@@ -724,16 +724,23 @@ public final class TldConfig  {
     }
 
     /**
-     * Returns a map of the paths to all JAR files accessible to the webapp.
+     * Returns a map of the paths to all JAR files that are accessible to the
+     * webapp and will be scanned for TLDs.
      *
-     * The map includes the JARs under WEB-INF/lib as well as those in the
-     * classloader delegation chain of the webapp's classloader.
+     * The map always includes all the JARs under WEB-INF/lib, as well as
+     * shared JARs in the classloader delegation chain of the webapp's
+     * classloader.
      *
      * The latter constitutes a Tomcat-specific extension to the TLD search
      * order defined in the JSP spec. It allows tag libraries packaged as JAR
      * files to be shared by web applications by simply dropping them in a 
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
+     *
+     * The set of shared JARs to be scanned for TLDs is narrowed down by
+     * the list of JARs specified as the value of the <tt>noTldJars</tt>
+     * property in catalina.properties, which are known not to contain any 
+     * TLDs.
      *
      * @return Map of JAR file paths
      */
