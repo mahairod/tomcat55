@@ -541,7 +541,7 @@ public class Embedded implements Lifecycle {
         try {
 
             Class clazz = 
-                Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+                Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
             connector = (Connector) clazz.newInstance();
 
             if (address != null) {
@@ -549,19 +549,21 @@ public class Embedded implements Lifecycle {
                                                "" + address);
             }
             IntrospectionUtils.setProperty(connector, "port", "" + port);
-            IntrospectionUtils.setProperty(connector, "useURIValidationHack", 
-                                           "" + false);
 
             if (protocol.equals("ajp")) {
                 IntrospectionUtils.setProperty
                     (connector, "protocolHandlerClassName",
                      "org.apache.jk.server.JkCoyoteHandler");
+            } else if (protocol.equals("memory")) {
+                IntrospectionUtils.setProperty
+                    (connector, "protocolHandlerClassName",
+                     "org.apache.coyote.memory.MemoryProtocolHandler");
             } else if (protocol.equals("https")) {
                 connector.setScheme("https");
                 connector.setSecure(true);
                 try {
                     Class serverSocketFactoryClass = Class.forName
-                        ("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
+                       ("org.apache.coyote.tomcat5.CoyoteServerSocketFactory");
                     ServerSocketFactory factory = 
                         (ServerSocketFactory) 
                         serverSocketFactoryClass.newInstance();
@@ -1052,6 +1054,7 @@ public class Embedded implements Lifecycle {
 
     // ------------------------------------------------------ Protected Methods
 
+
     /** Initialize naming - this should only enable java:env and root naming.
      * If tomcat is embeded in an application that already defines those -
      * it shouldn't do it.
@@ -1085,37 +1088,36 @@ public class Embedded implements Lifecycle {
         }
     }
 
+
     protected void initDirs() {
-        String catalinaHome=System.getProperty("catalina.home");
-        if ( catalinaHome== null) {
+
+        String catalinaHome = System.getProperty("catalina.home");
+        if (catalinaHome == null) {
             // Backwards compatibility patch for J2EE RI 1.3
             String j2eeHome = System.getProperty("com.sun.enterprise.home");
-            if (j2eeHome != null)
+            if (j2eeHome != null) {
                 catalinaHome=System.getProperty("com.sun.enterprise.home");
-            else if( System.getProperty("catalina.base") !=null ) {
-                catalinaHome=System.getProperty("catalina.base" );
+            } else if (System.getProperty("catalina.base") != null) {
+                catalinaHome = System.getProperty("catalina.base");
             } else {
-                // Original embeded behavior
-//                throw new LifecycleException
-//                    ("Must set 'catalina.home' system property");
-                // Catalina behavior
-//                System.setProperty("catalina.home",
-//                        System.getProperty("user.dir"));
-                // use IntrospectionUtils and guess the dir
-                catalinaHome=IntrospectionUtils.guessInstall("catalina.home",
-                                               "catalina.base","catalina.jar");
-                if( catalinaHome==null)
-                    catalinaHome=IntrospectionUtils.guessInstall("tomcat.install",
-                                               "catalina.home","tomcat.jar");
-
+                // Use IntrospectionUtils and guess the dir
+                catalinaHome = IntrospectionUtils.guessInstall
+                    ("catalina.home", "catalina.base", "catalina.jar");
+                if (catalinaHome == null) {
+                    catalinaHome = IntrospectionUtils.guessInstall
+                        ("tomcat.install", "catalina.home", "tomcat.jar");
+                }
             }
         }
-        if( catalinaHome!=null )
-            System.setProperty( "catalin.home", catalinaHome);
+        if (catalinaHome != null) {
+            System.setProperty("catalina.home", catalinaHome);
+        }
 
-        if (System.getProperty("catalina.base") == null)
+        if (System.getProperty("catalina.base") == null) {
             System.setProperty("catalina.base",
-                    System.getProperty("catalina.home"));
+                               System.getProperty("catalina.home"));
+        }
+
     }
 
 
@@ -1138,6 +1140,7 @@ public class Embedded implements Lifecycle {
                                          new MemoryRealm());
         embedded.setDebug(5);
         embedded.setLogger(new SystemOutLogger());
+        /*
         String home = System.getProperty("catalina.home");
         if (home == null) {
             System.err.println("You must set the 'catalina.home' system property");
@@ -1148,6 +1151,7 @@ public class Embedded implements Lifecycle {
             base = home;
             System.setProperty("catalina.base", base);
         }
+        */
 
         // Start up this embedded server (to prove we can dynamically
         // add and remove containers and connectors later)
@@ -1187,7 +1191,7 @@ public class Embedded implements Lifecycle {
 
         // Assemble and install a non-secure connector for port 8080
         Connector connector =
-            embedded.createConnector(null, 8080, false);
+            embedded.createConnector(null, 8080, "http");
         embedded.addConnector(connector);
 
         // Pause for a while to allow brief testing
