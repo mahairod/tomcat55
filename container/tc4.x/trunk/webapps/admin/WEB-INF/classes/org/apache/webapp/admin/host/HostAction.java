@@ -59,7 +59,8 @@
  *
  */
 
-package org.apache.webapp.admin;
+
+package org.apache.webapp.admin.host;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -79,26 +80,29 @@ import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
+
 import org.apache.struts.util.MessageResources;
+import org.apache.webapp.admin.ApplicationServlet;
 
 /**
  * Implementation of <strong>Action</strong> that validates
- * actions on a Logger.
+ * actions on a Host.
  *
  * @author Manveen Kaur
- * @version $Revision$ $Date$
+ * @version $Revision$Date: 2002/01/10 03:41:13 $
  */
 
-public final class LoggerAction extends Action {
-    
+public final class HostAction extends Action {
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
     
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     // --------------------------------------------------------- Public Methods
-    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -115,107 +119,102 @@ public final class LoggerAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
+    
     public ActionForward perform(ActionMapping mapping,
     ActionForm form,
     HttpServletRequest request,
     HttpServletResponse response)
     throws IOException, ServletException {
         
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+        
+        // Validate the request parameters specified by the user
+        ActionErrors errors = new ActionErrors();
+        
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        /**
+         * Get the host Name from the form.
+         * This is used to lookup the MBeanServer and
+         * retrieve this host's MBean.
+         */
+        String hostName = request.getParameter("hostName");
+        ObjectName hostObjName = null;
+        try{
+            Iterator hostItr =
+            mBServer.queryMBeans(new
+            ObjectName(hostName), null).iterator();
+            
+            ObjectInstance objInstance = (ObjectInstance)hostItr.next();
+            hostObjName = (objInstance).getObjectName();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBean reference " + hostName, t);
+        }
+        
+        /**
+         * Extracting the values from the form and
+         * updating the MBean with the new values.
+         */
+        String attribute = null;
         try{
             
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
+            String nameText = request.getParameter("name");
+            if(nameText != null) {
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.NAME_PROP_NAME,
+                nameText));
             }
             
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
+            String appBaseText = request.getParameter("appBase");
+            if(appBaseText != null) {
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.APPBASE_PROP_NAME,
+                appBaseText));
             }
             
-            /**
-             * Get the logger Name from the form.
-             * This is used to lookup the MBeanServer and
-             * retrieve this logger's MBean.
-             */
-            String loggerName = request.getParameter("loggerName");
-            
-            Iterator loggerItr =
-            mBServer.queryMBeans(new
-            ObjectName(loggerName), null).iterator();
-            
-            ObjectInstance objInstance = (ObjectInstance)loggerItr.next();
-            ObjectName loggerObjName = (objInstance).getObjectName();
-            
-            /**
-             * Extracting the values from the form and
-             * updating the MBean with the new values.
-             */        
-            
-            String debugLvlText = request.getParameter("debugLvl");            
+            String debugLvlText = request.getParameter("debugLvl");
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
-                mBServer.setAttribute(loggerObjName,
-                new Attribute(SetUpLoggerAction.DEBUG_PROP_NAME,
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.DEBUG_PROP_NAME,
                 debugLvl));
             }
             
-            
-            String verbosityLvlText = request.getParameter("verbosityLvl");
-            if(verbosityLvlText != null) {
-                Integer verbosityLvl = new Integer(verbosityLvlText);
-                mBServer.setAttribute(loggerObjName,
-                new Attribute(SetUpLoggerAction.VERBOSITY_PROP_NAME,
-                verbosityLvl));
+            String unpackWARsText = request.getParameter("unpackWARs");
+            if(unpackWARsText != null) {
+                Boolean unpackWARs = Boolean.valueOf(unpackWARsText);
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.UNPACKWARS_PROP_NAME,
+                unpackWARs));
             }
             
-            String type = request.getParameter("loggerType");
-            // the following are specific to FileLogger
-            if (type.equalsIgnoreCase(SetUpLoggerAction.FILE_LOGGER)) {
-                String directory = request.getParameter("directory");
-                if(directory != null) {
-                    mBServer.setAttribute(loggerObjName,
-                    new Attribute(SetUpLoggerAction.DIR_PROP_NAME,
-                    directory));
-                }
-                
-                String prefix = request.getParameter("prefix");
-                if(prefix != null) {
-                    mBServer.setAttribute(loggerObjName,
-                    new Attribute(SetUpLoggerAction.PREFIX_PROP_NAME,
-                    prefix));
-                }
-                
-                String suffix = request.getParameter("suffix");
-                if(suffix != null) {
-                    mBServer.setAttribute(loggerObjName,
-                    new Attribute(SetUpLoggerAction.SUFFIX_PROP_NAME,
-                    suffix));
-                }
-                
-                String timestamp = request.getParameter("timestamp");
-                if(timestamp != null) {
-                    Boolean tstamp = Boolean.valueOf(timestamp);
-                    mBServer.setAttribute(loggerObjName,
-                    new Attribute(SetUpLoggerAction.TIMESTAMP_PROP_NAME,
-                    tstamp));
-                }
-                
-            }
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        }catch(Exception e){
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.set",
+            attribute), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.set",
+            attribute));
+            return (null);
         }
+        
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");
         // Forward back to the test page

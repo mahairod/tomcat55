@@ -37,7 +37,7 @@
 
     <!-- Host form bean -->
     <form-bean      name="hostForm"
-                    type="org.apache.webapp.admin.HostForm"/>
+                    type="org.apache.webapp.admin.host.HostForm"/>
 
     <!-- Context form bean -->
     <form-bean      name="contextForm"
@@ -45,7 +45,7 @@
                     
     <!-- Logger form bean -->
     <form-bean      name="loggerForm"
-                    type="org.apache.webapp.admin.LoggerForm"/>
+                    type="org.apache.webapp.admin.logger.LoggerForm"/>
 
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
@@ -259,9 +259,6 @@
                type="org.apache.webapp.admin.SetUpServerAction"
                name="serverForm"
                scope="session">
-      <forward        name="SetUpServer"
-                      path="/server.jsp"
-                  redirect="true"/>
     </action>
 
    <!-- Set up Service datastructure -->
@@ -294,7 +291,7 @@
 
      <!-- Set up Host datastructure -->
     <action    path="/setUpHost"
-               type="org.apache.webapp.admin.SetUpHostAction"
+               type="org.apache.webapp.admin.host.SetUpHostAction"
                name="hostForm"
                scope="session">
     </action>
@@ -308,7 +305,7 @@
     
     <!-- Set up Logger datastructure -->
     <action    path="/setUpLogger"
-               type="org.apache.webapp.admin.SetUpLoggerAction"
+               type="org.apache.webapp.admin.logger.SetUpLoggerAction"
                name="loggerForm"
                scope="session">
     </action>
@@ -375,7 +372,7 @@
 
     <!-- Process a host change -->
     <action    path="/host"
-               type="org.apache.webapp.admin.HostAction"
+               type="org.apache.webapp.admin.host.HostAction"
                name="hostForm"
               scope="session"
               input="/host.jsp">
@@ -391,7 +388,7 @@
     
      <!-- Process a logger change -->
     <action    path="/logger"
-               type="org.apache.webapp.admin.LoggerAction"
+               type="org.apache.webapp.admin.logger.LoggerAction"
                name="loggerForm"
               scope="session"
               input="/logger.jsp">

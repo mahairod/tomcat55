@@ -44,7 +44,7 @@
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
  * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR loggerS; LOSS OF
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
  * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
@@ -59,12 +59,15 @@
  *
  */
 
-package org.apache.webapp.admin;
+
+package org.apache.webapp.admin.host;
+
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Arrays;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -75,50 +78,40 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.struts.util.MessageResources;
 
 /**
- * Test <code>Action</code> that handles events from the tree control when
- * a logger is chosen.
- *
+ * Test <code>Action</code> that handles events from the tree control test
+ * page when a node linking to a host is selected.
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class SetUpLoggerAction extends Action {
+public class SetUpHostAction extends Action {
     
     private static MBeanServer mBServer = null;
+    private MessageResources resources = null;
     
-    public final static String CLASSNAME_PROP_NAME = "className";
+    public final static String NAME_PROP_NAME = "name";
+    public final static String APPBASE_PROP_NAME = "appBase";
     public final static String DEBUG_PROP_NAME = "debug";
-    public final static String VERBOSITY_PROP_NAME = "verbosity";
+    public final static String UNPACKWARS_PROP_NAME = "unpackWARs";
     
-    // specific to FileLogger
-    public final static String DIR_PROP_NAME = "directory";
-    public final static String PREFIX_PROP_NAME = "prefix";
-    public final static String SUFFIX_PROP_NAME = "suffix";
-    public final static String TIMESTAMP_PROP_NAME = "timestamp";
-    
-    public final static String FILE_LOGGER = "FileLogger";
+    public final static String FINDALIASES_OPERATION_NAME = "findAliases";
     
     private ArrayList debugLvlList = null;
-    private ArrayList verbosityLvlList = null;
     private ArrayList booleanList = null;
+    private ArrayList aliasList = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -144,25 +137,30 @@ public class SetUpLoggerAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
         
         if (form == null) {
-            getServlet().log(" Creating new LoggerForm bean under key "
+            getServlet().log(" Creating new hostForm bean under key "
             + mapping.getAttribute());
-            form = new LoggerForm();
+            form = new HostForm();
             
             if ("request".equals(mapping.getScope()))
                 request.setAttribute(mapping.getAttribute(), form);
             else
-                session.setAttribute(mapping.getAttribute(), form);
-            
+                request.getSession().setAttribute(mapping.getAttribute(), form);
         }
         
         String selectedName = request.getParameter("select");
-        String loggerType = request.getParameter("type");
         // label of the node that was clicked on.
         String nodeLabel = request.getParameter("nodeLabel");
         
-        LoggerForm loggerFm = (LoggerForm) form;
+        // Do transaction stuff before this
+        
+        HostForm hostFm = (HostForm) form;
         
         if(debugLvlList == null) {
             debugLvlList = new ArrayList();
@@ -176,101 +174,102 @@ public class SetUpLoggerAction extends Action {
             debugLvlList.add(new LabelValueBean("7", "7"));
             debugLvlList.add(new LabelValueBean("8", "8"));
             debugLvlList.add(new LabelValueBean("9", "9"));
+            
         }
         
-        if(verbosityLvlList == null) {
-            verbosityLvlList = new ArrayList();
-            verbosityLvlList.add(new LabelValueBean("0", "0"));
-            verbosityLvlList.add(new LabelValueBean("1", "1"));
-            verbosityLvlList.add(new LabelValueBean("2", "2"));
-            verbosityLvlList.add(new LabelValueBean("3", "3"));
-            verbosityLvlList.add(new LabelValueBean("4", "4"));
-        }
-        
-        /* Boolean (true.false) list for enableLookups */
+        /* Boolean (true.false) list for unpackWARs */
         if(booleanList == null) {
             booleanList = new ArrayList();
             booleanList.add(new LabelValueBean("True", "true"));
             booleanList.add(new LabelValueBean("False", "false"));
         }
-                
-        // common for all loggers
-        Integer debug = null;
-        Integer verbosity = null;
         
-        // specific to FileLogger
-        String directory = null;
-        String prefix = null;
-        String suffix = null;
-        Boolean timestamp = null;
+        String name= null;
+        String appBase = null;
+        Integer debug = null;
+        Boolean unpackWARs = null;
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        String attribute = null;
+        ObjectName hostObjName = null;
         
         try{
             
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
+            Iterator hostItr =
+            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.HOST_TYPE +
+            TomcatTreeBuilder.WILDCARD),
+            null).iterator();
             
-            Iterator loggerItr =
-            mBServer.queryMBeans(new
-            ObjectName(selectedName), null).iterator();
+            hostObjName =
+            ((ObjectInstance)hostItr.next()).getObjectName();
             
-            ObjectInstance objInstance = (ObjectInstance)loggerItr.next();
-            ObjectName loggerObjName = (objInstance).getObjectName();
+            name = (String)mBServer.getAttribute(hostObjName,
+            attribute=NAME_PROP_NAME);
             
-            // common attributes for all logger types.            
-            debug = (Integer) mBServer.getAttribute(loggerObjName,
-            DEBUG_PROP_NAME);
+            appBase = (String)mBServer.getAttribute(hostObjName,
+            attribute=APPBASE_PROP_NAME);
             
-            verbosity = (Integer) mBServer.getAttribute(loggerObjName,
-            VERBOSITY_PROP_NAME);
- 
-            if (FILE_LOGGER.equalsIgnoreCase(loggerType)) {
-            // Initialize rest of variables.
-                
-                directory = (String) mBServer.getAttribute(loggerObjName,
-                DIR_PROP_NAME);
-
-                prefix = (String) mBServer.getAttribute(loggerObjName,
-                PREFIX_PROP_NAME);
-                
-                suffix = (String) mBServer.getAttribute(loggerObjName,
-                SUFFIX_PROP_NAME);
+            debug = (Integer)mBServer.getAttribute(hostObjName,
+            attribute=DEBUG_PROP_NAME);
             
-                timestamp = (Boolean) mBServer.getAttribute(loggerObjName,
-                TIMESTAMP_PROP_NAME);
-                
-            }
+            unpackWARs = (Boolean) mBServer.getAttribute(hostObjName,
+            attribute=UNPACKWARS_PROP_NAME);
             
-        } catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        }catch(Throwable t){
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.get",
+            attribute), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.get",
+            attribute));
+            return (null);
         }
         
-        //setting values obtained from the mBean to be displayed in the form.        
-        loggerFm.setLoggerType(loggerType);
-        
-        loggerFm.setDebugLvl(debug.toString());
-        loggerFm.setDebugLvlVals(debugLvlList);
-                
-        loggerFm.setVerbosityLvl(verbosity.toString());
-        loggerFm.setVerbosityLvlVals(verbosityLvlList);
-        
-        loggerFm.setLoggerName(selectedName);
-        loggerFm.setNodeLabel(nodeLabel);
-        
-        if (FILE_LOGGER.equalsIgnoreCase(loggerType)) {
-      
-            loggerFm.setDirectory(directory);
-            loggerFm.setPrefix(prefix);       
-            loggerFm.setSuffix(suffix);
+        try {
+            // retrieve all aliases
+            String aliases[] = (String[]) mBServer.invoke(hostObjName,
+            FINDALIASES_OPERATION_NAME, null, null);
             
-            loggerFm.setBooleanVals(booleanList);
-            loggerFm.setTimestamp(timestamp.toString());
-        
+            // convert the alias string array into an alias ArrayList
+            if (aliasList == null)
+                aliasList = new ArrayList(Arrays.asList(aliases));
+            
+        } catch (Exception e) {
+            getServlet().log
+            (resources.getMessage(locale, "users.error.invoke",
+            FINDALIASES_OPERATION_NAME), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.invoke",
+            FINDALIASES_OPERATION_NAME));
+            return (null);            
         }
+                
+        hostFm.setNodeLabel(nodeLabel);
+        hostFm.setHostName(selectedName);
+        
+        hostFm.setName(name);
+        hostFm.setAppBase(appBase);
+        hostFm.setDebugLvl(debug.toString());
+        hostFm.setUnpackWARs(unpackWARs.toString());
+        
+        hostFm.setDebugLvlVals(debugLvlList);
+        hostFm.setBooleanVals(booleanList);
+        hostFm.setAliasVals(aliasList);
+        
         // Forward back to the test page
-        return (mapping.findForward("Logger"));
+        return (mapping.findForward("Host"));
+        
     }
+    
+    
 }
 

@@ -59,7 +59,7 @@
  *
  */
 
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.logger;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
