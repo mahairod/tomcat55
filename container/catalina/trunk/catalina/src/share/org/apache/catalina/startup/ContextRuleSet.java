@@ -302,8 +302,11 @@ final class CreateLoaderRule extends Rule {
     public void begin(Attributes attributes) throws Exception {
 
         // Look up the required parent class loader
-        Container container = (Container) digester.peek();
-        ClassLoader parentClassLoader = container.getParentClassLoader();
+        ClassLoader parentClassLoader = null;
+        Object ojb = digester.peek();
+        if (ojb instanceof Container) {
+            parentClassLoader = ((Container)ojb).getParentClassLoader();
+        }
 
         // Instantiate a new Loader implementation object
         String className = loaderClass;

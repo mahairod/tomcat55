@@ -3965,6 +3965,19 @@ public class StandardContext
                 ok = false;
             }
         }
+
+        // Install DefaultContext configuration
+        if (!getOverride()) {
+            Container host = getParent();
+            if (host instanceof StandardHost) {
+                ((StandardHost)host).installDefaultContext(this);
+                Container engine = host.getParent();
+                if( engine instanceof StandardEngine ) {
+                    ((StandardEngine)engine).installDefaultContext(this);
+                }
+            }
+        }
+
         // Look for a realm - that may have been configured earlier. 
         // If the realm is added after context - it'll set itself.
         if( realm == null ) {

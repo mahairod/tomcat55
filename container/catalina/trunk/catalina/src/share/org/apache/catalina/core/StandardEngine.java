@@ -319,6 +319,22 @@ public class StandardEngine
 
 
     /**
+     * Install the StandardContext portion of the DefaultContext
+     * configuration into current Context.
+     *
+     * @param context current web application context
+     */
+    public void installDefaultContext(Context context) {
+
+        if (defaultContext != null &&
+            defaultContext instanceof StandardDefaultContext) {
+
+            ((StandardDefaultContext)defaultContext).installDefaultContext(context);
+        }
+    }
+
+
+    /**
      * Import the DefaultContext config into a web application context.
      *
      * @param context web application context to import default context
