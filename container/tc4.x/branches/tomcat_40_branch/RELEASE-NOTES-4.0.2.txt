@@ -93,6 +93,7 @@ Bugzilla Bugs Resolved:
 ----------------------
 
 5330  JNDI ENC context problem
+5471  jspc -webapp option is broken due to namespace collisions
 5644  JspC produces badly formed classnames if first char is a digit
 5647  AJP13 connector will not pass authentication requests
 5740  Content-type reset to text/html on response with status >= 400

@@ -12,7 +12,6 @@ acceptable to delay their resolution.
                    is 0 with Apache WebApp module
 5040    webaap     EOFException when talking from applet to servlet 
                    via mod_webapp
-5201    catalina   Persistent sessions & EJB Statefull
 5402    webapp     WarpConnection raise IOException
 5735    catalina   HTTP connector running out of processors under heavy load
 5795    catalina   Catalina Shutdown relies on localhost causing problems 
@@ -24,7 +23,6 @@ acceptable to delay their resolution.
 5704    servlets   CgiServlet corrupting images?
 4518    jasper     load-on-startup is not working with jsp page
 5759    servlets   CGI servlet mapping by extension *.cgi does not work
-5471    jasper     jspc -webapp option is broken due to namespace collisions
 
 
 
@@ -42,5 +40,7 @@ FIXED - 5647    jk         AJP13 connector will not pass authentication requests
 FIXED - 5644    jasper     JspC produces badly formed classnames if first char 
                    is a digit
 FIXED - 5905    jasper     JSP Document not correctly processed
+FIXED - 5471    jasper     jspc -webapp option is broken due to namespace collisions
+LATER - 5201    catalina   Persistent sessions & EJB Statefull
 
 
