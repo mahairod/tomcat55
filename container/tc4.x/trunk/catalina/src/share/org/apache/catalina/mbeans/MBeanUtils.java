@@ -1038,7 +1038,7 @@ public class MBeanUtils {
                 resourceLink.getNamingResources().getContainer();
         if (container instanceof Server) {        
             name = new ObjectName(domain + ":type=ResourceLink" +
-                        ",resourcetype=Global,class=" + resourceLink.getType() + 
+                        ",resourcetype=Global" + 
                         ",name=" + encodedResourceLinkName);
         } else if (container instanceof Context) {                    
             String path = ((Context)container).getPath();
@@ -1051,7 +1051,6 @@ public class MBeanUtils {
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
                         ",service=" + service.getName() +
-                        ",class=" + resourceLink.getType() + 
                         ",name=" + encodedResourceLinkName);
         } else if (container instanceof DefaultContext) {            
             container = ((DefaultContext)container).getParent();
@@ -1061,14 +1060,12 @@ public class MBeanUtils {
                 name = new ObjectName(domain + ":type=ResourceLink" + 
                         ",resourcetype=HostDefaultContext,host=" + host.getName() +
                         ",service=" + service.getName() +
-                        ",class=" + resourceLink.getType() + 
                         ",name=" + encodedResourceLinkName);
             } else if (container instanceof Engine) {
                 Engine engine = (Engine) container;
                 Service service = engine.getService();
                 name = new ObjectName(domain + ":type=ResourceLink" + 
                         ",resourcetype=ServiceDefaultContext,service=" + service.getName() +
-                        ",class=" + resourceLink.getType() + 
                         ",name=" + encodedResourceLinkName);
             }
         }
