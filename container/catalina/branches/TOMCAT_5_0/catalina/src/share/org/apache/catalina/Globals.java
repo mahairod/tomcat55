@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,9 +29,9 @@ public final class Globals {
 
     /**
      * The servlet context attribute under which we store the alternate
-     * deployment descriptor for this web application 
+     * deployment descriptor for this web application
      */
-    public static final String ALT_DD_ATTR = 
+    public static final String ALT_DD_ATTR =
         "org.apache.catalina.deploy.alt_dd";
 
     /**
@@ -66,13 +66,13 @@ public final class Globals {
     /**
      * Request dispatcher state.
      */
-    public static final String DISPATCHER_TYPE_ATTR = 
+    public static final String DISPATCHER_TYPE_ATTR =
         "org.apache.catalina.core.DISPATCHER_TYPE";
 
     /**
      * Request dispatcher path.
      */
-    public static final String DISPATCHER_REQUEST_PATH_ATTR = 
+    public static final String DISPATCHER_REQUEST_PATH_ATTR =
         "org.apache.catalina.core.DISPATCHER_REQUEST_PATH";
 
     /**
@@ -99,7 +99,7 @@ public final class Globals {
     public static final String INCLUDE_CONTEXT_PATH_ATTR =
         "javax.servlet.include.context_path";
 
-    
+
     /**
      * The request attribute under which the original context path is stored
      * on an forwarded dispatcher request.
@@ -196,8 +196,8 @@ public final class Globals {
      */
     public static final String INCLUDE_PATH_INFO_ATTR =
         "javax.servlet.include.path_info";
-    
-    
+
+
     /**
      * The request attribute under which the original path info is stored
      * on an forwarded dispatcher request.
@@ -213,15 +213,15 @@ public final class Globals {
     public static final String INCLUDE_QUERY_STRING_ATTR =
         "javax.servlet.include.query_string";
 
-    
+
     /**
      * The request attribute under which the original query string is stored
      * on an forwarded dispatcher request.
      */
     public static final String FORWARD_QUERY_STRING_ATTR =
         "javax.servlet.forward.query_string";
-    
-    
+
+
     /**
      * The request attribute under which the original request URI is stored
      * on an included dispatcher request.
@@ -236,8 +236,8 @@ public final class Globals {
      */
     public static final String FORWARD_REQUEST_URI_ATTR =
         "javax.servlet.forward.request_uri";
-    
-    
+
+
     /**
      * The request attribute under which we forward a servlet name to
      * an error page.
@@ -261,7 +261,7 @@ public final class Globals {
     public static final String FORWARD_SERVLET_PATH_ATTR =
         "javax.servlet.forward.servlet_path";
 
-    
+
     /**
      * The name of the cookie used to pass the session identifier back
      * and forth with the client.
@@ -274,6 +274,17 @@ public final class Globals {
      * back and forth with the client.
      */
     public static final String SESSION_PARAMETER_NAME = "jsessionid";
+
+
+   /**
+    * The servlet context attribute under which we store a flag used
+    * to mark this request as having been processed by the SSIServlet.
+    * We do this because of the pathInfo mangling happening when using
+    * the CGIServlet in conjunction with the SSI servlet. (value stored
+    * as an object of type String)
+    */
+    public static final String SSI_FLAG_ATTR =
+        "org.apache.catalina.ssi.SSIServlet";
 
 
     /**
@@ -290,7 +301,7 @@ public final class Globals {
     public static final String SUBJECT_ATTR =
         "javax.security.auth.subject";
 
-    
+
     /**
      * The servlet context attribute under which we record the set of
      * welcome files (as an object of type String[]) for this application.
