@@ -1376,12 +1376,13 @@ public class Generator {
 		    out.printin(tagHandlerVar);
 		    out.println(".doInitBody();");
 
+		    out.popIndent();
+		    out.printil("}");
+
 		    // Synchronize AT_BEGIN and NESTED scripting variables
 		    syncScriptingVars(n, VariableInfo.AT_BEGIN);
 		    syncScriptingVars(n, VariableInfo.NESTED);
 			
-		    out.popIndent();
-		    out.printil("}");
 		} else {
 		    // Synchronize NESTED scripting variables
 		    syncScriptingVars(n, VariableInfo.NESTED);
