@@ -197,6 +197,17 @@
     </ant>
   </target>
 
+  <target name="build-jasper" 
+          unless="jasper.build.notrequired" 
+          depends="init">
+    <echo>========== Building: jasper </echo>
+
+    <ant dir="${jasper.home}"   target="deploy">
+      <property name="catalina.home" value="${tomcat.build}"/>
+      <property name="commons-el.jar" location="${tomcat.build}/common/lib/commons-el.jar" />
+    </ant>
+  </target>
+
   <target name="build-admin" unless="admin.build.notrequired" 
           depends="init" >
     <echo>========== Building: admin </echo>
@@ -363,11 +374,7 @@
 
     <antcall target="build-tomcathttp11"/>
       
-    <echo>========== Building: jasper </echo>
-
-    <ant dir="${jasper.home}"   target="deploy">
-      <property name="catalina.home" value="${tomcat.build}"/>
-    </ant>
+    <antcall target="build-jasper"/>
 
     <!-- Correct permissions and line endings on "bin" scripts -->
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.sh"  eol="lf"/>
@@ -398,11 +405,35 @@
     </ant>
   </target>
 
+  <target name="build-commons-el" unless="commons-el.build.notrequired" >
+    <echo>========== Building: commons-el </echo>
+
+    <ant dir="${cvs.base}/jakarta-commons/el" target="jar-only" >
+        <property name="servlet-api.jar" location="${tomcat.build}/common/lib/servlet-api.jar" />
+        <property name="commons-el.jar" location="${tomcat.build}/common/lib/commons-el.jar" />
+        <property name="jsp-api.jar" value="${tomcat.build}/common/lib/jsp-api.jar"/>
+        <property name="compile.optimize" value="false" />
+        <property name="build.home" value="${tomcat.build}" />
+    </ant>
+  </target>
+
   <target name="build-depends" depends="init"
           description="Builds various dependent components">
+    <uptodate property="commons-logging.build.notrequired"
+              targetfile="${tomcat.build}/server/lib/commons-logging.jar">
+      <srcfiles dir="${cvs.base}/jakarta-commons/logging/src/java" includes="**" />
+    </uptodate>
+    <uptodate property="commons-modeler.build.notrequired"
+              targetfile="${tomcat.build}/server/lib/commons-modeler.jar">
+      <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
+    </uptodate>
+    <uptodate property="commons-el.build.notrequired"
+              targetfile="${tomcat.build}/common/lib/commons-el.jar">
+      <srcfiles dir="${cvs.base}/jakarta-commons/el/src/java" includes="**" />
+    </uptodate>
     <antcall target="build-commons-logging" />
     <antcall target="build-commons-modeler" />
-
+    <antcall target="build-commons-el" />
   </target>
 
 
@@ -458,10 +489,7 @@
       <fileset dir="${api.home}/jsr154/build/examples"/>
     </copy>
 
-    <echo>Target: Jasper - Deploy ...</echo>
-    <ant dir="${jasper.home}"   target="deploy">
-      <property name="catalina.home" value="${tomcat.build}"/>
-    </ant>
+    <antcall target="build-jasper"/>
 
     <!-- Correct permissions and line endings on "bin" scripts -->
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.sh"  eol="lf"/>
