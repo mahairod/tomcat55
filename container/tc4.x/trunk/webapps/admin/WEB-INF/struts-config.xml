@@ -64,8 +64,12 @@
                     type="org.apache.webapp.admin.UserForm"/>
 
     <!-- JDBC Realm form bean -->
-    <form-bean      name="realmForm"
+    <form-bean      name="jdbcRealmForm"
                     type="org.apache.webapp.admin.realm.JDBCRealmForm"/>
+
+    <!-- Memory Realm form bean -->
+    <form-bean      name="memoryRealmForm"
+                    type="org.apache.webapp.admin.realm.MemoryRealmForm"/>
 
    <!-- UserDB Realm form bean -->
     <form-bean      name="userdbRealmForm"
@@ -152,6 +156,10 @@
 
     <forward        name="JDBCRealm"
                     path="/jdbcRealm.jsp"
+                redirect="false"/>
+                
+    <forward        name="MemoryRealm"
+                    path="/memoryRealm.jsp"
                 redirect="false"/>
 
     <forward        name="UserDBRealm"
@@ -255,15 +263,29 @@
                       path="/logger.jsp"
                   redirect="true"/>
     </action>
+
+    <!-- Set up Memory Realm datastructure -->
+    <action    path="/setUpMemoryRealm"
+               type="org.apache.webapp.admin.realm.SetUpMemoryRealmAction"
+               name="memoryRealmForm"
+               scope="session">
+    <forward        name="SetUpMemoryRealm"
+                      path="/memoryRealm.jsp"
+                  redirect="true"/>
+    </action>
+
+   <!-- Set up JDBC Realm datastructure -->
+    <action    path="/setUpJDBCRealm"
+               type="org.apache.webapp.admin.realm.SetUpJDBCRealmAction"
+               name="jdbcRealmForm"
+               scope="session">
+    </action>
         
     <!-- Set up Realm datastructure -->
     <action    path="/setUpUserDBRealm"
                type="org.apache.webapp.admin.realm.SetUpUserDBRealmAction"
                name="userdbRealmForm"
                scope="session">
-      <forward        name="SetUpDBRealm"
-                      path="/userdbRealm.jsp"
-                  redirect="true"/>
     </action>
     
     <!-- Log out of the application -->
@@ -370,17 +392,24 @@
 
     <!-- JDBC realm action -->
     <action    path="/JDBCRealm"
-              input="/jdbcRealm.jsp"
-               name="realmForm"
-              scope="request"
-               type="org.apache.webapp.admin.realm.JDBCRealmAction"/>
+               type="org.apache.webapp.admin.realm.JDBCRealmAction"
+               name="jdbcRealmForm"
+               scope="session"               
+               input="/jdbcRealm.jsp"/>
+
+    <!-- Memory realm action -->
+    <action    path="/MemoryRealm"
+               type="org.apache.webapp.admin.realm.MemoryRealmAction"                        
+               name="memoryRealmForm"
+               scope="session"
+               input="/memoryRealm.jsp"/>
                
     <!-- UserDB realm action -->
     <action    path="/UserDBRealm"
-              input="/userDBRealm.jsp"
+               type="org.apache.webapp.admin.realm.UserDBRealmAction"             
                name="userdbRealmForm"
-              scope="request"
-               type="org.apache.webapp.admin.realm.UserDBRealmAction"/>
+               scope="session"
+               input="/userDBRealm.jsp"/>
 
   </action-mappings>  
     
