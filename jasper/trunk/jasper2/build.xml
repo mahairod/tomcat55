@@ -18,6 +18,7 @@
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>
+  <property name="ant.jar"           value="${ant.home}/lib/ant.jar"/>
 
   <!-- Construct Jasper classpath -->
   <path id="jasper.classpath">
@@ -203,6 +204,9 @@
         <include name="org/apache/jasper/util/**" />
       </fileset>
     </jar>
+
+    <!-- Copy Ant JAR -->
+    <copy todir="${jasper.deploy}/common/lib" file="${ant.jar}"/>
 
   </target>
 
