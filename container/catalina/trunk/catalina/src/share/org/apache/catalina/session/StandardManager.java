@@ -85,6 +85,9 @@ import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
+import javax.management.MBeanRegistration;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -95,8 +98,11 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleSupport;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -116,7 +122,8 @@ import org.apache.catalina.util.LifecycleSupport;
 
 public class StandardManager
     extends ManagerBase
-    implements Lifecycle, PropertyChangeListener, Runnable {
+    implements Lifecycle, PropertyChangeListener, Runnable 
+ {
 
     // ---------------------------------------------------- Security Classes
     private class PrivilegedDoLoad
@@ -193,7 +200,6 @@ public class StandardManager
      * Has this component been started yet?
      */
     private boolean started = false;
-
 
     /**
      * The background thread.
@@ -469,8 +475,7 @@ public class StandardManager
                 classLoader = loader.getClassLoader();
             if (classLoader != null) {
                 if (log.isDebugEnabled())
-                    log.debug("Creating custom object input stream for class loader "
-                        + classLoader);
+                    log.debug("Creating custom object input stream for class loader ");
                 ois = new CustomObjectInputStream(bis, classLoader);
             } else {
                 if (log.isDebugEnabled())
@@ -714,7 +719,6 @@ public class StandardManager
 
     }
 
-
     /**
      * Prepare for the beginning of active use of the public methods of this
      * component.  This method should be called after <code>configure()</code>,
@@ -725,13 +729,14 @@ public class StandardManager
      */
     public void start() throws LifecycleException {
 
-        if (log.isDebugEnabled())
-            log.debug("Starting");
-
+        if( ! initialized )
+            init();
+        
         // Validate and update our current component state
-        if (started)
-            throw new LifecycleException
-                (sm.getString("standardManager.alreadyStarted"));
+        if (started) {
+            log.info(sm.getString("standardManager.alreadyStarted"));
+            return;
+        }
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -767,7 +772,7 @@ public class StandardManager
 
         if (log.isDebugEnabled())
             log.debug("Stopping");
-
+        
         // Validate and update our current component state
         if (!started)
             throw new LifecycleException
@@ -801,6 +806,9 @@ public class StandardManager
         // Require a new random number generator if we are restarted
         this.random = null;
 
+        if( initialized ) {
+            destroy();
+        }
     }
 
 
@@ -965,4 +973,6 @@ public class StandardManager
         }
 
     }
+    
+    
 }
