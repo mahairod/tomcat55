@@ -128,7 +128,8 @@ public class HttpRequestAdapter extends RequestImpl {
 	// 	}
 
 	// for 0.9, we don't have headers!
-	if(protocol!=null)
+	if ((protocol!=null) &&
+            !protocol.toLowerCase().startsWith("http/0."))
 	    headers.read(in);
 	//	processCookies(); // called later
 
