@@ -265,6 +265,7 @@ public class DefaultContextMBean extends BaseModelMBean {
         ManagedBean managed = registry.findManagedBean("ContextResource");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), resource);
+        
         return (oname.toString());
     }
 

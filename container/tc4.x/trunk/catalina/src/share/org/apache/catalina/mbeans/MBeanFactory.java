@@ -819,7 +819,7 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardContext(String parent, String path,
                                         String docBase)
         throws Exception {
-
+        
         // Create a new StandardContext instance
         StandardContext context = new StandardContext();
         path = getPathStr(path);
@@ -832,15 +832,13 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
         Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        context.setParent(host);
         host.addChild(context);
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("StandardContext");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), context);
-        throw new Exception(oname.toString());
-        //return (oname.toString());
+        return (oname.toString());
 
     }
 

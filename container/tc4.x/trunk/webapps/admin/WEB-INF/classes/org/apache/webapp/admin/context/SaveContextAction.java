@@ -224,12 +224,13 @@ public final class SaveContextAction extends Action {
                 values[0] = parentName;
                 values[1] = cform.getPath();
                 values[2] = cform.getDocBase();
+
+                operation = "createStandardContext";    
                 
-                operation = "createStandardContext";
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardContextTypes);
-
+                
                 // Create a new Loader object
                 values = new String[1];
                 // parent of loader is the newly created context

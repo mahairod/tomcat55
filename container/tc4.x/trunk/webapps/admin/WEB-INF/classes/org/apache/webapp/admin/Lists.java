@@ -259,10 +259,9 @@ public class Lists {
      * @exception Exception if thrown while retrieving the list
      */
     public static List getDefaultContexts(MBeanServer mbserver, String 
-        container, String containerType) throws Exception {
+        container) throws Exception {
 
-        return (getDefaultContexts(mbserver, new ObjectName(container), 
-            containerType));
+        return (getDefaultContexts(mbserver, new ObjectName(container)));
 
     }
     
@@ -280,19 +279,26 @@ public class Lists {
      * @exception Exception if thrown while retrieving the list
      */
     public static List getDefaultContexts(MBeanServer mbserver, ObjectName 
-        container, String containerType) throws Exception {
-
+        container) throws Exception {
+        
         StringBuffer sb = new StringBuffer(container.getDomain());
-        if (containerType.equals("service")) {
-            sb.append(":type=DefaultContext,service=");
-            sb.append(container.getKeyProperty("name"));
-            sb.append(",*");
-        } else if (containerType.equals("host")) {
-            sb.append(":type=DefaultContext,host=");
-            sb.append(container.getKeyProperty("host"));
+        sb.append(":type=DefaultContext");
+        String type = container.getKeyProperty("type");
+        String host = container.getKeyProperty("host");
+        if ("Host".equals(type)) {
+            host = container.getKeyProperty("host");
+        }
+        if (host != null) {
+            sb.append(",host=");
+            sb.append(host);
+        }
+        String service = container.getKeyProperty("service");
+        if ("Service".equals(type)) {
+            service = container.getKeyProperty("name");
+        }
+        if (service != null) {
             sb.append(",service=");
-            sb.append(container.getKeyProperty("service"));
-            sb.append(",*");
+            sb.append(service);
         }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList defaultContexts = new ArrayList();

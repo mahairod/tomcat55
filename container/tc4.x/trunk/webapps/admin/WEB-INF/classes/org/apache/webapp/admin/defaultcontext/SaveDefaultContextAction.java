@@ -247,33 +247,8 @@ public final class SaveDefaultContextAction extends Action {
                 //                    values, createStandardManagerTypes);
                 
                 // Add the new Default Context to our tree control node
-                TreeControl control = (TreeControl)
-                    session.getAttribute("treeControlTest");
-                if (control != null) {
-                    TreeControlNode parentNode = control.findNode(parentName);
-                    if (parentNode != null) {
-                        String nodeLabel =
-                            "DefaultContext";
-                        String encodedName =
-                            URLEncoder.encode(cObjectName);
-                        TreeControlNode childNode =
-                            new TreeControlNode(cObjectName,
-                                                "DefaultContext.gif",
-                                                nodeLabel,
-                                                "EditDefaultContext.do?select=" +
-                                                encodedName,
-                                                "content",
-                                                true);
-                        parentNode.addChild(childNode);
-                        // FIXME - force a redisplay
-                    } else {
-                        getServlet().log
-                            ("Cannot find parent node '" + parentName + "'");
-                    }
-                } else {
-                    getServlet().log
-                        ("Cannot find TreeControlNode!");
-                }
+                addToTreeControlNode(oname, "DefaultContext", 
+                                    parentName, resources, session);
 
             } catch (Exception e) {
                 getServlet().log
@@ -429,6 +404,118 @@ public final class SaveDefaultContextAction extends Action {
         session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));
         
+    }
+    
+    
+    /**
+     * Append nodes for any define resources for the specified Context.
+     *
+     * @param containerNode Container node for the tree control
+     * @param containerName Object name of the parent container
+     * @param resources The MessageResources for our localized messages
+     *  messages
+     */
+    public void addToTreeControlNode(ObjectName oname, String containerName, 
+                                    String parentName, MessageResources resources,
+                                    HttpSession session) 
+        throws Exception {
+                              
+        TreeControl control = (TreeControl) session.getAttribute("treeControlTest");
+        if (control != null) {
+            TreeControlNode parentNode = control.findNode(parentName);
+            if (parentNode != null) {
+                String nodeLabel = "DefaultContext";
+                String encodedName = URLEncoder.encode(oname.toString());
+                TreeControlNode childNode = 
+                    new TreeControlNode(oname.toString(),
+                                        "DefaultContext.gif",
+                                        nodeLabel,
+                                        "EditDefaultContext.do?select=" +
+                                        encodedName,
+                                        "content",
+                                        true);
+                parentNode.addChild(childNode);
+                // FIXME - force a redisplay
+                String type = oname.getKeyProperty("type");
+                if (type == null) {
+                    type = "";
+                }
+                String path = oname.getKeyProperty("path");
+                if (path == null) {
+                    path = "";
+                }        
+                String host = oname.getKeyProperty("host");
+                if (host == null) {
+                    host = "";
+                }        
+                String service = oname.getKeyProperty("service");
+                TreeControlNode subtree = new TreeControlNode
+                    ("Context Resource Administration " + containerName,
+                    "folder_16_pad.gif",
+                    resources.getMessage("resources.treeBuilder.subtreeNode"),
+                    null,
+                    "content",
+                    true);        
+                childNode.addChild(subtree);
+                TreeControlNode datasources = new TreeControlNode
+                    ("Context Data Sources " + containerName,
+                    "Datasource.gif",
+                    resources.getMessage("resources.treeBuilder.datasources"),
+                    "resources/listDataSources.do?resourcetype=" + 
+                    URLEncoder.encode(type) + "&path=" +
+                    URLEncoder.encode(path) + "&host=" + 
+                    URLEncoder.encode(host) + "&service=" +
+                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode("DataSources List Setup"),
+                    "content",
+                    false);
+                TreeControlNode mailsessions = new TreeControlNode
+                    ("Context Mail Sessions " + containerName,
+                    "Mailsession.gif",
+                    resources.getMessage("resources.treeBuilder.mailsessions"),
+                    "resources/listMailSessions.do?resourcetype=" + 
+                    URLEncoder.encode(type) + "&path=" +
+                    URLEncoder.encode(path) + "&host=" + 
+                    URLEncoder.encode(host) + "&service=" +
+                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode("MailSessions List Setup"),
+                    "content",
+                    false);
+                TreeControlNode resourcelinks = new TreeControlNode
+                    ("Resource Links " + containerName,
+                    "ResourceLink.gif",
+                    resources.getMessage("resources.treeBuilder.resourcelinks"),
+                    "resources/listResourceLinks.do?resourcetype=" + 
+                    URLEncoder.encode(type) + "&path=" +
+                    URLEncoder.encode(path) + "&host=" + 
+                    URLEncoder.encode(host) + "&service=" +
+                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode("ResourceLinks List Setup"),
+                    "content",
+                    false);
+                TreeControlNode envs = new TreeControlNode
+                    ("Context Environment Entries "+ containerName,
+                    "EnvironmentEntries.gif",
+                    resources.getMessage("resources.env.entries"),
+                    "resources/listEnvEntries.do?resourcetype=" + 
+                    URLEncoder.encode(type) + "&path=" +
+                    URLEncoder.encode(path) + "&host=" + 
+                    URLEncoder.encode(host) + "&service=" +
+                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode("EnvEntries List Setup"),
+                    "content",
+                    false);
+                subtree.addChild(datasources);
+                subtree.addChild(mailsessions);
+                subtree.addChild(resourcelinks);
+                subtree.addChild(envs);                    
+            } else {
+                    getServlet().log
+                        ("Cannot find parent node '" + parentName + "'");
+            } 
+        }else {
+            getServlet().log("Cannot find TreeControlNode!");
+        }                              
     }
     
 }

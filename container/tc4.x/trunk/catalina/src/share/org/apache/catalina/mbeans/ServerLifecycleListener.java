@@ -948,6 +948,44 @@ public class ServerLifecycleListener
     
     
     /**
+     * Deregister the MBeans for the specified DefaultContext and its nested
+     * components.
+     *
+     * @param dcontext DefaultContext for which to deregister MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean destruction
+     */
+    protected void destroyMBeans(DefaultContext dcontext) throws Exception {
+
+        Manager dManager = dcontext.getManager();
+        if (dManager != null) {
+            if (debug >= 4)
+                log("Destroying MBean for Manager " + dManager);
+            MBeanUtils.destroyMBean(dManager);
+        }
+        
+        Loader dLoader = dcontext.getLoader();
+        if (dLoader != null) {
+            if (debug >= 4)
+                log("Destroying MBean for Loader " + dLoader);
+            MBeanUtils.destroyMBean(dLoader);
+        }
+
+        // Destroy the MBeans for the NamingResources (if any)
+        NamingResources resources = dcontext.getNamingResources();
+        if (resources != null) {
+            destroyMBeans(resources);
+        }
+        
+        // deregister the MBean for the DefaultContext itself
+        if (debug >= 4)
+            log("Destroying MBean for Context " + dcontext);
+        MBeanUtils.destroyMBean(dcontext);
+
+    }    
+    
+    
+    /**
      * Deregister the MBeans for the specified Engine and its nested
      * components.
      *
@@ -1138,7 +1176,7 @@ public class ServerLifecycleListener
      *
      * @param service Service for which to destroy MBeans
      *
-o     * @exception Exception if an exception is thrown during MBean destruction
+     * @exception Exception if an exception is thrown during MBean destruction
      */
     protected void destroyMBeans(Service service) throws Exception {
 
@@ -1275,13 +1313,13 @@ o     * @exception Exception if an exception is thrown during MBean destruction
                 if (debug >= 5) {
                     log("Removing MBean for DefaultContext " + oldValue);
                 }
-                MBeanUtils.destroyMBean((DefaultContext) oldValue);
+                destroyMBeans((DefaultContext) oldValue);
             }
             if (newValue != null) {
                 if (debug >= 5) {
                     log("Creating MBean for DefaultContext " + newValue);
                 }
-                MBeanUtils.createMBean((DefaultContext) newValue);
+                createMBeans((DefaultContext) newValue);
             }
         } else if ("loader".equals(propertyName)) {
             if (oldValue != null) {

@@ -215,7 +215,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             serverNode.addChild(serviceNode);
             getConnectors(serviceNode, serviceName);
-            getDefaultContexts(serviceNode, serviceName, "service", resources);
+            getDefaultContexts(serviceNode, serviceName, resources);
             getHosts(serviceNode, serviceName, resources);
             getLoggers(serviceNode, serviceName);
             getRealms(serviceNode, serviceName);
@@ -290,7 +290,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             serviceNode.addChild(hostNode);
             getContexts(hostNode, hostName, resources);            
-            getDefaultContexts(hostNode, hostName, "host", resources);
+            getDefaultContexts(hostNode, hostName, resources);
             getLoggers(hostNode, hostName);
             getRealms(hostNode, hostName);
             getValves(hostNode, hostName);
@@ -350,12 +350,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
      * @exception Exception if an exception occurs building the tree
      */
     public void getDefaultContexts(TreeControlNode hostNode, String containerName, 
-                        String containerType, MessageResources resources) 
-                        throws Exception {
+                                    MessageResources resources) throws Exception {
         
         Iterator defaultContextNames =
-            Lists.getDefaultContexts(mBServer, containerName, 
-                containerType).iterator();
+            Lists.getDefaultContexts(mBServer, containerName).iterator();
         while (defaultContextNames.hasNext()) {
             String defaultContextName = (String) defaultContextNames.next();
             ObjectName objectName = new ObjectName(defaultContextName);
