@@ -78,7 +78,7 @@ import java.net.MalformedURLException;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
-import org.apache.jasper.JspEngineContext;
+import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.runtime.HttpJspBase;
 
@@ -106,7 +106,7 @@ public class JspServletWrapper {
     private Servlet theServlet;
     private String jspUri;
     private Class servletClass;
-    private JspEngineContext ctxt;
+    private JspCompilationContext ctxt;
     private long available = 0L;
     private ServletConfig config;
     private Options options;
@@ -118,16 +118,42 @@ public class JspServletWrapper {
         this.config = config;
         this.options = options;
         this.jspUri = jspUri;
-        ctxt = new JspEngineContext
-            (rctxt, config.getServletContext(), jspUri,
-             this, isErrorPage, options);
+        ctxt = new JspCompilationContext( jspUri, isErrorPage,
+                                          options,
+                                          config.getServletContext(),
+                                          this, rctxt);
+        ctxt.createOutdir();
     }
 
-    public JspEngineContext getJspEngineContext() {
+    public JspCompilationContext getJspEngineContext() {
         return ctxt;
     }
 
-    public HttpJspBase getServlet() {
+    public HttpJspBase getServlet()
+        throws ServletException, IOException, FileNotFoundException
+    {
+        if (ctxt.isReload()) {
+            synchronized (this) {
+                // Synchronizing on jsw enables simultaneous loading
+                // of different pages, but not the same page.
+                if (ctxt.isReload()) {
+                    System.out.println("JspServletWrapper - isReload ");
+                    // This is to maintain the original protocol.
+                    destroy();
+                    
+                    try {
+                        servletClass = ctxt.load();
+                        theServlet = (Servlet) servletClass.newInstance();
+                    } catch( IllegalAccessException ex1 ) {
+                        throw new JasperException( ex1 );
+                    } catch( InstantiationException ex ) {
+                        throw new JasperException( ex );
+                    }
+                    
+                    theServlet.init(config);
+                }
+            }    
+        }
         return (HttpJspBase)theServlet;
     }
 
@@ -154,23 +180,13 @@ public class JspServletWrapper {
 
             if (options.getDevelopment()) {
                 synchronized (this) {
+                    System.out.println("JspServletWrapper - development compile ");
                     ctxt.compile();
                 }
             }
 
             if (ctxt.isReload()) {
-                synchronized (this) {
-    
-                    // Synchronizing on jsw enables simultaneous loading
-                    // of different pages, but not the same page.
-                    if (ctxt.isReload()) {
-                        servletClass = ctxt.load();
-                        // This is to maintain the original protocol.
-                        destroy();
-                        theServlet = (Servlet) servletClass.newInstance();
-                        theServlet.init(config);
-                    }
-                }    
+                getServlet();
             }
 
             // If a page is to only to be precompiled return.
