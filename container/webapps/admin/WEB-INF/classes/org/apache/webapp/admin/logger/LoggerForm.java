@@ -489,8 +489,8 @@ public final class LoggerForm extends ActionForm {
         // front end validation when save is clicked.
         // these checks should be done only if it is FileLogger. 
         // No checks needed otherwise        
-        if ((submit != null)
-           && ("FileLogger").equalsIgnoreCase(type)) {
+        //if ((submit != null) && 
+        if (("FileLogger").equalsIgnoreCase(type)) {
              
             if ((directory == null) || (directory.length() < 1)) {
                 errors.add("directory",

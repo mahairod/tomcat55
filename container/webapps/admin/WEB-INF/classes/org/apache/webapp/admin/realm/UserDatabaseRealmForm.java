@@ -163,12 +163,12 @@ public final class UserDatabaseRealmForm extends RealmForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
             if ((resource == null) || (resource.length() < 1)) {
                 errors.add("resource",
                 new ActionError("error.resource.required"));
             }
-        }
+        //}
         return errors;
     }
 }

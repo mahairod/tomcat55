@@ -193,7 +193,7 @@ public final class UserDatabaseForm extends BaseForm {
         errors = new ActionErrors();
 
         String submit = request.getParameter("submit");
-        if (submit != null) {
+        //if (submit != null) {
 
             // name is a required field
             if ((name == null) || (name.length() < 1)) {
@@ -224,7 +224,7 @@ public final class UserDatabaseForm extends BaseForm {
                 errors.add("description",
                            new ActionError("users.error.quotes"));
             }
-        }
+        //}
         return (errors);
     }
     

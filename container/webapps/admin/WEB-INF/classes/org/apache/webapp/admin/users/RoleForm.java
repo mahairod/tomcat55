@@ -148,7 +148,7 @@ public final class RoleForm extends BaseForm {
         ActionErrors errors = new ActionErrors();
 
         String submit = request.getParameter("submit");
-        if (submit != null) {
+        //if (submit != null) {
 
             // rolename is a required field
             if ((rolename == null) || (rolename.length() < 1)) {
@@ -168,7 +168,7 @@ public final class RoleForm extends BaseForm {
                            new ActionError("users.error.quotes"));
             }
 
-        }
+        //}
 
         return (errors);
 

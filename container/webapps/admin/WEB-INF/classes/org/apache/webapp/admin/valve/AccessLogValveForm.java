@@ -356,7 +356,7 @@ public final class AccessLogValveForm extends ValveForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.        
-         if (submit != null) {
+         //if (submit != null) {
             
              // if not specified, default is access_log.
              // to specify no prefix, specify a 0 length string...
@@ -379,7 +379,7 @@ public final class AccessLogValveForm extends ValveForm {
                 errors.add("pattern",
                 new ActionError("error.pattern.required"));
             }         
-        }
+        //}
                  
         return errors;
     }

@@ -129,14 +129,13 @@ public class AddDefaultContextAction extends Action {
         String service = request.getParameter("serviceName");
         String parent = request.getParameter("parent");
         String defaultContext = null;
-        int index = parent.indexOf(":");
-        String domain = parent.substring(0,index);
+        String domain = null;
         if (service != null) {
+            domain = service.substring(0,service.indexOf(":"));
             defaultContext = domain + TomcatTreeBuilder.DEFAULTCONTEXT_TYPE;
-            parent = domain + TomcatTreeBuilder.SERVICE_TYPE + 
-                ",name=" + service;
-            defaultContextFm.setParentObjectName(parent);
+            defaultContextFm.setParentObjectName(service);
         } else if (parent != null) {
+            domain = parent.substring(0,parent.indexOf(":"));
             defaultContextFm.setParentObjectName(parent);
             int position = parent.indexOf(",");
             defaultContext = domain + TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
@@ -144,10 +143,12 @@ public class AddDefaultContextAction extends Action {
         }
         defaultContextFm.setObjectName(defaultContext);                        
         int position = defaultContext.indexOf(",");
-        String loader = domain + TomcatTreeBuilder.LOADER_TYPE + 
-                defaultContext.substring(position, defaultContext.length());
-        String manager = domain + TomcatTreeBuilder.MANAGER_TYPE + 
-                defaultContext.substring(position, defaultContext.length());
+        String loader = domain + TomcatTreeBuilder.LOADER_TYPE;
+        String manager = domain + TomcatTreeBuilder.MANAGER_TYPE;
+        if (position > 0) {
+            loader += defaultContext.substring(position, defaultContext.length());
+            manager += defaultContext.substring(position, defaultContext.length());
+        }
         defaultContextFm.setLoaderObjectName(loader);
         defaultContextFm.setManagerObjectName(manager); 
         defaultContextFm.setNodeLabel("");

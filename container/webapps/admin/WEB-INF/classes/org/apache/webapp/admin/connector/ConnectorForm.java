@@ -727,13 +727,12 @@ public final class ConnectorForm extends ActionForm {
     
     public ActionErrors validate(ActionMapping mapping,
     HttpServletRequest request) {
-        
+    
         errors = new ActionErrors();
         
         String submit = request.getParameter("submit");
-        
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
             
             /* general */
             numberCheck("acceptCountText", acceptCountText, true, 0, 128);
@@ -779,7 +778,7 @@ public final class ConnectorForm extends ActionForm {
             // supported only by Coyote HTTP and HTTPS connectors
             if (!("AJP".equalsIgnoreCase(connectorType)))
                 numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);            
-        }
+        //}
         
         return errors;
     }

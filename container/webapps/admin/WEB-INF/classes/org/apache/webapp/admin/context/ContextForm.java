@@ -790,7 +790,7 @@ public final class ContextForm extends ActionForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
             
             // docBase cannot be null
             if ((docBase == null) || (docBase.length() < 1)) {
@@ -818,7 +818,7 @@ public final class ContextForm extends ActionForm {
             //if ((mgrSessionIDInit == null) || (mgrSessionIDInit.length() < 1)) {
             //    errors.add("mgrSessionIDInit", new ActionError("error.mgrSessionIDInit.required"));
             //}
-        }
+        //}
         
         return errors;
     }

@@ -205,8 +205,7 @@ public final class SaveDefaultContextAction extends Action {
                                         ",host=" + host);
                 } else {
                     oname = new ObjectName(domain +
-                                        TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
-                                        ",service=" + poname.getKeyProperty("name"));
+                                        TomcatTreeBuilder.DEFAULTCONTEXT_TYPE);
                 }
                 
                 if (mBServer.isRegistered(oname)) {

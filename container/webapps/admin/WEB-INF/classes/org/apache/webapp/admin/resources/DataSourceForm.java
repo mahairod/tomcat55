@@ -342,7 +342,7 @@ public final class DataSourceForm extends BaseForm {
 
         String submit = request.getParameter("submit");
 
-        if (submit != null) {
+        //if (submit != null) {
 
             // url is a required field
             if ((url == null) || (url.length() < 1)) {
@@ -391,7 +391,7 @@ public final class DataSourceForm extends BaseForm {
                 errors.add("password",
                            new ActionError("users.error.quotes"));
             }
-         }
+         //}
         return (errors);
     }
  
