@@ -21,9 +21,9 @@ you are installing all of the required distributions.
 
 * If you are running a JDK earlier than 1.3, download and install the current
   version of the Java Naming and Directory Interface (JNDI) package from
-  <http://java.sun.com/products/jndi>, and configure your CLASSPATH to include
-  the "jndi.jar" file (or copy this file to $JAVA_HOME/jre/lib/ext in a
-  JDK 1.2 environment).  None of the JNDI providers are required, unless you
+  <http://java.sun.com/products/jndi>, and put the jndi.jar file in the
+  "$JAVA_HOME/bin" directory (or copy this file to $JAVA_HOME/jre/lib/ext in a
+  JDK 1.2 environment). None of the JNDI providers are required, unless you
   need to use them in your own applications.
 
 * Download and install the Java API for XML Parsing (JAXP) implementation
