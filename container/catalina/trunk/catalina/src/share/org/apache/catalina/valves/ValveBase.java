@@ -83,6 +83,7 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Service;
 import org.apache.catalina.Host;
 import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
@@ -222,6 +223,10 @@ public abstract class ValveBase
         return oname;
     }
 
+    public void setObjectName(ObjectName oname) {
+        this.oname = oname;
+    }
+
     public String getDomain() {
         return domain;
     }
@@ -279,13 +284,22 @@ public abstract class ValveBase
         } else if (container instanceof Host) {
             parentName=",host=" +container.getName();
         } else if (container instanceof Context) {
-            String path = ((Context)container).getPath();
+                    String path = ((Context)container).getPath();
+                    if (path.length() < 1) {
+                        path = "/";
+                    }
+                    Host host = (Host) container.getParent();
+                    parentName=",path=" + path + ",host=" +
+                            host.getName();
+        } else if (container instanceof Wrapper) {
+            Context ctx = (Context) container.getParent();
+            String path = ctx.getPath();
             if (path.length() < 1) {
                 path = "/";
             }
-            Host host = (Host) container.getParent();
-            parentName=",path=" + path + ",host=" +
-                    host.getName();
+            Host host = (Host) ctx.getParent();
+            parentName=",servlet=" + container.getName() +
+                    ",path=" + path + ",host=" + host.getName();
         }
         log.info("valve parent=" + parentName + " " + parent);
 
