@@ -231,6 +231,8 @@ public class JspServlet extends HttpServlet {
 		log.debug("\t  Request Params: ");
 		Enumeration e = request.getParameterNames();
 
+                // Occurs only when DummyRequest is used (this method never 
+                // when used in the normal case return null
                 if (e != null) {
                     while (e.hasMoreElements()) {
                         String name = (String) e.nextElement();
