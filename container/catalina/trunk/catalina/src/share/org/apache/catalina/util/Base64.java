@@ -16,6 +16,9 @@
 
 package org.apache.catalina.util;
 
+import org.apache.tomcat.util.buf.ByteChunk;
+import org.apache.tomcat.util.buf.CharChunk;
+
 /**
  * This class provides encode/decode for RFC 2045 Base64 as defined by
  * RFC 2045, N. Freed and N. Borenstein.  <a
@@ -205,36 +208,45 @@ public final class  Base64
      * @param base64Data Byte array containing Base64 data
      * @return Array containing decoded data.
      */
-    public static byte[] decode( byte[] base64Data )
+    public static void decode( ByteChunk base64DataBC, CharChunk decodedDataCC)
     {
+        int start = base64DataBC.getStart();
+        int end = base64DataBC.getEnd();
+        byte[] base64Data = base64DataBC.getBuffer();
+        
+        decodedDataCC.recycle();
+        
         // handle the edge case, so we don't have to worry about it later
-        if(base64Data.length == 0) { return new byte[0]; }
+        if(end - start == 0) { return; }
 
-        int      numberQuadruple    = base64Data.length/FOURBYTE;
-        byte     decodedData[]      = null;
+        int      numberQuadruple    = (end - start)/FOURBYTE;
         byte     b1=0,b2=0,b3=0, b4=0, marker0=0, marker1=0;
 
         // Throw away anything not in base64Data
 
         int encodedIndex = 0;
-        int dataIndex    = 0;
+        int dataIndex = start;
+        char[] decodedData = null;
+        
         {
             // this sizes the output array properly - rlw
-            int lastData = base64Data.length;
+            int lastData = end - start;
             // ignore the '=' padding
-            while (base64Data[lastData-1] == PAD)
+            while (base64Data[start+lastData-1] == PAD)
             {
                 if (--lastData == 0)
                 {
-                    return new byte[0];
+                    return;
                 }
             }
-            decodedData = new byte[ lastData - numberQuadruple ];
+            decodedDataCC.allocate(lastData - numberQuadruple, -1);
+            decodedDataCC.setEnd(lastData - numberQuadruple);
+            decodedData = decodedDataCC.getBuffer();
         }
 
         for (int i = 0; i < numberQuadruple; i++)
         {
-            dataIndex = i * 4;
+            dataIndex = start + i * 4;
             marker0   = base64Data[dataIndex + 2];
             marker1   = base64Data[dataIndex + 3];
 
@@ -247,28 +259,27 @@ public final class  Base64
                 b3 = base64Alphabet[ marker0 ];
                 b4 = base64Alphabet[ marker1 ];
 
-                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ;
+                decodedData[encodedIndex]   = (char) ((  b1 <<2 | b2>>4 ) & 0xff);
                 decodedData[encodedIndex + 1] =
-                    (byte)(((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) );
-                decodedData[encodedIndex + 2] = (byte)( b3<<6 | b4 );
+                    (char) ((((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) ) & 0xff);
+                decodedData[encodedIndex + 2] = (char) (( b3<<6 | b4 ) & 0xff);
             }
             else if (marker0 == PAD)
             {
                 //Two PAD e.g. 3c[Pad][Pad]
-                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ;
+                decodedData[encodedIndex]   = (char) ((  b1 <<2 | b2>>4 ) & 0xff);
             }
             else if (marker1 == PAD)
             {
                 //One PAD e.g. 3cQ[Pad]
                 b3 = base64Alphabet[ marker0 ];
 
-                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 );
+                decodedData[encodedIndex]   = (char) ((  b1 <<2 | b2>>4 ) & 0xff);
                 decodedData[encodedIndex + 1] =
-                    (byte)(((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) );
+                    (char) ((((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) ) & 0xff);
             }
             encodedIndex += 3;
         }
-        return decodedData;
     }
 
 
