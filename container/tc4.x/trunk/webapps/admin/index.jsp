@@ -12,8 +12,7 @@
 <%@ include file="header.jsp" %>
 
 <!-- Body -->
-
-<frameset rows="100,*" border="2" framespacing="2">
+<frameset rows="117,685*" cols="*" frameborder="NO" border="3" framespacing="3"> 
   <frame name="banner" src='<%= response.encodeURL("banner.jsp") %>' scrolling="no">
   <frameset cols="300,*" frameborder="YES" border="2">
     <frame name="tree" src='<%= response.encodeURL("setUpTree.do") %>' scrolling="auto">

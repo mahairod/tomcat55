@@ -13,36 +13,34 @@
 
 <!-- Body -->
 
-<body bgcolor="white">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" bgcolor="7171A5" background="images/BlueTile.gif">
 
-<h2 align="center"><bean:message key="index.success"/></h2>
-<p>
-
-<%--
-<h3 align="center">
-  <bean:message key="index.logout"/>
-  <html:link page="/logOut.do" target="_top">
-    <bean:message key="index.here"/>
-  </html:link>
-</h3>
---%>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td colspan="2" align="center" nowrap>
-      <html:link page="/commitChanges.do" target="_self" styleClass="button">
-            <bean:message key="button.commit"/>
-      </html:link>
-        &nbsp;
-      <html:link page="/logOut.do" target="_top" styleClass="button">
-            <bean:message key="button.logout"/>
-      </html:link>
+      <td align="left" valign="middle"> 
+        <div class="masthead-title-text" align="left"><img src="images/TomcatBanner.jpg" width="430" height="120"></div>
       </td>
-    </tr>
+      <form method='post' action='/admin/commitChanges.do' target='_self'>
+      <td align="left" valign="middle"> 
+        <html:submit>
+          <bean:message key="button.commit"/>
+        </html:submit>
+      </td>
+      </form>
+      <td width="1%">
+        <div class="table-normal-text" align="left">&nbsp </div>
+      </td>
+    <form method='post' action='/admin/logOut.do' target='_top'>
+      <td align="left" valign="middle"> 
+        <html:submit>
+          <bean:message key="button.logout"/>
+        </html:submit>
+      </td>
+    </form>
+  </tr>
 </table>
 
 <!-- Select language -->
-
 <!--
 
 <h2><bean:message key="login.changeLanguage"/></h2>
