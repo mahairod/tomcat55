@@ -274,7 +274,7 @@ final class StandardWrapperValve
              ApplicationFilterFactory.REQUEST_INTEGER);
         sreq.setAttribute
             (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, 
-             requestPathMB.toString());
+             requestPathMB);
         // Create the filter chain for this request
         ApplicationFilterFactory factory = 
             ApplicationFilterFactory.getInstance();
