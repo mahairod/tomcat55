@@ -19,18 +19,3 @@ echo Building with classpath $CLASSPATH
 
 java org.apache.tools.ant.Main $*
 
-if [[ $1 == dist ]]; then
-  chmod 775 dist/runTest
-  chmod 775 dist/runClient
-  echo BUILDING EAR....
-  mkdir dist/foo
-  mkdir dist/foo/META-INF
-  cp src/etc/ear-dd.xml dist/foo/META-INF/application.xml
-  cp dist/servlet-tests.war dist/foo
-  cp dist/jsp-tests.war dist/foo
-  cd dist/foo
-  jar -cf ../jcheck.ear META-INF/application.xml jsp-tests.war servlet-tests.war
-  cd ${baseDir}
-  rm -rf dist/foo
-fi
-

@@ -15,7 +15,7 @@ default=all
 
 baseDir=`dirname $0`
 
-miscJars=${baseDir}/../../jakarta-tools/projectx-tr2.jar:${baseDir}/../../jakarta-tools/moo.jar
+miscJars=${baseDir}/lib/xml.jar:${baseDir}/lib/moo.jar
 appJars=${miscJars}
 sysJars=${JAVA_HOME}/lib/tools.jar
 
@@ -27,14 +27,26 @@ cp=$CLASSPATH
  
 if [ -d ${baseDir}/clients ]; then
     appClassPath=${baseDir}/clients:${appClassPath}
+else
+    appClassPath=${baseDir}/check-client.jar:${appClassPath}
+fi
+
+if [ -d ${baseDir}/webapps/servlet-tests ]; then
+   ## we are in a build directory, use server-test
+   webconf=./conf/server-test.xml
+else
+    webconf=./conf/dist-test.xml
 fi
 
 CLASSPATH=${appClassPath}:${sysJars}
+
+TOMCAT_HOME=../tomcat
+source ${TOMCAT_HOME}/env.tomcat
+
 export CLASSPATH
-echo $CLASSPATH
 
 if [ "$cp" != "" ]; then
-    CLASSPATH=${appClassPath}:${cp}
+    CLASSPATH=${CLASSPATH}:${cp}
     export CLASSPATH
 fi
 
@@ -45,7 +57,7 @@ if [ "$1" != "" ]; then
   default=$1
 fi
 
-java org.apache.tomcat.shell.Startup -config ./conf/server-test.xml $* &
+java org.apache.tomcat.shell.Startup -config $webconf  $* &
 sleep 25
 
 if [ "${default}" = jsp -o "${default}" = all ];then

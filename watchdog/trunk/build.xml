@@ -1,62 +1,110 @@
-<project name="jakarta-check" default="core" basedir=".">
+<project name="jakarta-check" default="main" basedir=".">
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
 
    <property name="build.compiler" value="classic"/>
 
-   <property name="dest" value="../build/jakarta-check"/>
+   <property name="jakarta-check.build" value="../build/jakarta-check"/>
+   <property name="jakarta-check.home" value="../dist/jakarta-check"/>
 
-   <target name="core">
+   <target name="prepare">
 
-      <mkdir dir="${dest}"/>
-      <mkdir dir="${dest}/clients"/>
-      <mkdir dir="${dest}/conf" />
-      <mkdir dir="${dest}/props" />  <!-- what is this for?? - akv -->
+      <mkdir dir="${jakarta-check.build}"/>
+      <mkdir dir="${jakarta-check.build}/clients"/>
+      <mkdir dir="${jakarta-check.build}/conf" />
+      <mkdir dir="${jakarta-check.build}/lib" />
+      <mkdir dir="${jakarta-check.build}/props" />  <!-- what is this for?? - akv -->
 
-      <mkdir dir="${dest}/webapps/servlet-tests/WEB-INF/classes"/>
-      <mkdir dir="${dest}/webapps/jsp-tests"/>
+      <mkdir dir="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/classes"/>
+      <mkdir dir="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/lib"/>
+      <mkdir dir="${jakarta-check.build}/webapps/jsp-tests/WEB-INF/lib"/>
+      <mkdir dir="${jakarta-check.build}/webapps/jsp-tests"/>
 
-      <copydir src="src/server/servlet-tests" dest="${dest}/webapps/servlet-tests"/>
-      <copydir src="src/server/jsp-tests" dest="${dest}/webapps/jsp-tests"/>
+      <copydir src="src/server/servlet-tests" dest="${jakarta-check.build}/webapps/servlet-tests"/>
+      <copydir src="src/server/jsp-tests" dest="${jakarta-check.build}/webapps/jsp-tests"/>
+      <copyfile src="../jakarta-tools/moo.jar" dest="${jakarta-check.build}/lib/moo.jar"/>
+
+      <copyfile src="../jakarta-tools/projectx-tr2.jar"
+                dest="${jakarta-check.build}/lib/xml.jar"/>
+
+
+      <copydir src="src/bin" dest="${jakarta-check.build}"/>
+      <copydir src="src/conf" dest="${jakarta-check.build}/conf" />
+      <copydir src="src/props" dest="${jakarta-check.build}/props"/>
+
+      <copyfile src="../jakarta-tools/moo.jar" 
+                dest="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
+      <copyfile src="../jakarta-tools/moo.jar" 
+                dest="${jakarta-check.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
+
+      <chmod src="${jakarta-check.build}/runClient.sh" perm="+x"/>
+      <chmod src="${jakarta-check.build}/runTest.sh" perm="+x"/> 
+   </target>       
+   <target name="main" depends="prepare">
 
       <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
-             destdir="${dest}/webapps/servlet-tests/WEB-INF/classes"/>
+             destdir="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/classes"/>
 
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
-             destdir="${dest}/webapps/jsp-tests/WEB-INF/classes"/>
+             destdir="${jakarta-check.build}/webapps/jsp-tests/WEB-INF/classes"/>
 
-      <copydir src="src/bin" dest="${dest}"/>
-      <copydir src="src/conf" dest="${dest}/conf" />
-      <copydir src="src/props" dest="${dest}/props"/>
+      <javac srcdir="src/clients" destdir="${jakarta-check.build}/clients" />    
+   </target>
 
-      <chmod src="${dest}/runClient.sh" perm="+x"/>
-      <chmod src="${dest}/runTest.sh" perm="+x"/> 
-     
-      <javac srcdir="src/clients" destdir="${dest}/clients" />    
-
-     <!-- Need to copy moo - the deployment file must be self-contained, with no 
-          external dependencies -->
- 
-     <!-- I find this ugly as I'm sure a lot of other people do but I don't have a
-          better solution. I agree the deployment file should be self-contained. 
-                                                                    - akv
+   <target name="dist" depends="main">
+    <!-- cut & paste of "prepare", with tomcat.home instead of tomcat_build 
+         XXX create "parametrized" targets
+         XXX do we need all the files in tomcat_build ??
       -->
-     
-      <javac srcdir="../jakarta-tools/moo/src/share" 
-             destdir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
+      <mkdir dir="${jakarta-check.home}"/>
+      <mkdir dir="${jakarta-check.home}/conf" />
+      <mkdir dir="${jakarta-check.home}/lib" />
+      <mkdir dir="${jakarta-check.home}/webapps" />
+      <mkdir dir="${jakarta-check.home}/props" />  <!-- what is this for?? - akv -->
 
-      <javac srcdir="../jakarta-tools/moo/src/share" 
-             destdir="${dest}/webapps/jsp-tests/WEB-INF/classes" />
+      <copyfile src="../jakarta-tools/moo.jar"
+                dest="${jakarta-check.home}/lib/moo.jar"/>
 
-     <!-- Build moo in the client directory too, avoid separate moo.jar problems -->
+      <copyfile src="../jakarta-tools/projectx-tr2.jar"
+                dest="${jakarta-check.home}/lib/xml.jar"/>
 
-      <javac srcdir="../jakarta-tools/moo/src/share" 
-             destdir="${dest}/clients" />
+      <copydir src="src/bin" dest="${jakarta-check.home}"/>
+      <copydir src="src/conf" dest="${jakarta-check.home}/conf" />
+      <copydir src="src/props" dest="${jakarta-check.home}/props"/>
+
+      <chmod src="${jakarta-check.home}/runClient.sh" perm="+x"/>
+      <chmod src="${jakarta-check.home}/runTest.sh" perm="+x"/> 
+
+      <jar jarfile="${jakarta-check.home}/check-client.jar"
+        basedir="${jakarta-check.build}/clients" 
+        items="org" />
+
+      <jar jarfile="${jakarta-check.home}/webapps/servlet-tests.jar"
+        basedir="${jakarta-check.build}/webapps/servlet-tests" 
+        items="WEB-INF" />
+
+      <jar jarfile="${jakarta-check.home}/webapps/jsp-tests.jar"
+        basedir="${jakarta-check.build}/webapps/jsp-tests" 
+        items="WEB-INF,jsp,golden-files" />
+
+      <!-- build EAR -->
+
+      <mkdir dir="${jakarta-check.build}/tmp" />
+      <mkdir dir="${jakarta-check.build}/tmp/META-INF" />
+      <copyfile src="src/etc/ear-dd.xml" dest="${jakarta-check.build}/tmp/META-INF/application.xml" />
+      <copyfile src="${jakarta-check.home}/webapps/servlet-tests.jar" 
+                dest="${jakarta-check.build}/tmp/servlet-tests.jar" />
+      <copyfile src="${jakarta-check.home}/webapps/jsp-tests.jar" 
+                dest="${jakarta-check.build}/tmp/jsp-tests.jar" />
+      <jar jarfile="${jakarta-check.home}/jcheck.ear"
+           basedir="${jakarta-check.build}/tmp" 
+           items="META-INF,jsp-tests.jar,servlet-tests.jar" />
+      
    </target>
 
    <target name="clean">
-      <deltree dir="${dest}"/>
+      <deltree dir="${jakarta-check.build}"/>
    </target>
 
 </project>

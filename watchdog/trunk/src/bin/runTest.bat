@@ -12,7 +12,7 @@ set stest=.\conf\servlet-testlist.txt
 set jtest=.\conf\jsp-testlist.txt
 set default=all
 
-set miscJars=.\..\..\jakarta-tools\projectx-tr2.jar;.\..\..\jakarta-tools\moo.jar;.\client.jar
+set miscJars=.\lib\xml.jar;.\lib\moo.jar;.\client.jar
 set appJars=%miscJars%
 set sysJars=%JAVA_HOME%\lib\tools.jar
 
@@ -30,6 +30,9 @@ echo Using classpath: %CLASSPATH%
 
 if "%1"=="" goto run
 set default=%1
+
+set tomcatHome=../tomcat
+%tomcatHome%/tomcatEnv.bat
 
 :run
 start java org.apache.tomcat.shell.Startup -config .\conf\server-test.xml %1 %2 %3 %4 %5 %6 %7 %8 %9
