@@ -81,6 +81,11 @@
              classpath="${watchdog-classpath}" 
              deprecation="off"  />    
 
+      <javac srcdir="src/tools/org/apache/jspxml"
+             destdir="${watchdog.build}/src/tools"
+             classpath="${watchdog-classpath}" 
+             deprecation="off"  />    
+
       <copydir src="src/clients" dest="${watchdog.build}/clients" >
           <include name="**/MANIFEST.MF" />
           <include name="**/*.properties" />
@@ -128,7 +133,8 @@
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
         includes="**/org/**" />
-      <jar jarfile="${watchdog.dist}/lib/testdriver.jar"
+      
+     <jar jarfile="${watchdog.dist}/lib/testdriver.jar"
         basedir="${watchdog.build}/src/tools" 
         includes="**/org/**" />
 
