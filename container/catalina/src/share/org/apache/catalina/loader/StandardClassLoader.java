@@ -370,7 +370,10 @@ public class StandardClassLoader
             URL url = new URL(null, repository, streamHandler);
             super.addURL(url);
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e.toString());
+            IllegalArgumentException iae = new IllegalArgumentException
+                ("Invalid repository: " + repository);
+            iae.initCause(e);
+            throw iae;
         }
 
         // Add this repository to our internal list
@@ -454,7 +457,7 @@ public class StandardClassLoader
                 } catch (Exception se) {
                     if (debug >= 4)
                         log("      -->Exception-->ClassNotFoundException", se);
-                    throw new ClassNotFoundException(name);
+                    throw new ClassNotFoundException(name, se);
                 }
             }
         }
@@ -473,7 +476,7 @@ public class StandardClassLoader
                     clazz = super.findClass(name);
                 }
             } catch(AccessControlException ace) {
-                throw new ClassNotFoundException(name);
+                throw new ClassNotFoundException(name, ace);
             } catch (RuntimeException e) {
                 if (debug >= 4)
                     log("      -->RuntimeException Rethrown", e);
@@ -774,10 +777,8 @@ public class StandardClassLoader
                 } catch (SecurityException se) {
                     String error = "Security Violation, attempt to use " +
                         "Restricted Class: " + name;
-                    System.out.println(error);
-                    se.printStackTrace();
                     log(error);
-                    throw new ClassNotFoundException(error);
+                    throw new ClassNotFoundException(error, se);
                 }
             }
         }
@@ -944,9 +945,10 @@ public class StandardClassLoader
                          repository + "'");
                 }
             } catch (Throwable t) {
-                t.printStackTrace();
-                throw new IllegalArgumentException
-                    ("addRepositoryInternal: " + t);
+                IllegalArgumentException iae = new IllegalArgumentException
+                    ("addRepositoryInternal");
+                iae.initCause(t);
+                throw iae;
             } finally {
                 if (jarFile != null) {
                     try {
