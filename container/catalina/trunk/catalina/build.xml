@@ -153,6 +153,9 @@
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
      classpath="${commons-digester.jar}"/>
+    <available property="lang.present"
+     classname="org.apache.commons.lang.StringUtils"
+     classpath="${commons-lang.jar}"/>
     <available property="launcher.present"
      classname="org.apache.commons.launcher.Launcher"
      classpath="${commons-daemon-launcher.jar}"/>
@@ -232,6 +235,7 @@
     <!-- JAR files availability flags -->
     <available property="daemon.jar.present" file="${commons-daemon.jar}" />
     <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
+    <available property="lang.jar.present" file="${commons-lang.jar}" />
     <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
       <and>
@@ -455,6 +459,17 @@
         </or>
       </and>
     </condition>
+    <condition property="copy.lang.jar">
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <equals arg1="${lang.present}" arg2="true" />
+        </or>
+      </and>
+    </condition>
     <condition property="copy.launcher.jars">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -580,6 +595,7 @@
     <echo message="jsse.present=${jsse.present}" />
     <echo message="jta.present=${jta.present}" />
     <echo message="junit.present=${junit.present}" />
+    <echo message="lang.present=${lang.present}" />
     <echo message="launcher.present=${launcher.present}" />
     <echo message="launcher.bootstrap.present=${launcher.bootstrap.present}" />
     <echo message="ldap.present=${ldap.present}" />
@@ -670,6 +686,9 @@
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
     <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
   </target>
+  <target name="copy-lang.jar" if="copy.lang.jar">
+    <copy todir="${catalina.build}/common/lib" file="${commons-lang.jar}"/>
+  </target>
   <target name="copy-jaas.jar" if="copy.jaas.jar">
     <copy todir="${catalina.build}/server/lib" file="${jaas.jar}"/>
   </target>
@@ -728,7 +747,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-daemon.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-launcher.jars,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-daemon.jar,copy-dbcp.jar,copy-lang.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-launcher.jars,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces2.jars">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
