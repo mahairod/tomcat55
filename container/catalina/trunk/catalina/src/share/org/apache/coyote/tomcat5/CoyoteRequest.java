@@ -66,17 +66,14 @@ package org.apache.coyote.tomcat5;
 
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.Principal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -89,11 +86,8 @@ import javax.security.auth.Subject;
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletRequestListener;
 import javax.servlet.ServletRequestAttributeEvent;
 import javax.servlet.ServletRequestAttributeListener;
 import javax.servlet.http.Cookie;
@@ -106,7 +100,6 @@ import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.http.FastHttpDateFormat;
 import org.apache.tomcat.util.http.Parameters;
 import org.apache.tomcat.util.http.mapper.MappingData;
-import org.apache.tomcat.util.net.SSLSupport;
 
 import org.apache.coyote.ActionCode;
 import org.apache.coyote.Request;
@@ -1307,13 +1300,23 @@ public class CoyoteRequest
         if (servletPath == null)
             servletPath = getServletPath();
 
-        int pos = servletPath.lastIndexOf('/');
+        // Add the path info, if there is any
+        String pathInfo = getPathInfo();
+        String requestPath = null;
+
+        if (pathInfo == null) {
+            requestPath = servletPath;
+        } else {
+            requestPath = servletPath + pathInfo;
+        }
+
+        int pos = requestPath.lastIndexOf('/');
         String relative = null;
         if (pos >= 0) {
             relative = RequestUtil.normalize
-                (servletPath.substring(0, pos + 1) + path);
+                (requestPath.substring(0, pos + 1) + path);
         } else {
-            relative = RequestUtil.normalize(servletPath + path);
+            relative = RequestUtil.normalize(requestPath + path);
         }
 
         return (context.getServletContext().getRequestDispatcher(relative));

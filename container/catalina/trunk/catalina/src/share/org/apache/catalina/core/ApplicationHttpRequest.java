@@ -70,7 +70,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -80,7 +79,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Session;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
@@ -343,13 +341,23 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         if (servletPath == null)
             servletPath = getServletPath();
 
-        int pos = servletPath.lastIndexOf('/');
+        // Add the path info, if there is any
+        String pathInfo = getPathInfo();
+        String requestPath = null;
+
+        if (pathInfo == null) {
+            requestPath = servletPath;
+        } else {
+            requestPath = servletPath + pathInfo;
+        }
+
+        int pos = requestPath.lastIndexOf('/');
         String relative = null;
         if (pos >= 0) {
             relative = RequestUtil.normalize
-                (servletPath.substring(0, pos + 1) + path);
+                (requestPath.substring(0, pos + 1) + path);
         } else {
-            relative = RequestUtil.normalize(servletPath + path);
+            relative = RequestUtil.normalize(requestPath + path);
         }
 
         return (context.getServletContext().getRequestDispatcher(relative));
