@@ -82,6 +82,18 @@
         description="Start a JMX proxy service">
     <property name="localDomain" value="catalina.proxy" />
     <property name="remoteDomain" value="catalina" />
+
+    <jmx-service>
+       <mbean code="org.apache.commons.modeler.mbeans.SimpleRemoteConnector"
+              name="modjk:type=jmxProxy,name=apache80" 
+              modeler="true" >
+         <attribute name="webServerPort"  value="80"/>
+         <attribute name="statusPath"  value="/jkstatus"/>
+         <attribute name="filter"  value="*"/>
+         <attribute name="user"  value="tomcat"/>
+         <attribute name="pass"  value="tomcat"/>
+       </mbean>
+    </jmx-service>
    
     <jmx-service>
        <mbean code="org.apache.commons.modeler.mbeans.SimpleRemoteConnector"
