@@ -5064,8 +5064,10 @@ public class StandardContext
                     MBeanUtils.createObjectName(this.getEngineName(), envs[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for environment " + envs[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
@@ -5087,8 +5089,10 @@ public class StandardContext
                     MBeanUtils.createObjectName(this.getEngineName(), resources[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resources[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
@@ -5110,8 +5114,10 @@ public class StandardContext
                     MBeanUtils.createObjectName(this.getEngineName(), links[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + links[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
