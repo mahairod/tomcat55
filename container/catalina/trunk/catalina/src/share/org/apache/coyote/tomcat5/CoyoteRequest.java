@@ -122,6 +122,7 @@ import org.apache.catalina.Session;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
 
+import org.apache.catalina.core.ApplicationFilterFactory;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.RequestUtil;
@@ -912,7 +913,7 @@ public class CoyoteRequest
 
         if (name.equals(Globals.DISPATCHER_TYPE_ATTR)) {
             return (dispatcherType == null) 
-                ? org.apache.catalina.core.ApplicationFilterFactory.REQUEST_INTEGER
+                ? ApplicationFilterFactory.REQUEST_INTEGER
                 : dispatcherType;
         } else if (name.equals(Globals.DISPATCHER_REQUEST_PATH_ATTR)) {
             return (requestDispatcherPath == null) 
