@@ -1700,9 +1700,9 @@ class Generator {
 
 	public void visit(Node.JspElement n) throws JasperException {
 
-	    // Hashtable for storing attribute name/value combinations
+	    // Compute attribute value string for XML-style and named
+	    // attributes
 	    Hashtable map = new Hashtable();
-
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
 	    for (int i=0; i<attrs.length; i++) {
 		String attrStr = null;
@@ -1710,34 +1710,25 @@ class Generator {
 		    attrStr = generateNamedAttributeValue(
                             attrs[i].getNamedAttributeNode());
 		} else {
-		    if ("name".equals(attrs[i].getName())) {
-			attrStr = attributeValue(attrs[i], false, String.class,
-						 "null");
-		    } else {
-			attrStr = attributeValue(attrs[i], false, Object.class,
-						 "null");
-		    }
+		    attrStr = attributeValue(attrs[i], false, Object.class,
+					     "null");
 		}
-		String s = null;
-		if ("name".equals(attrs[i].getName())) {
-		    s = " + " + attrStr;
-		} else {
-		    s = " + \" " + attrs[i].getName() + "=\\\"\" + "
-			+ attrStr + " + \"\\\"\"";
-		}
+		String s = " + \" " + attrs[i].getName() + "=\\\"\" + "
+		    + attrStr + " + \"\\\"\"";
 		map.put(attrs[i].getName(), s);
 	    }
             
 	    // Write begin tag
 	    out.printin("out.write(\"<\"");
-	    // Write 'name' attribute
-	    out.print((String) map.get("name"));
+
+	    // Write XML-style 'name' attribute
+	    out.print(" + " + attributeValue(n.getNameAttribute(), false,
+					     String.class, "null"));
+
 	    // Write remaining attributes
 	    Enumeration enum = map.keys();
 	    while (enum.hasMoreElements()) {
 		String attrName = (String) enum.nextElement();
-		if ("name".equals(attrName))
-		    continue;
 		out.print((String) map.get(attrName));
 	    }
 

@@ -1052,6 +1052,7 @@ abstract class Node implements TagConstants {
     public static class JspElement extends Node {
 
 	private JspAttribute[] jspAttrs;
+	private JspAttribute nameAttr;
 
 	public JspElement(Attributes attrs, Mark start, Node parent) {
 	    this(JSP_ELEMENT_ACTION, attrs, null, start, parent);
@@ -1072,6 +1073,20 @@ abstract class Node implements TagConstants {
 
 	public JspAttribute[] getJspAttributes() {
 	    return jspAttrs;
+	}
+
+	/*
+	 * Sets the XML-style 'name' attribute
+	 */
+	public void setNameAttribute(JspAttribute nameAttr) {
+	    this.nameAttr = nameAttr;
+	}
+
+	/*
+	 * Gets the XML-style 'name' attribute
+	 */
+	public JspAttribute getNameAttribute() {
+	    return this.nameAttr;
 	}
     }
 

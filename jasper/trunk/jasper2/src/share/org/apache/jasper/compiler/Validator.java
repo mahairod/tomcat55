@@ -896,19 +896,22 @@ class Validator {
 	public void visit(Node.JspElement n) throws JasperException {
 
 	    Attributes attrs = n.getAttributes();
-            Node.Nodes namedAttributeNodes = n.getNamedAttributeNodes();
-	    Node.JspAttribute[] jspAttrs
-		= new Node.JspAttribute[attrs.getLength()
-				       + namedAttributeNodes.size()];
+            Node.Nodes namedAttrs = n.getNamedAttributeNodes();
+	    int xmlAttrLen = attrs.getLength();
+	    Node.JspAttribute[] jspAttrs = new Node.JspAttribute[xmlAttrLen-1
+								+ namedAttrs.size()];
 
-	    boolean nameSpecified = false;
-	    for (int i=0; i<attrs.getLength(); i++) {
-		if ("name".equals(attrs.getQName(i))) {
-		    nameSpecified = true;
-		    jspAttrs[i] = getJspAttribute("name", null, null,
-						  n.getAttributeValue("name"), 
-						  java.lang.String.class, null,
-						  n, false);
+	    // Process XML-style attributes
+	    for (int i=0; i<xmlAttrLen && i<jspAttrs.length; i++) {
+		if ("name".equals(attrs.getLocalName(i))) {
+		    n.setNameAttribute(getJspAttribute(attrs.getQName(i),
+						       attrs.getURI(i),
+						       "name",
+						       n.getAttributeValue("name"), 
+						       java.lang.String.class,
+						       null,
+						       n,
+						       false));
 		} else {
 		    jspAttrs[i] = getJspAttribute(attrs.getQName(i),
 						  attrs.getURI(i),
@@ -920,18 +923,14 @@ class Validator {
 						  false);
 		}
 	    }
-	    for (int i=0; i<namedAttributeNodes.size(); i++) {
-                Node.NamedAttribute na = 
-                    (Node.NamedAttribute) namedAttributeNodes.getNode(i);
-		if ("name".equals(na.getName())) {
-		    nameSpecified = true;
-		}
-		jspAttrs[attrs.getLength() + i]
-		    = new Node.JspAttribute(na, false);
+	    if (n.getNameAttribute() == null) {
+		err.jspError(n, "jsp.error.jspelement.missing.name");
 	    }
 
-	    if (!nameSpecified) {
-		err.jspError(n, "jsp.error.jspelement.missing.name");
+	    // Process named attributes
+	    for (int i=0; i<namedAttrs.size(); i++) {
+                Node.NamedAttribute na = (Node.NamedAttribute) namedAttrs.getNode(i);
+		jspAttrs[xmlAttrLen-1 + i] = new Node.JspAttribute(na, false);
 	    }
 
 	    n.setJspAttributes(jspAttrs);
