@@ -418,6 +418,7 @@ public class StandardHostDeployer implements Deployer {
         host.log(sm.getString("standardHost.removing", contextPath));
         try {
             host.removeChild(context);
+            host.fireContainerEvent(REMOVE_EVENT, context);
         } catch (Exception e) {
             host.log(sm.getString("standardHost.removeError", contextPath), e);
             throw new IOException(e.toString());
