@@ -288,8 +288,6 @@ public class CoyoteAdapter
             return false;
         }
 
-        // Parse cookies
-        parseCookies(req, request);
         return true;
     }
 
@@ -348,22 +346,12 @@ public class CoyoteAdapter
             request.setRequestedSessionURL(false);
         }
 
-    }
-
-
-    /**
-     * Parse cookies.
-     */
-    protected void parseCookies(Request req, CoyoteRequest request) {
-
+        // Parse session id from cookies
         Cookies serverCookies = req.getCookies();
         int count = serverCookies.getCookieCount();
         if (count <= 0)
             return;
 
-        Cookie[] cookies = new Cookie[count];
-
-        int idx=0;
         for (int i = 0; i < count; i++) {
             ServerCookie scookie = serverCookies.getCookie(i);
             if (scookie.getName().equals(Globals.SESSION_COOKIE_NAME)) {
@@ -386,28 +374,7 @@ public class CoyoteAdapter
                     }
                 }
             }
-            try {
-                Cookie cookie = new Cookie(scookie.getName().toString(),
-                                           scookie.getValue().toString());
-                cookie.setPath(scookie.getPath().toString());
-                cookie.setVersion(scookie.getVersion());
-                String domain = scookie.getDomain().toString();
-                if (domain != null) {
-                    cookie.setDomain(scookie.getDomain().toString());
-                }
-                cookies[idx++] = cookie;
-            } catch(IllegalArgumentException e) {
-                log.info("Bad Cookie: Name: " + scookie.getName() 
-                         + " Value: " + scookie.getValue());
-            }
         }
-        if( idx < count ) {
-            Cookie [] ncookies = new Cookie[idx];
-            System.arraycopy(cookies, 0, ncookies, 0, idx);
-            cookies = ncookies;
-        }
-
-        request.setCookies(cookies);
 
     }
 
