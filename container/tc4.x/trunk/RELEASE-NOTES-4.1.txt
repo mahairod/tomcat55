@@ -453,6 +453,92 @@ Catalina Bug Fixes:
          JDBCStore:
          Fix NPE on shutdown.
 
+[4.1.13] StandardContext:
+         Major refactoring of the resources lifecycle handling, which is now 
+         similar to the one of the other components.
+
+[4.1.13] #12985
+         StandardWrapper:
+         Fix load on startup bug for JSPs.
+
+[4.1.13] StandardWrapper:
+         Add log swallowing support.
+
+[4.1.13] InvokerServlet:
+         SECURITY: Check the classname of the invoked servlet.
+
+[4.1.13] #13513
+         StandardManager:
+         Add disabling persistence with a blank String.
+
+[4.1.13] Catalina:
+         SECURITY: Add security manager protection on Coyote components.
+
+[4.1.13] ErrorReportValve:
+         Performance optimization: don't generate a status report for status 
+         codes < 400.
+
+[4.1.13] ProxyDirContext:
+         Cache non existing resources list to provide a major speedup for 
+         welcome files processing.
+
+[4.1.13] ProxyDirContext:
+         Avoid object creation when reproting a not found resource.
+
+[4.1.13] ProxyDirContext:
+         Peformance fix: allow directory caching.
+
+
+----------------
+Coyote Bug Fixes:
+----------------
+
+[4.1.13] #12998
+         CoyoteAdapter:
+         Fix compatibility problem with AJP.
+
+[4.1.13] #13162
+         CoyoteAdapter:
+         Decode the URI as a URI, not as a query-string.
+
+[4.1.13] #13658
+         CoyoteAdapter:
+         Arrange to have the SSL attributes in the CoyoteRequest so that they 
+         show up for getAttributeNames.
+
+[4.1.13] CoyoteConnector:
+         Allow disabling proxyName with an empty string.
+
+[4.1.13] CoyoteInputStream:
+         Implement available().
+
+[4.1.13] CoyoteResponse:
+         Fix sendRedirect URL generation.
+
+[4.1.13] HTTP/1.1 Constants:
+         Increase max HTTP header buffer size to 48K.
+
+[4.1.13] HTTP/1.1 Http11Processor:
+         Performance: Save on B2C for host name handling.
+
+[4.1.13] HTTP/1.1 Http11Processor:
+         Performance: Use bytes comparisons to check the "connection" header
+         values.
+
+[4.1.13] HTTP/1.1 InternalOutputBuffer:
+         Performance: improve header generation.
+
+[4.1.13] #13270
+         JK2 ChannelSocket:
+         TCP no delay was not implemented.
+
+[4.1.13] JK2 HandlerRequest:
+         Fix tomcatAuthentication support.
+
+[4.1.13] #11657
+         JK2 JkMain:
+         Initialize https URLs if only JK connector is used.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -625,6 +711,26 @@ Jasper Bug Fixes:
 
 [4.1.12] JspRuntimeContext:
          Add permission to allow reading the work directory.
+
+[4.1.13] #13144
+         Generator:
+         Ending comment eats up line following.
+
+[4.1.13] #13536
+         Generator:
+         Bad <jsp:param> value in plugin if the value is an expression.
+
+[4.1.13] JspRuntimeContext:
+         Make sure the CodeSource for JSP pages is created consistently 
+         the same.
+
+[4.1.13] #13206
+         JspRuntimeLibrary:
+         Invalid java bean property error message could be reported better.
+
+[4.1.13] #13843
+         JspServlet:
+         Fix locking on Windows of big JSP files.
 
 
 ============================
