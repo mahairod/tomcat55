@@ -27,7 +27,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
-import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.session.SessionMessage;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
@@ -146,8 +147,7 @@ public class ReplicationValve
             if ( invalidIds.length > 0 ) {
                 for ( int i=0;i<invalidIds.length; i++ ) {
                     try {
-                        SessionMessage imsg = manager.requestCompleted(
-                            invalidIds[i]);
+                        ClusterMessage imsg = manager.requestCompleted(invalidIds[i]);
                         if (imsg != null)
                             cluster.send(imsg);
                     }catch ( Exception x ) {
@@ -185,7 +185,7 @@ public class ReplicationValve
             log.debug("Invoking replication request on "+uri);
 
             
-            SessionMessage msg = manager.requestCompleted(id);
+            ClusterMessage msg = manager.requestCompleted(id);
 
             if ( msg == null ) return;
 

@@ -40,7 +40,7 @@ import org.apache.catalina.util.LifecycleSupport;
 
 import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.cluster.ClusterManager;
-import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.CatalinaCluster;
 
@@ -753,8 +753,12 @@ public class DeltaManager
         * receiving replication messages.
         * @param msg - the message received.
         */
-       public void messageDataReceived(SessionMessage msg) {
-           messageReceived(msg, msg.getAddress()!=null?(Member)msg.getAddress():null);
+       public void messageDataReceived(ClusterMessage cmsg) {
+           if ( cmsg instanceof SessionMessage ) {
+               SessionMessage msg = (SessionMessage)cmsg;
+               messageReceived(msg,
+                               msg.getAddress() != null ? (Member) msg.getAddress() : null);
+           }
        }
 
        /**
@@ -767,7 +771,7 @@ public class DeltaManager
         * @param sessionId - the sessionId that just completed.
         * @return a SessionMessage to be sent,
         */
-       public SessionMessage requestCompleted(String sessionId) {
+       public ClusterMessage requestCompleted(String sessionId) {
            try {
                DeltaSession session = (DeltaSession) findSession(sessionId);
                DeltaRequest deltaRequest = session.getDeltaRequest();
