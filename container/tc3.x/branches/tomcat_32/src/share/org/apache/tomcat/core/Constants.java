@@ -67,7 +67,7 @@ package org.apache.tomcat.core;
 
 public class Constants {
     public static final String TOMCAT_NAME = "Tomcat Web Server";
-    public static final String TOMCAT_VERSION = "3.2 beta 7";
+    public static final String TOMCAT_VERSION = "3.2 beta 8";
 
     public static final String JSP_NAME = "JSP";
     public static final String JSP_VERSION = "1.1";
