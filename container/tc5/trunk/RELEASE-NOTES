@@ -7,13 +7,14 @@
 $Id$
 
 
-============================
+=============================
 KNOWN ISSUES IN THIS RELEASE:
-============================
+=============================
 
-* Tomcat 5.5 and JNI Based Applications
-* Tomcat 5.5 Standard APIs Available
-* Tomcat 5.5 and XML Parsers
+* Dependency Changes
+* JNI Based Applications
+* Bundled APIs
+* XML Parsers
 * Web application reloading and static fields in shared libraries
 * JAVAC leaking memory
 * Tomcat on Linux
@@ -25,9 +26,24 @@ KNOWN ISSUES IN THIS RELEASE:
 * When all else fails
 
 
--------------------------------------
-Tomcat 5.5 and JNI Based Applications:
--------------------------------------
+===================
+Dependency Changes:
+===================
+Tomcat 5.5 is designed to run on J2SE 5.0 and later, and requires
+configuration to run on J2SE versions 1.3 and 1.4.  Make sure to 
+read the "RUNNING.txt" file in this directory if you are using
+J2SE version 1.3 or 1.4.
+
+In addition, Tomcat 5.5 depends on the Eclipse JDT for compiling
+JSP pages.  This means you no longer need to have the complete
+Java Development Kit (JDK) to run Tomcat, but a Java Runtime Environment
+(JRE) is sufficient.  The Eclipse JDT is bundled with the binary
+Tomcat distributions.
+
+
+=======================
+JNI Based Applications:
+=======================
 
 Applications that require native libraries must ensure that the libraries have
 been loaded prior to use.  Typically, this is done with a call like:
@@ -47,9 +63,9 @@ web application, and ensure that the loadLibrary() call is executed only once
 during the lifetime of a particular JVM.
 
 
-----------------------------------
-Tomcat 5.5 Standard APIs Available:
-----------------------------------
+=============
+Bundled APIs:
+=============
 
 A standard installation of Tomcat 5.5 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
@@ -61,29 +77,28 @@ for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * commons-pool.jar (Commons Pool 1.1 or later)
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
+* jmx.jar (Java Management Extensions API 1.2 or later)
 * jsp-api.jar (JSP 2.0 API)
 * commons-el.jar (JSP 2.0 Expression Language)
 * naming-common.jar (JNDI Context implementation)
 * naming-factory.jar (JNDI object factories for J2EE ENC support)
 * naming-resources.jar (JNDI DirContext implementations)
 * servlet-api.jar (Servlet 2.4 API)
+* xercesImpl.jar (Xerces XML Parser, version 2.6.2 or later)
 
 You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
 or by placing them in JAR files in the "lib" directory.
 
-Tomcat 5.5 also makes Xerces 2 and the Commons Logging API (release 1.0.3 or later)
-available to web applications.
+To override the XML parser implementation or interfaces, see the section below.
 
-Please note that the JMX API is available to applications as well.  The jmx.jar
-file used to be located in the common/lib directory, but was moved to the bin
-directory as part of the Tomcat 5.0.20 release.  The jmx.jar is in Tomcat's
-bootstrap classpath (included via the Class Path line in bootstrap.jar's manifest).
+Please note that the JMX API is required by Tomcat while starting up, and thus
+is in Tomcat's bootstrap classpath and placed in the $CATALINA_HOME/bin directory.
 
 
---------------------------
-Tomcat 5.5 and XML Parsers:
---------------------------
+============
+XML Parsers:
+============
 
 As described above, Tomcat 5.5 makes an XML parser (and many other standard
 APIs) available to web applications.  This parser is also used internally
@@ -91,17 +106,15 @@ to parse web.xml files and the server.xml configuration file.  If you wish,
 you may replace the "xercesImpl.jar" file in "common/endorsed" with another
 XML parser, as long as it is compatible with the JAXP 1.2 APIs.
 
-Xerces 2.6.2 is included.
-
 On a related note, JDK 1.4 includes Xalan.  If you run into Xalan-related
 problems, try downloading the latest Xalan version (from 
 http://xml.apache.org/xalan-j/index.html) and placing the Xalan jar file
 in the common/endorsed directory.
 
 
----------------------------------------------------------------
+================================================================
 Web application reloading and static fields in shared libraries:
----------------------------------------------------------------
+================================================================
 
 Some shared libraries (many are part of the JDK) keep references to objects
 instantiated by the web application. To avoid class loading related problems
@@ -114,9 +127,9 @@ and putting them in the shared classloader instead (JARs should be put in the
 "lib" folder, and classes should be put in the "classes" folder).
 
 
---------------------
+=====================
 JAVAC leaking memory:
---------------------
+=====================
 
 The Java compiler leaks memory each time a class is compiled. Web applications
 containing hundreds of JSP files may as a result trigger out of memory errors
@@ -128,9 +141,9 @@ The JSP command line compiler (JSPC) can also be used to precompile the JSPs.
 Note: This issue has been fixed in Sun JDK 1.4.x.
 
 
----------------
+================
 Tomcat on Linux:
----------------
+================
 
 Virtual machine crashes can be experienced when using certain combinations of
 kernel / glibc under Linux with Sun Hotspot 1.2 to 1.3. The crashes were
@@ -140,84 +153,39 @@ and neither does IBM JDK for Linux.
 The problems can be fixed by reducing the default stack size. At bash shell,
 do "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
 
-GLIBC 2.2 / Linux 2.4 users should also define an environment variable:
+GLIBC 2.2 / Linux 2.4 users may also define an environment variable:
 export LD_ASSUME_KERNEL=2.2.5
 
 Additionally, Redhat Linux 9.0 users should use the same setting, to avoid
 stability problems.
 
 
-----------------------------
+=============================
 Enabling SSI and CGI Support:
-----------------------------
+=============================
 
-Having CGI and SSI available to web applications created security problems when
-using a security manager (as a malicious web application could use them to
-sidestep the security manager access control). In Tomcat 5.5, they have been
-disabled by default, as our goal is to provide a fully secure default
-configuration. However, CGI and SSI remain available.
+Because of the security risks associated with CGI and SSI available
+to web applications, these features are disabled by default.  
 
+To enable and configure CGI support, please see the cgi-howto.html page.
 
-To enable CGI:
-* rename the file $CATALINA_HOME/server/lib/servlets-cgi.renametojar to
-  $CATALINA_HOME/server/lib/servlets-cgi.jar.
-* in $CATALINA_HOME/conf/web.xml, you will need to uncomment 2 areas, the
-  servlet declaration and the servlet mapping. The servlet declaration
-  looks similar to this:
-    <servlet>
-        <servlet-name>cgi</servlet-name>
-        ...
-    </servlet>
-
-  While the servlet mapping looks similar to this:
-    <servlet-mapping>
-        <servlet-name>cgi</servlet-name>
-        <url-pattern>/cgi-bin/*</url-pattern>
-    </servlet-mapping>
-
-  Alternately, these servlet declarations and mappings
-  can be added to your web application deployment descriptor.
-
-To enable SSI:
-* rename the file $CATALINA_HOME/server/lib/servlets-ssi.renametojar to
-  $CATALINA_HOME/server/lib/servlets-ssi.jar.
-* in $CATALINA_HOME/conf/web.xml, you will need to uncomment 2 areas, the
-  servlet declaration and the servlet mapping. The servlet declaration
-  looks similar to this:
-    <servlet>
-        <servlet-name>ssi</servlet-name>
-        ...
-    </servlet>
-
-  While the servlet mapping looks similar to this:
-    <servlet-mapping>
-        <servlet-name>ssi</servlet-name>
-        <url-pattern>*.shtml</url-pattern>
-    </servlet-mapping>
-
-  Alternately, these servlet declarations and mappings
-  can be added to your web application deployment descriptor.
+To enable and configue SSI support, please see the ssi-howto.html page.
 
 
-
----------------------
+======================
 Security manager URLs:
----------------------
+======================
 
-The URLs to be used in the policy file to grant permissions to JARs located
-inside the web application repositories have changed as of Tomcat 4.1.
+In order to grant security permissions to JARs located inside the
+web application repository, use URLs of of the following format
+in your policy file:
 
-In Tomcat 4.0, codeBase URLs for JARs loaded from web application
-repositories were:
-jar:file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar!/-
-
-In Tomcat 4.1 and 5.x, they should be:
 file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar
 
 
----------------------------
+============================
 Symlinking static resources:
----------------------------
+============================
 
 By default, Unix symlinks will not work when used in a web application to link
 resources located outside the web application root directory.
@@ -226,9 +194,9 @@ This behavior is optional, and the "allowLinking" flag may be used to disable
 the check.
 
 
-------------------------
+=========================
 Enabling invoker servlet:
-------------------------
+=========================
 
 Starting with Tomcat 4.1.12, the invoker servlet is no longer available by
 default in all webapps. Enabling it for all webapps is possible by editing
@@ -236,18 +204,20 @@ $CATALINA_HOME/conf/web.xml to uncomment the "/servlet/*" servlet-mapping
 definition.
 
 Using the invoker servlet in a production environment is not recommended and
-is unsupported.
+is unsupported.  More details are available on the Tomcat FAQ at
+http://jakarta.apache.org/tomcat/faq/misc.html#invoker.
 
-------------------------
-Viewing the Tomcat Change Log 
-------------------------
 
-The Change Log for tomcat 5.5 is available at
-http://jakarta.apache.org/tomcat/tomcat-5.5-doc/changelog.html.
+==============================
+Viewing the Tomcat Change Log:
+==============================
 
--------------------
+See changelog.html in this directory.
+
+
+====================
 When all else fails:
--------------------
+====================
 
 See the FAQ
 http://jakarta.apache.org/tomcat/faq/
