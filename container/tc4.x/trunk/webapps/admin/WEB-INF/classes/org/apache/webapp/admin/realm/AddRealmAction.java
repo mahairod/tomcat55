@@ -141,12 +141,12 @@ public class AddRealmAction extends Action {
         types = new ArrayList();
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "/admin/AddRealm.do?parent=" + URLEncoder.encode(parent)
+                "AddRealm.do?parent=" + URLEncoder.encode(parent)
                 + "&type=" + type));
         for (int i=0; i< realmTypes.length; i++) {
             if (!type.equalsIgnoreCase(realmTypes[i])) {
                 types.add(new LabelValueBean(realmTypes[i],
-                "/admin/AddRealm.do?parent=" + URLEncoder.encode(parent)
+                "AddRealm.do?parent=" + URLEncoder.encode(parent)
                 + "&type=" + realmTypes[i]));
             }
         }
