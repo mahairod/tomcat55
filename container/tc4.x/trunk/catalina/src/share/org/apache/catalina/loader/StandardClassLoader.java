@@ -707,8 +707,11 @@ public class StandardClassLoader
                                 "' modified '" +
                                 (new java.sql.Timestamp(file.lastModified())) +
                                 "'");
-                        classCache.put(name, new ClassCacheEntry
-                            (clazz, file, file.lastModified()));
+                        synchronized (classCache) {
+                            classCache.put
+                                (name, new ClassCacheEntry
+                                 (clazz, file, file.lastModified()));
+                        }
                     }
                     
                 } catch(AccessControlException ace) {
@@ -739,9 +742,11 @@ public class StandardClassLoader
                                 (new java.sql.Timestamp
                                     (classUrlConnection.getLastModified())) +
                                 "'");
-                        classCache.put(name, new ClassCacheEntry
-                            (clazz, classUrl, 
-                             classUrlConnection.getLastModified()));
+                        synchronized (classCache) {
+                            classCache.put(name, new ClassCacheEntry
+                                           (clazz, classUrl, 
+                                            classUrlConnection.getLastModified()));
+                        }
                     } catch (IOException e) {
                     }
                     
