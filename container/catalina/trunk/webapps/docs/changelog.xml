@@ -58,9 +58,6 @@
   <subsection name="Jasper">
     <changelog>
       <update>
-        <bug>32257</bug>: Added ability to customize JSP file extensions in JspC. (yoavs)
-      </update>
-      <update>
         Updated JspC usage messages to include recently added configurable parameters. (yoavs)
       </update>
     </changelog>
