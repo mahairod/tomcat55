@@ -18,4 +18,5 @@ tests.y2k.HttpDateTest
 tests.request.Get
 tests.request.Post
 tests.request.RequestMap
+tests.jsp.Jsp
 #tests.perf.CounterClient

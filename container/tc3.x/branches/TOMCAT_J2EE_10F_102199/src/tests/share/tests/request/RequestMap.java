@@ -111,7 +111,7 @@ public class RequestMap extends TestableBase {
                 if (! localStatus || ! test(request, response,
                     Boolean.valueOf(magnitude).booleanValue())) {
                     status = false;
-                    msg.append("can't run test " + testId + " : " +
+                    msg.append("Test " + testId + " : " +
                         description);
 	        }
 	    }

@@ -56,8 +56,8 @@ public class Post extends TestableBase {
                      status = false;
                      String description = props.getProperty("test." + testId +
                         ".description");
-                     msg.append("\tcan't run test " + testId + " : " +
-                         description + "\n");
+                     msg.append("\tTest " + testId + " : " +
+                         description);
                 }
             }
         }
