@@ -813,14 +813,7 @@ public class StandardManager
 
         for (int i = 0; i < sessions.length; i++) {
             StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid())
-                continue;
-            int maxInactiveInterval = session.getMaxInactiveInterval();
-            if (maxInactiveInterval < 0)
-                continue;
-            int timeIdle = // Truncate, do not round up
-                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-            if (timeIdle >= maxInactiveInterval) {
+            if (!session.isValid()) {
                 try {
                     expiredSessions++;
                     session.expire();

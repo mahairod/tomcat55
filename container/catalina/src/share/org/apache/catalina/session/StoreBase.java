@@ -309,25 +309,17 @@ public abstract class StoreBase
                 if (session == null) {
                     continue;
                 }
-                if (!session.isValid()) {
+                if (session.isValid()) {
                     continue;
                 }
-                int maxInactiveInterval = session.getMaxInactiveInterval();
-                if (maxInactiveInterval < 0) {
-                    continue;
+                if ( ( (PersistentManagerBase) manager).isLoaded( keys[i] )) {
+                    // recycle old backup session
+                    session.recycle();
+                } else {
+                    // expire swapped out session
+                    session.expire();
                 }
-                int timeIdle = // Truncate, do not round up
-                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-                if (timeIdle >= maxInactiveInterval) {
-                    if ( ( (PersistentManagerBase) manager).isLoaded( keys[i] )) {
-                        // recycle old backup session
-                        session.recycle();
-                    } else {
-                        // expire swapped out session
-                        session.expire();
-                    }
-                    remove(session.getId());
-                }
+                remove(session.getId());
             } catch (IOException e) {
                 log (e.toString());
                 e.printStackTrace();
