@@ -50,7 +50,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.2/1.1</td>
-  <td>3.3.1a</td>
+  <td>3.3.2</td>
 </tr>
 
 </table>
@@ -140,7 +140,7 @@ Software Foundation.  The 3.x versions all implement the <strong>Servlet
 2.2</strong> and <strong>JSP 1.1</strong> specifications.
 </p>
 
-<p><strong>Tomcat 3.3.x</strong>. Version 3.3.1 is the current production 
+<p><strong>Tomcat 3.3.x</strong>. Version 3.3.2 is the current production 
 quality release. It continues the refactoring that was begun in version 3.2 and
 carries it to its logical conclusion.  Version 3.3 provides a much more modular
 design and allows the servlet container to be customized by adding and removing
