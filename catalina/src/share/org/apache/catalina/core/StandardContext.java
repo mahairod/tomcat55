@@ -541,6 +541,21 @@ public class StandardContext
 
 
     /**
+     * Frequency of the session expiration, and related manager operations.
+     * Manager operations will be done once for the specified amount of
+     * backgrondProcess calls (ie, the lower the amount, the most often the
+     * checks will occur).
+     */
+    private int managerChecksFrequency = 6;
+
+
+    /**
+     * Iteration count for background processing.
+     */
+    private int count = 0;
+
+
+    /**
      * Caching allowed flag.
      */
     private boolean cachingAllowed = true;
@@ -688,7 +703,8 @@ public class StandardContext
                                    new Boolean(this.available));
 
     }
-        
+
+
     /**
      * Return the Locale to character set mapper for this Context.
      */
@@ -974,6 +990,37 @@ public class StandardContext
     public void setLazy(boolean lazy) {
         this.lazy = lazy;
     }
+
+
+    /**
+     * Return the frequency of manager checks.
+     */
+    public int getManagerChecksFrequency() {
+
+        return (this.managerChecksFrequency);
+
+    }
+
+
+    /**
+     * Set the manager checks frequency.
+     *
+     * @param managerChecksFrequency the new manager checks frequency
+     */
+    public void setManagerChecksFrequency(int managerChecksFrequency) {
+
+        if (managerChecksFrequency <= 0) {
+            return;
+        }
+
+        int oldManagerChecksFrequency = this.managerChecksFrequency;
+        this.managerChecksFrequency = managerChecksFrequency;
+        support.firePropertyChange("managerChecksFrequency",
+                                   new Integer(oldManagerChecksFrequency),
+                                   new Integer(this.managerChecksFrequency));
+
+    }
+
 
     /**
      * Return descriptive information about this Container implementation and
@@ -4302,12 +4349,16 @@ public class StandardContext
         if (!started)
             return;
 
-        if (getManager() != null) {
+        count = (count + 1) % managerChecksFrequency;
+
+        if ((getManager() != null) && (count == 0)) {
             if (getManager() instanceof StandardManager) {
                 ((StandardManager) getManager()).processExpires();
             } else if (getManager() instanceof PersistentManagerBase) {
                 PersistentManagerBase pManager = 
                     (PersistentManagerBase) getManager();
+                pManager.processExpires();
+                pManager.processPersistenceChecks();
                 if ((pManager.getStore() != null) 
                     && (pManager.getStore() instanceof StoreBase)) {
                     ((StoreBase) pManager.getStore()).processExpires();
