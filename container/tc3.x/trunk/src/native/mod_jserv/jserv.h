@@ -238,7 +238,7 @@ struct jserv_host {
  *                                                                           *
  *****************************************************************************/
 
-#define NB_MAX_JSERVS  25
+#define NB_MAX_JSERVS  256
 
 #define DOWN '-'
 #define SHUTDOWN_IMMEDIATE 'X'

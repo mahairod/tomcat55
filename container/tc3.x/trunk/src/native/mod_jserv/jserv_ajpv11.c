@@ -139,7 +139,7 @@ static int ajpv11_sendpacket(jserv_config *cfg, pool *p, int sock,
 	i=send(sock,"\x30\x30\x30\x30",4,0);
 #endif
         if (i==4) return 0;
-        else return 0;
+        else return -1; /* Was return -1 in tomcat CVS */
     }
 
     /* Format message */
