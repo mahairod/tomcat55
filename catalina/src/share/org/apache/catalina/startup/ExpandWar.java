@@ -187,7 +187,22 @@ public class ExpandWar {
      *
      * @param dir File object representing the directory to be deleted
      */
-    public static void deleteDir(File dir) {
+    public static boolean delete(File dir) {
+        if (dir.isDirectory()) {
+            return deleteDir(dir);
+        } else {
+            return dir.delete();
+        }
+    }
+    
+    
+    /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    public static boolean deleteDir(File dir) {
 
         String files[] = dir.list();
         if (files == null) {
@@ -201,7 +216,7 @@ public class ExpandWar {
                 file.delete();
             }
         }
-        dir.delete();
+        return dir.delete();
 
     }
 
