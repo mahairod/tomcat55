@@ -6,6 +6,12 @@
 
 <web-app>
 
+  <display-name>Tomcat Manager Application</display-name>
+  <description>
+    A scriptable management web application for the Tomcat Web Server;
+	Manager lets you view, load/unload/etc particular web applications.
+  </description>
+
   <!-- Define the Manager Servlet
        Change servlet-class to: org.apache.catalina.servlets.HTMLManagerServlet
        to get a Servlet with a more intuitive HTML interface, don't change if you
@@ -20,11 +26,23 @@
       <param-value>2</param-value>
     </init-param>
   </servlet>
+  <servlet>
+    <servlet-name>HTMLManager</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.HTMLManagerServlet</servlet-class>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>2</param-value>
+    </init-param>
+  </servlet>
 
   <!-- Define the Manager Servlet Mapping -->
   <servlet-mapping>
     <servlet-name>Manager</servlet-name>
     <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>HTMLManager</servlet-name>
+    <url-pattern>/html/*</url-pattern>
   </servlet-mapping>
 
   <!-- Define reference to the user database for looking up roles -->
