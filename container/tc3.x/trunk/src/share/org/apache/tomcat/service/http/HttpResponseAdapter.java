@@ -71,8 +71,6 @@ import org.apache.tomcat.logging.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 // no "buffering" - we send the status and headers as soon as
 // the method is called.

@@ -72,8 +72,6 @@ import org.apache.tomcat.logging.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 public class HttpRequestAdapter extends Request {
     static StringManager sm = StringManager.getManager("org.apache.tomcat.resources");
@@ -150,7 +148,7 @@ public class HttpRequestAdapter extends Request {
 	count = readLine(sin,buf, 0, buf.length);
 
 	if (count < 0 ) {
-	    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	    response.setStatus(400);
 	    return;
 	}
 	
@@ -364,7 +362,7 @@ public class HttpRequestAdapter extends Request {
 	// we're fine, off=count and remain unchanged
 	
 	if( buf[count-1]!= '\r' && buf[count-1]!= '\n' ) {
-	    response.setStatus(HttpServletResponse.SC_REQUEST_URI_TOO_LONG);
+	    response.setStatus(414);
 	    return;
 	}	    
 	
@@ -380,7 +378,7 @@ public class HttpRequestAdapter extends Request {
 	if( startReq < 0   ) {
 	    // we don't have 2 "words", probably only method
 	    // startReq>0 => method is fine, request has at least one char
-	    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	    response.setStatus(400);
 	    return;
 	}
 

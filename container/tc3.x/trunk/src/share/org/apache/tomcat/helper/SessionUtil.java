@@ -63,8 +63,6 @@
 
 package org.apache.tomcat.helper;
 
-
-import javax.servlet.http.Cookie;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
 
@@ -92,32 +90,6 @@ public final class SessionUtil {
 
 
     // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Construct and return an HTTP Cookie object that contains the specified
-     * session id.  If a cookie cannot be created for any reason, return
-     * <code>null</code>.
-     *
-     * @param req The request asking for this cookie to be created
-     * @param id The session id for which a cookie should be constructed
-     */
-    public static Cookie createCookie(Request req, String id) {
-
-	Cookie cookie = new Cookie(SESSION_COOKIE_NAME, id);
-	String serverName = req.getServerName();
-	if (serverName != null)
-	    cookie.setDomain(serverName);
-	String contextPath = req.getContext().getPath();
-	if ((contextPath != null) && (contextPath.length() > 0))
-	    cookie.setPath(contextPath);
-	else
-	    cookie.setPath("/");
-	cookie.setMaxAge(-1);
-	cookie.setVersion(1);
-	return (cookie);
-
-    }
 
 
     /**
@@ -180,27 +152,6 @@ public final class SessionUtil {
     public static String generateSessionId() {
         return SessionIdGenerator.generateId();
     }
-
-    /**
-     * Return the session id from the specified array of cookies,
-     * where the session id cookie was presumably created by the
-     * <code>createCookie()</code> method of this Manager.
-     * If there is no session id cookie included, return <code>null</code>.
-     *
-     * @param cookies Array of cookies from which to extract the session id
-     */
-    public static String parseSessionId(Cookie cookies[]) {
-
-	if (cookies == null)
-	    return (null);
-	for (int i = 0; i < cookies.length; i++) {
-	    if (SESSION_COOKIE_NAME.equals(cookies[i].getName()))
-		return (cookies[i].getValue());
-	}
-	return (null);
-
-    }
-
 
     /**
      * Return the session id from the specified request URI, where
