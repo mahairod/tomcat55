@@ -27,7 +27,6 @@ import java.net.URLConnection;
 import org.apache.catalina.util.Base64;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 
 
 /**
@@ -40,7 +39,7 @@ import org.apache.tools.ant.Task;
  * @since 4.1
  */
 
-public abstract class AbstractCatalinaTask extends Task {
+public abstract class AbstractCatalinaTask extends BaseRedirectorHelperTask {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -209,35 +208,48 @@ public abstract class AbstractCatalinaTask extends Task {
             reader = new InputStreamReader(hconn.getInputStream(), CHARSET);
             StringBuffer buff = new StringBuffer();
             String error = null;
+            int msgPriority = Project.MSG_INFO;
             boolean first = true;
             while (true) {
                 int ch = reader.read();
                 if (ch < 0) {
                     break;
                 } else if ((ch == '\r') || (ch == '\n')) {
-                    String line = buff.toString();
-                    buff.setLength(0);
-                    log(line, Project.MSG_INFO);
-                    if (first) {
-                        if (!line.startsWith("OK -")) {
-                            error = line;
+                    // in Win \r\n would cause handleOutput() to be called
+                    // twice, the second time with an empty string,
+                    // producing blank lines
+                    if (buff.length() > 0) {
+                        String line = buff.toString();
+                        buff.setLength(0);
+                        if (first) {
+                            if (!line.startsWith("OK -")) {
+                                error = line;
+                                msgPriority = Project.MSG_ERR;
+                            }
+                            first = false;
                         }
-                        first = false;
+                        handleOutput(line, msgPriority);
                     }
                 } else {
                     buff.append((char) ch);
                 }
             }
             if (buff.length() > 0) {
-                log(buff.toString(), Project.MSG_INFO);
+                handleOutput(buff.toString(), msgPriority);
             }
-            if (error != null) {
+            if (error != null && isFailOnError()) {
+                // exception should be thrown only if failOnError == true
+                // or error line will be logged twice
                 throw new BuildException(error);
             }
-
         } catch (Throwable t) {
-            throw new BuildException(t);
+            if (isFailOnError()) {
+                throw new BuildException(t);
+            } else {
+                handleErrorOutput(t.getMessage());
+            }
         } finally {
+            closeRedirector();
             if (reader != null) {
                 try {
                     reader.close();
