@@ -197,6 +197,12 @@ public class Embedded implements Lifecycle {
 
 
     /**
+     * Is naming enabled ?
+     */
+    protected boolean useNaming = true;
+
+
+    /**
      * The set of Engines that have been deployed in this server.  Normally
      * there will only be one.
      */
@@ -283,6 +289,31 @@ public class Embedded implements Lifecycle {
 	this.debug = debug;
 	support.firePropertyChange("debug", new Integer(oldDebug),
 				   new Integer(this.debug));
+
+    }
+
+
+    /**
+     * Return true if naming is enabled.
+     */
+    public boolean isUseNaming() {
+
+        return (this.useNaming);
+
+    }
+
+
+    /**
+     * Enables or disables naming support.
+     * 
+     * @param useNaming The new use naming value
+     */
+    public void setUseNaming(boolean useNaming) {
+
+        boolean oldUseNaming = this.useNaming;
+        this.useNaming = useNaming;
+	support.firePropertyChange("useNaming", new Boolean(oldUseNaming),
+				   new Boolean(this.useNaming));
 
     }
 
@@ -861,6 +892,22 @@ public class Embedded implements Lifecycle {
 		(sm.getString("embedded.alreadyStarted"));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
+
+        // Initialize some naming specific properties
+        if (!useNaming) {
+            System.setProperty("catalina.useNaming", "false");
+        } else {
+            System.setProperty("catalina.useNaming", "true");
+            String value = "org.apache.naming";
+            String oldValue = 
+                System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
+            if (oldValue != null) {
+                value = oldValue + ":" + value;
+            }
+            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
+            System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
+                               "org.apache.naming.java.javaURLContextFactory");
+        }
 
 	// Start our defined Engines first
 	for (int i = 0; i < engines.length; i++) {

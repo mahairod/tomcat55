@@ -33,7 +33,7 @@ fi
 
 # ----- Set Up The System Classpath -------------------------------------------
 
-CP=$CATALINA_HOME/bin/bootstrap.jar:$CATALINA_HOME/bin/servlet.jar
+CP=$CATALINA_HOME/bin/bootstrap.jar:$CATALINA_HOME/bin/servlet.jar:$CATALINA_HOME/bin/naming.jar
 
 if [ -f $JAVA_HOME/lib/tools.jar ] ; then
   CP=$CP:$JAVA_HOME/lib/tools.jar

@@ -71,6 +71,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -78,6 +80,16 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.naming.NamingException;
+import javax.naming.InitialContext;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
+import org.apache.naming.NamingContext;
+import org.apache.naming.ContextBindings;
+import org.apache.naming.ContextAccessController;
+import org.apache.naming.EjbRefAddr;
+import org.apache.naming.ResourceRefAddr;
+import org.apache.naming.ResourceEnvRefAddr;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
@@ -114,6 +126,7 @@ import org.apache.catalina.util.RequestUtil;
  * requests directed to a particular servlet.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -399,7 +412,31 @@ public final class StandardContext
     private String wrapperClass = "org.apache.catalina.core.StandardWrapper";
 
 
-    // -----------------------------------------------------Context  Properties
+    /**
+     * JNDI use flag.
+     */
+    private boolean useNaming = true;
+
+
+    // ----------------------------------------------------- Context Properties
+
+
+    /**
+     * Returns true if the internal naming support is used.
+     */
+    public boolean isUseNaming() {
+
+        return (useNaming);
+
+    }
+
+
+    /**
+     * Enables or disables naming.
+     */
+    public void setUseNaming(boolean useNaming) {
+        this.useNaming = useNaming;
+    }
 
 
     /**
@@ -2736,6 +2773,24 @@ public final class StandardContext
         if (!available)
             return;
 
+        // Reading the "catalina.useNaming" environment variable
+        String useNamingProperty = System.getProperty("catalina.useNaming");
+        if ((useNamingProperty != null) 
+            && (useNamingProperty.equals("false"))) {
+            useNaming = false;
+        }
+
+        // Create and register the associated naming context, if internal 
+        // naming is used
+        if (isUseNaming()) {
+            try {
+                createNamingContext();
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.namingInitFailed",
+                                 getName()));
+            }
+        }
+
         // Configure and call application event listeners and filters
         listenerStart();
         filterStart();
@@ -2870,6 +2925,172 @@ public final class StandardContext
 	super.addDefaultMapper(this.mapperClass);
 
     }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Create and initialize the JNDI naming context.
+     */
+    private void createNamingContext()
+        throws NamingException {
+
+        Hashtable contextEnv = new Hashtable();
+        javax.naming.Context namingContext = 
+            new NamingContext(contextEnv, getName());
+        ContextAccessController.setSecurityToken(getName(), this);
+        ContextBindings.bindContext(getName(), namingContext, this);
+        ContextBindings.bindThread(getName(), this);
+
+        // Setting the context in read/write mode
+        ContextAccessController.setWritable(getName(), this);
+
+        // Creating the comp subcontext
+        javax.naming.Context compCtx = namingContext.createSubcontext("comp");
+        javax.naming.Context envCtx = compCtx.createSubcontext("env");
+
+        // Now parsing the entries defined in the env, and adding them to the
+        // naming context
+
+        // Environment entries
+        Iterator envsList = envs.values().iterator();
+
+        while (envsList.hasNext()) {
+            ContextEnvironment env = (ContextEnvironment) envsList.next();
+            Object value = null;
+            // Instantiating a new instance of the correct object type, and 
+            // initializing it.
+            String type = env.getType();
+            try {
+                if (type.equals("java.lang.String")) {
+                    value = env.getValue();
+                } else if (type.equals("java.lang.Byte")) {
+                    value = Byte.decode(env.getValue());
+                } else if (type.equals("java.lang.Short")) {
+                    value = Short.decode(env.getValue());
+                } else if (type.equals("java.lang.Integer")) {
+                    value = Integer.decode(env.getValue());
+                } else if (type.equals("java.lang.Long")) {
+                    value = Long.decode(env.getValue());
+                } else if (type.equals("java.lang.Boolean")) {
+                    value = Boolean.valueOf(env.getValue());
+                } else if (type.equals("java.lang.Double")) {
+                    value = Double.valueOf(env.getValue());
+                } else if (type.equals("java.lang.Float")) {
+                    value = Float.valueOf(env.getValue());
+                } else {
+                    log(sm.getString("standardContext.invalidEnvEntryType",
+                                     env.getName()));
+                }
+            } catch (NumberFormatException e) {
+                log(sm.getString("standardContext.invalidEnvEntryValue",
+                                 env.getName()));
+            }
+            // Binding the object to the appropriate name
+            if (value != null) {
+                try {
+                    createSubcontexts(envCtx, env.getName());
+                    envCtx.bind(env.getName(), value);
+                } catch (NamingException e) {
+                    log(sm.getString("standardContext.invalidEnvEntryValue",
+                                     e));
+                }
+            }
+            
+        }
+
+        // EJB references
+        Iterator ejbsList = ejbs.values().iterator();
+
+        while (ejbsList.hasNext()) {
+            ContextEjb ejb = (ContextEjb) ejbsList.next();
+            // Create a reference to the EJB.
+            EjbRefAddr ejbRefAddr = new EjbRefAddr
+                (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink(),
+                 ejb.getRunAs());
+            Reference ref = new Reference(ejb.getType(), ejbRefAddr);
+            // Adding the additional parameters, if any
+            
+            try {
+                createSubcontexts(compCtx, ejb.getName());
+                compCtx.bind(ejb.getName(), ref);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.bindFailed", e));
+            }
+            
+        }
+
+        // Resources
+        Iterator resourcesList = resources.values().iterator();
+
+        while (resourcesList.hasNext()) {
+            ContextResource resource = (ContextResource) resourcesList.next();
+            // Create a reference to the resource.
+            ResourceRefAddr resourceRefAddr = new ResourceRefAddr
+                (resource.getType(), resource.getDescription(),
+                 resource.getScope(), resource.getAuth());
+            Reference ref = new Reference(resource.getType(), resourceRefAddr);
+            // Adding the additional parameters, if any
+            
+            try {
+                createSubcontexts(compCtx, resource.getName());
+                compCtx.bind(resource.getName(), ref);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.bindFailed", e));
+            }
+            
+        }
+
+        // Resources Env
+        Iterator resourceEnvsKeyList = resourceEnvRefs.keySet().iterator();
+
+        while (resourceEnvsKeyList.hasNext()) {
+            String key = (String) resourceEnvsKeyList.next();
+            String type = (String) resourceEnvRefs.get(key);
+            // Create a reference to the resource env.
+            Reference ref = new Reference(type);
+            ref.add(new StringRefAddr("name", key));
+            ref.add(new StringRefAddr("type", type));
+            // Adding the additional parameters, if any
+            
+            try {
+                createSubcontexts(compCtx, key);
+                compCtx.bind(key, ref);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.bindFailed", e));
+            }
+
+        }
+
+        // Setting the context in read only mode
+        ContextAccessController.setReadOnly(getName());
+
+        ContextBindings.unbindThread(getName(), this);
+
+    }
+
+
+    /**
+     * Create all intermediate subcontexts.
+     */
+    private void createSubcontexts(javax.naming.Context ctx, String name) 
+        throws NamingException {
+        javax.naming.Context currentContext = ctx;
+        StringTokenizer tokenizer = new StringTokenizer(name, "/");
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            if ((!token.equals("")) && (tokenizer.hasMoreTokens())) {
+                try {
+                    currentContext = currentContext.createSubcontext(token);
+                } catch (NamingException e) {
+                    // Silent catch. Probably an object is already bound in
+                    // the context.
+                }
+            }
+        }
+    }
+    
 
 
     /**

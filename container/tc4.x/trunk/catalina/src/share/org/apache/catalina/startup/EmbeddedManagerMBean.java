@@ -152,6 +152,20 @@ public interface EmbeddedManagerMBean {
 
 
     /**
+     * Return true if naming is enabled.
+     */
+    public boolean isUseNaming();
+
+
+    /**
+     * Enables or disables naming support.
+     * 
+     * @param useNaming The new use naming value
+     */
+    public void setUseNaming(boolean useNaming);
+
+
+    /**
      * Return the Logger for this component.
      */
     public Logger getLogger();

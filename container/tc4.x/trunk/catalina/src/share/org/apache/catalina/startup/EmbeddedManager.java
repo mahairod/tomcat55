@@ -281,6 +281,24 @@ public final class EmbeddedManager
 
 
     /**
+     * Return true if naming is enabled.
+     */
+    public boolean isUseNaming() {
+        return embedded.isUseNaming();
+    }
+
+
+    /**
+     * Enables or disables naming support.
+     * 
+     * @param useNaming The new use naming value
+     */
+    public void setUseNaming(boolean useNaming) {
+        embedded.setUseNaming(useNaming);
+    }
+
+
+    /**
      * Return the Logger for this component.
      */
     public Logger getLogger() {

@@ -55,7 +55,7 @@ set _RUNJAVA="%JAVA_HOME%\bin\java"
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
 set CP=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_HOME%\bin\servlet.jar
-set CP=%CP%;%JAVA_HOME%\lib\tools.jar
+set CP=%CP%;%CATALINA_HOME%\bin\naming.jar;%JAVA_HOME%\lib\tools.jar
 set CLASSPATH=%CP%
 echo Using CLASSPATH: %CLASSPATH%
 

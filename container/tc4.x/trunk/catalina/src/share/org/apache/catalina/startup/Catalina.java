@@ -141,6 +141,12 @@ public class Catalina {
     protected boolean stopping = false;
 
 
+    /**
+     * Are we using naming ?
+     */
+    protected boolean useNaming = true;
+
+
     // ----------------------------------------------------------- Main Program
 
 
@@ -223,6 +229,8 @@ public class Catalina {
 	        isConfig = true;
 	    } else if (args[i].equals("-debug")) {
 		debug = true;
+	    } else if (args[i].equals("-nonaming")) {
+		useNaming = false;
 	    } else if (args[i].equals("-help")) {
 		usage();
 		return (false);
@@ -633,6 +641,22 @@ public class Catalina {
 	    System.exit(1);
 	}
 
+        // Setting additional variables
+        if (!useNaming) {
+            System.setProperty("catalina.useNaming", "false");
+        } else {
+            System.setProperty("catalina.useNaming", "true");
+            String value = "org.apache.naming";
+            String oldValue = 
+                System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
+            if (oldValue != null) {
+                value = oldValue + ":" + value;
+            }
+            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
+            System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
+                               "org.apache.naming.java.javaURLContextFactory");
+        }
+
 	// Start the new server
 	if (server instanceof Lifecycle) {
 	    try {
@@ -709,8 +733,10 @@ public class Catalina {
      */
     protected void usage() {
 
-	System.out.println("usage: java org.apache.catalina.startup.Catalina" +
-			" [ -config {pathname} ] [ -debug ] { start | stop }");
+        System.out.println
+            ("usage: java org.apache.catalina.startup.Catalina" 
+             + " [ -config {pathname} ] [ -debug ]"
+             + " [ -nonaming ] { start | stop }");
 
     }
 

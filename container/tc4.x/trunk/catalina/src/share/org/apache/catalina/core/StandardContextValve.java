@@ -69,6 +69,8 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.naming.NamingException;
+import org.apache.naming.ContextBindings;
 import org.apache.catalina.Container;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
@@ -162,7 +164,22 @@ final class StandardContextValve
 
 	// Ask this Wrapper to process this Request
 	response.setContext(context);
+
+        if (context.isUseNaming()) {
+            try {
+                // Bind the thread to the context
+                ContextBindings.bindThread(context.getName(), context);
+            } catch (NamingException e) {
+                e.printStackTrace();
+            }
+        }
+
 	wrapper.invoke(request, response);
+
+        if (context.isUseNaming()) {
+            // Unbind the thread to the context
+            ContextBindings.unbindThread(context.getName(), context);
+        }
 
     }
 

@@ -82,7 +82,12 @@
     <!-- Construct bootstrap JAR file -->
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
            basedir="${catalina.build}/classes"
-          includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/*"/>
+           includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/**" 
+           />
+    <jar   jarfile="${catalina.build}/bin/naming.jar"
+           basedir="${catalina.build}/classes"
+           includes="**/org/apache/naming/**" 
+           />
 
   </target>
 
@@ -151,7 +156,8 @@
   <!-- ====================== DEPLOY: Create Catalina JAR ================= -->
   <target name="deploy-main" depends="deploy-static">
     <jar  jarfile="${catalina.deploy}/server/catalina.jar"
-          basedir="${catalina.build}/classes"/>
+          basedir="${catalina.build}/classes" 
+          excludes="**/org/apache/naming/**" />
   </target>
 
 
@@ -184,7 +190,8 @@
     <mkdir dir="${catalina.dist}/server"/>
     <copydir src="${catalina.build}/server" dest="${catalina.dist}/server"/>
     <jar  jarfile="${catalina.dist}/server/catalina.jar"
-          basedir="${catalina.build}/classes"/>
+          basedir="${catalina.build}/classes" 
+          excludes="**/org/apache/naming/**" />
 
   </target>
 
