@@ -1,0 +1,60 @@
+<project name="service" default="build-main" basedir=".">
+
+    <!-- ===================== Initialize Property Values ================ -->
+    <property file="build.properties"/>
+    <property file="${user.home}/build.properties"/>
+ 
+    <property name="service.build" value="${basedir}/build"/>
+    <property name="service.support" value="${basedir}/support"/>
+
+    <target name="build-prepare">
+        <mkdir dir="${service.build}"/>
+        <mkdir dir="${service.build}/classes"/>
+        <mkdir dir="${service.build}/lib"/>
+
+        <mkdir dir="${service.support}"/>
+        <mkdir dir="${service.support}/classes"/>
+        <mkdir dir="${service.support}/lib"/>
+    </target>
+
+    <target name="build-main" depends="build-prepare">
+        <javac srcdir="java"
+               destdir="${service.build}/classes"
+               deprecation="on"
+               debug="${debug}"
+               optimize="${optimize}"
+               verbose="off"
+               excludes="**/CVS/**">
+            <exclude name="org/apache/support/**" />
+        </javac>
+
+        <jar jarfile="${service.build}/lib/service.jar"
+             basedir="${service.build}/classes"
+             />
+
+    </target>
+
+    <target name="support" depends="build-main">
+
+        <javac srcdir="java"
+               destdir="${service.support}/classes"
+               deprecation="on"
+               debug="${debug}"
+               optimize="${optimize}"
+               verbose="off"
+               excludes="**/CVS/**">
+            <exclude name="org/apache/service/**" />
+        </javac>
+
+        <jar jarfile="${service.support}/lib/support.jar"
+             basedir="${service.support}/classes"
+             />
+
+    </target>
+
+    <target name="clean" description="Clean all components">
+        <delete dir="${service.build}"/>
+        <delete dir="${service.support}"/>
+    </target>
+
+</project>

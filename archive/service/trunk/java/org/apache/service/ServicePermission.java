@@ -260,7 +260,7 @@ public final class ServicePermission extends Permission {
         // Create the appropriate mask if this is a control permission.
         if (this.type==TYPE_CONTROL) {
             this.mask=this.createControlMask(actions);
-            return();
+            return;
         }
     }
 
@@ -287,7 +287,7 @@ public final class ServicePermission extends Permission {
      */
     public int hashCode() {
         this.setupDescription();
-        return(this.dest.hashCode());
+        return(this.desc.hashCode());
     }
 
     /**

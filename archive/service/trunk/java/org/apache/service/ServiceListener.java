@@ -56,6 +56,8 @@
  * ========================================================================= */
 package org.apache.service;
 
+import java.util.EventListener;
+
 public interface ServiceListener extends EventListener {
 
 }

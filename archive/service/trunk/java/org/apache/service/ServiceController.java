@@ -69,37 +69,37 @@ public interface ServiceController {
     /**
      *
      */
-    public static shutdown()
-    throws IllegalStatusException;
+    public void shutdown()
+    throws IllegalStateException;
 
     /**
      *
      */
-    public static reload()
-    throws IllegalStatusException;
+    public void reload()
+    throws IllegalStateException;
 
     /**
      *
      */
-    public static fail()
-    throws IllegalStatusException;
+    public void fail()
+    throws IllegalStateException;
 
     /**
      *
      */
-    public static fail(String message)
-    throws IllegalStatusException;
+    public void fail(String message)
+    throws IllegalStateException;
 
     /**
      *
      */
-    public static fail(Exception exception)
-    throws IllegalStatusException;
+    public void fail(Exception exception)
+    throws IllegalStateException;
 
     /**
      *
      */
-    public static fail(String message, Exception exception)
-    throws IllegalStatusException;
+    public void fail(String message, Exception exception)
+    throws IllegalStateException;
 
 }
