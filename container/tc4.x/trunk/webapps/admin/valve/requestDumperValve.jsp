@@ -16,7 +16,7 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/SaveAccessLogValve">
+<html:form method="POST" action="/SaveRequestDumperValve">
 
   <bean:define id="thisObjectName" type="java.lang.String"
                name="requestDumperValveForm" property="objectName"/>
