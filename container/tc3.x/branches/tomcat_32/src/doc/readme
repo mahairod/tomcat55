@@ -2,7 +2,7 @@ $Id$
 
                             Release Notes for:
                            ====================
-                           TOMCAT Version 3.2.1
+                           TOMCAT Version 3.2.2
                            ====================
 
 
@@ -124,7 +124,7 @@ described in the Servlet API Specification, version 2.2, section 11.
 Please note the following information about this implementation:
 
 - BASIC and FORM based authentication should work correctly.  Please
-  report any bugs you encounter here at <http://jakarta.apache.org/bugs>.
+  report any bugs you encounter here at <http://jakarta.apache.org/site/bugs.html>.
   The example application has a protected area defined at the following URL:
 
 	http://localhost:8080/examples/jsp/security/protected
@@ -289,22 +289,65 @@ and define your context like this:
 
 where "r:" is mapped to this share.
 
-6.11 Misconfiguration Can Cause CPU-Bound Loop
-
-If you misconfigure Tomcat 3.2 in a way that there is no valid context to
-handle a request (such as removing the root context and then attempting a
-request that should be handled by that context), Tomcat will enter a CPU-bound
-loop instead of responding with a 404 error.
-
-Workaround:  kill the offending Tomcat process and correct your server.xml
-file such that there is a properly configured root context.
-
 
 ===============================================================================
-7.  SECURITY VULNERABILITIES FIXED IN TOMCAT 3.2.1
+7.  FIXES AND ENHANCEMENTS IN UPDATES
 
 
-7.1 Protection of Resources in /WEB-INF and /META-INF Directories
+7.1 Fixes and Enhancements in Release 3.2.2
+
+This section highlights the bugs fixed in this release.  In addition to
+these, there have been many other minor bug fixes through the product.
+
+Documentation
+  -  Several updates to how-to documents and users guide.
+
+Servlet
+  -  Fix infinite loop if no prefix matches the request URI.  Now returns
+     a 404 error.
+  -  Handle UnavailableException in included servlets.
+  -  User principle was incorrectly maintained.  (#757)
+  -  Use access control for forward() and include() when security manager
+     is being used.
+  -  Properly interpret url-patterns inside security-contraints.  (#567)
+  -  Fix authentication with Sybase ASE 11.9.2 and Interbase.
+  -  reqeust.getPort() now returns the correct port when using SSL. (#743)
+  -  Fix problem accessing via HTTP without protocol. (#513)
+  -  Fix JSP source disclosure problem.  (#619)
+  -  ServletRequest.getProtocol() could contain a CRLF.  (#620)
+  -  Better initialization of psuedo-random number generator improves
+     response time for first request that generates a session.
+  -  Fix session tracking through forward().  (#504)
+
+Jasper
+  -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
+  -  Support compiling with debug information.
+  -  If JSP source file is removed, then generated files are removed
+     and subsequent requests return a 404 error. (#698)
+  -  Fix compile error with more than one set of tags with the same 
+     name. (#540)
+  -  Support for non 8859-1 character encodings for included pages.
+  -  Better error reporting if compile fails due to missing tag library.
+  -  Fix thread synchronization problem that can cause page compilation to 
+     fail (#44).
+  
+
+Connectors
+  -  Fix infinite loop on invalid content-length for ajp12.  (#264)
+  -  Fix infinite llop if Tomcat connector closed connection.  (#510)
+  -  For ajp13 protocol, add support for multipart form encoding
+     and file uploads now work.
+  -  Reading session ids from cookies in the load balancer. (#603) 
+
+  IIS
+     -  Better error logging for startup failures.
+  NetWare
+     -  Fix for netbuf_getbytes() not supported on NetWare 5.1.
+
+
+7.2 Security vulnerabilities fixed in Tomcat 3.2.1
+
+7.2.1 Protection of Resources in /WEB-INF and /META-INF Directories
 
 The servlet specification prohibits servlet containers from serving resources
 in the /WEB-INF and /META-INF directories of a web application archive directly
@@ -322,7 +365,7 @@ this information if the client requests a URL like this instead:
 corrected in Tomcat 3.2.1.
 
 
-7.2 Show Source Vulnerability
+7.2.2 Show Source Vulnerability
 
 The example application delivered with Tomcat 3.2 included a mechanism to
 display the source code for the JSP page examples.  This mechanism could
