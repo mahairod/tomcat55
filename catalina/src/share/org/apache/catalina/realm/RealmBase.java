@@ -703,7 +703,7 @@ public abstract class RealmBase
                 if (log.isDebugEnabled())
                     log.debug("  No user authenticated, cannot grant access");
                 ((HttpServletResponse) response.getResponse()).sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    (HttpServletResponse.SC_FORBIDDEN,
                      sm.getString("realmBase.notAuthenticated"));
                 return (false);
             }
