@@ -350,7 +350,22 @@ public class TreeControlTag extends TagSupport {
 
         HttpServletResponse response =
             (HttpServletResponse) pageContext.getResponse();
-
+    
+        // if the node is root node and the label value is
+        // null, then do not render root node in the tree.
+        
+        if ("ROOT-NODE".equalsIgnoreCase(node.getName()) &&
+        (node.getLabel() == null)) {
+            // Render the children of this node
+            TreeControlNode children[] = node.findChildren();
+            int lastIndex = children.length - 1;
+            int newLevel = level + 1;
+            for (int i = 0; i < children.length; i++) {
+                render(out, children[i], newLevel, width, i == lastIndex);
+            }
+            return;
+        }
+        
         // Render the beginning of this node
         out.println("  <tr valign=\"middle\">");
 

@@ -85,6 +85,7 @@ import org.apache.struts.action.ActionMapping;
  * for tree widget
  *
  * @author Jazmin Jonson
+ * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
@@ -92,6 +93,7 @@ public class SetUpTreeAction extends Action {
 
     public static final int INIT_PLUGIN_MAX = 10;
     public static final String TREEBUILDER_KEY = "treebuilders";
+    public static final String ROOTNODENAME_KEY = "rootnodename";
 
     // --------------------------------------------------------- Public Methods
 
@@ -116,21 +118,30 @@ public class SetUpTreeAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-        // Make the root node and tree control
-
-        TreeControlNode root =
-            new TreeControlNode("ROOT-NODE",
-                                null, "Root Node",
-                                "treeControlTest.do?select=ROOT-NODE",
-                                null, true);
-        TreeControl control = new TreeControl(root);
         ApplicationServlet servlet = (ApplicationServlet)getServlet();
 
         // Getting init parms from web.xml
 
+        // Get the string to be displayed as root node while rendering the tree
+        String rootnodeName = 
+            (String)servlet.getServletConfig().getInitParameter(ROOTNODENAME_KEY);
+        
         String treeBuildersStr  =
             (String)servlet.getServletConfig().getInitParameter(TREEBUILDER_KEY);
-
+        
+        // Make the root node and tree control
+        
+        // The root node gets rendered only if its value 
+        // is set as an init-param in web.xml
+        
+        TreeControlNode root =
+            new TreeControlNode("ROOT-NODE",
+                                null, rootnodeName,
+                                "treeControlTest.do?select=ROOT-NODE",
+                                null, true);
+                
+        TreeControl control = new TreeControl(root);
+        
         if(treeBuildersStr != null) {
             Class treeBuilderImpl;
             TreeBuilder treeBuilderBase;

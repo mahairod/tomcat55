@@ -42,6 +42,11 @@
       <param-name>validate</param-name>
       <param-value>true</param-value>
     </init-param>
+    <!-- Label to be displayed for rootnode. If absent, rootnode is not rendered -->
+    <init-param>
+      <param-name>rootnodename</param-name>
+      <param-value>Tomcat Root</param-value>
+    </init-param>
     <init-param>
       <param-name>treebuilders</param-name>
       <param-value>org.apache.webapp.admin.TomcatTreeBuilder</param-value>
