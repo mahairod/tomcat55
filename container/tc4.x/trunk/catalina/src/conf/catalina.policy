@@ -49,6 +49,10 @@ grant codeBase "file:${catalina.home}/server/-" {
         permission java.security.AllPermission;
 };
 
+// These permissions apply to the jasper page compiler
+grant codeBase "file:${catalina.home}/jasper/-" {
+        permission java.security.AllPermission;
+};
 
 // These permissions apply to all extension libraries (including Jasper,
 // if present) installed in the "lib" directory
