@@ -818,15 +818,6 @@ public class DefaultServlet
         // Create a place for the normalized path
         String normalized = path;
 
-        /*
-         * Commented out -- already URL-decoded in StandardContextMapper
-         * Decoding twice leaves the container vulnerable to %25 --> '%'
-         * attacks.
-         *
-         * if (normalized.indexOf('%') >= 0)
-         *     normalized = RequestUtil.URLDecode(normalized, "UTF8");
-         */
-
         if (normalized == null)
             return (null);
 
