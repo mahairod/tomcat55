@@ -80,4 +80,6 @@ public interface IDataSender
     public void disconnect();
     public void sendMessage(String sessionId, byte[] data) throws java.io.IOException;
     public boolean isConnected();
+    public void setSuspect(boolean suspect);
+    public boolean getSuspect();
 }
