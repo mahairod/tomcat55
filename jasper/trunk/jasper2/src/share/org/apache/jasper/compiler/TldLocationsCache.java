@@ -134,15 +134,30 @@ public class TldLocationsCache {
 
     private boolean initialized;
     private ServletContext ctxt;
+    private boolean redeployMode;
 
     //*********************************************************************
     // Constructor and Initilizations
     
     public TldLocationsCache(ServletContext ctxt) {
+        this(ctxt, false);
+    }
+
+    /** Constructs a new instance of TldLocationsCache. 
+     * @param ctxt the servlet context of the web application in which Jasper 
+     *   is running
+     * @param redeployMode if true, then the compiler will allow redeploying 
+     *   a tag library from the same jar, at the expense of slowing down the server 
+     *   a bit. Note that this may only work on JDK 1.3.1_01a and later, because 
+     *   of JDK bug 4211817 fixed in this release.
+     *   If redeployMode is false, a faster but less capable mode will be used.
+     */
+    public TldLocationsCache(ServletContext ctxt, boolean redeployMode) {
         this.ctxt = ctxt;
-	mappings = new Hashtable();
-	tlds = new Hashtable();
-	initialized = false;
+        this.redeployMode = redeployMode;
+        mappings = new Hashtable();
+        tlds = new Hashtable();
+        initialized = false;
     }
 
     private void init() {
@@ -247,6 +262,9 @@ public class TldLocationsCache {
             url = new URL("jar:" + url.toString() + "!/");
             JarURLConnection conn =
                 (JarURLConnection) url.openConnection();
+            if (redeployMode) {
+                conn.setUseCaches(false);
+            }
             jarFile = conn.getJarFile();
             Enumeration entries = jarFile.entries();
             while (entries.hasMoreElements()) {
@@ -255,32 +273,40 @@ public class TldLocationsCache {
                 if (!name.startsWith("META-INF/")) continue;
                 if (!name.endsWith(".tld")) continue;
                 stream = jarFile.getInputStream(entry);
-                String uri = parseTldForUri(resourcePath, stream);
-                if (uri != null) {
-                    mappings.put(uri, new String[]{ resourcePath, name });
+                try {
+                    String uri = parseTldForUri(resourcePath, stream);
+                    if (uri != null) {
+                        mappings.put(uri, new String[]{ resourcePath, name });
+                    }
+                }
+                finally {
+                    if (stream != null) {
+                        try {
+                            stream.close();
+                        } catch (Throwable t) {}
+                    }
                 }
             }
-            // FIXME @@@
-            // -- it seems that the JarURLConnection class caches JarFile 
-            // objects for particular URLs, and there is no way to get 
-            // it to release the cached entry, so
-            // there's no way to redeploy from the same JAR file.  Wierd.
         } catch (Exception ex) {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (Throwable t) {
-		    // ignore
-		}
-            }
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (Throwable t) {
-		    // ignore
-		}
+            if (!redeployMode) {
+                // if not in redeploy mode, close the jar in case of an error
+                if (jarFile != null) {
+                    try {
+                        jarFile.close();
+                    } catch (Throwable t) { /* ignore */ }
+                }
             }
 	    throw new JasperException(ex);
+        }
+        finally {
+            if (redeployMode) {
+                // if in redeploy mode, always close the jar
+                if (jarFile != null) {
+                    try {
+                        jarFile.close();
+                    } catch (Throwable t) { /* ignore */ }
+                }
+            }
         }
     }
 
