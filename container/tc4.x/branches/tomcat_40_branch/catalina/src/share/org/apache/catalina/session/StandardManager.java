@@ -790,6 +790,7 @@ public class StandardManager
         threadName = "StandardManager[" + container.getName() + "]";
         thread = new Thread(this, threadName);
         thread.setDaemon(true);
+        thread.setContextClassLoader(container.getLoader().getClassLoader());
         thread.start();
 
     }
