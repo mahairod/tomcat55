@@ -807,6 +807,46 @@
          request="${context.path}/WrappedGetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/GetLocales01" debug="${debug}"
+       inHeaders="Accept-Language:en-ca##Accept-Language:en-gb"
+      outContent="GetLocales01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedGetLocales01" debug="${debug}"
+       inHeaders="Accept-Language:en-ca##Accept-Language:en-gb"
+      outContent="GetLocales01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/GetLocales01" debug="${debug}"
+       inHeaders="Accept-Language:en-ca,en-gb"
+      outContent="GetLocales01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedGetLocales01" debug="${debug}"
+       inHeaders="Accept-Language:en-ca,en-gb"
+      outContent="GetLocales01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/GetLocales02" debug="${debug}"
+       inHeaders="Accept-Language:en-ca##Accept-Language:en-gb"
+      outContent="GetLocales02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedGetLocales02" debug="${debug}"
+       inHeaders="Accept-Language:en-ca##Accept-Language:en-gb"
+      outContent="GetLocales02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/GetLocales02" debug="${debug}"
+       inHeaders="Accept-Language:en-ca,en-gb"
+      outContent="GetLocales02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedGetLocales02" debug="${debug}"
+       inHeaders="Accept-Language:en-ca,en-gb"
+      outContent="GetLocales02 PASSED"/>
+
   </target>
 
 

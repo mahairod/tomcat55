@@ -133,6 +133,16 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetLocales01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetLocales02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedGetParameter01</url-pattern>
     </filter-mapping>
@@ -419,6 +429,16 @@
     <servlet>
         <servlet-name>GetInputStream01</servlet-name>
         <servlet-class>org.apache.tester.GetInputStream01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetLocales01</servlet-name>
+        <servlet-class>org.apache.tester.GetLocales01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetLocales02</servlet-name>
+        <servlet-class>org.apache.tester.GetLocales02</servlet-class>
     </servlet>
 
     <servlet>
@@ -788,6 +808,26 @@
     <servlet-mapping>
         <servlet-name>GetInputStream01</servlet-name>
         <url-pattern>/WrappedGetInputStream01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetLocales01</servlet-name>
+        <url-pattern>/GetLocales01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetLocales01</servlet-name>
+        <url-pattern>/WrappedGetLocales01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetLocales02</servlet-name>
+        <url-pattern>/GetLocales02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetLocales02</servlet-name>
+        <url-pattern>/WrappedGetLocales02</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
