@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # $Id$
 # Ksh wrapper around ant build system.
