@@ -306,7 +306,7 @@ public class NamingResources implements Serializable {
     /**
      * Add a resource link for this web application.
      *
-     * @param resource New resource link
+     * @param resourceLink New resource link
      */
     public void addResourceLink(ContextResourceLink resourceLink) {
 
@@ -540,8 +540,6 @@ public class NamingResources implements Serializable {
     /**
      * Return the resource parameters with the specified name, if any;
      * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource parameters
      */
     public ResourceParams findResourceParams(String name) {
 

@@ -98,7 +98,7 @@ public final class SecurityUtil{
      * be called.
      * @param targetType <code>Class</code> array used to instanciate a i
      * <code>Method</code> object.
-     * @param targetObject <code>Object</code> array contains the runtime 
+     * @param targetArguments <code>Object</code> array contains the runtime 
      * parameters instance.
      */
     public static void doAsPrivilege(final String methodName, 
@@ -124,7 +124,7 @@ public final class SecurityUtil{
      * be called.
      * @param targetType <code>Class</code> array used to instanciate a 
      * <code>Method</code> object.
-     * @param targetArgumentst <code>Object</code> array contains the 
+     * @param targetArguments <code>Object</code> array contains the 
      * runtime parameters instance.
      * @param principal the <code>Principal</code> to which the security 
      * privilege apply..
@@ -183,7 +183,7 @@ public final class SecurityUtil{
      * be called.
      * @param targetType <code>Class</code> array used to instanciate a
      * <code>Method</code> object.
-     * @param targetArgumentst <code>Object</code> array contains the 
+     * @param targetArguments <code>Object</code> array contains the 
      * runtime parameters instance.
      */    
     public static void doAsPrivilege(final String methodName, 
@@ -221,9 +221,7 @@ public final class SecurityUtil{
      * @param methodName the method to apply the security restriction
      * @param targetObject the <code>Servlet</code> on which the method will
      * be called.
-     * @param targetType <code>Class</code> array used to instanciate a 
-     * <code>Method</code> object.
-     * @param targetArgumentst <code>Object</code> array contains the 
+     * @param targetArguments <code>Object</code> array contains the 
      * runtime parameters instance.
      * @param principal the <code>Principal</code> to which the security 
      * privilege apply..
@@ -354,6 +352,8 @@ public final class SecurityUtil{
     
     /**
      * Remove the object from the cache.
+     *
+     * @param cachedObject The object to remove
      */
     public static void remove(Object cachedObject){
         objectCache.remove(cachedObject);
