@@ -185,11 +185,8 @@
   <!--                       header is added by generated servlet  [false]  -->
   <!--                                                                      -->
   <!-- If you wish to use Jikes to compile JSP pages:                       -->
-  <!--   Set the init parameter "compiler" to "jikes".  Define              -->
-  <!--   the property "-Dbuild.compiler.emacs=true" when starting Tomcat    -->
-  <!--   by adding the above to your CATALINA_OPTS environment variable.    -->
-  <!--   If you get an error reporting that jikes can't use UTF8 encoding,  -->
-  <!--   try setting the init parameter "javaEncoding" to "ISO-8859-1".     -->
+  <!--   Please see the "Using Jikes" section of the Jasper-HowTo           -->
+  <!--   page in the Tomcat documentation.                                  -->
 
     <servlet>
         <servlet-name>jsp</servlet-name>

@@ -281,7 +281,9 @@ are automatically compiled as part of the build process.
 <a href="http://oss.software.ibm.com/developerworks/opensource/jikes/">
 Jikes</a> to compile JSP pages:
 <ul>
-<li>Download and install the Ant JAR in <code>$CATALINA_BASE/common/lib</code>.</li>
+<li>From your <a href="ant.apache.org">Ant</a> installation, copy ant.jar
+and (if it's available: Ant 1.5 and later) ant-launcher.jar to 
+<code>$CATALINA_BASE/common/lib</code>.</li>
 <li>Download and install jikes. jikes must support the -encoding option.
 Execute <code>jikes -help</code> to verify that it was built with support
 for <code>-encoding</code>.</li>
