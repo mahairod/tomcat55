@@ -86,8 +86,6 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Realm;
-import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.Base64;
 
 
@@ -1519,7 +1517,7 @@ public class JNDIRealm extends RealmBase {
             // Ensure that we have a directory context available
             context = new InitialDirContext(getDirectoryContextEnvironment());
 
-        } catch (NamingException e) {
+        } catch (Exception e) {
 
             connectionAttempt = 1;
 
