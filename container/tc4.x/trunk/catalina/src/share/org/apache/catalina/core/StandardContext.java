@@ -2267,30 +2267,42 @@ public class StandardContext
 
         // Create and register the associated naming context, if internal 
         // naming is used
+        boolean ok = false;
         if (isUseNaming()) {
             try {
                 createNamingContext();
             } catch (NamingException e) {
                 log(sm.getString("standardContext.namingInitFailed",
                                  getName()));
+                ok = false;
             }
         }
 
         DirContextURLStreamHandler.bind(getResources());
 
         // Restart our application event listeners and filters
-        listenerStart();
-        filterStart();
+        if (ok) {
+            if (!listenerStart())
+                ok = false;
+        }
+        if (ok) {
+            if (!filterStart())
+                ok = false;
+        }
 
         // Load sessions from persistent storage, if supported
         try {
-            getManager().load();
+            if (ok)
+                getManager().load();
         } catch (Throwable t) {
             log(sm.getString("standardContext.managerLoad"), t);
+            ok = false;
         }
 
         // Restart our currently defined servlets
 	for (int i = 0; i < children.length; i++) {
+            if (!ok)
+                break;
 	    Wrapper wrapper = (Wrapper) children[i];
 	    if (wrapper instanceof Lifecycle) {
 		try {
@@ -2299,6 +2311,7 @@ public class StandardContext
 		    log(sm.getString("standardContext.startingWrapper",
 				     wrapper.getName()),
 			e);
+                    ok = false;
 		}
 	    }
 	}
@@ -2306,8 +2319,13 @@ public class StandardContext
         DirContextURLStreamHandler.unbind();
 
 	// Start accepting requests again
-	setPaused(false);
-	log(sm.getString("standardContext.reloadingCompleted"));
+        if (ok) {
+            setPaused(false);
+            log(sm.getString("standardContext.reloadingCompleted"));
+        } else {
+            setAvailable(false);
+            log(sm.getString("standardContext.reloadingFailed"));
+        }
 
     }
 
@@ -3031,6 +3049,8 @@ public class StandardContext
 
         if (debug >= 1)
             log("Starting");
+        setAvailable(false);
+        boolean ok = true;
 
         // Add missing components as necessary
         if (getResources() == null) {   // (1) Required by Loader
@@ -3059,8 +3079,6 @@ public class StandardContext
         if (debug >= 1)
             log("Processing standard container startup");
 	super.start();
-        if (!available)
-            return;
 
         // Reading the "catalina.useNaming" environment variable
         String useNamingProperty = System.getProperty("catalina.useNaming");
@@ -3077,6 +3095,7 @@ public class StandardContext
             } catch (NamingException e) {
                 log(sm.getString("standardContext.namingInitFailed",
                                  getName()));
+                ok = false;
             }
         }
 
@@ -3087,21 +3106,32 @@ public class StandardContext
         DirContextURLStreamHandler.bind(getResources());
 
         // Configure and call application event listeners and filters
-        listenerStart();
-        filterStart();
+        if (ok) {
+            if (!listenerStart())
+                ok = false;
+        }
+        if (ok) {
+            if (!filterStart())
+                ok = false;
+        }
 
 	// Create context attributes that will be required
-        if (debug >= 1)
-            log("Posting standard context attributes");
-	postWelcomeFiles();
+        if (ok) {
+            if (debug >= 1)
+                log("Posting standard context attributes");
+            postWelcomeFiles();
+        }
 
         // Reload sessions from persistent storage if supported
         try {
-            if (debug >= 1)
-                log("Loading persisted sessions");
-            getManager().load();
+            if (ok) {
+                if (debug >= 1)
+                    log("Loading persisted sessions");
+                getManager().load();
+            }
         } catch (Throwable t) {
             log(sm.getString("standardContext.managerLoad"), t);
+            ok = false;
         }
 
         // Collect "load on startup" servlets that need to be initialized
@@ -3134,20 +3164,29 @@ public class StandardContext
             ArrayList list = (ArrayList) map.get(key);
             Iterator wrappers = list.iterator();
             while (wrappers.hasNext()) {
+                if (!ok)
+                    break;
                 Wrapper wrapper = (Wrapper) wrappers.next();
                 try {
                     wrapper.load();
                 } catch (ServletException e) {
                     log(sm.getString("standardWrapper.loadException",
                                      getName()), e);
+                    ok = false;
                 }
             }
         }
 
         DirContextURLStreamHandler.unbind();
 
-        if (debug >= 1)
-            log("Starting completed");
+        if (ok) {
+            if (debug >= 1)
+                log("Starting completed");
+            setAvailable(true);
+        } else {
+            log(sm.getString("standardContext.startFailed"));
+            setAvailable(false);
+        }
 
     }
 
