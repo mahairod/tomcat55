@@ -98,6 +98,8 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.commons.digester.Digester;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -129,8 +131,10 @@ import org.apache.commons.digester.Digester;
  * @version $Revision$ $Date$
  */
 
-public class JAASMemoryLoginModule implements LoginModule, Realm {
+public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, Realm {
+    // We need to extend MemoryRealm to avoid class cast
 
+    private static Log log = LogFactory.getLog(JAASMemoryLoginModule.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -198,35 +202,9 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
 
     // --------------------------------------------------------- Public Methods
 
-
-    /**
-     * Add a new user to the in-memory database.
-     *
-     * @param username User's username
-     * @param password User's password (clear text)
-     * @param roles Comma-delimited set of roles associated with this user
-     */
-    void addUser(String username, String password, String roles) {
-
-        // Accumulate the list of roles for this user
-        ArrayList list = new ArrayList();
-        roles += ",";
-        while (true) {
-            int comma = roles.indexOf(',');
-            if (comma < 0)
-                break;
-            String role = roles.substring(0, comma).trim();
-            list.add(role);
-            roles = roles.substring(comma + 1);
-        }
-
-        // Construct and cache the Principal for this user
-        GenericPrincipal principal =
-            new GenericPrincipal(this, username, password, list);
-        principals.put(username, principal);
-
+    public JAASMemoryLoginModule() {
+        log.debug("MEMORY LOGIN MODULE");
     }
-
 
     /**
      * Phase 2 of authenticating a <code>Subject</code> when Phase 1
@@ -252,6 +230,7 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
             committed = false;
             principal = null;
         }
+        log.debug("Abort");
         return (true);
 
     }
@@ -269,6 +248,7 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
      * @exception LoginException if the commit fails
      */
     public boolean commit() throws LoginException {
+        log.debug("commit " + principal);
 
         // If authentication was not successful, just return false
         if (principal == null)
@@ -277,6 +257,7 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
         // Add our Principal to the Subject if needed
         if (!subject.getPrincipals().contains(principal))
             subject.getPrincipals().add(principal);
+
         committed = true;
         return (true);
 
@@ -339,6 +320,7 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
      */
     public void initialize(Subject subject, CallbackHandler callbackHandler,
                            Map sharedState, Map options) {
+        log.debug("Init");
 
         // Save configuration values
         this.subject = subject;
@@ -390,7 +372,9 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
         }
 
         // Validate the username and password we have received
-        principal = null; // FIXME - look up and check password
+        principal = super.authenticate(username, password);
+
+        log.debug("login " + username + " " + principal);
 
         // Report results based on success or failure
         if (principal != null) {
@@ -422,148 +406,6 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
 
 
     // ---------------------------------------------------------- Realm Methods
-
-
-    /**
-     * Return the Container with which this Realm has been associated.
-     */
-    public Container getContainer() {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Set the Container with which this Realm has been associated.
-     *
-     * @param container The associated Container
-     */
-    public void setContainer(Container container) {
-
-        ;
-
-    }
-
-
-    /**
-     * Return descriptive information about this Realm implementation and
-     * the corresponding version number, in the format
-     * <code>&lt;description&gt;/&lt;version&gt;</code>.
-     */
-    public String getInfo() {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Add a property change listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-
-        ;
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     */
-    public Principal authenticate(String username, String credentials) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     */
-    public Principal authenticate(String username, byte[] credentials) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified username, which
-     * matches the digest calculated using the given parameters using the
-     * method described in RFC 2069; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param digest Digest which has been submitted by the client
-     * @param nonce Unique (or supposedly unique) token which has been used
-     * for this request
-     * @param realm Realm name
-     * @param md5a2 Second MD5 digest used to calculate the digest :
-     * MD5(Method + ":" + uri)
-     */
-    public Principal authenticate(String username, String digest,
-                                  String nonce, String nc, String cnonce,
-                                  String qop, String realm,
-                                  String md5a2) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified chain of X509
-     * client certificates.  If there is none, return <code>null</code>.
-     *
-     * @param certs Array of client certificates, with the first one in
-     *  the array being the certificate of the client itself.
-     */
-    public Principal authenticate(X509Certificate certs[]) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return <code>true</code> if the specified Principal has the specified
-     * security role, within the context of this Realm; otherwise return
-     * <code>false</code>.
-     *
-     * @param principal Principal for whom the role is to be checked
-     * @param role Security role to be checked
-     */
-    public boolean hasRole(Principal principal, String role) {
-
-        return (false);
-
-    }
-
-
-    /**
-     * Remove a property change listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-
-        ;
-
-    }
-
-
     // ------------------------------------------------------ Protected Methods
 
 
@@ -595,208 +437,4 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
         }
 
     }
-
-
-    /**
-     * Log a message.
-     *
-     * @param message The message to be logged
-     */
-    protected void log(String message) {
-
-        System.out.print("JAASMemoryLoginModule: ");
-        System.out.println(message);
-
-    }
-
-
-    /**
-     * Log a message and associated exception.
-     *
-     * @param message The message to be logged
-     * @param exception The associated exception
-     */
-    protected void log(String message, Throwable exception) {
-
-        log(message);
-        exception.printStackTrace(System.out);
-
-    }
-    
-    /**
-     * Perform access control based on the specified authorization constraint.
-     * Return <code>true</code> if this constraint is satisfied and processing
-     * should continue, or <code>false</code> otherwise.
-     *
-     * @param request Request we are processing
-     * @param response Response we are creating
-     * @param constraint Security constraint we are enforcing
-     * @param The Context to which client of this class is attached.
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public boolean hasResourcePermission(HttpRequest request,
-                                         HttpResponse response,
-                                         SecurityConstraint constraint,
-                                         Context context)
-        throws IOException {
-
-        if (constraint == null)
-            return (true);
-
-        // Specifically allow access to the form login and form error pages
-        // and the "j_security_check" action
-        LoginConfig config = context.getLoginConfig();
-        if ((config != null) &&
-            (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
-            String requestURI = request.getDecodedRequestURI();
-            String loginPage = context.getPath() + config.getLoginPage();
-            if (loginPage.equals(requestURI)) {
-                if (debug)
-                    log(" Allow access to login page " + loginPage);
-                return (true);
-            }
-            String errorPage = context.getPath() + config.getErrorPage();
-            if (errorPage.equals(requestURI)) {
-                if (debug)
-                    log(" Allow access to error page " + errorPage);
-                return (true);
-            }
-            if (requestURI.endsWith(Constants.FORM_ACTION)) {
-                if (debug)
-                    log(" Allow access to username/password submission");
-                return (true);
-            }
-        }
-
-        // Which user principal have we already authenticated?
-        Principal principal =
-            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-        if (principal == null) {
-            if (debug)
-                log("  No user authenticated, cannot grant access");
-            ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 sm.getString("realmBase.notAuthenticated"));
-            return (false);
-        }
-
-        String roles[] = constraint.findAuthRoles();
-        if (roles == null)
-            roles = new String[0];
-
-        if (constraint.getAllRoles())
-            return (true);
-        if ((roles.length == 0) && (constraint.getAuthConstraint())) {
-            ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_FORBIDDEN,
-                 sm.getString("realmBase.forbidden"));
-            return (false); // No listed roles means no access at all
-        }
-        for (int i = 0; i < roles.length; i++) {
-            if (hasRole(principal, roles[i]))
-                return (true);
-        }
-
-        // Return a "Forbidden" message denying access to this resource
-        ((HttpServletResponse) response.getResponse()).sendError
-            (HttpServletResponse.SC_FORBIDDEN,
-             sm.getString("realmBase.forbidden"));
-        return (false);
-
-    } 
-    
-    /**
-     * Enforce any user data constraint required by the security constraint
-     * guarding this request URI.  Return <code>true</code> if this constraint
-     * was not violated and processing should continue, or <code>false</code>
-     * if we have created a response already.
-     *
-     * @param request Request we are processing
-     * @param response Response we are creating
-     * @param constraint Security constraint being checked
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public boolean hasUserDataPermission(HttpRequest request,
-                                         HttpResponse response,
-                                         SecurityConstraint constraint)
-        throws IOException {
-
-        // Is there a relevant user data constraint?
-        if (constraint == null) {
-            if (debug)
-                log("  No applicable security constraint defined");
-            return (true);
-        }
-        String userConstraint = constraint.getUserConstraint();
-        if (userConstraint == null) {
-            if (debug)
-                log("  No applicable user data constraint defined");
-            return (true);
-        }
-        if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
-            if (debug)
-                log("  User data constraint has no restrictions");
-            return (true);
-        }
-
-        // Validate the request against the user data constraint
-        if (request.getRequest().isSecure()) {
-            if (debug)
-                log("  User data constraint already satisfied");
-            return (true);
-        }
-
-        // Initialize variables we need to determine the appropriate action
-        HttpServletRequest hrequest =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hresponse =
-            (HttpServletResponse) response.getResponse();
-        int redirectPort = request.getConnector().getRedirectPort();
-
-        // Is redirecting disabled?
-        if (redirectPort <= 0) {
-            if (debug)
-                log("  SSL redirect is disabled");
-            hresponse.sendError
-                (HttpServletResponse.SC_FORBIDDEN,
-                 hrequest.getRequestURI());
-            return (false);
-        }
-
-        // Redirect to the corresponding SSL port
-        String protocol = "https";
-        String host = hrequest.getServerName();
-        StringBuffer file = new StringBuffer(hrequest.getRequestURI());
-        String requestedSessionId = hrequest.getRequestedSessionId();
-        if ((requestedSessionId != null) &&
-            hrequest.isRequestedSessionIdFromURL()) {
-            file.append(";jsessionid=");
-            file.append(requestedSessionId);
-        }
-        String queryString = hrequest.getQueryString();
-        if (queryString != null) {
-            file.append('?');
-            file.append(queryString);
-        }
-        URL url = null;
-        try {
-            url = new URL(protocol, host, redirectPort, file.toString());
-            if (debug)
-                log("  Redirecting to " + url.toString());
-            hresponse.sendRedirect(url.toString());
-            return (false);
-        } catch (MalformedURLException e) {
-            if (debug)
-                log("  Cannot create new URL", e);
-            hresponse.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 hrequest.getRequestURI());
-            return (false);
-        }
-
-    }
-
-
 }
