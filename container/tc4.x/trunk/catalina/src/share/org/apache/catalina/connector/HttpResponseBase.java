@@ -1044,23 +1044,8 @@ public class HttpResponseBase
         // Clear any data content that has been buffered
         resetBuffer();
 
-        // Cause the response to be committed
-        /* Per spec clarification, no default content type is set
-        String contentType = getContentType();
-        if ((contentType == null) || "text/plain".equals(contentType))
-            setContentType("text/html");
-        */
-
-        // Temporarily comment out the following flush so that
-        // default error reports can still set the content type
-        // FIXME - this stuff needs to be refactored
-        /*
-        try {
-            flushBuffer();
-        } catch (IOException e) {
-            ;
-        }
-        */
+        // Cause the response to be finished (from the application perspective)
+        setSuspended(true);
 
     }
 
@@ -1094,6 +1079,9 @@ public class HttpResponseBase
         } catch (IllegalArgumentException e) {
             setStatus(SC_NOT_FOUND);
         }
+
+        // Cause the response to be finished (from the application perspective)
+        setSuspended(true);
 
     }
 
