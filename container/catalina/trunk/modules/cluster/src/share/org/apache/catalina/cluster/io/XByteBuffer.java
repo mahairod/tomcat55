@@ -214,16 +214,29 @@ public class XByteBuffer
      * @param clearFromBuffer - if true, the package will be removed from the byte buffer
      * @return - returns the actual message bytes (header, size and footer not included).
      */
-    public synchronized byte[] extractPackage(boolean clearFromBuffer) {
+    public synchronized byte[] extractPackage(boolean clearFromBuffer) throws java.io.IOException {
         int size = packageExists();
         if ( size == 0 ) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
-        byte[] result = new byte[size];
-        System.arraycopy(buf,START_DATA.length+4,result,0,size);
+        byte[] data = new byte[size];
+        System.arraycopy(buf,START_DATA.length+4,data,0,size);
         if ( clearFromBuffer ) {
             int totalsize = START_DATA.length + 4 + size + END_DATA.length;
             bufSize = bufSize - totalsize;
             System.arraycopy(buf, totalsize, buf, 0, bufSize);
         }
+        java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(data);
+        java.util.zip.GZIPInputStream gin = new java.util.zip.GZIPInputStream(bin);
+        byte[] tmp = new byte[1024];
+        byte[] result = new byte[0];
+        int length = gin.read(tmp);
+        while ( length > 0 ) {
+            byte[] tmpdata = result;
+            result = new byte[result.length+length];
+            System.arraycopy(tmpdata,0,result,0,tmpdata.length);
+            System.arraycopy(tmp,0,result,tmpdata.length,length);
+            length = gin.read(tmp);
+        }
+        gin.close();
         return result;
     }//extractPackage
 
@@ -354,7 +367,13 @@ public class XByteBuffer
      * @param data - the message data to be contained within the package
      * @return - a full package (header,size,data,footer)
      */
-    public static byte[] createDataPackage(byte[] data)  {
+    public static byte[] createDataPackage(byte[] indata) throws java.io.IOException  {
+        java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream(indata.length/2);
+        java.util.zip.GZIPOutputStream gout = new java.util.zip.GZIPOutputStream(bout);
+        gout.write(indata);
+        gout.flush();
+        gout.close();
+        byte[] data = bout.toByteArray();
         byte[] result = new byte[START_DATA.length+4+data.length+END_DATA.length];
         System.arraycopy(START_DATA,0,result,0,START_DATA.length);
         System.arraycopy(toBytes(data.length),0,result,START_DATA.length,4);

@@ -77,6 +77,18 @@ public class ReplicationTransmitter
         for ( int i=0; i<senders.length; i++)
             map.put(senders[i].getAddress().getHostAddress()+":"+senders[i].getPort(),senders[i]);
     }
+
+    private static long nrOfRequests = 0;
+    private static long totalBytes = 0;
+    private static synchronized void addStats(int length) {
+        nrOfRequests++;
+        totalBytes+=length;
+        if ( (nrOfRequests % 100) == 0 ) {
+            log.info("Nr of bytes sent="+totalBytes+" over "+nrOfRequests+" =="+(totalBytes/nrOfRequests)+" bytes/request");
+        }
+
+    }
+
     public synchronized void add(IDataSender sender)
     {
         String key = sender.getAddress().getHostAddress()+":"+sender.getPort();
@@ -132,6 +144,7 @@ public class ReplicationTransmitter
             if (!sender.isConnected())
                 sender.connect();
             sender.sendMessage(sessionId,data);
+            addStats(data.length);
             sender.setSuspect(false);
         }catch ( Exception x)
         {

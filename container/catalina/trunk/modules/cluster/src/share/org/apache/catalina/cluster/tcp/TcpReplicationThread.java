@@ -197,8 +197,6 @@ public class TcpReplicationThread extends WorkerThread
 
     private void sendAck(SelectionKey key, SocketChannel channel) throws java.io.IOException {
         //send a reply-acknowledgement
-        java.nio.ByteBuffer buf = java.nio.ByteBuffer.wrap(new byte[] {6,2,3});
-        channel.write(buf);
-        buf.clear();
+        channel.write(ByteBuffer.wrap(new byte[] {6,2,3}));
     }
 }

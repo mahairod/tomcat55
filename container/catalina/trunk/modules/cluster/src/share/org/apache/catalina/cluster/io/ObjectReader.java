@@ -102,7 +102,7 @@ public class ObjectReader
         return this.channel;
     }
 
-    public int append(byte[] data,int off,int len) {
+    public int append(byte[] data,int off,int len) throws java.io.IOException {
         boolean result = false;
         buffer.append(data,off,len);
         int pkgCnt = 0;
@@ -116,7 +116,7 @@ public class ObjectReader
         return pkgCnt;
     }
 
-    public int execute() {
+    public int execute() throws java.io.IOException {
         return append(new byte[0],0,0);
     }
 
