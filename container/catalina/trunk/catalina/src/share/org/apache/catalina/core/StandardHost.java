@@ -75,7 +75,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Realm;
-import org.apache.catalina.valves.ErrorDispatcherValve;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.Registry;
 
@@ -788,9 +787,6 @@ public class StandardHost
                      errorReportValveClass));
             }
         }
-
-        // Set dispatcher valve
-        addValve(new ErrorDispatcherValve());
 
         super.start();
 

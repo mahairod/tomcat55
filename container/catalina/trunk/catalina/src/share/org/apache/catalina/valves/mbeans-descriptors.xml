@@ -76,28 +76,6 @@
 
   </mbean>
 
-  <mbean name="ErrorDispatcherValve"
-         description="Implementation of a Valve that handles the error
-         dispatch"
-         domain="Catalina"
-         group="Valve"
-         type="org.apache.catalina.valves.ErrorDispatcherValve">
-
-    <attribute name="className"
-               description="Fully qualified class name of the managed object"
-               type="java.lang.String"
-               writeable="false"/>
-
-    <attribute name="containerName"
-               description="Object name of the container"
-               type="javax.management.ObjectName"/>
-
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
-  </mbean>
-
   <mbean name="ExtendedAccessLogValve"
          description="Valve that generates a web server access log"
          domain="Catalina"
