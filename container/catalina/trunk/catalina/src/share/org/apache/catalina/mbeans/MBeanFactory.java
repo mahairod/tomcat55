@@ -98,6 +98,7 @@ import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.realm.UserDatabaseRealm;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.valves.AccessLogValve;
 import org.apache.catalina.valves.RemoteAddrValve;
 import org.apache.catalina.valves.RemoteHostValve;
@@ -921,6 +922,10 @@ public class MBeanFactory extends BaseModelMBean {
         host.setUnpackWARs(unpackWARs);
         host.setXmlNamespaceAware(xmlNamespaceAware);
         host.setXmlValidation(xmlValidation);
+	
+        // add HostConfig for active reloading
+        HostConfig hostConfig = new HostConfig();
+        host.addLifecycleListener(hostConfig);
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
