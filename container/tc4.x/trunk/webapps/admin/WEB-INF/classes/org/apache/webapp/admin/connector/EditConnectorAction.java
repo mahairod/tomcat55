@@ -188,9 +188,7 @@ public class EditConnectorAction extends Action {
             
             attribute = "scheme";
             connectorFm.setScheme
-                (connectorType + " (" + 
-                (String) mBServer.getAttribute(cname, attribute) + 
-                ")");
+                ((String) mBServer.getAttribute(cname, attribute));
             attribute = "acceptCount";
             connectorFm.setAcceptCountText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            

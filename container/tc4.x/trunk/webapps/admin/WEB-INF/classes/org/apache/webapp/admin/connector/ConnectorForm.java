@@ -188,10 +188,14 @@ public final class ConnectorForm extends ActionForm {
     
     /*
      * Represent boolean (true, false) values for enableLookups etc.
-     */
-    
+     */    
     private List booleanVals = null;
-    
+
+    /*
+     * Represent supported connector types.
+     */    
+    private List connectorTypeVals = null;
+
     // ------------------------------------------------------------- Properties
     
    /**
@@ -588,6 +592,24 @@ public final class ConnectorForm extends ActionForm {
         
     }
     
+    /**
+     * Return the connectorTypeVals.
+     */
+    public List getConnectorTypeVals() {
+        
+        return this.connectorTypeVals;
+        
+    }
+    
+    /**
+     * Set the connectorTypeVals.
+     */
+    public void setConnectorTypeVals(List connectorTypeVals) {
+        
+        this.connectorTypeVals = connectorTypeVals;
+        
+    }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -675,9 +697,11 @@ public final class ConnectorForm extends ActionForm {
                 } catch (Exception e) {
                     errors.add("proxyName", new ActionError("error.proxyName.invalid"));
                 }
-            }      
-            // FIXME - depends on Connector type
-            // numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);
+            }   
+            
+            // not supported by all connector types
+            if ("CoyoteConnector".equalsIgnoreCase(connectorType)) 
+                numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);
         }
         
         return errors;
