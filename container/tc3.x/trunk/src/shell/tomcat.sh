@@ -121,10 +121,6 @@ CLASSPATH=${TOMCAT_INSTALL}/lib/tomcat.jar
 
 # Ignore previous CLASSPATH
 
-if [ -f ${JAVA_HOME}/jre/lib/rt.jar ] ; then
-    CLASSPATH=${CLASSPATH}:${JAVA_HOME}/jre/lib/rt.jar
-fi
-
 # This is consistent with "java -jar tomcat.jar "
 export CLASSPATH
 
