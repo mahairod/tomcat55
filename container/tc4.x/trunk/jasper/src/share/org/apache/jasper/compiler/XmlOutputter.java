@@ -238,8 +238,6 @@ public class XmlOutputter {
         buff.append("</jsp:root>");
 	InputStream is = 
 	    new ByteArrayInputStream(buff.toString().getBytes());
-//DELETE
-System.out.println("getPageData: \n" + buff.toString());
 	PageData pageData = new PageDataImpl(is);
         return pageData;
     }
