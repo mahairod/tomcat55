@@ -193,7 +193,10 @@ class JspDocumentParser extends DefaultHandler
 	} catch (IOException ioe) {
 	    jspDocParser.err.jspError("jsp.error.data.file.read", path, ioe);
 	} catch (Exception e) {
-	    jspDocParser.err.jspError(e);
+	    jspDocParser.err.jspError(
+		new Mark(path, ((SAXParseException) e).getLineNumber(),
+			 ((SAXParseException) e).getColumnNumber()),
+		e.getMessage());
 	}
 
 	return pageNodes;

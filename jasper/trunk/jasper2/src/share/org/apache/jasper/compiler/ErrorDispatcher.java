@@ -386,11 +386,6 @@ public class ErrorDispatcher {
 	    line = where.getLineNumber();
 	    column = where.getColumnNumber();
 	    hasLocation = true;
-	} else if (e instanceof SAXParseException) {
-	    file = ((SAXParseException) e).getSystemId();
-	    line = ((SAXParseException) e).getLineNumber();
-	    column = ((SAXParseException) e).getColumnNumber();
-	    hasLocation = true;
 	}
 
 	// Get nested exception
