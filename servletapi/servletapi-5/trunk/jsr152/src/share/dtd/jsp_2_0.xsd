@@ -8,7 +8,7 @@
      version="2.0">
 <xsd:annotation>
 <xsd:documentation>
-@(#)jsp_2_0.xsds	1.12 09/18/02
+%W% %G%
 </xsd:documentation>
 </xsd:annotation>
 
@@ -150,16 +150,17 @@ following additional properties can be described:
         <xsd:element name="url-pattern"
                      type="j2ee:url-patternType"
                      maxOccurs="unbounded"/>
-        <xsd:element name="el-enabled"
+        <xsd:element name="el-ignored"
                      type="j2ee:true-falseType"
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
 
-        Can be used to easily set the isELEnabled
+        Can be used to easily set the isELIgnored
         property of a group of JSP pages.  By default, the
         EL evaluation is enabled for Web Applications using
-        a Servlet 2.4 or greater web.xml.
+        a Servlet 2.4 or greater web.xml, and disabled
+	otherwise.
 
         </xsd:documentation>
         </xsd:annotation>
@@ -181,15 +182,15 @@ following additional properties can be described:
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
-        <xsd:element name="scripting-enabled"
+        <xsd:element name="scripting-invalid"
                      type="j2ee:true-falseType"
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
 
-        Can be used to easily set the isScriptingEnabled
-        property of a group of JSP pages.  By default,
-        scripting is enabled.
+        Can be used to easily disable scripting in a
+        group of JSP pages.  By default, scripting is
+	enabled.
 
         </xsd:documentation>
         </xsd:annotation>
