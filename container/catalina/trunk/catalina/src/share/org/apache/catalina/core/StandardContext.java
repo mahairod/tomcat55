@@ -3866,19 +3866,19 @@ public class StandardContext
         boolean ok = true;
 
         // Set config file name
-        String appBase = getAppBase();
-        if ((getConfigFile() == null) && (appBase != null)) {
+        File configBase = getConfigBase();
+        if ((getConfigFile() == null) && (configBase != null)) {
 
             String name = getName();
             if (name.equals("")) {
                 name = "ROOT";
             }
-            File file = new File(appBase);
-            file = new File(file, name + ".xml");
+            File file = new File(configBase, name + ".xml");
 
             setConfigFile(file.getPath());
-            if( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
                 log.debug( "Set config file " + file);
+
         }
 
         // Add missing components as necessary
@@ -4542,6 +4542,33 @@ public class StandardContext
             appBase = ((Host) container).getAppBase();
         }
         return appBase;
+    }
+
+
+    /**
+     * Get config base.
+     */
+    private File getConfigBase() {
+        File configBase = 
+            new File(System.getProperty("catalina.base"), "conf");
+        Container container = this;
+        Container host = null;
+        Container engine = null;
+        while (container != null) {
+            if (container instanceof Host)
+                host = container;
+            if (container instanceof Engine)
+                engine = container;
+            container = container.getParent();
+        }
+        if (engine != null) {
+            configBase = new File(configBase, engine.getName());
+        }
+        if (host != null) {
+            configBase = new File(configBase, host.getName());
+        }
+        configBase.mkdirs();
+        return configBase;
     }
 
 
