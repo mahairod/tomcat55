@@ -179,6 +179,10 @@
       <fix>
         Fix cosmetic issue where extra CRLF would be inserted during each precompilation in web.xml. (remm)
       </fix>
+      <update>
+        Allow configuring the interval following a compilation during which a JSP will not be checked
+        for modifications. (remm)
+      </update>
     </changelog>
   </subsection>
 
