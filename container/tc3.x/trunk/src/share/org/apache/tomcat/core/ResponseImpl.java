@@ -83,7 +83,7 @@ import org.apache.tomcat.logging.*;
  */
 public class ResponseImpl implements Response {
     protected static StringManager sm =
-        StringManager.getManager("org.apache.tomcat.core");
+        StringManager.getManager("org.apache.tomcat.resources");
     static final Locale DEFAULT_LOCALE=new Locale(Constants.LOCALE_DEFAULT, "");
 
     protected Request request;
@@ -105,7 +105,7 @@ public class ResponseImpl implements Response {
     // usingStream== ( sos!=null && writer ==null)
     // usingWriter== ( writer != null )
     // started == ( sos!=null )
-    protected ServletOutputStream sos;
+    //    protected ServletOutputStream sos;
     protected PrintWriter writer;
 
     protected boolean commited = false;
@@ -196,7 +196,7 @@ public class ResponseImpl implements Response {
 	usingStream = false;
 	sessionId=null;
 	writer=null;
-	sos=null;
+	//	sos=null;
 	started = false;
 	commited = false;
 	notIncluded=true;
@@ -327,20 +327,20 @@ public class ResponseImpl implements Response {
 	and implement doWrite();
 	@deprecated 
      */
-    public ServletOutputStream getOutputStream() throws IOException {
-	started = true;
-// 	if( out!=null)
-// 	    return out;
-	// neither writer or output stream used
-	if( sos == null )
-	    sos=getFacade().getOutputStream();
+//     public ServletOutputStream getOutputStream() throws IOException {
+// 	started = true;
+// // 	if( out!=null)
+// // 	    return out;
+// 	// neither writer or output stream used
+// 	if( sos == null )
+// 	    sos=getFacade().getOutputStream();
 
-	return sos;
-    }
+// 	return sos;
+//     }
 
-    public void setServletOutputStream( ServletOutputStream s ) {
-	sos=s;
-    }
+//     public void setServletOutputStream( ServletOutputStream s ) {
+// 	sos=s;
+//     }
 
     // -------------------- Headers --------------------
     public MimeHeaders getMimeHeaders() {

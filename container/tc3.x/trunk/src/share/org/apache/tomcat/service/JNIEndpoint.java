@@ -80,7 +80,7 @@ import org.apache.tomcat.service.connector.*;
  */
 public class JNIEndpoint {
 
-    private StringManager sm =StringManager.getManager("org.apache.tomcat.service");
+    private StringManager sm =StringManager.getManager("org.apache.tomcat.resources");
 
     JNIConnectionHandler handler;
 

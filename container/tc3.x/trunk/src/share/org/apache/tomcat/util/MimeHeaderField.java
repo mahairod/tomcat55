@@ -85,7 +85,7 @@ public class MimeHeaderField {
     };
 
     private StringManager sm =
-        StringManager.getManager("org.apache.tomcat.util");
+        StringManager.getManager("org.apache.tomcat.resources");
 
     /**
      * The header field name.

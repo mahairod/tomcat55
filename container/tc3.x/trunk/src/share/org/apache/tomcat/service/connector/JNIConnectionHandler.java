@@ -203,7 +203,7 @@ public class JNIConnectionHandler {
 }
 
 class JNIRequestAdapter extends RequestImpl {
-    StringManager sm = StringManager.getManager("org.apache.tomcat.service");
+    static StringManager sm = StringManager.getManager("org.apache.tomcat.resources");
     ContextManager contextM;
     boolean shutdown=false;
 

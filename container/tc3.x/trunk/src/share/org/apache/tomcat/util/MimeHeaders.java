@@ -209,8 +209,8 @@ public class MimeHeaders {
     // Please avoid using any of the methods following this line. 
     // ( most of them will generate GC, or are http sepecific )
     // ------------------------------------------------------------
-    private StringManager sm =
-        StringManager.getManager("org.apache.tomcat.util");
+    private static StringManager sm =
+        StringManager.getManager("org.apache.tomcat.resources");
     int bufSize=512; // default
     /**
      * A buffer used when parsing headers.
@@ -489,8 +489,8 @@ public class MimeHeaders {
 }
 
 class MimeHeadersEnumerator implements Enumeration {
-    private StringManager sm =
-        StringManager.getManager("org.apache.tomcat.util");
+    private static StringManager sm =
+        StringManager.getManager("org.apache.tomcat.resources");
     private Hashtable hash;
     private Enumeration delegate;
 

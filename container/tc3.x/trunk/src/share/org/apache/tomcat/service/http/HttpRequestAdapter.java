@@ -74,6 +74,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class HttpRequestAdapter extends RequestImpl {
+    static StringManager sm = StringManager.getManager("org.apache.tomcat.resources");
     private Socket socket;
     private boolean moreRequests = false;
     RecycleBufferedInputStream sin;

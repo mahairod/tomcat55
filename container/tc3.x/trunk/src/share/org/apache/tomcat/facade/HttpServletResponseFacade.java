@@ -84,7 +84,7 @@ import javax.servlet.http.*;
 final class HttpServletResponseFacade  implements HttpServletResponse
 {
     // Use the strings from core
-    private static StringManager sm =  StringManager.getManager("org.apache.tomcat.core");
+    private static StringManager sm =  StringManager.getManager("org.apache.tomcat.resources");
 
     private Response response;
     private boolean usingStream = false;
