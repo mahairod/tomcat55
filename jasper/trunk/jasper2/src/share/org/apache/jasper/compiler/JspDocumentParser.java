@@ -768,7 +768,9 @@ class JspDocumentParser
         }
 
         if (taglibInfo != null) {
-            pageInfo.addTaglib(uri, taglibInfo);
+            if (pageInfo.getTaglib(uri) == null) {
+                pageInfo.addTaglib(uri, taglibInfo);
+            }
             pageInfo.pushPrefixMapping(prefix, uri);
         } else {
             pageInfo.pushPrefixMapping(prefix, null);
