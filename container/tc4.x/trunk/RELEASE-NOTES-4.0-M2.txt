@@ -92,6 +92,15 @@ human-oriented user interface that have yet to be created.  See a new
 document in the source distribution (catalina/docs/manager.html) for a more
 complete description of this new application.
 
+Catalina:  Single Sign On Support
+---------------------------------
+Catalina now supports the ability to configure "single sign on" across all of
+the web applications for a particular virtual host.  This facility supports a
+user experience where the user is authenticated by the first web application
+in which he or she tries to access a protected resource, and the fact of this
+authentication is propogated across the other web applications associated
+with this virtual host so that the user does not need to log in again.
+
 
 =========
 BUG FIXES:
