@@ -65,6 +65,7 @@
 package org.apache.tomcat.util;
 
 import java.io.File;
+import java.io.IOException;
 
 /*
  * FileUtil contains utils for dealing with Files. Some of these are 
@@ -202,5 +203,18 @@ public class FileUtil {
         }
 	return path;
     }
+
+    // Used in few places.
+    public static String getCanonicalPath(String name ) {
+	if( name==null ) return null;
+        File f = new File(name);
+        try {
+            return  f.getCanonicalPath();
+        } catch (IOException ioe) {
+	    ioe.printStackTrace();
+	    return name; // oh well, we tried...
+        }
+    }
+    
 
 }
