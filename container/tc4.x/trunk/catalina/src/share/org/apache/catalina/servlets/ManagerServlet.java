@@ -432,6 +432,7 @@ public class ManagerServlet
             log("deploy: Deploying web application at '" + path + "'");
         }
 
+        // Validate the requested context path
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             return;
@@ -440,19 +441,30 @@ public class ManagerServlet
         if (displayPath.equals("")) {
             displayPath = "/";
         }
+        String basename = null;
+        if (path.equals("")) {
+            basename = "_";
+        } else {
+            basename = path.substring(1);
+        }
+        if (deployer.findDeployedApp(path) != null) {
+            writer.println
+                (sm.getString("managerServlet.alreadyContext", displayPath));
+            return;
+        }
 
         // Upload the web application archive to a temporary JAR file
         File tempDir = (File) getServletContext().getAttribute
             ("javax.servlet.context.tempdir");
-        File tempJar = new File(tempDir, "webapp.war");
-        tempJar.delete();
+        File localWar = new File(tempDir, basename + ".war");
+        localWar.delete();
         try {
             if (debug >= 2) {
-                log("Uploading WAR file to " + tempJar);
+                log("Uploading WAR file to " + localWar);
             }
             ServletInputStream istream = request.getInputStream();
             BufferedOutputStream ostream =
-                new BufferedOutputStream(new FileOutputStream(tempJar), 1024);
+                new BufferedOutputStream(new FileOutputStream(localWar), 1024);
             byte buffer[] = new byte[1024];
             while (true) {
                 int n = istream.read(buffer);
@@ -468,99 +480,24 @@ public class ManagerServlet
             log("managerServlet.upload[" + displayPath + "]", e);
             writer.println(sm.getString("managerServlet.exception",
                                         e.toString()));
-            tempJar.delete();
+            localWar.delete();
             return;
         }
 
-        // Validate that the context path and directory name are available
-        if (deployer.findDeployedApp(path) != null) {
-            writer.println
-                (sm.getString("managerServlet.alreadyContext", displayPath));
-            tempJar.delete();
-            return;
-        }
-        if (!(context.getParent() instanceof Host)) {
-            writer.println(sm.getString("managerServlet.noAppBase",
-                                        displayPath));
-            tempJar.delete();
-            return;
-        }
-        String appBase = ((Host) context.getParent()).getAppBase();
-        File appBaseDir = new File(appBase);
-        if (!appBaseDir.isAbsolute()) {
-            appBaseDir = new File(System.getProperty("catalina.base"),
-                                  appBase);
-        }
-        String docBase = displayPath.substring(1);
-        if (docBase.length() < 1) {
-            docBase = "_";
-        }
-        File docBaseDir = new File(appBaseDir, docBase);
-        if (docBaseDir.exists()) {
-            writer.println(sm.getString("managerServlet.alreadyDocBase",
-                                        docBaseDir));
-            tempJar.delete();
-            return;
-        }
-        File tempBaseDir = new File(tempDir, docBase);
-
-        // Unpack the web application into a temporary directory
+        // Deploy the local WAR file
         try {
-
-            // Open the uploaded WAR file
-            if (debug >= 2) {
-                log("Opening WAR file " + tempJar.getPath());
-            }
-            JarFile jarFile = new JarFile(tempJar);
-
-            // Create a temporary directory
-            if (debug >= 2) {
-                log("deploy: Creating WAR directory " + tempBaseDir);
-            }
-            tempBaseDir.mkdir();
-
-            // Unpack the contents of the uploaded WAR file
-            Enumeration jarEntries = jarFile.entries();
-            while (jarEntries.hasMoreElements()) {
-                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-                String name = jarEntry.getName();
-                int last = name.lastIndexOf('/');
-                if (last >= 0) {
-                    File parent = new File(tempBaseDir,
-                                           name.substring(0, last));
-                    parent.mkdirs();
-                }
-                if (name.endsWith("/")) {
-                    continue;
-                }
-                InputStream istream = jarFile.getInputStream(jarEntry);
-                deployExpand(istream, tempBaseDir, name);
-                istream.close();
-            }
-            jarFile.close();
-
-            // Rename the temporary directory to a corresponding name
-            // in appBase (which will cause the app to be auto-deployed)
-            if (!tempBaseDir.renameTo(docBaseDir)) {
-                log("Cannot rename " + tempBaseDir + " to " + docBaseDir);
-                writer.println(sm.getString("managerServlet.noRename",
-                                            displayPath));
-                undeployDir(tempBaseDir);
-                tempJar.delete();
-                return;
-            }
-
-        } catch (IOException e) {
-            log("managerServlet.unpack[" + displayPath + "]", e);
+            deployer.install(path,
+                             new URL("jar:file:" +
+                                     localWar.getAbsolutePath() + "!/"));
+        } catch (Throwable t) {
+            log("ManagerServlet.deploy[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
-                                        e.toString()));
-            undeployDir(docBaseDir);
-            tempJar.delete();
+                                        t.toString()));
+            localWar.delete();
             return;
         }
 
         // Acknowledge successful completion of this deploy command
-        tempJar.delete();
         writer.println(sm.getString("managerServlet.installed",
                                     displayPath));
 
@@ -976,43 +913,53 @@ public class ManagerServlet
                 return;
             }
 
-            // Validate the owning Host of this Context
-            if (!(context.getParent() instanceof Host)) {
-                writer.println(sm.getString("managerServlet.noAppBase",
-                                            displayPath));
-                return;
-            }
-            String appBase = ((Host) context.getParent()).getAppBase();
-            File appBaseDir = new File(appBase);
-            if (!appBaseDir.isAbsolute()) {
-                appBaseDir = new File(System.getProperty("catalina.base"),
-                                      appBase);
+            // Identify the appBase of the owning Host of this Context (if any)
+            String appBase = null;
+            File appBaseDir = null;
+            String appBasePath = null;
+            if (context.getParent() instanceof Host) {
+                appBase = ((Host) context.getParent()).getAppBase();
+                appBaseDir = new File(appBase);
+                if (!appBaseDir.isAbsolute()) {
+                    appBaseDir = new File(System.getProperty("catalina.base"),
+                                          appBase);
+                }
+                appBasePath = appBaseDir.getCanonicalPath();
             }
 
-            // Validate the docBase directory of this application
+            // Validate the docBase path of this application
+            File tempDir = (File) getServletContext().getAttribute
+                ("javax.servlet.context.tempdir");
+            String tempDirPath = tempDir.getCanonicalPath();
             String docBase = context.getDocBase();
             File docBaseDir = new File(docBase);
             if (!docBaseDir.isAbsolute()) {
                 docBaseDir = new File(appBaseDir, docBase);
             }
-            if (!docBaseDir.getCanonicalPath().
-                startsWith(appBaseDir.getCanonicalPath())) {
+            String docBasePath = docBaseDir.getCanonicalPath();
+            boolean ok = false;
+            if (docBasePath.startsWith(tempDirPath)) {
+                ok = true;
+            } else if ((appBasePath != null) &&
+                       docBasePath.startsWith(appBasePath)) {
+                ok = true;
+            }
+            if (!ok) {
                 writer.println(sm.getString("managerServlet.noDocBase",
                                             displayPath));
                 return;
             }
-            if (!docBaseDir.isDirectory()) {
-                writer.println(sm.getString("managerServlet.noDirectory",
-                                            displayPath));
-                return;
-            }
 
-            // Remove this web application and its associated docBase directory
+            // Remove this web application and its associated docBase
             if (debug >= 2) {
-                log("Undeploying document base " + docBaseDir);
+                log("Undeploying document base " + docBasePath);
             }
             deployer.remove(path);
-            undeployDir(docBaseDir);
+            if (docBaseDir.isDirectory()) {
+                undeployDir(docBaseDir);
+            } else {
+                docBaseDir.delete();  // WAR file
+            }
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
 
