@@ -169,11 +169,11 @@ public class ErrorReportValve
         // Perform the request
         context.invokeNext(request, response);
 
-        ServletResponse sresp = response.getResponse();
+        ServletResponse sresp = (ServletResponse) response;
         if (sresp.isCommitted())
             return;
 
-        ServletRequest sreq = request.getRequest();
+        ServletRequest sreq = (ServletRequest) request;
         Throwable throwable = 
             (Throwable) sreq.getAttribute(Globals.EXCEPTION_ATTR);
 
@@ -184,12 +184,12 @@ public class ErrorReportValve
 
             // Reset the response (if possible)
             try {
-                response.getResponse().reset();
+                sresp.reset();
             } catch (IllegalStateException e) {
                 ;
             }
 
-            ServletResponse sresponse = response.getResponse();
+            ServletResponse sresponse = (ServletResponse) response;
             if (sresponse instanceof HttpServletResponse)
                 ((HttpServletResponse) sresponse).sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -237,10 +237,9 @@ public class ErrorReportValve
         if (!(response instanceof HttpResponse))
             return;
         HttpResponse hresponse = (HttpResponse) response;
-        if (!(response.getResponse() instanceof HttpServletResponse))
+        if (!(response instanceof HttpServletResponse))
             return;
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
+        HttpServletResponse hres = (HttpServletResponse) response;
         int statusCode = hresponse.getStatus();
         String message = RequestUtil.filter(hresponse.getMessage());
         if (message == null)
