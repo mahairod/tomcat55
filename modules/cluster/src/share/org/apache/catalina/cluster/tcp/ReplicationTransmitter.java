@@ -108,10 +108,10 @@ public class ReplicationTransmitter
 
     public synchronized void stop()
     {
-        java.util.Iterator i = map.keySet().iterator();
+        java.util.Iterator i = map.entrySet().iterator();
         while ( i.hasNext() )
         {
-            IDataSender sender = (IDataSender)map.get(i.next());
+            IDataSender sender = (IDataSender)((java.util.HashMap.Entry)i.next()).getValue();
             if ( sender.isConnected() )
             {
                 try { sender.disconnect(); } catch ( Exception x ){}
@@ -121,12 +121,11 @@ public class ReplicationTransmitter
 
     public synchronized IDataSender[] getSenders()
     {
-        java.util.Iterator i = map.keySet().iterator();
+        java.util.Iterator i = map.entrySet().iterator();
         java.util.Vector v = new java.util.Vector();
         while ( i.hasNext() )
         {
-            String key = (String)i.next();
-            IDataSender sender = (IDataSender)map.get(key);
+            IDataSender sender = (IDataSender)((java.util.HashMap.Entry)i.next()).getValue();
             if ( sender!=null) v.addElement(sender);
         }
         IDataSender[] result = new IDataSender[v.size()];
@@ -145,13 +144,12 @@ public class ReplicationTransmitter
 
     public void sendMessage(byte[] indata) throws java.io.IOException
     {
-        java.util.Iterator i = map.keySet().iterator();
+        java.util.Iterator i = map.entrySet().iterator();
         java.util.Vector v = new java.util.Vector();
         byte[] data = XByteBuffer.createDataPackage(indata);
         while ( i.hasNext() )
         {
-            String key = (String)i.next();
-            IDataSender sender = (IDataSender)map.get(key);
+            IDataSender sender = (IDataSender)((java.util.HashMap.Entry)i.next()).getValue();
             try
             {
                 if (!sender.isConnected())
