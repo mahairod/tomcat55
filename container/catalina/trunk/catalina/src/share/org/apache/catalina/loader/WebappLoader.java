@@ -684,8 +684,12 @@ public class WebappLoader
                 try {
                     StandardContext ctx=(StandardContext)container;
                     Engine eng=(Engine)ctx.getParent().getParent();
+                    String path = ctx.getPath();
+                    if (path.equals("")) {
+                        path = "/";
+                    }   
                     oname=new ObjectName(eng.getName() + ":type=Loader,path=" +
-                            ctx.getPath() + ",host=" + ctx.getParent().getName());
+                                path + ",host=" + ctx.getParent().getName());
                     Registry.getRegistry().registerComponent(this, oname, null);
                     controller=oname;
                 } catch (Exception e) {
