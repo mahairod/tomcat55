@@ -13,39 +13,397 @@
 
 <body>
 
-<section name="Tomcat 5.0.3">
+<section name="Tomcat 5.0.3-dev">
 
   <subsection name="General">
+
+    <changelog>
+
+      <update>
+      Upgrade to commons-fileupload 1.0 RC 1, submitted by Martin Cooper 
+      (billbarker)
+      </update>
+      <scode>
+      Fix the netbuild (remm)
+      </scode>
+      <update>
+      Specification schema changes, submitted by Mark Roth (kinman)
+      </update>
+      <update>
+      Many tag handling specification clarifications, submitted by Mark Roth 
+      (kinman)
+      </update>
+
+    </changelog>
 
   </subsection>
 
   <subsection name="Catalina">
 
     <changelog>
+
+      <add>
+      W3C Extended Log File Format support (funkman)
+      </add>
+      <update>
+      Refactor FORM using a forward, based on the patch by Jeff Tulley (remm)
+      </update>
+      <fix>
+      Properly set the wrapped request dispatcher state, submitted by Jan Luehe
+      (remm)
+      </fix>
+      <update>
+      Have all contexts inherit Embedded's logger (luehe)
+      </update>
+      <update>
+      Add logging of unexpected exceptions occuring during reference resolution
+      (remm)
+      </update>
+      <fix>
+      unbindClassLoader was thorwing NPE when newly added context 
+      was removed (amyroh)
+      </fix>
+      <fix>
+      Fix Gump failure by copying the Ant JAR manually (jfarcand)
+      </fix>
+      <update>
+      Update confidential HTTPS redirection without using an actual URL,
+      which has a hard JSSE dependency (remm)
+      </update>
       <add>
       Include updated clustering code (fhanik, remm)
+      </add>
+      <update>
+      Remove useless typecasts in the main processing pipeline, and make
+      critical methods final, to enforce the Catalina design pattern (remm)
+      </update>
+      <update>
+      Request dispatcher optimizations, based on the belief that wrapping 
+      is only needed (if at all) for the special attributes (remm)
+      </update>
+      <update>
+      Major filter mapping optimization, using simple String region matching,
+      as well as synchronization removal (remm)
+      </update>
+      <add>
+      Add new callback on the container interface to process any background
+      task the container may have (backgroundProcess), as well as a new
+      backgroundProcessor attribute (default value: 10s for the engine
+      container, and -1 for all others, so that only the engine has an
+      associated thread) (remm)
       </add>
       <add>
       Refactor application reloading, deployment handling and session 
       expiration to be able to use a single thread per Catalina engine, opposed
       to one thread per feature per webapp or virtual host; this should save
-      resources and make Tomcat suitable for large scale webhosting (remm)
+      resources and make Tomcat suitable for large scale web hosting; 
+      individual containers can still "own" their own reloading thread 
+      if they need to (remm)
       </add>
+      <fix>
+      Fix a bug where the context is not registered again in JMX after a 
+      stop/start, which would break mapping (remm)
+      </fix>
       <update>
-      Request dispatcher optimizations (remm)
+      Implement context reloading as stop, followed by start, in an attempt
+      to avoid code duplication and clear user confusion on what a reload 
+      exactly does (remm)
       </update>
       <update>
-      Upgrade to commons-fileupload 1.0 RC 1 (remm)
+      Pass the request URI as a parameter to the request dispatcher, as this 
+      avoids rebuilding it (remm)
       </update>
+      <fix>
+      Unify the way we shutdown the server, and fix a classloading problem 
+      when the digester file are under common/lib instead of server/lib 
+      (jfarcand)
+      </fix>
+      <fix>
+      Do not register a StandardContext instance when the context is stopped 
+      (undeployed) (remm)
+      </fix>
+      <scode>
+      Remove the old Catalina mapper (remm)
+      </scode>
+      <update>
+      Swicth to the "new" mapper for request dispatcher mapping (remm)
+      </update>
+      <fix>
+      <bug>20018</bug>: ErrorPage directive doesn't work for http error codes 
+      (400,500,..) (remm)
+      </fix>
+      <update>
+      Remove synchronized block on the request dispatcher wrapper request,
+      submitted by Remy Maucherat (jfarcand)
+      </update>
+      <fix>
+      Allow the getAttribute() method access to the wrapped request object 
+      (like setAttribute/removeAttribute) (jfarcand)
+      </fix>
+      <update>
+      Add the rest of missing attributes for j2eeType=WebModule and Servlet
+      (amyroh)
+      </update>
+      <scode>
+      Remove redundant commons-beanutils JAR (remm)
+      </scode>
+      <update>
+      Isolate the validating digester creation so that the code can be reused
+      (remm)
+      </update>
+      <fix>
+      Fix to unregister valves that are other than Lifecycle 
+      - RequestDumperValve (amyroh)
+      </fix>
+      <fix>
+      Service.removeConnector doesn't unregister connector mbeans; call 
+      connector.destroy to unregister (amyroh)
+      </fix>
+      <fix>
+      Return null for objectName when initialization fails (amyroh)
+      </fix>
+      <update>
+      Make objectName attribute visible for j2eeType=Servlet mbean (amyroh)
+      </update>
+      <fix>
+      Register valve in JMX even if it's not an instance of Lifecycle (amyroh)
+      </fix>
+      <update>
+      Add support for OS/400 in the Catalina shell scripts, submitted 
+      by Robert Upshall (jfclere)
+      </update>
+      <fix>
+      Improve logic for setWrapper call for privileged webapps (costin)
+      </fix>
+
     </changelog>
 
   </subsection>
 
   <subsection name="Coyote">
 
+    <changelog>
+
+      <fix>
+      RFC 2109 cookies with quoted values are not processed properly (luehe)
+      </fix>
+      <fix>
+      Check for the existence of the class before trying to load the JK adapter
+      to avoid useless error logging (funkman)
+      </fix>
+      <fix>
+      Fix the request state to allow the use of the request dispatcher from
+      outside the filter pipeline (remm)
+      </fix>
+      <fix>
+      Commit the response even if the buffer is empty when flushing (remm)
+      </fix>
+      <fix>
+      ServletResponse.getLocale returns en_US instead of container (luehe)
+      </fix>
+      <fix>
+      Filter out CRLF from the message text (remm)
+      </fix>
+      <update>
+      Pass through all connector parameters to the Coyote protocol handler,
+      which will allow custom initialization parameters for SSL, for example
+      (billbarker)
+      </update>
+      <fix>
+      Remove duplicate request field in the response object (remm)
+      </fix>
+      <fix>
+      Correctly handle redirects sent by the mapper (remm)
+      </fix>
+      <fix>
+      In the mapper, initialize the Context when the object is created (remm)
+      </fix>
+      <update>
+      Add removeWrapper similar to addWrapper to the maper (remm)
+      </update>
+      <update>
+      Refactor very slightly the mapping algorithm and the mapper so that
+      it can do context level mapping (remm)
+      </update>
+      <fix>
+      <bug>19991</bug>: Make sure that the SSL-Cert Note gets recycled 
+      before processing the request (billbarker)
+      </fix>
+      <fix>
+      Changing to do lazy evaluation of the Servlet-Spec's SSL-attributes
+      (billbarker)
+      </fix>
+      <fix>
+      <bug>19958</bug>: IS.read() was actually accessing the char buffer, 
+      instead of using the readByte method which correctly uses the byte buffer
+      (remm)
+      </fix>
+      <fix>
+      Get rid of the warning in the logs when no Client-Cert is available
+      (jfarcand)
+      </fix>
+      <fix>
+      Fix the server user-agent String to be compliant with the HTTP standard
+      (remm)
+      </fix>
+      <update>
+      Add new more explicit keep alive property based on the maxKeepAlive value
+      (remm)
+      </update>
+      <fix>
+      <bug>19904</bug>: Don't search the query-string or anchor-tag for 
+      the protocol (billbarker)
+      </fix>
+      <fix>
+      Robustness: catch exceptions which can occur in prepareRequest (remm)
+      </fix>
+      <fix>
+      ServletResponse.getCharacterEncoding() doesn't return the value specified
+      (luehe)
+      </fix>
+      <fix>
+      Incorrect handling of ServletResponse.setLocale (luehe)
+      </fix>
+      <add>
+      Add AOL Server support to JK 2, submitted by Alexander Leykekh (mturk)
+      </add>
+      <scode>
+      Fix javadoc generation for the connectors (costin)
+      </scode>
+
+    </changelog>
+
   </subsection>
 
   <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      Don't generate a smap for &lt;jsp:attribute&gt; itself, though maps are
+      still generated for its body (kinman)
+      </fix>
+      <fix>
+      In a template text, the char after '$' are not handled correctly (kinman)
+      </fix>
+      <update>
+      Only do the security init if there's a security manager (remm)
+      </update>
+      <fix>
+      JSP caches tests Failed-jsp compilation error (luehe)
+      </fix>
+      <fix>
+      Close JARs after parsing their TLDs, regardless of whether the JAR
+      contains any packaged tag files (luehe)
+      </fix>
+      <fix>
+      In JspUtil, path is slash, even on windows (kinman)
+      </fix>
+      <fix>
+      Expose root cause of ELExceptions when no error page is defined (luehe)
+      </fix>
+      <fix>
+      Include &lt;jsp:param&gt; when checking if a page is scriptless, 
+      submitted by Michael Walker (kinman)
+      </fix>
+      <fix>
+      Set correct class path for tag files, submitted by Michael Walker 
+      (kinman)
+      </fix>
+      <fix>
+      EL evaluation error no longer discloses root cause (luehe)
+      </fix>
+      <fix>
+      Exceptions not propagated to JSP error pages (luehe)
+      </fix>
+      <fix>
+      Make sure that the output directory exist, in case it was removed 
+      (kinman)
+      </fix>
+      <fix>
+      'xmlns' attributes that do not represent tag libraries are subject 
+      to TLD check (luehe)
+      </fix>
+      <fix>
+      Jasper *always* passes initial response character encoding 
+      to ServletResponse (luehe)
+      </fix>
+      <fix>
+      <bug>19713</bug>: Define "request" the out of line method when there is
+      a &lt;jsp:param&gt; in the body of a custom tag (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <add>
+      Add changelog, status, and developers list (remm)
+      </add>
+      <update>
+      Remove checkInterval attribute since it no longer exists (amyroh)
+      </update>
+      <fix>
+      Use getSession(true) in the session example (remm)
+      </fix>
+      <update>
+      Update documentation index, to reflect the docs structure (remm)
+      </update>
+      <fix>
+      Disallow more than one SingleSignOn valve per service (amyroh)
+      </fix>
+      <fix>
+      Unregister context and loader mbeans if it fails due to missing directory
+      (amyroh)
+      </fix>
+      <fix>
+      Fix to return an error page instead of error stack trace when a user 
+      tries to create a context without creating a directory first (amyroh)
+      </fix>
+      <docs>
+      Update manager documentation according to the new behavior (remm)
+      </docs>
+      <fix>
+      Disable realm operations for engine until jaas realm is supported 
+      in admin (amyroh)
+      </fix>
+      <docs>
+      Use a book-like structure for the user related documentation (remm)
+      </docs>
+      <docs>
+      Add new deployer documentation (remm)
+      </docs>
+      <docs>
+      Fix MySQL JDBC connection example (glenn)
+      </docs>
+      <fix>
+      Add proper MIME types for the content the JSPX examples generate, 
+      submitted by Mark Roth (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Deployer">
+
+    <changelog>
+
+      <add>
+      Generate minimal catalina-deployer JAR for use with the deployer (remm)
+      </add>
+      <add>
+      New validator task, for use with the deployer (remm)
+      </add>
+      <update>
+      Rename deploy.xml to build.xml for ease of use (remm)
+      </update>
+
+    </changelog>
 
   </subsection>
 
