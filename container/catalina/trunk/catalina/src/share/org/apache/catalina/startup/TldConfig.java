@@ -409,7 +409,24 @@ public final class TldConfig  {
                                                               tldDigester);
 
         if (xmlValidation) {
-            tldDigester.setSchema(url.toString());
+            if (tldDigester.getFactory().getClass()
+                            .getName().indexOf("xerces")!=-1) {
+                try{
+                    tldDigester.setFeature(
+                        "http://apache.org/xml/features/validation/dynamic",
+                        true);
+                    tldDigester.setFeature(
+                        "http://apache.org/xml/features/validation/schema",
+                        true);
+                } catch(ParserConfigurationException e){
+                        // log("contextConfig.registerLocalSchema", e);
+                } catch(SAXNotRecognizedException e){
+                        // log("contextConfig.registerLocalSchema", e);
+                } catch(SAXNotSupportedException e){
+                        // log("contextConfig.registerLocalSchema", e);
+                }
+
+            }
         }
         
         url = TldConfig.class.getResource(Constants.TldDtdResourcePath_11);
