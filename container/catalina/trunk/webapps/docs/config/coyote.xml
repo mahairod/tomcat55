@@ -137,7 +137,7 @@
       specifies the minimum amount of data before the output is compressed). If
       the content-length is not known and compression is set to "on" or more
       aggressive, the output will also be compressed. If not specified, this
-      attribute is set to "false".</p>
+      attribute is set to "off".</p>
     </attribute>
 
     <attribute name="connectionTimeout" required="false">
