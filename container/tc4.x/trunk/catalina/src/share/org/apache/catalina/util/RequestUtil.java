@@ -259,10 +259,18 @@ public final class RequestUtil {
 
             // Decode the name and value if required
             if ((name.indexOf('%') >= 0) || (name.indexOf('+') >= 0)) {
-                name = URLDecoder.decode(name);
+                try {
+                    name = URLDecoder.decode(name);
+                } catch (Throwable t) {
+                    ;
+                }
             }
             if ((value.indexOf('%') >= 0) || (value.indexOf('+') >= 0)) {
-                value = URLDecoder.decode(value);
+                try {
+                    value = URLDecoder.decode(value);
+                } catch (Throwable t) {
+                    ;
+                }
             }
 
 	    // Create or update the array of values for this name
