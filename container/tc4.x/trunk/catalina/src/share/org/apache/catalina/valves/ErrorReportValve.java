@@ -302,13 +302,15 @@ public class ErrorReportValve
         sb.append(Globals.SERVER_INFO).append(" - ");
         sb.append(sm.getString("errorReportValve.errorReport"));
         sb.append("</title>");
-        sb.append("<STYLE><!--H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
+        sb.append("<STYLE><!--");
+        sb.append("H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
+        sb.append("H3{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
         sb.append("BODY{font-family : sans-serif,Arial,Tahoma;color : black;background-color : white;} ");
         sb.append("B{color : white;background-color : #0086b2;} ");
         sb.append("HR{color : #0086b2;} ");
         sb.append("--></STYLE> ");
         sb.append("</head><body>");
-        sb.append("<h1>").append(Globals.SERVER_INFO).append(" - ");
+        sb.append("<h1>");
         sb.append(sm.getString("errorReportValve.statusHeader",
                                "" + statusCode, message)).append("</h1>");
         sb.append("<HR size=\"1\" noshade>");
@@ -349,6 +351,7 @@ public class ErrorReportValve
         }
 
         sb.append("<HR size=\"1\" noshade>");
+        sb.append("<h3>").append(Globals.SERVER_INFO).append("</h3>");
         sb.append("</body></html>");
 
         try {

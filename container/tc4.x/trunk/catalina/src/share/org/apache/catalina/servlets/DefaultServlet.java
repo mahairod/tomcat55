@@ -1459,20 +1459,26 @@ public class DefaultServlet
         }
         PrintWriter writer = new PrintWriter(osWriter);
 
-        // Render the page header
-        writer.print("<html>\r\n");
-        writer.print("<head>\r\n");
-        writer.print("<title>");
-        writer.print(sm.getString("directory.title", name));
-        writer.print("</title>\r\n</head>\r\n");
-        writer.print("<body bgcolor=\"white\">\r\n");
-        writer.print("<table width=\"90%\" cellspacing=\"0\"" +
-                     " cellpadding=\"5\" align=\"center\">\r\n");
+        StringBuffer sb = new StringBuffer();
 
-        // Render the in-page title
-        writer.print("<tr><td colspan=\"3\"><font size=\"+2\">\r\n<strong>");
-        writer.print(sm.getString("directory.title", name));
-        writer.print("</strong>\r\n</font></td></tr>\r\n");
+        // Render the page header
+        sb.append("<html>\r\n");
+        sb.append("<head>\r\n");
+        sb.append("<title>");
+        sb.append(sm.getString("directory.title", name));
+        sb.append("</title>\r\n");
+        sb.append("<STYLE><!--");
+        sb.append("H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
+        sb.append("H3{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
+        sb.append("BODY{font-family : sans-serif,Arial,Tahoma;color : black;background-color : white;} ");
+        sb.append("B{color : white;background-color : #0086b2;} ");
+        sb.append("A{color : black;} ");
+        sb.append("HR{color : #0086b2;} ");
+        sb.append("--></STYLE> ");
+        sb.append("</head>\r\n");
+        sb.append("<body>");
+        sb.append("<h1>");
+        sb.append(sm.getString("directory.title", name));
 
         // Render the link to our parent (if required)
         String parentDirectory = name;
@@ -1483,32 +1489,38 @@ public class DefaultServlet
         int slash = parentDirectory.lastIndexOf('/');
         if (slash >= 0) {
             String parent = name.substring(0, slash);
-            writer.print("<tr><td colspan=\"3\" bgcolor=\"#ffffff\">\r\n");
-            writer.print("<a href=\"");
-            writer.print(rewriteUrl(contextPath));
+            sb.append(" - <a href=\"");
+            sb.append(rewriteUrl(contextPath));
             if (parent.equals(""))
                 parent = "/";
-            writer.print(rewriteUrl(parent));
+            sb.append(rewriteUrl(parent));
             if (!parent.endsWith("/"))
-                writer.print("/");
-            writer.print("\">");
-            writer.print(sm.getString("directory.parent", parent));
-            writer.print("</a>\r\n");
-            writer.print("</td></tr>\r\n");
+                sb.append("/");
+            sb.append("\">");
+            sb.append("<b>");
+            sb.append(sm.getString("directory.parent", parent));
+            sb.append("</b>");
+            sb.append("</a>");
         }
 
+        sb.append("</h1>");
+        sb.append("<HR size=\"1\" noshade>");
+
+        sb.append("<table width=\"100%\" cellspacing=\"0\"" +
+                     " cellpadding=\"5\" align=\"center\">\r\n");
+
         // Render the column headings
-        writer.print("<tr bgcolor=\"#cccccc\">\r\n");
-        writer.print("<td align=\"left\"><font size=\"+1\"><strong>");
-        writer.print(sm.getString("directory.filename"));
-        writer.print("</strong></font></td>\r\n");
-        writer.print("<td align=\"center\"><font size=\"+1\"><strong>");
-        writer.print(sm.getString("directory.size"));
-        writer.print("</strong></font></td>\r\n");
-        writer.print("<td align=\"right\"><font size=\"+1\"><strong>");
-        writer.print(sm.getString("directory.lastModified"));
-        writer.print("</strong></font></td>\r\n");
-        writer.print("</tr>\r\n");
+        sb.append("<tr>\r\n");
+        sb.append("<td align=\"left\"><font size=\"+1\"><strong>");
+        sb.append(sm.getString("directory.filename"));
+        sb.append("</strong></font></td>\r\n");
+        sb.append("<td align=\"center\"><font size=\"+1\"><strong>");
+        sb.append(sm.getString("directory.size"));
+        sb.append("</strong></font></td>\r\n");
+        sb.append("<td align=\"right\"><font size=\"+1\"><strong>");
+        sb.append(sm.getString("directory.lastModified"));
+        sb.append("</strong></font></td>\r\n");
+        sb.append("</tr>");
 
         try {
 
@@ -1529,38 +1541,37 @@ public class DefaultServlet
                     trimmed.equalsIgnoreCase("META-INF"))
                     continue;
 
-                writer.print("<tr");
+                sb.append("<tr");
                 if (shade)
-                    writer.print(" bgcolor=\"eeeeee\"");
-                writer.print(">\r\n");
+                    sb.append(" bgcolor=\"eeeeee\"");
+                sb.append(">\r\n");
                 shade = !shade;
 
-                writer.print("<td align=\"left\">&nbsp;&nbsp;\r\n");
-                writer.print("<a href=\"");
-                writer.print(rewriteUrl(contextPath));
+                sb.append("<td align=\"left\">&nbsp;&nbsp;\r\n");
+                sb.append("<a href=\"");
+                sb.append(rewriteUrl(contextPath));
                 resourceName = rewriteUrl(name + resourceName);
-                writer.print(resourceName);
+                sb.append(resourceName);
                 if (childResourceInfo.collection)
-                    writer.print("/");
-                writer.print("\"><tt>");
-                writer.print(trimmed);
+                    sb.append("/");
+                sb.append("\"><tt>");
+                sb.append(trimmed);
+                if (childResourceInfo.collection)
+                    sb.append("/");
+                sb.append("</tt></a></td>\r\n");
 
+                sb.append("<td align=\"right\"><tt>");
                 if (childResourceInfo.collection)
-                    writer.print("/");
-                writer.print("</tt></a></td>\r\n");
-
-                writer.print("<td align=\"right\"><tt>");
-                if (childResourceInfo.collection)
-                    writer.print("&nbsp;");
+                    sb.append("&nbsp;");
                 else
-                    writer.print(renderSize(childResourceInfo.length));
-                writer.print("</tt></td>\r\n");
+                    sb.append(renderSize(childResourceInfo.length));
+                sb.append("</tt></td>\r\n");
 
-                writer.print("<td align=\"right\"><tt>");
-                writer.print(renderLastModified(childResourceInfo.date));
-                writer.print("</tt></td>\r\n");
+                sb.append("<td align=\"right\"><tt>");
+                sb.append(renderLastModified(childResourceInfo.date));
+                sb.append("</tt></td>\r\n");
 
-                writer.print("</tr>\r\n");
+                sb.append("</tr>\r\n");
             }
 
         } catch (NamingException e) {
@@ -1569,16 +1580,15 @@ public class DefaultServlet
         }
 
         // Render the page footer
-        writer.print("<tr><td colspan=\"3\">&nbsp;</td></tr>\r\n");
-        writer.print("<tr><td colspan=\"3\" bgcolor=\"#cccccc\">");
-        writer.print("<font size=\"-1\">");
-        writer.print(Globals.SERVER_INFO);
-        writer.print("</font></td></tr>\r\n");
-        writer.print("</table>\r\n");
-        writer.print("</body>\r\n");
-        writer.print("</html>\r\n");
+        sb.append("</table>\r\n");
+
+        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<h3>").append(Globals.SERVER_INFO).append("</h3>");
+        sb.append("</body>\r\n");
+        sb.append("</html>\r\n");
 
         // Return an input stream to the underlying bytes
+        writer.write(sb.toString());
         writer.flush();
         return (new ByteArrayInputStream(stream.toByteArray()));
 
