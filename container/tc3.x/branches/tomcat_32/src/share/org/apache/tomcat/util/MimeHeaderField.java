@@ -327,7 +327,7 @@ public class MimeHeaderField {
     }
     
     String formatDate( Date value ) {
-	return DateTool.rfc1123Format.format(value);
+	return DateTool.format1123(value);
     }
 
     long parseDate( String s ) {

@@ -94,7 +94,7 @@ public class DateTool {
     /** format for RFC 1123 date string -- "Sun, 06 Nov 1994 08:49:37 GMT"
      */
     public final static String RFC1123_PATTERN =
-        "EEE, dd MMM yyyyy HH:mm:ss z";
+        "EEE, dd MMM yyyy HH:mm:ss z";
 
     // format for RFC 1036 date string -- "Sunday, 06-Nov-94 08:49:37 GMT"
     private final static String rfc1036Pattern =
@@ -102,7 +102,7 @@ public class DateTool {
 
     // format for C asctime() date string -- "Sun Nov  6 08:49:37 1994"
     private final static String asctimePattern =
-        "EEE MMM d HH:mm:ss yyyyy";
+        "EEE MMM d HH:mm:ss yyyy";
 
     /** Pattern used for old cookies
      */
@@ -131,4 +131,18 @@ public class DateTool {
 	asctimeFormat.setTimeZone(GMT_ZONE);
     }
     
+    private static String rfc1123DS;
+    private static long   rfc1123Sec;
+
+    /**
+     */
+    public static String format1123( Date d ) {
+        long dt = d.getTime() % 1000;
+        if ((rfc1123DS != null) && (dt == rfc1123Sec))
+                return rfc1123DS;
+
+        rfc1123DS  = rfc1123Format.format( d );
+        rfc1123Sec = dt;
+        return rfc1123DS;
+    }
 }
