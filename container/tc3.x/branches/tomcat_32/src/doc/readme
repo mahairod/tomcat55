@@ -283,3 +283,31 @@ This is a known limitation of the design of the web connectors for Tomcat 3.2,
 and will be addressed by the introduction of the MOD_WARP connector in
 Tomcat 4.0.
 
+6.9 Limitation on Form Based Login
+
+If the pages you specify for <form-login-page> or <form-error-page> are within
+the area protected by a security constraint, Tomcat 3.2 will be unable to
+display them.  As a side effect of this problem, you will not be able to use
+a URL pattern of "/*" to protect your entire web application when using form
+based login.
+
+A workaround is to set up your web application with the form login page and
+form error page in the document root directory, place all other pages in one
+or more subdirectories, and establish security constraints to protect the
+subdirectories.
+
+6.10 Limitation on Document Base Paths
+
+Tomcat 3.2 is unable to support Windows SMB paths in a <Context> directive
+like this:
+
+        <Context path="/ctx" docBase="\\machine\share\path" />
+
+although this approach was supported in Tomcat 3.1, and is supported in
+Tomcat 4.0.  A workaround is to establish a drive mapping to "\\machine\share"
+and define your context like this:
+
+        <Context path="/ctx" docBase="r:\path" />
+
+where "r:" is mapped to this share.
+
