@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,JspParams,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
 
 
   <target name="ROOT">
@@ -497,16 +497,30 @@
   </target>
 
 
-  <target name="JspParams">
+  <target name="Jsp">
+
+    <!-- ========== JSP Access To Bean Classes ============================ -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspBeans01.jsp" debug="${debug}"
+      outContent="JspBeans01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspBeans02.jsp" debug="${debug}"
+      outContent="JspBeans02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspBeans03.jsp" debug="${debug}"
+      outContent="JspBeans03 PASSED"/>
 
     <!-- ========== <jsp:params> not legal in <jsp:include/forward> ======= -->
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${context.path}/JspParams01" debug="${debug}"
+         request="${context.path}/JspParams01.jsp" debug="${debug}"
           status="500"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${context.path}/JspParams02" debug="${debug}"
+         request="${context.path}/JspParams02.jsp" debug="${debug}"
           status="500"/>
 
   </target>
