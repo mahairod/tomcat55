@@ -57,31 +57,29 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.tagext.TagInfo;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import org.xml.sax.Attributes;
-
-import org.apache.tools.ant.BuildEvent;
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.Options;
+import org.apache.jasper.servlet.JspServletWrapper;
+import org.apache.jasper.util.SystemLogHandler;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
-
-import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.JasperException;
-import org.apache.jasper.Options;
-import org.apache.jasper.util.SystemLogHandler;
-import org.apache.jasper.runtime.HttpJspBase;
-import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
  * Main JSP compiler class. This class uses Ant for compiling.
@@ -279,7 +277,7 @@ public class Compiler {
 	TagPluginManager tagPluginManager = options.getTagPluginManager();
 	tagPluginManager.apply(pageNodes, errDispatcher, pageInfo);
 
-	// Generate static funciton mapper codes.
+	// Generate static function mapper codes.
 	ELFunctionMapper.map(this, pageNodes);
 
 	// generate servlet .java file
@@ -391,7 +389,7 @@ public class Compiler {
                 }
             }
         } catch (BuildException e) {
-            log.error( "Javac execption ", e);
+            log.error( "Javac exception ", e);
             log.error( "Env: " + info.toString());
             success = false;
         }
