@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE WebServer
+    PUBLIC "-//Sun Microsystems, Inc.//DTD WebServer 1.0//EN"
+    "file:./etc/webserver.dtd">
+
+<!--
+
+This is the configuration file for the JSWDK server.
+Following is a brief overview of the JSWDK server
+configuration options. Please review the following
+file for complete configuration information:
+
+    etc/webserver.dtd
+
+-->
+
+<WebServer>
+    <Service id="service0">
+        <WebApplication path="/servlet-tests" docBase="servlet-tests.war"/>
+        <WebApplication path="/jsp-tests" docBase="jsp-tests.war"/>
+    </Service>
+</WebServer>

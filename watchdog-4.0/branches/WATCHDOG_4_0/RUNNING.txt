@@ -1,0 +1,151 @@
+$Id$
+
+
+                Running The Watchdog 4.0 Validation Test Suite
+                ==========================================
+
+This subproject contains a set of tests to assist you in validating whether
+your servlet container conforms to the requirements of the Servlet 2.3 and
+JSP 1.2 specifications.  In order to run these tests from a binary
+distribution, you must do the following:
+
+(0) Download and Install a Java Development Kit
+    
+* Download a Java Development Kit (JDK) release (version 1.3 or later) from:
+      
+    http://java.sun.com/j2se/
+
+* Install the JDK according to the instructions included with the release.
+            
+* Set an environment variable JAVA_HOME to the pathname of the directory
+  into which you installed the JDK release.
+
+
+(1) Download and Install the Ant Binary Distribution
+
+NOTE:  These instructions assume that you are using the Ant 1.4 or later.
+
+* Download a binary distribution of Ant 1.4 from:
+
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
+
+  On a Windows platform, you will need:
+    jakarta-ant-1.4-bin.zip
+    jakarta-ant-1.4-optional.jar
+
+  On a Unix platform, you will need:
+    jakarta-ant-1.4-bin.tar.gz
+    jakarta-ant-1.4-optional.jar
+
+* Unpack the binary distribution into a convenient location so that the
+  Ant release resides in its own directory (conventionally named
+  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
+  the symbolic name "${ant.home}" is used to refer to the full pathname of
+  the release directory.
+
+* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
+  the directory "${ant.home}/lib".  This makes available several Ant
+  extension commands that are commonly required when building Jakarta
+  based projects.
+
+* Modify the PATH environment variable to include directory
+  "${ant.home}/bin" in its list.  This makes the "ant" command line script
+  available, which will be used to actually perform the build.
+
+
+(2) Download and Install the Java XML Pack Binary Distribution
+
+NOTE:  Although this step is not required to build this particular subproject,
+it is commonly required to build other Jakarta projects.  Hence, the steps
+required are documented here.
+
+* Download a binary distribution of Java XML Pack:
+
+    http://java.sun.com/xml/downloads/javaxmlpack.html
+
+* Unpack the binary distribution into a convenient location so that the
+  Java XML Pack release resides in its own directory (the JAXP libraries
+  reside in the jaxp-1.1.3 subdirectory).  For the purposes of the
+  remainder of this document, the symbolic name "${jaxp.home}" is used
+  to refer to the full pathname to the jaxp-1.1.3 subdirectory of
+  the Java XML Pack release directory.
+
+* Make the "xalan.jar" file of this distribution available to Ant 
+  (so that it can be used with the <style> tag) by copying it to
+  "${ant.home}/lib".
+
+* This is optional with JDK 1.4 or later.
+
+
+(3) Download and Install the Watchdog Binary Distribution
+
+NOTE:  As an alternative to downloading a binary distribution, you can create
+your own from the Watchdog source repository, as described in "BUILDING.txt".
+If you do this, the value to use for "${watchdog.home}" will be the "dist"
+subdirectory of your source distribution.
+
+* Download a binary distribution of Watchdog from:
+
+    http://jakarta.apache.org/builds/jakarta-watchdog-4.0/nightly/
+
+  On a Windows platform, you will need:
+    jakarta-watchdog-4.0-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    jakarta-watchdog-4.0-YYYYMMDD.zip
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "jakarta-watchdog-4.0").  For the purposes of the remainder of this document,
+  the symbolic name "${watchdog.home}" is used to refer to the full
+  pathname of the release directory.
+
+
+(4) Install Watchdog Web Applications in your Servlet Container
+
+In the "${watchdog.home}/webapps" directory, you will find multiple web application
+archive (WAR) files, representing the test applications (for JavaServer Pages
+1.2 and Servlet 2.3).  Use the standard deployment tools provided by your
+container to deploy these two applications.
+
+Alternatively, if your server is compatible with Java2 Enterprise Edition
+(J2EE) requirements, you can deploy the supplied "jcheck.ear" application.
+
+
+(5) Execute the Desired Tests
+
+Open a shell window, and execute the commands:
+
+  cd ${watchdog.home}
+  ant -projecthelp
+
+Ant will enumerate for you the various subsets of the tests that you can run
+("all" is the default, which will run all of the tests in the suite.  For
+example, to execute only the servlet tests, you would execute:
+
+  cd ${watchdog.home}
+  ant servlet
+
+Individual tests from a particular target can be run as well.  To execute
+a specific servlet test you would execute:
+
+  cd ${watchdog.home}
+  ant -Dstest=<testName> servlet
+
+For a specific JSP test you would execute:
+
+  cd ${watchdog.home}
+  ant -Djtest=<testName> jsp
+
+    -or-
+ 
+  cd ${watchdog.home}
+  ant -Djtest=<testName> jsp-xml
+
+The test scripts assume that your servlet container is running on server
+"localhost" at port "8080".  You can override these assumptions by including
+Ant command line parameters, like this:
+
+  cd ${watchdog.home}
+  ant -Dhost=www.mycompany.com -Dport=7777 jsp-all
+

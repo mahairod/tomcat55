@@ -1,0 +1,19 @@
+# -----------------------------------------------------------------------------
+# build.properties.sample
+#
+# This is an example "build.properties" file, used to customize building Tomcat
+# for your local environment.  Make any changes you need, and rename this file
+# to "build.properties" in the same directory that contains the top level
+# "build.xml" file.
+#
+# $Id$
+# -----------------------------------------------------------------------------
+
+
+# The directory containing your binary distribution of the Servlet 2.3
+# and JSP 1.2 API classes
+servlet23api.home=/usr/local/jakarta-servletapi-4
+
+# The directory containing your binary distribution of the Servlet 2.2
+# and JSP 1.1 API classes
+servlet22api.home=/usr/local/jakarta-servletapi

@@ -1,0 +1,6 @@
+host=localhost
+port=8080
+jsp-wgdir=/lib/nightly/jakarta-watchdog-4.0/lib/jsp-golden
+servlet-wgdir=/lib/nightly/jakarta-watchdog-4.0/lib/servlet-golden
+client-IP=127.0.0.1
+client-host=eb.com

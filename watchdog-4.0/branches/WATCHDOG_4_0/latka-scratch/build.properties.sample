@@ -1,0 +1,5 @@
+lib=/lib/maven-repo
+jdom.jar=${lib}/jdom.jar
+latka.jar=/cvs/jakarta/jakarta-commons/latka/target/jakarta-commons-latka-1.0-dev.jar
+regexp.jar=${lib}/jakarta-regexp.jar
+jaxp.jar=/lib/jaxp-1.1/jaxp.jar

@@ -1,0 +1,1193 @@
+<!--START converted ant target: main-->
+<!--END converted ant target-->
+<!-- ====================== Watchdog Servlet Tests ====================== -->
+<!-- BEGIN javax_servlet_Filter -->
+<!--START converted ant target: gtestservlet-test-->
+<!-- END javax_servlet_Filter -->
+<!-- BEGIN javax_servlet_Servlet -->
+<!-- END javax_servlet_Servlet -->
+<!-- START javax_servlet_GenericServlet -->
+<!-- END javax_servlet_GenericServlet -->
+<!-- START javax_servlet_RequestDispatcher -->
+<!-- END javax_servlet_RequestDispatcher -->
+<!-- START javax_servlet_ServletConfig -->
+<!-- END javax_servlet_ServletConfig -->
+<!-- START javax_servlet_ServletContext -->
+<!-- END javax_servlet_ServletContext -->
+<!-- START javax_servlet_ServletException -->
+<!-- END javax_servlet_ServletException -->
+<!-- START javax_servlet_ServletInputStream -->
+<!-- END javax_servlet_ServletInputStream -->
+<!-- START javax_servlet_ServletOutputStream -->
+<!-- END javax_servlet_ServletOutputStream -->
+<!-- START javax_servlet_ServletRequest -->
+<!-- END javax_servlet_ServletRequest -->
+<!-- START javax_servlet_UnavailableException -->
+<!-- END javax_servlet_UnavailableException -->
+<!--START javax_servlet_ServletResponse -->
+<!-- END javax_servlet_ServletResponse -->
+<!-- START javax_servlet_FilterConfig -->
+<!-- END javax_servlet_FilterConfig -->
+<!-- START javax_servlet_FilterChain -->
+<!-- END javax_servlet_FilterChaing -->
+<!-- START javax_servlet_ServletContextAttributeListener -->
+<!-- END javax_servlet_ServletContextAttributeListener -->
+<!-- START javax_servlet_ServletContextListener -->
+<!-- END javax_servlet_ServletContextListener -->
+<!-- START javax_servlet_ServletContextAttributeEvent -->
+<!-- END javax_servlet_ServletContextAttributeEvent -->
+<!-- START javax_servlet_ServletContextEvent -->
+<!-- END javax_servlet_ServletContextEvent -->
+<!-- START javax_servlet_ServletRequestWrapper -->
+<!-- END javax_servlet_ServletRequestWrapper -->
+<!-- START javax_servlet_ServletResponseWrapper -->
+<!-- END javax_servlet_ServletResponseWrapper -->
+<!-- START javax_servlet_SingleThreadModel -->
+<!-- END javax_servlet_SingleThreadModel -->
+<!-- START javax_servlet_Error -->
+<!-- END javax_servlet_Error -->
+<!-- START javax_servlet_http_HttpServletRequest -->
+<!-- END javax_servlet_http_HttpServletRequest -->
+<!-- START javax_servlet_http_Cookie -->
+<!-- END javax_servlet_http_Cookie -->
+<!-- START javax_servlet_http_HttpServletResponse -->
+<!-- START EXCLUDE SendError_StringTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).
+     This is on the slate to be clarified for the next spec.
+
+
+        <watchdog request="GET /servlet-tests/SendError_StringTest HTTP/1.0"
+            testName="SendError_StringTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            returnCode="410" returnCodeMsg="in SendError_StringTest servlet"
+            assertion="Sends an error response to the client using the specified status code and descriptive message,specified in the Java Servlet Pages Specification v2.3, Sec 14"
+            testStrategy="A test for HttpServletResponse.sendError(int sc, java.lang.String msg) method."
+        />
+
+END EXCLUDE SendError_StringTest -->
+<!-- END javax_servlet_http_HttpServletResponse -->
+<!-- START javax_servlet_http_HttpSession -->
+<!-- END javax_servlet_http_HttpSession -->
+<!-- START javax_servlet_http_HttpServletRequestWrapper -->
+<!-- END javax_servlet_http_HttpServletRequestWrapper -->
+<!-- START javax_servlet_http_HttpSessionListener -->
+<!-- END javax_servlet_http_HttpSessionListener -->
+<!-- START javax_servlet_http_HttpSessionAttributeListener -->
+<!-- END javax_servlet_http_HttpSessionAttributeListener -->
+<!-- START javax_servlet_http_HttpSessionEvent -->
+<!-- END javax_servlet_http_HttpSessionEvent -->
+<!-- START javax_servlet_http_HttpSessionBindingEvent -->
+<!-- END javax_servlet_http_HttpSessionBindingEvent -->
+<!-- START javax_servlet_http_HttpSessionBindingListener -->
+<!-- END javax_servlet_http_HttpSessionBindingListener -->
+<!-- START javax_servlet_http_HttpServletResponseWrapper -->
+<!-- START EXCLUDE HttpServletResponseWrapperSendErrorMsgTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).  This is on the
+     slate to be clarified for the next spec.
+
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+            testName="HttpServletResponseWrapperSendErrorMsgTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            returnCode="200" returnCodeMsg="in HttpServletResponseWrapperSendErrorMsgTest servlet"
+            expectHeaders="GenericResponseWrapper:sendErrorMsg"
+            assertion="Test for default behavior of this method is to call sendError(int, String) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendError(int sc, String msg) method"
+            testStrategy="Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendError method."
+        />
+
+END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
+<!-- END javax_servlet_http_HttpServletResponseWrapper -->
+<!-- START javax_servlet_http_HttpServlet -->
+<!-- END javax_servlet_http_HttpServlet -->
+<!-- START compat -->
+<!-- END compat -->
+<!-- BEGIN webapps_dirstruct -->
+<!-- END webapps_dirstruct -->
+<!--END converted ant target-->
+<!-- Begin individual targets that can invoke specific tests -->
+<!--START converted ant target: WithLeadingSlashTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-compat/WithLeadingSlashTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: WithoutLeadingSlashTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-compat/WithoutLeadingSlashTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoFilterTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoFilterTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: InitFilterConfigTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/InitFilterConfigTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoDestroyedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoDestroyedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoInit1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoInit1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoInit2Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoInit2Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoServletConfigTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoServletConfigTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoServletInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoServletInfoTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: PUTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/PUTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DoServiceTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DoServiceTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: DestroyTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/DestroyTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletConfigTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletConfigTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletContextTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletContextTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletInfoTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ForwardTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ForwardTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Forward_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Forward_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IncludeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IncludeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Include_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Include_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletConfigInitParameterNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletConfigInitParameterNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletConfigInitParameterNames_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletConfigInitParameterNames_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletConfigInitParameterTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletConfigInitParameterTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletConfigInitParameter_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletConfigInitParameter_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletConfigGetServletContextTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletConfigGetServletContextTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletNameTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletNameTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMajorVersionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMajorVersionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMimeType_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMimeType_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRealPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRealPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetResourceAsStreamTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetResourceAsStreamTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetResourceAsStream_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetResourceAsStream_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetResourceTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetResourceTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetResource_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetResource_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServerInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServerInfoTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Log_StringTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Log_StringTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Log_StringThrowableTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Log_StringThrowableTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetAttribute_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetAttribute_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetContextTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetContextTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetInitParameterNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetInitParameterNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetInitParameterTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetInitParameterTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetInitParameter_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetInitParameter_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextRemoveAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextRemoveAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextSetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextSetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetAttributeNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetAttributeNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMinorVersionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMinorVersionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMimeTypeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMimeTypeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetRequestDispatcherTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetRequestDispatcherTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetNamedDispatcherTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetNamedDispatcherTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRootCauseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRootCauseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletExceptionConstructor1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletExceptionConstructor1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletExceptionConstructor2Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletExceptionConstructor2Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletExceptionConstructor3Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletExceptionConstructor3Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletExceptionConstructor4Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletExceptionConstructor4Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ReadLineTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ReadLineTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_StringTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_StringTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_booleanTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_booleanTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_charTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_charTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_doubleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_doubleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_floatTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_floatTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_intTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_intTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Print_longTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Print_longTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: PrintlnTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/PrintlnTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_StringTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_StringTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_booleanTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_booleanTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_charTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_charTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_doubleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_doubleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_floatTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_floatTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_intTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_intTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Println_longTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Println_longTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetContentLengthTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetContentLengthTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetContentTypeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetContentTypeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetInputStreamTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetInputStreamTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetInputStream_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetInputStream_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetLocaleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetLocaleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetLocalesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetLocalesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetParameterNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetParameterNamesTest?BestLanguage=Java&BestJSP=Java2 HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetParameterNames_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetParameterNames_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetParameterTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetParameterTest?BestLanguage=Java HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetParameterValuesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetParameterValuesTest?Containers=JSP&Containers=Servlet HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetParameterValues_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetParameterValues_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetParameter_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetParameter_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetProtocolTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetProtocolTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetReaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetReaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetReader_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetReader_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRemoteAddrTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRemoteAddrTest?Address=|client.ip| HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRemoteHostTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRemoteHostTest?Address=|client.host|&Address=|client.ip| HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetSchemeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetSchemeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServerNameTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServerNameTest?hostname=localhost HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServerPortTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServerPortTest?port=${port} HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestGetAttributeNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestGetAttributeNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestGetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestGetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestGetAttribute_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestGetAttribute_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestGetCharacterEncodingTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestGetCharacterEncodingTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestGetCharacterEncoding_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestGetCharacterEncoding_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestSetCharacterEncoding_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestSetCharacterEncoding_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestGetRequestDispatcherTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestGetRequestDispatcherTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestSetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestSetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetUnavailableSecondsTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetUnavailableSecondsTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsPermanentTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsPermanentTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: UnavailableException_Constructor1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/UnavailableException_Constructor1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: UnavailableException_Constructor2Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/UnavailableException_Constructor2Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: FlushBufferTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/FlushBufferTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetBufferSizeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetBufferSizeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetOutputStream_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetOutputStream_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetWriter_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetWriter_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsCommittedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsCommittedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ResetTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ResetTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Reset_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Reset_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseGetCharacterEncodingTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseGetCharacterEncodingTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetBufferSizeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetBufferSizeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetBufferSize_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetBufferSize_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetContentLengthTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetContentLengthTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetContentTypeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetContentTypeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetLocaleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetLocaleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetFilterNameTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetFilterNameTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetInitParamNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetInitParamNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetInitParamNamesNullTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetInitParamNamesNullTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetInitParamTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetInitParamTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetInitParamNullTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetInitParamNullTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletContextFilterTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletContextFilterTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: FilterChainTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/FilterChainTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeAddedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeAddedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeRemovedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeRemovedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeReplacedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeReplacedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ContextInitializedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ContextInitializedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeAddedEventTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeAddedEventTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeRemovedEventTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeRemovedEventTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeReplacedEventTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeReplacedEventTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextAttributeEventConstructorTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextAttributeEventConstructorTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetSourceTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetSourceTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletContextGetServletContextTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletContextGetServletContextTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetAttributeNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetAttributeNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetAttribute_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetAttribute_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetCharacterEncodingTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetCharacterEncodingTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetContentLengthTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetContentLengthTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetContentTypeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetContentTypeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetInputStreamTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetInputStreamTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetInputStream_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetInputStream_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetLocaleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetLocaleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetLocalesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetLocalesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameterMapTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameterMapTest?BestLanguage=Java&BestJSP=Java2 HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameterNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameterNamesTest?BestLanguage=Java&BestJSP=Java2 HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameterNames_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameterNames_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameterTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameterTest?BestLanguage=Java HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameterValuesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameterValuesTest?Containers=JSP&Containers=Servlet HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameterValues_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameterValues_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetParameter_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetParameter_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetProtocolTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetProtocolTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetReaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetReaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetReader_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetReader_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetRemoteAddrTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetRemoteAddrTest?Address=|client.ip| HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetRemoteHostTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetRemoteHostTest?Address=|client.host|&Address=|client.ip| HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetRequestDispatcherTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetRequestDispatcherTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetSchemeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetSchemeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetServerNameTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetServerNameTest?hostname=localhost HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperGetServerPortTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperGetServerPortTest?port=${port} HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperIsSecureTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperIsSecureTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperRemoveAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperRemoveAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletRequestWrapperSetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletRequestWrapperSetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperFlushBufferTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperFlushBufferTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperGetBufferSizeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperGetBufferSizeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperGetCharacterEncodingTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperGetCharacterEncodingTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperGetOutputStream_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperGetOutputStream_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperGetWriter_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperGetWriter_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperIsCommittedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperIsCommittedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperResetBufferTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperResetBufferTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperResetTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperResetTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperReset_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperReset_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperSetBufferSizeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperSetBufferSizeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperSetBufferSize_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperSetBufferSize_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperSetContentLengthTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperSetContentLengthTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperSetContentTypeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperSetContentTypeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperSetLocaleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperSetLocaleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletResponseWrapperGetLocaleTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletResponseWrapperGetLocaleTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletToServletErrorPageTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletToServletErrorPageTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletToServletError501PageTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletToServletError501PageTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletToJSPErrorPageTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletToJSPErrorPageTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletToJSPError502PageTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletToJSPError502PageTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ServletToHTMLErrorPageTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ServletToHTMLErrorPageTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetAuthTypeWithoutProtectionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetAuthTypeWithoutProtectionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetContextPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetContextPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetCookiesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetCookiesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetCookies_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetCookies_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeaderLCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeaderLCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeaderMxCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeaderMxCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeader_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeader_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeader_02Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeader_02Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeader_02LCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeader_02LCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDateHeader_02MxCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDateHeader_02MxCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeaderNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeaderNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeader_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeader_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeadersTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeadersTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeadersEmptyTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeadersEmptyTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeaders_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeaders_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetIntHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetIntHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetIntHeaderLCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetIntHeaderLCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetIntHeaderMxCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetIntHeaderMxCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetIntHeader_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetIntHeader_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetIntHeader_2Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetIntHeader_2Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMethodTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMethodTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMethod_HEADTest-->
+<!--SKIPPED redundant gtest, path = HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMethod_POSTTest-->
+<!--SKIPPED redundant gtest, path = POST /servlet-tests/GetMethod_POSTTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetPathInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetPathInfoTest/pathinfostring1/pathinfostring2 HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetPathInfo_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetPathInfo_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetPathTranslatedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetPathTranslatedTest/javax_servlet HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetPathTranslatedNullTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetPathTranslatedNullTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetPathTranslated_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetPathTranslated_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetQueryStringTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetQueryStringTest?language=Java HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetQueryString_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetQueryString_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRemoteUser_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRemoteUser_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRequestURITest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRequestURITest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRequestURIWithQSTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRequestURIWithQSTest?language=java HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetRequestedSessionId_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetRequestedSessionId_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetServletPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetServletPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsRequestedSessionIdFromCookie_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsRequestedSessionIdFromCookie_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsRequestedSessionIdFromURL_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsRequestedSessionIdFromURL_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsRequestedSessionIdValid_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsRequestedSessionIdValid_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeaderLCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeaderLCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetHeaderMxCaseTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetHeaderMxCaseTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetSession_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetSession_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: CookieCloneTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/CookieCloneTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Cookie_ConstructorTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Cookie_ConstructorTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: Cookie_Constructor_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/Cookie_Constructor_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetCommentTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetCommentTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetComment_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetComment_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetDomainTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetDomainTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMaxAgeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMaxAgeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMaxAge_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMaxAge_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetNameTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetNameTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetSecureTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetSecureTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetValueTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetValueTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetVersionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetVersionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetCommentTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetCommentTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetDomainTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetDomainTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetMaxAgeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetMaxAgeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetSecureTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetSecureTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetValueTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetValueTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetVersionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetVersionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: AddCookieTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/AddCookieTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: AddDateHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/AddDateHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: AddHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/AddHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: AddIntHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/AddIntHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ContainsHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ContainsHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ContainsHeader_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ContainsHeader_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SendErrorTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendErrorTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SendErrorIgnoreHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendErrorIgnoreHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!-- START EXCLUDE SendError_StringTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).
+     This is on the slate to be clarified for the next spec.
+
+    <target name="SendError_StringTest">
+        <watchdog request="GET /servlet-tests/SendError_StringTest HTTP/1.0"
+            testName="SendError_StringTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            returnCode="410" returnCodeMsg="in SendError_StringTest servlet"
+            assertion="Sends an error response to the client using the specified  status code and descriptive message,specified in the Java  Servlet Pages Specification v2.3, Sec 14"
+            testStrategy="A test for HttpServletResponse.sendError(int sc,  java.lang.String msg) method."
+        />
+    </target>
+
+END EXCLUDE SendError_StringTest -->
+<!--START converted ant target: SendError_StringIgnoreHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendError_StringIgnoreHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SendRedirectTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendRedirectTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SendRedirectIgnoreHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendRedirectIgnoreHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SendRedirectForWebAppTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendRedirectForWebAppTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SendRedirect_1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SendRedirect_1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetDateHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetDateHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetIntHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetIntHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetStatusTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetStatusTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetCreationTimeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetCreationTimeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetIdTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetIdTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetLastAccessedTimeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetLastAccessedTimeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: GetMaxInactiveIntervalTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/GetMaxInactiveIntervalTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetMaxInactiveIntervalTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetMaxInactiveIntervalTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionGetAttributeNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionGetAttributeNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionGetAttributeNamesEmptyTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionGetAttributeNamesEmptyTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionGetAttributeNames_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionGetAttributeNames_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionGetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionGetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionGetAttribute_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionGetAttribute_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: InvalidateTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/InvalidateTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsNewTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsNewTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: IsNew_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/IsNew_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: RemoveAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/RemoveAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: RemoveAttribute_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/RemoveAttribute_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetAttributeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetAttributeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SetAttribute_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/SetAttribute_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionGetServletContextTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionGetServletContextTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperConstructorTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperConstructorTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetContextPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetContextPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetCookiesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetCookiesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetDateHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetDateHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetHeaderNamesTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetHeaderNamesTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetHeadersTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetHeadersTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetIntHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetIntHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetMethodTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetMethodTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetPathInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetPathInfoTest/pathinfostring1/pathinfostring2 HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetPathTranslatedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetPathTranslatedTest/javax_servlet HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetQueryStringTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetQueryStringTest?language=Java HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetRequestURITest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestURITest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetServletPathTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetServletPathTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetAuthTypeTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetAuthTypeTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetRemoteUserTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRemoteUserTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetRequestedSessionIdTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestedSessionIdTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetRequestURLTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestURLTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetSessionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetSessionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperGetSessionBooleanTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetSessionBooleanTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperIsRequestedSessionIdFromCookie_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperIsRequestedSessionIdFromCookie_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperIsRequestedSessionIdFromURL_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperIsRequestedSessionIdFromURL_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletRequestWrapperIsRequestedSessionIdValid_01Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsreqw/HttpServletRequestWrapperIsRequestedSessionIdValid_01Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionCreatedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionCreatedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionDestroyedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionDestroyedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionAttributeAddedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionAttributeAddedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionAttributeRemovedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionAttributeRemovedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionAttributeReplacedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionAttributeReplacedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionEventGetSessionTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionEventGetSessionTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionEventGetSourceTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionEventGetSourceTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionBindingEventAddedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionBindingEventAddedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionBindingEventRemovedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionBindingEventRemovedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionBindingEventReplacedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionBindingEventReplacedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionBindingEventConstructor1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionBindingEventConstructor1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionBindingEventConstructor2Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionBindingEventConstructor2Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionValueUnBoundTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionValueUnBoundTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpSessionValueBoundTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpSessionValueBoundTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperConstructorTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperConstructorTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperAddCookieTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperAddCookieTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperAddDateHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperAddHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperAddHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperAddIntHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperContainsHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperEncodeURLTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperEncodeURLTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperEncodeRedirectURLTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSendErrorTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorTest HTTP/1.0-->
+<!--END converted ant target-->
+<!-- START EXCLUDE HttpServletResponseWrapperSendErrorMsgTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).
+     This is on the slate to be clarified for the next spec.
+                    
+    <target name="HttpServletResponseWrapperSendErrorMsgTest">
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+            testName="HttpServletResponseWrapperSendErrorMsgTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            returnCode="200" returnCodeMsg="in HttpServletResponseWrapperSendErrorMsgTest servlet"
+            expectHeaders="GenericResponseWrapper:sendErrorMsg"
+            assertion="Test for default behavior of this method is to call  sendError(int, String) on the wrapped response object,  specified in the Java Servlet Pages Specification v2.3, Sec  14 - javax.servlet.HttpServletResponseWrapper. sendError(int sc, String msg) method"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the  response object and calls the responses sendError method."
+        />
+    </target>
+
+END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
+<!--START converted ant target: HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSendErrorIgnoreHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSendRedirectTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSendRedirectTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSendRedirectIgnoreHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSendRedirectForWebAppTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSetDateHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSetHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSetHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSetIntHeaderTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSetStatusMsgTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletResponseWrapperSetStatusTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/hsresw/HttpServletResponseWrapperSetStatusTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDoDestroyedTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDoDestroyedTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDoInit1Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDoInit1Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDoInit2Test-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDoInit2Test HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDoServletConfigTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDoServletConfigTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDoServletInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDoServletInfoTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDoServiceTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDoServiceTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletPUTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletPUTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletDestroyTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletDestroyTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletGetServletConfigTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletGetServletConfigTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletGetServletContextTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletGetServletContextTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: HttpServletGetServletInfoTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/HttpServletGetServletInfoTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: ClassFileTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/ClassFileTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: JarFileTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/JarFileTest HTTP/1.0-->
+<!--END converted ant target-->
+<!--START converted ant target: SingleModelTest-->
+<!--SKIPPED redundant gtest, path = GET /servlet-tests/STMClient?count=10&path=SingleModelTest HTTP/1.0-->
+<!--END converted ant target-->

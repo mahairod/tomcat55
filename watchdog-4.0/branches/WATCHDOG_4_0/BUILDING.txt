@@ -1,0 +1,188 @@
+$Id$
+
+
+                Building The Watchdog 4.0 Validation Test Suite
+                ===========================================
+
+This subproject contains a set of tests to assist you in validating whether
+your servlet container conforms to the requirements of the Servlet 2.3 and
+JSP 1.2 specifications.  In order to build these tests from a source
+distribution, you must do the following:
+
+(0) Download and Install a Java Development Kit
+
+* Download a Java Development Kit (JDK) release (version 1.3 or later) from:
+
+    http://java.sun.com/j2se/
+
+* Install the JDK according to the instructions included with the release.
+
+* Set an environment variable JAVA_HOME to the pathname of the directory
+  into which you installed the JDK release.
+
+
+(1) Download and Install the Ant Binary Distribution
+
+NOTE:  These instructions assume that you are using the Ant 1.4 or above. 
+
+* Download a binary distribution of Ant 1.4 from:
+
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
+
+  On a Windows platform, you will need:
+    jakarta-ant-1.4-bin.zip
+    jakarta-ant-1.4-optional.jar
+
+  On a Unix platform, you will need:
+    jakarta-ant-1.4-bin.tar.gz
+    jakarta-ant-1.4-optional.jar
+
+* Unpack the binary distribution into a convenient location so that the
+  Ant release resides in its own directory (conventionally named
+  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
+  the symbolic name "${ant.home}" is used to refer to the full pathname of
+  the release directory.
+
+* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
+  the directory "${ant.home}/lib".  This makes available several Ant
+  extension commands that are commonly required when building Jakarta
+  based projects.
+
+* Modify the PATH environment variable to include directory
+  "${ant.home}/bin" in its list.  This makes the "ant" command line script
+  available, which will be used to actually perform the build.
+
+
+(2) Download and Install the Java XML Pack Binary Distribution
+
+NOTE:  Although this step is not required to build this particular subproject,
+it is commonly required to build other Jakarta projects.  Hence, the steps
+required are documented here.
+
+* Download a binary distribution of Java XML Pack:
+
+    http://java.sun.com/xml/downloads/javaxmlpack.html
+
+* Unpack the binary distribution into a convenient location so that the
+  Java XML Pack release resides in its own directory (the JAXP libraries
+  reside in the jaxp-1.1.3 subdirectory).  For the purposes of the
+  remainder of this document, the symbolic name "${jaxp.home}" is used
+  to refer to the full pathname to the jaxp-1.1.3 subdirectory of
+  the Java XML Pack release directory.
+
+* Make the "xalan.jar" file of this distribution available to Ant
+  (so that it can be used with the <style> tag) by copying it to
+  "${ant.home}/lib".
+
+* This is optional with JDK 1.4 or later.
+
+
+(3) Download and Install Subproject Source Code
+
+* Use Anonymous CVS (as described on the Jakarta web site at
+  <http://jakarta.apache.org/site/cvsindex.html>, or
+  download a source distribution from:
+
+    http://jakarta.apache.org/builds/jakarta-watchdog-4.0/nightly/src/
+
+  On a Windows platform, you will need:
+    jakarta-watchdog-4.0-src-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    jakarta-watchdog-4.0-src-YYYYMMDD.zip
+
+* Unpack the source distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "jakarta-watchdog-4.0").  For the purposes of the remainder of this document,
+  the symbolic name "${watchdog.source}" is used to refer to the full
+  pathname of the release directory.
+
+
+(4) Download and Install the Servlet API Binary Distribution
+
+NOTE:  Alternatively, you can download the sources of the
+"jakarta-servletapi-4" and "jakarta-servletapi" subprojects, 
+and build a binary distribution yourself.
+
+* Download a binary distribution of the jakarta-servletapi-4
+  (this includes the classes for Servlet 2.3 and JSP 1.2) from:
+
+    http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly/
+
+  On a Windows platform, you will need:
+    jakarta-servletapi-4-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    jakarta-servletapi-4-YYYYMMDD.zip
+
+* Download a binary distribution of the jakarta-servletapi 
+  (this includes the classes for Servlet 2.2 and JSP 1.1) from:
+
+    http://jakarta.apache.org/builds/jakarta-tomcat/release/v3.3/bin/
+
+  On a Windows platform, you will need:
+    jakarta-servletapi.zip
+
+  On a Unix platform, you will need:
+    jakarta-servletapi.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "jakarta-servletapi-4" for Servlet2.3 and JSP1.2 and "jakarta-servletapi"
+  for Servlet 2.2 and JSP 1.1).  For the purposes of the remainder of this document,
+  the symbolic name "${servlet23api.home}" is used to refer to the full
+  pathname of the jakarta-servletapi-4 release directory and the symbolic
+  name, "${servlet22api.home} is used to refer to the full pathname of the
+  jakarta-servletapi release directory.
+
+* Make a note of the full pathname to the "servlet.jar" file included (in
+  the "lib" subdirectory of each of the distributions).  
+  You will need it in the next step.
+
+
+(5) Customize Build Properties For This Subproject
+
+Most Jakarta subprojects allow you to customize Ant properties (with default
+values defined in the "build.xml" file.  This is done by creating a text file
+named "build.properties" in the source distribution directory (for property
+definitions local to this subproject) and/or your user home directory (for
+property definitions shared across subprojects).  You can use the included
+"build.properties.sample" file as a starting point for this.
+
+Watchdog has an external dependency on a compiled version of the Servlet and
+JSP API classes, conventionally distributed in a file named "servlet.jar".
+You can utilize such a JAR file from the "jakarta-servletapi-4"
+subproject (as described in the previous step), or use the "servlet.jar" file
+delivered with your servlet container.
+
+Create (or update) a "build.properties" file in your "${watchdog.source}"
+directory, or in your user home directory, and set the values of 
+servlet23api.home and servlet22api.home to the fully qualified pathnames
+of the respective distributions.  For example:
+
+  servlet23api.home=/usr/local/jakarta-servletapi-4
+  servlet22api.home=/usr/local/jakarta-servletapi
+
+
+(6) Build A Binary Distribution
+
+Open a command line shell, and issue the following commands:
+
+  cd ${watchdog.source}
+  ant -projecthelp
+
+If everything is installed correctly, you should see a list of the Ant
+"targets" that represent different commands you might wish to build.  By
+convention, the "dist" target creates a complete binary distribution.  To
+execute it, type the following commands:
+
+  cd ${watchdog.source}
+  ant dist
+
+This will create a complete binary distribution of the subproject (equivalent
+in structure to the corresponding binary distribution downloadable from the
+Jakarta web site), in the "${watchdog.source}/dist" directory.  It will have
+the contents described in the corresponding "README.txt" file.
+
+See the document RUNNING.txt for instructions on how to run the test suite
+against your servlet container.

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "dtds/watchdog.dtd">
+<suite defaultHost="${host}" defaultPort="${port}">
+
+  &jsp-tests.testAll;
+  &servlet-tests.testAll;
+
+</suite>
+
+

@@ -1,0 +1,6 @@
+<!ENTITY % jsp-tests.ent SYSTEM "jsp-tests.ent">
+<!ENTITY % servlet-tests.ent SYSTEM "servlet-tests.ent">
+<!ENTITY % latka.ent SYSTEM "latka/suite.ent">
+%jsp-tests.ent;
+%servlet-tests.ent;
+%latka.ent;
