@@ -93,6 +93,7 @@ import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLStreamHandlerFactory;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -180,6 +181,12 @@ public class WebappLoader
     private int debug = 0;
 
 
+    /**
+     * The DefaultContext with which this Loader is associated.
+     */
+    protected DefaultContext defaultContext = null;
+    
+    
     /**
      * The "follow standard delegation model" flag that will be used to
      * configure our ClassLoader.
@@ -334,6 +341,30 @@ public class WebappLoader
             setReloadable( ((Context) this.container).getReloadable() );
             ((Context) this.container).addPropertyChangeListener(this);
         }
+
+    }
+
+
+    /**
+     * Return the DefaultContext with which this Loader is associated.
+     */
+    public DefaultContext getDefaultContext() {
+
+        return (this.defaultContext);
+
+    }
+
+
+    /**
+     * Set the DefaultContext with which this Loader is associated.
+     *
+     * @param defaultContext The newly associated DefaultContext
+     */
+    public void setDefaultContext(DefaultContext defaultContext) {
+
+        DefaultContext oldDefaultContext = this.defaultContext;
+        this.defaultContext = defaultContext;
+        support.firePropertyChange("defaultContext", oldDefaultContext, this.defaultContext);
 
     }
 
@@ -1349,5 +1380,3 @@ public class WebappLoader
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( WebappLoader.class );
 }
-
-

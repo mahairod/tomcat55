@@ -632,6 +632,18 @@ public class StandardDefaultContext
 
 
     /**
+     * Add a property change listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+
+        support.addPropertyChangeListener(listener);
+
+    }
+    
+    
+    /**
      * Add a resource reference for this web application.
      *
      * @param resource New resource reference
@@ -1080,6 +1092,18 @@ public class StandardDefaultContext
     }
 
 
+    /**
+     * Remove a property change listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+        support.removePropertyChangeListener(listener);
+
+    }
+    
+    
     /**
      * Remove any resource reference with the specified name.
      *
