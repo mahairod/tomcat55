@@ -580,6 +580,20 @@ class StandardSession
      */
     public void expire() {
 
+        expire(true);
+
+    }
+
+
+    /**
+     * Perform the internal processing required to invalidate this session,
+     * without triggering an exception if the session has already expired.
+     *
+     * @param notify Should we notify listeners about the demise of
+     *  this session?
+     */
+    public void expire(boolean notify) {
+
         // Mark this session as "being expired" if needed
         if (expiring)
             return;
@@ -593,16 +607,18 @@ class StandardSession
         // Unbind any objects associated with this session
         String keys[] = keys();
         for (int i = 0; i < keys.length; i++)
-            removeAttribute(keys[i]);
+            removeAttribute(keys[i], notify);
 
         // Notify interested session event listeners
-        fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
+        if (notify) {
+            fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
+        }
 
         // Notify interested application event listeners
         // FIXME - Assumes we call listeners in reverse order
         StandardContext context = (StandardContext) manager.getContainer();
         Object listeners[] = context.getApplicationListeners();
-        if (listeners != null) {
+        if (notify && (listeners != null)) {
             HttpSessionEvent event =
               new HttpSessionEvent(getSession());
             for (int i = 0; i < listeners.length; i++) {
@@ -1047,6 +1063,29 @@ class StandardSession
      */
     public void removeAttribute(String name) {
 
+        removeAttribute(name, true);
+
+    }
+
+
+    /**
+     * Remove the object bound with the specified name from this session.  If
+     * the session does not have an object bound with this name, this method
+     * does nothing.
+     * <p>
+     * After this method executes, and if the object implements
+     * <code>HttpSessionBindingListener</code>, the container calls
+     * <code>valueUnbound()</code> on the object.
+     *
+     * @param name Name of the object to remove from this session.
+     * @param notify Should we notify interested listeners that this
+     *  attribute is being removed?
+     *
+     * @exception IllegalStateException if this method is called on an
+     *  invalidated session
+     */
+    public void removeAttribute(String name, boolean notify) {
+
         // Validate our current state
         if (!expiring && !isValid)
             throw new IllegalStateException
@@ -1063,6 +1102,11 @@ class StandardSession
             } else {
                 return;
             }
+        }
+
+        // Do we need to do valueUnbound() and attributeRemoved() notification?
+        if (!notify) {
+            return;
         }
 
         // Call the valueUnbound() method if necessary
@@ -1253,7 +1297,8 @@ class StandardSession
         isValid = ((Boolean) stream.readObject()).booleanValue();
         thisAccessedTime = ((Long) stream.readObject()).longValue();
         principal = null;        // Transient only
-        setId((String) stream.readObject());
+        //        setId((String) stream.readObject());
+        id = (String) stream.readObject();
         if (debug >= 2)
             log("readObject() loading session " + id);
 

@@ -172,6 +172,10 @@ public class Session04 extends HttpServlet {
                 results.append(" New session has attribute already/");
         }
 
+        // Store an activation event listener in the session
+        newSession.setAttribute("activationListener",
+                                    new SessionListener03());
+
         // Report success if everything is still ok
         if (results.length() == 0)
             writer.println("Session04 PASSED");

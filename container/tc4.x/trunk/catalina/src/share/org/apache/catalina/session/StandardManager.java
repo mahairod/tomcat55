@@ -544,7 +544,7 @@ public class StandardManager
         while (expires.hasNext()) {
             StandardSession session = (StandardSession) expires.next();
             try {
-                session.expire();
+                session.expire(false);
             } catch (Throwable t) {
                 ;
             }

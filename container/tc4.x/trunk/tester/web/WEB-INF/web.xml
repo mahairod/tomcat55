@@ -436,7 +436,6 @@
 
     <!-- ========== Listener Definitions ================================== -->
 
-
     <listener>
         <listener-class>org.apache.tester.ContextListener01</listener-class>
     </listener>

@@ -78,16 +78,25 @@ public class SessionListener01
     public void attributeAdded(HttpSessionBindingEvent event) {
         StaticLogger.write("SessionListener01: attributeAdded(" +
                            event.getName() + "," + event.getValue() + ")");
+        event.getSession().getServletContext().log
+            ("SessionListener01: attributeAdded(" + event.getSession().getId()
+             + "," + event.getName() + ")");
     }
 
     public void attributeRemoved(HttpSessionBindingEvent event) {
         StaticLogger.write("SessionListener01: attributeRemoved(" +
                            event.getName() + "," + event.getValue() + ")");
+        event.getSession().getServletContext().log
+            ("SessionListener01: attributeRemoved(" +
+             event.getSession().getId() + "," + event.getName() + ")");
     }
 
     public void attributeReplaced(HttpSessionBindingEvent event) {
         StaticLogger.write("SessionListener01: attributeReplaced(" +
                            event.getName() + "," + event.getValue() + ")");
+        event.getSession().getServletContext().log
+            ("SessionListener01: attributeReplaced(" +
+             event.getSession().getId() + "," + event.getName() + ")");
     }
 
     public void sessionCreated(HttpSessionEvent event) {
