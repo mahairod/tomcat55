@@ -176,10 +176,13 @@ public class PageContextImpl extends PageContext {
 	try {
 	    if (isIncluded) {
 		((JspWriterImpl)out).flushBuffer();
-			// push it into the including jspWriter
+                // push it into the including jspWriter
 	    } else {
-	        out.flush();
-	    }
+                // Do not flush the buffer even if we're not included (i.e.
+                // we are the main page. The servlet will flush it and close
+                // the stream.
+                ((JspWriterImpl)out).flushBuffer();
+            }
 	} catch (IOException ex) {
 	    loghelper.log("Internal error flushing the buffer in release()");
 	}
@@ -470,15 +473,48 @@ public class PageContextImpl extends PageContext {
     public void handlePageException(Throwable t)
         throws IOException, ServletException 
     {
+	if (t == null) throw new NullPointerException("null Throwable");
         // set the request attribute with the Throwable.
+
 	request.setAttribute("javax.servlet.jsp.jspException", t);
 
 	if (errorPageURL != null && !errorPageURL.equals("")) {
+
+	    // Set request attributes.
+	    // Do not set the javax.servlet.error.exception attribute here
+	    // (instead, set in the generated servlet code for the error page)
+	    // in order to prevent the ErrorReportValve, which is invoked as
+	    // part of forwarding the request to the error page, from
+	    // throwing it if the response has not been committed (the response
+	    // will have been committed if the error page is a JSP page).
+	    request.setAttribute("javax.servlet.error.status_code",
+	        new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
+	    request.setAttribute("javax.servlet.error.request_uri",
+		((HttpServletRequest) request).getRequestURI());
+	    request.setAttribute("javax.servlet.error.servlet_name",
+				 config.getServletName());
+
             try {
                 forward(errorPageURL);
             } catch (IllegalStateException ise) {
                 include(errorPageURL);
             }
+
+            // The error page could be inside an include.
+
+            Object newException=request.getAttribute("javax.servlet.error.exception");
+
+            // t==null means the attribute was not set.
+            if ( (newException!= null) && (newException==t) ) {
+                request.removeAttribute("javax.servlet.error.exception");
+            }
+
+            // now clear the error code - to prevent double handling.
+            request.removeAttribute("javax.servlet.error.status_code");
+            request.removeAttribute("javax.servlet.error.request_uri");
+            request.removeAttribute("javax.servlet.error.status_code");
+            request.removeAttribute("javax.servlet.jsp.jspException");
+
 	} else {
             // Otherwise throw the exception wrapped inside a ServletException.
 	    // Set the exception as the root cause in the ServletException
