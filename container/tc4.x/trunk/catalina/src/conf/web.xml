@@ -48,7 +48,7 @@
     <init-param>
       <!-- Levels: FATAL ERROR WARNING INFORMATION DEBUG -->
       <param-name>logVerbosityLevel</param-name>
-      <param-value>DEBUG</param-value>
+      <param-value>WARNING</param-value>
     </init-param>
     <init-param>
       <param-name>sax2DriverClassName</param-name>
