@@ -90,6 +90,8 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.HttpRequestBase;
+import org.apache.catalina.connector.HttpResponseBase;
 import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
@@ -914,6 +916,16 @@ public final class StandardWrapper
             instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
                                               servlet);
             servlet.init(facade);
+            servlet.init(facade);
+            // Invoke jspInit on JSP pages
+            if ((loadOnStartup > 0) && (jspFile != null)) {
+                // Invoking jspInit
+                HttpRequestBase req = new HttpRequestBase();
+                HttpResponseBase res = new HttpResponseBase();
+                req.setServletPath(jspFile);
+                req.setQueryString("jsp_precompile=true");
+                servlet.service(req, res);
+            }
             instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
                                               servlet);
         } catch (UnavailableException f) {
