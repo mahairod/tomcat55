@@ -99,6 +99,7 @@ import org.apache.naming.TransactionRef;
 import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.WARDirContext;
 import org.apache.naming.resources.BaseDirContext;
+import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
@@ -3000,6 +3001,7 @@ public class StandardContext
         }
 
         // Load the collected "load on startup" servlets
+        DirContextURLStreamHandler.bind(getResources());
         if (debug >= 1)
             log("Loading " + map.size() + " load-on-startup servlets");
         Iterator keys = map.keySet().iterator();
@@ -3017,6 +3019,7 @@ public class StandardContext
                 }
             }
         }
+        DirContextURLStreamHandler.unbind();
 
         if (debug >= 1)
             log("Starting completed");
