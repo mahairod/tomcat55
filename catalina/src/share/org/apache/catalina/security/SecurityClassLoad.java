@@ -247,7 +247,7 @@ public final class SecurityClassLoad {
         String basePackage = "org.apache.tomcat.util.";
         loader.loadClass
             (basePackage +
-             "buff.C2BConverter");
+             "buf.C2BConverter");
     }
 
 }
