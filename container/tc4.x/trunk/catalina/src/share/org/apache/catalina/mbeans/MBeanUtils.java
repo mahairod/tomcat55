@@ -102,6 +102,7 @@ import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.valves.ValveBase;
@@ -317,6 +318,34 @@ public class MBeanUtils {
         return (mbean);
 
     }
+
+
+    /**
+     * Create, register, and return an MBean for this
+     * <code>ContextResourceLink</code> object.
+     *
+     * @param resourceLink The ContextResourceLink to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(ContextResourceLink resourceLink)
+        throws Exception {
+
+        String mname = createManagedName(resourceLink);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            Exception e = new Exception("ManagedBean is not found with "+mname);
+            throw new MBeanException(e);
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(resourceLink);
+        ObjectName oname = createObjectName(domain, resourceLink);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }    
     
     
     /**
@@ -901,7 +930,7 @@ public class MBeanUtils {
     
     /**
      * Create an <code>ObjectName</code> for this
-     * <code>Service</code> object.
+     * <code>ContextResource</code> object.
      *
      * @param domain Domain in which this name is to be created
      * @param resource The ContextResource to be named
@@ -920,6 +949,29 @@ public class MBeanUtils {
         return (name);
 
     }
+  
+    
+     /**
+     * Create an <code>ObjectName</code> for this
+     * <code>ContextResourceLink</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param resourceLink The ContextResourceLink to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              ContextResourceLink resourceLink)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        String encodedResourceLinkName = encodeStr(resourceLink.getName());
+        name = new ObjectName(domain + ":type=ResourceLink,class=" +
+                              resourceLink.getType()+",name=" + 
+                              encodedResourceLinkName);
+        return (name);
+
+    }   
     
     
     /**
@@ -1535,6 +1587,31 @@ public class MBeanUtils {
         mserver.unregisterMBean(oname);
 
     }
+     
+    
+    /**
+     * Deregister the MBean for this
+     * <code>ContextResourceLink</code> object.
+     *
+     * @param resourceLink The ContextResourceLink to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(ContextResourceLink resourceLink)
+        throws Exception {
+
+        String mname = createManagedName(resourceLink);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, resourceLink);
+        mserver.unregisterMBean(oname);
+
+    }   
     
     
     /**

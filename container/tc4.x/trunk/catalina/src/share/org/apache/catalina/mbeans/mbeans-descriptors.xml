@@ -193,6 +193,28 @@
   </mbean>
 
 
+   <mbean         name="ContextResourceLink"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Representation of a resource link for a web application"
+               domain="Catalina"
+                group="Resources"
+                 type="org.apache.catalina.deploy.ContextResourceLink">
+
+    <attribute   name="global"
+          description="The global name of this resource"
+                 type="java.lang.String"/>
+
+    <attribute   name="name"
+          description="The name of this resource"
+                 type="java.lang.String"/>
+
+    <attribute   name="type"
+          description="The type of this resource"
+                 type="java.lang.String"/>
+
+  </mbean>
+
+
   <mbean         name="CoyoteConnector"
             className="org.apache.catalina.mbeans.ConnectorMBean"
           description="Implementation of a Coyote connector"
@@ -1841,6 +1863,12 @@
           description="The document root for this web application"
                  type="java.lang.String"/>
 
+    <attribute   name="environments"
+          description="MBean Names of the set of defined environment entries 
+	  for this web application"
+                 type="java.lang.String[]"
+            writeable="false"/>
+
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
@@ -1858,6 +1886,12 @@
           description="The reloadable flag for this web application"
                  type="boolean"/>
 
+    <attribute   name="resources"
+          description="MBean Names of all the defined resource references 
+	  for this application."
+                 type="java.lang.String[]"
+            writeable="false"/>
+
     <attribute   name="useNaming"
           description="Create a JNDI naming context for this application?"
                    is="true"
@@ -1866,6 +1900,42 @@
     <attribute   name="workDir"
           description="The pathname to the work directory for this context"
                  type="java.lang.String"/>
+
+    <operation   name="addEnvironment"
+          description="Add an environment entry for this web application"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="envName"
+          description="New environment entry name"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="addResource"
+          description="Add a resource reference for this web application"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="resourceName"
+          description="New resource reference name"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeEnvironment"
+          description="Remove any environment entry with the specified name"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="envName"
+          description="Name of the environment entry to remove"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeResource"
+          description="Remove any resource reference with the specified name"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="resourceName"
+          description="Name of the resource reference to remove"
+                 type="java.lang.String"/>
+    </operation>
 
   </mbean>
 
