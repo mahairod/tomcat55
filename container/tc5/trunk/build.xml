@@ -12,7 +12,7 @@
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
-  <property name="year"                  value="2002" />
+  <property name="year"                  value="2003" />
   <property name="version"               value="5.0" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
