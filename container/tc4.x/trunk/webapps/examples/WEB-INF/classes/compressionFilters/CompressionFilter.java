@@ -116,9 +116,6 @@ public class CompressionFilter implements Filter{
 	      debug = Integer.parseInt(value);
       }
       else debug = 0;
-      if (debug > 0) {
-        System.out.println("@init compressionThreshold set to "+compressionThreshold);
-      }
     } else {
       compressionThreshold = 0;
     }
