@@ -206,7 +206,7 @@ public class RequestImpl  implements Request {
 	    return serverName;
 	}
 	// default to localhost - and warn
-	System.out.println("No server name, defaulting to localhost");
+	//	System.out.println("No server name, defaulting to localhost");
 	serverName="localhost";
 	return serverName;
     }
