@@ -124,7 +124,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         if (command == null) {
             response.sendRedirect(request.getRequestURI()+"/list");
         } else if (command.equals("/install")) {
-            install(writer, path, war);
+            install(writer, null, path, war);
         } else if (command.equals("/list")) {
             list(writer);
         } else if (command.equals("/reload")) {
