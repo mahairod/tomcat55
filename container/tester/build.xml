@@ -7,7 +7,7 @@
   <property file="../build.properties"/>
   <property file="${user.home}/build.properties"/>
 
-  <property name="build.compiler"  value="classic"/>
+  <property name="build.compiler"  value="modern"/>
   <property name="api.home" value="../../jakarta-servletapi-5/dist"/>
   <property name="tester.build"    value="${basedir}/build"/>
   <property name="tester.deploy"   value="${basedir}/../build"/>
