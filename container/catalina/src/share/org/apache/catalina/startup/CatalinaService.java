@@ -175,10 +175,8 @@ public class CatalinaService extends Catalina {
         String b=System.getProperty("catalina.base");
         if( h==null && b!=null ) {
             setHome( b );
-            System.out.println("XXX setHome " + b );
         } else if( b==null && h!=null ) {
             setBase( h );
-            System.out.println("XXX setBase" + h );
         } else if( b!=null && h!=null ) {
             return;
         } else { // b==null && h==null
