@@ -1040,9 +1040,9 @@ public class Request
         if (parameterMap.isLocked())
             return parameterMap;
 
-        Enumeration enum = getParameterNames();
-        while (enum.hasMoreElements()) {
-            String name = enum.nextElement().toString();
+        Enumeration enumeration = getParameterNames();
+        while (enumeration.hasMoreElements()) {
+            String name = enumeration.nextElement().toString();
             String[] values = getParameterValues(name);
             parameterMap.put(name, values);
         }
