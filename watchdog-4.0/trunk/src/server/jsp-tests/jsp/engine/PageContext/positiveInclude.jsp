@@ -10,7 +10,7 @@
 <!-- using pageContext object to include -->
 <%
 try{
-    pageContext.include("forward.jsp");
+    pageContext.include("include.jsp");
     }catch(Exception e){
     out.println(e);
 }

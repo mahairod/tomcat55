@@ -16,7 +16,6 @@
 <%@ taglib uri="http://java.apache.org/tomcat/examples-taglib" prefix="eg" %>
 
 <eg:page toBrowser="true" att1="setPageContext" >
- Test for </eg:page>
-
+ positiveSetPageContext Test Passed </eg:page>
 </body>
 </html>

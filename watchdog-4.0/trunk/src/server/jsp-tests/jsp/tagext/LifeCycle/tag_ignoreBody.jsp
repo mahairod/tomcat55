@@ -8,3 +8,4 @@
 <x:silly a='3' b="2" c="5" testLibInfo="true">
 HI!
 </x:silly>
+tag_ignoreBody test PASSED

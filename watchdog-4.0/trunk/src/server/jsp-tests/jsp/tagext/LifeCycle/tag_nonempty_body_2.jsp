@@ -9,3 +9,4 @@
 <x:silly a='3' b="2" c="5">
 HI!
 </x:silly>
+tag_nonempty_body_2 test PASSED

@@ -8,3 +8,4 @@
 HI! 
  <x:silly a='3' b="2" c="5" testLibInfo="true"/> 
 </x:silly> 
+tag_positiveBody test PASSED
