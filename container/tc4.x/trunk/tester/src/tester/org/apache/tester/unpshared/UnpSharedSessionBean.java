@@ -55,120 +55,152 @@
  *                                                                           *
  * ========================================================================= */
 
-package org.apache.tester;
+package org.apache.tester.unpshared;
 
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.apache.tester.shared.SharedSessionBean;
-import org.apache.tester.unpshared.UnpSharedSessionBean;
-import org.apache.tester.unshared.UnsharedSessionBean;
+import java.io.Serializable;
+import java.sql.Date;
+import javax.servlet.http.HttpSessionActivationListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.http.HttpSessionEvent;
 
 
 /**
- * Part 1 of Session Tests.  Ensures that there is no current session, then
- * creates a new session and sets a session attribute.  Also, ensure that
- * calling setAttribute("name", null) acts like removeAttribute().
+ * Simple JavaBean to use for session attribute tests.  It is Serializable
+ * so that instances can be saved and restored across server restarts.
+ * <p>
+ * This is functionally equivalent to <code>SessionBean</code>, but stored
+ * in a different package so that it gets deployed unpacked under
+ * <code>$CATALINA_HOME/classes</code>.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class Session01 extends HttpServlet {
+public class UnpSharedSessionBean implements
+    HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws IOException, ServletException {
 
-        response.setContentType("text/plain");
-        PrintWriter writer = response.getWriter();
+    // ------------------------------------------------------------- Properties
 
-        // Ensure that there is no current session
-        boolean ok = true;
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            writer.println("Session01 FAILED - Requested existing session " +
-                           session.getId());
-            ok = false;
-        }
 
-        // Create a new session
-        if (ok) {
-            session = request.getSession(true);
-            if (session == null) {
-                writer.println("Session01 FAILED - No session created");
-                ok = false;
-            }
-        }
+    /**
+     * A date property for use with property editor tests.
+     */
+    protected Date dateProperty =
+        new Date(System.currentTimeMillis());
 
-        // Ensure that there is no existing attribute
-        if (ok) {
-            if (session.getAttribute("sessionBean") != null) {
-                writer.println("Session01 FAILED - Attribute already exists");
-                ok = false;
-            }
-        }
+    public Date getDateProperty() {
+        return (this.dateProperty);
+    }
 
-        // Create and stash a session attribute
-        if (ok) {
-            SessionBean bean = new SessionBean();
-            bean.setStringProperty("Session01");
-            session.setAttribute("sessionBean", bean);
-        }
+    public void setDateProperty(Date dateProperty) {
+        this.dateProperty = dateProperty;
+    }
 
-        // Ensure that we can retrieve the attribute successfully
-        if (ok) {
-            Object bean = session.getAttribute("sessionBean");
-            if (bean == null) {
-                writer.println("Session01 FAILED - Cannot retrieve attribute");
-                ok = false;
-            } else if (!(bean instanceof SessionBean)) {
-                writer.println("Session01 FAILED - Attribute instance of " +
-                               bean.getClass().getName());
-                ok = false;
-            } else {
-                String value = ((SessionBean) bean).getStringProperty();
-                if (!"Session01".equals(value)) {
-                    writer.println("Session01 FAILED - Property = " + value);
-                    ok = false;
-                }
-            }
-        }
 
-        // Ensure that setAttribute("name", null) works correctly
-        if (ok) {
-            session.setAttribute("FOO", "BAR");
-            session.setAttribute("FOO", null);
-            if (session.getAttribute("FOO") != null) {
-                writer.println("Session01 FAILED - setAttribute(name,null)");
-                ok = false;
-            }
-        }
+    /**
+     * The lifecycle events that have happened on this bean instance.
+     */
+    protected String lifecycle = "";
 
-        // Create more beans that will be used to test application restart
-        if (ok) {
-            SharedSessionBean ssb = new SharedSessionBean();
-            ssb.setStringProperty("Session01");
-            session.setAttribute("sharedSessionBean", ssb);
-            UnpSharedSessionBean ussb = new UnpSharedSessionBean();
-            ussb.setStringProperty("Session01");
-            session.setAttribute("unpSharedSessionBean", ussb);
-            UnsharedSessionBean usb = new UnsharedSessionBean();
-            usb.setStringProperty("Session01");
-            session.setAttribute("unsharedSessionBean", usb);
-        }
+    public String getLifecycle() {
+        return (this.lifecycle);
+    }
 
-        // Report success if everything is still ok
-        if (ok)
-            writer.println("Session01 PASSED");
-        while (true) {
-            String message = StaticLogger.read();
-            if (message == null)
-                break;
-            writer.println(message);
-        }
-        StaticLogger.reset();
+    public void setLifecycle(String lifecycle) {
+        this.lifecycle = lifecycle;
+    }
+
+
+    /**
+     * A string property.
+     */
+    protected String stringProperty = "Default String Property Value";
+
+    public String getStringProperty() {
+        return (this.stringProperty);
+    }
+
+    public void setStringProperty(String stringProperty) {
+        this.stringProperty = stringProperty;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a string representation of this bean.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("SharedSessionBean[lifecycle=");
+        sb.append(this.lifecycle);
+        sb.append(",dateProperty=");
+        sb.append(dateProperty);
+        sb.append(",stringProperty=");
+        sb.append(this.stringProperty);
+        sb.append("]");
+        return (sb.toString());
 
     }
 
+
+    // ---------------------------------- HttpSessionActivationListener Methods
+
+
+    /**
+     * Receive notification that this session was activated.
+     *
+     * @param event The session event that has occurred
+     */
+    public void sessionDidActivate(HttpSessionEvent event) {
+
+        lifecycle += "/sda";
+
+    }
+
+
+    /**
+     * Receive notification that this session will be passivated.
+     *
+     * @param event The session event that has occurred
+     */
+    public void sessionWillPassivate(HttpSessionEvent event) {
+
+        lifecycle += "/swp";
+
+    }
+
+
+    // ------------------------------------- HttpSessionBindingListener Methods
+
+
+    /**
+     * Receive notification that this attribute has been bound.
+     *
+     * @param event The session event that has occurred
+     */
+    public void valueBound(HttpSessionBindingEvent event) {
+
+        lifecycle += "/vb";
+
+    }
+
+
+    /**
+     * Receive notification that this attribute has been unbound.
+     *
+     * @param event The session event that has occurred
+     */
+    public void valueUnbound(HttpSessionBindingEvent event) {
+
+        lifecycle += "/vu";
+
+    }
+
+
 }
+

@@ -875,6 +875,16 @@
          request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/Unpacked01.txt"
       outContent="Resources01 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/shared/Shared01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/unpshared/UnpShared01.txt"
+      outContent="Resources01 PASSED"/>
+
     <!-- ========== Negative ServletContext.getResource() Tests =========== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -904,6 +914,16 @@
          request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/Unpacked02.txt.bad"
       outContent="Resources02 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/shared/Shared01.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/unpshared/UnpShared01.txt.bad"
+      outContent="Resources02 PASSED"/>
+
     <!-- ========== Positive ServletContext.getResourceAsStream() Tests === -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -931,6 +951,16 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}"
          request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/Unpacked03.txt"
+      outContent="Resources03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/shared/Shared03.txt"
+      outContent="Resources03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/unpshared/UnpShared03.txt"
       outContent="Resources03 PASSED"/>
 
     <!-- ========== Negative ServletContext.getResourceAsStream() Tests === -->

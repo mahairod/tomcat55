@@ -75,8 +75,16 @@
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/unshared/UnsharedSessionBean.class"/>
     <copy file="src/tester/org/apache/tester/Resources01.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources01.txt"
+        tofile="${tester.build}/classes/org/apache/tester/shared/Shared01.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources01.txt"
+        tofile="${tester.build}/classes/org/apache/tester/unpshared/UnpShared01.txt"/>
     <copy file="src/tester/org/apache/tester/Resources03.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked03.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources03.txt"
+        tofile="${tester.build}/classes/org/apache/tester/shared/Shared03.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources03.txt"
+        tofile="${tester.build}/classes/org/apache/tester/unpshared/UnpShared03.txt"/>
     <copy file="src/tester/org/apache/tester/Resources05.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked05.txt"/>
 
@@ -141,6 +149,14 @@
     <fixcrlf srcdir="${tester.deploy}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${tester.deploy}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${tester.deploy}/bin/tester.sh"/>
+
+    <!-- Unpacked Shared Classes -->
+    <mkdir   dir="${tester.deploy}/classes"/>
+    <copy  todir="${tester.deploy}/classes">
+      <fileset dir="${tester.build}/classes">
+        <include name="**/unpshared/*"/>
+      </fileset>
+    </copy>
 
     <!-- Shared Library -->
     <mkdir   dir="${tester.deploy}/lib"/>

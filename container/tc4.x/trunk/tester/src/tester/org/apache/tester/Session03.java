@@ -62,6 +62,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.apache.tester.shared.SharedSessionBean;
+import org.apache.tester.unpshared.UnpSharedSessionBean;
 import org.apache.tester.unshared.UnsharedSessionBean;
 
 
@@ -154,6 +155,36 @@ public class Session03 extends HttpServlet {
                     String lifecycle = ssb.getLifecycle();
                     if (!"/vb/swp/sda/vu".equals(lifecycle)) {
                         writer.println("Session03 FAILED - Shared lifecycle ="
+                                       + lifecycle);
+                        ok = false;
+                    }
+                }
+            }
+        }
+
+        // Retrieve and validate the unpacked shared session bean
+        UnpSharedSessionBean ussb = null;
+        if (ok) {
+            Object object = session.getAttribute("unpSharedSessionBean");
+            if (object == null) {
+                writer.println("Session03 FAILED - Cannot retrieve ussb");
+                ok = false;
+            } else if (!(object instanceof UnpSharedSessionBean)) {
+                writer.println("Session03 FAILED - unpShared attribute class "
+                               + object.getClass().getName());
+                ok = false;
+            } else {
+                ussb = (UnpSharedSessionBean) object;
+                String value = ussb.getStringProperty();
+                if (!"Session01".equals(value)) {
+                    writer.println("Session03 FAILED - unpShared property ="
+                                   + value);
+                    ok = false;
+                } else {
+                    session.removeAttribute("unpSharedSessionBean");
+                    String lifecycle = ssb.getLifecycle();
+                    if (!"/vb/swp/sda/vu".equals(lifecycle)) {
+                        writer.println("Session03 FAILED - unpShared lifecycle ="
                                        + lifecycle);
                         ok = false;
                     }
