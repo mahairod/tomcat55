@@ -294,8 +294,10 @@ public final class HTMLManagerServlet extends ManagerServlet {
         }
         String config = null;
         try {
-            URL url = localXml.toURL();
-            config = url.toString();
+            if (localXml.exists()) {
+                URL url = localXml.toURL();
+                config = url.toString();
+            }
         } catch (MalformedURLException e) {
             throw e;
         }
