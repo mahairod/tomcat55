@@ -2687,8 +2687,8 @@ class Generator {
          * @return The name of the temporary variable the result is stored in.
          */
         public String generateNamedAttributeValue( Node.NamedAttribute n )
-            throws JasperException
-        {
+                    throws JasperException {
+
             String varName = n.getTemporaryVariableName();
 
             // If the only body element for this named attribute node is
@@ -2696,29 +2696,34 @@ class Generator {
             // pushBody and popBody.  Maybe we can further optimize
             // here by getting rid of the temporary variable, but in
             // reality it looks like javac does this for us.
-            boolean templateTextOptimization = false;
             Node.Nodes body = n.getBody();
-            if( body.size() == 1 ) {
-                Node bodyElement = body.getNode( 0 );
-                if( bodyElement instanceof Node.TemplateText ) {
-                    templateTextOptimization = true;
-                    out.printil( "String " + varName + " = " +
-                        quote( new String(
-                        ((Node.TemplateText)bodyElement).getText() ) ) + ";" );
-                }
-            }
+	    if (body != null) {
+		boolean templateTextOptimization = false;
+		if( body.size() == 1 ) {
+		    Node bodyElement = body.getNode( 0 );
+		    if( bodyElement instanceof Node.TemplateText ) {
+			templateTextOptimization = true;
+			out.printil("String " + varName + " = "
+				    + quote(new String(((Node.TemplateText)bodyElement).getText()))
+				    + ";");
+		    }
+		}
 
-            // XXX - Another possible optimization would be for
-            // lone EL expressions (no need to pushBody here either).
+		// XXX - Another possible optimization would be for
+		// lone EL expressions (no need to pushBody here either).
 
-            if( !templateTextOptimization ) {
-                out.printil( "out = pageContext.pushBody();" );
-                visitBody( n );
-                out.printil( "String " + varName + " = " +
-			     "((javax.servlet.jsp.tagext.BodyContent)" +
-			     "out).getString();" );
-                out.printil( "out = pageContext.popBody();" );
-            }
+		if( !templateTextOptimization ) {
+		    out.printil( "out = pageContext.pushBody();" );
+		    visitBody( n );
+		    out.printil( "String " + varName + " = " +
+				 "((javax.servlet.jsp.tagext.BodyContent)" +
+				 "out).getString();" );
+		    out.printil( "out = pageContext.popBody();" );
+		}
+	    } else {
+		// Empty body must be treated as ""
+		out.printil("String " + varName + " = \"\";"); 
+	    }
 
             return varName;
         }

@@ -1425,6 +1425,20 @@ abstract class Node {
             }
             text = text.substring(0, index);
         }
+
+	/**
+	 * Returns true if this template text contains whitespace only.
+	 */
+	public boolean isAllSpace() {
+	    boolean isAllSpace = true;
+	    for (int i=0; i<text.length(); i++) {
+		if (!Character.isSpace(text.charAt(i))) {
+		    isAllSpace = false;
+		    break;
+		}
+	    }
+	    return isAllSpace;
+	}
     }
 
     /*********************************************************************
@@ -1591,6 +1605,14 @@ abstract class Node {
 	public void add(Node n) {
 	    list.add(n);
 	    root = null;
+	}
+
+	/**
+	 * Removes the given node from the list.
+	 * @param n The node to be removed
+	 */
+	public void remove(Node n) {
+	    list.remove(n);
 	}
 
 	/**

@@ -349,12 +349,15 @@ class JspDocumentParser extends DefaultHandler
 			   int offset,
 			   int len) throws SAXException {
 	/*
-	 * All textual nodes that have only white space are to be dropped from
-	 * the document, except for nodes in a jsp:text element, which are 
-	 * kept verbatim (JSP 5.2.1).
+	 * JSP.6.1.1: All textual nodes that have only white space are to be
+	 * dropped from the document, except for nodes in a jsp:text element,
+	 * and any leading and trailing white-space-only textual nodes in a
+	 * jsp:attribute whose 'trim' attribute is set to FALSE, which are to
+	 * be kept verbatim.
 	 */
 	boolean isAllSpace = true;
-	if (!(current instanceof Node.JspText)) {
+	if (!(current instanceof Node.JspText)
+	        && !(current instanceof Node.NamedAttribute)) {
 	    for (int i=offset; i<offset+len; i++) {
 		if (!Character.isSpace(buf[i])) {
 		    isAllSpace = false;
@@ -362,7 +365,8 @@ class JspDocumentParser extends DefaultHandler
 		}
 	    }
 	}
-	if ((current instanceof Node.JspText) || !isAllSpace) {
+	if ((current instanceof Node.JspText)
+	        || (current instanceof Node.NamedAttribute) || !isAllSpace) {
 	    Mark start = new Mark(path, locator.getLineNumber(),
 				  locator.getColumnNumber());
 
@@ -440,24 +444,34 @@ class JspDocumentParser extends DefaultHandler
 	}
 
 	if (current instanceof Node.NamedAttribute) {
-	    Node.Nodes subelems = ((Node.NamedAttribute) current).getBody();
-	    if (subelems == null) {
-                throw new SAXParseException(
-		        err.getString("jsp.error.empty.body.not.allowed",
-				      "&lt;jsp:attribute"),
-			locator);
-	    }
-	    if (((Node.NamedAttribute) current).isTrim()) {
+	    boolean isTrim = ((Node.NamedAttribute) current).isTrim();
+	    Node.Nodes subElems = ((Node.NamedAttribute) current).getBody();
+	    for (int i=0; subElems != null && i<subElems.size(); i++) {
+		Node subElem = subElems.getNode(i);
+		if (!(subElem instanceof Node.TemplateText)) {
+		    continue;
+		}
 		// Ignore any whitespace (including spaces, carriage returns,
 		// line feeds, and tabs, that appear at the beginning and at
-		// the end of the body of the <jsp:attribute> action.
-		Node firstNode = subelems.getNode(0);
-		if (firstNode instanceof Node.TemplateText) {
-		    ((Node.TemplateText) firstNode).ltrim();
-		}
-		Node lastNode = subelems.getNode(subelems.size() - 1);
-		if (lastNode instanceof Node.TemplateText) {
-		    ((Node.TemplateText) lastNode).rtrim();
+		// the end of the body of the <jsp:attribute> action, if the
+		// action's 'trim' attribute is set to TRUE (default).
+		// In addition, any textual nodes in the <jsp:attribute> that
+		// have only white space are dropped from the document, with
+		// the exception of leading and trailing white-space-only
+		// textual nodes in a <jsp:attribute> whose 'trim' attribute
+		// is set to FALSE, which must be kept verbatim.
+		if (i == 0) {
+		    if (isTrim) {
+			((Node.TemplateText) subElem).ltrim();
+		    }
+		} else if (i == subElems.size()-1) {
+		    if (isTrim) {
+			((Node.TemplateText) subElem).rtrim();
+		    }
+		} else {
+		    if (((Node.TemplateText) subElem).isAllSpace()) {
+			subElems.remove(subElem);
+		    }
 		}
 	    }
 	} else if (current instanceof Node.ScriptingElement) {
