@@ -961,6 +961,28 @@ public class JspParseEventListener extends BaseJspListener {
         xo.addRootAttrs(attrs);
     }
     
+    public void handleUninterpretedTagBegin(Mark start, Mark stop,
+					    String rawName, Hashtable attrs) 
+	throws JasperException
+    {
+        UninterpretedTagBeginGenerator gen = 
+	    new UninterpretedTagBeginGenerator(rawName, attrs);
+        Generator genWrapper = new GeneratorWrapper(gen, start, stop);
+	addGenerator(genWrapper);
+        xo.append(rawName, attrs);
+    }
+
+    public void handleUninterpretedTagEnd(Mark start, Mark stop,
+					  String rawName)
+	throws JasperException
+    {
+        UninterpretedTagEndGenerator gen = 
+	    new UninterpretedTagEndGenerator(rawName);
+        Generator genWrapper = new GeneratorWrapper(gen, start, stop);
+	addGenerator(genWrapper);
+        xo.append(rawName);
+    }
+
     /**
      * validate the XML stream of the JSP document against the
      * libraries used by the document.

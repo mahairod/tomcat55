@@ -187,4 +187,12 @@ public class BaseJspListener implements ParseEventListener {
 
     public void handleRootBegin(Hashtable attrs) {};
     public void handleRootEnd() {};
+
+    public void handleUninterpretedTagBegin(Mark start, Mark stop,
+					    String rawName, Hashtable attrs)
+	throws JasperException {}
+
+    public void handleUninterpretedTagEnd(Mark start, Mark stop,
+					  String rawName)
+	throws JasperException {}
 }

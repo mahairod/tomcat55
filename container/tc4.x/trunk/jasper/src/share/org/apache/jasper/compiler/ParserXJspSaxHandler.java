@@ -177,7 +177,7 @@ class ParserXJspSaxHandler
 	//p("|" + String.valueOf(ch, start, length) + "|");
 
 	Node node = (Node)stack.peek();
-	if (node.isRoot()) {
+	if (node.isRoot() || node.isUninterpretedTag()) {
 	    // template data in <jsp:root>.
 	    //p("these chars are added directly in jsp:root");
 	    try {
@@ -258,9 +258,28 @@ class ParserXJspSaxHandler
 	    } else if (name.equals("jsp:useBean")) {
 		jspHandler.handleBean(
 				      node.start, node.start, attrsToHashtable(node.attrs));
-	    } else if (name.length()<4 || !name.substring(0,4).equals("jsp:")) {
-		// custom tag
-		processCustomTagBegin();
+	    } else if (name.length()<4 || 
+		       !name.substring(0,4).equals("jsp:")) {
+		// custom tag or 'uninterpreted' tag
+		int i = name.indexOf(':');
+		boolean isCustomTag = false;
+		if (i != -1) {
+		    String prefix = name.substring(0, i);
+		    String shortTagName = name.substring(i+1);
+		    TagLibraries libraries = jspHandler.getTagLibraries();
+		    if (libraries.isUserDefinedTag(prefix, shortTagName)) {
+			// custom tag
+			isCustomTag = true;
+			processCustomTagBegin(prefix, shortTagName);
+		    }
+		}
+		if (!isCustomTag) {
+		    // uninterpreted tag
+		    node.setUninterpreted(true);
+		    jspHandler.handleUninterpretedTagBegin(
+				node.start, node.start, 
+				node.rawName, attrsToHashtable(node.attrs));
+		}
 	    }
 	} catch (Exception ex) {
 	    throw new SAXException(ex);
@@ -377,11 +396,13 @@ class ParserXJspSaxHandler
 		jspHandler.handlePlugin(
 		    node.start, stop, attrsToHashtable(node.attrs), params, fallback);
 	    } else {
-		// Ought to be a custom tag
-		//p("should be nodetag");
-		//p(node);
-		//p("class is: " + node.getClass().getName());
-		processCustomTagEnd((NodeTag)node, stop);
+		if (node.isUninterpretedTag()) {
+		    // this is an 'uninterpreted' tag
+		    jspHandler.handleUninterpretedTagEnd(stop, stop, rawName);
+		} else {
+		    // this is a custom tag
+		    processCustomTagEnd((NodeTag)node, stop);
+		}
 	    }
 	} catch (Exception ex) {
 	    ex.printStackTrace();
@@ -389,23 +410,12 @@ class ParserXJspSaxHandler
 	}
     }
 
-    private void processCustomTagBegin() 
+    private void processCustomTagBegin(String prefix, String shortTagName) 
 	throws ParseException, JasperException 
     {
 	Node node = (Node)stack.pop();
-	String tag = node.rawName;
-	int i = tag.indexOf(':');
-	if (i == -1) throw new ParseException("unknown tag: " + tag);
-	
-	String prefix = tag.substring(0, i);
-	String shortTagName = tag.substring(i+1);
-	
 	TagLibraries libraries = jspHandler.getTagLibraries();
 	
-	if (!libraries.isUserDefinedTag(prefix, shortTagName)) {
-	    throw new ParseException(node.start, "invalid tag: " + node.rawName);
-	}
-
 	if (shortTagName == null) {
 	    throw new ParseException(node.start, "Nothing after the :");
 	}
@@ -414,7 +424,8 @@ class ParserXJspSaxHandler
 	TagInfo ti = tli.getTag(shortTagName);
             
 	if (ti == null) {
-	    throw new ParseException(node.start, "Unable to locate TagInfo for "+tag);
+	    throw new ParseException(node.start, 
+	       "Unable to locate TagInfo for " + prefix + ":" + shortTagName);
 	}
 	node = new NodeTag(node, prefix, shortTagName, tli, ti);
 	stack.push(node);
@@ -593,6 +604,7 @@ class ParserXJspSaxHandler
 	Mark start;
 
 	boolean isRoot;
+	boolean isUninterpretedTag = false;
 	StringBuffer text = null;
 
 	Node(Node node) {
@@ -619,6 +631,14 @@ class ParserXJspSaxHandler
 
 	boolean isRoot() {
 	    return isRoot;
+	}
+
+	void setUninterpreted(boolean isUninterpretedTag) {
+	    this.isUninterpretedTag = isUninterpretedTag;
+	}
+
+	boolean isUninterpretedTag() {
+	    return isUninterpretedTag;
 	}
 
 	void validate(boolean canHaveAttributes,
