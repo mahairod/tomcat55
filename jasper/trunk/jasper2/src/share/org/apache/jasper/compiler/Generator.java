@@ -268,7 +268,7 @@ class Generator {
 		    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 		    VariableInfo[] varInfos = n.getVariableInfos();
 
-		    if (varInfos != null) {
+		    if (varInfos.length > 0) {
 			for (int i=0; i<varInfos.length; i++) {
 			    String varName = varInfos[i].getVarName();
 			    String tmpVarName = "_jspx_" + varName + "_"
@@ -283,7 +283,7 @@ class Generator {
 				out.println(";");
 			    }
 			}
-		    } else if (tagVarInfos != null) {
+		    } else {
 			for (int i=0; i<tagVarInfos.length; i++) {
 			    String varName = tagVarInfos[i].getNameGiven();
 			    if (varName == null) {
@@ -1788,38 +1788,27 @@ class Generator {
                     out.printil( "java.util.HashMap " + var + 
                         " = new java.util.HashMap();" );
                     
-                    if( varInfos != null ) {
-                        for( int i = 0; i < varInfos.length; i++ ) {
-                            if( (varInfos[i].getScope() == 
-                                    VariableInfo.AT_BEGIN) ||
-                                (varInfos[i].getScope() == 
-                                    VariableInfo.NESTED) ) 
-                            {
-                                out.printil( var + ".put( \"" + 
-                                    varInfos[i].getVarName() + "\", " +
-                                    varInfos[i].getVarName() + " );" );
-                            }
-                        }
-                    }
+		    for (int i = 0; i < varInfos.length; i++) {
+			if ((varInfos[i].getScope() == VariableInfo.AT_BEGIN)
+			        || (varInfos[i].getScope() == VariableInfo.NESTED)) {
+			    out.printil( var + ".put( \"" + 
+					 varInfos[i].getVarName() + "\", " +
+					 varInfos[i].getVarName() + " );" );
+			}
+		    }
 
-                    if( tagVarInfos != null ) {
-                        for( int i = 0; i < tagVarInfos.length; i++ ) {
-                            if( (tagVarInfos[i].getScope() == 
-                                    VariableInfo.AT_BEGIN) || 
-                                (tagVarInfos[i].getScope() ==
-                                    VariableInfo.NESTED) )
-                            {
-                                out.printin( var + ".put( \"" );
-                                String name = tagVarInfos[i].getNameGiven();
-                                if( name == null ) {
-                                    name = customTag.getTagData().
-                                        getAttributeString(
+		    for (int i = 0; i < tagVarInfos.length; i++) {
+			if ((tagVarInfos[i].getScope() == VariableInfo.AT_BEGIN)
+			        || (tagVarInfos[i].getScope() == VariableInfo.NESTED)) {
+			    out.printin( var + ".put( \"" );
+			    String name = tagVarInfos[i].getNameGiven();
+			    if( name == null ) {
+				name = customTag.getTagData().getAttributeString(
                                         tagVarInfos[i].getNameFromAttribute());
-                                }
-                                out.println( name + "\", " + name + " );" );
-                            }
-                        }
-                    }
+			    }
+			    out.println( name + "\", " + name + " );" );
+			}
+		    }
                     
                     out.printil("(" + 
                         attributeValue(value, false, JspFragment.class,
@@ -2208,11 +2197,11 @@ class Generator {
 
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 	    VariableInfo[] varInfos = n.getVariableInfos();
-	    if ((varInfos == null) && (tagVarInfos == null)) {
+	    if ((varInfos.length == 0) && (tagVarInfos.length == 0)) {
 		return;
 	    }
 
-	    if (varInfos != null) {
+	    if (varInfos.length > 0) {
 		for (int i=0; i<varInfos.length; i++) {
 		    if (varInfos[i].getScope() != scope)
 			continue;
@@ -2257,11 +2246,11 @@ class Generator {
 
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 	    VariableInfo[] varInfos = n.getVariableInfos();
-	    if ((varInfos == null) && (tagVarInfos == null)) {
+	    if ((varInfos.length == 0) && (tagVarInfos.length == 0)) {
 		return;
 	    }
 
-	    if (varInfos != null) {
+	    if (varInfos.length > 0) {
 		for (int i=0; i<varInfos.length; i++) {
 		    if (varInfos[i].getScope() != scope)
 			continue;
@@ -2300,11 +2289,11 @@ class Generator {
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 	    VariableInfo[] varInfos = n.getVariableInfos();
 
-	    if ((varInfos == null) && (tagVarInfos == null)) {
+	    if ((varInfos.length == 0) && (tagVarInfos.length == 0)) {
 		return;
 	    }
 
-	    if (varInfos != null) {
+	    if (varInfos.length > 0) {
 		for (int i=0; i<varInfos.length; i++) {
 		    if (varInfos[i].getScope() == scope) {
 			out.printin(varInfos[i].getVarName());
@@ -2995,20 +2984,18 @@ class Generator {
 	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
 
 	// Declare attributes
-	if (attrInfos != null) {
-	    for (int i=0; i<attrInfos.length; i++) {
-		out.printin("private ");
-		if (attrInfos[i].isFragment()) {
-		    out.print("javax.servlet.jsp.tagext.JspFragment ");
-		} else {
-		    out.print(attrInfos[i].getTypeName());
-		    out.print(" ");
-		}
-		out.print(attrInfos[i].getName());
-		out.println(";");
+	for (int i=0; i<attrInfos.length; i++) {
+	    out.printin("private ");
+	    if (attrInfos[i].isFragment()) {
+		out.print("javax.servlet.jsp.tagext.JspFragment ");
+	    } else {
+		out.print(attrInfos[i].getTypeName());
+		out.print(" ");
 	    }
-	    out.println();
+	    out.print(attrInfos[i].getName());
+	    out.println(";");
 	}
+	out.println();
 
 	// Define attribute getter and setter methods
 	if (attrInfos != null) {
@@ -3070,7 +3057,7 @@ class Generator {
 	out.printil("java.util.Vector _jspx_at_begin = new java.util.Vector();");
 	out.printil("java.util.Vector _jspx_at_end = new java.util.Vector();");
 	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	for (int i=0; tagVars != null && i<tagVars.length; i++) {
+	for (int i=0; i<tagVars.length; i++) {
 		String name = tagVars[i].getNameGiven();
 		/* XXX
 		if (name == null) {
@@ -3135,18 +3122,16 @@ class Generator {
 
 	// "normal" attributes
 	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
-	if (attrInfos != null) {
-	    for (int i=0; i<attrInfos.length; i++) {
-		String attrName = attrInfos[i].getName();
-                out.printil("if( " + toGetterMethod(attrName) + " != null ) " );
-		out.pushIndent();
-                out.printin("pageContext.setAttribute(");
-		out.print(quote(attrName));
-		out.print(", ");
-		out.print(toGetterMethod(attrName));
-		out.println(");");
-		out.popIndent();
-	    }
+	for (int i=0; i<attrInfos.length; i++) {
+	    String attrName = attrInfos[i].getName();
+	    out.printil("if( " + toGetterMethod(attrName) + " != null ) " );
+	    out.pushIndent();
+	    out.printin("pageContext.setAttribute(");
+	    out.print(quote(attrName));
+	    out.print(", ");
+	    out.print(toGetterMethod(attrName));
+	    out.println(");");
+	    out.popIndent();
 	}
 
 	// dynamic attributes

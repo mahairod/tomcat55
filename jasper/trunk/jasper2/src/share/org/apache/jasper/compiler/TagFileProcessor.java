@@ -245,17 +245,13 @@ class TagFileProcessor {
 
             tagclass = Constants.TAG_FILE_PACKAGE_NAME + "." + name;
 
-            TagVariableInfo[] tagVariableInfos = null;
-            if (variableVector.size() > 0) {
-                tagVariableInfos = new TagVariableInfo[variableVector.size()];
-                variableVector.copyInto(tagVariableInfos);
-            }
+            TagVariableInfo[] tagVariableInfos
+		= new TagVariableInfo[variableVector.size()];
+	    variableVector.copyInto(tagVariableInfos);
 
-            TagAttributeInfo[] tagAttributeInfo = null;
-            if (attributeVector.size() > 0) {
-                tagAttributeInfo = new TagAttributeInfo[attributeVector.size()];
-                attributeVector.copyInto(tagAttributeInfo);
-            }
+            TagAttributeInfo[] tagAttributeInfo
+		= new TagAttributeInfo[attributeVector.size()];
+	    attributeVector.copyInto(tagAttributeInfo);
 
             return new TagInfo(name,
 			       tagclass,

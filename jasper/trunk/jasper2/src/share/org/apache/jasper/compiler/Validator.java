@@ -651,7 +651,7 @@ class Validator {
 	     */
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    Attributes attrs = n.getAttributes();
-	    for (int i=0; tldAttrs != null && i<tldAttrs.length; i++) {
+	    for (int i=0; i<tldAttrs.length; i++) {
 		String attr = attrs.getValue(tldAttrs[i].getName());
 		Node.NamedAttribute jspAttr =
 			n.getNamedAttributeNode(tldAttrs[i].getName());
@@ -788,7 +788,6 @@ class Validator {
 	    if (tei != null
 		    && tei.getVariableInfo(tagData) != null
 		    && tei.getVariableInfo(tagData).length > 0
-		    && tagInfo.getTagVariableInfos() != null
 		    && tagInfo.getTagVariableInfos().length > 0) {
 		err.jspError("jsp.error.non_null_tei_and_var_subelems",
 			     n.getName());

@@ -120,7 +120,7 @@ class ScriptingVariabler {
 
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 	    VariableInfo[] varInfos = n.getVariableInfos();
-	    if (tagVarInfos == null && varInfos == null) {
+	    if (tagVarInfos.length == 0 && varInfos.length == 0) {
 		return;
 	    }
 
@@ -139,7 +139,7 @@ class ScriptingVariabler {
 		ownRange = n.getNumCount();
 	    }
 
-	    if (varInfos != null) {
+	    if (varInfos.length > 0) {
 		for (int i=0; i<varInfos.length; i++) {
 		    if (varInfos[i].getScope() != scope
 			    || !varInfos[i].getDeclare()) {

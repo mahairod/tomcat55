@@ -1718,7 +1718,7 @@ class Parser {
 	if (n instanceof Node.CustomTag) {
 	    TagInfo tagInfo = ((Node.CustomTag)n).getTagInfo();
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
-	    for (int i=0; tldAttrs != null && i<tldAttrs.length; i++) {
+	    for (int i=0; i<tldAttrs.length; i++) {
 		if (name.equals(tldAttrs[i].getName())) {
 		    if (tldAttrs[i].isFragment()) {
 		        return TagInfo.BODY_CONTENT_SCRIPTLESS;

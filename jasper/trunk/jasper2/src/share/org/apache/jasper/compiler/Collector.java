@@ -188,12 +188,8 @@ class Collector {
 
             if( (n instanceof Node.CustomTag) && !hasScriptingVars) {
                 Node.CustomTag ct = (Node.CustomTag)n;
-		// For some reason, varInfos is null when var is not defined
-		// in TEI, but tagVarInfos is empty array when var is not
-		// defined in tld.
-		hasScriptingVars = ct.getVariableInfos() != null || 
-			(ct.getTagVariableInfos() != null
-			 && ct.getTagVariableInfos().length > 0);
+		hasScriptingVars = ct.getVariableInfos().length > 0
+		    || ct.getTagVariableInfos().length > 0;
 	    }
 
 	    // Record if the tag element and its body contains any scriptlet.
