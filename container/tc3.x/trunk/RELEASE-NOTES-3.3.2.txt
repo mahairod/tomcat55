@@ -67,6 +67,9 @@ Bug No.  Description
 
 15894	 Fix race condition on reusing Sessions.
 
+         Updated DecodeInterceptor to treat URL paths containing null
+         characters as unsafe.
+
 Jasper:
 
 Bug No.  Description
