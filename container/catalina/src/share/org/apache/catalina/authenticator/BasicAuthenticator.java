@@ -71,10 +71,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.util.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 
@@ -89,6 +89,8 @@ import org.apache.catalina.util.Base64;
 
 public class BasicAuthenticator
     extends AuthenticatorBase {
+    private static Log log = LogFactory.getLog(BasicAuthenticator.class);
+
 
 
     // ----------------------------------------------------- Instance Variables
@@ -145,8 +147,8 @@ public class BasicAuthenticator
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
         if (principal != null) {
-            if (debug >= 1)
-                log("Already authenticated '" + principal.getName() + "'");
+            if (log.isDebugEnabled())
+                log.debug("Already authenticated '" + principal.getName() + "'");
             return (true);
         }
 
