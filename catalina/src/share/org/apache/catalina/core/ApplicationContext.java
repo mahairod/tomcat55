@@ -526,19 +526,36 @@ public class ApplicationContext
         if (path == null)
             return (null);
 
-        DirContext resources = context.getResources();
-        if (resources != null) {
-            String fullPath = context.getName() + path;
-            String hostName = context.getParent().getName();
-            try {
-                resources.lookup(path);
-                return new URL
-                    ("jndi", null, 0, getJNDIUri(hostName, fullPath),
-                     new DirContextURLStreamHandler(resources));
-            } catch (Exception e) {
-                //e.printStackTrace();
+        String libPath = "/WEB-INF/lib/";
+        if ((path.startsWith(libPath)) && (path.endsWith(".jar"))) {
+            File jarFile = null;
+            if (context.isFilesystemBased()) {
+                jarFile = new File(basePath, path);
+            } else {
+                jarFile = new File(context.getWorkDir(), path);
+            }
+            if (jarFile.exists()) {
+                return jarFile.toURL();
+            } else {
+                return null;
+            }
+        } else {
+
+            DirContext resources = context.getResources();
+            if (resources != null) {
+                String fullPath = context.getName() + path;
+                String hostName = context.getParent().getName();
+                try {
+                    resources.lookup(path);
+                    return new URL
+                        ("jndi", null, 0, getJNDIUri(hostName, fullPath),
+                         new DirContextURLStreamHandler(resources));
+                } catch (Exception e) {
+                    // Ignore
+                }
             }
         }
+
         return (null);
 
     }
