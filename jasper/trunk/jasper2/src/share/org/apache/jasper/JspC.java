@@ -1160,8 +1160,8 @@ public class JspC implements Options {
                     try {
                         File libFile = new File(lib, libs[i]);
                         classPath = classPath + File.pathSeparator
-                            + libFile.getCanonicalPath();
-                        urls.add(libFile.getCanonicalFile().toURL());
+                            + libFile.getAbsolutePath();
+                        urls.add(libFile.getAbsoluteFile().toURL());
                     } catch (IOException ioe) {
                         // failing a toCanonicalPath on a file that
                         // exists() should be a JVM regression test,
@@ -1193,7 +1193,7 @@ public class JspC implements Options {
         }
         try {
             if (f.exists()) {
-                f = new File(f.getCanonicalPath());
+                f = new File(f.getAbsolutePath());
                 while (f != null) {
                     File g = new File(f, "WEB-INF");
                     if (g.exists() && g.isDirectory()) {
@@ -1203,7 +1203,7 @@ public class JspC implements Options {
                             log.info(Localizer.getMessage(
                                         "jspc.implicit.uriRoot",
                                         uriRoot));
-			}
+                        }
                         break;
                     }
                     if (f.exists() && f.isDirectory()) {
