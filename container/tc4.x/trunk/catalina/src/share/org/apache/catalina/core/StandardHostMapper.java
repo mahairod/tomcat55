@@ -87,7 +87,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public final class StandardHostMapper
+public class StandardHostMapper
     implements Mapper {
 
 

@@ -85,7 +85,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public final class StandardEngineMapper
+public class StandardEngineMapper
     implements Mapper {
 
 

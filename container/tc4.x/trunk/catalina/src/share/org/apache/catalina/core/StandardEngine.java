@@ -87,7 +87,7 @@ import org.apache.catalina.Response;
  * @version $Revision$ $Date$
  */
 
-public final class StandardEngine
+public class StandardEngine
     extends ContainerBase
     implements Engine {
 

@@ -100,7 +100,7 @@ import org.apache.catalina.Response;
  * @version $Revision$ $Date$
  */
 
-public final class StandardHost
+public class StandardHost
     extends ContainerBase
     implements Deployer, Host {
 
