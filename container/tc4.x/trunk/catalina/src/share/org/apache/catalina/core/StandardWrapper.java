@@ -1133,7 +1133,10 @@ public final class StandardWrapper
     protected String logName() {
 
         StringBuffer sb = new StringBuffer("StandardWrapper[");
-        sb.append(getParent().getName());
+        if (getParent() != null)
+            sb.append(getParent().getName());
+        else
+            sb.append("null");
         sb.append(':');
         sb.append(getName());
         sb.append(']');

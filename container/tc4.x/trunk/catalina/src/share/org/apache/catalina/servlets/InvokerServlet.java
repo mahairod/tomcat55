@@ -326,26 +326,27 @@ public final class InvokerServlet
         String pattern = inServletPath + "/" + servletClass + "/*";
         Wrapper wrapper = null;
 
-        // Are we referencing an existing servlet name?
-        wrapper = (Wrapper) context.findChild(servletClass);
-        if (wrapper != null) {
-            if (debug >= 1)
-                log("Using wrapper for servlet '" +
-                    wrapper.getName() + "' with mapping '" + pattern + "'");
-            context.addServletMapping(pattern, wrapper.getName());
-        }
+        // Synchronize to avoid race conditions when multiple requests
+        // try to initialize the same servlet at the same time
+        synchronized (this) {
 
-        // No, create a new wrapper for the specified servlet class
-        else {
+            // Are we referencing an existing servlet name?
+            wrapper = (Wrapper) context.findChild(servletClass);
+            if (wrapper != null) {
+                if (debug >= 1)
+                    log("Using wrapper for servlet '" +
+                        wrapper.getName() + "' with mapping '" +
+                        pattern + "'");
+                context.addServletMapping(pattern, wrapper.getName());
+            }
 
-            if (debug >= 1)
-                log("Creating wrapper for '" + servletClass +
-                    "' with mapping '" + pattern + "'");
+            // No, create a new wrapper for the specified servlet class
+            else {
 
-            // Create and install a new wrapper (synchronized to avoid
-            // race conditions when multiple requests try to initialize
-            // the same servlet at the same time)
-            synchronized (this) {
+                if (debug >= 1)
+                    log("Creating wrapper for '" + servletClass +
+                        "' with mapping '" + pattern + "'");
+
                 try {
                     wrapper = context.createWrapper();
                     wrapper.setName(name);
