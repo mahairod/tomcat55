@@ -46,10 +46,6 @@ release, please submit a bug report as quickly as possible.
 Bugs That Must Be Addressed Before Final Release:
 ------------------------------------------------
 
-Connectors  2997    Webapp connector should recover when Tomcat is restarted
-
-Connectors  3476    Cannot use other than default context when using mod_webapp
-
 Connectors  3509    Apache 1.3.20 and mod_webapp and Tomcat 4b7 HANGS
                     (likely to be the same issue as 1788)
 
@@ -69,17 +65,10 @@ Servletapi  3344    Typo in javadocs
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):
 -----------------------------------------------------
 
-Catalina    3511    Line too long (awaiting reproducible failure case)
+Jasper      3529    JSPC cannot handle tag libraries (reopened)
+                    (under investigation)
 
-Catalina    3515    Process hanging after stopping Tomcat (awaiting
-                    reproducible failure case)
+Jasper      3640    Fix for JSPC handling of tag libraries in a JAR
+                    (probably related to 3529)
 
-Catalina    3594    Have to reload page or page will not be shown
-                    (awaiting reproducible failure case, likely user error)
-
-Catalina    3612    getServletPath() returns wrong value (awaiting reproducible
-                    failure case)
-
-Jasper      3127    <jsp:directive.include/> not supported (awaiting
-                    reproducible failure case)
 
