@@ -146,6 +146,16 @@ public class GTestTag extends TagSupport {
 	    // XXX
 	    project.setUserProperty( "gdir", base + "/Golden");
 	    project.setUserProperty( "wgdir", base + "/Golden");
+
+	    String port=pageContext.getRequest().getParameter("port");
+	    if( port!=null)
+		project.setUserProperty( "port", port);
+	    String proto=pageContext.getRequest().getParameter("server.proto");
+	    if( proto!=null )
+		project.setUserProperty( "http.protocol", proto);
+	    String host=pageContext.getRequest().getParameter("host");
+	    if( host!=null )
+		project.setUserProperty( "host", host);
 	    
 	    ProjectHelper.configureProject( project, testFile );
 
