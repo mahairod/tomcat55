@@ -64,11 +64,14 @@
 
 package org.apache.naming.resources;
 
-import java.util.Hashtable;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Map;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
+
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameParser;
@@ -79,7 +82,10 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
+
 import org.apache.naming.StringManager;
+
+import org.apache.commons.collections.LRUMap;
 
 /**
  * Proxy Directory Context implementation.
@@ -111,7 +117,7 @@ public class ProxyDirContext implements DirContext {
             // Initialize parameters based on the associated dir context, like
             // the caching policy.
             if (((BaseDirContext) dirContext).isCached()) {
-                cache = new Hashtable();
+                cache = Collections.synchronizedMap(new LRUMap(cacheSize));
                 cacheTTL = ((BaseDirContext) dirContext).getCacheTTL();
                 cacheObjectMaxSize = 
                     ((BaseDirContext) dirContext).getCacheObjectMaxSize();
@@ -132,6 +138,7 @@ public class ProxyDirContext implements DirContext {
         this.dirContext = dirContext;
         this.vPath = vPath;
         this.cache = proxyDirContext.cache;
+        this.cacheSize = proxyDirContext.cacheSize;
         this.cacheTTL = proxyDirContext.cacheTTL;
         this.cacheObjectMaxSize = proxyDirContext.cacheObjectMaxSize;
         this.hostName = proxyDirContext.hostName;
@@ -182,7 +189,13 @@ public class ProxyDirContext implements DirContext {
      * Cache.
      * Path -> Cache entry.
      */
-    protected Hashtable cache = null;
+    protected Map cache = null;
+
+
+    /**
+     * Cache size
+     */
+    protected int cacheSize = 1000;
 
 
     /**
@@ -676,7 +689,7 @@ public class ProxyDirContext implements DirContext {
      */
     public Name composeName(Name name, Name prefix)
         throws NamingException {
-	prefix = (Name) name.clone();
+        prefix = (Name) name.clone();
 	return prefix.addAll(name);
     }
 
