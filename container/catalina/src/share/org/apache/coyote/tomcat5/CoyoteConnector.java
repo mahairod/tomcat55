@@ -1307,6 +1307,8 @@ public class CoyoteConnector
                                            ssf.getSSLImplementation());
             IntrospectionUtils.setProperty(protocolHandler, "ciphers",
                                            ssf.getCiphers());
+            IntrospectionUtils.setProperty(protocolHandler, "keyAlias",
+                                           ssf.getKeyAlias());
         } else {
             IntrospectionUtils.setProperty(protocolHandler, "secure",
                                            "" + secure);
@@ -1537,6 +1539,35 @@ public class CoyoteConnector
         ServerSocketFactory factory = getFactory();
         if (factory instanceof CoyoteServerSocketFactory) {
             ((CoyoteServerSocketFactory)factory).setCiphers(ciphers);
+        }
+    }
+
+    /**
+     * Gets the alias name of the keypair and supporting certificate chain
+     * used by this Connector to authenticate itself to SSL clients.
+     *
+     * @return The alias name of the keypair and supporting certificate chain
+     */
+    public String getKeyAlias() {
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            return ((CoyoteServerSocketFactory)factory).getKeyAlias();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the alias name of the keypair and supporting certificate chain
+     * used by this Connector to authenticate itself to SSL clients.
+     *
+     * @param alias The alias name of the keypair and supporting certificate
+     * chain
+     */
+    public void setKeyAlias(String alias) {
+        setProperty("keyAlias", alias);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setKeyAlias(alias);
         }
     }
 
