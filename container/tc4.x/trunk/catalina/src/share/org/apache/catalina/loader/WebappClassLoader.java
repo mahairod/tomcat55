@@ -146,6 +146,32 @@ public class WebappClassLoader
     }
 
 
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * The set of trigger classes that will cause a proposed repository not
+     * to be added if this class is visible to the class loader that loaded
+     * this factory class.  Typically, trigger classes will be listed for
+     * components that have been integrated into the JDK for later versions,
+     * but where the corresponding JAR files are required to run on
+     * earlier versions.
+     */
+    private static final String[] triggers = {
+        "com.sun.jndi.ldap.LdapCtxFactory",      // LDAP      added in 1.3
+        "com.sun.net.ssl.internal.ssl.Provider", // JSSE      added in 1.4
+        "javax.security.auth.Subject",           // JAAS      added in 1.4
+        "javax.naming.Context",                  // JNDI      added in 1.3
+        "javax.net.SocketFactory",               // JSSE      added in 1.4
+        "javax.security.cert.X509Certificate",   // JSSE      added in 1.4
+        "javax.sql.DataSource",                  // JDBC ext. added in 1.4
+        "javax.xml.parsers.DocumentBuilder",     // JAXP      added in 1.4
+        "javax.servlet.Servlet",                 // Servlet API
+        // "org.apache.crimson.jaxp.DocumentBuilderImpl",
+                                                 // Crimson   added in 1.4
+    };
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -565,13 +591,6 @@ public class WebappClassLoader
 
         }
 
-        JarFile[] result2 = new JarFile[jarFiles.length + 1];
-        for (i = 0; i < jarFiles.length; i++) {
-            result2[i] = jarFiles[i];
-        }
-        result2[jarFiles.length] = jarFile;
-        jarFiles = result2;
-
         try {
 
             // Register the JAR for tracking
@@ -595,7 +614,23 @@ public class WebappClassLoader
             lastModifiedDates = result3;
 
         } catch (NamingException e) {
+            // Ignore
         }
+
+        if (!validateJarFile(file))
+            System.out.println("Didn't validate:" + file);
+
+        // If the JAR currently contains invalid classes, don't actually use it
+        // for classloading
+        if (!validateJarFile(file))
+            return;
+
+        JarFile[] result2 = new JarFile[jarFiles.length + 1];
+        for (i = 0; i < jarFiles.length; i++) {
+            result2[i] = jarFiles[i];
+        }
+        result2[jarFiles.length] = jarFile;
+        jarFiles = result2;
 
         // Add the file to the list
         File[] result4 = new File[jarRealFiles.length + 1];
@@ -1879,6 +1914,48 @@ public class WebappClassLoader
             return false;
 
         return true;
+
+    }
+
+
+    /**
+     * Check the specified JAR file, and return <code>true</code> if it does
+     * not contain any of the trigger classes.
+     *
+     * @param jarFile The JAR file to be checked
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private boolean validateJarFile(File jarfile)
+        throws IOException {
+
+        if (triggers == null)
+            return (true);
+        JarFile jarFile = new JarFile(jarfile);
+        for (int i = 0; i < triggers.length; i++) {
+            Class clazz = null;
+            try {
+                if (parent != null) {
+                    clazz = parent.loadClass(triggers[i]);
+                } else {
+                    clazz = Class.forName(triggers[i]);
+                }
+            } catch (Throwable t) {
+                clazz = null;
+            }
+            if (clazz == null)
+                continue;
+            String name = triggers[i].replace('.', '/') + ".class";
+            if (debug >= 2)
+                log(" Checking for " + name);
+            JarEntry jarEntry = jarFile.getJarEntry(name);
+            if (jarEntry != null) {
+                jarFile.close();
+                return (false);
+            }
+        }
+        jarFile.close();
+        return (true);
 
     }
 
