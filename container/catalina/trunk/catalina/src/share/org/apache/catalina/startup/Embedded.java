@@ -217,11 +217,6 @@ public class Embedded  extends StandardService implements Lifecycle {
      */
     protected boolean await = false;
 
-    /**
-     * The property change support for this component.
-     */
-    protected PropertyChangeSupport support = new PropertyChangeSupport(this);
-
 
     // ------------------------------------------------------------- Properties
 
@@ -426,18 +421,6 @@ public class Embedded  extends StandardService implements Lifecycle {
         }
 
         this.container = engine;
-    }
-
-
-    /**
-     * Add a property change listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-
-        support.addPropertyChangeListener(listener);
-
     }
 
 
@@ -819,19 +802,6 @@ public class Embedded  extends StandardService implements Lifecycle {
         if( log.isDebugEnabled() )
             log.debug(" Removing this Host");
         host.getParent().removeChild(host);
-
-    }
-
-
-
-    /**
-     * Remove a property change listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-
-        support.removePropertyChangeListener(listener);
 
     }
 
