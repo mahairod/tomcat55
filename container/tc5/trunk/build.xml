@@ -1,4 +1,4 @@
-<project name="Tomcat 5.0" default="deploy" basedir=".">
+<project name="Tomcat 5.5" default="deploy" basedir=".">
 
 
   <!-- ===================== Initialize Property Values =================== -->
@@ -13,7 +13,7 @@
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
   <property name="year"                  value="2004" />
-  <property name="version"               value="5.0" />
+  <property name="version"               value="5.5" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
