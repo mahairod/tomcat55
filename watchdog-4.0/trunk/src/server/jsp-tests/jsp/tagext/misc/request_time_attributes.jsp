@@ -20,7 +20,7 @@
 <request:ReqTime attr1="<%= ++i %>" attr2="<%= ++i %>" attr3="<%= ++i %>"  />
 <request:ReqTime attr1="<%= --i %>" attr2="<%= --i %>" attr3="<%= --i %>"  />
 <%-- Make set i to original value so that we get the same output everytime we run this tests and we don't have to shutdown and restart the server --%>
-<%=i=10 %>
+<%i=10; %>
 
 </body>
 </html>
