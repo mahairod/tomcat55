@@ -30,13 +30,20 @@
   <subsection name="General">
     <changelog>
       <update>
-        Many updated and fixed JavaDocs. (everyone)
+        Many updated and fixed JavaDocs. (yoavs)
       </update>
       <update>
         Designed and tested Tomcat on J2SE 5.0 (aka JDK 1.5). (everyone)
       </update>
       <update> 
         Bundled Eclipse JDT (new dependency) to allow Tomcat to run on a JRE only, i.e. no JDK required. (remm)
+      </update>
+      <update> 
+        Repackage commons-dbcp and its dependencies as a sigle smaller WAR, with renamed packages. (remm)
+      </update>
+      <update> 
+        Removed dependencies on commons-digester, commons-beanutils, and commons-collections. 
+        The relevant digester functionality is now merged in tomcat-util. (remm)
       </update>
     </changelog>
   </subsection>
@@ -55,6 +62,23 @@
       <update>
         Extensively profiled and optimized the server startup performance as well as the request mapping and processing pipeline. (remm)
       </update>
+      <update> 
+        The container will now always process a /META-INF/context.xml resource, unless the webapp has a specified external context file. (remm)
+      </update>
+      <update> 
+        New default configuration mechanism for web applications, replacing DefaultContext. This uses a
+        shared context file located in conf/context.xml. (remm)
+      </update>
+      <update> 
+        Revamped deployer, alloying full hotdeploy (note: on Windows, this requires the anti file locking
+        features). (remm)
+      </update>
+      <update> 
+        Remove verbosity from the JNDI resources configuration, by allowing arbitrary attributes on the Resource element. (remm)
+      </update>
+      <update> 
+        Simpler Valve interface, to allow smaller stack traces and reducing the amount of method calls. (remm)
+      </update>
     </changelog>
   </subsection>
 
@@ -63,6 +87,14 @@
 
   <subsection name="Jasper">
     <changelog>
+      <update> 
+        Eclipse JDT is now the default Java compiler in Jasper. Source dependencies are now loaded from
+        the container classloader, and compilation times are much faster. (remm)
+      </update>
+      <update> 
+        Jasper development mode should now have acceptable performance for heavily accessed pages.
+        Precompiling JSPs is still significantly more efficient, however. (remm)
+      </update>
     </changelog>
   </subsection>
 
