@@ -128,6 +128,7 @@ public class JspC implements Options {
     private String classPath = null;
     private URLClassLoader loader = null;
     private boolean trimSpaces = false;
+    private boolean genStringAsCharArray = false;
     private boolean xpoweredBy;
     private boolean mappedFile = false;
     private boolean poolingEnabled = true;
@@ -385,7 +386,7 @@ public class JspC implements Options {
         return true;
     }
 
-   /**
+    /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      */
     public boolean isSmapDumped() {
@@ -393,12 +394,42 @@ public class JspC implements Options {
     }
 
     /**
-     * Are Text strings to be generated as char arrays?
+     * Determines whether text strings are to be generated as char arrays,
+     * which improves performance in some cases.
+     *
+     * @param genStringAsCharArray true if text strings are to be generated as
+     * char arrays, false otherwise
      */
-    public boolean genStringAsCharArray() {
-        return false;
+    public void setGenStringAsCharArray(boolean genStringAsCharArray) {
+        this.genStringAsCharArray = genStringAsCharArray;
     }
 
+    /**
+     * Indicates whether text strings are to be generated as char arrays.
+     *
+     * @return true if text strings are to be generated as char arrays, false
+     * otherwise
+     */
+    public boolean genStringAsCharArray() {
+        return genStringAsCharArray;
+    }
+
+    /**
+     * Sets the class-id value to be sent to Internet Explorer when using
+     * <jsp:plugin> tags.
+     *
+     * @param ieClassId Class-id value
+     */
+    public void setIeClassId(String ieClassId) {
+        this.ieClassId = ieClassId;
+    }
+
+    /**
+     * Gets the class-id value that is sent to Internet Explorer when using
+     * <jsp:plugin> tags.
+     *
+     * @return Class-id value
+     */
     public String getIeClassId() {
         return ieClassId;
     }
