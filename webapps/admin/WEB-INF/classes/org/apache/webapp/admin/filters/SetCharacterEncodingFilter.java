@@ -15,7 +15,7 @@
  */
 
 
-package filters;
+package org.apache.webapp.admin.filters;
 
 
 import java.io.IOException;
