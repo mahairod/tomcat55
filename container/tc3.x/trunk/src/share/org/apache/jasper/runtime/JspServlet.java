@@ -116,7 +116,7 @@ public class JspServlet extends HttpServlet {
 	    }
 	}
 	
-	private void loadIfNecessary() 
+	private void loadIfNecessary(HttpServletRequest req, HttpServletResponse res) 
             throws JasperException, ServletException, FileNotFoundException 
         {
             // First try context attribute; if that fails then use the 
@@ -139,7 +139,7 @@ public class JspServlet extends HttpServlet {
                               new Object[] { accordingto, cp }, 
                               Constants.MED_VERBOSITY);
 
-	    if (loader.loadJSP(jspUri, cp, isErrorPage) || theServlet == null) {
+	    if (loader.loadJSP(jspUri, cp, isErrorPage, req, res) || theServlet == null) {
                 load();
             }
 	}
@@ -150,7 +150,7 @@ public class JspServlet extends HttpServlet {
 	    throws ServletException, IOException, FileNotFoundException 
 	{
             try {
-                loadIfNecessary();
+                loadIfNecessary(request, response);
 
 		// If a page is to only to be precompiled return.
 		if (precompile)
