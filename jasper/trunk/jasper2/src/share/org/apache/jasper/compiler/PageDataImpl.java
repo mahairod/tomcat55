@@ -187,13 +187,22 @@ class PageDataImpl extends PageData implements TagConstants {
 	    Attributes attrs = n.getAttributes();
 	    if (attrs != null) {
 		String type = "xmlns:" + attrs.getValue("prefix");
-		String location = attrs.getValue("uri");
-		if (location != null) {
-		    rootAttrs.addAttribute("", "", type, "CDATA", location);
-		} else {
-		    location = attrs.getValue("tagdir");
-		    rootAttrs.addAttribute("", "", type, "CDATA",
-					   URN_JSPTAGDIR + location);
+		/*
+		 * According to javadocs of org.xml.sax.helpers.AttributesImpl,
+		 * the addAttribute method does not check to see if the
+		 * specified attribute is already contained in the list: This
+		 * is the application's responsibility!
+		 */
+		if (rootAttrs.getIndex(type) == -1) {
+		    String location = attrs.getValue("uri");
+		    if (location != null) {
+			rootAttrs.addAttribute("", "", type, "CDATA",
+					       location);
+		    } else {
+			location = attrs.getValue("tagdir");
+			rootAttrs.addAttribute("", "", type, "CDATA",
+					       URN_JSPTAGDIR + location);
+		    }
 		}
 	    }
 	}
