@@ -462,6 +462,7 @@ public class Generator {
 
 	private ServletWriter out;
 	private MethodsBuffer methodsBuffer;
+	private int methodNesting;
 
 	/**
 	 * Constructor.
@@ -471,6 +472,7 @@ public class Generator {
 	    this.methodsBuffer = methodsBuffer;
 	    handlerInfos = new Hashtable();
 	    tagVarNumbers = new Hashtable();
+	    methodNesting = 0;
 	}
 
 	/**
@@ -569,7 +571,7 @@ public class Generator {
 	    out.print  (attributeValue(n.getPage(), false));
 	    printParams(n);
 	    out.println(");");
-	    out.printil("return;");
+	    out.printil((methodNesting > 0)? "return true;": "return;");
 	    out.popIndent();
 	    out.printil("}");
 
@@ -1013,14 +1015,18 @@ public class Generator {
 		String tagMethod = "_jspx_meth_" + baseVar;
 
 		// Generate a call to this method
-		out.printin(tagMethod);
+		out.printin("if (");
+		out.print(tagMethod);
 		out.print("(");
 		if (parent != null) {
 		    out.print(parent);
 		    out.print(", ");
 		}
-//		out.println("pageContext, _jspxState);");
-		out.println("pageContext);");
+//		out.println("pageContext, _jspxState)");
+		out.println("pageContext))");
+		out.pushIndent();
+		out.printil((methodNesting > 0)? "return true;": "return;");
+		out.popIndent();
 
 		// Set up new buffer for the method
 		outSave = out;
@@ -1028,10 +1034,11 @@ public class Generator {
 		methodsBufferSave = methodsBuffer;
 		methodsBuffer = new MethodsBuffer();
 
+		methodNesting++;
 		// Generate code for method declaration
 		out.println();
 		out.pushIndent();
-		out.printin("private void ");
+		out.printin("private boolean ");
 		out.print(tagMethod);
 		out.print("(");
 		if (parent != null) {
@@ -1074,9 +1081,14 @@ public class Generator {
 	    if (n.isScriptless() && varInfos == null &&
 			(tagVarInfos == null || tagVarInfos.length == 0)) {
 		// Generate end of method
+		if (methodNesting > 0) {
+		    out.printil("return false;");
+		}
 		out.popIndent();
 		out.printil("}");
 		out.popIndent();
+
+		methodNesting--;
 
 		// Append any methods that got generated in the body to the
 		// current buffer
@@ -1319,7 +1331,7 @@ public class Generator {
 	    out.print(tagHandlerVar);
 	    out.println(".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
 	    out.pushIndent();
-	    out.printil("return;");
+	    out.printil((methodNesting > 0)? "return true;": "return;");
 	    out.popIndent();
 
 	    // TryCatchFinally
