@@ -106,14 +106,14 @@ Tomcat 3.2.1 is a maintenance and bug fix release, based on the Tomcat 3.2
 6.1 Using An Absolute Path as Document Root Under Windows
 
 In the TOMCAT_HOME/conf/server.xml file, you can declare a relative or absolute
-directory pathname for the docRoot attribute.  If you wish to use an absolute
+directory pathname for the docBase attribute.  If you wish to use an absolute
 pathname on a Windows system, you MUST include the drive letter in order to
 conform to Java's definition of an absolute path on this platform:
 
-    GOOD:  c:\mydirectory\mydocroot
-    GOOD:  c:/mydirectory/mydocroot
-    BAD:   \mydirectory\mydocroot
-    BAD:   /mydirectory/mydocroot
+    GOOD:  c:\mydirectory\mydocbase
+    GOOD:  c:/mydirectory/mydocbase
+    BAD:   \mydirectory\mydocbase
+    BAD:   /mydirectory/mydocbase
 
 Under Unix, absolute pathnames must begin with a slash ('/') character.
 
