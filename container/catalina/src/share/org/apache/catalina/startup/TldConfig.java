@@ -503,7 +503,6 @@ public final class TldConfig  {
 
         JarFile jarFile = null;
         String name = null;
-        InputSource inputSource = null;
 
         String jarPath = file.getAbsolutePath();
 
@@ -522,21 +521,18 @@ public final class TldConfig  {
                 if (log.isTraceEnabled()) {
                     log.trace("  Processing TLD at '" + name + "'");
                 }
-                inputSource = new InputSource(jarFile.getInputStream(entry));
-                tldScanStream(inputSource);
-                inputSource = null;
-                name = null;
+                try {
+                    tldScanStream(new InputSource(jarFile.getInputStream(entry)));
+                } catch (Exception e) {
+                    log.error(sm.getString("contextConfig.tldEntryException",
+                                           name, jarPath, context.getPath()),
+                              e);
+                }
             }
         } catch (Exception e) {
-            if (name == null) {
-                log.error(sm.getString("contextConfig.tldJarException",
-                                       jarPath, context.getPath()),
-                          e);
-            } else {
-                log.error(sm.getString("contextConfig.tldEntryException",
-                                       name, jarPath, context.getPath()),
-                          e);
-            }
+            log.error(sm.getString("contextConfig.tldJarException",
+                                   jarPath, context.getPath()),
+                      e);
         } finally {
             if (jarFile != null) {
                 try {
