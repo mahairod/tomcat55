@@ -69,26 +69,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
-import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
-import org.apache.catalina.connector.HttpResponseWrapper;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
@@ -324,7 +315,7 @@ public class ErrorReportValve
             sb.append("<p><b>");
             sb.append(sm.getString("errorReportValve.exception"));
             sb.append("</b> <pre>");
-            sb.append(stackTrace.toString());
+            sb.append(RequestUtil.filter(stackTrace.toString()));
             sb.append("</pre></p>");
             if (rootCause != null) {
                 stackTrace = new StringWriter();
@@ -332,7 +323,7 @@ public class ErrorReportValve
                 sb.append("<p><b>");
                 sb.append(sm.getString("errorReportValve.rootCause"));
                 sb.append("</b> <pre>");
-                sb.append(stackTrace.toString());
+                sb.append(RequestUtil.filter(stackTrace.toString()));
                 sb.append("</pre></p>");
             }
         }
