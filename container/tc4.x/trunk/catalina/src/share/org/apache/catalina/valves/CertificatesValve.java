@@ -65,10 +65,12 @@
 package org.apache.catalina.valves;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import java.security.cert.CertificateFactory;
 import javax.security.cert.X509Certificate;
 import javax.servlet.ServletException;
 import org.apache.catalina.Globals;
@@ -163,24 +165,54 @@ public final class CertificatesValve
      */
     private void expose(Request request, Request actual) {
 
+	// Ensure that this request came in on an SSLSocket
         if (actual.getSocket() == null)
             return;
         if (!(actual.getSocket() instanceof SSLSocket))
             return;
         SSLSocket socket = (SSLSocket) actual.getSocket();
+
+	// Look up the current SSLSession
         SSLSession session = socket.getSession();
         if (session == null)
             return;
-        X509Certificate certs[] = null;
+
+	// If we have cached certificates, return them
+	Object cached = session.getValue(Globals.CERTIFICATES_ATTR);
+	if (cached != null) {
+	    request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR,
+	                                      cached);
+	    return;
+        }
+
+	// Convert JSSE's certificate format to the ones we need
+        X509Certificate jsseCerts[] = null;
+	java.security.cert.X509Certificate x509Certs[] = null;
         try {
-            certs = session.getPeerCertificateChain();
-        } catch (SSLPeerUnverifiedException e) {
+            jsseCerts = session.getPeerCertificateChain();
+	    if (jsseCerts == null)
+	        jsseCerts = new X509Certificate[0];
+	    x509Certs =
+              new java.security.cert.X509Certificate[jsseCerts.length];
+	    for (int i = 0; i < x509Certs.length; i++) {
+		byte buffer[] = jsseCerts[i].getEncoded();
+		CertificateFactory cf =
+		  CertificateFactory.getInstance("X.509");
+		ByteArrayInputStream stream =
+		  new ByteArrayInputStream(buffer);
+		x509Certs[i] = (java.security.cert.X509Certificate)
+		  cf.generateCertificate(stream);
+	    }
+        } catch (Throwable t) {
             return;
         }
-        if ((certs == null) || (certs.length < 1))
-            return;
 
-        request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR, certs);
+	// Expose these certificates as a request attribute
+        if ((x509Certs == null) || (x509Certs.length < 1))
+            return;
+        session.putValue(Globals.CERTIFICATES_ATTR, x509Certs);
+        request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR,
+                                          x509Certs);
 
     }
 
