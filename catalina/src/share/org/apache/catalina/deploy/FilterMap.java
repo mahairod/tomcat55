@@ -178,7 +178,7 @@ public final class FilterMap implements Serializable {
             // apply FORWARD to the global dispatcherMapping.
             switch (dispatcherMapping) {
                 case NOT_SET  :  dispatcherMapping = FORWARD; break;
-                case ERROR : dispatcherMapping = FORWARD_ERROR;
+                case ERROR : dispatcherMapping = FORWARD_ERROR; break;
                 case INCLUDE  :  dispatcherMapping = INCLUDE_FORWARD; break;
                 case INCLUDE_ERROR  :  dispatcherMapping = INCLUDE_ERROR_FORWARD; break;
                 case REQUEST : dispatcherMapping = REQUEST_FORWARD; break;
@@ -190,7 +190,7 @@ public final class FilterMap implements Serializable {
             // apply INCLUDE to the global dispatcherMapping.
             switch (dispatcherMapping) {
                 case NOT_SET  :  dispatcherMapping = INCLUDE; break;
-                case ERROR : dispatcherMapping = INCLUDE_ERROR;
+                case ERROR : dispatcherMapping = INCLUDE_ERROR; break;
                 case FORWARD  :  dispatcherMapping = INCLUDE_FORWARD; break;
                 case FORWARD_ERROR  :  dispatcherMapping = INCLUDE_ERROR_FORWARD; break;
                 case REQUEST : dispatcherMapping = REQUEST_INCLUDE; break;
@@ -202,7 +202,7 @@ public final class FilterMap implements Serializable {
             // apply REQUEST to the global dispatcherMapping.
             switch (dispatcherMapping) {
                 case NOT_SET  :  dispatcherMapping = REQUEST; break;
-                case ERROR : dispatcherMapping = REQUEST_ERROR;
+                case ERROR : dispatcherMapping = REQUEST_ERROR; break;
                 case FORWARD  :  dispatcherMapping = REQUEST_FORWARD; break;
                 case FORWARD_ERROR  :  dispatcherMapping = REQUEST_ERROR_FORWARD; break;
                 case INCLUDE  :  dispatcherMapping = REQUEST_INCLUDE; break;
@@ -217,10 +217,10 @@ public final class FilterMap implements Serializable {
                 case FORWARD  :  dispatcherMapping = FORWARD_ERROR; break;
                 case INCLUDE  :  dispatcherMapping = INCLUDE_ERROR; break;
                 case INCLUDE_FORWARD : dispatcherMapping = INCLUDE_ERROR_FORWARD; break;
-                case REQUEST : dispatcherMapping = REQUEST_ERROR;
-                case REQUEST_INCLUDE : dispatcherMapping = REQUEST_ERROR_INCLUDE;
-                case REQUEST_FORWARD : dispatcherMapping = REQUEST_ERROR_FORWARD;
-                case REQUEST_FORWARD_INCLUDE : dispatcherMapping = REQUEST_ERROR_FORWARD_INCLUDE;
+                case REQUEST : dispatcherMapping = REQUEST_ERROR; break;
+                case REQUEST_INCLUDE : dispatcherMapping = REQUEST_ERROR_INCLUDE; break;
+                case REQUEST_FORWARD : dispatcherMapping = REQUEST_ERROR_FORWARD; break;
+                case REQUEST_FORWARD_INCLUDE : dispatcherMapping = REQUEST_ERROR_FORWARD_INCLUDE; break;
             }
         }
     }
