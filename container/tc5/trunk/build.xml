@@ -258,7 +258,6 @@
       <fileset dir="${tomcat.build}/common/lib">
         <include name="*.jar"/>
       </fileset>
-      <pathelement location="${build.dir}/WEB-INF/classes"/>
     </path>
 
     <taskdef classname="org.apache.jasper.JspC" name="jasper2" >
