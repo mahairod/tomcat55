@@ -119,6 +119,7 @@ public class Compiler {
     private ErrorDispatcher errDispatcher;
     private PageInfo pageInfo;
     private JspServletWrapper jsw;
+    private TagFileProcessor tfp;
 
     protected Project project=null;
 
@@ -256,6 +257,13 @@ public class Compiler {
 	ParserController parserCtl = new ParserController(ctxt, this);
 	pageNodes = parserCtl.parse(ctxt.getJspFile());
 
+	if (ctxt.isPrototypeMode()) {
+	    // generate prototype .java file for the tag file
+	    Generator.generate(writer, this, pageNodes);
+            writer.close();
+	    return;
+	}
+
 	// Validate and process attributes
 	Validator.validate(this, pageNodes);
 
@@ -268,7 +276,8 @@ public class Compiler {
 
 	// Compile (if necessary) and load the tag files referenced in
 	// this compilation unit.
-	TagFileProcessor.loadTagFiles(this, pageNodes);
+	tfp = new TagFileProcessor();
+	tfp.loadTagFiles(this, pageNodes);
 
         long t3=System.currentTimeMillis();
         
@@ -287,6 +296,14 @@ public class Compiler {
         
         //JSR45 Support - note this needs to be checked by a JSR45 guru
 	SmapUtil.generateSmap(ctxt, pageNodes, true);
+
+	// If any proto type .java and .class files was generated,
+	// the prototype .java may have been replaced by the current
+	// compilation (if the tag file is self referencing), but the
+	// .class file need to be removed, to make sure that javac would
+	// generate .class again from the new .java file just generated.
+
+	tfp.removeProtoTypeFiles(ctxt.getClassFileName());
     }
 
     /** 
@@ -368,6 +385,11 @@ public class Compiler {
         if( t2-t1 > 500 ) {
             log.info( "Compiled " + javaFileName + " " + (t2-t1));
         }
+
+	if (ctxt.isPrototypeMode()) {
+	    return;
+	}
+
         //JSR45 Support - note this needs to be checked by a JSR45 guru
 	SmapUtil.installSmap(ctxt);
     }
@@ -380,6 +402,9 @@ public class Compiler {
     {
         generateJava();
         generateClass();
+	if (tfp != null) {
+	    tfp.removeProtoTypeFiles(null);
+	}
     }
 
     /**
@@ -495,7 +520,7 @@ public class Compiler {
      */
     public void removeGeneratedFiles() {
         try {
-            String classFileName = ctxt.getServletClassName();
+            String classFileName = ctxt.getClassFileName();
             if (classFileName != null) {
                 File classFile = new File(classFileName);
                 if( log.isDebugEnabled() )
@@ -518,5 +543,17 @@ public class Compiler {
         }
     }
 
-
+    public void removeGeneratedClassFiles() {
+        try {
+            String classFileName = ctxt.getClassFileName();
+            if (classFileName != null) {
+                File classFile = new File(classFileName);
+                if( log.isDebugEnabled() )
+                    log.debug( "Deleting " + classFile );
+                classFile.delete();
+            }
+        } catch (Exception e) {
+            // Remove as much as possible, ignore possible exceptions
+        }
+    }
 }

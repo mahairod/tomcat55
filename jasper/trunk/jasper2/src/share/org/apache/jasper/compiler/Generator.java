@@ -2873,6 +2873,11 @@ public class Generator {
 	if (gen.ctxt.isTagFile()) {
 	    TagInfo tagInfo = gen.ctxt.getTagInfo();
 	    gen.generateTagHandlerPreamble(tagInfo, page);
+
+	    if (gen.ctxt.isPrototypeMode()) {
+		return;
+	    }
+
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
 					       gen.methodsBuffer,
@@ -2963,6 +2968,14 @@ public class Generator {
         
         // Now the doTag() method
 	out.printil("public void doTag() throws javax.servlet.jsp.JspException, java.io.IOException {");
+
+	if (ctxt.isPrototypeMode()) {
+	    out.printil("}");
+	    out.popIndent();
+	    out.printil("}");
+	    return;
+	}
+
 	out.pushIndent();
 	out.printil("PageContext pageContext = (PageContext)jspContext;");
         

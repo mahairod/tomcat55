@@ -122,6 +122,7 @@ public class JspCompilationContext {
     protected Class servletClass;
 
     protected boolean isTagFile;
+    protected boolean protoTypeMode;
     protected TagInfo tagInfo;
     protected TagData tagData;
 
@@ -233,6 +234,10 @@ public class JspCompilationContext {
         }
         jspCompiler = new Compiler(this, jsw);
         return jspCompiler;
+    }
+
+    public Compiler getCompiler() {
+	return jspCompiler;
     }
 
     /** ---------- Access resources in the webapp ---------- */
@@ -361,6 +366,18 @@ public class JspCompilationContext {
 
     public TagInfo getTagInfo() {
 	return tagInfo;
+    }
+
+    /**
+     * True if we are compiling a tag file in prototype mode, i.e. we only
+     * Generate codes with class for the tag handler with empty method bodies.
+     */
+    public boolean isPrototypeMode() {
+	return protoTypeMode;
+    }
+
+    public void setPrototypeMode(boolean pm) {
+	protoTypeMode = pm;
     }
 
     public TagData getTagData() {

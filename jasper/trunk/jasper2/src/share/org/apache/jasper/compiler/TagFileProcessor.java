@@ -82,6 +82,8 @@ import org.apache.jasper.servlet.JspServletWrapper;
 
 public class TagFileProcessor {
 
+    private Vector tempVector;
+
     /**
      * A visitor the tag file
      */
@@ -332,9 +334,9 @@ public class TagFileProcessor {
     /**
      * Compiles and loads a tagfile.
      */
-    private static Class loadTagFile(Compiler compiler,
-				    String tagFilePath, TagInfo tagInfo,
-				    TagData tagData)
+    private Class loadTagFile(Compiler compiler,
+			      String tagFilePath, TagInfo tagInfo,
+			      TagData tagData)
 	throws JasperException {
 
 	JspCompilationContext ctxt = compiler.getCompilationContext();
@@ -342,29 +344,47 @@ public class TagFileProcessor {
         JspServletWrapper wrapper =
 		(JspServletWrapper) rctxt.getWrapper(tagFilePath);
 
-	// No need to synchronize wrapper creation since this can only
-	// happen when a JSP file is compiled, which is synchronized.
-	if (wrapper == null) {
-	    wrapper = new JspServletWrapper(ctxt.getServletContext(),
+	synchronized(rctxt) {
+	    if (wrapper == null) {
+	        wrapper = new JspServletWrapper(ctxt.getServletContext(),
 					    ctxt.getOptions(),
 					    tagFilePath,
 					    tagInfo,
 					    tagData,
 					    ctxt.getRuntimeContext(),
 					    ctxt.getTagFileJars());
-	    rctxt.addWrapper(tagFilePath,wrapper);
-	}
+	        rctxt.addWrapper(tagFilePath,wrapper);
+	    }
 
-	// Check to see if we have been here before but not finished
-	// compiling/loading.
-	if (wrapper.incTripCount() > 0) {
-	    // Circular tag file dependencies
-	    compiler.getErrorDispatcher().jspError("jsp.error.circular.tagfile",
-			tagFilePath);
+	    Class tagClass;
+	    int tripCount = wrapper.incTripCount();
+	    try {
+	        if (tripCount > 0) {
+		    // When tripCount is greater than zero, a circular
+		    // dependency exists.  The circularily dependant tag
+		    // file is compiled in prototype mode, to avoid infinite
+		    // recursion.
+
+		    JspServletWrapper tempWrapper = new JspServletWrapper(
+					    ctxt.getServletContext(),
+                                            ctxt.getOptions(),
+                                            tagFilePath,
+                                            tagInfo,
+                                            tagData,
+                                            ctxt.getRuntimeContext(),
+                                            ctxt.getTagFileJars());
+	            tagClass = tempWrapper.loadTagFilePrototype();
+		    tempVector.add(
+			tempWrapper.getJspEngineContext().getCompiler());
+	        } else {
+	            tagClass = wrapper.loadTagFile();
+	        }
+	    } finally {
+	        wrapper.decTripCount();
+	    }
+
+	    return tagClass;
 	}
-	Class tagClass = wrapper.loadTagFile();
-	wrapper.decTripCount();
-	return tagClass;
     }
 
     /*
@@ -372,12 +392,13 @@ public class TagFileProcessor {
      * files and compile (if necessary) and load them.
      */ 
 
-    static class TagFileLoaderVisitor extends Node.Visitor {
+    class TagFileLoaderVisitor extends Node.Visitor {
 
 	private Compiler compiler;
 	private PageInfo pageInfo;
 
 	TagFileLoaderVisitor(Compiler compiler) {
+	    
 	    this.compiler = compiler;
 	    this.pageInfo = compiler.getPageInfo();
 	}
@@ -401,11 +422,32 @@ public class TagFileProcessor {
      * are assumed to have been proccessed and encapsulated as TagFileInfo
      * in the CustomTag nodes.
      */
-    public static void loadTagFiles(Compiler compiler, Node.Nodes page)
+    public void loadTagFiles(Compiler compiler, Node.Nodes page)
 		throws JasperException {
 
+	tempVector = new Vector();
 	page.visit(new TagFileLoaderVisitor(compiler));
     }
-	
+
+    /**
+     * Removed the java and class files for the tag prototype 
+     * generated from the current compilation.
+     * @param classFileName If non-null, remove only the class file with
+     *        with this name.
+     */
+    public void removeProtoTypeFiles(String classFileName) {
+	Iterator iter = tempVector.iterator();
+	while (iter.hasNext()) {
+	    Compiler c = (Compiler) iter.next();
+	    if (classFileName == null) {
+		c.removeGeneratedClassFiles();
+	    } else if (classFileName.equals(
+			c.getCompilationContext().getClassFileName())) {
+		c.removeGeneratedClassFiles();
+		tempVector.remove(c);
+		return;
+	    }
+	}
+    }
 }
 

@@ -199,6 +199,9 @@ public class JspServletWrapper {
         return config.getServletContext();
     }
 
+    /**
+     * Compile (if needed) and load a tag file
+     */
     public Class loadTagFile() throws JasperException {
 
         try {
@@ -211,17 +214,29 @@ public class JspServletWrapper {
                 }
             }
             if (ctxt.isReload()) {
-                synchronized (this) {
-                    if (ctxt.isReload()) {
-                        tagHandlerClass = ctxt.load();
-                    }
-                }
+                tagHandlerClass = ctxt.load();
             }
         } catch (FileNotFoundException ex) {
             throw new JasperException(ex);
 	}
 
 	return tagHandlerClass;
+    }
+
+    /**
+     * Compile and load a prototype for the Tag file.  This is needed
+     * when compiling tag files with circular dependencies.  A prototpe
+     * (skeleton) with no dependencies on other other tag files is
+     * generated and compiled.
+     */
+    public Class loadTagFilePrototype() throws JasperException {
+
+	ctxt.setPrototypeMode(true);
+	try {
+	    return loadTagFile();
+	} finally {
+	    ctxt.setPrototypeMode(false);
+	}
     }
 
     /**
