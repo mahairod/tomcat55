@@ -46,7 +46,7 @@
                 <tr><td align="left" valign="top"><b><%= application.getServerInfo() %></b></td></tr>
             </table>
         </td>
-        <td align="right"><a href="http://jakarta.apache.org/"><img src="jakarta-banner.gif" height="100" width="350" border="0" alt="The Jakarta Project"></a></td>
+        <td align="right"><a href="http://jakarta.apache.org/"><img src="jakarta-banner.gif" height="48" width="505" border="0" alt="The Jakarta Project"></a></td>
     </tr>
 </table>
 
