@@ -174,9 +174,11 @@ public class RequestDumperValve
         log("       contentType=" + hreq.getContentType());
         log("       contextPath=" + hreq.getContextPath());
         Cookie cookies[] = hreq.getCookies();
-        for (int i = 0; i < cookies.length; i++)
-            log("            cookie=" + cookies[i].getName() + "=" +
-                cookies[i].getValue());
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++)
+                log("            cookie=" + cookies[i].getName() + "=" +
+                    cookies[i].getValue());
+        }
         Enumeration hnames = hreq.getHeaderNames();
         while (hnames.hasMoreElements()) {
             String hname = (String) hnames.nextElement();
