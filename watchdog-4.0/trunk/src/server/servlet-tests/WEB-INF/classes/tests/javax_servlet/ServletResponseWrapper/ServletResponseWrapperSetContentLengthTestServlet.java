@@ -77,12 +77,12 @@ public class ServletResponseWrapperSetContentLengthTestServlet extends GenericSe
         sl.resetLog();
         // this length includes the output from the wrapper.
         response.setContentLength( PASSED.length() + 48 );
-        out.println( PASSED );
+        out.print( PASSED + "\r\n" );
         Enumeration e = sl.readFromLog();
 
         while ( e.hasMoreElements() ) {
             String tmp = ( String ) e.nextElement();
-            out.println( tmp );
+            out.print( tmp + "\r\n" );
         }
     }
 }
