@@ -354,7 +354,7 @@ public class DefaultServlet extends HttpServlet {
         // Unfortunately, on Unix, it prevents symlinks from working
 	// So, a check for File.separatorChar='\\' ..... It hopefully
 	// happens on flavors of Windows.
-	if ( (File.separator == '\\') && (!absPath.equals(canPath)) ) {
+	if ( (File.separatorChar  == '\\') && (!absPath.equals(canPath)) ) {
 	    response.sendError(response.SC_NOT_FOUND);
 
 	    return;
