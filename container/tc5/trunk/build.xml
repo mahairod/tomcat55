@@ -800,7 +800,7 @@
       <param name="destfile" value="${commons-launcher.jar}"/>
     </antcall>
     <copy
-      file="${commons-launcher.home}/dist/commons-launcher.jar"
+      file="${commons-launcher.home}/dist/bin/commons-launcher.jar"
       tofile="${commons-launcher.jar}"
     />
     <copy
