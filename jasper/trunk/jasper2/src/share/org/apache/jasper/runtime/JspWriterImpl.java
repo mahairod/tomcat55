@@ -139,9 +139,6 @@ public class JspWriterImpl extends JspWriter {
      * Discard the output buffer.
      */
     public final void clear() throws IOException {
-        if (bufferSize == 0)
-            throw new IllegalStateException(
-                    getLocalizeMessage("jsp.error.ise_on_clear"));
         if (flushed)
             throw new IOException(
                     getLocalizeMessage("jsp.error.attempt_to_clear_flushed_buffer"));
