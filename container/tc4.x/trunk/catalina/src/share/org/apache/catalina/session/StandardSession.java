@@ -464,15 +464,8 @@ class StandardSession
      * Return the maximum time interval, in seconds, between client requests
      * before the servlet container will invalidate the session.  A negative
      * time indicates that the session should never time out.
-     *
-     * @exception IllegalStateException if this method is called on
-     *  an invalidated session
      */
     public int getMaxInactiveInterval() {
-
-        if (!isValid)
-            throw new IllegalStateException
-                (sm.getString("standardSession.getMaxInactiveInterval.ise"));
 
         return (this.maxInactiveInterval);
 
