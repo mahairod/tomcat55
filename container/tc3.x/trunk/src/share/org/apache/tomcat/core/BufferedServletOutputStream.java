@@ -126,8 +126,10 @@ public class BufferedServletOutputStream extends ServletOutputStream {
     }
 
     protected void sendHeaders() throws IOException {
-	response.writeHeaders();
-	resA.endHeaders();
+	if(response!=null)
+	    response.writeHeaders();
+	if(resA!=null)
+	    resA.endHeaders();
     }
 
     public void setResponse( Response response ) {

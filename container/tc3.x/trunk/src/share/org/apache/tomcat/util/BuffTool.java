@@ -84,11 +84,17 @@ public class BuffTool {
     /** @returns new position
      */ 
     public static int addString( byte buff[], int pos, String v ) {
-	int len=v.length();
-	addInt( buff, pos, len );
-	System.arraycopy( v.getBytes(), 0, buff, pos+2, len);
-	buff[pos+len+2]=0;
-	return len+pos+3;
+	if(v!=null) {
+	    int len=v.length();
+	    addInt( buff, pos, len );
+	    System.arraycopy( v.getBytes(), 0, buff, pos+2, len);
+	    buff[pos+len+2]=0;
+	    return len+pos+3;
+	}  else {
+	    addInt( buff, pos, 0);
+	    buff[pos+2] = 0;
+	    return pos+3;
+	}                   
     }
 
     public static  int getInt( byte b[], int offset )  {
