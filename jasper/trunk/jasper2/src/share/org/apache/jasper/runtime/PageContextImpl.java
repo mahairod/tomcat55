@@ -246,7 +246,8 @@ public class PageContextImpl
 
 	    case SESSION_SCOPE:
 		if (session == null)
-		    throw new IllegalArgumentException("can't access SESSION_SCOPE without an HttpSession");
+		    throw new IllegalArgumentException(
+                        "can't access SESSION_SCOPE without an HttpSession");
 		else
 		    return session.getAttribute(name);
 
@@ -254,7 +255,7 @@ public class PageContextImpl
 		return context.getAttribute(name);
 
 	    default:
-		throw new IllegalArgumentException("unidentified scope");
+		throw new IllegalArgumentException("Invalid scope");
 	}
     }
 
@@ -268,24 +269,26 @@ public class PageContextImpl
 	switch (scope) {
 	    case PAGE_SCOPE:
 		attributes.put(name, o);
-	    break;
+		break;
 
 	    case REQUEST_SCOPE:
 		request.setAttribute(name, o);
-	    break;
+		break;
 
 	    case SESSION_SCOPE:
 		if (session == null)
-		    throw new IllegalArgumentException("can't access SESSION_SCOPE without an HttpSession");
+		    throw new IllegalArgumentException(
+                        "can't access SESSION_SCOPE without an HttpSession");
 		else
 		    session.setAttribute(name, o);
-	    break;
+		break;
 
 	    case APPLICATION_SCOPE:
 		context.setAttribute(name, o);
-	    break;
+		break;
 
 	    default:
+		throw new IllegalArgumentException("Invalid scope");
 	}
     }
 
@@ -293,25 +296,26 @@ public class PageContextImpl
 	switch (scope) {
 	    case PAGE_SCOPE:
 		attributes.remove(name);
-	    break;
+		break;
 
 	    case REQUEST_SCOPE:
 		request.removeAttribute(name);
-            break;
+		break;
 
 	    case SESSION_SCOPE:
 		if (session == null)
-		    throw new IllegalArgumentException("can't access SESSION_SCOPE without an HttpSession");
+		    throw new IllegalArgumentException(
+                        "can't access SESSION_SCOPE without an HttpSession");
 		else
                     session.removeAttribute(name);
                 // was:
                 //		    session.removeValue(name);
                 // REVISIT Verify this is correct - akv
-	    break;
+		break;
 
 	    case APPLICATION_SCOPE:
 		context.removeAttribute(name);
-	    break;
+		break;
 
 	    default:
 	}
@@ -364,7 +368,8 @@ public class PageContextImpl
 		if (session != null) {
 		    return session.getAttributeNames();
 		} else
-		    throw new IllegalArgumentException("can't access SESSION_SCOPE without an HttpSession");
+		    throw new IllegalArgumentException(
+                        "can't access SESSION_SCOPE without an HttpSession");
 
 	    case APPLICATION_SCOPE:
 		return context.getAttributeNames();
