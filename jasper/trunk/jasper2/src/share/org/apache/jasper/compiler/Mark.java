@@ -123,7 +123,9 @@ final class Mark {
     {
 	this.reader = reader;
 	this.stream = inStream;
-	this.cursor = this.line = this.col = 0;
+	this.cursor = 0;
+	this.line = 1;
+	this.col = 1;
 	this.fileid = fileid;
 	this.fileName = name;
 	this.baseDir = inBaseDir;
@@ -180,8 +182,8 @@ final class Mark {
 
 	// set new variables
 	cursor = 0;
-	line = 0;
-	col = 0;
+	line = 1;
+	col = 1;
 	fileid = inFileid;
 	fileName = name;
 	baseDir = inBaseDir;

@@ -61,6 +61,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.Node;
+import org.apache.jasper.JasperException;
 
 /**
  * Contains static utilities for generating SMAP data based on the
@@ -109,7 +110,7 @@ public class SmapUtil {
 	String smapPath = inputSmapPath(ctxt.getRealPath(ctxt.getJspFile()));
         File inputSmap = new File(smapPath);
         if (inputSmap.exists()) {
-        byte[] embeddedSmap = null;
+            byte[] embeddedSmap = null;
 	    byte[] subSmap = SDEInstaller.readWhole(inputSmap);
 	    String subSmapString = new String(subSmap, SMAP_ENCODING);
 	    g.addSmap(subSmapString, "JSP");
@@ -472,32 +473,147 @@ public class SmapUtil {
             }
         }
     }
-    public static void evaluateNodes(Node.Nodes nodes, SmapStratum s) {
-        if( nodes != null && nodes.size()>0) {
-            int numChildNodes = nodes.size();
-            for( int i = 0; i < numChildNodes; i++ ) {
-                Node n = nodes.getNode( i );
-		if (!n.isDummy()) {
-		    Mark mark = n.getStart();
 
-		    if (verbose) {
-			System.out.println("Mark(start): line=" +
-					   mark.getLineNumber() +
-					   " col="+mark.getColumnNumber() +
-					   "Node: begLine=" +
-					   n.getBeginJavaLine() +
-					   " endLine="+n.getEndJavaLine());
-		    }
-		    String unqualifiedName = unqualify(mark.getFile());
-		    s.addFile(unqualifiedName);
-		    s.addLineData(mark.getLineNumber(),
-				  unqualifiedName,
-				  1,
-				  n.getBeginJavaLine(),
-				  n.getEndJavaLine() - n.getBeginJavaLine());
-		}
-		evaluateNodes(nodes.getNode(i).getBody(), s);
+    public static void evaluateNodes(Node.Nodes nodes, SmapStratum s) {
+        try {
+            nodes.visit(new SmapGenVisitor(s));
+        } catch (JasperException ex) {
+	}
+    }
+
+    static class SmapGenVisitor extends Node.Visitor {
+
+        private SmapStratum smap;
+
+        SmapGenVisitor(SmapStratum s) {
+            this.smap = s;
+        }
+
+        public void visit(Node.Declaration n) throws JasperException {
+            doSmapText(n);
+        }
+
+        public void visit(Node.Expression n) throws JasperException {
+            doSmapText(n);
+        }
+
+        public void visit(Node.Scriptlet n) throws JasperException {
+            doSmapText(n);
+        }
+
+        public void visit(Node.IncludeAction n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.ForwardAction n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.GetProperty n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.SetProperty n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.UseBean n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.PlugIn n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.CustomTag n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.UninterpretedTag n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.JspElement n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.JspText n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+        public void visit(Node.NamedAttribute n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.JspBody n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.InvokeAction n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.DoBodyAction n) throws JasperException {
+            doSmap(n);
+            visitBody(n);
+        }
+
+        public void visit(Node.TemplateText n) throws JasperException {
+            // Skip smap there the text is all noise
+            String text = n.getText();
+            int i = 0;
+            while (i < text.length()) {
+                if (text.charAt(i) > ' ')
+                    break;
+                i++;
             }
+            if (i < text.length()) {
+                doSmap(n);
+            }
+        }
+
+        private void doSmap(Node n, int inLineCount, int outIncrement) {
+            Mark mark = n.getStart();
+	    if (mark == null) {
+                 return;
+            }
+
+            String unqualifiedName = unqualify(mark.getFile());
+            smap.addFile(unqualifiedName);
+            smap.addLineData(mark.getLineNumber(),
+                          unqualifiedName,
+                          inLineCount,
+                          n.getBeginJavaLine(),
+                          outIncrement);
+        }
+
+        private void doSmap(Node n) {
+            doSmap(n, 1, n.getEndJavaLine() - n.getBeginJavaLine());
+        }
+
+        private void doSmapText(Node n) {
+            String text = n.getText();
+            int index = 0;
+            int lineCount = 1;
+            // count lines inside text
+            while ((index = text.indexOf('\n', index)) > -1 ) {
+                lineCount++;
+                index++;
+            }
+
+            doSmap(n, lineCount, 1);
         }
     }
 }
