@@ -366,6 +366,11 @@ public class CoyoteRequest
 
 
     /**
+     * Local port
+     */
+    protected int localPort = -1;
+
+    /**
      * Remote address.
      */
     protected String remoteAddr = null;
@@ -420,6 +425,7 @@ public class CoyoteRequest
         remoteAddr = null;
         remoteHost = null;
         remotePort = -1;
+        localPort = -1;
         localAddr = null;
 
         attributes.clear();
@@ -646,6 +652,7 @@ public class CoyoteRequest
         remoteHost = null;
         remoteAddr = null;
         remotePort = -1;
+        localPort = -1;
         localAddr = null;
     }
 
@@ -1236,7 +1243,7 @@ public class CoyoteRequest
                 remotePort = socket.getPort();
             } else {
                 coyoteRequest.action
-                    (ActionCode.ACTION_REQ_HOST_ATTRIBUTE, coyoteRequest);
+                    (ActionCode.ACTION_REQ_REMOTEPORT_ATTRIBUTE, coyoteRequest);
                 remotePort = coyoteRequest.getRemotePort();
             }
         }
@@ -1262,7 +1269,7 @@ public class CoyoteRequest
                 localAddr = inet.getHostAddress();
             } else {
                 coyoteRequest.action
-                    (ActionCode.ACTION_REQ_HOST_ATTRIBUTE, coyoteRequest);
+                    (ActionCode.ACTION_REQ_LOCAL_ADDR_ATTRIBUTE, coyoteRequest);
                 localAddr = coyoteRequest.localAddr().toString();
             }
         }
@@ -1275,7 +1282,16 @@ public class CoyoteRequest
      * on which the request was received.
      */
     public int getLocalPort(){
-        return getServerPort();
+        if (localPort == -1){
+            if (socket != null) {
+                localPort = socket.getLocalPort();
+            } else {
+                coyoteRequest.action
+                    (ActionCode.ACTION_REQ_LOCALPORT_ATTRIBUTE, coyoteRequest);
+                localPort = coyoteRequest.getLocalPort();
+            }           
+        }
+        return localPort;
     }
     
     /**
