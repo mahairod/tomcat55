@@ -235,8 +235,16 @@ public class Handler {
     }
 
     /** Call the service method, and notify all listeners
+     *
+     * @exception IOException if an input/output error occurs and we are
+     *  processing an included servlet (otherwise it is swallowed and
+     *  handled by the top level error handler mechanism)
+     * @exception ServletException if a servlet throws an exception and
+     *  we are processing an included servlet (otherwise it is swallowed
+     *  and handled by the top level error handler mechanism)
      */
     public void service(Request req, Response res) 
+        throws IOException, ServletException
     {
 	if( ! initialized ) {
 	    try {
@@ -250,6 +258,15 @@ public class Handler {
 		    return;
 		}
 		context.log("Exception in init  " + ex.getMessage(), ex );
+                if (res.isIncluded()) {
+                    if (ex instanceof IOException)
+                        throw (IOException) ex;
+                    else if (ex instanceof ServletException)
+                        throw (ServletException) ex;
+                    else
+                        throw new ServletException
+                            ("Included Servlet Init Exception", ex);
+                }
 		contextM.handleError( req, res, ex );
 		return;
 	    }
@@ -270,7 +287,21 @@ public class Handler {
 	    contextM.doPostService( req, res );
 
 	if( t==null ) return;
+
+        // Rethrow an exception if we are inside an include
+        if (res.isIncluded()) {
+            context.log("Rethrowing included exception: " + t);
+            if (t instanceof IOException)
+                throw (IOException) t;
+            else if (t instanceof ServletException)
+                throw (ServletException) t;
+            else
+                throw new ServletException("Included Servlet Exception", t);
+        }
+
+        // Otherwise, handle a top-level error as usual
 	contextM.handleError( req, res, t );
+
     }
 
 //     protected void handleError( Request req, Response res, Throwable t) {

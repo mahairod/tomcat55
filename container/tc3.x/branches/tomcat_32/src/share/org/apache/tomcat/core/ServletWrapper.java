@@ -327,10 +327,18 @@ public class ServletWrapper extends Handler {
     }
 
     /** Override service to hook reloading - it can be done in a clean
-	interceptor. It also hooks jsp - we should have a separate
-	JspHandler
-    */
-    public void service(Request req, Response res) 
+     * interceptor. It also hooks jsp - we should have a separate
+     * JspHandler
+     *
+     * @exception IOException if an input/output error occurs and we are
+     *  processing an included servlet (otherwise it is swallowed and
+     *  handled by the top level error handler mechanism)
+     * @exception ServletException if a servlet throws an exception and
+     *  we are processing an included servlet (otherwise it is swallowed
+     *  and handled by the top level error handler mechanism)
+     */
+    public void service(Request req, Response res)
+        throws IOException, ServletException
     {
 	try {
 	    handleReload(req);
@@ -368,11 +376,17 @@ public class ServletWrapper extends Handler {
 
 	// called only if unavailable==null or timer expired.
 	// will do an init
-	super.service( req, res );
-
-	// if unavailable set, assume problem in init()
-	if (unavailable!=null)
-		handleUnavailable( req, res);
+        try {
+            super.service( req, res );
+        } catch( IOException e ) {
+            throw e;
+        } catch( UnavailableException e ) {
+            // if unavailable set, assume problem in init()
+            handleUnavailable( req, res );
+            throw e;
+        } catch( ServletException e ) {
+            throw e;
+        }
     }
 
     protected void doService(Request req, Response res)

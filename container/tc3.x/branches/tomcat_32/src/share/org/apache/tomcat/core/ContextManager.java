@@ -1042,7 +1042,13 @@ public class ContextManager {
 
 	req.setAttribute("tomcat.servlet.error.request", req);
 
-	errorServlet.service( req, res );
+        try {
+            errorServlet.service( req, res );
+        } catch( IOException e ) {
+            ;   // ASSERT: Only thrown by included servlets
+        } catch( ServletException e ) {
+            ;   // ASSERT: Only thrown by included servlets
+        }
     }
 
     // XXX XXX Security - we should log the message, but nothing
@@ -1120,7 +1126,13 @@ public class ContextManager {
 	req.setAttribute("tomcat.servlet.error.throwable", t);
 	req.setAttribute("tomcat.servlet.error.request", req);
 
-	errorServlet.service( req, res );
+        try {
+            errorServlet.service( req, res );
+        } catch( IOException e ) {
+            ;   // ASSERT: Only thrown by included servlets
+        } catch( ServletException e) {
+            ;   // ASSERT: Only thrown by included servlets
+        }
     }
 
     public ServletWrapper getHandlerForPath( Context ctx, String path ) {
