@@ -306,8 +306,6 @@ public class ServletWrapper {
     }
 
     /** Load and init a the servlet pointed by this wrapper
-     *  @deprecated loadServlet is used with the meaning of initServlet.
-     *    Use the real thing.
      */
     public void loadServlet()
 	throws ClassNotFoundException, InstantiationException,
