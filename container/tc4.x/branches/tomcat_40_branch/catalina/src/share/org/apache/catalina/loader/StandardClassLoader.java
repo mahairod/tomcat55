@@ -668,6 +668,9 @@ public class StandardClassLoader
                 log("      super.findClass(" + name + ")");
             try {
                 synchronized (this) {
+                    clazz = findLoadedClass(name);
+                    if (clazz != null)
+                        return clazz;
                     clazz = super.findClass(name);
                 }
             } catch(AccessControlException ace) {
