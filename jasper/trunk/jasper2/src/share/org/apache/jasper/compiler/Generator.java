@@ -1261,41 +1261,37 @@ class Generator {
                         className =
                             attributeValue(beanName, false, String.class);
                     }
-                    out.printil("try {");
-                    out.pushIndent();
-                    out.printin(name);
-                    out.print(" = (");
-                    out.print(type);
-                    out.print(") java.beans.Beans.instantiate(");
-                    out.print("this.getClass().getClassLoader(), ");
-                    out.print(className);
-                    out.println(");");
-                    out.popIndent();
-                    /*
-                     * Note: Beans.instantiate throws ClassNotFoundException
-                     * if the bean class is abstract.
-                     */
-                    out.printil("} catch (ClassNotFoundException exc) {");
-                    out.pushIndent();
-                    out.printil(
-                        "throw new InstantiationException(exc.getMessage());");
-                    out.popIndent();
-                    out.printil("} catch (Exception exc) {");
-                    out.pushIndent();
-                    out.printin("throw new ServletException(");
-                    out.print("\"Cannot create bean of class \" + ");
-                    out.print(className);
-                    out.println(", exc);");
-                    out.popIndent();
-                    out.printil("}"); // close of try
                 } else {
                     // Implies klass is not null
-                    // Generate codes to instantiate the bean class
-                    out.printin(name);
-                    out.print(" = new ");
-                    out.print(klass);
-                    out.println("();");
+                    className = quote(klass);
                 }
+                out.printil("try {");
+                out.pushIndent();
+                out.printin(name);
+                out.print(" = (");
+                out.print(type);
+                out.print(") java.beans.Beans.instantiate(");
+                out.print("this.getClass().getClassLoader(), ");
+                out.print(className);
+                out.println(");");
+                out.popIndent();
+                /*
+                 * Note: Beans.instantiate throws ClassNotFoundException
+                 * if the bean class is abstract.
+                 */
+                out.printil("} catch (ClassNotFoundException exc) {");
+                out.pushIndent();
+                out.printil(
+                    "throw new InstantiationException(exc.getMessage());");
+                out.popIndent();
+                out.printil("} catch (Exception exc) {");
+                out.pushIndent();
+                out.printin("throw new ServletException(");
+                out.print("\"Cannot create bean of class \" + ");
+                out.print(className);
+                out.println(", exc);");
+                out.popIndent();
+                out.printil("}"); // close of try
                 /*
                  * Set attribute for bean in the specified scope
                  */
