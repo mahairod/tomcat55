@@ -81,6 +81,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
@@ -116,8 +117,10 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Mapper;
+import org.apache.catalina.Pipeline;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
@@ -138,6 +141,7 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
+
 
 
 /**
@@ -2502,6 +2506,13 @@ public class StandardContext
             }
         }
 
+        // Create request listener valve
+        if (ok) {
+            if (!requestListenerConfig()) {
+                log(sm.getString("standardContext.requestListenerStartFailed"));
+            }
+        }
+
         // Restore the "Welcome Files" and "Resources" context attributes
         postResources();
         postWelcomeFiles();
@@ -3507,6 +3518,13 @@ public class StandardContext
                 ok = false;
         }
 
+        // Create request listener lifecycle valve
+        if (ok) {
+            if (!requestListenerConfig()) {
+                log(sm.getString("standardContext.requestListenerStartFailed"));
+            }
+        }
+
         // Load and initialize all "load on startup" servlets
         if (ok)
             loadOnStartup(findChildren());
@@ -3986,5 +4004,57 @@ public class StandardContext
 
     }
 
+
+    /**
+     * Create and deploy a Valve to handle request linitialization and
+     * destroy listener lifecycle events. If there are no request listeners
+     * registered to receive notifications do not instantiate valve.
+     */
+    private boolean requestListenerConfig() {
+        // Only install this valive if there is a registered RequestListener.
+        Object instances[] = getApplicationListeners();
+        boolean registered = false;
+        boolean ok = true;
+
+        if (instances != null) {
+            for (int i = 0; i < instances.length; i++) {
+                if (instances[i] instanceof ServletRequestListener) {
+                    registered = true;
+                    break;
+                }
+            }
+        }
+
+        if (!registered) {
+            return ok;
+        }
+
+        // Instantiate a new CertificatesValve if possible
+        Valve requestListener = null;
+        try {
+            Class clazz =
+                Class.forName("org.apache.catalina.valves.RequestListenerValve");
+            requestListener = (Valve) clazz.newInstance();
+        } catch (Throwable t) {
+            return false;    
+        }
+
+        // Add this Valve to our Pipeline
+        try {
+            if (this instanceof ContainerBase) {
+                Pipeline pipeline = ((ContainerBase) this).getPipeline();
+                if (pipeline != null) {
+                    ((ContainerBase) this).addValve(requestListener);
+                    log(sm.getString
+                        ("standardContext.requestListenerConfig.added"));
+                }
+            }
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.requestListenerConfig.error"), t);
+            ok = false;
+        }
+        return ok;
+
+    }
 
 }
