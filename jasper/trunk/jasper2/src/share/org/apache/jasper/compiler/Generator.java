@@ -3006,7 +3006,7 @@ class Generator {
 	        throws JasperException {
 
 	if (tagInfo.hasDynamicAttributes()) {
-	    out.printil("java.util.HashMap dynamicAttrs = new java.util.HashMap();");
+	    out.printil("private java.util.HashMap dynamicAttrs = new java.util.HashMap();");
 	}
 
 	// Declare attributes
