@@ -503,4 +503,136 @@ public class MBeanUtils {
     }
 
 
+    /**
+     * Deregister the MBean for this
+     * <code>Connector</code> object.
+     *
+     * @param connector The Connector to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Connector connector)
+        throws Exception {
+
+        String mname = createManagedName(connector);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, connector);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>Context</code> object.
+     *
+     * @param context The Context to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Context context)
+        throws Exception {
+
+        String mname = createManagedName(context);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, context);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>Engine</code> object.
+     *
+     * @param engine The Engine to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Engine engine)
+        throws Exception {
+
+        String mname = createManagedName(engine);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, engine);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>Host</code> object.
+     *
+     * @param host The Host to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Host host)
+        throws Exception {
+
+        String mname = createManagedName(host);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, host);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>Server</code> object.
+     *
+     * @param server The Server to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Server server)
+        throws Exception {
+
+        String mname = createManagedName(server);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, server);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>Service</code> object.
+     *
+     * @param service The Service to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Service service)
+        throws Exception {
+
+        String mname = createManagedName(service);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, service);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
 }

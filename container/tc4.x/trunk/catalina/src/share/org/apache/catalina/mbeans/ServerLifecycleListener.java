@@ -472,17 +472,11 @@ public class ServerLifecycleListener
                 }
                 if (debug >= 4)
                     log("  Removing MBean for Context " + context);
-                MBeanServer mserver = MBeanUtils.createServer();
-                mserver.unregisterMBean
-                    (MBeanUtils.createObjectName(mserver.getDefaultDomain(),
-                                                 context));
+                MBeanUtils.destroyMBean(context);
                 ; // FIXME - child component MBeans?
             } else if (child instanceof Host) {
                 Host host = (Host) child;
-                MBeanServer mserver = MBeanUtils.createServer();
-                mserver.unregisterMBean
-                    (MBeanUtils.createObjectName(mserver.getDefaultDomain(),
-                                                 host));
+                MBeanUtils.destroyMBean(host);
                 ; // FIXME - child component MBeans?
             }
         } catch (MBeanException t) {
