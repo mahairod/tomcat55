@@ -13,6 +13,30 @@
 
 <body>
 
+<section name="Tomcat 5.0.17 (probably remm, unless we decide to give him a break)">
+  <subsection name="Catalina">
+    <changelog>
+      <add>
+        Added minimal-server.xml (yoavs)
+      </add>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Jasper">
+    <changelog>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Webapps">
+    <changelog>
+      <docs>
+        Added architecture documentation (yoavs)
+      </docs>
+    </changelog>
+  </subsection>
+  
+</section>
+
 <section name="Tomcat 5.0.16 (remm)">
 
   <subsection name="Catalina">
