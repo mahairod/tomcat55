@@ -23,6 +23,6 @@ acceptable to delay their resolution.
 5704    servlets   CgiServlet corrupting images?
 4518    jasper     load-on-startup is not working with jsp page
 5759    servlets   CGI servlet mapping by extension *.cgi does not work
-
+6400    jasper     Tag Libraries not deploying in 4.0.2 final
 
 
