@@ -333,8 +333,16 @@ public class JspParseEventListener implements ParseEventListener {
 	writer.println();
         writer.println("if (_jspx_inited == false) {");
         writer.pushIndent();
+	writer.println("synchronized (this) {");
+        writer.pushIndent();
+        writer.println("if (_jspx_inited == false) {");
+        writer.pushIndent();
         writer.println("_jspx_init();");
         writer.println("_jspx_inited = true;");
+        writer.popIndent();
+        writer.println("}");
+        writer.popIndent();
+        writer.println("}");
         writer.popIndent();
         writer.println("}");
 
