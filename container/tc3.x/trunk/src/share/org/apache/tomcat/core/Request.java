@@ -236,7 +236,7 @@ public class Request  {
      * original parameters before adding parameters from the
      * query string, if any.
      */
-    public Hashtable getParametersCopy() {
+    Hashtable getParametersCopy() {
 	handleParameters();
 	return (Hashtable) parameters.clone();
     }
@@ -572,6 +572,10 @@ public class Request  {
 	// XXX Should we override query parameters ??
     }
 
+    public Hashtable getParameters() {
+	return parameters;
+    }
+
     public void setContentLength( int  len ) {
 	this.contentLength=len;
     }
@@ -639,7 +643,8 @@ public class Request  {
     }
 
     public void setAttribute(String name, Object value) {
-        attributes.put(name, value);
+	if(name!=null && value!=null)
+	    attributes.put(name, value);
     }
 
     public void removeAttribute(String name) {
