@@ -85,14 +85,6 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>
-            snoop
-        </servlet-name>
-        <url-pattern>
-            *.snp
-        </url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>
             servletToJsp
         </servlet-name>
         <url-pattern>
