@@ -75,6 +75,7 @@ import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -146,11 +147,8 @@ public class WebappLoader
      * @param parent The parent class loader
      */
     public WebappLoader(ClassLoader parent) {
-
-
         super();
         this.parentClassLoader = parent;
-
     }
 
 
@@ -483,8 +481,8 @@ public class WebappLoader
      */
     public void addRepository(String repository) {
 
-        if (debug >= 1)
-            log(sm.getString("webappLoader.addRepository", repository));
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("webappLoader.addRepository", repository));
 
         for (int i = 0; i < repositories.length; i++) {
             if (repository.equals(repositories[i]))
@@ -601,8 +599,8 @@ public class WebappLoader
         if (started)
             throw new LifecycleException
                 (sm.getString("webappLoader.alreadyStarted"));
-        if (debug >= 1)
-            log(sm.getString("webappLoader.starting"));
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("webappLoader.starting"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -644,6 +642,7 @@ public class WebappLoader
                 ((ClassLoader) classLoader, this.container.getResources());
 
         } catch (Throwable t) {
+            log.error( "LifecycleException ", t );
             throw new LifecycleException("start: ", t);
         }
 
@@ -652,7 +651,7 @@ public class WebappLoader
 
         // Start our background thread if we are reloadable
         if (reloadable) {
-            log(sm.getString("webappLoader.reloading"));
+            log.info(sm.getString("webappLoader.reloading"));
             try {
                 threadStart();
             } catch (IllegalStateException e) {
@@ -674,8 +673,8 @@ public class WebappLoader
         if (!started)
             throw new LifecycleException
                 (sm.getString("webappLoader.notStarted"));
-        if (debug >= 1)
-            log(sm.getString("webappLoader.stopping"));
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("webappLoader.stopping"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
 
@@ -720,7 +719,7 @@ public class WebappLoader
                 setReloadable
                     ( ((Boolean) event.getNewValue()).booleanValue() );
             } catch (NumberFormatException e) {
-                log(sm.getString("webappLoader.reloadable",
+                log.error(sm.getString("webappLoader.reloadable",
                                  event.getNewValue().toString()));
             }
         }
@@ -743,6 +742,7 @@ public class WebappLoader
         if (parentClassLoader == null) {
             // Will cause a ClassCast is the class does not extend WCL, but
             // this is on purpose (the exception will be caught and rethrown)
+            log.info( "Creating loader with no parent ");
             classLoader = (WebappClassLoader) clazz.newInstance();
         } else {
             Class[] argTypes = { ClassLoader.class };
@@ -941,7 +941,8 @@ public class WebappLoader
         if (workDir == null)
             return;
 
-        log(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
+        if( log.isDebugEnabled()) 
+            log.debug(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
 
         DirContext resources = container.getResources();
 
@@ -979,7 +980,8 @@ public class WebappLoader
 
             }
 
-            log(sm.getString("webappLoader.classDeploy", classesPath,
+            if(log.isDebugEnabled())
+                log.debug(sm.getString("webappLoader.classDeploy", classesPath,
                              classRepository.getAbsolutePath()));
 
 
@@ -1035,7 +1037,8 @@ public class WebappLoader
                     // impossible to update it or remove it at runtime)
                     File destFile = new File(destDir, binding.getName());
 
-                    log(sm.getString("webappLoader.jarDeploy", filename,
+                    if( log.isDebugEnabled())
+                    log.debug(sm.getString("webappLoader.jarDeploy", filename,
                                      destFile.getAbsolutePath()));
 
                     Resource jarResource = (Resource) binding.getObject();
@@ -1082,8 +1085,20 @@ public class WebappLoader
         int layers = 0;
         int n = 0;
         while ((layers < 3) && (loader != null)) {
-            if (!(loader instanceof URLClassLoader))
+            if (!(loader instanceof URLClassLoader)) {
+                String cp=getClasspath( loader );
+                if( cp==null ) {
+                    log.info( "Unknown loader " + loader + " " + loader.getClass());
+                    break;
+                } else {
+                    if (n > 0) 
+                        classpath.append(File.pathSeparator);
+                    classpath.append(cp);
+                    n++;
+                }
                 break;
+                //continue;
+            }
             URL repositories[] =
                 ((URLClassLoader) loader).getURLs();
             for (int i = 0; i < repositories.length; i++) {
@@ -1114,6 +1129,24 @@ public class WebappLoader
 
     }
 
+    // try to extract the classpath from a loader that is not URLClassLoader
+    private String getClasspath( ClassLoader loader ) {
+        try {
+            Method m=loader.getClass().getMethod("getClasspath", new Class[] {});
+            if( log.isTraceEnabled())
+                log.trace("getClasspath " + m );
+            if( m==null ) return null;
+            Object o=m.invoke( loader, new Object[] {} );
+            if( log.isDebugEnabled() )
+                log.debug("gotClasspath " + o);
+            if( o instanceof String )
+                return (String)o;
+            return null;
+        } catch( Exception ex ) {
+            log.info("getClasspath ", ex);
+        }
+        return null;
+    }
 
     /**
      * Copy directory.
@@ -1217,8 +1250,9 @@ public class WebappLoader
                 (sm.getString("webappLoader.notContext"));
 
         // Start the background thread
-        if (debug >= 1)
-            log(" Starting background thread");
+        if (log.isDebugEnabled())
+            log.debug(" Starting background thread");
+        // XXX ONE TREAD PER WEBAPP IS _WRONG_ - IT DOESN'T SCALE
         threadDone = false;
         threadName = "WebappLoader[" + container.getName() + "]";
         thread = new Thread(this, threadName);
@@ -1237,8 +1271,8 @@ public class WebappLoader
         if (thread == null)
             return;
 
-        if (debug >= 1)
-            log(" Stopping background thread");
+        if (log.isDebugEnabled())
+            log.debug(" Stopping background thread");
         threadDone = true;
         thread.interrupt();
         try {
@@ -1267,14 +1301,14 @@ public class WebappLoader
                 ((WebappClassLoader) classLoader).findAvailable();
             Extension required[] =
                 ((WebappClassLoader) classLoader).findRequired();
-            if (debug >= 1)
-                log("Optional Packages:  available=" +
+            if (log.isDebugEnabled())
+                log.debug("Optional Packages:  available=" +
                     available.length + ", required=" +
                     required.length);
 
             for (int i = 0; i < required.length; i++) {
-                if (debug >= 1)
-                    log("Checking for required package " + required[i]);
+                if (log.isDebugEnabled())
+                    log.debug("Checking for required package " + required[i]);
                 boolean found = false;
                 for (int j = 0; j < available.length; j++) {
                     if (available[j].isCompatibleWith(required[i])) {
@@ -1300,8 +1334,8 @@ public class WebappLoader
      */
     public void run() {
 
-        if (debug >= 1)
-            log("BACKGROUND THREAD Starting");
+        if (log.isDebugEnabled())
+            log.debug("BACKGROUND THREAD Starting");
 
         // Loop until the termination semaphore is set
         while (!threadDone) {
@@ -1317,7 +1351,7 @@ public class WebappLoader
                 if (!classLoader.modified())
                     continue;
             } catch (Exception e) {
-                log(sm.getString("webappLoader.failModifiedCheck"), e);
+                log.error(sm.getString("webappLoader.failModifiedCheck"), e);
                 continue;
             }
 
@@ -1327,8 +1361,8 @@ public class WebappLoader
 
         }
 
-        if (debug >= 1)
-            log("BACKGROUND THREAD Stopping");
+        if (log.isDebugEnabled())
+            log.debug("BACKGROUND THREAD Stopping");
 
     }
 
@@ -1355,7 +1389,8 @@ public class WebappLoader
 
     }
 
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( WebappLoader.class );
 }
 
 
