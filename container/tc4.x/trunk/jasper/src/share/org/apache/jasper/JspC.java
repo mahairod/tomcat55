@@ -62,6 +62,7 @@
 package org.apache.jasper;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.apache.jasper.compiler.JspReader;
@@ -71,7 +72,6 @@ import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.CommandLineCompiler;
 import org.apache.jasper.compiler.TldLocationsCache;
 
-//import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.servlet.JasperLoader;
 
 import org.apache.jasper.logging.Logger;
@@ -145,8 +145,6 @@ public class JspC implements Options { //, JspCompilationContext {
     static int die; // I realize it is duplication, but this is for
                     // the static main catch
 
-    //JspLoader loader;
-
     boolean dirset;
 
     Vector extensions;
@@ -193,10 +191,6 @@ public class JspC implements Options { //, JspCompilationContext {
     public File getScratchDir() {
         return scratchDir;
     }
-
-    //public String getClassPath() {
-    //    return classpath;
-    //}
 
     public Class getJspCompilerPlugin() {
        // we don't compile, so this is meanlingless
@@ -339,28 +333,25 @@ public class JspC implements Options { //, JspCompilationContext {
     public boolean parseFile(PrintStream log, String file, Writer servletout, Writer mappingout)
     {
         try {
-            JasperLoader loader = new JasperLoader();
-	    loader.setParentClassLoader(getClass().getClassLoader());
-	    loader.setOptions( this);
             CommandLineContext clctxt = new CommandLineContext(
-                    loader, getClassPath(), file, uriBase, uriRoot, false,
+                    getClassPath(), file, uriBase, uriRoot, false,
                     this);
             if ((targetClassName != null) && (targetClassName.length() > 0)) {
                 clctxt.setServletClassName(targetClassName);
-                clctxt.lockClassName();
             }
             if (targetPackage != null) {
                 clctxt.setServletPackageName(targetPackage);
-                clctxt.lockPackageName();
             }
             if (dirset) {
                 clctxt.setOutputInDirs(true);
             }
+	    ArrayList urls = new ArrayList();
+
             if (new File(clctxt.getRealPath("/")).exists()) {
                 File classes = new File(clctxt.getRealPath("/WEB-INF/classes"));
                 try {
                      if (classes.exists()) {
-                        loader.addJar(classes.getCanonicalPath());
+                         urls.add(classes.toURL());
                     }
                 } catch (IOException ioe) {
                     // failing a toCanonicalPath on a file that
@@ -373,9 +364,10 @@ public class JspC implements Options { //, JspCompilationContext {
                     String[] libs = lib.list();
                     for (int i = 0; i < libs.length; i++) {
                         try {
-                            loader.addJar(lib.getCanonicalPath()
+			    File libFile = new File(lib.toString()
                                     + File.separator
                                     + libs[i]);
+			    urls.add(libFile.toURL());
                         } catch (IOException ioe) {
                             // failing a toCanonicalPath on a file that
                             // exists() should be a JVM regression test,
@@ -385,6 +377,9 @@ public class JspC implements Options { //, JspCompilationContext {
                     }
                 }
             }
+	    URLClassLoader loader = new URLClassLoader(
+		(URL[])(urls.toArray(new URL[urls.size()])),null);
+	    clctxt.setClassLoader(loader);
             CommandLineCompiler clc = new CommandLineCompiler(clctxt);
 
             clc.compile();
@@ -425,6 +420,7 @@ public class JspC implements Options { //, JspCompilationContext {
         } catch (Exception e) {
             Constants.message("jspc.error.generalException", 
                     new Object[] {file, e}, Logger.ERROR);
+	    e.printStackTrace();
             if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
             }

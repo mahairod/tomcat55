@@ -106,51 +106,12 @@ public class PageContextImpl extends PageContext {
         this.factory = factory;
     }
 
-    /*
-      static class InitAction implements java.security.PrivilegedAction {
-	Servlet servlet;
-	ServletRequest request;
-	ServletResponse response;
-	String errorPageURL;
-	boolean needsSession;
-	int bufferSize;
-	boolean autoFlush;
-	PageContextImpl pci;
-	    
-	InitAction(PageContextImpl pci, Servlet s, ServletRequest req,
-		   ServletResponse res, String err,
-		   boolean n, int b,
-		   boolean a) {
-	    this.pci=pci;
-	    servlet=s;
-	    request=req;
-	    response=res;
-	    errorPageURL=err;
-	    needsSession=n;;
-	    bufferSize=b;
-	    autoFlush=a;
-	}
-	
-	public Object run()  {
-	    try {
-		pci._initialize(servlet, request, response, errorPageURL, needsSession, bufferSize, autoFlush);
-	    } catch( Throwable t ) {
-		t. print Stack Trace();
-	    }
-	    return null;
-	}
-    }
-    */    
     public void initialize(Servlet servlet, ServletRequest request,
                            ServletResponse response, String errorPageURL,
                            boolean needsSession, int bufferSize,
                            boolean autoFlush)
         throws IOException, IllegalStateException, IllegalArgumentException
     {
-	// 	 	InitAction ia=new InitAction( this, servlet, request, response,
-	// 	 					  errorPageURL, needsSession, bufferSize,
-	// 	 					  autoFlush);
-	// 		java.security.AccessController.doPrivileged( ia );
 	_initialize(servlet, request, response, errorPageURL, needsSession, bufferSize, autoFlush);
     }
 

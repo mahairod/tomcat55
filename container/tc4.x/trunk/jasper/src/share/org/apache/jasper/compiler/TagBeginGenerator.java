@@ -318,26 +318,21 @@ public class TagBeginGenerator
         writer.println("/* ----  "+prefix+":"+shortTagName+" ---- */");
 
         writer.println(ti.getTagClassName()+" "+thVarName+" = new "+ti.getTagClassName()+"();");
-
         generateSetters(writer, parent);
 
         VariableInfo[] vi = ti.getVariableInfo(tagData);
 	TagVariableInfo[] tvi = ti.getTagVariableInfos();
-
         // Just declare AT_BEGIN here...
         declareVariables(writer, vi, tvi, tagData, true, false, VariableInfo.AT_BEGIN);
 
 	writer.println("try {");
 	writer.pushIndent();
 
-
-
         writer.println("int "+evalVar+" = "
                        +thVarName+".doStartTag();");
 
         boolean implementsBodyTag = 
 	    BodyTag.class.isAssignableFrom(tc.getTagHandlerClass());
-
         // Need to update AT_BEGIN variables here
         declareVariables(writer, vi, tvi, tagData, false, true, VariableInfo.AT_BEGIN);
 

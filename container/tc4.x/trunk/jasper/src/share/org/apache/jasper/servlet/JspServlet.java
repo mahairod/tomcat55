@@ -72,8 +72,15 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-
+import java.io.FilePermission;
+import java.lang.RuntimePermission;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.MalformedURLException;
 import java.security.AccessController;
+import java.security.CodeSource;
+import java.security.PermissionCollection;
+import java.security.Policy;
 import java.security.PrivilegedAction;
 
 import org.apache.jasper.JasperException;
@@ -94,6 +101,13 @@ import org.apache.jasper.logging.JasperLogger;
 /**
  * The JSP engine (a.k.a Jasper)! 
  *
+ * The servlet container is responsible for providing a
+ * URLClassLoader for the web application context Jasper
+ * is being used in. Jasper will try get the Tomcat
+ * ServletContext attribute for its ServletContext class
+ * loader, if that fails, it uses the parent class loader.
+ * In either case, it must be a URLClassLoader.
+ *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
  */
@@ -107,6 +121,7 @@ public class JspServlet extends HttpServlet {
 	boolean isErrorPage;
 	// ServletWrapper will set this 
 	Class servletClass;
+	URLClassLoader loader = null;
 	
 	JspServletWrapper(String jspUri, boolean isErrorPage) {
 	    this.jspUri = jspUri;
@@ -116,7 +131,6 @@ public class JspServlet extends HttpServlet {
 	
 	private void load() throws JasperException, ServletException {
 	    try {
-		// Class servletClass = (Class) loadedJSPs.get(jspUri);
 		// This is to maintain the original protocol.
 		destroy();
 
@@ -125,10 +139,12 @@ public class JspServlet extends HttpServlet {
 		throw new JasperException(ex);
 	    }
 	    theServlet.init(JspServlet.this.config);
+/*	Shouldn't be needed after switching to URLClassLoader
 	    if (theServlet instanceof HttpJspBase)  {
                 HttpJspBase h = (HttpJspBase) theServlet;
                 h.setClassLoader(JspServlet.this.parentClassLoader);
 	    }
+*/
 	}
 	
 	private void loadIfNecessary(HttpServletRequest req, HttpServletResponse res) 
@@ -218,23 +234,14 @@ public class JspServlet extends HttpServlet {
 	
     protected ServletContext context = null;
     protected Hashtable jsps = new Hashtable();
-    //    protected Hashtable loadedJSPs = new Hashtable();
     protected ServletConfig config;
-    protected JasperLoader loader;
     protected Options options;
-    protected ClassLoader parentClassLoader;
+    protected URLClassLoader parentClassLoader;
     protected ServletEngine engine;
     protected String serverInfo;
+    private PermissionCollection permissionCollection = null;
 
     static boolean firstTime = true;
-    static boolean jdk12=false;
-    static {
-	try {
-	    Class.forName( "java.security.PrivilegedAction" );
-	    jdk12=true;
-	} catch(Throwable ex ) {
-	}
-    }
 
     public void init(ServletConfig config)
 	throws ServletException
@@ -254,55 +261,73 @@ public class JspServlet extends HttpServlet {
 
 	options = new EmbededServletOptions(config, context);
 
-	parentClassLoader = (ClassLoader) context.getAttribute(Constants.SERVLET_CLASS_LOADER);
-	if (parentClassLoader == null)
-	    parentClassLoader = this.getClass().getClassLoader();
-            
-	// getClass().getClassLoader() returns null in JDK 1.1.6/1.1.8
-	if (parentClassLoader != null) {
-            Constants.message("jsp.message.parent_class_loader_is", 
+	// Get the parent class loader
+	parentClassLoader =
+	    (URLClassLoader)context.getAttribute(Constants.SERVLET_CLASS_LOADER);
+        if (parentClassLoader == null)
+            parentClassLoader = (URLClassLoader)this.getClass().getClassLoader();
+        if (parentClassLoader != null) {
+            Constants.message("jsp.message.parent_class_loader_is",
                               new Object[] {
                                   parentClassLoader.toString()
                               }, Logger.DEBUG);
             }
-	else {
-            Constants.message("jsp.message.parent_class_loader_is", 
+        else {
+            Constants.message("jsp.message.parent_class_loader_is",
                               new Object[] {
-                                  "<none>"
+                                  "<none>"  
                               }, Logger.DEBUG);
-	}
-	//	System.out.println("JspServlet: init " + config.getServletName() );
-	if( loader==null ) {
-	    if( jdk12 ) {
-                class createLoader12 implements PrivilegedAction {
-                    public Object run() {
-                        return
-                            (new org.apache.jasper.servlet.JasperLoader12());
-                    }
-                }
-                createLoader12 cl = new createLoader12();
-                loader = (org.apache.jasper.servlet.JasperLoader)
-                    AccessController.doPrivileged(cl);
+        }
+
+	// Setup the PermissionCollection for this web app context
+	// based on the permissions configured for the root of the
+	// web app context directory, then add a file read permission
+	// for that directory.
+	Policy policy = Policy.getPolicy();
+	if( policy != null ) {
+            try {          
+		// Get the permissions for the web app context
+		URL url = options.getScratchDir().toURL();
+		CodeSource cs = new CodeSource(url,null);
+		permissionCollection = policy.getPermissions(cs);
+		// Create a file read permission for web app context directory
+		String contextDir = url.getFile();
+		if( contextDir.endsWith(File.separator) )
+		    contextDir = contextDir + "-";
+		else
+		    contextDir = contextDir + File.separator + "-";
+		permissionCollection.add( new FilePermission(contextDir,"read") );
+		// Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
+		permissionCollection.add( new RuntimePermission(
+		    "accessClassInPackage.org.apache.jasper.runtime"
+		    ) );
+	    } catch(MalformedURLException mfe) {
 	    }
-	    if( loader==null ) {
-                class createLoader implements PrivilegedAction {
-                    public Object run() {
-                        return
-                            (new org.apache.jasper.servlet.JasperLoader());
-                    }
-                }
-                createLoader cl = new createLoader();
-                loader = (org.apache.jasper.servlet.JasperLoader)
-                    AccessController.doPrivileged(cl);
-            }
-	    loader.setParentClassLoader(parentClassLoader);
-	    loader.setOptions(options);
-	    Object pd=context.getAttribute("org.apache.tomcat.protection_domain");
-	    loader.setProtectionDomain( pd );
 	}
 
 	if (firstTime) {
 	    firstTime = false;
+	    if( System.getSecurityManager() != null ) {
+		// Make sure classes needed at runtime by a JSP servlet
+		// are already loaded by the class loader so that we
+		// don't get a defineClassInPackage security exception.
+		String basePackage = "org.apache.jasper.";
+		try {
+		    parentClassLoader.loadClass( basePackage +
+			"runtime.JspFactoryImpl$PrivilegedGetPageContext");
+		    parentClassLoader.loadClass( basePackage +
+			"runtime.JspFactoryImpl$PrivilegedReleasePageContext");
+		    parentClassLoader.loadClass( basePackage +
+			"runtime.JspRuntimeLibrary");
+                    parentClassLoader.loadClass( basePackage +
+                        "runtime.JspRuntimeLibrary$PrivilegedIntrospectHelper");
+                    parentClassLoader.loadClass( basePackage +
+                        "servlet.JspServlet$JspServletWrapper");
+                    parentClassLoader.loadClass( basePackage +
+			"compiler.ServletResponseWrapperInclude");
+		} catch (ClassNotFoundException ex) {
+		}
+	    }
 	    Constants.message("jsp.message.scratch.dir.is", 
 			      new Object[] { 
 				  options.getScratchDir().toString() 
@@ -378,11 +403,6 @@ public class JspServlet extends HttpServlet {
             else
                 jspUri = includeUri;
 
-//	    System.out.println("JspServletWrapper: " + includeUri + " " +
-//                            jspUri + 
-// 			       (String) request.getAttribute(
-//                                  Constants.INC_REQUEST_URI));
-
             boolean precompile = preCompile(request);
 
 	    Logger jasperLog = Constants.jasperLog;
@@ -444,30 +464,29 @@ public class JspServlet extends HttpServlet {
 	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
 	throws JasperException, FileNotFoundException 
     {
-	// Loader knows how to set the right priviledges, and call
-	// doLoadeJsp
-	return loader.loadJSP( this,jspUri, classpath, isErrorPage, req, res );
-    }
-
-    /*  Check if we need to reload a JSP page.
-     *
-     *  Side-effect: re-compile the JSP page.
-     *
-     *  @param classpath explicitly set the JSP compilation path.
-     *  @return true if JSP files is newer
-     */
-    protected boolean doLoadJSP(String jspUri, String classpath, 
-	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
-    {
 	JspServletWrapper jsw=(JspServletWrapper) jsps.get(jspUri);
 	if( jsw==null ) {
 	    throw new JasperException("Can't happen - JspServletWrapper=null");
 	}
-	//	Class jspClass = (Class) loadedJSPs.get(jspUri);
+        File outDir = null;
+        try {
+            URL outURL = options.getScratchDir().toURL();
+            String outURI = outURL.toString();
+            if( outURI.endsWith("/") )
+                outURI = outURI + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+            else
+                outURI = outURI + jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
+            outURL = new URL(outURI);
+            outDir = new File(outURL.getFile());
+            if( !outDir.exists() ) {
+                outDir.mkdirs();
+            }
+        } catch(Exception e) {
+            throw new JasperException("No output directory: " + e.getMessage());
+        }
 	boolean firstTime = jsw.servletClass == null;
-        JspCompilationContext ctxt = new JspEngineContext(loader, classpath,
-                                                     context, jspUri, 
+        JspCompilationContext ctxt = new JspEngineContext(parentClassLoader, classpath,
+                                                     context, jspUri, outDir.toString() + File.separator,
                                                      isErrorPage, options,
                                                      req, res);
 	boolean outDated = false; 
@@ -497,17 +516,19 @@ public class JspServlet extends HttpServlet {
 	// Reload only if it's outdated
 	if((jsw.servletClass == null) || outDated) {
 	    try {
-		if( null ==ctxt.getServletClassName() ) {
-		    compiler.computeServletClassName();
-		}
-		jsw.servletClass = loader.loadClass(ctxt.getFullClassName());
-                        //loadClass(ctxt.getFullClassName(), true);
+		URL [] urls = new URL[1];
+		urls[0] = new URL("file:" + ctxt.getOutputDir());
+		jsw.loader = new JasperLoader(urls,ctxt.getServletClassName(),
+					      parentClassLoader,permissionCollection);
+		jsw.servletClass = jsw.loader.loadClass(ctxt.getServletClassName());
 	    } catch (ClassNotFoundException cex) {
-		throw new JasperException(Constants.getString("jsp.error.unable.load"), 
-					  cex);
+		throw new JasperException(
+		    Constants.getString("jsp.error.unable.load"),cex);
+	    } catch (MalformedURLException mue) {
+                throw new JasperException(
+		    Constants.getString("jsp.error.unable.load"),mue);
 	    }
 	    
-	    //	    loadedJSPs.put(jspUri, jspClass);
 	}
 	
 	return outDated;

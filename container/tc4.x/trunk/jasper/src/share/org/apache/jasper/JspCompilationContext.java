@@ -67,7 +67,6 @@ package org.apache.jasper;
 
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
-//import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.compiler.TagLibraries;
 import java.io.IOException;
 import java.net.URL;
@@ -78,9 +77,6 @@ import org.apache.jasper.compiler.Compiler;
  * A place holder for various things that are used through out the JSP
  * engine. This is a per-request/per-context data structure. Some of
  * the instance variables are set at different points.
- *
- * JspLoader creates this object and passes this off to the "compiler"
- * subsystem, which then initializes the rest of the variables. 
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
@@ -109,10 +105,6 @@ public interface JspCompilationContext {
      */
     public ClassLoader getClassLoader();
 
-    /** Add a jar to the classpath used by the loader
-     */
-    void addJar(String jar) throws IOException ;
-
     /**
      * Are we processing something that has been declared as an
      * errorpage? 
@@ -139,15 +131,9 @@ public interface JspCompilationContext {
     public String getServletClassName();
     
     /**
-     * The package name into which the servlet class is generated. 
+     * The package name into which the servlet class is generated.
      */
     public String getServletPackageName();
-
-    /**
-     * Utility method to get the full class name from the package and
-     * class name. 
-     */
-    public String getFullClassName();
 
     /**
      * Full path name of the Java file into which the servlet is being
@@ -180,7 +166,7 @@ public interface JspCompilationContext {
     void setServletClassName(String servletClassName);
     
     public void setServletPackageName(String servletPackageName);
-    
+
     public void setServletJavaFileName(String servletJavaFileName);
     
     public void setErrorPage(boolean isErrPage);

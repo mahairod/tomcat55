@@ -110,11 +110,6 @@ public final class EmbededServletOptions implements Options {
      * in?
      */
     public File scratchDir;
-    /**
-     * When used with a Securitymanager, what ProtectionDomain to use.
-     */
-    private Object protectionDomain;
-
     
     /**
      * Need to have this as is for versions 4 and 5 of IE. Can be set from
@@ -191,12 +186,6 @@ public final class EmbededServletOptions implements Options {
         return scratchDir;
     }
 
-    /**
-     * ProtectionDomain for this JSP Context when using a SecurityManager
-     */
-    public final Object getProtectionDomain() {
-        return protectionDomain;
-    }
     /**
      * What classpath should I use while compiling the servlets
      * generated from JSP files?
@@ -294,9 +283,6 @@ public final class EmbededServletOptions implements Options {
             }
         }
                 
-        // Get the ProtectionDomain for this Context in case
-        // we are using a SecurityManager
-        protectionDomain = context.getAttribute(Constants.ATTRIB_JSP_ProtectionDomain);
         if (this.scratchDir == null) {
             Constants.message("jsp.error.no.scratch.dir", Logger.FATAL);
             return;

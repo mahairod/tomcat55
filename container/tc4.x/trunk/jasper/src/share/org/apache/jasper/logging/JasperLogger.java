@@ -163,23 +163,8 @@ public class JasperLogger extends Logger {
     private void init() {
 	if (logDaemon == null || logQueue == null) {
 	    logQueue = new Queue();
-            class createDaemon implements PrivilegedAction {
-                private Queue logQueue;
-                private ServletContext servletContext;
-                public createDaemon(Queue logQueue,
-                                    ServletContext servletContext) {
-                    this.logQueue = logQueue;
-                    this.servletContext = servletContext;
-                }
-                public Object run() {
-                    LogDaemon logDaemon =
-                        new LogDaemon(logQueue, servletContext);
-                    logDaemon.start();
-                    return (logDaemon);
-                }
-            }
-            createDaemon cd = new createDaemon(logQueue, servletContext);
-            logDaemon = (LogDaemon) AccessController.doPrivileged(cd);
+            LogDaemon logDaemon = new LogDaemon(logQueue, servletContext);
+            logDaemon.start();               
 	}
     }
     

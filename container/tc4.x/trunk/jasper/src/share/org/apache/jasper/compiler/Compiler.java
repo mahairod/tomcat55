@@ -107,35 +107,22 @@ public class Compiler {
     public boolean compile()
         throws FileNotFoundException, JasperException, Exception 
     {
-        String pkgName = mangler.getPackageName();
         String classFileName = mangler.getClassFileName();
 
-        ctxt.setServletPackageName(pkgName);
-        Constants.message("jsp.message.package_name_is",
-                          new Object[] { (pkgName==null)?
-                                          "[default package]":pkgName },
-                          Logger.DEBUG);
-        Constants.message("jsp.message.class_file_name_is",
-                          new Object[] { classFileName },
+        String className = mangler.getClassName();
+        ctxt.setServletClassName(className);
+        Constants.message("jsp.message.class_name_is",
+                          new Object[] { className },
                           Logger.DEBUG);
 
 	if (!isOutDated())
             return false;
 
-	// Hack to avoid readign the class file every time -
-	// getClassName() is an _expensive_ operation, and it's needed only
-	// if isOutDated() return true. 
         String javaFileName = mangler.getJavaFileName();
         ctxt.setServletJavaFileName(javaFileName);
 
         Constants.message("jsp.message.java_file_name_is",
                           new Object[] { javaFileName },
-                          Logger.DEBUG);
-
-	String className = mangler.getClassName();
-        ctxt.setServletClassName(className);
-        Constants.message("jsp.message.class_name_is",
-                          new Object[] { className },
                           Logger.DEBUG);
 
         // Setup the ServletWriter
@@ -224,11 +211,9 @@ public class Compiler {
         listener.beginPageProcessing();
         listener.endPageProcessing();
         writer.close();
-
 	// An XML input stream has been produced and can be validated
 	// by TagLibraryValidator classes 
 	((JspParseEventListener)listener).validate();
-
 
         String classpath = ctxt.getClassPath(); 
 
@@ -296,9 +281,6 @@ public class Compiler {
         }
 
         String classFile = ctxt.getOutputDir() + File.separatorChar;
-        if (pkgName != null && !pkgName.equals(""))
-            classFile = classFile + pkgName.replace('.', File.separatorChar) + 
-                File.separatorChar;
         classFile = classFile + className + ".class";
 
         if (!classFile.equals(classFileName)) {
@@ -317,17 +299,6 @@ public class Compiler {
         return true;
     }
 
-    public void computeServletClassName() {
-	// Hack to avoid readign the class file every time -
-	// getClassName() is an _expensive_ operation, and it's needed only
-	// if isOutDated() return true. 
-	String className = mangler.getClassName();
-        ctxt.setServletClassName(className);
-        Constants.message("jsp.message.class_name_is",
-                          new Object[] { className },
-                          Logger.DEBUG);
-    }
-    
     /**
      * This is a protected method intended to be overridden by 
      * subclasses of Compiler. This is used by the compile method
@@ -404,5 +375,3 @@ public class Compiler {
         }
     }
 }
-
-

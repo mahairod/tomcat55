@@ -65,16 +65,17 @@
 
 package org.apache.jasper;
 
+import java.io.IOException;
+import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
-//import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.servlet.JasperLoader;
 import org.apache.jasper.compiler.TagLibraries;
 
@@ -89,9 +90,6 @@ import org.apache.jasper.logging.Logger;
  * engine. This is a per-request/per-context data structure. Some of
  * the instance variables are set at different points.
  *
- * JspLoader creates this object and passes this off to the "compiler"
- * subsystem, which then initializes the rest of the variables. 
- *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
  * @author Pierre Delisle
@@ -100,10 +98,11 @@ public class JspEngineContext implements JspCompilationContext {
     JspReader reader;
     ServletWriter writer;
     ServletContext context;
-    JasperLoader loader;
+    URLClassLoader loader;
     String classpath; // for compiling JSPs.
     boolean isErrPage;
     String jspFile;
+    String outDir;
     String servletClassName;
     String servletPackageName;
     String servletJavaFileName;
@@ -113,15 +112,16 @@ public class JspEngineContext implements JspCompilationContext {
     HttpServletResponse res;
     
 
-    public JspEngineContext(JasperLoader loader, String classpath, 
-                            ServletContext context, String jspFile, 
-                            boolean isErrPage, Options options, 
+    public JspEngineContext(URLClassLoader loader, String classpath, 
+                            ServletContext context, String jspFile, String outDir,
+                            boolean isErrPage, Options options,
                             HttpServletRequest req, HttpServletResponse res) 
     {
         this.loader = loader;
         this.classpath = classpath;
         this.context = context;
         this.jspFile = jspFile;
+	this.outDir = outDir;
         this.isErrPage = isErrPage;
         this.options = options;
         this.req = req;
@@ -147,7 +147,15 @@ public class JspEngineContext implements JspCompilationContext {
      * The classpath that is passed off to the Java compiler. 
      */
     public String getClassPath() {
-        return loader.getClassPath() + classpath;
+	URL [] urls = loader.getURLs();
+        StringBuffer cpath = new StringBuffer();
+        String sep = System.getProperty("path.separator");
+
+        for(int i = 0; i < urls.length; i++) {
+            cpath.append((String)urls[i].getFile()+sep);
+        }
+         
+        return cpath.toString() + classpath;
     }
     
     /**
@@ -179,10 +187,6 @@ public class JspEngineContext implements JspCompilationContext {
         return loader;
     }
 
-    public void addJar( String jar ) throws IOException  {
-	loader.addJar( jar );
-    }
-
     /**
      * Are we processing something that has been declared as an
      * errorpage? 
@@ -197,7 +201,7 @@ public class JspEngineContext implements JspCompilationContext {
      * other places it is called outputDir.
      */
     public String getOutputDir() {
-        return options.getScratchDir().toString();
+        return outDir;
     }
     
     /**
@@ -217,20 +221,10 @@ public class JspEngineContext implements JspCompilationContext {
     }
     
     /**
-     * The package name into which the servlet class is generated. 
+     * Package name for the generated class.
      */
     public String getServletPackageName() {
         return servletPackageName;
-    }
-
-    /**
-     * Utility method to get the full class name from the package and
-     * class name. 
-     */
-    public final String getFullClassName() {
-        if (servletPackageName == null)
-            return servletClassName;
-        return servletPackageName + "." + servletClassName;
     }
 
     /**
@@ -282,7 +276,7 @@ public class JspEngineContext implements JspCompilationContext {
     public void setServletPackageName(String servletPackageName) {
         this.servletPackageName = servletPackageName;
     }
-    
+
     public void setServletJavaFileName(String servletJavaFileName) {
         this.servletJavaFileName = servletJavaFileName;
     }
@@ -351,7 +345,7 @@ public class JspEngineContext implements JspCompilationContext {
         return context.getResourceAsStream(res);
     }
 
-    public java.net.URL getResource(String res)
+    public URL getResource(String res)
 	throws MalformedURLException
     {
         return context.getResource(res);

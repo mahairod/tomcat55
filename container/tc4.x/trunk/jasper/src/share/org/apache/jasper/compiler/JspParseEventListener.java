@@ -182,7 +182,6 @@ public class JspParseEventListener implements ParseEventListener {
         // FIXME: Is this good enough? (I'm just taking the easy way out - akv)
         if (ctxt.getOptions().getLargeFile())
             dataFile = ctxt.getOutputDir() + File.separatorChar +
-                ctxt.getServletPackageName() + "_" +
                 ctxt.getServletClassName() + ".dat";
     }
 
@@ -235,7 +234,6 @@ public class JspParseEventListener implements ParseEventListener {
     }
 
     private void generateAll(Class phase) throws JasperException {
-
 	for(int i = 0; i < generators.size(); i++) {
             Generator gen = (Generator) generators.elementAt(i);
             if (phase.isInstance(gen)) {
@@ -248,11 +246,11 @@ public class JspParseEventListener implements ParseEventListener {
     private void generateHeader() throws JasperException {
         String servletPackageName = ctxt.getServletPackageName();
         String servletClassName = ctxt.getServletClassName();
-	// First the package name:
-	if (! "".equals(servletPackageName) && servletPackageName != null) {
-	    writer.println("package "+servletPackageName+";");
-	    writer.println();
-	}
+        // First the package name:
+        if (! "".equals(servletPackageName) && servletPackageName != null) {
+            writer.println("package "+servletPackageName+";");
+            writer.println();
+        }
 
 	Enumeration e = imports.elements();
 	while (e.hasMoreElements())

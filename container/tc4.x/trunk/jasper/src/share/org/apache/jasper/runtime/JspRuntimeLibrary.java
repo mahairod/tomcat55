@@ -77,6 +77,10 @@ import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletContext;
@@ -100,6 +104,34 @@ import org.apache.jasper.Constants;
  */
 public class JspRuntimeLibrary {
 
+    protected static class PrivilegedIntrospectHelper
+	implements PrivilegedExceptionAction {
+
+	private Object bean;
+	private String prop;
+	private String value;
+	private ServletRequest request;
+	private String param;
+	private boolean ignoreMethodNF;
+
+        PrivilegedIntrospectHelper(Object bean, String prop,
+                                   String value, ServletRequest request,
+                                   String param, boolean ignoreMethodNF)
+        {
+	    this.bean = bean;
+	    this.prop = prop;
+	    this.value = value;
+            this.request = request;
+	    this.param = param;
+	    this.ignoreMethodNF = ignoreMethodNF;
+        }
+         
+        public Object run() throws JasperException {
+	    internalIntrospecthelper(
+                bean,prop,value,request,param,ignoreMethodNF);
+            return null;
+        }
+    }
  
    // __begin convertMethod
     public static Object convert(String propertyName, String s, Class t, Class propertyEditorClass) 
@@ -164,6 +196,27 @@ public class JspRuntimeLibrary {
     
     // __begin introspecthelperMethod
     public static void introspecthelper(Object bean, String prop,
+                                        String value, ServletRequest request,
+                                        String param, boolean ignoreMethodNF)
+                                        throws JasperException
+    {
+        if( System.getSecurityManager() != null ) {
+            try {
+                PrivilegedIntrospectHelper dp =
+		    new PrivilegedIntrospectHelper(
+			bean,prop,value,request,param,ignoreMethodNF);
+                AccessController.doPrivileged(dp);
+            } catch( PrivilegedActionException pe) {
+                Exception e = pe.getException();
+                throw (JasperException)e;
+            }
+        } else {
+            internalIntrospecthelper(
+		bean,prop,value,request,param,ignoreMethodNF);
+        }
+    }
+
+    private static void internalIntrospecthelper(Object bean, String prop,
 					String value, ServletRequest request,
 					String param, boolean ignoreMethodNF) 
 					throws JasperException

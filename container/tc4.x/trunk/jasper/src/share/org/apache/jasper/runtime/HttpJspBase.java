@@ -78,8 +78,6 @@ public abstract class HttpJspBase
     extends HttpServlet 
     implements HttpJspPage 
 {
-    private ClassLoader cl;
-
     protected PageContext pageContext;
 
     protected HttpJspBase() {
@@ -98,16 +96,6 @@ public abstract class HttpJspBase
 
     public final void destroy() {
 	jspDestroy();
-    }
-
-    public final void setClassLoader(ClassLoader cl) {
-        this.cl = cl;
-    }
-    
-    protected ClassLoader getClassLoader() {
-	if (cl == null) 
-            return this.getClass().getClassLoader();
-	return cl;
     }
 
     /**

@@ -74,6 +74,7 @@ public class CommandLineCompiler extends Compiler implements Mangler {
 
     String javaFileName;
     String classFileName;
+    String packageName;
     String pkgName;
     String className;
     File jsp;
@@ -84,18 +85,15 @@ public class CommandLineCompiler extends Compiler implements Mangler {
 
         jsp = new File(ctxt.getJspFile());
         outputDir =  ctxt.getOptions().getScratchDir().getAbsolutePath();
-
+	packageName = ctxt.getServletPackageName();
+	if( packageName == null )
+	    packageName = "";
+	pkgName = packageName;
         setMangler(this);
 
-        computePackageName();
-        ctxt.setServletPackageName(pkgName);
         className = getBaseClassName();
         // yes this is kind of messed up ... but it works
         if (ctxt.isOutputInDirs()) {
-            String pkgName = ctxt.getServletPackageName();
-            if (pkgName == null) {
-                pkgName = "";
-            }
             String tmpDir = outputDir
                    + File.separatorChar
                    + pkgName.replace('.', File.separatorChar);
@@ -132,8 +130,7 @@ public class CommandLineCompiler extends Compiler implements Mangler {
     }
 
     void computeClassFileName() {
-        String prefix = getPrefix(jsp.getPath());
-        classFileName = prefix + getBaseClassName() + ".class";
+        classFileName = getBaseClassName() + ".class";
 	if (outputDir != null && !outputDir.equals(""))
 	    classFileName = outputDir + File.separatorChar + classFileName;
     }
@@ -154,63 +151,8 @@ public class CommandLineCompiler extends Compiler implements Mangler {
         "try", "void", "volatile", "while"
     };
 
-    void computePackageName() {
-	String pathName = jsp.getPath();
-	StringBuffer modifiedpkgName = new StringBuffer ();
-        int indexOfSepChar = pathName.lastIndexOf(File.separatorChar);
-
-        if (("".equals(ctxt.getServletPackageName())) ||
-	    (indexOfSepChar == -1) || (indexOfSepChar == 0)) {
-	    pkgName = null;
-	} else {
-	    for (int i = 0; i < keywords.length; i++) {
-		char fs = File.separatorChar;
-		int index;
-		if (pathName.startsWith(keywords[i] + fs)) {
-		    index = 0;
-		} else {
-		    index = pathName.indexOf(fs + keywords[i] + fs);
-		}
-		while (index != -1) {
-		    String tmpathName = pathName.substring (0,index+1) + '%';
-		    pathName = tmpathName + pathName.substring (index+2);
-		    index = pathName.indexOf(fs + keywords[i] + fs);
-		}
-	    }
-	
-	    // XXX fix for paths containing '.'.
-	    // Need to be more elegant here.
-            pathName = pathName.replace('.','_');
-	
-	    pkgName = pathName.substring(0, pathName.lastIndexOf(
-	    		File.separatorChar)).replace(File.separatorChar, '.');
-	    if (ctxt.getServletPackageName() != null) {
-	        pkgName = ctxt.getServletPackageName();
-	    }
-	    for (int i=0; i<pkgName.length(); i++)
-		if (Character.isLetter(pkgName.charAt(i)) == true ||
-		    pkgName.charAt(i) == '.') {
-		    modifiedpkgName.append(pkgName.substring(i,i+1));
-		}
-		else
-		    modifiedpkgName.append(mangleChar(pkgName.charAt(i)));
-
-	    if (modifiedpkgName.charAt(0) == '.') {
-                String modifiedpkgNameString = modifiedpkgName.toString();
-                pkgName = modifiedpkgNameString.substring(1,
-                                                         modifiedpkgName.length ());
-            }
-	    else
-	        pkgName = modifiedpkgName.toString();
-	}
-
-    }
-
-					
     private final String getInitialClassName() {
-        String prefix = getPrefix(jsp.getPath());
-
-        return prefix + getBaseClassName() + Constants.JSP_TOKEN + "0";
+        return getBaseClassName();
     }
 
     private final String getBaseClassName() {
@@ -243,21 +185,6 @@ public class CommandLineCompiler extends Compiler implements Mangler {
 	return modifiedClassName.toString();
     }
 
-    private final String getPrefix(String pathName) {
-	if (pathName != null) {
-	    StringBuffer modifiedName = new StringBuffer();
-	    for (int i = 0; i < pathName.length(); i++) {
-		if (Character.isLetter(pathName.charAt(i)) == true)
-		    modifiedName.append(pathName.substring(i,i+1));
-		else
-		    modifiedName.append(mangleChar(pathName.charAt(i)));
- 	    }
-	    return modifiedName.toString();
-	}
-	else
-            return "";
-    }
-
     private static final String mangleChar(char ch) {
 	
         if(ch == File.separatorChar) {
@@ -275,12 +202,12 @@ public class CommandLineCompiler extends Compiler implements Mangler {
     }
 
 
-    public final String getPackageName() {
-        return pkgName;
-    }
-
     public final String getClassName() {
         return className;
+    }
+
+    public final String getPackageName() {
+        return packageName;
     }
 
     public final String getJavaFileName() {

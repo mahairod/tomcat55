@@ -125,11 +125,6 @@ public interface Options {
     public String getJspCompilerPath();
     
     /**
-     * ProtectionDomain for this JSP Context when using a SecurityManager
-     */
-    public Object getProtectionDomain();
-
-    /**
      * The cache for the location of the TLD's
      * for the various tag libraries 'exposed'
      * by the web application.
