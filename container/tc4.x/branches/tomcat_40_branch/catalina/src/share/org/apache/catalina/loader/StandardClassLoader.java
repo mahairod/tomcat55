@@ -693,7 +693,7 @@ public class StandardClassLoader
 
         // Re-locate the class ourselves to track modifications if possible
         for (int i = 0; i < repositories.length; i++) {
-            if (!repositories[i].endsWith("/"))
+            if (!repositories[i].endsWith("/"))                
                 continue;
             String pathname =
                 repositories[i].substring(0, repositories[i].length() - 1);
@@ -1197,7 +1197,8 @@ public class StandardClassLoader
             streamHandler = factory.createURLStreamHandler(protocol);
 
         // Validate the manifest of a JAR file repository
-        if (!repository.endsWith(File.separator)) {
+        if (!repository.endsWith(File.separator) &&
+            !repository.endsWith(File.separator)) {
             try {
                 JarFile jarFile = null;
                 Manifest manifest = null;
