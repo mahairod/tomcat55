@@ -78,6 +78,11 @@ grant codeBase "file:${catalina.home}/server/-" {
         permission java.security.AllPermission;
 };
 
+// The permissions granted to the balancer WEB-INF/classes directory
+grant codeBase "file:${catalina.home}/webapps/balancer/WEB-INF/classes/-" {
+        permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.util.digester";
+        permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.util.digester.*";
+};
 // ========== WEB APPLICATION PERMISSIONS =====================================
 
 
