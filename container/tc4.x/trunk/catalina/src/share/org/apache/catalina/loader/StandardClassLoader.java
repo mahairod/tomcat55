@@ -1060,14 +1060,16 @@ public class StandardClassLoader
                          repository + "'");
                 }
                 Manifest manifest = jarFile.getManifest();
-                Iterator extensions =
-                    Extension.getAvailable(manifest).iterator();
-                while (extensions.hasNext())
-                    available.add(extensions.next());
-                extensions =
-                    Extension.getRequired(manifest).iterator();
-                while (extensions.hasNext())
-                    required.add(extensions.next());
+                if (manifest != null) {
+                    Iterator extensions =
+                        Extension.getAvailable(manifest).iterator();
+                    while (extensions.hasNext())
+                        available.add(extensions.next());
+                    extensions =
+                        Extension.getRequired(manifest).iterator();
+                    while (extensions.hasNext())
+                        required.add(extensions.next());
+                }
                 jarFile.close();
             } catch (Throwable t) {
                 throw new IllegalArgumentException("addRepositoryInternal: " + t);
