@@ -11,9 +11,7 @@
   <cvs repository="jakarta" module="jakarta-tomcat-jasper"/>
   <project name="jakarta-tomcat-jasper_tc5">
       <home nested="jasper2" />
-      <jar name="build/shared/lib/jasper-compiler.jar" />
-      <jar name="build/shared/lib/jasper-runtime.jar" />
-      <jar name="build/shared/lib/jsp20el.jar" />
+      <jar name="lib/jsp20el.jar" />
   </project>
 
   <depend project="commons-logging"/>
