@@ -341,7 +341,7 @@ public final class SaveConnectorAction extends Action {
             if (!("AJP".equalsIgnoreCase(connectorType))) {
                 attribute = "proxyName";  
                 String proxyName = cform.getProxyName();
-                if ((proxyName != null) || (proxyName.length()>0)) { 
+                if ((proxyName != null) && (proxyName.length()>0)) { 
                     mBServer.setAttribute(coname,
                                   new Attribute("proxyName", proxyName));
                 }
@@ -366,13 +366,13 @@ public final class SaveConnectorAction extends Action {
                 
                 attribute = "keystoreFile";
                 String keyFile = cform.getKeyStoreFileName();
-                if ((keyFile != null) || (keyFile.length()>0)) 
+                if ((keyFile != null) && (keyFile.length()>0)) 
                     mBServer.setAttribute(coname,
                               new Attribute("keystoreFile", keyFile));            
                 
                 attribute = "keystorePass";
                 String keyPass = cform.getKeyStorePassword();
-                if ((keyPass != null) || (keyPass.length()>0)) 
+                if ((keyPass != null) && (keyPass.length()>0)) 
                     mBServer.setAttribute(coname,
                               new Attribute("keystorePass", keyPass));                 
                 // request.setAttribute("warning", "connector.keyPass.warning");               
