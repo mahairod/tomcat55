@@ -19,7 +19,26 @@
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ "$CATALINA_HOME" = "" ] ; then
-  CATALINA_HOME=`pwd`
+  ## resolve links - $0 may be a link to  home
+  PRG=$0
+  progname=`basename $0`
+  
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '.*/.*' > /dev/null; then
+	PRG="$link"
+    else
+	PRG="`dirname $PRG`/$link"
+    fi
+  done
+  
+  CATALINA_HOME_1=`dirname "$PRG"`/..
+  echo "Guessing CATALINA_HOME from catalina.sh to ${CATALINA_HOME_1}" 
+    if [ -d ${CATALINA_HOME_1}/conf ] ; then 
+	CATALINA_HOME=${CATALINA_HOME_1}
+	echo "Setting CATALINA_HOME to $CATALINA_HOME"
+    fi
 fi
 
 if [ "$CATALINA_OPTS" = "" ] ; then
