@@ -4015,8 +4015,8 @@ public class StandardContext
                 // Initialize associated mapper
                 mapper.setContext(getPath(), welcomeFiles, resources);
 
-                // JMX registration
-                registerJMX();
+                // Set JMX object name for proper pipeline registration
+                preRegisterJMX();
 
                 // Start our child containers, if any
                 Container children[] = findChildren();
@@ -4127,8 +4127,8 @@ public class StandardContext
             setAvailable(false);
         }
 
-        // Wrappers JMX registration
-        registerWrappersJMX();
+        // JMX registration
+        registerJMX();
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
@@ -5031,33 +5031,35 @@ public class StandardContext
         return oname;        
     }    
     
-    private void registerJMX() {
+    private void preRegisterJMX() {
         try {
-            StandardHost hst=(StandardHost)getParent();
-            if( oname==null || oname.getKeyProperty("j2eeType")==null ) {
-                
-                oname=createObjectName(hst.getDomain(), hst.getJmxName());
-                log.debug("Checking for " + oname );
-                if(! Registry.getRegistry().getMBeanServer().isRegistered(oname))
-                {
-                    controller=oname;
-                    Registry.getRegistry().registerComponent(this,oname, null);
-                }
+            StandardHost host = (StandardHost) getParent();
+            if ((oname == null) 
+                || (oname.getKeyProperty("j2eeType") == null)) {
+                oname = createObjectName(host.getDomain(), host.getJmxName());
+                controller = oname;
             }
-        } catch( Exception ex ) {
+        } catch(Exception ex) {
             log.info("Error registering ctx with jmx " + this + " " +
-                    oname + " " + ex.toString(), ex );
+                     oname + " " + ex.toString(), ex );
         }
     }
 
-    private void registerWrappersJMX() {
+    private void registerJMX() {
         try {
-            for( Iterator it=wrappers.iterator(); it.hasNext() ; ) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking for " + oname );
+            }
+            if(! Registry.getRegistry().getMBeanServer().isRegistered(oname)) {
+                controller = oname;
+                Registry.getRegistry().registerComponent(this, oname, null);
+            }
+            for (Iterator it = wrappers.iterator(); it.hasNext() ; ) {
                 StandardWrapper wrapper=(StandardWrapper)it.next();
                 // XXX prevent duplicated registration
                 wrapper.registerJMX( this );
             }
-        } catch( Exception ex ) {
+        } catch (Exception ex) {
             log.info("Error registering wrapper with jmx " + this + " " +
                     oname + " " + ex.toString(), ex );
         }
