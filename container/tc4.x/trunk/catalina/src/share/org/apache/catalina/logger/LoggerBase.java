@@ -98,6 +98,12 @@ public abstract class LoggerBase
 
 
     /**
+     * The debugging detail level for this component.
+     */
+    protected int debug = 0;
+
+    
+    /**
      * The descriptive information about this implementation.
      */
     protected static final String info =
@@ -139,6 +145,28 @@ public abstract class LoggerBase
         Container oldContainer = this.container;
         this.container = container;
         support.firePropertyChange("container", oldContainer, this.container);
+
+    }
+
+
+    /**
+     * Return the debugging detail level for this component.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level for this component.
+     *
+     * @param debug The new debugging detail level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
 
     }
 

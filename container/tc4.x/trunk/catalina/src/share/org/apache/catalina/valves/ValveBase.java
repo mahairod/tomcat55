@@ -101,6 +101,12 @@ public abstract class ValveBase
 
 
     /**
+     * The debugging detail level for this component.
+     */
+    protected int debug = 0;
+
+
+    /**
      * Descriptive information about this Valve implementation.  This value
      * should be overridden by subclasses.
      */
@@ -136,6 +142,28 @@ public abstract class ValveBase
     public void setContainer(Container container) {
 
         this.container = container;
+
+    }
+
+
+   /**
+     * Return the debugging detail level for this component.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level for this component.
+     *
+     * @param debug The new debugging detail level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
 
     }
 
