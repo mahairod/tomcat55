@@ -440,7 +440,11 @@ public class MapperListener
         // name attribute is the same... - then it's ours
         String targetDomain=objectName.getDomain();
         if( ! domain.equals( targetDomain )) {
-            targetDomain=(String) mBeanServer.getAttribute(objectName, "engineName");
+            try {
+                targetDomain=(String) mBeanServer.getAttribute(objectName, "engineName");
+            } catch (Exception e) {
+                // Ignore
+            }
             if( ! domain.equals( targetDomain )) {
                 // not ours
                 return;
