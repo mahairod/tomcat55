@@ -114,6 +114,11 @@ else
   fi
 fi
 
+# Set juli LogManager if it is present
+if [ -r "$CATALINA_HOME"/bin/tomcat-juli.jar ]; then
+  JAVA_OPTS="$JAVA_OPTS "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+fi
+
 # Add on extra jar files to CLASSPATH
 if [ -n "$JSSE_HOME" ]; then
   CLASSPATH="$CLASSPATH":"$JSSE_HOME"/lib/jcert.jar:"$JSSE_HOME"/lib/jnet.jar:"$JSSE_HOME"/lib/jsse.jar

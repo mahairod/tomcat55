@@ -77,6 +77,10 @@ if not "%CATALINA_TMPDIR%" == "" goto gotTmpdir
 set CATALINA_TMPDIR=%CATALINA_BASE%\temp
 :gotTmpdir
 
+if not exist "%CATALINA_HOME%\bin\tomcat-juli.jar" goto noJuli
+set JAVA_OPTS=%JAVA_OPTS% -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+:noJuli
+
 rem ----- Execute The Requested Command ---------------------------------------
 
 echo Using CATALINA_BASE:   %CATALINA_BASE%
