@@ -2284,7 +2284,7 @@ public class StandardContext
         setPaused(true);
 
         // Binding thread
-        bindThread();
+        ClassLoader oldCCL = bindThread();
 
         // Shut down the current version of all active servlets
         Container children[] = findChildren();
@@ -2299,11 +2299,6 @@ public class StandardContext
                         e);
                 }
             }
-        }
-
-        // Unbinding thread
-        if (isUseNaming()) {
-            ContextBindings.unbindThread(this, this);
         }
 
         // Clear all application-originated servlet context attributes
@@ -2324,7 +2319,7 @@ public class StandardContext
         }
 
         // Binding thread
-        unbindThread();
+        unbindThread(oldCCL);
 
         // Dump the old Jasper loader
         jasperLoader = null;
@@ -2361,16 +2356,7 @@ public class StandardContext
         }
 
         // Binding thread
-        bindThread();
-
-        ClassLoader oldCtxClassLoader =
-            Thread.currentThread().getContextClassLoader();
-        ClassLoader classLoader = loader.getClassLoader();
-
-        // Set the context class loader
-        if (classLoader != null) {
-            Thread.currentThread().setContextClassLoader(classLoader);
-        }
+        oldCCL = bindThread();
 
         // Restart our session manager (AFTER naming context recreated/bound)
         if ((manager != null) && (manager instanceof Lifecycle)) {
@@ -2399,11 +2385,6 @@ public class StandardContext
         postResources();
         postWelcomeFiles();
 
-        // Set the context class loader to the old class loader
-        if (classLoader != null) {
-            Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
-        }
-
         // Restart our currently defined servlets
         for (int i = 0; i < children.length; i++) {
             if (!ok)
@@ -2425,7 +2406,7 @@ public class StandardContext
         loadOnStartup(children);
 
         // Unbinding thread
-        unbindThread();
+        unbindThread(oldCCL);
 
         // Start accepting requests again
         if (ok) {
@@ -3283,7 +3264,7 @@ public class StandardContext
             (Globals.RESOURCES_ATTR, getResources());
 
         // Binding thread
-        bindThread();
+        ClassLoader oldCCL = bindThread();
 
         // Configure and call application event listeners and filters
         if (ok) {
@@ -3306,7 +3287,7 @@ public class StandardContext
         loadOnStartup(findChildren());
 
         // Unbinding thread
-        unbindThread();
+        unbindThread(oldCCL);
 
         if (ok) {
             if (debug >= 1)
@@ -3334,7 +3315,7 @@ public class StandardContext
         setAvailable(false);
 
         // Binding thread
-        bindThread();
+        ClassLoader oldCCL = bindThread();
 
         // Stop our filters and application listeners
         filterStop();
@@ -3356,7 +3337,7 @@ public class StandardContext
         super.stop();
 
         // Unbinding thread
-        unbindThread();
+        unbindThread(oldCCL);
 
         // Dump the old Jasper loader
         jasperLoader = null;
@@ -3457,8 +3438,15 @@ public class StandardContext
     /**
      * Bind current thread, both for CL purposes and for JNDI ENC support
      * during : startup, shutdown and realoading of the context.
+     * 
+     * @return the previous context class loader
      */
-    private void bindThread() {
+    private ClassLoader bindThread() {
+
+        ClassLoader oldContextClassLoader = 
+            Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader
+            (getLoader().getClassLoader());
 
         DirContextURLStreamHandler.bind(getResources());
 
@@ -3471,13 +3459,19 @@ public class StandardContext
             }
         }
 
+        return oldContextClassLoader;
+
     }
 
 
     /**
      * Unbind thread.
      */
-    private void unbindThread() {
+    private void unbindThread(ClassLoader oldContextClassLoader) {
+
+        Thread.currentThread().setContextClassLoader(oldContextClassLoader);
+
+        oldContextClassLoader = null;
 
         if (isUseNaming()) {
             ContextBindings.unbindThread(this, this);

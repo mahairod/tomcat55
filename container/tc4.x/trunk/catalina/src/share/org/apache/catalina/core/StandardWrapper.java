@@ -768,8 +768,6 @@ public final class StandardWrapper
                 (sm.getString("standardWrapper.missingLoader", getName()));
         }
 
-        ClassLoader oldCtxClassLoader =
-            Thread.currentThread().getContextClassLoader();
         ClassLoader classLoader = loader.getClassLoader();
 
         // Special case class loader for a Catalina internal servlet
@@ -785,11 +783,6 @@ public final class StandardWrapper
             log(sm.getString("standardWrapper.jasperLoader", getName()));
         }
 
-        // Set the context class loader
-        if (classLoader != null) {
-            Thread.currentThread().setContextClassLoader(classLoader);
-        }
-
         // Load the specified servlet class from the appropriate class loader
         Class classClass = null;
         try {
@@ -800,21 +793,12 @@ public final class StandardWrapper
             }
         } catch (ClassNotFoundException e) {
             unavailable(null);
-            // Restore the context ClassLoader
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader
-                    (oldCtxClassLoader);
-            }
             throw new ServletException
                 (sm.getString("standardWrapper.missingClass", actualClass),
                  e);
         }
         if (classClass == null) {
             unavailable(null);
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader
-                    (oldCtxClassLoader);
-            }
             throw new ServletException
                 (sm.getString("standardWrapper.missingClass", actualClass));
         }
@@ -826,19 +810,11 @@ public final class StandardWrapper
         } catch (ClassCastException e) {
             unavailable(null);
             // Restore the context ClassLoader
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader
-                    (oldCtxClassLoader);
-            }
             throw new ServletException
                 (sm.getString("standardWrapper.notServlet", actualClass), e);
         } catch (Throwable e) {
             unavailable(null);
             // Restore the context ClassLoader
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader
-                    (oldCtxClassLoader);
-            }
             throw new ServletException
                 (sm.getString("standardWrapper.instantiate", actualClass), e);
         }
@@ -875,12 +851,6 @@ public final class StandardWrapper
             // said so, so do not call unavailable(null).
             throw new ServletException
                 (sm.getString("standardWrapper.initException", getName()), f);
-        } finally {
-            // Restore the context ClassLoader
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader
-                    (oldCtxClassLoader);
-            }
         }
 
         // Register our newly initialized instance

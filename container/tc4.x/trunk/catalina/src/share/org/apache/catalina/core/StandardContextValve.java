@@ -212,14 +212,7 @@ final class StandardContextValve
         // Ask this Wrapper to process this Request
         response.setContext(context);
 
-        // Bind current thread with the resources
-        DirContextURLStreamHandler.bindThread(context.getResources());
-
-        try {
-            wrapper.invoke(request, response);
-        } finally {
-            DirContextURLStreamHandler.unbindThread();
-        }
+        wrapper.invoke(request, response);
 
     }
 
