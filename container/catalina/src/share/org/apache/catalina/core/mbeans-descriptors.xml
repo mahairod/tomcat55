@@ -119,6 +119,10 @@
                description="Location of the default web.xml resource or file"
                type="java.lang.String"/>
                
+    <attribute name="delegate"
+               description=""
+               type="boolean"/>
+               
     <attribute name="deploymentDescriptor"
                description="String deployment descriptor "
                type="java.lang.String"/>
