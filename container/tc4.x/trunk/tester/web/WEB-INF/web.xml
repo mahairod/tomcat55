@@ -62,6 +62,11 @@
 
     <filter-mapping>
         <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedReset01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedSetBufferSize01</url-pattern>
     </filter-mapping>
 
@@ -106,6 +111,11 @@
     <servlet>
         <servlet-name>GetQueryString01</servlet-name>
         <servlet-class>org.apache.tester.GetQueryString01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Reset01</servlet-name>
+        <servlet-class>org.apache.tester.Reset01</servlet-class>
     </servlet>
 
     <servlet>
@@ -178,6 +188,16 @@
     <servlet-mapping>
         <servlet-name>GetQueryString01</servlet-name>
         <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Reset01</servlet-name>
+        <url-pattern>/Reset01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Reset01</servlet-name>
+        <url-pattern>/WrappedReset01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

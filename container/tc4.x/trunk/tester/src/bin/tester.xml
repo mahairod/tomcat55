@@ -177,6 +177,14 @@
     <!-- ========== Other ServletResponse Tests =========================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
+         request="${context.path}/Reset01"
+      outContent="Reset01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
+         request="${context.path}/WrappedReset01"
+      outContent="Reset01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
          request="${context.path}/SetBufferSize01"
       outContent="SetBufferSize01 PASSED"/>
 
