@@ -62,25 +62,11 @@
 
 package org.apache.jasper.runtime;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Map;
-
+import java.util.*;
+import java.io.*;
+import java.beans.*;
+import java.security.*;
 import java.lang.reflect.Method;
-
-import java.io.Writer;
-import java.io.Reader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import java.beans.PropertyDescriptor;
-import java.beans.IndexedPropertyDescriptor;
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
-
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-import java.security.PrivilegedActionException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -818,7 +804,7 @@ public class JspRuntimeLibrary {
      * @param request The servlet request we are processing
      * @param response The servlet response we are processing
      * @param relativePath The relative path of the resource to be included
-     * @param out The JspWriter to whom we are currently writing
+     * @param out The Writer to whom we are currently writing
      * @param flush Should we flush before the include is processed?
      *
      * @exception IOException if thrown by the included servlet
@@ -827,7 +813,7 @@ public class JspRuntimeLibrary {
     public static void include(HttpServletRequest request,
                                HttpServletResponse response,
                                String relativePath,
-                               JspWriter out,
+                               Writer out,
                                boolean flush)
         throws IOException, ServletException {
 

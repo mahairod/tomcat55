@@ -62,6 +62,7 @@
 package org.apache.jasper.runtime;
 
 import java.lang.IllegalStateException;
+import java.io.Writer;
 import java.io.PrintWriter;
 
 import javax.servlet.*;
@@ -73,7 +74,7 @@ import javax.servlet.jsp.*;
  *
  * This 'wrapped' response object is passed as the second argument 
  * to the internal RequestDispatcher.include(). It channels
- * all output text into the current JspWriter.
+ * all output text into the current Writer.
  *
  * @author Pierre Delisle
  */
@@ -82,20 +83,20 @@ public class ServletResponseWrapperInclude
     extends HttpServletResponseWrapper
 {
     /**
-     * The PrintWriter writes all output to the JspWriter of the 
+     * The PrintWriter writes all output to the Writer of the 
      * including page.
      */
     PrintWriter printWriter;
 
     public ServletResponseWrapperInclude(ServletResponse response, 
-					 JspWriter jspWriter) 
+					 Writer writer) 
     {
 	super((HttpServletResponse)response);
-	this.printWriter = new PrintWriter(jspWriter);
+	this.printWriter = new PrintWriter(writer);
     }
 
     /**
-     * Returns a wrapper around the JspWriter of the including page.
+     * Returns a wrapper around the Writer of the including page.
      */
     public java.io.PrintWriter getWriter()
 	throws java.io.IOException 
