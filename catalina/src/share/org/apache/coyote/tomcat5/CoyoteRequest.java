@@ -212,7 +212,7 @@ public class CoyoteRequest
     /**
      * Reader.
      */
-    protected BufferedReader reader = new CoyoteReader(inputBuffer);
+    protected CoyoteReader reader = new CoyoteReader(inputBuffer);
 
 
     /**
@@ -406,9 +406,19 @@ public class CoyoteRequest
 
         mappingData.recycle();
 
-        if ((Constants.SECURITY) && (facade != null)) {
-            facade.clear();
-            facade = null;
+        if (Constants.SECURITY) {
+            if (facade != null) {
+                facade.clear();
+                facade = null;
+            }
+            if (inputStream != null) {
+                inputStream.clear();
+                inputStream = null;
+            }
+            if (reader != null) {
+                reader.clear();
+                reader = null;
+            }
         }
 
     }
@@ -625,6 +635,9 @@ public class CoyoteRequest
      * Return the input stream associated with this Request.
      */
     public InputStream getStream() {
+        if (inputStream == null) {
+            inputStream = new CoyoteInputStream(inputBuffer);
+        }
         return inputStream;
     }
 
@@ -717,6 +730,9 @@ public class CoyoteRequest
      */
     public ServletInputStream createInputStream() 
         throws IOException {
+        if (inputStream == null) {
+            inputStream = new CoyoteInputStream(inputBuffer);
+        }
         return inputStream;
     }
 
@@ -987,6 +1003,9 @@ public class CoyoteRequest
                 (sm.getString("coyoteRequest.getInputStream.ise"));
 
         usingInputStream = true;
+        if (inputStream == null) {
+            inputStream = new CoyoteInputStream(inputBuffer);
+        }
         return inputStream;
 
     }
@@ -1132,6 +1151,9 @@ public class CoyoteRequest
 
         usingReader = true;
         inputBuffer.checkConverter();
+        if (reader == null) {
+            reader = new CoyoteReader(inputBuffer);
+        }
         return reader;
 
     }

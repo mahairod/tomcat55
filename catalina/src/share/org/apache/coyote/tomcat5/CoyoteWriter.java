@@ -55,6 +55,14 @@ public class CoyoteWriter
 
 
     /**
+     * Clear facade.
+     */
+    void clear() {
+        ob = null;
+    }
+
+
+    /**
      * Recycle.
      */
     void recycle() {
