@@ -414,6 +414,7 @@
 
     <ant dir="${catalina.home}/catalina" target="catalina-jars">
         <!-- in-place building -->
+        <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
         <property name="catalina.build" value="${tomcat.build}" />
         <property name="classes.dir" value="${tomcat.build}/classes" />
         <property name="tomcat-util.jar"
