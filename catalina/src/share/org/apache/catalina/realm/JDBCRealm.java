@@ -521,40 +521,60 @@ public class JDBCRealm
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
-        try {
-            stmt = credentials(dbConnection, username);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                dbCredentials = rs.getString(1);
-            }
-            rs.close();
-            rs = null;
-            if (dbCredentials == null) {
-                return (null);
-            }
-
-            dbCredentials = dbCredentials.trim();
-            return dbCredentials;
-            
-        } catch(SQLException e){
-            containerLog.error(sm.getString("jdbcRealm.getPassword.exception",
-                                            username),
-                               e);
-        } finally {
-            if (rs!=null) {
-                try {
-                    rs.close();
-                } catch(SQLException e) {
-                    containerLog.warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
-                }
-            }
+        // Number of tries is the numebr of attempts to connect to the database
+        // during this login attempt (if we need to open the database)
+        // This needs rewritten wuth better pooling support, the existing code
+        // needs signature changes since the Prepared statements needs cached
+        // with the connections.
+        // The code below will try twice if there is a SQLException so the
+        // connection may try to be opened again. On normal conditions (including
+        // invalid login - the above is only used once.
+        int numberOfTries = 2;
+        while (numberOfTries>0) {
             try {
-                dbConnection.commit();
+                
+                // Ensure that we have an open database connection
+                open();
+                
+                try {
+                    stmt = credentials(dbConnection, username);
+                    rs = stmt.executeQuery();
+                    
+                    if (rs.next()) {
+                        dbCredentials = rs.getString(1);
+                    }
+                    rs.close();
+                    rs = null;
+                    if (dbCredentials == null) {
+                        return (null);
+                    }
+                    
+                    dbCredentials = dbCredentials.trim();
+                    return dbCredentials;
+                    
+                } finally {
+                    if (rs!=null) {
+                        try {
+                            rs.close();
+                        } catch(SQLException e) {
+                            containerLog.warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                        }
+                    }
+                    dbConnection.commit();
+                }
+                
             } catch (SQLException e) {
-                containerLog.warn(sm.getString("jdbcRealm.getPassword.exception",
-                                               username));
+                
+                // Log the problem for posterity
+                containerLog.error(sm.getString("jdbcRealm.exception"), e);
+                
+                // Close the connection so that it gets reopened next time
+                if (dbConnection != null)
+                    close(dbConnection);
+                
             }
+            
+            numberOfTries--;
         }
         
         return (null);
@@ -582,41 +602,62 @@ public class JDBCRealm
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
-        try {
-            // Accumulate the user's roles
-            ArrayList roleList = new ArrayList();
-            stmt = roles(dbConnection, username);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                String role = rs.getString(1);
-                if (null!=role) {
-                    roleList.add(role.trim());
-                }
-            }
-            rs.close();
-            rs = null;
-            
-            return (roleList);
-            
-        } catch(SQLException e){
-            containerLog.error(sm.getString("jdbcRealm.getRoles.exception",
-                                            username));
-        } finally {
-            if (rs!=null) {
-                try {
-                    rs.close();
-                } catch(SQLException e) {
-                    containerLog.warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
-                }
-            }
+        // Number of tries is the numebr of attempts to connect to the database
+        // during this login attempt (if we need to open the database)
+        // This needs rewritten wuth better pooling support, the existing code
+        // needs signature changes since the Prepared statements needs cached
+        // with the connections.
+        // The code below will try twice if there is a SQLException so the
+        // connection may try to be opened again. On normal conditions (including
+        // invalid login - the above is only used once.
+        int numberOfTries = 2;
+        while (numberOfTries>0) {
             try {
-                dbConnection.commit();
+                
+                // Ensure that we have an open database connection
+                open();
+                
+                try {
+                    // Accumulate the user's roles
+                    ArrayList roleList = new ArrayList();
+                    stmt = roles(dbConnection, username);
+                    rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        String role = rs.getString(1);
+                        if (null!=role) {
+                            roleList.add(role.trim());
+                        }
+                    }
+                    rs.close();
+                    rs = null;
+                    
+                    return (roleList);
+                    
+                } finally {
+                    if (rs!=null) {
+                        try {
+                            rs.close();
+                        } catch(SQLException e) {
+                            containerLog.warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                        }
+                    }
+                    dbConnection.commit();
+                }
+                
             } catch (SQLException e) {
-                containerLog.warn(sm.getString("jdbcRealm.getRoles.exception",
-                                               username));
+                
+                // Log the problem for posterity
+                containerLog.error(sm.getString("jdbcRealm.exception"), e);
+                
+                // Close the connection so that it gets reopened next time
+                if (dbConnection != null)
+                    close(dbConnection);
+                
             }
+            
+            numberOfTries--;
         }
-
+        
         return (null);
         
     }
