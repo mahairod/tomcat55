@@ -63,6 +63,7 @@ package org.apache.catalina.core;
 
 import java.io.IOException;
 import java.net.URL;
+import java.lang.reflect.Method;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -91,7 +92,9 @@ import org.apache.commons.modeler.Registry;
 
 public class StandardHost
     extends ContainerBase
-    implements Deployer, Host {
+    implements Deployer, Host  
+ {
+    /* Why do we implement deployer and delegate to deployer ??? */
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( StandardHost.class );
@@ -831,8 +834,7 @@ public class StandardHost
      *  during install
      */
     public void install(String contextPath, URL war) throws IOException {
-
-        getDelegateDeployer().install(contextPath, war);
+        getDeployer().install(contextPath, war);
 
     }
 
@@ -863,7 +865,7 @@ public class StandardHost
      */
     public synchronized void install(URL config, URL war) throws IOException {
 
-        getDelegateDeployer().install(config, war);
+        getDeployer().install(config, war);
 
     }
 
@@ -877,7 +879,7 @@ public class StandardHost
      */
     public Context findDeployedApp(String contextPath) {
 
-        return (getDelegateDeployer().findDeployedApp(contextPath));
+        return (getDeployer().findDeployedApp(contextPath));
 
     }
 
@@ -889,7 +891,7 @@ public class StandardHost
      */
     public String[] findDeployedApps() {
 
-        return (getDelegateDeployer().findDeployedApps());
+        return (getDeployer().findDeployedApps());
 
     }
 
@@ -912,7 +914,7 @@ public class StandardHost
      */
     public void remove(String contextPath) throws IOException {
 
-        getDelegateDeployer().remove(contextPath);
+        getDeployer().remove(contextPath);
 
     }
 
@@ -937,7 +939,7 @@ public class StandardHost
      */
     public void remove(String contextPath, boolean undeploy) throws IOException {
 
-        getDelegateDeployer().remove(contextPath,undeploy);
+        getDeployer().remove(contextPath,undeploy);
 
     }
 
@@ -957,7 +959,7 @@ public class StandardHost
      */
     public void start(String contextPath) throws IOException {
 
-        getDelegateDeployer().start(contextPath);
+        getDeployer().start(contextPath);
 
     }
 
@@ -977,7 +979,7 @@ public class StandardHost
      */
     public void stop(String contextPath) throws IOException {
 
-        getDelegateDeployer().stop(contextPath);
+        getDeployer().stop(contextPath);
 
     }
 
@@ -997,11 +999,25 @@ public class StandardHost
 
     }
 
-    private Deployer getDelegateDeployer() {
+    static String STANDARD_HOST_DEPLOYER="org.apache.catalina.core.StandardHostDeployer";
+    
+    public Deployer getDeployer() {
         if( deployer!= null )
             return deployer;
-        deployer=new StandardHostDeployer(this);
+        log.info( "Create Host deployer for direct deployment ( non-jmx ) ");
+        try {
+            Class c=Class.forName( STANDARD_HOST_DEPLOYER );
+            deployer=(Deployer)c.newInstance();
+            Method m=c.getMethod("setHost", new Class[] {Host.class} );
+            m.invoke( deployer,  new Object[] { this } );
+        } catch( Throwable t ) {
+            log.error( "Error creating deployer ", t);
+        }
         return deployer;
+    }
+    
+    public void setDeployer(Deployer d) {
+        this.deployer=d;
     }
 
     // -------------------- JMX  --------------------

@@ -77,6 +77,7 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Host;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.ExpandWar;
@@ -101,6 +102,8 @@ public class StandardHostDeployer implements Deployer {
 
     // ----------------------------------------------------------- Constructors
 
+    public StandardHostDeployer() {
+    }
 
     /**
      * Create a new StandardHostDeployer associated with the specified
@@ -170,6 +173,13 @@ public class StandardHostDeployer implements Deployer {
 
     // -------------------------------------------------------- Depoyer Methods
 
+    public Host getHost() {
+        return host;
+    }
+
+    public void setHost(Host host) {
+        this.host = (StandardHost)host;
+    }
 
     /**
      * Return the name of the Container with which this Deployer is associated.
