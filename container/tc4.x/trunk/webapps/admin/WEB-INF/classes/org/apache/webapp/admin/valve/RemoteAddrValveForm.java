@@ -73,26 +73,16 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
 
 /**
- * Form bean for the remote host valve page.
+ * Form bean for the remote addr valve page.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class RemoteAddrValveForm extends ActionForm {
+public final class RemoteAddrValveForm extends ValveForm {
     
     // ----------------------------------------------------- Instance Variables
     
-   /**
-     * The administrative action represented by this form.
-     */
-    private String adminAction = "Edit";
-
-    /**
-     * The object name of the valve this bean refers to.
-     */
-    private String objectName = null;
-
     /**
      * The text for the allow IP addresses.
      * A comma-separated list of regular expression patterns
@@ -105,88 +95,8 @@ public final class RemoteAddrValveForm extends ActionForm {
      */
     private String deny = "";
 
-    /**
-     * The text for the valve name, used to retrieve
-     * the corresponding valve mBean.
-     */
-    private String valveName = null;
-    
-    /**
-     * The text for the valve type.
-     */
-    private String valveType = null;
-        
-    /**
-     * The text for the node label.
-     */
-    private String nodeLabel = null;
-    
-    /**
-     * The object name of the parent of this valve.
-     */
-    private String parentObjectName = null;
-
-    /**
-     * Set of valid values for valves.
-     */
-    private List valveTypeVals = null;
-    
     // ------------------------------------------------------------- Properties
 
-       /**
-     * Return the administrative action represented by this form.
-     */
-    public String getAdminAction() {
-
-        return this.adminAction;
-
-    }
-
-    /**
-     * Set the administrative action represented by this form.
-     */
-    public void setAdminAction(String adminAction) {
-
-        this.adminAction = adminAction;
-
-    }
-
-    /**
-     * Return the Object Name.
-     */
-    public String getObjectName() {
-        
-        return this.objectName;
-        
-    }
-    
-    /**
-     * Set the Object Name.
-     */
-    public void setObjectName(String objectName) {
-        
-        this.objectName = objectName;
-        
-    }
-    
-    /**
-     * Return the valve type.
-     */
-    public String getValveType() {
-        
-        return this.valveType;
-        
-    }
-    
-    /**
-     * Set the valve type.
-     */
-    public void setValveType(String valveType) {
-        
-        this.valveType = valveType;
-        
-    }
-    
     /**
      * Return the allow hosts IP adddresses.
      */
@@ -222,63 +132,7 @@ public final class RemoteAddrValveForm extends ActionForm {
         this.deny = deny;
         
     }    
-    
-    /**
-     * Return the label of the node that was clicked.
-     */
-    public String getNodeLabel() {
-        
-        return this.nodeLabel;
-        
-    }
-    
-    /**
-     * Set the node label.
-     */
-    public void setNodeLabel(String nodeLabel) {
-        
-        this.nodeLabel = nodeLabel;
-        
-    }
-    
-    /**
-     * Return the parent object name of the valve this bean refers to.
-     */
-    public String getParentObjectName() {
 
-        return this.parentObjectName;
-
-    }
-
-
-    /**
-     * Set the parent object name of the valve this bean refers to.
-     */
-    public void setParentObjectName(String parentObjectName) {
-
-        this.parentObjectName = parentObjectName;
-
-    }
-    
-        
-   /**
-     * Return the valveTypeVals.
-     */
-    public List getValveTypeVals() {
-        
-        return this.valveTypeVals;
-        
-    }
-    
-    /**
-     * Set the valveTypeVals.
-     */
-    public void setValveTypeVals(List valveTypeVals) {
-        
-        this.valveTypeVals = valveTypeVals;
-        
-    }
-    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -288,8 +142,8 @@ public final class RemoteAddrValveForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-        
-        this.objectName = null;
+                
+        super.reset(mapping, request);
         this.allow = null;
         this.deny = null;
         
@@ -301,15 +155,15 @@ public final class RemoteAddrValveForm extends ActionForm {
     public String toString() {
 
         StringBuffer sb = new StringBuffer("RemoteAddrValveForm[adminAction=");
-        sb.append(adminAction);
+        sb.append(getAdminAction());
         sb.append("',valveType=");
-        sb.append(valveType);
+        sb.append(getValveType());
         sb.append(",allow=");
-        sb.append(allow);
+        sb.append(getAllow());
         sb.append(",deny=");
-        sb.append(deny);        
+        sb.append(getDeny());        
         sb.append("',objectName='");
-        sb.append(objectName);
+        sb.append(getObjectName());
         sb.append("]");
         return (sb.toString());
 

@@ -73,64 +73,164 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
 
 /**
- * Form bean for the single sign on valve page.
+ * Form bean for the generic valve page.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class SingleSignOnValveForm extends ValveForm {
+public class ValveForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
+    
+   /**
+     * The administrative action represented by this form.
+     */
+    private String adminAction = "Edit";
 
     /**
-     * The text for the debug level.
+     * The object name of the valve this bean refers to.
      */
-    private String debugLvl = "0";
+    private String objectName = null;
+
+    /**
+     * The text for the valve name, used to retrieve
+     * the corresponding valve mBean.
+     */
+    private String valveName = null;
+    
+    /**
+     * The text for the valve type.
+     */
+    private String valveType = null;
         
     /**
-     * Set of valid values for debug level.
+     * The text for the node label.
      */
-    private List debugLvlVals = null;
+    private String nodeLabel = null;
+    
+    /**
+     * The object name of the parent of this valve.
+     */
+    private String parentObjectName = null;
+
+    /**
+     * Set of valid values for valves.
+     */
+    private List valveTypeVals = null;
     
     // ------------------------------------------------------------- Properties
-    
-    /**
-     * Return the debugVals.
+
+       /**
+     * Return the administrative action represented by this form.
      */
-    public List getDebugLvlVals() {
+    public String getAdminAction() {
+
+        return this.adminAction;
+
+    }
+
+    /**
+     * Set the administrative action represented by this form.
+     */
+    public void setAdminAction(String adminAction) {
+
+        this.adminAction = adminAction;
+
+    }
+
+    /**
+     * Return the Object Name.
+     */
+    public String getObjectName() {
         
-        return this.debugLvlVals;
+        return this.objectName;
         
     }
     
     /**
-     * Set the debugVals.
+     * Set the Object Name.
      */
-    public void setDebugLvlVals(List debugLvlVals) {
+    public void setObjectName(String objectName) {
         
-        this.debugLvlVals = debugLvlVals;
+        this.objectName = objectName;
         
     }
     
     /**
-     * Return the Debug Level Text.
+     * Return the valve type.
      */
-    public String getDebugLvl() {
+    public String getValveType() {
         
-        return this.debugLvl;
+        return this.valveType;
         
     }
     
     /**
-     * Set the Debug Level Text.
+     * Set the valve type.
      */
-    public void setDebugLvl(String debugLvl) {
+    public void setValveType(String valveType) {
         
-        this.debugLvl = debugLvl;
+        this.valveType = valveType;
         
     }
+    
+    /**
+     * Return the label of the node that was clicked.
+     */
+    public String getNodeLabel() {
         
+        return this.nodeLabel;
+        
+    }
+    
+    /**
+     * Set the node label.
+     */
+    public void setNodeLabel(String nodeLabel) {
+        
+        this.nodeLabel = nodeLabel;
+        
+    }
+    
+    /**
+     * Return the parent object name of the valve this bean refers to.
+     */
+    public String getParentObjectName() {
+
+        return this.parentObjectName;
+
+    }
+
+
+    /**
+     * Set the parent object name of the valve this bean refers to.
+     */
+    public void setParentObjectName(String parentObjectName) {
+
+        this.parentObjectName = parentObjectName;
+
+    }
+    
+        
+   /**
+     * Return the valveTypeVals.
+     */
+    public List getValveTypeVals() {
+        
+        return this.valveTypeVals;
+        
+    }
+    
+    /**
+     * Set the valveTypeVals.
+     */
+    public void setValveTypeVals(List valveTypeVals) {
+        
+        this.valveTypeVals = valveTypeVals;
+        
+    }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -140,53 +240,9 @@ public final class SingleSignOnValveForm extends ValveForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-    
-        super.reset(mapping, request);
-        this.debugLvl = "0";        
+        
+        objectName = null;
         
     }
-    
-    /**
-     * Render this object as a String.
-     */
-    public String toString() {
 
-        StringBuffer sb = new StringBuffer("SingleSignOnValveForm[adminAction=");
-        sb.append(getAdminAction());
-        sb.append("',valveType=");
-        sb.append(getValveType());
-        sb.append(",debugLvl=");
-        sb.append(debugLvl);
-        sb.append("',objectName='");
-        sb.append(getObjectName());
-        sb.append("]");
-        return (sb.toString());
-
-    }
-    
-    /**
-     * Validate the properties that have been set from this HTTP request,
-     * and return an <code>ActionErrors</code> object that encapsulates any
-     * validation errors that have been found.  If no errors are found, return
-     * <code>null</code> or an <code>ActionErrors</code> object with no
-     * recorded error messages.
-     *
-     * @param mapping The mapping used to select this instance
-     * @param request The servlet request we are processing
-     */
-    
-    public ActionErrors validate(ActionMapping mapping,
-    HttpServletRequest request) {
-        
-        ActionErrors errors = new ActionErrors();
-        
-        String submit = request.getParameter("submit");
-        
-        // front end validation when save is clicked.        
-         if (submit != null) {
-             // no validation needed
-         }
-                 
-        return errors;
-    }
 }
