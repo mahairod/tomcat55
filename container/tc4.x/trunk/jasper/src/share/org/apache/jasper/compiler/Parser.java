@@ -258,7 +258,7 @@ public class Parser {
 	private static final String CLOSE_INCLUDE_NO_BODY = "/>";
 	private static final String CLOSE_INCLUDE_BODY = ">";
 	private static final String CLOSE_INCLUDE = "</jsp:include>";
-	private static final String OPEN_INDIVIDUAL_PARAM = "<jsp:param";
+	private static final String OPEN_INDIVIDUAL_PARAM = "<jsp:param ";
 	private static final String CLOSE_INDIVIDUAL_PARAM = "/>";
 
 	private static final JspUtil.ValidAttribute[] validAttributes = {
@@ -295,7 +295,7 @@ public class Parser {
 			if (!reader.matches (OPEN_INDIVIDUAL_PARAM))
 			    throw new ParseException (reader.mark(),
 						      Constants.getString
-						      ("jsp.error.paramexpected"));
+						      ("jsp.error.paramexpectedonly"));
 
 			//Parse zero or more param tags.
 			while (reader.matches(OPEN_INDIVIDUAL_PARAM)) {
@@ -343,7 +343,7 @@ public class Parser {
 	private static final String CLOSE_FORWARD_NO_BODY = "/>";
 	private static final String CLOSE_FORWARD_BODY = ">";
 	private static final String CLOSE_FORWARD = "</jsp:forward>";
-	private static final String OPEN_INDIVIDUAL_PARAM = "<jsp:param";
+	private static final String OPEN_INDIVIDUAL_PARAM = "<jsp:param ";
 	private static final String CLOSE_INDIVIDUAL_PARAM = "/>";
 
 	private static final JspUtil.ValidAttribute[] validAttributes = {
@@ -376,7 +376,7 @@ public class Parser {
 			if (!reader.matches (OPEN_INDIVIDUAL_PARAM))
 			    throw new ParseException (reader.mark(),
 						      Constants.getString
-						      ("jsp.error.paramexpected"));
+						      ("jsp.error.paramexpectedonly"));
 			// Parse zero or more param tags.
 			while (reader.matches(OPEN_INDIVIDUAL_PARAM)) {
 			    
@@ -915,7 +915,7 @@ public class Parser {
 	private static final String CLOSE_PLUGIN = "</jsp:plugin>";
 	private static final String OPEN_PARAMS = "<jsp:params>";
 	private static final String CLOSE_PARAMS = "</jsp:params>";
-	private static final String OPEN_INDIVIDUAL_PARAM = "<jsp:param";
+	private static final String OPEN_INDIVIDUAL_PARAM = "<jsp:param ";
 	private static final String CLOSE_INDIVIDUAL_PARAM = "/>";
 	private static final String OPEN_FALLBACK = "<jsp:fallback>";
 	private static final String CLOSE_FALLBACK = "</jsp:fallback>";
