@@ -1744,10 +1744,12 @@ public class DefaultServlet
 
         // Optimization: If the binary content has already been loaded, send
         // it directly
-        byte buffer[] = resourceInfo.file.getContent();
-        if (buffer != null) {
-            ostream.write(buffer, 0, buffer.length);
-            return;
+        if (resourceInfo.file != null) {
+            byte buffer[] = resourceInfo.file.getContent();
+            if (buffer != null) {
+                ostream.write(buffer, 0, buffer.length);
+                return;
+            }
         }
 
         InputStream resourceInputStream = resourceInfo.getStream();
