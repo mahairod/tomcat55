@@ -77,6 +77,9 @@ Section "Tomcat 4.0 Start Menu Group"
 
   SectionIn 1 2 3
 
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
+
   SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0"
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Tomcat Home Page.lnk" \
@@ -89,13 +92,13 @@ Section "Tomcat 4.0 Start Menu Group"
                  "$INSTDIR"
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Start Tomcat.lnk" \
-                 "%JAVA_HOME%\bin\java.exe" \
-                 '-cp "$INSTDIR\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap start' \
+                 "$2\bin\java.exe" \
+                 '-cp "$INSTDIR\bin\bootstrap.jar;$2\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
-                 "%JAVA_HOME%\bin\java.exe" \
-                 '-cp "$INSTDIR\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap stop' \
+                 "$2\bin\java.exe" \
+                 '-cp "$INSTDIR\bin\bootstrap.jar;$2\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
   SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration"
@@ -190,11 +193,18 @@ SectionEnd
 
 Function .onInit
 
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "If not done already, you need to set the JAVA_HOME \
-environment variable and have it point to your JDK installation directory. \
-Answer No to quit the installer if your environment is not properly set." IDYES NoAbort
-      Abort ; causes installer to quit.
+  ClearErrors
+
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
+
+  IfErrors 0 NoAbort
+    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
+computer. Please download one from http://java.sun.com."
+    Abort
+
   NoAbort:
+    MessageBox MB_OK "Using Java Development Kit version $1 found in $2"
 
 FunctionEnd
 
