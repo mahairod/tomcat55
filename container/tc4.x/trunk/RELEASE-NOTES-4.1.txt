@@ -1106,7 +1106,7 @@ Coyote Bug Fixes:
          HandlerReqest:
          Fix potential Dos condition when given a mal-formed URI.
 
-[4.1.20] Upgrade to Connectors from Tomcat 5.0.18.
+[4.1.30] Upgrade to Connectors from Tomcat 5.0.18.
 
 
 ----------------
