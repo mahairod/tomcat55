@@ -353,11 +353,14 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    return (false);
 	if (!request.getServerName().equalsIgnoreCase(url.getHost()))
 	    return (false);
-        // Set the URL port to HTTP default if not available before comparing
-        int urlPort = url.getPort();
-        if (urlPort == -1) {
+    // Set the URL port to the HTTP(S) default if not available before comparing
+    int urlPort = url.getPort();
+    if (urlPort == -1) {
+        if(request.isSecure())
+            urlPort = 443;
+        else
             urlPort = 80;
-        }
+    }
 	if (request.getServerPort() != urlPort)
 	    return (false);
 	String contextPath = request.getContext().getPath();
