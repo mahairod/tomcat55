@@ -100,7 +100,12 @@ public final class EmbededServletOptions implements Options {
      * data being used literally in the generated servlet. 
      */
     public boolean largeFile = false;
-    
+
+    /**
+     * Determines whether tag handler pooling is enabled.
+     */
+    public boolean poolingEnabled = true;
+
     /**
      * Do you want support for "mapped" files? This will generate
      * servlet that has a print statement per line of the JSP file.
@@ -184,6 +189,10 @@ public final class EmbededServletOptions implements Options {
      */
     public boolean getLargeFile() {
         return largeFile;
+    }
+
+    public boolean isPoolingEnabled() {
+	return poolingEnabled;
     }
     
     /**
@@ -274,7 +283,9 @@ public final class EmbededServletOptions implements Options {
      * Create an EmbededServletOptions object using data available from
      * ServletConfig and ServletContext. 
      */
-    public EmbededServletOptions(ServletConfig config, ServletContext context) {
+    public EmbededServletOptions(ServletConfig config,
+				 ServletContext context) {
+
         Enumeration enum=config.getInitParameterNames();
         while( enum.hasMoreElements() ) {
             String k=(String)enum.nextElement();
@@ -313,6 +324,17 @@ public final class EmbededServletOptions implements Options {
             else if (mapFile.equalsIgnoreCase("false"))
                 this.mappedFile = false;
             else Constants.message ("jsp.warning.mappedFile", Logger.WARNING);
+        }
+
+	poolingEnabled = true;
+        String poolingEnabledParam
+	    = config.getInitParameter("enablePooling"); 
+        if (poolingEnabledParam != null
+  	        && !poolingEnabledParam.equalsIgnoreCase("true")) {
+            if (poolingEnabledParam.equalsIgnoreCase("false"))
+                this.poolingEnabled = false;
+            else Constants.message("jsp.warning.enablePooling",
+				   Logger.WARNING);
         }
 	
         String senderr = config.getInitParameter("sendErrToClient");

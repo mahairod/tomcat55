@@ -89,6 +89,10 @@ public interface Options {
      */
     public boolean getLargeFile();
 
+    /**
+     * Returns true if tag handler pooling is enabled, false otherwise.
+     */
+    public boolean isPoolingEnabled();
 
     /**
      * Are we supporting HTML mapped servlets?

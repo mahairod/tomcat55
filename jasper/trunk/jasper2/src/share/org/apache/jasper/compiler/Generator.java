@@ -394,8 +394,12 @@ public class Generator {
 
  	// Class variable declarations
      	
-	// Declare tag pools, one per (tag with specific attribute list).
-	if (!tagHandlerPoolNames.isEmpty()) {
+	/*
+	 * Declare tag handler pools (tags of the same type and with the same
+	 * attribute set share the same tag handler pool)
+	 */
+	if (ctxt.getOptions().isPoolingEnabled()
+	        && !tagHandlerPoolNames.isEmpty()) {
 	    for (int i=0; i<tagHandlerPoolNames.size(); i++) {
 		out.printil("private org.apache.jasper.runtime.TagHandlerPool "
 			    + tagHandlerPoolNames.elementAt(i) + ";");
@@ -404,7 +408,8 @@ public class Generator {
 	}
  
 	// Constructor
-	if (!tagHandlerPoolNames.isEmpty()) {
+	if (ctxt.getOptions().isPoolingEnabled()
+	        && !tagHandlerPoolNames.isEmpty()) {
 	    generateServletConstructor(servletClassName);
 	}
  
@@ -418,7 +423,8 @@ public class Generator {
         out.printil("}");
         out.println();
 
-	if (!tagHandlerPoolNames.isEmpty()) {
+	if (ctxt.getOptions().isPoolingEnabled()
+	        && !tagHandlerPoolNames.isEmpty()) {
 	    generateDestroy();
 	}
  
@@ -546,7 +552,8 @@ public class Generator {
 	/**
 	 * Constructor.
 	 */
-	public GenerateVisitor(ServletWriter out, MethodsBuffer methodsBuffer) {
+	public GenerateVisitor(ServletWriter out,
+			       MethodsBuffer methodsBuffer) {
 	    this.out = out;
 	    this.methodsBuffer = methodsBuffer;
 	    methodNesting = 0;
@@ -1314,13 +1321,20 @@ public class Generator {
 	    out.printin(tagHandlerClass.getName());
 	    out.print(" ");
 	    out.print(tagHandlerVar);
-	    out.print(" = (");
-	    out.print(tagHandlerClass.getName());
-	    out.print(") ");
-	    out.print(n.getTagHandlerPoolName());
-	    out.print(".get(");
-	    out.print(tagHandlerClass.getName());
-	    out.println(".class);");
+	    out.print(" = ");
+	    if (ctxt.getOptions().isPoolingEnabled()) {
+		out.print("(");
+		out.print(tagHandlerClass.getName());
+		out.print(") ");
+		out.print(n.getTagHandlerPoolName());
+		out.print(".get(");
+		out.print(tagHandlerClass.getName());
+		out.println(".class);");
+	    } else {
+		out.print("new ");
+		out.print(tagHandlerClass.getName());
+		out.println("();");
+	    }
 
 	    generateSetters(n, tagHandlerVar, handlerInfo);
 	    
@@ -1436,17 +1450,18 @@ public class Generator {
                 out.pushIndent();
 		out.printin(tagHandlerVar);
 		out.println(".doFinally();");
+            }
+
+	    if (ctxt.getOptions().isPoolingEnabled()) {
                 out.printin(n.getTagHandlerPoolName());
                 out.print(".reuse(");
 		out.print(tagHandlerVar);
 		out.println(");");
+	    }
+
+	    if (implementsTryCatchFinally) {
                 out.popIndent();
                 out.println("}");
-            } else {
-                out.printin(n.getTagHandlerPoolName());
-                out.print(".reuse(");
-		out.print(tagHandlerVar);
-		out.println(");");
 	    }
 
 	    // Synchronize AT_END variables
@@ -1873,7 +1888,9 @@ public class Generator {
 	pageInfo = compiler.getPageInfo();
 	beanInfo = pageInfo.getBeanRepository();
 	breakAtLF = ctxt.getOptions().getMappedFile();
-	tagHandlerPoolNames = new Vector();
+	if (ctxt.getOptions().isPoolingEnabled()) {
+	    tagHandlerPoolNames = new Vector();
+	}
     }
 
     /**
@@ -1886,7 +1903,9 @@ public class Generator {
 				Node.Nodes page) throws JasperException {
 	Generator gen = new Generator(out, compiler);
 
-	gen.compileTagHandlerPoolList(page);
+	if (gen.ctxt.getOptions().isPoolingEnabled()) {
+	    gen.compileTagHandlerPoolList(page);
+	}
 	gen.generatePreamble(page);
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer));
 	gen.generatePostamble(page);

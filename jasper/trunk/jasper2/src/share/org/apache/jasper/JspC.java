@@ -205,6 +205,10 @@ public class JspC implements Options {
         return largeFile;
     }
 
+    public boolean isPoolingEnabled() {
+        return true;
+    }
+
     /**
      * Are we supporting HTML mapped servlets?
      */
