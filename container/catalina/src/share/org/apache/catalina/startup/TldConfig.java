@@ -444,7 +444,9 @@ public final class TldConfig  {
 			      resourcePath));
 	}
 	url = new URL("jar:" + url.toString() + "!/");
-	tldScanJar((JarURLConnection) url.openConnection());
+	JarURLConnection conn = (JarURLConnection) url.openConnection();
+	conn.setUseCaches(false);
+	tldScanJar(conn);
     }
 
     /*
@@ -462,7 +464,6 @@ public final class TldConfig  {
 	String jarPath = conn.getJarFileURL().toString();
 
 	try {
-	    conn.setUseCaches(false);
 	    jarFile = conn.getJarFile();
             Enumeration entries = jarFile.entries();
             while (entries.hasMoreElements()) {
@@ -725,14 +726,17 @@ public final class TldConfig  {
 		for (int i=0; i<urls.length; i++) {
 		    URLConnection conn = urls[i].openConnection();
 		    if (conn instanceof JarURLConnection) {
+			conn.setUseCaches(false);			
 			globalJarPaths.add((JarURLConnection) conn);
 		    } else {
 			String urlStr = urls[i].toString();
 			if (urlStr.startsWith("file:")
 			        && urlStr.endsWith(".jar")) {
 			    URL jarURL = new URL("jar:" + urlStr + "!/");
-			    globalJarPaths.add((JarURLConnection)
-					       jarURL.openConnection());
+			    JarURLConnection jarConn = (JarURLConnection)
+				jarURL.openConnection();
+			    jarConn.setUseCaches(false);
+			    globalJarPaths.add(jarConn);
 			}
 		    }
 		}
