@@ -134,7 +134,7 @@ public class JNIEndpoint {
         }
 
         try {
-            JNIEndpointConnector.setEndpoinet(this);
+            JNIEndpointConnector.setEndpoint(this);
             StartupThread startup = new StartupThread(cmdLine,
                                                       this);
             startup.start();
