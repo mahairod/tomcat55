@@ -395,14 +395,16 @@ public class JDBCRealm
 	    ResultSet rs1 = preparedAuthenticate.executeQuery();
 	    boolean found = false;
 	    if (rs1.next()) {
+                String dbCredentials=rs1.getString(1).trim();
                 if( digest.equals("") || digest.equalsIgnoreCase("No")){
-                    if(credentials.equals(rs1.getString(1).trim())) {
+                    if(credentials.equals(dbCredentials)) {
                         if(debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
                                              username));
                         found = true;
-                    }else if (credentials.equals(
-                                Digest(rs1.getString(1).trim(),digest))) {
+                    }
+                } else{
+                    if (Digest(credentials,digest).equals(dbCredentials)) {
                         if (debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
                                      username));
