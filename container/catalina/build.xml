@@ -920,6 +920,9 @@
     </jar>
 
     <!-- Catalina Main JAR File -->
+    <!-- Excluding files from here is worse than duplicating them - a loader that uses the
+         package name as index and includes both bootstrap and catalina will be confused -->
+
     <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
       <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/**" />
@@ -927,14 +930,16 @@
         <exclude name="org/apache/catalina/launcher/**" />
         <exclude name="org/apache/naming/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
+<!--
         <exclude name="org/apache/catalina/startup/catalina.properties" />
         <exclude name="org/apache/catalina/startup/CatalinaProperties.class" />
         <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <exclude name="org/apache/catalina/startup/Tool.class" />
+        <exclude name="org/apache/catalina/startup/SecurityClassLoad.class" />
         <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <exclude name="org/apache/catalina/loader/Extension.class" />
         <exclude name="org/apache/catalina/loader/Reloader.class" />
-        <exclude name="org/apache/catalina/startup/SecurityClassLoad.class" />
+-->
         <exclude name="org/apache/catalina/servlets/**" />
         <exclude name="org/apache/catalina/ssi/**" />
       </fileset>
@@ -955,7 +960,9 @@
         <include name="org/apache/naming/factory/Constants.class" />
         <include name="org/apache/naming/factory/ResourceLinkFactory.class" />
         <exclude name="org/apache/naming/java/*" />
+<!--
         <exclude name="org/apache/naming/JndiPermission.class" />
+-->
       </fileset>
     </jar>
 
