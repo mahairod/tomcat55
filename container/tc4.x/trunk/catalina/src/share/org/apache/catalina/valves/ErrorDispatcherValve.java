@@ -234,8 +234,9 @@ public class ErrorDispatcherValve
             sreq.setAttribute(Globals.EXCEPTION_ATTR,
                               throwable);
             Wrapper wrapper = request.getWrapper();
-            sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
-                              wrapper.getName());
+            if (wrapper != null)
+                sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+                                  wrapper.getName());
             if (sreq instanceof HttpServletRequest)
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
@@ -287,8 +288,9 @@ public class ErrorDispatcherValve
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               message);
             Wrapper wrapper = request.getWrapper();
-            sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
-                              wrapper.getName());
+            if (wrapper != null)
+                sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+                                  wrapper.getName());
             if (sreq instanceof HttpServletRequest)
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
