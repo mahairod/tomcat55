@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
 
 <html:html locale="true">
 
@@ -28,11 +29,33 @@
       </td>
       <td width="19%"> 
         <div align="right">
-          <html:select property="action">
-          <bean:define id="actionVals" name="serviceForm" property="actionVals"/>
-          <html:options collection="actionVals" 
-           property="value" labelProperty="label"/>
-            </html:select>
+        <controls:actions>
+            <controls:action selected="true"> -----<bean:message key="actions.available.actions"/>----- </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <!-- will add the urls later once those screens get implemented -->
+            <controls:action url="">  <bean:message key="actions.accesslogger.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.accesslogger.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.connector.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.connector.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.host.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.host.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.logger.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.logger.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.requestfilter.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.requestfilter.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.userrealm.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.userrealm.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
+            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.service.delete"/> </controls:action>
+        </controls:actions>
           </div>
       </td>
     </tr>

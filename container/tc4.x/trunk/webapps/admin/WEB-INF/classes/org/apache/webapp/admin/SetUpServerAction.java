@@ -110,7 +110,6 @@ public class SetUpServerAction extends Action {
     public final static String DEBUG_PROP_NAME = "debug";
 
     private ArrayList debugLvlList = null; 
-    private ArrayList actionList = null;
  
     // --------------------------------------------------------- Public Methods
 
@@ -149,10 +148,7 @@ public class SetUpServerAction extends Action {
                 request.getSession().setAttribute(mapping.getAttribute(), form);
                
         }
-            
-        MessageResources messages = getResources();
-        Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
-            
+
         // Do transaction stuff before this
 
         ServerForm serverFm = (ServerForm) form;
@@ -170,23 +166,6 @@ public class SetUpServerAction extends Action {
             debugLvlList.add(new LabelValueBean("8", "8"));
             debugLvlList.add(new LabelValueBean("9", "9"));
 
-        }
-
-        if(actionList == null) {
-
-            actionList = new ArrayList();
-            // You can get this from the Mbean
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.available.actions"),
-            "Available Actions"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.services.create"),
-            "Create New Service"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.services.delete"),
-            "Delete Services"));
         }
 
         Integer portNumb = null;
@@ -228,8 +207,6 @@ public class SetUpServerAction extends Action {
                                                      SHUTDOWN_PROP_NAME);
 
             request.setAttribute("debugLvlVals", debugLvlList);
-            request.setAttribute("actionVals", actionList);
-
 
         }catch(Throwable t){
             t.printStackTrace(System.out);
@@ -241,7 +218,6 @@ public class SetUpServerAction extends Action {
         // Hardcode debuglvl for now
         serverFm.setDebugLvl(debug.toString());
         serverFm.setShutdownText(shutdown);
-        serverFm.setActionVals(actionList);
         serverFm.setDebugLvlVals(debugLvlList);
         
         // Forward back to the test page

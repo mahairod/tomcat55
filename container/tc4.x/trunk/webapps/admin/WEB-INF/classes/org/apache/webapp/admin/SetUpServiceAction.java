@@ -110,9 +110,6 @@ public class SetUpServiceAction extends Action {
     public final static String HOST_PROP_NAME = "defaultHost";
     public final static String DEBUG_PROP_NAME = "debug";
     
-    // list of available actions on this service.
-    private ArrayList actionList = null;
-    
     private ArrayList debugLvlList = null;
     private ArrayList hostNameList = null;
     
@@ -155,8 +152,8 @@ public class SetUpServiceAction extends Action {
         }
         
         // The message resources for this package.
-        MessageResources messages = getResources();
-        Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
+    //    MessageResources messages = getResources();
+    //    Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
         
         String selectedName = request.getParameter("select");
         
@@ -174,76 +171,6 @@ public class SetUpServiceAction extends Action {
             debugLvlList.add(new LabelValueBean("7", "7"));
             debugLvlList.add(new LabelValueBean("8", "8"));
             debugLvlList.add(new LabelValueBean("9", "9"));
-            
-        }
-        
-        if(actionList == null) {
-            
-            actionList = new ArrayList();
-            // You can get this from the Mbean
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.available.actions"),
-            "Available Actions"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.accesslogger.create"),
-            "Create New Access Logger"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.accesslogger.delete"),
-            "Delete Access Logger"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.connector.create"),
-            "Create New Connector"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.connector.delete"),
-            "Delete Connectors..."));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.host.create"),
-            "Create New Host"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.host.delete"),
-            "Delete Hosts"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.logger.create"),
-            "Create New Logger"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.logger.delete"),
-            "Delete Logger"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.requestfilter.create"),
-            "Create New Request Filter"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.requestfilter.delete"),
-            "Delete Request Filters"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.userrealm.create"),
-            "Create New User Realm"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.userrealm.delete"),
-            "Delete User Realm"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.valve.create"),
-            "Create New Valve"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.valve.delete"),
-            "Delete Valves"));
-            
-            actionList.add(new LabelValueBean(
-            messages.getMessage(locale, "actions.service.delete"),
-            "Delete This Service"));
             
         }
         
@@ -335,7 +262,6 @@ public class SetUpServiceAction extends Action {
         serviceFm.setDebugLvl(debug.toString());
         serviceFm.setEngineName(engineName);
         serviceFm.setDebugLvlVals(debugLvlList);
-        serviceFm.setActionVals(actionList);
         serviceFm.setHostNameVals(hostNameList);
         
         // Forward back to the test page

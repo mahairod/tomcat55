@@ -97,13 +97,7 @@ public final class ServiceForm extends ActionForm {
      * The text for the debug level.
      */
     private String debugLvl = "0";
-    
-    
-    /**
-     * The action chosen.
-     */
-    private String action = null;
-    
+        
     /**
      * The text for the defaultHost Name.
      */
@@ -111,7 +105,6 @@ public final class ServiceForm extends ActionForm {
     
     private ArrayList debugLvlVals = null;
     private ArrayList hostNameVals = null;
-    private ArrayList actionVals = null;
     // ------------------------------------------------------------- Properties
     
     
@@ -149,41 +142,6 @@ public final class ServiceForm extends ActionForm {
     public void setHostNameVals(ArrayList hostNameVals) {
         
         this.hostNameVals = hostNameVals;
-        
-    }
-    /**
-     * Return the ActionVals.
-     */
-    public ArrayList getActionVals() {
-        
-        return this.actionVals;
-        
-    }
-    
-    /**
-     * Set the ActionVals.
-     */
-    public void setActionVals(ArrayList actionVals) {
-        
-        this.actionVals = actionVals;
-        
-    }
-    
-    /**
-     * Return the Action.
-     */
-    public String getAction() {
-        
-        return this.action;
-        
-    }
-    
-    /**
-     * Set the action.
-     */
-    public void setAction(String action) {
-        
-        this.action = action;
         
     }
     
@@ -276,10 +234,8 @@ public final class ServiceForm extends ActionForm {
         this.engineName = null;
         this.debugLvl = "0";
         this.defaultHost = " ";
-        this.action = null;
         //this.debugLvlVals = null;
         //this.hostNameVals = null;
-        //this.actionVals = null;
     }
     
     /**

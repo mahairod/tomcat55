@@ -23,6 +23,10 @@
     <form-bean      name="serviceForm"
                     type="org.apache.webapp.admin.ServiceForm"/>
 
+    <!-- Connector form bean -->
+    <form-bean      name="connectorForm"
+                    type="org.apache.webapp.admin.ConnectorForm"/>
+
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
@@ -58,6 +62,10 @@
                     path="/service.jsp"
                 redirect="false"/>
 
+    <forward        name="Connector"
+                    path="/connector.jsp"
+                redirect="false"/>
+                
     <forward        name="Save Successful"
                     path="/saved.jsp"
                 redirect="false"/>
@@ -102,6 +110,17 @@
                scope="session">
       <forward        name="SetUpService"
                       path="/service.jsp"
+                  redirect="true"/>
+    </action>
+
+    
+   <!-- Set up Connector datastructure -->
+    <action    path="/setUpConnector"
+               type="org.apache.webapp.admin.SetUpConnectorAction"
+               name="connectorForm"
+               scope="session">
+      <forward        name="SetUpConnector"
+                      path="/connector.jsp"
                   redirect="true"/>
     </action>
 

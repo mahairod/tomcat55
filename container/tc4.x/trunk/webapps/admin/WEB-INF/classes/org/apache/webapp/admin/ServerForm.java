@@ -81,11 +81,6 @@ public final class ServerForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
-    /**
-     * The text for the port number.
-     */
-    private String action = null;
-    
     private String portNumberText = "8080";
     
     /**
@@ -100,7 +95,7 @@ public final class ServerForm extends ActionForm {
     private String shutdownText = null;
     
     private ArrayList debugLvlVals = null;
-    private ArrayList actionVals = null;
+    
     // ------------------------------------------------------------- Properties
     
     
@@ -121,45 +116,7 @@ public final class ServerForm extends ActionForm {
         this.debugLvlVals = debugLvlVals;
         
     }
-    
-    
-    /**
-     * Return the ActionVals.
-     */
-    public ArrayList getActionVals() {
         
-        return this.actionVals;
-        
-    }
-    
-    /**
-     * Set the ActionVals.
-     */
-    public void setActionVals(ArrayList actionVals) {
-        
-        this.actionVals = actionVals;
-        
-    }
-    
-    /**
-     * Return the Action.
-     */
-    public String getAction() {
-        
-        return this.action;
-        
-    }
-    
-    /**
-     * Set the action.
-     */
-    public void setAction(String action) {
-        
-        this.action = action;
-        
-    }
-    
-    
     /**
      * Return the portNumberText.
      */
@@ -227,7 +184,6 @@ public final class ServerForm extends ActionForm {
         this.portNumberText = null;
         this.debugLvl = "0";
         this.shutdownText = null;
-        this.action = null;
         
     }
     
