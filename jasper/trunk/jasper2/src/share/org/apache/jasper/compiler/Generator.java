@@ -1986,12 +1986,15 @@ class Generator {
 
             n.setBeginJavaLine(out.getJavaLine());
 
+            // Invoke fragment, unless fragment is null
+            out.printin("if (");
+            out.print(toGetterMethod(n.getTextAttribute("fragment")));
+            out.println(" != null) {");
+            out.pushIndent();
             // Copy virtual page scope of tag file to page scope of invoking
             // page
             out.printil(
                 "((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncBeforeInvoke();");
-
-            // Invoke fragment
             String varReaderAttr = n.getTextAttribute("varReader");
             String varAttr = n.getTextAttribute("var");
             if (varReaderAttr != null || varAttr != null) {
@@ -2020,6 +2023,9 @@ class Generator {
                 }
                 out.println(");");
             }
+
+            out.popIndent();
+            out.printil("}");
 
             n.setEndJavaLine(out.getJavaLine());
         }
