@@ -825,7 +825,7 @@ class Generator {
 		    out.print(" + ");
 		    out.print(separator);
 		    out.print(" + \"");
-		    out.print(n.getTextAttribute("name"));
+		    out.print(URLEncoder.encode(n.getTextAttribute("name")));
 		    out.print("=\" + ");
 		    out.print(attributeValue(n.getValue(), true, String.class,
                         "null" ));
