@@ -159,8 +159,6 @@ public class StandardContext
 
 
     // ----------------------------------------------------- Instance Variables
-
-
     /**
      * The alternate deployment descriptor name.
      */
@@ -527,8 +525,12 @@ public class StandardContext
     private ArrayList wrappers=new ArrayList();
 
     private long startupTime;
+    private long startTime;
     private long tldScanTime;
 
+    /** Name of the engine. If null, the domain is used.
+     */ 
+    private String engineName = null;
     private String j2EEApplication="none";
     private String j2EEServer="none";
 
@@ -934,6 +936,15 @@ public class StandardContext
 
     }
 
+    public String getEngineName() {
+        if( engineName != null ) return engineName;
+        return domain;
+    }
+
+    public void setEngineName(String engineName) {
+        this.engineName = engineName;
+    }
+
     public String getJ2EEApplication() {
         return j2EEApplication;
     }
@@ -1053,7 +1064,7 @@ public class StandardContext
 
     }
 
-
+    
     /**
      * Set the context path for this Context.
      * <p>
@@ -3705,7 +3716,7 @@ public class StandardContext
             }
             // Register the cache in JMX
             ObjectName resourcesName = 
-                new ObjectName(this.getDomain() + ":type=Cache,host=" + 
+                new ObjectName(getEngineName() + ":type=Cache,host=" + 
                                getHostname() + ",path=" 
                                + (("".equals(getPath()))?"/":getPath()));
             Registry.getRegistry().registerComponent
@@ -3738,7 +3749,7 @@ public class StandardContext
                 }
                 // Unregister the cache in JMX
                 ObjectName resourcesName = 
-                    new ObjectName(this.getDomain() + ":type=Cache,host=" + 
+                    new ObjectName(getEngineName() + ":type=Cache,host=" + 
                                    getHostname() + ",path=" 
                                    + (("".equals(getPath()))?"/":getPath()));
                 Registry.getRegistry().unregisterComponent(resourcesName);
@@ -3880,7 +3891,7 @@ public class StandardContext
         if( realm == null ) {
             ObjectName realmName=null;
             try {
-                realmName=new ObjectName( domain + ":type=Host,host=" + 
+                realmName=new ObjectName( getEngineName() + ":type=Host,host=" + 
                         getHostname() + ",path=" + getPath());
                 if( mserver.isRegistered(realmName ) ) {
                     mserver.invoke(realmName, "init", 
@@ -4101,7 +4112,7 @@ public class StandardContext
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
-
+        startTime=System.currentTimeMillis();
     }
 
     /**
@@ -4705,7 +4716,7 @@ public class StandardContext
         for (int i = 0; i < envs.length; i++) {
             try {
                 ObjectName oname =
-                    MBeanUtils.createObjectName(this.getDomain(), envs[i]);
+                    MBeanUtils.createObjectName(this.getEngineName(), envs[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
                 throw new IllegalArgumentException
@@ -4728,7 +4739,7 @@ public class StandardContext
         for (int i = 0; i < resources.length; i++) {
             try {
                 ObjectName oname =
-                    MBeanUtils.createObjectName(this.getDomain(), resources[i]);
+                    MBeanUtils.createObjectName(this.getEngineName(), resources[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
                 throw new IllegalArgumentException
@@ -4751,7 +4762,7 @@ public class StandardContext
         for (int i = 0; i < links.length; i++) {
             try {
                 ObjectName oname =
-                    MBeanUtils.createObjectName(this.getDomain(), links[i]);
+                    MBeanUtils.createObjectName(this.getEngineName(), links[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
                 throw new IllegalArgumentException
@@ -4906,11 +4917,11 @@ public class StandardContext
     }
     
 
-    public ObjectName createObjectName(String domain, ObjectName parentName)
+    public ObjectName createObjectName(String hostDomain, ObjectName parentName)
             throws MalformedObjectNameException
     {
         String onameStr;
-        StandardHost ctx=(StandardHost)getParent();
+        StandardHost hst=(StandardHost)getParent();
         
         String pathName=getName();
         String hostName=getParent().getName();
@@ -4924,16 +4935,20 @@ public class StandardContext
         onameStr="j2eeType=WebModule,name=" + name + suffix;
         if( log.isDebugEnabled())
             log.debug("Registering " + onameStr + " for " + oname);
+        
+        // default case - no domain explictely set.
+        if( getDomain() == null ) domain=hst.getDomain();
 
-        ObjectName oname=new ObjectName(ctx.getDomain()+ ":" + onameStr);
+        ObjectName oname=new ObjectName(getDomain() + ":" + onameStr);
         return oname;        
     }    
     
     private void registerJMX() {
         try {
-            StandardHost ctx=(StandardHost)getParent();
+            StandardHost hst=(StandardHost)getParent();
             if( oname==null || oname.getKeyProperty("j2eeType")==null ) {
-                oname=createObjectName(ctx.getDomain(), ctx.getObjectName());
+                
+                oname=createObjectName(hst.getDomain(), hst.getObjectName());
                 log.debug("Checking for " + oname );
                 if(! Registry.getRegistry().getMBeanServer().isRegistered(oname))
                 {
@@ -5028,7 +5043,9 @@ public class StandardContext
             this.setName( path );
         }
         // XXX The service and domain should be the same.
-        ObjectName parentName=new ObjectName( domain + ":" +
+        String parentDomain=getEngineName();
+        if( parentDomain == null ) parentDomain=domain;
+        ObjectName parentName=new ObjectName( parentDomain + ":" +
                 "type=Host,host=" + hostName);
         return parentName;
     }
@@ -5061,4 +5078,35 @@ public class StandardContext
 
 
 
+    /** Support for "stateManageable" JSR77 
+     * 
+     */
+    public boolean getStateManageable() {
+        return true;
+    }
+    
+    public void startRecursive() throws LifecycleException {
+        // nothing to start recursive, the servlets will be started by load-on-startup
+        start();
+    }
+    
+    public int getState() {
+        if( started ) {
+            return 1; // RUNNING
+        }
+        if( initialized ) {
+            return 0; // starting ? 
+        }
+        if( ! available ) { 
+            return 4; //FAILED
+        }
+        // 2 - STOPPING
+        return 3; // STOPPED
+    }
+
+    public long getStartTime() {
+        return startupTime;
+    }
+    
+    
 }
