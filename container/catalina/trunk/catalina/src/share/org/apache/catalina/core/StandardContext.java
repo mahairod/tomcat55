@@ -83,6 +83,8 @@ import javax.naming.directory.DirContext;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.BaseDirContext;
 import org.apache.naming.resources.FileDirContext;
@@ -4023,6 +4025,44 @@ public class StandardContext
 
     }
 
+    /**
+     * Stop this Context component. Experimental, please ignore.
+     *
+     * @exception LifecycleException if a shutdown error occurs
+     */
+    public synchronized void stopNew() throws LifecycleException {
+        // Mark this application as unavailable while we shut down
+        setAvailable(false);
+
+        // Binding thread
+        ClassLoader oldCCL = bindThread();
+
+        try {
+            // Stop our filters
+            filterStop();
+            
+            // Finalize our character set mapper
+            setCharsetMapper(null);
+            
+            // Stop our application listeners
+            listenerStop();
+            
+            // Stop resources
+            resourcesStop();
+            
+            super.stop();
+        } finally {
+            
+            // Unbinding thread
+            unbindThread(oldCCL);
+            
+        }
+        
+        // Reset application context
+        context = null;
+        
+        wrappers = new ArrayList();
+    }
 
     /**
      * Stop this Context component.
@@ -4116,11 +4156,18 @@ public class StandardContext
         context = null;
 
         wrappers = new ArrayList();
+
+        // This object will no longer be visible or used. 
+        try {
+            resetContext();
+        } catch( Exception ex ) {
+            log.error( "Error reseting context " + this + " " + ex, ex );
+        }
         
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
         
-
+        
         if (log.isDebugEnabled())
             log.debug("Stopping complete");
     }
@@ -4139,42 +4186,17 @@ public class StandardContext
      */ 
     public void destroy() throws Exception {
         super.destroy();
-        
-                
+    }
+    
+    private void resetContext() throws Exception, MBeanRegistrationException {
         // Restore the original state ( pre reading web.xml in start )
         // If you extend this - override this method and make sure to clean up
         children=new HashMap();
-    
-        StandardContext repl=new StandardContext();
-        // All configurable options
-        repl.setAltDDName(altDDName);
-        repl.setCachingAllowed(cachingAllowed);
-        repl.setCharsetMapperClass(mapperClass);
-        repl.setConfigFile(configFile);
-        repl.setCookies(cookies);
-        repl.setCrossContext(crossContext);
-        repl.setDefaultWebXml(defaultWebXml);
-        //repl.setDistributable(distributable); // this is from web.xml
-        repl.setDocBase(docBase);
-        repl.setJ2EEApplication(j2EEApplication);
-        repl.setJ2EEServer(j2EEServer);
-        repl.setLazy(lazy);
-        repl.setMapperClass(mapperClass);
-        repl.setName(name);
-        repl.setOverride(override);
-        repl.setPath(getPath());
-        repl.setPrivileged(privileged);
-        repl.setReloadable(reloadable);
-        repl.setReplaceWelcomeFiles(replaceWelcomeFiles);
-        repl.setSessionTimeout(sessionTimeout);
-        repl.setUseNaming(useNaming);
-        repl.setWrapperClass(wrapperClass);
-        repl.setWorkDir(workDir);
-        repl.setSwallowOutput(swallowOutput);
-        
-        if( oname != null ) 
-            mserver.unregisterMBean(oname);
-        Registry.getRegistry().registerComponent(repl, oname, null);
+        log.info("resetContext " + oname + " " + mserver);
+        if( oname != null ) { 
+            Registry.getRegistry().unregisterComponent(oname); 
+        }
+        Registry.getRegistry().registerComponent(this, oname, null);
         
     }
 
@@ -4761,31 +4783,39 @@ public class StandardContext
         return result;
     }
 
+    public ObjectName createObjectName(String domain, ObjectName parentName)
+            throws MalformedObjectNameException
+    {
+        String onameStr;
+        StandardHost ctx=(StandardHost)getParent();
+        
+        String pathName=getName();
+        String hostName=getParent().getName();
+        String name= "//" + ((hostName==null)? "DEFAULT" : hostName) +
+                (("".equals(pathName))?"/":pathName );
+
+        String suffix=",J2EEApplication=" +
+                getJ2EEApplication() + ",J2EEServer=" +
+                getJ2EEServer();
+
+        onameStr="j2eeType=WebModule,name=" + name + suffix;
+        if( log.isDebugEnabled())
+            log.debug("Registering " + onameStr + " for " + oname);
+
+        ObjectName oname=new ObjectName(ctx.getDomain()+ ":" + onameStr);
+        return oname;        
+    }    
+    
     private void registerJMX() {
-        String onameStr=null;
         try {
+            StandardHost ctx=(StandardHost)getParent();
             if( oname==null || oname.getKeyProperty("j2eeType")==null ) {
-                StandardHost ctx=(StandardHost)parent;
-                String pathName=getName();
-                String hostName=getParent().getName();
-                String name= "//" + ((hostName==null)? "DEFAULT" : hostName) +
-                        (("".equals(pathName))?"/":pathName );
-
-                String suffix=",J2EEApplication=" +
-                        getJ2EEApplication() + ",J2EEServer=" +
-                        getJ2EEServer();
-
-                onameStr="j2eeType=WebModule,name=" + name + suffix;
-                if( log.isDebugEnabled())
-                    log.debug("Registering " + onameStr + " for " + oname);
-
-                ObjectName oname=new ObjectName(ctx.getDomain()+ ":" + onameStr);
+                oname=createObjectName(ctx.getDomain(), ctx.getObjectName());
                 log.debug("Checking for " + oname );
                 if(! Registry.getRegistry().getMBeanServer().isRegistered(oname))
                 {
-                    Registry.getRegistry().registerComponent(this,
-                            ctx.getDomain(),
-                            "StandardContext", onameStr);
+                    controller=oname;
+                    Registry.getRegistry().registerComponent(this,oname, null);
                 }
             }
             for( Iterator it=wrappers.iterator(); it.hasNext() ; ) {
@@ -4795,7 +4825,7 @@ public class StandardContext
             }
         } catch( Exception ex ) {
             log.info("Error registering ctx with jmx " + this + " " +
-                    onameStr + " " + ex.toString(), ex );
+                    oname + " " + ex.toString(), ex );
         }
     }
 
@@ -4847,6 +4877,7 @@ public class StandardContext
             ContextConfig config = new ContextConfig();
             this.addLifecycleListener(config);
 
+            log.debug( "AddChild " + parentName + " " + this);
             mserver.invoke(parentName, "addChild", new Object[] { this },
                     new String[] {"org.apache.catalina.Container"});
         }            
