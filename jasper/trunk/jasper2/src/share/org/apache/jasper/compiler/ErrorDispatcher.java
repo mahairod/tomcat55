@@ -18,7 +18,6 @@ package org.apache.jasper.compiler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ResourceBundle;
 import java.util.Vector;
 import java.net.MalformedURLException;
 
@@ -40,9 +39,6 @@ import org.xml.sax.SAXException;
  * @author Kin-man Chung
  */
 public class ErrorDispatcher {
-
-    private static final ResourceBundle bundle = ResourceBundle.getBundle(
-        "org.apache.jasper.resources.messages");
 
     // Custom error handler
     private ErrorHandler errHandler;

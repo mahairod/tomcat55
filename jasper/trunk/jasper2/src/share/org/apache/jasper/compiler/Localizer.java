@@ -28,8 +28,16 @@ import java.util.ResourceBundle;
  */
 public class Localizer {
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle(
-        "org.apache.jasper.resources.messages");
+    private static ResourceBundle bundle = null;
+    
+    static {
+        try {
+        bundle = ResourceBundle.getBundle(
+            "org.apache.jasper.resources.LocalStrings");
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
 
     /*
      * Returns the localized error message corresponding to the given error
