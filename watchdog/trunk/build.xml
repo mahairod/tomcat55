@@ -76,8 +76,8 @@
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
       <copyfile src="src/conf/dist-test.xml" dest="${watchdog.dist}/conf/server-test.xml" />
     
-      <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
-      <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
+      <chmod src="${watchdog.dist}/runclient.sh" perm="+x"/>
+      <chmod src="${watchdog.dist}/runtest.sh" perm="+x"/> 
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
