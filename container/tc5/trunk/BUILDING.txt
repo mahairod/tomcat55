@@ -56,13 +56,13 @@ do the following:
 
 * Download a binary distribution of version 2.0.1 from:
 
-  http://xml.apache.org/dist/xerces-j/old_xerces2
+  http://xml.apache.org/dist/xerces-j/
 
   On a Windows platform, you will need:
-    Xerces-J-bin.2.0.1.zip
+    Xerces-J-bin.2.2.1.zip
 
   On a Unix platform, you will need:
-    Xerces-J-bin.2.0.1.tar.gz
+    Xerces-J-bin.2.2.1.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
