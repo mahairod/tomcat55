@@ -339,10 +339,10 @@ final class HttpRequestImpl
      */
     public String getRemoteHost() {
 
-        if (connector.getDisableLookups())
-            return (getRemoteAddr());
-        else
+        if (connector.getEnableLookups())
             return (inet.getHostName());
+        else
+            return (getRemoteAddr());
 
     }
 

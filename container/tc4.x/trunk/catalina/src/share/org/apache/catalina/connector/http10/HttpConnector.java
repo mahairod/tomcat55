@@ -149,9 +149,9 @@ public final class HttpConnector
 
 
     /**
-     * The "disable DNS lookups" flag for this Connector.
+     * The "enable DNS lookups" flag for this Connector.
      */
-    private boolean disableLookups = false;
+    private boolean enableLookups = false;
 
 
     /**
@@ -438,23 +438,23 @@ public final class HttpConnector
 
 
     /**
-     * Return the "disable DNS lookups" flag.
+     * Return the "enable DNS lookups" flag.
      */
-    public boolean getDisableLookups() {
+    public boolean getEnableLookups() {
 
-        return (this.disableLookups);
+        return (this.enableLookups);
 
     }
 
 
     /**
-     * Set the "disable DNS lookups" flag.
+     * Set the "enable DNS lookups" flag.
      *
-     * @param disableLookups The new "disable DNS lookups" flag value
+     * @param enableLookups The new "enable DNS lookups" flag value
      */
-    public void setDisableLookups(boolean disableLookups) {
+    public void setEnableLookups(boolean enableLookups) {
 
-        this.disableLookups = disableLookups;
+        this.enableLookups = enableLookups;
 
     }
 

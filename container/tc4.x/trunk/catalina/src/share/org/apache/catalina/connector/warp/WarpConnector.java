@@ -99,8 +99,8 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
     private boolean started=false;
     /** The accept count for the server socket. */
     private int count = 10;
-    /** Should we disable DNS lookups? */
-    private boolean disableLookups = false;
+    /** Should we enable DNS lookups? */
+    private boolean enableLookups = false;
 
     // -------------------------------------------------------- BEAN PROPERTIES
 
@@ -313,17 +313,17 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
     }
 
     /**
-     * Return the "disable DNS lookups" flag for this Connector.
+     * Return the "enable DNS lookups" flag for this Connector.
      */
-    public boolean getDisableLookups() {
-        return (this.disableLookups);
+    public boolean getEnableLookups() {
+        return (this.enableLookups);
     }
 
     /**
-     * Set the "disable DNS lookups" flag for this Connector.
+     * Set the "enable DNS lookups" flag for this Connector.
      */
-    public void setDisableLookups(boolean disableLookups) {
-        this.disableLookups = disableLookups;
+    public void setEnableLookups(boolean enableLookups) {
+        this.enableLookups = enableLookups;
     }
 
     /**

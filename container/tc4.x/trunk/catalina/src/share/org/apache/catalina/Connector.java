@@ -143,17 +143,17 @@ public interface Connector {
 
 
     /**
-     * Return the "disable DNS lookups" flag.
+     * Return the "enable DNS lookups" flag.
      */
-    public boolean getDisableLookups();
+    public boolean getEnableLookups();
 
 
     /**
-     * Set the "disable DNS lookups" flag.
+     * Set the "enable DNS lookups" flag.
      *
-     * @param disableLookups The new "disable DNS lookups" flag value
+     * @param enableLookups The new "enable DNS lookups" flag value
      */
-    public void setDisableLookups(boolean disableLookups);
+    public void setEnableLookups(boolean enableLookups);
 
 
     /**
