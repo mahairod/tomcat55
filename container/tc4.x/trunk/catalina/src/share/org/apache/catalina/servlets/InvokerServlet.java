@@ -367,58 +367,92 @@ public final class InvokerServlet
                 }
             }
 
-            // Ensure that we can actually allocate and release an instance
-            try {
-                Servlet instance = wrapper.allocate();
-                wrapper.deallocate(instance);
-            } catch (ServletException e) {
-                log("serveRequest.load", e);
-                context.removeServletMapping(pattern);
-                context.removeChild(wrapper);
-                Throwable rootCause = e.getRootCause();
-                if (rootCause == null)
-                    rootCause = e;
-                if (included)
-                    throw new ServletException
-                        (sm.getString("invokerServlet.cannotLoad",
-                                      inRequestURI), rootCause);
-                if ((rootCause != null) &&
-                    (rootCause instanceof ClassNotFoundException)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                                       inRequestURI);
-                } else {
-                    response.sendError
-                        (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                         inRequestURI);
-                }
-                return;
-            } catch (Throwable t) {
-                log("serveRequest.load", t);
-                context.removeServletMapping(pattern);
-                context.removeChild(wrapper);
-                if (included)
-                    throw new ServletException
-                        (sm.getString("invokerServlet.cannotLoad",
-                                      inRequestURI), t);
-                response.sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     inRequestURI);
-                return;
-            }
-
 	}
 
-	// Pass this request on to the identified or newly created wrapper
+        // Create a request wrapper to pass on to the invoked servlet
+        InvokerHttpRequest wrequest =
+            new InvokerHttpRequest(request);
 	StringBuffer sb = new StringBuffer(inServletPath);
 	sb.append("/");
 	sb.append(servletClass);
-	sb.append(pathInfo);
-	String dispatcherPath = sb.toString();
-	if (debug >= 1)
-	    log("serveRequest:  Forwarding to '" + dispatcherPath + "'");
-	RequestDispatcher rd =
-	    getServletContext().getRequestDispatcher(dispatcherPath);
-	rd.forward(request, response);
+        wrequest.setServletPath(sb.toString());
+        if ((pathInfo == null) || (pathInfo.length() < 1))
+            wrequest.setPathInfo(null);
+        else
+            wrequest.setPathInfo(pathInfo);
+        wrequest.setQueryString(request.getQueryString());
+
+        // Allocate a servlet instance to perform this request
+        Servlet instance = null;
+        try {
+            instance = wrapper.allocate();
+        } catch (ServletException e) {
+            log(sm.getString("invokerServlet.allocate", inRequestURI), e);
+            context.removeServletMapping(pattern);
+            context.removeChild(wrapper);
+            Throwable rootCause = e.getRootCause();
+            if (rootCause == null)
+                rootCause = e;
+            if (rootCause instanceof ClassNotFoundException) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                   inRequestURI);
+                return;
+            } else if (rootCause instanceof IOException) {
+                throw (IOException) rootCause;
+            } else if (rootCause instanceof RuntimeException) {
+                throw (RuntimeException) rootCause;
+            } else if (rootCause instanceof ServletException) {
+                throw (ServletException) rootCause;
+            } else {
+                throw new ServletException
+                    (sm.getString("invokerServlet.allocate", inRequestURI),
+                     rootCause);
+            }
+        } catch (Throwable e) {
+            log(sm.getString("invokerServlet.allocate", inRequestURI), e);
+            context.removeServletMapping(pattern);
+            context.removeChild(wrapper);
+            throw new ServletException
+                (sm.getString("invokerServlet.allocate", inRequestURI), e);
+        }
+
+        // Invoke the service() method of the allocated servlet
+        try {
+            instance.service(wrequest, response);
+        } catch (IOException e) {
+            try {
+                wrapper.deallocate(instance);
+            } catch (Throwable f) {
+                ;
+            }
+            throw e;
+        } catch (ServletException e) {
+            try {
+                wrapper.deallocate(instance);
+            } catch (Throwable f) {
+                ;
+            }
+            throw e;
+        } catch (RuntimeException e) {
+            try {
+                wrapper.deallocate(instance);
+            } catch (Throwable f) {
+                ;
+            }
+            throw e;
+        }
+
+        // Deallocate the allocated servlet instance
+        try {
+            wrapper.deallocate(instance);
+        } catch (ServletException e) {
+            log(sm.getString("invokerServlet.deallocate", inRequestURI), e);
+            throw e;
+        } catch (Throwable e) {
+            log(sm.getString("invokerServlet.deallocate", inRequestURI), e);
+            throw new ServletException
+                (sm.getString("invokerServlet.deallocate", inRequestURI), e);
+        }
 
     }
 
