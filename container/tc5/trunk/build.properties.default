@@ -49,8 +49,14 @@ base.path=/usr/share/java
 # ----- Jakarta files base location -----
 base-jakarta.loc=http://archive.apache.org/dist/jakarta
 
+# ----- Logging files base location -----
+base-logging.loc=http://archive.apache.org/dist/logging
+
 # ----- XML files base location -----
 base-xml.loc=http://archive.apache.org/dist/xml
+
+# ----- Struts files base location -----
+base-struts.loc=http://archive.apache.org/dist/struts
 
 # ----- Sourceforge files base location -----
 base-sf.loc=http://telia.dl.sourceforge.net/sourceforge
@@ -85,10 +91,10 @@ commons-daemon.jsvc.tar.gz=${commons-daemon.lib}/bin/jsvc.tar.gz
 
 
 # ----- Commons Digester, version 1.4 or later -----
-commons-digester.home=${base.path}/commons-digester-1.5
+commons-digester.home=${base.path}/commons-digester-1.6
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=${base-jakarta.loc}/commons/digester/binaries/commons-digester-1.5.tar.gz
+commons-digester.loc=${base-jakarta.loc}/commons/digester/binaries/commons-digester-1.6.tar.gz
 
 
 # ----- Commons Expression Language (EL), version 1.0 or later -----
@@ -132,10 +138,10 @@ xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.2.tar.gz
 
 
 # ----- Eclipse JDT, version 3.0 or later -----
-jdt.home=${base.path}/eclipse/plugins/org.eclipse.jdt.core_3.0.0
+jdt.home=${base.path}/eclipse/plugins/org.eclipse.jdt.core_3.0.1
 jdt.lib=${jdt.home}
 jdt.jar=${jdt.lib}/jdtcore.jar
-jdt.loc=http://sunsite.informatik.rwth-aachen.de/eclipse/downloads/drops/R-3.0-200406251208/eclipse-JDT-3.0.zip
+jdt.loc=http://sunsite.informatik.rwth-aachen.de/eclipse/downloads/drops/R-3.0.1-200409161125/eclipse-JDT-3.0.1.zip
 
 
 # --------------------------------------------------
@@ -144,10 +150,10 @@ jdt.loc=http://sunsite.informatik.rwth-aachen.de/eclipse/downloads/drops/R-3.0-2
 
 
 # ----- Log4j, version 1.2 or later -----
-log4j.home=${base.path}/jakarta-log4j-1.2.8
+log4j.home=${base.path}/logging-log4j-1.2.9
 log4j.lib=${log4j.home}
-log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.8.jar
-log4j.loc=${base-jakarta.loc}/log4j/binaries/jakarta-log4j-1.2.8.tar.gz
+log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.9.jar
+log4j.loc=${base-logging.loc}/log4j/1.2.9/logging-log4j-1.2.9.tar.gz
 
 
 # ----- Commons DBCP, version 1.1 or later -----
@@ -183,11 +189,11 @@ commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0.jar
 commons-fileupload.loc=${base-jakarta.loc}/commons/fileupload/binaries/commons-fileupload-1.0.tar.gz
 
 # ----- Java Management Extensions (JMX), JMX RI 1.2.1 or later or MX4J 2.0.1 or later -----
-jmx.home=${base.path}/mx4j-2.0.1
+jmx.home=${base.path}/mx4j-2.1.0/mx4j-2.1.0
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j.jar
 jmx-tools.jar=${jmx.lib}/mx4j-tools.jar
-jmx.loc=${base-sf.loc}/mx4j/mx4j-2.0.1.zip
+jmx.loc=${base-sf.loc}/mx4j/mx4j-2.1.0.zip
 
 
 # ----- JUnit Unit Test Suite, version 3.7 or later -----
@@ -206,10 +212,10 @@ nsis.loc=${base-sf.loc}/nsis/nsis20.exe
 
 
 # ----- Struts, version 1.2.4 or later -----
-struts.home=${base.path}/jakarta-struts-1.2.4
+struts.home=${base.path}/struts-1.2.6
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
-struts.loc=${base-jakarta.loc}/../struts/binaries/jakarta-struts-1.2.4.tar.gz
+struts.loc=${base-struts.loc}/binaries/struts-1.2.6.tar.gz
 
 
 # --------------------------------------------------
