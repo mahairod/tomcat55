@@ -1196,6 +1196,8 @@ class Parser {
 	    parsePlugin(parent);
 	} else if (reader.matches("element")) {
 	    parseElement(parent);
+	} else if (reader.matches("fallback")) {
+	    err.jspError(start, "jsp.error.fallback.invalidUse");
 	} else if (reader.matches("params")) {
 	    err.jspError(start, "jsp.error.params.invalidUse");
 	} else if (reader.matches("param")) {
