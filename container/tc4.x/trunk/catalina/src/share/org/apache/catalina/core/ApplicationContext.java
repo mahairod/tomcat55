@@ -1063,7 +1063,7 @@ public class ApplicationContext
             Binding binding = (Binding) childPaths.nextElement();
             String name = binding.getName();
             StringBuffer childPath = new StringBuffer(path);
-            if (!"/".equals(path))
+            if (!"/".equals(path) && !path.endsWith("/"))
                 childPath.append("/");
             childPath.append(name);
             Object object = binding.getObject();
