@@ -1233,7 +1233,7 @@ public class Generator {
                             escape( name ) + "\\\" value=\\\"\" + " +
                             attributeValue( n.getValue(), false, String.class, 
                             "null" ) + " + \"\\\">\" );" );
-                        out.printil( "out.write(\"\n\");" );
+                        out.printil("out.write(\"\\n\");");
                     }
                     else {
                         // We want something of the form
