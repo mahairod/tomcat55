@@ -346,7 +346,10 @@ public class DummyRequest
     public boolean isRequestedSessionIdValid() { return false; }
     public boolean isUserInRole(String role) { return false; }
     public Principal getUserPrincipal() { return null; }
-
-
+    public String getLocalAddr() { return null; }    
+    public String getLocalName() { return null; }
+    public int getLocalPort() { return -1; }
+    public int getRemotePort() { return -1; }
+    
 }
 
