@@ -62,6 +62,10 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Manager</servlet-name>
+      <url-pattern>/deploy</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
       <url-pattern>/undeploy</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
