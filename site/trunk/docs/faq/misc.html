@@ -5,30 +5,21 @@
       Tomcat FAQ
     " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Miscellaneous Questions</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/misc.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
                     </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
-<p>
-  <em>Tomcat 4.1.27 has a bug with respect to webapp reloading which requires a hotfix.
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22096">
-      Here are more details.
-    </a>
-  </em>
-</p>
-<p>
- In Tomcat 5 - there have been issues with respect to character encoding.
- ( Usually of the the form "<tt>request.setCharacterEncoding(String) doesn't work</tt>" )
- Odds are, its not a bug. Before filing a bug report, see these bug reports as well
-    as any bug reports linked to these bug reports:
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23929">23929</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25360">25360</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25231">25231</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25235">25235</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22666">22666</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24557">24557</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24345">24345</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25848">25848</a>
-</p>
+  This section contains various miscellaneous questions that are
+  asked frequently enough to be listed here.
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
 <p>
   <ul>
+    <li>
+      <a href="#tomcat5CharEncoding">
+        I'm having a problem with character encoding in tomcat 5.
+      </a>
+    </li>
+    <li>
+      <a href="#tomcat4127webappReloading">
+        I have a problem with webapp reloading in tomcat 4.1.27.
+      </a>
+    </li>
     <li>
       <a href="#compile">
         I am unable to compile my JSP!
@@ -168,10 +159,46 @@
         Who uses tomcat in production?
       </a>
     </li>
+    <li>
+      <a href="#commonsLoggingLog4j">
+        How do I configure commons-logging and log4j in tomcat 5?
+      </a>
+    </li>
   </ul>
 </p>
 
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+  <b style="font-size: larger">
+    <a name="tomcat5CharEncoding">
+      I'm having a problem with character encoding in tomcat 5.
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    In Tomcat 5 - there have been issues with respect to character encoding.
+    ( Usually of the the form "<tt>request.setCharacterEncoding(String) doesn't work</tt>" )
+    Odds are, its not a bug. Before filing a bug report, see these bug reports as well
+    as any bug reports linked to these bug reports:
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23929">23929</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25360">25360</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25231">25231</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25235">25235</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22666">22666</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24557">24557</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24345">24345</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25848">25848</a>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="tomcat4127webappReloading">
+      I have a problem with webapp reloading in tomcat 4.1.27.
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Update to a later tomcat version, preferably the latest stable one.
+    If you must stay with 4.1.27, get this hotfix:
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22096">
+    </a>
+  </div><br>
 
   <b style="font-size: larger">
     <a name="compile">I am unable to compile my JSP!</a>
@@ -730,6 +757,15 @@
     software products, not just tomcat).  We'll keep adding to the list,
     but please let us know (by sending a message to tomat-user@jakarta.apache.org)
     if your site is using tomcat in production.
+  </div><br>
+ 
+  <b style="font-size: larger">
+    <a name="commonsLoggingLog4j">
+      How do I configure commons-logging and log4j in tomcat 5?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    See this mailing list <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=108330970225012&w=2">message.</a>
   </div><br>
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
         Copyright &copy; 1999-2003, Apache Software Foundation

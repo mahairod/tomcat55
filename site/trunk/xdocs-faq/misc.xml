@@ -16,32 +16,23 @@
 
 
 <section name="Preface">
-<p>
-  <em>Tomcat 4.1.27 has a bug with respect to webapp reloading which requires a hotfix.
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22096">
-      Here are more details.
-    </a>
-  </em>
-</p>
-<p>
- In Tomcat 5 - there have been issues with respect to character encoding.
- ( Usually of the the form "<tt>request.setCharacterEncoding(String) doesn't work</tt>" )
- Odds are, its not a bug. Before filing a bug report, see these bug reports as well
-    as any bug reports linked to these bug reports:
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23929">23929</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25360">25360</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25231">25231</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25235">25235</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22666">22666</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24557">24557</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24345">24345</a>,
-    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25848">25848</a>
-</p>
+  This section contains various miscellaneous questions that are
+  asked frequently enough to be listed here.
 </section>
 
 <section name="Questions">
 <p>
   <ul>
+    <li>
+      <a href="#tomcat5CharEncoding">
+        I'm having a problem with character encoding in tomcat 5.
+      </a>
+    </li>
+    <li>
+      <a href="#tomcat4127webappReloading">
+        I have a problem with webapp reloading in tomcat 4.1.27.
+      </a>
+    </li>
     <li>
       <a href="#compile">
         I am unable to compile my JSP!
@@ -181,6 +172,11 @@
         Who uses tomcat in production?
       </a>
     </li>
+    <li>
+      <a href="#commonsLoggingLog4j">
+        How do I configure commons-logging and log4j in tomcat 5?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -188,6 +184,37 @@
 
 
 <section name="Answers">
+  <question>
+    <a name="tomcat5CharEncoding">
+      I'm having a problem with character encoding in tomcat 5.
+    </a>
+  </question>
+  <answer>
+    In Tomcat 5 - there have been issues with respect to character encoding.
+    ( Usually of the the form "<tt>request.setCharacterEncoding(String) doesn't work</tt>" )
+    Odds are, its not a bug. Before filing a bug report, see these bug reports as well
+    as any bug reports linked to these bug reports:
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23929">23929</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25360">25360</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25231">25231</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25235">25235</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22666">22666</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24557">24557</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24345">24345</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25848">25848</a>
+  </answer>
+
+  <question>
+    <a name="tomcat4127webappReloading">
+      I have a problem with webapp reloading in tomcat 4.1.27.
+    </a>
+  </question>
+  <answer>
+    Update to a later tomcat version, preferably the latest stable one.
+    If you must stay with 4.1.27, get this hotfix:
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22096">
+    </a>
+  </answer>
 
   <question>
     <a name="compile">I am unable to compile my JSP!</a>
@@ -746,6 +773,15 @@
     software products, not just tomcat).  We'll keep adding to the list,
     but please let us know (by sending a message to tomat-user@jakarta.apache.org)
     if your site is using tomcat in production.
+  </answer>
+ 
+  <question>
+    <a name="commonsLoggingLog4j">
+      How do I configure commons-logging and log4j in tomcat 5?
+    </a>
+  </question>
+  <answer>
+    See this mailing list <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108330970225012&amp;w=2">message.</a>
   </answer>
 </section>
 
