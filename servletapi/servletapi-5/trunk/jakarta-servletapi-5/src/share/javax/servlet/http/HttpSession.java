@@ -461,5 +461,21 @@ public interface HttpSession {
      */
 
     public boolean isNew();
+
+
+    /**
+     *
+     * Logs the client out of the web server and invalidates all
+     * sessions associated with this client. The scope of the logout
+     * is the same as the scope of the authentication. For example, if
+     * the servlet container implements single signon, the logout logs
+     * the client out of all web applications on the servlet container
+     * and invalidates all sessions associated with the same client.
+     *
+     * @exception IllegalStateException if this method is called on an
+     *                                  already invalidated session
+     */
+    public void logout();
+
 }
 
