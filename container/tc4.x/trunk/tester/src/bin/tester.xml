@@ -802,6 +802,46 @@
          request="${context.path}/SSIInclude08.shtml" debug="${debug}"
           golden="${golden.path}/SSIInclude02.txt"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConfig01.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConfig01.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConfig03.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConfig03.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize01.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude01.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize02.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize03.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize04.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize05.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize06.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize07.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIFsize08.shtml" debug="${debug}"
+          golden="${golden.path}/SSIFsize02.txt"/>
+          
   </target>
 
 

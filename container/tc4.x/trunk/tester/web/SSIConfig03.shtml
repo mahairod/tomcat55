@@ -1,0 +1,4 @@
+<!--#config sizefmt="bytes" -->
+<!--#fsize file="index.shtml" -->
+<!--#config sizefmt="abbrev" -->
+<!--#fsize file="index.shtml" -->
