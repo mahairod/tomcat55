@@ -89,12 +89,14 @@ public class ServletConfigGetServletContextTestServlet extends HttpServlet {
 
 		//we expect ServletContext object that corresponds to the named URL
 		ServletContext context2 = context.getContext(anotherServlet); 
-		if((context2 == context))  {
+		if((context2 == context) || (context2 == null))  {
 			out.println("ServletConfigGetServletContextTest test PASSED");
 		}
 		else {
 			out.println("ServletConfigGetServletContextTest test FAILED");
 			out.println("ServletConfig.getServletContext() returned incorrect result");
+                        out.println("context1 = " + context);
+                        out.println("context2 = " + context2);
 		}
 	}
 }

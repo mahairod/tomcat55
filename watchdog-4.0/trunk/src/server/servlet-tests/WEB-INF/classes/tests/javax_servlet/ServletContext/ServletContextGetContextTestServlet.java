@@ -99,6 +99,8 @@ public class ServletContextGetContextTestServlet extends HttpServlet {
 		else {
 			out.println("ServletContextGetContextTest test FAILED");
 			out.println("ServletContext.getServletContext() returned incorrect result");
+                        out.println("context1 = " + context);
+                        out.println("context2 = " + context2);
 		}
 	}
 }
