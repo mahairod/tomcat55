@@ -8,6 +8,7 @@ package jsp2.examples.simpletag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.util.HashMap;
+import java.io.IOException;
 
 /**
  * SimpleTag handler that accepts a num attribute and 
@@ -17,10 +18,9 @@ public class RepeatSimpleTag extends SimpleTagSupport {
     private int num;
 
     public void doTag() throws JspException, IOException {
-        HashMap params = new HashMap();
         for (int i=0; i<num; i++) {
-            params.put( "count", String.valueOf( i + 1 ) );
-	    getJspBody().invoke(null, params);
+            jspContext.setAttribute("count", String.valueOf( i + 1 ) );
+            getJspBody().invoke(null);
         }
     }
 
