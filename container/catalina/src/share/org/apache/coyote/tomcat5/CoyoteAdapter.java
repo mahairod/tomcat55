@@ -379,7 +379,6 @@ final class CoyoteAdapter
                             (scookie.getValue().toString());
                     }
                 }
-                continue;
             }
             try {
                 Cookie cookie = new Cookie(scookie.getName().toString(),
