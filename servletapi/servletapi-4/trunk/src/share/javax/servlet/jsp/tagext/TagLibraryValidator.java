@@ -83,6 +83,24 @@ import java.util.Map;
  * may create auxiliary objects internally to perform
  * the validation (e.g. an XSchema validator) and may reuse it for all
  * the pages in a given translation run.
+ *
+ * <p>
+ * The JSP container is not guaranteed to serialize invocations of
+ * validate() method, and TagLibraryValidators should perform any
+ * synchronization they may require.
+ *
+ * <p>
+ * A JSP container may optionally support a jsp:id attribute to
+ * provide higher quality validation errors.
+ * When supported, the container will track the JSP pages
+ * as passed to the container, and will assign to each element
+ * a unique "id", which is passed as the value of the jsp:id
+ * attribute.  Each XML element in the XML view available will
+ * be extended with this attribute.  The TagLibraryValidator
+ * can then use the attribute in one or more ValidationMessage
+ * objects.  The container then, in turn, can use these
+ * values to provide more precise information on the location
+ * of an error.
  */
 
 abstract public class TagLibraryValidator {
@@ -111,15 +129,17 @@ abstract public class TagLibraryValidator {
     /**
      * Validate a JSP page.
      * This will get invoked once per directive in the JSP page.
-     * This method will return a null String if the page passed through
-     * is valid; otherwise an error message.
+     * This method will return null if the page is valid; otherwise
+     * the method should return an array of ValidationMessage objects.
+     * An array of length zero is also interpreted as no errors.
      *
      * @param prefix the value of the prefix argument in the directive
      * @param uri the value of the uri argument in the directive
      * @param thePage the JspData page object
-     * @return A string indicating whether the page is valid or not.
+     * @return A null object, or zero length array if no errors, an array
+     * of ValidationMessages otherwise.
      */
-    public String validate(String prefix, String uri, PageData page) {
+    public ValidationMessage[] validate(String prefix, String uri, PageData page) {
 	return null;
     }
 
