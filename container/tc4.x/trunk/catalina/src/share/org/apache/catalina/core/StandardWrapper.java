@@ -823,7 +823,7 @@ public final class StandardWrapper
 	    instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
 					      servlet);
             Thread.currentThread().setContextClassLoader(classLoader);
-	    servlet.init((ServletConfig) this);
+	    servlet.init(new StandardWrapperFacade(this));
 	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
 					      servlet);
 	} catch (UnavailableException f) {
