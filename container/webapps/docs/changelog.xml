@@ -64,6 +64,9 @@
       <fix>
         <bug>29869</bug>: Better JMX/JSR77 support in StandardContext and StandardWrapper. (remm)
       </fix>
+      <update> 
+        Fixed broken link to JK documenration from AJP Connector reference page. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
