@@ -10,8 +10,8 @@
   <property file="build.properties"/>
   <property file="build.properties.default"/>
   
-  <property name="basedir" location="." />
-        
+  <property name="basedir" location="."/>
+    
   <!-- Source dependencies -->
   <property name="api.home"
            value="${basedir}/../jakarta-servletapi-5"/>
@@ -31,7 +31,8 @@
   <property name="build.dir"   value="${basedir}/build"/>
 
   <property name="log4j.jar"   value="${base.path}/log4j/log4j.jar"/>
-
+    
+   
 
   <path id="alljars" >
     <pathelement location="${jmx.jar}"/>
@@ -95,6 +96,7 @@
         <path location="${commons.home}/collections/src/java" />
         <path location="${commons.home}/beanutils/src/java" />
         <path location="${commons.home}/logging/src/java" />
+        <path location="${commons.home}/discovery/src/java" />
       </src>
       <exclude name="org/apache/tomcat/util/net/PureTLS*" />
       <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
@@ -103,6 +105,9 @@
       <!-- Fail with GCJ -->
       <exclude name="org/apache/commons/collections/DoubleOrderedMap.java" />
       <exclude name="org/apache/tomcat/util/log/CommonLogHandler.java" />
+
+      <exclude name="org/apache/commons/discovery/D**" />
+      <exclude name="org/apache/commons/discovery/*/**" />
     </javac>
     <copy toDir="${build.dir}/classes" >
       <fileset dir="${commons.home}/modeler/src/java" >
@@ -128,7 +133,8 @@
            debug="on"
            classpathref="alljars" >
       <src>
-        <path location="${api.home}/src/share" />
+        <path location="${api.home}/jsr152/src/share" />
+        <path location="${api.home}/jsr154/src/share" />
         <path location="${catalina.home}/catalina/src/share" />
         <path location="${jtc.home}/coyote/src/java" />
         <path location="${jtc.home}/jk/java" />
@@ -161,24 +167,25 @@
     </copy>
 
     <copy toDir="${build.dir}/classes" >
-        <fileset dir="${api.home}/src/share">
+        <fileset dir="${api.home}/jsr154/src/share">
+          <include name="**/*.properties"/>
+        </fileset>
+        <fileset dir="${api.home}/jsr152/src/share">
           <include name="**/*.properties"/>
         </fileset>
     </copy>
 
     <!-- Servlet/JSP resources - work around stupid src layout  -->
     <copy todir="${build.dir}/classes/javax/servlet/resources">
-        <fileset dir="${api.home}/src/share/dtd">
-          <include name="web-app**"/>
-          <include name="j2ee*.xsd"/>
-          <include name="xml.xsd"/>
+        <fileset dir="${api.home}/jsr154/src/share/dtd">
+          <include name="*.xsd"/>
+          <include name="*.dtd"/>
         </fileset>
     </copy>
     <copy todir="${build.dir}/classes/javax/servlet/jsp/resources">
-      <fileset dir="${api.home}/src/share/dtd">
-        <include name="web-jsptaglibrary**"/>
-        <include name="jspxml**"/>
-        <include name="jsp*.xsd"/>
+      <fileset dir="${api.home}/jsr152/src/share/dtd">
+        <include name="*.xsd"/>
+        <include name="*.dtd"/>
       </fileset>
     </copy>
   </target>
@@ -252,8 +259,9 @@
       <path refid="alljars" />
       <path refid="jasperjars" />
       <pathelement location="${build.dir}/classes"/>
-      <pathelement location="${ant.home}/lib/xercesImpl.jar" />
+      <!-- <pathelement location="${ant.home}/lib/xercesImpl.jar" />
       <pathelement location="${ant.home}/lib/xml-apis.jar" />
+      -->
       <pathelement location="${ant.home}/lib/ant.jar" />
       <pathelement location="${tools.jar}" />
     </path>
@@ -271,6 +279,27 @@
     </java>
     -->
     <echo message="==================== Tomcat5 up and running ==================== "/>
+  </target>
+
+  <target name="discovery" >
+    <path id="discoveryCP" >
+      <path refid="alljars"/>
+      <path refid="jasperjars"/>
+      <pathelement location="${build.dir}/classes"/>
+      <pathelement location="${ant.home}/lib/xercesImpl.jar"/>
+      <pathelement location="${ant.home}/lib/xml-apis.jar"/>
+      <pathelement location="${ant.home}/lib/ant.jar"/>
+      <pathelement location="${tools.jar}"/>
+      <pathelement location="/usr/share/java/xalan-j_2_3_1/bin/xercesImpl.jar"/>
+     </path>
+ 
+    <taskdef name="discovery" 
+             classname="org.apache.commons.discovery.ServiceDiscoveryTask" 
+             classpathref="discoveryCP"/>
+      
+    <discovery debug="1" id="myDiscovery"
+               serviceName="javax.xml.parsers.SAXParserFactory" />
+    <echo message="Found ${jxpath:/references[@name='myDiscovery']}" />
   </target>
 
   <target name="jdepend" description="Document the dependency graph ">
@@ -305,7 +334,7 @@
 
   </target>
 
-  <target name="checkout" 
+  <target name="update" 
           description="Update or checkout required package from CVS">
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P jakarta-tomcat-catalina" 
