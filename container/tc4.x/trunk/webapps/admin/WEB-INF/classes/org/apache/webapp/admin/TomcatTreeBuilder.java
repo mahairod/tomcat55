@@ -85,6 +85,8 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 
+import org.apache.webapp.admin.realm.SetUpUserDBRealmAction;
+
 /**
  * <p> Implementation of TreeBuilder interface for Tomcat Tree Controller
  *     to build plugin components into the tree
@@ -101,6 +103,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     private final static String SERVER_LABEL = "Tomcat Server";
     
     public final static String SERVER_TYPE = "Catalina:type=Server";
+    public final static String FACTORY_TYPE = "Catalina:type=MBeanFactory";
     public final static String SERVICE_TYPE = "Catalina:type=Service";
     public final static String ENGINE_TYPE = "Catalina:type=Engine";
     public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
@@ -109,10 +112,12 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String LOADER_TYPE = "Catalina:type=Loader";
     public final static String MANAGER_TYPE = "Catalina:type=Manager";
     public final static String LOGGER_TYPE = "Catalina:type=Logger";
-
+    public final static String REALM_TYPE = "Catalina:type=Realm";
+    
     public final static String WILDCARD = ",*";
     
     private static MBeanServer mBServer = null;
+    //private static ObjectInstance mBeanFactory = null;
     
     public void buildTree(TreeControl treeControl,
     ApplicationServlet servlet,
@@ -127,6 +132,17 @@ public class TomcatTreeBuilder implements TreeBuilder{
         }catch(Throwable t){
             t.printStackTrace(System.out);
         }
+    }
+    
+    public static ObjectInstance getMBeanFactory()
+    throws JMException, ServletException {
+        
+        Iterator factoryItr =
+        mBServer.queryMBeans(new ObjectName(FACTORY_TYPE + WILDCARD), null).iterator();
+        ObjectInstance mBeanFactory = (ObjectInstance)factoryItr.next();
+        
+        System.out.println(" mbean factory= " + (mBeanFactory.getObjectName()).toString());
+        return mBeanFactory;
     }
     
     public TreeControlNode getServer()
@@ -197,6 +213,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getConnectors(serviceNode, serviceName);
             getHosts(serviceNode, serviceName);
             getLoggers(serviceNode, serviceName, null, null, 0);
+            getRealms(serviceNode, serviceName, null, null, 0);
         }
     }
     
@@ -225,20 +242,20 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
             
             connectorNode =
-                new TreeControlNode(connectorObj.getObjectName().toString(),
-                "folder_16_pad.gif",
-                nodeLabel,
-                "setUpConnector.do?select=" + encodedConnectorName
-                + "&nodeLabel="+ encodedNodeLabel,
-                "content", true);
-                
+            new TreeControlNode(connectorObj.getObjectName().toString(),
+            "folder_16_pad.gif",
+            nodeLabel,
+            "setUpConnector.do?select=" + encodedConnectorName
+            + "&nodeLabel="+ encodedNodeLabel,
+            "content", true);
+            
             serviceNode.addChild(connectorNode);
-        }        
+        }
     }
     
     public void getHosts(TreeControlNode serviceNode, String serviceName)
     throws JMException{
- 
+        
         Iterator HostItr =
         (mBServer.queryMBeans(new ObjectName(HOST_TYPE + WILDCARD +
         ",service=" + serviceName), null)).iterator();
@@ -271,13 +288,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             getContexts(hostNode, hostName, serviceName);
             getLoggers(hostNode, serviceName, hostName, null, 1);
+            getRealms(hostNode, serviceName, hostName, null, 1);
         }
-        
     }
     
     public void getContexts(TreeControlNode hostNode, String hostName, String serviceName)
     throws JMException{
-    
+        
         Iterator contextItr =
         (mBServer.queryMBeans(new ObjectName(CONTEXT_TYPE + WILDCARD +
         ",host=" + hostName + ",service=" + serviceName), null)).iterator();
@@ -307,12 +324,14 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             hostNode.addChild(contextNode);
             //get all loggers for this context
-            if (contextName.length() > 0)
-                getLoggers(contextNode, serviceName, hostName, contextName, 2);            
-        }        
+            if (contextName.length() > 0) {
+                getLoggers(contextNode, serviceName, hostName, contextName, 2);
+                getRealms(contextNode, serviceName, hostName, contextName, 2);
+            }
+        }
     }
     
-        
+    
     /**
      * Add the required logger nodes to the specified node instance.
      *
@@ -351,11 +370,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
         while(loggerItr.hasNext()){
             
             ObjectInstance loggerObj = (ObjectInstance)loggerItr.next();
-            ObjectName loggerObjName = loggerObj.getObjectName();            
+            ObjectName loggerObjName = loggerObj.getObjectName();
             encodedLoggerName =  URLEncoder.encode(loggerObj.getObjectName().toString());
             
             String className =
-            (String)mBServer.getAttribute(loggerObj.getObjectName(), 
+            (String)mBServer.getAttribute(loggerObj.getObjectName(),
             SetUpLoggerAction.CLASSNAME_PROP_NAME);
             
             String loggerType = null;
@@ -379,5 +398,86 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             node.addChild(loggerNode);
         }
-    }    
+    }
+    
+    /**
+     * Add the required realm nodes to the specified node instance.
+     *
+     * @param node The <code>TreeControlNode</code> to which we should
+     * add our realm nodes.
+     * @param serviceName The service to which this realm belongs.
+     * @param hostName The host to which this realm belongs.
+     * @param contextName The context to which this realm belongs.
+     * @param type (0,1,2)  Get all realms for a particular service(0),
+     * host(1), context (2).
+     */
+    public void getRealms(TreeControlNode node, String serviceName,
+    String hostName, String contextName, int type)
+    throws JMException{
+        
+        Iterator realmItr = null;
+        
+        if (type == 0) {
+            realmItr =
+            (mBServer.queryMBeans(new ObjectName(REALM_TYPE +
+            ",service=" + serviceName), null)).iterator();
+        }  else if (type == 1) {
+            realmItr =
+            (mBServer.queryMBeans(new ObjectName(REALM_TYPE +
+            ",host=" + hostName + ",service=" + serviceName), null)).iterator();
+        } else if (type == 2) {
+            realmItr =
+            (mBServer.queryMBeans(new ObjectName(REALM_TYPE +
+            ",path=" + contextName + ",host=" + hostName +
+            ",service=" + serviceName), null)).iterator();
+        }
+        
+        TreeControlNode realmNode = null;
+        String encodedRealmName;
+        
+        while(realmItr.hasNext()){
+            
+            ObjectInstance realmObj = (ObjectInstance)realmItr.next();
+            ObjectName realmObjName = realmObj.getObjectName();
+            encodedRealmName =  URLEncoder.encode(realmObj.getObjectName().toString());
+            
+            String className =
+            (String)mBServer.getAttribute(realmObj.getObjectName(),
+            SetUpLoggerAction.CLASSNAME_PROP_NAME);
+            
+            String realmType = null;
+            int period = className.lastIndexOf(".");
+            if (period >= 0)
+                realmType = className.substring(period + 1);
+            
+            String setUpAction = null;
+            if ((SetUpUserDBRealmAction.JDBC_REALM).equalsIgnoreCase(realmType)) {
+                setUpAction = "setUpJDBCRealm";
+            } else if ((SetUpUserDBRealmAction.JNDI_REALM).equalsIgnoreCase(realmType)) {
+                setUpAction = "setUpJNDIRealm";
+            } else if ((SetUpUserDBRealmAction.MEMORY_REALM).equalsIgnoreCase(realmType)) {
+                setUpAction = "setUpMemoryRealm";
+            } else {
+                // UserDatabaseRealm
+                setUpAction = "setUpUserDBRealm";
+            }
+            
+            String encodedRealmType =  URLEncoder.encode(realmType);
+            
+            String nodeLabel= "Realm";
+            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
+            
+            realmNode =
+            new TreeControlNode(realmObj.getObjectName().toString(),
+            "folder_16_pad.gif",
+            nodeLabel,
+            setUpAction +".do?select=" + encodedRealmName            
+            +"&nodeLabel="+ encodedNodeLabel
+            +"&type="+ encodedRealmType,
+            "content", true);
+            
+            node.addChild(realmNode);
+        }
+    }
+    
 }

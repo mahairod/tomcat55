@@ -63,6 +63,14 @@
     <form-bean      name="userForm"
                     type="org.apache.webapp.admin.UserForm"/>
 
+    <!-- JDBC Realm form bean -->
+    <form-bean      name="realmForm"
+                    type="org.apache.webapp.admin.realm.JDBCRealmForm"/>
+
+   <!-- UserDB Realm form bean -->
+    <form-bean      name="userdbRealmForm"
+                    type="org.apache.webapp.admin.realm.UserDBRealmForm"/>
+
   </form-beans>
 
 
@@ -140,6 +148,14 @@
   
     <forward        name="User"
                     path="/user.jsp"
+                redirect="false"/>
+
+    <forward        name="JDBCRealm"
+                    path="/jdbcRealm.jsp"
+                redirect="false"/>
+
+    <forward        name="UserDBRealm"
+                    path="/userDBRealm.jsp"
                 redirect="false"/>
 
   </global-forwards>
@@ -237,6 +253,16 @@
                scope="session">
       <forward        name="SetUpLogger"
                       path="/logger.jsp"
+                  redirect="true"/>
+    </action>
+        
+    <!-- Set up Realm datastructure -->
+    <action    path="/setUpUserDBRealm"
+               type="org.apache.webapp.admin.realm.SetUpUserDBRealmAction"
+               name="userdbRealmForm"
+               scope="session">
+      <forward        name="SetUpDBRealm"
+                      path="/userdbRealm.jsp"
                   redirect="true"/>
     </action>
     
@@ -341,7 +367,21 @@
                name="addServiceForm"
               scope="request"
                type="org.apache.webapp.admin.service.AddServiceAction"/>
+
+    <!-- JDBC realm action -->
+    <action    path="/JDBCRealm"
+              input="/jdbcRealm.jsp"
+               name="realmForm"
+              scope="request"
+               type="org.apache.webapp.admin.realm.JDBCRealmAction"/>
                
+    <!-- UserDB realm action -->
+    <action    path="/UserDBRealm"
+              input="/userDBRealm.jsp"
+               name="userdbRealmForm"
+              scope="request"
+               type="org.apache.webapp.admin.realm.UserDBRealmAction"/>
+
   </action-mappings>  
     
 </struts-config>
