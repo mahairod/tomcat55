@@ -209,7 +209,7 @@
       -->
 
       <!-- Define the default virtual host
-           Note: XML Schema validationn will not works with Xerces 2.2.
+           Note: XML Schema validation will not work with Xerces 2.2.
        -->
       <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true"
