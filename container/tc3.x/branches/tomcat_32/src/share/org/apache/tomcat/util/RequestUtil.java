@@ -303,9 +303,10 @@ public class RequestUtil {
         while (strPos < strLen) {
             int laPos;        // lookahead position
 
+            char[] ca = str.toCharArray();
             // look ahead to next URLencoded metacharacter, if any
             for (laPos = strPos; laPos < strLen; laPos++) {
-                char laChar = str.charAt(laPos);
+                char laChar = ca[laPos];
                 if ((laChar == '+') || (laChar == '%')) {
                     break;
                 }
@@ -313,7 +314,7 @@ public class RequestUtil {
 
             // if there were non-metacharacters, copy them all as a block
             if (laPos > strPos) {
-                dec.append(str.substring(strPos,laPos));
+                dec.append(ca, strPos, laPos);
                 strPos = laPos;
             }
 
@@ -331,7 +332,7 @@ public class RequestUtil {
             } else if (metaChar == '%') {
                 char c = (char) Integer.parseInt(str.substring(strPos + 1, strPos + 3), 16);
                 if(c == '/' || c == '%' || c=='.' || c == '\\' || c == '\0')
-                    dec.append(str.substring(strPos, strPos+3));
+                    dec.append(ca, strPos, strPos+3);
                 else
                     dec.append(c);
                 strPos += 3;
@@ -341,40 +342,42 @@ public class RequestUtil {
         return dec.toString();
     }
 
-    public static String unUrlDecode(String data) {
-	StringBuffer buf = new StringBuffer();
-	for (int i = 0; i < data.length(); i++) {
-	    char c = data.charAt(i);
-	    switch (c) {
-	    case '+':
-		buf.append(' ');
-		break;
-	    case '%':
-		// XXX XXX 
-		try {
-		    buf.append((char) Integer.parseInt(data.substring(i+1,
-                        i+3), 16));
-		    i += 2;
-		} catch (NumberFormatException e) {
+    public static String unUrlDecode(String data)
+    {
+        StringBuffer buf = new StringBuffer(data.length());
+        char ca[] = data.toCharArray();
+        for (int i = 0; i < data.length(); i++) {
+            char c = ca[i];
+            switch (c) {
+            case '+':
+                buf.append(' ');
+                break;
+            case '%':
+                // XXX XXX 
+                try {
+                    buf.append((char) Integer.parseInt(data.substring(i+1,
+                                                                      i+3), 16));
+                    i += 2;
+                } catch (NumberFormatException e) {
                     String msg = "Decode error ";
-		    // XXX no need to add sm just for that
-		    // sm.getString("serverRequest.urlDecode.nfe", data);
+                    // XXX no need to add sm just for that
+                    // sm.getString("serverRequest.urlDecode.nfe", data);
 
-		    throw new IllegalArgumentException(msg);
-		} catch (StringIndexOutOfBoundsException e) {
-		    String rest  = data.substring(i);
-		    buf.append(rest);
-		    if (rest.length()==2)
-			i++;
-		}
-		
-		break;
-	    default:
-		buf.append(c);
-		break;
-	    }
-	}
-	return buf.toString();
+                    throw new IllegalArgumentException(msg);
+                } catch (StringIndexOutOfBoundsException e) {
+                    String rest  = data.substring(i);
+                    buf.append(rest);
+                    if (rest.length()==2)
+                        i++;
+                }
+
+                break;
+            default:
+                buf.append(c);
+                break;
+            }
+        }
+        return buf.toString();
     }           
 	
 
