@@ -398,7 +398,7 @@ public class JspConfig {
 	private Vector includePrelude;
 	private Vector includeCoda;
 
-	JspProperty(String isXml, String elIgnored,
+	public JspProperty(String isXml, String elIgnored,
 		    String scriptingInvalid, String pageEncoding,
 		    Vector includePrelude, Vector includeCoda) {
 
