@@ -153,9 +153,9 @@ public final class SessionUtil {
      * @param url The URL to be encoded with the session id
      */
     public static String encodeURL(Request req, String id, String url) {
-
-	// Encode all relative URLs unless they start with a hash
-	if (!url.startsWith("http:")) {
+        String sch=req.getScheme();
+        // Encode all relative URLs unless they start with a hash
+	if (!url.startsWith(sch+":")) {
 	    if (!url.startsWith("#"))
 		return (encode(id, url));
 	    else
@@ -164,8 +164,8 @@ public final class SessionUtil {
 
 	// Encode all absolute URLs that return to this hostname
 	String serverName = req.getServerName();
-	String match = "http://" + serverName;
-	if (url.startsWith("http://" + serverName))
+	String match = sch+"://" + serverName;
+	if (url.startsWith(sch+"://" + serverName))
 	    return (encode(id, url));
 	else
 	    return (url);
