@@ -717,6 +717,16 @@
      joinSession="true"
       outContent="Session04 PASSED"/>
 
+    <!-- Exercise session event listeners -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session05" debug="${debug}"
+          golden="${golden.path}/Session05.txt"/>
+
+    <!-- Exercise session event listeners -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession05" debug="${debug}"
+          golden="${golden.path}/Session05.txt"/>
+
   </target>
 
 

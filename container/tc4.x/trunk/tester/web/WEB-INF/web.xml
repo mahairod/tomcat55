@@ -228,6 +228,18 @@
     </filter-mapping>
 
 
+    <!-- ========== Listener Definitions ================================== -->
+
+
+    <listener>
+        <listener-class>org.apache.tester.SessionListener01</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.apache.tester.SessionListener02</listener-class>
+    </listener>
+
+
     <!-- ========== Servlet Definitions =================================== -->
 
     <servlet>
@@ -403,6 +415,11 @@
     <servlet>
         <servlet-name>Session04</servlet-name>
         <servlet-class>org.apache.tester.Session04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session05</servlet-name>
+        <servlet-class>org.apache.tester.Session05</servlet-class>
     </servlet>
 
     <servlet>
@@ -761,6 +778,16 @@
     <servlet-mapping>
         <servlet-name>Session04</servlet-name>
         <url-pattern>/WrappedSession04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session05</servlet-name>
+        <url-pattern>/Session05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session05</servlet-name>
+        <url-pattern>/WrappedSession05</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
