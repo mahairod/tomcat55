@@ -108,9 +108,8 @@ public final class SampleAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-        // Always return to the input page. This method only saves the form
-        // data and redisplays the data with the saved values.
-        return new ActionForward(mapping.getInput());
+        // Forward back to the test page
+        return (mapping.findForward("Tree Control Test"));
 
     }
 

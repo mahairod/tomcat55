@@ -73,8 +73,8 @@
     <action    path="/sample"
                type="org.apache.webapp.admin.SampleAction"
                name="sampleForm"
-              scope="request"
-              input="/index.jsp">
+              scope="session"
+              input="/tree-control-test.jsp">
     </action>
 
     <!-- Process a set-locale action -->
