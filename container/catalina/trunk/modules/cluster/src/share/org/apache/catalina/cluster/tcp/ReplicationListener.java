@@ -178,7 +178,7 @@ public class ReplicationListener extends Thread
                     // remove key from selected set, it's been handled
                     it.remove();
                 }
-                System.out.println("Done with loop");
+                //System.out.println("Done with loop");
             }
             catch (java.nio.channels.CancelledKeyException nx) {
                 log.warn(
