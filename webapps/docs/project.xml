@@ -2,7 +2,7 @@
 <project name="Apache Jakarta Tomcat Documentation - Top Level Directory"
         href="http://jakarta.apache.org/tomcat/">
 
-    <title>The Apache Jakarta Tomcat 5 Servlet/JSP Container</title>
+    <title>The Apache Jakarta Tomcat 5.5 Servlet/JSP Container</title>
 
     <logo href="/images/tomcat.gif">
       The Apache Jakarta Tomcat Servlet/JSP Container
@@ -38,6 +38,7 @@
         <item name="17) Default Servlet"    href="default-servlet.html"/>
         <item name="18) Clustering"         href="cluster-howto.html"/>
         <item name="19) Load Balancer"      href="balancer-howto.html"/>
+        <item name="20) Connectors"         href="connectors.html"/>
     </menu>
 
     <menu name="Reference">

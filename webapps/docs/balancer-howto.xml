@@ -17,104 +17,25 @@
 
 <section name="Table of Contents">
 <p>
-<a href="#Using the JK native connector">
+<a href="#Using the JK 1.2.x native connector">
 Using the JK native connector</a><br />
-<a href="#Using Apache 2 with mod_proxy and mod_rewrite">
-Using Apache 2 with mod_proxy and mod_rewrite</a><br />
+<a href="#Using Apache httpd 2.2 with mod_proxy">
+Using Apache httpd 2.2 and mod_proxy</a><br />
 <a href="#Using the balancer webapp">Using the balancer webapp</a><br />
 </p>
 </section>
 
-<section name="Using the JK native connector">
+<section name="Using the JK 1.2.x native connector">
 
-Please refer to the JK documentation.
+Please refer to the JK 1.2.x documentation.
 
 </section>
 
-<section name="Using Apache 2 with mod_proxy and mod_rewrite">
+<section name="Using Apache httpd 2.2 with mod_proxy">
 
-<subsection name="Overview">
-
-<p>
-It is possible to use Apache 2, with mod_proxy and mod_rewrite, to load balance
-requests to a set of Tomcat servers, using the HTTP protocol rather than AJP.
-Although it does not have any advanced load balancing or failover strategies,
-it is very easy to setup.
-</p>
-
-<p>
-Thanks to Pier Fumagalli for helping document this method. 
-</p>
-
-</subsection>
-
-<subsection name="Configuring Tomcat">
-
-<p>
-Edit <code>$CATALINA_HOME/conf/server.xml</code>, and find the Engine element 
-and add an attribute called jvmRoute. Set its value to LB1.
-</p>
-
-<source>
-&lt;Engine name="MainEngine" defaultHost="localhost" jvmRoute="LB1"&gt;
-</source>
-
-<p>
-Do the same for each server in the group, giving each a different ID: LB2, 
-LB3, ...
-</p>
-
-</subsection>
-
-<subsection name="Apache 2 configuration">
-
-<p>
-First we must create a rewrite map (for mod_rewrite) (balancing.conf):
-</p>
-
-<source>
-LB1  tomcat1.foo.com:8080
-LB2  tomcat2.foo.com:8080
-LB3  tomcat3.foo.com:8888
-ALL  tomcat1.foo.com:8080|tomcat2.foo.com:8080|tomcat3.foo.com:8888
-</source>
-
-<p>
-This means each worker is associated with a specific server and port. The name
-associated with each node <strong>must</strong> match the one used for the 
-jvmRoute attribute specified on the Engine element of each node's server.xml.
-</p>
-
-<p>
-In <code>httpd.conf</code>:
-</p>
-
-<source>RewriteMap SERVERS rnd:/usr/local/httpd/conf/servers.conf
-
-&lt;Location /webapp&gt;
-    RewriteEngine On
-
-    RewriteCond "%{HTTP_COOKIE}"                  "(^|;\s*)jsessionid=\w*\.(\w+)($|;)"
-    RewriteRule "(.*)"                            "http://${SERVERS:%2}%{REQUEST_URI}"  [P,L]
-    RewriteRule "^.*;jsessionid=\w*\.(\w+)($|;)"  "http://${SERVERS:$1}%{REQUEST_URI}"  [P,L]
-    RewriteRule "(.*)"                            "http://${SERVERS:ALL}%{REQUEST_URI}" [P,L]
-&lt;/Location&gt;
-</source>
-
-<p>
-The first entry means that we want to load the server map which we
-created. The "ALL" entry in the server map will affect those users who
-do not yet have a session ID. Meaning the session cookie which Tomcat
-creates will have the LBx id in it, the other entries will govern which
-host we're directed to.
-</p>
-
-<p>The rewrite rules govern those users with a cookie. Apache will
-rewrite the URL and point you to one of the instances of Tomcat. This
-is vodoo but it should work.
-</p>
-
-</subsection>
+Please refer to the mod_proxy documentation for Apache 2.2. This supports either
+HTTP or AJP load balancing. This new version of mod_proxy is also useable with
+Apache httpd 2.0.
 
 </section>
 

@@ -45,7 +45,7 @@ container, to have access to different repositories of available classes and
 resources.  This mechanism is used to provide the functionality defined in the
 Servlet Specification, version 2.4 -- in particular, Sections 9.4 and 9.6.</p>
 
-<p>In a Java 2 (that is, JDK 1.2 or later) environment, class loaders are
+<p>In a J2SE 2 (that is, J2SE 1.2 or later) environment, class loaders are
 arranged in a parent-child tree.  Normally, when a class loader is asked to
 load a particular class or resource, it delegates the request to a parent
 class loader first, and then looks in its own repositories only if the parent
@@ -112,19 +112,16 @@ loaders as it is initialized:</p>
     be placed here.  All unpacked classes and resources in
     <code>$CATALINA_HOME/common/classes</code>, as well as classes and
     resources in JAR files under the
-    <code>$CATALINA_HOME/commons/endorsed</code> and
+    <code>$CATALINA_HOME/commons/endorsed</code>,
+    <code>$CATALINA_HOME/commons/i18n</code> and
     <code>$CATALINA_HOME/common/lib</code> directories,
     are made visible through this
     class loader.  By default, that includes the following:
     <ul>
-    <li><em>ant.jar</em> - Apache Ant.</li>
-    <li><em>commons-collection.jar</em> - Jakarta commons collection.</li>
-    <li><em>commons-dbcp.jar</em> - Jakarta commons DBCP, providing a
-        JDBC connection pool to web applications.</li>
     <li><em>commons-el.jar</em> - Jakarta commons el, implementing the 
         expression language used by Jasper.</li>
-    <li><em>commons-pool.jar</em> - Jakarta commons pool.</li>
     <li><em>jasper-compiler.jar</em> - The JSP 2.0 compiler.</li>
+    <li><em>jasper-compiler-jdt.jar</em> - The Eclipse JDT Java compiler.</li>
     <li><em>jasper-runtime.jar</em> - The JSP 2.0 runtime.</li>
     <li><em>jsp-api.jar</em> - The JSP 2.0 API.</li>
     <li><em>naming-common.jar</em> - The JNDI implementation used by Tomcat 5
@@ -132,12 +129,19 @@ loaders as it is initialized:</p>
     <li><em>naming-factory.jar</em> - The JNDI implementation used by Tomcat 5
         to resolve references to enterprise resources (EJB, connection 
         pools).</li>
+    <li><em>naming-factory-dbcp.jar</em> - Jakarta commons DBCP, providing a
+        JDBC connection pool to web applications. The classes have been moved
+        out of their default org.apache.commons package.</li>
+    <li><em>naming-java.jar</em> - Handler for the java: namespace.</li>
     <li><em>naming-resources.jar</em> - The specialized JNDI naming context
         implementation used to represent the static resources of a web
-        application.</li>
-    <li><em>servlet-api.jar</em> - The Servlet and JSP API classes.</li>
-    <li><em>xerces.jar</em> - The XML parser that is visible by default to
-        Tomcat internal classes and to web applications.</li>
+        application. This is not related to the support of the J2EE ENC, and
+        cannot be removed.</li>
+    <li><em>servlet-api.jar</em> - The Servlet 2.4 API.</li>
+    <li><em>tomcat-i18n-**.jar</em> - Optional JARs containing resource bundles
+        for other languages. As default bundles are also included in each 
+        individual JAR, they can be safely removed if no internationalization
+        of messages is needed.</li>
     </ul></li>
 <li><strong>Catalina</strong> - This class loader is initialized to include
     all classes and resources required to implement Tomcat 5 itself.  These
@@ -150,20 +154,22 @@ loaders as it is initialized:</p>
     <ul>
     <li><em>catalina.jar</em> - Implementation of the Catalina servlet
         container portion of Tomcat 5.</li>
-    <li><em>jakarta-regexp-X.Y.jar</em> - The binary distribution of the
-        <a href="http://jakarta.apache.org/regexp/">Jakarta Regexp</a>
-        regular expression processing library, used in the implementation of
-        request filters.</li>
+    <li><em>catalina-ant.jar</em> - Some Ant tasks which can be used to
+        manage Tomcat using the manager web application.</li>
+    <li><em>catalina-optional.jar</em> - Some optional components of
+        Catalina.</li>
+    <li><em>commons-modeler.jar</em> - A model MBeans implementation used
+        by Tomcat to expose its internal objects through JMX.</li>
     <li><em>servlets-xxxxx.jar</em> - The classes associated with each
         internal servlet that provides part of Tomcat's functionality.
         These are separated so that they can be completely removed if the
         corresponding service is not required, or they can be subject to
         specialized security manager permissions.</li>
-    <li><em>tomcat-coyote.jar</em> - Coyote connector for Tomcat 5.</li>
-    <li><em>tomcat-http11.jar</em> - Standalone Java HTTP/1.1 
+    <li><em>tomcat-coyote.jar</em> - Coyote API.</li>
+    <li><em>tomcat-http.jar</em> - Standalone Java HTTP/1.1 
         connector.</li>
-    <li><em>tomcat-jk2.jar</em> - Classes for the Java portion of the
-        <code>JK 2</code> web server connector, which allows Tomcat to
+    <li><em>tomcat-ajp.jar</em> - Classes for the Java portion of the
+        <code>AJP</code> web server connector, which allows Tomcat to
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>
     <li><em>tomcat-util.jar</em> - Utility classes required by some
         Tomcat connectors.</li>
@@ -196,7 +202,7 @@ class from the web application's <em>WebappX</em> class loader is processed,
 this class loader will look in the local repositories <strong>first</strong>,
 instead of delegating before looking.  There are exceptions. Classes which are
 part of the JRE base classes cannot be overriden. For some classes (such as
-the XML parser components in JDK 1.4+), the JDK 1.4 endorsed feature can be 
+the XML parser components in J2SE 1.4+), the J2SE 1.4 endorsed feature can be 
 used used 
 (see the common classloader definition above). In addition, for the following
 class patterns, the classloader will always delegate first 
@@ -221,6 +227,7 @@ loading looks in the following repositories, in this order:</p>
 <li><em>/WEB-INF/lib/*.jar</em> of your web application</li>
 <li><em>$CATALINA_HOME/common/classes</em></li>
 <li><em>$CATALINA_HOME/common/endorsed/*.jar</em></li>
+<li><em>$CATALINA_HOME/common/i18n/*.jar</em></li>
 <li><em>$CATALINA_HOME/common/lib/*.jar</em></li>
 <li><em>$CATALINA_BASE/shared/classes</em></li>
 <li><em>$CATALINA_BASE/shared/lib/*.jar</em></li>
@@ -229,16 +236,16 @@ loading looks in the following repositories, in this order:</p>
 </section>
 
 
-<section name="XML Parsers and JDK 1.4">
+<section name="XML Parsers and J2SE 1.4">
 
-<p>Among many other changes, the JDK 1.4 release packages the JAXP APIs, and
-a version of Xerces, inside the JDK.  This has impacts on applications that
+<p>Among many other changes, the J2SE 1.4 release packages the JAXP APIs, and
+a version of Xerces, inside the JRE.  This has impacts on applications that
 wish to use their own XML parser.</p>
 
 <p>In previous versions of Tomcat 5, you could simply replace the XML parser
 in the <code>$CATALINA_HOME/common/lib</code> directory to change the parser
 used by all web applications.  However, this technique will not be effective
-when you are running on JDK 1.4, because the usual class loader delegation
+when you are running on J2SE 1.4, because the usual class loader delegation
 process will always choose the implementation inside the JDK in preference
 to this one.</p>
 
