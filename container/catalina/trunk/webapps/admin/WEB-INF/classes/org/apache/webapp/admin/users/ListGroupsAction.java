@@ -164,6 +164,7 @@ public class ListGroupsAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage
                  (locale, "users.error.attribute.get", "groups"));
+            return null;
         }
 
         // Stash the results in request scope

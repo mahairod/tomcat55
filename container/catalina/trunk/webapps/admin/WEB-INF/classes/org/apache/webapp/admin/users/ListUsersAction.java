@@ -164,6 +164,7 @@ public class ListUsersAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage
                  (locale, "users.error.attribute.get", "users"));
+            return null;
         }
 
         // Stash the results in request scope
