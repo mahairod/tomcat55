@@ -72,6 +72,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -376,7 +378,7 @@ public final class StandardContext
     private String wrapperClass = "org.apache.catalina.core.StandardWrapper";
 
 
-    // ------------------------------------------------------------- Properties
+    // -----------------------------------------------------Context  Properties
 
 
     /**
@@ -466,32 +468,6 @@ public final class StandardContext
 	this.charsetMapper = mapper;
 	support.firePropertyChange("charsetMapper", oldCharsetMapper,
 				   this.charsetMapper);
-
-    }
-
-
-    /**
-     * Return the Locale to character set mapper class for this Context.
-     */
-    public String getCharsetMapperClass() {
-
-        return (this.charsetMapperClass);
-
-    }
-
-
-    /**
-     * Set the Locale to character set mapper class for this Context.
-     *
-     * @param mapper The new mapper class
-     */
-    public void setCharsetMapperClass(String mapper) {
-
-        String oldCharsetMapperClass = this.charsetMapperClass;
-	this.charsetMapperClass = mapper;
-	support.firePropertyChange("charsetMapperClass",
-				   oldCharsetMapperClass,
-				   this.charsetMapperClass);
 
     }
 
@@ -599,11 +575,35 @@ public final class StandardContext
 
 
     /**
+     * Return descriptive information about this Container implementation and
+     * the corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
+
+	return (info);
+
+    }
+
+
+    /**
      * Return the login configuration descriptor for this web application.
      */
     public LoginConfig getLoginConfig() {
 
 	return (this.loginConfig);
+
+    }
+
+
+    /**
+     * Set the Loader with which this Context is associated.
+     *
+     * @param loader The newly associated loader
+     */
+    public synchronized void setLoader(Loader loader) {
+
+	super.setLoader(loader);
 
     }
 
@@ -715,6 +715,59 @@ public final class StandardContext
 
 
     /**
+     * Return the Java class name of the Wrapper implementation used
+     * for servlets registered in this Context.
+     */
+    public String getWrapperClass() {
+
+	return (this.wrapperClass);
+
+    }
+
+
+    /**
+     * Set the Java class name of the Wrapper implementation used
+     * for servlets registered in this Context.
+     *
+     * @param wrapperClass The new wrapper class
+     */
+    public void setWrapperClass(String wrapperClass) {
+
+	this.wrapperClass = wrapperClass;
+
+    }
+
+
+    // ------------------------------------------------------ Public Properties
+
+
+    /**
+     * Return the Locale to character set mapper class for this Context.
+     */
+    public String getCharsetMapperClass() {
+
+        return (this.charsetMapperClass);
+
+    }
+
+
+    /**
+     * Set the Locale to character set mapper class for this Context.
+     *
+     * @param mapper The new mapper class
+     */
+    public void setCharsetMapperClass(String mapper) {
+
+        String oldCharsetMapperClass = this.charsetMapperClass;
+	this.charsetMapperClass = mapper;
+	support.firePropertyChange("charsetMapperClass",
+				   oldCharsetMapperClass,
+				   this.charsetMapperClass);
+
+    }
+
+
+    /**
      * Return the work directory for this Context.
      */
     public String getWorkDir() {
@@ -739,31 +792,7 @@ public final class StandardContext
     }
 
 
-    /**
-     * Return the Java class name of the Wrapper implementation used
-     * for servlets registered in this Context.
-     */
-    public String getWrapperClass() {
-
-	return (this.wrapperClass);
-
-    }
-
-
-    /**
-     * Set the Java class name of the Wrapper implementation used
-     * for servlets registered in this Context.
-     *
-     * @param wrapperClass The new wrapper class
-     */
-    public void setWrapperClass(String wrapperClass) {
-
-	this.wrapperClass = wrapperClass;
-
-    }
-
-
-    // --------------------------------------------------------- Public Methods
+    // -------------------------------------------------------- Context Methods
 
 
     /**
@@ -1729,18 +1758,6 @@ public final class StandardContext
 
 
     /**
-     * Return descriptive information about this Container implementation and
-     * the corresponding version number, in the format
-     * <code>&lt;description&gt;/&lt;version&gt;</code>.
-     */
-    public String getInfo() {
-
-	return (info);
-
-    }
-
-
-    /**
      * Process the specified Request, and generate the corresponding Response,
      * according to the design of this particular Container.
      *
@@ -1812,6 +1829,9 @@ public final class StandardContext
 	    }
 	}
 
+        listenerStop();
+        setApplicationListeners(null);
+
 	if ((manager != null) && (manager instanceof Lifecycle)) {
 	    try {
 		((Lifecycle) manager).stop();
@@ -1846,6 +1866,9 @@ public final class StandardContext
 	    }
 	}
 
+        listenerConfig();
+        listenerStart();
+
 	for (int i = 0; i < children.length; i++) {
 	    Wrapper wrapper = (Wrapper) children[i];
 	    if (wrapper instanceof Lifecycle) {
@@ -1862,44 +1885,6 @@ public final class StandardContext
 	// Start accepting requests again
 	setPaused(false);
 	log(sm.getString("standardContext.reloadingCompleted"));
-
-    }
-
-
-    /**
-     * Remove the specified security constraint from this web application.
-     *
-     * @param constraint Constraint to be removed
-     */
-    public void removeConstraint(SecurityConstraint constraint) {
-
-	synchronized (constraints) {
-
-	    // Make sure this constraint is currently present
-	    int n = -1;
-	    for (int i = 0; i < constraints.length; i++) {
-		if (constraints[i].equals(constraint)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
-
-	    // Remove the specified constraint
-	    int j = 0;
-	    SecurityConstraint results[] =
-		new SecurityConstraint[constraints.length - 1];
-	    for (int i = 0; i < constraints.length; i++) {
-		if (i != n)
-		    results[j++] = constraints[i];
-	    }
-	    constraints = results;
-
-	}
-
-	// Inform interested listeners
-	fireContainerEvent("removeConstraint", constraint);
 
     }
 
@@ -1979,6 +1964,44 @@ public final class StandardContext
 
 	// Inform interested listeners
 	fireContainerEvent("removeApplicationParameter", name);
+
+    }
+
+
+    /**
+     * Remove the specified security constraint from this web application.
+     *
+     * @param constraint Constraint to be removed
+     */
+    public void removeConstraint(SecurityConstraint constraint) {
+
+	synchronized (constraints) {
+
+	    // Make sure this constraint is currently present
+	    int n = -1;
+	    for (int i = 0; i < constraints.length; i++) {
+		if (constraints[i].equals(constraint)) {
+		    n = i;
+		    break;
+		}
+	    }
+	    if (n < 0)
+		return;
+
+	    // Remove the specified constraint
+	    int j = 0;
+	    SecurityConstraint results[] =
+		new SecurityConstraint[constraints.length - 1];
+	    for (int i = 0; i < constraints.length; i++) {
+		if (i != n)
+		    results[j++] = constraints[i];
+	    }
+	    constraints = results;
+
+	}
+
+	// Inform interested listeners
+	fireContainerEvent("removeConstraint", constraint);
 
     }
 
@@ -2371,14 +2394,111 @@ public final class StandardContext
     }
 
 
-    /**
-     * Set the Loader with which this Context is associated.
-     *
-     * @param loader The newly associated loader
-     */
-    public synchronized void setLoader(Loader loader) {
+    // --------------------------------------------------------- Public Methods
 
-	super.setLoader(loader);
+
+    /**
+     * Configure the set of instantiated application event listeners
+     * for this Context.  Return <code>true</code> if all listeners wre
+     * initialized successfully, or <code>false</code> otherwise.
+     */
+    public boolean listenerConfig() {
+
+        if (debug >= 1)
+	    log("Configuring application event listeners");
+
+        ClassLoader loader = getLoader().getClassLoader();
+	String listeners[] = findApplicationListeners();
+        Object results[] = new Object[listeners.length];
+        boolean ok = true;
+	for (int i = 0; i < results.length; i++) {
+	    if (debug >= 2)
+		log(" Configuring event listener class '" +
+		    listeners[i] + "'");
+	    try {
+		Class clazz = loader.loadClass(listeners[i]);
+		results[i] = clazz.newInstance();
+	    } catch (Throwable t) {
+		log(sm.getString("contextConfig.applicationListener",
+				 listeners[i]), t);
+                ok = false;
+	    }
+	}
+	if (ok)
+	    setApplicationListeners(results);
+        return (ok);
+    }
+
+
+    /**
+     * Send an application start event to all interested listeners.
+     * Return <code>true</code> if all events were sent successfully,
+     * or <code>false</code> otherwise.
+     */
+    public boolean listenerStart() {
+
+        if (debug >= 1)
+	    log("Sending application start events");
+
+        boolean ok = true;
+        Object listeners[] = getApplicationListeners();
+        if (listeners == null)
+	    return (ok);
+	ServletContextEvent event =
+	  new ServletContextEvent(getServletContext());
+	for (int i = 0; i < listeners.length; i++) {
+            if (listeners[i] == null)
+                continue;
+	    if (!(listeners[i] instanceof ServletContextListener))
+	        continue;
+	    try {
+	        ServletContextListener listener =
+		  (ServletContextListener) listeners[i];
+		listener.contextInitialized(event);
+	    } catch (Throwable t) {
+	        log(sm.getString("standardContext.listenerStart",
+                                 listeners[i].getClass().getName()), t);
+                ok = false;
+	    }
+	}
+        return (ok);
+
+    }
+
+
+    /**
+     * Send an application stop event to all interested listeners.
+     * Return <code>true</code> if all events were sent successfully,
+     * or <code>false</code> otherwise.
+     */
+    public boolean listenerStop() {
+
+        if (debug >= 1)
+	    log("Sending application stop events");
+
+        boolean ok = true;
+        Object listeners[] = getApplicationListeners();
+        if (listeners == null)
+	    return (ok);
+	ServletContextEvent event =
+	  new ServletContextEvent(getServletContext());
+	for (int i = 0; i < listeners.length; i++) {
+	    int j = (listeners.length - 1) - i;
+            if (listeners[j] == null)
+                continue;
+	    if (!(listeners[j] instanceof ServletContextListener))
+	        continue;
+	    try {
+	        ServletContextListener listener =
+		  (ServletContextListener) listeners[j];
+		listener.contextDestroyed(event);
+	    } catch (Throwable t) {
+	        log(sm.getString("standardContext.listenerStop",
+                                 listeners[j].getClass().getName()), t);
+                ok = false;
+	    }
+	}
+        return (ok);
 
     }
 
@@ -2389,10 +2509,6 @@ public final class StandardContext
      * @exception LifecycleException if a startup error occurs
      */
     public void start() throws LifecycleException {
-
-	// Create context attributes that will be required
-	postWelcomeFiles();
-	postWorkDirectory();
 
         // Add missing components as necessary
         if (getResources() == null) {   // (1) Required by Loader
@@ -2415,6 +2531,20 @@ public final class StandardContext
 	super.start();
         if (!available)
             return;
+
+        // Configure and call application event listeners
+        if (!listenerConfig()) {
+            setAvailable(false);
+            return;
+        }
+        if (!listenerStart()) {
+            setAvailable(false);
+            return;
+        }
+
+	// Create context attributes that will be required
+	postWelcomeFiles();
+	postWorkDirectory();
 
         // Collect "load on startup" servlets that need to be initialized
         TreeMap map = new TreeMap();
@@ -2463,6 +2593,8 @@ public final class StandardContext
     public void stop() throws LifecycleException {
 
         setAvailable(false);
+        listenerStop();
+        setApplicationListeners(null);
         super.stop();
 
     }

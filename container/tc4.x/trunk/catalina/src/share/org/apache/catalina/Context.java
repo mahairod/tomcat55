@@ -664,6 +664,23 @@ public interface Context extends Container {
 
 
     /**
+     * Return the context-relative URI of the error page for the specified
+     * HTTP status code, if any; otherwise return <code>null</code>.
+     *
+     * @param status HTTP status code to look up
+     */
+    public String findStatusPage(int status);
+
+
+    /**
+     * Return the set of HTTP status codes for which error pages have
+     * been specified.  If none are specified, a zero-length array
+     * is returned.
+     */
+    public int[] findStatusPages();
+
+
+    /**
      * Return the tag library descriptor location for the specified taglib
      * URI, if any; otherwise, return <code>null</code>.
      *
@@ -862,6 +879,15 @@ public interface Context extends Container {
      * @param name Name of the welcome file to be removed
      */
     public void removeWelcomeFile(String name);
+
+
+    /**
+     * Remove a class name from the set of LifecycleListener classes that
+     * will be added to newly created Wrappers.
+     *
+     * @param listener Class name of a LifecycleListener class to be removed
+     */
+    public void removeWrapperLifecycle(String listener);
 
 
     /**

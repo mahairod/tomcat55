@@ -88,8 +88,6 @@ import java.util.ResourceBundle;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -689,98 +687,6 @@ public final class ContextConfig
 
 
     /**
-     * Configure the set of instantiated application event listeners
-     * for this Context.
-     */
-    private void listenerConfig() {
-
-        if (debug >= 1)
-	    log("Configuring application event listeners");
-
-        ClassLoader loader = context.getLoader().getClassLoader();
-	String listeners[] = context.findApplicationListeners();
-        Object results[] = new Object[listeners.length];
-	boolean error = false;
-	for (int i = 0; i < results.length; i++) {
-	    if (debug >= 2)
-		log(" Configuring event listener class '" +
-		    listeners[i] + "'");
-	    try {
-		Class clazz = loader.loadClass(listeners[i]);
-		results[i] = clazz.newInstance();
-	    } catch (Throwable t) {
-		log(sm.getString("contextConfig.applicationListener",
-				 listeners[i]), t);
-		error = true;
-                ok = false;
-	    }
-	}
-	if (!error)
-	    context.setApplicationListeners(results);
-
-    }
-
-
-    /**
-     * Send an application start event to all interested listeners.
-     */
-    private void listenerStartEvent() {
-
-        if (debug >= 1)
-	    log("Sending application start events");
-
-        Object listeners[] = context.getApplicationListeners();
-        if (listeners == null)
-	    return;
-	ServletContextEvent event =
-	  new ServletContextEvent(context.getServletContext());
-	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof ServletContextListener))
-	        continue;
-	    try {
-	        ServletContextListener listener =
-		  (ServletContextListener) listeners[i];
-		listener.contextInitialized(event);
-	    } catch (Throwable t) {
-	        log(sm.getString("contextConfig.applicationStart"), t);
-                ok = false;
-	    }
-	}
-
-    }
-
-
-    /**
-     * Send an application stop event to all interested listeners.
-     */
-    private void listenerStopEvent() {
-
-        if (debug >= 1)
-	    log("Sending application stop events");
-
-        Object listeners[] = context.getApplicationListeners();
-        if (listeners == null)
-	    return;
-	ServletContextEvent event =
-	  new ServletContextEvent(context.getServletContext());
-	for (int i = 0; i < listeners.length; i++) {
-	    int j = (listeners.length - 1) - i;
-	    if (!(listeners[j] instanceof ServletContextListener))
-	        continue;
-	    try {
-	        ServletContextListener listener =
-		  (ServletContextListener) listeners[j];
-		listener.contextDestroyed(event);
-	    } catch (Throwable t) {
-	        log(sm.getString("contextConfig.applicationStop"), t);
-                ok = false;
-	    }
-	}
-
-    }
-
-
-    /**
      * Log a message on the Logger associated with our Context (if any)
      *
      * @param message Message to be logged
@@ -957,14 +863,6 @@ public final class ContextConfig
         if (ok)
             authenticatorConfig();
 
-	// Configure the application event listeners for this Context
-        if (ok)
-            listenerConfig();
-
-	// Send an application start event to all interested listeners
-        if (ok)
-            listenerStartEvent();
-
         // Dump the contents of this pipeline if requested
         if (debug >= 1) {
             log("Pipline Configuration:");
@@ -995,12 +893,6 @@ public final class ContextConfig
 	if (debug > 0)
 	    log(sm.getString("contextConfig.stop"));
         ok = true;
-
-	// Send an application stop event to all interested listeners
-	listenerStopEvent();
-
-	// Release references to the listener objects themselves
-	context.setApplicationListeners(null);
 
     }
 
