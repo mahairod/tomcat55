@@ -1735,7 +1735,8 @@ public class WebappClassLoader
                     }
 
                     // Register the full path for modification checking
-                    synchronized (paths) {
+                    // Note: Only syncing on a 'constant' object is needed
+                    synchronized (allPermission) {
 
                         int j;
 
@@ -1833,7 +1834,7 @@ public class WebappClassLoader
         }
 
         // Add the entry in the local resource repository
-        synchronized (this) {
+        synchronized (resourceEntries) {
             // Ensures that all the threads which may be in a race to load
             // a particular class all end up with the same ResourceEntry
             // instance
