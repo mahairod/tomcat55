@@ -17,6 +17,11 @@
 
 <h2>
   <bean:message key="error.login"/>
+  <br>
+  <bean:message key="error.tryagain"/>
+  <html:link page="/logOut.do">
+    <bean:message key="error.here"/>
+  </html:link>
 </h2>
 
 </center>
