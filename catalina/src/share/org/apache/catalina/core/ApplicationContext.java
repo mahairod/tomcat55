@@ -149,7 +149,7 @@ public class ApplicationContext
         }
 
         public Object run() {
-            HttpRequest request = new MappingRequest
+            HttpRequest request = new DummyRequest
                 (context.getPath(), contextPath + relativeURI, queryString);
             Wrapper wrapper = (Wrapper) context.map(request, true);
             if (wrapper == null)
@@ -604,14 +604,8 @@ public class ApplicationContext
 
         // The remaining code is duplicated in PrivilegedGetRequestDispatcher,
         // we need to make sure they stay in sync
-        HttpRequest request = new MappingRequest
+        HttpRequest request = new DummyRequest
             (context.getPath(), contextPath + relativeURI, queryString);
-        /*
-        request.setContext(context);
-        request.setContextPath(context.getPath());
-        request.setRequestURI(contextPath + relativeURI);
-        request.setQueryString(queryString);
-        */
         Wrapper wrapper = (Wrapper) context.map(request, true);
         if (wrapper == null)
             return (null);
