@@ -290,7 +290,7 @@ public final class HostConfig
                 if (debug >= 1)
                     log(sm.getString("hostConfig.deployDir", files[i]));
                 try {
-                    URL url = new URL("file", null, dir.getAbsolutePath());
+                    URL url = new URL("file", null, dir.getCanonicalPath());
                     ((Deployer) host).deploy(contextPath, url);
                 } catch (Throwable t) {
                     log(sm.getString("hostConfig.deployDir.error", files[i]),
@@ -313,7 +313,7 @@ public final class HostConfig
                 if (debug >= 1)
                     log(sm.getString("hostConfig.deployJar", files[i]));
                 try {
-                    URL url = new URL("file", null, dir.getAbsolutePath());
+                    URL url = new URL("file", null, dir.getCanonicalPath());
                     url = new URL("jar:" + url.toString() + "!/");
                     ((Deployer) host).deploy(contextPath, url);
                 } catch (Throwable t) {

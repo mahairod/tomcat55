@@ -678,10 +678,13 @@ public final class ContextConfig
 			    File.separator + Constants.DefaultWebXml);
 	FileInputStream stream = null;
 	try {
-	    stream = new FileInputStream(file.getAbsolutePath());
+	    stream = new FileInputStream(file.getCanonicalPath());
 	} catch (FileNotFoundException e) {
-	    log(sm.getString("context.Config.defaultMissing"));
+	    log(sm.getString("contextConfig.defaultMissing"));
 	    return;
+        } catch (IOException e) {
+            log(sm.getString("contextConfig.defaultMissing"), e);
+            return;
 	}
 
 	// Process the default web.xml file
@@ -796,8 +799,13 @@ public final class ContextConfig
         commonPerms.add(new FilePermission(baseFile, "read"));
         File workDir = (File)
             context.getServletContext().getAttribute(Globals.WORK_DIR_ATTR);
-        commonPerms.add(new FilePermission(workDir.getAbsolutePath() + "/-",
-                                           "read,write,delete"));
+        try {
+            commonPerms.add(new FilePermission(workDir.getCanonicalPath() +
+                                               "/-",
+                                               "read,write,delete"));
+        } catch (IOException e) {
+            log("permissionsConfig.filePerm", e);
+        }
         if (debug >= 1)
             log(" commonPerms=" + commonPerms.toString());
 
@@ -838,10 +846,10 @@ public final class ContextConfig
             log("Building work directory code source");
         URL workURL = null;
         try {
-            workURL = new URL("file", null, workDir.getAbsolutePath());
+            workURL = new URL("file", null, workDir.getCanonicalPath());
             if (debug >= 1)
                 log(" workURL=" + workURL.toString());
-        } catch (MalformedURLException e) {
+        } catch (IOException e) {
             log("permissionsConfig.workURL", e);
         }
         CodeSource workSource = new CodeSource(workURL, null);

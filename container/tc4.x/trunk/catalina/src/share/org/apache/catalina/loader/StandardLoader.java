@@ -191,7 +191,6 @@ public final class StandardLoader
      * <code>Reloader</code> interface.
      */
     private String loaderClass =
-        //	"org.apache.catalina.loader.FileClassLoader";
 	"org.apache.catalina.loader.StandardClassLoader";
 
 
@@ -875,10 +874,14 @@ public final class StandardLoader
 		    if (!filenames[i].endsWith(".jar"))
 		        continue;
 		    File jarFile = new File(libFile, filenames[i]);
-		    if (debug > 0)
-		        log(" Adding '" + "file: " +
-                            jarFile.getAbsolutePath() + "'");
-                    addRepository("file:" + jarFile.getAbsolutePath());
+                    try {
+                        if (debug > 0)
+                            log(" Adding '" + "file: " +
+                                jarFile.getCanonicalPath() + "'");
+                        addRepository("file:" + jarFile.getCanonicalPath());
+                    } catch (IOException e) {
+                        log(jarFile.getAbsolutePath(), e);
+                    }
 		}
 	    }
 	}
