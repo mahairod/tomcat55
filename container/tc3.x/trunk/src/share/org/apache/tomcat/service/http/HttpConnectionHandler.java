@@ -77,12 +77,17 @@ import javax.servlet.http.*;
 
 public class HttpConnectionHandler  implements  TcpConnectionHandler {
     
+    boolean secure=false;
     ContextManager contextM;
     
     public HttpConnectionHandler() {
 	super();
     }
 
+    public void setSecure( boolean b ) {
+	secure=b;
+    }
+    
     public void setAttribute(String name, Object value ) {
 	if("context.manager".equals(name) ) {
 	    setServer(value);
@@ -181,7 +186,10 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    resA.setOutputStream( out );
 
 	    reqA.readNextRequest(resA);
-
+	    if( secure ) {
+		reqA.setScheme( "https" );
+	    }
+	    
 	    contextM.service( reqA, resA );
 
 	    try {
