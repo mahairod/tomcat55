@@ -224,9 +224,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         for (int i = 0; i < contextPaths.length; i++) {
             String displayPath = contextPaths[i];
-            if (displayPath.equals("")) {
-                displayPath = "/";
-            }
             sortedContextPathsMap.put(displayPath, contextPaths[i]);
         }
 
@@ -241,6 +238,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
             String displayPath = (String) entry.getKey();
             String contextPath = (String) entry.getKey();
             Context context = deployer.findDeployedApp(contextPath);
+            if (displayPath.equals("")) {
+                displayPath = "/";
+            }
 
             if (context != null ) {
                 args = new Object[6];
@@ -272,14 +272,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
                         STOPPED_APPS_ROW_BUTTON_SECTION, args));
                 }
 
-            } else if (displayPath.equals("/")) {
-                args = new Object[4];
-                args[0] = displayPath;
-                args[1] = "ROOT";
-                args[2] = new Boolean(true);
-                args[3] = "-";
-                writer.print
-                    (MessageFormat.format(APPS_ROOT_ROW_SECTION, args));
             }
         }
 
@@ -551,15 +543,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  &nbsp;<a href=\"remove?path={0}\">{4}</a>&nbsp; \n" +
         "  </small> \n" +
         " </td> \n" +
-        "</tr> \n";
-
-    private static final String APPS_ROOT_ROW_SECTION =
-        "<tr> \n" +
-        " <td class=\"row-left\"><small><a href=\"{0}\">{0}</a></small></td>\n" +
-        " <td class=\"row-left\"><small>{1}</small></td> \n" +
-        " <td class=\"row-center\"><small>{2}</small></td> \n" +
-        " <td class=\"row-center\"><small>{3}</small></td> \n" +
-        " <td class=\"row-right\">&nbsp;</td> \n" +
         "</tr> \n";
 
     private static final String INSTALL_SECTION =
