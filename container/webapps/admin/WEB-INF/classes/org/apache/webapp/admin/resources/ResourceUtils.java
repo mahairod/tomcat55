@@ -22,9 +22,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collections;
 
+import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ObjectInstance;
+
 
 /**
  * <p>Shared utility methods for the resource administration module.</p>
@@ -197,7 +199,14 @@ public class ResourceUtils {
         while (iterator.hasNext()) {
             
             ObjectInstance instance = (ObjectInstance) iterator.next(); 
-            results.add(instance.getObjectName().toString());
+            ObjectName oname = instance.getObjectName();
+            try {
+                // only add resource mbean if definition exists
+                mserver.getAttribute(oname, "driverClassName");
+                results.add(instance.getObjectName().toString());
+            } catch (AttributeNotFoundException ex) {
+                // full resource definition doesn't exist
+            }
         }
 
         Collections.sort(results);        
