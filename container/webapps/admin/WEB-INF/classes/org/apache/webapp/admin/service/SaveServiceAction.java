@@ -91,6 +91,7 @@ import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
+import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 
 
@@ -137,6 +138,15 @@ public final class SaveServiceAction extends Action {
       "java.lang.String",     // engineName
       "java.lang.String",     // defaultHost
       "java.lang.String"      // serviceName
+    };
+    
+    
+    /**
+     * Signature for the <code>createUserDatabaseRealm</code> operation.
+     */
+    private String createUserDatabaseRealmTypes[] =
+    { "java.lang.String",     // parent
+      "java.lang.String",     // name
     };
 
 
@@ -245,6 +255,26 @@ public final class SaveServiceAction extends Action {
                                     values, createStandardEngineServiceTypes);
                 eoname = (ObjectName)onames.get(0);
                 soname = (ObjectName)onames.get(1);
+                sObjectName = soname.toString();
+                eObjectName = eoname.toString();
+                
+                String realmOName = DeleteLoggerAction.getObjectName(
+                                    eObjectName, TomcatTreeBuilder.REALM_TYPE);
+            
+                ObjectName roname = new ObjectName(realmOName);
+                if (mBServer.isRegistered(roname)) {
+                    mBServer.unregisterMBean(roname); 
+                }
+                
+                // Create a new UserDatabaseRealm object
+                values = new String[2];
+                values[0] = eObjectName;
+                values[1] = "UserDatabase";
+                operation = "createUserDatabaseRealm";
+                realmOName = (String)
+                    mBServer.invoke(fname, operation,
+                                    values, createUserDatabaseRealmTypes);
+                                    
                 //Enumeration enum = onames.elements();
                 //while (enum.hasMoreElements()) {
                 //    getServlet().log("save service "+enum.nextElement());
