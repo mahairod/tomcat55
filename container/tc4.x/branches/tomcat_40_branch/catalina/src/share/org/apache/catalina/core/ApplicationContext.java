@@ -569,6 +569,8 @@ public class ApplicationContext
         if (!path.startsWith("/"))
             throw new IllegalArgumentException
               (sm.getString("applicationContext.requestDispatcher.iae", path));
+        if (normalize(path) == null)
+            return (null);
 
         // Construct a "fake" request to be mapped by our Context
         String contextPath = context.getPath();
@@ -997,6 +999,41 @@ public class ApplicationContext
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Return a context-relative path, beginning with a "/", that represents
+     * the canonical version of the specified path after ".." and "." elements
+     * are resolved out.  If the specified path attempts to go outside the
+     * boundaries of the current context (i.e. too many ".." path elements
+     * are present), return <code>null</code> instead.
+     *
+     * @param path Path to be normalized
+     */
+    private String normalize(String path) {
+
+	String normalized = path;
+
+	// Normalize the slashes and add leading slash if necessary
+	if (normalized.indexOf('\\') >= 0)
+	    normalized = normalized.replace('\\', '/');
+
+	// Resolve occurrences of "/../" in the normalized path
+	while (true) {
+	    int index = normalized.indexOf("/../");
+	    if (index < 0)
+		break;
+	    if (index == 0)
+		return (null);	// Trying to go outside our context
+	    int index2 = normalized.lastIndexOf('/', index - 1);
+	    normalized = normalized.substring(0, index2) +
+		normalized.substring(index + 3);
+	}
+
+	// Return the normalized path that we have completed
+	return (normalized);
+
+    }
 
 
     /**
