@@ -92,7 +92,8 @@ public final class Bootstrap {
     // -------------------------------------------------------------- Constants
 
 
-    protected static final String CATALINA_TOKEN = "${catalina.home}";
+    protected static final String CATALINA_HOME_TOKEN = "${catalina.home}";
+    protected static final String CATALINA_BASE_TOKEN = "${catalina.base}";
     protected static final String HTTP_TOKEN = "http://";
 
 
@@ -162,9 +163,12 @@ public final class Bootstrap {
             }
             // Local repository
             boolean packed = false;
-            if (repository.startsWith(CATALINA_TOKEN)) {
+            if (repository.startsWith(CATALINA_HOME_TOKEN)) {
                 repository = getCatalinaHome() 
-                    + repository.substring(CATALINA_TOKEN.length());
+                    + repository.substring(CATALINA_HOME_TOKEN.length());
+            } else if (repository.startsWith(CATALINA_BASE_TOKEN)) {
+                repository = getCatalinaBase() 
+                    + repository.substring(CATALINA_BASE_TOKEN.length());
             }
             if (repository.endsWith("*.jar")) {
                 packed = true;
