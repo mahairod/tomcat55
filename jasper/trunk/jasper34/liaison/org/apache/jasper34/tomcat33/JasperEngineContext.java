@@ -74,7 +74,8 @@ import java.net.*;
     to the servlet and standalone ). Used by JspInterceptor - but
     it's in no way specific to tomcat.
 */
-public class JasperEngineContext implements JspCompilationContext {
+public class JasperEngineContext extends ContainerLiaison
+{
     JspReader reader;
     ServletWriter writer;
     ServletContext context;
@@ -243,9 +244,9 @@ public class JasperEngineContext implements JspCompilationContext {
      * What's the content type of this JSP? Content type includes
      * content type and encoding. 
      */
-    public String getContentType() {
-        return contentType;
-    }
+//     public String getContentType() {
+//         return contentType;
+//     }
 
     /**
      * Get hold of the Options object for this context. 
@@ -258,9 +259,9 @@ public class JasperEngineContext implements JspCompilationContext {
 	this.options=options;
     }
     
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+//     public void setContentType(String contentType) {
+//         this.contentType = contentType;
+//     }
 
     public void setReader(JspReader reader) {
         this.reader = reader;
@@ -332,7 +333,6 @@ public class JasperEngineContext implements JspCompilationContext {
 	TagLibReader reader=new TagLibReader( this, libs );
 	reader.readTagLib( tl, prefix, uri );
     }
-
     
     // development tracing 
     private static int debug=0;

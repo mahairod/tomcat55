@@ -72,11 +72,14 @@ import org.apache.tomcat.util.compat.*;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.generator.*;
+import org.apache.jasper34.liaison.*;
+import org.apache.jasper34.jsptree.*;
 import org.apache.jasper34.javacompiler.*;
 import org.apache.jasper34.core.Compiler;
 
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.facade.*;
+import org.apache.tomcat.util.io.*;
 
 /**
  * Plug in the JSP engine (a.k.a Jasper)!
@@ -296,14 +299,15 @@ public class JspInterceptor extends BaseInterceptor {
 		if( debug>0 ) log( "Setting " + s + "=" + v );
 		jspServlet.getServletInfo().addInitParam(s, v );
 	    }
-	    
-	    if( debug > 0 ) {
-		//enable jasperServlet logging
-		log( "Seetting debug on jsp servlet");
-		Constants.jasperLog=  loghelper;
-		// 		org.apache.jasper.Constants.jasperLog.
-		// 		    setVerbosityLevel("debug");
-	    }
+
+	    // XXX redo - when containerL becomes one per/context 
+// 	    if( debug > 0 ) {
+// 		//enable jasperServlet logging
+// 		log( "Seetting debug on jsp servlet");
+// 		containerL.setLog(loghelper);
+// 		// 		org.apache.jasper.containerL.jasperLog.
+// 		// 		    setVerbosityLevel("debug");
+// 	    }
 
 	    jspServlet.setServletClassName(jspServletCN);
 	} else {
@@ -436,7 +440,7 @@ public class JspInterceptor extends BaseInterceptor {
 
 	// we need to compile... ( or find previous .class )
 	JasperLiaison liasion=new JasperLiaison(getLog(), debug);
-	liasion.processJspFile(req, jspFile, handler, args);
+	liasion.processJspFile( req, jspFile, handler, args);
 
 	if( pre_compile ) {
 	    // we may have compiled the page ( if needed ), but
@@ -535,10 +539,12 @@ class JspPrecompileH extends Handler {
 final class JasperLiaison {
     Log log;
     final int debug;
+    //    ContainerLiaison containerL;
     
-    JasperLiaison( Log log, int debug ) {
+    JasperLiaison(  Log log, int debug ) {
 	this.log=log;
 	this.debug=debug;
+	//	this.containerL=containerL;
     }
     
     /** Generate mangled names, check for previous versions,
@@ -546,7 +552,7 @@ final class JasperLiaison {
      *  operations. This happens only once ( or when the jsp file
      *  changes ). 
      */
-    int processJspFile(Request req, String jspFile,
+    int processJspFile( Request req, String jspFile,
 		       ServletHandler handler, Properties args)
     {
 	// ---------- Expensive part - compile and load
@@ -564,19 +570,39 @@ final class JasperLiaison {
 		// if the jspfile is older than the class - we're ok
 		return 0;
 	    }
-
+	    if( debug > 0 ) 
+		if( depM == null )
+		    log.log( "DepM==null ");
+		else
+		    log.log( "DepM.shouldReload()");
 	    Context ctx=req.getContext();
 	    
 	    // Mangle the names - expensive operation, but nothing
 	    // compared with a compilation :-)
-	    JasperMangler mangler=
-		new JasperMangler(ctx.getWorkDir().getAbsolutePath(),
-			       ctx.getAbsolutePath(),
-			       jspFile );
+	    Mangler mangler=
+		new Mangler33(ctx.getWorkDir().getAbsolutePath(),
+			      ctx.getAbsolutePath(),
+			      jspFile );
 
+	    Options options=new OptionsProperties(args); 
+	    
+	    JasperEngineContext ctxt = new JasperEngineContext();
+	    ctxt.setClassPath( computeClassPath( req.getContext()) );
+	    ctxt.setServletContext( req.getContext().getFacade());
+	    ctxt.setOptions( options );
+	    ctxt.setClassLoader( req.getContext().getClassLoader());
+	    ctxt.setOutputDir(req.getContext().getWorkDir().getAbsolutePath());
+	    
+	    JspPageInfo pageInfo=new JspPageInfo( ctxt, options, mangler );
+	    
+	    //pageInfo.setServletClassName( mangler.getClassName());
+	    pageInfo.setJspFile( jspFile );
+	    
+	    Compiler compiler=new Compiler(ctxt);
+	    
 	    // register the handler as dependend of the jspfile 
 	    if( depM==null ) {
-		depM=setDependency( ctx, mangler, handler );
+		depM=setDependency( ctx, mangler, handler, pageInfo );
 		// update the servlet class name
 		handler.setServletClassName( mangler.getServletClassName() );
 
@@ -617,14 +643,10 @@ final class JasperLiaison {
 
 	    
 	    try {
-		Options options=new JasperOptionsImpl(args); 
-		JspCompilationContext ctxt=createCompilationContext(req,
-								    jspFile,
-								    options,
-								    mangler);
-		jsp2java( mangler, ctxt );
 
-		javac( options, ctxt, mangler );
+		jsp2java( compiler, mangler, ctxt, pageInfo );
+
+		javac( compiler, pageInfo, options, ctxt, mangler );
 	    
 		if(debug>0)log.log( "Generated " +
 				    mangler.getClassFileName() );
@@ -650,7 +672,8 @@ final class JasperLiaison {
 
     /** Convert the .jsp file to a java file, then compile it to class
      */
-    void jsp2java(JasperMangler mangler,  JspCompilationContext ctxt)
+    void jsp2java(Compiler compiler, Mangler mangler,
+		  JasperEngineContext ctxt, JspPageInfo pageInfo )
 	throws Exception
     {
 	if( debug > 0 ) log.log( "Generating " + mangler.getJavaFileName());
@@ -662,14 +685,12 @@ final class JasperLiaison {
 	// make sure the directory is created
 	new File( javaFile.getParent()).mkdirs();
 	
-	Compiler compiler=new Compiler(ctxt);
-	compiler.setMangler( mangler );
 	// we will compile ourself
-	compiler.setJavaCompiler( null );
+	// compiler.setJavaCompiler( null );
 	
 	
 	synchronized ( mangler ) {
-	    compiler.compile();
+	    compiler.jsp2java(pageInfo);
 	}
 	if( debug > 0 ) {
 	    File f = new File( mangler.getJavaFileName());
@@ -681,34 +702,18 @@ final class JasperLiaison {
     String javaEncoding = "UTF8";           // perhaps debatable?
     static String sep = System.getProperty("path.separator");
 
-    private void prepareCompiler( JavaCompiler javac,
-				  Options options, 
-				  JspCompilationContext ctxt )
-	throws JasperException
-    {
-	String compilerPath = options.getJspCompilerPath();
-        if (compilerPath != null)
-            javac.setCompilerPath(compilerPath);
-
-	javac.setClassDebugInfo(options.getClassDebugInfo());
-
-	javac.setEncoding(javaEncoding);
-	String cp=System.getProperty("java.class.path")+ sep + 
-	    ctxt.getClassPath() + sep + ctxt.getOutputDir();
-        javac.setClasspath( cp );
-	javac.setOutputDir(ctxt.getOutputDir());
-
-	if( debug>5) log.log( "ClassPath " + cp);
-    }
-
     static boolean tryJikes=true;
     static Class jspCompilerPlugin = null;
+    static String jspCompilerPluginS;
     
     /** Compile a java to class. This should be moved to util, togheter
 	with JavaCompiler - it's a general purpose code, no need to
 	keep it part of jasper
     */
-    void javac(Options options, JspCompilationContext ctxt,
+    void javac(Compiler compiler,
+	       JspPageInfo pageInfo,
+	       Options options,
+	       ContainerLiaison containerL,
 	       Mangler mangler)
 	throws JasperException
     {
@@ -716,21 +721,23 @@ final class JasperLiaison {
 	if( debug>0 ) log.log( "Compiling java file " + javaFileName);
 
 	boolean status=true;
-	if( jspCompilerPlugin == null ) {
-	    jspCompilerPlugin=options.getJspCompilerPlugin();
+	if( jspCompilerPluginS == null ) {
+	    jspCompilerPluginS=options.getJspCompilerPlugin();
 	}
+	
 	// If no explicit compiler, and we never tried before
 	if( jspCompilerPlugin==null && tryJikes ) {
+
 	    ByteArrayOutputStream out = new ByteArrayOutputStream (256);
 	    try {
-
-		jspCompilerPlugin=Class.
-		    forName(JspInterceptor.JIKES);
-		JavaCompiler javaC=createJavaCompiler( jspCompilerPlugin );
+		jspCompilerPlugin=Class.forName(JspInterceptor.JIKES);
+		JavaCompiler javaC=
+		    JavaCompiler.createJavaCompiler( containerL,
+						     jspCompilerPlugin );
 		
-		prepareCompiler( javaC, options, ctxt );
+		compiler.prepareCompiler( javaC, options, pageInfo );
 		javaC.setMsgOutput(out);
-		status = javaC.compile(javaFileName);
+		status = compiler.javac(pageInfo, javaC );
 	    } catch( Exception ex ) {	
 		log.log("Guess java compiler: no jikes " + ex.toString());
 		status=false;
@@ -745,14 +752,15 @@ final class JasperLiaison {
 	    }
 	}
 
-	JavaCompiler javaC=createJavaCompiler( jspCompilerPlugin );
-	prepareCompiler( javaC, options, ctxt );
+	JavaCompiler javaC=
+	    JavaCompiler.createJavaCompiler( containerL, jspCompilerPlugin );
+	compiler.prepareCompiler( javaC, options, pageInfo );
 	ByteArrayOutputStream out = new ByteArrayOutputStream (256);
 	javaC.setMsgOutput(out);
 	
 	status = javaC.compile(javaFileName);
 
-        if (!ctxt.keepGenerated()) {
+        if (!containerL.getOptions().getKeepGenerated()) {
             File javaFile = new File(javaFileName);
             javaFile.delete();
         }
@@ -763,29 +771,6 @@ final class JasperLiaison {
                                       + msg);
         }
 	if( debug > 0 ) log.log("Compiled ok");
-    }
-
-    /** tool for customizing javac.
-     */
-    public JavaCompiler createJavaCompiler(Class jspCompilerPlugin )
-	throws JasperException
-    {
-        JavaCompiler javac;
-
-	if (jspCompilerPlugin != null) {
-            try {
-                javac = (JavaCompiler) jspCompilerPlugin.newInstance();
-            } catch (Exception ex) {
-		Constants.message("jsp.warning.compiler.class.cantcreate",
-				  new Object[] { jspCompilerPlugin, ex }, 
-				  Log.FATAL);
-                javac = new SunJavaCompiler();
-	    }
-	} else {
-            javac = new SunJavaCompiler();
-	}
-
-	return javac;
     }
 
     private String computeClassPath(Context ctx) {
@@ -820,24 +805,6 @@ final class JasperLiaison {
         return cpath;
     }
 
-    private JspCompilationContext createCompilationContext( Request req,
-							    String jspFile,
-							    Options opt,
-							    Mangler mangler)
-    {
-	JasperEngineContext ctxt = new JasperEngineContext();
-	ctxt.setServletClassName( mangler.getClassName());
-	//	ctxt.setJspFile( req.servletPath().toString());
-	ctxt.setJspFile( jspFile );
-	ctxt.setClassPath( computeClassPath( req.getContext()) );
-//        System.out.println("computeClasspath:"+ctxt.getClassPath());
-	ctxt.setServletContext( req.getContext().getFacade());
-	ctxt.setOptions( opt );
-	ctxt.setClassLoader( req.getContext().getClassLoader());
-	ctxt.setOutputDir(req.getContext().getWorkDir().getAbsolutePath());
-	return ctxt;
-    }
-
     private void addExtraDeps( DependManager depM, ServletHandler handler )
     {
 	try {
@@ -866,10 +833,17 @@ final class JasperLiaison {
 
     }
 
+    private String getJspFilePath( String docBase, JspPageInfo pageInfo )
+    {
+	return FileUtil.safePath( docBase,
+				  pageInfo.getJspFile());
+    }
+
     
     // Add an "expire check" to the generated servlet.
-    private DependManager setDependency( Context ctx, JasperMangler mangler,
-					 ServletHandler handler )
+    private DependManager setDependency( Context ctx, Mangler mangler,
+					 ServletHandler handler,
+					 JspPageInfo pageInfo )
     {
 	ServletInfo info=handler.getServletInfo();
 	// create a lastModified checker.
@@ -877,7 +851,10 @@ final class JasperLiaison {
 	DependManager depM=new DependManager(4); // jsps have fewer deps
 	
 	Dependency dep=new Dependency();
-	dep.setOrigin( new File(mangler.getJspFilePath()) );
+	File depFile=new File(getJspFilePath(ctx.getAbsolutePath(),
+					     pageInfo));
+	dep.setOrigin( depFile );
+	System.out.println("XXX " + depFile + " " + depFile.lastModified());
 	dep.setTarget( handler );
 	//dep.setLocal( true );
 	File f=new File( mangler.getClassFileName() );
@@ -885,6 +862,7 @@ final class JasperLiaison {
 	    // it has a previous version
 	    dep.setLastModified(f.lastModified());
 	    // update the "expired" variable
+	    System.out.println("XXY " + f + " " + f.lastModified());
 	    dep.checkExpiry();
 	} else {
 	    dep.setLastModified( -1 );
