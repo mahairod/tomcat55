@@ -119,9 +119,11 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 		    tldFile = path;
 		    break;
 		} else if (path.endsWith(".tag")) {
-		    tagVector.addElement(TagFileProcessor.parseTagFile(pc,
-								       path,
-								       this)); 
+		    tagVector.addElement(
+                                    TagFileProcessor.parseTagFile(pc,
+								  shortname,
+								  path,
+								  this)); 
 		}
 	    }
 
