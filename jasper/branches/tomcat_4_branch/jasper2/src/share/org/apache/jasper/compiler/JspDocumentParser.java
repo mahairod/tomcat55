@@ -76,13 +76,13 @@ public class JspDocumentParser extends DefaultHandler
      */
     public JspDocumentParser(ParserController pc,
                              String path,
-                             InputStreamReader reader) {
+                             InputStream stream) {
         this.parserController = pc;
         this.ctxt = pc.getJspCompilationContext();
         this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
         this.err = pc.getCompiler().getErrorDispatcher();
         this.path = path;
-        this.inputSource = new InputSource(reader);
+        this.inputSource = new InputSource(stream);
     }
 
     /*
@@ -92,9 +92,9 @@ public class JspDocumentParser extends DefaultHandler
      */
     public static Node.Nodes parse(ParserController pc,
                                    String path,
-                                   InputStreamReader reader,
+                                   InputStream stream,
                                    Node parent) throws JasperException {
-        JspDocumentParser handler = new JspDocumentParser(pc, path, reader);
+        JspDocumentParser handler = new JspDocumentParser(pc, path, stream);
         handler.current = parent;
         Node.Nodes pageNodes = null;
 

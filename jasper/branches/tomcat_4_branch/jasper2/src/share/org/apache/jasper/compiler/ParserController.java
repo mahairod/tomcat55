@@ -124,6 +124,7 @@ public class ParserController {
         Node.Nodes parsedPage = null;
         String absFileName = resolveFileName(inFileName);
         String encoding = topFileEncoding;
+        InputStream stream = null;
         InputStreamReader reader = null;
         try {
             // Figure out what type of JSP document we are dealing with
@@ -146,11 +147,12 @@ public class ParserController {
 
             // dispatch to the proper parser
             
-            reader = getReader(absFileName, encoding);
             if (isXml) {
+                stream = getStream(absFileName);
                 parsedPage = JspDocumentParser.parse(this, absFileName,
-                                                     reader, parent);
+                                                     stream, parent);
             } else {
+                reader = getReader(absFileName, encoding);
                 JspReader r = new JspReader(ctxt, absFileName, encoding,
                                             reader,
                                             compiler.getErrorDispatcher());
@@ -161,6 +163,13 @@ public class ParserController {
             if (reader != null) {
                 try {
                     reader.close();
+                } catch (Exception any) {
+                }
+            }
+            
+            if (stream != null) {
+                try {
+                    stream.close();
                 } catch (Exception any) {
                 }
             }
@@ -201,8 +210,8 @@ public class ParserController {
         newEncoding = null;
 
         // Figure out the encoding of the page
-        // FIXME: We assume xml parser will take care of
-        // encoding for page in XML syntax. Correct?
+        // xml parser will take care of encoding for
+        // page in XML syntax since we pass it a stream
         if (!isXml) {
             jspReader.reset(startMark);
             while (jspReader.skipUntil("<%@") != null) {
@@ -253,18 +262,22 @@ public class ParserController {
         return fileName;
     }
 
+    private InputStream getStream(String file)
+        throws FileNotFoundException
+    {
+        InputStream in;
+        in = ctxt.getResourceAsStream(file);
+        if (in == null) {
+            throw new FileNotFoundException(file);
+        }
+        return in;
+    }
+
     private InputStreamReader getReader(String file, String encoding)
         throws FileNotFoundException, JasperException
     {
-        InputStream in;
-        InputStreamReader reader;
-
         try {
-            in = ctxt.getResourceAsStream(file);
-            if (in == null) {
-                throw new FileNotFoundException(file);
-            }
-            return new InputStreamReader(in, encoding);
+            return new InputStreamReader(getStream(file), encoding);
         } catch (UnsupportedEncodingException ex) {
             throw new JasperException(
                 Constants.getString("jsp.error.unsupported.encoding",
