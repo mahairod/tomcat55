@@ -97,27 +97,27 @@ public class ManifestResource {
     }
     
     /**
-     * return the name of the resource
+     * Gets the name of the resource
      *
-     * @return Strig the name of the resource
+     * @return The name of the resource
      */
     public String getResourceName() {
         return resourceName;
     }
 
     /**
-     * Return the map of available extensions
+     * Gets the map of available extensions
      *
-     * @return HashMap map of available extensions
+     * @return Map of available extensions
      */
     public HashMap getAvailableExtensions() {
         return availableExtensions;
     }
     
     /**
-     * Return the list of required extensions
+     * Gets the list of required extensions
      *
-     * @return ArrayList list of required extensions
+     * @return List of required extensions
      */
     public ArrayList getRequiredExtensions() {
         return requiredExtensions;   
@@ -126,23 +126,21 @@ public class ManifestResource {
     // --------------------------------------------------------- Public Methods
 
     /**
-     * Return the number of available extensions
+     * Gets the number of available extensions
      *
-     * @return int the number of available extensions
+     * @return The number of available extensions
      */
     public int getAvailableExtensionCount() {
-        if (availableExtensions == null) return 0;
-        return availableExtensions.size();
+        return (availableExtensions != null) ? availableExtensions.size() : 0;
     }
     
     /**
-     * Return the number of required extensions
+     * Gets the number of required extensions
      *
-     * @return int the number of required extensions
+     * @return The number of required extensions
      */
     public int getRequiredExtensionCount() {
-        if (requiredExtensions == null) return 0;
-        return requiredExtensions.size();
+        return (requiredExtensions != null) ? requiredExtensions.size() : 0;
     }
     
     /**
@@ -152,8 +150,7 @@ public class ManifestResource {
      * @return true if required extensions are present
      */
     public boolean requiresExtensions() {
-        if (getRequiredExtensionCount() > 0) return true;
-        else return false;
+        return (requiredExtensions != null) ? true : false;
     }
     
     /**
@@ -165,18 +162,18 @@ public class ManifestResource {
      * @return true if extension available
      */
     public boolean containsExtension(String key) {
-        return (availableExtensions.containsKey(key));
+        return (availableExtensions != null) ?
+                availableExtensions.containsKey(key) : false;
     }
     
     /**
-     * Returns <code>true</code> if all required extension  dependencies
+     * Returns <code>true</code> if all required extension dependencies
      * have been meet for this <code>ManifestResource</code> object.
      *
-     * @return boolean true if extension dependencies satisfied
+     * @return boolean true if all extension dependencies have been satisfied
      */
     public boolean isFulfilled() {
-        if ((requiredExtensions == null) ||
-        requiredExtensions.size() ==0) {
+        if (requiredExtensions == null) {
             return false;
         }
         Iterator it = requiredExtensions.iterator();
@@ -217,20 +214,22 @@ public class ManifestResource {
     
     /**
      * Return the set of <code>Extension</code> objects representing optional
-     * packages that are required by the application contained in the JAR or WAR
-     * file associated with the specified <code>Manifest</code>.  If there
-     * are no such optional packages, null is returned.
+     * packages that are required by the application associated with the
+     * specified <code>Manifest</code>.
      *
      * @param manifest Manifest to be parsed
      *
-     * @return ArrayList list of required extensions
+     * @return List of required extensions, or null if the application
+     * does not require any extensions
      */
     private ArrayList getRequiredExtensions(Manifest manifest) {
-        ArrayList extensionList = new ArrayList();
+
         Attributes attributes = manifest.getMainAttributes();
         String names = attributes.getValue("Extension-List");
         if (names == null)
             return null;
+
+        ArrayList extensionList = new ArrayList();
         names += " ";
 
         while (true) {
@@ -262,20 +261,23 @@ public class ManifestResource {
     
     /**
      * Return the set of <code>Extension</code> objects representing optional
-     * packages that are avaiable by the application contained in the JAR
-     * file associated with the specified <code>Manifest</code>.  If there
-     * are no such optional packages, a zero-length list is returned.
+     * packages that are bundled with the application associated with the
+     * specified <code>Manifest</code>.
      *
      * @param manifest Manifest to be parsed
      *
-     * @return HashMap Map of available extensions
+     * @return Map of available extensions, or null if the web application
+     * does not bundle any extensions
      */
     private HashMap getAvailableExtensions(Manifest manifest) {
-        HashMap extensionMap = new HashMap();
+
         Attributes attributes = manifest.getMainAttributes();
         String name = attributes.getValue("Extension-Name");
         if (name == null)
             return (null);
+
+        HashMap extensionMap = new HashMap();
+
         Extension extension = new Extension();
         extension.setExtensionName(name);
         extension.setImplementationURL
@@ -291,6 +293,7 @@ public class ManifestResource {
         // creating a unique extension identifier with the key and value pair
         if (!extensionMap.containsKey(name + version)) 
             extensionMap.put(name + version, extension);
+
         return extensionMap;
     }
     
