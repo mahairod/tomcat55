@@ -483,8 +483,8 @@ public class JspDocumentParser extends DefaultHandler
                     // get the location
                     String[] location = ctxt.getTldLocation(uri);
                 
-                    tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location,
-						err);
+                    tl = new TagLibraryInfoImpl(ctxt, parserController, prefix,
+						uri, location, err);
                 }
 		taglibs.put(prefix, tl);
 	    }

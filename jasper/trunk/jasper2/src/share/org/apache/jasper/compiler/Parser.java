@@ -371,8 +371,9 @@ public class Parser {
 	if (uri != null && prefix != null) {
 	    // Errors to be checked in Validator
 	    String[] location = ctxt.getTldLocation(uri);
-	    TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
-						   location, err);
+	    TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, parserController,
+						       prefix, uri, location,
+						       err);
 	    taglibs.put(prefix, tl);
 	}
 

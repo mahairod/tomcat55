@@ -81,13 +81,14 @@ import org.apache.jasper.xmlparser.TreeNode;
  * @author Kin-man Chung
  */
 public class TagLibraryInfoImpl extends TagLibraryInfo {
-    static private final String TAGLIB_TLD = "META-INF/taglib.tld";
-    static private final String WEB_XML = "/WEB-INF/web.xml";
 
-    Hashtable jarEntries;
+    private static final String TAGLIB_TLD = "META-INF/taglib.tld";
+    private static final String WEB_XML = "/WEB-INF/web.xml";
 
-    JspCompilationContext ctxt;
-    ErrorDispatcher err;
+    private Hashtable jarEntries;
+    private JspCompilationContext ctxt;
+    private ErrorDispatcher err;
+    private ParserController parserController;
 
     private final void print(String name, String value, PrintWriter w) {
         if (value != null) {
@@ -141,14 +142,19 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
        
     }
 
-    public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, 
-			      String uriIn, String[] location,
-			      ErrorDispatcher err) 
-                throws JasperException {
-
+    /**
+     * Constructor.
+     */
+    public TagLibraryInfoImpl(JspCompilationContext ctxt,
+			      ParserController pc,
+			      String prefix, 
+			      String uriIn,
+			      String[] location,
+			      ErrorDispatcher err) throws JasperException {
         super(prefix, uriIn);
 
 	this.ctxt = ctxt;
+	this.parserController = pc;
 	this.err = err;
         ZipInputStream zin;
         InputStream in = null;
@@ -275,6 +281,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 this.tagLibraryValidator = createValidator(element);
             else if ("tag".equals(tname))
                 tagVector.addElement(createTagInfo(element));
+            else if ("tag-file".equals(tname))
+                tagVector.addElement(createTagInfoFromTagFile(element));
             else if ("function".equals(tname))          // JSP2.0
                 functionVector.addElement(createFunctionInfo(element));
             else if ("display-name".equals(tname) ||    // Ignored elements
@@ -415,6 +423,36 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                                       fragmentAttributes,
                                       dynamicAttributes);
         return taginfo;
+    }
+
+    /*
+     * Parses the tag file directives of the given TagFile and turns them into
+     * a TagInfo.
+     *
+     * @return TagInfo correspoding to tag file directives
+     */
+    private TagInfo createTagInfoFromTagFile(TreeNode elem)
+	        throws JasperException {
+
+	TagInfo tagInfo = null;
+
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode child = (TreeNode) list.next();
+            String tname = child.getName();
+            if ("path".equals(tname)) {
+		String tagFilePath = child.getBody();
+		try {
+		    tagInfo = TagFileProcessor.parseTagFile(parserController,
+							    tagFilePath);
+		} catch (FileNotFoundException e) {
+		    err.jspError("jsp.error.file.not.found", tagFilePath);
+		}
+		break;
+	    }
+	}
+
+	return tagInfo;
     }
 
     TagAttributeInfo createAttribute(TreeNode elem) {
