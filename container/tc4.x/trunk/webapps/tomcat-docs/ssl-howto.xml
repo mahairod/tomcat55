@@ -31,20 +31,14 @@ these simple steps.  For more information, read the rest of this HOW-TO.</p>
 <ol>
 <li>Download JSSE 1.0.2 (or later) from
    <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>
-   and either make it an <em>installed extension</em> on the system, or else add it
-   to the classpath being passed to Tomcat in the Catalina startup script.
-</li><br/><br/>
+   and either make it an <em>installed extension</em> on the system, or else
+   set an environment variable <code>JSSE_HOME</code> that points at the
+   directory into which you installed JSSE.</li><br/><br/>
 <li>Create a certificate keystore by executing the following command:
 <source>
 keytool -genkey -alias tomcat -keyalg RSA
 </source>
     and specify a password value of "changeit".</li><br/><br/>
-<li>Edit <code>$JAVA_HOME/jre/lib/security/java.security</code> and add
-<source>
-security.provider.2=com.sun.net.ssl.internal.ssl.Provider
-</source>
-    (if you already have a <code>security.provider.2</code> entry, use the
-    next available numeric identifier).</li><br/><br/>
 <li>Uncomment the "SSL HTTP/1.1 Connector" entry in
     <code>$CATALINA_HOME/conf/server.xml</code> and tweak as necessary.</li>
     <br/><br/>
@@ -182,25 +176,16 @@ If you built Tomcat from source, you have probably already downloaded this
 package.  If you are running JDK 1.4 (currently in beta), these classes have
 been integrated directly into the JDK, so you can skip this entire step.</p>
 
-<p>After expanding the package, there are two ways to make it available to Tomcat.
-The easiest approach is to simply make it an <em>installed extension</em> by 
-copying all three JAR files (<code>jcert.jar</code>, <code>jnet.jar</code>, and
-<code>jsse.jar</code>) into your <code>$JAVA_HOME/jre/lib/ext</code> directory.
-In effect, this eliminates the need to have them in any <code>CLASSPATH</code>.</p>
-
-<p>If making the JSSE libraries an installed extension is either not possible or
-not desirable in your particular environment, the alternative approach is to 
-add the JAR files to Tomcat's startup <code>CLASSPATH</code>. Because Tomcat
-ignores the system <code>CLASSPATH</code>, this approach involves modifying the 
-Catalina command script for your particular environment (<code>catalina.sh</code>
-under Unix, or <code>catalina.bat</code> in Windows). Add the JSSE libraries to
-the classpath being passed to the <code>java</code> command.</p>
-
-<p><strong>WARNING</strong> - Do <strong>not</strong> copy any of these JAR
-files into any of the internal Tomcat directories. Also, do not make them both an
-installed extension <em>and</em> include them in the startup script's 
-<code>CLASSPATH</code>. Either of these two scenerios will cause Tomcat to fail
-on startup.</p>
+<p>After expanding the package, there are two ways to make it available to
+Tomcat (choose one or the other):</p>
+<ul>
+<li>Make JSSE an <em>installed extension</em> by copying all three JAR files
+    (<code>jcert.jar</code>, <code>jnet.jar</code>, and <code>jsse.jar</code>)
+    into your <code>$JAVA_HOME/jre/lib/ext</code> directory.</li>
+<li>Create a new environment variable <code>JSSE_HOME</code> that contains
+    the absolute path to the directory into which you unpacked the
+    JSSE binary distribution.</li>
+</ul>
 
 </subsection>
 
@@ -256,35 +241,6 @@ ENTER key does this for you automatically.)</p>
 
 <p>If everything was successful, you now have a keystore file with a
 Certificate that can be used by your server.</p>
-
-</subsection>
-
-<subsection name="Add the SSL Provider to the JVM">
-
-<p>When the JVM attempts to load up the necessary classes for SSL during
-server startup, it checks for an appropriate <em>Provider</em> for each
-cryptographic service.  In order to let the JVM know that it has a suitable
-SSL provider installed (which you did when you installed JSSE), you must
-edit the <code>$JAVA_HOME/jre/lib/security/java.security</code> file and
-add an entry.  The very first section of this configuration file should
-already have one or more lines that look like this:</p>
-<source>
-security.provider.1=sun.security.provider.Sun
-</source>
-
-<p>The syntax here is:</p>
-<source>
-security.provider.{search-order}={fully-qualified-Provider-class-name}
-</source>
-
-<p>In order to register the SSL provider, add a line like this:</p>
-<source>
-security.provider.2=com.sun.net.ssl.internal.ssl.Provider
-</source>
-
-<p>If there is already an entry for <code>security.provider.2</code>,
-simply use the next available number (such as
-<code>security.provider.3</code>) that is not currently in use.</p>
 
 </subsection>
 
@@ -400,11 +356,8 @@ SSL communications, and what to do about them.</p>
 <li>I get "java.security.NoSuchAlgorithmException" errors in my
     log files.
     <blockquote>
-    <p>The JVM cannot find the JSSE JAR files, or you have not registered
-    the JSSE Provider.  Follow all of the directions to
-    <a href="#Download and Install JSSE">download and install JSSE</a>, and
-    <a href="#Add the SSL Provider to the JVM">register the SSL provider</a>
-    with your JVM.</p>
+    <p>The JVM cannot find the JSSE JAR files.  Follow all of the directions to
+    <a href="#Download and Install JSSE">download and install JSSE</a>.</p>
     </blockquote></li>
 
 <li>When Tomcat starts up, I get an exception like

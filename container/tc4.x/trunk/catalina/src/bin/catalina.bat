@@ -16,6 +16,10 @@ rem                 "stop", or "run" command is executed.
 rem
 rem   JAVA_HOME     Must point at your Java Development Kit installation.
 rem
+rem   JSSE_HOME     (Optional) May point at your Java Secure Sockets Extension
+rem                 (JSSE) installation, whose JAR files will be added to the
+rem                 system class path used to start Tomcat.
+rem
 rem $Id$
 rem ---------------------------------------------------------------------------
 
@@ -65,10 +69,14 @@ set _RUNJAVA="%JAVA_HOME%\bin\java"
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
 set CP=%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar
+if "%JSSE_HOME%" == "" goto noJsse
+set CP=%CP%;%JSSE_HOME%\lib\jcert.jar;%JSSE_HOME%\lib\jnet.jar;%JSSE_HOME%\jsse.jar
+:noJsse
 set CLASSPATH=%CP%
 echo Using CATALINA_BASE: %CATALINA_BASE%
 echo Using CATALINA_HOME: %CATALINA_HOME%
-echo Using CLASSPATH: %CLASSPATH%
+echo Using CLASSPATH:     %CLASSPATH%
+echo Using JAVA_HOME:     %JAVA_HOME%
 
 
 rem ----- Execute The Requested Command ---------------------------------------

@@ -20,6 +20,10 @@
 #                 command is executed.  Defaults to
 #                 "-classic -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
 #
+#   JSSE_HOME     (Optional) May point at your Java Secure Sockets Extension
+#                 (JSSE) installation, whose JAR files will be added to the
+#                 system class path used to start Tomcat.
+#
 # $Id$
 # -----------------------------------------------------------------------------
 
@@ -86,6 +90,9 @@ CP="$CATALINA_HOME/bin/bootstrap.jar"
 
 if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
   CP=$CP:"$JAVA_HOME/lib/tools.jar"
+fi
+if [ -f "$JSSE_HOME/lib/jsse.jar" ] ; then
+  CP=$CP:"$JSSE_HOME/lib/jcert.jar":"$JSSE_HOME/lib/jnet.jar":"$JSSE_HOME/lib/jsse.jar"
 fi
 
 
