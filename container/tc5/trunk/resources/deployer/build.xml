@@ -72,6 +72,8 @@
              addWebXmlMappings="true"
              outputDir="${webapp.path}/WEB-INF/classes" /> 
 
+    <validator path="${webapp.path}" />
+
     <mkdir dir="${webapp.path}/WEB-INF/classes"/>
     <mkdir dir="${webapp.path}/WEB-INF/lib"/>
 
@@ -91,8 +93,6 @@
       <include name="**" />
       <exclude name="tags/**" />
     </javac>
-
-    <validator path="${webapp.path}" />
 
     <jar destfile="${webapp.path}.war"
          basedir="${webapp.path}" />
