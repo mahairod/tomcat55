@@ -72,14 +72,21 @@
   <!-- ====================== DEPLOY: Deploy Components =================== -->
   <target name="deploy" depends="deploy-static"
    description="Build and deploy all components">
+
     <echo>Target: API - Dist ...</echo>
     <ant dir="${api.home}" target="dist"/>
+
     <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="${catalina.home}" target="deploy"/>
+    <copy todir="${tomcat.build}">
+      <fileset dir="${catalina.home}/build"/>
+    </copy>
+
     <echo>Target: Jasper - Deploy ...</echo>
     <ant dir="${jasper.home}"   target="deploy">
       <property name="catalina.home" value="${tomcat.build}"/>
     </ant>
+
   </target>
 
 
