@@ -2,8 +2,7 @@
 ; Tomcat 4 script for Nullsoft Installer
 ; $Id$
 
-Name "apache-tomcat-4.1"
-Caption "Apache Tomcat @VERSION@"
+Name "Apache Tomcat @VERSION@"
 OutFile tomcat4.exe
 CRCCheck on
 SetCompress force
