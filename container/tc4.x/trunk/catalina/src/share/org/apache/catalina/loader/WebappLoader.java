@@ -646,8 +646,6 @@ public class WebappLoader
             DirContextURLStreamHandler.bind
                 ((ClassLoader) classLoader, this.container.getResources());
 
-            Thread.currentThread().setContextClassLoader(classLoader);
-
         } catch (Throwable t) {
             throw new LifecycleException("start: ", t);
         }
