@@ -431,8 +431,9 @@ public class ServletWrapper {
     }
 
     public String toString() {
-	String toS="Wrapper( " + servletClassName + ",";
-	if( servlet!=null ) toS=toS+ servlet.getClass().getName();
+	String toS="Wrapper(";
+	if( servlet!=null ) toS=toS+ "S:" + servlet.getClass().getName();
+	else  toS= toS + servletClassName;
 	return toS + ")";
     }
 

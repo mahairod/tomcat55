@@ -75,10 +75,17 @@ import java.util.*;
 public class ContextMapperInterceptor implements RequestInterceptor {
     ContextManager cm;
     
+    public ContextMapperInterceptor() {
+    }
+
     public ContextMapperInterceptor(ContextManager cm) {
 	this.cm=cm;
     }
 
+    public void setContextManager( ContextManager cm ) {
+	this.cm=cm;
+    }
+    
     public int handleRequest( Request rrequest ) {
 	// someone else set it up, no need to worry
 	if( rrequest.getContext() != null )

@@ -182,6 +182,10 @@ public class ResponseImpl implements Response {
 	    out.reallyFlush();
 	} catch (SocketException e) {
 	    return;  // munch
+	} catch (IOException e) {
+	    if("Broken pipe".equals(e.getMessage()))
+		return;
+	    throw e;
 	}
     }
 
