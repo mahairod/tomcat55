@@ -30,7 +30,7 @@ echo Using classpath: ${CLASSPATH}
 echo
 
 java org.apache.tomcat.shell.Startup "$@" &
-sleep 5
+sleep 15
 java -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main \
     -testfile $test -debug
 java org.apache.tomcat.shell.Shutdown "$@"
