@@ -290,12 +290,29 @@ public class ResponseImpl extends Response {
             Cookie c  = (Cookie)cookieEnum.nextElement();
             headers.putHeader( CookieTools.getCookieHeaderName(c),
 			       CookieTools.getCookieHeaderValue(c));
+	    if( c.getVersion() == 1 ) {
+		// add a version 0 header too.
+		// XXX what if the user set both headers??
+		Cookie c0 = (Cookie)c.clone();
+		c0.setVersion(0);            
+		headers.putHeader( CookieTools.getCookieHeaderName(c0),
+				   CookieTools.getCookieHeaderValue(c0));
+	    }
         }
+	// XXX duplicated code, ugly
         cookieEnum = userCookies.elements();
         while (cookieEnum.hasMoreElements()) {
             Cookie c  = (Cookie)cookieEnum.nextElement();
             headers.putHeader( CookieTools.getCookieHeaderName(c),
 			       CookieTools.getCookieHeaderValue(c));
+	    if( c.getVersion() == 1 ) {
+		// add a version 0 header too.
+		// XXX what if the user set both headers??
+		Cookie c0 = (Cookie)c.clone();
+		c0.setVersion(0);            
+		headers.putHeader( CookieTools.getCookieHeaderName(c0),
+				   CookieTools.getCookieHeaderValue(c0));
+	    }
         }
 	// XXX
         // do something with content encoding here

@@ -128,7 +128,7 @@ public class HttpResponse extends ResponseImpl  {
         int size = headers.size();
         for (int i = 0; i < size; i++) {
             MimeHeaderField h = headers.getField(i);
-            buf.append(h + "\r\n");
+            buf.append(h).append("\r\n");
         }
         buf.append("\r\n");
         

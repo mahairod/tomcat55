@@ -110,7 +110,6 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
 	    AJPRequest request = new AJPRequest(socket); // todo: clean ConnectionHandler, make it abstract
 	    AJPResponse response = new AJPResponse();
             response.setOutputStream(socket.getOutputStream());
-        
 	    int count = 1;
 
 	    request.setResponse(response);
