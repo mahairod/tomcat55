@@ -11,6 +11,7 @@
   <property name="compile.debug"       value="true"/>
   <property name="compile.deprecation" value="false"/>
   <property name="compile.optimize"    value="true"/>
+  <property name="implementation.revision" value="1"/>
   <property name="servletapi.build"    value="build"/>
   <property name="servletapi.dist"     value="dist"/>
   <property name="servletapi.lib"      value="lib"/>
@@ -95,7 +96,7 @@
              use="true"
              windowtitle="Servlet and JavaServer Pages API Documentation"
              doctitle="Servlet and JavaServer Pages API Documentation"
-             bottom="Copyright &amp;copy; 1999-2001 The Apache Software Foundation.  All Rights Reserved."/>
+             bottom="Copyright &amp;copy; 1999-2002 The Apache Software Foundation.  All Rights Reserved."/>
 
   </target>
 
@@ -109,9 +110,19 @@
         <fileset dir="${servletapi.build}/docs/api"/>
     </copy>
 
+    <!-- Prepare Manifest -->
+    <copy tofile="${servletapi.build}/manifest"
+            file="src/etc/manifest" overwrite="yes">
+      <filterset>
+        <filter token="implementation.revision"
+                value="${implementation.revision}"/>
+      </filterset>
+    </copy>
+
     <!-- Create JAR file -->
     <jar jarfile="${servletapi.dist}/lib/servlet.jar"
-         basedir="${servletapi.build}/classes"/>
+         basedir="${servletapi.build}/classes"
+        manifest="${servletapi.build}/manifest"/>
 
     <!-- Copy API source files -->
     <copy todir="${servletapi.dist}/src">
