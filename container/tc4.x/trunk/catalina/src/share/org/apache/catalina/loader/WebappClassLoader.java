@@ -576,10 +576,10 @@ public class WebappClassLoader
 	    loader = loader.getParent();
 	    if (loader == null)        
 		break;        
-	    if (!(loader instanceof StandardClassLoader))
+	    if (!(loader instanceof WebappClassLoader))
 		continue;
             Extension extensions[] =
-                ((StandardClassLoader) loader).findAvailable();
+                ((WebappClassLoader) loader).findAvailable();
             for (int i = 0; i < extensions.length; i++)
                 results.add(extensions[i]);
         }
@@ -623,10 +623,10 @@ public class WebappClassLoader
 	    loader = loader.getParent();
             if (loader == null)
                 break;
-            if (!(loader instanceof StandardClassLoader))
+            if (!(loader instanceof WebappClassLoader))
                 continue;
             Extension extensions[] =
-                ((StandardClassLoader) loader).findRequired();
+                ((WebappClassLoader) loader).findRequired();
             for (int i = 0; i < extensions.length; i++)
                 results.add(extensions[i]);
         }
@@ -717,7 +717,7 @@ public class WebappClassLoader
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("StandardClassLoader\r\n");
+        StringBuffer sb = new StringBuffer("WebappClassLoader\r\n");
         sb.append("  available:\r\n");
         Iterator available = this.available.iterator();
         while (available.hasNext()) {
@@ -1187,7 +1187,7 @@ public class WebappClassLoader
 
     /**
      * Get the Permissions for a CodeSource.  If this instance
-     * of StandardClassLoader is for a web application context,
+     * of WebappClassLoader is for a web application context,
      * add read FilePermissions for the base directory (if unpacked),
      * the context URL, and jar file resources.
      *
@@ -1556,7 +1556,7 @@ public class WebappClassLoader
      */
     private void log(String message) {
 
-	System.out.println("StandardClassLoader: " + message);
+	System.out.println("WebappClassLoader: " + message);
 
     }
 
@@ -1569,7 +1569,7 @@ public class WebappClassLoader
      */
     private void log(String message, Throwable throwable) {
 
-	System.out.println("StandardClassLoader: " + message);
+	System.out.println("WebappClassLoader: " + message);
 	throwable.printStackTrace(System.out);
 
     }
