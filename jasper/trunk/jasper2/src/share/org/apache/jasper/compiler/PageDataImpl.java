@@ -271,6 +271,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	private StringBuffer buf;
 	private Compiler compiler;
 	private String jspIdPrefix;
+	private boolean resetDefaultNS = false;
 
 	// Current value of jsp:id attribute
 	private int jspId;
@@ -295,7 +296,12 @@ class PageDataImpl extends PageData implements TagConstants {
 		appendXmlProlog();
 		appendTag(n);
 	    } else {
+		boolean resetDefaultNSSave = resetDefaultNS;
+		if (n.isXmlSyntax()) {
+		    resetDefaultNS = true;
+		}
 		visitBody(n);
+		resetDefaultNS = resetDefaultNSSave;
 	    }
 	}
 
@@ -400,11 +406,15 @@ class PageDataImpl extends PageData implements TagConstants {
         }
 
 	public void visit(Node.CustomTag n) throws JasperException {
+	    boolean resetDefaultNSSave = resetDefaultNS;
 	    appendTag(n);
+	    resetDefaultNS = resetDefaultNSSave;
 	}
 
 	public void visit(Node.UninterpretedTag n) throws JasperException {
+	    boolean resetDefaultNSSave = resetDefaultNS;
 	    appendTag(n);
+	    resetDefaultNS = resetDefaultNSSave;
 	}
 
 	public void visit(Node.JspText n) throws JasperException {
@@ -690,10 +700,16 @@ class PageDataImpl extends PageData implements TagConstants {
 	     */
 	    attrs = n.getNonTaglibXmlnsAttributes();
 	    len = (attrs == null) ? 0 : attrs.getLength();
+	    boolean defaultNSSeen = false;
 	    for (int i=0; i<len; i++) {
 		String name = attrs.getQName(i);
 		String value = attrs.getValue(i);
 		buf.append("  ").append(name).append("=\"").append(value).append("\"\n");
+		defaultNSSeen = "xmlns".equals(name);
+	    }
+	    if (resetDefaultNS && !defaultNSSeen) {
+		buf.append("  xmlns=\"\"\n");
+		resetDefaultNS = false;
 	    }
 
 	    /*
