@@ -92,6 +92,11 @@ public final class ConnectorForm extends ActionForm {
     private String objectName = null;
     
     /**
+     * The name of the service this connector belongs to.
+     */
+    private String serviceName = null;
+   
+    /**
      * The text for the scheme.
      */
     private String scheme = null;
@@ -224,6 +229,25 @@ public final class ConnectorForm extends ActionForm {
     public void setObjectName(String objectName) {
 
         this.objectName = objectName;
+
+    }
+    
+      /**
+     * Return the object name of the service this connector belongs to.
+     */
+    public String getServiceName() {
+
+        return this.serviceName;
+
+    }
+
+
+    /**
+     * Set the object name of the Service this connector belongs to.
+     */
+    public void setServiceName(String serviceName) {
+
+        this.serviceName = serviceName;
 
     }
     
