@@ -401,7 +401,13 @@ public class ServletWrapper {
 	    // 	    }
 	    // 	}
 	} catch( Throwable t ) {
-	    contextM.handleError( req, res, t, 0 );
+	    if( null!=req.getAttribute("tomcat.servlet.error.defaultHandler") ) {
+		// we are in handleRequest for the "default
+		System.out.println("ERROR: can't find default error handler or error in default error page");
+		t.printStackTrace();
+	    } else {
+		contextM.handleError( req, res, t, 0 );
+	    }
 	}
     }
 
