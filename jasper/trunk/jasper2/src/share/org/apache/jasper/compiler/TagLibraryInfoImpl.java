@@ -288,7 +288,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             else if ("validator".equals(tname))
                 this.tagLibraryValidator = createValidator(element);
             else if ("tag".equals(tname))
-                tagVector.addElement(createTagInfo(element));
+                tagVector.addElement(createTagInfo(element, jspversion));
             else if ("tag-file".equals(tname)) {
                 TagFileInfo tagFileInfo = createTagFileInfo(element, uri,
                                                             jarFileUrl);
@@ -382,7 +382,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
         return location;
     }
 
-    private TagInfo createTagInfo(TreeNode elem) throws JasperException {
+    private TagInfo createTagInfo(TreeNode elem, String jspVersion)
+            throws JasperException {
+
         String tagName = null;
         String tagClassName = null;
         String teiClassName = null;
@@ -430,7 +432,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             } else if ("variable".equals(tname)) {
                 variableVector.addElement(createVariable(element));
             } else if ("attribute".equals(tname)) {
-                attributeVector.addElement(createAttribute(element));
+                attributeVector.addElement(createAttribute(element, jspVersion));
             } else if ("dynamic-attributes".equals(tname)) {
                 dynamicAttributes = JspUtil.booleanValue(element.getBody());
             } else if ("example".equals(tname)) {
@@ -526,7 +528,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
         return new TagFileInfo(name, path, tagInfo);
     }
 
-    TagAttributeInfo createAttribute(TreeNode elem) {
+    TagAttributeInfo createAttribute(TreeNode elem, String jspVersion) {
         String name = null;
         String type = null;
         boolean required = false, rtexprvalue = false, reqTime = false,
@@ -549,6 +551,19 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
                     rtexprvalue = JspUtil.booleanValue(s);
             } else if ("type".equals(tname)) {
                 type = element.getBody();
+                if ("1.2".equals(jspVersion)
+                        && (type.equals("Boolean")
+                            || type.equals("Byte")
+                            || type.equals("Character")
+                            || type.equals("Double")
+                            || type.equals("Float")
+                            || type.equals("Integer")
+                            || type.equals("Long")
+                            || type.equals("Object")
+                            || type.equals("Short")
+                            || type.equals("String"))) {
+                    type = "java.lang." + type;
+                }
             } else if ("fragment".equals(tname)) {
                 String s = element.getBody();
                 if (s != null)
