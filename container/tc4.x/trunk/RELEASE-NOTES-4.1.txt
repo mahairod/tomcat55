@@ -679,6 +679,12 @@ Catalina Bug Fixes:
          Add missing security mapping for deploy (this bug was introduced 
          in 4.1.19).
 
+[4.1.20] ManagerBase, StandardSession:
+         Correct problems related to the persistence of sessions.
+
+[4.1.20] ApplicationContext:
+         Add a workaround to allow retrieving contexts from the root context.
+
 
 ----------------
 Coyote Bug Fixes:
