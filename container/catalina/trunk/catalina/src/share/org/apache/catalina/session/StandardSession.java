@@ -44,6 +44,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.SessionEvent;
@@ -156,6 +157,14 @@ public class StandardSession
      * is not included in the serialized version of this object.
      */
     protected transient int debug = 0;
+
+
+    /**
+     * Set of attribute names which are not allowed to be persisted.
+     */
+    private static final String[] excludedAttributes = {
+        Globals.SUBJECT_ATTR
+    };
 
 
     /**
@@ -1384,7 +1393,8 @@ public class StandardSession
             }
             if (value == null)
                 continue;
-            else if (value instanceof Serializable) {
+            else if ( (value instanceof Serializable) 
+                    && (!exclude(keys[i]) )) {
                 saveNames.add(keys[i]);
                 saveValues.add(value);
             }
@@ -1410,6 +1420,21 @@ public class StandardSession
             }
         }
 
+    }
+
+
+    /**
+     * Exclude attribute that cannot be serialized.
+     * @param name the attribute's name
+     */
+    protected boolean exclude(String name){
+
+        for (int i = 0; i < excludedAttributes.length; i++) {
+            if (name.equalsIgnoreCase(excludedAttributes[i]))
+                return true;
+        }
+
+        return false;
     }
 
 
