@@ -70,22 +70,17 @@ import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 import javax.naming.directory.DirContext;
 import org.apache.naming.ContextAccessController;
 import org.apache.catalina.Container;
-import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
-import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Manager;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -469,6 +464,10 @@ public class StandardDefaultContext
         Loader oldLoader = this.loader;
         this.loader = loader;
         
+        if (loader != null) {
+            loader.setDefaultContext(this);
+        }
+        
         // Report this property change to interested listeners
         support.firePropertyChange("loader", oldLoader, this.loader);
     }
@@ -493,7 +492,11 @@ public class StandardDefaultContext
     public void setManager(Manager manager) {
         Manager oldManager = this.manager;
         this.manager = manager;
-        
+
+        if (manager != null) {
+            manager.setDefaultContext(this);
+        }
+
         // Report this property change to interested listeners
         support.firePropertyChange("manager", oldManager, this.manager);
     }
