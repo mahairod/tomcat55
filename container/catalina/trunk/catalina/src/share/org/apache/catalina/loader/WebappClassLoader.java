@@ -1513,6 +1513,7 @@ public class WebappClassLoader
 
         notFoundResources.clear();
         resourceEntries.clear();
+        resources = null;
         repositories = null;
         files = null;
         jarFiles = null;
