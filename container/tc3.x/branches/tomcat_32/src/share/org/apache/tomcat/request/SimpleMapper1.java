@@ -343,8 +343,8 @@ public class SimpleMapper1 extends  BaseInterceptor  {
             requestURI.substring(contextPath.length()).toUpperCase();
         if (relativePath.equals("/META-INF") ||
             relativePath.equals("/WEB-INF") ||
-            (relativePath.indexOf("/META-INF/") != 0) ||
-            (relativePath.indexOf("/WEB-INF/") != 0))
+            (relativePath.indexOf("/META-INF/") >= 0) ||
+            (relativePath.indexOf("/WEB-INF/") >= 0))
             return 404;
 
 	return OK;

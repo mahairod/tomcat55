@@ -419,8 +419,8 @@ class FileHandler extends ServletWrapper  {
 		String relPathU=relPath.toUpperCase();
 		if ( relPathU.startsWith("WEB-INF") ||
                      relPathU.startsWith("META-INF") ||
-                    (relPathU.indexOf("/WEB-INF/") != 0) ||
-                    (relPathU.indexOf("/META-INF/") != 0) ) {
+                    (relPathU.indexOf("/WEB-INF/") >= 0) ||
+                    (relPathU.indexOf("/META-INF/") >= 0) ) {
 			return null;
 		}
 	}
