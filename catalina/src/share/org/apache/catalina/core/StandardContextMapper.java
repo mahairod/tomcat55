@@ -380,7 +380,7 @@ public final class StandardContextMapper
         /**
          * JNDI resources name.
          */
-        protected static final String RESOURCES_JNDI_NAME = "java:/comp/Resources";
+        private static final String RESOURCES_JNDI_NAME = "java:/comp/Resources";
 
         /**
          * Get resources. This method will try to retrieve the resources through
@@ -389,7 +389,7 @@ public final class StandardContextMapper
          *
          * @return A JNDI DirContext, or null.
          */
-        protected DirContext getResources() {
+        private DirContext getResources() {
 
             DirContext result = null;
 
