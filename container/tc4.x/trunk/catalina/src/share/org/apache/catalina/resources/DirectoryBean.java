@@ -229,7 +229,9 @@ public final class DirectoryBean extends ResourceBean {
     public InputStream render(String contextPath) {
 
 	// Number of characters to trim from the beginnings of filenames
-	int trim = name.length() + 1;
+	int trim = name.length();
+	if (!name.endsWith("/"))
+	    trim += 1;
 	if (name.equals("/"))
 	    trim = 1;
 
