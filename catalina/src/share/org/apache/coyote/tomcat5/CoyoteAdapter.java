@@ -187,6 +187,10 @@ final class CoyoteAdapter
             req.setNote(ADAPTER_NOTES, request);
             res.setNote(ADAPTER_NOTES, response);
 
+            // Set query string encoding
+            req.getParameters().setQueryStringEncoding
+                (connector.getURIEncoding());
+
         }
 
         if (connector.isXpoweredBy()) {
