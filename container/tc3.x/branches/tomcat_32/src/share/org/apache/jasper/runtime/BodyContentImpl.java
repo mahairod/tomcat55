@@ -109,19 +109,15 @@ public class BodyContentImpl extends BodyContent {
 
         char[] tmp = null;
 
-	//XXX Should it be multiple of DEFAULT_BUFFER_SIZE??
-
-    int newBufferSize = bufferSize * 2;
-    if (len <= newBufferSize) {
-	    bufferSize = newBufferSize;
-	    tmp = new char [bufferSize];
-	} else {
-	    tmp = new char [bufferSize + len];
-	    bufferSize += len;
-	}
-	System.arraycopy(cb, 0, tmp, 0, cb.length);
-	cb = tmp;
-	tmp = null;
+        if(len <= bufferSize){
+            bufferSize *= 2;
+        }else{
+            bufferSize += len;
+        }
+        tmp = new char[bufferSize];
+        System.arraycopy(cb, 0, tmp, 0, cb.length);
+        cb = tmp;
+        tmp = null;
     }
 
     /**
