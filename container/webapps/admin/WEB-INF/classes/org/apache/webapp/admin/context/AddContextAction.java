@@ -151,11 +151,11 @@ public class AddContextAction extends Action {
         contextFm.setPath("");
         contextFm.setDebugLvl("0");
         //loader initialization
-        contextFm.setLdrCheckInterval("15");
+        //contextFm.setLdrCheckInterval("15");
         contextFm.setLdrDebugLvl("0");
         contextFm.setLdrReloadable("false");
         //manager initialization
-        contextFm.setMgrCheckInterval("60");
+        //contextFm.setMgrCheckInterval("60");
         contextFm.setMgrDebugLvl("0");
         contextFm.setMgrMaxSessions("-1");
         contextFm.setMgrSessionIDInit("");
