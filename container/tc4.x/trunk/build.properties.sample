@@ -57,10 +57,10 @@ base.path=/usr/local
 
 
 # ----- Commons Beanutils, version 1.1 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.3
+commons-beanutils.home=${base.path}/commons-beanutils-1.4
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
-commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.3/commons-beanutils-1.3.tar.gz
+commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.4/commons-beanutils-1.4.tar.gz
 
 
 # ----- Commons Collections, version 1.0 or later -----
@@ -82,8 +82,7 @@ commons-logging.home=${base.path}/commons-logging-1.0.1
 commons-logging.lib=${commons-logging.home}
 commons-logging-api.jar=${commons-logging.lib}/commons-logging-api.jar
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
-commons-logging.loc=jakarta-commons/logging
-#commons-logging.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.1/commons-logging-1.0.1.tar.gz
+commons-logging.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.1/commons-logging-1.0.1.tar.gz
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
@@ -143,18 +142,11 @@ commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
 commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
-# ----- Commons DBCP, version 20011030 or later -----
-commons-dbcp.home=${base.path}/commons-dbcp
+# ----- Commons DBCP, version 1.0 or later -----
+commons-dbcp.home=${base.path}/commons-dbcp-1.0
 commons-dbcp.lib=${commons-dbcp.home}
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
-commons-dbcp.loc=jakarta-commons/dbcp
-
-
-# ----- Commons Lang, version 20020808 or later -----
-commons-lang.home=${base.path}/commons-lang
-commons-lang.lib=${commons-lang.home}
-commons-lang.jar=${commons-lang.lib}/commons-lang.jar
-commons-lang.loc=jakarta-commons/lang
+commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-dbcp/v1.0/commons-dbcp-1.0.zip
 
 
 # ----- Commons Modeler, version 1.0 or later -----
@@ -165,10 +157,10 @@ commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/com
 
 
 # ----- Commons Pool, version 1.0 or later -----
-commons-pool.home=${base.path}/commons-pool-1.0
+commons-pool.home=${base.path}/commons-pool-1.0.1
 commons-pool.lib=${commons-pool.home}
 commons-pool.jar=${commons-pool.lib}/commons-pool.jar
-commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0/commons-pool-1.0.tar.gz
+commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0.1/commons-pool-1.0.1.tar.gz
 
 
 # ----- JavaService, version 1.2.0 or later -----
@@ -216,7 +208,7 @@ mail.lib=${mail.home}
 mail.jar=${mail.lib}/mail.jar
 
 
-# ----- NSIS, version 1.90 or later -----
+# ----- NSIS, version 1.9x -----
 nsis.home=${base.path}/nsis
 nsis.loc=http://www.nullsoft.com/free/nsis/nsis198.exe
 
