@@ -1,0 +1,42 @@
+<project name="moo" default="core" basedir=".">
+
+  <!-- system properties can be defined here, compiler can have the values:
+       classic, modern, jikes -->
+  <property name="build.compiler" value="classic"/>
+
+  <target name="core" >
+
+    <!-- create build and classes directories -->
+    <mkdir dir="build"/>
+    <mkdir dir="build/classes"/>
+
+    <!-- create classes -->
+    <javac srcdir="src/share" destdir="build/classes" />
+
+  </target>
+
+  <target name="dist" depends="core">
+
+    <!-- create dist directory -->
+    <mkdir dir="dist"/>
+
+    <!-- copy stuff from build -->
+    <copydir src="build" dest="dist"/>
+
+    <!-- create jars for the classes -->
+    <jar jarfile="../moo.jar" basedir="dist/classes" items="org"/>
+
+    <!-- remove stuff from dist -->
+    <deltree dir="dist" />
+
+  </target>
+
+
+  <target name="clean">
+
+    <deltree dir="build"/>
+
+  </target>
+
+
+</project>

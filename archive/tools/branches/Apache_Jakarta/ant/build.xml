@@ -1,0 +1,33 @@
+<!-- basedir attrib of project is optional -->
+
+<project name="BuildTool" default="main" basedir=".">
+
+  <!-- system properties can be defined here, compiler can have the values:
+       classic, modern, jikes -->
+
+  <property name="build.compiler" value="classic"/>
+
+  <!-- need to define the default taskdefs elsewhere -->
+
+  <target name="main">
+    <mkdir dir="build"/>
+    <javac srcdir="src/main" destdir="build" classpath="lib/projectx-tr2.jar"
+     debug="on"/>
+  </target>
+
+  <target name="dist" depends="main">
+    <!-- need to make a way for a jar to include other jar files -->
+    <jar jarfile="../ant.jar" basedir="build" items="org"
+     manifest="src/etc/manifest"/>
+  </target>
+
+  <target name="foo" depends="main">
+    <jar jarfile="foo.jar" basedir="build" items="org/apache/tools/ant/taskdefs"/>
+  </target>
+  
+  <target name="clean">
+    <deltree dir="build"/>
+  </target>
+
+</project>
+
