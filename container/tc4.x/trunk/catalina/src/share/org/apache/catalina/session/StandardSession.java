@@ -128,6 +128,8 @@ final class StandardSession
 
 	super();
 	this.manager = manager;
+        if (manager instanceof StandardManager)
+            this.debug = ((StandardManager) manager).getDebug();
 
     }
 
@@ -162,6 +164,13 @@ final class StandardSession
      * January 1, 1970 GMT.
      */
     private long creationTime = 0L;
+
+
+    /**
+     * The debugging detail level for this component.  NOTE:  This value
+     * is not included in the serialized version of this object.
+     */
+    private transient int debug = 0;
 
 
     /**
@@ -1037,6 +1046,8 @@ final class StandardSession
 	thisAccessedTime = ((Long) stream.readObject()).longValue();
 	principal = null;	// Transient only
         setId((String) stream.readObject());
+        if (debug >= 2)
+            log("readObject() loading session " + id);
 
 	// Deserialize the attribute count and attribute values
 	if (attributes == null)
@@ -1049,6 +1060,9 @@ final class StandardSession
 	    Object value = (Object) stream.readObject();
 	    if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
 		continue;
+            if (debug >= 2)
+                log("  loading attribute '" + name +
+                    "' with value '" + value + "'");
             setAttribute(name, value);
 	}
         isValid = isValidSave;
@@ -1085,6 +1099,8 @@ final class StandardSession
 	stream.writeObject(new Boolean(isValid));
 	stream.writeObject(new Long(thisAccessedTime));
 	stream.writeObject(id);
+        if (debug >= 2)
+            log("writeObject() storing session " + id);
 
 	// Accumulate the names of serializable and non-serializable attributes
 	String keys[] = keys();
@@ -1112,10 +1128,16 @@ final class StandardSession
 	    stream.writeObject((String) saveNames.get(i));
 	    try {
 		stream.writeObject(saveValues.get(i));
+                if (debug >= 2)
+                    log("  storing attribute '" + saveNames.get(i) +
+                        "' with value '" + saveValues.get(i) + "'");
 	    } catch (NotSerializableException e) {
 		log(sm.getString("standardSession.notSerializable",
 				 saveNames.get(i), id));
 		stream.writeObject(NOT_SERIALIZED);
+                if (debug >= 2)
+                    log("  storing attribute '" + saveNames.get(i) +
+                        "' with value NOT_SERIALIZED");
 		unbinds.add(saveNames.get(i));
 	    }
 	}
