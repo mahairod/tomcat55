@@ -142,10 +142,15 @@ public final class HttpServletResponseFacade  implements HttpServletResponse
      *  part of response, but session code.
      */
     public String encodeRedirectURL(String location) {
-	if (isEncodeable(toAbsolute(location)))
+	String absolute = toAbsolute(location);
+	if (isEncodeable(absolute)) {
+	    if( "".equals(location) ) {
+		location = absolute;
+	    }
 	    return (toEncoded(location, response.getRequest().getSession(false)));
-	else
+	} else {
 	    return (location);
+	}
     }
 
     /**
@@ -156,10 +161,15 @@ public final class HttpServletResponseFacade  implements HttpServletResponse
     }
 
     public String encodeURL(String url) {
-	if (isEncodeable(toAbsolute(url)))
+	String absolute = toAbsolute(url); 
+	if (isEncodeable(absolute)) {
+	    if( "".equals(url) ) {
+		url = absolute;
+	    }
 	    return (toEncoded(url, response.getRequest().getSession(false)));
-	else
+	} else {
 	    return (url);
+	}
     }
 
     /**
