@@ -73,7 +73,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.security.AccessController;
 import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -551,8 +553,18 @@ public class StandardSession
      */
     public HttpSession getSession() {
 
-        if (facade == null)
-            facade = new StandardSessionFacade(this);
+        if (facade == null){
+            if (System.getSecurityManager() != null){
+                final StandardSession fsession = this;
+                facade = (StandardSessionFacade)AccessController.doPrivileged(new PrivilegedAction(){
+                    public Object run(){
+                        return new StandardSessionFacade(fsession);
+                    }
+                });
+            } else {
+                facade = new StandardSessionFacade(this);
+            }
+        }
         return (facade);
 
     }
