@@ -135,7 +135,10 @@ public class AddHostAction extends Action {
         hostFm.setDebugLvl("0");
         hostFm.setServiceName(serviceName);
         hostFm.setAppBase("");
-        hostFm.setUnpackWARs("false");
+        hostFm.setAutoDeploy("true");
+        hostFm.setDeployXML("true");
+        hostFm.setLiveDeploy("true");
+        hostFm.setUnpackWARs("true");
         hostFm.setDebugLvlVals(Lists.getDebugLevels());
         hostFm.setBooleanVals(Lists.getBooleanValues());        
         

@@ -41,7 +41,9 @@
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE S            attribute = "appBase";
+            hostFm.setAppBase
+                ((String) mBServer.getAttribute(hname, attribute));OFTWARE FOUNDATION OR
  * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
@@ -115,11 +117,26 @@ public final class HostForm extends ActionForm {
      * The text for the debug level.
      */
     private String debugLvl = "0";
+
+    /**
+     * Boolean for autoDeploy.
+     */
+    private String autoDeploy = "true";
+
+    /**
+     * Boolean for deployXML.
+     */
+    private String deployXML = "true";
+
+    /**
+     * Boolean for liveDeploy.
+     */
+    private String liveDeploy = "true";
     
     /**
      * Boolean for unpack WARs.
      */
-    private String unpackWARs = "false";
+    private String unpackWARs = "true";
     
     /**
      * The text for the port. -- TBD
@@ -256,6 +273,63 @@ public final class HostForm extends ActionForm {
         this.appBase = appBase;
         
     }
+
+    /**
+     * Return the autoDeploy.
+     */
+    public String getAutoDeploy() {
+        
+        return this.autoDeploy;
+        
+    }
+    
+    /**
+     * Set the autoDeploy.
+     */
+    
+    public void setAutoDeploy(String autoDeploy) {
+        
+        this.autoDeploy = autoDeploy;
+        
+    }
+
+    /**
+     * Return the deployXML.
+     */
+    public String getDeployXML() {
+        
+        return this.deployXML;
+        
+    }
+    
+    /**
+     * Set the deployXML.
+     */
+    
+    public void setDeployXML(String deployXML) {
+        
+        this.deployXML = deployXML;
+        
+    }
+
+    /**
+     * Return the liveDeploy.
+     */
+    public String getLiveDeploy() {
+        
+        return this.liveDeploy;
+        
+    }
+    
+    /**
+     * Set the liveDeploy.
+     */
+    
+    public void setLiveDeploy(String liveDeploy) {
+        
+        this.liveDeploy = liveDeploy;
+        
+    }
     
     /**
      * Return the unpackWARs.
@@ -364,8 +438,11 @@ public final class HostForm extends ActionForm {
         this.serviceName = null;
         this.hostName = null;
         this.appBase = null;
+        this.autoDeploy = "true";
+        this.deployXML = "true";
+        this.liveDeploy = "true";
         this.debugLvl = "0";
-        this.unpackWARs = "false";
+        this.unpackWARs = "true";
         
     }
     
@@ -380,6 +457,12 @@ public final class HostForm extends ActionForm {
         sb.append(debugLvl);
         sb.append(",appBase=");
         sb.append(appBase);
+        sb.append(",autoDeploy=");
+        sb.append(autoDeploy);
+        sb.append(",deployXML=");
+        sb.append(deployXML);
+        sb.append(",liveDeploy=");
+        sb.append(liveDeploy);
         sb.append(",unpackWARs=");
         sb.append(unpackWARs);
         sb.append("',objectName='");

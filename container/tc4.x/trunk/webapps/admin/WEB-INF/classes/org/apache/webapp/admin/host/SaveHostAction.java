@@ -112,6 +112,9 @@ public final class SaveHostAction extends Action {
     { "java.lang.String",     // parent
       "java.lang.String",     // name
       "java.lang.String",     // appBase
+      "boolean",              // autoDeploy
+      "boolean",              // deployXML
+      "boolean",              // liveDeploy
       "boolean",              // unpackWARs
     };
 
@@ -199,12 +202,15 @@ public final class SaveHostAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardHost object
-                values = new Object[4];
+                values = new Object[7];
                 values[0] = 
                     TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName;
                 values[1] = hform.getHostName();
                 values[2] = hform.getAppBase();
-                values[3] = new Boolean(hform.getUnpackWARs());
+                values[3] = new Boolean(hform.getAutoDeploy());
+                values[4] = new Boolean(hform.getDeployXML());
+                values[5] = new Boolean(hform.getLiveDeploy());
+                values[6] = new Boolean(hform.getUnpackWARs());
                 
                 operation = "createStandardHost";
                 hObjectName = (String)
@@ -281,7 +287,37 @@ public final class SaveHostAction extends Action {
             }
             mBServer.setAttribute(honame,
                                   new Attribute("appBase", appBase));
-            
+
+            attribute = "autoDeploy";
+            String autoDeploy = "true";
+            try {
+                autoDeploy = hform.getAutoDeploy();
+            } catch (Throwable t) {
+                autoDeploy = "true";
+            }
+            mBServer.setAttribute(honame,
+                                  new Attribute("autoDeploy", new Boolean(autoDeploy)));
+
+            attribute = "deployXML";
+            String deployXML = "true";
+            try {
+                deployXML = hform.getDeployXML();
+            } catch (Throwable t) {
+                deployXML = "true";
+            }
+            mBServer.setAttribute(honame,
+                                  new Attribute("deployXML", new Boolean(deployXML)));
+
+            attribute = "liveDeploy";
+            String liveDeploy = "true";
+            try {
+                liveDeploy = hform.getLiveDeploy();
+            } catch (Throwable t) {
+                liveDeploy = "true";
+            }
+            mBServer.setAttribute(honame,
+                                  new Attribute("liveDeploy", new Boolean(liveDeploy)));
+
             attribute = "unpackWARs";
             String unpackWARs = "false";
             try {
@@ -291,7 +327,6 @@ public final class SaveHostAction extends Action {
             }
             mBServer.setAttribute(honame,
                                   new Attribute("unpackWARs", new Boolean(unpackWARs)));
-
         } catch (Exception e) {
 
             getServlet().log

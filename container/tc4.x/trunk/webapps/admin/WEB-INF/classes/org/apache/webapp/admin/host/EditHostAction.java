@@ -186,6 +186,15 @@ public class EditHostAction extends Action {
             attribute = "appBase";
             hostFm.setAppBase
                 ((String) mBServer.getAttribute(hname, attribute));
+            attribute = "autoDeploy";
+            hostFm.setAutoDeploy
+                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
+            attribute = "deployXML";
+            hostFm.setDeployXML
+                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
+            attribute = "liveDeploy";
+            hostFm.setLiveDeploy
+                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
             attribute = "unpackWARs";
             hostFm.setUnpackWARs
                 (((Boolean) mBServer.getAttribute(hname, attribute)).toString());

@@ -149,7 +149,6 @@
             </controls:data>
         </controls:row>
 
-
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="host.base"/>:</controls:label>
             <controls:data>
@@ -163,12 +162,46 @@
             </controls:data>
         </controls:row>
 
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="host.autoDeploy"/>:</controls:label>
+            <controls:data>
+               <html:select property="autoDeploy">
+                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
                 <html:select property="debugLvl">
                      <bean:define id="debugLvlVals" name="hostForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="host.deployXML"/>:</controls:label>
+            <controls:data>
+               <html:select property="deployXML">
+                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="host.liveDeploy"/>:</controls:label>
+            <controls:data>
+               <html:select property="liveDeploy">
+                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
                 </html:select>
             </controls:data>

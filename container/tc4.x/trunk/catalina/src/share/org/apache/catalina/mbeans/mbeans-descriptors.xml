@@ -2069,9 +2069,22 @@
           description="The application root for this Host"
                  type="java.lang.String"/>
 
+    <attribute   name="autoDeploy"
+          description="The auto deploy flag for this Host"
+                 type="boolean"/>
+
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
+
+    <attribute   name="deployXML"
+          description="deploy Context XML config files property"
+                 is="true"
+                 type="boolean"/>
+
+    <attribute   name="liveDeploy"
+          description="The live deploy flag for this Host"
+                 type="boolean"/>
 
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"

@@ -877,18 +877,26 @@ public class MBeanFactory extends BaseModelMBean {
      * @param parent MBean Name of the associated parent component
      * @param name Unique name of this Host
      * @param appBase Application base directory name
+     * @param autoDeploy Should we auto deploy?
+     * @param deployXML Should we deploy Context XML config files property?
+     * @param liveDeploy Should we live deploy?
      * @param unpackWARs Should we unpack WARs when auto deploying?
      *
      * @exception Exception if an MBean cannot be created or registered
      */
     public String createStandardHost(String parent, String name,
-                                     String appBase, boolean unpackWARs)
+                                     String appBase, boolean autoDeploy,
+				     boolean deployXML, boolean liveDeploy,
+				     boolean unpackWARs)
         throws Exception {
 
         // Create a new StandardHost instance
         StandardHost host = new StandardHost();
         host.setName(name);
         host.setAppBase(appBase);
+        host.setAutoDeploy(autoDeploy);
+        host.setDeployXML(deployXML);
+        host.setLiveDeploy(liveDeploy);
         host.setUnpackWARs(unpackWARs);
 
         // Add the new instance to its parent component
