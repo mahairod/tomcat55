@@ -67,6 +67,7 @@ package org.apache.catalina.connector.http;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.io.EOFException;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -166,6 +167,9 @@ public class SocketInputStream extends BufferedInputStream {
         while ((chr = read()) == CR) { // Skipping CR
             read(); // Skipping LF
         }
+        if (chr == -1)
+            throw new EOFException
+                (sm.getString("requestStream.readline.error"));
         if (chr != CR) {
             pos--;
         }
@@ -457,7 +461,8 @@ public class SocketInputStream extends BufferedInputStream {
                     eol = true;
                 } else {
                     // FIXME : Check if binary conversion is working fine
-                    header.value[readCount] = (char) (buf[pos] & 0xff);
+                    int ch = buf[pos] & 0xff;
+                    header.value[readCount] = (char) ch;
                     readCount++;
                 }
                 pos++;
