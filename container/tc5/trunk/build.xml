@@ -5,8 +5,8 @@
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
   <!-- property values you must customize for successful building!!!        -->
-  <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
   <property file="build.properties.default"/>
 
   <!-- Project Properties -->
@@ -463,7 +463,7 @@
     </ant>
   </target>
 
-  <target name="build-all" depends="init,build-depends,build"/>
+  <target name="build-all" depends="init,build-depends,build,build-webapps,embed"/>
 
 
   <target name="build-depends" depends="init"
@@ -495,6 +495,22 @@
 
     <mkdir dir="${tomcat.build}/webapps" />
     <mkdir dir="${tomcat.build}/server/webapps" />
+  
+    <!-- The build files are far too difficult to hack - just build it and copy -->
+    <ant dir="${api.home}/jsr154" target="dist">
+    </ant>
+    <ant dir="${api.home}/jsr152" target="dist">
+    </ant>
+
+    <mkdir dir="${tomcat.build}/webapps/servlets-examples"/>
+    <copy todir="${tomcat.build}/webapps/servlets-examples">
+      <fileset dir="${api.home}/jsr154/build/examples" includes="**"/>
+    </copy>
+
+    <mkdir dir="${tomcat.build}/webapps/jsp-examples"/>
+    <copy todir="${tomcat.build}/webapps/jsp-examples">
+      <fileset dir="${api.home}/jsr152/build/examples" includes="**"/>
+    </copy>
 
     <ant dir="${catalina.home}/webapps/ROOT" target="build-main">
         <property name="webapps.build" value="${tomcat.build}/webapps" />
@@ -526,7 +542,10 @@
         <property name="catalina.deploy" value="${tomcat.build}" />
         <property name="flags.hide" value="true" />
     </ant>
+
     <antcall target="fix-webapps" />
+
+    <ant dir="."   target="build-webapps-precompile" /> 
   </target>
 
   <target name="fix-webapps" depends="init"
@@ -550,16 +569,6 @@
     <copy file="./CHANGELOG"
         tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
 
-    <!-- Copy the examples webapps -->
-    <copy todir="${tomcat.build}/webapps/jsp-examples">
-      <fileset dir="${api.home}/jsr152/build/examples"/>
-    </copy>
-    <copy todir="${tomcat.build}/webapps/servlets-examples">
-      <fileset dir="${api.home}/jsr154/build/examples"/>
-    </copy>
-
-    <echo>Target: Webapps precompilation ...</echo>
-    <ant dir="."   target="build-webapps-precompile" /> 
   </target>
 
   <!-- ====================== Embeded target =================== -->
@@ -581,13 +590,10 @@
         <include name="ant.jar"/>
       </fileset>
     </copy>
+    <copy todir="embed/lib" file="${commons-beanutils.jar}" />
     
     <!-- JMX -->
-    <copy todir="embed/lib">
-      <fileset dir="build/server/lib">
-        <include name="jmx.jar"/>
-      </fileset>
-    </copy>
+    <copy todir="embed/lib" file="${jmx.jar}" />
     
     <!-- Connector -->
     <copy todir="embed/lib">
@@ -705,6 +711,18 @@
     <chmod      dir="${tomcat.build}/bin"   includes="*.sh"  perm="+x"/>
 
     <antcall target="fix-webapps"/>
+
+    <!-- Copy the examples webapps -->
+    <copy todir="${tomcat.build}/webapps/jsp-examples">
+      <fileset dir="${api.home}/jsr152/build/examples"/>
+    </copy>
+    <copy todir="${tomcat.build}/webapps/servlets-examples">
+      <fileset dir="${api.home}/jsr154/build/examples"/>
+    </copy>
+
+    <echo>Target: Webapps precompilation ...</echo>
+    <ant dir="."   target="build-webapps-precompile" /> 
+
   </target>
 
 
