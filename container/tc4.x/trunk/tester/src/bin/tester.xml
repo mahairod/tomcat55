@@ -12,7 +12,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession"/>
+  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession"/>
 
 
   <target name="ROOT">
@@ -91,6 +91,35 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/Examples/servlet/HelloWorldExample"
           status="404"/>
+
+  </target>
+
+
+  <target name="ErrorPage">
+
+    <!-- ========== Error Code Mapping ==================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage01" debug="${debug}"
+      outContent="ErrorPage02 PASSED"/>
+
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage01" debug="${debug}"
+      outContent="ErrorPage02 PASSED"/>
+
+
+    <!-- ========== Exception Mapping ===================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage03" debug="${debug}"
+      outContent="ErrorPage04 PASSED"/>
+
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage03" debug="${debug}"
+      outContent="ErrorPage04 PASSED"/>
+
 
   </target>
 

@@ -52,6 +52,26 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedForward01</url-pattern>
     </filter-mapping>
 
@@ -161,6 +181,26 @@
     <servlet>
         <servlet-name>Authentication02</servlet-name>
         <servlet-class>org.apache.tester.Authentication02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage01</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage02</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage03</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage03</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage04</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage04</servlet-class>
     </servlet>
 
     <servlet>
@@ -289,6 +329,46 @@
     <servlet-mapping>
         <servlet-name>Authentication02</servlet-name>
         <url-pattern>/protected/Authentication02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage01</servlet-name>
+        <url-pattern>/ErrorPage01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage01</servlet-name>
+        <url-pattern>/WrappedErrorPage01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage02</servlet-name>
+        <url-pattern>/ErrorPage02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage02</servlet-name>
+        <url-pattern>/WrappedErrorPage02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage03</servlet-name>
+        <url-pattern>/ErrorPage03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage03</servlet-name>
+        <url-pattern>/WrappedErrorPage03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage04</servlet-name>
+        <url-pattern>/ErrorPage04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage04</servlet-name>
+        <url-pattern>/WrappedErrorPage04</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -485,6 +565,19 @@
         <servlet-name>SetLocale01</servlet-name>
         <url-pattern>/WrappedSetLocale01</url-pattern>
     </servlet-mapping>
+
+
+    <!-- ========== Error Page Mappings =================================== -->
+
+    <error-page>
+        <error-code>412</error-code>  <!-- SC_PRECONDITION_FAILED -->
+        <location>/ErrorPage02</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>org.apache.tester.TesterException</exception-type>
+        <location>/ErrorPage04</location>
+    </error-page>
 
 
     <!-- ========== Security Constraints ================================== -->
