@@ -68,6 +68,7 @@ package org.apache.tomcat.util;
 import javax.servlet.http.Cookie;
 import org.apache.tomcat.core.*;
 
+import java.security.*;
 
 /**
  * General purpose utilities useful to <code>Manager</code> and
@@ -177,7 +178,27 @@ public final class SessionUtil {
      * Generate and return a new session identifier.
      */
     public static String generateSessionId(String jsIdent) {
-        return SessionIdGenerator.generateId(jsIdent);
+        /**
+         * When using a SecurityManager and a JSP page or servlet triggers
+         * creation of a new session id it must be performed with the 
+         * Permissions of this class using doPriviledged because the parent
+         * JSP or servlet may not have sufficient Permissions.
+         */
+        if( System.getSecurityManager() != null ) {
+            class doInit implements PrivilegedAction {
+                private String jsIdent;
+                public doInit(String ident) {
+                    jsIdent = ident;
+                }           
+                public Object run() {
+                    return SessionIdGenerator.generateId(jsIdent);
+                }           
+            }    
+            doInit di = new doInit(jsIdent);
+            return (String)AccessController.doPrivileged(di);
+        } else {            
+            return SessionIdGenerator.generateId(jsIdent);
+	}
     }
 
     /**
