@@ -2459,6 +2459,16 @@ public class StandardContext
         // Binding thread
         ClassLoader oldCCL = bindThread();
 
+        // Shut down filters
+        filterStop();
+
+        // Clear all application-originated servlet context attributes
+        if (context != null)
+            context.clearAttributes();
+
+        // Shut down application event listeners
+        listenerStop();
+
         // Shut down our session manager
         if ((manager != null) && (manager instanceof Lifecycle)) {
             try {
@@ -2483,18 +2493,8 @@ public class StandardContext
             }
         }
 
-        // Shut down application event listeners
-        listenerStop();
-
-        // Clear all application-originated servlet context attributes
-        if (context != null)
-            context.clearAttributes();
-
-        // Shut down filters
-        filterStop();
-
         if (isUseNaming()) {
-            // Start
+            // Stop
             namingContextListener.lifecycleEvent
                 (new LifecycleEvent(this, Lifecycle.STOP_EVENT));
         }
@@ -3692,6 +3692,10 @@ public class StandardContext
 
         // Stop our filters
         filterStop();
+
+        // Clear all application-originated servlet context attributes
+        if (context != null)
+            context.clearAttributes();
 
         // Stop our application listeners
         listenerStop();
