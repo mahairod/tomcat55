@@ -422,9 +422,8 @@ public final class ApplicationContextFacade
     /**
      * Use reflection to invoke the requested method. Cache the method object 
      * to speed up the process
-     * @param appContext The AppliationContext object on which the method
-     *                   will be invoked
-     * @param methodName The method to call.
+     * @param methodName The method to invoke.
+     * @param clazz The class where the method is.
      * @param params The arguments passed to the called method.
      */    
     private Object doPrivileged(final String methodName, 
