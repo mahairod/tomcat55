@@ -24,6 +24,7 @@ import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.Policy;
+import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -369,7 +370,7 @@ public final class JspRuntimeContext implements Runnable {
                 }
                 File contextDir = new File(codeBase);
                 URL url = contextDir.getCanonicalFile().toURL();
-                codeSource = new CodeSource(url,null);
+                codeSource = new CodeSource(url,(Certificate[])null);
                 permissionCollection = policy.getPermissions(codeSource);
 
                 // Create a file read permission for web app context directory

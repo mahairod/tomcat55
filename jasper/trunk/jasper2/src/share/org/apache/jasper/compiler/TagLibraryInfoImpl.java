@@ -292,9 +292,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
 
         this.functions = new FunctionInfo[functionTable.size()];
         int i=0;
-        Enumeration enum = functionTable.elements();
-        while (enum.hasMoreElements()) {
-            this.functions[i++] = (FunctionInfo) enum.nextElement();
+        Enumeration enumeration = functionTable.elements();
+        while (enumeration.hasMoreElements()) {
+            this.functions[i++] = (FunctionInfo) enumeration.nextElement();
         }
     }
     

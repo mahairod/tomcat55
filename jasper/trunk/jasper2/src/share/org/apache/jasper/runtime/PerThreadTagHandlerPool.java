@@ -117,9 +117,9 @@ public class PerThreadTagHandlerPool extends TagHandlerPool {
      * Calls the release() method of all tag handlers in this tag handler pool.
      */
     public void release() {        
-        Enumeration enum = perThreadDataVector.elements();
-        while (enum.hasMoreElements()) {
-	    PerThreadData ptd = (PerThreadData)enum.nextElement();
+        Enumeration enumeration = perThreadDataVector.elements();
+        while (enumeration.hasMoreElements()) {
+	    PerThreadData ptd = (PerThreadData)enumeration.nextElement();
             if (ptd.handlers != null) {
                 for (int i=ptd.current; i>=0; i--) {
                     if (ptd.handlers[i] != null) {

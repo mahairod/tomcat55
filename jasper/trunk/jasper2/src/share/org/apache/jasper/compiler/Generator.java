@@ -1821,9 +1821,9 @@ class Generator {
             out.print(" + " + elemName);
 
             // Write remaining attributes
-            Enumeration enum = map.keys();
-            while (enum.hasMoreElements()) {
-                String attrName = (String)enum.nextElement();
+            Enumeration enumeration = map.keys();
+            while (enumeration.hasMoreElements()) {
+                String attrName = (String)enumeration.nextElement();
                 out.print((String)map.get(attrName));
             }
 
