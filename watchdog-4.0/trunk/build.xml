@@ -38,6 +38,23 @@
   <patternset id="compat.servlet.tests"
     includes="**/compat/**"/>
 
+  <!-- ===================== Verify Dependencies ========================= -->
+  <target name="deps">
+    <available file="${servlet23.jar}" property="servlet23.is.available"/>
+    <available file="${servlet22.jar}" property="servlet22.is.available"/>
+    <antcall target="checkServlet23"/>
+    <antcall target="checkServlet22"/>
+    <antcall target="convert"/>
+  </target>
+
+  <target name="checkServlet23" unless="servlet23.is.available">
+    <fail message="The dependency on the existence of the Servlet 2.3/JSP 1.2 classes in not satisfied.  Please read BUILDING.txt to learn where to aquire these classes."/>
+  </target>
+
+  <target name="checkServlet22" unless="servlet22.is.available">
+    <fail message="The dependency on the existence of the Servlet 2.2/JSP 1.2 classes in not satisfied.  Please read BUILDING.txt to learn where to aquire these classes."/>
+  </target>
+
   <!-- ===================== Prepare Directories ========================= -->
   <target name="prepare">
 
@@ -125,7 +142,6 @@
 
   </target>
 
-
   <!-- ======================== Compile Classes ========================== -->
   <target name="compile" depends="static"
    description="Compile all classes">
@@ -199,7 +215,7 @@
 
 
   <!-- ========================= Default Build Target ===================== -->
-  <target name="main" depends="convert"
+  <target name="main" depends="deps"
    description="Compile classes and convert JSP to XML syntax (default)"/>
 
 
