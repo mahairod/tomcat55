@@ -2003,6 +2003,10 @@
           description="The pathname to the work directory for this context"
                  type="java.lang.String"/>
 
+    <attribute   name="available"
+          description="Is this context available"
+                 type="boolean"/>
+
     <operation   name="addEnvironment"
           description="Add an environment entry for this web application"
                impact="ACTION"
@@ -2037,6 +2041,24 @@
       <parameter name="resourceName"
           description="Name of the resource reference to remove"
                  type="java.lang.String"/>
+    </operation>
+
+    <operation   name="start"
+          description="Start the webapp"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
+    <operation   name="stop"
+          description="Start the webapp"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
+    <operation   name="reload"
+          description="Restart the webapp"
+               impact="ACTION"
+           returnType="void">
     </operation>
 
   </mbean>
@@ -2346,6 +2368,67 @@
           description="Path name of the disk file in which active sessions"
                  type="java.lang.String"/>
 
+    <attribute   name="rejectedSessions"
+          description="Number of sessions we rejected due to maxActive beeing reached"
+                 type="int" />
+
+    <attribute   name="expiredSessions"
+          description="Number of sessions that expired ( doesn't include explicit invalidations )"
+                 type="int" />
+
+    <attribute   name="processingTime"
+          description="Time spent doing housekeeping and expiration"
+                 type="long" />
+
+    <attribute   name="duplicates"
+          description="Number of duplicated session ids generated"
+                 type="int" />
+
+    <attribute   name="sessionCounter"
+          description="Total number of sessions created by this manager"
+                 type="int" />
+
+    <attribute   name="maxActive"
+          description="Maximum number of active sessions so far"
+                 type="int" />
+
+
+    <operation   name="listSessionIds"
+          description="Return the list of active session ids"
+               impact="ACTION"
+           returnType="java.lang.String">
+    </operation>
+
+    <operation   name="getSessionAttribute"
+          description="Return a session attribute"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+      <parameter name="key"
+          description="key of the attribute"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="expireSession"
+          description="Expire a session"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="getLastAccessedTime"
+          description="Get the last access time"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+    </operation>
+
   </mbean>
 
 
@@ -2399,6 +2482,58 @@
     <attribute   name="name"
           description="Unique name of this Service"
                  type="java.lang.String"/>
+
+  </mbean>
+
+  <mbean         name="StandardWrapper"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Wrapper for a Servlet or JSP"
+               domain="Catalina"
+                group="Servlet"
+                 type="org.apache.catalina.core.StandardWrapper">
+
+    <attribute   name="name"
+          description="The name of the servlet"
+                 type="java.lang.String"/>
+    <attribute   name="jspFile"
+          description="The name of the jsp file - for jsps"
+                 type="java.lang.String"/>
+    <attribute   name="servletName"
+          description="The name of the servlet"
+                 type="java.lang.String"/>
+    <attribute   name="info"
+          description="Info"
+                 type="java.lang.String"/>
+    <attribute   name="servletClass"
+          description="Class name of the servlet"
+                 type="java.lang.String"/>
+
+    <attribute   name="debug"
+          description="Debug level"
+                 type="int"/>
+    <attribute   name="countAllocated"
+          description="Number of allocated instances, for single threaded model"
+                 type="int"/>
+    <attribute   name="maxInstances"
+          description="Maximum number of instances, for single threaded model"
+                 type="int"/>
+    <attribute   name="errorCount"
+          description="Number errors on this servlet"
+                 type="int"/>
+    <attribute   name="requestCount"
+          description="Number of requests for this servlet"
+                 type="int"/>
+
+    <attribute   name="available"
+          description="Delay until it will be made available"
+                 type="long"/>
+    <attribute   name="maxTime"
+          description="Longest execution time of the servlet"
+                 type="long"/>
+    <attribute   name="processingTime"
+          description="Total execution time of the servlet"
+                 type="long"/>
+
 
   </mbean>
 
