@@ -7,8 +7,9 @@
     &project;
 
     <properties>
-        <author email="craigmcc@apache.org">Craig R. McClanahan</author>
-        <title>JNDI Resources HOW-TO</title>
+      <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+      <author email="yoavs@apache.org">Yoav Shapira</author>
+      <title>JNDI Resources HOW-TO</title>
     </properties>
 
 <body>
@@ -17,10 +18,42 @@
 <section name="Introduction">
 
 <p>Tomcat 5 provides a JNDI <strong>InitialContext</strong> implementation
-instance to web applications running under it, in a manner that is compatible
-with those provided by a <a href="http://java.sun.com/j2ee">Java2 Enterprise
-Edition</a> application server.  Entries in this <code>InitialContext</code>
-are configured in the <code>$CATALINA_HOME/conf/server.xml</code> file, and
+instance for each web application running under it, in a manner that is 
+compatible with those provided by a 
+<a href="http://java.sun.com/j2ee">Java2 Enterprise Edition</a> application 
+server. 
+
+The J2EE standard provides a standard set of elements in 
+the <code>/WEB-INF/web.xml</code> file to reference resources; resources 
+referenced in these elements must be defined in an application-server-specific configuration. 
+</p>
+
+<p>For Tomcat 5, these entries in per-web-application 
+<code>InitialContext</code> are configured in the 
+<code><strong>&lt;Context&gt;</strong></code> or 
+<code><strong>&lt;DefaultContext&gt;</strong></code>
+elements of the 
+<a href="config/server.html"><code><strong>&lt;Server&gt;</strong></code></a>
+element. 
+
+The <code><strong>&lt;Context&gt;</strong></code> element can be specified 
+in either <code>$CATALINA_HOME/conf/server.xml</code> or, preferably, 
+the per-web-application context XML file.
+
+<code><strong>&lt;DefaultContext&gt;</strong></code> must be specified in 
+<code>$CATALINA_HOME/conf/server.xml</code>.
+</p>
+
+<p>Tomcat 5 maintains a separate namespace of global resources for the 
+entire server.  These are configured in the 
+<a href="config/globalresources.html">
+<code><strong>&lt;GlobalNameingResources&gt;</strong></code></a> element of 
+<code>$CATALINA_HOME/conf/server.xml</code>. You may expose these resources to 
+web applications by using 
+<code><strong>&lt;ResourceLink&gt;</strong></code> elements.
+</p>
+
+<p>The resources defined in these elements
 may be referenced by the following elements in the web application deployment
 descriptor (<code>/WEB-INF/web.xml</code>) of your web application:</p>
 <ul>
@@ -39,10 +72,11 @@ descriptor (<code>/WEB-INF/web.xml</code>) of your web application:</p>
 
 <p>The <code>InitialContext</code> is configured as a web application is
 initially deployed, and is made available to web application components (for
-read-only access).  All configured entries and resources will be placed in
+read-only access).  All configured entries and resources are placed in
 the <code>java:comp/env</code> portion of the JNDI namespace, so a typical
 access to a resource - in this case, to a JDBC <code>DataSource</code> -
 would look something like this:</p>
+
 <source>
 // Obtain our environment naming context
 Context initCtx = new InitialContext();
@@ -75,8 +109,9 @@ servers, which Tomcat emulates for the services that it provides:</p>
 <section name="Configuring JNDI Resources">
 
 <p>Each available JNDI Resource is configured based on inclusion of the
-following elements in the <code>$CATALINA_HOME/conf/server.xml</code>
-file:</p>
+following elements in the <code><strong>&lt;Context&gt;</strong></code> or 
+<code><strong>&lt;DefaultContext&gt;</strong></code> elements:</p>
+
 <ul>
 <li><a href="config/context.html#Environment Entries">&lt;Environment&gt;</a> -
     Configure names and values for scalar environment entries that will be
@@ -89,12 +124,20 @@ file:</p>
     application (equivalent to the inclusion of a
     <code>&lt;resource-ref&gt;</code> element in the web application
     deployment descriptor).</li>
-<li><a href="config/context.html#Resource Parameters">&lt;ResourceParams&gt;</a> -
+
+<li>
+    <a href="config/context.html#Resource Parameters">&lt;ResourceParams&gt;</a> -
     Configure the Java class name of the resource factory implementation to be
     used, as well as JavaBeans properties used to configure that resource
     factory.</li>
+
 <li><a href="config/context.html#Resource Links">&lt;ResourceLink&gt;</a> -
-    Add a link to a resource defined in the global JNDI context.</li>
+    Add a link to a resource defined in the global JNDI context. Use resource 
+    links to give a web application access to a resource defined in 
+    the<a href="config/globalresources.html">&lt;GlobalNamingResources&gt;</a>
+    child element of the <a href="config/server.html">&lt;Server&gt;</a>
+    element.</li>
+
 </ul>
 
 <p>Any number of these elements may be nested inside a
@@ -116,7 +159,9 @@ well, overriding corresponding values from <code>conf/server.xml</code>
 the resource elements described above to the
 <a href="config/globalresources.html">&lt;GlobalNamingResources&gt;</a>
 child element of the <a href="config/server.html">&lt;Server&gt;</a>
-element.</p>
+element and using a 
+<a href="config/context.html#Resource Links">&lt;ResourceLink&gt;</a> to
+include it in the per-web-application context.</p>
 
 </section>
 
