@@ -18,8 +18,6 @@
 package org.apache.catalina.connector;
 
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
@@ -58,31 +56,36 @@ public class Connector
     private static Log log = LogFactory.getLog(Connector.class);
 
 
+    // ------------------------------------------------------------ Constructor
+
+
+    public Connector()
+        throws Exception {
+        this(null);
+    }
+    
+    public Connector(String protocol) 
+        throws Exception {
+        setProtocol(protocol);
+        // Instantiate protocol handler
+        try {
+            Class clazz = Class.forName(protocolHandlerClassName);
+            this.protocolHandler = (ProtocolHandler) clazz.newInstance();
+        } catch (Exception e) {
+            log.error
+                (sm.getString
+                 ("coyoteConnector.protocolHandlerInstantiationFailed", e));
+        }
+    }
+    
+    
     // ----------------------------------------------------- Instance Variables
 
-
-    /**
-     * Holder for our configured properties.
-     */
-    private HashMap properties = new HashMap();
 
     /**
      * The <code>Service</code> we are associated with (if any).
      */
     private Service service = null;
-
-
-    /**
-     * The accept count for this Connector.
-     */
-    private int acceptCount = 10;
-
-
-    /**
-     * The IP address on which to bind, if any.  If <code>null</code>, all
-     * addresses on the server will be bound.
-     */
-    private String address = null;
 
 
     /**
@@ -92,21 +95,9 @@ public class Connector
 
 
     /**
-     * The input buffer size we should create on input streams.
-     */
-    private int bufferSize = 2048;
-
-
-    /**
      * The Container used for processing requests received by this Connector.
      */
     protected Container container = null;
-
-
-    /**
-     * Compression value.
-     */
-    private String compression = "off";
 
 
     /**
@@ -118,7 +109,7 @@ public class Connector
     /*
      * Is generation of X-Powered-By response header enabled/disabled?
      */
-    private boolean xpoweredBy;
+    private boolean xpoweredBy = false;
 
 
     /**
@@ -132,53 +123,6 @@ public class Connector
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
-
-
-    /**
-     * The minimum number of processors to start at initialization time.
-     */
-    protected int minProcessors = 5;
-
-
-    /**
-     * The maximum number of processors allowed, or <0 for unlimited.
-     */
-    private int maxProcessors = 20;
-
-
-    /**
-     * The thread priority for processors.
-     */
-    private int threadPriority = Thread.NORM_PRIORITY;
-
-
-    /**
-     * Linger value on the incoming connection.
-     * Note : a value inferior to 0 means no linger.
-     */
-    private int connectionLinger = Constants.DEFAULT_CONNECTION_LINGER;
-
-
-    /**
-     * Timeout value on the incoming connection.
-     * Note : a value of 0 means no timeout.
-     */
-    private int connectionTimeout = Constants.DEFAULT_CONNECTION_TIMEOUT;
-
-
-    /**
-     * Timeout value on the incoming connection during request processing.
-     * Note : a value of 0 means no timeout.
-     */
-    private int connectionUploadTimeout = 
-        Constants.DEFAULT_CONNECTION_UPLOAD_TIMEOUT;
-
-
-    /**
-     * Timeout value on the server socket.
-     * Note : a value of 0 means no timeout.
-     */
-    private int serverSocketTimeout = Constants.DEFAULT_SERVER_SOCKET_TIMEOUT;
 
 
     /**
@@ -225,37 +169,11 @@ public class Connector
     private boolean secure = false;
 
 
-    /** For jk, do tomcat authentication if true, trust server if false 
-     */ 
-    private boolean tomcatAuthentication = true;
-
-
     /**
      * The string manager for this package.
      */
     private StringManager sm =
         StringManager.getManager(Constants.Package);
-
-
-    /**
-     * Flag to disable setting a seperate time-out for uploads.
-     * If <code>true</code>, then the <code>timeout</code> parameter is
-     * ignored.  If <code>false</code>, then the <code>timeout</code>
-     * parameter is used to control uploads.
-     */
-    private boolean disableUploadTimeout = false;
-
-
-    /**
-     * Maximum size of a HTTP header. 4KB is the default.
-     */
-    private int maxHttpHeaderSize = 4 * 1024;
-
-
-    /**
-     * Maximum number of Keep-Alive requests to honor per connection.
-     */
-    private int maxKeepAliveRequests = 100;
 
 
     /**
@@ -287,12 +205,6 @@ public class Connector
      * The background thread.
      */
     private Thread thread = null;
-
-
-    /**
-     * Use TCP no delay ?
-     */
-    private boolean tcpNoDelay = true;
 
 
     /**
@@ -346,23 +258,43 @@ public class Connector
      * Return a configured property.
      */
     public Object getProperty(String name) {
-        return properties.get(name);
+        return IntrospectionUtils.getProperty(protocolHandler, name);
     }
 
+    
     /**
      * Set a configured property.
      */
-    public void setProperty(String name, Object value) {
-        properties.put(name, value);
+    public void setProperty(String name, String value) {
+        IntrospectionUtils.setProperty(protocolHandler, name, value);
     }
 
+    
+    /**
+     * Return a configured property.
+     */
+    public Object getAttribute(String name) {
+        return getProperty(name);
+    }
+
+    
+    /**
+     * Set a configured property.
+     */
+    public void setAttribute(String name, Object value) {
+        setProperty(name, String.valueOf(value));
+    }
+
+    
     /** 
      * remove a configured property.
      */
     public void removeProperty(String name) {
-        properties.remove(name);
+        // FIXME !
+        //protocolHandler.removeAttribute(name);
     }
 
+    
     /**
      * Return the <code>Service</code> with which we are associated (if any).
      */
@@ -381,169 +313,7 @@ public class Connector
     public void setService(Service service) {
 
         this.service = service;
-        setProperty("service", service);
-
-    }
-
-
-    /**
-     * Get the value of compression.
-     */
-    public String getCompression() {
-
-        return (compression);
-
-    }
-
-
-    /**
-     * Set the value of compression.
-     *
-     * @param compression The new compression value, which can be "on", "off"
-     * or "force"
-     */
-    public void setCompression(String compression) {
-
-        this.compression = compression;
-        setProperty("compression", compression);
-
-    }
-
-
-    /**
-     * Return the connection linger for this Connector.
-     */
-    public int getConnectionLinger() {
-
-        return (connectionLinger);
-
-    }
-
-
-    /**
-     * Set the connection linger for this Connector.
-     *
-     * @param connectionLinger The new connection linger
-     */
-    public void setConnectionLinger(int connectionLinger) {
-
-        this.connectionLinger = connectionLinger;
-        setProperty("soLinger", String.valueOf(connectionLinger));
-
-    }
-
-
-    /**
-     * Return the connection timeout for this Connector.
-     */
-    public int getConnectionTimeout() {
-
-        return (connectionTimeout);
-
-    }
-
-
-    /**
-     * Set the connection timeout for this Connector.
-     *
-     * @param connectionTimeout The new connection timeout
-     */
-    public void setConnectionTimeout(int connectionTimeout) {
-
-        this.connectionTimeout = connectionTimeout;
-        setProperty("soTimeout", String.valueOf(connectionTimeout));
-
-    }
-
-
-    /**
-     * Return the connection upload timeout for this Connector.
-     */
-    public int getConnectionUploadTimeout() {
-
-        return (connectionUploadTimeout);
-
-    }
-
-
-    /**
-     * Set the connection upload timeout for this Connector.
-     *
-     * @param connectionUploadTimeout The new connection upload timeout
-     */
-    public void setConnectionUploadTimeout(int connectionUploadTimeout) {
-
-        this.connectionUploadTimeout = connectionUploadTimeout;
-        setProperty("timeout", String.valueOf(connectionUploadTimeout));
-
-    }
-
-
-    /**
-     * Return the server socket timeout for this Connector.
-     */
-    public int getServerSocketTimeout() {
-
-        return (serverSocketTimeout);
-
-    }
-
-
-    /**
-     * Set the server socket timeout for this Connector.
-     *
-     * @param serverSocketTimeout The new server socket timeout
-     */
-    public void setServerSocketTimeout(int serverSocketTimeout) {
-
-        this.serverSocketTimeout = serverSocketTimeout;
-        setProperty("serverSoTimeout", String.valueOf(serverSocketTimeout));
-
-    }
-
-
-    /**
-     * Return the accept count for this Connector.
-     */
-    public int getAcceptCount() {
-
-        return (acceptCount);
-
-    }
-
-
-    /**
-     * Set the accept count for this Connector.
-     *
-     * @param count The new accept count
-     */
-    public void setAcceptCount(int count) {
-
-        this.acceptCount = count;
-        setProperty("backlog", String.valueOf(count));
-
-    }
-
-
-    /**
-     * Return the bind IP address for this Connector.
-     */
-    public String getAddress() {
-
-        return (this.address);
-
-    }
-
-
-    /**
-     * Set the bind IP address for this Connector.
-     *
-     * @param address The bind IP address
-     */
-    public void setAddress(String address) {
-
-        this.address = address;
-        setProperty("address", address);
+        // FIXME: setProperty("service", service);
 
     }
 
@@ -576,29 +346,6 @@ public class Connector
     public boolean isAvailable() {
 
         return (started);
-
-    }
-
-
-    /**
-     * Return the input buffer size for this Connector.
-     */
-    public int getBufferSize() {
-
-        return (this.bufferSize);
-
-    }
-
-
-    /**
-     * Set the input buffer size for this Connector.
-     *
-     * @param bufferSize The new input buffer size.
-     */
-    public void setBufferSize(int bufferSize) {
-
-        this.bufferSize = bufferSize;
-        setProperty("bufferSize", String.valueOf(bufferSize));
 
     }
 
@@ -674,73 +421,6 @@ public class Connector
 
 
     /**
-     * Return the minimum number of processors to start at initialization.
-     */
-    public int getMinProcessors() {
-
-        return (minProcessors);
-
-    }
-
-
-    /**
-     * Set the minimum number of processors to start at initialization.
-     *
-     * @param minProcessors The new minimum processors
-     */
-    public void setMinProcessors(int minProcessors) {
-
-        this.minProcessors = minProcessors;
-        setProperty("minProcessors", String.valueOf(minProcessors));
-
-    }
-
-
-    /**
-     * Return the maximum number of processors allowed, or <0 for unlimited.
-     */
-    public int getMaxProcessors() {
-
-        return (maxProcessors);
-
-    }
-
-
-    /**
-     * Set the maximum number of processors allowed, or <0 for unlimited.
-     *
-     * @param maxProcessors The new maximum processors
-     */
-    public void setMaxProcessors(int maxProcessors) {
-
-        this.maxProcessors = maxProcessors;
-        setProperty("maxThreads", String.valueOf(maxProcessors));
-
-    }
-
-    /**
-     * Return the processor thread priority. 
-     *
-     * @return int
-     */
-    public int getThreadPriority() {
-      return threadPriority;
-    }
-
-    
-    /**
-     * Sets the processor thread priority.
-     *
-     * @param threadPriority The new priority level
-     */
-    public void setThreadPriority(int threadPriority) {
-      this.threadPriority = threadPriority;
-      setProperty("threadPriority", String.valueOf(threadPriority));
-    }  
-      
-
-
-    /**
      * Return the maximum size of a POST which will be automatically
      * parsed by the container.
      */
@@ -800,7 +480,7 @@ public class Connector
                    (getProtocolHandlerClassName())) {
             return "AJP/1.3";
         }
-        return null;
+        return getProtocolHandlerClassName();
 
     }
 
@@ -812,14 +492,14 @@ public class Connector
      */
     public void setProtocol(String protocol) {
 
-        if (protocol.equals("HTTP/1.1")) {
+        if ("HTTP/1.1".equals(protocol)) {
             setProtocolHandlerClassName
                 ("org.apache.coyote.http11.Http11Protocol");
-        } else if (protocol.equals("AJP/1.3")) {
+        } else if ("AJP/1.3".equals(protocol)) {
             setProtocolHandlerClassName
                 ("org.apache.jk.server.JkCoyoteHandler");
-        } else {
-            setProtocolHandlerClassName(null);
+        } else if (protocol != null) {
+            setProtocolHandlerClassName(protocol);
         }
 
     }
@@ -933,74 +613,7 @@ public class Connector
 
     }
 
-    /**
-     * Return the flag that specifies upload time-out behavior.
-     */
-    public boolean getDisableUploadTimeout() {
-        return disableUploadTimeout;
-    }
-
-    /**
-     * Set the flag to specify upload time-out behavior.
-     *
-     * @param isDisabled If <code>true</code>, then the <code>timeout</code>
-     * parameter is ignored.  If <code>false</code>, then the
-     * <code>timeout</code> parameter is used to control uploads.
-     */
-    public void setDisableUploadTimeout( boolean isDisabled ) {
-        disableUploadTimeout = isDisabled;
-        setProperty("disableUploadTimeout", String.valueOf(isDisabled));
-    }
-
-
-    /**
-     * Return the Keep-Alive policy for the connection.
-     */
-    public boolean getKeepAlive() {
-        return ((maxKeepAliveRequests != 0) && (maxKeepAliveRequests != 1));
-    }
-
-    /**
-     * Set the keep-alive policy for this connection.
-     */
-    public void setKeepAlive(boolean keepAlive) {
-        if (!keepAlive) {
-            setMaxKeepAliveRequests(1);
-        }
-    }
-
-    /**
-     * Return the maximum HTTP header size.
-     */
-    public int getMaxHttpHeaderSize() {
-        return maxHttpHeaderSize;
-    }
-
-    /**
-     * Set the maximum HTTP header size.
-     */
-    public void setMaxHttpHeaderSize(int size) {
-        maxHttpHeaderSize = size;
-        setProperty("maxHttpHeaderSize", String.valueOf(size));
-    }
-
-    /**
-     * Return the maximum number of Keep-Alive requests to honor 
-     * per connection.
-     */
-    public int getMaxKeepAliveRequests() {
-        return maxKeepAliveRequests;
-    }
-
-    /**
-     * Set the maximum number of Keep-Alive requests to honor per connection.
-     */
-    public void setMaxKeepAliveRequests(int mkar) {
-        maxKeepAliveRequests = mkar;
-        setProperty("maxKeepAliveRequests", String.valueOf(mkar));
-    }
-
-
+    
     /**
      * Return the scheme that will be assigned to requests received
      * through this connector.  Default value is "http".
@@ -1049,40 +662,6 @@ public class Connector
         setProperty("secure", String.valueOf(secure));
 
     }
-
-    public boolean getTomcatAuthentication() {
-        return tomcatAuthentication;
-    }
-
-    public void setTomcatAuthentication(boolean tomcatAuthentication) {
-        this.tomcatAuthentication = tomcatAuthentication;
-        setProperty("tomcatAuthentication", String.valueOf(tomcatAuthentication));
-    }
-    
-
-    /**
-     * Return the TCP no delay flag value.
-     */
-    public boolean getTcpNoDelay() {
-
-        return (this.tcpNoDelay);
-
-    }
-
-
-    /**
-     * Set the TCP no delay flag which will be set on the socket after
-     * accepting a connection.
-     *
-     * @param tcpNoDelay The new TCP no delay flag
-     */
-    public void setTcpNoDelay(boolean tcpNoDelay) {
-
-        this.tcpNoDelay = tcpNoDelay;
-        setProperty("tcpNoDelay", String.valueOf(tcpNoDelay));
-
-    }
-
 
      /**
       * Return the character encoding to be used for the URI.
@@ -1241,10 +820,10 @@ public class Connector
                 // we are loaded directly, via API - and no name was given to us
                 StandardEngine cb=(StandardEngine)container;
                 String encodedAddr = null;
-                if (getAddress() != null) {
-                    encodedAddr = URLEncoder.encode(getAddress());
+                if (getProperty("address") != null) {
+                    encodedAddr = URLEncoder.encode(getProperty("address").toString());
                 }
-                String addSuffix=(getAddress()==null) ?"": ",address=" + encodedAddr;
+                String addSuffix=(getProperty("address")==null) ?"": ",address=" + encodedAddr;
                 oname=new ObjectName(cb.getName() + ":type=Connector,port="+
                         getPort() + addSuffix);
                 Registry.getRegistry(null, null)
@@ -1258,33 +837,10 @@ public class Connector
 
         // Initializa adapter
         adapter = new CoyoteAdapter(this);
-
-        // Instantiate protocol handler
-        try {
-            Class clazz = Class.forName(protocolHandlerClassName);
-            protocolHandler = (ProtocolHandler) clazz.newInstance();
-        } catch (Exception e) {
-            throw new LifecycleException
-                (sm.getString
-                 ("coyoteConnector.protocolHandlerInstantiationFailed", e));
-        }
         protocolHandler.setAdapter(adapter);
 
         IntrospectionUtils.setProperty(protocolHandler, "jkHome",
                                        System.getProperty("catalina.base"));
-
-        /* Set the configured properties.  This only sets the ones that were
-         * explicitly configured.  Default values are the responsibility of
-         * the protocolHandler.
-         */
-        Iterator keys = properties.keySet().iterator();
-        while( keys.hasNext() ) {
-            String name = (String)keys.next();
-            String value = properties.get(name).toString();
-	    String trnName = translateAttributeName(name);
-            IntrospectionUtils.setProperty(protocolHandler, trnName, value);
-        }
-        
 
         try {
             protocolHandler.init();
@@ -1321,32 +877,6 @@ public class Connector
             log.error(sm.getString
                       ("coyoteConnector.protocolHandlerResumeFailed"), e);
         }
-    }
-
-
-    /*
-     * Translate the attribute name from the legacy Factory names to their
-     * internal protocol names.
-     */
-    private String translateAttributeName(String name) {
-	if ("clientAuth".equals(name)) {
-	    return "clientauth";
-	} else if ("keystoreFile".equals(name)) {
-	    return "keystore";
-	} else if ("randomFile".equals(name)) {
-	    return "randomfile";
-	} else if ("rootFile".equals(name)) {
-	    return "rootfile";
-	} else if ("keystorePass".equals(name)) {
-	    return "keypass";
-	} else if ("keystoreType".equals(name)) {
-	    return "keytype";
-	} else if ("sslProtocol".equals(name)) {
-	    return "protocol";
-	} else if ("sslProtocols".equals(name)) {
-	    return "protocols";
-	}
-	return name;
     }
 
 
