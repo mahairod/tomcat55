@@ -181,15 +181,23 @@ public class TagFileProcessor {
             String attrName = n.getAttributeValue("name");
             boolean required = JspUtil.booleanValue(
 					n.getAttributeValue("required"));
-            boolean rtexprvalue = JspUtil.booleanValue(
-					n.getAttributeValue("rtexprvalue"));
+            String rtexprvalueString = n.getAttributeValue("rtexprvalue");
+            boolean rtexprvalue = JspUtil.booleanValue( rtexprvalueString );
             boolean fragment = JspUtil.booleanValue(
 					n.getAttributeValue("fragment"));
 	    String type = n.getAttributeValue("type");
             if (fragment) {
                 fragmentAttributesMap.put(attrName, n);
+                // type is fixed to "JspFragment" and a translation error
+                // must occur if specified.
                 if (type != null) {
                     err.jspError("jsp.error.fragmentwithtype");
+                }
+                // rtexprvalue is fixed to "true" and a translation error
+                // must occur if specified.
+                rtexprvalue = true;
+                if( rtexprvalueString != null ) {
+                    err.jspError("jsp.error.frgmentwithrtexprvalue" );
                 }
             } else {
                 if (type == null)

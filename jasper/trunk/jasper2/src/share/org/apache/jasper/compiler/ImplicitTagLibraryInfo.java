@@ -76,7 +76,7 @@ import org.apache.jasper.JasperException;
  */
 public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
-    private static final String WEB_INF_TAGS = "/WEB-INF/tags/";
+    private static final String WEB_INF_TAGS = "/WEB-INF/tags";
     private static final String TAG_FILE_SUFFIX = ".tag";
     private static final String TAGS_SHORTNAME = "tags";
     private static final String TLIB_VERSION = "1.0";
@@ -101,7 +101,9 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	
 	// Determine the value of the <short-name> subelement of the
 	// "imaginary" <taglib> element
-	if (tagdir.equals(WEB_INF_TAGS)) {
+	if (tagdir.equals(WEB_INF_TAGS) || 
+            tagdir.equals( WEB_INF_TAGS + "/" ) ) 
+        {
 	    shortname = TAGS_SHORTNAME;
 	} else {
 	    shortname = tagdir.substring(WEB_INF_TAGS.length());

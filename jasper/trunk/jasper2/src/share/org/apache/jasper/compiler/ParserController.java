@@ -278,12 +278,15 @@ public class ParserController {
 	// FIXME: We assume xml parser will take care of
         // encoding for page in XML syntax. Correct?
 	if (!isXml) {
-            jspReader.reset(startMark);
-            while (jspReader.skipUntil("<%@") != null) {
+            // Note: this currently assumes there is no XML syntax for tag 
+            // files (as of PFD of the JSP 2.0 spec there is an XML view, 
+            // but no XML syntax).
+            isTagFile = file.startsWith( "/WEB-INF/tags" ) ||
+                file.startsWith( "/META-INF/tags" );
+	    jspReader.reset(startMark);
+	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
-		boolean tIsTagFile = jspReader.matches("tag ");
-		if (tIsTagFile || jspReader.matches("page")) {
-		    isTagFile = tIsTagFile;
+		if (jspReader.matches( "tag " ) || jspReader.matches("page")) {
 		    jspReader.skipSpaces();
 		    Attributes attrs = Parser.parseAttributes(this, jspReader);
 		    String attribute = "pageEncoding";

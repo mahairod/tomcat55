@@ -75,6 +75,7 @@ import org.apache.jasper.servlet.JspCServletContext;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.JasperLogger;
+import org.apache.jasper.compiler.JspConfig;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the 
@@ -912,6 +913,15 @@ public class JspC implements Options {
         
         Constants.jasperLog.setVerbosityLevel(verbosityLevel);
     }
+    
+    /** 
+     * Obtain JSP configuration informantion specified in web.xml.
+     */
+    public JspConfig getJspConfig() {
+        // XXX - Stubbed out so Jasper compiles.
+        initServletContext();
+        return new JspConfig( context );
+    }    
 
 }
 

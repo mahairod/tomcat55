@@ -170,6 +170,7 @@ public class Generator {
 
 	out.println();
 	page.visit(new DeclarationVisitor());
+	out.println();
     }
 
     /**
@@ -329,23 +330,25 @@ public class Generator {
     }
 
     /**
-     * Generates the beginning of the static portion of the servelet.
+     * Generate preamble package name
+     * (shared by servlet and tag handler preamble generation)
      */
-    private void generatePreamble(Node.Nodes page) throws JasperException {
-
-	String servletPackageName = ctxt.getServletPackageName();
-	String servletClassName = ctxt.getServletClassName();
-	String serviceMethodName = Constants.SERVICE_METHOD_NAME;
-
-	// First the package name:
-
-	if (! "".equals(servletPackageName) && servletPackageName != null) {
-	    out.printil("package " + servletPackageName + ";");
+    private void genPreamblePackage( String packageName ) 
+        throws JasperException
+    {
+	if (! "".equals(packageName) && packageName != null) {
+	    out.printil("package " + packageName + ";");
 	    out.println();
         }
-
-	// Generate imports
-
+    }
+    
+    /**
+     * Generate preamble imports
+     * (shared by servlet and tag handler preamble generation)
+     */
+    private void genPreambleImports() 
+        throws JasperException
+    {
 	Iterator iter = pageInfo.getImports().iterator();
 	while (iter.hasNext()) {
 	    out.printin("import ");
@@ -353,31 +356,21 @@ public class Generator {
 	    out.println(";");
 	}
 	out.println();
+    }
 
-	// Generate class declaration
-
-	out.printin("public class ");
-	out.print  (servletClassName);
-	out.print  (" extends ");
-	out.print  (pageInfo.getExtends());
-	if (!pageInfo.isThreadSafe()) {
-	    out.print("implements SingleThreadModel");
-	}
-	out.println(" {");
-	out.pushIndent();
-
-	// Class body begins here
-
-	generateDeclarations(page);
-	out.println();
-
-	// Static initializations here
-
+    /**
+     * Generation of static initializers in preamble.
+     * For example, include list, el function map, prefix map.
+     * (shared by servlet and tag handler preamble generation)
+     */
+    private void genPreambleStaticInitializers() 
+        throws JasperException
+    {
         // Static data for getIncludes()
         out.printil("private static java.util.Vector _jspx_includes;");
         out.println();
         List includes = pageInfo.getIncludes();
-        iter = includes.iterator();
+        Iterator iter = includes.iterator();
         if( !includes.isEmpty() ) {
             out.printil("static {");
             out.pushIndent();
@@ -397,13 +390,16 @@ public class Generator {
         // Static data for EL function and prefix maps:
         generateELFunctionMap();
 	generatePrefixMap();
+    }
 
- 	// Class variable declarations
-     	
-	/*
-	 * Declare tag handler pools (tags of the same type and with the same
-	 * attribute set share the same tag handler pool)
-	 */
+    /**
+     * Declare tag handler pools (tags of the same type and with the same
+     * attribute set share the same tag handler pool)
+     * (shared by servlet and tag handler preamble generation)
+     */
+    private void genPreambleClassVariableDeclarations( String className ) 
+        throws JasperException
+    {
 	if (ctxt.getOptions().isPoolingEnabled()
 	        && !tagHandlerPoolNames.isEmpty()) {
 	    for (int i=0; i<tagHandlerPoolNames.size(); i++) {
@@ -416,11 +412,17 @@ public class Generator {
 	// Constructor
 	if (ctxt.getOptions().isPoolingEnabled()
 	        && !tagHandlerPoolNames.isEmpty()) {
-	    generateServletConstructor(servletClassName);
+	    generateConstructor(className);
 	}
- 
-	// Methods here
+    }
 
+    /**
+     * Declare general-purpose methods
+     * (shared by servlet and tag handler preamble generation)
+     */
+    private void genPreambleMethods() 
+        throws JasperException
+    {
 	// Method used to get compile time include file dependencies
         out.printil("public java.util.List getIncludes() {");
         out.pushIndent();
@@ -433,6 +435,45 @@ public class Generator {
 	        && !tagHandlerPoolNames.isEmpty()) {
 	    generateDestroy();
 	}
+    }
+    
+    /**
+     * Generates the beginning of the static portion of the servelet.
+     */
+    private void generatePreamble(Node.Nodes page) throws JasperException {
+
+	String servletPackageName = ctxt.getServletPackageName();
+	String servletClassName = ctxt.getServletClassName();
+	String serviceMethodName = Constants.SERVICE_METHOD_NAME;
+
+	// First the package name:
+        genPreamblePackage( servletPackageName );
+
+	// Generate imports
+        genPreambleImports();
+
+	// Generate class declaration
+	out.printin("public class ");
+	out.print  (servletClassName);
+	out.print  (" extends ");
+	out.print  (pageInfo.getExtends());
+	if (!pageInfo.isThreadSafe()) {
+	    out.print("implements SingleThreadModel");
+	}
+	out.println(" {");
+	out.pushIndent();
+
+	// Class body begins here
+	generateDeclarations(page);
+
+	// Static initializations here
+        genPreambleStaticInitializers();
+
+ 	// Class variable declarations
+        genPreambleClassVariableDeclarations( servletClassName );
+ 
+	// Methods here
+        genPreambleMethods();
  
 	// Now the service method
 	out.printin("public void ");
@@ -668,10 +709,11 @@ public class Generator {
     }
 
     /*
-     * Generates the servlet constructor.
+     * Generates the constructor.
+     * (shared by servlet and tag handler preamble generation)
      */
-    private void generateServletConstructor(String servletClassName) {
-	out.printil("public " + servletClassName + "() {");
+    private void generateConstructor(String className) {
+	out.printil("public " + className + "() {");
 	out.pushIndent();
 	for (int i=0; i<tagHandlerPoolNames.size(); i++) {
 	    out.printin((String) tagHandlerPoolNames.elementAt(i));
@@ -1699,11 +1741,11 @@ public class Generator {
 	}
 
 	public void visit(Node.JspBody n) throws JasperException {
+            Node.JspAttribute value = n.getValue();
 	    if (isSimpleTagHandler) {
 		out.printin(simpleTagHandlerVar);
 		out.print(".setJspBody(");
 
-		Node.JspAttribute value = n.getValue();
 		if (value != null) {
 		    out.print(attributeValue(value, false, JspFragment.class,
                         "null" ));
@@ -1712,7 +1754,63 @@ public class Generator {
 		}
 		out.println(");");
 	    } else {
-		visitBody(n);
+                Node parent = n.getParent();
+                if( (parent instanceof Node.CustomTag) && (value != null) ) {
+                    Node.CustomTag customTag = (Node.CustomTag)parent;
+                    
+                    // Classic tag handler invoked with <jsp:body value="...">
+                    // Generate a tag body that evaluates the given
+                    // fragment.
+                    
+                    // First, generate a Map with all the AT_BEGIN and 
+                    // NESTED variables so the body can access them.
+                    VariableInfo[] varInfos = customTag.getVariableInfos();
+                    TagVariableInfo[] tagVarInfos = 
+                        customTag.getTagVariableInfos();
+                    
+                    String var = JspUtil.nextTemporaryVariableName();
+                    out.printil( "java.util.HashMap " + var + 
+                        " = new java.util.HashMap();" );
+                    
+                    if( varInfos != null ) {
+                        for( int i = 0; i < varInfos.length; i++ ) {
+                            if( (varInfos[i].getScope() == 
+                                    VariableInfo.AT_BEGIN) ||
+                                (varInfos[i].getScope() == 
+                                    VariableInfo.NESTED) ) 
+                            {
+                                out.printil( var + ".put( \"" + 
+                                    varInfos[i].getVarName() + "\", " +
+                                    varInfos[i].getVarName() + " );" );
+                            }
+                        }
+                    }
+
+                    if( tagVarInfos != null ) {
+                        for( int i = 0; i < tagVarInfos.length; i++ ) {
+                            if( (tagVarInfos[i].getScope() == 
+                                    VariableInfo.AT_BEGIN) || 
+                                (tagVarInfos[i].getScope() ==
+                                    VariableInfo.NESTED) )
+                            {
+                                out.printin( var + ".put( \"" );
+                                String name = tagVarInfos[i].getNameGiven();
+                                if( name == null ) {
+                                    name = customTag.getTagData().
+                                        getAttributeString(
+                                        tagVarInfos[i].getNameFromAttribute());
+                                }
+                                out.println( name + "\", " + name + " );" );
+                            }
+                        }
+                    }
+                    
+                    out.printil("(" + 
+                        attributeValue(value, false, JspFragment.class,
+                        "null" ) + ").invoke( out, " + var + " );" );
+		} else {
+                    visitBody(n);
+		}
 	    }
 	}
 
@@ -2675,6 +2773,29 @@ public class Generator {
     }
     
     /**
+     * Common part of postamble, shared by both servlets and tag files.
+     */
+    private void genCommonPostamble() {
+	// Append any methods that were generated
+	out.print(methodsBuffer.toString());
+        
+        // Append the helper class
+        if( fragmentHelperClass.isUsed() ) {
+            fragmentHelperClass.generatePostamble();
+            out.printMultiLn(fragmentHelperClass.toString());
+        }
+
+	// generate class definition for JspxState
+        if (maxTagNesting > 0) {
+	    generateJspState();
+	}
+
+        // Close the class definition
+        out.popIndent();
+        out.printil("}");
+    }
+        
+    /**
      * Generates the ending part of the static portion of the servlet.
      */
     private void generatePostamble(Node.Nodes page) {
@@ -2703,23 +2824,8 @@ public class Generator {
         out.popIndent();
         out.printil("}");
 
-	// Append any methods that were generated
-	out.print(methodsBuffer.toString());
-        
-        // Append the helper class
-        if( fragmentHelperClass.isUsed() ) {
-            fragmentHelperClass.generatePostamble();
-            out.printMultiLn(fragmentHelperClass.toString());
-        }
-
-	// generate class definition for JspxState
-        if (maxTagNesting > 0) {
-	    generateJspState();
-	}
-
-        // Close the class definition
-        out.popIndent();
-        out.printil("}");
+        // Generated methods, helper classes, etc.
+        genCommonPostamble();
     }
 
     /**
@@ -2751,17 +2857,17 @@ public class Generator {
 
 	Generator gen = new Generator(out, compiler);
 
+        if (gen.ctxt.getOptions().isPoolingEnabled()) {
+            gen.compileTagHandlerPoolList(page);
+        }
 	if (gen.ctxt.isTagFile()) {
 	    TagInfo tagInfo = gen.ctxt.getTagInfo();
-	    gen.generateTagHandlerPreamble(tagInfo);
+	    gen.generateTagHandlerPreamble(tagInfo, page);
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
 					       gen.methodsBuffer, null,
 					       tagInfo));
 	    gen.generateTagHandlerPostamble();
 	} else {
-	    if (gen.ctxt.getOptions().isPoolingEnabled()) {
-		gen.compileTagHandlerPoolList(page);
-	    }
 	    gen.generatePreamble(page);
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
@@ -2774,28 +2880,20 @@ public class Generator {
     /*
      * XXX
      */
-    private void generateTagHandlerPreamble(TagInfo tagInfo)
-	    throws JasperException {
+    private void generateTagHandlerPreamble(TagInfo tagInfo, Node.Nodes tag )
+        throws JasperException 
+    {
 
 	// Generate package declaration
 	String className = tagInfo.getTagClassName();
 	if (className.indexOf('.') != -1) {
 	    String pkgName
 		= className.substring(0, className.lastIndexOf("."));
-	    out.printin("package ");
-	    out.print(pkgName);
-	    out.println(";");
-	    out.println();
+            genPreamblePackage( pkgName );
 	}
 
 	// Generate imports
-	Iterator iter = pageInfo.getImports().iterator();
-	while (iter.hasNext()) {
-	    out.printin("import ");
-	    out.print  ((String)iter.next());
-	    out.println(";");
-	}
-	out.println();
+        genPreambleImports();
 
 	// Generate class declaration
 	out.printin("public class ");
@@ -2808,19 +2906,45 @@ public class Generator {
 	out.pushIndent();
 	
 	// Class body begins here
+	generateDeclarations(tag);
 
-        // Static data for EL function and prefix maps:
-        generateELFunctionMap();
-	generatePrefixMap();
+	// Static initializations here
+        genPreambleStaticInitializers();
 
+ 	// Class variable declarations
+        genPreambleClassVariableDeclarations( tagInfo.getTagName() );
+        
+        // Tag-handler specific declarations:
 	generateTagHandlerDeclarations(tagInfo);
 
 	if (tagInfo.hasDynamicAttributes())
 	    generateSetDynamicAttribute();
 
+	// Methods here
+        genPreambleMethods();
+        
+        // Now the doTag() method
 	out.printil("public void doTag() throws javax.servlet.jsp.JspException {");
 	out.pushIndent();
 	out.printil("PageContext pageContext = new JspContextWrapper(getJspContext());");
+        
+        // Declare implicit objects.  
+        // XXX - Note that the current JSP 2.0 PFD 
+        // spec is unclear about whether these are required
+        // XXX - Optimization: Check scriptlets and expressions for the
+        // use of any of these.  They're not likely to be used.  If they're
+        // not used, get rid of them.
+        out.printil( "javax.servlet.ServletRequest request = " +
+            "pageContext.getRequest();" );
+        out.printil( "javax.servlet.ServletResponse response = " +
+            "pageContext.getResponse();" );
+        out.printil( "javax.servlet.http.HttpSession session = " +
+            "pageContext.getSession();" );
+        out.printil( "javax.servlet.ServletContext application = " +
+            "pageContext.getServletContext();" );
+	out.printil("javax.servlet.ServletConfig config = " +
+            "pageContext.getServletConfig();");
+        
 	// Declare parameter map for fragment/body invocation
 	out.printil("java.util.Map _jspx_params = null;");
 
@@ -2830,21 +2954,40 @@ public class Generator {
 
 	out.printil("javax.servlet.jsp.JspWriter out = pageContext.getOut();");
 	generatePageScopedVariables(tagInfo);
+        
+     	// Number of tag object that need to be popped
+	// XXX TODO: use a better criteria
+	maxTagNesting = pageInfo.getMaxTagNesting();
+        
+	declareTemporaryScriptingVars(tag);
+	out.println();
+        
 	out.printil("try {");
 	out.pushIndent();
     }
 
     private void generateTagHandlerPostamble() {
         out.popIndent();
-        out.printil("} catch (java.io.IOException ioe) {");
-	out.pushIndent();
-	out.printil("throw new javax.servlet.jsp.JspException(ioe);");
-	out.popIndent();
-	out.printil("}");
-	out.popIndent();
-	out.printil("}");
-	out.popIndent();
-	out.printil("}");
+        //out.printil("} catch (java.io.IOException ioe) {");
+	//out.pushIndent();
+	//out.printil("throw new javax.servlet.jsp.JspException(ioe);");
+	//out.popIndent();
+	//out.printil("}");
+        
+        // Have to catch Throwable because a classic tag handler
+        // helper method is declared to throw Throwable.
+        out.printil( "} catch( Throwable t ) {" );
+        out.pushIndent();
+        out.printil("throw new javax.servlet.jsp.JspException(t);" );
+        out.popIndent();
+        out.printil( "}" );
+        
+        // Close the doTag method
+        out.popIndent();
+        out.printil("}");
+
+        // Generated methods, helper classes, etc.
+        genCommonPostamble();
     }
 
     /**
