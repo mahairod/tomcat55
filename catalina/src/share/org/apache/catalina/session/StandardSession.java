@@ -149,14 +149,14 @@ public class StandardSession
      * The dummy attribute value serialized when a NotSerializableException is
      * encountered in <code>writeObject()</code>.
      */
-    private static final String NOT_SERIALIZED =
+    protected static final String NOT_SERIALIZED =
         "___NOT_SERIALIZABLE_EXCEPTION___";
 
 
     /**
      * The collection of user data attributes associated with this Session.
      */
-    private HashMap attributes = new HashMap();
+    protected HashMap attributes = new HashMap();
 
 
     /**
@@ -164,7 +164,7 @@ public class StandardSession
      * if any.  NOTE:  This value is not included in the serialized
      * version of this object.
      */
-    private transient String authType = null;
+    protected transient String authType = null;
 
 
     /**
@@ -175,13 +175,13 @@ public class StandardSession
      * computed dynamically the first time it is needed, or after
      * a session reload (since it is declared transient).
      */
-    private transient Method containerEventMethod = null;
+    protected transient Method containerEventMethod = null;
 
 
     /**
      * The method signature for the <code>fireContainerEvent</code> method.
      */
-    private static final Class containerEventTypes[] =
+    protected static final Class containerEventTypes[] =
     { String.class, Object.class };
 
 
@@ -189,14 +189,14 @@ public class StandardSession
      * The time this session was created, in milliseconds since midnight,
      * January 1, 1970 GMT.
      */
-    private long creationTime = 0L;
+    protected long creationTime = 0L;
 
 
     /**
      * The debugging detail level for this component.  NOTE:  This value
      * is not included in the serialized version of this object.
      */
-    private transient int debug = 0;
+    protected transient int debug = 0;
 
 
     /**
@@ -204,44 +204,44 @@ public class StandardSession
      * certain IllegalStateException tests.  NOTE:  This value is not
      * included in the serialized version of this object.
      */
-    private transient boolean expiring = false;
+    protected transient boolean expiring = false;
 
 
     /**
      * The facade associated with this session.  NOTE:  This value is not
      * included in the serialized version of this object.
      */
-    private transient StandardSessionFacade facade = null;
+    protected transient StandardSessionFacade facade = null;
 
 
     /**
      * The session identifier of this Session.
      */
-    private String id = null;
+    protected String id = null;
 
 
     /**
      * Descriptive information describing this Session implementation.
      */
-    private static final String info = "StandardSession/1.0";
+    protected static final String info = "StandardSession/1.0";
 
 
     /**
      * The last accessed time for this Session.
      */
-    private long lastAccessedTime = creationTime;
+    protected long lastAccessedTime = creationTime;
 
 
     /**
      * The session event listeners for this Session.
      */
-    private transient ArrayList listeners = new ArrayList();
+    protected transient ArrayList listeners = new ArrayList();
 
 
     /**
      * The Manager with which this Session is associated.
      */
-    private Manager manager = null;
+    protected Manager manager = null;
 
 
     /**
@@ -249,19 +249,19 @@ public class StandardSession
      * the servlet container may invalidate this session.  A negative time
      * indicates that the session should never time out.
      */
-    private int maxInactiveInterval = -1;
+    protected int maxInactiveInterval = -1;
 
 
     /**
      * Flag indicating whether this session is new or not.
      */
-    private boolean isNew = false;
+    protected boolean isNew = false;
 
 
     /**
      * Flag indicating whether this session is valid or not.
      */
-    private boolean isValid = false;
+    protected boolean isValid = false;
 
 
     /**
@@ -269,7 +269,7 @@ public class StandardSession
      * and event listeners.  <b>IMPLEMENTATION NOTE:</b> This object is
      * <em>not</em> saved and restored across session serializations!
      */
-    private transient HashMap notes = new HashMap();
+    protected transient HashMap notes = new HashMap();
 
 
     /**
@@ -277,34 +277,34 @@ public class StandardSession
      * <b>IMPLEMENTATION NOTE:</b>  This object is <i>not</i> saved and
      * restored across session serializations!
      */
-    private transient Principal principal = null;
+    protected transient Principal principal = null;
 
 
     /**
      * The string manager for this package.
      */
-    private static StringManager sm =
+    protected static StringManager sm =
         StringManager.getManager(Constants.Package);
 
 
     /**
      * The HTTP session context associated with this session.
      */
-    private static HttpSessionContext sessionContext = null;
+    protected static HttpSessionContext sessionContext = null;
 
 
     /**
      * The property change support for this component.  NOTE:  This value
      * is not included in the serialized version of this object.
      */
-    private transient PropertyChangeSupport support =
+    protected transient PropertyChangeSupport support =
         new PropertyChangeSupport(this);
 
 
     /**
      * The current accessed time for this session.
      */
-    private long thisAccessedTime = creationTime;
+    protected long thisAccessedTime = creationTime;
 
 
     // ----------------------------------------------------- Session Properties
@@ -1358,7 +1358,7 @@ public class StandardSession
     }
 
 
-    // -------------------------------------------- HttpSession Private Methods
+    // ------------------------------------------ HttpSession Protected Methods
 
 
     /**
@@ -1373,7 +1373,7 @@ public class StandardSession
      * @exception ClassNotFoundException if an unknown class is specified
      * @exception IOException if an input/output error occurs
      */
-    private void readObject(ObjectInputStream stream)
+    protected void readObject(ObjectInputStream stream)
         throws ClassNotFoundException, IOException {
 
         // Deserialize the scalar instance variables (except Manager)
@@ -1432,7 +1432,7 @@ public class StandardSession
      *
      * @exception IOException if an input/output error occurs
      */
-    private void writeObject(ObjectOutputStream stream) throws IOException {
+    protected void writeObject(ObjectOutputStream stream) throws IOException {
 
         // Write the scalar instance variables (except Manager)
         stream.writeObject(new Long(creationTime));
@@ -1485,7 +1485,7 @@ public class StandardSession
     }
 
 
-    private void evaluateIfValid() {
+    protected void evaluateIfValid() {
         /*
 	 * If this session has expired or is in the process of expiring or
 	 * will never expire, return
@@ -1504,7 +1504,7 @@ public class StandardSession
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -1517,7 +1517,7 @@ public class StandardSession
      *
      * @exception Exception occurred during event firing
      */
-    private void fireContainerEvent(Context context,
+    protected void fireContainerEvent(Context context,
                                     String type, Object data)
         throws Exception {
 
@@ -1569,7 +1569,7 @@ public class StandardSession
      * as an array of Strings.  If there are no defined attributes, a
      * zero-length array is returned.
      */
-    private String[] keys() {
+    protected String[] keys() {
 
         String results[] = new String[0];
         synchronized (attributes) {
@@ -1582,7 +1582,7 @@ public class StandardSession
     /**
      * Return the value of an attribute without a check for validity.
      */
-    private Object getAttributeInternal(String name) {
+    protected Object getAttributeInternal(String name) {
 
         synchronized (attributes) {
             return (attributes.get(name));
@@ -1628,7 +1628,7 @@ public class StandardSession
 }
 
 
-// -------------------------------------------------------------- Private Class
+// ------------------------------------------------------------ Protected Class
 
 
 /**
@@ -1645,7 +1645,7 @@ public class StandardSession
 final class StandardSessionContext implements HttpSessionContext {
 
 
-    private HashMap dummy = new HashMap();
+    protected HashMap dummy = new HashMap();
 
     /**
      * Return the session identifiers of all sessions defined

@@ -145,7 +145,7 @@ public class StandardManager
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "StandardManager/1.0";
+    protected static final String info = "StandardManager/1.0";
 
 
     /**
@@ -157,7 +157,7 @@ public class StandardManager
     /**
      * The maximum number of active Sessions allowed, or -1 for no limit.
      */
-    private int maxActiveSessions = -1;
+    protected int maxActiveSessions = -1;
 
 
     /**
@@ -174,13 +174,13 @@ public class StandardManager
      * temporary working directory provided by our context, available via
      * the <code>javax.servlet.context.tempdir</code> context attribute.
      */
-    private String pathname = "SESSIONS.ser";
+    protected String pathname = "SESSIONS.ser";
 
 
     /**
      * Has this component been started yet?
      */
-    private boolean started = false;
+    protected boolean started = false;
 
 
     int rejectedSessions=0;
@@ -388,7 +388,7 @@ public class StandardManager
      *  found during the reload
      * @exception IOException if an input/output error occurs
      */
-    private void doLoad() throws ClassNotFoundException, IOException {    
+    protected void doLoad() throws ClassNotFoundException, IOException {    
         if (log.isDebugEnabled())
             log.debug("Start: Loading persisted sessions");
 
@@ -527,7 +527,7 @@ public class StandardManager
      *
      * @exception IOException if an input/output error occurs
      */
-    private void doUnload() throws IOException {   
+    protected void doUnload() throws IOException {   
 
         if (log.isDebugEnabled())
             log.debug("Unloading persisted sessions");
@@ -773,14 +773,14 @@ public class StandardManager
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
      * Return a File object representing the pathname to our
      * persistence file, if any.
      */
-    private File file() {
+    protected File file() {
 
         if ((pathname == null) || (pathname.length() == 0))
             return (null);
