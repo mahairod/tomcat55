@@ -1368,6 +1368,14 @@ abstract class Node implements TagConstants {
 	    return tagFileInfo;
 	}
 
+	/*
+	 * @return true if this custom action is supported by a tag file,
+	 * false otherwise
+	 */
+	public boolean isTagFile() {
+	    return tagFileInfo != null;
+	}
+
 	public Class getTagHandlerClass() {
 	    return tagHandlerClass;
 	}

@@ -2436,8 +2436,8 @@ class Generator {
 
 		String nameFrom = tagVars[i].getNameFromAttribute();
 		if (nameFrom != null) {
-		    String aliaseName = n.getAttributeValue(nameFrom);
-		    if (aliaseName == null) continue;
+		    String aliasedName = n.getAttributeValue(nameFrom);
+		    if (aliasedName == null) continue;
 
 		    if ( ! aliasSeen ) {
 			out.printin("java.util.HashMap ");
@@ -2450,7 +2450,7 @@ class Generator {
 		    out.print(".put(");
 		    out.print(quote(tagVars[i].getNameGiven()));
 		    out.print(", ");
-		    out.print(quote(aliaseName));
+		    out.print(quote(aliasedName));
 		    out.println(");");
 		}
 	    }
@@ -2466,7 +2466,10 @@ class Generator {
 	    // Set context
 	    if (simpleTag) {
 		// Generate alias map 
-		String aliasMapVar= generateAliasMap(n, tagHandlerVar);
+		String aliasMapVar = null;
+		if (n.isTagFile()) {
+		    aliasMapVar = generateAliasMap(n, tagHandlerVar);
+		}
 		out.printin(tagHandlerVar);
 		if (aliasMapVar == null) {
 		    out.println(".setJspContext(pageContext);");
@@ -3135,7 +3138,7 @@ class Generator {
 	boolean atBeginSeen = false;
 	boolean atEndSeen = false;
 
-	// Determine if there is any aliases
+	// Determine if there are any aliases
 	boolean aliasSeen = false;
 	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
 	for (int i=0; i<tagVars.length; i++) {
