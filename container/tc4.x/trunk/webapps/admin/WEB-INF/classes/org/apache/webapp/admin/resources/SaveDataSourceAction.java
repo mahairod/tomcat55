@@ -177,13 +177,30 @@ public final class SaveDataSourceAction extends Action {
             Object params[] = new Object[2];
             params[0] = dataSourceForm.getJndiName();
             params[1] = ResourceUtils.DATASOURCE_CLASS;     
-           
+            
+            String resourcetype = dataSourceForm.getResourcetype();
+            String path = dataSourceForm.getPath();
+            String host = dataSourceForm.getHost();
+            String service = dataSourceForm.getService();
+            
             ObjectName oname = null;
 
             try {
-
-                // Construct the MBean Name for the naming source
-                oname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+                if (resourcetype!=null) {
+                    // Construct the MBean Name for the naming source
+                    if (resourcetype.equals("Global")) {
+                        oname = 
+                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                            ResourceUtils.GLOBAL_TYPE);
+                    } else if (resourcetype.equals("Context")) {            
+                        oname = 
+                            new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                            ",host=" + host + ",service=" + service);
+                    } else if (resourcetype.equals("DefaultContext")) {
+                        // add defaultcontext support later
+                    }
+                }
 
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResource",

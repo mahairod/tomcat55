@@ -18,6 +18,21 @@
 
 <html:form action="/resources/listEnvEntries">
 
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="envEntriesForm" property="resourcetype"/>
+  <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="envEntriesForm" property="path"/>
+  <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="envEntriesForm" property="host"/>
+  <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="envEntriesForm" property="service"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
@@ -36,8 +51,26 @@
 </html:form>
 
 <br>
+
 <bean:define id="checkboxes" scope="page" value="true"/>
+
 <html:form action="/resources/deleteEnvEntries">
+
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="envEntriesForm" property="resourcetype"/>
+  <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="envEntriesForm" property="path"/>
+  <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="envEntriesForm" property="host"/>
+  <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="envEntriesForm" property="service"/>
+
   <%@ include file="../buttons.jsp" %>
   <br>
   <%@ include file="envEntries.jspf" %>

@@ -18,6 +18,22 @@
 
 <html:form action="/resources/listDataSources">
 
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="dataSourcesForm" property="resourcetype"/>
+  <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="dataSourcesForm" property="path"/>
+  <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="dataSourcesForm" property="host"/>
+  <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="dataSourcesForm" property="service"/>
+  <html:hidden property="service"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
@@ -33,13 +49,12 @@
     </tr>
   </table>
 
-</html:form>
-
 <br>
 
 <%@ include file="dataSources.jspf" %>
 
 <br>
+</html:form>
 
 </body>
 </html:html>

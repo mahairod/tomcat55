@@ -133,7 +133,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
             ("Globally Administer Data Sources",
              "Datasource.gif",
              resources.getMessage("resources.treeBuilder.datasources"),
-             "resources/listDataSources.do?forward=" +
+             "resources/listDataSources.do?resourcetype=Global&forward=" +
              URLEncoder.encode("DataSources List Setup"),
              "content",
              false);
@@ -148,11 +148,11 @@ public class ResourcesTreeBuilder implements TreeBuilder {
         TreeControlNode envs = new TreeControlNode
             ("Globally Administer Environment Entries",
              "EnvironmentEntries.gif",
-             resources.getMessage("resources.env.entries"),
-             "resources/listEnvEntries.do?forward=" +
-             URLEncoder.encode("EnvEntries List Setup"),
-             "content",
-             false);
+            resources.getMessage("resources.env.entries"),
+            "resources/listEnvEntries.do?resourcetype=Global&forward=" +
+            URLEncoder.encode("EnvEntries List Setup"),
+            "content",
+            false);
         root.addChild(subtree);
         subtree.addChild(datasources);
         subtree.addChild(envs);

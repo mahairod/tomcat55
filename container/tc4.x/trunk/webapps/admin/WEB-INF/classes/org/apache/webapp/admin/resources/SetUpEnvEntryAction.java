@@ -150,24 +150,27 @@ public final class SetUpEnvEntryAction extends Action {
         }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        
-        String parentName = request.getParameter("parent");
-        String parentType = request.getParameter("parentType");
 
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
+        String resourcetype = request.getParameter("resourcetype");
+        String path = request.getParameter("path");
+        String host = request.getParameter("host");
+        String service = request.getParameter("service");
         
-        EnvEntryForm envEntryForm = new EnvEntryForm();
+        EnvEntryForm envEntryForm = new EnvEntryForm();           
+        envEntryForm.setResourcetype(resourcetype);
+        envEntryForm.setPath(path);
+        envEntryForm.setHost(host);
+        envEntryForm.setService(service);
         if (objectName == null) {
             envEntryForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.env.create"));
-            envEntryForm.setObjectName(null);
+            envEntryForm.setObjectName(null); 
         } else {
             envEntryForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.env.edit"));
             envEntryForm.setObjectName(objectName);
-            envEntryForm.setParentName(parentName);
-            envEntryForm.setParentType(parentType);
             
             String attribute = null;
             try {

@@ -115,26 +115,84 @@ public final class ResourceLinkForm extends BaseForm {
     }
     
     /**
-     * The object name of the parent of this resource link.
+     * The resource type of this resource link.
      */
-    private String parentObjectName = null;
+    private String resourcetype = null;
     
     /**
-     * Return the parent object name of the Logger this bean refers to.
+     * Return the resource type of the resource link this bean refers to.
      */
-    public String getParentObjectName() {
-        return this.parentObjectName;
+    public String getResourcetype() {
+        return this.resourcetype;
     }
 
     /**
-     * Set the parent object name of the Logger this bean refers to.
+     * Set the resource type of the resource link this bean refers to.
      */
-    public void setParentObjectName(String parentObjectName) {
-        this.parentObjectName = parentObjectName;
+    public void setResourcetype(String resourcetype) {
+        this.resourcetype = resourcetype;
+    }
+       
+    /**
+     * The path of this resource link.
+     */
+    private String path = null;
+    
+    /**
+     * Return the path of the resource link this bean refers to.
+     */
+    public String getPath() {
+        return this.path;
+    }
+
+    /**
+     * Set the path of the resource link this bean refers to.
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+       
+    /**
+     * The host of this resource link.
+     */
+    private String host = null;
+    
+    /**
+     * Return the host of the resource link this bean refers to.
+     */
+    public String getHost() {
+        return this.host;
+    }
+
+    /**
+     * Set the host of the resource link this bean refers to.
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }    
+    
+       
+    /**
+     * The service of this resource link.
+     */
+    private String service = null;
+    
+    /**
+     * Return the service of the resource link this bean refers to.
+     */
+    public String getService() {
+        return this.service;
+    }
+
+    /**
+     * Set the service of the resource link this bean refers to.
+     */
+    public void setService(String service) {
+        this.service = service;
     }
     
     /**
-     * The type of the resource link.
+     * The type of the resource link link.
      */
     private String type = null;
 

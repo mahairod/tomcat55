@@ -152,8 +152,16 @@ public final class SetUpDataSourceAction extends Action {
 
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
+        String resourcetype = request.getParameter("resourcetype");
+        String path = request.getParameter("path");
+        String host = request.getParameter("host");
+        String service = request.getParameter("service");
         
-        DataSourceForm dataSourceForm = new DataSourceForm();
+        DataSourceForm dataSourceForm = new DataSourceForm();       
+        dataSourceForm.setResourcetype(resourcetype);
+        dataSourceForm.setPath(path);
+        dataSourceForm.setHost(host);
+        dataSourceForm.setService(service);
         dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
 
         if (objectName == null) {

@@ -21,6 +21,10 @@
 
   <html:hidden property="objectName"/>
   <html:hidden property="type"/>
+  <html:hidden property="resourcetype"/>
+  <html:hidden property="path"/>
+  <html:hidden property="host"/>
+  <html:hidden property="service"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">

@@ -19,8 +19,11 @@
 
 <html:form method="POST" action="/resources/saveResourceLink">
 
-  <html:hidden property="parentObjectName"/>
   <html:hidden property="objectName"/>
+  <html:hidden property="resourcetype"/>
+  <html:hidden property="path"/>
+  <html:hidden property="host"/>
+  <html:hidden property="service"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">

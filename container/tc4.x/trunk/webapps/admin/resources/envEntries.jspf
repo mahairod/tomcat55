@@ -32,11 +32,11 @@
         </logic:present>
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpEnvEntry.do?objectName=" + 
-                               URLEncoder.encode(envEntry) +
-                                "&parent=" +
-                               URLEncoder.encode(parentNameInfo) +
-                                "&parentType="+
-                               URLEncoder.encode(parentTypeInfo) %>'>
+                               URLEncoder.encode(envEntry) + "&resourcetype=" +
+                               URLEncoder.encode(resourcetypeInfo) + "&path="+
+                               URLEncoder.encode(pathInfo) + "&host="+
+                               URLEncoder.encode(hostInfo) + "&service="+
+                               URLEncoder.encode(serviceInfo) %>'>
             <controls:attribute name="envEntry" attribute="name"/>
           </html:link>
         </div></td>

@@ -29,7 +29,11 @@
         </logic:present>
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpDataSource.do?objectName=" + 
-                               URLEncoder.encode(dataSource) %>'>
+                               URLEncoder.encode(dataSource) + "&resourcetype=" +
+                               URLEncoder.encode(resourcetypeInfo) + "&path="+
+                               URLEncoder.encode(pathInfo) + "&host="+
+                               URLEncoder.encode(hostInfo) + "&service="+
+                               URLEncoder.encode(serviceInfo) %>'>
             <controls:attribute name="dataSource" attribute="name"/>
           </html:link>
         </div></td>

@@ -18,13 +18,21 @@
 
 <html:form action="/resources/listEnvEntries">
 
-  <bean:define id="parentNameInfo" type="java.lang.String"
-               name="envEntriesForm" property="parentName"/>
-  <html:hidden property="parentName"/>
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="envEntriesForm" property="resourcetype"/>
+  <html:hidden property="resourcetype"/>
 
-  <bean:define id="parentTypeInfo" type="java.lang.String"
-               name="envEntriesForm" property="parentType"/>
-  <html:hidden property="parentType"/>
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="envEntriesForm" property="path"/>
+  <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="envEntriesForm" property="host"/>
+  <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="envEntriesForm" property="service"/>
+  <html:hidden property="service"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">

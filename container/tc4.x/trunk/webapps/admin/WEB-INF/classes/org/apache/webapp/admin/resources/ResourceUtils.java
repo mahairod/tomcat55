@@ -85,6 +85,9 @@ public class ResourceUtils {
     public final static String RESOURCE_TYPE = "Catalina:type=Resource";
     public final static String RESOURCELINK_TYPE = "Catalina:type=ResourceLink";
     public final static String NAMINGRESOURCES_TYPE = "Catalina:type=NamingResources";
+    public final static String GLOBAL_TYPE = ",resourcetype=Global";
+    public final static String CONTEXT_TYPE = ",resourcetype=Context";
+    public final static String DEFAULTCONTEXT_TYPE = ",resourcetype=DefaultContext";
     
     // resource class names
     public final static String USERDB_CLASS = "org.apache.catalina.UserDatabase";
@@ -102,14 +105,20 @@ public class ResourceUtils {
      * @exception Exception if an error occurs
      */
     public static EnvEntriesForm getEnvEntriesForm(MBeanServer mserver, 
-                        String parent, String parentType) throws Exception {
+        String resourcetype, String path, String host, String service) 
+        throws Exception {
                            
         ObjectName ename = null;
-        if ((parent == null) || (parentType == null)) {
-            ename = new ObjectName( ENVIRONMENT_TYPE + ",*");
-        } else {
-            ename = new ObjectName( ENVIRONMENT_TYPE +
-                                        ","+parentType+"=" + parent);
+        if (resourcetype!=null) {
+            if (resourcetype.equals("Global")) {
+                ename = new ObjectName( ENVIRONMENT_TYPE + GLOBAL_TYPE + ",*");
+            } else if (resourcetype.equals("Context")) {
+                ename = new ObjectName (ENVIRONMENT_TYPE + CONTEXT_TYPE + 
+                    ",path=" + path + ",host=" + host + ",service=" + 
+                    service + ",*");
+            } else if (resourcetype.equals("DefaultContext")) {
+                // add defaultcontext support later
+            }
         }
         
         Iterator iterator = (mserver.queryMBeans(ename, null).iterator());
@@ -126,17 +135,26 @@ public class ResourceUtils {
         envEntriesForm.setEnvEntries((String[]) 
                         results.toArray(new String[results.size()]));
         
-        if (parent != null) {
-            envEntriesForm.setParentName(parent);
+        if (resourcetype != null) {
+            envEntriesForm.setResourcetype(resourcetype);
         } else {
-            envEntriesForm.setParentName("");
+            envEntriesForm.setResourcetype("");
         }
-        
-        if (parentType != null) {
-            envEntriesForm.setParentType(parentType);
+         if (path != null) {
+            envEntriesForm.setPath(path);
         } else {
-            envEntriesForm.setParentType("");
-        }
+            envEntriesForm.setPath("");
+        }        
+        if (host != null) {
+            envEntriesForm.setHost(host);
+        } else {
+            envEntriesForm.setHost("");
+        }        
+        if (service != null) {
+            envEntriesForm.setService(service);
+        } else {
+            envEntriesForm.setService("");
+        }     
         
         return (envEntriesForm);
 
@@ -152,11 +170,23 @@ public class ResourceUtils {
      * @exception Exception if an error occurs
      */
     public static DataSourcesForm getDataSourcesForm(MBeanServer mserver, 
-                        String parent, String parentType) throws Exception {
+        String resourcetype, String path, String host, String service) 
+        throws Exception {
                             
-        ObjectName rname = new ObjectName( RESOURCE_TYPE + 
-                            ",class=" + DATASOURCE_CLASS + ",*");
-                                 
+        ObjectName rname = null;
+        if (resourcetype!=null) {
+            if (resourcetype.equals("Global")) {
+                rname = new ObjectName( RESOURCE_TYPE + GLOBAL_TYPE + 
+                                        ",class=" + DATASOURCE_CLASS + ",*");
+            } else if (resourcetype.equals("Context")) {
+                rname = new ObjectName (RESOURCE_TYPE + CONTEXT_TYPE + 
+                    ",path=" + path + ",host=" + host + ",service=" + 
+                    service + ",class=" + DATASOURCE_CLASS + ",*");
+            } else if (resourcetype.equals("DefaultContext")) {
+                // add defaultcontext support later
+            }
+        }
+       
         Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
         
         ArrayList results = new ArrayList();        
@@ -169,6 +199,28 @@ public class ResourceUtils {
         DataSourcesForm dataSourcesForm = new DataSourcesForm();
         dataSourcesForm.setDataSources((String[]) 
                         results.toArray(new String[results.size()]));        
+        
+        if (resourcetype != null) {
+            dataSourcesForm.setResourcetype(resourcetype);
+        } else {
+            dataSourcesForm.setResourcetype("");
+        }
+         if (path != null) {
+            dataSourcesForm.setPath(path);
+        } else {
+            dataSourcesForm.setPath("");
+        }        
+        if (host != null) {
+            dataSourcesForm.setHost(host);
+        } else {
+            dataSourcesForm.setHost("");
+        }        
+        if (service != null) {
+            dataSourcesForm.setService(service);
+        } else {
+            dataSourcesForm.setService("");
+        }   
+        
         return (dataSourcesForm);
 
     }
@@ -183,10 +235,22 @@ public class ResourceUtils {
      * @exception Exception if an error occurs
      */
     public static ResourceLinksForm getResourceLinksForm(MBeanServer mserver, 
-                        String parent, String parentType) throws Exception {
+        String resourcetype, String path, String host, String service) 
+        throws Exception {
 
-        ObjectName rname = new ObjectName( RESOURCELINK_TYPE + ",*");
-                                 
+        ObjectName rname = null;
+        if (resourcetype!=null) {
+            if (resourcetype.equals("Global")) {
+                rname = new ObjectName( RESOURCELINK_TYPE + GLOBAL_TYPE + ",*");
+            } else if (resourcetype.equals("Context")) {
+                rname = new ObjectName (RESOURCELINK_TYPE + CONTEXT_TYPE + 
+                    ",path=" + path + ",host=" + host + ",service=" + 
+                    service + ",*");
+            } else if (resourcetype.equals("DefaultContext")) {
+                // add defaultcontext support later
+            }
+        }
+       
         Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
         
         ArrayList results = new ArrayList();        
@@ -199,8 +263,30 @@ public class ResourceUtils {
         ResourceLinksForm resourceLinksForm = new ResourceLinksForm();
         resourceLinksForm.setResourceLinks((String[]) 
                         results.toArray(new String[results.size()]));        
+        
+        if (resourcetype != null) {
+            resourceLinksForm.setResourcetype(resourcetype);
+        } else {
+            resourceLinksForm.setResourcetype("");
+        }
+         if (path != null) {
+            resourceLinksForm.setPath(path);
+        } else {
+            resourceLinksForm.setPath("");
+        }        
+        if (host != null) {
+            resourceLinksForm.setHost(host);
+        } else {
+            resourceLinksForm.setHost("");
+        }        
+        if (service != null) {
+            resourceLinksForm.setService(service);
+        } else {
+            resourceLinksForm.setService("");
+        }   
+        
         return (resourceLinksForm);
-
+        
     }
     
     /**

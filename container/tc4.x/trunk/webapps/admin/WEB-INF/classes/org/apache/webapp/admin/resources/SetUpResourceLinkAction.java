@@ -152,14 +152,20 @@ public final class SetUpResourceLinkAction extends Action {
 
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
+        String resourcetype = request.getParameter("resourcetype");
+        String path = request.getParameter("path");
+        String host = request.getParameter("host");
+        String service = request.getParameter("service");
         
-        ResourceLinkForm resourceLinkForm = new ResourceLinkForm();
-        // fix type
-        //resourceLinkForm.setType(ResourceUtils.DATASOURCE_CLASS);
-
+        ResourceLinkForm resourceLinkForm = new ResourceLinkForm();       
+        resourceLinkForm.setResourcetype(resourcetype);
+        resourceLinkForm.setPath(path);
+        resourceLinkForm.setHost(host);
+        resourceLinkForm.setService(service);
         if (objectName == null) {
             resourceLinkForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.resourcelk.create"));
+            resourceLinkForm.setObjectName(null);
             
         } else {
             resourceLinkForm.setNodeLabel

@@ -456,8 +456,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
                               MessageResources resources) throws Exception {
 
         ObjectName oname = new ObjectName(containerName);
+        String type = oname.getKeyProperty("type");
         String path = oname.getKeyProperty("path");
-        String defaultContext = oname.getKeyProperty("defaultContext");
+        String host = oname.getKeyProperty("host");
+        String service = oname.getKeyProperty("service");
         TreeControlNode subtree = new TreeControlNode
             ("Context Resource Administration " + containerName,
              "folder_16_pad.gif",
@@ -466,69 +468,45 @@ public class TomcatTreeBuilder implements TreeBuilder{
              "content",
              true);        
         containerNode.addChild(subtree);
-        if (path != null) {
-            TreeControlNode datasources = new TreeControlNode
-                ("Context Data Sources " + containerName,
-                "Datasource.gif",
-                resources.getMessage("resources.treeBuilder.datasources"),
-                "resources/listDataSources.do?parent="+
-                URLEncoder.encode(path)+"&parentType=path&forward=" +
+        TreeControlNode datasources = new TreeControlNode
+            ("Context Data Sources " + containerName,
+            "Datasource.gif",
+            resources.getMessage("resources.treeBuilder.datasources"),
+            "resources/listDataSources.do?resourcetype=" + 
+                URLEncoder.encode(type) + "&path=" +
+                URLEncoder.encode(path) + "&host=" + 
+                URLEncoder.encode(host) + "&service=" +
+                URLEncoder.encode(service) + "&forward=" +
                 URLEncoder.encode("DataSources List Setup"),
-                "content",
-                false);
-            TreeControlNode resourcelinks = new TreeControlNode
-                ("Resource Links " + containerName,
-                "Datasource.gif",
-                resources.getMessage("resources.treeBuilder.resourcelinks"),
-                "resources/listResourceLinks.do?parent="+
-                URLEncoder.encode(path)+"&parentType=path&forward=" +
+            "content",
+            false);
+        TreeControlNode resourcelinks = new TreeControlNode
+            ("Resource Links " + containerName,
+            "Datasource.gif",
+            resources.getMessage("resources.treeBuilder.resourcelinks"),
+            "resources/listResourceLinks.do?resourcetype=" + 
+                URLEncoder.encode(type) + "&path=" +
+                URLEncoder.encode(path) + "&host=" + 
+                URLEncoder.encode(host) + "&service=" +
+                URLEncoder.encode(service) + "&forward=" +
                 URLEncoder.encode("ResourceLinks List Setup"),
-                "content",
-                false);
-            TreeControlNode envs = new TreeControlNode
-                ("Context Environment Entries "+ containerName,
-                "EnvironmentEntries.gif",
-                resources.getMessage("resources.env.entries"),
-                "resources/listEnvEntries.do?parent="+
-                URLEncoder.encode(path)+"&parentType=path&forward=" +
+            "content",
+            false);
+        TreeControlNode envs = new TreeControlNode
+            ("Context Environment Entries "+ containerName,
+            "EnvironmentEntries.gif",
+            resources.getMessage("resources.env.entries"),
+            "resources/listEnvEntries.do?resourcetype=" + 
+                URLEncoder.encode(type) + "&path=" +
+                URLEncoder.encode(path) + "&host=" + 
+                URLEncoder.encode(host) + "&service=" +
+                URLEncoder.encode(service) + "&forward=" +
                 URLEncoder.encode("EnvEntries List Setup"),
-                "content",
-                false);
-            subtree.addChild(datasources);
-            subtree.addChild(resourcelinks);
-            subtree.addChild(envs);
-        } else if (defaultContext != null) {
-            TreeControlNode datasources = new TreeControlNode
-                ("Context Data Sources " + containerName,
-                "Datasource.gif",
-                resources.getMessage("resources.treeBuilder.datasources"),
-                "resources/listDataSources.do?parent="+
-                URLEncoder.encode(defaultContext)+"&parentType=defaultContext"+
-                "&forward=" + URLEncoder.encode("DataSources List Setup"),
-                "content",
-                false);
-            TreeControlNode resourcelinks = new TreeControlNode
-                ("Resource Links " + containerName,
-                "Datasource.gif",
-                resources.getMessage("resources.treeBuilder.resourcelinks"),
-                "resources/listResourceLinks.do?parent="+
-                URLEncoder.encode(defaultContext)+"&parentType=defaultContext"+
-                "&forward=" + URLEncoder.encode("ResourceLinks List Setup"),
-                "content",
-                false);
-            TreeControlNode envs = new TreeControlNode
-                ("Context Environment Entries "+ containerName,
-                "EnvironmentEntries.gif",
-                resources.getMessage("resources.env.entries"),
-                "resources/listEnvEntries.do?parent="+
-                URLEncoder.encode(defaultContext)+"&parentType=defaultContext"+
-                "&forward=" + URLEncoder.encode("EnvEntries List Setup"),
-                "content",
-                false);
-            subtree.addChild(datasources);
-            subtree.addChild(resourcelinks);
-            subtree.addChild(envs);
-        }
+            "content",
+            false);
+        subtree.addChild(datasources);
+        subtree.addChild(resourcelinks);
+        subtree.addChild(envs);
     }
     
     

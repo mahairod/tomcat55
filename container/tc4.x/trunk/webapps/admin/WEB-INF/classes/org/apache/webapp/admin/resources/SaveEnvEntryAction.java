@@ -177,15 +177,32 @@ public final class SaveEnvEntryAction extends Action {
 
             Object params[] = new Object[2];
             params[0] = envEntryForm.getName();
-            params[1] = envEntryForm.getEntryType();     
+            params[1] = envEntryForm.getEntryType();
+            
+            String resourcetype = envEntryForm.getResourcetype();
+            String path = envEntryForm.getPath();
+            String host = envEntryForm.getHost();
+            String service = envEntryForm.getService();
             
             ObjectName oname = null;
 
             try {
 
-                // Construct the MBean Name for the naming source
-                oname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
-
+                if (resourcetype!=null) {
+                    // Construct the MBean Name for the naming source
+                    if (resourcetype.equals("Global")) {
+                        oname = 
+                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                            ResourceUtils.GLOBAL_TYPE);
+                    } else if (resourcetype.equals("Context")) {            
+                        oname = 
+                            new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                            ",host=" + host + ",service=" + service);
+                    } else if (resourcetype.equals("DefaultContext")) {
+                        // add defaultcontext support later
+                    }
+                }
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addEnvironment",
                                                      params, signature);

@@ -8,7 +8,11 @@
     ---------------------------------
   </controls:action>
 
-  <controls:action url="/resources/setUpResourceLink.do">
+  <controls:action url='<%= "/resources/setUpResourceLink.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) %>'>
     <bean:message key="resources.actions.resourcelk.create"/>
   </controls:action>
 

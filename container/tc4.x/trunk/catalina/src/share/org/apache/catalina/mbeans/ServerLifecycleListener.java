@@ -428,7 +428,11 @@ public class ServerLifecycleListener
                 MBeanUtils.createMBean(cValves[l]);
             }
             
-        }
+        }        
+        
+        // Create the MBeans for the NamingResources (if any)
+        NamingResources resources = context.getNamingResources();
+        createMBeans(resources);
 
     }
 

@@ -151,7 +151,12 @@ public final class DeleteEnvEntriesAction extends Action {
         }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-
+        
+        getServlet().log("resourcetype = "+request.getParameter("resourcetype"));
+        getServlet().log("path = "+request.getParameter("path"));
+        getServlet().log("host = "+request.getParameter("host"));
+        getServlet().log("service = "+request.getParameter("service"));
+        
         // Has this transaction been cancelled?
         if (isCancelled(request)) {
             return (mapping.findForward("List EnvEntries Setup"));
@@ -167,7 +172,9 @@ public final class DeleteEnvEntriesAction extends Action {
 
         // Perform any extra validation that is required
         EnvEntriesForm envEntriesForm = (EnvEntriesForm) form;
+        getServlet().log("form resourcetype = "+envEntriesForm.getResourcetype());
         String envEntries[] = envEntriesForm.getEnvEntries();
+        
         if (envEntries == null) {
             envEntries = new String[0];
         }

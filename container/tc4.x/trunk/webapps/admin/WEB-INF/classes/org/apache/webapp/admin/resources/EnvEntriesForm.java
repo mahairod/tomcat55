@@ -100,41 +100,80 @@ public final class EnvEntriesForm extends BaseForm {
     }
     
     /**
-     * The parent name of this environment entry.
+     * The resource type of this environment entry.
      */
-    private String parentName = null;
+    private String resourcetype = null;
     
     /**
-     * Return the parent name of the environment entry this bean refers to.
+     * Return the resource type of the environment entry this bean refers to.
      */
-    public String getParentName() {
-        return this.parentName;
+    public String getResourcetype() {
+        return this.resourcetype;
     }
 
     /**
-     * Set the parent name of the environment entry this bean refers to.
+     * Set the resource type of the environment entry this bean refers to.
      */
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
+    public void setResourcetype(String resourcetype) {
+        this.resourcetype = resourcetype;
     }
+       
+    /**
+     * The path of this environment entry.
+     */
+    private String path = null;
     
     /**
-     * The parent type of this environment entry.
+     * Return the path of the environment entry this bean refers to.
      */
-    private String parentType = null;
-    
-    /**
-     * Return the parent type of the environment entry this bean refers to.
-     */
-    public String getParentType() {
-        return this.parentType;
+    public String getPath() {
+        return this.path;
     }
 
     /**
-     * Set the parent type of the environment entry this bean refers to.
+     * Set the path of the environment entry this bean refers to.
      */
-    public void setParentType(String parentType) {
-        this.parentType = parentType;
+    public void setPath(String path) {
+        this.path = path;
+    }
+       
+    /**
+     * The host of this environment entry.
+     */
+    private String host = null;
+    
+    /**
+     * Return the host of the environment entry this bean refers to.
+     */
+    public String getHost() {
+        return this.host;
+    }
+
+    /**
+     * Set the host of the environment entry this bean refers to.
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }    
+    
+       
+    /**
+     * The service of this environment entry.
+     */
+    private String service = null;
+    
+    /**
+     * Return the service of the environment entry this bean refers to.
+     */
+    public String getService() {
+        return this.service;
+    }
+
+    /**
+     * Set the service of the environment entry this bean refers to.
+     */
+    public void setService(String service) {
+        this.service = service;
     }
     
     // --------------------------------------------------------- Public Methods

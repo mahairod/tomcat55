@@ -145,20 +145,30 @@ public class ListDataSourcesAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
-        String parent = request.getParameter("parent");
-        String parentType = request.getParameter("parentType");
-        if (parent != null) {
-            parent = URLDecoder.decode(parent);
+        String resourcetype = request.getParameter("resourcetype");
+        String path = request.getParameter("path");
+        String host = request.getParameter("host");
+        String service = request.getParameter("service");
+        
+        if (resourcetype != null) {
+            resourcetype = URLDecoder.decode(resourcetype);
         }
-        if (parentType != null) {
-            parentType = URLDecoder.decode(parentType);
+        if (path != null) {
+            path = URLDecoder.decode(path);
+        }
+        if (host != null) {
+            host = URLDecoder.decode(host);
+        }
+        if (service != null) {
+            service = URLDecoder.decode(service);
         }
         
         // Create a form bean containing the requested MBean Names
         DataSourcesForm dataSourcesForm = null;
         try {
               dataSourcesForm = 
-                ResourceUtils.getDataSourcesForm(mserver, parent, parentType);
+                ResourceUtils.getDataSourcesForm(mserver, resourcetype,
+                                        path, host, service);
         } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,

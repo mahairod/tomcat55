@@ -176,18 +176,32 @@ public final class SaveResourceLinkAction extends Action {
 
             Object params[] = new Object[2];
             params[0] = resourceLinkForm.getName();
-            
-            // fix the type later ----- 
-            //params[1] = ResourceUtils.DATASOURCE_CLASS;   
             params[1] = resourceLinkForm.getType();   
-           
+            
+            String resourcetype = resourceLinkForm.getResourcetype();
+            String path = resourceLinkForm.getPath();
+            String host = resourceLinkForm.getHost();
+            String service = resourceLinkForm.getService();
+                       
             ObjectName oname = null;
 
             try {
 
-                // Construct the MBean Name for the naming source
-                oname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
-
+                if (resourcetype!=null) {
+                    // Construct the MBean Name for the naming source
+                    if (resourcetype.equals("Global")) {
+                        oname = 
+                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                            ResourceUtils.GLOBAL_TYPE);
+                    } else if (resourcetype.equals("Context")) {            
+                        oname = 
+                            new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                            ",host=" + host + ",service=" + service);
+                    } else if (resourcetype.equals("DefaultContext")) {
+                        // add defaultcontext support later
+                    }
+                }
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResourceLink",
                                                      params, signature);
@@ -196,11 +210,11 @@ public final class SaveResourceLinkAction extends Action {
 
                 getServlet().log
                     (resources.getMessage(locale, "users.error.invoke",
-                                          "addResource"), e);
+                                          "addResourceLink"), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.invoke",
-                                          "addResource"));
+                                          "addResourceLink"));
                 return (null);
             }
 
@@ -211,7 +225,7 @@ public final class SaveResourceLinkAction extends Action {
         try {
             
             ObjectName oname = new ObjectName(objectName);
-
+            getServlet().log(objectName);
             attribute = "name";
             mserver.setAttribute
                 (oname,
