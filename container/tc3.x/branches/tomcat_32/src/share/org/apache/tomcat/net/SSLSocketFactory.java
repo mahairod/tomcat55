@@ -95,7 +95,7 @@ public class SSLSocketFactory
     
     // defaults
     static String defaultKeystoreFile=System.getProperty("user.home") +
-	"/.keystore";
+	File.separator + ".keystore";
     static String defaultKeyPass="changeit";
 
     
