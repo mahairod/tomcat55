@@ -111,6 +111,8 @@ public class StandardEngine
             setJvmRoute(System.getProperty("jvmRoute"));
         } catch(Exception ex) {
         }
+        // By default, the engine will hold the reloading thread
+        executeDelay = 10;
 
     }
 

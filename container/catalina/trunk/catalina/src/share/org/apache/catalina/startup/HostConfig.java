@@ -107,7 +107,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class HostConfig
-    implements LifecycleListener, Runnable {
+    implements LifecycleListener {
     
     private static org.apache.commons.logging.Log log=
          org.apache.commons.logging.LogFactory.getLog( HostConfig.class );
@@ -154,12 +154,6 @@ public class HostConfig
 
 
     /**
-     * The number of seconds between checks for web app deployment.
-     */
-    private int checkInterval = 15;
-
-
-    /**
      * Should we deploy XML Context config files?
      */
     private boolean deployXML = false;
@@ -170,24 +164,6 @@ public class HostConfig
      * applications and automatically deploy them?
      */
     private boolean liveDeploy = false;
-
-
-    /**
-     * The background thread.
-     */
-    private Thread thread = null;
-
-
-    /**
-     * The background thread completion semaphore.
-     */
-    private boolean threadDone = false;
-
-
-    /**
-     * Name to register for the background thread.
-     */
-    private String threadName = "HostConfig";
 
 
     /**
@@ -395,6 +371,7 @@ public class HostConfig
         this.xmlNamespaceAware=xmlNamespaceAware;
     }    
 
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -404,6 +381,9 @@ public class HostConfig
      * @param event The lifecycle event that has occurred
      */
     public void lifecycleEvent(LifecycleEvent event) {
+
+        if (event.getType().equals("check"))
+            check();
 
         // Identify the host we are associated with
         try {
@@ -835,10 +815,6 @@ public class HostConfig
             deployApps();
         }
 
-        if (isLiveDeploy()) {
-            threadStart();
-        }
-
     }
 
 
@@ -849,8 +825,6 @@ public class HostConfig
 
         if (log.isDebugEnabled())
             log.debug(sm.getString("hostConfig.stop"));
-
-        threadStop();
 
         undeployApps();
 
@@ -883,97 +857,16 @@ public class HostConfig
 
 
     /**
-     * Start the background thread that will periodically check for
-     * web application autoDeploy and changes to the web.xml config.
-     *
-     * @exception IllegalStateException if we should not be starting
-     *  a background thread now
+     * Deploy webapps.
      */
-    protected void threadStart() {
+    public void check() {
 
-        // Has the background thread already been started?
-        if (thread != null)
-            return;
-
-        // Start the background thread
-        if (log.isDebugEnabled())
-            log.debug(" Starting background thread");
-        threadDone = false;
-        threadName = "HostConfig[" + host.getName() + "]";
-        thread = new Thread(this, threadName);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-
-    /**
-     * Stop the background thread that is periodically checking for
-     * for web application autoDeploy and changes to the web.xml config.
-     */
-    protected void threadStop() {
-
-        if (thread == null)
-            return;
-
-        if (log.isDebugEnabled())
-            log.debug(" Stopping background thread");
-        threadDone = true;
-        thread.interrupt();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        thread = null;
-
-    }
-
-
-    /**
-     * Sleep for the duration specified by the <code>checkInterval</code>
-     * property.
-     */
-    protected void threadSleep() {
-
-        try {
-            Thread.sleep(checkInterval * 1000L);
-        } catch (InterruptedException e) {
-            ;
-        }
-
-    }
-
-
-    // ------------------------------------------------------ Background Thread
-
-
-    /**
-     * The background thread that checks for web application autoDeploy
-     * and changes to the web.xml config.
-     */
-    public void run() {
-
-        if (log.isDebugEnabled())
-            log.debug("BACKGROUND THREAD Starting");
-
-        // Loop until the termination semaphore is set
-        while (!threadDone) {
-
-            // Wait for our check interval
-            threadSleep();
-
+        if (host.getAutoDeploy()) {
             // Deploy apps if the Host allows auto deploying
             deployApps();
-
             // Check for web.xml modification
             checkContextLastModified();
-
         }
-
-        if (log.isDebugEnabled())
-            log.debug("BACKGROUND THREAD Stopping");
 
     }
 
