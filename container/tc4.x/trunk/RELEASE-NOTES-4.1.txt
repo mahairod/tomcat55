@@ -1361,16 +1361,6 @@ However, users are urged to use the version of Jasper included with Tomcat 4.1
 (Jasper 2), as it has much higher performance and scalability than Jasper 1.
 
 
--------------------------------
-Administrartion web application:
--------------------------------
-
-The administration web application should currently be considered beta quality
-code, but is supported as an official component of Tomcat 4.1.
-
-A finalized version will be delivered in an upcoming Tomcat 4.1 release.
-
-
 ---------------------------
 Symlinking static resources:
 ---------------------------
