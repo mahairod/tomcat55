@@ -137,6 +137,9 @@ public class StoreFileMover {
         if (!configNew.isAbsolute()) {
             configNew = new File(getBasename(), configFile + ".new");
         }
+        if (!configNew.getParentFile().exists()) {
+            configNew.getParentFile().mkdirs();
+        }
         String sb = getTimeTag();
         configSave = new File(configFile + sb);
         if (!configSave.isAbsolute()) {
@@ -151,18 +154,24 @@ public class StoreFileMover {
      */
     public void move() throws IOException {
         if (configOld.renameTo(configSave)) {
-            if (configNew.renameTo(configOld)) {
-                return;
-            } else {
+            if (!configNew.renameTo(configOld)) {
                 configSave.renameTo(configOld);
                 throw new IOException("Cannot rename "
                         + configNew.getAbsolutePath() + " to "
                         + configOld.getAbsolutePath());
             }
         } else {
-            throw new IOException("Cannot rename "
+            if (!configOld.exists()) {
+                if (!configNew.renameTo(configOld)) {
+                    throw new IOException("Cannot move "
+                            + configNew.getAbsolutePath() + " to "
+                            + configOld.getAbsolutePath());
+                }
+            } else {
+                throw new IOException("Cannot rename "
                     + configOld.getAbsolutePath() + " to "
                     + configSave.getAbsolutePath());
+            }
         }
     }
 
