@@ -134,10 +134,7 @@ public final class Request {
     /**
      * HTTP specific fields. (remove them ?)
      */
-    private int contentLength = -1;
-    // how much body we still have to read.
-    // Apparently nobody uses this field...
-    private int available = -1;
+    private long contentLength = -1;
     private MessageBytes contentTypeMB = null;
     private String charEncoding = null;
     private Cookies cookies = new Cookies(headers);
@@ -297,18 +294,25 @@ public final class Request {
 
     public void setContentLength(int len) {
 	this.contentLength = len;
-	available = len;
     }
 
 
     public int getContentLength() {
+        long length = getContentLengthLong();
+        
+        if (length < Integer.MAX_VALUE) {
+            return (int) length;
+        }
+        return -1;
+    }
+    
+    public long getContentLengthLong() {
         if( contentLength > -1 ) return contentLength;
 
-	MessageBytes clB = headers.getValue("content-length");
-        contentLength = (clB == null || clB.isNull()) ? -1 : clB.getInt();
-	available = contentLength;
+        MessageBytes clB = headers.getValue("content-length");
+        contentLength = (clB == null || clB.isNull()) ? -1 : clB.getLong();
 
-	return contentLength;
+        return contentLength;
     }
 
 
@@ -424,7 +428,6 @@ public final class Request {
         throws IOException {
         int n = inputBuffer.doRead(chunk, this);
         if (n > 0) {
-            available -= n;
             bytesRead+=n;
         }
         return n;

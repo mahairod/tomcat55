@@ -113,6 +113,7 @@ public final class MessageBytes implements Cloneable, Serializable {
 	hasStrValue=false;
 	hasHashCode=false;
 	hasIntValue=false;
+    hasLongValue=false;
 	hasDateValue=false;	
     }
 
@@ -504,11 +505,13 @@ public final class MessageBytes implements Cloneable, Serializable {
     }
 
     // -------------------- Deprecated code --------------------
-    // efficient int and date
+    // efficient int, long and date
     // XXX used only for headers - shouldn't be
     // stored here.
     private int intValue;
     private boolean hasIntValue=false;
+    private long longValue;
+    private boolean hasLongValue=false;
     private Date dateValue;
     private boolean hasDateValue=false;
     
@@ -617,6 +620,26 @@ public final class MessageBytes implements Cloneable, Serializable {
 	return intValue;
     }
 
+    // Used for headers conversion
+    /** Convert the buffer to an long, cache the value
+     */ 
+    public long getLong() {
+        if( hasLongValue )
+            return longValue;
+        
+        switch (type) {
+        case T_BYTES:
+            longValue=byteC.getLong();
+            break;
+        default:
+            longValue=Long.parseLong(toString());
+        }
+
+        hasLongValue=true;
+        return longValue;
+
+     }
+   
     // -------------------- Future may be different --------------------
     
     private static MessageBytesFactory factory=new MessageBytesFactory();
