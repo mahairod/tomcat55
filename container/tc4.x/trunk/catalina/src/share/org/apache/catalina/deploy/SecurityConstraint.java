@@ -234,14 +234,16 @@ public final class SecurityConstraint {
 
 	if (authRole == null)
 	    return;
+        if ("*".equals(authRole)) {
+            allRoles = true;
+            return;
+        }
 	String results[] = new String[authRoles.length + 1];
 	for (int i = 0; i < authRoles.length; i++)
 	    results[i] = authRoles[i];
 	results[authRoles.length] = authRole;
 	authRoles = results;
         authConstraint = true;
-        if ("*".equals(authRole))
-            allRoles = true;
 
     }
 

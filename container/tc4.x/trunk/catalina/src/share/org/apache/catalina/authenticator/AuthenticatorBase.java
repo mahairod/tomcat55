@@ -95,6 +95,7 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
@@ -570,6 +571,8 @@ public abstract class AuthenticatorBase
 	Principal principal =
 	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
 	if (principal == null) {
+            if (debug >= 2)
+                log("  No user authenticated, cannot grant access");
 	    ((HttpServletResponse) response.getResponse()).sendError
 		(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 		 sm.getString("authenticator.notAuthenticated"));
@@ -582,7 +585,8 @@ public abstract class AuthenticatorBase
 	if (roles == null)
 	    roles = new String[0];
 	if (roles.length == 0) {
-            if (constraint.getAuthConstraint()) {
+            if (constraint.getAuthConstraint() &&
+                !constraint.getAllRoles()) {
                 ((HttpServletResponse) response.getResponse()).sendError
                     (HttpServletResponse.SC_FORBIDDEN,
                      sm.getString("authenticator.forbidden"));
@@ -1014,6 +1018,8 @@ public abstract class AuthenticatorBase
 	    throw new LifecycleException
 		(sm.getString("authenticator.alreadyStarted"));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
+        if (context instanceof StandardContext)
+            setDebug(((StandardContext) context).getDebug());
 	started = true;
 
         // Look up the SingleSignOn implementation in our request processing
