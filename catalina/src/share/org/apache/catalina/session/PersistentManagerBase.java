@@ -67,17 +67,11 @@ package org.apache.catalina.session;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
@@ -105,6 +99,7 @@ import org.apache.catalina.util.LifecycleSupport;
  * <code>stop()</code> methods of this class at the correct times.
  *
  * @author Craig R. McClanahan
+ * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
 
@@ -112,7 +107,74 @@ public abstract class PersistentManagerBase
     extends ManagerBase
     implements Lifecycle, PropertyChangeListener, Runnable {
 
+    // ---------------------------------------------------- Security Classes
+     private class PrivilegedStoreClear
+        implements PrivilegedExceptionAction {
 
+        PrivilegedStoreClear() {            
+        }
+
+        public Object run() throws Exception{
+           store.clear();
+           return null;
+        }                       
+    }   
+     
+     private class PrivilegedStoreRemove
+        implements PrivilegedExceptionAction {
+
+        private String id;    
+            
+        PrivilegedStoreRemove(String id) {     
+            this.id = id;
+        }
+
+        public Object run() throws Exception{
+           store.remove(id);
+           return null;
+        }                       
+    }   
+     
+    private class PrivilegedStoreLoad
+        implements PrivilegedExceptionAction {
+
+        private String id;    
+            
+        PrivilegedStoreLoad(String id) {     
+            this.id = id;
+        }
+
+        public Object run() throws Exception{
+           store.load(id);
+           return null;
+        }                       
+    }   
+          
+    private class PrivilegedStoreSave
+        implements PrivilegedExceptionAction {
+
+        private Session session;    
+            
+        PrivilegedStoreSave(Session session) {     
+            this.session = session;
+        }
+
+        public Object run() throws Exception{
+           store.save(session);
+           return null;
+        }                       
+    }   
+     
+    private class PrivilegedStoreKeys
+        implements PrivilegedExceptionAction {
+
+        PrivilegedStoreKeys() {     
+        }
+
+        public Object run() throws Exception{
+           return store.keys();
+        }                       
+    }   
     // ----------------------------------------------------- Instance Variables
 
 
@@ -461,7 +523,6 @@ public abstract class PersistentManagerBase
      * @param store the associated Store
      */
     public void setStore(Store store) {
-
         this.store = store;
         store.setManager(this);
 
@@ -525,8 +586,18 @@ public abstract class PersistentManagerBase
         if (store == null)
             return;
 
-        try {
-            store.clear();
+        try {     
+            if (System.getSecurityManager() != null){
+                try{
+                    AccessController.doPrivileged(new PrivilegedStoreClear());
+                }catch(PrivilegedActionException ex){
+                    Exception exception = ex.getException();
+                    log("Exception clearing the Store: " + exception);
+                    exception.printStackTrace();                        
+                }
+            } else {
+                store.clear();
+            }
         } catch (IOException e) {
             log("Exception clearing the Store: " + e);
             e.printStackTrace();
@@ -617,7 +688,17 @@ public abstract class PersistentManagerBase
 
         String[] ids = null;
         try {
-            ids = store.keys();
+            if (System.getSecurityManager() != null){
+                try{
+                    ids = (String[])AccessController.doPrivileged(new PrivilegedStoreKeys());
+                }catch(PrivilegedActionException ex){
+                    Exception exception = ex.getException();
+                    log("Exception clearing the Store: " + exception);
+                    exception.printStackTrace();                        
+                }
+            } else {
+                ids = store.keys();
+            }
         } catch (IOException e) {
             log("Can't load sessions from store, " + e.getMessage(), e);
             return;
@@ -650,16 +731,36 @@ public abstract class PersistentManagerBase
 
         super.remove (session);
 
-        if (store != null)
-            try {
-                store.remove(session.getId());
-            } catch (IOException e) {
-                log("Exception removing session  " + e.getMessage());
-                e.printStackTrace();
-            }
-
+        if (store != null){
+            removeSession(session.getId());
+        }
     }
 
+    
+    /**
+     * Remove this Session from the active Sessions for this Manager,
+     * and from the Store.
+     *
+     * @param is Session's id to be removed
+     */    
+    private void removeSession(String id){
+        try {
+            if (System.getSecurityManager() != null){
+                try{
+                    AccessController.doPrivileged(new PrivilegedStoreRemove(id));
+                }catch(PrivilegedActionException ex){
+                    Exception exception = ex.getException();
+                    log("Exception clearing the Store: " + exception);
+                    exception.printStackTrace();                        
+                }
+            } else {
+                 store.remove(id);
+            }               
+        } catch (IOException e) {
+            log("Exception removing session  " + e.getMessage());
+            e.printStackTrace();
+        }        
+    }
 
     /**
      * Save all currently active sessions in the appropriate persistence
@@ -711,7 +812,17 @@ public abstract class PersistentManagerBase
 
         Session session = null;
         try {
-            session = store.load(id);
+            if (System.getSecurityManager() != null){
+                try{
+                    AccessController.doPrivileged(new PrivilegedStoreLoad(id));
+                }catch(PrivilegedActionException ex){
+                    Exception exception = ex.getException();
+                    log("Exception clearing the Store: " + exception);
+                    exception.printStackTrace();                        
+                }
+            } else {
+                 store.load(id);
+            }   
         } catch (ClassNotFoundException e) {
             log(sm.getString("persistentManager.deserializeError", id, e));
             throw new IllegalStateException
@@ -725,7 +836,7 @@ public abstract class PersistentManagerBase
                 || isSessionStale(session, System.currentTimeMillis())) {
             log("session swapped in is invalid or expired");
             session.expire();
-            store.remove(id);
+            removeSession(id);
             return (null);
         }
 
@@ -777,7 +888,17 @@ public abstract class PersistentManagerBase
             return;
 
         try {
-            store.save(session);
+            if (System.getSecurityManager() != null){
+                try{
+                    AccessController.doPrivileged(new PrivilegedStoreSave(session));
+                }catch(PrivilegedActionException ex){
+                    Exception exception = ex.getException();
+                    log("Exception clearing the Store: " + exception);
+                    exception.printStackTrace();                        
+                }
+            } else {
+                 store.save(session);
+            }   
         } catch (IOException e) {
             log(sm.getString
                 ("persistentManager.serializeError", session.getId(), e));
