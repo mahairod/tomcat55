@@ -77,12 +77,7 @@ import java.util.TreeMap;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.net.URLDecoder;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequestListener;
+
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.management.InstanceNotFoundException;
@@ -92,6 +87,18 @@ import javax.management.MBeanServer;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ObjectName;
+
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextAttributeListener;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequestAttributeListener;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionListener;
+
 import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.BaseDirContext;
 import org.apache.naming.resources.FileDirContext;
@@ -185,10 +192,17 @@ public class StandardContext
 
 
     /**
-     * The set of instantiated application listener objects, in a one-to-one
-     * correspondence to the class names in <code>applicationListeners</code>.
+     * The set of instantiated application event listener objects</code>.
      */
-    private transient Object applicationListenersObjects[] = new Object[0];
+    private transient Object applicationEventListenersObjects[] = 
+        new Object[0];
+
+
+    /**
+     * The set of instantiated application lifecycle listener objects</code>.
+     */
+    private transient Object applicationLifecycleListenersObjects[] = 
+        new Object[0];
 
 
     /**
@@ -599,31 +613,52 @@ public class StandardContext
 
 
     /**
-     * Return the set of initialized application listener objects,
+     * Return the set of initialized application event listener objects,
      * in the order they were specified in the web application deployment
      * descriptor, for this application.
      *
      * @exception IllegalStateException if this method is called before
      *  this application has started, or after it has been stopped
      */
-    public Object[] getApplicationListeners() {
-
-        return (applicationListenersObjects);
-
+    public Object[] getApplicationEventListeners() {
+        return (applicationEventListenersObjects);
     }
 
 
     /**
-     * Store the set of initialized application listener objects,
+     * Store the set of initialized application event listener objects,
      * in the order they were specified in the web application deployment
      * descriptor, for this application.
      *
      * @param listeners The set of instantiated listener objects.
      */
-    public void setApplicationListeners(Object listeners[]) {
+    public void setApplicationEventListeners(Object listeners[]) {
+        applicationEventListenersObjects = listeners;
+    }
 
-        applicationListenersObjects = listeners;
 
+    /**
+     * Return the set of initialized application lifecycle listener objects,
+     * in the order they were specified in the web application deployment
+     * descriptor, for this application.
+     *
+     * @exception IllegalStateException if this method is called before
+     *  this application has started, or after it has been stopped
+     */
+    public Object[] getApplicationLifecycleListeners() {
+        return (applicationEventListenersObjects);
+    }
+
+
+    /**
+     * Store the set of initialized application lifecycle listener objects,
+     * in the order they were specified in the web application deployment
+     * descriptor, for this application.
+     *
+     * @param listeners The set of instantiated listener objects.
+     */
+    public void setApplicationLifecycleListeners(Object listeners[]) {
+        applicationEventListenersObjects = listeners;
     }
 
 
@@ -3482,13 +3517,30 @@ public class StandardContext
             return (false);
         }
 
+        // Sort listeners in two arrays
+        ArrayList eventListeners = new ArrayList();
+        ArrayList lifecycleListeners = new ArrayList();
+        for (int i = 0; i < results.length; i++) {
+            if ((results[i] instanceof ServletContextAttributeListener)
+                || (results[i] instanceof ServletRequestAttributeListener)
+                || (results[i] instanceof ServletRequestListener)) {
+                eventListeners.add(results[i]);
+            }
+            if ((results[i] instanceof ServletContextListener)
+                || (results[i] instanceof HttpSessionListener)) {
+                lifecycleListeners.add(results[i]);
+            }
+        }
+
+        setApplicationEventListeners(eventListeners.toArray());
+        setApplicationLifecycleListeners(lifecycleListeners.toArray());
+
         // Send application start events
 
         if (log.isDebugEnabled())
             log.debug("Sending application start events");
 
-        setApplicationListeners(results);
-        Object instances[] = getApplicationListeners();
+        Object instances[] = getApplicationLifecycleListeners();
         if (instances == null)
             return (ok);
         ServletContextEvent event =
@@ -3528,7 +3580,7 @@ public class StandardContext
             log.debug("Sending application stop events");
 
         boolean ok = true;
-        Object listeners[] = getApplicationListeners();
+        Object listeners[] = getApplicationLifecycleListeners();
         if (listeners == null)
             return (ok);
         ServletContextEvent event =
@@ -3553,7 +3605,8 @@ public class StandardContext
                 ok = false;
             }
         }
-        setApplicationListeners(null);
+        setApplicationEventListeners(null);
+        setApplicationLifecycleListeners(null);
         return (ok);
 
     }
