@@ -192,6 +192,9 @@ public final class SaveAccessLogValveAction extends Action {
             attribute = "resolveHosts";
             mBServer.setAttribute(voname,
                         new Attribute("resolveHosts", new Boolean(vform.getResolveHosts())));
+            attribute = "rotatable";
+            mBServer.setAttribute(voname,
+                        new Attribute("rotatable", new Boolean(vform.getRotatable())));
 
         } catch (Exception e) {
 
