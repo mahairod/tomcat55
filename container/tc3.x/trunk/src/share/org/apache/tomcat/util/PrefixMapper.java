@@ -227,6 +227,9 @@ public class PrefixMapper {
 	    container = myMap.prefixMappedServlets.get(s);
 	    
 	    if (container == null) {
+		// if empty string didn't map, time to give up
+		if ( s.length() == 0 )
+                    break;
 		s=FileUtil.removeLast( s );
 	    }  else {
 		if( myMap.mapCacheEnabled ) {
