@@ -723,6 +723,10 @@ Catalina Bug Fixes:
          JDBCStore
          Fix bug where first session in result set was skipped.
 
+[4.1.23] #14616
+         AuthenticatorBase
+         Redirect for trailing slash prior to auth challenge for root contexts 
+
 ----------------
 Coyote Bug Fixes:
 ----------------
