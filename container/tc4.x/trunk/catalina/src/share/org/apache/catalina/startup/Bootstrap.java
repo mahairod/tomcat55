@@ -67,7 +67,10 @@ package org.apache.catalina.startup;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import org.apache.catalina.loader.FileClassLoader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import org.apache.catalina.loader.StandardClassLoader;
 
 
 /**
@@ -96,17 +99,15 @@ public final class Bootstrap {
      */
     public static void main(String args[]) {
 
-	// Construct a new class loader for our internal classes
-        Bootstrap dummy = new Bootstrap();
-	FileClassLoader loader =
-            new FileClassLoader(dummy.getClass().getClassLoader());
+        // Construct the "class path" for a new class loader
+        ArrayList list = new ArrayList();
 
 	// Add the "classes" subdirectory underneath "catalina.home"
 	File classes = new File(System.getProperty("catalina.home"),
 				"classes");
 	if (classes.exists() && classes.canRead() &&
 	    classes.isDirectory()) {
-	    loader.addRepository(classes.getAbsolutePath());
+	    list.add(classes.getAbsolutePath() + "/");
 	}
 
 	// Add the JAR files in the "server" subdirectory as well
@@ -121,9 +122,21 @@ public final class Bootstrap {
 	for (int i = 0; i < filenames.length; i++) {
 	    if (!filenames[i].toLowerCase().endsWith(".jar"))
 		continue;
-	    File file = new File(directory, filenames[i]);
-	    loader.addRepository(file.getAbsolutePath());
+            File file = new File(directory, filenames[i]);
+            //	    loader.addRepository(file.getAbsolutePath());
+            try {
+                URL url = new URL("file", null, file.getAbsolutePath());
+                list.add(url.toString());
+            } catch (MalformedURLException e) {
+                System.out.println("Cannot create URL for " +
+                                   filenames[i]);
+                System.exit(1);
+            }
 	}
+
+        // Construct the class loader itself
+        String array[] = (String[]) list.toArray(new String[list.size()]);
+	StandardClassLoader loader = new StandardClassLoader(array);
 
 	// Load our startup class and call its process() method
 	try {

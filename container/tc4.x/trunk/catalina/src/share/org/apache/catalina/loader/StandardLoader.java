@@ -180,7 +180,8 @@ public final class StandardLoader
      * <code>Reloader</code> interface.
      */
     private String loaderClass =
-	"org.apache.catalina.loader.FileClassLoader";
+        //	"org.apache.catalina.loader.FileClassLoader";
+	"org.apache.catalina.loader.StandardClassLoader";
 
 
     /**
@@ -541,9 +542,11 @@ public final class StandardLoader
 	    classLoader = (Reloader) clazz.newInstance();
 	    */
 	    if (parentClassLoader == null)
-	        classLoader = new FileClassLoader();
+                //	        classLoader = new FileClassLoader();
+	        classLoader = new StandardClassLoader();
 	    else
-	        classLoader = new FileClassLoader(parentClassLoader);
+                //	        classLoader = new FileClassLoader(parentClassLoader);
+	        classLoader = new StandardClassLoader(parentClassLoader);
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
 	    classLoader.addRestricted("org.apache.catalina.");

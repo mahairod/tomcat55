@@ -742,6 +742,7 @@ public final class ContextConfig
         } catch (MalformedURLException e) {
 	    ;
 	}
+        /**
 	if ((classesURL != null) && "file".equals(classesURL.getProtocol())) {
 	    File classesFile = new File(classesURL.getFile());
 	    if (classesFile.exists() && classesFile.canRead() &&
@@ -751,6 +752,9 @@ public final class ContextConfig
 		loader.addRepository(classesFile.getAbsolutePath());
 	    }
 	}
+        **/
+        if (classesURL != null)
+            loader.addRepository(classesURL.toString() + "/");
 
 	// Add the WEB-INF/lib/*.jar files
 	URL libURL = null;
@@ -759,6 +763,7 @@ public final class ContextConfig
 	} catch (MalformedURLException e) {
 	    ;
 	}
+        // FIXME - This still requires disk directory!  Scan JARs if present
 	if ((libURL != null) && "file".equals(libURL.getProtocol())) {
 	    File libFile = new File(libURL.getFile());
 	    if (libFile.exists() && libFile.canRead() &&
@@ -770,7 +775,9 @@ public final class ContextConfig
 		    File jarFile = new File(libFile, filenames[i]);
 		    if (debug > 0)
 		        log(" Adding '" + jarFile.getAbsolutePath() + "'");
-		    loader.addRepository(jarFile.getAbsolutePath());
+                    //	    loader.addRepository(jarFile.getAbsolutePath());
+		    loader.addRepository("jar:" + libURL.toString() +
+                                         "!/" + libFile);
 		}
 	    }
 	}
