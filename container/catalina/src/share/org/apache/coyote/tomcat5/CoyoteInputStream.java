@@ -105,7 +105,7 @@ public class CoyoteInputStream
                         new PrivilegedExceptionAction(){
 
                             public Object run() throws IOException{
-                                Integer integer = new Integer(ib.read());
+                                Integer integer = new Integer(ib.readByte());
                                 return integer;
                             }
 
@@ -120,7 +120,7 @@ public class CoyoteInputStream
                 }
             }
         } else {
-            return ib.read();
+            return ib.readByte();
         }
     }
 
