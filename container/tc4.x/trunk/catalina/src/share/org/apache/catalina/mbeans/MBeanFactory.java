@@ -63,7 +63,8 @@
 
 package org.apache.catalina.mbeans;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -1013,7 +1014,7 @@ public class MBeanFactory extends BaseModelMBean {
             MBeanUtils.createObjectName(managed.getDomain(), logger);
         return (oname.toString());
     }
-    
+
     
     /**
      * Create a new  UserDatabaseRealm.
@@ -1109,34 +1110,27 @@ public class MBeanFactory extends BaseModelMBean {
         if (address==null) {
             address = "";
         }
+
         Connector conns[] = (Connector[]) service.findConnectors();
 
         for (int i = 0; i < conns.length; i++) {
-            if (conns[i] instanceof
-                    org.apache.catalina.connector.http10.HttpConnector) {
-                String connAddress =
-                    ((org.apache.catalina.connector.http10.HttpConnector)conns[i]).getAddress();
-                if (connAddress == null) {
-                    connAddress = "";
-                }
-                int p = ((org.apache.catalina.connector.http10.HttpConnector)conns[i]).getPort();
-                String connPort = "" + p;
-                if (address.equals(connAddress) && port.equals(connPort)) {
-                    // Remove this component from its parent component
-                    service.removeConnector(conns[i]);
-                    break;
-                }
-            } else if (conns[i] instanceof
-                    org.apache.catalina.connector.http.HttpConnector) {
-                String connAddress =
-                    ((org.apache.catalina.connector.http.HttpConnector)conns[i]).getAddress();
-                int p = ((org.apache.catalina.connector.http.HttpConnector)conns[i]).getPort();
-                String connPort = "" + p;
-                if (address.equals(connAddress) && port.equals(connPort)) {
-                    // Remove this component from its parent component
-                    service.removeConnector(conns[i]);
-                    break;
-                }
+            Class cls = conns[i].getClass();
+            Method getAddrMeth = cls.getMethod("getAddress", null);
+            Object addrObj = getAddrMeth.invoke(conns[i], null);
+            String connAddress = new String();
+            if (addrObj != null) {
+                connAddress = addrObj.toString();
+            }
+            Method getPortMeth = cls.getMethod("getPort", null);
+            Object portObj = getPortMeth.invoke(conns[i], null);
+            String connPort = new String();
+            if (portObj != null) {
+                connPort = portObj.toString();
+            }
+            if (address.equals(connAddress) && port.equals(connPort)) {
+                // Remove this component from its parent component
+                service.removeConnector(conns[i]);
+                break;
             }
         }
 
