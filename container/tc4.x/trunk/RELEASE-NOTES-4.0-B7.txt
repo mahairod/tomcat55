@@ -292,7 +292,7 @@ inside Apache 1.3.  The current state of this support is summarized as follows:
   configuration information in your Apache 1.3 httpd.conf file is
   something like this:
 
-    WebAppMount examples   warpConnection   /examples/
+    WebAppDeploy examples   warpConnection   /examples/
 
   which causes mod_webapp to automatically recognize all of your servlet
   mappings, security constraints, and other configuration elements.

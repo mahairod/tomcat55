@@ -291,9 +291,8 @@
 
        The next time you restart Apache (after restarting Tomcat, if needed)
        the connection will be established, and all applications you make
-       visible via "WebAppMount" directives can be accessed through Apache.
+       visible via "WebAppDeploy" directives can be accessed through Apache.
   -->
-
 
   <!-- Define an Apache-Connector Service -->
   <Service name="Tomcat-Apache">
