@@ -643,7 +643,7 @@ public abstract class ManagerBase implements Manager {
         if (session != null)
             session.setManager(this);
         else
-            session = new StandardSession(this);
+            session = getNewSession();
         return(session);
     }
 
@@ -715,6 +715,15 @@ public abstract class ManagerBase implements Manager {
 
     // ------------------------------------------------------ Protected Methods
 
+
+    /**
+     * Get new session class to be used in the doLoad() method.
+     */
+    protected StandardSession getNewSession() {
+        return new StandardSession(this);
+    }
+
+
     protected void getRandomBytes( byte bytes[] ) {
         // Generate a byte array containing a session identifier
         if( devRandomSource!=null && randomIS==null ) {
@@ -735,7 +744,8 @@ public abstract class ManagerBase implements Manager {
         Random random = getRandom();
         getRandom().nextBytes(bytes);
     }
-    
+
+
     /**
      * Generate and return a new session identifier.
      */
