@@ -18,11 +18,9 @@
 package org.apache.catalina.core;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.management.ObjectName;
-import javax.servlet.ServletException;
 
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
@@ -31,8 +29,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Valve;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
@@ -100,12 +96,6 @@ public class StandardPipeline
      * The Container with which this Pipeline is associated.
      */
     protected Container container = null;
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
 
 
     /**
@@ -516,33 +506,6 @@ public class StandardPipeline
     }
 
     /**
-     * Cause the specified request and response to be processed by the Valves
-     * associated with this pipeline, until one of these valves causes the
-     * response to be created and returned.  The implementation must ensure
-     * that multiple simultaneous requests (on different threads) can be
-     * processed through the same Pipeline without interfering with each
-     * other's control flow.
-     *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet exception is thrown
-     */
-    public void invoke(Request request, Response response)
-        throws IOException, ServletException {
-
-        // Invoke the first Valve in this pipeline for this request
-    	if (first != null) {
-    		first.invoke(request, response);
-    	} else {
-    		basic.invoke(request, response);
-    	}
-
-    }
-
-
-    /**
      * Remove the specified Valve from the pipeline associated with this
      * Container, if it is found; otherwise, do nothing.  If the Valve is
      * found and removed, the Valve's <code>setContainer(null)</code> method
@@ -577,6 +540,15 @@ public class StandardPipeline
             unregisterValve(valve);
         }
     
+    }
+
+
+    public Valve getFirst() {
+        if (first != null) {
+            return first;
+        } else {
+            return basic;
+        }
     }
 
 

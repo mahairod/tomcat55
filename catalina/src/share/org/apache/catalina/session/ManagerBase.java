@@ -89,12 +89,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-
-    /**
      * The DefaultContext with which this Manager is associated.
      */
     protected DefaultContext defaultContext = null;
@@ -281,27 +275,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     }
     
     
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
-
     /** Returns the name of the implementation class.
      */
     public String getClassName() {

@@ -70,7 +70,6 @@ public class CoyoteAdapter
 
         super();
         this.connector = connector;
-        this.debug = connector.getDebug();
 
     }
 
@@ -82,12 +81,6 @@ public class CoyoteAdapter
      * The CoyoteConnector with which this processor is associated.
      */
     private Connector connector = null;
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
 
 
     /**
@@ -155,7 +148,7 @@ public class CoyoteAdapter
             // request parameters
             if ( postParseRequest(req, request, res, response) ) {
                 // Calling the container
-                connector.getContainer().invoke(request, response);
+                connector.getContainer().getPipeline().getFirst().invoke(request, response);
             }
 
             response.finishResponse();

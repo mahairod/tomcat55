@@ -104,7 +104,7 @@ final class StandardEngineValve
         }
 
         // Ask this Host to process this request
-        host.getPipeline().invoke(request, response);
+        host.getPipeline().getFirst().invoke(request, response);
 
     }
 

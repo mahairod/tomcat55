@@ -478,7 +478,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
         StandardContext context = new StandardContext();
 
-        context.setDebug(debug);
         context.setDocBase(docBase);
         context.setPath(path);
 
@@ -502,7 +501,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
         StandardEngine engine = new StandardEngine();
 
-        engine.setDebug(debug);
         // Default host will be set to the first host added
         engine.setRealm(realm);         // Inherited by all children
 
@@ -546,7 +544,6 @@ public class Embedded  extends StandardService implements Lifecycle {
         StandardHost host = new StandardHost();
 
         host.setAppBase(appBase);
-        host.setDebug(debug);
         host.setName(name);
 
         return (host);

@@ -133,12 +133,6 @@ public class WebappLoader
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
-
-
-    /**
      * The DefaultContext with which this Loader is associated.
      */
     protected DefaultContext defaultContext = null;
@@ -291,31 +285,6 @@ public class WebappLoader
         DefaultContext oldDefaultContext = this.defaultContext;
         this.defaultContext = defaultContext;
         support.firePropertyChange("defaultContext", oldDefaultContext, this.defaultContext);
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        int oldDebug = this.debug;
-        this.debug = debug;
-        support.firePropertyChange("debug", new Integer(oldDebug),
-                                   new Integer(this.debug));
 
     }
 
@@ -675,7 +644,6 @@ public class WebappLoader
 
             classLoader = createClassLoader();
             classLoader.setResources(container.getResources());
-            classLoader.setDebug(this.debug);
             classLoader.setDelegate(this.delegate);
 
             for (int i = 0; i < repositories.length; i++) {

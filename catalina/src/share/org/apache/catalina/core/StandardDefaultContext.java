@@ -1535,8 +1535,6 @@ public class StandardDefaultContext
                 context_loader.setDelegate(loader.getDelegate());
                 context_loader.setReloadable(loader.getReloadable());
                 if (loader instanceof WebappLoader) {
-                    ((WebappLoader)context_loader).setDebug
-                        (((WebappLoader)loader).getDebug());
                     ((WebappLoader)context_loader).setLoaderClass
                         (((WebappLoader)loader).getLoaderClass());
                 }

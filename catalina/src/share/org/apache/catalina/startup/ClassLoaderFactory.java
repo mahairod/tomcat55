@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.catalina.loader.StandardClassLoader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -47,39 +49,7 @@ import org.apache.catalina.loader.StandardClassLoader;
 public final class ClassLoaderFactory {
 
 
-    // ------------------------------------------------------- Static Variables
-
-
-    /**
-     * Debugging detail level for processing the startup.
-     */
-    private static int debug = 0;
-
-
-    // ------------------------------------------------------ Static Properties
-
-
-    /**
-     * Return the debugging detail level.
-     */
-    public static int getDebug() {
-
-        return (debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level.
-     *
-     * @param newDebug The new debugging detail level
-     */
-    public static void setDebug(int newDebug) {
-
-        debug = newDebug;
-
-    }
-
+    private static Log log = LogFactory.getLog(ClassLoaderFactory.class);
 
     // --------------------------------------------------------- Public Methods
 
@@ -132,8 +102,8 @@ public final class ClassLoaderFactory {
                                                 ClassLoader parent)
         throws Exception {
 
-        if (debug >= 1)
-            log("Creating new class loader");
+        if (log.isDebugEnabled())
+            log.debug("Creating new class loader");
 
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
@@ -144,8 +114,8 @@ public final class ClassLoaderFactory {
                 File file = unpacked[i];
                 if (!file.exists() || !file.canRead())
                     continue;
-                if (debug >= 1)
-                    log("  Including directory or JAR " 
+                if (log.isDebugEnabled())
+                    log.debug("  Including directory or JAR " 
                         + file.getAbsolutePath());
                 URL url = new URL("file", null,
                                   file.getCanonicalPath() + File.separator);
@@ -166,8 +136,8 @@ public final class ClassLoaderFactory {
                     if (!filename.endsWith(".jar"))
                         continue;
                     File file = new File(directory, filenames[j]);
-                    if (debug >= 1)
-                        log("  Including jar file " + file.getAbsolutePath());
+                    if (log.isDebugEnabled())
+                        log.debug("  Including jar file " + file.getAbsolutePath());
                     URL url = new URL("file", null,
                                       file.getCanonicalPath());
                     list.add(url.toString());

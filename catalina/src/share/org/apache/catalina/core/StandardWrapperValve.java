@@ -39,6 +39,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 /**
  * Valve that implements the default basic behavior for the
@@ -98,9 +99,10 @@ final class StandardWrapperValve
         requestCount++;
         StandardWrapper wrapper = (StandardWrapper) getContainer();
         Servlet servlet = null;
-
+        Context context = (Context) wrapper.getParent();
+        
         // Check for the application being marked unavailable
-        if (!((Context) wrapper.getParent()).getAvailable()) {
+        if (!context.getAvailable()) {
         	response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                            sm.getString("standardContext.isUnavailable"));
             unavailable = true;
@@ -197,7 +199,22 @@ final class StandardWrapperValve
             else
             	request.removeAttribute(Globals.JSP_FILE_ATTR);
             if ((servlet != null) && (filterChain != null)) {
-                filterChain.doFilter(request, response);
+
+                // Swallow output if needed
+                if (context.getSwallowOutput()) {
+                    try {
+                        SystemLogHandler.startCapture();
+                        filterChain.doFilter(request, response);
+                    } finally {
+                        String log = SystemLogHandler.stopCapture();
+                        if (log != null && log.length() > 0) {
+                            context.getLogger().info(log);
+                        }
+                    }
+                } else {
+                    filterChain.doFilter(request, response);
+                }
+
             }
             request.removeAttribute(Globals.JSP_FILE_ATTR);
         } catch (ClientAbortException e) {

@@ -30,6 +30,8 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.apache.catalina.security.SecurityClassLoad;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -48,7 +50,8 @@ import org.apache.catalina.security.SecurityClassLoad;
 
 public final class Bootstrap {
 
-
+    private static Log log = LogFactory.getLog(Bootstrap.class);
+    
     // -------------------------------------------------------------- Constants
 
 
@@ -79,12 +82,6 @@ public final class Bootstrap {
 
 
     /**
-     * Debugging detail level for processing the startup.
-     */
-    protected int debug = 0;
-
-
-    /**
      * Daemon reference.
      */
     private Object catalinaDaemon = null;
@@ -100,12 +97,11 @@ public final class Bootstrap {
 
     private void initClassLoaders() {
         try {
-            ClassLoaderFactory.setDebug(debug);
             commonLoader = createClassLoader("common", null);
             catalinaLoader = createClassLoader("server", commonLoader);
             sharedLoader = createClassLoader("shared", commonLoader);
         } catch (Throwable t) {
-            log("Class loader creation threw exception", t);
+            log.error("Class loader creation threw exception", t);
             System.exit(1);
         }
     }
@@ -197,16 +193,16 @@ public final class Bootstrap {
         SecurityClassLoad.securityClassLoad(catalinaLoader);
 
         // Load our startup class and call its process() method
-        if (debug >= 1)
-            log("Loading startup class");
+        if (log.isDebugEnabled())
+            log.debug("Loading startup class");
         Class startupClass =
             catalinaLoader.loadClass
             ("org.apache.catalina.startup.Catalina");
         Object startupInstance = startupClass.newInstance();
 
         // Set the shared extensions class loader
-        if (debug >= 1)
-            log("Setting startup class properties");
+        if (log.isDebugEnabled())
+            log.debug("Setting startup class properties");
         String methodName = "setParentClassLoader";
         Class paramTypes[] = new Class[1];
         paramTypes[0] = Class.forName("java.lang.ClassLoader");
@@ -242,8 +238,8 @@ public final class Bootstrap {
         }
         Method method = 
             catalinaDaemon.getClass().getMethod(methodName, paramTypes);
-        if (debug >= 1)
-            log("Calling startup class " + method);
+        if (log.isDebugEnabled())
+            log.debug("Calling startup class " + method);
         method.invoke(catalinaDaemon, param);
 
     }
@@ -257,15 +253,6 @@ public final class Bootstrap {
      */
     public void init(String[] arguments)
         throws Exception {
-
-        // Read the arguments
-        if (arguments != null) {
-            for (int i = 0; i < arguments.length; i++) {
-                if (arguments[i].equals("-debug")) {
-                    debug = 1;
-                }
-            }
-        }
 
         init();
         load(arguments);
@@ -499,33 +486,6 @@ public final class Bootstrap {
      */
     public static String getCatalinaBase() {
         return System.getProperty("catalina.base", getCatalinaHome());
-    }
-
-
-    /**
-     * Log a debugging detail message.
-     *
-     * @param message The message to be logged
-     */
-    protected static void log(String message) {
-
-        System.out.print("Bootstrap: ");
-        System.out.println(message);
-
-    }
-
-
-    /**
-     * Log a debugging detail message with an exception.
-     *
-     * @param message The message to be logged
-     * @param exception The exception to be logged
-     */
-    protected static void log(String message, Throwable exception) {
-
-        log(message);
-        exception.printStackTrace(System.out);
-
     }
 
 
