@@ -188,9 +188,9 @@ public class JasperLoader extends URLClassLoader {
                     ex.getException().printStackTrace();
 
                 }
-             } else {
-                clazz = Thread.currentThread().getContextClassLoader().loadClass(name);
-              }
+            } else {
+                clazz = parent.loadClass(name);
+            }
             
 	    if( resolve )
 		resolveClass(clazz);

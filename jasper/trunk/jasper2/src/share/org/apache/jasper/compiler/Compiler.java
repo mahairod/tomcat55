@@ -152,7 +152,7 @@ public class Compiler {
         logger.setErrorPrintStream(System.err);
 	logger.setMessageOutputLevel(Project.MSG_INFO);
         project.addBuildListener( logger);
-        if (System.getProperty("catalina.home") != null) {
+	if (System.getProperty("catalina.home") != null) {
             project.setBasedir( System.getProperty("catalina.home"));
         }
         
@@ -192,7 +192,7 @@ public class Compiler {
     /** 
      * Compile the jsp file from the current engine context
      */
-    public void generateJava()
+    private void generateJava()
         throws Exception
     {
         long t1=System.currentTimeMillis();
@@ -310,7 +310,7 @@ public class Compiler {
     /** 
      * Compile the jsp file from the current engine context
      */
-    public void generateClass()
+    private void generateClass()
         throws FileNotFoundException, JasperException, Exception {
 
         long t1=System.currentTimeMillis();
@@ -431,13 +431,24 @@ public class Compiler {
     public void compile()
         throws FileNotFoundException, JasperException, Exception
     {
+        compile(true);
+    }
+
+    /**
+     * Compile the jsp file from the current engine context
+     */
+    public void compile(boolean compileClass)
+        throws FileNotFoundException, JasperException, Exception
+    {
         if (errDispatcher == null) {
             this.errDispatcher = new ErrorDispatcher();
         }
 
         try {
             generateJava();
-            generateClass();
+            if (compileClass) {
+                generateClass();
+            }
         } finally {
             if (tfp != null) {
                 tfp.removeProtoTypeFiles(null);

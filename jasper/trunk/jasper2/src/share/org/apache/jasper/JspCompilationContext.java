@@ -589,7 +589,7 @@ public class JspCompilationContext {
             jspLoader = new JasperLoader
                 (outUrls,
                  getServletPackageName() + "." + getServletClassName(),
-                 rctxt.getParentClassLoader(),
+                 getClassLoader(),
                  rctxt.getPermissionCollection(),
                  rctxt.getCodeSource());
             
