@@ -12,6 +12,10 @@
 # The path that is base for the rest of the paths in this file.
 base.path=/usr/local
 
+# The directory that contains your binary distribution of the Java
+# Activation Framework, version 1.0.1 or later.
+activation.home=${base.path}/jaf-1.0.1
+
 # The directory containing your binary distribution of JAXP and its
 # associated declarations.  You can customize the versions of JAXP used
 # for Catalina and Jasper below.  If you are using JAXP/1.0, replace
@@ -44,6 +48,10 @@ jsse.home=${base.path}/jsse1.0.2
 # The JAR file for the JUnit unit test suite you are using.  This is required
 # only if you wish to execute the unit tests
 #junit.jar=${base.path}/junit3.5/junit.jar
+
+# The directory containing your binary distribution of JavaMail, version 1.2
+# or later.
+mail.home=${base.path}/javamail-1.2
 
 # The directory containing your binary distribution of the Jakarta
 # regular expressions package (jakarta-regexp), version 1.2.

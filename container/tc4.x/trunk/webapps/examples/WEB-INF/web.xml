@@ -95,6 +95,12 @@
     </listener>
 
     <!-- Define servlets that are included in the example application -->
+
+    <servlet>
+        <servlet-name>SendMailServlet</servlet-name>
+        <servlet-class>SendMailServlet</servlet-class>
+    </servlet>
+
     <servlet>
         <servlet-name>
             snoop
@@ -113,6 +119,7 @@
             <role-name>tomcat</role-name>
         </run-as>
     </servlet>
+
     <servlet>
       <servlet-name>
           servletToJsp
@@ -138,6 +145,11 @@
         <url-pattern>
             /CompressionTest
         </url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SendMailServlet</servlet-name>
+        <url-pattern>/SendMailServlet</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -176,7 +188,7 @@
     </taglib>
 
     <resource-ref>
-      <res-ref-name>mail/session</res-ref-name>
+      <res-ref-name>mail/Session</res-ref-name>
       <res-type>javax.mail.Session</res-type>
       <res-auth>Container</res-auth>
     </resource-ref>

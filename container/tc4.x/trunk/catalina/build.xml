@@ -22,6 +22,7 @@
   <property name="test.webapp.war"   value="${java.io.tmpdir}/webapp.war"/>
 
   <!-- ================== Derived Property Values ========================= -->
+  <property name="activation.jar"  value="${activation.home}/activation.jar"/>
   <property name="jaxp.jar"        value="${catalina.jaxp.home}/jaxp.jar"/>
   <property name="parser.jar"      value="${catalina.jaxp.home}/${catalina.jaxp.parser.jar}"/>
   <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
@@ -29,6 +30,7 @@
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
   <property name="jmxri.jar"       value="${jmx.home}/lib/jmxri.jar"/>
+  <property name="mail.jar"        value="${mail.home}/lib/mail.jar"/>
   <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.2.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
@@ -38,11 +40,13 @@
     <pathelement location="${jaxp.jar}"/>
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
+    <pathelement location="${activation.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
     <pathelement location="${jmxri.jar}"/>
     <pathelement location="${junit.jar}"/>
+    <pathelement location="${mail.jar}"/>
     <pathelement location="${catalina.build}/classes"/>
     <pathelement location="${catalina.build}/tests"/>
   </path>
@@ -91,6 +95,11 @@
     <copy file="${servlet.jar}" tofile="${catalina.build}/common/lib/servlet.jar" />
     <!--   Copy the JNDI JAR file for use under JDK 1.2.2 -->
     <copy file="${jndi.jar}"    tofile="${catalina.build}/common/lib/jndi.jar" />
+    <!--   Copy activation.jar and mail.jar for the mail resource factories -->
+    <copy file="${activation.jar}"
+        tofile="${catalina.build}/common/lib/activation.jar"/>
+    <copy file="${mail.jar}"
+        tofile="${catalina.build}/common/lib/mail.jar"/>
 
     <!-- Server Components -->
     <!--   Catalina needs JAXP compliant XML parser -->
@@ -126,8 +135,6 @@
      classname="javax.transaction.UserTransaction" />
     <available property="avalon.present" 
      classname="org.apache.avalon.blocks.Block" />
-    <available property="javamail.present"
-     classname="javax.mail.internet.MimeMessage" />
     <available property="jdk.1.3.present"
      classname="java.lang.reflect.Proxy" />
     <!-- Compile Service API -->
@@ -136,15 +143,11 @@
              excludes="**/CVS/**" />
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-             classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}:${jndi.jar}"
+             classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}:${jndi.jar}:${activation.jar}:${mail.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**">
       <exclude name="**/factory/Tyrex*.java" 
        unless="tyrex.present" />
-      <exclude name="**/factory/MailSessionFactory.java"
-       unless="javamail.present" />
-      <exclude name="**/factory/SendMailFactory.java"
-       unless="javamail.present" />
       <exclude name="**/startup/CatalinaBlock.java" 
        unless="avalon.present" />
       <exclude name="**/util/ProcessHelper.java"

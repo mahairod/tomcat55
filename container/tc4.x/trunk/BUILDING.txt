@@ -208,7 +208,26 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
   it resides in its own subdirectory.
 
 
-(10) Download and Install the JSSE 1.0.2 Reference Implementation
+(10) Download and Install the Java Activation Framework 1.0.1
+
+* Download the Java Activation Framework package (version 1.0.1 or later) from
+
+    http://java.sun.com/products/javabeans/glasgow/jaf.html
+
+* Unpack the package into a convenient location so that it
+  resised in its own subdirectory.
+
+(11) Download and Install JavaMail 1.2
+
+* Download the JavaMail package (version 1.2 or later) from
+
+    http://java.sun.com/products/javamail/index.html
+
+* Unpack the package into a convenient location so that
+  it resides in its own subdirectory.
+
+
+(12) Download and Install the JSSE 1.0.2 Reference Implementation
 
 * Download the Java Secure Sockets Extension (JSSE) package,
   (version 1.0.2 or later) from
@@ -219,7 +238,7 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
   it resides in its own subdirectory.
 
 
-(11) Download and Install the Java Transaction APIs (OPTIONAL)
+(13) Download and Install the Java Transaction APIs (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -232,7 +251,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(12) Download and Install the JUnit Testing Package (OPTIONAL)
+(14) Download and Install the JUnit Testing Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build and execute the unit
 tests that are part of the Tomcat 4.0 source base.
@@ -245,7 +264,7 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(13) Download and Install the Tyrex Data Source Package (OPTIONAL)
+(15) Download and Install the Tyrex Data Source Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -258,7 +277,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(13) Customize Build Properties For This Subproject
+(16) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -273,6 +292,9 @@ the following properties:
 
   Property Name     Description
   ----------------  --------------------------------------------------------
+
+  activation.home   Pathname to directory containing the Java Activation
+                    Framework package, version 1.0.1 or later
 
   jmx.home          Pathname to directory containing the Java Management
                     Extensions (JMX) Reference Implementation, version 1.0
@@ -289,21 +311,23 @@ the following properties:
   junit.jar         Pathname to the "junit.jar" file from JUnit, version 3.7
                     or later
 
+  mail.home         Pathname to the directory containing the JavaMail package,
+                    version 1.2 or later
+
   regexp.home       Pathname to directory containing a binary distribution of
                     the Jakarta Regexp Project, version 1.2
 
   servletapi.home   Pathname to directory containing a binary distribution of
                     the Servlet 2.3/JSP 1.2 API classes
 
-FIXME:  Properties for mail.jar, activation.jar, jdbc2_0-stdext.jar,
+FIXME:  Properties for jdbc2_0-stdext.jar,
 jta-spec1_0_1.jar, tyrex-0.9.7.0.jar
 
 A short-cut to preparing your "build.properties" file is to make a copy of the
 "build.properties.sample" file included in the Tomcat source distribution,
 and then customize the paths within it.
 
-
-(14) Build A Binary Distribution
+(17) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 

@@ -46,7 +46,7 @@ would look something like this:</p>
 <source>
 // Obtain our environment naming context
 Context initCtx = new InitialContext();
-Context envCtx = initCtx.lookup("java:comp/env");
+Context envCtx = (Context) initCtx.lookup("java:comp/env");
 
 // Look up our data source
 DataSource ds = (DataSource)
@@ -115,7 +115,138 @@ well, overriding corresponding values from <code>conf/server.xml</code>
 
 <section name="Tomcat Standard Resource Factories">
 
+  <p>Tomcat 4 includes a series of standard resource factories that can
+  provide services to your web applications, but give you configuration
+  flexibility (in <code>$CATALINA_HOME/conf/server.xml</code>) without
+  modifying the web application or the deployment descriptor.  Each
+  subsection below details the configuration and usage of the standard
+  resource factories.</p>
+
+  <p>See <a href="#Adding Custom Resource Factories">Adding Custom
+  Resource Factories</a> for information about how to create, install,
+  configure, and use your own custom resource factory classes with
+  Tomcat 4.</p>
+
   <subsection name="JavaMail Sessions">
+
+    <h3>0.  Introduction</h3>
+
+    <p>In many web applications, sending electronic mail messages is a
+    required part of the system's functionality.  The
+    <a href="http://java.sun.com/products/javamail">Java Mail</a> API
+    makes this process relatively straightforward, but requires many
+    configuration details that the client application must be aware of
+    (including the name of the SMTP host to be used for message sending).</p>
+
+    <p>Tomcat 4 includes a standard resource factory that will create
+    <code>javax.mail.Session</code> session instances for you, already
+    connected to the SMTP server that is configured in <code>server.xml</code>.
+    In this way, the application is totally insulated from changes in the
+    email server configuration environment - it simply asks for, and receives,
+    a preconfigured session whenever needed.</p>
+
+    <p>The steps required for this are outlined below.</p>
+
+    <h3>1.  Declare Your Resource Requirements</h3>
+
+    <p>The first thing you should do is modify the web application deployment
+    descriptor (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under
+    which you will look up preconfigured sessions.  By convention, all such
+    names should resolve to the <code>mail</code> subcontext (relative to the
+    standard <code>java:comp/env</code> naming context that is the root of
+    all provided resource factories.  A typical <code>web.xml</code> entry
+    might look like this:</p>
+<source>
+&lt;resource-ref&gt;
+  &lt;description&gt;
+    Resource reference to a factory for javax.mail.Session
+    instances that may be used for sending electronic mail
+    messages, preconfigured to connect to the appropriate
+    SMTP server.
+  &lt;/description&gt;
+  &lt;resource-ref-name&gt;
+    mail/Session
+  &lt;/resource-ref-name&gt;
+  &lt;res-type&gt;
+    javax.mail.Session
+  &lt;/res-type&gt;
+  &lt;res-auth&gt;
+    Container
+  &lt;/res-auth&gt;
+&lt;/resource-ref&gt;
+</source>
+
+    <p><strong>WARNING</strong> - Be sure you respect the element ordering
+    that is required by the DTD for web application deployment descriptors!
+    See the
+    <a href="http://java.sun.com/products/servlet/download.html">Servlet
+    Specification</a> for details.</p>
+
+    <h3>2.  Code Your Application's Use Of This Resource</h3>
+
+    <p>A typical use of this resource reference might look like this:</p>
+<source>
+Context initCtx = new InitialContext();
+Context envCtx = (Context) initCtx.lookup("java:comp/env");
+Session session = (Session) envCtx.lookup("mail/Session");
+
+Message message = new MimeMessage(session);
+message.setFrom(new InternetAddress(request.getParameter("from"));
+InternetAddress to[] = new InternetAddress[1];
+to[0] = new InternetAddress(request.getParameter("to"));
+message.setRecipients(Message.RecipientType.TO, to);
+message.setSubject(request.getParameter("subject"));
+message.setContent(request.getParameter("content"), "text/plain");
+Transport.send(message);
+</source>
+
+    <p>Note that the application uses the same resource reference name
+    that was declared in the web application deployment descriptor.  This
+    is matched up against the resource factory that is configured in
+    <code>$CATALINA_HOME/conf/server.xml</code>, as described below.</p>
+
+    <h3>3.  Configure Tomcat's Resource Factory</h3>
+
+    <p>To configure Tomcat's resource factory, add an elements like this to the
+    <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
+    <code>Context</code> element for this web application (or nested inside
+    a <code>DefaultContext</code> element for the surrounding
+    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+<source>
+&lt;Context ...&gt;
+  ...
+  &lt;Resource name="mail/Session" auth="Container"
+            type="javax.mail.Session"/&gt;
+  &lt;ResourceParams name="mail/Session"&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;mail.smtp.host&lt;/name&gt;
+      &lt;value&gt;localhost&lt;/value&gt;
+    &lt;/parameter&gt;
+  &lt;/ResourceParams&gt;
+  ...
+&lt;/Context&gt;
+</source>
+
+    <p>Note that the resource name (here, <code>mail/Session</code>) must
+    match the value specified in the web application deployment descriptor.
+    Customize the value of the <code>mail.smtp.host</code> parameter to
+    point at the server that provides SMTP service for your network.</p>
+
+    <h3>Example Application</h3>
+
+    <p>The <code>/examples</code> application included with Tomcat contains
+    an example of utilizing this resource factory.  It is accessed via the
+    "JSP Examples" link.  The source code for the servlet that actually
+    sends the mail message is in
+    <code>/WEB-INF/classes/SendMailServlet.java</code>.</p>
+
+    <p><strong>WARNING</strong> - The default configuration assumes that
+    there is an SMTP server listing on port 25 on <code>localhost</code>.
+    If this is not the case, edit the
+    <code>$CATALINA_HOME/conf/server.xml</code> file, and modify the
+    parameter value for the <code>mail.smtp.host</code> parameter to be
+    the host name of an SMTP server on your network.</p>
+
   </subsection>
 
   <subsection name="JDBC Data Sources">
