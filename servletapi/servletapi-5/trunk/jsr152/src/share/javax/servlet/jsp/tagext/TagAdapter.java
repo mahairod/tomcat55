@@ -79,8 +79,11 @@ public class TagAdapter
     private SimpleTag simpleTagAdaptee;
 
     /** The parent, of this tag, converted (if necessary) to be of type Tag */
-    private Tag cachedParent;
-    
+    private Tag parent;
+
+    // Flag indicating whether we have already determined the parent
+    private boolean parentDetermined;
+
     /**
      * Creates a new TagAdapter that wraps the given SimpleTag and 
      * returns the parent tag when getParent() is called.
@@ -121,26 +124,30 @@ public class TagAdapter
 
 
     /**
-     * Returns the value passed to setParent().  
-     * This will either be the enclosing Tag (if parent implements Tag),
-     * or an adapter to the enclosing Tag (if parent does
-     * not implement Tag).
+     * Returns the parent of this tag, which is always
+     * getAdaptee().getParent().  
+     *
+     * This will either be the enclosing Tag (if getAdaptee().getParent()
+     * implements Tag), or an adapter to the enclosing Tag (if 
+     * getAdaptee().getParent() does not implement Tag).
      *
      * @return The parent of the tag being adapted.
      */
     public Tag getParent() {
-	if( this.cachedParent == null ) {
-	    JspTag parent = simpleTagAdaptee.getParent();
-	    if( parent instanceof Tag ) {
-	        this.cachedParent = (Tag)parent;
+	if (!parentDetermined) {
+	    JspTag adapteeParent = simpleTagAdaptee.getParent();
+	    if (adapteeParent != null) {
+		if (adapteeParent instanceof Tag) {
+		    this.parent = (Tag) adapteeParent;
+		} else {
+		    // Must be SimpleTag - no other types defined.
+		    this.parent = new TagAdapter((SimpleTag) adapteeParent);
+		}
 	    }
-	    else {
-                // Must be SimpleTag - no other types defined.
-	        this.cachedParent = new TagAdapter( (SimpleTag)parent );
-	    }
+	    parentDetermined = true;
 	}
 
-	return this.cachedParent;
+	return this.parent;
     }
     
     /**
@@ -187,5 +194,4 @@ public class TagAdapter
         throw new UnsupportedOperationException( 
             "Illegal to invoke release() on TagAdapter wrapper" );
     }
-
 }
