@@ -2377,6 +2377,15 @@ public class StandardContext
         // Binding thread
         ClassLoader oldCCL = bindThread();
 
+        // Shut down our session manager
+        if ((manager != null) && (manager instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) manager).stop();
+            } catch (LifecycleException e) {
+                log(sm.getString("standardContext.stoppingManager"), e);
+            }
+        }
+
         // Shut down the current version of all active servlets
         Container children[] = findChildren();
         for (int i = 0; i < children.length; i++) {
@@ -2392,24 +2401,15 @@ public class StandardContext
             }
         }
 
+        // Shut down application event listeners
+        listenerStop();
+
         // Clear all application-originated servlet context attributes
         if (context != null)
             context.clearAttributes();
 
         // Shut down filters
         filterStop();
-
-        // Shut down our session manager
-        if ((manager != null) && (manager instanceof Lifecycle)) {
-            try {
-                ((Lifecycle) manager).stop();
-            } catch (LifecycleException e) {
-                log(sm.getString("standardContext.stoppingManager"), e);
-            }
-        }
-
-        // Shut down application event listeners
-        listenerStop();
 
         if (isUseNaming()) {
             // Start
@@ -3406,8 +3406,6 @@ public class StandardContext
                 // Binding thread
                 oldCCL = bindThread();
 
-                if ((manager != null) && (manager instanceof Lifecycle))
-                    ((Lifecycle) manager).start();
                 if ((cluster != null) && (cluster instanceof Lifecycle))
                     ((Lifecycle) cluster).start();
                 if ((realm != null) && (realm instanceof Lifecycle))
@@ -3437,6 +3435,9 @@ public class StandardContext
                 // Notify our interested LifecycleListeners
                 lifecycle.fireLifecycleEvent(START_EVENT, null);
 
+                if ((manager != null) && (manager instanceof Lifecycle))
+                    ((Lifecycle) manager).start();
+
             } finally {
                 // Unbinding thread
                 unbindThread(oldCCL);
@@ -3454,6 +3455,13 @@ public class StandardContext
         // Binding thread
         oldCCL = bindThread();
 
+        // Create context attributes that will be required
+        if (ok) {
+            if (debug >= 1)
+                log("Posting standard context attributes");
+            postWelcomeFiles();
+        }
+
         // Configure and call application event listeners and filters
         if (ok) {
             if (!listenerStart())
@@ -3462,13 +3470,6 @@ public class StandardContext
         if (ok) {
             if (!filterStart())
                 ok = false;
-        }
-
-        // Create context attributes that will be required
-        if (ok) {
-            if (debug >= 1)
-                log("Posting standard context attributes");
-            postWelcomeFiles();
         }
 
         // Load and initialize all "load on startup" servlets
@@ -3523,6 +3524,10 @@ public class StandardContext
         // Finalize our character set mapper
         setCharsetMapper(null);
 
+        if ((manager != null) && (manager instanceof Lifecycle)) {
+            ((Lifecycle) manager).stop();
+        }
+
         // Normal container shutdown processing
         if (debug >= 1)
             log("Processing standard container shutdown");
@@ -3550,6 +3555,9 @@ public class StandardContext
                 if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
                     ((Lifecycle) mappers[(mappers.length-1)-i]).stop();
             }
+
+            // Stop our application listeners
+            listenerStop();
 
             // Stop our subordinate components, if any
             if (resources != null) {
@@ -3580,13 +3588,6 @@ public class StandardContext
             if ((cluster != null) && (cluster instanceof Lifecycle)) {
                 ((Lifecycle) cluster).stop();
             }
-            if ((manager != null) && (manager instanceof Lifecycle)) {
-                ((Lifecycle) manager).stop();
-            }
-
-            // Stop our application listeners
-            listenerStop();
-
             if ((logger != null) && (logger instanceof Lifecycle)) {
                 ((Lifecycle) logger).stop();
             }
