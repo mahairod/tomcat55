@@ -81,6 +81,8 @@ import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagLibraryValidator;
 import javax.servlet.jsp.tagext.PageData;
+import javax.servlet.jsp.tagext.VariableInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -429,11 +431,17 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     private TagInfo createTagInfo(Element elem) throws JasperException {
-        String name = null, tagclass = null, teiclass = null;
+        String name = null;
+	String tagclass = null;
+	String teiclass = null;
         String bodycontent = "JSP"; // Default body content is JSP
 	String info = null;
+	String displayName = null;
+	String smallIcon = null;
+	String largeIcon = null;
         
         Vector attributeVector = new Vector();
+        Vector variableVector = new Vector();
         NodeList list = elem.getChildNodes();
         for(int i = 0; i < list.getLength(); i++) {
             Node tmp  =  list.item(i);
@@ -460,19 +468,45 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     info = t.getData();
-            } else if (tname.equals("attribute"))
+            } else if (tname.equals("attribute")) {
                 attributeVector.addElement(createAttribute(e));
-            else 
+
+	    // JSP 1.2
+
+	    } else if (tname.equals("display-name")) {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    displayName = t.getData();
+	    } else if (tname.equals("small-icon")) {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    smallIcon = t.getData();
+	    } else if (tname.equals("large-icon")) {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    largeIcon = t.getData();
+	    } else if (tname.equals("variable")) {
+		if (teiclass != null) {
+		    throw new JasperException(
+			Constants.getString("tld.error.variableNotAllowed"));
+		}
+		variableVector.addElement(createVariable(e));
+	    } else {
                 Constants.message("jsp.warning.unknown.element.in.tag", 
                                   new Object[] {
                                       e.getTagName()
                                   },
                                   Logger.WARNING
                                   );
-        }
+	    }
+	}
 	TagAttributeInfo[] tagAttributeInfo 
             = new TagAttributeInfo[attributeVector.size()];
 	attributeVector.copyInto (tagAttributeInfo);
+
+	TagVariableInfo[] tagVariableInfos
+            = new TagVariableInfo[variableVector.size()];
+	variableVector.copyInto(tagVariableInfos);
 
         TagExtraInfo tei = null;
 
@@ -506,7 +540,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         TagInfo taginfo = new TagInfo(name, tagclass, bodycontent,
                                       info, this, 
                                       tei,
-                                      tagAttributeInfo);
+                                      tagAttributeInfo,
+				      displayName,
+				      smallIcon,
+				      largeIcon,
+				      tagVariableInfos);
         return taginfo;
     }
 
@@ -554,6 +592,52 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         
 	//     return new TagAttributeInfo(name, required, rtexprvalue, type);
         return new TagAttributeInfo(name, required, type, rtexprvalue);
+    }
+
+    TagVariableInfo createVariable(Element elem) {
+        String nameGiven = null;
+        String nameFromAttribute = null;
+	String className = null;
+	boolean declare = true;
+	int scope = VariableInfo.NESTED;
+        
+        NodeList list = elem.getChildNodes();
+        for(int i=0; i<list.getLength(); i++) {
+            Node tmp  = list.item(i);
+	    if (!(tmp instanceof Element)) continue;
+	    Element e = (Element) tmp;
+            String tname = e.getTagName();
+            if (tname.equals("name-given"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    nameGiven = t.getData();
+            } else if (tname.equals("name-from-attribute"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    nameFromAttribute = t.getData();
+            } else if (tname.equals("variable-class"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    className = t.getData();
+            } else if (tname.equals("declare"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null) {
+                    declare = Boolean.valueOf(t.getData()).booleanValue();
+		    if (t.getData().equalsIgnoreCase("yes"))
+			declare = true;
+		}
+            } else if (tname.equals("scope")) {
+                Text t = (Text) e.getFirstChild();
+                if (t != null) {
+                    scope = Integer.valueOf(t.getData()).intValue();
+		}
+            } else 
+                Constants.message("jsp.warning.unknown.element.in.variable",
+                                  new Object[] {e.getTagName()},
+                                  Logger.WARNING);
+        }
+        return new TagVariableInfo(nameGiven, nameFromAttribute,
+				   className, declare, scope);
     }
 
     static void copy(InputStream in, String fileName) 
