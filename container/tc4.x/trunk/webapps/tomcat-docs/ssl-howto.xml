@@ -141,7 +141,7 @@ simply prefixing the addres with <code>https:</code> instead of
 <code>http:</code>.  Any pages which absolutely <strong>require</strong>
 a secure connection should check the protocol type associated with the
 page request and take the appropriate action of <code>https</code> is not
-speciifed.</p>
+specified.</p>
 
 </section>
 
