@@ -820,9 +820,13 @@ final class HttpProcessor
 
         // Prevent encoding '%', '/', '.' and '\', which are special reserved
         // characters
-        if ((normalized.indexOf("%25") > 0) || (normalized.indexOf("%2F") > 0)
-            || (normalized.indexOf("%2E") > 0) 
-            || (normalized.indexOf("%5C") > 0)) {
+        if ((normalized.indexOf("%25") >= 0) 
+	    || (normalized.indexOf("%2F") >= 0)
+            || (normalized.indexOf("%2E") >= 0) 
+            || (normalized.indexOf("%5C") >= 0)
+	    || (normalized.indexOf("%2f") >= 0)
+            || (normalized.indexOf("%2e") >= 0) 
+            || (normalized.indexOf("%5c") >= 0)) {
             return null;
         }
 
