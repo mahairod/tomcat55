@@ -498,6 +498,65 @@
     <!-- <antcall target="build-commons-modeler" /> -->
     <!-- <antcall target="build-commons-daemon"  /> -->
 
+  	<antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-collections-src.loc}"/>
+      <param name="destfile" value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+    </antcall>
+  	<antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-pool-src.loc}"/>
+      <param name="destfile" value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-dbcp-src.loc}"/>
+      <param name="destfile" value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+    </antcall>
+  	<mkdir dir="${base.path}/tomcat-deps"/>
+    <copy todir="${base.path}/tomcat-deps">
+    	<fileset dir="${commons-collections.home}" >
+    		<include name="**/collections/CursorableLinkedList.java" />
+    		<include name="**/collections/KeyValue.java" />
+    		<include name="**/collections/LRUMap.java" />
+    		<include name="**/collections/SequencedHashMap.java" />
+    	</fileset>
+    	<fileset dir="${commons-pool.home}">
+    		<include name="**/*.java" />
+    		<exclude name="**/Stack*.java" />
+    		<exclude name="**/SoftReferenceObjectPool.java" />
+    		<exclude name="**/test/**" />
+    	</fileset>
+    	<fileset dir="${commons-dbcp.home}">
+    		<include name="**/*.java" />
+    		<exclude name="**/test/**" />
+       	</fileset>
+    </copy>
+  	<replace dir="${base.path}/tomcat-deps/src/java/org/apache/commons">
+  		<replacefilter token="return UnmodifiableList.decorate(l);"
+  			value="return l;" />
+  		<replacefilter token="import org.apache.commons.collections.list.UnmodifiableList;"
+  			value=" " />
+  	</replace>
+  	<replace dir="${base.path}/tomcat-deps/src/java/org/apache/commons" >
+  		<replacefilter token="org.apache.commons" 
+  			value="org.apache.tomcat.dbcp" />
+  	</replace>
+  	<mkdir dir="${base.path}/tomcat-deps/src/java/org/apache/tomcat/dbcp" />
+  	<move todir="${base.path}/tomcat-deps/src/java/org/apache/tomcat/dbcp">
+  		<fileset dir="${base.path}/tomcat-deps/src/java/org/apache/commons" />
+    </move>
+  	<mkdir dir="${base.path}/tomcat-deps/classes"/>
+    <javac destdir="${base.path}/tomcat-deps/classes"
+           optimize="off" debug="on"
+           srcdir="${base.path}/tomcat-deps/src/java" >
+      <include name="**" />
+    </javac>
+    <jar jarfile="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"
+         index="true">
+       <fileset dir="${base.path}/tomcat-deps/classes">
+          <include name="**/*.class" />
+          <include name="**/*.properties" />
+       </fileset>
+    </jar>
+    
   </target>
 
   <target name="build-webapps" depends="init"
@@ -1616,6 +1675,7 @@
       <param name="destfile" value="${commons-launcher.jar}"/>
     </antcall>
 
+  	<!--
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-pool.loc}"/>
       <param name="destfile" value="${commons-pool.jar}"/>
@@ -1626,6 +1686,7 @@
       <param name="destfile" value="${commons-dbcp.jar}"/>
       <param name="destdir" value="${base.path}"/>
     </antcall>
+    -->
 
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-httpclient.loc}"/>

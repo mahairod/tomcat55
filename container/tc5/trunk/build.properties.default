@@ -60,13 +60,6 @@ commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
 commons-beanutils.loc=${base-jakarta.loc}/commons/beanutils/binaries/commons-beanutils-1.7.0.tar.gz
 
 
-# ----- Commons Collections, version 2.0 or later -----
-commons-collections.home=${base.path}/commons-collections-3.1
-commons-collections.lib=${commons-collections.home}
-commons-collections.jar=${commons-collections.lib}/commons-collections-3.1.jar
-commons-collections.loc=${base-jakarta.loc}/commons/collections/binaries/commons-collections-3.1.tar.gz
-
-
 # ----- Commons Launcher, version 0.9 or later -----
 commons-launcher.home=${base.path}/commons-launcher-0.9
 commons-launcher.lib=${commons-launcher.home}
@@ -151,10 +144,9 @@ log4j.loc=${base-jakarta.loc}/log4j/binaries/jakarta-log4j-1.2.8.tar.gz
 
 
 # ----- Commons DBCP, version 1.1 or later -----
+commons-dbcp.version=1.2.1
 commons-dbcp.home=${base.path}/commons-dbcp-1.2.1
-commons-dbcp.lib=${commons-dbcp.home}
-commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp-1.2.1.jar
-commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/commons-dbcp-1.2.1.tar.gz
+commons-dbcp-src.loc=${base-jakarta.loc}/commons/dbcp/source/commons-dbcp-1.2.1-src.tar.gz
 
 
 # ----- Commons HttpClient, version 2.0 or later -----
@@ -166,9 +158,15 @@ commons-httpclient.loc=${base-jakarta.loc}/commons/httpclient/binary/commons-htt
 
 # ----- Commons Pool, version 1.1 or later -----
 commons-pool.home=${base.path}/commons-pool-1.2
-commons-pool.lib=${commons-pool.home}
-commons-pool.jar=${commons-pool.lib}/commons-pool-1.2.jar
-commons-pool.loc=${base-jakarta.loc}/commons/pool/binaries/commons-pool-1.2.tar.gz
+commons-pool-src.loc=${base-jakarta.loc}/commons/pool/source/commons-pool-1.2-src.tar.gz
+
+
+# ----- Commons Collections, version 2.0 or later -----
+commons-collections.home=${base.path}/commons-collections-3.1
+commons-collections.lib=${commons-collections.home}
+commons-collections.jar=${commons-collections.lib}/commons-collections-3.1.jar
+commons-collections.loc=${base-jakarta.loc}/commons/collections/binaries/commons-collections-3.1.tar.gz
+commons-collections-src.loc=${base-jakarta.loc}/commons/collections/source/commons-collections-3.1-src.tar.gz
 
 
 # ----- Commons FileUpload, version 1.0-20030531 or later -----
