@@ -1302,6 +1302,8 @@ public class CoyoteConnector
                                            ssf.getKeystoreType());
             IntrospectionUtils.setProperty(protocolHandler, "protocol",
                                            ssf.getProtocol());
+            IntrospectionUtils.setProperty(protocolHandler, "protocols",
+                                           ssf.getProtocols());
             IntrospectionUtils.setProperty(protocolHandler,
                                            "sSLImplementation",
                                            ssf.getSSLImplementation());
@@ -1336,23 +1338,27 @@ public class CoyoteConnector
         }
     }
 
-    /**
+    /*
      * Translate the attribute name from the legacy Factory names to their
      * internal protocol names.
      */
     private String translateAttributeName(String name) {
-	if("clientAuth".equals(name)) {
+	if ("clientAuth".equals(name)) {
 	    return "clientauth";
-	} else if("keystoreFile".equals(name)) {
+	} else if ("keystoreFile".equals(name)) {
 	    return "keystore";
-	} else if("randomFile".equals(name)) {
+	} else if ("randomFile".equals(name)) {
 	    return "randomfile";
-	} else if("rootFile".equals(name)) {
+	} else if ("rootFile".equals(name)) {
 	    return "rootfile";
-	} else if("keystorePass".equals(name)) {
+	} else if ("keystorePass".equals(name)) {
 	    return "keypass";
-	} else if("keystoreType".equals(name)) {
+	} else if ("keystoreType".equals(name)) {
 	    return "keytype";
+	} else if ("sslProtocol".equals(name)) {
+	    return "protocol";
+	} else if ("sslProtocols".equals(name)) {
+	    return "protocols";
 	}
 	return name;
     }
@@ -1454,50 +1460,63 @@ public class CoyoteConnector
     // -------------------- Management methods --------------------
 
     public boolean getClientAuth() {
-        ServerSocketFactory factory= this.getFactory();
-        if( ! (factory instanceof CoyoteServerSocketFactory) )
-            return false;
-        CoyoteServerSocketFactory coyoteFactory=(CoyoteServerSocketFactory)factory;
-        return coyoteFactory.getClientAuth();
+        boolean ret = false;
+
+        String prop = (String) getProperty("clientauth");
+        if (prop != null) {
+            ret = Boolean.valueOf(prop).booleanValue();
+        } else {	
+            ServerSocketFactory factory = this.getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getClientAuth();
+            }
+        }
+
+        return ret;
     }
 
     public void setClientAuth(boolean clientAuth) {
         setProperty("clientauth", String.valueOf(clientAuth));
-        ServerSocketFactory factory= this.getFactory();
-        if( ! (factory instanceof CoyoteServerSocketFactory) )
-            return;
-        CoyoteServerSocketFactory coyoteFactory=(CoyoteServerSocketFactory)factory;
-        coyoteFactory.setClientAuth(clientAuth);
+        ServerSocketFactory factory = this.getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setClientAuth(clientAuth);
+        }
     }
 
 
     public String getKeystoreFile() {
-        ServerSocketFactory factory= this.getFactory();
-        if( ! (factory instanceof CoyoteServerSocketFactory) )
-            return null;
-        CoyoteServerSocketFactory coyoteFactory=(CoyoteServerSocketFactory)factory;
-        return coyoteFactory.getKeystoreFile();
+        String ret = (String) getProperty("keystore");
+        if (ret == null) {
+            ServerSocketFactory factory = this.getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getKeystoreFile();
+            }
+        }
+
+        return ret;
     }
 
     public void setKeystoreFile(String keystoreFile) {
         setProperty("keystore", keystoreFile);
-        ServerSocketFactory factory= this.getFactory();
-        if( ! (factory instanceof CoyoteServerSocketFactory) )
-            return;
-        CoyoteServerSocketFactory coyoteFactory=(CoyoteServerSocketFactory)factory;
-        coyoteFactory.setKeystoreFile(keystoreFile);
-        
+        ServerSocketFactory factory = this.getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setKeystoreFile(keystoreFile);
+        }
     }
 
     /**
      * Return keystorePass
      */
     public String getKeystorePass() {
-        ServerSocketFactory factory = getFactory();
-        if( factory instanceof CoyoteServerSocketFactory ) {
-            return ((CoyoteServerSocketFactory)factory).getKeystorePass();
+        String ret = (String) getProperty("keypass");
+        if (ret == null) {
+            ServerSocketFactory factory = getFactory();
+            if (factory instanceof CoyoteServerSocketFactory ) {
+                return ((CoyoteServerSocketFactory)factory).getKeystorePass();
+            }
         }
-        return null;
+
+        return ret;
     }
 
     /**
@@ -1519,11 +1538,15 @@ public class CoyoteConnector
      * enabled
      */
     public String getCiphers() {
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            return ((CoyoteServerSocketFactory)factory).getCiphers();
+        String ret = (String) getProperty("ciphers");
+        if (ret == null) {
+            ServerSocketFactory factory = getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getCiphers();
+            }
         }
-        return null;
+
+        return ret;
     }
 
     /**
@@ -1549,11 +1572,15 @@ public class CoyoteConnector
      * @return The alias name of the keypair and supporting certificate chain
      */
     public String getKeyAlias() {
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            return ((CoyoteServerSocketFactory)factory).getKeyAlias();
+        String ret = (String) getProperty("keyAlias");
+        if (ret == null) {
+            ServerSocketFactory factory = getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getKeyAlias();
+            }
         }
-        return null;
+
+        return ret;
     }
 
     /**
@@ -1577,11 +1604,15 @@ public class CoyoteConnector
      * @return SSL protocol variant
      */
     public String getSslProtocol() {
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            return ((CoyoteServerSocketFactory)factory).getProtocol();
+        String ret = (String) getProperty("sslProtocol");
+        if (ret == null) {
+            ServerSocketFactory factory = getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getProtocol();
+            }
         }
-        return null;
+
+        return ret;
     }
 
     /**
@@ -1590,9 +1621,40 @@ public class CoyoteConnector
      * @param sslProtocol SSL protocol variant
      */
     public void setSslProtocol(String sslProtocol) {
+        setProperty("sslProtocol", sslProtocol);
         ServerSocketFactory factory = getFactory();
         if (factory instanceof CoyoteServerSocketFactory) {
             ((CoyoteServerSocketFactory)factory).setProtocol(sslProtocol);
+        }
+    }
+
+    /**
+     * Gets the SSL protocol variants to be enabled.
+     *
+     * @return Comma-separated list of SSL protocol variants
+     */
+    public String getSslProtocols() {
+        String ret = (String) getProperty("sslProtocols");
+        if (ret == null) {
+            ServerSocketFactory factory = getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getProtocols();
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Sets the SSL protocol variants to be enabled.
+     *
+     * @param sslProtocols Comma-separated list of SSL protocol variants
+     */
+    public void setSslProtocols(String sslProtocols) {
+        setProperty("sslProtocols", sslProtocols);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setProtocols(sslProtocols);
         }
     }
 
