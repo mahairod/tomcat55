@@ -140,8 +140,8 @@ final class StandardHostValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public void invoke(Request request, Response response,
-                       ValveContext valveContext)
+    public final void invoke(Request request, Response response,
+                             ValveContext valveContext)
         throws IOException, ServletException {
 
         // Select the Context to be used for this Request

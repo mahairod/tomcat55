@@ -102,7 +102,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Craig R. McClanahan
  */
 
-public class StandardPipeline
+public final class StandardPipeline
     implements Pipeline, Contained, Lifecycle 
  {
     private static Log log = LogFactory.getLog(StandardPipeline.class);
@@ -545,7 +545,7 @@ public class StandardPipeline
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception is thrown
      */
-    public void invoke(Request request, Response response)
+    public final void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Invoke the first Valve in this pipeline for this request
