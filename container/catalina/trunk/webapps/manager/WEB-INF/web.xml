@@ -43,6 +43,11 @@
     </init-param>
   </servlet>
 
+  <servlet>
+    <servlet-name>JMXProxy</servlet-name>
+    <servlet-class>org.apache.catalina.manager.JMXProxyServlet</servlet-class>
+  </servlet>
+
   <!-- Define the Manager Servlet Mapping -->
   <servlet-mapping>
     <servlet-name>Manager</servlet-name>
@@ -95,6 +100,10 @@
   <servlet-mapping>
     <servlet-name>Status</servlet-name>
     <url-pattern>/status</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>JMXProxy</servlet-name>
+      <url-pattern>/jmxproxy/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>HTMLManager</servlet-name>
