@@ -115,7 +115,8 @@ public class ProxyDirContext implements DirContext {
         if (dirContext instanceof BaseDirContext) {
             // Initialize parameters based on the associated dir context, like
             // the caching policy.
-            if (((BaseDirContext) dirContext).isCached()) {
+            BaseDirContext baseDirContext = (BaseDirContext) dirContext;
+            if (baseDirContext.isCached()) {
                 try {
                     cache = (ResourceCache) 
                         Class.forName(cacheClassName).newInstance();
@@ -123,9 +124,9 @@ public class ProxyDirContext implements DirContext {
                     //FIXME
                     e.printStackTrace();
                 }
-                cacheTTL = ((BaseDirContext) dirContext).getCacheTTL();
-                cacheObjectMaxSize = 
-                    ((BaseDirContext) dirContext).getCacheObjectMaxSize();
+                cache.setCacheMaxSize(baseDirContext.getCacheMaxSize());
+                cacheTTL = baseDirContext.getCacheTTL();
+                cacheObjectMaxSize = baseDirContext.getCacheMaxSize() / 20;
             }
         }
         hostName = (String) env.get(HOST);
