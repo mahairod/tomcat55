@@ -130,7 +130,7 @@ Section "Core" SecTomcatCore
 
   Call configure
 
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //IS//Tomcat5 --Group Tomcat --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --JavaOptions -Xrs --Startup manual'
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --JavaOptions -Xrs --Startup manual'
 
 SectionEnd
 
