@@ -89,7 +89,7 @@ public final class Constants {
         Package + ".EjbFactory";
 
     public static final String DBCP_DATASOURCE_FACTORY = 
-        Package + ".DbcpDataSourceFactory";
+        "org.apache.commons.dbcp.BasicDataSourceFactory";
 
     public static final String TYREX_DATASOURCE_FACTORY = 
         Package + ".TyrexDataSourceFactory";
