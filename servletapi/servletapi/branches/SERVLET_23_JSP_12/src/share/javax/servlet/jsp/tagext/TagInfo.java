@@ -57,8 +57,8 @@ package javax.servlet.jsp.tagext;
 
 /**
  * Tag information for a tag in a Tag Library;
- * this class is instantiated from the Tag Library Descriptor file (TLD).
- *
+ * This class is instantiated from the Tag Library Descriptor file (TLD)
+ * and is available only at translation time.
  */
 
 public class TagInfo {
@@ -84,8 +84,8 @@ public class TagInfo {
 
     /**
      * Constructor for TagInfo.
-     * No public constructor; this class is to be instantiated only from the
-     * TagLibrary code under request from some JSP code that is parsing a
+     * This class is to be instantiated only from the TagLibrary code
+     * under request from some JSP code that is parsing a
      * TLD (Tag Library Descriptor).
      *
      * @param tagName The name of this tag
@@ -118,7 +118,9 @@ public class TagInfo {
     }
 			 
     /**
-     * Tag name
+     * The name of the Tag.
+     *
+     * @return The (short) name of the tag.
      */
 
     public String getTagName() {
@@ -126,7 +128,12 @@ public class TagInfo {
     }
 
     /**
-     * A null return means no information on attributes
+     * Attribute information (in the TLD) on this tag.
+     * The return is an array describing the attributes of this tag, as
+     * indicated in the TLD.
+     * A null return means no attributes.
+     *
+     * @return The array of TagAttributeInfo for this tag.
      */
 
    public TagAttributeInfo[] getAttributes() {
@@ -134,11 +141,14 @@ public class TagInfo {
    }
 
     /**
-     * Information on the object created by this tag at runtime.
-     * Null means no such object created.
-     *
+     * Information on the scripting objects created by this tag at runtime.
+     * This is a convenience method on the associated TagExtraInfo class.
+     * <p>
      * Default is null if the tag has no "id" attribute,
      * otherwise, {"id", Object}
+     *
+     * @param data TagData describing this action.
+     * @return Array of VariableInfo elements.
      */
 
    public VariableInfo[] getVariableInfo(TagData data) {
@@ -150,10 +160,11 @@ public class TagInfo {
    }
 
     /**
-     * Translation-time validation of the attributes.  The argument is a
-     * translation-time, so request-time attributes are indicated as such.
+     * Translation-time validation of the attributes. 
+     * This is a convenience method on the associated TagExtraInfo class.
      *
      * @param data The translation-time TagData instance.
+     * @return Whether the data is valid.
      */
 
 
@@ -167,15 +178,19 @@ public class TagInfo {
 
 
     /**
-      The instance (if any) for extra tag information
-      */
+     * The instance (if any) for extra tag information
+     * 
+     * @return The TagExtraInfo instance, if any.
+     */
     public TagExtraInfo getTagExtraInfo() {
 	return tagExtraInfo;
     }
 
 
     /**
-     * Name of the class that provides the (run-time handler for this tag
+     * Name of the class that provides the handler for this tag.
+     *
+     * @return The name of the tag handler class.
      */
     
     public String getTagClassName() {
@@ -184,19 +199,27 @@ public class TagInfo {
 
 
     /**
-     * @return the body content (hint) string
+     * The bodycontent information for this tag.
+     *
+     * @return the body content string.
      */
 
     public String getBodyContent() { return bodyContent; }
 
+
     /**
+     * The information string for the tag.
+     *
      * @return the info string
      */
 
     public String getInfoString() { return infoString; }
 
+
     /**
-     * @return the tab library instance we belong to
+     * The instance of TabLibraryInfo we belong to.
+     *
+     * @return the tab library instance we belong to.
      */
 
     public TagLibraryInfo getTagLibrary() { return tagLibrary; }

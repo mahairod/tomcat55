@@ -51,118 +51,66 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
- 
+ */
 package javax.servlet.jsp.tagext;
 
-import java.io.Reader;
-import java.io.Writer;
-import java.io.IOException;
 import javax.servlet.jsp.*;
 
 /**
- * An encapsulation of the evaluation of the body of an action so it is
- * available to a tag handler.  BodyContent is a subclass of JspWriter.
+ * The IterationTag interface extends Tag by defining one additional
+ * method that controls the reevaluation of its body.
  *
- * <p>
- * Note that the content of BodyContent is the result of evaluation, so
- * it will not contain actions and the like, but the result of their
- * invocation.
- * 
- * <p>
- * BodyContent has methods to convert its contents into
- * a String, to read its contents, and to clear the contents.
+ * <p> A tag handler that implements IterationTag is treated as one that
+ * implements Tag regarding  the doStartTag() and doEndTag() methods.
+ * IterationTag provides a new method: <code>doAfterBody()</code>.
  *
- * <p>
- * The buffer size of a BodyContent object is unbounded.  A
- * BodyContent object cannot be in autoFlush mode.  It is not possible to
- * invoke flush on a BodyContent object, as there is no backing stream.
+ * <p> The doAfterBody() method is invoked after every body evaluation
+ * to control whether the body will be reevaluated or not.  If doAfterBody()
+ * returns IterationTag.EVAL_BODY_AGAIN, then the body will be reevaluated.
+ * If doAfterBody() returns Tag.SKIP_BODY, then the body will be skipped
+ * and doEndTag() will be evaluated instead.
  *
- * <p>
- * Instances of BodyContent are created by invoking the pushBody and
- * popBody methods of the PageContext class.  A BodyContent is enclosed
- * within another JspWriter (maybe another BodyContent object) following
- * the structure of their associated actions.
  */
 
-public abstract class BodyContent extends JspWriter {
-    
+public interface IterationTag extends Tag {
+
     /**
-     * Protected constructor.
+     * Request the reevaluation of some body.
+     * Returned from doAfterBody.
      *
-     * Unbounded buffer, no autoflushing.
+     * For compatibility with JSP 1.1, the value is carefully selected
+     * to be the same as the, now deprecated, BodyTag.EVAL_BODY_TAG,
+     * 
      */
-
-    protected BodyContent(JspWriter e) {
-	super(UNBOUNDED_BUFFER , false);
-	this.enclosingWriter = e;
-    }
+ 
+    public final static int EVAL_BODY_AGAIN = 2;
 
     /**
-     * Redefined flush() so it is not legal.
+     * Process body (re)evaluation.  This method is invoked by the
+     * JSP Page implementation object after every evaluation of
+     * the body into the BodyEvaluation object. The method is
+     * not invoked if there is no body evaluation.
      *
      * <p>
-     * It is not valid to flush a BodyContent because there is no backing
-     * stream behind it.
-     */
-
-    public void flush() throws IOException {
-	throw new IOException("Illegal to flush within a custom tag");
-    }
-
-    /**
-     * Clear the body without throwing any exceptions.
-     */
-    
-    public void clearBody() {
-	try {
-	    this.clear();
-	} catch (IOException ex) {
-	    // TODO -- clean this one up.
-	    throw new Error("internal error!;");
-	}
-    }
-
-    /**
-     * Return the value of this BodyContent as a Reader.
+     * If doAfterBody returns EVAL_BODY_AGAIN, a new evaluation of the
+     * body will happen (followed by another invocation of doAfterBody).
+     * If doAfterBody returns SKIP_BODY no more body evaluations will
+     * occur, the value of out will be restored using the popBody method
+     * in pageContext, and then doEndTag will be invoked.
      *
-     * @return the value of this BodyContent as a Reader
-     */
-    public abstract Reader getReader();
-
-
-    /**
-     * Return the value of the BodyContent as a String.
+     * <p>
+     * The method re-invocations may be lead to different actions because
+     * there might have been some changes to shared state, or because
+     * of external computation.
      *
-     * @return the value of the BodyContent as a String
-     */
-    public abstract String getString();
-	
-
-    /**
-     * Write the contents of this BodyContent into a Writer.
-     * Subclasses may optimize common invocation patterns.
+     * <p>
+     * The JSP container will resynchronize
+     * any variable values that are indicated as so in TagExtraInfo after the
+     * invocation of doAfterBody().
      *
-     * @param out The writer into which to place the contents of
-     * this body evaluation
+     * @return whether additional evaluations of the body are desired
+     * @throws JspException
      */
 
-    public abstract void writeOut(Writer out) throws IOException;
-
-
-    /**
-     * Get the enclosing JspWriter.
-     *
-     * @return the enclosing JspWriter passed at construction time
-     */
-
-    public JspWriter getEnclosingWriter() {
-	return enclosingWriter;
-    }
-
-    /**
-     * private fields
-     */
-    
-    private JspWriter enclosingWriter;
- }
+    int doAfterBody() throws JspException;
+}

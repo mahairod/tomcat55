@@ -52,117 +52,58 @@
  * <http://www.apache.org/>.
  *
  */ 
- 
+
 package javax.servlet.jsp.tagext;
 
 /**
- * Information on the attributes of a Tag, available at translation time.
- * This class is instantiated from the Tag Library Descriptor file (TLD).
+ * Translation-time validator class for a JSP page. 
+ * A validator operates on the XML document associated with the JSP page.
  *
  * <p>
- * Only the information needed to generate code is included here.  Other information
- * like SCHEMA for validation belongs elsewhere.
+ * Validator classes are associated with a tag library via the TLD.
+ * A TagLibraryValidator instance is associated with a given TLD
+ * and the JSP translator will invoke the setTagLibraryInfo method
+ * on an instance before invoking the validate method.
+ * A TagLibraryValidator instance
+ * may create auxiliary objects internally to perform
+ * the validation (e.g. an XSchema validator) and may reuse it for all
+ * the pages in a given translation run.
  */
 
-public class TagAttributeInfo {
-    /**
-     * "id" is wired in to be ID.  There is no real benefit in having it be something else
-     * IDREFs are not handled any differently.
-     */
-
-    public static final String ID = "id";
+abstract public class TagLibraryValidator {
 
     /**
-     * Constructor for TagAttributeInfo.
-     * This class is to be instantiated only from the
-     * TagLibrary code under request from some JSP code that is parsing a
-     * TLD (Tag Library Descriptor).
+     * Set the TagLibraryInfo data for this validator.
      *
-     * @param name The name of the attribute
-     * @param required If this attribute is required in tag instances
-     * @param type The name of the type of the attribute
-     * @param reqTime Whether this attribute hold a request-time Attribute
+     * @param tld The TagLibraryInfo instance
      */
+    public void setTagLibraryInfo(TagLibraryInfo tld) {
+	theTLD = tld;
+    }
 
-    public TagAttributeInfo(String name, boolean required,
-                            String type, boolean reqTime)
-    {
-	this.name = name;
-        this.required = required;
-        this.type = type;
-	this.reqTime = reqTime;
+
+    /**
+     * Get the TagLibraryInfo associated with with Validator.
+     *
+     * @return The TagLibraryInfo instance
+     */
+    public TagLibraryInfo getTagLibraryInfo() {
+	return theTLD;
     }
 
     /**
-     * The name of this attribute.
+     * Validate a JSP page.
+     * This method will return a null String if the page passed through
+     * is valid; otherwise an error message.
      *
-     * @return the name of the attribute
+     * @param thePage the JSP page object
+     * @return A string indicating whether the page is valid or not.
      */
-
-    public String getName() {
-	return name;
+    public String validate(PageInfo thePage) {
+	return null;
     }
 
-    /**
-     * The type (as a String) of this attribute.
-     *
-     * @return the type of the attribute
-     */
+    // Private data
+    private TagLibraryInfo theTLD;
 
-    public String getTypeName() {
-	return type;
-    }
-
-    /**
-     * Whether this attribute can hold a request-time value.
-     *
-     * @return if the attribute can hold a request-time value.
-     */
-
-    public boolean canBeRequestTime() {
-	return reqTime;
-    }
-
-    /**
-     * Whether this attribute is required.
-     *
-     * @return if the attribute is required.
-     */
-    public boolean isRequired() {
-        return required;
-    }
-
-    /**
-     * Convenience static method that goes through an array of TagAttributeInfo
-     * objects and looks for "id".
-     *
-     * @param a An array of TagAttributeInfo
-     * @return The TagAttributeInfo reference with name "id"
-     */
-    public static TagAttributeInfo getIdAttribute(TagAttributeInfo a[]) {
-	for (int i=0; i<a.length; i++) {
-	    if (a[i].getName().equals(ID)) {
-		return a[i];
-	    }
-	}
-	return null;		// no such attribute
-    }
-
-    public String toString() {
-        StringBuffer b = new StringBuffer();
-        b.append("name = "+name+" ");
-        b.append("type = "+type+" ");
-	b.append("reqTime = "+reqTime+" ");
-        b.append("required = "+required+" ");
-        return b.toString();
-    }
-
-    /*
-     * fields
-     */
-
-    private String name;
-    private String type;
-    private boolean reqTime;
-    private boolean required;
 }
