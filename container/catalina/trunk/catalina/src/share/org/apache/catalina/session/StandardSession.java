@@ -1397,6 +1397,8 @@ public class StandardSession
                     && (!exclude(keys[i]) )) {
                 saveNames.add(keys[i]);
                 saveValues.add(value);
+            } else {
+                removeAttribute(keys[i]);
             }
         }
 
