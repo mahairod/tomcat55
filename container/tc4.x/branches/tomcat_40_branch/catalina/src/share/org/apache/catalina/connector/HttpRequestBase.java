@@ -751,7 +751,16 @@ public class HttpRequestBase
         String servletPath = (String) getAttribute(Globals.SERVLET_PATH_ATTR);
         if (servletPath == null)
             servletPath = getServletPath();
-        String relative = RequestUtil.normalize(servletPath + "/../" + path);
+
+        int pos = servletPath.lastIndexOf('/');
+        String relative = null;
+        if (pos > 0) {
+            relative = RequestUtil.normalize
+                (servletPath.substring(0, pos + 1) + path);
+        } else {
+            relative = RequestUtil.normalize(servletPath + path);
+        }
+
         return (context.getServletContext().getRequestDispatcher(relative));
 
     }
