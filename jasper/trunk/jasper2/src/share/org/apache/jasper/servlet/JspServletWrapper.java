@@ -137,7 +137,6 @@ public class JspServletWrapper {
                 // Synchronizing on jsw enables simultaneous loading
                 // of different pages, but not the same page.
                 if (ctxt.isReload()) {
-                    System.out.println("JspServletWrapper - isReload ");
                     // This is to maintain the original protocol.
                     destroy();
                     
@@ -180,7 +179,6 @@ public class JspServletWrapper {
 
             if (options.getDevelopment()) {
                 synchronized (this) {
-                    System.out.println("JspServletWrapper - development compile ");
                     ctxt.compile();
                 }
             }
