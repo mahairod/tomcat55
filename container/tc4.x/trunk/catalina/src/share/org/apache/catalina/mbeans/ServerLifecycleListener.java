@@ -75,31 +75,40 @@ import java.util.StringTokenizer;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
-import org.apache.catalina.ContainerEvent;
-import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
+import org.apache.catalina.Group;
 import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
+import org.apache.catalina.User;
+import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.Contained;
+import org.apache.catalina.ContainerListener;
+import org.apache.catalina.ContainerEvent;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.Globals;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardService;
+import org.apache.catalina.core.StandardWrapper;
+import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
@@ -128,6 +137,7 @@ public class ServerLifecycleListener
      * The debugging detail level for this component.
      */
     protected int debug = 0;
+    boolean jsr77Names=false;
 
     public int getDebug() {
         return (this.debug);
@@ -137,6 +147,16 @@ public class ServerLifecycleListener
         this.debug = debug;
     }
 
+    public void setJsr77Names( boolean b ) {
+        MBeanUtils.jsr77Names=b;
+        jsr77Names=b;
+    }
+
+    /** Enable registration of contexts and servlet wrappers using JSR77 naming pattern.
+     */
+    public boolean getJsr77Names() {
+        return jsr77Names;
+    }
 
     /**
      * Semicolon separated list of paths containing MBean desciptor resources.
@@ -209,7 +229,8 @@ public class ServerLifecycleListener
             
             // We are embedded.
             if( lifecycle instanceof Service ) {
-                log( "Starting embeded" + lifecycle);
+                if( debug > 0 )
+                    log( "Starting embeded" + lifecycle);
                 try {
                     MBeanFactory factory = new MBeanFactory();
                     createMBeans(factory);
@@ -441,6 +462,18 @@ public class ServerLifecycleListener
             MBeanUtils.createMBean(cRealm);
         }
 
+        // Create the mbeans for servlets
+        if( jsr77Names ) {
+            Container childs[]=context.findChildren();
+            for( int i=0; i<childs.length; i++ ) {
+                StandardWrapper wrapper=(StandardWrapper)childs[i];
+                // XXX prevent duplicated registration
+                if( debug > 0 )
+                    log("Register child wrapper (findChildren)" + wrapper);
+                MBeanUtils.createMBean( wrapper );
+            }
+        }
+
         // Create the MBeans for the associated Valves
         if (context instanceof StandardContext) {
             Valve cValves[] = ((StandardContext)context).getValves();
@@ -449,14 +482,14 @@ public class ServerLifecycleListener
                     log("Creating MBean for Valve " + cValves[l]);
                 MBeanUtils.createMBean(cValves[l]);
             }
-            
-        }        
+        }
         
         // Create the MBeans for the NamingResources (if any)
         NamingResources resources = context.getNamingResources();
         createMBeans(resources);
 
     }
+
 
 
     /**
@@ -476,6 +509,26 @@ public class ServerLifecycleListener
         MBeanUtils.createMBean(environment);
 
     }
+
+    /**
+     * Create the MBeans for the specified Servlet entry.
+     *
+     * @param wrapper
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void createMBeans(Wrapper wrapper)
+        throws Exception {
+
+        if( ! jsr77Names ) return;
+        // Create the MBean for the ContextEnvironment itself
+        if (debug >= 3) {
+            log("Creating MBean for Wrapper " + wrapper);
+        }
+        MBeanUtils.createMBean(wrapper);
+
+    }
+
 
 
     /**
@@ -879,6 +932,8 @@ public class ServerLifecycleListener
             
         }
 
+
+
         // Destroy the MBeans for the associated nested components
         Realm hRealm = context.getParent().getRealm();
         Realm cRealm = context.getRealm();
@@ -921,6 +976,25 @@ public class ServerLifecycleListener
             ((StandardContext) context).
                 removePropertyChangeListener(this);
         }
+
+    }
+
+    /**
+     * Deregister the MBeans for the specified wrapper entry.
+     *
+     * @param wrapper ContextEnvironment for which to destroy MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean destruction
+     */
+    protected void destroyMBeans(Wrapper wrapper)
+            throws Exception {
+        if( !jsr77Names ) return;
+
+        // Destroy the MBean for the ContextEnvironment itself
+        if (debug >= 3) {
+            log("Destroying MBean for Wrapper " + wrapper);
+        }
+        MBeanUtils.destroyMBean(wrapper);
 
     }
 
@@ -1286,6 +1360,12 @@ public class ServerLifecycleListener
                 createMBeans((Engine) child);
             } else if (child instanceof Host) {
                 createMBeans((Host) child);
+            } else if( child instanceof Wrapper ) {
+                if( debug > 0 )
+                    log( "addChild callback for wrapper " + child);
+                if( jsr77Names )
+                    createMBeans( (Wrapper)child );
+                //registerJMX( (StandardContext)parent, (StandardWrapper)child);
             }
         } catch (MBeanException t) {
             Exception e = t.getTargetException();
@@ -1543,6 +1623,9 @@ public class ServerLifecycleListener
                     ((StandardHost) host).
                         removePropertyChangeListener(this);
                 }
+            } else if (child instanceof Wrapper) {
+                Wrapper wrapper = (Wrapper) child;
+                if( jsr77Names ) destroyMBeans(wrapper);
             }
         } catch (MBeanException t) {
             Exception e = t.getTargetException();
