@@ -534,6 +534,7 @@ public final class ContextConfig
                 } catch (IOException e) {
                     log.error(sm.getString("contextConfig.defaultClose"), e);
                 }
+                webDigester.push(null);
             }
         }
         webRuleSet.recycle();
