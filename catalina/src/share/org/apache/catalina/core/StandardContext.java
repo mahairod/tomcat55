@@ -4392,6 +4392,30 @@ public class StandardContext
     }
 
 
+    /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void execute() {
+
+        if (!started)
+            return;
+
+        if ((getManager() != null) 
+            && (getManager() instanceof StandardManager)) {
+            ((StandardManager) getManager()).processExpires();
+        }
+
+        if (reloadable && (getLoader() != null)) {
+            if (getLoader().modified()) {
+                reload();
+            }
+        }
+
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 
