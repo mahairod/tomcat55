@@ -682,6 +682,27 @@ public class NamingContextListener
         if (namingResources == null)
             namingResources = new NamingResources();
 
+        // Resource links
+        ContextResourceLink[] resourceLinks = 
+            namingResources.findResourceLinks();
+        for (i = 0; i < resourceLinks.length; i++) {
+            addResourceLink(resourceLinks[i]);
+        }
+
+        // Resources
+        ContextResource[] resources = namingResources.findResources();
+        for (i = 0; i < resources.length; i++) {
+            addResource(resources[i]);
+        }
+
+        // Resources Env
+        String[] resourceEnvRefs = namingResources.findResourceEnvRefs();
+        for (i = 0; i < resourceEnvRefs.length; i++) {
+            String key = resourceEnvRefs[i];
+            String type = namingResources.findResourceEnvRef(key);
+            addResourceEnvRef(key, type);
+        }
+
         // Environment entries
         ContextEnvironment[] contextEnvironments = 
             namingResources.findEnvironments();
@@ -693,27 +714,6 @@ public class NamingContextListener
         ContextEjb[] ejbs = namingResources.findEjbs();
         for (i = 0; i < ejbs.length; i++) {
             addEjb(ejbs[i]);
-        }
-
-        // Resources
-        ContextResource[] resources = namingResources.findResources();
-        for (i = 0; i < resources.length; i++) {
-            addResource(resources[i]);
-        }
-
-        // Resource links
-        ContextResourceLink[] resourceLinks = 
-            namingResources.findResourceLinks();
-        for (i = 0; i < resourceLinks.length; i++) {
-            addResourceLink(resourceLinks[i]);
-        }
-
-        // Resources Env
-        String[] resourceEnvRefs = namingResources.findResourceEnvRefs();
-        for (i = 0; i < resourceEnvRefs.length; i++) {
-            String key = resourceEnvRefs[i];
-            String type = namingResources.findResourceEnvRef(key);
-            addResourceEnvRef(key, type);
         }
 
         // Binding a User Transaction reference
@@ -873,7 +873,6 @@ public class NamingContextListener
             createSubcontexts(envCtx, resource.getName());
             envCtx.bind(resource.getName(), ref);
         } catch (NamingException e) {
-            e.printStackTrace();
             log(sm.getString("naming.bindFailed", e));
         }
 
