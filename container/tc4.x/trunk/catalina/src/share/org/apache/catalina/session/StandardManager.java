@@ -181,6 +181,8 @@ public class StandardManager
      */
     private String threadName = "StandardManager";
 
+    private int rejectedSessions=0;
+    private int expiredSessions=0;
 
     // ------------------------------------------------------------- Properties
 
@@ -259,6 +261,31 @@ public class StandardManager
 
     }
 
+    /** Number of session creations that failed due to maxActiveSessions
+     *
+     * @return
+     */
+    public int getRejectedSessions() {
+        return rejectedSessions;
+    }
+
+    public void setRejectedSessions(int rejectedSessions) {
+        this.rejectedSessions = rejectedSessions;
+    }
+
+    /** Number of sessions that expired.
+     *
+     * @return
+     */
+    public int getExpiredSessions() {
+        return expiredSessions;
+    }
+
+    public void setExpiredSessions(int expiredSessions) {
+        this.expiredSessions = expiredSessions;
+    }
+
+
 
     /**
      * Set the maximum number of actives Sessions allowed, or -1 for
@@ -328,9 +355,11 @@ public class StandardManager
     public Session createSession() {
 
         if ((maxActiveSessions >= 0) &&
-          (sessions.size() >= maxActiveSessions))
+          (sessions.size() >= maxActiveSessions)) {
+            rejectedSessions++;
             throw new IllegalStateException
                 (sm.getString("standardManager.createSession.ise"));
+        }
 
         return (super.createSession());
 
@@ -572,7 +601,7 @@ public class StandardManager
 
 
     /**
-     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Get the lifecycle listeners associated with this lifecycle. If this
      * Lifecycle has no listeners registered, a zero-length array is returned.
      */
     public LifecycleListener[] findLifecycleListeners() {
@@ -760,6 +789,7 @@ public class StandardManager
                 (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
             if (timeIdle >= maxInactiveInterval) {
                 try {
+                    expiredSessions++;
                     session.expire();
                 } catch (Throwable t) {
                     log(sm.getString("standardManager.expireException"), t);
