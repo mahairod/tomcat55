@@ -506,6 +506,7 @@ public abstract class ContainerBase
         return (null);
     }
 
+
     /**
      * Set the Cluster with which this Container is associated.
      *
@@ -890,6 +891,22 @@ public abstract class ContainerBase
 
 
     /**
+     * Return the set of container listeners associated with this Container.
+     * If this Container has no registered container listeners, a zero-length
+     * array is returned.
+     */
+    public ContainerListener[] findContainerListeners() {
+
+        synchronized (listeners) {
+            ContainerListener[] results = 
+                new ContainerListener[listeners.size()];
+            return ((ContainerListener[]) listeners.toArray(results));
+        }
+
+    }
+
+
+    /**
      * Return the Mapper associated with the specified protocol, if there
      * is one.  If there is only one defined Mapper, use it for all protocols.
      * If there is no matching Mapper, return <code>null</code>.
@@ -1062,6 +1079,17 @@ public abstract class ContainerBase
     public void addLifecycleListener(LifecycleListener listener) {
 
         lifecycle.addLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+
+        return lifecycle.findLifecycleListeners();
 
     }
 
