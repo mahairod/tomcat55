@@ -57,10 +57,10 @@
         <logic:iterate name="hostsList" id="host">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
-              <logic:match name="host" value='<%= request.getServerName() %>'>
+              <logic:match name="host" value='<%= "host="+request.getServerName()+"," %>'>
                 <font color='red'>*</font>           
               </logic:match>          
-              <logic:notMatch name="host" value='<%= request.getServerName() %>'>
+              <logic:notMatch name="host" value='<%= "host="+request.getServerName()+"," %>'>
               <html:multibox property="hosts"
                                 value="<%= host.toString() %>"/>
               </logic:notMatch>                 

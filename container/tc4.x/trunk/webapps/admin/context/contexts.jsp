@@ -65,10 +65,10 @@
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
               <%-- admin context cannot be deleted from the tool --%>
-              <logic:match name="context" value='<%= request.getContextPath() %>'>
+              <logic:match name="context" value='<%= "path="+request.getContextPath()+"," %>'>
                 <font color='red'>*</font>           
               </logic:match>          
-              <logic:notMatch name="context" value='<%= request.getContextPath() %>'>
+              <logic:notMatch name="context" value='<%= "path="+request.getContextPath()+"," %>'>
               <html:multibox property="contexts"
                                 value="<%= context.toString() %>"/>
               </logic:notMatch>
