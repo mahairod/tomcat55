@@ -92,7 +92,7 @@ public class Constants {
 
         public static class JSWDK {
 	    public static final String Name = "Tomcat Web Server";
-	    public static final String Version = "2.2";
+	    public static final String Version = "3.0";
 	}
 
         public static class Attribute {
