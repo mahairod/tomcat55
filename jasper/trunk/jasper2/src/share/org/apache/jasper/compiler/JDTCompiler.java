@@ -314,17 +314,20 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
                             IProblem[] problems = result.getProblems();
                             for (int i = 0; i < problems.length; i++) {
                                 IProblem problem = problems[i];
-                                String name = 
-                                    new String(problems[i].getOriginatingFileName());
-                                try {
-                                    problemList.add(ErrorDispatcher.createJavacError
-                                        (name, pageNodes, new StringBuffer(problem.getMessage()), 
-                                                problem.getSourceLineNumber()));
-                                } catch (JasperException e) {
-                                    log.error("Error visiting node", e);
+                                if (problem.isError()) {
+                                    String name = 
+                                        new String(problems[i].getOriginatingFileName());
+                                    try {
+                                        problemList.add(ErrorDispatcher.createJavacError
+                                                (name, pageNodes, new StringBuffer(problem.getMessage()), 
+                                                        problem.getSourceLineNumber()));
+                                    } catch (JasperException e) {
+                                        log.error("Error visiting node", e);
+                                    }
                                 }
                             }
-                        } else {
+                        }
+                        if (problemList.isEmpty()) {
                             ClassFile[] classFiles = result.getClassFiles();
                             for (int i = 0; i < classFiles.length; i++) {
                                 ClassFile classFile = classFiles[i];
