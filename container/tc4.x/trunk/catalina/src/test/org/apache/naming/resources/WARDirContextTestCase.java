@@ -66,7 +66,18 @@ package org.apache.naming.resources;
 
 import java.io.File;
 import java.io.IOException;
+
+import java.util.Date;
+
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import javax.naming.NamingException;
+
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -137,7 +148,79 @@ public class WARDirContextTestCase extends BaseDirContextTestCase {
     // ------------------------------------------------ Individual Test Methods
 
 
+    /**
+     * Test the attributes returned for the <code>WEB-INF</code> entry.
+     */
+    public void testGetAttributesWebInf() {
+
+        try {
+
+            // Look up the attributes of this WAR file entry
+            JarFile jarFile = new JarFile(docBase);
+            assertNotNull("Created JarFile for " + docBase, jarFile);
+            JarEntry jarEntry =
+                (JarEntry) jarFile.getEntry("WEB-INF");
+            assertNotNull("Created JarEntry for WEB-INF", jarEntry);
+
+            // Look up the attributes for the WEB-INF entry
+            Attributes attributes = context.getAttributes("WEB-INF");
+
+            // Enumerate and check the attributes for this entry
+            checkWebInfAttributes(attributes,
+                                  new Date(jarEntry.getTime()),
+                                  jarEntry.getSize(),
+                                  "WEB-INF",
+                                  new Date(jarEntry.getTime()));
+
+        } catch (IOException e) {
+
+            fail("IOException: " + e);
+
+        } catch (NamingException e) {
+
+            fail("NamingException: " + e);
+
+        }
+
+    }
+
+
+    /**
+     * Test the attributes returned for the <code>WEB-INF/web.xml</code>
+     * entry.
+     */
+    public void testGetAttributesWebXml() {
+
+        try {
+
+            // Look up the attributes of this WAR file entry
+            JarFile jarFile = new JarFile(docBase);
+            assertNotNull("Created JarFile for " + docBase, jarFile);
+            JarEntry jarEntry =
+                (JarEntry) jarFile.getEntry("WEB-INF/web.xml");
+            assertNotNull("Created JarEntry for WEB-INF/web.xml", jarEntry);
+
+            // Look up the attributes for the WEB-INF/web.xml entry
+            Attributes attributes = context.getAttributes("WEB-INF/web.xml");
+
+            // Enumerate and check the attributes for this entry
+            checkWebXmlAttributes(attributes,
+                                  new Date(jarEntry.getTime()),
+                                  jarEntry.getSize(),
+                                  "web.xml",
+                                  new Date(jarEntry.getTime()));
+
+        } catch (IOException e) {
+
+            fail("IOException: " + e);
+
+        } catch (NamingException e) {
+
+            fail("NamingException:  " + e);
+
+        }
+
+    }
+
+
 }
-
-
-

@@ -64,7 +64,16 @@
 
 package org.apache.naming.resources;
 
+import java.io.File;
+
+import java.util.Date;
+
+import javax.naming.NamingException;
+
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -133,6 +142,68 @@ public class FileDirContextTestCase extends BaseDirContextTestCase {
 
 
     // ------------------------------------------------ Individual Test Methods
+
+
+    /**
+     * Test the attributes returned for the <code>WEB-INF</code> entry.
+     */
+    public void testGetAttributesWebInf() {
+
+        try {
+
+            // Identify a local file object for WEB-INF
+            File docBaseFile = new File(docBase);
+            File webInfFile = new File(docBaseFile, "WEB-INF");
+
+            // Look up the attributes for the WEB-INF entry
+            Attributes attributes = context.getAttributes("WEB-INF");
+
+            // Enumerate and check the attributes for this entry
+            checkWebInfAttributes(attributes,
+                                  new Date(webInfFile.lastModified()),
+                                  webInfFile.length(),
+                                  "WEB-INF",
+                                  new Date(webInfFile.lastModified()));
+
+        } catch (NamingException e) {
+
+            fail("NamingException: " + e);
+
+        }
+
+    }
+
+
+    /**
+     * Test the attributes returned for the <code>WEB-INF/web.xml</code>
+     * entry.
+     */
+    public void testGetAttributesWebXml() {
+
+        try {
+
+            // Identify a local file object for WEB-INF/web.xml
+            File docBaseFile = new File(docBase);
+            File webInfFile = new File(docBaseFile, "WEB-INF");
+            File webXmlFile = new File(webInfFile, "web.xml");
+
+            // Look up the attributes for the WEB-INF entry
+            Attributes attributes = context.getAttributes("WEB-INF/web.xml");
+
+            // Enumerate and check the attributes for this entry
+            checkWebXmlAttributes(attributes,
+                                  new Date(webXmlFile.lastModified()),
+                                  webXmlFile.length(),
+                                  "web.xml",
+                                  new Date(webXmlFile.lastModified()));
+
+        } catch (NamingException e) {
+
+            fail("NamingException:  " + e);
+
+        }
+
+    }
 
 
 }
