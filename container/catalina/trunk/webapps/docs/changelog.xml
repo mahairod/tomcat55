@@ -36,6 +36,9 @@
       <fix>
         <bug>29561</bug>: NullPointerException in Compiler.java:547 (luehe)
       </fix>
+      <fix>
+        ServletResponse.setContentType sets response encoding after getWriter was called (Bugtraq 5062838) (luehe)
+      </fix>
     </changelog>
   </subsection>
 
