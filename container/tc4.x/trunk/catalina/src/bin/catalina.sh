@@ -164,7 +164,7 @@ else
   echo "  run -security     Start in the current window with security manager"
   echo "  start             Start Catalina in a separate window"
   echo "  start -security   Start in a separate window with security manager"
-  echo "  stop -            Stop Catalina"
+  echo "  stop              Stop Catalina"
   exit 1
 
 fi
