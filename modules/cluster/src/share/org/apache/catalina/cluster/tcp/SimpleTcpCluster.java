@@ -338,7 +338,7 @@ public class SimpleTcpCluster
 
 
     public synchronized Manager createManager(String name) {
-        log.info("Creating ClusterManager for context "+name + " using class "+getManagerClassName());
+        log.debug("Creating ClusterManager for context "+name + " using class "+getManagerClassName());
         ClusterManager manager = null;
         try {
             manager = (ClusterManager)getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();
