@@ -77,6 +77,7 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -93,6 +94,20 @@ import org.apache.catalina.util.StringManager;
 
 public final class StandardServer
     implements Lifecycle, Server {
+
+
+    // ------------------------------------------------------------ Constructor
+
+
+    /**
+     * Construct a default instance of this class.
+     */
+    public StandardServer() {
+
+        super();
+        ServerFactory.setServer(this);
+
+    }
 
 
     // ----------------------------------------------------- Instance Variables
