@@ -198,6 +198,9 @@
       <fix>
         <bug>31465</bug>: Ensure that the compiler reads the .java file using the same encoding as that with which it was written. (markt)
       </fix>
+      <fix>
+        <bug>31510</bug>: Null out response in JspWriterImpl#recycle to aid in JBoss memory leak. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
