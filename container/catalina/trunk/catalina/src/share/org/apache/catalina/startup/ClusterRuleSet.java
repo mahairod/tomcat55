@@ -27,6 +27,7 @@ import org.apache.tomcat.util.digester.RuleSetBase;
  * Cluster definition element.  </p>
  *
  * @author Filip Hanik
+ * @author Peter Rossbach
  * @version $Revision$ $Date$
  */
 
@@ -123,11 +124,23 @@ public class ClusterRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Deployer",
                             "setClusterDeployer",
                             "org.apache.catalina.cluster.ClusterDeployer");
-
-
-
+        
+        digester.addObjectCreate(prefix + "Listener",
+                null, // MUST be specified in the element
+                "className");
+        digester.addSetProperties(prefix + "Listener");
+        digester.addSetNext(prefix + "Listener",
+                            "addLifecycleListener",
+                            "org.apache.catalina.LifecycleListener");
+        
+        digester.addObjectCreate(prefix + "ClusterListener",
+                null, // MUST be specified in the element
+                "className");
+        digester.addSetProperties(prefix + "ClusterListener");
+        digester.addSetNext(prefix + "ClusterListener",
+                            "addClusterListener",
+                            "org.apache.catalina.cluster.MessageListener");
         //Cluster configuration end
     }
-
 
 }
