@@ -159,7 +159,7 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 		tagInfo = TagFileProcessor.parseTagFile(pc, shortName, path,
 							this);
 	    } catch (JasperException je) {
-		// XXX
+		throw new RuntimeException(je);
 	    }
 
 	    tagFile = new TagFileInfo(shortName, path, tagInfo);
