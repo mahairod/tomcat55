@@ -1290,6 +1290,24 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="removeManager"
+          description="Remove an existing Manager"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="MBean Name of the component to be removed"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeRealm"
+          description="Remove an existing Realm"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="MBean Name of the component to be removed"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="removeService"
           description="Remove an existing Service"
                impact="ACTION"
@@ -1697,61 +1715,6 @@
           description="The pathname to the work directory for this context"
                  type="java.lang.String"/>
 
-    <operation   name="addValve"
-          description="Add a new Valve to those associated with this Context"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="valve"
-          description="MBean Name of the Valve to be added"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeValve"
-          description="Remove the specified Valve from those associated with
-                        this Context"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="valve"
-          description="MBean Name of the Valve to be removed"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setLoader"
-          description="Associate the specified Loader with this Context"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="loader"
-          description="MBean Name of the Loader to be associated"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setLogger"
-          description="Associate the specified Logger with this Context"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="logger"
-          description="MBean Name of the Logger to be associated"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setManager"
-          description="Associate the specified Manager with this Context"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="manager"
-          description="MBean Name of the Manager to be associated"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setRealm"
-          description="Associate the specified Realm with this Context"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="realm"
-          description="MBean Name of the Realm to be associated"
-                 type="java.lang.String"/>
-    </operation>
-
   </mbean>
 
 
@@ -1797,62 +1760,6 @@
     <attribute   name="name"
           description="Unique name of this Engine"
                  type="java.lang.String"/>
-
-    <operation   name="addHost"
-          description="Add a new Host to those associated with this Engine"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="host"
-          description="MBean Name of the new Host to be added"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="addValve"
-          description="Add a new Valve to those associated with this Engine"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="valve"
-          description="MBean Name of the Valve to be added"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeValve"
-          description="Remove the specified Valve from those associated with
-                        this Engine"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="valve"
-          description="MBean Name of the Valve to be removed"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeHost"
-          description="Remove the specified Host from those associated with
-                        this Engine"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="host"
-          description="MBean Name of the Host to be removed"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setLogger"
-          description="Associate the specified Logger with this Engine"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="logger"
-          description="MBean Name of the Logger to be associated"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setRealm"
-          description="Associate the specified Realm with this Engine"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="realm"
-          description="MBean Name of the Realm to be associated"
-                 type="java.lang.String"/>
-    </operation>
 
   </mbean>
 
@@ -1914,24 +1821,6 @@
                  type="java.lang.String"/>
     </operation>
 
-    <operation   name="addContext"
-          description="Add a new Context to those associated with this Host"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="context"
-          description="MBean Name of the new Context to be added"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="addValve"
-          description="Add a new Valve to those associated with this Host"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="valve"
-          description="MBean Name of the Valve to be added"
-                 type="java.lang.String"/>
-    </operation>
-
     <operation   name="findAliases"
           description="Return the set of alias names for this Host"
                impact="INFO"
@@ -1950,44 +1839,6 @@
            returnType="void">
       <parameter name="alias"
           description="Alias name to be removed"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeContext"
-          description="Remove the specified Context from those associated with
-                        this Host"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="context"
-          description="MBean Name of the Context to be removed"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeValve"
-          description="Remove the specified Valve from those associated with
-                        this Host"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="valve"
-          description="MBean Name of the Valve to be removed"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setLogger"
-          description="Associate the specified Logger with this Host"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="logger"
-          description="MBean Name of the Logger to be associated"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="setRealm"
-          description="Associate the specified Realm with this Host"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="realm"
-          description="MBean Name of the Realm to be associated"
                  type="java.lang.String"/>
     </operation>
 
@@ -2096,26 +1947,6 @@
           description="Shutdown password"
                  type="java.lang.String"/>
 
-<!--
-    <operation   name="addService"
-          description="Add a new Service associated with this Server"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="service"
-          description="MBean Name of the Service to be added"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeService"
-          description="Remove an existing child Service"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="service"
-          description="MBean Name of the Service to be removed"
-                 type="java.lang.String"/>
-    </operation>
--->
-
   </mbean>
 
 
@@ -2137,27 +1968,6 @@
     <attribute   name="name"
           description="Unique name of this Service"
                  type="java.lang.String"/>
-
-<!--
-    <operation   name="addConnector"
-          description="Add a new Connector associated with this Service"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="connector"
-          description="MBean Name of the Connector to be added"
-                 type="java.lang.String"/>
-    </operation>
-
-    <operation   name="removeConnector"
-          description="Remove an existing Connector associated with this
-                        Service"
-               impact="ACTION"
-           returnType="void">
-      <parameter name="connector"
-          description="MBean Name of the Connector to be removed"
-                 type="java.lang.String"/>
-    </operation>
--->
 
   </mbean>
 

@@ -76,6 +76,8 @@ import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Manager;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
@@ -235,8 +237,13 @@ public class MBeanFactory extends BaseModelMBean {
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        host.addDefaultContext(context);
+        String hostName = pname.getKeyProperty("host");
+        if (hostName == null) { //if DefaultContext is nested in Engine
+            engine.addDefaultContext(context);
+        } else {                // if DefaultContext is nested in Host
+            Host host = (Host) engine.findChild(hostName);
+            host.addDefaultContext(context);
+        }
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("DefaultContext");
@@ -1053,6 +1060,93 @@ public class MBeanFactory extends BaseModelMBean {
     }
 
 
+    /**
+     * Remove an existing Manager.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeManager(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        String contextName = oname.getKeyProperty("path");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(hostName);
+        Context context = (Context) host.findChild(contextName);
+
+        // Remove this component from its parent component
+        context.setManager(null);
+
+    }
+
+    
+    /**
+     * Remove an existing Realm.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeRealm(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        String path = oname.getKeyProperty("path");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        StandardEngine engine = (StandardEngine) service.getContainer();
+        if (hostName == null) {             // if realm's container is Engine
+            Realm realm = engine.getRealm();
+            Container container = realm.getContainer();
+            if (container instanceof StandardEngine) {
+                String sname =
+                    ((StandardEngine)container).getService().getName();
+                if (sname.equals(serviceName)) {
+                    engine.setRealm(null);
+                }
+            }
+        } else if (path == null) {      // if realm's container is Host
+            StandardHost host = (StandardHost) engine.findChild(hostName);
+            Realm realm = host.getRealm();
+            Container container = realm.getContainer();
+            if (container instanceof StandardHost) {
+                String hn = ((StandardHost)container).getName();
+                StandardEngine se =
+                    (StandardEngine) ((StandardHost)container).getParent();
+                String sname = se.getService().getName();
+                if (sname.equals(serviceName) && hn.equals(hostName)) {
+                    host.setRealm(null);
+                }
+            }
+        } else {                // realm's container is Context
+            StandardHost host = (StandardHost) engine.findChild(hostName);
+            StandardContext context = (StandardContext) host.findChild(path);
+            Realm realm = context.getRealm();
+            Container container = realm.getContainer();
+            if (container instanceof StandardContext) {
+                String pathName = ((StandardContext)container).getName();
+                StandardHost sh =
+                    (StandardHost)((StandardContext)container).getParent();
+                String hn = sh.getName();;
+                StandardEngine se = (StandardEngine)sh.getParent();
+                String sname = se.getService().getName();
+                if ((sname.equals(serviceName) && hn.equals(hostName)) &&
+                        pathName.equals(path)) {
+                    context.setRealm(null);
+                }
+            }
+        }
+    }
+
+    
     /**
      * Remove an existing Service.
      *
