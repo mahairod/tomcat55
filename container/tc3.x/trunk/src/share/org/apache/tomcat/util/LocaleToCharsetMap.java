@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -70,7 +66,7 @@
  *
  */
 
-package org.apache.tomcat.core;
+package org.apache.tomcat.util;
 
 import java.util.*;
 
