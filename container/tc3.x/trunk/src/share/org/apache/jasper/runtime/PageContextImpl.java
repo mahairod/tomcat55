@@ -443,8 +443,7 @@ public class PageContextImpl extends PageContext {
 		throw (IOException)e;
 	    if( e instanceof ServletException )
 		throw (ServletException) e;
-
-	    e.printStackTrace();
+	    //	    e.printStackTrace();
 	    throw new ServletException(e);
 	}
 
