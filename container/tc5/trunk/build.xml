@@ -1143,7 +1143,9 @@
       <fileset dir="${tomcat.build}/common/lib" />
     </copy>
     <copy todir="${tomcat.dist}/conf">
-      <fileset dir="${tomcat.build}/conf" />
+      <fileset dir="${tomcat.build}/conf">
+        <exclude name="MANIFEST.MF" />
+      </fileset>
     </copy>
     <copy todir="${tomcat.dist}/server/lib">
       <fileset dir="${tomcat.build}/server/lib" />
