@@ -813,7 +813,10 @@ public class RequestImpl  implements Request {
     }
 
     public String getRemoteHost() {
-	return remoteHost;
+        // This is belt and suspenders.  The request adapters should have set this correctly.
+        if(remoteHost == null || remoteHost.length() == 0)
+            remoteHost = remoteAddr;
+        return remoteHost;
     }
 
     /** Fill in the buffer. This method is probably easier to implement than

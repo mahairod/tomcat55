@@ -271,7 +271,9 @@ class AJP12RequestAdapter extends RequestImpl {
 		    if( doLog ) log("AJP: RA=" + remoteAddr );
 		    
 		    remoteHost = ajpin.readString("");            //remote host
-		    if( doLog ) log("AJP: RH=" + remoteHost );
+            if(remoteHost.length() == 0)
+                remoteHost = remoteAddr;     // If host isn't specified then use IP address 
+            if( doLog ) log("AJP: RH=" + remoteHost );
 		    
 		    remoteUser = ajpin.readString(null);                 //remote user
 		    if( doLog ) log("AJP: RU=" + remoteUser);
