@@ -13,6 +13,11 @@
     <!-- "Build" Hierarchy -->
     <mkdir dir="${servletapi.build}"/>
     <mkdir dir="${servletapi.build}/classes"/>
+    <mkdir dir="${servletapi.build}/classes/javax"/>
+    <mkdir dir="${servletapi.build}/classes/javax/servlet"/>
+    <mkdir dir="${servletapi.build}/classes/javax/servlet/resources"/>
+    <mkdir dir="${servletapi.build}/classes/javax/servlet/jsp"/>
+    <mkdir dir="${servletapi.build}/classes/javax/servlet/jsp/resources"/>
     <mkdir dir="${servletapi.build}/docs"/>
     <mkdir dir="${servletapi.build}/docs/api"/>
     <!-- "Dist" Hierarchy -->
@@ -27,12 +32,26 @@
 
   <!-- ======================== Compile Classes ========================== -->
   <target name="compile" depends="prepare">
+    <!-- Java classes -->
     <javac srcdir="src/share" destdir="${servletapi.build}/classes"
            debug="on" optimize="on" deprecation="on"/>
-           
+    <!-- Associated property files -->
     <copy todir="${servletapi.build}/classes">
         <fileset dir="src/share">
           <include name="**/*.properties"/>
+        </fileset>
+    </copy>
+    <!-- Servlet resources -->
+    <copy todir="${servletapi.build}/classes/javax/servlet/resources">
+        <fileset dir="src/share/dtd">
+          <include name="web-app*.dtd"/>
+        </fileset>
+    </copy>
+    <!-- JSP resources -->
+    <copy todir="${servletapi.build}/classes/javax/servlet/jsp/resources">
+        <fileset dir="src/share/dtd">
+          <include name="web-jsptaglibrary*.dtd"/>
+          <include name="jspxml.*"/>
         </fileset>
     </copy>
   </target>
