@@ -104,7 +104,12 @@ public final class HttpResponseFacade
 
 
     public void addCookie(Cookie cookie) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).addCookie(cookie);
+
     }
 
 
@@ -135,59 +140,120 @@ public final class HttpResponseFacade
 
     public void sendError(int sc, String msg)
         throws IOException {
+
+        if (isCommitted())
+            return;
+
+        committed = true;
+
         ((HttpServletResponse) response).sendError(sc, msg);
+
     }
 
 
     public void sendError(int sc)
         throws IOException {
+
+        if (isCommitted())
+            return;
+
+        committed = true;
+
         ((HttpServletResponse) response).sendError(sc);
+
     }
 
 
     public void sendRedirect(String location)
         throws IOException {
+
+        if (isCommitted())
+            return;
+
+        committed = true;
+
         ((HttpServletResponse) response).sendRedirect(location);
+
     }
 
 
     public void setDateHeader(String name, long date) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).setDateHeader(name, date);
+
     }
 
 
     public void addDateHeader(String name, long date) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).addDateHeader(name, date);
+
     }
 
 
     public void setHeader(String name, String value) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).setHeader(name, value);
+
     }
 
 
     public void addHeader(String name, String value) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).addHeader(name, value);
+
     }
 
 
     public void setIntHeader(String name, int value) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).setIntHeader(name, value);
+
     }
 
 
     public void addIntHeader(String name, int value) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).addIntHeader(name, value);
+
     }
 
 
     public void setStatus(int sc) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).setStatus(sc);
+
     }
 
 
     public void setStatus(int sc, String sm) {
+
+        if (isCommitted())
+            return;
+
         ((HttpServletResponse) response).setStatus(sc, sm);
+
     }
 
 

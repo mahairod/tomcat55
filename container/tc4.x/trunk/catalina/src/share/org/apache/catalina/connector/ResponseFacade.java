@@ -96,6 +96,7 @@ public class ResponseFacade implements ServletResponse {
      */
     public ResponseFacade(Response response) {
         this.response = (ServletResponse) response;
+        committed = false;
     }
 
 
@@ -106,6 +107,12 @@ public class ResponseFacade implements ServletResponse {
      * The wrapped response.
      */
     protected ServletResponse response = null;
+
+
+    /**
+     * Application level commit.
+     */
+    protected boolean committed = false;
 
 
     // ------------------------------------------------ ServletResponse Methods
@@ -129,17 +136,33 @@ public class ResponseFacade implements ServletResponse {
 
 
     public void setContentLength(int len) {
+
+        if (isCommitted())
+            return;
+
         response.setContentLength(len);
+
     }
 
 
     public void setContentType(String type) {
+
+        if (isCommitted())
+            return;
+
         response.setContentType(type);
+
     }
 
 
     public void setBufferSize(int size) {
+
+        if (isCommitted())
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
+
         response.setBufferSize(size);
+
     }
 
 
@@ -150,26 +173,46 @@ public class ResponseFacade implements ServletResponse {
 
     public void flushBuffer()
         throws IOException {
+
+        committed = true;
+
         response.flushBuffer();
+
     }
 
 
     public void resetBuffer() {
+
+        if (isCommitted())
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
+
         response.resetBuffer();
+
     }
 
 
     public boolean isCommitted() {
-        return response.isCommitted();
+        return (committed || response.isCommitted());
     }
 
 
     public void reset() {
+
+        if (isCommitted())
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
+
         response.reset();
+
     }
 
 
     public void setLocale(Locale loc) {
+
+        if (isCommitted())
+            return;
+
         response.setLocale(loc);
     }
 
