@@ -84,6 +84,15 @@ public class InvokerInterceptor extends BaseInterceptor {
     String prefix="/servlet/";
     int prefixLen=prefix.length();
 
+    public String getPrefix() {
+        return (prefix);
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+	this.prefixLen = prefix.length();
+    }
+
     public int requestMap(Request req) {
 	// If we have an explicit mapper - return
 	Container ct=req.getContainer();

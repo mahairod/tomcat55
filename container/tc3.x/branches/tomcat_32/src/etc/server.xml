@@ -139,10 +139,16 @@
             debug="0" />
 
         <!-- Non-standard invoker, for backward compat. ( /servlet/* )
+             You can modify the prefix that is matched by adjusting the
+             "prefix" parameter below.  Be sure your modified pattern
+             starts and ends with a slash.
+
+             NOTE:  This prefix applies to *all* web applications that
+             are running in this instance of Tomcat.
           -->
         <RequestInterceptor 
             className="org.apache.tomcat.request.InvokerInterceptor" 
-            debug="0" />
+            debug="0" prefix="/servlet/" />
 
         <!-- "default" handler - static files and dirs
           -->
