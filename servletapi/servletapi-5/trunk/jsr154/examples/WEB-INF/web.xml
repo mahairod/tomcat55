@@ -97,66 +97,61 @@
     <!-- Define servlets that are included in the example application -->
 
     <servlet>
-        <servlet-name>
-            snoop
-        </servlet-name>
-        <servlet-class>
-            SnoopServlet
-        </servlet-class>
-<!--
-        <init-param>
-            <param-name>foo</param-name>
-            <param-value>bar</param-value>
-        </init-param>
--->
-        <run-as>
-            <description>Security role for anonymous access</description>
-            <role-name>tomcat</role-name>
-        </run-as>
+        <servlet-name>CompressionFilterTestServlet</servlet-name>
+        <servlet-class>compressionFilters.CompressionFilterTestServlet</servlet-class>
     </servlet>
-
     <servlet>
-      <servlet-name>
-          servletToJsp
-      </servlet-name>
-      <servlet-class>
-          servletToJsp
-      </servlet-class>
+        <servlet-name>HelloWorldExample</servlet-name>
+        <servlet-class>HelloWorldExample</servlet-class>
     </servlet>
-        <servlet>
-        <servlet-name>
-            CompressionFilterTestServlet
-        </servlet-name>
-        <servlet-class>
-            compressionFilters.CompressionFilterTestServlet
-        </servlet-class>
-
+    <servlet>
+        <servlet-name>RequestInfoExample</servlet-name>
+        <servlet-class>RequestInfoExample</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RequestHeaderExample</servlet-name>
+        <servlet-class>RequestHeaderExample</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RequestParamExample</servlet-name>
+        <servlet-class>RequestParamExample</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CookieExample</servlet-name>
+        <servlet-class>CookieExample</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SessionExample</servlet-name>
+        <servlet-class>SessionExample</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>
-            CompressionFilterTestServlet
-        </servlet-name>
-        <url-pattern>
-            /CompressionTest
-        </url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>
-            snoop
-        </servlet-name>
-        <url-pattern>
-            /snoop
-        </url-pattern>
+        <servlet-name>CompressionFilterTestServlet</servlet-name>
+        <url-pattern>/CompressionTest</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>
-            servletToJsp
-        </servlet-name>
-        <url-pattern>
-            /servletToJsp
-        </url-pattern>
+        <servlet-name>HelloWorldExample</servlet-name>
+        <url-pattern>/servlet/HelloWorldExample</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RequestInfoExample</servlet-name>
+        <url-pattern>/servlet/RequestInfoExample</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RequestHeaderExample</servlet-name>
+        <url-pattern>/servlet/RequestHeaderExample</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RequestParamExample</servlet-name>
+        <url-pattern>/servlet/RequestParamExample</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CookieExample</servlet-name>
+        <url-pattern>/servlet/CookieExample</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SessionExample</servlet-name>
+        <url-pattern>/servlet/SessionExample</url-pattern>
     </servlet-mapping>
 
     <security-constraint>
