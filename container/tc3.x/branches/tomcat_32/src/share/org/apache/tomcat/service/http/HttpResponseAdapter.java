@@ -102,6 +102,7 @@ public class HttpResponseAdapter extends  ResponseImpl {
     static final byte CRLF[]= { (byte)'\r', (byte)'\n' };
     
     public void endHeaders()  throws IOException {
+
 	super.endHeaders();
 	
 	sendStatus( status, ResponseImpl.getMessage( status ));
@@ -128,6 +129,7 @@ public class HttpResponseAdapter extends  ResponseImpl {
 	HTTP response is the status line
     */
     protected void sendStatus( int status, String message ) throws IOException {
+
 	printHead("HTTP/1.0 ");
 	printHead(String.valueOf(status));
 	if(message!=null) {

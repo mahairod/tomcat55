@@ -208,6 +208,19 @@ final class RequestDispatcherImpl implements RequestDispatcher {
 	    return;
 	}
 	
+	// Add an unspecified response.flushBuffer() call to work around
+	// a fundamental problem in the way that the session interceptor
+	// works.  If we do not do this, the session cookie gets dropped (!)
+	// if the first flush of the buffer happens inside an included
+	// servlet.  This occurs because the session interceptor uses the
+	// normal response.addHeader() method to add the cookie -- but such
+	// header changes are suppressed inside an included servlet.
+	// (Reference: BugRat bug report #316)
+	//
+	// NOTE:  This *must* be done before the include flag is set for
+	// this request!
+	response.flushBuffer();
+
 	// Implement the spec that "no changes in response, only write"
 	// can also be done by setting the response to 0.9 mode
 	//	IncludedResponse iResponse = new IncludedResponse(realResponse);

@@ -364,17 +364,18 @@ public class ResponseImpl implements Response {
     }
     
     public void reset() throws IllegalStateException {
+
+        if( isIncluded() ) return;      // We are in an included sub-request
+
 	// Force the PrintWriter to flush its data to the output
         // stream before resetting the output stream
         //
-        if( ! isIncluded() ) {
-            userCookies.removeAllElements();  // keep system (session) cookies
-            contentType = Constants.DEFAULT_CONTENT_TYPE;
-            locale = DEFAULT_LOCALE;
-            characterEncoding = Constants.DEFAULT_CHAR_ENCODING;
-            contentLength = -1;
-            status = 200;
-        }
+        userCookies.removeAllElements();  // keep system (session) cookies
+        contentType = Constants.DEFAULT_CONTENT_TYPE;
+        locale = DEFAULT_LOCALE;
+        characterEncoding = Constants.DEFAULT_CHAR_ENCODING;
+        contentLength = -1;
+        status = 200;
 
 	if (usingWriter == true && writer != null)
 	    writer.flush();
@@ -386,7 +387,7 @@ public class ResponseImpl implements Response {
         // Clear the cookies and such
 
         // Clear the headers
-        if( ! isIncluded() ) headers.clear();
+        headers.clear();
     }
 
     // Reset the response buffer but not headers and cookies
@@ -427,7 +428,7 @@ public class ResponseImpl implements Response {
 
 	// let CM notify interceptors and give a chance to fix
 	// the headers
-	if(request.getContext() != null && notIncluded ) 
+	if(request.getContext() != null) 
 	    request.getContext().getContextManager().doBeforeBody(request, this);
 
 	// No action.. 
