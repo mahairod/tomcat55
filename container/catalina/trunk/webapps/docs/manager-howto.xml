@@ -981,7 +981,7 @@ file might look something like this:</p>
   &lt;/target&gt;
 
   &lt;target name="undeploy" description="Remove web application"&gt;
-    &lt;remove url="${url}" username="${username}" password="${password}"
+    &lt;undeploy url="${url}" username="${username}" password="${password}"
             path="${path}"/&gt;
   &lt;/target&gt;
 

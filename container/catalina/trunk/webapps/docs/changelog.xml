@@ -57,6 +57,9 @@
       <fix>
         <bug>29779</bug>: Admin/Examples SetCharacterEncodingFilter wrong package. (yoavs)
       </fix>
+      <fix>
+        <bug>30354</bug>: manager-howto.xml used wrong Ant task. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
