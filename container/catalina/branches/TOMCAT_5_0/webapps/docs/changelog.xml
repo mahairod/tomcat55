@@ -22,6 +22,9 @@
 
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        <bug>30602</bug>: Subject is not available during the first call to the servlet which use the basic authentication (jfarcand)
+      </fix>
     </changelog>
   </subsection>
 
