@@ -68,8 +68,8 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
 import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.JMException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,13 +85,13 @@ import org.apache.webapp.admin.ApplicationServlet;
 
 /**
  * The <code>Action</code> that completes <em>Add Valve</em> and
- * <em>Edit Valve</em> transactions for Remote Host valve.
+ * <em>Edit Valve</em> transactions for Request Dumper valve.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class SaveRemoteHostValveAction extends Action {
+public final class SaveRequestDumperValveAction extends Action {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -146,7 +146,7 @@ public final class SaveRemoteHostValveAction extends Action {
         }
         
         // Identify the requested action
-        RemoteHostValveForm vform = (RemoteHostValveForm) form;
+        RequestDumperValveForm vform = (RequestDumperValveForm) form;
         String adminAction = vform.getAdminAction();
         String vObjectName = vform.getObjectName();
         String parent = vform.getObjectName();
@@ -162,30 +162,8 @@ public final class SaveRemoteHostValveAction extends Action {
         }
 
         // Perform attribute updates as requested
-        String attribute = null;
-        try {
+        // No attributes to be updated.
         
-            ObjectName voname = new ObjectName(vObjectName);
-            
-            attribute = "allow";
-            mBServer.setAttribute(voname,
-                                  new Attribute("allow", vform.getAllow()));
-            attribute = "deny";
-            mBServer.setAttribute(voname,
-                    new Attribute("deny", vform.getDeny()));
-
-        } catch (Exception e) {
-
-            getServlet().log
-                (resources.getMessage(locale, "users.error.attribute.set",
-                                      attribute), e);
-            response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 resources.getMessage(locale, "users.error.attribute.set",
-                                      attribute));
-            return (null);
-        }
-    
         // Forward to the success reporting page
         session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));

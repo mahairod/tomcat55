@@ -61,8 +61,6 @@
 
 package org.apache.webapp.admin.valve;
 
-import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import javax.management.Attribute;
@@ -85,10 +83,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TomcatTreeBuilder;
-import org.apache.webapp.admin.TreeControl;
-import org.apache.webapp.admin.TreeControlNode;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 /**
  * The <code>Action</code> that completes <em>Add Valve</em> and

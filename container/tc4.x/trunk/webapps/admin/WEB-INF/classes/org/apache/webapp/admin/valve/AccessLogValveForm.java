@@ -66,11 +66,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.net.InetAddress;
 import java.util.List;
-
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.LabelValueBean;
 
 /**
  * Form bean for the accesslog valve page.
@@ -79,36 +75,14 @@ import org.apache.webapp.admin.LabelValueBean;
  * @version $Revision$ $Date$
  */
 
-public final class AccessLogValveForm extends ActionForm {
+public final class AccessLogValveForm extends ValveForm {
     
     // ----------------------------------------------------- Instance Variables
-    
-   /**
-     * The administrative action represented by this form.
-     */
-    private String adminAction = "Edit";
-
-    /**
-     * The object name of the valve this bean refers to.
-     */
-    private String objectName = null;
-
     /**
      * The text for the debug level.
      */
     private String debugLvl = "0";
-    
-    /**
-     * The text for the valve name, used to retrieve
-     * the corresponding valve mBean.
-     */
-    private String valveName = null;
-    
-    /**
-     * The text for the valve type.
-     */
-    private String valveType = null;
-    
+  
     /**
      * Set of valid values for debug level.
      */
@@ -132,28 +106,13 @@ public final class AccessLogValveForm extends ActionForm {
     /**
      * The text for the suffix.
      */
-    private String suffix = "";
-  
-    /**
-     * The text for the node label.
-     */
-    private String nodeLabel = null;
-    
+    private String suffix = null;
+      
     /**
      * The text for the connection URL.
      */
     private String resolveHosts = "false";
-    
-    /**
-     * The object name of the parent of this valve.
-     */
-    private String parentObjectName = null;
-
-    /**
-     * Set of valid values for valves.
-     */
-    private List valveTypeVals = null;
-        
+       
     /**
      * Set of boolean values.
      */
@@ -161,60 +120,6 @@ public final class AccessLogValveForm extends ActionForm {
  
     // ------------------------------------------------------------- Properties
 
-       /**
-     * Return the administrative action represented by this form.
-     */
-    public String getAdminAction() {
-
-        return this.adminAction;
-
-    }
-
-    /**
-     * Set the administrative action represented by this form.
-     */
-    public void setAdminAction(String adminAction) {
-
-        this.adminAction = adminAction;
-
-    }
-
-    /**
-     * Return the Object Name.
-     */
-    public String getObjectName() {
-        
-        return this.objectName;
-        
-    }
-    
-    /**
-     * Set the Object Name.
-     */
-    public void setObjectName(String objectName) {
-        
-        this.objectName = objectName;
-        
-    }
-    
-    /**
-     * Return the valve type.
-     */
-    public String getValveType() {
-        
-        return this.valveType;
-        
-    }
-    
-    /**
-     * Set the valve type.
-     */
-    public void setValveType(String valveType) {
-        
-        this.valveType = valveType;
-        
-    }
-    
     /**
      * Return the debugVals.
      */
@@ -340,25 +245,7 @@ public final class AccessLogValveForm extends ActionForm {
         this.suffix = suffix;
         
     }
-    
-    /**
-     * Return the label of the node that was clicked.
-     */
-    public String getNodeLabel() {
-        
-        return this.nodeLabel;
-        
-    }
-    
-    /**
-     * Set the node label.
-     */
-    public void setNodeLabel(String nodeLabel) {
-        
-        this.nodeLabel = nodeLabel;
-        
-    }
-        
+            
     /**
      * Return the resolve hosts.
      */
@@ -377,44 +264,6 @@ public final class AccessLogValveForm extends ActionForm {
         
     }
     
-     /**
-     * Return the parent object name of the valve this bean refers to.
-     */
-    public String getParentObjectName() {
-
-        return this.parentObjectName;
-
-    }
-
-
-    /**
-     * Set the parent object name of the valve this bean refers to.
-     */
-    public void setParentObjectName(String parentObjectName) {
-
-        this.parentObjectName = parentObjectName;
-
-    }
-    
-        
-   /**
-     * Return the valveTypeVals.
-     */
-    public List getValveTypeVals() {
-        
-        return this.valveTypeVals;
-        
-    }
-    
-    /**
-     * Set the valveTypeVals.
-     */
-    public void setValveTypeVals(List valveTypeVals) {
-        
-        this.valveTypeVals = valveTypeVals;
-        
-    }
-    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -424,13 +273,13 @@ public final class AccessLogValveForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-        
-        this.objectName = null;
+    
+        super.reset(mapping, request);
         this.debugLvl = "0";
         
         this.directory = null;
         this.prefix = null;
-        
+        this.suffix = null;
         this.pattern = null;        
         this.resolveHosts = "false";
         
@@ -442,9 +291,9 @@ public final class AccessLogValveForm extends ActionForm {
     public String toString() {
 
         StringBuffer sb = new StringBuffer("AccessLogValveForm[adminAction=");
-        sb.append(adminAction);
+        sb.append(getAdminAction());
         sb.append("',valveType=");
-        sb.append(valveType);
+        sb.append(getValveType());
         sb.append(",debugLvl=");
         sb.append(debugLvl);
         sb.append(",directory=");
@@ -456,7 +305,7 @@ public final class AccessLogValveForm extends ActionForm {
         sb.append(",resolveHosts=");
         sb.append(resolveHosts);
         sb.append("',objectName='");
-        sb.append(objectName);
+        sb.append(getObjectName());
         sb.append("]");
         return (sb.toString());
 

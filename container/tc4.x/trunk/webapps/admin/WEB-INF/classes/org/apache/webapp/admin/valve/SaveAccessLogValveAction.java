@@ -68,8 +68,8 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
 import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.JMException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,13 +85,13 @@ import org.apache.webapp.admin.ApplicationServlet;
 
 /**
  * The <code>Action</code> that completes <em>Add Valve</em> and
- * <em>Edit Valve</em> transactions for Remote Host valve.
+ * <em>Edit Valve</em> transactions for AccessLog valve.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class SaveRemoteHostValveAction extends Action {
+public final class SaveAccessLogValveAction extends Action {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -146,7 +146,7 @@ public final class SaveRemoteHostValveAction extends Action {
         }
         
         // Identify the requested action
-        RemoteHostValveForm vform = (RemoteHostValveForm) form;
+        AccessLogValveForm vform = (AccessLogValveForm) form;
         String adminAction = vform.getAdminAction();
         String vObjectName = vform.getObjectName();
         String parent = vform.getObjectName();
@@ -167,12 +167,31 @@ public final class SaveRemoteHostValveAction extends Action {
         
             ObjectName voname = new ObjectName(vObjectName);
             
-            attribute = "allow";
+            attribute = "debug";
+            int debug = 0;
+            try {
+                debug = Integer.parseInt(vform.getDebugLvl());
+            } catch (Throwable t) {
+                debug = 0;
+            }
             mBServer.setAttribute(voname,
-                                  new Attribute("allow", vform.getAllow()));
-            attribute = "deny";
+                                  new Attribute("debug", new Integer(debug)));
+  
+            attribute = "directory";
             mBServer.setAttribute(voname,
-                    new Attribute("deny", vform.getDeny()));
+                         new Attribute("directory", vform.getDirectory()));
+            attribute = "pattern";
+            mBServer.setAttribute(voname,
+                        new Attribute("pattern", vform.getPattern()));
+            attribute = "prefix";
+            mBServer.setAttribute(voname,
+                        new Attribute("prefix", vform.getPrefix()));
+            attribute = "suffix";
+            mBServer.setAttribute(voname,
+                        new Attribute("suffix", vform.getSuffix()));
+            attribute = "resolveHosts";
+            mBServer.setAttribute(voname,
+                        new Attribute("resolveHosts", new Boolean(vform.getResolveHosts())));
 
         } catch (Exception e) {
 
