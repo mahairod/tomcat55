@@ -92,14 +92,17 @@
            testStrategy="Testing that destroy method is not called during service method execution"
 />
 
+<!-- Excluded : Bugzilla 4474 
 
       <gtest request="GET /servlet-tests/DoInit1Test HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
-           returnCode="500"
+           returnCode="503"
 	   testName="DoInit1Test"
            assertion="CalLed by the servlet container to indicate to a servlet that the servlet is being placed into service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.init() method "
            testStrategy="A negative test for the init method. We will throw UnavailableException from inside init.The Servlet should not be initialized "
 />
+
+-->
 
       <gtest request="GET /servlet-tests/DoInit2Test HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
