@@ -10,7 +10,7 @@ if [ -z "$JAVA_HOME" ]; then
   echo "This environment variable is needed to run this program"
   exit 1
 fi
-if $os400; then
+if [ "$os400" = "true" ]; then
   if [ ! -x "$JAVA_HOME"/bin/java -o ! -x "$JAVA_HOME"/bin/javac ]; then
     echo "The JAVA_HOME environment variable is not defined correctly"
     echo "This environment variable is needed to run this program"
@@ -55,7 +55,7 @@ fi
 
 # Set standard commands for invoking Java.
 _RUNJAVA="$JAVA_HOME"/bin/java
-if [ $os400 = false ]; then
+if [ "$os400" != "true" ]; then
   _RUNJDB="$JAVA_HOME"/bin/jdb
 fi
 _RUNJAVAC="$JAVA_HOME"/bin/javac
