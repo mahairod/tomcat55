@@ -99,10 +99,12 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NameClassPair;
 
 import org.apache.tomcat.util.compat.JdkCompat;
+
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.util.StringManager;
 
 import org.apache.naming.JndiPermission;
 import org.apache.naming.resources.ResourceAttributes;
@@ -203,6 +205,13 @@ public class WebappClassLoader
         "org.apache.commons.logging",                // Commons logging.
         "org.apache.xalan"                           // Xalan
     };
+
+
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm =
+        StringManager.getManager(Constants.Package);
 
 
     // ----------------------------------------------------------- Constructors
@@ -1247,7 +1256,7 @@ public class WebappClassLoader
 
         // Don't load classes if class loader is stopped
         if (!started) {
-            log.debug("Lifecycle error : CL stopped");
+            log.info(sm.getString("webappClassLoader.stopped"));
             throw new IncompatibleClassChangeError(name);
         }
 
@@ -1691,7 +1700,7 @@ public class WebappClassLoader
     protected ResourceEntry findResourceInternal(String name, String path) {
 
         if (!started) {
-            log.info("Lifecycle error : CL stopped");
+            log.info(sm.getString("webappClassLoader.stopped"));
             return null;
         }
 
