@@ -1694,12 +1694,12 @@ class Generator {
 		map.put(attrs[i].getName(), s);
 	    }
             
-	    // Write begin tag
+	    // Write begin tag, using XML-style 'name' attribute as the
+	    // element name
+	    String elemName = attributeValue(n.getNameAttribute(), false,
+					     String.class, "null");
 	    out.printin("out.write(\"<\"");
-
-	    // Write XML-style 'name' attribute
-	    out.print(" + " + attributeValue(n.getNameAttribute(), false,
-					     String.class, "null"));
+	    out.print(" + " + elemName);
 
 	    // Write remaining attributes
 	    Enumeration enum = map.keys();
@@ -1729,7 +1729,7 @@ class Generator {
 
 		// Write end tag
 		out.printin("out.write(\"</\"");
-		out.print((String) map.get("name"));
+		out.print(" + " + elemName);
 		out.println(" + \">\");");
 	    } else {
 		out.println(" + \"/>\");");
