@@ -107,4 +107,10 @@ public interface TagConstants {
 	= "jsp:directive.attribute";
     public static final String JSP_VARIABLE_DIRECTIVE
 	= "jsp:directive.variable";
+
+    /*
+     * Directive attributes
+     */
+    public static final String URN_JSPTAGDIR = "urn:jsptagdir:";
+    public static final String URN_JSPTLD = "urn:jsptld:";
 }

@@ -159,7 +159,8 @@ class PageDataImpl extends PageData implements TagConstants {
      * In addition, this Visitor converts any taglib directives into xmlns:
      * attributes and adds them to the jsp:root element of the XML view.
      */
-    static class FirstPassVisitor extends Node.Visitor {
+    static class FirstPassVisitor
+	        extends Node.Visitor implements TagConstants {
 
 	private Node.Root root;
 	private AttributesImpl rootAttrs;
@@ -206,19 +207,21 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	/*
-	 * Converts taglib directive into xmlns: attribute of jsp:root element.
+	 * Converts taglib directive into "xmlns:..." attribute of jsp:root
+	 * element.
 	 */
 	public void visit(Node.TaglibDirective n) throws JasperException {
 	    Attributes attrs = n.getAttributes();
 	    if (attrs != null) {
+		String type = "xmlns:" + attrs.getValue("prefix");
 		String location = attrs.getValue("uri");
-		if (location == null) {
-		    // XXX JSP 2.0 CLARIFICATION NEEDED
+		if (location != null) {
+		    rootAttrs.addAttribute("", "", type, "CDATA", location);
+		} else {
 		    location = attrs.getValue("tagdir");
+		    rootAttrs.addAttribute("", "", type, "CDATA",
+					   URN_JSPTAGDIR + location);
 		}
-		String prefix = attrs.getValue("prefix");
-		rootAttrs.addAttribute("", "", "xmlns:" + prefix, "CDATA",
-				       location);
 	    }
 	}
     }

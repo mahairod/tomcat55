@@ -86,8 +86,6 @@ class JspDocumentParser extends DefaultHandler
     private static final String XMLNS = "xmlns:";
     private static final String XMLNS_JSP = "xmlns:jsp";
     private static final String JSP_VERSION = "version";
-    private static final String URN_JSPTLD = "urn:jsptld:";
-    private static final String URN_JSPTAGDIR = "urn:jsptagdir:";
     private static final String LEXICAL_HANDLER_PROPERTY
 	= "http://xml.org/sax/properties/lexical-handler";
 
@@ -619,11 +617,11 @@ class JspDocumentParser extends DefaultHandler
 	    for (int i=0; i<size; i++) {
 		Node n = body.getNode(i);
 		if (!(n instanceof Node.TemplateText)) {
-		    String elemType = TagConstants.JSP_SCRIPTLET;
+		    String elemType = JSP_SCRIPTLET;
 		    if (scriptingElem instanceof Node.Declaration)
-			elemType = TagConstants.JSP_DECLARATION;
+			elemType = JSP_DECLARATION;
 		    if (scriptingElem instanceof Node.Expression)
-			elemType = TagConstants.JSP_EXPRESSION;
+			elemType = JSP_EXPRESSION;
 		    String msg = err.getString(
                         "jsp.error.parse.xml.scripting.invalid.body",
 			elemType);
