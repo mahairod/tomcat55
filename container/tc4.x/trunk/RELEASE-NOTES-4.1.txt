@@ -704,7 +704,8 @@ Security manager URLs:
 The URLs to be used in the policy file to grant permissions to JARs located
 inside the web application repositories have changed in Tomcat 4.1.
 
-In Tomcat 4.0, codeBase URL were:
+In Tomcat 4.0, codeBase URLs for JARs loaded from web application 
+repositories were:
 jar:file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar!/-
 
 In Tomcat 4.1, they should be:
@@ -719,9 +720,12 @@ It is possible to use Jasper 1 (included in Tomcat 4.0.x) with Tomcat 4.1, as
 it has the same API and supports the same JSP API.
 
 To use Jasper 1 instead of Jasper 2, copy the two following JARs to
-$CATALINA_HOME/common/lib, overwriting the two which are already present:
+$CATALINA_HOME/common/lib (overwriting the two existing JARs):
 * $TOMCAT40_HOME/lib/jasper-runtime.jar
 * $TOMCAT40_HOME/lib/jasper-compiler.jar
+
+However, users are urged to use the version of Jasper included with Tomcat 4.1
+(Jasper 2), as it has much higher performance and scalability than Jasper 1.
 
 
 -------------------------------
