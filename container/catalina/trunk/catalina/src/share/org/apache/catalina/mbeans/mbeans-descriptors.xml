@@ -1981,6 +1981,10 @@
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
 
+    <attribute   name="mappingObject"
+          description="The object used for mapping"
+                 type="java.lang.Object"/>
+
     <attribute   name="override"
           description="The DefaultContext override flag for this web
                        application"
@@ -2000,6 +2004,11 @@
                  type="java.lang.String[]"
             writeable="false"/>
 
+    <attribute   name="staticResources"
+          description="Static resources associated with the context."
+                 type="javax.naming.directory.DirContext"
+            writeable="false"/>
+
     <attribute   name="swallowOutput"
           description="Flag to set to cause the system.out and system.err
       to be redirected to the logger when executing a servlet"
@@ -2009,6 +2018,11 @@
           description="Create a JNDI naming context for this application?"
                    is="true"
                  type="boolean"/>
+
+    <attribute   name="welcomeFiles"
+          description="The welcome files for this context"
+                 type="java.lang.String[]"
+            writeable="false"/>
 
     <attribute   name="workDir"
           description="The pathname to the work directory for this context"
