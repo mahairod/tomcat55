@@ -301,7 +301,7 @@ public class TagBeginGenerator
         } else if (c == Long.class) {
             return "new Long(" + Long.valueOf(s).toString() + "l)";
         } else if (c == Object.class) {
-            return "new String(" + s + ")";
+            return "new String(" + writer.quoteString(s) + ")";
 	} else {
 	    return "(" + c.getName() + 
 		")JspRuntimeLibrary.getValueFromPropertyEditorManager(" +
