@@ -355,11 +355,15 @@ public class StatusManagerServlet
 
         writer.print("<p>");
         writer.print(" Free memory: ");
-        writer.print(Runtime.getRuntime().freeMemory());
+        writer.print(formatSize(new Long(Runtime.getRuntime().freeMemory()), 
+                                true));
         writer.print(" Total memory: ");
-        writer.print(Runtime.getRuntime().totalMemory());
+        writer.print(formatSize(new Long(Runtime.getRuntime().totalMemory()),
+                                true));
         writer.print(" Max memory: ");
-        writer.print(JdkCompat.getJdkCompat().getMaxMemory());
+        writer.print(formatSize
+                     (new Long(JdkCompat.getJdkCompat().getMaxMemory()), 
+                      true));
         writer.print("</p>");
 
     }
@@ -405,17 +409,21 @@ public class StatusManagerServlet
         }
 
         writer.print(" Max processing time: ");
-        writer.print(mBeanServer.getAttribute(grpName, "maxTime"));
-        writer.print(" Processing time:");
-        writer.print(mBeanServer.getAttribute(grpName, "processingTime"));
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (grpName, "maxTime"), false));
+        writer.print(" Processing time: ");
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (grpName, "processingTime"), true));
         writer.print(" Request count: ");
         writer.print(mBeanServer.getAttribute(grpName, "requestCount"));
         writer.print(" Error count: ");
         writer.print(mBeanServer.getAttribute(grpName, "errorCount"));
         writer.print(" Bytes received: ");
-        writer.print(mBeanServer.getAttribute(grpName, "bytesReceived"));
+        writer.print(formatSize(mBeanServer.getAttribute
+                                (grpName, "bytesReceived"), true));
         writer.print(" Bytes sent: ");
-        writer.print(mBeanServer.getAttribute(grpName, "bytesSent"));
+        writer.print(formatSize(mBeanServer.getAttribute
+                                (grpName, "bytesSent"), true));
         writer.print("</p>");
 
         writer.print("<table border=\"0\"><tr><th>Stage</th><th>Time</th><th>B Sent</th><th>B Recv</th><th>Client</th><th>VHost</th><th>Request</th></tr>");
@@ -449,6 +457,7 @@ public class StatusManagerServlet
             (Integer) mBeanServer.getAttribute(pName, "stage");
         int stage = stageValue.intValue();
         boolean fullStatus = true;
+        boolean showRequest = true;
 
         writer.write("<td><strong>");
 
@@ -477,7 +486,8 @@ public class StatusManagerServlet
             break;
         case (6/*org.apache.coyote.Constants.STAGE_KEEPALIVE*/):
             writer.write("K");
-            fullStatus = false;
+            fullStatus = true;
+            showRequest = false;
             break;
         case (0/*org.apache.coyote.Constants.STAGE_NEW*/):
             writer.write("R");
@@ -493,34 +503,52 @@ public class StatusManagerServlet
 
         if (fullStatus) {
             writer.write("<td>");
-            writer.print(mBeanServer.getAttribute
-                         (pName, "requestProcessingTime"));
+            writer.print(formatTime(mBeanServer.getAttribute
+                                    (pName, "requestProcessingTime"), false));
             writer.write("</td>");
             writer.write("<td>");
-            writer.print(mBeanServer.getAttribute
-                         (pName, "requestBytesSent"));
-            writer.write("</td>");
-            writer.write("<td>");
-            writer.print(mBeanServer.getAttribute
-                         (pName, "requestBytesReceived"));
-            writer.write("</td>");
-            writer.write("<td>");
-            writer.print("" + mBeanServer.getAttribute(pName, "remoteAddr"));
-            writer.write("</td>");
-            writer.write("<td nowrap>");
-            writer.write("" + filter(mBeanServer.getAttribute
-                                     (pName, "virtualHost").toString()));
-            writer.write("</td>");
-            writer.write("<td nowrap>");
-            writer.write("" + filter(mBeanServer.getAttribute
-                                     (pName, "method").toString()));
-            writer.write(" " + filter(mBeanServer.getAttribute
-                                     (pName, "currentUri").toString()));
-            String queryString = (String) mBeanServer.getAttribute
-                (pName, "currentQueryString");
-            if ((queryString != null) && (!queryString.equals(""))) {
+            if (showRequest) {
+                writer.print(formatSize(mBeanServer.getAttribute
+                                        (pName, "requestBytesSent"), false));
+            } else {
                 writer.write("?");
-                writer.print(queryString);
+            }
+            writer.write("</td>");
+            writer.write("<td>");
+            if (showRequest) {
+                writer.print(formatSize(mBeanServer.getAttribute
+                                        (pName, "requestBytesReceived"), 
+                                        false));
+            } else {
+                writer.write("?");
+            }
+            writer.write("</td>");
+            writer.write("<td>");
+            writer.print(filter(mBeanServer.getAttribute
+                                (pName, "remoteAddr")));
+            writer.write("</td>");
+            writer.write("<td nowrap>");
+            writer.write(filter(mBeanServer.getAttribute
+                                (pName, "virtualHost")));
+            writer.write("</td>");
+            writer.write("<td nowrap>");
+            if (showRequest) {
+                writer.write(filter(mBeanServer.getAttribute
+                                    (pName, "method")));
+                writer.write(" ");
+                writer.write(filter(mBeanServer.getAttribute
+                                    (pName, "currentUri")));
+                String queryString = (String) mBeanServer.getAttribute
+                    (pName, "currentQueryString");
+                if ((queryString != null) && (!queryString.equals(""))) {
+                    writer.write("?");
+                    writer.print(queryString);
+                }
+                writer.write(" ");
+                writer.write(filter(mBeanServer.getAttribute
+                                    (pName, "protocol")));
+            } else {
+                writer.write("?");
             }
             writer.write("</td>");
         } else {
@@ -582,9 +610,11 @@ public class StatusManagerServlet
 
         writer.print("<p>");
         writer.print(" Startup time: ");
-        writer.print(mBeanServer.getAttribute(objectName, "startupTime"));
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (objectName, "startupTime"), false));
         writer.print(" TLD scan time: ");
-        writer.print(mBeanServer.getAttribute(objectName, "tldScanTime"));
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (objectName, "tldScanTime"), false));
         writer.print("</p>");
 
         String onStr = "*:j2eeType=Servlet,WebModule=" + webModuleName + ",*";
@@ -626,17 +656,21 @@ public class StatusManagerServlet
 
         writer.print("<p>");
         writer.print(" Processing time: ");
-        writer.print(mBeanServer.getAttribute(objectName, "processingTime"));
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (objectName, "processingTime"), true));
         writer.print(" Max time: ");
-        writer.print(mBeanServer.getAttribute(objectName, "maxTime"));
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (objectName, "maxTime"), false));
         writer.print(" Request count: ");
         writer.print(mBeanServer.getAttribute(objectName, "requestCount"));
         writer.print(" Error count: ");
         writer.print(mBeanServer.getAttribute(objectName, "errorCount"));
         writer.print(" Load time: ");
-        writer.print(mBeanServer.getAttribute(objectName, "loadTime"));
-        writer.print(" Classload time: ");
-        writer.print(mBeanServer.getAttribute(objectName, "classLoadTime"));
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (objectName, "loadTime"), false));
+        writer.print(" Classloading time: ");
+        writer.print(formatTime(mBeanServer.getAttribute
+                                (objectName, "classLoadTime"), false));
         writer.print("</p>");
 
     }
@@ -649,10 +683,11 @@ public class StatusManagerServlet
      *
      * @param message The message string to be filtered
      */
-    public static String filter(String message) {
+    public static String filter(Object obj) {
 
-        if (message == null)
-            return (null);
+        if (obj == null)
+            return ("?");
+        String message = obj.toString();
 
         char content[] = new char[message.length()];
         message.getChars(0, message.length(), content, 0);
@@ -676,6 +711,56 @@ public class StatusManagerServlet
             }
         }
         return (result.toString());
+
+    }
+
+
+    /**
+     * Display the given size in bytes, either as KB or MB.
+     *
+     * @param mb true to display megabytes, false for kilobytes
+     */
+    public static String formatSize(Object obj, boolean mb) {
+
+        long bytes = -1L;
+
+        if (obj instanceof Long) {
+            bytes = ((Long) obj).longValue();
+        } else if (obj instanceof Integer) {
+            bytes = ((Integer) obj).intValue();
+        }
+
+        if (mb) {
+            long mbytes = bytes / 1000000;
+            long rest = (bytes / 10000) - mbytes * 100;
+            return (mbytes + "." + rest + " MB");
+        } else {
+            return ((bytes / 1000) + " KB");
+        }
+
+    }
+
+
+    /**
+     * Display the given time in ms, either as ms or s.
+     *
+     * @param seconds true to display seconds, false for milliseconds
+     */
+    public static String formatTime(Object obj, boolean seconds) {
+
+        long time = -1L;
+
+        if (obj instanceof Long) {
+            time = ((Long) obj).longValue();
+        } else if (obj instanceof Integer) {
+            time = ((Integer) obj).intValue();
+        }
+
+        if (seconds) {
+            return ((time / 1000) + " s");
+        } else {
+            return (time + " ms");
+        }
 
     }
 
