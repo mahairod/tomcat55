@@ -105,7 +105,7 @@ public class DirContextURLConnection
         if (context == null)
             throw new IllegalArgumentException
                 ("Directory context can't be null");
-        this.permission = new FilePermission(url.toString(),"read");
+        this.permission = new FilePermission(url.toString(), "read");
         this.context = context;
     }
     
@@ -172,8 +172,26 @@ public class DirContextURLConnection
             
             try {
                 date = System.currentTimeMillis();
-                object = context.lookup(getURL().getFile());
-                attributes = context.getAttributes(getURL().getFile());
+                String path = getURL().getFile();
+                if (context instanceof ProxyDirContext) {
+                    ProxyDirContext proxyDirContext = 
+                        (ProxyDirContext) context;
+                    String hostName = proxyDirContext.getHostName();
+                    String contextName = proxyDirContext.getContextName();
+                    if (hostName != null) {
+                        if (!url.getHost().equalsIgnoreCase(hostName))
+                            return;
+                    }
+                    if (contextName != null) {
+                        if (!path.startsWith(contextName)) {
+                            return;
+                        } else {
+                            path = path.substring(contextName.length());
+                        }
+                    }
+                }
+                object = context.lookup(path);
+                attributes = context.getAttributes(path);
                 if (object instanceof Resource)
                     resource = (Resource) object;
                 if (object instanceof DirContext)

@@ -680,8 +680,11 @@ public abstract class ContainerBase
 	DirContext oldResources = this.resources;
 	if (oldResources == resources)
 	    return;
-        this.resources = new ProxyDirContext(new Hashtable(), resources);
-
+        Hashtable env = new Hashtable();
+        if (getParent() != null)
+            env.put(ProxyDirContext.HOST, getParent().getName());
+        env.put(ProxyDirContext.CONTEXT, getName());
+        this.resources = new ProxyDirContext(env, resources);
 	// Report this property change to interested listeners
 	support.firePropertyChange("resources", oldResources, this.resources);
 

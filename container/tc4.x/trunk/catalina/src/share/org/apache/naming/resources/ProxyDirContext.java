@@ -93,6 +93,10 @@ public class ProxyDirContext implements DirContext {
     // -------------------------------------------------------------- Constants
 
 
+    public static final String CONTEXT = "context";
+    public static final String HOST = "host";
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -110,6 +114,8 @@ public class ProxyDirContext implements DirContext {
                 cacheTTL = ((BaseDirContext) dirContext).getCacheTTL();
             }
         }
+        hostName = (String) env.get(HOST);
+        contextName = (String) env.get(CONTEXT);
     }
 
 
@@ -135,6 +141,18 @@ public class ProxyDirContext implements DirContext {
 
 
     /**
+     * Host name.
+     */
+    protected String hostName;
+
+
+    /**
+     * Context name.
+     */
+    protected String contextName;
+
+
+    /**
      * Cache.
      * Path -> Cache entry.
      */
@@ -148,6 +166,33 @@ public class ProxyDirContext implements DirContext {
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return the document root for this component.
+     */
+    public String getDocBase() {
+        if (dirContext instanceof BaseDirContext)
+            return ((BaseDirContext) dirContext).getDocBase();
+        else
+            return "";
+    }
+
+
+    /**
+     * Return the host name.
+     */
+    public String getHostName() {
+        return this.hostName;
+    }
+
+
+    /**
+     * Return the context name.
+     */
+    public String getContextName() {
+        return this.contextName;
+    }
 
 
     // -------------------------------------------------------- Context Methods

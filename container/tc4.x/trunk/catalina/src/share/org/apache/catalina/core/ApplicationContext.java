@@ -160,15 +160,17 @@ public final class ApplicationContext
         implements PrivilegedExceptionAction {
         
 	private String path;
+        private String host;
 	private DirContext resources;
 
-        PrivilegedGetResource(String path, DirContext resources) {
+        PrivilegedGetResource(String host, String path, DirContext resources) {
+            this.host = host;
             this.path = path;
             this.resources = resources;
         }
         
         public Object run() throws Exception {
-            return new URL("jndi", null, 0, path,
+            return new URL("jndi", host, 0, path,
                    new DirContextURLStreamHandler(resources));
         }
         
@@ -185,7 +187,6 @@ public final class ApplicationContext
      * @param context The associated Context instance
      */
     public ApplicationContext(String basePath, StandardContext context) {
-
 	super();
 	this.context = context;
         this.basePath = basePath;
@@ -495,7 +496,8 @@ public final class ApplicationContext
 	    return (null);  
 
 	// Construct a RequestDispatcher to process this request
-	HttpServletRequest hrequest = (HttpServletRequest) request.getRequest();
+	HttpServletRequest hrequest = 
+            (HttpServletRequest) request.getRequest();
         return (RequestDispatcher) new ApplicationDispatcher(wrapper,
                         hrequest.getServletPath(), 
                         hrequest.getPathInfo(),    
@@ -516,22 +518,26 @@ public final class ApplicationContext
      * @exception MalformedURLException if the path is not given
      *  in the correct form
      */
-    public URL getResource(String path) throws MalformedURLException {
+    public URL getResource(String path) 
+        throws MalformedURLException {
 	DirContext resources = context.getResources();
 	if (resources != null) {
+            String fullPath = context.getName() + path;
+            String hostName = context.getParent().getName();
             try {
                 resources.lookup(path);
 	        if( System.getSecurityManager() != null ) {
 	            try {
 	                PrivilegedGetResource dp =
-			    new PrivilegedGetResource(path,resources);
+			    new PrivilegedGetResource
+                                (hostName, fullPath, resources);
 	                return (URL)AccessController.doPrivileged(dp);
 	            } catch( PrivilegedActionException pe) {
 	                throw pe.getException();
 	            }
 	        } else {
-                    return new URL("jndi", null, 0, path, 
-                               new DirContextURLStreamHandler(resources));
+                    return new URL("jndi", hostName, 0, fullPath, 
+                                   new DirContextURLStreamHandler(resources));
 		}
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -805,8 +811,8 @@ public final class ApplicationContext
 	        (ServletContextAttributeListener) listeners[i];
 	    try {
 		if (replaced) {
-                    context.fireContainerEvent("beforeContextAttributeReplaced",
-                                               listener);
+                    context.fireContainerEvent
+                        ("beforeContextAttributeReplaced", listener);
 		    listener.attributeReplaced(event);
                     context.fireContainerEvent("afterContextAttributeReplaced",
                                                listener);
