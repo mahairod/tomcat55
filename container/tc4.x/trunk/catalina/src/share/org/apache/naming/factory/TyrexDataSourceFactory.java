@@ -76,7 +76,28 @@ import tyrex.jdbc.ServerDataSource;
 import tyrex.jdbc.xa.EnabledDataSource;
 
 /**
- * Object factory for Tyrex DataSources.
+ * Object factory for Tyrex DataSources.<br>
+ * Tyrex is an open-source transaction manager, developed by Assaf Arkin and
+ * exolab.org. See the <a href="http://tyrex.exolab.org/">Tyrex homepage</a>
+ * for more details about Tyrex and downloads.
+ * <p>
+ * This factory can produced either ServerDataSource objects (with integrated
+ * connection pooling) or EnabledDataSource objects. If the requested type is
+ * "tyrex.jdbc.ServerDataSource", a ServerDataSource will be instantiated.
+ * Be aware that some specific runtime permissions have to be set to be able
+ * to generate a ServerDataSource object (see the Tyrex documentation at the 
+ * Tyrex website for more information).
+ * <p>
+ * Definition of the following additional properties is recommended :
+ * <ul>
+ * <li>driverName : Name of the JDBC driver to use ( = connection URL)</li>
+ * <li>driverClassName : Class name of the JDBC driver</li>
+ * <li>user : User name. Can also be specified later when the Connection
+ * is retrieved.</li>
+ * <li>password : Password. Can also be specified later when the Connection
+ * is retrieved.</li>
+ * <li>loginTimeout : Optional. Login timeout.</li>
+ * </ul>
  * 
  * @author Remy Maucherat
  * @version $Revision$ $Date$
@@ -103,6 +124,13 @@ public class TyrexDataSourceFactory
     public static final String PASSWORD = "password";
     public static final String DRIVER_NAME = "driverName";
     public static final String DRIVER_CLASS_NAME = "driverClassName";
+
+    // Default values
+    public static final String DEFAULT_DRIVER_NAME = "jdbc:HypersonicSQL:.";
+    public static final String DEFAULT_DRIVER_CLASS_NAME = 
+        "org.hsql.jdbcDriver";
+    public static final String DEFAULT_USER = "sa";
+    public static final String DEFAULT_PASSWORD = "";
 
 
     // ----------------------------------------------------- Instance Variables
@@ -150,20 +178,28 @@ public class TyrexDataSourceFactory
                     currentRefAddr = ref.get(USER);
                     if (currentRefAddr != null) {
                         ds.setUser(currentRefAddr.getContent().toString());
+                    } else {
+                        ds.setUser(DEFAULT_USER);
                     }
                     currentRefAddr = ref.get(PASSWORD);
                     if (currentRefAddr != null) {
                         ds.setPassword(currentRefAddr.getContent().toString());
+                    } else {
+                        ds.setPassword(DEFAULT_PASSWORD);
                     }
                     currentRefAddr = ref.get(DRIVER_NAME);
                     if (currentRefAddr != null) {
                         ds.setDriverName
                             (currentRefAddr.getContent().toString());
+                    } else {
+                        ds.setDriverName(DEFAULT_DRIVER_NAME);
                     }
                     currentRefAddr = ref.get(DRIVER_CLASS_NAME);
                     if (currentRefAddr != null) {
                         ds.setDriverClassName
                             (currentRefAddr.getContent().toString());
+                    } else {
+                        ds.setDriverName(DEFAULT_DRIVER_CLASS_NAME);
                     }
                     
                     if (ref.getClassName().equals

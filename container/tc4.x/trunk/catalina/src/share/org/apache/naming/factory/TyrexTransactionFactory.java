@@ -75,7 +75,10 @@ import org.apache.naming.TransactionRef;
 import tyrex.tm.Tyrex;
 
 /**
- * Object factory for Tyrex User transactions.
+ * Object factory for Tyrex User transactions.<br>
+ * Tyrex is an open-source transaction manager, developed by Assaf Arkin and
+ * exolab.org. See the <a href="http://tyrex.exolab.org/">Tyrex homepage</a>
+ * for more details about Tyrex and downloads.
  * 
  * @author Remy Maucherat
  * @version $Revision$ $Date$
