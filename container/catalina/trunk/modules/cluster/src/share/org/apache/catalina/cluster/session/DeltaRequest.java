@@ -215,6 +215,11 @@ public class DeltaRequest implements Externalizable {
         return actions.size();
     }
     
+    public void clear() {
+        actions.clear();
+        actionPool.clear();
+    }
+    
     public void readExternal(java.io.ObjectInput in) throws java.io.IOException,
         java.lang.ClassNotFoundException {
         //sessionId - String

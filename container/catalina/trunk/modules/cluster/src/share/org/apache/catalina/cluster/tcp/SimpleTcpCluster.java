@@ -127,14 +127,13 @@ public class SimpleTcpCluster
     public static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
 
-
     // ----------------------------------------------------- Instance Variables
 
 
     /**
      * Descriptive information about this component implementation.
      */
-    protected static final String info = "SimpleTcpCluster2/1.0";
+    protected static final String info = "SimpleTcpCluster/1.0";
 
 
     /**
@@ -339,6 +338,7 @@ public class SimpleTcpCluster
 
 
     public synchronized Manager createManager(String name) {
+        log.debug("Creating ClusterManager for context "+name + " using class "+getManagerClassName());
         ClusterManager manager = null;
         try {
             manager = (ClusterManager)getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();

@@ -339,6 +339,11 @@ public class DeltaSession
      */
     private transient long lastTimeReplicated = System.currentTimeMillis();
     
+    /**
+     * The access count for this session
+     */
+    protected transient int accessCount = 1;
+    
     // ----------------------------------------------------- Session Properties
 
     /**
@@ -642,6 +647,10 @@ public class DeltaSession
             return false;
         }
         
+        if (accessCount > 0 ) {
+            return true;
+        }
+        
         if (maxInactiveInterval >= 0) {
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
@@ -686,11 +695,14 @@ public class DeltaSession
         this.thisAccessedTime = System.currentTimeMillis();
 
         evaluateIfValid();
+        
+        accessCount++;
     }
 
 
     public void endAccess() {
-        // FIXME
+        isNew = false;
+        accessCount--;
     }
 
 
@@ -777,16 +789,12 @@ public class DeltaSession
                     }
                 }
             }
+            accessCount=0;
             setValid(false);
 
             // Remove this session from our manager's active sessions
             if (manager != null)
                 manager.remove(this);
-
-            // Unbind any objects associated with this session
-            String keys[] = keys();
-            for (int i = 0; i < keys.length; i++)
-                removeAttribute(keys[i], notify);
 
             // Notify interested session event listeners
             if (notify) {
@@ -795,6 +803,13 @@ public class DeltaSession
 
             // We have completed expire of this session
             expiring = false;
+
+            // Unbind any objects associated with this session
+            String keys[] = keys();
+            for (int i = 0; i < keys.length; i++)
+                removeAttributeInternal(keys[i], notify, false);
+
+
             
             if ( notifyCluster ) {
                 log.debug("Notifying cluster of expiration primary=" +
@@ -849,11 +864,13 @@ public class DeltaSession
         id = null;
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
+        accessCount = 1;
         notes.clear();
         setPrincipal(null);
         isNew = false;
         isValid = false;
         manager = null;
+        deltaRequest.clear();
 
     }
 
@@ -1217,67 +1234,10 @@ public class DeltaSession
         if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.removeAttribute.ise"));
-
-        // Remove this attribute from our collection
-        Object value = null;
-        boolean found = false;
-        synchronized (attributes) {
-            found = attributes.containsKey(name);
-            if (found) {
-                value = attributes.get(name);
-                attributes.remove(name);
-            } else {
-                return;
-            }
-        }
-        
-        if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.removeAttribute(name);
-
-        // Do we need to do valueUnbound() and attributeRemoved() notification?
-        if (!notify) {
-            return;
-        }
-
-        // Call the valueUnbound() method if necessary
-        HttpSessionBindingEvent event =
-          new HttpSessionBindingEvent((HttpSession) this, name, value);
-        if ((value != null) &&
-            (value instanceof HttpSessionBindingListener))
-            ((HttpSessionBindingListener) value).valueUnbound(event);
-
-        // Notify interested application event listeners
-        Context context = (Context) manager.getContainer();
-        Object listeners[] = context.getApplicationEventListeners();
-        if (listeners == null)
-            return;
-        for (int i = 0; i < listeners.length; i++) {
-            if (!(listeners[i] instanceof HttpSessionAttributeListener))
-                continue;
-            HttpSessionAttributeListener listener =
-                (HttpSessionAttributeListener) listeners[i];
-            try {
-                fireContainerEvent(context,
-                                   "beforeSessionAttributeRemoved",
-                                   listener);
-                listener.attributeRemoved(event);
-                fireContainerEvent(context,
-                                   "afterSessionAttributeRemoved",
-                                   listener);
-            } catch (Throwable t) {
-                try {
-                    fireContainerEvent(context,
-                                       "afterSessionAttributeRemoved",
-                                       listener);
-                } catch (Exception e) {
-                    ;
-                }
-                // FIXME - should we do anything besides log these?
-                log.error(sm.getString("standardSession.attributeEvent"), t);
-            }
-        }
-
+        removeAttributeInternal(name,notify,addDeltaRequest);
     }
-
+    
+    
 
     /**
      * Remove the object bound with the specified name from this session.  If
@@ -1351,12 +1311,18 @@ public class DeltaSession
             throw new IllegalArgumentException
                 (sm.getString("standardSession.setAttribute.iae"));
 
-        // Replace or add this attribute
-        Object unbound = null;
-        synchronized (attributes) {
-            unbound = attributes.get(name);
-            attributes.put(name, value);
+        
+        // Construct an event with the new value
+        HttpSessionBindingEvent event = null;
+        
+        // Call the valueBound() method if necessary
+        if ( value instanceof HttpSessionBindingListener ) {
+            event = new HttpSessionBindingEvent(this, name, value);
+            ((HttpSessionBindingListener) value).valueBound(event);
         }
+        
+        // Replace or add this attribute
+        Object unbound = attributes.put(name, value);
 
         // Call the valueUnbound() method if necessary
         if ((unbound != null) &&
@@ -1365,16 +1331,6 @@ public class DeltaSession
               (new HttpSessionBindingEvent((HttpSession) this, name));
         }
 
-        // Call the valueBound() method if necessary
-        HttpSessionBindingEvent event = null;
-        if (unbound != null)
-            event = new HttpSessionBindingEvent
-                ((HttpSession) this, name, unbound);
-        else
-            event = new HttpSessionBindingEvent
-                ((HttpSession) this, name, value);
-        if (value instanceof HttpSessionBindingListener)
-            ((HttpSessionBindingListener) value).valueBound(event);
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
@@ -1391,6 +1347,10 @@ public class DeltaSession
                     fireContainerEvent(context,
                                        "beforeSessionAttributeReplaced",
                                        listener);
+                    if ( event == null ) {
+                        event = new HttpSessionBindingEvent
+                            (this,name,unbound);
+                    }
                     listener.attributeReplaced(event);
                     fireContainerEvent(context,
                                        "afterSessionAttributeReplaced",
@@ -1399,6 +1359,10 @@ public class DeltaSession
                     fireContainerEvent(context,
                                        "beforeSessionAttributeAdded",
                                        listener);
+                    if (event == null) {
+                        event = new HttpSessionBindingEvent
+                            (this, name, unbound);
+                    }
                     listener.attributeAdded(event);
                     fireContainerEvent(context,
                                        "afterSessionAttributeAdded",
@@ -1559,13 +1523,7 @@ public class DeltaSession
         if (!this.isValid || expiring || maxInactiveInterval < 0)
             return;
 
-        if (!isValid()) {
-            try {
-                expire();
-            } catch (Throwable t) {
-                log.error(sm.getString("standardSession.expireException"), t);
-            }
-        }
+        isValid();
 
     }
 
@@ -1635,7 +1593,7 @@ public class DeltaSession
      * as an array of Strings.  If there are no defined attributes, a
      * zero-length array is returned.
      */
-    private String[] keys() {
+    protected String[] keys() {
 
         String results[] = new String[0];
         synchronized (attributes) {
@@ -1648,13 +1606,67 @@ public class DeltaSession
     /**
      * Return the value of an attribute without a check for validity.
      */
-    private Object getAttributeInternal(String name) {
+    protected Object getAttributeInternal(String name) {
 
         synchronized (attributes) {
             return (attributes.get(name));
         }
 
     }
+    
+    protected void removeAttributeInternal(String name, boolean notify, boolean addDeltaRequest) {
+
+        // Remove this attribute from our collection
+        Object value = attributes.remove(name);
+        if ( value == null ) return;
+
+        if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.removeAttribute(name);
+
+        // Do we need to do valueUnbound() and attributeRemoved() notification?
+        if (!notify) {
+            return;
+        }
+
+        // Call the valueUnbound() method if necessary
+        HttpSessionBindingEvent event =
+          new HttpSessionBindingEvent((HttpSession) this, name, value);
+        if ((value != null) &&
+            (value instanceof HttpSessionBindingListener))
+            ((HttpSessionBindingListener) value).valueUnbound(event);
+
+        // Notify interested application event listeners
+        Context context = (Context) manager.getContainer();
+        Object listeners[] = context.getApplicationEventListeners();
+        if (listeners == null)
+            return;
+        for (int i = 0; i < listeners.length; i++) {
+            if (!(listeners[i] instanceof HttpSessionAttributeListener))
+                continue;
+            HttpSessionAttributeListener listener =
+                (HttpSessionAttributeListener) listeners[i];
+            try {
+                fireContainerEvent(context,
+                                   "beforeSessionAttributeRemoved",
+                                   listener);
+                listener.attributeRemoved(event);
+                fireContainerEvent(context,
+                                   "afterSessionAttributeRemoved",
+                                   listener);
+            } catch (Throwable t) {
+                try {
+                    fireContainerEvent(context,
+                                       "afterSessionAttributeRemoved",
+                                       listener);
+                } catch (Exception e) {
+                    ;
+                }
+                // FIXME - should we do anything besides log these?
+                log.error(sm.getString("standardSession.attributeEvent"), t);
+            }
+        }
+
+    }
+
     
     protected long getLastTimeReplicated() {
         return lastTimeReplicated;
