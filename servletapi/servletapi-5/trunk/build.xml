@@ -37,6 +37,9 @@
     <!-- "Library" Hierarchy -->
     <mkdir dir="${servletapi.lib}"/>
 
+    <uptodate property="docs.uptodate" targetfile="${servletapi.build}/docs/api/index.html">
+    <srcfiles dir="src/share" includes="**/*.java" />
+    </uptodate>
   </target>
 
 
@@ -93,7 +96,7 @@
 
 
   <!-- ======================== Build JavaDoc =========================== -->
-  <target name="javadoc" depends="prepare">
+  <target name="javadoc" depends="prepare" unless="docs.uptodate">
 
     <javadoc packagenames="javax.servlet.*"
              sourcepath="${basedir}/src/share"
