@@ -104,7 +104,7 @@
 <!--
       <Context path="/examples" docBase="examples" debug="0"
                reloadable="true">
-	<Logger className="org.apache.tomcat.logger.FileLogger"
+	<Logger className="org.apache.catalina.logger.FileLogger"
 	        prefix="localhost_examples_log." suffix=".txt"
 		timestamp="true"/>
       </Context>
