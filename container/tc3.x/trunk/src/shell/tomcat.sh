@@ -18,11 +18,11 @@ fi
 
 if [ "$TOMCAT_HOME" = "" ] ; then
   # try to find tomcat
-  if [ -d ${HOME}/opt/tomcat ] ; then 
+  if [ -d ${HOME}/opt/tomcat/conf ] ; then 
     TOMCAT_HOME=${HOME}/opt/tomcat
   fi
 
-  if [ -d /opt/tomcat ] ; then 
+  if [ -d /opt/tomcat/conf ] ; then 
     TOMCAT_HOME=/opt/tomcat
   fi
 
@@ -40,7 +40,7 @@ if [ "$TOMCAT_HOME" = "" ] ; then
     fi
   done
   
-  TOMCAT_HOME=`dirname "$PRG"`
+  TOMCAT_HOME=`dirname "$PRG"`/..
 
 fi
 
@@ -62,7 +62,7 @@ fi
 
 oldCP=$CLASSPATH
  
-CLASSPATH=${TOMCAT_HOME}/webserver.jar
+CLASSPATH=${TOMCAT_HOME}/lib/webserver.jar
 CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/lib/servlet.jar
 CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/lib/jasper.jar
 CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/lib/xml.jar

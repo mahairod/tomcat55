@@ -74,7 +74,7 @@ public class Constants {
     public static final String Package = "org.apache.tomcat.shell";
 
     public static class Server {
-        public static final String ConfigFile = "server.xml";
+        public static final String ConfigFile = "conf/server.xml";
         public static final String LogFile = "serverlog.txt";
     }
 
@@ -143,7 +143,7 @@ public class Constants {
     public static class Default {
         public static final int ADMIN_PORT = -1;
         public static final String WORK_DIR = "work";
-        public static final boolean IS_WORK_DIR_PERSISTENT = false;
+        public static final boolean IS_WORK_DIR_PERSISTENT = true;
         public static final int SessionTimeOut = 30;
         public static final boolean IS_WAR_EXPANDED = true;
         public static final boolean IS_WAR_VALIDATED = false;

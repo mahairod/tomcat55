@@ -125,11 +125,21 @@ public class Config {
 
 	if (! f.exists() &&
 	    (! isArg(Constants.Arg.NoConfig))) {
-	    // createConfigFile(configFile);
-	    InputStream is =
-	        this.getClass().getResourceAsStream(configFile);
 
-	    loadConfig(is, validate);
+	    /* Creating a "default" config with examples and root
+	       is confusing and doesn't work anyway ( since examples and root are in
+	       different directories, we can't guess the location )
+	       Also, it means something is wrong - and it's better to
+	       warn the user, so he can correct it
+	    */
+	    System.out.println("No config file found " + configFile );
+	    throw new StartupException("No config file found " + configFile );
+	    
+	    // 	    System.out.println("No config file found " + configFile );
+	    // 	    InputStream is =
+	    // 	        this.getClass().getResourceAsStream(configFile);
+	    
+	    // 	    loadConfig(is, validate);
 	} else {
 	    try {
 	        configURL = URLUtil.resolve(configFile, null);

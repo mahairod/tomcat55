@@ -114,6 +114,7 @@ public class ContextConfig {
 
         try {
             db = URLUtil.resolve(documentBase);
+	    System.out.println("Resolved " + documentBase + " to " + db);
         } catch (MalformedURLException mue) {
         }
 
