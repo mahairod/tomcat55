@@ -131,7 +131,7 @@ public interface ServletContext {
     /**
      * Returns the major version of the Java Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.2 must have this method
+     * with Version 2.3 must have this method
      * return the integer 2.
      *
      * @return 		2
@@ -146,9 +146,9 @@ public interface ServletContext {
      * Returns the minor version of the Servlet API that this
      * servlet container supports. All implementations that comply
      * with Version 2.2 must have this method
-     * return the integer 2.
+     * return the integer 3.
      *
-     * @return 		2
+     * @return 		3
      *
      */
 
@@ -642,7 +642,7 @@ public interface ServletContext {
     
     /**
      * Returns the name of this web application correponding to this ServletContext as specified in the deployment
-     * descriptor for this web application by the <display-name> element.
+     * descriptor for this web application by the display-name element.
      *
      *
      * @return	    The name of the web application or null if no name has been declared in the deployment descriptor.
