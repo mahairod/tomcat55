@@ -91,76 +91,54 @@ import org.apache.catalina.security.SecurityClassLoad;
 
 public final class Bootstrap {
 
+
+    // -------------------------------------------------------------- Constants
+
+
+    protected static final String CATALINA_TOKEN = "${catalina.home}";
+
+
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * Daemon object used by main.
+     */
+    private static Bootstrap daemon = null;
+
+
+    // -------------------------------------------------------------- Variables
+
+
     /**
      * Debugging detail level for processing the startup.
      */
     protected int debug = 0;
-    protected String args[];
 
-    // Construct the class loaders we will need
+
+    /**
+     * Daemon reference.
+     */
+    private Object catalinaDaemon = null;
+
+
     protected ClassLoader commonLoader = null;
     protected ClassLoader catalinaLoader = null;
     protected ClassLoader sharedLoader = null;
 
-    protected static final String CATALINA_TOKEN = "${catalina.home}";
-    
-    public void setDebug( int debug ) {
-        this.debug=debug;
-    }
 
-    public void setArgs(String args[] ) {
-        this.args=args;
-    }
+    // -------------------------------------------------------- Private Methods
 
 
-    // ----------------------------------------------------------- Main Program
-
-
-    public void initClassLoaders() {
+    private void initClassLoaders() {
         try {
-
-            /*
-            File unpacked[] = new File[1];
-            File packed[] = new File[1];
-            File packed2[] = new File[2];
-            ClassLoaderFactory.setDebug(debug);
-
-            unpacked[0] = new File(getCatalinaHome(),
-                                   "common" + File.separator + "classes");
-            packed2[0] = new File(getCatalinaHome(),
-                                  "common" + File.separator + "endorsed");
-            packed2[1] = new File(getCatalinaHome(),
-                                  "common" + File.separator + "lib");
-            commonLoader =
-                ClassLoaderFactory.createClassLoader(unpacked, packed2, null);
-
-            unpacked[0] = new File(getCatalinaHome(),
-                                   "server" + File.separator + "classes");
-            packed[0] = new File(getCatalinaHome(),
-                                 "server" + File.separator + "lib");
-            catalinaLoader =
-                ClassLoaderFactory.createClassLoader(unpacked, packed,
-                                                     commonLoader);
-
-            unpacked[0] = new File(getCatalinaBase(),
-                                   "shared" + File.separator + "classes");
-            packed[0] = new File(getCatalinaBase(),
-                                 "shared" + File.separator + "lib");
-            sharedLoader =
-                ClassLoaderFactory.createClassLoader(unpacked, packed,
-                                                     commonLoader);
-            */
-
             ClassLoaderFactory.setDebug(debug);
             commonLoader = createClassLoader("common", null);
             catalinaLoader = createClassLoader("server", commonLoader);
             sharedLoader = createClassLoader("shared", commonLoader);
-
         } catch (Throwable t) {
-
             log("Class loader creation threw exception", t);
             System.exit(1);
-
         }
     }
 
@@ -203,84 +181,237 @@ public final class Bootstrap {
     }
 
 
-    // ----------------------------------------------------------- Main Program
+    /**
+     * Initialize daemon.
+     */
+    private void init()
+        throws Exception {
 
-    public void execute() {
-        // Set the debug flag appropriately
-        for (int i = 0; i < args.length; i++)  {
-            if ("-debug".equals(args[i]))
-                setDebug( 1 );
-        }
-        
-        // Configure catalina.base from catalina.home if not yet set
-        if (System.getProperty("catalina.base") == null)
-            System.setProperty("catalina.base", getCatalinaHome());
+        // Set Catalina path
+        setCatalinaHome();
+        setCatalinaBase();
 
-        this.initClassLoaders();
+        initClassLoaders();
 
         Thread.currentThread().setContextClassLoader(catalinaLoader);
 
- 
+        SecurityClassLoad.securityClassLoad(catalinaLoader);
+
         // Load our startup class and call its process() method
-        try {
-            SecurityClassLoad.securityClassLoad(catalinaLoader);
+        if (debug >= 1)
+            log("Loading startup class");
+        Class startupClass =
+            catalinaLoader.loadClass
+            ("org.apache.catalina.startup.Catalina");
+        Object startupInstance = startupClass.newInstance();
 
-            // Instantiate a startup class instance
-            if (debug >= 1)
-                log("Loading startup class");
-            Class startupClass =
-                catalinaLoader.loadClass
-                ("org.apache.catalina.startup.Catalina");
-            Object startupInstance = startupClass.newInstance();
+        // Set the shared extensions class loader
+        if (debug >= 1)
+            log("Setting startup class properties");
+        String methodName = "setParentClassLoader";
+        Class paramTypes[] = new Class[1];
+        paramTypes[0] = Class.forName("java.lang.ClassLoader");
+        Object paramValues[] = new Object[1];
+        paramValues[0] = sharedLoader;
+        Method method =
+            startupInstance.getClass().getMethod(methodName, paramTypes);
+        method.invoke(startupInstance, paramValues);
 
-            // Set the shared extensions class loader
-            if (debug >= 1)
-                log("Setting startup class properties");
-            String methodName = "setParentClassLoader";
-            Class paramTypes[] = new Class[1];
-            paramTypes[0] = Class.forName("java.lang.ClassLoader");
-            Object paramValues[] = new Object[1];
-            paramValues[0] = sharedLoader;
-            Method method =
-                startupInstance.getClass().getMethod(methodName, paramTypes);
-            method.invoke(startupInstance, paramValues);
+        catalinaDaemon = startupInstance;
 
-            // Call the process() method
-            if (debug >= 1)
-                log("Calling startup class process() method");
-            methodName = "process";
-            paramTypes = new Class[1];
-            paramTypes[0] = args.getClass();
-            paramValues = new Object[1];
-            paramValues[0] = args;
-            method =
-                startupInstance.getClass().getMethod(methodName, paramTypes);
-            method.invoke(startupInstance, paramValues);
-
-        } catch (Exception e) {
-            System.out.println("Exception during startup processing");
-            e.printStackTrace(System.out);
-            System.exit(2);
-        }
     }
 
+
     /**
-     * The main program for the bootstrap.
+     * Load daemon.
+     */
+    private void load(String[] arguments)
+        throws Exception {
+
+        // Call the load() method
+        String methodName = "load";
+        Object param[];
+        Class paramTypes[];
+        if (arguments==null || arguments.length==0) {
+            paramTypes = null;
+            param = null;
+        } else {
+            paramTypes = new Class[1];
+            paramTypes[0] = arguments.getClass();
+            param = new Object[1];
+            param[0] = arguments;
+        }
+        Method method = 
+            catalinaDaemon.getClass().getMethod(methodName, paramTypes);
+        if (debug >= 1)
+            log("Calling startup class " + method);
+        method.invoke(catalinaDaemon, param);
+
+    }
+
+
+    // ----------------------------------------------------------- Main Program
+
+
+    /**
+     * Load the Catalina daemon.
+     */
+    public void init(String[] arguments)
+        throws Exception {
+
+        // Read the arguments
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i].equals("-debug")) {
+                    debug = 1;
+                }
+            }
+        }
+
+        init();
+        load(arguments);
+
+    }
+
+
+    /**
+     * Start the Catalina daemon.
+     */
+    public void start()
+        throws Exception {
+
+        Method method = catalinaDaemon.getClass().getMethod("start", null);
+        method.invoke(catalinaDaemon, null);
+
+    }
+
+
+    /**
+     * Stop the Catalina Daemon.
+     */
+    public void stop()
+        throws Exception {
+
+        Method method = catalinaDaemon.getClass().getMethod("stop", null);
+        method.invoke(catalinaDaemon, null);
+
+    }
+
+
+    /**
+     * Stop the standlone server.
+     */
+    public void stopServer()
+        throws Exception {
+
+        Method method = 
+            catalinaDaemon.getClass().getMethod("stopServer", null);
+        method.invoke(catalinaDaemon, null);
+
+    }
+
+
+    /**
+     * Set flag.
+     */
+    public void setAwait(boolean await)
+        throws Exception {
+
+        Class paramTypes[] = new Class[1];
+        paramTypes[0] = Boolean.TYPE;
+        Object paramValues[] = new Object[1];
+        paramValues[0] = new Boolean(await);
+        Method method = 
+            catalinaDaemon.getClass().getMethod("setAwait", paramTypes);
+        method.invoke(catalinaDaemon, paramValues);
+
+    }
+
+
+    /**
+     * Destroy the Catalina Daemon.
+     */
+    public void destroy() {
+
+        // FIXME
+
+    }
+
+
+    /**
+     * Main method, used for testing only.
      *
      * @param args Command line arguments to be processed
      */
     public static void main(String args[]) {
-        Bootstrap bootstrap=new Bootstrap();
 
-        bootstrap.setArgs( args );
-        bootstrap.execute();
+        if (daemon == null) {
+            daemon = new Bootstrap();
+            try {
+                daemon.init();
+            } catch (Throwable t) {
+                t.printStackTrace();
+                return;
+            }
+        }
+
+        try {
+            String command = args[0];
+            if (command.equals("startd")) {
+                daemon.load(args);
+                daemon.start();
+            } else if (command.equals("stopd")) {
+                daemon.stop();
+            } else if (command.equals("start")) {
+                daemon.setAwait(true);
+                daemon.load(args);
+                daemon.start();
+            } else if (command.equals("stop")) {
+                daemon.stopServer();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * Set the <code>catalina.base</code> System property to the current
+     * working directory if it has not been set.
+     */
+    private void setCatalinaBase() {
+
+        if (System.getProperty("catalina.base") != null)
+            return;
+        if (System.getProperty("catalina.home") != null)
+            System.setProperty("catalina.base",
+                               System.getProperty("catalina.home"));
+        else
+            System.setProperty("catalina.base",
+                               System.getProperty("user.dir"));
+
+    }
+
+
+    /**
+     * Set the <code>catalina.home</code> System property to the current
+     * working directory if it has not been set.
+     */
+    private void setCatalinaHome() {
+
+        if (System.getProperty("catalina.home") != null)
+            return;
+        System.setProperty("catalina.home",
+                           System.getProperty("user.dir"));
+
     }
 
 
     /**
      * Get the value of the catalina.home environment variable.
      */
-    protected String getCatalinaHome() {
+    protected static String getCatalinaHome() {
         return System.getProperty("catalina.home",
                                   System.getProperty("user.dir"));
     }
@@ -289,7 +420,7 @@ public final class Bootstrap {
     /**
      * Get the value of the catalina.base environment variable.
      */
-    protected String getCatalinaBase() {
+    protected static String getCatalinaBase() {
         return System.getProperty("catalina.base", getCatalinaHome());
     }
 
@@ -299,7 +430,7 @@ public final class Bootstrap {
      *
      * @param message The message to be logged
      */
-    protected void log(String message) {
+    protected static void log(String message) {
 
         System.out.print("Bootstrap: ");
         System.out.println(message);
@@ -313,7 +444,7 @@ public final class Bootstrap {
      * @param message The message to be logged
      * @param exception The exception to be logged
      */
-    protected void log(String message, Throwable exception) {
+    protected static void log(String message, Throwable exception) {
 
         log(message);
         exception.printStackTrace(System.out);

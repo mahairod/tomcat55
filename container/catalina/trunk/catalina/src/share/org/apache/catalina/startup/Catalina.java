@@ -150,6 +150,36 @@ public class Catalina {
     protected boolean useNaming = true;
 
 
+    /**
+     * Use await.
+     */
+    protected boolean await = false;
+
+
+    /**
+     * Shutdown hook.
+     */
+    protected Thread shutdownHook = new CatalinaShutdownHook();
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    public void setUseNaming(boolean b) {
+        useNaming = b;
+    }
+
+
+    public void setConfig(String file) {
+        configFile = file;
+    }
+
+
+    public void setAwait(boolean b) {
+        await = b;
+    }
+
+
     // ----------------------------------------------------------- Main Program
 
 
@@ -159,7 +189,6 @@ public class Catalina {
      * @param args Command line arguments
      */
     public static void main(String args[]) {
-
         (new Catalina()).process(args);
     }
 
@@ -170,12 +199,17 @@ public class Catalina {
      * @param args Command line arguments
      */
     public void process(String args[]) {
-
+        setAwait(true);
         setCatalinaHome();
         setCatalinaBase();
         try {
-            if (arguments(args))
-                execute();
+            if (arguments(args)) {
+                if (starting) {
+                    start();
+                } else if (stopping) {
+                    stopServer();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
@@ -243,7 +277,9 @@ public class Catalina {
                 return (false);
             } else if (args[i].equals("start")) {
                 starting = true;
+                stopping = false;
             } else if (args[i].equals("stop")) {
+                starting = false;
                 stopping = true;
             } else {
                 usage();
@@ -391,15 +427,40 @@ public class Catalina {
     }
 
 
-    /**
-     * Execute the processing that has been configured from the command line.
-     */
-    protected void execute() throws Exception {
+    public void stopServer() {
 
-        if (starting)
-            start();
-        else if (stopping)
-            stop();
+        // Create and execute our Digester
+        Digester digester = createStopDigester();
+        File file = configFile();
+        try {
+            InputSource is =
+                new InputSource("file://" + file.getAbsolutePath());
+            FileInputStream fis = new FileInputStream(file);
+            is.setByteStream(fis);
+            digester.push(this);
+            digester.parse(is);
+            fis.close();
+        } catch (Exception e) {
+            System.out.println("Catalina.stop: " + e);
+            e.printStackTrace(System.out);
+            System.exit(1);
+        }
+
+        // Stop the existing server
+        try {
+            Socket socket = new Socket("127.0.0.1", server.getPort());
+            OutputStream stream = socket.getOutputStream();
+            String shutdown = server.getShutdown();
+            for (int i = 0; i < shutdown.length(); i++)
+                stream.write(shutdown.charAt(i));
+            stream.flush();
+            stream.close();
+            socket.close();
+        } catch (IOException e) {
+            System.out.println("Catalina.stop: " + e);
+            e.printStackTrace(System.out);
+            System.exit(1);
+        }
 
     }
 
@@ -435,10 +496,11 @@ public class Catalina {
     /**
      * Start a new server instance.
      */
-    protected void start() {
+    public void load() {
+
         // Create and execute our Digester
         Digester digester = createStartDigester();
-        long t1=System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
         File file = configFile();
         try {
             InputSource is =
@@ -453,9 +515,9 @@ public class Catalina {
             e.printStackTrace(System.out);
             System.exit(1);
         }
-        long t2=System.currentTimeMillis();
-        log.debug( "Server.xml processed " + (t2-t1 ));
-        
+        long t2 = System.currentTimeMillis();
+        log.debug( "Server.xml processed " + (t2 - t1));
+
         // Setting additional variables
         if (!useNaming) {
             System.setProperty("catalina.useNaming", "false");
@@ -480,104 +542,101 @@ public class Catalina {
         SecurityConfig securityConfig = SecurityConfig.newInstance();
         securityConfig.setPackageDefinition();
         securityConfig.setPackageAccess();
-        
+
         // Replace System.out and System.err with a custom PrintStream
         SystemLogHandler systemlog = new SystemLogHandler(System.out);
         System.setOut(systemlog);
         System.setErr(systemlog);
 
-        Thread shutdownHook = new CatalinaShutdownHook();
-
-        long t3=System.currentTimeMillis();
-
         // Start the new server
         if (server instanceof Lifecycle) {
             try {
                 server.initialize();
-                ((Lifecycle) server).start();
-                long t4=System.currentTimeMillis();
-                log.debug( "server.start " + server + " " + (t4-t3 ));
-                try {
-                    // Register shutdown hook
-                    Runtime.getRuntime().addShutdownHook(shutdownHook);
-                } catch (Throwable t) {
-                    // This will fail on JDK 1.2. Ignoring, as Tomcat can run
-                    // fine without the shutdown hook.
-                }
-                // Wait for the server to be told to shut down
-                server.await();
             } catch (LifecycleException e) {
-                System.out.println("Catalina.start: " + e);
-                e.printStackTrace(System.out);
-                if (e.getThrowable() != null) {
-                    System.out.println("----- Root Cause -----");
-                    e.getThrowable().printStackTrace(System.out);
-                }
+                log.error("Catalina.start", e);
             }
         }
 
-        // Shut down the server
+    }
+
+    /* 
+     * Load using arguments
+     */
+    public void load(String args[]) {
+
+        setCatalinaHome();
+        setCatalinaBase();
+        try {
+            if (arguments(args))
+                load();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+    }
+
+
+    /**
+     * Start a new server instance.
+     */
+    public void start() {
+
+        // Start the new server
         if (server instanceof Lifecycle) {
             try {
-                try {
-                    // Remove the ShutdownHook first so that server.stop() 
-                    // doesn't get invoked twice
-                    Runtime.getRuntime().removeShutdownHook(shutdownHook);
-                } catch (Throwable t) {
-                    // This will fail on JDK 1.2. Ignoring, as Tomcat can run
-                    // fine without the shutdown hook.
-                }
-                ((Lifecycle) server).stop();
+                ((Lifecycle) server).start();
             } catch (LifecycleException e) {
-                System.out.println("Catalina.stop: " + e);
-                e.printStackTrace(System.out);
-                if (e.getThrowable() != null) {
-                    System.out.println("----- Root Cause -----");
-                    e.getThrowable().printStackTrace(System.out);
-                }
+                log.error("Catalina.start: ", e);
             }
         }
+
+        try {
+            // Register shutdown hook
+            Runtime.getRuntime().addShutdownHook(shutdownHook);
+        } catch (Throwable t) {
+            // This will fail on JDK 1.2. Ignoring, as Tomcat can run
+            // fine without the shutdown hook.
+        }
+
+        if (await) {
+            await();
+            stop();
+        }
+
     }
 
 
     /**
      * Stop an existing server instance.
      */
-    protected void stop() {
+    public void stop() {
 
-        // Create and execute our Digester
-        Digester digester = createStopDigester();
-        File file = configFile();
         try {
-            InputSource is =
-                new InputSource("file://" + file.getAbsolutePath());
-            FileInputStream fis = new FileInputStream(file);
-            is.setByteStream(fis);
-            digester.push(this);
-            digester.parse(is);
-            fis.close();
-        } catch (Exception e) {
-            System.out.println("Catalina.stop: " + e);
-            e.printStackTrace(System.out);
-            System.exit(1);
+            // Remove the ShutdownHook first so that server.stop() 
+            // doesn't get invoked twice
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        } catch (Throwable t) {
+            // This will fail on JDK 1.2. Ignoring, as Tomcat can run
+            // fine without the shutdown hook.
         }
 
-      // Stop the existing server
-      try {
-          Socket socket = new Socket("127.0.0.1", server.getPort());
-          OutputStream stream = socket.getOutputStream();
-          String shutdown = server.getShutdown();
-          for (int i = 0; i < shutdown.length(); i++)
-              stream.write(shutdown.charAt(i));
-          stream.flush();
-          stream.close();
-          socket.close();
-      } catch (IOException e) {
-          System.out.println("Catalina.stop: " + e);
-          e.printStackTrace(System.out);
-          System.exit(1);
-      }
+        // Shut down the server
+        if (server instanceof Lifecycle) {
+            try {
+                ((Lifecycle) server).stop();
+            } catch (LifecycleException e) {
+                log.error("Catalina.stop", e);
+            }
+        }
 
+    }
+
+
+    /**
+     * Await and shutdown.
+     */
+    public void await() {
+
+        server.await();
 
     }
 
