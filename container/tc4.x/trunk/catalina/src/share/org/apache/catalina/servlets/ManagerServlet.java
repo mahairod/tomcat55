@@ -67,13 +67,15 @@ package org.apache.catalina.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.Host;
+import org.apache.catalina.Deployer;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Wrapper;
@@ -109,6 +111,11 @@ import org.apache.catalina.util.StringManager;
  * generally be deployed as a separate web application within the virtual host
  * to be managed.
  * <p>
+ * <b>NOTE</b> - For security reasons, this application will not operate
+ * when accessed via the invoker servlet.  You must explicitly map this servlet
+ * with a servlet mapping, and you will always want to protect it with
+ * appropriate security constraints as well.
+ * <p>
  * The following servlet initialization parameters are recognized:
  * <ul>
  * <li><b>debug</b> - The debugging detail level that controls the amount
@@ -139,11 +146,11 @@ public final class ManagerServlet
 
 
     /**
-     * The Host container that contains our own web application's Context,
+     * The Deployer container that contains our own web application's Context,
      * along with the associated Contexts for web applications that we
      * are managing.
      */
-    private Host host = null;
+    private Deployer deployer = null;
 
 
     /**
@@ -218,6 +225,14 @@ public final class ManagerServlet
      */
     public void init() throws ServletException {
 
+        // Verify that we were not accessed using the invoker servlet
+        String servletName = getServletConfig().getServletName();
+        if (servletName == null)
+            servletName = "";
+        if (servletName.startsWith("org.apache.catalina.INVOKER."))
+            throw new UnavailableException
+                (sm.getString("managerServlet.cannotInvoke"));
+
 	// Set our properties from the initialization parameters
 	String value = null;
 	try {
@@ -230,11 +245,11 @@ public final class ManagerServlet
 	// Identify the internal container resources we need
 	Wrapper wrapper = (Wrapper) getServletConfig();
 	context = (Context) wrapper.getParent();
-	host = (Host) context.getParent();
+	deployer = (Deployer) context.getParent();
 
 	// Log debugging messages as necessary
 	if (debug >= 1) {
-	    log("init: Associated with Host '" + host.getName() + "'");
+	    log("init: Associated with Deployer '" + deployer.getName() + "'");
 	}
 
     }
@@ -258,14 +273,24 @@ public final class ManagerServlet
 	    log("deploy: Deploying web application at '" + path +
 		"' from '" + war + "'");
 
+        if ((path == null) || !path.startsWith("/")) {
+            writer.println(sm.getString("managerServlet.invalidPath", path));
+            return;
+        }
+        if ((war == null) ||
+            (!war.startsWith("file:") && !war.startsWith("jar:"))) {
+            writer.println(sm.getString("managerServlet.invalidWar", war));
+            return;
+        }
+
 	try {
-	  Context context = (Context) host.findChild(path);
+	  Context context =  deployer.findDeployedApp(path);
 	  if (context != null) {
 	      writer.println(sm.getString("managerServlet.alreadyContext",
 					  path));
 	      return;
 	  }
-	  ; // FIXME - deploy()
+          deployer.deploy(path, new URL(war));
 	  writer.println(sm.getString("managerServlet.deployed", path));
 	} catch (Throwable t) {
 	    getServletContext().log("ManagerServlet.deploy[" + path + "]", t);
@@ -285,13 +310,13 @@ public final class ManagerServlet
 
         if (debug >= 1)
 	    log("list: Listing contexts for virtual host '" +
-		host.getName() + "'");
+		deployer.getName() + "'");
 
-        writer.println(sm.getString("managerServlet.listed", host.getName()));
-	Container children[] = host.findChildren();
-	for (int i = 0; i < children.length; i++)
-	    writer.println(children[i].getName());
-
+        writer.println(sm.getString("managerServlet.listed",
+                                    deployer.getName()));
+        String contextPaths[] = deployer.findDeployedApps();
+        for (int i = 0; i < contextPaths.length; i++)
+            writer.println(contextPaths[i]);
 
     }
 
@@ -307,8 +332,13 @@ public final class ManagerServlet
         if (debug >= 1)
 	    log("restart: Reloading web application at '" + path + "'");
 
+        if ((path == null) || !path.startsWith("/")) {
+            writer.println(sm.getString("managerServlet.invalidPath", path));
+            return;
+        }
+
         try {
-	    Context context = (Context) host.findChild(path);
+	    Context context = deployer.findDeployedApp(path);
 	    if (context == null) {
 	        writer.println(sm.getString("managerServlet.noContext", path));
 		return;
@@ -335,13 +365,18 @@ public final class ManagerServlet
         if (debug >= 1)
 	    log("undeploy: Undeploying web application at '" + path + "'");
 
+        if ((path == null) || !path.startsWith("/")) {
+            writer.println(sm.getString("managerServlet.invalidPath", path));
+            return;
+        }
+
         try {
-	    Context context = (Context) host.findChild(path);
+	    Context context = deployer.findDeployedApp(path);
 	    if (context == null) {
 	        writer.println(sm.getString("managerServlet.noContext", path));
 		return;
 	    }
-	    host.removeChild(context);
+            deployer.undeploy(path);
 	    writer.println(sm.getString("managerServlet.undeployed", path));
 	} catch (Throwable t) {
 	    getServletContext().log("ManagerServlet.undeploy[" + path + "]",
