@@ -8,7 +8,6 @@ acceptable to delay their resolution.
 
 
 3509    webapp     Apache 1.3.20 & mod_webapp & Tomcat 4b7 HANGS under Win
-4518    jasper     load-on-startup is not working with jsp page
 4793    webapp     mod_webapp connector doesn´t work
 4930    webapp     java.io.StreamCorruptedException: Type code out of range, 
                    is 0 with Apache WebApp module

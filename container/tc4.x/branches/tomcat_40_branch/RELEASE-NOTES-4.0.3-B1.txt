@@ -97,8 +97,10 @@ Bugzilla Bugs Resolved:
 ----------------------
 
 3770  HttpSessionListener.sessionCreated() called twice for each session
+4518  Jsp-file and load-on-startup and init-param does not work
 5422  HTTP Headers not being cleared after form authentication
 5647  AJP13 connector will not pass authentication requests
+6090  Listener not instantiated in tld file
 6374  Class not found for: org/w3c/dom/range/Range
 6396  LoggerBase class is package not public
 6406  All classes in $CATALINA_HOME/classes become invisible 
@@ -108,6 +110,8 @@ Bugzilla Bugs Resolved:
 6468  Content-type not set for errors
 6480  HttpServletRequest.getPathTranslated() returns different results 
       on repeated actions
+6550  Old WebappClassLoaders can't be GC'd
+6558  NPE in RequestDumperValve.toString if debug in catalina/XmlMapper
 
 
 ============================
