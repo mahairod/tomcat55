@@ -10,10 +10,18 @@
 
   <!-- ===================== Prepare Directories ========================= -->
   <target name="prepare">
+    <!-- "Build" Hierarchy -->
     <mkdir dir="${servletapi.build}"/>
-    <mkdir dir="${servletapi.build}/servletapi-doc"/>
     <mkdir dir="${servletapi.build}/classes"/>
+    <mkdir dir="${servletapi.build}/docs"/>
+    <mkdir dir="${servletapi.build}/docs/api"/>
+    <!-- "Dist" Hierarchy -->
     <mkdir dir="${servletapi.dist}"/>
+    <mkdir dir="${servletapi.dist}/docs"/>
+    <mkdir dir="${servletapi.dist}/docs/api"/>
+    <mkdir dir="${servletapi.dist}/lib"/>
+    <mkdir dir="${servletapi.dist}/src"/>
+    <!-- "Library" Hierarchy -->
     <mkdir dir="${servletapi.lib}"/>
   </target>
 
@@ -30,7 +38,7 @@
   <target name="javadoc" depends="prepare">
     <javadoc packagenames="javax.servlet.*"
              sourcepath="src/share"
-             destdir="${servletapi.build}/servletapi-doc"
+             destdir="${servletapi.build}/docs/api"
              use="true"
              windowtitle="Servlet and JavaServer Pages API Documentation"
              doctitle="Servlet and JavaServer Pages API Documentation"
@@ -40,12 +48,13 @@
 
   <!-- ===================== Distribution Files ========================= -->
   <target name="dist" depends="compile,javadoc">
-    <jar jarfile="${servletapi.dist}/servlet.jar"
+    <copydir src="${servletapi.build}/docs/api"
+            dest="${servletapi.dist}/docs/api"/>
+    <jar jarfile="${servletapi.dist}/lib/servlet.jar"
          basedir="${servletapi.build}/classes"/>
-    <zip zipfile="${servletapi.dist}/servletapi-doc.zip"
-         basedir="${servletapi.build}"
-         includes="servletapi-doc/**"/>
-    <copyfile src="${servletapi.dist}/servlet.jar"
+    <copyfile src="build.xml" dest="${servletapi.dist}/lib/build.xml"/>
+    <copydir src="src/share" dest="${servletapi.dist}/src"/>
+    <copyfile src="${servletapi.dist}/lib/servlet.jar"
               dest="${servletapi.lib}/servlet.jar"/>
   </target>
 
