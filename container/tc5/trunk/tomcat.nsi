@@ -1,9 +1,9 @@
 
-; Tomcat 4 script for Nullsoft Installer
+; Tomcat script for Nullsoft Installer
 ; $Id$
 
 Name "Apache Tomcat @VERSION@"
-OutFile tomcat4.exe
+OutFile tomcat-installer.exe
 CRCCheck on
 SetCompress force
 SetDatablockOptimize on
@@ -19,18 +19,18 @@ DisabledBitmap tickno.bmp
 
 LicenseText "You must read the following license before installing:"
 LicenseData INSTALLLICENSE
-ComponentText "This will install the Apache Tomcat 4.1 servlet container on your computer:"
+ComponentText "This will install the Apache Tomcat 5.0 servlet container on your computer:"
 InstType Normal
 InstType Minimum
 InstType "Full (w/ Source Code)"
 AutoCloseWindow false
 ShowInstDetails show
-DirText "Please select a location to install Tomcat 4.1 (or use the default):"
+DirText "Please select a location to install Tomcat 5.0 (or use the default):"
 SetOverwrite on
 SetDateSave on
 
-InstallDir "$PROGRAMFILES\Apache Group\Tomcat 4.1"
-InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1" ""
+InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
+InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
 
 Section "Tomcat (required)"
 
@@ -70,7 +70,7 @@ Section "NT Service (NT/2k/XP only)"
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
   
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 4.1" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 5.0" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
   ClearErrors
 
@@ -102,23 +102,23 @@ Section "Tomcat Start Menu Group"
   Call findJavaPath
   Pop $2
 
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Home Page.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Home Page.lnk" \
                  "http://jakarta.apache.org/tomcat"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Uninstall Tomcat 4.1.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Uninstall Tomcat 5.0.lnk" \
                  "$INSTDIR\uninst-tomcat4.exe"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat 4.1 Program Directory.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Start Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
                  '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Stop Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Stop Tomcat.lnk" \
                  "$2\bin\java.exe" \
                  '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
@@ -133,11 +133,11 @@ Section "Tomcat Documentation"
   SetOutPath $INSTDIR\webapps
   File /r webapps\tomcat-docs
 
-  IfFileExists "$SMPROGRAMS\Apache Tomcat 4.1" 0 NoLinks
+  IfFileExists "$SMPROGRAMS\Apache Tomcat 5.0" 0 NoLinks
 
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Documentation.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Documentation.lnk" \
                  "$INSTDIR\webapps\tomcat-docs\index.html"
 
  NoLinks:
@@ -183,10 +183,10 @@ Section -post
 
   Call startService
 
-  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\4.1" "" $INSTDIR
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
-                   "DisplayName" "Apache Tomcat 4.1 (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
+  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\5.0" "" $INSTDIR
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
+                   "DisplayName" "Apache Tomcat 5.0 (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
                    "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
 
   Sleep 500
@@ -208,7 +208,7 @@ FunctionEnd
 
 Function .onInstSuccess
 
-  ExecShell open '$SMPROGRAMS\Apache Tomcat 4.1'
+  ExecShell open '$SMPROGRAMS\Apache Tomcat 5.0'
 
 FunctionEnd
 
@@ -354,11 +354,11 @@ Function configure
   FileClose $R9
 
   ; Creating a few shortcuts
-  IfFileExists "$SMPROGRAMS\Apache Tomcat 4.1" 0 NoLinks
+  IfFileExists "$SMPROGRAMS\Apache Tomcat 5.0" 0 NoLinks
 
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Administration.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Administration.lnk" \
                  "http://127.0.0.1:$R0/admin"
 
  NoLinks:
@@ -412,7 +412,7 @@ FunctionEnd
 Function startService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net start "Apache Tomcat 4.1"'
+  ExecWait 'net start "Apache Tomcat 5.0"'
   Sleep 4000
 
  NoService:
@@ -429,7 +429,7 @@ FunctionEnd
 Function un.stopService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net stop "Apache Tomcat 4.1"'
+  ExecWait 'net stop "Apache Tomcat 5.0"'
   Sleep 2000
 
  NoService:
@@ -437,7 +437,7 @@ Function un.stopService
 FunctionEnd
 
 
-UninstallText "This will uninstall Apache Tomcat 4.1 from your system:"
+UninstallText "This will uninstall Apache Tomcat 5.0 from your system:"
 
 
 Section Uninstall
@@ -458,13 +458,13 @@ Section Uninstall
       DeleteRegValue HKCR ".jsp" "backup_val"
   NoOwn:
 
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 4.1"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 5.0"'
   ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1"
-  DeleteRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1"
-  RMDir /r "$SMPROGRAMS\Apache Tomcat 4.1"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0"
+  DeleteRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0"
+  RMDir /r "$SMPROGRAMS\Apache Tomcat 5.0"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
   RMDir /r "$INSTDIR\bin"
@@ -488,7 +488,7 @@ Section Uninstall
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
-      "Remove all files in your Tomcat 4.1 directory? (If you have anything\
+      "Remove all files in your Tomcat 5.0 directory? (If you have anything\
  you created that you want to keep, click No)" IDNO Removed
     Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
     RMDir /r "$INSTDIR"

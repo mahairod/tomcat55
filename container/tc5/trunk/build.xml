@@ -283,7 +283,7 @@
     <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis-bz2.exe">
       <arg value="tomcat.nsi" />
     </exec>
-    <move file="${tomcat.dist}/tomcat4.exe" 
+    <move file="${tomcat.dist}/tomcat-installer.exe" 
      tofile="${tomcat.dist}/${final.name}.exe" />
   </target>
 
