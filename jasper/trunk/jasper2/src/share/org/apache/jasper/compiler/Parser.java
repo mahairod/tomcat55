@@ -1942,6 +1942,7 @@ class Parser implements TagConstants {
 	reader.setSingleFile(true);
 	reader.skipUntil("<");
         while (reader.hasMoreInput()) {
+            start = reader.mark();
             if (reader.matches("%--")) {
                 parseComment(parent);
             } else if (reader.matches("%@")) {
