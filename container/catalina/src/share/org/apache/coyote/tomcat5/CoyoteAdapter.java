@@ -265,7 +265,13 @@ final class CoyoteAdapter
         // URI decoding
         MessageBytes decodedURI = req.decodedURI();
         decodedURI.duplicate(req.requestURI());
-        req.getURLDecoder().convert(decodedURI, false);
+        try {
+          req.getURLDecoder().convert(decodedURI, false);
+        } catch (IOException ioe) {
+          res.setStatus(400);
+          res.setMessage("Invalid URI");
+          throw ioe;
+        }
 
         // Normalize decoded URI
         if (!normalize(req.decodedURI())) {
