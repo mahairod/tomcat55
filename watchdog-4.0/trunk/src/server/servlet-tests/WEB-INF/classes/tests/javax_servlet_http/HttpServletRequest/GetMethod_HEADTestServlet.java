@@ -81,19 +81,16 @@ public class GetMethod_HEADTestServlet extends HttpServlet {
 
 	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-
+		// just to validate that a response body isn't returned.
+		out.println( "Arbitrary text..." );
 		String method = request.getMethod();
 		if(method!=null) {
 			if(method.trim().equalsIgnoreCase("HEAD"))
 			{
-				out.println("GetMethod_HEADTest test PASSED");
+				response.sendError( HttpServletResponse.SC_OK, "GetMethod_HEADTest PASSED" );
 				return;
 			}
 		}
-		out.println("GetMethod_HEADTest test FAILED");
-		out.println( "<BR>getMethod did not return proper method type");
-		out.println("Actual Return Value : " + method );
-		out.println("Expected Return Value : HEAD "  );
-
+		response.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "GetMethod_HEADTest FAILED" );
 	}
 }
