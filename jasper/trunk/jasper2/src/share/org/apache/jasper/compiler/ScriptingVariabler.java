@@ -100,9 +100,11 @@ public class ScriptingVariabler {
      */
     static class ScriptingVariableVisitor extends Node.Visitor {
 
+	private ErrorDispatcher err;
 	private Hashtable scriptVars;
-
-	public ScriptingVariableVisitor() {
+	
+	public ScriptingVariableVisitor(ErrorDispatcher err) {
+	    this.err = err;
 	    scriptVars = new Hashtable();
 	}
 
@@ -113,7 +115,8 @@ public class ScriptingVariabler {
 	    setScriptingVars(n, VariableInfo.AT_END);
 	}
 
-	private void setScriptingVars(Node.CustomTag n, int scope) {
+	private void setScriptingVars(Node.CustomTag n, int scope)
+	        throws JasperException {
 
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 	    VariableInfo[] varInfos = n.getVariableInfos();
@@ -162,6 +165,10 @@ public class ScriptingVariabler {
 		    if (varName == null) {
 			varName = n.getTagData().getAttributeString(
 		                        tagVarInfos[i].getNameFromAttribute());
+			if (varName == null) {
+			    err.jspError(n, "jsp.error.scripting.variable.missing_name",
+					 tagVarInfos[i].getNameFromAttribute());
+			}
 		    }
 
 		    Integer currentRange = (Integer) scriptVars.get(varName);
@@ -177,8 +184,9 @@ public class ScriptingVariabler {
 	}
     }
 
-    public static void set(Node.Nodes page) throws JasperException {
+    public static void set(Node.Nodes page, ErrorDispatcher err)
+	    throws JasperException {
 	page.visit(new CustomTagCounter());
-	page.visit(new ScriptingVariableVisitor());
+	page.visit(new ScriptingVariableVisitor(err));
     }
 }

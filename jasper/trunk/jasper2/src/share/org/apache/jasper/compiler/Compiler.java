@@ -283,7 +283,7 @@ public class Compiler {
         long t3=System.currentTimeMillis();
         
 	// Determine which custom tag needs to declare which scripting vars
-	ScriptingVariabler.set(pageNodes);
+	ScriptingVariabler.set(pageNodes, errDispatcher);
 
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);
