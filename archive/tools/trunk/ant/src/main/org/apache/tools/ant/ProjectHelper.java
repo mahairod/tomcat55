@@ -189,13 +189,13 @@ class ProjectHelper {
 		// into the task
 
 		NamedNodeMap nodeMap = element.getAttributes();
-		configureTask(task, nodeMap);
+		configureTask(project, task, nodeMap);
 		target.addTask(task);
 	    }
 	}
     }
 
-    private static void configureTask(Task task, NamedNodeMap nodeMap)
+    private static void configureTask(Project project, Task task, NamedNodeMap nodeMap)
 	throws BuildException
     {
 	// XXX
@@ -250,9 +250,10 @@ class ProjectHelper {
 			"\" does not have a setMethod in " + task.getClass();
 		    throw new BuildException(msg);
 		}
-		
+
+		String value=replaceProperties( project, attr.getValue() );
 		try {
-		    setMethod.invoke(task, new String[] {attr.getValue()});
+		    setMethod.invoke(task, new String[] {value});
 		} catch (IllegalAccessException iae) {
 		    String msg = "Error setting value for attrib: " +
 			attr.getName();
@@ -267,6 +268,43 @@ class ProjectHelper {
 		}
 	    }
 	}
+    }
+
+    /** Replace ${NAME} with the property value
+     */
+    public static String replaceProperties( Project proj, String value )
+	throws BuildException
+    {
+	// XXX use Map instead of proj, it's too heavy
+
+	// XXX need to replace this code with something better.
+	StringBuffer sb=new StringBuffer();
+	int i=0;
+	int prev=0;
+	// assert value!=nil
+	int pos;
+	while( (pos=value.indexOf( "$", prev )) >= 0 ) {
+	    if(pos>0)
+		sb.append( value.substring( prev, pos ) );
+	    if( value.charAt( pos + 1 ) != '{' ) {
+		sb.append( value.charAt( pos + 1 ) );
+		prev=pos+2; // XXX 
+	    } else {
+		int endName=value.indexOf( '}', pos );
+		if( endName < 0 ) {
+		    throw new BuildException("Syntax error in prop: " + value );
+		}
+		String n=value.substring( pos+2, endName );
+		String v=proj.getProperty( n );
+		//System.out.println("N: " + n + " " + " V:" + v); 
+		sb.append( v );
+		prev=endName+1;
+	    }
+	}
+	if( prev < value.length() ) sb.append( value.substring( prev ) );
+	//	System.out.println("After replace: " + sb.toString());
+	//	System.out.println("Before replace: " + value);
+	return sb.toString();
     }
 }
 
