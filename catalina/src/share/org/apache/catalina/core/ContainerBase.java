@@ -1213,18 +1213,6 @@ public abstract class ContainerBase
             }
         }
 
-        // unregister this component
-        if( oname != null ) {
-            try {
-                if( controller == oname ) {
-                    Registry.getRegistry().unregisterComponent(oname);
-                    log.debug("unregistering " + oname);
-                }
-            } catch( Throwable t ) {
-                log.error("Error unregistering ", t );
-            }
-        }
-        
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
@@ -1253,7 +1241,7 @@ public abstract class ContainerBase
                 mserver.invoke(parentName, "addChild", new Object[] { this },
                         new String[] {"org.apache.catalina.Container"});
             }
-        }      
+        }
         initialized=true;
     }
     
@@ -1266,6 +1254,19 @@ public abstract class ContainerBase
             stop();
         }
         initialized=false;
+
+        // unregister this component
+        if ( oname != null ) {
+            try {
+                if( controller == oname ) {
+                    Registry.getRegistry().unregisterComponent(oname);
+                    log.debug("unregistering " + oname);
+                }
+            } catch( Throwable t ) {
+                log.error("Error unregistering ", t );
+            }
+        }
+
         if (parent != null) {
             parent.removeChild(this);
         }
