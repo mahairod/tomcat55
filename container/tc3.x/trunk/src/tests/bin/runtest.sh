@@ -51,7 +51,7 @@ echo
 
 #$JAVACMD org.apache.tomcat.shell.Startup "$@" &
 $TOMCAT_HOME/tomcat.sh start &
-sleep 15
+sleep 25
 $JAVACMD -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main -testfile $test -debug
 $TOMCAT_HOME/tomcat.sh stop
 #$JAVACMD org.apache.tomcat.shell.Shutdown "$@"
