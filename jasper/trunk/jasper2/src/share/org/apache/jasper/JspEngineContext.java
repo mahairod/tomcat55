@@ -101,7 +101,13 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @author Glenn Nielsen
  * @author Remy Maucherat
  */
-public class JspEngineContext implements JspCompilationContext {
+public class JspEngineContext 
+    implements JspCompilationContext {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
     private JspReader reader;
     private ServletWriter writer;
     private ServletContext context;
@@ -125,10 +131,15 @@ public class JspEngineContext implements JspCompilationContext {
     private int removed = 0;
     private JspServletWrapper jsw;
 
+
+    // ------------------------------------------------------------ Constructor
+
+
     public JspEngineContext(JspRuntimeContext rctxt, ServletContext context,
                             String jspUri, JspServletWrapper jsw,
                             boolean isErrPage, Options options)
-            throws JasperException {
+        throws JasperException {
+
         this.rctxt = rctxt;
         this.context = context;
         this.jspUri = jspUri;
@@ -139,32 +150,12 @@ public class JspEngineContext implements JspCompilationContext {
 
         createOutdir();
         createCompiler();
+
     }
 
-    private void createOutdir() {
-        File outDir = null;
-        try {
-            URL outURL = options.getScratchDir().toURL();
-            String outURI = outURL.toString();
-            if( outURI.endsWith("/") ) {
-                outURI = outURI +
-                         jspUri.substring(1,jspUri.lastIndexOf("/")+1);
-            } else {
-                outURI = outURI +
-                         jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
-            }
-            outURL = new URL(outURI);
-            outDir = new File(normalize(outURL.getFile()));
-            if( !outDir.exists() ) {
-                outDir.mkdirs();
-            }
-            this.outDir = outDir.toString() + File.separator;
-            outUrls[0] = new URL(outDir.toURL().toString() + File.separator);
-        } catch(Exception e) {
-            throw new IllegalStateException("No output directory: " +
-                                            e.getMessage());
-        }
-    }
+
+    // ------------------------------------------ JspCompilationContext Methods
+
 
     /**
      * The classpath that is passed off to the Java compiler. 
@@ -172,28 +163,32 @@ public class JspEngineContext implements JspCompilationContext {
     public String getClassPath() {
         return rctxt.getClassPath();
     }
-    
+
+
     /**
      * Get the input reader for the JSP text. 
      */
     public JspReader getReader() { 
         return reader;
     }
-    
+
+
     /**
      * Where is the servlet being generated?
      */
     public ServletWriter getWriter() {
         return writer;
     }
-    
+
+
     /**
      * Get the ServletContext for the JSP we're processing now. 
      */
     public ServletContext getServletContext() {
         return context;
     }
-    
+
+
     /**
      * The class loader to use for loading classes while compiling
      * this JSP.
@@ -201,6 +196,7 @@ public class JspEngineContext implements JspCompilationContext {
     public ClassLoader getClassLoader() {
         return rctxt.getParentClassLoader();
     }
+
 
     /**
      * Return true if the current page is an errorpage.
@@ -212,22 +208,9 @@ public class JspEngineContext implements JspCompilationContext {
 
     /**
      * What is the scratch directory we are generating code into?
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
      */
     public String getOutputDir() {
         return outDir;
-    }
-
-
-    /**
-     * Get the scratch directory to place generated code for javac.
-     *
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
-     */
-    public String getJavacOutputDir() {
-        return null;
     }
 
 
@@ -338,6 +321,7 @@ public class JspEngineContext implements JspCompilationContext {
         return contentType;
     }
 
+
     /**
      * Get hold of the Options object for this context. 
      */
@@ -350,29 +334,36 @@ public class JspEngineContext implements JspCompilationContext {
         this.contentType = contentType;
     }
 
+
     public void setReader(JspReader reader) {
         this.reader = reader;
     }
-    
+
+
     public void setWriter(ServletWriter writer) {
         this.writer = writer;
     }
-    
+
+
     public void setServletClassName(String servletClassName) {
         this.servletClassName = servletClassName;
     }
-    
+
+
     public void setServletPackageName(String servletPackageName) {
         this.servletPackageName = servletPackageName;
     }
 
+
     public void setServletJavaFileName(String servletJavaFileName) {
         this.servletJavaFileName = servletJavaFileName;
     }
-    
+
+
     public void setErrorPage(boolean isErrPage) {
         this.isErrPage = isErrPage;
     }
+
 
     public Compiler createCompiler() throws JasperException {
 
@@ -384,6 +375,7 @@ public class JspEngineContext implements JspCompilationContext {
         return jspCompiler;
 
     }
+
 
     public void compile() throws JasperException, FileNotFoundException {
 
@@ -398,7 +390,9 @@ public class JspEngineContext implements JspCompilationContext {
         }
     }
 
-    public Class load() throws JasperException, FileNotFoundException {
+
+    public Class load() 
+        throws JasperException, FileNotFoundException {
 
         try {
             if (servletClass == null && !options.getDevelopment()) {
@@ -429,9 +423,11 @@ public class JspEngineContext implements JspCompilationContext {
         return servletClass;
     }
 
+
     public boolean isReload() {
         return reload;
     }
+
 
     public void incrementRemoved() {
         if (removed > 1) {
@@ -441,12 +437,14 @@ public class JspEngineContext implements JspCompilationContext {
         removed++;
     }
 
+
     public boolean isRemoved() {
         if (removed > 1 ) {
             return true;
         }
         return false;
     }
+
 
     /** 
      * Get the full value of a URI relative to this compilations context
@@ -458,6 +456,7 @@ public class JspEngineContext implements JspCompilationContext {
         return baseURI + uri;
     }
 
+
     /**
      * Gets a resource as a stream, relative to the meanings of this
      * context's implementation.
@@ -468,9 +467,11 @@ public class JspEngineContext implements JspCompilationContext {
         return context.getResourceAsStream(res);
     }
 
+
     public URL getResource(String res) throws MalformedURLException {
         return context.getResource(res);
     }
+
 
     /** 
      * Gets the actual path of a URI relative to the context of
@@ -483,74 +484,11 @@ public class JspEngineContext implements JspCompilationContext {
         return path;
     }
 
+
     public String[] getTldLocation(String uri) throws JasperException {
 	String[] location = 
 	    options.getTldLocationsCache().getLocation(uri);
 	return location;
-    }
-
-    /**
-     * Return a context-relative path, beginning with a "/", that represents
-     * the canonical version of the specified path after ".." and "." elements
-     * are resolved out.  If the specified path attempts to go outside the
-     * boundaries of the current context (i.e. too many ".." path elements
-     * are present), return <code>null</code> instead.
-     *
-     * @param path Path to be normalized
-     */
-    protected String normalize(String path) {
-
-        if (path == null) {
-            return null;
-        }
-
-        String normalized = path;
-
-        // Normalize the slashes and add leading slash if necessary
-        if (normalized.indexOf('\\') >= 0) {
-            normalized = normalized.replace('\\', '/');
-        }
-        if (!normalized.startsWith("/")) {
-            normalized = "/" + normalized;
-        }
-
-        // Resolve occurrences of "//" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("//");
-            if (index < 0) {
-                break;
-            }
-            normalized = normalized.substring(0, index) +
-                normalized.substring(index + 1);
-        }
-
-        // Resolve occurrences of "/./" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("/./");
-            if (index < 0) {
-                break;
-            }
-            normalized = normalized.substring(0, index) +
-                normalized.substring(index + 2);
-        }
-
-        // Resolve occurrences of "/../" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("/../");
-            if (index < 0) {
-                break;
-            }
-            if (index == 0) {
-                return (null);  // Trying to go outside our context
-            }
-            int index2 = normalized.lastIndexOf('/', index - 1);
-            normalized = normalized.substring(0, index2) +
-                normalized.substring(index + 3);
-        }
-
-        // Return the normalized path that we have completed
-        return (normalized);
-
     }
 
 
@@ -569,6 +507,34 @@ public class JspEngineContext implements JspCompilationContext {
 
     }
 
+
+    // -------------------------------------------------------- Private Methods
+
+
+    private void createOutdir() {
+        File outDir = null;
+        try {
+            URL outURL = options.getScratchDir().toURL();
+            String outURI = outURL.toString();
+            if( outURI.endsWith("/") ) {
+                outURI = outURI +
+                         jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+            } else {
+                outURI = outURI +
+                         jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
+            }
+            outURL = new URL(outURI);
+            outDir = new File(outURL.getFile());
+            if (!outDir.exists()) {
+                outDir.mkdirs();
+            }
+            this.outDir = outDir.toString() + File.separator;
+            outUrls[0] = new URL(outDir.toURL().toString() + File.separator);
+        } catch (Exception e) {
+            throw new IllegalStateException("No output directory: " +
+                                            e.getMessage());
+        }
+    }
 
     /**
      * Mangle the specified character to create a legal Java class name.
