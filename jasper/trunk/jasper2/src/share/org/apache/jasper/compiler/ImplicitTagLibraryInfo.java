@@ -82,6 +82,12 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
     private static final String TLIB_VERSION = "1.0";
     private static final String JSP_VERSION = "2.0";
 
+    // Maps tag names to tag file paths
+    private Hashtable tagFileMap;
+
+    private ParserController pc;
+    private Vector vec;
+
     /**
      * Constructor.
      */
@@ -91,7 +97,10 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 				  String tagdir,
 				  ErrorDispatcher err) throws JasperException {
         super(prefix, tagdir);
-	
+	this.pc = pc;
+	this.tagFileMap = new Hashtable();
+	this.vec = new Vector();
+
 	tlibversion = TLIB_VERSION;
 	jspversion = JSP_VERSION;
 
@@ -110,9 +119,9 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	    shortname = shortname.replace('/', '-');
 	}
 
+	// Populate mapping of tag names to tag file paths
 	Set dirList = ctxt.getResourcePaths(tagdir);
 	if (dirList != null) {
-	    Vector vec = new Vector();
 	    Iterator it = dirList.iterator();
 	    while (it.hasNext()) {
 		String path = (String) it.next();
@@ -123,16 +132,43 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 		    String tagName = path.substring(path.lastIndexOf("/") + 1);
 		    tagName = tagName.substring(0,
 						tagName.lastIndexOf(TAG_FILE_SUFFIX));
-		    TagInfo tagInfo = TagFileProcessor.parseTagFile(pc,
-								    tagName,
-								    path,
-								    this); 
-		    vec.addElement(new TagFileInfo(tagName, path, tagInfo));
+		    tagFileMap.put(tagName, path);
 		}
 	    }
+	}
+    }
+
+    /**
+     * Checks to see if the given tag name maps to a tag file path,
+     * and if so, parses the corresponding tag file.
+     *
+     * @return The TagFileInfo corresponding to the given tag name, or null if
+     * the given tag name is not implemented as a tag file
+     */
+    public TagFileInfo getTagFile(String shortName) {
+
+	TagFileInfo tagFile = super.getTagFile(shortName);
+	if (tagFile == null) {
+	    String path = (String) tagFileMap.get(shortName);
+	    if (path == null) {
+		return null;
+	    }
+
+	    TagInfo tagInfo = null;
+	    try {
+		tagInfo = TagFileProcessor.parseTagFile(pc, shortName, path,
+							this);
+	    } catch (JasperException je) {
+		// XXX
+	    }
+
+	    tagFile = new TagFileInfo(shortName, path, tagInfo);
+	    vec.addElement(tagFile);
 
 	    this.tagFiles = new TagFileInfo[vec.size()];
 	    vec.copyInto(this.tagFiles);
 	}
+
+	return tagFile;
     }
 }
