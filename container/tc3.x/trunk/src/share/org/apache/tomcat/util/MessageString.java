@@ -67,8 +67,6 @@ package org.apache.tomcat.util;
 import java.io.OutputStream;
 import java.io.IOException;
 
-import javax.servlet.ServletOutputStream;
-
 /**
  * This class is used to represent a string in an HTTP message.
  *

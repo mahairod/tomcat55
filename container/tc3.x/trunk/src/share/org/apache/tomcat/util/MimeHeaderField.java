@@ -64,7 +64,6 @@
 
 package org.apache.tomcat.util;
 
-import javax.servlet.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;

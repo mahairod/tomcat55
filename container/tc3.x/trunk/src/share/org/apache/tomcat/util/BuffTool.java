@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -67,7 +63,6 @@ package org.apache.tomcat.util;
 import org.apache.tomcat.util.StringManager;
 import org.apache.tomcat.core.Constants;
 import java.io.*;
-import javax.servlet.ServletOutputStream;
 
 /**
  *
