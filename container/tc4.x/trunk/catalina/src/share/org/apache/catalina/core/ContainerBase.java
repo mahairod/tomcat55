@@ -985,8 +985,8 @@ public abstract class ContainerBase
                     log("ContainerBase.removeChild: stop: ", e);
                 }
             }
-            child.setParent(null);
             fireContainerEvent(REMOVE_CHILD_EVENT, child);
+            child.setParent(null);
         }
 
     }
