@@ -842,3 +842,6 @@ Starting with Tomcat 4.1.12, the invoker servlet is no longer available by
 default in all webapp. Enabling it for all webapps is possible by editing
 $CATALINA_HOME/conf/web.xml to uncomment the "/servlet/*" servlet-mapping
 definition.
+
+Using the invoker servlet in a production environment is not recommended and
+is unsupported.
