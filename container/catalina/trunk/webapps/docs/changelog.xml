@@ -46,6 +46,9 @@
       <fix>
         <bug>30325</bug>: Only set CATALINA_HOME if not already set (in bin/catalina.sh). (yoavs)
       </fix>
+      <fix>
+        <bug>30144</bug>: Made SSIServlet check resource MimeType before using text/html and UTF-8 default. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
