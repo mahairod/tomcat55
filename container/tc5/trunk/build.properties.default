@@ -217,7 +217,7 @@ mail.jar=${mail.lib}/mail.jar
 
 
 # ----- NSIS, version 2.0a6 or later -----
-nsis.home=${base.path}/nsis
+nsis.home=${base.path}/nsis-2.0
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions=${nsis.home}/Bin/InstallOptions.dll
 nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis2k/nsis20a6.exe
@@ -240,6 +240,6 @@ struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.2/jakart
 tyrex.home=${base.path}/tyrex-1.0
 tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-1.0.jar
-tyrex.loc=ftp://ftp.exolab.org/pub/tyrex/tyrex-1.0/tyrex-1.0.jar
+tyrex.loc=http://telia.dl.sourceforge.net/sourceforge/tyrex/tyrex-1.0.jar
 
 
