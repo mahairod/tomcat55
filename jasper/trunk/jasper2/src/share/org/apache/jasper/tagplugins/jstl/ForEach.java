@@ -135,10 +135,17 @@ public final class ForEach implements TagPlugin {
 	ctxt.generateJavaSource("else if (" + itemsV + " instanceof double[])");
 	ctxt.generateJavaSource(iterV + "=toIterator((double[])" + itemsV + ");");
 
+        // Collection
         ctxt.generateJavaSource("else if (" + itemsV + " instanceof Collection)");
         ctxt.generateJavaSource(iterV + "=((Collection)" + itemsV + ").iterator();");
+
+        // Iterator
         ctxt.generateJavaSource("else if (" + itemsV + " instanceof Iterator)");
         ctxt.generateJavaSource(iterV + "=(Iterator)" + itemsV + ";");
+
+        // Map
+        ctxt.generateJavaSource("else if (" + itemsV + " instanceof Map)");
+        ctxt.generateJavaSource(iterV + "=((Map)" + itemsV + ").entrySet().iterator();");
 
 	if (hasBegin) {
             String tV = ctxt.getTemporaryVariableName();
