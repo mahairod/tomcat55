@@ -2392,6 +2392,9 @@ public class StandardContext
 	    }
 	}
 
+        // Reinitialize all load on startup servlets
+        loadOnStartup(children);
+
         // Unbinding thread
         unbindThread();
 
@@ -3133,6 +3136,56 @@ public class StandardContext
 
 
     /**
+     * Load and initialize all servlets marked "load on startup" in the
+     * web application deployment descriptor.
+     *
+     * @param children Array of wrappers for all currently defined
+     *  servlets (including those not declared load on startup)
+     */
+    public void loadOnStartup(Container children[]) {
+
+        // Collect "load on startup" servlets that need to be initialized
+        TreeMap map = new TreeMap();
+        for (int i = 0; i < children.length; i++) {
+            Wrapper wrapper = (Wrapper) children[i];
+            int loadOnStartup = wrapper.getLoadOnStartup();
+            if (loadOnStartup < 0)
+                continue;
+            if (loadOnStartup == 0)	// Arbitrarily put them last
+                loadOnStartup = Integer.MAX_VALUE;
+            Integer key = new Integer(loadOnStartup);
+            ArrayList list = (ArrayList) map.get(key);
+            if (list == null) {
+                list = new ArrayList();
+                map.put(key, list);
+            }
+            list.add(wrapper);
+        }
+
+        // Load the collected "load on startup" servlets
+        Iterator keys = map.keySet().iterator();
+        while (keys.hasNext()) {
+            Integer key = (Integer) keys.next();
+            ArrayList list = (ArrayList) map.get(key);
+            Iterator wrappers = list.iterator();
+            while (wrappers.hasNext()) {
+                Wrapper wrapper = (Wrapper) wrappers.next();
+                try {
+                    wrapper.load();
+                } catch (ServletException e) {
+                    log(sm.getString("standardWrapper.loadException",
+                                     getName()), e);
+                    // NOTE: load errors (including a servlet that throws
+                    // UnavailableException from tht init() method) are NOT
+                    // fatal to application startup
+                }
+            }
+        }
+
+    }
+
+
+    /**
      * Start this Context component.
      *
      * @exception LifecycleException if a startup error occurs
@@ -3220,50 +3273,8 @@ public class StandardContext
             postWelcomeFiles();
         }
 
-        // Collect "load on startup" servlets that need to be initialized
-        if (debug >= 1)
-            log("Identifying load-on-startup servlets");
-        TreeMap map = new TreeMap();
-        Container children[] = findChildren();
-        for (int i = 0; i < children.length; i++) {
-            Wrapper wrapper = (Wrapper) children[i];
-            int loadOnStartup = wrapper.getLoadOnStartup();
-            if (loadOnStartup < 0)
-                continue;
-            if (loadOnStartup == 0)	// Arbitrarily put them last
-                loadOnStartup = Integer.MAX_VALUE;
-            Integer key = new Integer(loadOnStartup);
-            ArrayList list = (ArrayList) map.get(key);
-            if (list == null) {
-                list = new ArrayList();
-                map.put(key, list);
-            }
-            list.add(wrapper);
-        }
-
-        // Load the collected "load on startup" servlets
-        if (debug >= 1)
-            log("Loading " + map.size() + " load-on-startup servlets");
-        Iterator keys = map.keySet().iterator();
-        while (keys.hasNext()) {
-            Integer key = (Integer) keys.next();
-            ArrayList list = (ArrayList) map.get(key);
-            Iterator wrappers = list.iterator();
-            while (wrappers.hasNext()) {
-                if (!ok)
-                    break;
-                Wrapper wrapper = (Wrapper) wrappers.next();
-                try {
-                    wrapper.load();
-                } catch (ServletException e) {
-                    log(sm.getString("standardWrapper.loadException",
-                                     getName()), e);
-                    // NOTE: load errors (including a servlet that throws
-                    // UnavailableException from tht init() method) are NOT
-                    // fatal to application startup
-                }
-            }
-        }
+        // Load and initialize all "load on startup" servlets
+        loadOnStartup(findChildren());
 
         // Unbinding thread
         unbindThread();
