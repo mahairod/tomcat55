@@ -1623,7 +1623,7 @@ public class DefaultServlet
                 }
             }
         } catch(IllegalArgumentException illegalArgument) {
-            return false;
+            return true;
         }
         return true;
 
@@ -1714,7 +1714,7 @@ public class DefaultServlet
                 }
             }
         } catch(IllegalArgumentException illegalArgument) {
-            return false;
+            return true;
         }
         return true;
 
