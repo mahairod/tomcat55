@@ -307,6 +307,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         }
         try {
             MBeanUtils.destroyMBean(group);
+            database.removeGroup(group);
         } catch (Exception e) {
             throw new IllegalArgumentException("Exception destroying group " +
                                                group + " MBean: " + e);
@@ -329,6 +330,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         }
         try {
             MBeanUtils.destroyMBean(user);
+            database.removeUser(user);
         } catch (Exception e) {
             throw new IllegalArgumentException("Exception destroying user " +
                                                user + " MBean: " + e);

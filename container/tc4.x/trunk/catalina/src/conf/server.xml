@@ -13,9 +13,11 @@
 <Server port="8005" shutdown="SHUTDOWN" debug="0">
 
 
-  <!-- Uncomment this entry to enable JMX MBeans support -->
+  <!-- Uncomment these entries to enable JMX MBeans support -->
 <!--
   <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener"
+                debug="0"/>
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"
                 debug="0"/>
 -->
 
@@ -27,11 +29,11 @@
 
     <!-- Editable user database that can also be used by
          UserDatabaseRealm to authenticate users -->
-    <Resource name="catalina/UserDatabase" auth="Container"
+    <Resource name="UserDatabase" auth="Container"
               type="org.apache.catalina.UserDatabase"
        description="User database that can be updated and saved">
     </Resource>
-    <ResourceParams name="catalina/UserDatabase">
+    <ResourceParams name="UserDatabase">
       <parameter>
         <name>factory</name>
         <value>org.apache.catalina.users.MemoryUserDatabaseFactory</value>
@@ -160,11 +162,11 @@
       <!-- Because this Realm is here, an instance will be shared globally -->
 
       <!-- This Realm uses the UserDatabase configured in the global JNDI
-           resources under the key "catalina/UserDatabase".  Any edits
+           resources under the key "UserDatabase".  Any edits
            that are performed against this UserDatabase are immediately
            available for use by the Realm.  -->
       <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
-                 debug="0" resourceName="catalina/UserDatabase"/>
+                 debug="0" resourceName="UserDatabase"/>
 
       <!-- Comment out the old realm but leave here for now in case we
            need to go back quickly -->
@@ -268,7 +270,7 @@
                     (UserDatabase) envCtx.lookup("userDatabase");
           -->
 <!--
-          <ResourceLink name="userDatabase" global="catalina/UserDatabase"
+          <ResourceLink name="userDatabase" global="UserDatabase"
                         type="org.apache.catalina.UserDatabase"/>
 -->
 

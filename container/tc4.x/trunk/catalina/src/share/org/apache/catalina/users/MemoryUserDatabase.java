@@ -498,6 +498,25 @@ public class MemoryUserDatabase implements UserDatabase {
     }
 
 
+    /**
+     * Return a String representation of this UserDatabase.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("MemoryUserDatabase[id=");
+        sb.append(this.id);
+        sb.append(",pathname=");
+        sb.append(pathname);
+        sb.append(",groupCount=");
+        sb.append(this.groups.size());
+        sb.append(",userCount=");
+        sb.append(this.users.size());
+        sb.append("]");
+        return (sb.toString());
+
+    }
+
+
     // -------------------------------------------------------- Package Methods
 
 
