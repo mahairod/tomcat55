@@ -127,7 +127,7 @@ xerces.home=${base.path}/xerces-2_5_0
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.5.0.tar.gz
+xerces.loc=http://archive.apache.org/dist/xml/xerces-j/binaries/Xerces-J-bin.2.5.0.tar.gz
 
 
 # --------------------------------------------------
