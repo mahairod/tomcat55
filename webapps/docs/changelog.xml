@@ -99,6 +99,9 @@
       <fix>
         <bug>31592</bug>: Support other encodings for digests. (yoavs)
       </fix>
+      <update>
+        <bug>31739</bug>: Minor realm-howto and AJP connector doc updates. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
