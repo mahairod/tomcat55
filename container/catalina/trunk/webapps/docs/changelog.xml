@@ -105,6 +105,9 @@
       <fix>
         <bug>31753</bug>: Minor inconsistency between JDBC and DataSourceRealm#authenticate. (yoavs)
       </fix>
+      <update> 
+        <bug>31683</bug>: Minor clarifications to realm documentation. (yoavs) 
+      </update> 
     </changelog>
   </subsection>
 
