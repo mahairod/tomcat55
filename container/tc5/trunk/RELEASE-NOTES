@@ -21,7 +21,6 @@ KNOWN ISSUES IN THIS RELEASE:
 * Security manager URLs
 * Symlinking static resources
 * Enabling invoker servlet
-* Privileged web applications and log4j
 * When all else fails
 
 
@@ -201,17 +200,6 @@ definition.
 
 Using the invoker servlet in a production environment is not recommended and
 is unsupported.
-
-
--------------------------------------
-Privileged web applications and log4j:
--------------------------------------
-
-Apache log4j, or other logging systems, cannot be used inside privileged web
-applications, due to classloading problems caused by commons-logging.
-
-Note that privileged contexts are only useful to write web application which
-extend the container functionality.
 
 
 -------------------
