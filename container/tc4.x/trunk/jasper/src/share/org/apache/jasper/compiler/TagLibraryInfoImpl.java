@@ -186,7 +186,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    int uriType = TagLibrariesGlobal.uriType(uri);
 	    if (uriType == TagLibrariesGlobal.ABS_URI) {
 		throw new JasperException(
-                    Constants.getString("jsp.error.absUriCannotBeResolved",
+                    Constants.getString("jsp.error.taglibDirective.absUriCannotBeResolved",
 					new Object[] {uri}));
 	    } else if (uriType == 
 		       TagLibrariesGlobal.NOROOT_REL_URI) {
