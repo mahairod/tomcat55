@@ -60,24 +60,24 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.io.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.apache.jasper.Constants;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.JasperException;
-
-import org.xml.sax.Attributes;
-
-// EL interpreter (subject to change)
-import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ELParseException;
+import javax.servlet.jsp.el.FunctionMapper;
+
 import org.apache.commons.el.ExpressionEvaluatorImpl;
+import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.xml.sax.Attributes;
 
 /** 
  * This class has all the utility method(s).
@@ -104,6 +104,18 @@ public class JspUtil {
     private static int tempSequenceNumber = 0;
     private static ExpressionEvaluatorImpl expressionEvaluator
 	= new ExpressionEvaluatorImpl();
+
+    private static final String javaKeywords[] = {
+        "abstract", "boolean", "break", "byte", "case",
+        "catch", "char", "class", "const", "continue",
+        "default", "do", "double", "else", "extends",
+        "final", "finally", "float", "for", "goto",
+        "if", "implements", "import", "instanceof", "int",
+        "interface", "long", "native", "new", "package",
+        "private", "protected", "public", "return", "short",
+        "static", "strictfp", "super", "switch", "synchronized",
+        "this", "throws", "transient", "try", "void",
+        "volatile", "while" };
 
     public static char[] removeQuotes(char []chars) {
         CharArrayWriter caw = new CharArrayWriter();
@@ -885,23 +897,30 @@ public class JspUtil {
 						ErrorDispatcher err)
                 throws JasperException {
 
-	String className = null;
-	int begin = 0;
-	int index;
-	
-	// Remove ".tag" suffix
-	index = path.lastIndexOf(".tag");
-	if (index != -1) {
-	    path = path.substring(0, index);
-	} else {
-	    err.jspError("jsp.error.tagfile.badSuffix", path);
-	}
+        String className = null;
+        int begin = 0;
+        int index;
+        
+        index = path.lastIndexOf(".tag");
+        if (index == -1) {
+            err.jspError("jsp.error.tagfile.badSuffix", path);
+        }
 
-	index = path.indexOf(WEB_INF_TAGS);
-	if (index != -1) {
-	    className = "org.apache.jsp.tag.web.";
-	    begin = index + WEB_INF_TAGS.length();
-	} else {
+        //It's tempting to remove the ".tag" suffix here, but we can't.
+        //If we remove it, the fully-qualified class name of this tag
+        //could conflict with the package name of other tags.
+        //For instance, the tag file
+        //    /WEB-INF/tags/foo.tag
+        //would have fully-qualified class name
+        //    org.apache.jsp.tag.web.foo
+        //which would conflict with the package name of the tag file
+        //    /WEB-INF/tags/foo/bar.tag
+
+        index = path.indexOf(WEB_INF_TAGS);
+        if (index != -1) {
+            className = "org.apache.jsp.tag.web.";
+            begin = index + WEB_INF_TAGS.length();
+        } else {
 	    index = path.indexOf(META_INF_TAGS);
 	    if (index != -1) {
 		className = "org.apache.jsp.tag.meta.";
@@ -911,9 +930,81 @@ public class JspUtil {
 	    }
 	}
 
-	className += path.substring(begin).replace('/', '.');
-
+        //Make sure the class name consists of legal Java identifiers
+        String classNameComponents[] = path.substring(begin).split("/");
+        StringBuffer legalClassNames = new StringBuffer();
+        for (int i = 0; i < classNameComponents.length; i++) {
+            legalClassNames.append(makeJavaIdentifier(classNameComponents[i]));
+            if (isJavaKeyword(classNameComponents[i])) {
+                legalClassNames.append('_');
+            }
+            if (i < classNameComponents.length - 1) {
+                legalClassNames.append('.');
+            }
+        }
+        className += legalClassNames.toString();
+  
 	return className;
+    }
+
+    /**
+     * Converts the given identifier to a legal Java identifier
+     *
+     * @param identifier Identifier to convert
+     *
+     * @return Legal Java identifier corresponding to the given identifier
+     */
+    public static final String makeJavaIdentifier(String identifier) {
+        StringBuffer modifiedIdentifier = 
+            new StringBuffer(identifier.length());
+        if (!Character.isJavaIdentifierStart(identifier.charAt(0))) {
+            modifiedIdentifier.append('_');
+        }
+        for (int i = 0; i < identifier.length(); i++) {
+            char ch = identifier.charAt(i);
+            if (Character.isJavaIdentifierPart(ch) && ch != '_') {
+                modifiedIdentifier.append(ch);
+            } else if (ch == '.') {
+                modifiedIdentifier.append('_');
+            } else {
+                modifiedIdentifier.append(mangleChar(ch));
+            }
+        }
+        return modifiedIdentifier.toString();
+    }
+    
+    /**
+     * Mangle the specified character to create a legal Java class name.
+     */
+    public static final String mangleChar(char ch) {
+        char[] result = new char[5];
+        result[0] = '_';
+        result[1] = Character.forDigit((ch >> 12) & 0xf, 16);
+        result[2] = Character.forDigit((ch >> 8) & 0xf, 16);
+        result[3] = Character.forDigit((ch >> 4) & 0xf, 16);
+        result[4] = Character.forDigit(ch & 0xf, 16);
+        return new String(result);
+    }
+
+    /**
+     * Test whether the argument is a Java keyword
+     */
+    public static boolean isJavaKeyword(String key) {
+        int i = 0;
+        int j = javaKeywords.length;
+        while (i < j) {
+            int k = (i+j)/2;
+            int result = javaKeywords[k].compareTo(key);
+            if (result == 0) {
+                return true;
+            }
+            if (result < 0) {
+                i = k+1;
+            } else {
+                j = k;
+            }
+        }
+        return false;
     }
 
     static InputStreamReader getReader(String fname, String encoding,

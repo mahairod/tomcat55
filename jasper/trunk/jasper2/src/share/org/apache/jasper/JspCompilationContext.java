@@ -61,19 +61,24 @@
 
 package org.apache.jasper;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.jar.JarFile;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Hashtable;
+import java.util.Set;
+
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagData;
-import org.apache.jasper.compiler.JspRuntimeContext;
-import org.apache.jasper.compiler.ServletWriter;
+
 import org.apache.jasper.compiler.Compiler;
+import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.compiler.JspUtil;
 import org.apache.jasper.compiler.Localizer;
-import org.apache.jasper.servlet.JspServletWrapper;
+import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.servlet.JasperLoader;
+import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
  * A place holder for various things that are used through out the JSP
@@ -127,19 +132,6 @@ public class JspCompilationContext {
     private boolean protoTypeMode;
     private TagInfo tagInfo;
     private URL tagFileJarUrl;
-
-    private static final String javaKeywords[] = {
-        "abstract", "boolean", "break", "byte", "case",
-        "catch", "char", "class", "const", "continue",
-        "default", "do", "double", "else", "extends",
-        "final", "finally", "float", "for", "goto",
-        "if", "implements", "import", "instanceof", "int",
-        "interface", "long", "native", "new", "package",
-        "private", "protected", "public", "return", "short",
-        "static", "strictfp", "super", "switch", "synchronized",
-        "this", "throws", "transient", "try", "void",
-        "volatile", "while" };
-
 
     // jspURI _must_ be relative to the context
     public JspCompilationContext(String jspUri,
@@ -343,25 +335,8 @@ public class JspCompilationContext {
             }
         } else {
             int iSep = jspUri.lastIndexOf('/') + 1;
-            int iEnd = jspUri.length();
-            StringBuffer modifiedClassName = 
-                new StringBuffer(jspUri.length() - iSep);
-            if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
-                modifiedClassName.append('_');
-            }
-            for (int i = iSep; i < iEnd; i++) {
-                char ch = jspUri.charAt(i);
-                if (Character.isJavaIdentifierPart(ch) && ch != '_') {
-                    modifiedClassName.append(ch);
-                } else if (ch == '.') {
-                    modifiedClassName.append('_');
-                } else {
-                    modifiedClassName.append(mangleChar(ch));
-                }
-            }
-            className = modifiedClassName.toString();
+            className = JspUtil.makeJavaIdentifier(jspUri.substring(iSep));
         }
-
         return className;
     }
 
@@ -436,17 +411,17 @@ public class JspCompilationContext {
                 if (Character.isJavaIdentifierPart(ch) && ch != '_') {
                     modifiedPackageName.append(ch);
                 } else if (ch == '/') {
-                    if (isJavaKeyword(jspUri.substring(nameStart, i))) {
+                    if (JspUtil.isJavaKeyword(jspUri.substring(nameStart, i))) {
                         modifiedPackageName.append('_');
                     }
                     nameStart = i+1;
                     modifiedPackageName.append('.');
                 } else {
-                    modifiedPackageName.append(mangleChar(ch));
+                    modifiedPackageName.append(JspUtil.mangleChar(ch));
                 }
             }
             if (nameStart < iSep
-                    && isJavaKeyword(jspUri.substring(nameStart, iSep))) {
+                    && JspUtil.isJavaKeyword(jspUri.substring(nameStart, iSep))) {
                 modifiedPackageName.append('_');
             }
             derivedPackageName = modifiedPackageName.toString();
@@ -670,20 +645,6 @@ public class JspCompilationContext {
     }
     
     // ==================== Private methods ==================== 
-    // Mangling, etc.
-    
-    /**
-     * Mangle the specified character to create a legal Java class name.
-     */
-    private static final String mangleChar(char ch) {
-        char[] result = new char[5];
-        result[0] = '_';
-        result[1] = Character.forDigit((ch >> 12) & 0xf, 16);
-        result[2] = Character.forDigit((ch >> 8) & 0xf, 16);
-        result[3] = Character.forDigit((ch >> 4) & 0xf, 16);
-        result[4] = Character.forDigit(ch & 0xf, 16);
-        return new String(result);
-    }
 
     private static final boolean isPathSeparator(char c) {
        return (c == '/' || c == '\\');
@@ -747,24 +708,5 @@ public class JspCompilationContext {
        }
        return result.toString();
     }
-
-    private static boolean isJavaKeyword(String key) {
-        int i = 0;
-        int j = javaKeywords.length;
-        while (i < j) {
-            int k = (i+j)/2;
-            int result = javaKeywords[k].compareTo(key);
-            if (result == 0) {
-                return true;
-            }
-            if (result < 0) {
-                i = k+1;
-            } else {
-                j = k;
-            }
-        }
-        return false;
-    }
-
 }
 
