@@ -120,7 +120,8 @@ class PageDataImpl extends PageData implements TagConstants {
      *
      * @param page the page nodes from which to generate the XML view
      */
-    public PageDataImpl(Node.Nodes page) throws JasperException {
+    public PageDataImpl(Node.Nodes page, PageInfo pageInfo)
+	        throws JasperException {
 
 	// First pass
 	FirstPassVisitor firstPassVisitor
@@ -130,7 +131,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	// Second pass
 	buf = new StringBuffer();
 	SecondPassVisitor secondPassVisitor
-	    = new SecondPassVisitor(page.getRoot(), buf);
+	    = new SecondPassVisitor(page.getRoot(), buf, pageInfo);
 	page.visit(secondPassVisitor);
     }
 
@@ -236,6 +237,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	private Node.Root root;
 	private StringBuffer buf;
+	private PageInfo pageInfo;
 
 	// current jsp:id attribute value
 	private int jspId;
@@ -243,9 +245,11 @@ class PageDataImpl extends PageData implements TagConstants {
 	/*
 	 * Constructor
 	 */
-	public SecondPassVisitor(Node.Root root, StringBuffer buf) {
+	public SecondPassVisitor(Node.Root root, StringBuffer buf,
+				 PageInfo pageInfo) {
 	    this.root = root;
 	    this.buf = buf;
+	    this.pageInfo = pageInfo;
 	}
 
 	/*
@@ -254,6 +258,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.Root n) throws JasperException {
 	    if (n == this.root) {
 		// top-level page
+		appendXmlProlog();
 		appendTag(JSP_ROOT, n.getAttributes(), n.getBody(), null);
 	    } else {
 		visitBody(n);
@@ -269,6 +274,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.JspRoot n) throws JasperException {
 	    if (n == this.root) {
 		// top-level jsp:root element
+		appendXmlProlog();
 		appendTag(JSP_ROOT, n.getAttributes(), n.getBody(), null);
 	    } else {
 		visitBody(n);
@@ -525,6 +531,13 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append("  ").append(name).append("=\"");
 		buf.append(JspUtil.getExprInXml(value)).append("\"\n");
 	    }
+	}
+
+	/*
+	 * Appends XML prolog with encoding declaration.
+	 */
+	private void appendXmlProlog() {
+	    buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 	}
     }
 }

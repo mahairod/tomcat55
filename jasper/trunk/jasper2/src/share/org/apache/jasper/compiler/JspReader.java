@@ -57,6 +57,7 @@ package org.apache.jasper.compiler;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.JarFile;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
@@ -94,29 +95,44 @@ class JspReader {
     /*
      * Set to true when using the JspReader on a single file where we read up
      * to the end and reset to the beginning many times.
-     * (as in ParserCtl.figureOutJspDocument().
+     * (as in ParserController.figureOutJspDocument()).
      */
     private boolean singleFile;
 
     /*
      * Constructor.
      */
-    public JspReader(JspCompilationContext ctx,
-		     String file,
+    public JspReader(JspCompilationContext ctxt,
+		     String fname,
+		     String encoding,
+		     JarFile jarFile,
+		     ErrorDispatcher err)
+	    throws JasperException, FileNotFoundException, IOException {
+
+	this(ctxt, fname, encoding,
+	     JspUtil.getReader(fname, encoding, jarFile, ctxt, err),
+	     err);
+    }
+
+    /*
+     * Constructor.
+     */
+    public JspReader(JspCompilationContext ctxt,
+		     String fname,
 		     String encoding,
 		     InputStreamReader reader,
 		     ErrorDispatcher err)
 	    throws JasperException, FileNotFoundException {
 
-        this.context = ctx;
+        this.context = ctxt;
 	this.err = err;
 	sourceFiles = new Vector();
 	currFileId = 0;
 	size = 0;
 	singleFile = false;
-	loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
 
-	pushFile2(file, encoding, reader);
+	loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
+	pushFile2(fname, encoding, reader);
     }
     
     String getFile(int fileid) {
@@ -553,7 +569,9 @@ class JspReader {
 	    err.jspError("jsp.error.file.cannot.read", "ze file");
 	} finally {
 	    if (reader != null) {
-		try { reader.close(); } catch (Exception any) {}
+		try {
+		    reader.close();
+		} catch (Exception any) {}
 	    }
 	}
     }

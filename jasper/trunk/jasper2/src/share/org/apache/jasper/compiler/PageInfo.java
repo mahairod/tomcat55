@@ -65,7 +65,7 @@ import java.util.*;
 import org.apache.jasper.Constants;
 
 /**
- * A repository for various info about the page under compilation
+ * A repository for various info about the translation unit under compilation.
  *
  * @author Kin-man Chung
  */
@@ -88,15 +88,30 @@ class PageInfo {
     private boolean isErrorPage = false;
     private String errorPage = null;
     private String pageEncoding = null;
+
+    /*
+     * Auto-detected encoding, or encoding specified in XML prolog
+     * (declaration).
+     * Only meaningful for XML documents.
+     */
+    private String xmlEncoding = null;
+
+    // Indicates whether page has XML declaration with encoding attribute
+    private boolean hasEncodingProlog = false;
+
     private int maxTagNesting = 0;
     private boolean scriptless = false;
     private boolean scriptingInvalid = false;
     private boolean elIgnored = false;
     private boolean elIgnoredSpecified = false;
     private boolean isXml = false;
-    private boolean isXmlSpecified = false;	// true is there is a is-xml
-						// element in jsp-config
-    private boolean hasTagFile = false;		// A custom tag is a tag file
+
+    // true is there is a is-xml element in jsp-config
+    private boolean isXmlSpecified = false;	
+
+    // A custom tag is a tag file
+    private boolean hasTagFile = false;
+
     private boolean hasJspRoot = false;
     private Vector includePrelude;
     private Vector includeCoda;
@@ -218,6 +233,22 @@ class PageInfo {
 
     public String getPageEncoding() {
 	return pageEncoding;
+    }
+
+    public void setXmlEncoding(String xmlEncoding) {
+	this.xmlEncoding = xmlEncoding;
+    }
+
+    public String getXmlEncoding() {
+	return xmlEncoding;
+    }
+    
+    public void setHasEncodingProlog(boolean hasEncodingProlog) {
+	this.hasEncodingProlog = hasEncodingProlog;
+    }
+
+    public boolean hasEncodingProlog() {
+	return hasEncodingProlog;
     }
 
     public int getMaxTagNesting() {

@@ -1020,8 +1020,7 @@ class Validator {
 	 */
 	page.visit(new DirectiveVisitor(compiler));
 
-	// Determine the default output content type, per errata_a
-	// http://jcp.org/aboutJava/communityprocess/maintenance/jsr053/errata_1_2_a_20020321.html
+	// Determine the default output content type
 	PageInfo pageInfo = compiler.getPageInfo();
 	String contentType = pageInfo.getContentType();
 	if (!compiler.getCompilationContext().isTagFile() && 
@@ -1033,10 +1032,20 @@ class Validator {
 	    } else {
 		defaultType = contentType;
 	    }
-	    String charset = pageInfo.getPageEncoding();
-	    if (charset == null)
-		charset = isXml? "UTF-8": "ISO-8859-1";
-	    pageInfo.setContentType(defaultType + ";charset=" + charset);
+
+	    String charset = null;
+	    if (isXml) {
+		charset = "UTF-8";
+	    } else {
+		charset = pageInfo.getPageEncoding();
+		// The resulting charset might be null
+	    }
+
+	    if (charset != null) {
+		pageInfo.setContentType(defaultType + ";charset=" + charset);
+	    } else {
+		pageInfo.setContentType(defaultType);
+	    }
 	}
 
 	/*
@@ -1051,7 +1060,8 @@ class Validator {
 	 * Invoke TagLibraryValidator classes of all imported tags
 	 * (second validation step for custom tags according to JSP.10.5).
 	 */
-	validateXmlView(new PageDataImpl(page), compiler);
+	validateXmlView(new PageDataImpl(page, compiler.getPageInfo()),
+			compiler);
 
 	/*
 	 * Invoke TagExtraInfo method isValid() for all imported tags 

@@ -96,9 +96,6 @@ public class ErrorDispatcher {
 	errHandler = new DefaultErrorHandler(this);
     }
 
-    //*********************************************************************
-    // Package-scoped utility methods
-
     /*
      * Dispatches the given JSP parse error to the configured error handler.
      *
@@ -108,7 +105,7 @@ public class ErrorDispatcher {
      *
      * @param errCode Error code
      */
-    void jspError(String errCode) throws JasperException {
+    public void jspError(String errCode) throws JasperException {
 	dispatch(null, errCode, null, null);
     }
 
@@ -122,7 +119,7 @@ public class ErrorDispatcher {
      * @param where Error location
      * @param errCode Error code
      */
-    void jspError(Mark where, String errCode) throws JasperException {
+    public void jspError(Mark where, String errCode) throws JasperException {
 	dispatch(where, errCode, null, null);
     }
 
@@ -136,7 +133,7 @@ public class ErrorDispatcher {
      * @param n Node that caused the error
      * @param errCode Error code
      */
-    void jspError(Node n, String errCode) throws JasperException {
+    public void jspError(Node n, String errCode) throws JasperException {
 	dispatch(n.getStart(), errCode, null, null);
     }
 
@@ -150,7 +147,7 @@ public class ErrorDispatcher {
      * @param errCode Error code
      * @param arg Argument for parametric replacement
      */
-    void jspError(String errCode, String arg) throws JasperException {
+    public void jspError(String errCode, String arg) throws JasperException {
 	dispatch(null, errCode, new Object[] {arg}, null);
     }
 
@@ -165,7 +162,7 @@ public class ErrorDispatcher {
      * @param errCode Error code
      * @param arg Argument for parametric replacement
      */
-    void jspError(Mark where, String errCode, String arg)
+    public void jspError(Mark where, String errCode, String arg)
 	        throws JasperException {
 	dispatch(where, errCode, new Object[] {arg}, null);
     }
@@ -181,7 +178,7 @@ public class ErrorDispatcher {
      * @param errCode Error code
      * @param arg Argument for parametric replacement
      */
-    void jspError(Node n, String errCode, String arg)
+    public void jspError(Node n, String errCode, String arg)
 	        throws JasperException {
 	dispatch(n.getStart(), errCode, new Object[] {arg}, null);
     }
@@ -197,7 +194,7 @@ public class ErrorDispatcher {
      * @param arg1 First argument for parametric replacement
      * @param arg2 Second argument for parametric replacement
      */
-    void jspError(String errCode, String arg1, String arg2)
+    public void jspError(String errCode, String arg1, String arg2)
 	        throws JasperException {
 	dispatch(null, errCode, new Object[] {arg1, arg2}, null);
     }
@@ -214,7 +211,7 @@ public class ErrorDispatcher {
      * @param arg1 First argument for parametric replacement
      * @param arg2 Second argument for parametric replacement
      */
-    void jspError(Mark where, String errCode, String arg1, String arg2)
+    public void jspError(Mark where, String errCode, String arg1, String arg2)
 	        throws JasperException {
 	dispatch(where, errCode, new Object[] {arg1, arg2}, null);
     }
@@ -231,7 +228,7 @@ public class ErrorDispatcher {
      * @param arg1 First argument for parametric replacement
      * @param arg2 Second argument for parametric replacement
      */
-    void jspError(Node n, String errCode, String arg1, String arg2)
+    public void jspError(Node n, String errCode, String arg1, String arg2)
 	        throws JasperException {
 	dispatch(n.getStart(), errCode, new Object[] {arg1, arg2}, null);
     }
@@ -241,7 +238,7 @@ public class ErrorDispatcher {
      *
      * @param e Parsing exception
      */
-    void jspError(Exception e) throws JasperException {
+    public void jspError(Exception e) throws JasperException {
 	dispatch(null, null, null, e);
     }
 
@@ -256,7 +253,7 @@ public class ErrorDispatcher {
      * @param arg Argument for parametric replacement
      * @param e Parsing exception
      */
-    void jspError(String errCode, String arg, Exception e)
+    public void jspError(String errCode, String arg, Exception e)
 	        throws JasperException {
 	dispatch(null, errCode, new Object[] {arg}, e);
     }
@@ -273,7 +270,7 @@ public class ErrorDispatcher {
      * @param arg Argument for parametric replacement
      * @param e Parsing exception
      */
-    void jspError(Node n, String errCode, String arg, Exception e)
+    public void jspError(Node n, String errCode, String arg, Exception e)
 	        throws JasperException {
 	dispatch(n.getStart(), errCode, new Object[] {arg}, e);
     }
@@ -287,7 +284,7 @@ public class ErrorDispatcher {
      * @param page Node representation of JSP page from which the Java source
      * file was generated
      */
-    void javacError(String errMsg, String fname, Node.Nodes page)
+    public void javacError(String errMsg, String fname, Node.Nodes page)
 	        throws JasperException, IOException {
 	JavacErrorDetail[] errDetails = parseJavacMessage(errMsg, fname, page);
 	errHandler.javacError(errDetails);
@@ -304,7 +301,7 @@ public class ErrorDispatcher {
      * 
      * @return Localized error message
      */
-    String getString(String errCode) {
+    public String getString(String errCode) {
 	String errMsg = errCode;
 	try {
 	    errMsg = bundle.getString(errCode);
@@ -325,7 +322,7 @@ public class ErrorDispatcher {
      *
      * @return Localized error message
      */
-    String getString(String errCode, String arg) {
+    public String getString(String errCode, String arg) {
 	return getString(errCode, new Object[] {arg});
     }
 
@@ -342,7 +339,7 @@ public class ErrorDispatcher {
      *
      * @return Localized error message
      */
-    String getString(String errCode, String arg1, String arg2) {
+    public String getString(String errCode, String arg1, String arg2) {
 	return getString(errCode, new Object[] {arg1, arg2});
     }
     
@@ -360,7 +357,8 @@ public class ErrorDispatcher {
      *
      * @return Localized error message
      */
-    String getString(String errCode, String arg1, String arg2, String arg3) {
+    public String getString(String errCode, String arg1, String arg2,
+			    String arg3) {
 	return getString(errCode, new Object[] {arg1, arg2, arg3});
     }
 
@@ -376,7 +374,7 @@ public class ErrorDispatcher {
      *
      * @return Localized error message
      */
-    String getString(String errCode, Object[] args) {
+    public String getString(String errCode, Object[] args) {
 	String errMsg = errCode;
 	try {
 	    errMsg = bundle.getString(errCode);

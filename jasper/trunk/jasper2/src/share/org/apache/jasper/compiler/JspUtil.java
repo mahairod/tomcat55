@@ -62,18 +62,18 @@ package org.apache.jasper.compiler;
 
 import java.net.URL;
 
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.apache.jasper.Constants;
+import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.logging.Logger;
 
@@ -97,7 +97,7 @@ import org.apache.jasper.runtime.ExpressionEvaluatorImpl;
  * @author Shawn Bayern
  * @author Mark Roth
  */
-class JspUtil {
+public class JspUtil {
 
     // Delimiters for request-time expressions (JSP and XML syntax)
     private static final String OPEN_EXPR  = "<%=";
@@ -716,6 +716,50 @@ class JspUtil {
         public Class[] getParameterTypes() {
             return this.parameterTypes;
         }    
+    }
+
+    public static InputStream getInputStream(String fname, JarFile jarFile,
+					     JspCompilationContext ctxt,
+					     ErrorDispatcher err)
+	        throws JasperException, IOException {
+
+        InputStream in = null;
+
+	if (jarFile != null) {
+	    String jarEntryName = fname.substring(1, fname.length());
+	    ZipEntry jarEntry = jarFile.getEntry(jarEntryName);
+	    if (jarEntry == null) {
+		err.jspError("jsp.error.file.not.found", fname);
+	    }
+	    in = jarFile.getInputStream(jarEntry);
+	} else {
+	    in = ctxt.getResourceAsStream(fname);
+	}
+
+	if (in == null) {
+	    err.jspError("jsp.error.file.not.found", fname);
+	}
+
+	return in;
+    }
+
+
+    static InputStreamReader getReader(String fname, String encoding,
+				       JarFile jarFile,
+				       JspCompilationContext ctxt,
+				       ErrorDispatcher err)
+	        throws JasperException, IOException {
+
+        InputStreamReader reader = null;
+	InputStream in = getInputStream(fname, jarFile, ctxt, err);
+
+	try {
+            reader = new InputStreamReader(in, encoding);
+	} catch (UnsupportedEncodingException ex) {
+	    err.jspError("jsp.error.unsupported.encoding", encoding);
+	}
+
+	return reader;
     }
 }
 

@@ -63,6 +63,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 import org.apache.jasper.*;
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.xmlparser.XMLEncodingDetector;
 
 /**
  * Controller for the parsing of a JSP page.
@@ -75,30 +76,34 @@ import org.apache.jasper.logging.Logger;
  * the proper parser.
  *
  * @author Pierre Delisle
+ * @author Jan Luehe
  */
 class ParserController {
 
+    private static final String CHARSET = "charset=";
+
     private JspCompilationContext ctxt;
     private Compiler compiler;
+    private PageInfo pageInfo;
     private ErrorDispatcher err;
-
-    /*
-     * A stack to keep track of the 'current base directory'
-     * for include directives that refer to relative paths.
-     */
-    private Stack baseDirStack = new Stack();
 
     /*
      * Document information which tells us what
      * kind of document we are dealing with.
      */
     private boolean isXml;
+
+    /*
+     * A stack to keep track of the 'current base directory'
+     * for include directives that refer to relative paths.
+     */
+    private Stack baseDirStack = new Stack();
     
     /*
      * Static information used in the process of figuring out
      * the kind of document we're dealing with.
      */
-    private static final String JSP_ROOT_TAG   = "<jsp:root";
+    private static final String JSP_ROOT_TAG = "<jsp:root";
 
     /*
      * Tells if the file being processed is the "top" file
@@ -107,24 +112,12 @@ class ParserController {
     private boolean isTopFile = true;
 
     /*
-     * The encoding of the "top" file. This encoding is used
-     * for included files by default.
-     * Defaults to "ISO-8859-1" per JSP spec.
-     */
-    private String topFileEncoding = "ISO-8859-1"; 
-    
-    /*
-     * The 'new' encoding required to read a page.
-     */
-    private String newEncoding;
-
-
-    /*
      * Constructor
      */
     public ParserController(JspCompilationContext ctxt, Compiler compiler) {
         this.ctxt = ctxt; // @@@ can we assert that ctxt is not null?
 	this.compiler = compiler;
+	this.pageInfo = compiler.getPageInfo();
 	this.err = compiler.getErrorDispatcher();
     }
 
@@ -187,34 +180,29 @@ class ParserController {
 	        throws FileNotFoundException, JasperException, IOException {
 
 	Node.Nodes parsedPage = null;
-	String encoding = topFileEncoding;
         InputStreamReader reader = null;
 	String absFileName = resolveFileName(inFileName);
 
 	JarFile jarFile = (JarFile) ctxt.getTagFileJars().get(inFileName);
 
         try {
-            // Figure out what type of JSP document we are dealing with
-            reader = getReader(absFileName, encoding, jarFile);
-            figureOutJspDocument(absFileName, encoding, reader);
-	    if (newEncoding != null)
-		encoding = newEncoding;
+            // Figure out what type of JSP document and encoding type we are
+	    // dealing with
+            String encoding = figureOutJspDocument(absFileName, jarFile);
+
 	    if (isTopFile) {
-		// Set the "top level" file encoding that will be used
-		// for all included files where encoding is not defined.
-		topFileEncoding = encoding;
+		pageInfo.setIsXml(isXml);
+		if (isXml) {
+		    pageInfo.setXmlEncoding(encoding);
+		}
 		isTopFile = false;
 	    } else {
-                compiler.getPageInfo().addDependant(absFileName);
-            }
-	    try {
-		reader.close();
-	    } catch (IOException ex) {
+		compiler.getPageInfo().addDependant(absFileName);
 	    }
 
             // dispatch to the proper parser
-	    
-            reader = getReader(absFileName, encoding, jarFile);
+            reader = JspUtil.getReader(absFileName, encoding, jarFile, ctxt,
+				       err);
             if (isXml) {
                 parsedPage = JspDocumentParser.parse(this, absFileName,
 						     reader, parent,
@@ -240,40 +228,68 @@ class ParserController {
     }
 
     /**
-     * Discover the properties of the page by scanning it.
-     * Properties to find out are:
-     *   - Is it in XML syntax?
-     *   - What is the the page encoding
+     * Determines the properties of the given page or tag file.
+     * The properties to be determined are:
+     *
+     *   - Syntax (JSP or XML).
+     *     This information is supplied by setting the instance variable
+     *     'isXml'.
+     *
+     *   - Source Encoding.
+     *     This information is supplied as the return value.
+     *
      * If these properties are already specified in the jsp-config element
      * in web.xml, then they are used.
+     *
+     * @return The source encoding 
      */
-    private void figureOutJspDocument(String file, 
-				      String encoding,
-				      InputStreamReader reader)
-	 throws JasperException
-    {
-	newEncoding = null;
-	PageInfo pageInfo = compiler.getPageInfo();
+    private String figureOutJspDocument(String fname, JarFile jarFile)
+	        throws JasperException, IOException {
+
 	boolean isXmlFound = false;
+	isXml = false;
+
 	if (pageInfo.isXmlSpecified()) {
 	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
 	    isXml = pageInfo.isXml();
 	    isXmlFound = true;
-	} else if (file.endsWith(".jspx")) {
+	} else if (fname.endsWith(".jspx")) {
 	    isXml = true;
 	    isXmlFound = true;
 	}
 	
-	if (pageInfo.getPageEncoding() != null) {
-	    newEncoding = pageInfo.getPageEncoding();
+	String sourceEnc = null;
+	if (isXmlFound && !isXml) {
+	    // JSP syntax
+	    if (pageInfo.getPageEncoding() != null) {
+		// encoding specified in jsp-config (used only by JSP syntax)
+		return pageInfo.getPageEncoding();
+	    } else {
+		// We don't know the encoding
+		sourceEnc = "ISO-8859-1";
+	    }
+	} else {
+	    // XML syntax or unknown, autodetect encoding ...
+	    Object[] ret = XMLEncodingDetector.getEncoding(fname, jarFile,
+							   ctxt, err);
+	    sourceEnc = (String) ret[0];
+	    boolean isEncodingSetInProlog = ((Boolean) ret[1]).booleanValue();
+	    if (isTopFile) {
+		pageInfo.setHasEncodingProlog(isEncodingSetInProlog);
+	    }
+	    if (isEncodingSetInProlog) {
+		// Prolog present only in XML syntax
+		isXml = true;
+	    }
 	}
 
-	if (isXmlFound && newEncoding != null)
-	    return;	// No need to scan the file
+	if (isXml) {
+	    return sourceEnc;
+	}
 
-	JspReader jspReader;
+	JspReader jspReader = null;
 	try {
-	    jspReader = new JspReader(ctxt, file, encoding, reader, err);
+	    jspReader = new JspReader(ctxt, fname, sourceEnc, jarFile, err);
 	} catch (FileNotFoundException ex) {
 	    throw new JasperException(ex);
 	}
@@ -288,47 +304,60 @@ class ParserController {
 	    Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
 	    if (mark != null) {
 	        isXml = true;
+		return sourceEnc;
 	    } else {
 	        isXml = false;
 	    }
 	}
 
-	if (newEncoding != null) {
-	    // encoding specified in jsp-config
-	    return;
+	// At this point we know it's JSP syntax ...
+	if (pageInfo.getPageEncoding() != null) {
+	    return pageInfo.getPageEncoding();
+	} else {
+	    return getSourceEncodingForJspSyntax(jspReader, startMark);
 	}
+    }
+    
+    /*
+     * Determines page source encoding for JSP page or tag file in JSP syntax
+     */
+    private String getSourceEncodingForJspSyntax(JspReader jspReader,
+						 Mark startMark)
+	        throws JasperException {
 
-	// Figure out the encoding of the page
-	// FIXME: We assume xml parser will take care of
-        // encoding for page in XML syntax. Correct?
-	if (!isXml) {
-	    jspReader.reset(startMark);
-	    while (jspReader.skipUntil("<%@") != null) {
+	String encoding = null;
+
+	jspReader.reset(startMark);
+	while (jspReader.skipUntil("<%@") != null) {
+	    jspReader.skipSpaces();
+	    // compare for "tag ", so we don't match "taglib"
+	    if (jspReader.matches("tag ") || jspReader.matches("page")) {
 		jspReader.skipSpaces();
-		if (jspReader.matches( "tag " ) || jspReader.matches("page")) {
-		    jspReader.skipSpaces();
-		    Attributes attrs = Parser.parseAttributes(this, jspReader);
-		    String attribute = "pageEncoding";
-		    newEncoding = attrs.getValue("pageEncoding");
-		    if (newEncoding == null) {
-			String contentType = attrs.getValue("contentType");
-			if (contentType != null) {
-			    int loc = contentType.indexOf("charset=");
-			    if (loc != -1) {
-				newEncoding = contentType.substring(loc+8);
-				return;
-			    }
-			}
-			if (newEncoding == null)
-			    newEncoding = "ISO-8859-1";
-		    } else {
-			return;
+		Attributes attrs = Parser.parseAttributes(this, jspReader);
+		encoding = attrs.getValue("pageEncoding");
+		if (encoding != null) {
+		    break;
+		}
+		String contentType = attrs.getValue("contentType");
+		if (contentType != null) {
+		    int loc = contentType.indexOf(CHARSET);
+		    if (loc != -1) {
+			encoding = contentType.substring(loc
+							 + CHARSET.length());
+			break;
 		    }
 		}
 	    }
 	}
+
+	if (encoding == null) {
+	    // Default to "ISO-8859-1" per JSP spec
+	    encoding = "ISO-8859-1";
+	}
+
+	return encoding;
     }
-    
+
     /*
      * Resolve the name of the file and update
      * baseDirStack() to keep track ot the current
@@ -348,34 +377,4 @@ class ParserController {
 	return fileName;
     }
 
-    private InputStreamReader getReader(String file, String encoding,
-					JarFile jarFile)
-	        throws JasperException, IOException {
-
-        InputStream in = null;
-        InputStreamReader reader = null;
-
-	if (jarFile != null) {
-	    String jarEntryName = file.substring(1, file.length());
-	    ZipEntry jarEntry = jarFile.getEntry(jarEntryName);
-	    if (jarEntry == null) {
-		err.jspError("jsp.error.file.not.found", file);
-	    }
-	    in = jarFile.getInputStream(jarEntry);
-	} else {
-	    in = ctxt.getResourceAsStream(file);
-	}
-
-	if (in == null) {
-	    err.jspError("jsp.error.file.not.found", file);
-	}
-
-	try {
-            reader = new InputStreamReader(in, encoding);
-	} catch (UnsupportedEncodingException ex) {
-	    err.jspError("jsp.error.unsupported.encoding", encoding);
-	}
-
-	return reader;
-    }
 }
