@@ -896,7 +896,7 @@ public class HostConfig
             try {
                 StandardContext sctx = (StandardContext)context;
                 sctx.reload();
-            } catch( Exception e ) {
+            } catch (Exception e) {
                 log.warn(sm.getString
                          ("hostConfig.context.restart", context.getName()), e);
                 result = false;
@@ -904,7 +904,7 @@ public class HostConfig
         } else {
             try {
                 ((Lifecycle) context).stop();
-            } catch( Exception ex ) {
+            } catch (Exception e) {
                 log.warn(sm.getString
                          ("hostConfig.context.restart", context.getName()), e);
             }
