@@ -60,6 +60,8 @@
 
 package javax.servlet.http;
 
+import java.util.EventListener;
+
 	/** 
 	* Implementations of this interface may are notified of changes to the 
 	* list of active sessions in a web application.
@@ -69,7 +71,7 @@ package javax.servlet.http;
 	 * @since	v 2.3
 	*/
 
-public interface HttpSessionListener {
+public interface HttpSessionListener extends EventListener {
     
 	/** 
 	* Notification that a session was created.
