@@ -196,9 +196,7 @@ public class JspServletWrapper {
             }
             if (options.getDevelopment() || firstTime ) {
                 synchronized (this) {
-                    if (firstTime) {
-                        firstTime = false;
-                    }
+                    firstTime = false;
                     ctxt.compile();
                 }
             } else {
@@ -289,9 +287,8 @@ public class JspServletWrapper {
              */
             if (options.getDevelopment() || firstTime ) {
                 synchronized (this) {
-                    if (firstTime) {
-                        firstTime = false;
-                    }
+                    firstTime = false;
+
                     // The following sets reload to true, if necessary
                     ctxt.compile();
                 }
