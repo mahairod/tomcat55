@@ -82,6 +82,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Hashtable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -178,6 +179,19 @@ public class DefaultServlet
 	new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
 	new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
     };
+
+
+    protected final static TimeZone gmtZone = TimeZone.getTimeZone("GMT");
+
+
+    /**
+     * GMT timezone - all HTTP dates are on GMT
+     */
+    static {
+        formats[0].setTimeZone(gmtZone);
+        formats[1].setTimeZone(gmtZone);
+        formats[2].setTimeZone(gmtZone);
+    }
 
 
     /**
