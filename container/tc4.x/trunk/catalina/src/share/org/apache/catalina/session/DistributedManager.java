@@ -16,17 +16,12 @@
 
 package org.apache.catalina.session;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleException;
@@ -82,14 +77,14 @@ public final class DistributedManager extends PersistentManagerBase {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-        return (this.info);
+        return (info);
     }
 
     /**
      * Return the descriptive short name of this Manager implementation.
      */
     public String getName() {
-        return (this.name);
+        return (name);
     }
 
 

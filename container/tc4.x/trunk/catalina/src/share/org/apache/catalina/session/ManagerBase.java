@@ -374,7 +374,7 @@ public abstract class ManagerBase implements Manager {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
