@@ -1001,7 +1001,11 @@ public class Generator {
 	    out.print( pageParam );
 	    printParams(n, pageParam, page.isLiteral());
 	    out.println(");");
-	    out.printil((methodNesting > 0)? "return true;": "return;");
+	    if (isTagFile) {
+		out.printil("throw new javax.servlet.jsp.SkipPageException();");
+	    } else {
+		out.printil((methodNesting > 0)? "return true;": "return;");
+	    }
 	    out.popIndent();
 	    out.printil("}");
 
@@ -1445,7 +1449,6 @@ public class Generator {
 		 makeAttr("java_archive", archive);
 	    out.printil("out.write(" + 
                 quote(s0) + s1 + s2 + " + " + quote(s3) + ");");
-	    out.printil("out.write(\"\\n\");");
 		 
 	    /*
 	     * Generate a 'attr = "value"' for each <jsp:param> in plugin body
@@ -1764,7 +1767,7 @@ public class Generator {
 	    // Store varReader in appropriate scope
 	    if (varReader != null) {
 		String scopeName = n.getAttributeValue("scope");
-		out.printin("getJspContext().setAttribute(");
+		out.printin("pageContext.setAttribute(");
 		out.print(quote(varReader));
 		out.print(", new java.io.StringReader(sout.toString())");
 		if (scopeName != null) {
@@ -1812,13 +1815,13 @@ public class Generator {
 		    String name = tagVars[i].getNameGiven();
 		    if (name != null) {
 			out.print(quote(name));
-			out.print(", getJspContext().getAttribute(");
+			out.print(", pageContext.getAttribute(");
 			out.print(quote(name));
 			out.println("));");
 		    } else {
 			String getter = toGetterMethod(tagVars[i].getNameFromAttribute());
 			out.print(getter);
-			out.print(", getJspContext().getAttribute(");
+			out.print(", pageContext.getAttribute(");
 			out.print(getter);
 			out.println("));");
 		    }
@@ -1837,7 +1840,7 @@ public class Generator {
 	    // Store varReader in appropriate scope
 	    if (varReader != null) {
 		String scopeName = n.getAttributeValue("scope");
-		out.printin("getJspContext().setAttribute(");
+		out.printin("pageContext.setAttribute(");
 		out.print(quote(varReader));
 		out.print(", new java.io.StringReader(sout.toString())");
 		if (scopeName != null) {
@@ -2797,6 +2800,15 @@ public class Generator {
 	    out.println();
 	}
 
+	// Generate imports
+	Iterator iter = pageInfo.getImports().iterator();
+	while (iter.hasNext()) {
+	    out.printin("import ");
+	    out.print  ((String)iter.next());
+	    out.println(";");
+	}
+	out.println();
+
 	// Generate class declaration
 	out.printin("public class ");
 	out.print(tagInfo.getTagName());
@@ -2820,6 +2832,7 @@ public class Generator {
 
 	out.printil("public void doTag() throws javax.servlet.jsp.JspException {");
 	out.pushIndent();
+	out.printil("PageContext pageContext = new JspContextWrapper(getJspContext());");
 	// Declare parameter map for fragment/body invocation
 	out.printil("java.util.Map params = null;");
 
@@ -2827,8 +2840,7 @@ public class Generator {
 	// if 'varReader' attribute is specified
 	out.printil("java.io.Writer sout = null;");
 
-	out.printil("javax.servlet.jsp.JspWriter out = getJspContext().getOut();");
-	out.printil("getJspContext().pushPageScope(null);");
+	out.printil("javax.servlet.jsp.JspWriter out = pageContext.getOut();");
 	generatePageScopedVariables(tagInfo);
 	out.printil("try {");
 	out.pushIndent();
@@ -2840,10 +2852,6 @@ public class Generator {
 	out.pushIndent();
 	out.printil("throw new javax.servlet.jsp.JspException(ioe);");
 	out.popIndent();
-        out.printil("} finally {");
-        out.pushIndent();
-        out.printil("getJspContext().popPageScope();");
-        out.popIndent();
 	out.printil("}");
 	out.popIndent();
 	out.printil("}");
@@ -2988,7 +2996,7 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		String attrName = attrInfos[i].getName();
-		out.printin("getJspContext().setAttribute(");
+		out.printin("pageContext.setAttribute(");
 		out.print(quote(attrName));
 		out.print(", ");
 		out.print(toGetterMethod(attrName));
@@ -3002,7 +3010,7 @@ public class Generator {
 	if (fragAttrInfos != null) {
 	    for (int i=0; i<fragAttrInfos.length; i++) {
 		String attrName = fragAttrInfos[i].getName();
-		out.printin("getJspContext().setAttribute(");
+		out.printin("pageContext.setAttribute(");
 		out.print(quote(attrName));
 		out.print(", ");
 		out.print(toGetterMethod(attrName));
@@ -3015,7 +3023,7 @@ public class Generator {
 	    out.printil("for (java.util.Iterator i = dynamicAttrs.entrySet().iterator(); i.hasNext(); ) {");
 	    out.pushIndent();
 	    out.printil("java.util.Map.Entry e = (java.util.Map.Entry) i.next();");
-	    out.printil("getJspContext().setAttribute((String) e.getKey(), e.getValue());");
+	    out.printil("pageContext.setAttribute((String) e.getKey(), e.getValue());");
 	    out.popIndent();
 	    out.printil("}");
 	}
@@ -3253,8 +3261,6 @@ public class Generator {
             out.popIndent();
             out.printil( "{" );
             out.pushIndent();
-            out.printil( 
-                "this.jspContext.pushPageScope( this.originalPageScope );" );
             out.printil( "java.util.Map _jspx_originalValues = null;" );
             out.printil( "if( params != null ) {" );
             out.pushIndent();
@@ -3293,7 +3299,6 @@ public class Generator {
             out.printil( "restorePageScope( _jspx_originalValues );");
             out.popIndent();
             out.printil( "}" );
-            out.printil( "this.jspContext.popPageScope();" );
             out.popIndent();
             out.printil( "}" ); // finally
             out.popIndent();

@@ -90,7 +90,6 @@ public abstract class JspFragmentHelper
     protected JspContext jspContext;
     protected PageContext pageContext;
     protected JspTag parentTag;
-    protected Map originalPageScope;
 
     public JspFragmentHelper( int discriminator, JspContext jspContext, 
         JspTag parentTag ) 
@@ -102,7 +101,6 @@ public abstract class JspFragmentHelper
             pageContext = (PageContext)jspContext;
         }
         this.parentTag = parentTag;
-        this.originalPageScope = jspContext.peekPageScope();
     }
     
     public JspContext getJspContext() {
@@ -127,7 +125,7 @@ public abstract class JspFragmentHelper
         while( keys.hasNext() ) {
             String key = (String)keys.next();
             // Remember original values to restore later
-            originalValues.put( key, originalPageScope.get( key ) );
+            originalValues.put( key, jspContext.getAttribute( key ) );
             // Set new values, based on params
             jspContext.setAttribute( key, params.get( key ) );
         }

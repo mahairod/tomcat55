@@ -465,67 +465,6 @@ public class PageContextImpl extends PageContext {
     }
 
     /**
-     * Pops the page scope from the stack. After calling this method, the
-     * PageScope will appear the same as it was before the last call to
-     * pushPageScope.
-     *
-     * @return A Map representing the state of the page scope just before
-     *     it was popped.  This object can be passed to pushPageScope to
-     *     restore this state.  The keys of the returned Map are Strings
-     *     representing attribute names.  The values are the values of
-     *     those attributes.
-     */
-    public java.util.Map popPageScope()
-        throws EmptyStackException
-    {
-        if( this.attributesStack == null ) {
-            throw new EmptyStackException();
-        }
-        // Remember pop() may throw EmptyStackException.
-        this.attributes = (Hashtable)this.attributesStack.pop();
-        return this.attributes;
-    }
-
-    /**
-     * Pushes a new page scope on the stack.
-     *
-     * @param scopeState If null, a new, empty, page scope is pushed.
-     *     Otherwise, the state of the page scope is restored to the
-     *     contents of the provided Map.
-     */
-    public void pushPageScope( java.util.Map scopeState ) {
-        // Lazily create page scope stack
-        if( this.attributesStack == null ) {
-            this.attributesStack = new Stack();
-        }
-
-        // Push the old page scope on the stack:
-        this.attributesStack.push( this.attributes );
-
-        // Set the new page scope, depending on the input.
-        if( scopeState == null ) {
-            // Create a fresh page scope:
-            this.attributes = new Hashtable( 16 );
-        }
-        else if( scopeState instanceof Hashtable ) {
-            // Compatible Map.
-            this.attributes = (Hashtable)scopeState;
-        }
-        else {
-            // Incompatible Map.  Only Maps returned by popPageScope()
-            // or peekPageScope() can be passed in to this method.
-            // Therefore, the scopeState MUST be an instance of Hashtable.
-            throw new IllegalArgumentException(
-                "Attempt to pass PageContext.pushPageScope() a Map " +
-                "that was not created by this container." );
-        }
-    }
-
-    public java.util.Map peekPageScope() {
-        return this.attributes;
-    }
-
-    /**
      * Provides programmatic access to the ExpressionEvaluator.
      * The JSP Container must return a valid instance of an
      * ExpressionEvaluator that can parse EL expressions.
@@ -612,9 +551,6 @@ public class PageContextImpl extends PageContext {
 
     protected transient Hashtable	attributes = new Hashtable(16);
 
-    // Page scope attribute stack, to implement {push|pop|peek}PageScope:
-    // Lazily initialized.
-    protected transient Stack           attributesStack = null;
     // per request state
 
     protected transient ServletRequest	request;
