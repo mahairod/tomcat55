@@ -1,68 +1,70 @@
 <project name="build-site" default="docs" basedir=".">
 
-    <!-- Initialization properties -->
-    <property name="project.name"   value="site"/>
-    <property name="docs.src" value="./xdocs"/>
-    <property name="docs.dest" value="./docs"/>
+    <!-- ===================== Initialize Property Values =================== -->
 
-    <target name="prepare">
-        <available classname="org.apache.velocity.anakia.AnakiaTask"
-            property="AnakiaTask.present"/>
-    </target>
+    <!-- See "build.properties.sample" in the top level directory for all     -->
+    <!-- property values you must customize for successful building!!!        -->
+    <property file="build.properties"/>
+    <property file="${user.home}/build.properties"/>
 
-    <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
-        <echo>
-            AnakiaTask is not present! Please check to make sure that
-            velocity.jar is in your classpath.
-        </echo>
-    </target>
+    <property name="docs.src" location="xdocs"/>
+    <property name="docs.dest" location="docs"/>
+    <property name="faq.src" location="xdocs-faq"/>
+    <property name="faq.dest" location="${docs.dest}/faq"/>
 
-    <target name="docs" depends="prepare-error" if="AnakiaTask.present">
-        <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask"/>
-        <anakia basedir="${docs.src}" destdir="${docs.dest}/"
-             extension=".html" style="./site.vsl"
-             projectFile="stylesheets/project.xml"
-             excludes="**/stylesheets/** empty.xml"
-             includes="**/*.xml"
-             lastModifiedCheck="true"
-             templatePath="../jakarta-site2/xdocs/stylesheets"
-        >
-        </anakia>
+    <!-- Requires JDK 1.4 -->
+    <target name="docs"
+            description="Render HTML Pages via XSLT">
 
-        <copy todir="${docs.dest}/images" filtering="no">
+        <!-- Transform the xml files - requires Ant 1.6.2 -->
+
+        <!-- Transform the top-level directory -->
+        <style  basedir="${docs.src}"
+                destdir="${docs.dest}"
+                extension=".html"
+                style="${docs.src}/stylesheets/tomcat-site.xsl"
+                excludes="project.xml"
+                includes="*.xml">
+            <param name="relative-path" expression="."/>
+        </style>
+
+        <!-- Transform the "faq" subdirectory -->
+        <mkdir  dir="${docs.dest}/faq" />
+        <style  basedir="${faq.src}"
+                destdir="${faq.dest}"
+                extension=".html"
+                style="${faq.src}/tomcat-faq.xsl"
+                excludes="project.xml"
+                includes="*.xml">
+            <param name="relative-path" expression=".."/>
+        </style>
+        <mkdir  dir="${docs.dest}/faq/printer" />
+        <style  basedir="${faq.src}"
+                destdir="${faq.dest}/printer"
+                extension=".html"
+                style="${faq.src}/tomcat-faq.xsl"
+                excludes="project.xml"
+                includes="*.xml">
+            <param name="relative-path" expression="../.."/>
+            <param name="project-menu" expression="nomenu"/>
+        </style>
+
+        <!-- Copy static resource files -->
+        <copy   todir="${docs.dest}/images" filtering="no">
             <fileset dir="${docs.src}/images">
                 <include name="**/*.gif"/>
                 <include name="**/*.jpeg"/>
                 <include name="**/*.jpg"/>
             </fileset>
         </copy>
-        <!-- In case we have CSS someday
-        <copy todir="${docs.dest}" filtering="no">
+
+        <!-- Copy CSS stylesheets -->
+        <copy    todir="${docs.dest}" filtering="no">
             <fileset dir="${docs.src}">
                 <include name="**/*.css"/>
             </fileset>
         </copy>
-        -->
 
-         <!-- FAQ -->
-        <style basedir="xdocs-faq"
-               destdir="${docs.dest}/faq"
-             extension=".html"
-                 style="xdocs-faq/tomcat-faq.xsl"
-              excludes="project.xml build.xml"
-              includes="*.xml">
-          <param name="relative-path" expression=".."/>
-        </style>
-        <mkdir     dir="${docs.dest}/faq/printer"/>
-        <style basedir="xdocs-faq"
-               destdir="${docs.dest}/faq/printer"
-             extension=".html"
-                 style="xdocs-faq/tomcat-faq.xsl"
-              excludes="project.xml build.xml"
-              includes="*.xml">
-          <param name="relative-path" expression="../.."/>
-          <param name="project-menu" expression="nomenu"/>
-        </style>
+  </target>
 
-    </target>
 </project>

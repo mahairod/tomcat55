@@ -32,11 +32,11 @@ involved, <a href="/site/getinvolved.html">click here</a>.  </p>
 <p>For the impatient, current Tomcat production quality releases vs.
 Servlet/JSP specifications:</p>
 
-<table>
+<table class="detail-table">
 
 <tr>
-  <th>Servlet/JSP Spec</th>
-  <th>Tomcat version</th>
+  <th><strong>Servlet/JSP Spec</strong></th>
+  <th><strong>Tomcat version</strong></th>
 </tr>
 
 <tr>
