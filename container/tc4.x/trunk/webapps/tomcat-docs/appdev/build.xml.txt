@@ -144,6 +144,7 @@
 -->
 
   <taskdef name="install" classname="org.apache.catalina.ant.InstallTask"/>
+  <taskdef name="list"    classname="org.apache.catalina.ant.ListTask"/>
   <taskdef name="reload"  classname="org.apache.catalina.ant.ReloadTask"/>
   <taskdef name="remove"  classname="org.apache.catalina.ant.RemoveTask"/>
 
@@ -390,6 +391,27 @@
 
 
 
+<!-- ====================== List Target =================================== -->
+
+<!--
+
+  The "list" target asks the specified Tomcat 4 installation to list the
+  currently running web applications, either loaded at startup time or
+  installed dynamically.  It is useful to determine whether or not the
+  application you are currently developing has been installed.
+
+-->
+
+  <target name="list"
+   description="List installed applications on servlet container">
+
+    <list    url="${manager.url}"
+        username="${manager.username}"
+        password="${manager.password}"/>
+
+  </target>
+
+
 <!-- ==================== Prepare Target ================================== -->
 
 <!--
@@ -439,7 +461,7 @@
 
 -->
 
-  <target name="reload"
+  <target name="reload" depends="compile"
    description="Reload application on servlet container">
 
     <reload url="${manager.url}"
