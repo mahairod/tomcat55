@@ -353,8 +353,12 @@ public class ErrorReportValve
 
         try {
             Writer writer = response.getReporter();
-            writer.write(sb.toString());
-            writer.flush();
+            if (writer != null) {
+                // If writer is null, it's an indication that the response has
+                // been hard committed already
+                writer.write(sb.toString());
+                writer.flush();
+            }
         } catch (IOException e) {
             ;
         } catch (IllegalStateException e) {
