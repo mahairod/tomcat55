@@ -37,12 +37,21 @@
   SetCompressor bzip2
   SetDatablockOptimize on
 
+  ;Install Options pages
+  LangString TEXT_JVM_TITLE ${LANG_ENGLISH} "Java Virtual Machine"
+  LangString TEXT_JVM_SUBTITLE ${LANG_ENGLISH} "Java Virtual Machine path selection."
+  LangString TEXT_JVM_PAGETITLE ${LANG_ENGLISH} ": Java Virtual Machine path selection"
+
+  LangString TEXT_CONF_TITLE ${LANG_ENGLISH} "Configuration"
+  LangString TEXT_CONF_SUBTITLE ${LANG_ENGLISH} "Tomcat basic configuration."
+  LangString TEXT_CONF_PAGETITLE ${LANG_ENGLISH} ": Configuration Options"
+
   ;Page order
   !insertmacro MUI_PAGECOMMAND_LICENSE
   !insertmacro MUI_PAGECOMMAND_COMPONENTS
   !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  Page custom SetConfiguration
-  Page custom SetChooseJVM
+  Page custom SetConfiguration "$(TEXT_CONF_PAGETITLE)"
+  Page custom SetChooseJVM "$(TEXT_JVM_PAGETITLE)"
   !insertmacro MUI_PAGECOMMAND_INSTFILES
 
   ;License dialog
@@ -60,15 +69,6 @@
 
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
-
-  ;Install Options pages
-  LangString TEXT_JVM_TITLE ${LANG_ENGLISH} "Java Virtual Machine"
-  LangString TEXT_JVM_SUBTITLE ${LANG_ENGLISH} "Java Virtual Machine path selection."
-  LangString TEXT_JVM_PAGETITLE ${LANG_ENGLISH} "Java Virtual Machine path selection"
-
-  LangString TEXT_CONF_TITLE ${LANG_ENGLISH} "Configuration"
-  LangString TEXT_CONF_SUBTITLE ${LANG_ENGLISH} "Tomcat basic configuration."
-  LangString TEXT_CONF_PAGETITLE ${LANG_ENGLISH} "Tomcat 5 Configuration Options"
 
   ;Install types
   InstType Normal
@@ -231,21 +231,15 @@ Section -post
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
                    "UninstallString" '"$INSTDIR\Uninstall.exe"'
 
-  Sleep 500
   BringToFront
 
 SectionEnd
-
 
 Function .onInit
 
   ;Extract Install Options INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "config.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "jvm.ini"
-
-  ;Titles for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "config.ini" "$(TEXT_CONF_PAGETITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "jvm.ini" "$(TEXT_JVM_PAGETITLE)"
 
 FunctionEnd
 
@@ -260,12 +254,6 @@ FunctionEnd
 Function SetConfiguration
   !insertmacro MUI_HEADER_TEXT "$(TEXT_CONF_TITLE)" "$(TEXT_CONF_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "config.ini"
-FunctionEnd
-
-Function .onInstSuccess
-
-  ExecShell open '$SMPROGRAMS\Apache Tomcat 5.0'
-
 FunctionEnd
 
 ;--------------------------------
