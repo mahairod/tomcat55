@@ -83,10 +83,24 @@ public class Jndi01 extends HttpServlet {
         Context ctx = null;
         try {
             ctx = new InitialContext();
+            ctx.lookup("java:/comp");
             log("initialized successfully");
         } catch (NamingException e) {
+            e.printStackTrace();
             log("Cannot create context", e);
             throw new ServletException(e);
+        }
+    }
+
+    public void destroy() {
+        Context ctx = null;
+        try {
+            ctx = new InitialContext();
+            ctx.lookup("java:/comp");
+            log("initialized successfully");
+        } catch (NamingException e) {
+            e.printStackTrace();
+            log("Cannot create context", e);
         }
     }
 
