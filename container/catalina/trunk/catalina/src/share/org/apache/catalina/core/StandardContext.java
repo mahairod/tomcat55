@@ -3867,6 +3867,9 @@ public class StandardContext
             if (name.equals("")) {
                 name = "ROOT";
             }
+            if (name.startsWith("/")) {
+                name = name.substring(1);
+            }
             File file = new File(configBase, name.replace('/', '_') + ".xml");
             setConfigFile(file.getPath());
         }
