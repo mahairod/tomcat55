@@ -91,6 +91,38 @@
 
     <attributes>
 
+      <attribute name="allowLinking" required="false">
+        <p>If the value of this flag is <code>true</code>, symlinks will be
+        allowed inside the web application, pointing to resources outside the
+        web application base path. If not specified, the default value
+        of the flag is <code>false</code>.</p>
+      </attribute>
+
+      <attribute name="cacheMaxSize" required="false">
+        <p>Maximum size of the static resource cache in kilobytes. 
+        If not specified, the default value is <code>10240</code>
+        (10 megabytes).</p>
+      </attribute>
+
+      <attribute name="cacheTTL" required="false">
+        <p>Amount of time in milliseconds between cache entries revalidation.
+        If not specified, the default value is <code>5000</code> 
+        (5 seconds).</p>
+      </attribute>
+
+      <attribute name="cachingAllowed" required="false">
+        <p>If the value of this flag is <code>true</code>, the cache for static
+        resources will be used. If not specified, the default value
+        of the flag is <code>true</code>.</p>
+      </attribute>
+
+      <attribute name="caseSensitive" required="false">
+        <p>If the value of this flag is <code>true</code>, all case sensitivity
+        checks will be disabled. This should not be disabled on OSes which do
+        not have a case sensitive filesystem, such as Windows. If not 
+        specified, the default value of the flag is <code>true</code>.</p>
+      </attribute>
+
       <attribute name="swallowOutput" required="false">
         <p>If the value of this flag is <code>true</code>, the bytes output to
         System.out and System.err by the web application will be redirected to

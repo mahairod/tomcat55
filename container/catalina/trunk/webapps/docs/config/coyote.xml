@@ -168,6 +168,12 @@
       not specified, this attribute is set to 100.</p>
     </attribute>
 
+    <attribute name="maxPostSize" required="false">
+      <p>The maximum size in bytes of the POST which will be handled by 
+      the container FORM URL parameter parsing. If not specified, 
+      this attribute is set to 2097152 (2 megabytes).</p>
+    </attribute>
+
     <attribute name="maxSpareThreads" required="false">
       <p>The maximum number of unused request processing threads that 
       will be allowed to exist until the thread pool starts stopping the
