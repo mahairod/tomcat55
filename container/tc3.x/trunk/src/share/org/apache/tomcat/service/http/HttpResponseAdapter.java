@@ -113,14 +113,17 @@ public class HttpResponseAdapter extends  ResponseImpl {
 	Enumeration e = headers.names();
 	while (e.hasMoreElements()) {
 	    String name = (String)e.nextElement();
-	    String value = headers.getHeader(name);
-	    headersSB.setLength(0);
-	    headersSB.append(name).append(": ").append(value).append("\r\n");
-	    try {
-		sout.write( headersSB.toString().getBytes(Constants.CharacterEncoding.Default) );
-	    } catch( IOException ex ) {
-		ex.printStackTrace();
-		//XXX mark the error - should abandon everything 
+	    String values[] = headers.getHeaders(name);
+	    for( int i=0; i< values.length; i++ ) {
+		String value=values[i];
+		headersSB.setLength(0);
+		headersSB.append(name).append(": ").append(value).append("\r\n");
+		try {
+		    sout.write( headersSB.toString().getBytes(Constants.CharacterEncoding.Default) );
+		} catch( IOException ex ) {
+		    ex.printStackTrace();
+		    //XXX mark the error - should abandon everything 
+		}
 	    }
 	}
 	sout.write( CRLF, 0, 2 );

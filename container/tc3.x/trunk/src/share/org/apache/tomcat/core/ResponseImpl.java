@@ -403,7 +403,6 @@ public class ResponseImpl implements Response {
 	return out;
     }
     
-
     /** Write a chunk of bytes. Should be called only from ServletOutputStream implementations,
      *	No need to implement it if your adapter implements ServletOutputStream.
      *  Headers and status will be written before this method is exceuted.

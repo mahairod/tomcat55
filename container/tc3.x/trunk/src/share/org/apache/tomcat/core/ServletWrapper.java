@@ -104,6 +104,8 @@ public class ServletWrapper {
     protected long lastAccessed;
     protected int serviceCount = 0;
 
+    int loadOnStartup=0;
+    
     ServletWrapper(Context context) {
         this.context = context;
         config = new ServletConfigImpl(context);
@@ -113,6 +115,14 @@ public class ServletWrapper {
 	return context;
     }
 
+    public void setLoadOnStartUp( int level ) {
+	loadOnStartup=level;
+    }
+
+    public int getLoadOnStartUp() {
+	return loadOnStartup;
+    }
+    
     void setReloadable(boolean reloadable) {
 	isReloadable = reloadable;
     }

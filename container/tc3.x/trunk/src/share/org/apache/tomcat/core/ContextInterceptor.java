@@ -75,6 +75,16 @@ import javax.servlet.Servlet;
 public interface ContextInterceptor {
     public static final int OK=0;
     
-    public int handleContextInit(Context ctx);
-    public int handleContextShutdown(Context ctx);
+    public int contextInit(Context ctx);
+    
+    public int contextShutdown(Context ctx);
+
+    /** Notify when a new servlet is added
+     */
+    public int addServlet( Context ctx, ServletWrapper sw);
+
+    /** Notify when a servlet is removed from context
+     */
+    public int removeServlet( Context ctx, ServletWrapper sw);
+    
 }

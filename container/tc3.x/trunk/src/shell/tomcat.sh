@@ -62,13 +62,13 @@ fi
 
 oldCP=$CLASSPATH
  
-CLASSPATH=${TOMCAT_HOME}/lib/webserver.jar
-CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/lib/servlet.jar
-CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/lib/jasper.jar
-CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/lib/xml.jar
-## CLASSPATH=${CLASSPATH}:${TOMCAT_HOME}/webpages/WEB-INF/classes/jsp/beans
+CLASSPATH=.
+for i in ${TOMCAT_HOME}/lib/* ; do
+  CLASSPATH=${CLASSPATH}:$i
+done
 
 CLASSPATH=${CLASSPATH}:${JAVA_HOME}/lib/tools.jar
+echo XXX $CLASSPATH
 
 
 # Backdoor classpath setting for development purposes when all classes
