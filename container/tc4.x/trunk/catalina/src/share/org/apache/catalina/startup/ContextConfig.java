@@ -344,24 +344,30 @@ public final class ContextConfig
 		       mapper.methodSetter("setDistributable", 0));
 
 	mapper.addRule("web-app/ejb-ref",
-		       mapper.methodSetter("addEjb", 7));
+		 mapper.objectCreate("org.apache.catalina.deploy.ContextEjb"));
+	mapper.addRule("web-app/ejb-ref",
+		       mapper.addChild("addEjb",
+				     "org.apache.catalina.deploy.ContextEjb"));
 	mapper.addRule("web-app/ejb-ref/description",
-		       mapper.methodParam(1));
+		       mapper.methodSetter("setDescription", 0));
 	mapper.addRule("web-app/ejb-ref/ejb-ref-name",
-		       mapper.methodParam(0));
+		       mapper.methodSetter("setName", 0));
 	mapper.addRule("web-app/ejb-ref/ejb-ref-type",
-		       mapper.methodParam(2));
+		       mapper.methodSetter("setType", 0));
 	mapper.addRule("web-app/ejb-ref/home",
-		       mapper.methodParam(3));
+		       mapper.methodSetter("setHome", 0));
 	mapper.addRule("web-app/ejb-ref/remote",
-		       mapper.methodParam(4));
+		       mapper.methodSetter("setRemote", 0));
 	mapper.addRule("web-app/ejb-ref/ejb-link",
-		       mapper.methodParam(5));
+		       mapper.methodSetter("setLink", 0));
 	mapper.addRule("web-app/ejb-ref/runAs",
-		       mapper.methodParam(6));
+		       mapper.methodSetter("setRunAs", 0));
 
 	mapper.addRule("web-app/env-entry",
 	 mapper.objectCreate("org.apache.catalina.deploy.ContextEnvironment"));
+	mapper.addRule("web-app/env-entry",
+		       mapper.addChild("addEnvironment",
+			     "org.apache.catalina.deploy.ContextEnvironment"));
 	mapper.addRule("web-app/env-entry/env-entry-description",
 		       mapper.methodSetter("setDescription", 0));
 	mapper.addRule("web-app/env-entry/env-entry-name",
@@ -385,6 +391,9 @@ public final class ContextConfig
 
 	mapper.addRule("web-app/filter",
 		  mapper.objectCreate("org.apache.catalina.deploy.FilterDef"));
+	mapper.addRule("web-app/filter",
+		       mapper.addChild("addFilterDef",
+				      "org.apache.catalina.deploy.FilterDef"));
 	mapper.addRule("web-app/filter/description",
 		       mapper.methodSetter("setDescription", 0));
 	mapper.addRule("web-app/filter/display-name",
@@ -406,6 +415,9 @@ public final class ContextConfig
 
 	mapper.addRule("web-app/filter-mapping",
 		  mapper.objectCreate("org.apache.catalina.deploy.FilterMap"));
+	mapper.addRule("web-app/filter-mapping",
+		       mapper.addChild("addFilterMap",
+				      "org.apache.catalina.deploy.FilterMap"));
 	mapper.addRule("web-app/filter-mapping/filter-name",
 		       mapper.methodSetter("setFilterName", 0));
 	mapper.addRule("web-app/filter-mapping/servlet-name",
@@ -417,15 +429,18 @@ public final class ContextConfig
 		       mapper.methodSetter("addApplicationListener", 0));
 
 	mapper.addRule("web-app/login-config",
-		       mapper.methodSetter("setLoginConfig", 4));
+		mapper.objectCreate("org.apache.catalina.deploy.LoginConfig"));
+	mapper.addRule("web-app/login-config",
+		       mapper.addChild("setLoginConfig",
+				    "org.apache.catalina.deploy.LoginConfig"));
 	mapper.addRule("web-app/login-config/auth-method",
-		       mapper.methodParam(0));
+		       mapper.methodSetter("setAuthMethod", 0));
 	mapper.addRule("web-app/login-config/realm-name",
-		       mapper.methodParam(1));
+		       mapper.methodSetter("setRealmName", 0));
 	mapper.addRule("web-app/login-config/form-login-config/form-login-page",
-		       mapper.methodParam(2));
+		       mapper.methodSetter("setLoginPage", 0));
 	mapper.addRule("web-app/login-config/form-login-config/form-error-page",
-		       mapper.methodParam(3));
+		       mapper.methodSetter("setErrorPage", 0));
 
 	mapper.addRule("web-app/mime-mapping",
 		       mapper.methodSetter("addMimeMapping", 2));
@@ -434,16 +449,18 @@ public final class ContextConfig
 	mapper.addRule("web-app/mime-mapping/mime-type",
 		       mapper.methodParam(1));
 
+
 	mapper.addRule("web-app/resource-ref",
-		       mapper.methodSetter("addResource", 4));
+		       mapper.addChild("addResource",
+				       "org.apache.catalina.deploy.ContextResource"));
 	mapper.addRule("web-app/resource-ref/description",
-		       mapper.methodParam(1));
+		       mapper.methodSetter("setDescription", 0));
 	mapper.addRule("web-app/resource-ref/res-auth",
-		       mapper.methodParam(3));
+		       mapper.methodSetter("setAuth", 0));
 	mapper.addRule("web-app/resource-ref/res-ref-name",
-		       mapper.methodParam(0));
+		       mapper.methodSetter("setName", 0));
 	mapper.addRule("web-app/resource-ref/res-type",
-		       mapper.methodParam(2));
+		       mapper.methodSetter("setType", 0));
 
 	mapper.addRule("web-app/security-constraint",
 		       mapper.objectCreate("org.apache.catalina.deploy.SecurityConstraint"));
@@ -473,7 +490,6 @@ public final class ContextConfig
 
 	mapper.addRule("web-app/servlet",
 		       new WrapperCreate(context));
-	//		       mapper.objectCreate(context.getWrapperClass()));
 	mapper.addRule("web-app/servlet",
 		       mapper.addChild("addChild",
 				       "org.apache.catalina.Container"));

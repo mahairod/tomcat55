@@ -77,55 +77,92 @@ package org.apache.catalina.deploy;
 public final class ContextResource {
 
 
-    // ----------------------------------------------------------- Constructors
+    // ------------------------------------------------------------- Properties
 
 
     /**
-     * Construct a new resource reference with the specified properties
-     *
-     * @param name Resource reference name
-     * @param description Resource reference description
-     * @param type Java class name of the implementation class
-     * @param auth Authorization requirement (SERVLET or CONTAINER)
+     * The authorization requirement for this resource (SERVLET or
+     * CONTAINER).
      */
-    public ContextResource(String name, String description,
-                           String type, String auth) {
-
-        super();        
-	this.name = name;
-	this.description = description;
-	this.type = type;
-	this.auth = auth;
-
-    }
-
-
-    // ----------------------------------------------------- Instance Variables
-
-
     private String auth = null;
-    private String description = null;
-    private String name = null;
-    private String type = null;
-
-
-    // ------------------------------------------------------------- Properties
-
 
     public String getAuth() {
 	return (this.auth);
     }
 
+    public void setAuth(String auth) {
+	this.auth = auth;
+    }
+
+
+    /**
+     * The description of this resource.
+     */
+    private String description = null;
+
     public String getDescription() {
 	return (this.description);
     }
+
+    public void setDescription(String description) {
+	this.description = description;
+    }
+
+
+    /**
+     * The name of this resource.
+     */
+    private String name = null;
 
     public String getName() {
 	return (this.name);
     }
 
+    public void setName(String name) {
+	this.name = name;
+    }
+
+
+    /**
+     * The type of this resource.
+     */
+    private String type = null;
+
     public String getType() {
 	return (this.type);
+    }
+
+    public void setType(String type) {
+	this.type = type;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a String representation of this object.
+     */
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer("ContextResource[");
+	sb.append("name=");
+	sb.append(name);
+	if (description != null) {
+	    sb.append(", description=");
+	    sb.append(description);
+	}
+	if (type != null) {
+	    sb.append(", type=");
+	    sb.append(type);
+	}
+	if (auth != null) {
+	    sb.append(", auth=");
+	    sb.append(auth);
+	}
+	sb.append("]");
+	return (sb.toString());
+
     }
 
 

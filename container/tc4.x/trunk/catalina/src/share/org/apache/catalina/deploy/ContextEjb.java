@@ -77,78 +77,145 @@ package org.apache.catalina.deploy;
 public final class ContextEjb {
 
 
-    // ----------------------------------------------------------- Constructors
+    // ------------------------------------------------------------- Properties
 
 
     /**
-     * Construct a new EJB resource reference with the specified properties
-     *
-     * @param name EJB resource reference name
-     * @param description EJB resource reference description
-     * @param type Java class name of the EJB bean implementation class
-     * @param home Java class name of the EJB home implementation class
-     * @param remote Java class name of the EJB remote implementation class
-     * @param link Optional link to a J2EE EJB definition 
-     * @param runAs Optional security role for transactions performed
-     *  to this Enterprise JavaBean resource reference
+     * The description of this EJB.
      */
-    public ContextEjb(String name, String description,
-		      String type, String home,
-		      String remote, String link, String runAs) {
-
-        super();        
-	this.name = name;
-	this.description = description;
-	this.type = type;
-	this.home = home;
-	this.remote = remote;
-	this.link = link;
-	this.runAs = runAs;
-
-    }
-
-
-    // ----------------------------------------------------- Instance Variables
-
-
     private String description = null;
-    private String home = null;
-    private String link = null;
-    private String name = null;
-    private String remote = null;
-    private String runAs = null;
-    private String type = null;
-
-
-    // ------------------------------------------------------------- Properties
-
 
     public String getDescription() {
 	return (this.description);
     }
 
+    public void setDescription(String description) {
+	this.description = description;
+    }
+
+
+    /**
+     * The name of the EJB home implementation class.
+     */
+    private String home = null;
+
     public String getHome() {
 	return (this.home);
     }
+
+    public void setHome(String home) {
+	this.home = home;
+    }
+
+
+    /**
+     * The link to a J2EE EJB definition.
+     */
+    private String link = null;
 
     public String getLink() {
 	return (this.link);
     }
 
+    public void setLink(String link) {
+	this.link = link;
+    }
+
+
+    /**
+     * The name of this EJB.
+     */
+    private String name = null;
+
     public String getName() {
 	return (this.name);
     }
+
+    public void setName(String name) {
+	this.name = name;
+    }
+
+
+    /**
+     * The name of the EJB remote implementation class.
+     */
+    private String remote = null;
 
     public String getRemote() {
 	return (this.remote);
     }
 
+    public void setRemote(String remote) {
+	this.remote = remote;
+    }
+
+
+    /**
+     * The "run as" remote identity for this bean.
+     */
+    private String runAs = null;
+
     public String getRunAs() {
 	return (this.runAs);
     }
 
+    public void setRunAs(String runAs) {
+	this.runAs = runAs;
+    }
+
+
+    /**
+     * The name of the EJB bean implementation class.
+     */
+    private String type = null;
+
     public String getType() {
 	return (this.type);
+    }
+
+    public void setType(String type) {
+	this.type = type;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a String representation of this object.
+     */
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer("ContextEjb[");
+	sb.append("name=");
+	sb.append(name);
+	if (description != null) {
+	    sb.append(", description=");
+	    sb.append(description);
+	}
+	if (type != null) {
+	    sb.append(", type=");
+	    sb.append(type);
+	}
+	if (home != null) {
+	    sb.append(", home=");
+	    sb.append(home);
+	}
+	if (remote != null) {
+	    sb.append(", remote=");
+	    sb.append(remote);
+	}
+	if (link != null) {
+	    sb.append(", link=");
+	    sb.append(link);
+	}
+	if (runAs != null) {
+	    sb.append(", runAs=");
+	    sb.append(runAs);
+	}
+	sb.append("]");
+	return (sb.toString());
+
     }
 
 

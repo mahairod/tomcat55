@@ -134,4 +134,33 @@ public final class ContextEnvironment {
 	this.value = value;
     }
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a String representation of this object.
+     */
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer("ContextEnvironment[");
+	sb.append("name=");
+	sb.append(name);
+	if (description != null) {
+	    sb.append(", description=");
+	    sb.append(description);
+	}
+	if (type != null) {
+	    sb.append(", type=");
+	    sb.append(type);
+	}
+	if (value != null) {
+	    sb.append(", value=");
+	    sb.append(value);
+	}
+	sb.append("]");
+	return (sb.toString());
+
+    }
+
+
 }

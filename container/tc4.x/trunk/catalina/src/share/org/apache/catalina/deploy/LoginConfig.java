@@ -77,34 +77,7 @@ package org.apache.catalina.deploy;
 public final class LoginConfig {
 
 
-    // ----------------------------------------------------------- Constructors
-
-
-    /**
-     * Construct a new login configuration with the specified properties
-     *
-     * @param authMethod Authentication method to use, if any
-     * @param realmName Realm name to use in security challenges
-     * @param loginPage Context-relative URI of the login page
-     * @param errorPage Context-relative URI of the error page
-     */
-    public LoginConfig(String authMethod, String realmName,
-		       String loginPage, String errorPage) {
-
-	super();
-	if (authMethod != null)
-	    this.authMethod = authMethod;
-	if (realmName != null)
-	    this.realmName = realmName;
-	if (loginPage != null)
-	    this.loginPage = loginPage;
-	if (errorPage != null)
-	    this.errorPage = errorPage;
-
-    }
-
-
-    // ----------------------------------------------------- Instance Variables
+    // ------------------------------------------------------------- Properties
 
 
     /**
@@ -113,17 +86,41 @@ public final class LoginConfig {
      */
     private String authMethod = null;
 
+    public String getAuthMethod() {
+	return (this.authMethod);
+    }
+
+    public void setAuthMethod(String authMethod) {
+	this.authMethod = authMethod;
+    }
+
 
     /**
      * The context-relative URI of the error page for form login.
      */
     private String errorPage = null;
 
+    public String getErrorPage() {
+	return (this.errorPage);
+    }
+
+    public void setErrorPage(String errorPage) {
+	this.errorPage = errorPage;
+    }
+
 
     /**
      * The context-relative URI of the login page for form login.
      */
     private String loginPage = null;
+
+    public String getLoginPage() {
+	return (this.loginPage);
+    }
+
+    public void setLoginPage(String loginPage) {
+	this.loginPage = loginPage;
+    }
 
 
     /**
@@ -132,46 +129,40 @@ public final class LoginConfig {
      */
     private String realmName = null;
 
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the authentication method for this web application.
-     */
-    public String getAuthMethod() {
-
-	return (this.authMethod);
-
-    }
-
-
-    /**
-     * Return the error page URI for form login for this web application.
-     */
-    public String getErrorPage() {
-
-	return (this.errorPage);
-
-    }
-
-
-    /**
-     * Return the login page URI for form login for this web application.
-     */
-    public String getLoginPage() {
-
-	return (this.loginPage);
-
-    }
-
-
-    /**
-     * Return the realm name for this web application.
-     */
     public String getRealmName() {
-
 	return (this.realmName);
+    }
+
+    public void setRealmName(String realmName) {
+	this.realmName = realmName;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a String representation of this object.
+     */
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer("LoginConfig[");
+	sb.append("authMethod=");
+	sb.append(authMethod);
+	if (realmName != null) {
+	    sb.append(", realmName=");
+	    sb.append(realmName);
+	}
+	if (loginPage != null) {
+	    sb.append(", loginPage=");
+	    sb.append(loginPage);
+	}
+	if (errorPage != null) {
+	    sb.append(", errorPage=");
+	    sb.append(errorPage);
+	}
+	sb.append("]");
+	return (sb.toString());
 
     }
 

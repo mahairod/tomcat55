@@ -501,24 +501,6 @@ public final class StandardContext
 
 
     /**
-     * Set the login configuration descriptor for this web application.
-     *
-     * @param authMethod Authentication method to use (if any)
-     * @param realmName Realm name to use in security challenges
-     * @param loginPage Context-relative URI of the login page (if any)
-     * @param errorPage Context-relative URI of the error page (if any)
-     */
-    public void setLoginConfig(String authMethod, String realmName,
-			       String loginPage, String errorPage) {
-
-        LoginConfig newLoginConfig =
-	  new LoginConfig(authMethod, realmName, loginPage, errorPage);
-	setLoginConfig(newLoginConfig);
-
-    }
-
-
-    /**
      * Return the context path for this Context.
      */
     public String getPath() {
@@ -733,27 +715,6 @@ public final class StandardContext
 
 
     /**
-     * Add a new EJB resource reference for this web application.
-     *
-     * @param name EJB resource reference name
-     * @param description EJB resource reference description
-     * @param type Java class name of the EJB bean implementation class
-     * @param home Java class name of the EJB home implementation class
-     * @param remote Java class name of the EJB remote implementation class
-     * @param link Optional link to a J2EE EJB definition
-     * @param runAs Optional run as security role
-     */
-    public void addEjb(String name, String description,
-		       String type, String home,
-		       String remote, String link, String runAs) {
-
-	addEjb(new ContextEjb(name, description, type, home,
-			      remote, link, runAs));
-
-    }
-
-
-    /**
      * Add an environment entry for this web application.
      *
      * @param environment New environment entry
@@ -889,22 +850,6 @@ public final class StandardContext
 	    resources.put(resource.getName(), resource);
 	}
 	fireContainerEvent("addResource", resource.getName());
-
-    }
-
-
-    /**
-     * Add a resource reference for this web application.
-     *
-     * @param name Name of this resource reference
-     * @param description Description of this resource reference
-     * @param type Java class of this resource reference
-     * @param auth Authentication technique used by this resource reference
-     */
-    public void addResource(String name, String description,
-			    String type, String auth) {
-
-	addResource(new ContextResource(name, description, type, auth));
 
     }
 
