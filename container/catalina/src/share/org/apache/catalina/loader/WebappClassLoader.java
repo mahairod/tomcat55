@@ -464,14 +464,27 @@ public class WebappClassLoader
      * @param path file directory path
      */
     public void addPermission(String path) {
+        if (path == null) {
+            return;
+        }
+
         if (securityManager != null) {
             Permission permission = null;
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
+                if (!path.endsWith("/")) {
+                    path = path + "/";
+                }
                 permission = new JndiPermission(path + "*");
+                addPermission(permission);
             } else {
-                permission = new FilePermission(path + "-","read");
+                if (!path.endsWith(File.separator)) {
+                    permission = new FilePermission(path, "read");
+                    addPermission(permission);
+                    path = path + File.separator;
+                }
+                permission = new FilePermission(path + "-", "read");
+                addPermission(permission);
             }
-            addPermission(permission);
         }
     }
 
@@ -483,7 +496,9 @@ public class WebappClassLoader
      * @param url URL for a file or directory on local system
      */
     public void addPermission(URL url) {
-        addPermission(url.toString());
+        if (url != null) {
+            addPermission(url.toString());
+        }
     }
 
 
