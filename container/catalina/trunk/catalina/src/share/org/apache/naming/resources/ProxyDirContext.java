@@ -75,6 +75,7 @@ import java.io.ByteArrayInputStream;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameParser;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -208,6 +209,13 @@ public class ProxyDirContext implements DirContext {
      * Max size of resources which will have their content cached.
      */
     protected int cacheObjectMaxSize = 32768; // 32 KB
+
+
+    /**
+     * Immutable name not found exception.
+     */
+    protected NameNotFoundException notFoundException =
+        new ImmutableNameNotFoundException();
 
 
     // --------------------------------------------------------- Public Methods
@@ -1396,7 +1404,7 @@ public class ProxyDirContext implements DirContext {
             }
         }
         if (!cacheEntry.exists) {
-            throw new NamingException("Resource not found");
+            throw notFoundException;
         }
         return (cacheEntry);
     }
