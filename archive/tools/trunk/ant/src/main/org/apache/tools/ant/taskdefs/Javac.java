@@ -32,11 +32,11 @@ public class Javac extends Task {
     private Hashtable filecopyList = new Hashtable();
 
     public void setSrcdir(String srcDirName) {
-	srcDir = new File(srcDirName);
+	srcDir = project.resolveFile(srcDirName);
     }
 
     public void setDestdir(String destDirName) {
-	destDir = new File(destDirName);
+	destDir = project.resolveFile(destDirName);
     }
 
     public void setClasspath(String classpath) {
@@ -84,13 +84,8 @@ public class Javac extends Task {
 	}
 
 	if (compileList.size() > 0) {
-            try {
-                project.log("Compiling " + compileList.size() +
-			    " source files to " + destDir.getCanonicalPath());
-            } catch (IOException e) {
-                throw new BuildException("IOException reading filesystem: " + 
-                                         e.getMessage());
-            }
+            project.log("Compiling " + compileList.size() +
+		        " source files to " + destDir);
 	    
 	    if (compiler.equalsIgnoreCase("classic")) {
 		doClassicCompile();

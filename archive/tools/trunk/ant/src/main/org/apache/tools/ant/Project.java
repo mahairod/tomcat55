@@ -198,7 +198,7 @@ public class Project {
     }
 
     public File resolveFile(String fileName) {
-	File file = new File( baseDir.getAbsolutePath());
+	File file = new File(baseDir.getAbsolutePath());
 	StringTokenizer tok = new StringTokenizer(fileName, "/", false);
 	while (tok.hasMoreTokens()) {
 	    String part = tok.nextToken();
@@ -208,7 +208,15 @@ public class Project {
 		file = new File(file, part);
 	    }
 	}
-	return new File(file.getAbsolutePath());
+
+	try {
+	    return new File(file.getCanonicalPath());
+	}
+	catch (IOException e) {
+	    log("IOException getting canonical path for " + file + ": " +
+                e.getMessage(), MSG_ERR);
+	    return new File(file.getAbsolutePath());
+	}
     }
 }
 
