@@ -47,7 +47,7 @@ public class Copydir extends Task {
     }
 
     private void scanDir(File from, File to) {
-	String[] list = from.list();
+	String[] list = from.list(new DesirableFilter());
 	for (int i = 0; i < list.length; i++) {
 	    String filename = list[i];
 	    File srcFile = new File(from, filename);
@@ -55,8 +55,7 @@ public class Copydir extends Task {
 	    if (srcFile.isDirectory()) {
 		scanDir(srcFile, destFile);
 	    } else {
-		if (isFileDesirable(filename) &&
-		    srcFile.lastModified() > destFile.lastModified()) {
+		if (srcFile.lastModified() > destFile.lastModified()) {
 		    filecopyList.put(srcFile.getAbsolutePath(),
 				     destFile.getAbsolutePath());
 		}

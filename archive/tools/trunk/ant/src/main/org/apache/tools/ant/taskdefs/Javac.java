@@ -121,7 +121,7 @@ public class Javac extends Task {
 
     private void scanDir(File srcDir, File destDir) {
 
-	String[] list = srcDir.list();
+	String[] list = srcDir.list(new DesirableFilter());
 	for (int i = 0; i < list.length; i++) {
 	    String filename = list[i];
 	    File srcFile = new File(srcDir, filename);
@@ -141,8 +141,7 @@ public class Javac extends Task {
 			compileList.addElement(srcFile.getAbsolutePath());
 		    }
 		} else {
-		    if (isFileDesirable(filename) &&
-			srcFile.lastModified() > destFile.lastModified()) {
+		    if (srcFile.lastModified() > destFile.lastModified()) {
 			filecopyList.put(srcFile.getAbsolutePath(),
 					 destFile.getAbsolutePath());
 		    }
