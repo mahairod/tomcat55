@@ -114,6 +114,7 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
+import org.apache.catalina.Mapper;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
@@ -2394,9 +2395,8 @@ public class StandardContext
         if (context != null)
             context.clearAttributes();
 
-        // Shut down filters and application event listeners
+        // Shut down filters
         filterStop();
-        listenerStop();
 
         // Shut down our session manager
         if ((manager != null) && (manager instanceof Lifecycle)) {
@@ -2406,6 +2406,9 @@ public class StandardContext
                 log(sm.getString("standardContext.stoppingManager"), e);
             }
         }
+
+        // Shut down application event listeners
+        listenerStop();
 
         if (isUseNaming()) {
             // Start
@@ -3302,6 +3305,10 @@ public class StandardContext
      */
     public synchronized void start() throws LifecycleException {
 
+        if (started)
+            throw new LifecycleException
+                (sm.getString("containerBase.alreadyStarted", logName()));
+
         if (debug >= 1)
             log("Starting");
         if (debug >= 1)
@@ -3370,13 +3377,62 @@ public class StandardContext
         // Standard container startup
         if (debug >= 1)
             log("Processing standard container startup");
+
         if (ok) {
+
             try {
-                super.start();
+
+                addDefaultMapper(this.mapperClass);
+                started = true;
+
+                // Start our subordinate components, if any
+                if ((loader != null) && (loader instanceof Lifecycle))
+                    ((Lifecycle) loader).start();
+                if ((logger != null) && (logger instanceof Lifecycle))
+                    ((Lifecycle) logger).start();
+
+                // Unbinding thread
+                unbindThread(oldCCL);
+
+                // Binding thread
+                oldCCL = bindThread();
+
+                if ((manager != null) && (manager instanceof Lifecycle))
+                    ((Lifecycle) manager).start();
+                if ((cluster != null) && (cluster instanceof Lifecycle))
+                    ((Lifecycle) cluster).start();
+                if ((realm != null) && (realm instanceof Lifecycle))
+                    ((Lifecycle) realm).start();
+                if ((resources != null) && (resources instanceof Lifecycle))
+                    ((Lifecycle) resources).start();
+
+                // Start our Mappers, if any
+                Mapper mappers[] = findMappers();
+                for (int i = 0; i < mappers.length; i++) {
+                    if (mappers[i] instanceof Lifecycle)
+                        ((Lifecycle) mappers[i]).start();
+                }
+
+                // Start our child containers, if any
+                Container children[] = findChildren();
+                for (int i = 0; i < children.length; i++) {
+                    if (children[i] instanceof Lifecycle)
+                        ((Lifecycle) children[i]).start();
+                }
+
+                // Start the Valves in our pipeline (including the basic), 
+                // if any
+                if (pipeline instanceof Lifecycle)
+                    ((Lifecycle) pipeline).start();
+
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(START_EVENT, null);
+
             } finally {
                 // Unbinding thread
                 unbindThread(oldCCL);
             }
+
         }
         if (!getConfigured())
             ok = false;
@@ -3438,6 +3494,11 @@ public class StandardContext
      */
     public synchronized void stop() throws LifecycleException {
 
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("containerBase.notStarted", logName()));
+
         if (debug >= 1)
             log("Stopping");
 
@@ -3447,9 +3508,8 @@ public class StandardContext
         // Binding thread
         ClassLoader oldCCL = bindThread();
 
-        // Stop our filters and application listeners
+        // Stop our filters
         filterStop();
-        listenerStop();
 
         // Finalize our character set mapper
         setCharsetMapper(null);
@@ -3457,10 +3517,61 @@ public class StandardContext
         // Normal container shutdown processing
         if (debug >= 1)
             log("Processing standard container shutdown");
-        super.stop();
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-        // Unbinding thread
-        unbindThread(oldCCL);
+        try {
+
+            // Stop the Valves in our pipeline (including the basic), if any
+            if (pipeline instanceof Lifecycle) {
+                ((Lifecycle) pipeline).stop();
+            }
+
+            // Stop our child containers, if any
+            Container children[] = findChildren();
+            for (int i = 0; i < children.length; i++) {
+                if (children[i] instanceof Lifecycle)
+                    ((Lifecycle) children[i]).stop();
+            }
+
+            // Stop our Mappers, if any
+            Mapper mappers[] = findMappers();
+            for (int i = 0; i < mappers.length; i++) {
+                if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
+                    ((Lifecycle) mappers[(mappers.length-1)-i]).stop();
+            }
+
+            // Stop our subordinate components, if any
+            if ((resources != null) && (resources instanceof Lifecycle)) {
+                ((Lifecycle) resources).stop();
+            }
+            if ((realm != null) && (realm instanceof Lifecycle)) {
+                ((Lifecycle) realm).stop();
+            }
+            if ((cluster != null) && (cluster instanceof Lifecycle)) {
+                ((Lifecycle) cluster).stop();
+            }
+            if ((manager != null) && (manager instanceof Lifecycle)) {
+                ((Lifecycle) manager).stop();
+            }
+
+            // Stop our application listeners
+            listenerStop();
+
+            if ((logger != null) && (logger instanceof Lifecycle)) {
+                ((Lifecycle) logger).stop();
+            }
+            if ((loader != null) && (loader instanceof Lifecycle)) {
+                ((Lifecycle) loader).stop();
+            }
+
+        } finally {
+
+            // Unbinding thread
+            unbindThread(oldCCL);
+
+        }
 
         if (debug >= 1)
             log("Stopping complete");
