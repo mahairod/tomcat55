@@ -363,11 +363,17 @@ public class DataSourceRealm
         if (dbConnection == null)
             return;
 
+        // Commit if not auto committed
+        try {
+            if (!dbConnection.getAutoCommit()) {
+                dbConnection.commit();
+            }            
+        } catch (SQLException e) {
+            containerLog.error("Exception committing connection before closing:", e);
+        }
+
         // Close this database connection, and log any errors
         try {
-        	if (!dbConnection.getAutoCommit()) {
-        		dbConnection.commit();
-        	}
             dbConnection.close();
         } catch (SQLException e) {
             containerLog.error(sm.getString("dataSourceRealm.close"), e); // Just log it here
