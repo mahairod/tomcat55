@@ -1619,7 +1619,7 @@
 
 	  <target name="package-compat-zip">
 	    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-compat.zip">
-	      <zipfileset dir="${tomcat.compat}" prefix="${final.name}t" 
+	      <zipfileset dir="${tomcat.compat}" prefix="${final.name}" 
 	                  includes="**" />
 	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="LICENSE" />
