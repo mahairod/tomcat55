@@ -979,7 +979,7 @@
   <!-- ==================== TEST: Execute Unit Tests ====================== -->
   <target name="test" if="junit.present"
    description="Run all unit test cases"
-   depends="build-tests,test-dir-context,test-util">
+   depends="build-tests,test-dir-context,test-realm,test-util">
   </target>
 
   <target name="test-dir-context" if="junit.present">
@@ -1004,6 +1004,16 @@
     </java>
     <delete file="${test.webapp.war}"/>
 
+  </target>
+
+  <target name="test-realm" if="junit.present">
+
+    <echo message="Running Realm tests"/>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <arg value="org.apache.catalina.realm.JNDIRealmTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
   </target>
 
   <target name="test-util" if="junit.present">

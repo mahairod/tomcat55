@@ -362,7 +362,7 @@ as your database structure conforms to the following requirements:</p>
     <li>Password to be recognized by Tomcat when the user logs in.
         This value may in cleartext or digested - see below for more
         information.</li>
-    </ul></li>    
+    </ul></li>
 <li>There must be a table, referenced below as the <em>user roles</em> table,
     that contains one row for every valid role that is assigned to a
     particular user.  It is legal for a user to have zero, one, or more than
@@ -373,13 +373,13 @@ as your database structure conforms to the following requirements:</p>
     <li>Username to be recognized by Tomcat (same value as is specified
         in the <em>users</em> table).</li>
     <li>Role name of a valid role associated with this user.</li>
-    </ul></li>    
+    </ul></li>
 </ul>
 
 <h3>Quick Start</h3>
-                  
+
 <p>To set up Tomcat to use DataSourceRealm, you will need to follow these steps:</p>
-<ol>              
+<ol>
 <li>If you have not yet done so, create tables and columns in your database
     that conform to the requirements described above.</li>
 <li>Configure a database username and password for use by Tomcat, that has
@@ -418,7 +418,7 @@ attributes are supported by this implementation:</p>
     generate more detailed output.  If not specified, the default
     debugging detail level is zero (0).</p>
   </attribute>
-    
+
   <attribute name="digest" required="false">
     <p>The digest algorithm used to store passwords in non-plaintext formats.
     Valid values are those accepted for the algorithm name by the
@@ -426,18 +426,18 @@ attributes are supported by this implementation:</p>
     <a href="#Digested Passwords">Digested Passwords</a> for more
     information.  If not specified, passwords are stored in clear text.</p>
   </attribute>
-    
+
   <attribute name="roleNameCol" required="true">
     <p>The name of the column, in the <em>user roles</em> table, that
     contains the name of a role assigned to this user.</p>
   </attribute>
-    
+
   <attribute name="userCredCol" required="true">
     <p>The name of the column, in the <em>users</em> table, that contains
     the password for this user (either in clear text, or digested if the
     <code>digest</code> attribute is set).</p>
   </attribute>
-    
+
   <attribute name="userNameCol" required="true">
     <p>The name of the column, in the <em>users</em> and <em>user roles</em>
     tables, that contains the username of this user.</p>
@@ -559,11 +559,19 @@ initial <code>DirContext</code> defined by the
 attribute containing the username that is presented for
 authentication.</p>
 
-<p>Often the distinguished name of the user's entry contains the
-username presented for authentication but is otherwise the same for
-all users. In this case the <strong>userPattern</strong> attribute may
-be used to specify the DN, with "{0}" marking where
-the username should be substituted.</p>
+<p>There are multiple options for specifying where to look for users.
+One is through the use of <strong>userPattern</strong>.  This is set
+to the distinguished name of the user entry, but with "{0}" marking
+where the username should be substituted.  If you want Tomcat to
+search for the username in multiple places, you can supply multiple
+locations in the <strong>userPattern</strong>.  This is done by
+surrounding each separate location with parentheses.  For example,
+"(cn={0},ou=users1,o=myorg)(cn={0},ou=users2,o=myorg)" will result in
+Tomcat looking in ou=users1,o=myorg, and then ou=users2,o=myorg for the
+username passed in from the authentication process.  You can also use
+the standard LDAP "OR" search format, for instance
+"(|(cn={0},o=myorg)({0}))".  Note that, as in this example, you can
+do both context-less and fully-typed logins using this technique.</p>
 
 <p>Otherwise the realm must search the directory to find a unique entry
 containing the username. The following attributes configure this
@@ -831,7 +839,8 @@ attributes are supported by this implementation:</p>
         directory entry, following the syntax supported by the
         <code>java.text.MessageFormat</code> class with
         <code>{0}</code> marking where the actual username should be
-        inserted. You can use this property instead of
+        inserted.  Multiple search locations are achieved by separating
+        each with parentheses.  You can use this property instead of
         <code>userSearch</code>, <code>userSubtree</code> and
         <code>userBase</code> when the distinguished name contains the
         username and is otherwise the same for all users.</p>
@@ -908,6 +917,12 @@ dn: ou=people,dc=mycompany,dc=com
 objectClass: organizationalUnit
 ou: people
 
+# Define another entry to contain admin users
+# searches for admin users are based on this entry
+dn: ou=admins,dc=mycompany,dc=com
+objectClass: organizationalUnit
+ou: admins
+
 # Define a user entry for Janet Jones
 dn: uid=jjones,ou=people,dc=mycompany,dc=com
 objectClass: inetOrgPerson
@@ -926,6 +941,15 @@ cn: fred bloggs
 mail: f.bloggs@mycompany.com
 userPassword: fred
 
+# Define a user entry for an admin user
+dn: uid=jsmith,ou=admins,dc=mycompany,dc=com
+objectClass: inetOrgPerson
+uid: jsmith
+sn: smith
+cn: jean smith
+mail: j.smith@mycompany.com
+userPassword: jean
+
 # Define an entry to contain LDAP groups
 # searches for roles are based on this entry
 dn: ou=groups,dc=mycompany,dc=com
@@ -938,6 +962,7 @@ objectClass: groupOfUniqueNames
 cn: tomcat
 uniqueMember: uid=jjones,ou=people,dc=mycompany,dc=com
 uniqueMember: uid=fbloggs,ou=people,dc=mycompany,dc=com
+uniqueMember: uid=jsmith,ou=admins,dc=mycompany,dc=com
 
 # Define an entry for the "role1" role
 dn: cn=role1,ou=groups,dc=mycompany,dc=com
@@ -967,6 +992,23 @@ distinguished name by substituting the username into the
 <code>userPattern</code>, authenticate by binding to the directory
 with this DN and the password received from the user, and search the
 directory to find the user's roles.</p>
+
+<p>If you want the realm to look in multiple pre-determined locations,
+you can use a similar notation, surrounding each location by parentheses:</p>
+<source>
+&lt;Realm   className="org.apache.catalina.realm.JNDIRealm" debug="99"
+     connectionURL="ldap://localhost:389"
+       userPattern="(uid={0},ou=people,dc=mycompany,dc=com)(uid={0},ou=admins,dc=mycompany,dc=com)"
+          roleBase="ou=groups,dc=mycompany,dc=com"
+          roleName="cn"
+        roleSearch="(uniqueMember={0})"
+/&gt;
+</source>
+<p>This pre-supposes that the User IDs in these two groups are unique;
+the first <code>userPattern</code> that results in a valid user ID
+will be the one used.  Note that you can support typeless logins as
+well by adding "({0})" to the userPattern string above.  Then, Jean Smith
+can log in as "jsmith", or "uid=jsmith,ou=admins,dc=mycompany,dc=com".</p>
 
 <p>Now suppose that users are expected to enter their email address
 rather than their userid when logging in. In this case the realm must

@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,8 +69,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.naming.Context;
 import javax.naming.CommunicationException;
+import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -298,6 +300,17 @@ public class JNDIRealm extends RealmBase {
 
 
     /**
+     * A string of LDAP user patterns or paths, ":"-separated
+     * These will be used to form the distinguished name of a
+     * user, with "{0}" marking the spot where the specified username
+     * goes.
+     * This is similar to userPattern, but allows for multiple searches
+     * for a user.
+     */
+    protected String[] userPatternArray = null;
+
+
+    /**
      * The message format used to form the distinguished name of a
      * user, with "{0}" marking the spot where the specified username
      * goes.
@@ -306,10 +319,10 @@ public class JNDIRealm extends RealmBase {
 
 
     /**
-     * The MessageFormat object associated with the current
-     * <code>userPattern</code>.
+     * An array of MessageFormat objects associated with the current
+     * <code>userPatternArray</code>.
      */
-    protected MessageFormat userPatternFormat = null;
+    protected MessageFormat[] userPatternFormatArray = null;
 
 
     /**
@@ -360,6 +373,11 @@ public class JNDIRealm extends RealmBase {
      * alternate url.
      */
     protected int connectionAttempt = 0;
+
+    /**
+     * The current user pattern to be used for lookup and binding of a user.
+     */
+    protected int curUserPattern = 0;
 
     // ------------------------------------------------------------- Properties
 
@@ -726,6 +744,11 @@ public class JNDIRealm extends RealmBase {
 
     /**
      * Set the message format pattern for selecting users in this Realm.
+     * This may be one simple pattern, or multiple patterns to be tried,
+     * separated by parentheses. (for example, either "cn={0}", or
+     * "(cn={0})(cn={0},o=myorg)" Full LDAP search strings are also supported,
+     * but only the "OR", "|" syntax, so "(|(cn={0})(cn={0},o=myorg))" is
+     * also valid. Complex search strings with &, etc are NOT supported.
      *
      * @param userPattern The new user pattern
      */
@@ -733,11 +756,18 @@ public class JNDIRealm extends RealmBase {
 
         this.userPattern = userPattern;
         if (userPattern == null)
-            userPatternFormat = null;
-        else
-            userPatternFormat = new MessageFormat(userPattern);
-
+            userPatternArray = null;
+        else {
+            userPatternArray = parseUserPatternString(userPattern);
+            int len = this.userPatternArray.length;
+            userPatternFormatArray = new MessageFormat[len];
+            for (int i=0; i < len; i++) {
+                userPatternFormatArray[i] =
+                    new MessageFormat(userPatternArray[i]);
+            }
+        }
     }
+
 
     /**
      * Getter for property alternateURL.
@@ -749,6 +779,7 @@ public class JNDIRealm extends RealmBase {
         return this.alternateURL;
 
     }
+
 
     /**
      * Setter for property alternateURL.
@@ -870,21 +901,50 @@ public class JNDIRealm extends RealmBase {
             || credentials == null || credentials.equals(""))
             return (null);
 
-        // Retrieve user information
-        User user = getUser(context, username);
-        if (user == null)
-            return (null);
+        if (userPatternArray != null) {
+            for (curUserPattern = 0;
+                 curUserPattern < userPatternFormatArray.length;
+                 curUserPattern++) {
+                // Retrieve user information
+                User user = getUser(context, username);
+                if (user != null) {
+                    try {
+                        // Check the user's credentials
+                        if (checkCredentials(context, user, credentials)) {
+                            // Search for additional roles
+                            List roles = getRoles(context, user);
+                            return (new GenericPrincipal(this,
+                                                         username,
+                                                         credentials,
+                                                         roles));
+                        }
+                    } catch (InvalidNameException ine) {
+                        // Log the problem for posterity
+                        log(sm.getString("jndiRealm.exception"), ine);
+                        // ignore; this is probably due to a name not fitting
+                        // the search path format exactly, as in a fully-
+                        // qualified name being munged into a search path
+                        // that already contains cn= or vice-versa
+                    }
+                }
+            }
+            return null;
+        } else {
+            // Retrieve user information
+            User user = getUser(context, username);
+            if (user == null)
+                return (null);
 
-        // Check the user's credentials
-        if (!checkCredentials(context, user, credentials))
-            return (null);
+            // Check the user's credentials
+            if (!checkCredentials(context, user, credentials))
+                return (null);
 
-        // Search for additional roles
-        List roles = getRoles(context, user);
+            // Search for additional roles
+            List roles = getRoles(context, user);
 
-        // Create and return a suitable Principal for this user
-        return (new GenericPrincipal(this, username, credentials, roles));
-
+            // Create and return a suitable Principal for this user
+            return (new GenericPrincipal(this, username, credentials, roles));
+        }
     }
 
 
@@ -919,7 +979,7 @@ public class JNDIRealm extends RealmBase {
         list.toArray(attrIds);
 
         // Use pattern or search for user entry
-        if (userPatternFormat != null) {
+        if (userPatternFormatArray != null) {
             user = getUserByPattern(context, username, attrIds);
         } else {
             user = getUserBySearch(context, username, attrIds);
@@ -950,11 +1010,11 @@ public class JNDIRealm extends RealmBase {
         if (debug >= 2)
             log("lookupUser(" + username + ")");
 
-        if (username == null || userPatternFormat == null)
+        if (username == null || userPatternFormatArray[curUserPattern] == null)
             return (null);
 
         // Form the dn from the user pattern
-        String dn = userPatternFormat.format(new String[] { username });
+        String dn = userPatternFormatArray[curUserPattern].format(new String[] { username });
         if (debug >= 3) {
             log("  dn=" + dn);
         }
@@ -1160,7 +1220,8 @@ public class JNDIRealm extends RealmBase {
                     password = password.substring(5);
                     md.reset();
                     md.update(credentials.getBytes());
-                    String digestedPassword = new String(Base64.encode(md.digest()));
+                    String digestedPassword =
+                        new String(Base64.encode(md.digest()));
                     validated = password.equals(digestedPassword);
                 }
             } else {
@@ -1566,7 +1627,50 @@ public class JNDIRealm extends RealmBase {
 
     }
 
+    /**
+     * Given a string containing LDAP patterns for user locations (separated by
+     * parentheses in a pseudo-LDAP search string format -
+     * "(location1)(location2)", returns an array of those paths.  Real LDAP
+     * search strings are supported as well (though only the "|" "OR" type).
+     *
+     * @param userPatternString - a string LDAP search paths surrounded by
+     * parentheses
+     */
+    protected String[] parseUserPatternString(String userPatternString) {
 
+        if (userPatternString != null) {
+            ArrayList pathList = new ArrayList();
+            int startParenLoc = userPatternString.indexOf('(');
+            if (startParenLoc == -1) {
+                // no parens here; return whole thing
+                return new String[] {userPatternString};
+            }
+            int startingPoint = 0;
+            while (startParenLoc > -1) {
+                int endParenLoc = 0;
+                // weed out escaped open parens and parens enclosing the
+                // whole statement (in the case of valid LDAP search
+                // strings: (|(something)(somethingelse))
+                while ( (userPatternString.charAt(startParenLoc + 1) == '|') ||
+                        (startParenLoc != 0 && userPatternString.charAt(startParenLoc - 1) == '\\') ) {
+                    startParenLoc = userPatternString.indexOf("(", startParenLoc+1);
+                }
+                endParenLoc = userPatternString.indexOf(")", startParenLoc+1);
+                // weed out escaped end-parens
+                while (userPatternString.charAt(endParenLoc - 1) == '\\') {
+                    endParenLoc = userPatternString.indexOf(")", endParenLoc+1);
+                }
+                String nextPathPart = userPatternString.substring
+                    (startParenLoc+1, endParenLoc);
+                pathList.add(nextPathPart);
+                startingPoint = endParenLoc+1;
+                startParenLoc = userPatternString.indexOf('(', startingPoint);
+            }
+            return (String[])pathList.toArray(new String[] {});
+        }
+        return null;
+
+    }
 }
 
 // ------------------------------------------------------ Private Classes
@@ -1581,10 +1685,7 @@ class User {
     ArrayList roles = null;
 
 
-    User(String username,
-             String dn,
-             String password,
-             ArrayList roles) {
+    User(String username, String dn, String password, ArrayList roles) {
         this.username = username;
         this.dn = dn;
         this.password = password;
