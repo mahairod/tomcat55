@@ -370,6 +370,12 @@ public class StandardContext
 
 
     /**
+     * The privileged flag for this web application.
+     */
+    private boolean privileged = false;
+
+
+    /**
      * Should the next call to <code>addWelcomeFile()</code> cause replacement
      * of any existing welcome files?  This will be set before processing the
      * web application's deployment descriptor, so that application specified
@@ -969,6 +975,32 @@ public class StandardContext
         support.firePropertyChange("override",
                                    new Boolean(oldOverride),
                                    new Boolean(this.override));
+
+    }
+
+
+    /**
+     * Return the privileged flag for this web application.
+     */
+    public boolean getPrivileged() {
+
+        return (this.privileged);
+
+    }
+
+
+    /**
+     * Set the privileged flag for this web application.
+     * 
+     * @param privileged The new privileged flag
+     */
+    public void setPrivileged(boolean privileged) {
+
+        boolean oldPrivileged = this.privileged;
+        this.privileged = privileged;
+        support.firePropertyChange("privileged",
+                                   new Boolean(oldPrivileged),
+                                   new Boolean(this.privileged));
 
     }
 

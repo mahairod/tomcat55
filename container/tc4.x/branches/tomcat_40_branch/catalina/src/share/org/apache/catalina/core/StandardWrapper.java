@@ -830,6 +830,14 @@ public final class StandardWrapper
                 (sm.getString("standardWrapper.instantiate", actualClass), e);
         }
 
+        // Check if loading the servlet in this web application should be 
+        // allowed
+        if (!isServletAllowed(servlet)) {
+            throw new SecurityException
+                (sm.getString("standardWrapper.privilegedServlet", 
+                              actualClass));
+        }
+
         // Special handling for ContainerServlet instances
         if ((servlet instanceof ContainerServlet) &&
             isContainerServlet(actualClass)) {
@@ -1110,6 +1118,28 @@ public final class StandardWrapper
             return (true);
         else
             return (false);
+
+    }
+
+
+    /**
+     * Return <code>true</code> if loading this servlet is allowed.
+     */
+    private boolean isServletAllowed(Object servlet) {
+
+        if (servlet instanceof ContainerServlet) {
+            if (((Context) getParent()).getPrivileged() 
+                || (servlet.getClass().getName().equals
+                    ("org.apache.catalina.servlets.InvokerServlet"))) {
+                System.out.println("Allow:" + servlet);
+                return (true);
+            } else {
+                System.out.println("Not allowed:" + servlet);
+                return (false);
+            }
+        }
+
+        return (true);
 
     }
 
