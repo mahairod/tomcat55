@@ -76,10 +76,10 @@ public class SimpleTagSupport
     private JspTag parentTag;
     
     /** The JSP context for the upcoming tag invocation. */
-    protected JspContext jspContext;
+    private JspContext jspContext;
     
     /** The body of the tag. */
-    protected JspFragment jspBody;
+    private JspFragment jspBody;
     
     /**
      * Sole constructor. (For invocation by subclass constructors, 
@@ -144,7 +144,7 @@ public class SimpleTagSupport
      *
      * @return the page context for this invocation
      */
-    public JspContext getJspContext() {
+    protected JspContext getJspContext() {
         return this.jspContext;
     }
                 
@@ -165,7 +165,7 @@ public class SimpleTagSupport
      * @return the fragment encapsulating the body of this tag, or
      *    null if this tag has a body content type of empty.
      */
-    public JspFragment getJspBody() {
+    protected JspFragment getJspBody() {
         return this.jspBody;
     }
 

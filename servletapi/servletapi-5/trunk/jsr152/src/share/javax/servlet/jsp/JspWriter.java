@@ -165,10 +165,9 @@ abstract public class JspWriter extends java.io.Writer {
 
     /**
      * Print a boolean value.  The string produced by <code>{@link
-     * java.lang.String#valueOf(boolean)}</code> is translated into bytes
-     * according to the platform's default character encoding, and these bytes
-     * are written in exactly the manner of the <code>{@link
-     * #write(int)}</code> method.
+     * java.lang.String#valueOf(boolean)}</code> is written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the 
+     * underlying writer.
      *
      * @param      b   The <code>boolean</code> to be printed
      * @throws	   java.io.IOException If an error occured while writing
@@ -177,10 +176,9 @@ abstract public class JspWriter extends java.io.Writer {
     abstract public void print(boolean b) throws IOException;
 
     /**
-     * Print a character.  The character is translated into one or more bytes
-     * according to the platform's default character encoding, and these bytes
-     * are written in exactly the manner of the <code>{@link
-     * #write(int)}</code> method.
+     * Print a character.  The character is written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      c   The <code>char</code> to be printed
      * @throws	   java.io.IOException If an error occured while writing
@@ -190,10 +188,9 @@ abstract public class JspWriter extends java.io.Writer {
 
     /**
      * Print an integer.  The string produced by <code>{@link
-     * java.lang.String#valueOf(int)}</code> is translated into bytes according
-     * to the platform's default character encoding, and these bytes are
-     * written in exactly the manner of the <code>{@link #write(int)}</code>
-     * method.
+     * java.lang.String#valueOf(int)}</code> is written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      i   The <code>int</code> to be printed
      * @see        java.lang.Integer#toString(int)
@@ -204,10 +201,9 @@ abstract public class JspWriter extends java.io.Writer {
 
     /**
      * Print a long integer.  The string produced by <code>{@link
-     * java.lang.String#valueOf(long)}</code> is translated into bytes
-     * according to the platform's default character encoding, and these bytes
-     * are written in exactly the manner of the <code>{@link #write(int)}</code>
-     * method.
+     * java.lang.String#valueOf(long)}</code> is written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      l   The <code>long</code> to be printed
      * @see        java.lang.Long#toString(long)
@@ -218,10 +214,9 @@ abstract public class JspWriter extends java.io.Writer {
 
     /**
      * Print a floating-point number.  The string produced by <code>{@link
-     * java.lang.String#valueOf(float)}</code> is translated into bytes
-     * according to the platform's default character encoding, and these bytes
-     * are written in exactly the manner of the <code>{@link #write(int)}</code>
-     * method.
+     * java.lang.String#valueOf(float)}</code> is written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      f   The <code>float</code> to be printed
      * @see        java.lang.Float#toString(float)
@@ -232,10 +227,9 @@ abstract public class JspWriter extends java.io.Writer {
 
     /**
      * Print a double-precision floating-point number.  The string produced by
-     * <code>{@link java.lang.String#valueOf(double)}</code> is translated into
-     * bytes according to the platform's default character encoding, and these
-     * bytes are written in exactly the manner of the <code>{@link
-     * #write(int)}</code> method.
+     * <code>{@link java.lang.String#valueOf(double)}</code> is written to
+     * the JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      d   The <code>double</code> to be printed
      * @see        java.lang.Double#toString(double)
@@ -245,10 +239,9 @@ abstract public class JspWriter extends java.io.Writer {
     abstract public void print(double d) throws IOException;
 
     /**
-     * Print an array of characters.  The characters are converted into bytes
-     * according to the platform's default character encoding, and these bytes
-     * are written in exactly the manner of the <code>{@link #write(int)}</code>
-     * method.
+     * Print an array of characters.  The characters are written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      s   The array of chars to be printed
      *
@@ -261,9 +254,8 @@ abstract public class JspWriter extends java.io.Writer {
     /**
      * Print a string.  If the argument is <code>null</code> then the string
      * <code>"null"</code> is printed.  Otherwise, the string's characters are
-     * converted into bytes according to the platform's default character
-     * encoding, and these bytes are written in exactly the manner of the
-     * <code>{@link #write(int)}</code> method.
+     * written to the JspWriter's buffer or, if no buffer is used, directly
+     * to the underlying writer.
      *
      * @param      s   The <code>String</code> to be printed
      * @throws	   java.io.IOException If an error occured while writing
@@ -273,10 +265,9 @@ abstract public class JspWriter extends java.io.Writer {
 
     /**
      * Print an object.  The string produced by the <code>{@link
-     * java.lang.String#valueOf(Object)}</code> method is translated into bytes
-     * according to the platform's default character encoding, and these bytes
-     * are written in exactly the manner of the <code>{@link #write(int)}</code>
-     * method.
+     * java.lang.String#valueOf(Object)}</code> method is written to the
+     * JspWriter's buffer or, if no buffer is used, directly to the
+     * underlying writer.
      *
      * @param      obj   The <code>Object</code> to be printed
      * @see        java.lang.Object#toString()
@@ -411,7 +402,7 @@ abstract public class JspWriter extends java.io.Writer {
      * method will not throw an IOException if the buffer has already been
      * flushed. It merely clears the current content of the buffer and
      * returns.
-    *
+     *
      * @throws IOException		If an I/O error occurs
      */
 

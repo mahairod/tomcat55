@@ -119,7 +119,8 @@ package javax.servlet.jsp.tagext;
  * a picture:
  *
  * <p>
- * <IMG src="doc-files/VariableInfo-1.gif"/>
+ * <IMG src="doc-files/VariableInfo-1.gif"
+ *      alt="NESTED, AT_BEGIN and AT_END Variable Scopes"/>
  *
  *<p>
  * The JSP 2.0 specification defines the interpretation of 3 values:
@@ -141,7 +142,7 @@ package javax.servlet.jsp.tagext;
  *
  * <blockquote>
  * <table cellpadding="2" cellspacing="2" border="0" width="55%"
- * bgcolor="#999999">
+ *        bgcolor="#999999" summary="Variable Synchronization Points">
  * <tbody>
  *   <tr align="center">
  *     <td valign="top" colspan="6" bgcolor="#999999"><u><b>Variable Synchronization
