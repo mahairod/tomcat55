@@ -3829,16 +3829,28 @@ public class StandardContext
      */
     private void postWorkDirectory() {
 
-        // Retrieve our parent (normally a host) name
-        String parentName = null;
-        if (getParent() != null)
-            parentName = getParent().getName();
-        if ((parentName == null) || (parentName.length() < 1))
-            parentName = "_";
-
         // Acquire (or calculate) the work directory path
         String workDir = getWorkDir();
         if (workDir == null) {
+
+            // Retrieve our parent (normally a host) name
+            String hostName = null;
+            String engineName = null;
+            String hostWorkDir = null;
+            Container parentHost = getParent();
+            if (parentHost != null) {
+                hostName = parentHost.getName();
+                hostWorkDir = ((StandardHost)parentHost).getWorkDir();
+                Container parentEngine = parentHost.getParent();
+                if (parentEngine != null) {
+                   engineName = parentEngine.getName();
+                }
+            }
+            if ((hostName == null) || (hostName.length() < 1))
+                hostName = "_";
+            if ((engineName == null) || (engineName.length() < 1))
+                engineName = "_";
+
             String temp = getPath();
             if (temp.startsWith("/"))
                 temp = temp.substring(1);
@@ -3846,8 +3858,12 @@ public class StandardContext
             temp = temp.replace('\\', '_');
             if (temp.length() < 1)
                 temp = "_";
-            workDir = "work" + File.separator + parentName +
-                File.separator + temp;
+            if (hostWorkDir != null ) {
+                workDir = hostWorkDir + File.separator + temp;
+            } else {
+                workDir = "work" + File.separator + engineName +
+                    File.separator + hostName + File.separator + temp;
+            }
             setWorkDir(workDir);
         }
 

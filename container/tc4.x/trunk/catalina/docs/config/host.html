@@ -88,6 +88,22 @@ following attributes:</p>
     </td>
   </tr>
 
+  <tr>
+    <td><code>workDir</code></td>
+    <td>
+      Pathname to a scratch directory to be used by applications for 
+      this Host. Each application will have its own sub directory with
+      temporary read-write use.  Configuring a Context workDir will override
+      use of the Host workDir configuration.  The
+      corresponding directory will be made visible as a servlet context
+      attribute (of type <code>java.io.File</code>) with the standard name
+      assigned by the Servlet API Specification, version 2.2
+      (<code>javax.servlet.context.tempdir</code>).  If not specified, a
+      suitable directory underneath Catalina's home directory will be
+      assigned automatically.
+    </td>
+  </tr>
+
 </table>
 
 <br>

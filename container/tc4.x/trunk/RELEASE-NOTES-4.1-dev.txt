@@ -39,6 +39,9 @@ General New Features:
 Catalina New Features:
 ---------------------
 
+Added the workDir attribute to the Host configuration in server.xml.
+This makes it easier to configure a different location for each
+virtual hosts application work directories.
 
 -------------------
 Jasper New Features:
@@ -48,6 +51,11 @@ Jasper New Features:
 --------------------
 Webapps New Features:
 --------------------
+
+The default work directory created for a web application now includes the
+Engine name as a directory in work directory path name.  This ensures that
+if you have two Host's with the same host name (one http, one https) configured
+in different Engine's, they will each have their own unique work directory.
 
 
 ==========================

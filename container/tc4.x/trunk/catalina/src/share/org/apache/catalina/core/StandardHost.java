@@ -190,6 +190,12 @@ public class StandardHost
 
 
     /**
+     * Work Directory base for applications.
+     */
+    private String workDir = null;
+
+
+    /**
      * DefaultContext config
      */
     private DefaultContext defaultContext;
@@ -425,6 +431,24 @@ public class StandardHost
 
         this.unpackWARs = unpackWARs;
 
+    }
+
+
+    /**
+     * Host work directory base.
+     */
+    public String getWorkDir() {
+
+        return (workDir);
+    }
+
+
+    /**
+     * Host work directory base.
+     */
+    public void setWorkDir(String workDir) {
+
+        this.workDir = workDir;
     }
 
 
