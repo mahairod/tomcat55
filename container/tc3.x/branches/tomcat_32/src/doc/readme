@@ -69,17 +69,6 @@ refactoring, removal of dead code, and separation of J2EE-specific code).
 - Tomcat 3.2 is the first performance tune-up, and also adds a few new 
 features (see next section).
 
-- It is expected that Tomcat 3.3 will feature additional major performance 
-improvements resulting from changes in data representation and algorithms.
-Version 3.3 will also undergo a major review of security  (to be able to 
-trust that "untrusted" code runs safely), and support for I18N character 
-sets.
-
-- Tomcat 3.4 will likely focus on scalability and advanced load balancing.  
-It will also support version 2.3 of the Java Servlet specification.  
-(First-round support for version 2.3 for the servlet specification may be 
-included in version 3.3.)
-
 - Tomcat 4.0 is separate development from Tomcat 3.x.  It is based on the
 Catalina architecture, which is very different from the architecture of
 Tomcat 3.x.  In addition, Tomcat 4.0 is to be the reference implementation
