@@ -89,7 +89,7 @@ Section "Service" SecTomcatService
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
   
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 5.0" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 5.0" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -start org.apache.catalina.startup.Bootstrap -params startd -stop org.apache.catalina.startup.Bootstrap -params stopd -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
   BringToFront
   ClearErrors
