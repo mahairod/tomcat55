@@ -109,6 +109,20 @@ public interface Service {
     public String getInfo();
 
 
+    /**
+     * Return the name of this Service.
+     */
+    public String getName();
+
+
+    /**
+     * Set the name of this Service.
+     *
+     * @param name The new service name
+     */
+    public void setName(String name);
+
+
     // --------------------------------------------------------- Public Methods
 
 

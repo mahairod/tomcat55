@@ -113,6 +113,12 @@ public final class StandardService
 
 
     /**
+     * The name of this service.
+     */
+    private String name = this.toString();
+
+
+    /**
      * The lifecycle event support for this component.
      */
     private LifecycleSupport lifecycle = new LifecycleSupport(this);
@@ -187,6 +193,28 @@ public final class StandardService
     public String getInfo() {
 
         return (this.info);
+
+    }
+
+
+    /**
+     * Return the name of this Service.
+     */
+    public String getName() {
+
+        return (this.name);
+
+    }
+
+
+    /**
+     * Set the name of this Service.
+     *
+     * @param name The new service name
+     */
+    public void setName(String name) {
+
+        this.name = name;
 
     }
 
@@ -314,6 +342,8 @@ public final class StandardService
 	    throw new LifecycleException
 		(sm.getString("standardService.start.started"));
 
+        System.out.println
+            (sm.getString("standardService.start.name", this.name));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
@@ -351,6 +381,9 @@ public final class StandardService
 	    throw new LifecycleException
 		(sm.getString("standardService.stop.notStarted"));
 	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+
+        System.out.println
+            (sm.getString("standardService.stop.name", this.name));
 	started = false;
 
 	// Stop our defined Connectors first
