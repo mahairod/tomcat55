@@ -75,6 +75,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
@@ -91,6 +92,7 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardService;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemErrLogger;
 import org.apache.catalina.logger.SystemOutLogger;
@@ -199,7 +201,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(accessLogger);
         } else if (tname.equals("Engine")) {
             ((StandardEngine)engine).addValve(accessLogger);
@@ -277,7 +279,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             context.setLogger(fileLogger);
         } else if (tname.equals("Engine")) {
             engine.setLogger(fileLogger);
@@ -384,7 +386,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
         } else if (tname.equals("Engine")) {
             engine.setRealm(realm);
@@ -425,7 +427,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
         } else if (tname.equals("Engine")) {
             engine.setRealm(realm);
@@ -466,7 +468,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
         } else if (tname.equals("Engine")) {
             engine.setRealm(realm);
@@ -507,7 +509,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
         } else if (tname.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -548,7 +550,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
         } else if (tname.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -589,7 +591,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
         } else if (tname.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -630,7 +632,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
         } else if (tname.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -772,7 +774,7 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
         Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        Context context = (Context) host.findChild(pname.getKeyProperty("context"));
+        Context context = (Context) host.findChild(pname.getKeyProperty("path"));
         context.setManager(manager);
 
         // Return the corresponding MBean name
@@ -836,7 +838,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             context.setLogger(logger);
         } else if (tname.equals("Engine")) {
             engine.setLogger(logger);
@@ -877,7 +879,7 @@ public class MBeanFactory extends BaseModelMBean {
         if (tname.equals("StandardContext")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
-                    (Context) host.findChild(pname.getKeyProperty("context"));
+                    (Context) host.findChild(pname.getKeyProperty("path"));
             context.setLogger(logger);
         } else if (tname.equals("Engine")) {
             engine.setLogger(logger);
@@ -891,6 +893,37 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), logger);
         return (oname.toString());
+    }
+
+
+    /**
+     * Create a new Web Application Loader.
+     *
+     * @param parent MBean Name of the associated parent component
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public String createWebappLoader(String parent)
+        throws Exception {
+
+        // Create a new WebappLoader instance
+        WebappLoader loader = new WebappLoader();
+
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+        Context context = (Context) host.findChild(pname.getKeyProperty("path"));
+        context.setLoader(loader);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("WebappLoader");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), loader);
+        return (oname.toString());
+
     }
 
 
@@ -1057,6 +1090,32 @@ public class MBeanFactory extends BaseModelMBean {
                 }
             }
         }
+    }
+
+
+    /**
+     * Remove an existing Loader.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeLoader(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        String contextName = oname.getKeyProperty("path");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(hostName);
+        Context context = (Context) host.findChild(contextName);
+
+        // Remove this component from its parent component
+        context.setLoader(null);
+
     }
 
 

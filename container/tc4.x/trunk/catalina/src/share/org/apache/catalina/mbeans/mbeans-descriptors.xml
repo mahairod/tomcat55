@@ -1281,6 +1281,15 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="removeLoader"
+          description="Remove an existing Loader"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="MBean Name of the component to be removed"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="removeLogger"
           description="Remove an existing Logger"
                impact="ACTION"
