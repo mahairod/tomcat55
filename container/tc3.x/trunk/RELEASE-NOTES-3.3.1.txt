@@ -68,6 +68,9 @@ Bug No.  Description
 	 RequestDispatcher.include/forward wasn't handling the case where only
 	 the parameter name was specified.
 
+4948	 Fix DependClassLoader to be a Java2 ClassLoader when running under
+	 a Java2 JVM.  
+
 Configuration:
 
 Bug No.  Description
