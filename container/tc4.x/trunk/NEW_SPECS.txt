@@ -90,8 +90,8 @@ It will be replaced by the official version when published.
 JavaServer Pages (JSP) Specification, version 1.2
 =================================================
 
-JSP Include Supports flush="false" [Rare]
------------------------------------------
+JSP Include Supports flush="false" [Medium]
+-------------------------------------------
 This change will allow use of <jsp:include> nested within another standard
 or custom tag, allowing the output produced by the included servlet (or
 page) to be buffered and processed.  This change depends on the enhancement
