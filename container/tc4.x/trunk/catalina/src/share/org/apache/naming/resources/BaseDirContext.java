@@ -268,6 +268,14 @@ public abstract class BaseDirContext implements DirContext {
 
 
     /**
+     * Allocate resources for this directory context.
+     */
+    public void allocate() {
+        ; // No action taken by the default implementation
+    }
+
+
+    /**
      * Release any resources allocated for this directory context.
      */
     public void release() {
