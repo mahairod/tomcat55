@@ -173,7 +173,7 @@ class NotFoundHandler extends ServletWrapper {
 	    .append("</h1>\r\n<b>");
 	buf.append(sm.getString("defaulterrorpage.originalrequest"))
 	    .append("</b> ")
-	    .append( requestURI );
+	    .append( RequestUtil.filter(requestURI) );
 
 	if (contextM.getShowDebugInfo()) {
 	    if (res.isIncluded()) {
@@ -184,7 +184,7 @@ class NotFoundHandler extends ServletWrapper {
 		buf.append("<br><br>\r\n<b>")
 		    .append(sm.getString("defaulterrorpage.notfoundrequest"))
 		    .append("</b> ")
-		    .append( requestURI );
+		    .append( RequestUtil.filter(requestURI) );
 	    }
 	}
 
@@ -253,14 +253,14 @@ class ExceptionHandler extends ServletWrapper {
 	buf.append("<h2>")
 	    .append(sm.getString("defaulterrorpage.location"))
 	    .append(" ")
-	    .append(req.getRequestURI())
+	    .append(RequestUtil.filter(req.getRequestURI()))
 	    .append("</h2>");
 
 	if ( errorURI != null && contextM.getShowDebugInfo()) {
 	    buf.append("\r\n<h2>")
 		.append(sm.getString("defaulterrorpage.errorlocation"))
 		.append(" ")
-		.append(errorURI)
+		.append(RequestUtil.filter(errorURI))
 		.append("</h2>");
 	}
 
@@ -377,19 +377,19 @@ class StatusHandler extends ServletWrapper {
 	buf.append("<h2>")
 	    .append(sm.getString("defaulterrorpage.location"))
 	    .append(" ")
-	    .append(req.getRequestURI())
+	    .append(RequestUtil.filter(req.getRequestURI()))
 	    .append("</h2>");
 
 	if ( sc >= 400 && errorURI != null && contextM.getShowDebugInfo()) {
 	    buf.append("\r\n<h2>")
 		.append(sm.getString("defaulterrorpage.errorlocation"))
 		.append(" ")
-		.append(errorURI)
+		.append(RequestUtil.filter(errorURI))
 		.append("</h2>");
 	}
 
 	buf.append("<b>")
-	    .append(msg)
+	    .append(RequestUtil.filter(msg))
 	    .append("</b><br>");
 
 	// add unavailable time if present
@@ -419,6 +419,7 @@ class StatusHandler extends ServletWrapper {
 	    out.print(buf.toString());
 	}
     }
+
 }
 	
 class RedirectHandler extends ServletWrapper {
@@ -459,7 +460,7 @@ class RedirectHandler extends ServletWrapper {
 	    append("</h1>\r\n").
 	    append(sm.getString("defaulterrorpage.thisdocumenthasmoved")).
 	    append(" <a href=\"").
-	    append(location).
+	    append(RequestUtil.filter(location)).
 	    append("\">here</a>.<p>\r\n</body>\r\n");
 
 	String body = buf.toString();
