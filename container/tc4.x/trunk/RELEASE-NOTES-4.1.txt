@@ -51,6 +51,9 @@ Catalina New Features:
         Complete rewrite of the SSI functionality (WARNING: servlet class name
         has changed).
 
+[4.1.3] CoyoteConnector:
+        Add PureTLS support.
+
 
 -------------------
 Jasper New Features:
@@ -65,6 +68,23 @@ Jasper New Features:
 
 [4.1.3] Compiler:
         Ant 1.5 based compiler.
+
+[4.1.4] Compiler:
+        Extensive code cleanup.
+
+[4.1.4] JspC:
+        Extensive refactoring of JspC.
+
+[4.1.4] Options:
+        Add nem "compiler" option, which contains the Ant name of the Java 
+        compiler to be used. Please refer to the list in the Ant documentation
+        for more details.
+
+[4.1.4] Generator:
+        Fix the limitation on the number of tags which can be used within a
+        single page, which was cause by the 64K bytecode limit for a sigle 
+        method. Now Jasper generates separate methods for tag bodies when lots
+        of tags are used.
 
 
 ==========================
@@ -163,7 +183,26 @@ Catalina Bug Fixes:
 [4.1.3] ManagerServlet:
         Handle resources nested in subcontexts.
 
+[4.1.3] NamingResources:
+        Prevent naming resources overriding.
 
+[4.1.4] HostConfig:
+        Do web.xml tracking on all contexts.
+
+[4.1.4] NamingResources:
+        Fix entries removal.
+
+[4.1.4] ContextBindings:
+        JNDI environment is now available to webapp created classloaders, as
+        long as the webapp classloader is in its parent hierarchy.
+
+[4.1.4] ManagerServlet:
+        Save configuration when undeploying.
+
+[4.1.4] #9629
+        Fix ServletContext.getResourcePaths to match spec
+        ApplicationContext:
+        getResourcePaths now returns null for non existing paths.
 
 
 ----------------
@@ -203,12 +242,6 @@ Jasper Bug Fixes:
 [4.1.3] Generator:
         Fix spec compliance bug where a tag could define scripting variables in
         both the TLD and the TagExtraInfo class.
-
-[4.1.3] CoyoteConnector:
-        Add PureTLS support.
-
-[4.1.3] NamingResources:
-        Prevent naming resources overriding.
 
 
 ============================
