@@ -237,6 +237,15 @@ public class JspServlet extends HttpServlet {
                              request.getParameter(name));
                 }
 	    }
+
+	    /*
+	     * Add X-Powered-By header for JSP, if Catalina already added a
+	     * corresponding header for servlets
+	     */
+	    if (response.containsHeader("X-Powered-By")) {
+		response.addHeader("X-Powered-By", "JSP/2.0");
+	    }
+
             serviceJspFile(request, response, jspUri, null, precompile);
 	} catch (RuntimeException e) {
 	    throw e;
