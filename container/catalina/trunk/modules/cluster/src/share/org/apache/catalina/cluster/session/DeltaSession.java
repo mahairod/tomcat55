@@ -1419,8 +1419,7 @@ public class DeltaSession
         boolean hasPrincipal = stream.readBoolean();
         principal = null;   
         if ( hasPrincipal ) {
-            SerializablePrincipal p = (SerializablePrincipal)stream.readObject();
-            principal = p.getPrincipal(getManager().getContainer().getRealm());
+            principal = SerializablePrincipal.readPrincipal(stream,getManager().getContainer().getRealm());
         }
             
         //        setId((String) stream.readObject());
@@ -1479,8 +1478,9 @@ public class DeltaSession
         stream.writeObject(new Boolean(isValid));
         stream.writeObject(new Long(thisAccessedTime));
         stream.writeBoolean(getPrincipal()!=null);
-        if (getPrincipal() != null) stream.writeObject(SerializablePrincipal.
-            createPrincipal( (GenericPrincipal) getPrincipal()));
+        if (getPrincipal() != null) {
+            SerializablePrincipal.writePrincipal((GenericPrincipal)principal,stream);
+        }
         
         stream.writeObject(id);
         if (log.isDebugEnabled())
