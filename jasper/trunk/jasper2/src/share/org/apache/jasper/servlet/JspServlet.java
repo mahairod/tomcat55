@@ -598,55 +598,49 @@ public class JspServlet extends HttpServlet {
 	boolean outDated = false; 
         Compiler compiler = ctxt.createCompiler();
         
-        try {
-            if (options.getReloading()) {
+        if (options.getReloading() || (jsw.servletClass == null)) {
+            try {
                 synchronized (jsw) {
+
                     // Synchronizing on jsw enables simultaneous 
                     // compilations of different pages, but not the 
                     // same page.
                     outDated = compiler.isOutDated();
                     if (outDated)
                         compiler.compile();
-                }
-            }
-        } catch (FileNotFoundException ex) {
-            compiler.removeGeneratedFiles();
-            throw ex;
-        } catch (JasperException ex) {
-            throw ex;
-        } catch (Exception ex) {
-	    throw new JasperException
-                (Constants.getString("jsp.error.unable.compile"), ex);
-	}
 
-        // Reload only if it's outdated
-	if ((jsw.servletClass == null) || outDated) {
-	    try {
-		synchronized (jsw) {
-		    if (jsw.servletClass == null || outDated) {
-			URL [] urls = new URL[1];
-			File outputDir = new File(normalize(ctxt.getOutputDir()));
+                    if ((jsw.servletClass == null) || outDated) {
+                        URL [] urls = new URL[1];
+			File outputDir = 
+                            new File(normalize(ctxt.getOutputDir()));
 			urls[0] = outputDir.toURL();
-			jsw.loader = new JasperLoader(
-						urls,ctxt.getServletClassName(),
-						parentClassLoader,
-						permissionCollection,
-						codeSource);
-			jsw.servletClass = jsw.loader.loadClass(
-				Constants.JSP_PACKAGE_NAME + "." +
-				ctxt.getServletClassName());
-		    }
-		}
-	    } catch (ClassNotFoundException cex) {
+			jsw.loader = new JasperLoader
+                            (urls,ctxt.getServletClassName(),
+                             parentClassLoader, permissionCollection,
+                             codeSource);
+			jsw.servletClass = jsw.loader.loadClass
+                            (Constants.JSP_PACKAGE_NAME + "." 
+                             + ctxt.getServletClassName());
+                    }
+
+                }
+            } catch (FileNotFoundException ex) {
+                compiler.removeGeneratedFiles();
+                throw ex;
+            } catch (ClassNotFoundException cex) {
 		throw new JasperException(
 		    Constants.getString("jsp.error.unable.load"),cex);
 	    } catch (MalformedURLException mue) {
                 throw new JasperException(
 		    Constants.getString("jsp.error.unable.load"),mue);
-	    }
-	    
-	}
-	
+	    } catch (JasperException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                throw new JasperException
+                    (Constants.getString("jsp.error.unable.compile"), ex);
+            }
+        }
+
 	return outDated;
     }
 
