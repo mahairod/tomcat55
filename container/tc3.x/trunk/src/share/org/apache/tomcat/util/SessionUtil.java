@@ -67,6 +67,7 @@ package org.apache.tomcat.util;
 
 import javax.servlet.http.Cookie;
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.core.Constants;
 
 
 /**
