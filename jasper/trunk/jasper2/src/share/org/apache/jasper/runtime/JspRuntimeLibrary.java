@@ -876,9 +876,9 @@ public class JspRuntimeLibrary {
 	    return pe.getValue();
 	} catch (Exception ex) {
 	    throw new JasperException(
-	        "Unable to convert string '" + attrValue + "' to class " +
-		attrClass.getName() + " for attribute " + attrName +
-		": " + ex);
+                Localizer.getMessage("jsp.error.beans.property.conversion",
+				     attrValue, attrClass.getName(), attrName,
+				     ex.getMessage()));
 	}
     }
 
@@ -893,13 +893,14 @@ public class JspRuntimeLibrary {
 		propEditor.setAsText(attrValue);
 		return propEditor.getValue();
 	    } else {
-		throw new IllegalArgumentException("Property Editor not registered with the PropertyEditorManager");
+		throw new IllegalArgumentException(
+                    Localizer.getMessage("jsp.error.beans.propertyeditor.notregistered"));
 	    }
 	} catch (IllegalArgumentException ex) {
 	    throw new JasperException(
-		"Unable to convert string '" + attrValue + "' to class " +
-		attrClass.getName() + " for attribute " + attrName +
-		": " + ex);
+                Localizer.getMessage("jsp.error.beans.property.conversion",
+				     attrValue, attrClass.getName(), attrName,
+				     ex.getMessage()));
 	}
     }
 

@@ -319,7 +319,9 @@ public class TldLocationsCache {
      * an implicit map entry to the taglib map for any TLD that has a <uri>
      * element.
      */
-    private void processTldsInFileSystem(String startPath) throws JasperException {
+    private void processTldsInFileSystem(String startPath)
+	    throws JasperException {
+
 	Set dirList = ctxt.getResourcePaths(startPath);
 	if (dirList != null) {
 	    Iterator it = dirList.iterator();
