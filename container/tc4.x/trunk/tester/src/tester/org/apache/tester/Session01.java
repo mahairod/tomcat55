@@ -64,7 +64,8 @@ import javax.servlet.http.*;
 
 /**
  * Part 1 of Session Tests.  Ensures that there is no current session, then
- * creates a new session and sets a session attribute.
+ * creates a new session and sets a session attribute.  Also, ensure that
+ * calling setAttribute("name", null) acts like removeAttribute().
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -127,6 +128,16 @@ public class Session01 extends HttpServlet {
                     writer.println("Session01 FAILED - Property = " + value);
                     ok = false;
                 }
+            }
+        }
+
+        // Ensure that setAttribute("name", null) works correctly
+        if (ok) {
+            session.setAttribute("FOO", "BAR");
+            session.setAttribute("FOO", null);
+            if (session.getAttribute("FOO") != null) {
+                writer.println("Session01 FAILED - setAttribute(name,null)");
+                ok = false;
             }
         }
 
