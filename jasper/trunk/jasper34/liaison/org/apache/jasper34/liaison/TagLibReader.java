@@ -109,11 +109,11 @@ public class TagLibReader {
     static private final String TLD = "META-INF/taglib.tld";
     static private final String WEBAPP_INF = "/WEB-INF/web.xml";
 
-    JspCompilationContext ctxt;
+    ContainerLiaison containerL;
     TagLibraries libs;
 
-    public TagLibReader(JspCompilationContext ctxt, TagLibraries libs) {
-	this.ctxt=ctxt;
+    public TagLibReader(ContainerLiaison containerL, TagLibraries libs) {
+	this.containerL=containerL;
 	this.libs=libs;
     }
     
@@ -127,7 +127,7 @@ public class TagLibReader {
 
         // Try to resolve URI relative to the current JSP page
         if (!uri.startsWith("/") && isRelativeURI(uri))
-            uri = ctxt.resolveRelativeUri(uri);
+            uri = containerL.resolveRelativeUri(uri);
 
 	tli.setURI( uri ); // ?? as in the original code
 
@@ -143,7 +143,7 @@ public class TagLibReader {
 	    in = getResourceAsStream(uri);
 	    
 	    if (in == null)
-		throw new JasperException(Constants
+		throw new JasperException(containerL
 					  .getString("jsp.error.tld_not_found",
 						     new Object[] {uri}));
 	    // Now parse the tld.
@@ -171,14 +171,14 @@ public class TagLibReader {
 	    zin = new ZipInputStream(in);
 	    
 	    //	    this.jarEntries = new Hashtable();
-	    //this.ctxt = ctxt;
+	    //this.containerL = containerL;
 	    
             /* NOT COMPILED
 	    // First copy this file into our work directory! 
 	    {
-		File jspFile = new File(ctxt.getJspFile());
+		File jspFile = new File(containerL.getJspFile());
                 String parent = jspFile.getParent();
-                String jarFileName = ctxt.getOutputDir();
+                String jarFileName = containerL.getOutputDir();
                 if (parent != null) {
                    jarFileName = jarFileName + File.separatorChar +
                        parent;
@@ -192,7 +192,7 @@ public class TagLibReader {
 		    jarFileName = jarFileName+File.separatorChar+
 			new File(url.getFile()).getName();
 	    
-		Constants.message("jsp.message.copyinguri", 
+		containerL.message("jsp.message.copyinguri", 
 	                          new Object[] { uri, jarFileName },
 				  Log.DEBUG);
 	    
@@ -202,7 +202,7 @@ public class TagLibReader {
 		else
 		    copy(url.openStream(), jarFileName);
 	    
-	        ctxt.addJar(jarFileName);
+	        containerL.addJar(jarFileName);
 	    }
             */ // END NOT COMPILED
 	    boolean tldFound = false;
@@ -248,7 +248,7 @@ public class TagLibReader {
 	    }
 	    
 	    if (!tldFound)
-		throw new JasperException(Constants.getString("jsp.error.tld_not_found",
+		throw new JasperException(containerL.getString("jsp.error.tld_not_found",
 							      new Object[] {
 		    TLD
 			}
@@ -262,13 +262,13 @@ public class TagLibReader {
         throws JasperException
     {
 	Document tld;
-	tld = parseXMLDoc(in, Constants.TAGLIB_DTD_RESOURCE,
+	tld = parseXMLDoc(containerL, in, Constants.TAGLIB_DTD_RESOURCE,
 			  Constants.TAGLIB_DTD_PUBLIC_ID);
 	
         NodeList list = tld.getElementsByTagName("taglib");
 
         if (list.getLength() != 1)
-            throw new JasperException(Constants.getString("jsp.error.more.than.one.taglib"));
+            throw new JasperException(containerL.getString("jsp.error.more.than.one.taglib"));
 
         Element elem = (Element) list.item(0);
         list = elem.getChildNodes();
@@ -302,7 +302,7 @@ public class TagLibReader {
             } else if (tname.equals("tag")) {
                 tli.addTagInfo( createTagInfo(e, tli));
 	    } else
-                Constants.message("jsp.warning.unknown.element.in.TLD", 
+                containerL.message("jsp.warning.unknown.element.in.TLD", 
                                   new Object[] {
                                       e.getTagName()
                                   },
@@ -348,7 +348,7 @@ public class TagLibReader {
             } else if (tname.equals("attribute"))
                 attributeVector.addElement(createAttribute(e));
             else 
-                Constants.message("jsp.warning.unknown.element.in.tag", 
+                containerL.message("jsp.warning.unknown.element.in.tag", 
                                   new Object[] {
                                       e.getTagName()
                                   },
@@ -363,24 +363,24 @@ public class TagLibReader {
 
         if (teiclass != null && !teiclass.equals(""))
             try {
-                Class teiClass = ctxt.getClassLoader().loadClass(teiclass);
+                Class teiClass = containerL.getClassLoader().loadClass(teiclass);
                 tei = (TagExtraInfo) teiClass.newInstance();
 	    } catch (ClassNotFoundException cex) {
-                Constants.message("jsp.warning.teiclass.is.null",
+                containerL.message("jsp.warning.teiclass.is.null",
                                   new Object[] {
                                       teiclass, cex.getMessage()
                                   },
                                   Log.WARNING
                                   );
             } catch (IllegalAccessException iae) {
-                Constants.message("jsp.warning.teiclass.is.null",
+                containerL.message("jsp.warning.teiclass.is.null",
                                   new Object[] {
                                       teiclass, iae.getMessage()
                                   },
                                   Log.WARNING
                                   );
             } catch (InstantiationException ie) {
-                Constants.message("jsp.warning.teiclass.is.null",
+                containerL.message("jsp.warning.teiclass.is.null",
                                   new Object[] {
                                       teiclass, ie.getMessage()
                                   },
@@ -388,7 +388,8 @@ public class TagLibReader {
                                   );
             }
 
-        TagInfoImpl taginfo = new TagInfoImpl(name, tagclass, bodycontent,
+        TagInfoImpl taginfo = new TagInfoImpl(containerL,
+					      name, tagclass, bodycontent,
 					      info, tli, 
 					      tei,
 					      tagAttributeInfo);
@@ -429,7 +430,7 @@ public class TagLibReader {
                 if (t != null)
                     type = t.getData().trim();
             } else 
-                Constants.message("jsp.warning.unknown.element.in.attribute", 
+                containerL.message("jsp.warning.unknown.element.in.attribute", 
                                   new Object[] {
                                       e.getTagName()
                                   },
@@ -451,10 +452,10 @@ public class TagLibReader {
         if (uri.indexOf(":") > 0) {
             // may be fully qualified (Windows) or may be a URL.  Let
             // getResourceAsStream deal with it.
-            return ctxt.getResourceAsStream(uri);
+            return containerL.getResourceAsStream(uri);
         } else {
             // assume it translates to a real file, and use getRealPath
-            String real = ctxt.getRealPath(uri);
+            String real = containerL.getRealPath(uri);
             return (real == null) ? null : new FileInputStream(real);
         }
     }
@@ -484,14 +485,17 @@ public class TagLibReader {
     // -------------------- Utils from JspUtil/TreeUtil --------------------
     
     // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDoc(InputStream in, String dtdResource, 
-    					  String dtdId) throws JasperException 
+    public static Document parseXMLDoc(ContainerLiaison containerL,
+				       InputStream in, String dtdResource, 
+				       String dtdId)
+	throws JasperException 
     {
-	return parseXMLDocJaxp(in, dtdResource, dtdId );
+	return parseXMLDocJaxp(containerL, in, dtdResource, dtdId );
     }
 
     // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDocJaxp(InputStream in, String dtdResource, 
+    public static Document parseXMLDocJaxp(ContainerLiaison containerL,
+					   InputStream in, String dtdResource, 
 					   String dtdId)
 	throws JasperException
     {
@@ -514,19 +518,19 @@ public class TagLibReader {
 	    tld = builder.parse(in);
 	    return tld;
 	} catch( ParserConfigurationException ex ) {
-            throw new JasperException(Constants.
+            throw new JasperException(containerL.
 				      getString("jsp.error.parse.error.in.TLD",
 						new Object[] {
 						    ex.getMessage()
 						}));
 	} catch ( SAXException sx ) {
-            throw new JasperException(Constants.
+            throw new JasperException(containerL.
 				      getString("jsp.error.parse.error.in.TLD",
 						new Object[] {
 						    sx.getMessage()
 						}));
         } catch (IOException io) {
-            throw new JasperException(Constants.
+            throw new JasperException(containerL.
 				      getString("jsp.error.unable.to.open.TLD",
 						new Object[] {
 						    io.getMessage() }));
@@ -544,7 +548,7 @@ public class TagLibReader {
 
         if (is != null) {
             Document webtld =
-                parseXMLDoc(is,Constants.WEBAPP_DTD_RESOURCE,
+                parseXMLDoc(containerL, is,Constants.WEBAPP_DTD_RESOURCE,
 			    Constants.WEBAPP_DTD_PUBLIC_ID);
 	    
             NodeList nList =  webtld.getElementsByTagName("taglib");
