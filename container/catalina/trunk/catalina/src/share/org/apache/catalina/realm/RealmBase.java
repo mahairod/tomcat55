@@ -1071,6 +1071,7 @@ public abstract class RealmBase
                 ContainerBase cb=(ContainerBase)container;
                 oname=new ObjectName(cb.getDomain()+":type=Realm" + cb.getContainerSuffix());
                 Registry.getRegistry().registerComponent(this, oname, null );
+                log.info("Register Realm "+oname);
             } catch (Throwable e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }

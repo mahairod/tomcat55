@@ -486,6 +486,8 @@ public class StandardPipeline
             results[valves.length] = valve;
             valves = results;
         }
+        // register the newly added valve
+        registerValve(valve);
 
     }
 
@@ -601,6 +603,8 @@ public class StandardPipeline
                 log.error("StandardPipeline.removeValve: stop: ", e);
             }
         }
+        // unregister the removed valave
+        unregisterValve(valve);
 
     }
 

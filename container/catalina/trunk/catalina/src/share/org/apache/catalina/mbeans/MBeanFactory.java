@@ -198,6 +198,30 @@ public class MBeanFactory extends BaseModelMBean {
         return t;
     }
 
+    
+   /**
+     * Get Parent DefaultContext to add its child component 
+     * from parent's ObjectName
+     */
+    private DefaultContext getDefaultContext(ObjectName pname) 
+        throws Exception {
+        
+        String type = pname.getKeyProperty("type");
+        if (type.equals("DefaultContext")) {
+            Service service = getService(pname);
+            StandardEngine engine = (StandardEngine) service.getContainer();
+            String hostName = pname.getKeyProperty("host");
+            if (hostName!=null) {
+                StandardHost host = 
+                    (StandardHost) engine.findChild(hostName);
+                return host.getDefaultContext();
+            } else {
+                return engine.getDefaultContext();
+            }
+        }
+        return null;
+    }
+    
 
     /**
      * Get Parent ContainerBase to add its child component 
@@ -208,19 +232,7 @@ public class MBeanFactory extends BaseModelMBean {
         
         String type = pname.getKeyProperty("type");
         String j2eeType = pname.getKeyProperty("j2eeType");
-        String domain = pname.getDomain();
-        Server server = ServerFactory.getServer();
-        Service[] services = server.findServices();
-        StandardService service = null;
-        for (int i = 0; i < services.length; i++) {
-            service = (StandardService) services[i];
-            if (domain.equals(service.getObjectName().getDomain())) {
-                break;
-            }
-        }
-        if (!service.getObjectName().getDomain().equals(domain)) {
-            throw new Exception("Service with the domain is not found");
-        }        
+        Service service = getService(pname);
         StandardEngine engine = (StandardEngine) service.getContainer();
         if ((j2eeType!=null) && (j2eeType.equals("WebModule"))) {
             String name = pname.getKeyProperty("name");
@@ -253,21 +265,9 @@ public class MBeanFactory extends BaseModelMBean {
     private ContainerBase getParentContainerFromChild(ObjectName oname) 
         throws Exception {
         
-        String domain = oname.getDomain();
         String hostName = oname.getKeyProperty("host");
         String path = oname.getKeyProperty("path");
-        Server server = ServerFactory.getServer();
-        Service[] services = server.findServices();
-        StandardService service = null;
-        for (int i = 0; i < services.length; i++) {
-            service = (StandardService) services[i];
-            if (domain.equals(service.getObjectName().getDomain())) {
-                break;
-            }
-        }
-        if (!service.getObjectName().getDomain().equals(domain)) {
-            throw new Exception("Service with the domain is not found");
-        }        
+        Service service = getService(oname);
         StandardEngine engine = (StandardEngine) service.getContainer();
         if (hostName == null) {             
             // child's container is Engine
@@ -322,10 +322,7 @@ public class MBeanFactory extends BaseModelMBean {
         ContainerBase containerBase = getParentContainerFromParent(pname);
         // Add the new instance to its parent component
         containerBase.addValve(accessLogger);
-        //FIXME getObjectName() returns null
-        //ObjectName oname = accessLogger.getObjectName();
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), accessLogger);
+        ObjectName oname = accessLogger.getObjectName();
         return (oname.toString());
 
     }
@@ -409,13 +406,7 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        String serviceName = pname.getKeyProperty("service");
-        if (serviceName == null) {
-            serviceName = pname.getKeyProperty("name");
-        }
-        Service service = server.findService(serviceName);        
+        Service service = getService(pname);       
         Engine engine = (Engine) service.getContainer();
         String hostName = pname.getKeyProperty("host");
         if (hostName == null) { //if DefaultContext is nested in Engine
@@ -455,10 +446,7 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         containerBase.setLogger(fileLogger);
         // Return the corresponding MBean name
-        //ObjectName oname = fileLogger.getObjectName();
-        //FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), fileLogger);
+        ObjectName oname = fileLogger.getObjectName();
         return (oname.toString());
 
     }
@@ -628,11 +616,15 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         containerBase.setRealm(realm);
         // Return the corresponding MBean name
-        // ObjectName oname = realm.getObjectName();
+        ObjectName oname = realm.getObjectName();
         // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), realm);
-        return (oname.toString());
+        //ObjectName oname = 
+        //    MBeanUtils.createObjectName(pname.getDomain(), realm);
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            return null;
+        }   
 
     }
 
@@ -656,11 +648,16 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         containerBase.setRealm(realm);
         // Return the corresponding MBean name
-        //ObjectName oname = realm.getObjectName();
+        ObjectName oname = realm.getObjectName();
         // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), realm);
-        return (oname.toString());
+        //ObjectName oname = 
+        //    MBeanUtils.createObjectName(pname.getDomain(), realm);
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            return null;
+        }   
+
 
     }
 
@@ -688,7 +685,11 @@ public class MBeanFactory extends BaseModelMBean {
         // FIXME getObjectName() returns null
         ObjectName oname = 
             MBeanUtils.createObjectName(pname.getDomain(), realm);
-        return (oname.toString());
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            return null;
+        }   
 
     }
 
@@ -710,10 +711,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.addValve(valve);
-        //ObjectName oname = valve.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), valve);
+        ObjectName oname = valve.getObjectName();
         return (oname.toString());
 
     }
@@ -736,10 +734,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.addValve(valve);
-        //ObjectName oname = valve.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), valve);
+        ObjectName oname = valve.getObjectName();
         return (oname.toString());
         
     }
@@ -762,10 +757,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.addValve(valve);
-        //ObjectName oname = valve.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), valve);
+        ObjectName oname = valve.getObjectName();
         return (oname.toString());
 
     }
@@ -788,10 +780,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.addValve(valve);
-        //ObjectName oname = valve.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), valve);
+        ObjectName oname = valve.getObjectName();
         return (oname.toString());
 
     }
@@ -960,7 +949,9 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
-        containerBase.setManager(manager);
+        if (containerBase != null) {
+            containerBase.setManager(manager);
+        } 
         //ObjectName oname = manager.getObjectName();
         // FIXME getObjectName() returns null
         ObjectName oname = 
@@ -1013,10 +1004,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.setLogger(logger);
-        //ObjectName oname = logger.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), logger);
+        ObjectName oname = logger.getObjectName();
         return (oname.toString());
 
     }
@@ -1039,10 +1027,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.setLogger(logger);
-        //ObjectName oname = logger.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), logger);
+        ObjectName oname = logger.getObjectName();
         return (oname.toString());
         
     }
@@ -1070,11 +1055,16 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         containerBase.setRealm(realm);
         // Return the corresponding MBean name
-        //ObjectName oname = realm.getObjectName();
+        ObjectName oname = realm.getObjectName();
         // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), realm);
-        return (oname.toString());
+        //ObjectName oname = 
+        //    MBeanUtils.createObjectName(pname.getDomain(), realm);
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            return null;
+        }   
+
     }
 
 
@@ -1094,7 +1084,9 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         ContainerBase containerBase = getParentContainerFromParent(pname);
-        containerBase.setLoader(loader);
+        if (containerBase != null) {
+            containerBase.setLoader(loader);
+        } 
         // FIXME add Loader.getObjectName
         //ObjectName oname = loader.getObjectName();
         ObjectName oname = 
@@ -1308,9 +1300,10 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         ContainerBase container = getParentContainerFromChild(oname);
         String sequence = oname.getKeyProperty("seq");
-        ValveBase[] valves = (ValveBase[])container.getValves();
+        Valve[] valves = (Valve[])container.getValves();
         for (int i = 0; i < valves.length; i++) {
-            if ((valves[i].getObjectName().toString()).equals(name)) {
+            ObjectName voname = ((ValveBase) valves[i]).getObjectName();
+            if (voname.equals(oname)) {
                 container.removeValve(valves[i]);
             }
         }

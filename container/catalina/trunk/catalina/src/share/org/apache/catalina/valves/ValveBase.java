@@ -323,7 +323,10 @@ public abstract class ValveBase
             ext=",seq=" + seq;
         }
 
-        return new ObjectName( domain + ":type=Valve,name=" + className + ext + parentName);
+        ObjectName objectName = 
+            new ObjectName( domain + ":type=Valve,name=" + className + ext + parentName);
+        log.info("valve objectname = "+objectName);
+        return objectName;
     }
 
     // -------------------- JMX data  --------------------

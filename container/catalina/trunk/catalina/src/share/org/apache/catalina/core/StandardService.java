@@ -582,6 +582,16 @@ public class StandardService
                 }
             }
         }
+        
+        // unregister this service
+        if( oname!=null ) {
+            try {
+                Registry.getRegistry().unregisterComponent(oname);
+                log.info("unregistering " + oname);
+            } catch (Exception e) {
+                log.error("Error unregistering ",e);
+            }
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);

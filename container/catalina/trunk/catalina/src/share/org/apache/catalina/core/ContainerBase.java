@@ -1322,6 +1322,16 @@ public abstract class ContainerBase
             }
         }
 
+        // unregister this component
+        if( oname != null ) {
+            try {
+                Registry.getRegistry().unregisterComponent(oname);
+                log.info("unregistering " + oname);
+            } catch( Throwable t ) {
+                log.error("Error unregistering ", t );
+            }
+        }
+        
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
@@ -1667,11 +1677,11 @@ public abstract class ContainerBase
             host=context.getParent();
             servlet=container;
         }
-        if( host!=null ) suffix.append(",host=").append( host.getName() );
         if( context!=null ) {
             String path=((StandardContext)context).getPath();
-            suffix.append(",path=").append((path=="") ? "/" : path);
+            suffix.append(",path=").append((path.equals("")) ? "/" : path);
         } 
+        if( host!=null ) suffix.append(",host=").append( host.getName() );
         if( servlet != null ) {
             String name=container.getName();
             suffix.append(",servlet=");
