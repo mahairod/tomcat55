@@ -109,6 +109,7 @@ final class StandardWrapperValve
     // are here for performance.
     private long processingTime;
     private long maxTime;
+    private long minTime = Long.MAX_VALUE;
     private int requestCount;
     private int errorCount;
 
@@ -371,6 +372,7 @@ final class StandardWrapperValve
         long time=t2-t1;
         processingTime += time;
         if( time > maxTime) maxTime=time;
+        if( time < minTime) minTime=time;
 
     }
 
@@ -466,6 +468,14 @@ final class StandardWrapperValve
 
     public void setMaxTime(long maxTime) {
         this.maxTime = maxTime;
+    }
+
+    public long getMinTime() {
+        return minTime;
+    }
+
+    public void setMinTime(long minTime) {
+        this.minTime = minTime;
     }
 
     public int getRequestCount() {
