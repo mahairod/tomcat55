@@ -928,7 +928,7 @@ public class WARDirContext extends BaseDirContext {
         public InputStream streamContent()
             throws IOException {
             try {
-                if ((inputStream == null) && (binaryContent == null)) {
+                if (binaryContent == null) {
                     inputStream = base.getInputStream(entry);
                 }
             } catch (ZipException e) {

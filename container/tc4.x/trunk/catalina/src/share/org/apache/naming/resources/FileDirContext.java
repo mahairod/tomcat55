@@ -943,7 +943,7 @@ public class FileDirContext extends BaseDirContext {
          */
         public InputStream streamContent()
             throws IOException {
-            if ((inputStream == null) && (binaryContent == null))
+            if (binaryContent == null)
                 inputStream = new FileInputStream(file);
             return super.streamContent();
         }
