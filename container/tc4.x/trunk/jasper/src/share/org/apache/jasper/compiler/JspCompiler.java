@@ -163,17 +163,19 @@ public class JspCompiler extends Compiler implements Mangler {
      * from whence it came
      */
     public boolean isOutDated() {
-        File jspReal = null;
+        long jspRealLastModified = 0;
 
-        jspReal = new File(ctxt.getRealPath(jsp.getPath()));
-
-        if (!jspReal.exists()) {
+        try {
+            jspRealLastModified = ctxt.getResource(jsp.getPath())
+                .openConnection().getLastModified();
+        } catch (Exception e) {
+            e.printStackTrace();
             return true;
         }
 
         File classFile = new File(getClassFileName());
         if (classFile.exists()) {
-            outDated = classFile.lastModified() < jspReal.lastModified();
+            outDated = classFile.lastModified() < jspRealLastModified;
         } else {
             outDated = true;
         }

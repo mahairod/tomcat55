@@ -152,7 +152,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         try {
             // see if file exists on the filesystem first
             String real = ctxt.getRealPath(uri);
-            return (real == null) ? null : new FileInputStream(real);
+            if (real == null) {
+                return ctxt.getResourceAsStream(uri);
+            } else {
+                return new FileInputStream(real);
+            }
         }
         catch (FileNotFoundException ex) {
             // if file not found on filesystem, get the resource through

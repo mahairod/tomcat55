@@ -248,6 +248,8 @@ public class JspReader {
 	String longName = (context == null)
 	    ? file.getAbsolutePath()
 	    : context.getRealPath(file.toString());
+        if (longName == null)
+            longName = file.toString();
 
 	int fileid = registerSourceFile(longName);
 
