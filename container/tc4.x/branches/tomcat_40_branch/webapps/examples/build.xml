@@ -60,7 +60,7 @@
 
 
   <!-- ================ BUILD: Copy Static Files ========================== -->
-  <target name="build-static" depends="build-prepare">
+  <target name="build-static" depends="flags,build-prepare">
     <copy todir="${webapps.build}/${webapp.name}">
       <fileset dir=".">
         <exclude name="build.*"/>
