@@ -718,7 +718,7 @@ public class ApacheConfig  extends BaseInterceptor {
 	String npath=("".equals(ctxPath)) ? "/" : ctxPath;
 	// Static files will be served by Apache
 	mod_jk.println(indent + "# Static files ");		    
-	mod_jk.println(indent + "Alias " + npath + " \"" + docBase + "\"/");
+	mod_jk.println(indent + "Alias " + npath + " \"" + docBase + "\"");
 	mod_jk.println();
 	mod_jk.println(indent + "<Directory \"" + docBase + "\">");
 	mod_jk.println(indent + "    Options Indexes FollowSymLinks");
