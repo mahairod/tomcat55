@@ -114,7 +114,7 @@ public interface Filter {
 	* filter content or headers for output filtering <br>
 	* 4. a) <strong>Either</strong> invoke the next entity in the chain using the FilterChain object (<code>chain.doFilter()</code>), <br>   
 	** 4. b) <strong>or</strong> not pass on the request/response pair to the next entity in the filter chain to block the request processing<br>
-	** 5. Directly set headers on the response after invocation of the next entity in ther filter chain.
+	** 5. Directly set headers on the response after invocation of the next entity in the filter chain.
 	**/
     public void doFilter ( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException;
 

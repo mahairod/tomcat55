@@ -147,7 +147,7 @@ public interface ServletRequest {
      * 
      *
      * @return		a <code>String</code> containing the name of 
-     *			the chararacter encoding, or <code>null</code>
+     *			the character encoding, or <code>null</code>
      *			if the request does not specify a character encoding
      *
      */
@@ -161,7 +161,7 @@ public interface ServletRequest {
      * 
      *
      * @param env	a <code>String</code> containing the name of 
-     *			the chararacter encoding.
+     *			the character encoding.
      * @throws		java.io.UnsupportedEncodingException if this is not a valid encoding
      */
 
@@ -451,7 +451,10 @@ public interface ServletRequest {
      * reserved for use by Sun Microsystems.
      *<br> If the object passed in is null, the effect is the same as
      * calling {@link #removeAttribute}.
-     *
+     * <br> It is warned that when the request is dispatched from the
+     * servlet resides in a different web application by
+     * <code>RequestDispatcher</code>, the object set by this method
+     * may not be correctly retrieved in the caller servlet.
      *
      *
      * @param name			a <code>String</code> specifying 
@@ -593,6 +596,8 @@ public interface ServletRequest {
     /**
      * Returns the Internet Protocol (IP) source port of the client
      * or last proxy that sent the request.
+     *
+     * @return	an integer specifying the port number
      *
      * @since 2.4
      */    

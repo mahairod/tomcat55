@@ -89,7 +89,7 @@ import javax.servlet.ServletContext;
  * the servlet notifies the object that it has been bound to or unbound 
  * from the session. Notifications are sent after the binding methods complete. 
  * For session that are invalidated or expire, notifications are sent after
- * the session has been invalidatd or expired.
+ * the session has been invalidated or expired.
  *
  * <p> When container migrates a session between VMs in a distributed container
  * setting, all session attributes implementing the {@link HttpSessionActivationListener}

@@ -674,7 +674,7 @@ public interface ServletContext {
     public void removeAttribute(String name);
     
     /**
-     * Returns the name of this web application correponding to this ServletContext as specified in the deployment
+     * Returns the name of this web application corresponding to this ServletContext as specified in the deployment
      * descriptor for this web application by the display-name element.
      *
      *
