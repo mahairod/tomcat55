@@ -581,7 +581,7 @@ public class HttpRequestBase
 	String queryString = getQueryString();
 	if ((queryString != null) && (queryString.length() > 0)) {
 	    try {
-	        RequestUtil.parseParameters(results, queryString);
+	        RequestUtil.parseParameters(results, queryString, true);
 	    } catch (Throwable t) {
 	        ;
 	    }
@@ -609,10 +609,11 @@ public class HttpRequestBase
 		String data = null;
 		String encoding = getCharacterEncoding();
 		if (encoding == null)
-		    RequestUtil.parseParameters(results, new String(buf));
+		    RequestUtil.parseParameters
+                        (results, new String(buf), false);
 		else
-		    RequestUtil.parseParameters(results,
-						new String(buf, encoding));
+		    RequestUtil.parseParameters
+                        (results, new String(buf, encoding), false);
 	    } catch (Throwable t) {
 	        ;
 	    }

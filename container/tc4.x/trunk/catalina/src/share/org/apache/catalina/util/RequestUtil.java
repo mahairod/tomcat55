@@ -217,10 +217,12 @@ public final class RequestUtil {
      *
      * @param map Map that accumulates the resulting parameters
      * @param data Input string containing request parameters
+     * @param urlParameters true if we're parsing parameters on the URL
      *
      * @exception IllegalArgumentException if the data is malformed
      */
-    public static void parseParameters(Map map, String data) {
+    public static void parseParameters(Map map, String data, 
+                                       boolean urlParameters) {
 
         if ((data == null) || (data.length() < 1))
 	    return;
@@ -260,14 +262,22 @@ public final class RequestUtil {
             // Decode the name and value if required
             if ((name.indexOf('%') >= 0) || (name.indexOf('+') >= 0)) {
                 try {
-                    name = URLDecoder.decode(name);
+                    if (urlParameters) {
+                        name = URLDecode(name);
+                    } else {
+                        name = URLDecoder.decode(name);
+                    }
                 } catch (Throwable t) {
                     ;
                 }
             }
             if ((value.indexOf('%') >= 0) || (value.indexOf('+') >= 0)) {
                 try {
-                    value = URLDecoder.decode(value);
+                    if (urlParameters) {
+                        value = URLDecode(value);
+                    } else {
+                        value = URLDecoder.decode(value);
+                    }
                 } catch (Throwable t) {
                     ;
                 }

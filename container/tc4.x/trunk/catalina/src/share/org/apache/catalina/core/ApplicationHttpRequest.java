@@ -450,7 +450,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	    return;
 
 	HashMap queryParameters = new HashMap();
-	RequestUtil.parseParameters(queryParameters, queryString);
+	RequestUtil.parseParameters(queryParameters, queryString, true);
 	synchronized (parameters) {
 	    Iterator keys = parameters.keySet().iterator();
 	    while (keys.hasNext()) {
