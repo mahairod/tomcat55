@@ -94,6 +94,10 @@ Server:
 
 Bug No.  Description
 
+         Fixed problem with JSP page names that match a Windows DOS device
+         name, such as aux.jsp.  Instead of potentially hanging the thread
+         that services the request, these requests now return "404 Not Found".
+
 4418     Ported Tomcat 3.2.x fix for race condition in ServerSocketFactory.
 
 4436     Reduce log output from DecodeInterceptor if debug level is zero.  This
