@@ -4,7 +4,7 @@
     <property name="port" value="8080" />
     <property name="wgdir" value="lib/servlet-golden" />
 
-    <taskdef name="watchdog" classname="org.apache.tomcat.task.GTest" />
+    <taskdef name="watchdog" classname="org.apache.watchdog.task.GTest" />
 
     <target name="main" depends="gtestservlet-test" />
 

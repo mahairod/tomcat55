@@ -3,7 +3,7 @@
     <property name="host" value="localhost" />
     <property name="port" value="8080" />
               
-    <taskdef name="watchdog" classname="org.apache.tomcat.task.GTest" />
+    <taskdef name="watchdog" classname="org.apache.watchdog.task.GTest" />
     <property name="wgdir" value="lib/jsp-golden" />
                     
     <target name="main" depends="jsp-test" />
