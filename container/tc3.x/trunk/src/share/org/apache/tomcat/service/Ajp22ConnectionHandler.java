@@ -149,9 +149,6 @@ public class Ajp22ConnectionHandler  implements  TcpConnectionHandler {
 		// final fix on response & request
 		//		rresponse.setServerHeader(server.getServerHeader());
 
-		String ctxPath = ctx.getPath();
-		String pathInfo =path.substring(ctxPath.length(),
-						path.length());
                 //    don't do headers if request protocol is http/0.9
 		if (rrequest.getProtocol() == null) {
 		    rresponse.setOmitHeaders(true);
