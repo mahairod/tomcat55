@@ -110,7 +110,7 @@ public class SimpleFileFilter implements FilenameFilter {
               return files;
           } else {
               files=new String[1];
-              files[0]=fname;
+              files[0]=f.getPath();// was:fname;
               return files;
           }
       }
