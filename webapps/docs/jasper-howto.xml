@@ -108,10 +108,6 @@ java source files. Default <code>UTF8</code>.</li>
 code for each page instead of deleting it? <code>true</code> or
 <code>false</code>, default <code>true</code>.</li>
 
-<li><strong>largefile</strong> - Should we store the static content of JSP
-pages in external data files, to reduce the size of the generated servlets?
-<code>true</code> or <code>false</code>, default <code>false</code>.</li>
-
 <li><strong>mappedfile</strong> - Should we generate static content with one 
 print statement per input line, to ease debugging?
 <code>true</code> or <code>false</code>, default <code>true</code>.</li>
