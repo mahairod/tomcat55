@@ -213,7 +213,7 @@ public final class SsiInvokerServlet extends HttpServlet {
 
         ServletContext servletContext = getServletContext();
         String path = getRelativePath(req);
-	URL resource = servletContext.getResource(path);
+	    URL resource = servletContext.getResource(path);
 
         if (debug > 0)
             log("SsiInvokerServlet.requestHandler()\n" +
@@ -241,12 +241,11 @@ public final class SsiInvokerServlet extends HttpServlet {
         }
 
         OutputStream out = null;
-	URLConnection resourceInfo = resource.openConnection();
+    	URLConnection resourceInfo = resource.openConnection();
         InputStream resourceInputStream = resourceInfo.getInputStream();
 
         InputStream in = new BufferedInputStream(resourceInputStream, 4096);
-        ByteArrayOutputStream soonOut =
-	    new ByteArrayOutputStream(resourceInfo.getContentLength());
+        ByteArrayOutputStream soonOut =	new ByteArrayOutputStream(resourceInfo.getContentLength());
 
         StringBuffer command = new StringBuffer();
         byte buf[] = new byte[4096];
@@ -264,8 +263,7 @@ public final class SsiInvokerServlet extends HttpServlet {
             out = res.getOutputStream();
 
         if (ssiMediator == null)
-            ssiMediator =
-		new SsiMediator(req, res, out, servletContext, debug, path, isVirtualWebappRelative);
+            ssiMediator = new SsiMediator(req, res, out, servletContext, debug, path, isVirtualWebappRelative);
         else
             ssiMediator.flush(req, res, out, servletContext, path, isVirtualWebappRelative);
 
@@ -277,8 +275,7 @@ public final class SsiInvokerServlet extends HttpServlet {
         soonOut = null; buf = null;
         while (bIdx < unparsed.length) {
             if (!inside) {
-                if (unparsed[bIdx] == bStart[0]&&
-		    byteCmp(unparsed, bIdx, bStart)) {
+                if (unparsed[bIdx] == bStart[0]&& byteCmp(unparsed, bIdx, bStart)) {
                     inside = true;
                     bIdx += bStart.length;
                     command.delete(0, command.length());
@@ -287,8 +284,7 @@ public final class SsiInvokerServlet extends HttpServlet {
                 out.write(unparsed[bIdx]);
                 bIdx++;
             } else {
-                if (unparsed[bIdx] == bEnd[0]&&
-		    byteCmp(unparsed, bIdx, bEnd)) {
+                if (unparsed[bIdx] == bEnd[0]&& byteCmp(unparsed, bIdx, bEnd)) {
                     inside = false;
                     bIdx += bEnd.length;
                     try {
@@ -301,17 +297,14 @@ public final class SsiInvokerServlet extends HttpServlet {
                     strParamType = parseParamType(command, strCmd.length());
                     strParam = parseParam(command, strCmd.length());
 
-		    if(debug > 0)
-			log("Serving SSI resource: " + strCmd);
+        		    if(debug > 0)
+		        	log("Serving SSI resource: " + strCmd);
 
                     ssiCommand = ssiMediator.getCommand(strCmd);
-                    if (ssiCommand != null&&
-			strParamType.length==strParam.length&&
-			strParamType.length>0) {
-                        if (ssiCommand.isPrintable())
-                            out.write((ssiCommand.getStream(strParamType,
-							    strParam)).getBytes());
-                        else
+                    if (ssiCommand != null && strParamType.length==strParam.length&& strParamType.length>0) {
+                        if (ssiCommand.isPrintable()) {
+                            out.write((ssiCommand.getStream(strParamType, strParam)).getBytes());
+                        } else
                             ssiCommand.process(strParamType, strParam);
                     } else {
                         out.write(ssiMediator.getError());
