@@ -489,14 +489,13 @@ public final class TldConfig  {
         } catch (Exception e) {
             // XXX Why do we wrap it ? The signature is 'throws Exception'
             if (name == null) {
-                    log.error(sm.getString("contextConfig.tldJarException",
-					   jarPath, context.getPath()),
-			      e);
+		log.error(sm.getString("contextConfig.tldJarException",
+				       jarPath, context.getPath()),
+			  e);
             } else {
-                    log.error(sm.getString("contextConfig.tldEntryException",
-					   name, jarPath,
-					   context.getPath()),
-			      e);
+		log.error(sm.getString("contextConfig.tldEntryException",
+				       name, jarPath, context.getPath()),
+			  e);
             }
         } finally {
             if (inputStream != null) {
@@ -724,19 +723,30 @@ public final class TldConfig  {
 	    if (loader instanceof URLClassLoader) {
 		URL[] urls = ((URLClassLoader) loader).getURLs();
 		for (int i=0; i<urls.length; i++) {
+		    JarURLConnection jarConn = null;
 		    URLConnection conn = urls[i].openConnection();
 		    if (conn instanceof JarURLConnection) {
-			conn.setUseCaches(false);			
-			globalJarPaths.add((JarURLConnection) conn);
+			jarConn = (JarURLConnection) conn;
 		    } else {
 			String urlStr = urls[i].toString();
 			if (urlStr.startsWith("file:")
 			        && urlStr.endsWith(".jar")) {
 			    URL jarURL = new URL("jar:" + urlStr + "!/");
-			    JarURLConnection jarConn = (JarURLConnection)
-				jarURL.openConnection();
+			    jarConn = (JarURLConnection) jarURL.openConnection();
+			}
+		    }
+		    if (jarConn != null) {
+			try {
+			    /*
+			     * Call getJarFile() to see if JAR file exists
+			     * (throws exception in case it doesn't)
+			     */
+			    jarConn.getJarFile();
 			    jarConn.setUseCaches(false);
 			    globalJarPaths.add(jarConn);
+			} catch (Exception e) {
+			    // Ignore any JAR files that may have been
+			    // specified on the class path but don't exist
 			}
 		    }
 		}
