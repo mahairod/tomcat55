@@ -177,16 +177,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     /**
-     * The socket factory that will be used when a <code>secure</code>
-     * Connector is created.  If a standard Connector is created, the
-     * internal (to the Connector class default socket factory class)
-     * will be used instead.
-     */
-    protected String socketFactory =
-        "org.apache.catalina.net.SSLSocketFactory";
-
-
-    /**
      * Has this component been started yet?
      */
     protected boolean started = false;
@@ -245,28 +235,6 @@ public class Embedded  extends StandardService implements Lifecycle {
         Realm oldRealm = this.realm;
         this.realm = realm;
         support.firePropertyChange("realm", oldRealm, this.realm);
-
-    }
-
-
-    /**
-     * Return the secure socket factory class name.
-     */
-    public String getSocketFactory() {
-
-        return (this.socketFactory);
-
-    }
-
-
-    /**
-     * Set the secure socket factory class name.
-     *
-     * @param socketFactory The new secure socket factory class name
-     */
-    public void setSocketFactory(String socketFactory) {
-
-        this.socketFactory = socketFactory;
 
     }
 
@@ -414,7 +382,7 @@ public class Embedded  extends StandardService implements Lifecycle {
         try {
 
             Class clazz = 
-                Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
+                Class.forName("org.apache.catalina.connector.Connector");
             connector = (Connector) clazz.newInstance();
 
             if (address != null) {
