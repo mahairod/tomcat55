@@ -172,6 +172,7 @@ public class EditConnectorAction extends Action {
         connectorFm.setNodeLabel(sb.toString());
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());               
         connectorFm.setBooleanVals(Lists.getBooleanValues());        
+        connectorFm.setClientAuthVals(Lists.getClientAuthValues());
         
         String attribute = null;
         try {
