@@ -698,10 +698,10 @@ public final class URL implements Serializable {
                 start = limit;
             }
             if (authority.length() > 0) {
-		int at = authority.indexOf('@');
-		if( at >= 0 ) {
-		    userInfo = authority.substring(0,at);
-		}
+                int at = authority.indexOf('@');
+                if( at >= 0 ) {
+                    userInfo = authority.substring(0,at);
+                }
                 int colon = authority.indexOf(':',at+1);
                 if (colon >= 0) {
                     try {
