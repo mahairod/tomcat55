@@ -1583,6 +1583,11 @@
 
     <!-- ========== SendRedirect Handling ================================= -->
 
+    <!-- Also check debug output to make sure no extra content was included -->
+    <tester host="${host}" port="${port}" protocol=""
+         request="${context.path}/Redirect01" debug="${debug}"
+          status="302" redirect="false"/>
+
     <tester host="${host}" port="${port}" protocol=""
          request="${context.path}/Redirect01" debug="${debug}"
       outContent="Redirect01a PASSED" redirect="true"/>
