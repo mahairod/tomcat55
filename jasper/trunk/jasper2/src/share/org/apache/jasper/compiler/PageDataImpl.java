@@ -279,17 +279,14 @@ public class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.Declaration n) throws JasperException {
-	    // jsp:declaration has no attributes, except for jsp:id
 	    appendTag(JSP_DECLARATION, n.getAttributes(), n.getText());
 	}
 
 	public void visit(Node.Expression n) throws JasperException {
-	    // jsp:scriptlet has no attributes, except for jsp:id
 	    appendTag(JSP_EXPRESSION, n.getAttributes(), n.getText());
 	}
 
 	public void visit(Node.Scriptlet n) throws JasperException {
-	    // jsp:scriptlet has no attributes, except for jsp:id
 	    appendTag(JSP_SCRIPTLET, n.getAttributes(), n.getText());
 	}
 
@@ -346,7 +343,6 @@ public class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.JspText n) throws JasperException {
-	    // jsp:text has no attributes, except for jsp:id
 	    appendTag(JSP_TEXT, n.getAttributes(), n.getBody());
 	}
         
