@@ -1999,7 +1999,7 @@ public class Generator {
 	    out.print(tagHandlerVar);
 	    out.println(".doStartTag();");
 
-	    if (!n.implementsBodyTag()) {
+	    if (!n.implementsIterationTag()) {
 		// Synchronize AT_BEGIN scripting variables
 		syncScriptingVars(n, VariableInfo.AT_BEGIN);
 		// Declare and synchronize NESTED scripting variables
@@ -2013,30 +2013,30 @@ public class Generator {
 		out.println(" != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {");
 		out.pushIndent();
 		
-		if (n.implementsBodyTag()) {
+		if (n.implementsIterationTag()) {
 		    // Declare NESTED scripting variables
 		    declareScriptingVars(n, VariableInfo.NESTED);
 
-		    out.printin("if (");
-		    out.print(tagEvalVar);
-		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
-		    // Assume EVAL_BODY_BUFFERED
-		    out.pushIndent();
-                    out.printil("out = pageContext.pushBody();");
-		    out.printin(tagHandlerVar);
-		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
-		    out.printin(tagHandlerVar);
-		    out.println(".doInitBody();");
+		    if (n.implementsBodyTag()) {
+			out.printin("if (");
+			out.print(tagEvalVar);
+			out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
+			// Assume EVAL_BODY_BUFFERED
+			out.pushIndent();
+			out.printil("out = pageContext.pushBody();");
+			out.printin(tagHandlerVar);
+			out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
+			out.printin(tagHandlerVar);
+			out.println(".doInitBody();");
 
-		    // Synchronize AT_BEGIN and NESTED scripting variables
-		    syncScriptingVars(n, VariableInfo.AT_BEGIN);
-		    syncScriptingVars(n, VariableInfo.NESTED);
-		    
-		    out.popIndent();
-		    out.printil("}");
-		}
-		
-		if (n.implementsIterationTag()) {
+			// Synchronize AT_BEGIN and NESTED scripting variables
+			syncScriptingVars(n, VariableInfo.AT_BEGIN);
+			syncScriptingVars(n, VariableInfo.NESTED);
+
+			out.popIndent();
+			out.printil("}");
+		    }
+
 		    out.printil("do {");
 		    out.pushIndent();
 		}
@@ -2056,10 +2056,8 @@ public class Generator {
 		out.println(".doAfterBody();");
 
 		// Synchronize AT_BEGIN and NESTED scripting variables
-		if (n.implementsBodyTag()) {
-		    syncScriptingVars(n, VariableInfo.AT_BEGIN);
-		    syncScriptingVars(n, VariableInfo.NESTED);
-		}
+		syncScriptingVars(n, VariableInfo.AT_BEGIN);
+		syncScriptingVars(n, VariableInfo.NESTED);
 
 		out.printil("if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)");
 		out.pushIndent();
