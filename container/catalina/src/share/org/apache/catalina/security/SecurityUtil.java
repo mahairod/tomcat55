@@ -251,10 +251,15 @@ public final class SecurityUtil{
 
                 HttpSession session = request.getSession(false);
                 if (session != null){
-                    subject = (Subject)session.getAttribute(Globals.SUBJECT_ATTR);
+                    subject = 
+                        (Subject)session.getAttribute(Globals.SUBJECT_ATTR);
 
                     if (subject == null){
                         subject = new Subject();
+                        
+                        if (principal != null){
+                            subject.getPrincipals().add(principal);
+                        }
                         session.setAttribute(Globals.SUBJECT_ATTR, subject);
                     }
                 }
