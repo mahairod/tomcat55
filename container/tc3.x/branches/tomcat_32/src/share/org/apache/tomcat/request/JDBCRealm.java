@@ -318,29 +318,13 @@ public class JDBCRealm extends BaseInterceptor {
             log(sm.getString("jdbcRealm.authenticateSQLException",
                      username));
             log("SQLException: " + ex);
-
-            // Clean up the JDBC objects so that they get recreated next time
-            if (preparedAuthenticate != null) {
-            try {
-                preparedAuthenticate.close();
-            } catch (Throwable t) {
-                ;
-            }
-            preparedAuthenticate = null;
-            }
-            if (dbConnection != null) {
-            try {
-                dbConnection.close();
-            } catch (Throwable t) {
-                ;
-            }
-            dbConnection = null;
-            }
+            close();
 
             // Return "not authenticated" for this request
             return false;
         }
     }
+
 
     public synchronized String[] getUserRoles(String username) {
         try {
@@ -380,30 +364,15 @@ public class JDBCRealm extends BaseInterceptor {
             log(sm.getString("jdbcRealm.getUserRolesSQLException",
                      username));
             log("SQLException: " + ex);
-            if (preparedRoles != null) {
-                try {
-                    preparedRoles.close();
-                } catch (Throwable t) {
-                    ;
-            }
-            preparedRoles = null;
-            }
-            if (dbConnection != null) {
-                try {
-                    dbConnection.close();
-                } catch (Throwable t) {
-                    ;
-                }
-            dbConnection = null;
-            }
+            close();
         }
-	    return null;
+        return null;
     }
 
 
     public void contextInit(Context ctx)
             throws org.apache.tomcat.core.TomcatException {
-	// Validate and update our current component state
+        // Validate and update our current component state
       if (!started && checkConnection() ) {
           started = true;
           log(sm.getString("jdbcRealm.started"));
@@ -415,14 +384,7 @@ public class JDBCRealm extends BaseInterceptor {
       // Validate and update our current component state
       if (started) {
             started=false;
-            if( dbConnection != null ) {
-              try {
-                dbConnection.close();
-              }
-              catch( SQLException ex ) {
-                log("dbConnection.close Exception!!!");
-              }
-           }
+            close();
       }
     }
 
@@ -448,8 +410,8 @@ public class JDBCRealm extends BaseInterceptor {
         // This realm will use only username and password callbacks
         String user=(String)cred.get("username");
         String password=(String)cred.get("password");
-	
-	if( user !=null && password !=null ){
+        
+        if( user !=null && password !=null ){
             if ( authenticate( user, password ) ) {
                 if( debug > 0 ) log( "Auth ok, user=" + user );
                 req.setRemoteUser( user );
@@ -458,8 +420,8 @@ public class JDBCRealm extends BaseInterceptor {
                 if (ctx != null)
                     req.setAuthType(ctx.getAuthMethod());
             }
-	}
-	return 0;
+        }
+        return 0;
     }
 
     public int authorize( Request req, Response response, String roles[] )
@@ -473,16 +435,16 @@ public class JDBCRealm extends BaseInterceptor {
 
         String userRoles[]=null;
 
-	String user=req.getRemoteUser();
-	if( user==null ) 
+        String user=req.getRemoteUser();
+        if( user==null ) 
             return 401; //HttpServletResponse.SC_UNAUTHORIZED
-	
-	if( debug > 0 )
+        
+        if( debug > 0 )
             log( "Controled access for " + user + " " + req + " "
                  + req.getContainer() );
-	
-	userRoles = getUserRoles( user );
-	req.setUserRoles( userRoles );
+        
+        userRoles = getUserRoles( user );
+        req.setUserRoles( userRoles );
 
         if( debug > 0 ) {
             if ((userRoles != null) && (userRoles.length > 0))
@@ -500,7 +462,7 @@ public class JDBCRealm extends BaseInterceptor {
             else
                 log( "UnAuthorized - no roles specified");
         }
-	return 401; //HttpServletResponse.SC_UNAUTHORIZED
+        return 401; //HttpServletResponse.SC_UNAUTHORIZED
         // XXX check transport
     }
 
@@ -527,10 +489,39 @@ public class JDBCRealm extends BaseInterceptor {
         }catch (SQLException ex){
             log(sm.getString("jdbcRealm.checkConnectionSQLException"));
             log ("SQLException: "+ex);
+            close();
             return false;
         }
         catch( ClassNotFoundException ex ) {
             throw new RuntimeException("JDBCRealm.checkConnection: " + ex);
+        }
+    }
+
+    private void close() {
+            // Clean up the JDBC objects so that they get recreated next time
+        if (preparedRoles != null) {
+            try {
+                preparedRoles.close();
+            } catch (Throwable t) {
+                ;
+            }
+            preparedRoles = null;
+        }
+        if (preparedAuthenticate != null) {
+            try {
+                preparedAuthenticate.close();
+            } catch (Throwable t) {
+                ;
+            }
+            preparedAuthenticate = null;
+        }
+        if (dbConnection != null) {
+            try {
+                dbConnection.close();
+            } catch (Throwable t) {
+                ;
+            }
+            dbConnection = null;
         }
     }
 
