@@ -103,7 +103,8 @@ public abstract class PersistentManagerBase
     private static Log log = LogFactory.getLog(PersistentManagerBase.class);
 
     // ---------------------------------------------------- Security Classes
-     private class PrivilegedStoreClear
+
+    private class PrivilegedStoreClear
         implements PrivilegedExceptionAction {
 
         PrivilegedStoreClear() {            
@@ -115,7 +116,7 @@ public abstract class PersistentManagerBase
         }                       
     }   
      
-     private class PrivilegedStoreRemove
+    private class PrivilegedStoreRemove
         implements PrivilegedExceptionAction {
 
         private String id;    
@@ -168,7 +169,8 @@ public abstract class PersistentManagerBase
         public Object run() throws Exception{
            return store.keys();
         }                       
-    }   
+    }
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -187,39 +189,39 @@ public abstract class PersistentManagerBase
     /**
      * The maximum number of active Sessions allowed, or -1 for no limit.
      */
-    private int maxActiveSessions = -1;
+    protected int maxActiveSessions = -1;
 
 
     /**
      * The descriptive name of this Manager implementation (for logging).
      */
-    protected static String name = "PersistentManagerBase";
+    private static String name = "PersistentManagerBase";
 
 
     /**
      * Has this component been started yet?
      */
-    private boolean started = false;
+    protected boolean started = false;
 
 
     /**
      * Store object which will manage the Session store.
      */
-    private Store store = null;
+    protected Store store = null;
 
 
     /**
      * Whether to save and reload sessions when the Manager <code>unload</code>
      * and <code>load</code> methods are called.
      */
-    private boolean saveOnRestart = true;
+    protected boolean saveOnRestart = true;
 
 
     /**
      * How long a session must be idle before it should be backed up.
      * -1 means sessions won't be backed up.
      */
-    private int maxIdleBackup = -1;
+    protected int maxIdleBackup = -1;
 
 
     /**
@@ -227,29 +229,56 @@ public abstract class PersistentManagerBase
      * This overrides maxActiveSessions, to prevent thrashing if there are lots
      * of active sessions. Setting to -1 means it's ignored.
      */
-    private int minIdleSwap = -1;
+    protected int minIdleSwap = -1;
 
     /**
      * The maximum time a session may be idle before it should be swapped
      * to file just on general principle. Setting this to -1 means sessions
      * should not be forced out.
      */
-    private int maxIdleSwap = -1;
+    protected int maxIdleSwap = -1;
+
+
+    /**
+     * Number of session creations that failed due to maxActiveSessions.
+     */
+    protected int rejectedSessions = 0;
+
+
+    /**
+     * Number of sessions that expired.
+     */
+    protected int expiredSessions = 0;
+
+
+    /**
+     * Processing time during session expiration and passivation.
+     */
+    protected long processingTime = 0;
 
 
     // ------------------------------------------------------------- Properties
 
-/**
+
+    /**
      * Perform the background processes for this Manager
      */
     public void backgroundProcess() {
+
+        long timeNow = System.currentTimeMillis();
+
         this.processExpires();
         this.processPersistenceChecks();
         if ((this.getStore() != null)
             && (this.getStore() instanceof StoreBase)) {
             ((StoreBase) this.getStore()).processExpires();
         }
+
+        long timeEnd = System.currentTimeMillis();
+        processingTime += ( timeEnd - timeNow );
+
     }
+
 
     /**
      * Indicates how many seconds old a session can get, after its last
@@ -440,6 +469,42 @@ public abstract class PersistentManagerBase
     }
 
 
+    /** 
+     * Number of session creations that failed due to maxActiveSessions.
+     *
+     * @return
+     */
+    public int getRejectedSessions() {
+        return rejectedSessions;
+    }
+
+
+    
+    public void setRejectedSessions(int rejectedSessions) {
+        this.rejectedSessions = rejectedSessions;
+    }
+
+    /** Number of sessions that expired.
+     *
+     * @return
+     */
+    public int getExpiredSessions() {
+        return expiredSessions;
+    }
+
+    public void setExpiredSessions(int expiredSessions) {
+        this.expiredSessions = expiredSessions;
+    }
+
+    public long getProcessingTime() {
+        return processingTime;
+    }
+
+    public void setProcessingTime(long processingTime) {
+        this.processingTime = processingTime;
+    }
+
+
     /**
      * Return the descriptive short name of this Manager implementation.
      */
@@ -565,20 +630,12 @@ public abstract class PersistentManagerBase
      */
     public void processExpires() {
 
-        if (!started)
-            return;
-
-        long timeNow = System.currentTimeMillis();
         Session sessions[] = findSessions();
 
         for (int i = 0; i < sessions.length; i++) {
             StandardSession session = (StandardSession) sessions[i];
             if (!session.isValid()) {
-                try {
-                    session.expire();
-                } catch (Throwable t) {
-                    ;
-                }
+                expiredSessions++;
 	    }
         }
 
@@ -592,9 +649,9 @@ public abstract class PersistentManagerBase
      */
     public void processPersistenceChecks() {
 
-            processMaxIdleSwaps();
-            processMaxActiveSwaps();
-            processMaxIdleBackups();
+        processMaxIdleSwaps();
+        processMaxActiveSwaps();
+        processMaxIdleBackups();
 
     }
 
@@ -611,9 +668,11 @@ public abstract class PersistentManagerBase
     public Session createSession() {
 
         if ((maxActiveSessions >= 0) &&
-          (sessions.size() >= maxActiveSessions))
+            (sessions.size() >= maxActiveSessions)) {
+            rejectedSessions++;
             throw new IllegalStateException
                 (sm.getString("standardManager.createSession.ise"));
+        }
 
         return (super.createSession());
 
@@ -730,7 +789,7 @@ public abstract class PersistentManagerBase
      *
      * @param is Session's id to be removed
      */    
-    private void removeSession(String id){
+    protected void removeSession(String id){
         try {
             if (System.getSecurityManager() != null){
                 try{
@@ -1048,7 +1107,7 @@ public abstract class PersistentManagerBase
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
