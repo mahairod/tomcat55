@@ -185,12 +185,6 @@ public final class StandardWrapper
 
 
     /**
-     * The specialized class loader for the Jasper JSP servlet.
-     */
-    private ClassLoader jasperLoader = null;
-
-
-    /**
      * The context-relative URI of the JSP file for this servlet.
      */
     private String jspFile = null;
@@ -800,12 +794,6 @@ public final class StandardWrapper
                   ("standardWrapper.containerServlet", getName()));
         }
 
-        // Special case class loader for the Jasper JSP servlet
-        if (actualClass.equals(Constants.JSP_SERVLET_CLASS)) {
-            classLoader = ((StandardContext) getParent()).getJasperLoader();
-            log(sm.getString("standardWrapper.jasperLoader", getName()));
-        }
-
         // Load the specified servlet class from the appropriate class loader
         Class classClass = null;
         try {
@@ -1031,7 +1019,6 @@ public final class StandardWrapper
 
         // Deregister the destroyed instance
         instance = null;
-        jasperLoader = null;
         unloading = false;
         fireContainerEvent("unload", this);
 
