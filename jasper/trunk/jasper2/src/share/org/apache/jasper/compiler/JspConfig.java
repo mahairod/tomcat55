@@ -95,6 +95,7 @@ public class JspConfig {
     private String defaultIsXml = null;		// unspecified
     private String defaultIsELIgnored = null;	// unspecified
     private String defaultIsScriptingInvalid = "false";
+    private JspProperty defaultJspProperty;
 
     public JspConfig(ServletContext ctxt) {
 	this.ctxt = ctxt;
@@ -216,13 +217,17 @@ public class JspConfig {
 
 	if (!initialized) {
 	    processWebDotXml(ctxt);
+	    defaultJspProperty = new JspProperty(defaultIsXml,
+						 defaultIsELIgnored,
+						 defaultIsScriptingInvalid,
+						 null, null, null);
 	    initialized = true;
 	}
-	    
-	if (jspProperties == null) {
-	    return new JspProperty(defaultIsXml, defaultIsELIgnored,
-				   defaultIsScriptingInvalid,
-				   null, null, null);
+
+	// JSP Configuration settings do not apply to tag files	    
+	if (jspProperties == null || uri.endsWith(".tag")
+	        || uri.endsWith(".tagx")) {
+	    return defaultJspProperty;
 	}
 
 	String uriPath = null;
