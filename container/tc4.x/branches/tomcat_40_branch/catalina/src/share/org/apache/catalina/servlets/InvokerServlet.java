@@ -342,6 +342,14 @@ public final class InvokerServlet
             if (wrapper == null)
                 wrapper = (Wrapper) context.findChild(name);
             if (wrapper != null) {
+                String actualServletClass = wrapper.getServletClass();
+                if ((actualServletClass != null)
+                    && (actualServletClass.startsWith
+                        ("org.apache.catalina"))) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                       inRequestURI);
+                    return;
+                }
                 if (debug >= 1)
                     log("Using wrapper for servlet '" +
                         wrapper.getName() + "' with mapping '" +
