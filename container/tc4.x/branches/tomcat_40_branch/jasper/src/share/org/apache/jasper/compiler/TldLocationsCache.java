@@ -200,6 +200,9 @@ public class TldLocationsCache {
     {
 
         Set libSet = ctxt.getResourcePaths("/WEB-INF/lib");
+        if (libSet == null) {
+            return;
+        }
         Iterator it = libSet.iterator();
         while (it.hasNext()) {
             String resourcePath = (String) it.next();
