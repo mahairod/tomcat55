@@ -286,12 +286,14 @@ public class HttpRequestAdapter extends RequestImpl {
 	return socket.getInetAddress().getHostName();
     }    
 
-    /** Advance to first non-space
+    /** Advance to first non-whitespace
      */
     private  final int skipSpaces() {
 	while (off < count) {
 	    if ((buf[off] != (byte) ' ') 
-		&& (buf[off] != (byte) '\t')) {
+		&& (buf[off] != (byte) '\t')
+		&& (buf[off] != (byte) '\r')
+		&& (buf[off] != (byte) '\n')) {
 		return off;
 	    }
 	    off++;
@@ -299,12 +301,14 @@ public class HttpRequestAdapter extends RequestImpl {
 	return -1;
     }
 
-    /** Advance to the first space
+    /** Advance to the first whitespace character
      */
     private  int findSpace() {
 	while (off < count) {
 	    if ((buf[off] == (byte) ' ') 
-		|| (buf[off] == (byte) '\t')) {
+		|| (buf[off] == (byte) '\t')
+		|| (buf[off] == (byte) '\r')
+		|| (buf[off] == (byte) '\n')) {
 		return off;
 	    }
 	    off++;
