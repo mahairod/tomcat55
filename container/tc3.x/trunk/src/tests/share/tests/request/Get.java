@@ -105,8 +105,8 @@ public class Get extends TestableBase {
 
             if (! localStatus || ! test(request, response,
                 Boolean.valueOf(magnitude).booleanValue())) {
-                msg.append("\tcan't run test " + testId + " : " +
-                    description + "\n");
+                msg.append("\tTest " + testId + " : " +
+                    description);
                 status = false;
 	        }
 	    }

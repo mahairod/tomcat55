@@ -32,7 +32,6 @@ public class EchoServlet extends HttpServlet {
                       HttpServletResponse response)
         throws IOException, ServletException
     {
-System.out.println("EchoServletr: inside doPost()");
         doGet(request, response);
     }
     
