@@ -76,7 +76,7 @@
 #include "jk_ajp12_worker.h"
 #include "jk_uri_worker_map.h"
 
-#define VERSION_STRING "Jakarta/ISAPI/1.0b1"
+#define VERSION_STRING "Jakarta/ISAPI/" JK_VERSTRING
 
 /*
  * We use special two headers to pass values from the filter to the 
