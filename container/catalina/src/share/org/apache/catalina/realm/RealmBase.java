@@ -310,21 +310,6 @@ public abstract class RealmBase
                                   String qop, String realm,
                                   String md5a2) {
 
-        /*
-          System.out.println("Digest : " + clientDigest);
-
-          System.out.println("************ Digest info");
-          System.out.println("Username:" + username);
-          System.out.println("ClientSigest:" + clientDigest);
-          System.out.println("nOnce:" + nOnce);
-          System.out.println("nc:" + nc);
-          System.out.println("cnonce:" + cnonce);
-          System.out.println("qop:" + qop);
-          System.out.println("realm:" + realm);
-          System.out.println("md5a2:" + md5a2);
-        */
-
-
         String md5a1 = getDigest(username, realm);
         if (md5a1 == null)
             return null;
@@ -332,8 +317,14 @@ public abstract class RealmBase
             + cnonce + ":" + qop + ":" + md5a2;
         String serverDigest =
             md5Encoder.encode(md5Helper.digest(serverDigestValue.getBytes()));
-        //System.out.println("Server digest : " + serverDigest);
-
+        if (log.isDebugEnabled()) {
+            log.debug("Digest : " + clientDigest + " Username:" + username 
+                    + " ClientSigest:" + clientDigest + " nOnce:" + nOnce 
+                    + " nc:" + nc + " cnonce:" + cnonce + " qop:" + qop 
+                    + " realm:" + realm + "md5a2:" + md5a2 
+                    + " Server digest:" + serverDigest);
+        }
+        
         if (serverDigest.equals(clientDigest))
             return getPrincipal(username);
         else
