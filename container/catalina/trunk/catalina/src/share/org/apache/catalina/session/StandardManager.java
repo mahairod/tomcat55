@@ -399,14 +399,6 @@ public class StandardManager
 
 
     /**
-     * Get new session class to be used in the doLoad() method.
-     */
-    protected StandardSession getNewSession() {
-        return new StandardSession(this);
-    }
-
-
-    /**
      * Load any currently active sessions that were previously unloaded
      * to the appropriate persistence mechanism, if any.  If persistence is not
      * supported, this method returns without doing anything.
