@@ -484,7 +484,8 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK  lpEcb)
             if(worker) {
                 jk_endpoint_t *e = NULL;
                 if(worker->get_endpoint(worker, &e, logger)) {
-                    if(e->service(e, &s, logger)) {
+                    int recover = JK_FALSE;
+                    if(e->service(e, &s, logger, &recover)) {
                         rc = HSE_STATUS_SUCCESS_AND_KEEP_CONN;
                         lpEcb->dwHttpStatusCode = HTTP_STATUS_OK;
                     }

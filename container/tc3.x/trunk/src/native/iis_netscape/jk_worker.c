@@ -61,6 +61,7 @@
 
 #include "jk_ajp12_worker.h"
 #include "jk_jni_worker.h"
+#include "jk_lb_worker.h"
 #include "jk_worker.h"
 #include "jk_util.h"
 
@@ -75,6 +76,7 @@ static jk_map_t *worker_map;
 static worker_factory_record_t worker_factories[] = {
     { JK_AJP12_WORKER_NAME, ajp12_worker_factory},
     { JK_JNI_WORKER_NAME, jni_worker_factory},
+    { JK_LB_WORKER_NAME, lb_worker_factory},
     { NULL, NULL}
 };
 

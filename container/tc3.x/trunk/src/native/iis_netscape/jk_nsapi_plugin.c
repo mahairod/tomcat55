@@ -340,7 +340,8 @@ NSAPI_PUBLIC int jk_service(pblock *pb,
         if(init_ws_service(&private_data, &s)) {
             jk_endpoint_t *e = NULL;
             if(worker->get_endpoint(worker, &e, logger)) {                
-                if(e->service(e, &s, logger)) {
+                int recover = JK_FALSE;
+                if(e->service(e, &s, logger, &recover)) {
                     rc = REQ_PROCEED;
                 }
                 e->done(&e, logger);
