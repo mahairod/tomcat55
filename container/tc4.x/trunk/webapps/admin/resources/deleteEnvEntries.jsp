@@ -32,6 +32,7 @@
 
   <bean:define id="serviceInfo" type="java.lang.String"
                name="envEntriesForm" property="service"/>
+  <html:hidden property="service"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -70,6 +71,7 @@
 
   <bean:define id="serviceInfo" type="java.lang.String"
                name="envEntriesForm" property="service"/>
+  <html:hidden property="service"/>
 
   <%@ include file="../buttons.jsp" %>
   <br>

@@ -188,7 +188,8 @@ public final class SaveUserDatabaseAction extends Action {
             try {
 
                 // Construct the MBean Name for the naming source
-                oname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+                oname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE + 
+                                                    ResourceUtils.GLOBAL_TYPE);
 
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResource",

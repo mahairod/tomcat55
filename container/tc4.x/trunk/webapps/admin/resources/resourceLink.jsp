@@ -20,10 +20,23 @@
 <html:form method="POST" action="/resources/saveResourceLink">
 
   <html:hidden property="objectName"/>
+
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="resourceLinkForm" property="resourcetype"/>
   <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="resourceLinkForm" property="path"/>
   <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="resourceLinkForm" property="host"/>
   <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="resourceLinkForm" property="service"/>
   <html:hidden property="service"/>
+
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -42,11 +55,19 @@
               ---------------------------------
             </controls:action>
 
-            <controls:action url="/resources/setUpResourceLink.do">
+            <controls:action url='<%= "/resources/setUpResourceLink.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) %>'>
                 <bean:message key="resources.actions.resourcelk.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listResourceLinks.do?forward=" + 
-                               URLEncoder.encode("ResourceLinks Delete List") %>'>
+            <controls:action url='<%= "/resources/listResourceLinks.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) + "&forward=" + 
+                            URLEncoder.encode("ResourceLinks Delete List") %>'>
                 <bean:message key="resources.actions.resourcelk.delete"/>
             </controls:action>
          </controls:actions>

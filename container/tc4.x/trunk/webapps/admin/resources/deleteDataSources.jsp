@@ -52,7 +52,9 @@
 </html:form>
 
 <br>
+
 <bean:define id="checkboxes" scope="page" value="true"/>
+
 <html:form action="/resources/deleteDataSources">
 
   <bean:define id="resourcetypeInfo" type="java.lang.String"

@@ -198,14 +198,14 @@ public final class DeleteDataSourcesAction extends Action {
             String signature[] = new String[1];
             signature[0] = "java.lang.String";
             Object params[] = new String[1];
-
+             
             for (int i = 0; i < dataSources.length; i++) {
                 ObjectName oname = new ObjectName(dataSources[i]);
                 params[0] = oname.getKeyProperty("name");
                 mserver.invoke(dname, "removeResource",
                                params, signature);
             }
-
+          
         } catch (Throwable t) {
 
             getServlet().log

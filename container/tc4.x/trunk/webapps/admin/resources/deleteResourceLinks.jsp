@@ -18,6 +18,22 @@
 
 <html:form action="/resources/listResourceLinks">
 
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="resourceLinksForm" property="resourcetype"/>
+  <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="resourceLinksForm" property="path"/>
+  <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="resourceLinksForm" property="host"/>
+  <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="resourceLinksForm" property="service"/>
+  <html:hidden property="service"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
@@ -38,6 +54,22 @@
 <br>
 <bean:define id="checkboxes" scope="page" value="true"/>
 <html:form action="/resources/deleteResourceLinks">
+
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="resourceLinksForm" property="resourcetype"/>
+  <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="resourceLinksForm" property="path"/>
+  <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="resourceLinksForm" property="host"/>
+  <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="resourceLinksForm" property="service"/>
+  <html:hidden property="service"/>
 
   <%@ include file="../buttons.jsp" %>
   <br>

@@ -176,7 +176,8 @@ public final class DeleteUserDatabasesAction extends Action {
         try {
 
             // Construct the MBean Name for the naming source
-            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE + 
+                                                    ResourceUtils.GLOBAL_TYPE);
 
             String signature[] = new String[1];
             signature[0] = "java.lang.String";

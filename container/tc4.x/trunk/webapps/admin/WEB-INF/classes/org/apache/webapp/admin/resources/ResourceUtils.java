@@ -191,6 +191,7 @@ public class ResourceUtils {
         
         ArrayList results = new ArrayList();        
         while (iterator.hasNext()) {
+            
             ObjectInstance instance = (ObjectInstance) iterator.next(); 
             results.add(instance.getObjectName().toString());
         }
@@ -300,8 +301,8 @@ public class ResourceUtils {
      */
     public static UserDatabasesForm getUserDatabasesForm(MBeanServer mserver)
         throws Exception {
-
-        ObjectName rname = new ObjectName( RESOURCE_TYPE + 
+            
+        ObjectName rname = new ObjectName( RESOURCE_TYPE + GLOBAL_TYPE +
                             ",class=" + USERDB_CLASS + ",*");
         
         Iterator iterator = (mserver.queryMBeans(rname, null).iterator());

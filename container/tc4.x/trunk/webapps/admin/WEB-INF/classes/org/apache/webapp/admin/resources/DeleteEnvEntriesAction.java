@@ -194,7 +194,7 @@ public final class DeleteEnvEntriesAction extends Action {
                         // add defaultcontext support later
                 }
             }
-
+            
             String signature[] = new String[1];
             signature[0] = "java.lang.String";
             Object params[] = new String[1];
@@ -205,7 +205,7 @@ public final class DeleteEnvEntriesAction extends Action {
                 mserver.invoke(dname, "removeEnvironment",
                                params, signature);
             }
-
+            
         } catch (Throwable t) {
 
             getServlet().log

@@ -149,7 +149,7 @@ public class ListResourceLinksAction extends Action {
         String path = request.getParameter("path");
         String host = request.getParameter("host");
         String service = request.getParameter("service");
-        
+            
         if (resourcetype != null) {
             resourcetype = URLDecoder.decode(resourcetype);
         }

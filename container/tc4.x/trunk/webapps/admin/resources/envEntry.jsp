@@ -20,9 +20,21 @@
 <html:form method="POST" action="/resources/saveEnvEntry">
 
   <html:hidden property="objectName"/>
+
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="envEntryForm" property="resourcetype"/>
   <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="envEntryForm" property="path"/>
   <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="envEntryForm" property="host"/>
   <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="envEntryForm" property="service"/>
   <html:hidden property="service"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -42,10 +54,18 @@
               ---------------------------------
             </controls:action>
 
-            <controls:action url="/resources/setUpEnvEntry.do">
+  	    <controls:action url='<%= "/resources/setUpEnvEntry.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) %>'>
                 <bean:message key="resources.actions.env.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listEnvEntries.do?forward=" +
+            <controls:action url='<%= "/resources/listEnvEntries.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) + "&forward=" +
                             URLEncoder.encode("EnvEntries Delete List") %>'>
                 <bean:message key="resources.actions.env.delete"/>
             </controls:action>

@@ -20,9 +20,21 @@
 <html:form method="POST" action="/resources/saveDataSource">
 
   <html:hidden property="objectName"/>
+
+  <bean:define id="resourcetypeInfo" type="java.lang.String"
+               name="dataSourceForm" property="resourcetype"/>
   <html:hidden property="resourcetype"/>
+
+  <bean:define id="pathInfo" type="java.lang.String"
+               name="dataSourceForm" property="path"/>
   <html:hidden property="path"/>
+
+  <bean:define id="hostInfo" type="java.lang.String"
+               name="dataSourceForm" property="host"/>
   <html:hidden property="host"/>
+
+  <bean:define id="serviceInfo" type="java.lang.String"
+               name="dataSourceForm" property="service"/>
   <html:hidden property="service"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -42,11 +54,19 @@
               ---------------------------------
             </controls:action>
 
-            <controls:action url="/resources/setUpDataSource.do">
+  	    <controls:action url='<%= "/resources/setUpDataSource.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) %>'>
                 <bean:message key="resources.actions.datasrc.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listDataSources.do?forward=" + 
-                               URLEncoder.encode("DataSources Delete List") %>'>
+            <controls:action url='<%= "/resources/listDataSources.do?resourcetype=" +
+                            URLEncoder.encode(resourcetypeInfo) + "&path="+
+                            URLEncoder.encode(pathInfo) + "&host="+
+                            URLEncoder.encode(hostInfo) + "&service="+
+                            URLEncoder.encode(serviceInfo) + "&forward=" + 
+                            URLEncoder.encode("DataSources Delete List") %>'>
                 <bean:message key="resources.actions.datasrc.delete"/>
             </controls:action>
          </controls:actions>

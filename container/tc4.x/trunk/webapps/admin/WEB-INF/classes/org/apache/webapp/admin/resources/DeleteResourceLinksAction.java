@@ -173,18 +173,33 @@ public final class DeleteResourceLinksAction extends Action {
 
         // Perform "Delete Resource Link" transactions as required
         try {
+            
+            String resourcetype = resourceLinksForm.getResourcetype();
+            String path = resourceLinksForm.getPath();
+            String host = resourceLinksForm.getHost();
+            String service = resourceLinksForm.getService();
+            
+            ObjectName dname = null;
 
-            // Construct the MBean Name for the naming source
-            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+            if (resourcetype!=null) {
+                // Construct the MBean Name for the naming source
+                if (resourcetype.equals("Context")) {            
+                    dname = new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                                ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                                ",host=" + host + ",service=" + service);
+                } else if (resourcetype.equals("DefaultContext")) {
+                    // add defaultcontext support later
+                }
+            }
 
             String signature[] = new String[1];
             signature[0] = "java.lang.String";
             Object params[] = new String[1];
-
+            
             for (int i = 0; i < resourceLinks.length; i++) {
                 ObjectName oname = new ObjectName(resourceLinks[i]);
                 params[0] = oname.getKeyProperty("name");
-                mserver.invoke(dname, "removeResource",
+                mserver.invoke(dname, "removeResourceLink",
                                params, signature);
             }
 
