@@ -132,12 +132,6 @@ public class JikesJavaCompiler implements JavaCompiler {
           source
         };
 
-        System.out.println(
-	  compilerPath +
-          //XXX - add encoding once Jikes supports it
-          " -classpath " + classpath +
-          " -d " + outdir +
-          source);
 	try {
 	    p = Runtime.getRuntime().exec(compilerCmd);
 
