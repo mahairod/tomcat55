@@ -38,16 +38,17 @@
             <controls:action>
               ---------------------------------
             </controls:action>
-            <!-- will add the urls later once those screens get implemented -->
-<%--
-            <controls:action url="">
-              <bean:message key="users.actions.user.create"/>
+            <controls:action url='<%= "/users/setUpUser.do?databaseName=" +
+            URLEncoder.encode(request.getParameter("databaseName")) %>'>
+                <bean:message key="users.actions.user.create"/>
             </controls:action>
-            <controls:action url="">
-              <bean:message key="users.actions.user.delete"/>
+
+            <controls:action url='<%= "/users/listUsers.do?databaseName=" +
+                URLEncoder.encode(request.getParameter("databaseName")) +
+                "&forward=" + URLEncoder.encode("Users Delete List") %>'>
+                <bean:message key="users.actions.user.delete"/>
             </controls:action>
---%>
-          </controls:actions>
+         </controls:actions>
         </div>
       </td>
     </tr>
@@ -95,7 +96,7 @@
               <bean:message key="users.prompt.password"/>
             </controls:label>
             <controls:data>
-              <html:text property="password" size="24" maxlength="32"/>
+              <html:password property="password" size="24" maxlength="32"/>
             </controls:data>
           </controls:row>
 
