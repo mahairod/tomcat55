@@ -1218,7 +1218,7 @@ class StandardSession
                         "' with value '" + saveValues.get(i) + "'");
             } catch (NotSerializableException e) {
                 log(sm.getString("standardSession.notSerializable",
-                                 saveNames.get(i), id));
+                                 saveNames.get(i), id), e);
                 stream.writeObject(NOT_SERIALIZED);
                 if (debug >= 2)
                     log("  storing attribute '" + saveNames.get(i) +
