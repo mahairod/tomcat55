@@ -34,6 +34,9 @@ import org.apache.catalina.realm.GenericPrincipal;
 
 public class DeltaRequest implements Externalizable {
 
+    public static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( DeltaRequest.class );
+
     public static final int TYPE_ATTRIBUTE = 0;
     public static final int TYPE_PRINCIPAL = 1;
     public static final int TYPE_ISNEW = 2;
@@ -91,13 +94,18 @@ public class DeltaRequest implements Externalizable {
         addAction(TYPE_ISNEW,action,NAME_ISNEW,new Boolean(n));
     }
 
-    protected void addAction(int type,
+    protected synchronized void addAction(int type,
                              int action,
                              String name,
                              Object value) {
         AttributeInfo info = null;
         if ( this.actionPool.size() > 0 ) {
-            info = (AttributeInfo)actionPool.removeFirst();
+            try {
+                info = (AttributeInfo) actionPool.removeFirst();
+            }catch ( Exception x ) {
+                log.error("Unable to remove element:",x);
+                info = new AttributeInfo(type, action, name, value);
+            }
             info.init(type,action,name,value);
         } else {
             info = new AttributeInfo(type, action, name, value);
@@ -119,7 +127,7 @@ public class DeltaRequest implements Externalizable {
         execute(session,true);
     }
 
-    public void execute(DeltaSession session, boolean notifyListeners) {
+    public synchronized void execute(DeltaSession session, boolean notifyListeners) {
         if ( !this.sessionId.equals( session.getId() ) )
             throw new java.lang.IllegalArgumentException("Session id mismatch, not executing the delta request");
         session.access();
@@ -156,11 +164,15 @@ public class DeltaRequest implements Externalizable {
         session.endAccess();
     }
 
-    public void reset() {
+    public synchronized void reset() {
         while ( actions.size() > 0 ) {
-            AttributeInfo info = (AttributeInfo)actions.removeFirst();
-            info.recycle();
-            actionPool.addLast(info);
+            try {
+                AttributeInfo info = (AttributeInfo) actions.removeFirst();
+                info.recycle();
+                actionPool.addLast(info);
+            }catch  ( Exception x ) {
+                log.error("Unable to remove element",x);
+            }
         }
         actions.clear();
     }
@@ -178,7 +190,7 @@ public class DeltaRequest implements Externalizable {
         return actions.size();
     }
     
-    public void clear() {
+    public synchronized void clear() {
         actions.clear();
         actionPool.clear();
     }
@@ -200,7 +212,12 @@ public class DeltaRequest implements Externalizable {
         for (int i = 0; i < cnt; i++) {
             AttributeInfo info = null;
             if (this.actionPool.size() > 0) {
-                info = (AttributeInfo) actionPool.removeFirst();
+                try {
+                    info = (AttributeInfo) actionPool.removeFirst();
+                } catch ( Exception x )  {
+                    log.error("Unable to remove element",x);
+                    info = new AttributeInfo(-1,-1,null,null);
+                }
             }
             else {
                 info = new AttributeInfo(-1,-1,null,null);
@@ -284,7 +301,7 @@ public class DeltaRequest implements Externalizable {
             return other.getName().equals(this.getName());
         }
         
-        public void readExternal(java.io.ObjectInput in ) throws java.io.IOException,
+        public synchronized void readExternal(java.io.ObjectInput in ) throws java.io.IOException,
             java.lang.ClassNotFoundException {
             //type - int
             //action - int
@@ -296,7 +313,7 @@ public class DeltaRequest implements Externalizable {
             value = in.readObject();
         }
 
-        public void writeExternal(java.io.ObjectOutput out) throws java.io.
+        public synchronized void writeExternal(java.io.ObjectOutput out) throws java.io.
             IOException {
             //type - int
             //action - int
