@@ -423,6 +423,14 @@ public class Catalina extends Embedded {
 
 
     public void stopServer() {
+        stopServer(null);
+    }
+
+    public void stopServer(String[] arguments) {
+
+        if (arguments != null) {
+            arguments(arguments);
+        }
 
         if( server == null ) {
             // Create and execute our Digester
