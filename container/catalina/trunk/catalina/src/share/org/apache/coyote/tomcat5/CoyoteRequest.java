@@ -633,20 +633,7 @@ public class CoyoteRequest
      * an SSLSocket.
      */
     public Socket getSocket() {
-        return (socket);
-    }
-
-    /**
-     * Set the Socket (if any) through which this Request was received.
-     *
-     * @param socket The socket through which this request was received
-     */
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-        remoteHost = null;
-        remoteAddr = null;
-        remotePort = -1;
-        localAddr = null;
+        return coyoteRequest.getSocket();
     }
 
 
