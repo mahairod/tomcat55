@@ -343,8 +343,8 @@ public class CompressionResponseStream
             if (debug > 1) {
                 System.out.println("new GZIPOutputStream");
             }
-            gzipstream = new GZIPOutputStream(output);
             response.addHeader("Content-Encoding", "gzip");
+            gzipstream = new GZIPOutputStream(output);
         }
         gzipstream.write(b, off, len);
 
