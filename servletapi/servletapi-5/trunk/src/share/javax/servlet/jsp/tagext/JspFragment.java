@@ -98,6 +98,11 @@ public interface JspFragment {
      *     values are parameter values.  This allows the invoker to 
      *     parameterize a fragment invocation.
      * @throws javax.servlet.jsp.JspException
+     * @throws javax.servlet.jsp.SkipPageException Thrown if the page
+     *     that (either directly or indirectly) invoked the tag handler that
+     *     invoked this fragment is to cease evaluation.  The container
+     *     must throw this exception if a Classic Tag Handler returned
+     *     Tag.SKIP_PAGE or if a Simple Tag Handler threw SkipPageException.
      */
     public void invoke( java.io.Writer out, 
         java.util.Map params )

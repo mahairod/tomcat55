@@ -76,15 +76,12 @@ public interface DynamicAttributes {
      *     namespace.
      * @param localName the name of the attribute being set.
      * @param value the value of the attribute
-     * @throws AttributeNotSupportedException if the tag handler wishes to
+     * @throws JspException if the tag handler wishes to
      *     signal that it does not accept the given attribute.  The 
-     *     container must catch this exception and rethrow a JspException
-     *     to the calling page before calling doStartTag() or doTag(). 
-     *     If a message is provided in the AttributeNotSupportedException, 
-     *     the corresponding JspException must contain the same message.
+     *     container must not call doStartTag() or doTag() for this tag.
      */
     public void setDynamicAttribute(
         String uri, String localName, Object value ) 
-        throws AttributeNotSupportedException;
+        throws javax.servlet.jsp.JspException;
     
 }
