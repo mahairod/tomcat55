@@ -561,8 +561,8 @@ public class StandardClassLoader
                     return (true);
                 }
             } else if (entries[i].origin instanceof URL) {
+                URL url = (URL) entries[i].origin;
                 try {
-                    URL url = (URL) entries[i].origin;
                     URLConnection urlConn = url.openConnection();
                     if (entries[i].lastModified != urlConn.getLastModified()) {
                         if (debug >= 2)
@@ -572,6 +572,7 @@ public class StandardClassLoader
                         return (true);
                     }
                 } catch (IOException e) {
+                    log("    Failed tracking modifications of '" + url + "'");
                 }
             }
         }
@@ -687,27 +688,71 @@ public class StandardClassLoader
                 repositories[i].substring(0, repositories[i].length() - 1);
 	    if (debug >= 4)
 	        log("      Checking repository " + pathname);
-            if (pathname.startsWith("file://"))
-                pathname = pathname.substring(7);
-            else if (pathname.startsWith("file:"))
-                pathname = pathname.substring(5);
-            pathname += File.separatorChar +
-                name.replace('.', File.separatorChar) + ".class";
-	    try {
-                File file = new File(pathname);
-                if (file.exists() && file.canRead()) {
-                    if (debug >= 3)
-                        log("    Caching from '" + file.getAbsolutePath() +
+            if ((pathname.startsWith("file://")) 
+                || (pathname.startsWith("file:"))) {
+
+                if (pathname.startsWith("file://")) {
+                    pathname = pathname.substring(7);
+                } else if (pathname.startsWith("file:")) {
+                    pathname = pathname.substring(5);
+                }
+                pathname += File.separatorChar 
+                    + name.replace('.', File.separatorChar) + ".class";
+                
+                try {
+                    File file = new File(pathname);
+                    if (file.exists() && file.canRead()) {
+                        if (debug >= 3)
+                            log("    Caching from '" + file.getAbsolutePath() +
+                                "' modified '" +
+                                (new java.sql.Timestamp(file.lastModified())) +
+                                "'");
+                        classCache.put(name, new ClassCacheEntry
+                            (clazz, file, file.lastModified()));
+                    }
+                    
+                } catch(AccessControlException ace) {
+                    // Don't worry about caching the class last modified
+                    // if ClassLoader doesn't have permission to read file
+                }
+
+            } else {
+                
+                pathname += "/" + name.replace('.', '/') + ".class";
+
+                try {
+                    URLStreamHandler streamHandler = null;
+                    String protocol = parseProtocol(pathname);
+                    if (factory != null)
+                        streamHandler = 
+                            factory.createURLStreamHandler(protocol);
+                    URL classUrl = new URL(null, pathname, streamHandler);
+                    try {
+                        URLConnection classUrlConnection =
+                            classUrl.openConnection();
+                        log("    Caching from '" + classUrl.toString() +
                             "' modified '" +
-                            (new java.sql.Timestamp(file.lastModified())) +
-			    "'");
-                    classCache.put(name, new ClassCacheEntry(clazz, file,
-                                   file.lastModified()));
-		}
-            } catch(AccessControlException ace) {
-		// Don't worry about caching the class last modified
-		// if ClassLoader doesn't have permission to read file
-	    }
+                            (new java.sql.Timestamp
+                                (classUrlConnection.getLastModified())) +
+                            "'");
+                        classCache.put(name, new ClassCacheEntry
+                            (clazz, classUrl, 
+                             classUrlConnection.getLastModified()));
+                    } catch (IOException e) {
+                        log("    Failed tracking modifications of '" 
+                            + classUrl.toString() + "'");
+                    }
+                    
+                } catch(MalformedURLException ex) {
+                    // Should never happen
+                    ex.printStackTrace();
+                } catch(AccessControlException ace) {
+                    // Don't worry about caching the class last modified
+                    // if ClassLoader doesn't have permission to read file
+                }
+
+            }
+
         }
 
         // Return the class we have located
