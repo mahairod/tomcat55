@@ -3717,8 +3717,8 @@ public class StandardContext
             // Register the cache in JMX
             if (isCachingAllowed()) {
                 ObjectName resourcesName = 
-                    new ObjectName(getEngineName() + ":type=Cache,host=" + 
-                                   getHostname() + ",path=" 
+                    new ObjectName(this.getDomain() + ":type=Cache,host=" 
+                                   + getHostname() + ",path=" 
                                    + (("".equals(getPath()))?"/":getPath()));
                 Registry.getRegistry().registerComponent
                     (proxyDirContext.getCache(), resourcesName, null);
@@ -3752,8 +3752,9 @@ public class StandardContext
                 // Unregister the cache in JMX
                 if (isCachingAllowed()) {
                     ObjectName resourcesName = 
-                        new ObjectName(getEngineName() + ":type=Cache,host=" + 
-                                       getHostname() + ",path=" 
+                        new ObjectName(this.getDomain()
+                                       + ":type=Cache,host=" 
+                                       + getHostname() + ",path=" 
                                        + (("".equals(getPath()))?"/"
                                           :getPath()));
                     Registry.getRegistry().unregisterComponent(resourcesName);
