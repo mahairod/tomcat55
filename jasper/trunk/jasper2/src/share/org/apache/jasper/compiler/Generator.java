@@ -1449,9 +1449,8 @@ class Generator {
             // IE style plugin
             // <OBJECT ...>
             // First compose the runtime output string 
-            String s0 =
-                "<OBJECT classid="
-                    + ctxt.getOptions().getIeClassId()
+            String s0 = "<OBJECT"
+                    + makeAttr("classid", ctxt.getOptions().getIeClassId())
                     + makeAttr("name", name);
 
             String s1 = "";
@@ -1464,8 +1463,7 @@ class Generator {
                 s2 = " + \" height=\\\"\" + " + heightStr + " + \"\\\"\"";
             }
 
-            String s3 =
-                makeAttr("hspace", hspace)
+            String s3 = makeAttr("hspace", hspace)
                     + makeAttr("vspace", vspace)
                     + makeAttr("align", align)
                     + makeAttr("codebase", iepluginurl)
@@ -1483,8 +1481,7 @@ class Generator {
 
             // <PARAM > for java_codebase
             if (codebase != null) {
-                s0 =
-                    "<PARAM name=\"java_codebase\""
+                s0 = "<PARAM name=\"java_codebase\""
                         + makeAttr("value", codebase)
                         + '>';
                 out.printil("out.write(" + quote(s0) + ");");
@@ -1493,8 +1490,7 @@ class Generator {
 
             // <PARAM > for java_archive
             if (archive != null) {
-                s0 =
-                    "<PARAM name=\"java_archive\""
+                s0 = "<PARAM name=\"java_archive\""
                         + makeAttr("value", archive)
                         + '>';
                 out.printil("out.write(" + quote(s0) + ");");
@@ -1502,8 +1498,7 @@ class Generator {
             }
 
             // <PARAM > for type
-            s0 =
-                "<PARAM name=\"type\""
+            s0 = "<PARAM name=\"type\""
                     + makeAttr(
                         "value",
                         "application/x-java-"
@@ -1527,8 +1522,7 @@ class Generator {
              */
             out.printil("out.write(" + quote("<COMMENT>") + ");");
             out.printil("out.write(\"\\n\");");
-            s0 =
-                "<EMBED"
+            s0 = "<EMBED"
                     + makeAttr(
                         "type",
                         "application/x-java-"
@@ -1541,8 +1535,7 @@ class Generator {
 
             // s1 and s2 are the same as before.
 
-            s3 =
-                makeAttr("hspace", hspace)
+            s3 = makeAttr("hspace", hspace)
                     + makeAttr("vspace", vspace)
                     + makeAttr("align", align)
                     + makeAttr("pluginspage", nspluginurl)
