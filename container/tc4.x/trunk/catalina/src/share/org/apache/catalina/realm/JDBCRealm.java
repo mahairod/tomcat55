@@ -86,9 +86,9 @@ import org.apache.catalina.util.Base64;
  * See the JDBCRealm.howto for more details on how to set up the database and
  * for configuration options.
  *
- * TODO:
- *    - Make sure no bad chars can get in and trick the auth and hasrole
- *    - Use a database connection pool for faster simultaneous access
+ * <p><strong>TODO</strong> - Support connection pooling (including message
+ * format objects) so that <code>authenticate()</code> does not have to be
+ * synchronized.</p>
  *
  * @author Craig R. McClanahan
  * @author Carson McDonald
@@ -307,57 +307,28 @@ public class JDBCRealm
      * event is also logged, and the connection will be closed so that
      * a subsequent request will automatically re-open it.
      *
-     * <strong>IMPLEMENTATION NOTE</strong> - This method is synchronized
-     * because we are sharing a single connection (and its associated
-     * prepared statements) across all request threads.
-     *
      * @param username Username of the Principal to look up
      * @param credentials Password or other credentials to use in
      *  authenticating this username
      */
-    public synchronized Principal authenticate(String username,
-					       String credentials) {
+    public Principal authenticate(String username, String credentials) {
+
+        Connection dbConnection = null;
 
         try {
 
-            // Ensure that our database connection is open
-            open();
+            // Ensure that we have an open database connection
+            dbConnection = open();
 
-            // Look up the user's credentials
-            String dbCredentials = null;
-            PreparedStatement stmt = credentials(username);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                dbCredentials = rs.getString(1).trim();
-            }
-            rs.close();
-            if (dbCredentials == null)
-                return (null);
+            // Acquire a Principal object for this user
+            Principal principal = authenticate(dbConnection,
+                                               username, credentials);
 
-            // Validate the user's credentials
-            if (digest(credentials).equals(dbCredentials)) {
-                if (debug >= 2)
-                    log(sm.getString("jdbcRealm.authenticateSuccess",
-                                     username));
-            } else {
-                if (debug >= 2)
-                    log(sm.getString("jdbcRealm.authenticateFailure",
-                                     username));
-                return (null);
-            }
+            // Release the database connection we just used
+            release(dbConnection);
 
-            // Accumulate the user's roles
-            ArrayList list = new ArrayList();
-            stmt = roles(username);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                list.add(rs.getString(1).trim());
-            }
-            rs.close();
-            dbConnection.commit();
-
-            // Create and return a suitable Principal for this user
-            return (new GenericPrincipal(this, username, credentials, list));
+            // Return the Principal (if any)
+            return (principal);
 
 	} catch (SQLException e) {
 
@@ -365,7 +336,8 @@ public class JDBCRealm
 	    log(sm.getString("jdbcRealm.exception"), e);
 
             // Close the connection so that it gets reopened next time
-            close();
+            if (dbConnection != null)
+                close(dbConnection);
 
 	    // Return "not authenticated" for this request
 	    return (null);
@@ -382,9 +354,67 @@ public class JDBCRealm
 
 
     /**
-     * Close any database connection that is currently open.
+     * Return the Principal associated with the specified username and
+     * credentials, if there is one; otherwise return <code>null</code>.
+     *
+     * @param dbConnection The database connection to be used
+     * @param username Username of the Principal to look up
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
+     *
+     * @exception SQLException if a database error occurs
      */
-    protected void close() {
+    public synchronized Principal authenticate(Connection dbConnection,
+                                               String username,
+					       String credentials)
+        throws SQLException {
+
+        // Look up the user's credentials
+        String dbCredentials = null;
+        PreparedStatement stmt = credentials(dbConnection, username);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            dbCredentials = rs.getString(1).trim();
+        }
+        rs.close();
+        if (dbCredentials == null) {
+                return (null);
+        }
+
+        // Validate the user's credentials
+        if (digest(credentials).equals(dbCredentials)) {
+            if (debug >= 2)
+                log(sm.getString("jdbcRealm.authenticateSuccess",
+                                 username));
+        } else {
+            if (debug >= 2)
+                log(sm.getString("jdbcRealm.authenticateFailure",
+                                 username));
+            return (null);
+        }
+
+        // Accumulate the user's roles
+        ArrayList list = new ArrayList();
+        stmt = roles(dbConnection, username);
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+            list.add(rs.getString(1).trim());
+        }
+        rs.close();
+        dbConnection.commit();
+
+        // Create and return a suitable Principal for this user
+        return (new GenericPrincipal(this, username, credentials, list));
+
+    }
+
+
+    /**
+     * Close the specified database connection.
+     *
+     * @param dbConnection The connection to be closed
+     */
+    protected void close(Connection dbConnection) {
 
         // Do nothing if the database connection is already closed
         if (dbConnection == null)
@@ -410,9 +440,9 @@ public class JDBCRealm
         }
 
         // Release resources associated with the closed connection
-        dbConnection = null;
-        preparedCredentials = null;
-        preparedRoles = null;
+        this.dbConnection = null;
+        this.preparedCredentials = null;
+        this.preparedRoles = null;
 
     }
 
@@ -421,11 +451,13 @@ public class JDBCRealm
      * Return a PreparedStatement configured to perform the SELECT required
      * to retrieve user credentials for the specified username.
      *
+     * @param dbConnection The database connection to be used
      * @param username Username for which credentials should be retrieved
      *
      * @exception SQLException if a database error occurs
      */
-    protected PreparedStatement credentials(String username)
+    protected PreparedStatement credentials(Connection dbConnection,
+                                            String username)
         throws SQLException {
 
         if (preparedCredentials == null) {
@@ -477,15 +509,16 @@ public class JDBCRealm
 
 
     /**
-     * Open a database connection for use by this Realm.
+     * Open (if necessary) and return a database connection for use by
+     * this Realm.
      *
      * @exception SQLException if a database error occurs
      */
-    protected void open() throws SQLException {
+    protected Connection open() throws SQLException {
 
         // Do nothing if there is a database connection already open
         if (dbConnection != null)
-            return;
+            return (dbConnection);
 
         // Instantiate our database driver if necessary
         if (driver == null) {
@@ -504,6 +537,19 @@ public class JDBCRealm
         if (connectionPassword != null)
             props.put("password", connectionPassword);
         dbConnection = driver.connect(connectionURL, props);
+        return (dbConnection);
+
+    }
+
+
+    /**
+     * Release our use of this connection so that it can be recycled.
+     *
+     * @param dbConnnection The connection to be released
+     */
+    protected void release(Connection dbConnection) {
+
+        ; // NO-OP since we are not pooling anything
 
     }
 
@@ -512,11 +558,12 @@ public class JDBCRealm
      * Return a PreparedStatement configured to perform the SELECT required
      * to retrieve user roles for the specified username.
      *
+     * @param dbConnection The database connection to be used
      * @param username Username for which roles should be retrieved
      *
      * @exception SQLException if a database error occurs
      */
-    protected PreparedStatement roles(String username)
+    protected PreparedStatement roles(Connection dbConnection, String username)
         throws SQLException {
 
         if (preparedRoles == null) {
@@ -580,7 +627,7 @@ public class JDBCRealm
         super.stop();
 
 	// Close any open DB connection
-        close();
+        close(this.dbConnection);
 
     }
 
