@@ -464,28 +464,28 @@ public class HostConfig
                 // Assume this is a configuration descriptor and deploy it
                 log.debug(sm.getString("hostConfig.deployDescriptor", files[i]));
                 try {
-                    Context newContext = null;
+                    Context context = null;
                     synchronized (digester) {
-                        newContext = (Context) digester.parse(contextXml);
+                        context = (Context) digester.parse(contextXml);
                     }
-                    if (newContext instanceof Lifecycle) {
+                    if (context instanceof Lifecycle) {
                         Class clazz = Class.forName(host.getConfigClass());
                         LifecycleListener listener =
                             (LifecycleListener) clazz.newInstance();
-                        ((Lifecycle) newContext).addLifecycleListener(listener);
+                        ((Lifecycle) context).addLifecycleListener(listener);
                     }
-                    newContext.setConfigFile(contextXml.getAbsolutePath());
-                    newContext.setPath(contextPath);
+                    context.setConfigFile(contextXml.getAbsolutePath());
+                    context.setPath(contextPath);
                     // Add the context XML to the list of watched files
                     deployedApp.reloadResources.put
                         (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                     // Add the associated docBase to the redeployed list if it's a WAR
                     boolean isWar = false;
-                    if (newContext.getDocBase() != null) {
-                        File docBase = new File(newContext.getDocBase());
+                    if (context.getDocBase() != null) {
+                        File docBase = new File(context.getDocBase());
                         if (!docBase.isAbsolute()) {
                             docBase = new File(new File(host.getAppBase()), 
-                                    newContext.getDocBase());
+                                    context.getDocBase());
                         }
                         deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                                 new Long(docBase.lastModified()));
@@ -493,21 +493,18 @@ public class HostConfig
                             isWar = true;
                         }
                     }
-                    host.addChild(newContext);
+                    host.addChild(context);
                     // Add the eventual unpacked WAR and all the resources which will be
                     // watched inside it
-                    if (isWar && unpackWARs && (newContext.getDocBase() != null)) {
-                        File docBase = new File(newContext.getDocBase());
+                    if (isWar && unpackWARs && (context.getDocBase() != null)) {
+                        File docBase = new File(context.getDocBase());
                         if (!docBase.isAbsolute()) {
                             docBase = new File(new File(host.getAppBase()), 
-                                    newContext.getDocBase());
+                                    context.getDocBase());
                         }
                         deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                                 new Long(docBase.lastModified()));
-                        // FIXME: Add the list of reload resources as given by the context
-                        //        This list would by default contain /WEB-INF/web.xml and
-                        //        /META-INF/context.xml
-                        //        Add new element in Context to configure this
+                        addWatchedResources(deployedApp, context);
                     }
                 } catch (Throwable t) {
                     log.error(sm.getString("hostConfig.deployDescriptor.error",
@@ -652,10 +649,7 @@ public class HostConfig
                         }
                         deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                                 new Long(docBase.lastModified()));
-                        // FIXME: Add the list of reload resources as given by the context
-                        //        This list would by default contain /WEB-INF/web.xml and
-                        //        /META-INF/context.xml
-                        //        Add new element in Context to configure this
+                        addWatchedResources(deployedApp, context);
                     }
                 } catch (Throwable t) {
                     log.error(sm.getString("hostConfig.deployJar.error",
@@ -728,10 +722,7 @@ public class HostConfig
                     host.addChild(context);
                     deployedApp.redeployResources.put(dir.getAbsolutePath(),
                             new Long(dir.lastModified()));
-                    // FIXME: Add the list of reload resources as given by the context
-                    //        This list would by default contain /WEB-INF/web.xml and
-                    //        /META-INF/context.xml
-                    //        Add new element in Context to configure this
+                    addWatchedResources(deployedApp, context);
                 } catch (Throwable t) {
                     log.error(sm.getString("hostConfig.deployDir.error", files[i]),
                         t);
@@ -745,6 +736,25 @@ public class HostConfig
 
     }
 
+    
+    /**
+     * Add watched resources to the specified Context.
+     * @param app
+     */
+    protected void addWatchedResources(DeployedApplication app, Context context) {
+        File docBase = new File(context.getDocBase());
+        if (!docBase.isAbsolute()) {
+            docBase = new File(new File(host.getAppBase()), 
+                    context.getDocBase());
+        }
+        String[] watchedResources = context.findWatchedResources();
+        for (int i = 0; i < watchedResources.length; i++) {
+            File resource = new File(docBase, watchedResources[i]);
+            app.reloadResources.put(resource.getAbsolutePath(), 
+                    new Long(resource.lastModified()));
+        }
+    }
+    
 
     /**
      * Check resources for redeployment and reloading.
@@ -805,7 +815,8 @@ public class HostConfig
             if (log.isDebugEnabled())
                 log.debug("Checking context[" + app.name + "] reload resource " + resource);
             long lastModified = ((Long) app.reloadResources.get(resources[i])).longValue();
-            if ((!resource.exists()) || (resource.lastModified() != lastModified)) {
+            if ((!resource.exists() && lastModified != 0L) 
+                || (resource.lastModified() != lastModified)) {
                 // Reload application
                 Container context = host.findChild(app.name);
                 try {
@@ -822,6 +833,8 @@ public class HostConfig
                     log.warn(sm.getString
                              ("hostConfig.context.restart", app.name), e);
                 }
+                // Update times
+                app.reloadResources.put(resources[i], new Long(resource.lastModified()));
                 app.timestamp = System.currentTimeMillis();
                 return;
             }
