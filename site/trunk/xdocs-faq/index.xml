@@ -74,10 +74,10 @@
     Miscellaneous common how to's. </li>
 <li><a href="unix.html">Linux / Unix</a> -
     Common questions for Linux / Unix related platforms. </li>
+<li><a href="otherOperatingSystems.html">Other Operating Systems</a> -
+    Information about scripts and support for other operating systems. </li>
 <li><a href="logging.html">Logging</a> -
     Common questions related to logging in Tomcat. </li>
-<li><a href="os2.html">OS/2, z/OS</a> -
-    Common questions for OS/2, z/OS and related platforms. </li>
 <li><a href="memory.html">Memory</a> -
     Common memory related questions. </li>
 <li><a href="meta.html">Meta</a> -
