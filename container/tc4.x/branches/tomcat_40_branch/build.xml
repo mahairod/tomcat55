@@ -117,6 +117,7 @@
     <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/webapps"/>
     <mkdir dir="${tomcat.dist}/work"/>
+    <mkdir dir="${tomcat.dist}/temp"/>
   </target>
 
 

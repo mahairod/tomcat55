@@ -46,6 +46,7 @@ Section "Tomcat 4.0 (required)"
   File /r logs
   File /r server
   File /r work
+  File /r temp
   SetOutPath $INSTDIR\webapps
   File /r webapps\manager
   File /r webapps\ROOT
@@ -336,6 +337,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\webapps\webdav"
   RMDir "$INSTDIR\webapps"
   RMDir /r "$INSTDIR\work"
+  RMDir /r "$INSTDIR\temp"
   RMDir /r "$INSTDIR\src"
   RMDir "$INSTDIR"
 

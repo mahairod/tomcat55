@@ -93,6 +93,11 @@ Bugzilla Bugs Resolved:
 ----------------------
 
 6374  Class not found for: org/w3c/dom/range/Range
+6396  LoggerBase class is package not public
+6406  All classes in $CATALINA_HOME/classes become invisible 
+      when the Oracle 8.1.7 JDBC driver classes are added to this shared 
+      class loader directory
+6400  Tag Libraries not deploying in 4.0.2 final
 
 
 ============================

@@ -426,6 +426,7 @@
     <mkdir dir="${catalina.build}/classes"/>
     <mkdir dir="${catalina.build}/lib"/>
     <mkdir dir="${catalina.build}/work"/>
+    <mkdir dir="${catalina.build}/temp"/>
 
   </target>
 
@@ -653,6 +654,7 @@
     <mkdir dir="${catalina.deploy}/server/classes"/>
     <mkdir dir="${catalina.deploy}/server/lib"/>
     <mkdir dir="${catalina.deploy}/work"/>
+    <mkdir dir="${catalina.deploy}/temp"/>
   </target>
 
 
