@@ -6,12 +6,12 @@
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.AccessLogValve">
-    
+
     <attribute name="className"
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-      
+
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
@@ -23,11 +23,11 @@
     <attribute name="directory"
                description="The directory in which log files are created"
                type="java.lang.String"/>
-      
+
     <attribute   name="pattern"
                description="The pattern used to format our access log lines"
                type="java.lang.String"/>
-      
+
     <attribute name="prefix"
                description="The prefix that is added to log file filenames"
                type="java.lang.String"/>
@@ -36,7 +36,7 @@
                description="Resolve hosts"
                is="true"
                type="boolean"/>
-                 
+
     <attribute name="rotatable"
                description="Rotate log"
                is="true"
@@ -52,12 +52,12 @@
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.CertificatesValve">
-    
+
     <attribute   name="className"
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-      
+
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -65,20 +65,20 @@
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+
   </mbean>
-  
+
   <mbean name="ErrorReportValve"
          description="Implementation of a Valve that outputs HTML error pages"
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.ErrorReportValve">
-    
+
     <attribute name="className"
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-      
+
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -86,16 +86,16 @@
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+
   </mbean>
-  
+
   <mbean name="ErrorDispatcherValve"
          description="Implementation of a Valve that handles the error
          dispatch"
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.ErrorDispatcherValve">
-    
+
     <attribute name="className"
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
@@ -108,19 +108,79 @@
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+
   </mbean>
-  
+
+  <mbean name="ExtendedAccessLogValve"
+         description="Valve that generates a web server access log"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.valves.ExtendedAccessLogValve">
+
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+
+    <attribute name="containerName"
+               description="Object name of the container"
+               type="javax.management.ObjectName"/>
+
+    <attribute name="directory"
+               description="The directory in which log files are created"
+               type="java.lang.String"/>
+
+    <attribute   name="pattern"
+               description="The pattern used to format our access log lines"
+               type="java.lang.String"/>
+
+    <attribute name="prefix"
+               description="The prefix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <attribute name="rotatable"
+               description="Rotate log"
+               is="true"
+               type="boolean"/>
+
+    <attribute name="condition"
+               description="The value to look for conditional logging."
+               type="java.lang.String"/>
+
+    <attribute name="checkExists"
+               description="Check for file existence before each logging."
+               is="true"
+               type="boolean"/>
+
+    <attribute name="suffix"
+               description="The suffix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <operation name="rotate"
+               description="Move the existing log file to a new name"
+               impact="ACTION"
+               returnType="boolean">
+      <parameter name="newFileName"
+                 description="File name to move the log file to."
+                 type="java.lang.String"/>
+    </operation>
+
+  </mbean>
+
   <mbean name="RemoteAddrValve"
          description="Concrete implementation of RequestFilterValve that  filters based on the string representation of the remote client's IP address"
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.RemoteAddrValve">
-    
+
     <attribute name="allow"
                description="The comma-delimited set of allow expressions"
                type="java.lang.String"/>
-      
+
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -129,17 +189,17 @@
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-      
+
     <attribute   name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+
     <attribute   name="deny"
                description="The comma-delimited set of deny expressions"
                type="java.lang.String"/>
-      
+
   </mbean>
-  
+
   <mbean name="RemoteHostValve"
          description="Concrete implementation of RequestFilterValve that
          filters based on the string representation of the remote
@@ -147,11 +207,11 @@
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.RemoteHostValve">
-    
+
     <attribute   name="allow"
                description="The comma-delimited set of allow expressions"
                type="java.lang.String"/>
-      
+
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -160,23 +220,23 @@
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-      
+
     <attribute   name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+
     <attribute   name="deny"
                description="The comma-delimited set of deny expressions"
                type="java.lang.String"/>
-      
+
   </mbean>
-  
+
   <mbean name="RequestDumperValve"
          description="Implementation of a Valve that logs interesting contents from the specified Request and the corresponding Response"
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.RequestDumperValve">
-    
+
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -191,18 +251,18 @@
                type="int"/>
 
   </mbean>
-  
+
   <mbean name="RequestListenerValve"
          description="Valve that handles request initialization and destroy events"
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.valves.RequestListenerValve">
-    
+
     <attribute   name="className"
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-      
+
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -210,7 +270,7 @@
     <attribute   name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+
   </mbean>
-  
+
 </mbeans-descriptors>
