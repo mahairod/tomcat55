@@ -192,6 +192,13 @@ public final class EmbeddedManager
 
             embedded.start();
 
+            state = STARTED;
+            notification = new AttributeChangeNotification
+                (this, sequenceNumber++, System.currentTimeMillis(),
+                 "Started " + NAME, "State", "java.lang.Integer",
+                 new Integer(STARTING), new Integer(STARTED));
+            sendNotification(notification);
+
         } catch (Throwable t) {
             state = STOPPED;
             notification = new AttributeChangeNotification
@@ -200,13 +207,6 @@ public final class EmbeddedManager
                  new Integer(STARTING), new Integer(STOPPED));
             sendNotification(notification);
         }
-
-        state = STARTED;
-        notification = new AttributeChangeNotification
-            (this, sequenceNumber++, System.currentTimeMillis(),
-             "Started " + NAME, "State", "java.lang.Integer",
-             new Integer(STARTING), new Integer(STARTED));
-        sendNotification(notification);
 
     }
 
