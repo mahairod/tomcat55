@@ -613,17 +613,32 @@ public class ServerLifecycleListener
                 MBeanUtils.createMBean((Manager) newValue);
             }
         } else if ("realm".equals(propertyName)) {
+            // removeService() has non-null oldValue
             if (oldValue != null) {
                 if (debug >= 5) {
                     log("Removing MBean for Realm " + oldValue);
                 }
                 MBeanUtils.destroyMBean((Realm) oldValue);
             }
+            // addService() has non-null newValue
             if (newValue != null) {
                 if (debug >= 5) {
                     log("Creating MBean for Realm " + newValue);
                 }
                 MBeanUtils.createMBean((Realm) newValue);
+            }
+        } else if ("service".equals(propertyName)) {
+            if (oldValue != null) {
+                if (debug >= 5) {
+                    log("Removing MBean for Service " + oldValue);
+                }
+                MBeanUtils.destroyMBean((Service) oldValue);
+            }
+            if (newValue != null) {
+                if (debug >= 5) {
+                    log("Creating MBean for Service " + newValue);
+                }
+                MBeanUtils.createMBean((Service) newValue);
             }
         }
 
@@ -694,7 +709,16 @@ public class ServerLifecycleListener
             log("Process removeValve[container=" + container + ",valve=" +
                 valve + "]");
 
-        ; // FIXME - processContainerRemoveValve()
+        try {
+            MBeanUtils.destroyMBean(valve);
+        } catch (MBeanException t) {
+            Exception e = t.getTargetException();
+            if (e == null)
+                e = t;
+            log("processContainerRemoveValve: MBeanException", e);
+        } catch (Throwable t) {
+            log("processContainerRemoveValve: Throwable", t);
+        }
 
     }
 

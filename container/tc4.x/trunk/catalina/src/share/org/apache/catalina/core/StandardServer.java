@@ -65,6 +65,7 @@
 package org.apache.catalina.core;
 
 
+import java.beans.PropertyChangeSupport;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -204,6 +205,12 @@ public final class StandardServer
     private boolean initialized = false;
 
 
+    /**
+     * The property change support for this component.
+     */
+    protected PropertyChangeSupport support = new PropertyChangeSupport(this);
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -341,6 +348,7 @@ public final class StandardServer
     public void addService(Service service) {
 
         service.setServer(this);
+        Service oldServices[] = this.services;
 
         synchronized (services) {
             Service results[] = new Service[services.length + 1];
@@ -363,6 +371,9 @@ public final class StandardServer
                     ;
                 }
             }
+
+            // Report this property change to interested listeners
+            support.firePropertyChange("service", null, service);
         }
 
     }
@@ -496,6 +507,9 @@ public final class StandardServer
                     results[k++] = services[i];
             }
             services = results;
+
+            // Report this property change to interested listeners
+            support.firePropertyChange("service", service, null);
         }
 
     }
