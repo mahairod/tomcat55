@@ -75,6 +75,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.SingleThreadModel;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.InstanceEvent;
@@ -204,11 +205,25 @@ final class ApplicationFilterChain implements FilterChain {
             support.fireInstanceEvent(InstanceEvent.BEFORE_SERVICE_EVENT,
                                       servlet);
             if ((request instanceof HttpServletRequest) &&
-                (response instanceof HttpServletResponse))
-                servlet.service((HttpServletRequest) request,
-                                (HttpServletResponse) response);
-            else
-                servlet.service(request, response);
+                (response instanceof HttpServletResponse)) {
+                if (servlet instanceof SingleThreadModel) {
+                    synchronized (servlet) {
+                        servlet.service((HttpServletRequest) request,
+                                        (HttpServletResponse) response);
+                    }
+                } else {
+                    servlet.service((HttpServletRequest) request,
+                                    (HttpServletResponse) response);
+                }
+            } else {
+                if (servlet instanceof SingleThreadModel) {
+                    synchronized (servlet) {
+                        servlet.service(request, response);
+                    }
+                } else {
+                    servlet.service(request, response);
+                }
+            }
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
                                       servlet);
         } catch (IOException e) {
