@@ -126,7 +126,9 @@ public class FileUtil {
 	return lookupPath + "/" + path;
     }
 
-    static Log loghelper = new Log("tc_log", "FileUtil");
+    // XXX tc_log is the default channel in tomcat, this component
+    //should be able to log in a specific channel.
+    static Log loghelper = Log.getLog("tc/FileUtil", "FileUtil");
     
     /** All the safety checks from getRealPath() and
 	DefaultServlet.

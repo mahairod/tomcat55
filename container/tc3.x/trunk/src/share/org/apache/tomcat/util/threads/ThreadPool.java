@@ -130,7 +130,7 @@ public class ThreadPool  {
     /**
      * Helper object for logging
      **/
-    Log loghelper = new Log("tc_log", "ThreadPool");
+    Log loghelper = Log.getLog("tc/ThreadPool", "ThreadPool");
     
     public ThreadPool() {
         maxThreads      = MAX_THREADS;
@@ -250,7 +250,7 @@ public class ThreadPool  {
 		     * Do nothing... The show must go on, we are shutting 
 		     * down the pool and nothing should stop that.
 		     */
-		    loghelper.log("Ignored exception while shutting down thread pool", t, Logger.ERROR);
+		    loghelper.log("Ignored exception while shutting down thread pool", t, Log.ERROR);
                 }
             }
             currentThreadsBusy = currentThreadCount = 0;
@@ -399,7 +399,7 @@ public class ThreadPool  {
                     p.checkSpareControllers();
 
                 } catch(Throwable t) {
-		    loghelper.log("Unexpected exception", t, Logger.ERROR);
+		    loghelper.log("Unexpected exception", t, Log.ERROR);
                 }
             }
         }
