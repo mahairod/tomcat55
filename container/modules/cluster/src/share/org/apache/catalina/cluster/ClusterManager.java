@@ -61,7 +61,7 @@
  *
  */
 
-package org.apache.catalina.cluster.session;
+package org.apache.catalina.cluster;
 
 /**
  * The common interface used by all cluster manager.
