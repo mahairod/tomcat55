@@ -459,8 +459,10 @@ class Generator {
 	out.print  (servletClassName);
 	out.print  (" extends ");
 	out.println(pageInfo.getExtends());
+/* Supress until we also implement resolveFunction()
 	out.printil("    implements javax.servlet.jsp.el.FunctionMapper, ");
-	out.printin("               org.apache.jasper.runtime.JspSourceDependent");
+*/
+	out.printin("    implements org.apache.jasper.runtime.JspSourceDependent");
 	if (!pageInfo.isThreadSafe()) {
 	    out.println(",");
 	    out.printin("                 SingleThreadModel");
@@ -578,15 +580,13 @@ class Generator {
             }
         }
         
-        out.printil("private static java.util.HashMap _jspx_fnmap = null;");
+        out.printil("private static org.apache.jasper.runtime.ProtectedFunctionMapper _jspx_fnmap;");
         if( fnPresent ) {
             iter = taglibs.keySet().iterator();
             out.println();
             out.printil("static {");
             out.pushIndent();
-            out.printil("_jspx_fnmap = new java.util.HashMap();");
-            out.printil( "try {" );
-            out.pushIndent();
+	    out.printil("_jspx_fnmap = org.apache.jasper.runtime.ProtectedFunctionMapper.getInstance();");
             while( iter.hasNext() ) {
                 String key = (String)iter.next();
                 TagLibraryInfo tli = (TagLibraryInfo)taglibs.get( key );
@@ -594,14 +594,13 @@ class Generator {
                 String fnPrefix = tli.getPrefixString();
                 out.printil( "// Functions for " + tli.getShortName() );
                 for( int i = 0; i < fnInfo.length; i++ ) {
-                    String fnName = fnPrefix + ":" + fnInfo[i].getName();
-                    String fnSignature = fnInfo[i].getFunctionSignature();
-                    out.printin("_jspx_fnmap.put(");
-                    out.print(quote(fnName));
+		    out.printin("_jspx_fnmap.mapFunction(");
+		    out.print(quote(fnPrefix));
                     out.print(", ");
-                    out.print(fnInfo[i].getFunctionClass() + 
-                        ".class.getDeclaredMethod(");
-                    
+		    out.print(quote(fnInfo[i].getName()));
+                    out.print(", ");
+                    out.print(fnInfo[i].getFunctionClass() + ".class, ");
+                    String fnSignature = fnInfo[i].getFunctionSignature();
                     JspUtil.FunctionSignature functionSignature = 
                         new JspUtil.FunctionSignature( fnSignature, 
                         tli.getShortName(), err, ctxt.getClassLoader() );
@@ -620,19 +619,10 @@ class Generator {
 		    } else {
 			out.print("null");
 		    }
-                    out.println("));");
+                    out.println(");");
                 }
             }
-            out.popIndent();
-            out.printil( "}" );
-            out.printil( "catch( NoSuchMethodException e ) {" );
-            out.pushIndent();
-            out.printil( "throw new RuntimeException( \"" +
-                "Invalid function mapping - no such method: \" + " +
-                "e.getMessage());" );
-            out.popIndent();
-            out.printil( "}" );
-            out.popIndent();
+	    out.popIndent();
             out.printil("}");
             out.println();
         }
@@ -644,6 +634,7 @@ class Generator {
     private void generateFunctionMapper() 
         throws JasperException 
     {
+/* XX suppress until EL moves out of JSTL
         out.printil( "public java.lang.reflect.Method resolveFunction(" );
         out.printil( "    String prefix, String localName )" );
         out.printil( "{" );
@@ -653,6 +644,7 @@ class Generator {
         out.popIndent();
         out.printil( "}" );
         out.println();
+*/
     }
 
 
@@ -1067,9 +1059,11 @@ class Generator {
                     "pageContext.findAttribute(\""  + name + "\"), \""
                     + property + "\", "
                     + quote(value.getValue()) + ", "
-                    + "pageContext, "
+                    + "pageContext, _jspx_fnmap);");
+/*
                     + "(javax.servlet.jsp.el.VariableResolver) pageContext, "
                     + "(javax.servlet.jsp.el.FunctionMapper) this );");
+*/
             } else if( value.isNamedAttribute() ) {
                 // If the value for setProperty was specified via
                 // jsp:attribute, first generate code to evaluate
@@ -2889,8 +2883,10 @@ class Generator {
 	out.printin("public final class ");
 	out.print(tagInfo.getTagName());
 	out.println(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
-	out.printil("    implements javax.servlet.jsp.el.FunctionMapper, ");
-	out.printin("               org.apache.jasper.runtime.JspSourceDependent");
+/* Supress until we also implement resolveFunction()
+	out.printil("    implements "javax.servlet.jsp.el.FunctionMapper, ");
+*/
+	out.printin("    implements org.apache.jasper.runtime.JspSourceDependent");
 	if (tagInfo.hasDynamicAttributes()) {
 	    out.println(",");
 	    out.printin("                 javax.servlet.jsp.tagext.DynamicAttributes");

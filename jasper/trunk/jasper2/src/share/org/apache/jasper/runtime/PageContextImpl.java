@@ -628,14 +628,17 @@ public class PageContextImpl
      * @return The result of the evaluation
      */
     public static Object proprietaryEvaluate( String expression, 
-        Class expectedType, PageContext pageContext, Map functionMap, 
-        String defaultPrefix )
+        Class expectedType, PageContext pageContext,
+	ProtectedFunctionMapper functionMap, String defaultPrefix )
         throws ELException
     {
+	java.util.HashMap funcMap =
+		(functionMap == null)? null: functionMap.getFnMap();
+	
         try {
             return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
-                expression, expectedType, null, pageContext, functionMap, 
-                defaultPrefix );
+                expression, expectedType, null, pageContext,
+		funcMap, defaultPrefix );
         }
         catch( JspException e ) {
             throw new ELException( e );

@@ -98,6 +98,8 @@ public abstract class HttpJspBase
                                                                    "runtime.ServletResponseWrapperInclude");
                     factory.getClass().getClassLoader().loadClass( basePackage +
                                                                    "servlet.JspServletWrapper");
+                    factory.getClass().getClassLoader().loadClass( basePackage +
+				"runtime.ProtectedFunctionMapper");
                 } catch (ClassNotFoundException ex) {
                     System.out.println(
                                        "Jasper JspRuntimeContext preload of class failed: " +
