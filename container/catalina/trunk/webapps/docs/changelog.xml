@@ -54,6 +54,9 @@
       <update>
         Update to MX4J 3.0.1 (pero)
       </update>
+      <update>
+        <bug>34139</bug>: Updated Realm-HowTo to specify JMX, Commons-Logging jars for RealmBase. (yoavs)
+      </update>
     </changelog>
    </subsection>
 

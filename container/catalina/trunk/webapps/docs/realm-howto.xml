@@ -219,7 +219,11 @@ java org.apache.catalina.realm.RealmBase \
 
 <p>To use either of the above techniques, the
 <code>$CATALINA_HOME/server/lib/catalina.jar</code> file will need to be
-on your class path to make the <code>RealmBase</code> class available.</p>
+on your class path to make the <code>RealmBase</code> class available.  In 
+addition, you will need the JMX jar and the commons-logging jar (either 
+commons-logging-api.jar or commons-logging.jar).  Both of these are included
+with the Tomcat distribution.
+</p>
 
 <p>Non-ASCII usernames and/or passwords are supported using
 <source>java org.apache.catalina.realm.RealmBase \
