@@ -146,7 +146,7 @@ public class WebRuleSet extends RuleSetBase {
         digester.addCallParam(prefix + "web-app/context-param/param-value", 1);
 
         digester.addRule(prefix + "web-app/deployment-extension",
-                         new SetDeploymentExtensionRule(digester));
+                         new CheckDeploymentExtensionRule(digester));
 
         digester.addCallMethod(prefix + "web-app/display-name",
                                "setDisplayName", 0);
@@ -341,7 +341,7 @@ public class WebRuleSet extends RuleSetBase {
                             "org.apache.catalina.Container");
 
         digester.addRule(prefix + "web-app/servlet/deployment-extension",
-                         new SetDeploymentExtensionRule(digester));
+                         new CheckDeploymentExtensionRule(digester));
 
         digester.addCallMethod(prefix + "web-app/servlet/init-param",
                                "addInitParameter", 2);
@@ -393,6 +393,33 @@ public class WebRuleSet extends RuleSetBase {
 
 // ----------------------------------------------------------- Private Classes
 
+/**
+ * A Rule that checks mustUnderstand attribute.  It throws an Exception if
+ * mustUnderstand attribute is true since stand-alone Tomcat currently does
+ * not have a way of recognizing an extension within a deployment descriptor.
+ */
+
+final class CheckDeploymentExtensionRule extends Rule {
+
+    public CheckDeploymentExtensionRule(Digester digester) {
+        super(digester);
+    }
+
+    public void begin(Attributes attributes) throws Exception {
+        String mustUnderstand = attributes.getValue("mustUnderstand");
+        if ((mustUnderstand != null) && (mustUnderstand.equals("true"))) {
+            String namespace = attributes.getValue("namespace");
+            if (digester.getDebug() > 0) {
+                digester.log("Exception thrown CheckDeploymentExtensionRule");
+            }
+            throw new Exception("deployment-extension "+namespace+
+            " attribute mustUnderstand is set to true");
+        }
+
+    }
+
+}
+
 
 /**
  * A Rule that calls the <code>setAuthConstraint(true)</code> method of
@@ -412,33 +439,6 @@ final class SetAuthConstraintRule extends Rule {
         securityConstraint.setAuthConstraint(true);
         if (digester.getDebug() > 0)
             digester.log("Calling SecurityConstraint.setAuthConstraint(true)");
-    }
-
-}
-
-
-/**
- * A Rule that checks mustUnderstand attribute.  It throws an Exception if
- * mustUnderstand attribute is true since stand-alone Tomcat currently does
- * not have a way of recognizing an extension within a deployment descriptor.
- */
-
-final class SetDeploymentExtensionRule extends Rule {
-
-    public SetDeploymentExtensionRule(Digester digester) {
-        super(digester);
-    }
-
-    public void begin(Attributes attributes) throws Exception {
-        String mustUnderstand = attributes.getValue("mustUnderstand");
-        if ((mustUnderstand != null) && (mustUnderstand.equals("true"))) {
-            if (digester.getDebug() > 0) {
-                digester.log("Exception in SetDeploymentExtensionRule");
-            }
-            throw new Exception(
-            "deployment-extension attribute mustUnderstand is set to true");
-        }
-
     }
 
 }
