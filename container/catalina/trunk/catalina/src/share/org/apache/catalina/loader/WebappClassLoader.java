@@ -61,6 +61,7 @@
 package org.apache.catalina.loader;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -285,6 +286,12 @@ public class WebappClassLoader
 
 
     /**
+     * Last time a JAR was accessed.
+     */
+    protected long lastJarAccessed = 0L;
+
+
+    /**
      * The list of local repositories, in the order they should be searched
      * for locally loaded classes or resources.
      */
@@ -345,6 +352,12 @@ public class WebappClassLoader
      * is for a web application context.
      */
     private ArrayList permissionList = new ArrayList();
+
+
+    /**
+     * Path where resources loaded from JARs will be extracted.
+     */
+    private File loaderDir = null;
 
 
     /**
@@ -531,6 +544,14 @@ public class WebappClassLoader
 
         this.jarPath = jarPath;
 
+    }
+
+
+    /**
+     * Change the work directory.
+     */
+    public void setWorkDir(File workDir) {
+        this.loaderDir = new File(workDir, "loader");
     }
 
 
@@ -977,15 +998,18 @@ public class WebappClassLoader
         }
 
         // Looking at the JAR files
-        for (i = 0; i < jarFilesLength; i++) {
-            JarEntry jarEntry = jarFiles[i].getJarEntry(name);
-            if (jarEntry != null) {
-                try {
-                    String jarFakeUrl = getURI(jarRealFiles[i]).toString();
-                    jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
-                    result.addElement(new URL(jarFakeUrl));
-                } catch (MalformedURLException e) {
-                    // Ignore
+        synchronized (jarFiles) {
+            openJARs();
+            for (i = 0; i < jarFilesLength; i++) {
+                JarEntry jarEntry = jarFiles[i].getJarEntry(name);
+                if (jarEntry != null) {
+                    try {
+                        String jarFakeUrl = getURI(jarRealFiles[i]).toString();
+                        jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
+                        result.addElement(new URL(jarFakeUrl));
+                    } catch (MalformedURLException e) {
+                        // Ignore
+                    }
                 }
             }
         }
@@ -1052,6 +1076,33 @@ public class WebappClassLoader
         // (2) Search local repositories
         url = findResource(name);
         if (url != null) {
+            // Locating the repository for special handling in the case 
+            // of a JAR
+            ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
+            FileOutputStream os = null;
+            try {
+                String repository = entry.codeBase.toString();
+                if (repository.endsWith(".jar")) {
+                    // Copy binary content to the work directory if not present
+                    File resourceFile = new File(loaderDir, name);
+                    if (entry.lastModified > resourceFile.lastModified()) {
+                        resourceFile.getParentFile().mkdirs();
+                        os = new FileOutputStream(resourceFile);
+                        os.write(entry.binaryContent);
+                    }
+                    url = resourceFile.toURL();
+                }
+            } catch (Exception e) {
+                // Ignore
+                e.printStackTrace();
+            } finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException ex) {
+                    }
+                }
+            }
             if (log.isDebugEnabled())
                 log.debug("  --> Returning '" + url.toString() + "'");
             return (url);
@@ -1454,7 +1505,9 @@ public class WebappClassLoader
         length = jarFiles.length;
         for (int i = 0; i < length; i++) {
             try {
-                jarFiles[i].close();
+                if (jarFiles[i] != null) {
+                    jarFiles[i].close();
+                }
             } catch (IOException e) {
                 // Ignore
             }
@@ -1479,7 +1532,51 @@ public class WebappClassLoader
     }
 
 
+    /**
+     * Used to periodically signal to the classloader to release 
+     * JAR resources.
+     */
+    public void closeJARs(boolean force) {
+        if (jarFiles.length > 0) {
+            try {
+                synchronized (jarFiles) {
+                    if (force || (System.currentTimeMillis() 
+                                  > (lastJarAccessed + 90000))) {
+                        for (int i = 0; i < jarFiles.length; i++) {
+                            if (jarFiles[i] != null) {
+                                jarFiles[i].close();
+                                jarFiles[i] = null;
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                log("Failed to close JAR", e);
+            }
+        }
+    }
+
+
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Used to periodically signal to the classloader to release JAR resources.
+     */
+    protected void openJARs() {
+        if (started && (jarFiles.length > 0)) {
+            lastJarAccessed = System.currentTimeMillis();
+            if (jarFiles[0] == null) {
+                try {
+                    for (int i = 0; i < jarFiles.length; i++) {
+                        jarFiles[i] = new JarFile(jarRealFiles[i]);
+                    }
+                } catch (IOException e) {
+                    log("Failed to open JAR", e);
+                }
+            }
+        }
+    }
 
 
     /**
@@ -1692,67 +1789,74 @@ public class WebappClassLoader
 
         JarEntry jarEntry = null;
 
-        for (i = 0; (entry == null) && (i < jarFilesLength); i++) {
+        synchronized (jarFiles) {
 
-            jarEntry = jarFiles[i].getJarEntry(path);
+            openJARs();
+            for (i = 0; (entry == null) && (i < jarFilesLength); i++) {
 
-            if (jarEntry != null) {
+                jarEntry = jarFiles[i].getJarEntry(path);
 
-                entry = new ResourceEntry();
-                try {
-                    entry.codeBase = getURL(jarRealFiles[i]);
-                    String jarFakeUrl = getURI(jarRealFiles[i]).toString();
-                    jarFakeUrl = "jar:" + jarFakeUrl + "!/" + path;
-                    entry.source = new URL(jarFakeUrl);
-                } catch (MalformedURLException e) {
-                    return null;
+                if (jarEntry != null) {
+
+                    entry = new ResourceEntry();
+                    try {
+                        entry.codeBase = getURL(jarRealFiles[i]);
+                        String jarFakeUrl = getURI(jarRealFiles[i]).toString();
+                        jarFakeUrl = "jar:" + jarFakeUrl + "!/" + path;
+                        entry.source = new URL(jarFakeUrl);
+                        entry.lastModified = jarRealFiles[i].lastModified();
+                    } catch (MalformedURLException e) {
+                        return null;
+                    }
+                    contentLength = (int) jarEntry.getSize();
+                    try {
+                        entry.manifest = jarFiles[i].getManifest();
+                        binaryStream = jarFiles[i].getInputStream(jarEntry);
+                    } catch (IOException e) {
+                        return null;
+                    }
                 }
-                contentLength = (int) jarEntry.getSize();
+
+            }
+
+            if (entry == null) {
+                synchronized (notFoundResources) {
+                    notFoundResources.put(name, name);
+                }
+                return null;
+            }
+
+            if (binaryStream != null) {
+
+                byte[] binaryContent = new byte[contentLength];
+
                 try {
-                    entry.manifest = jarFiles[i].getManifest();
-                    binaryStream = jarFiles[i].getInputStream(jarEntry);
+                    int pos = 0;
+
+                    while (true) {
+                        int n = binaryStream.read(binaryContent, pos,
+                                                  binaryContent.length - pos);
+                        if (n <= 0)
+                            break;
+                        pos += n;
+                    }
+                    binaryStream.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
                     return null;
                 }
-            }
 
-        }
+                entry.binaryContent = binaryContent;
 
-        if (entry == null) {
-            synchronized (notFoundResources) {
-                notFoundResources.put(name, name);
-            }
-            return null;
-        }
-
-        if (binaryStream != null) {
-
-            byte[] binaryContent = new byte[contentLength];
-
-            try {
-                int pos = 0;
-                while (true) {
-                    int n = binaryStream.read(binaryContent, pos,
-                                              binaryContent.length - pos);
-                    if (n <= 0)
-                        break;
-                    pos += n;
+                // The certificates are only available after the JarEntry 
+                // associated input stream has been fully read
+                if (jarEntry != null) {
+                    entry.certificates = jarEntry.getCertificates();
                 }
-                binaryStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
 
-            entry.binaryContent = binaryContent;
-
-            // The certificates are only available after the JarEntry 
-            // associated input stream has been fully read
-            if (jarEntry != null) {
-                entry.certificates = jarEntry.getCertificates();
             }
 
         }
