@@ -105,8 +105,9 @@
     <p>
 This answer assumes that you have correctly set up a NetBeans IDE project and
 that you know how to use its debugger. If not, please go to
-http://www.netbeans.org/kb/using-netbeans/40/debug.html and read up on how to
-use NetBeans IDE and its debugger.
+<a href="http://www.netbeans.org/kb/using-netbeans/40/debug.html">
+http://www.netbeans.org/kb/using-netbeans/40/debug.html</a>
+ and read up on how to use NetBeans IDE and its debugger.
 </p>
 <p>
 Make sure that Tomcat is started, that your application is deployed, and that
