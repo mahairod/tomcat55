@@ -758,7 +758,12 @@ public class MBeanFactory extends BaseModelMBean {
         ContainerBase containerBase = getParentContainerFromParent(pname);
         containerBase.addValve(valve);
         ObjectName oname = valve.getObjectName();
-        return (oname.toString());
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            oname = MBeanUtils.createObjectName(pname.getDomain(), valve);
+            return (oname.toString());
+        }
 
     }
 
