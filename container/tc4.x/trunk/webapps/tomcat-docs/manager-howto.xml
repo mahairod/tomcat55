@@ -179,13 +179,16 @@ version of the messages.</p>
 <source>
 http://localhost:8080/manager/install?path=/foo&amp;war=file:/path/to/foo
 
-http://localhost:8080/manager/install?path=/bar&amp;war=file:/path/to/bar.war
+http://localhost:8080/manager/install?path=/bar&amp;war=jar:file:/path/to/bar.war!/
 </source>
 
 <p>Install and start a new web application, attached to the specified context
 path (which must not be in use by any other web application).  The
 <code>war</code> parameter specifies a URL (including the <code>file:</code>
-scheme) for either a directory or a web application archive (WAR) file.</p>
+scheme) for either a directory or a web application archive (WAR) file.
+The supported syntax for a URL referring to a WAR file is described on the
+Javadocs page for the <code>java.net.JarURLConnection</code> class.  Use
+only URLs that refer to the entire WAR file.</p>
 
 <p>If installation and startup is successful, you will receive a response
 like this:</p>
