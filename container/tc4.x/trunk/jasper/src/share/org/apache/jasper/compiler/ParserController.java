@@ -89,12 +89,10 @@ public class ParserController {
     private JspCompilationContext ctxt;
 
     /*
-     * The filename and path of the file being currently parsed.
-     * This is used to define the path to a file that may
-     * be included by that 'parent' file.
+     * A stack to keep track of the 'current base directory'
+     * for include directives that refer to relative paths.
      */
-    private String currentFilePath = null;
-    private String currentFileName = null;
+    private Stack baseDirStack = new Stack();
 
     /*
      * The parse 'event handler', shared by both
@@ -173,7 +171,7 @@ public class ParserController {
 	throws FileNotFoundException, JasperException
     {
         //p("parse(" + inFileName + ", " + encoding + ")");
-        resolveFileName(inFileName);
+        String absFileName = resolveFileName(inFileName);
 
         if (encoding == null) {
             encoding = "8859_1"; // default per JSP spec
@@ -185,16 +183,16 @@ public class ParserController {
 	// @@@ need to do a pass at JSP doc to find encoding as specified
 	// @@@ in page directive (see JspParseEventListener)
 
-        File file = new File(currentFileName);
-	currentFilePath = (ctxt == null) 
+        File file = new File(absFileName);
+	String filePath = (ctxt == null) 
 	    ? file.getAbsolutePath()
 	    : ctxt.getRealPath(file.toString());
-	//p("currentFilePath: " + currentFilePath);
+	//p("filePath: " + filePath);
 
         InputStreamReader reader = null;
         try {
             // Figure out what type of JSP document we are dealing with
-            reader = getReader(file, encoding);
+            reader = getReader(file, encoding, absFileName);
             figureOutJspDocument(file, encoding, reader);
             //p("isXml = " + isXml + "   hasTaglib = " + hasTaglib);
 
@@ -202,12 +200,13 @@ public class ParserController {
 	    try {
 		reader.close();
 	    } catch (IOException ex) {}
-            reader = getReader(file, encoding);
+            reader = getReader(file, encoding, absFileName);
             if (isXml) {
-                (new ParserXJspSax(currentFilePath, reader, jspHandler)).parse();
+                (new ParserXJspSax(filePath, reader, jspHandler)).parse();
             } else {
                 (new Parser(ctxt, file, encoding, reader, jspHandler)).parse();
             }
+	    baseDirStack.pop();
         } finally {
             if (reader != null) {
                 try {
@@ -374,27 +373,26 @@ public class ParserController {
     // Utility methods
 
     /*
-     * Resolve the name of the file and update global
-     * 'parentFileName' so we can properly include
-     * other jsp pages that are relative to this one.
+     * Resolve the name of the file and update
+     * baseDirStack() to keep track ot the current
+     * base directory for each included file.
+     * The 'root' file is always an 'absolute' path,
+     * so no need to put an initial value in the
+     * baseDirStack.
      */
-    private void resolveFileName(String inFileName) {
-        String baseDir = (currentFileName == null)
-	    ? null
-	    : currentFileName.substring(
-        0, currentFileName.lastIndexOf("/") + 1);
-        //@@@ if no '/', would fail???
+    private String resolveFileName(String inFileName) {
         boolean isAbsolute = inFileName.startsWith("/");
-
-        if (baseDir == null || isAbsolute) {
-            currentFileName = inFileName;
-        } else {
-            currentFileName = baseDir + inFileName;
-        }
-	//p("resolveFileName() currentFileName: " + currentFileName);
+	String fileName = 
+	    isAbsolute ?
+	    inFileName : (String)baseDirStack.peek() + inFileName;
+	String baseDir = 
+	    inFileName.substring(0, inFileName.lastIndexOf("/") + 1);
+	baseDirStack.push(baseDir);
+	return fileName;
     }
 
-    private InputStreamReader getReader(File file, String encoding)
+    private InputStreamReader getReader(File file, String encoding,
+					String absFileName)
 	throws FileNotFoundException, JasperException
     {
         InputStream in;
@@ -408,7 +406,7 @@ public class ParserController {
 		//String fileName = ctxt.getRealPath(file.toString());
 		in = ctxt.getResourceAsStream(file.toString());
 		if (in == null) {
-		    throw new FileNotFoundException(currentFileName);
+		    throw new FileNotFoundException(absFileName);
 		}
 		reader = new InputStreamReader(in, encoding);
 	    }
