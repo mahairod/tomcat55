@@ -2388,17 +2388,17 @@ class Generator {
                 }
             }
 
-	    String attrName = attr.getName();
+	    String localName = attr.getLocalName();
 
 	    Method m = null;
 	    Class[] c = null;
 	    if (attr.isDynamic()) {
 		c = OBJECT_CLASS;
             } else {
-		m = handlerInfo.getSetterMethod(attrName);
+		m = handlerInfo.getSetterMethod(localName);
 		if (m == null) {
 		    err.jspError(n, "jsp.error.unable.to_find_method",
-				     attrName);
+				 attr.getName());
 		}
 		c = m.getParameterTypes();
 		// XXX assert(c.length > 0)
@@ -2410,8 +2410,8 @@ class Generator {
 		if (!n.checkIfAttributeIsJspFragment(attr.getName())
 			    && !attr.isDynamic()) {
 		    attrValue = convertString(
-                                c[0], attrValue, attrName,
-				handlerInfo.getPropertyEditorClass(attrName),
+                                c[0], attrValue, localName,
+				handlerInfo.getPropertyEditorClass(localName),
 				true);
 		}
 	    } else if (attr.isELInterpreterInput()) {
@@ -2420,8 +2420,8 @@ class Generator {
                          attrValue, c[0], n.getPrefix(), "_jspx_fnmap", false );
             } else {
 		attrValue = convertString(
-                                c[0], attrValue, attrName,
-				handlerInfo.getPropertyEditorClass(attrName),
+                                c[0], attrValue, localName,
+				handlerInfo.getPropertyEditorClass(localName),
 				false);
 	    }
 	    return attrValue;
@@ -2503,7 +2503,7 @@ class Generator {
 		} else {
 		    out.printin(tagHandlerVar);
 		    out.print(".");
-		    out.print(handlerInfo.getSetterMethod(attrs[i].getName()).getName());
+		    out.print(handlerInfo.getSetterMethod(attrs[i].getLocalName()).getName());
 		    out.print("(");
 		    out.print(attrValue);
 		    out.println(");");

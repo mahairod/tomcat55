@@ -175,7 +175,15 @@ abstract class Node {
         int numChildNodes = nodes.size();
         for( int i = 0; i < numChildNodes; i++ ) {
             NamedAttribute na = (NamedAttribute)nodes.getNode( i );
-            if( na.getName().equals( name ) ) {
+	    boolean found = false;
+	    int index = name.indexOf(':');
+	    if (index != -1) {
+		// qualified name
+		found = na.getName().equals(name);
+	    } else {
+		found = na.getLocalName().equals(name);
+	    }
+	    if (found) {
                 result = na;
                 break;
             }
@@ -1312,15 +1320,25 @@ abstract class Node {
         private boolean trim = true;
         
         private ChildInfo childInfo;
+	private String name;
+	private String localName;
+	private String prefix;
 
         public NamedAttribute( Attributes attrs, Mark start, Node parent) {
             super( attrs, start, parent );
-            this.temporaryVariableName = JspUtil.nextTemporaryVariableName();
+            temporaryVariableName = JspUtil.nextTemporaryVariableName();
             if( "false".equals( this.getAttributeValue( "trim" ) ) ) {
                 // (if null or true, leave default of true)
                 trim = false;
             }
-            this.childInfo = new ChildInfo();
+            childInfo = new ChildInfo();
+	    name = this.getAttributeValue("name");
+	    localName = name;
+	    int index = name.indexOf(':');
+	    if (index != -1) {
+		prefix = name.substring(0, index);
+		localName = name.substring(index+1);
+	    }
         }
 
         public void accept(Visitor v) throws JasperException {
@@ -1328,7 +1346,15 @@ abstract class Node {
         }
 
         public String getName() {
-            return this.getAttributeValue( "name" );
+            return this.name;
+        }
+
+        public String getLocalName() {
+            return this.localName;
+        }
+
+        public String getPrefix() {
+            return this.prefix;
         }
         
         public ChildInfo getChildInfo() {
@@ -1497,11 +1523,11 @@ abstract class Node {
          * named attribute.  In this case, we have to store the nodes of
          * the body of the attribute.
          */
-        JspAttribute(NamedAttribute namedAttributeNode, boolean dyn) {
-            this.qName = namedAttributeNode.getName();
-	    this.localName = this.qName;
+        JspAttribute(NamedAttribute na, boolean dyn) {
+            this.qName = na.getName();
+	    this.localName = na.getLocalName();
             this.value = null;
-            this.namedAttributeNode = namedAttributeNode;
+            this.namedAttributeNode = na;
             this.expression = false;
             this.el = false;
 	    this.dynamic = dyn;

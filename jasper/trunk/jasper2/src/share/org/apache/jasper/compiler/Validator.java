@@ -678,17 +678,26 @@ class Validator {
 		err.jspError(n, "jsp.error.dynamic.attributes.not.implemented",
 			     n.getName());
 	    }
+
+	    // Get custom actions's namespace, which is used to validate the
+	    // namespaces of any custom action attributes with qualified names
+	    String customActionUri =
+		((TagLibraryInfo) taglibs.get(n.getPrefix())).getURI();
 		
 	    /*
 	     * Make sure all required attributes are present, either as
              * attributes or named attributes (<jsp:attribute>).
- 	     * Also Make sure that the same attribute is not specified in
+ 	     * Also make sure that the same attribute is not specified in
 	     * both attributes or named attributes.
 	     */
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    Attributes attrs = n.getAttributes();
 	    for (int i=0; i<tldAttrs.length; i++) {
 		String attr = attrs.getValue(tldAttrs[i].getName());
+		if (attr == null) {
+		    attr = attrs.getValue(customActionUri,
+					  tldAttrs[i].getName());
+		}
 		Node.NamedAttribute jspAttr =
 			n.getNamedAttributeNode(tldAttrs[i].getName());
 		
@@ -711,9 +720,6 @@ class Validator {
 		= new Node.JspAttribute[attrs.getLength()
 				       + namedAttributeNodes.size()];
 	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
-	    TagLibraryInfo tagLibInfo =
-		(TagLibraryInfo) taglibs.get(n.getPrefix());
-	    String uri = tagLibInfo.getURI();
 	    for (int i=0; i<attrs.getLength(); i++) {
 		boolean found = false;
 		for (int j=0; tldAttrs != null && j<tldAttrs.length; j++) {
@@ -736,7 +742,7 @@ class Validator {
 		    if (attrs.getLocalName(i).equals(tldAttrs[j].getName())
 			    && (attrs.getURI(i) == null
 				|| attrs.getURI(i).length() == 0
-				|| attrs.getURI(i) == uri)) {
+				|| attrs.getURI(i) == customActionUri)) {
 			if (tldAttrs[j].canBeRequestTime()) {
                             Class expectedType = String.class;
                             try {
@@ -815,9 +821,22 @@ class Validator {
 	    for (int i=0; i<namedAttributeNodes.size(); i++) {
                 Node.NamedAttribute na = 
                     (Node.NamedAttribute)namedAttributeNodes.getNode( i );
+		String uri = "";
+		if (na.getPrefix() != null) {
+		    TagLibraryInfo tagLibInfo =
+			(TagLibraryInfo) taglibs.get(na.getPrefix());
+		    if (tagLibInfo == null) {
+			err.jspError(n, "jsp.error.attribute.invalidPrefix",
+				     na.getPrefix());
+		    }
+		    uri = tagLibInfo.getURI();
+		}
 		boolean found = false;
 		for (int j=0; j<tldAttrs.length; j++) {
-		    if (na.getName().equals(tldAttrs[j].getName())) {
+		    // See above comment about namespace matches
+		    if (na.getLocalName().equals(tldAttrs[j].getName())
+			    && (uri == null || uri.length() == 0
+				|| uri == customActionUri)) {
 			jspAttrs[attrs.getLength() + i]
 			    = new Node.JspAttribute(na, false);
 			NamedAttributeVisitor nav = null;
