@@ -1466,6 +1466,28 @@ public class MBeanUtils {
 
 
     /**
+     * Load an MBean descriptor resource.
+     */
+    public synchronized static void loadMBeanDescriptors(String resource) {
+
+        try {
+            URL url = ServerLifecycleListener.class.getResource(resource);
+            if (url != null) {
+                InputStream stream = url.openStream();
+                Registry.loadRegistry(stream);
+                stream.close();
+            } else {
+                // XXX: i18n
+                System.out.println("MBean descriptors not found:" + resource);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace(System.out);
+        }
+
+    }
+
+
+    /**
      * Create and configure (if necessary) and return the
      * <code>MBeanServer</code> with which we will be
      * registering our <code>ModelMBean</code> implementations.

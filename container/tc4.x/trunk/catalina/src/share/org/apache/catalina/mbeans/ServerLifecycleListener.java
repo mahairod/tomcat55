@@ -66,10 +66,12 @@ package org.apache.catalina.mbeans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -135,6 +137,20 @@ public class ServerLifecycleListener
     }
 
 
+    /**
+     * Semicolon separated list of paths containing MBean desciptor resources.
+     */
+    protected String descriptors = null;
+
+    public String getDescriptors() {
+        return (this.descriptors);
+    }
+
+    public void setDescriptors(String descriptors) {
+        this.descriptors = descriptors;
+    }
+
+
     // ---------------------------------------------- ContainerListener Methods
 
 
@@ -180,9 +196,16 @@ public class ServerLifecycleListener
 
         Lifecycle lifecycle = event.getLifecycle();
         if (Lifecycle.START_EVENT.equals(event.getType())) {
+
             if (lifecycle instanceof Server) {
+
+                // Loading additional MBean descriptors
+                loadMBeanDescriptors();
+
                 createMBeans();
+
             }
+
             /*
             // Ignore events from StandardContext objects to avoid
             // reregistering the context
@@ -190,11 +213,15 @@ public class ServerLifecycleListener
                 return;
             createMBeans();
             */
+
         } else if (Lifecycle.STOP_EVENT.equals(event.getType())) {
+
             if (lifecycle instanceof Server) {
                 destroyMBeans();
             }
+
         } else if (Context.RELOAD_EVENT.equals(event.getType())) {
+
             // Give context a new handle to the MBean server if the
             // context has been reloaded since reloading causes the
             // context to lose its previous handle to the server
@@ -211,6 +238,7 @@ public class ServerLifecycleListener
                          MBeanUtils.createServer());
                 }
             }
+
         }
 
     }
@@ -270,6 +298,22 @@ public class ServerLifecycleListener
 
 
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Load additional MBean descriptor resources.
+     */
+    protected void loadMBeanDescriptors() {
+
+        if (descriptors != null) {
+            StringTokenizer tokenizer = new StringTokenizer(descriptors, ";");
+            while (tokenizer.hasMoreTokens()) {
+                String resource = tokenizer.nextToken();
+                MBeanUtils.loadMBeanDescriptors(resource);
+            }
+        }
+
+    }
 
 
     /**
