@@ -74,7 +74,7 @@ char *location_home[] = {
 #elif defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_BSD)
     "/usr/java",
     "/usr/local/java",
-#elif define(OS_CYGWIN)
+#elif defined(OS_CYGWIN)
     "/cygdrive/c/WINNT/system32/java",
 #endif
     NULL,
