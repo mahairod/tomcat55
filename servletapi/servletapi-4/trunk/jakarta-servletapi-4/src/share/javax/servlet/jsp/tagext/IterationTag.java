@@ -70,6 +70,12 @@ import javax.servlet.jsp.*;
  * If doAfterBody() returns Tag.SKIP_BODY, then the body will be skipped
  * and doEndTag() will be evaluated instead.
  *
+ * <p><B>Properties</B>
+ * There are no new properties in addition to those in Tag.
+ *
+ * <p><B>Methods</B>
+ * There is one new methods: doAfterBody().
+ *
  * <p><B>Lifecycle</B>
  *
  * <p> Lifecycle details are described by the transition diagram
@@ -80,7 +86,22 @@ import javax.servlet.jsp.*;
  * details.
  *
  * <p>
- * <IMG src="doc-files/IterationTagProtocol.gif"/> */
+ * <IMG src="doc-files/IterationTagProtocol.gif"/>
+ *
+ * <p><B>Empty and Non-Empty Action</B>
+ * <p> If the action is an <b>empty action</b>, the doStartTag() method must
+ * return SKIP_BODY.
+ *
+ * <p> If the action is a <b>non-empty action</b>, the doStartTag() method
+ * may return SKIP_BODY or EVAL_BODY_INCLUDE.
+ *
+ * If SKIP_BODY is returned the body is not evaluated, and then doEndTag()
+ * is invoked.
+ *
+ * If EVAL_BODY_INCLUDE is returned, the body is evaluated and
+ * "passed through" to the current out, then doAfterBody() is invoked
+ * and, after zero or more iterations, doEndTag() is invoked.
+*/
 
 public interface IterationTag extends Tag {
 
