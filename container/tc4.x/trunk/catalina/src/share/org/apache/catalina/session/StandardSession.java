@@ -766,12 +766,17 @@ class StandardSession
         setPrincipal(null);
         isNew = false;
         isValid = false;
+
+        // Disable session recycling
+        manager = null;
+        /*
         Manager savedManager = manager;
         manager = null;
 
         // Tell our Manager that this Session has been recycled
         if ((savedManager != null) && (savedManager instanceof ManagerBase))
             ((ManagerBase) savedManager).recycle(this);
+        */
 
     }
 
