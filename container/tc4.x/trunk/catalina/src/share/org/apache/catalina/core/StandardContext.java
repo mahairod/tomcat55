@@ -3617,6 +3617,9 @@ public class StandardContext
 
         }
 
+        // Reset application context
+        context = null;
+
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
