@@ -79,8 +79,8 @@ class PageInfo {
 
     private BeanRepository beanRepository;
     private HashMap taglibsMap;
-    private Hashtable prefixMapper;
-
+    private HashMap jspPrefixMapper;
+    private HashMap xmlPrefixMapper;
     private String language = "java";
     private String xtends = Constants.JSP_SERVLET_BASE;
     private String contentType = null;
@@ -128,7 +128,8 @@ class PageInfo {
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
 	this.taglibsMap = new HashMap();
-	this.prefixMapper = new Hashtable();
+	this.jspPrefixMapper = new HashMap();
+	this.xmlPrefixMapper = new HashMap();
 	this.imports = new Vector();
         this.dependants = new Vector();
 	this.includePrelude = new Vector();
@@ -344,19 +345,58 @@ class PageInfo {
      * @param prefix The prefix to map
      * @param uri The URI to be associated with the given prefix
      */
-    public void addPrefixToURIMapping(String prefix, String uri) {
-	prefixMapper.put(prefix, uri);
+    public void addPrefixMapping(String prefix, String uri) {
+	jspPrefixMapper.put(prefix, uri);
     }
 
     /*
-     * Maps the given prefix to its URI.
+     * Pushes the given URI onto the stack of URIs to which the given prefix
+     * is mapped.
      *
-     * @param prefix The prefix to map
+     * @param prefix The prefix whose stack of URIs is to be pushed
+     * @param uri The URI to be pushed onto the stack
+     */
+    public void pushPrefixMapping(String prefix, String uri) {
+	LinkedList stack = (LinkedList) xmlPrefixMapper.get(prefix);
+	if (stack == null) {
+	    stack = new LinkedList();
+	}
+	stack.addFirst(uri);
+    }
+
+    /*
+     * Removes the URI at the top of the stack of URIs to which the given 
+     * prefix is mapped. 
+     *
+     * @param prefix The prefix whose stack of URIs is to be popped
+     */
+    public void popPrefixMapping(String prefix) {
+	LinkedList stack = (LinkedList) xmlPrefixMapper.get(prefix);
+	if (stack == null || stack.size() == 0) {
+	    // XXX throw new Exception("XXX");
+	}
+	stack.removeFirst();
+    }
+
+    /*
+     * Returns the URI to which the given prefix maps.
+     *
+     * @param prefix The prefix whose URI is sought
      *
      * @return The URI to which the given prefix maps
      */
     public String getURI(String prefix) {
-	return (String) prefixMapper.get(prefix);
+
+	String uri = null;
+
+	LinkedList stack = (LinkedList) xmlPrefixMapper.get(prefix);
+	if (stack == null || stack.size() == 0) {
+	    uri = (String) jspPrefixMapper.get(prefix);
+	} else {
+	    uri = (String) stack.getFirst();
+	}
+
+	return uri;
     }
 
 

@@ -459,7 +459,7 @@ class Parser implements TagConstants {
 							      location,
 							      err));
 		}
-		pageInfo.addPrefixToURIMapping(prefix, uri);
+		pageInfo.addPrefixMapping(prefix, uri);
 	    } else {
 		String tagdir = attrs.getValue("tagdir");
 		if (tagdir != null) {
@@ -473,7 +473,7 @@ class Parser implements TagConstants {
 						   tagdir,
 						   err));
 		    }
-		    pageInfo.addPrefixToURIMapping(prefix, urnTagdir);
+		    pageInfo.addPrefixMapping(prefix, urnTagdir);
 		}
 	    }
 	}
