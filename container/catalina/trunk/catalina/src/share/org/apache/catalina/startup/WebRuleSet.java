@@ -471,7 +471,7 @@ final class SetJspConfig extends Rule {
 
 
 /**
- * Rule to check that the <code>jsp-config</code> is occuring 
+ * Rule to check that the <code>session-config</code> is occuring 
  * only 1 time within the web.xml
  */
 final class SetSessionConfig extends Rule {
