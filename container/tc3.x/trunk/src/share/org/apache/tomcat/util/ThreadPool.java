@@ -263,7 +263,7 @@ public class ThreadPool  {
                     boolean checkSpare = false;
                     synchronized(this) {
                         if(!shouldRun && !shouldTerminate) {
-                            wait(WORK_WAIT_TIMEOUT);
+                            this.wait(WORK_WAIT_TIMEOUT);
                         }
                         if(!shouldRun && !shouldTerminate) {
                             checkSpare = true;
@@ -298,7 +298,7 @@ public class ThreadPool  {
         public synchronized void runIt(Runnable toRun) {
             this.toRun = toRun;
             shouldRun = true;
-            notify();
+            this.notify();
         }
 
         public synchronized void terminate() {

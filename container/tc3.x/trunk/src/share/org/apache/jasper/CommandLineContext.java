@@ -329,7 +329,7 @@ public class CommandLineContext implements JspCompilationContext {
             return uri;
         } else {
             return uriBase + uri;
-        };
+        }
     };
 
 

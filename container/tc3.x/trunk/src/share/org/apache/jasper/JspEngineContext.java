@@ -329,7 +329,7 @@ public class JspEngineContext implements JspCompilationContext {
             String actURI =  req.getServletPath();
             String baseURI = actURI.substring(0, actURI.lastIndexOf('/'));
             return baseURI + '/' + uri;
-       };
+        }
     };    
 
     /**
@@ -356,7 +356,7 @@ public class JspEngineContext implements JspCompilationContext {
         else
         {
             return path;
-        };
+        }
     };
 
    
