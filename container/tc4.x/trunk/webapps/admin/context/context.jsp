@@ -51,6 +51,9 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.loggers.deletes"/> 
             </controls:action>
+            <%-- cannot delete or add the realm of the context of the admin app --%>
+            <logic:notEqual name="contextForm" property="path" 
+                            value='<%= request.getContextPath() %>'>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
             <controls:action url='<%= "/AddRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
@@ -60,7 +63,7 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.realms.deletes"/> 
             </controls:action>
-            --%>
+            </logic:notEqual>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url='<%= "/AddValve.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
