@@ -28,7 +28,7 @@ involved, <a href="/site/getinvolved.html">click here</a>.  </p>
 
 <section name="Tomcat Versions">
 <p>There are several versions of Tomcat currently available for download.  Version 3.1.1
-is a legacy release.  Version 3.2.1 is the current production quality release.  Tomcat 3.3
+is a legacy release.  Version 3.2.3 is the current production quality release.  Tomcat 3.3
 is the latest continuation of the Tomcat 3.x architecture.  All Tomcat 3.x releases
 trace their heritage back to the original Servlet and JSP implementations that Sun
 donated to the Apache Software Foundation.  The 3.x versions all implement the
@@ -50,7 +50,7 @@ latest maintenance release, 3.1.1, contained fixes for security problems.
 There is no active development ongoing for Tomcat 3.1.x.  Users of Tomcat 
 3.1 should update to 3.1.1 to close the security holes and they are 
 strongly encouraged to migrate to the current production release, Tocmat 
-3.2.1.</p> 
+3.2.3.</p> 
 
 <p><strong>Tomcat 3.2.x</strong>.  Tomcat 3.2.3 is the current production 
 quality release.  Version 3.2 added few new features; the major effort was 
