@@ -94,10 +94,12 @@ public class JspFactoryImpl extends JspFactory {
 	    } else {
 		pc =  new PageContextImpl(this);
 	    }
-            pc.initialize(servlet, request, response, errorPageURL, 
+
+	    pc.initialize(servlet, request, response, errorPageURL, 
                           needsSession, bufferSize, autoflush);
+	    
             return pc;
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             /* FIXME: need to do something reasonable here!! */
             ex.printStackTrace();
             return null;
