@@ -499,26 +499,23 @@ final class StandardWrapperValve
 			   Throwable exception) {
 
 	// Handle a custom error page for this status code
-	Context context = (Context) container.getParent();
-	Throwable realError = exception;
-	if (exception instanceof ServletException) {
-	    Throwable rootCause =
-		((ServletException) exception).getRootCause();
-	    if (rootCause != null)
-		realError = rootCause;
-	}
         if (debug >= 1)
-            log("Handling exception: " + realError.toString());
-        ErrorPage errorPage =
-	    context.findErrorPage(realError.getClass().getName());
+            log("Handling exception: " + exception);
+	Context context = (Context) container.getParent();
+        Throwable realError = exception;
+        ErrorPage errorPage = findErrorPage(context, realError);
+        if ((errorPage == null) && (realError instanceof ServletException)) {
+            realError = ((ServletException) exception).getRootCause();
+            errorPage = findErrorPage(context, realError);
+        }
 	if (errorPage != null) {
             //            if (debug >= 1)
             //                log(" Sending to custom error page " + errorPage);
             ServletRequest sreq = request.getRequest();
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
-                              realError.getMessage());
+                              exception.getMessage());
             sreq.setAttribute(Globals.EXCEPTION_ATTR,
-                              realError);
+                              exception);
             Wrapper wrapper = (Wrapper) getContainer();
             sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
                               wrapper.getName());
@@ -526,7 +523,7 @@ final class StandardWrapperValve
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
 	    sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
-                              realError.getClass());
+                              exception.getClass());
             if (custom(request, response, errorPage))
 		return;
 	}
@@ -618,6 +615,35 @@ final class StandardWrapperValve
 	}
         //        if (debug >= 1)
         //            log(" Finished with exception() report");
+
+    }
+
+
+    /**
+     * Find and return the ErrorPage instance for the specified exception's
+     * class, or an ErrorPage instance for the closest superclass for which
+     * there is such a definition.  If no associated ErrorPage instance is
+     * found, return <code>null</code>.
+     *
+     * @param context The Context in which to search
+     * @param exception The exception for which to find an ErrorPage
+     */
+    private ErrorPage findErrorPage(Context context, Throwable exception) {
+
+        if (exception == null)
+            return (null);
+        Class clazz = exception.getClass();
+        String name = clazz.getName();
+        while (!"java.lang.Object".equals(clazz)) {
+            ErrorPage errorPage = context.findErrorPage(name);
+            if (errorPage != null)
+                return (errorPage);
+            clazz = clazz.getSuperclass();
+            if (clazz == null)
+                break;
+            name = clazz.getName();
+        }
+        return (null);
 
     }
 
