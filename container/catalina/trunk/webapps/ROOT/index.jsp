@@ -80,6 +80,7 @@
                 </tr>
                 <tr>
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
+                        <a href="RELEASE-NOTES.txt">Release Notes</a><br>
                         <a href="tomcat-docs">Tomcat Documentation</a><br>
                         &nbsp;
                     </td>
