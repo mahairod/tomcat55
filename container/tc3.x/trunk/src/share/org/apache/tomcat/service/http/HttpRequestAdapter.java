@@ -72,24 +72,6 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-class RecycleBufferedInputStream extends BufferedInputStream {
-    RecycleBufferedInputStream( InputStream is ) {
-	super( is );
-    }
-
-    void setInputStream( InputStream is ) {
-	this.count=0;
-	this.in=is;
-    }
-
-    void recycle() {
-	this.in=null;
-	this.count=0;
-    }
-
-    
-}
-
 public class HttpRequestAdapter extends RequestImpl {
     private Socket socket;
     private boolean moreRequests = false;

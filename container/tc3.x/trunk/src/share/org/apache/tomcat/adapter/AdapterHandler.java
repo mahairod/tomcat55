@@ -1,6 +1,10 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
- * 
+ *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -56,112 +60,115 @@
  * [Additional notices, if required by prior licensing conditions]
  *
  */ 
+package org.apache.tomcat.adapter;
 
-
-package org.apache.tomcat.facade;
-
+import org.apache.tomcat.service.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
-import java.io.*;
-import javax.servlet.ServletOutputStream;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-/**
- * 
- */
-final class ServletOutputStreamFacade extends ServletOutputStream {
-    // Use the strings from core
-    protected StringManager sm = StringManager.getManager("org.apache.tomcat.core");
 
-    // encoding
-    private Writer writer=null;
+public class AdapterHandler  implements  TcpConnectionHandler {
     
-    protected boolean closed = false;
+    ContextManager contextM;
+    SimplePool pool = new SimplePool(60);
+    public static boolean usePool=true;
 
-    Response resA;
-    ByteBuffer bb;
     
-    /** Encoding - first time print() is used.
-	IMPORTANT: print() is _bad_, if you want to write Strings and mix
-	bytes you'd better use a real writer ( it's faster ).
-	But _don't_ use the servlet writer - since you'll not be able to write
-	bytes.
-    */
-    String enc;
-    /** True if we already called getEncoding() - cache result */
-    boolean gotEnc=false;
-    
-    protected ServletOutputStreamFacade( Response resA) {
-	this.resA=resA;
-	bb=resA.getOutputBuffer();
+    public AdapterHandler() {
+	super();
     }
 
-    // -------------------- Write methods --------------------
-    
-    public void write(int i) throws IOException {
-	bb.write(i);
-    }
-
-    public void write(byte[] b) throws IOException {
-	write(b,0,b.length);
-    }
-    
-    public void write(byte[] b, int off, int len) throws IOException {
-	bb.write( b, off, len );
-    }
-
-    // -------------------- Servlet Output Stream methods --------------------
-    
-    /** Alternate implementation for print, using String.getBytes(enc).
-	It seems to be a bit faster for small strings, but it's 10..20% slower
-	for larger texts ( nor very large - 5..10k )
-
-	That seems to be mostly because of byte b[] - the writer has an
-	internal ( and fixed ) buffer.
-
-	Please use getWriter() if you want to send strings.
-    */
-    public void print(String s) throws IOException {
-	if (s==null) s="null";
-	byte b[]=null;
-	if( !gotEnc ) {
-	    enc = resA.getCharacterEncoding();
-	    gotEnc=true;
-	    if ( Constants.DEFAULT_CHAR_ENCODING.equals(enc) )
-		enc=null;
+    public void setAttribute(String name, Object value ) {
+	if("context.manager".equals(name) ) {
+	    contextM=(ContextManager)value;
 	}
-	if( enc==null) 
-	    b=s.getBytes();
-	else 
+    }
+    
+    public void setServer( Object  contextM ) {
+	this.contextM=(ContextManager)contextM;
+    }
+
+    public Object[] init() {
+	if( usePool ) return null;
+        Object thData[]=new Object[1];
+	thData[0]=createAdapter();
+        return  thData;
+    }
+
+    HttpAdapter createAdapter() {
+	//System.out.println("XXX REQUEST_IMPL new " + pool.size());
+	HttpAdapter httpA=new HttpAdapter();
+	httpA.init(contextM);
+	return httpA;
+    }
+    
+    public void processConnection(TcpConnection connection, Object thData[]) {
+	Socket socket=null;
+	Request reqA=null;
+	Response resA=null;
+	HttpAdapter httpA=null;
+
+	//	System.out.println("New Connection");
+	try {
+	    if (connection == null)
+		return;
+	    socket=connection.getSocket();
+	    if (socket == null)
+		return;
+
+	    if( usePool || thData==null || thData[0]==null) {
+		httpA=(HttpAdapter)pool.get();
+		if( httpA==null ) httpA=createAdapter();
+	    } else {
+		httpA =(HttpAdapter)thData[0];
+	    }
+
+	    httpA.setSocket( socket );
+
+	    httpA.readNextRequest();
+
+	    contextM.service( httpA.getRequest(), httpA.getResponse() );
+
+	    httpA.recycle();
+	    
 	    try {
-		b=s.getBytes( enc );
-	    } catch (java.io.UnsupportedEncodingException ex) {
-		b=s.getBytes();
-		enc=null;
-	    } 
-	
-	write( b );
-    } 
+               InputStream is = socket.getInputStream();
+               int available = is.available ();
+	       
+               // XXX on JDK 1.3 just socket.shutdownInput () which
+               // was added just to deal with such issues.
 
-    /** Will send the buffer to the client.
-     */
-    public void flush() throws IOException {
-	bb.flush(); // send it now !
+               // skip any unread (bogus) bytes
+               if (available > 1) {
+                   is.skip (available);
+               }
+	    }catch(NullPointerException npe) {
+		// do nothing - we are just cleaning up, this is
+		// a workaround for Netscape \n\r in POST - it is supposed
+		// to be ignored
+	    } catch(java.net.SocketException ex) {
+		// do nothing - same
+	    }
+	    //	    System.out.print("5");
+	} catch (Exception e) {
+	    contextM.log( "Error reading request " + e.getMessage());
+	    e.printStackTrace();
+	} finally {
+	    // recycle kernel sockets ASAP
+	    try { if (socket != null) socket.close (); }
+	    catch (IOException e) { /* ignore */ }
+        }
+	if( usePool || thData==null || thData[0]==null ) {
+	    pool.put( httpA );
+	}
+
+	//	System.out.print("6");
     }
 
-    public void close() throws IOException {
-	bb.flush(); // send it now !
-	closed = true;
-    }
-
-    /** Reuse the object instance, avoid GC
-     *  Called from BSOS
-     */
-    void recycle() {
-	writer=null;
-	closed = false;
-	enc=null;
-	gotEnc=false;
-    }
 
 }
-
