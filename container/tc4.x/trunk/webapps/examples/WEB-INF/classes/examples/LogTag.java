@@ -11,7 +11,6 @@ import java.io.IOException;
  */
 public class LogTag 
     extends ExampleTagBase
-    implements BodyTag 
 {
     boolean toBrowser = false;
     

@@ -15,7 +15,6 @@ import java.io.IOException;
 
 public class FooTag 
     extends ExampleTagBase 
-    implements BodyTag 
 {
     private String atts[] = new String[3];
     int i = 0;

@@ -3,7 +3,7 @@ package examples;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
-public abstract class ExampleTagBase implements Tag {
+public abstract class ExampleTagBase extends BodyTagSupport {
 
     public void setParent(Tag parent) {
         this.parent = parent;
