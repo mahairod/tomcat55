@@ -90,11 +90,12 @@
              returnCode="${http.protocol} 200"
              responseMatch="PreInclude" 
        />
+      <!-- remove test that no longer fits current behavior
       <gtest host="${host}" port="${port}"  description="PrintWriterTest"
              request="GET /test/servlet/dispatch.PrintWriterTest1Servlet HTTP/1.0"
              returnCode="${http.protocol} 200"
              responseMatch="PostInclude" 
-       />
+       /> -->
       <gtest host="${host}" port="${port}"  description="PrintWriterTest"
              request="GET /test/servlet/dispatch.PrintWriterTest1Servlet HTTP/1.0"
              returnCode="${http.protocol} 200"
