@@ -124,6 +124,7 @@ else
   echo "        start - start tomcat in the background"
   echo "        run   - start tomcat in the foreground"
   echo "        stop  - stop tomcat"
+  echo "        env  -  set CLASSPATH and TOMCAT_HOME env. variables"
 
   exit 0
 fi
