@@ -1085,8 +1085,10 @@
     </copy>
     <copy todir="${tomcat.dist}/server/webapps">
       <fileset dir="${tomcat.build}/server/webapps">
-        <exclude name="${tomcat.build}/server/webapps/admin/WEB-INF/classes/**" />
-        <exclude name="${tomcat.build}/server/webapps/manager/WEB-INF/classes/**" />
+        <exclude name="admin/**/*.jsp" />
+        <exclude name="admin/WEB-INF/classes/**" />
+        <exclude name="admin/WEB-INF/src/**" />
+        <exclude name="manager/WEB-INF/classes/**" />
       </fileset>
     </copy>
 <!--
