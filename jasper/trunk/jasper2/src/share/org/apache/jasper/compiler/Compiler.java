@@ -98,12 +98,6 @@ public class Compiler {
     // ----------------------------------------------------------------- Static
 
 
-    static {
-
-        System.setErr(new SystemLogHandler(System.err));
-
-    }
-
     // Some javac are not thread safe; use a lock to serialize compilation, 
     static Object javacLock = new Object();
 

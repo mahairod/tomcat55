@@ -82,6 +82,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
+import org.apache.jasper.util.SystemLogHandler;
 import org.apache.jasper.runtime.JspFactoryImpl;
 import org.apache.jasper.security.SecurityClassLoad;
 import org.apache.jasper.servlet.JspServletWrapper;
@@ -124,6 +125,8 @@ public final class JspRuntimeContext implements Runnable {
      * @param ServletContext for web application
      */
     public JspRuntimeContext(ServletContext context, Options options) {
+
+        System.setErr(new SystemLogHandler(System.err));
 
         this.context = context;
         this.options = options;
@@ -271,7 +274,10 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Process a "destory" event for this web application context.
      */                                                        
-    public void destroy() {                                    
+    public void destroy() {
+
+        if(System.err instanceof SystemLogHandler)
+            System.setErr(((SystemLogHandler)System.err).getWrapped());
 
         threadStop();
 

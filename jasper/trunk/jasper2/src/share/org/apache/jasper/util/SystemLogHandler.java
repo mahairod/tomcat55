@@ -79,7 +79,7 @@ public class SystemLogHandler extends PrintStream {
      */
     public SystemLogHandler(PrintStream wrapped) {
         super(wrapped);
-        out = wrapped;
+        this.wrapped = wrapped;
     }
 
 
@@ -89,7 +89,7 @@ public class SystemLogHandler extends PrintStream {
     /**
      * Wrapped PrintStream.
      */
-    protected PrintStream out = null;
+    protected PrintStream wrapped = null;
 
 
     /**
@@ -106,6 +106,10 @@ public class SystemLogHandler extends PrintStream {
 
     // --------------------------------------------------------- Public Methods
 
+
+    public PrintStream getWrapped() {
+      return wrapped;
+    }
 
     /**
      * Start capturing thread's output.
@@ -142,7 +146,7 @@ public class SystemLogHandler extends PrintStream {
     protected PrintStream findStream() {
         PrintStream ps = (PrintStream) streams.get(Thread.currentThread());
         if (ps == null) {
-            ps = out;
+            ps = wrapped;
         }
         return ps;
     }
