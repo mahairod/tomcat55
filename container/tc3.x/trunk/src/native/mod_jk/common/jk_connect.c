@@ -108,7 +108,7 @@ int jk_open_socket(struct sockaddr_in *addr,
     jk_log(l, JK_LOG_DEBUG, "Into jk_open_socket\n");
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    if(sock > 0) {
+    if(sock > -1) {
         int ret;
         /* Tries to connect to JServ (continues trying while error is EINTR) */
         do {
