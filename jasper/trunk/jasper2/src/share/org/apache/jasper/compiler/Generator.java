@@ -1636,7 +1636,7 @@ class Generator {
                 // Set up new buffer for the method
                 outSave = out;
                 GenBuffer genBuffer =
-                    new GenBuffer(n.implementsSimpleTag() ? null : n.getBody());
+                    new GenBuffer(n.implementsSimpleTag() ? null : n);
                 methodsBuffered.add(genBuffer);
                 out = genBuffer.getOut();
 
@@ -2957,11 +2957,17 @@ class Generator {
             isSimpleTagParent = true;
             boolean tmpIsFragment = isFragment;
             isFragment = true;
+            String pushBodyCountVarSave = pushBodyCountVar;
+            if (pushBodyCountVar != null) {
+                // Use a fixed name for push body count, to simplify code gen
+                pushBodyCountVar = "_jspx_push_body_count";
+            }
             visitBody(n);
             out = outSave;
             parent = tmpParent;
             isSimpleTagParent = isSimpleTagParentSave;
             isFragment = tmpIsFragment;
+            pushBodyCountVar = pushBodyCountVarSave;
             fragmentHelperClass.closeFragment(fragment, methodNesting);
             // XXX - Need to change pageContext to jspContext if
             // we're not in a place where pageContext is defined (e.g.
@@ -2973,6 +2979,8 @@ class Generator {
                     + fragment.getId()
                     + ", pageContext, "
                     + tagHandlerVar
+                    + ", "
+                    + pushBodyCountVar
                     + ")");
         }
 
@@ -3691,14 +3699,17 @@ class Generator {
      */
     private static class GenBuffer {
 
-        private Node.Nodes body;
+        private Node node;
         private java.io.CharArrayWriter charWriter;
         protected ServletWriter out;
 
-        GenBuffer(Node.Nodes body) {
-            this.body = body;
-            if (body != null) {
-                body.setGeneratedInBuffer(true);
+        GenBuffer(Node n) {
+            node = n;
+            if (n != null) {
+                Node.Nodes body = n.getBody();
+                if (body != null) {
+                    body.setGeneratedInBuffer(true);
+                }
             }
             charWriter = new java.io.CharArrayWriter();
             out = new ServletWriter(new java.io.PrintWriter(charWriter));
@@ -3720,9 +3731,10 @@ class Generator {
          */
         public void adjustJavaLines(final int offset) {
 
-            if (body != null) {
+            if (node != null) {
                 try {
-                    body.visit(new Node.Visitor() {
+                    node.accept(new Node.Visitor() {
+
                         public void doVisit(Node n) {
                             if (n.getBeginJavaLine() > 0) {
                                 n.setBeginJavaLine(
@@ -3735,7 +3747,11 @@ class Generator {
                             throws JasperException {
                             doVisit(n);
                             Node.Nodes body = n.getBody();
-                            if (body != null && !body.isGeneratedInBuffer()) {
+                            if (body != null &&
+                                ((node == n) || !body.isGeneratedInBuffer())) {
+                                // We want to adjust the Java lines only for
+                                // top level Custom tags, unless its body is
+                                // not generated in a buffer.
                                 body.visit(this);
                             }
                         }
@@ -3755,9 +3771,9 @@ class Generator {
             private GenBuffer genBuffer;
             private int id;
 
-            public Fragment(int id, Node.Nodes body) {
+            public Fragment(int id, Node node) {
                 this.id = id;
-                genBuffer = new GenBuffer(body);
+                genBuffer = new GenBuffer(node);
             }
 
             public GenBuffer getGenBuffer() {
@@ -3804,15 +3820,18 @@ class Generator {
             out.pushIndent();
             out.printil(
                 "private javax.servlet.jsp.tagext.JspTag _jspx_parent;");
+            out.printil("private int[] _jspx_push_body_count;");
             out.println();
             out.printil(
                 "public "
                     + className
                     + "( int discriminator, JspContext jspContext, "
-                    + "javax.servlet.jsp.tagext.JspTag _jspx_parent ) {");
+                    + "javax.servlet.jsp.tagext.JspTag _jspx_parent, "
+                    + "int[] _jspx_push_body_count ) {");
             out.pushIndent();
             out.printil("super( discriminator, jspContext, _jspx_parent );");
             out.printil("this._jspx_parent = _jspx_parent;");
+            out.printil("this._jspx_push_body_count = _jspx_push_body_count;");
             out.popIndent();
             out.printil("}");
         }
@@ -3822,7 +3841,7 @@ class Generator {
             String tagHandlerVar,
             int methodNesting)
             throws JasperException {
-            Fragment result = new Fragment(fragments.size(), parent.getBody());
+            Fragment result = new Fragment(fragments.size(), parent);
             fragments.add(result);
             this.used = true;
 
