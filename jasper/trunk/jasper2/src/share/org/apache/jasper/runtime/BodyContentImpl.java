@@ -83,13 +83,7 @@ public class BodyContentImpl extends BodyContent {
     // Enclosed writer to which any output is written
     private Writer writer;
 
-    /*
-     * Indicates whether this BodyContentImpl is returned as the result of a
-     * call to JspContext.pushBody(java.io.Writer) (FALSE) or
-     * PageContext.pushBody() (TRUE)
-     */
-    private boolean isBodyContent;
-
+    // See comment in setWriter()
     private int bufferSizeSave;
 
     /**
@@ -505,10 +499,10 @@ public class BodyContentImpl extends BodyContent {
      * @throws IOException If an I/O error occurs
      */
     public void clear() throws IOException {
-	if (isBodyContent) {
-	    nextChar = 0;
-	} else {
+	if (writer != null) {
 	    throw new IOException();
+	} else {
+	    nextChar = 0;
 	}
     }
 
@@ -521,7 +515,9 @@ public class BodyContentImpl extends BodyContent {
      * @throws IOException If an I/O error occurs
      */
     public void clearBuffer() throws IOException {
-        if (isBodyContent) this.clear();
+        if (writer == null) {
+	    this.clear();
+	}
     }
 
     /**
@@ -544,7 +540,7 @@ public class BodyContentImpl extends BodyContent {
      * @return the number of bytes unused in the buffer
      */
     public int getRemaining() {
-	return isBodyContent ? bufferSize-nextChar : 0;
+	return (writer == null) ? bufferSize-nextChar : 0;
     }
 
     /**
@@ -555,7 +551,7 @@ public class BodyContentImpl extends BodyContent {
      * @return the value of this BodyJspWriter as a Reader
      */
     public Reader getReader() {
-	return isBodyContent ? new CharArrayReader (cb, 0, nextChar) : null;
+	return (writer == null) ? new CharArrayReader (cb, 0, nextChar) : null;
     }
 
     /**
@@ -566,7 +562,7 @@ public class BodyContentImpl extends BodyContent {
      * @return the value of the BodyJspWriter as a String
      */
     public String getString() {
-	return isBodyContent ? new String(cb, 0, nextChar) : null;
+	return (writer == null) ? new String(cb, 0, nextChar) : null;
     }
 	
     /**
@@ -578,7 +574,7 @@ public class BodyContentImpl extends BodyContent {
      * evaluation
      */
     public void writeOut(Writer out) throws IOException {
-	if (isBodyContent) {
+	if (writer == null) {
 	    out.write(cb, 0, nextChar);
 	    // Flush not called as the writer passed could be a BodyContent and
 	    // it doesn't allow to flush.
@@ -600,11 +596,20 @@ public class BodyContentImpl extends BodyContent {
     void setWriter(Writer writer) {
 	this.writer = writer;
 	if (writer != null) {
-	    isBodyContent = false;
-	    bufferSizeSave = bufferSize;
-	    bufferSize = 0;
+	    // According to the spec, the JspWriter returned by 
+	    // JspContext.pushBody(java.io.Writer writer) must behave as
+	    // though it were unbuffered. This means that its getBufferSize()
+	    // must always return 0. The implementation of
+	    // JspWriter.getBufferSize() returns the value of JspWriter's
+	    // 'bufferSize' field, which is inherited by this class. 
+	    // Therefore, we simply save the current 'bufferSize' (so we can 
+	    // later restore it should this BodyContentImpl ever be reused by
+	    // a call to PageContext.pushBody()) before setting it to 0.
+	    if (bufferSize != 0) {
+		bufferSizeSave = bufferSize;
+		bufferSize = 0;
+	    }
 	} else {
-	    isBodyContent = true;
 	    bufferSize = bufferSizeSave;
 	    clearBody();
 	}
