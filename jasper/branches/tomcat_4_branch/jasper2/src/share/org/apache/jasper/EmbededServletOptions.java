@@ -91,7 +91,7 @@ public final class EmbededServletOptions implements Options {
     /**
      * Should Ant fork its java compiles of JSP pages.
      */
-    public boolean fork = false;
+    public boolean fork = true;
 
     /**
      * Do you want to keep the generated Java files around?
