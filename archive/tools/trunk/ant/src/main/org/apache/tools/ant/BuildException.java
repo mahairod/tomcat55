@@ -60,7 +60,7 @@ package org.apache.tools.ant;
  * @author James Duncan Davidson
  */
 
-public class BuildException extends Exception {
+public class BuildException extends RuntimeException {
 
     /** Exception that might have caused this one */
     private Exception cause;
