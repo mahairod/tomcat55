@@ -143,11 +143,14 @@ public class ResponseFacade implements ServletResponse {
     public ServletOutputStream getOutputStream()
         throws IOException {
 
-        if (isFinished())
-            throw new IllegalStateException
-                (/*sm.getString("responseFacade.finished")*/);
+        //        if (isFinished())
+        //            throw new IllegalStateException
+        //        (/*sm.getString("responseFacade.finished")*/);
 
-        return response.getOutputStream();
+        ServletOutputStream sos = response.getOutputStream();
+        if (isFinished())
+            resp.setSuspended(true);
+        return (sos);
 
     }
 
@@ -155,11 +158,14 @@ public class ResponseFacade implements ServletResponse {
     public PrintWriter getWriter()
         throws IOException {
 
-        if (isFinished())
-            throw new IllegalStateException
-                (/*sm.getString("responseFacade.finished")*/);
+        //        if (isFinished())
+        //            throw new IllegalStateException
+        //                (/*sm.getString("responseFacade.finished")*/);
 
-        return response.getWriter();
+        PrintWriter writer = response.getWriter();
+        if (isFinished())
+            resp.setSuspended(true);
+        return (writer);
 
     }
 
@@ -204,8 +210,9 @@ public class ResponseFacade implements ServletResponse {
         throws IOException {
 
         if (isFinished())
-            throw new IllegalStateException
-                (/*sm.getString("responseFacade.finished")*/);
+            //            throw new IllegalStateException
+            //                (/*sm.getString("responseFacade.finished")*/);
+            return;
 
         resp.setAppCommitted(true);
 
