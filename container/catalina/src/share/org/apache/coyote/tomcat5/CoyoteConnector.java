@@ -1486,7 +1486,7 @@ public class CoyoteConnector
             try {
                 Registry.getRegistry(null, null).registerComponent
                     (protocolHandler, this.domain + ":type=protocolHandler,className="
-                     + protocolHandlerClassName, "protocolHandler");
+                     + protocolHandlerClassName, null);
             } catch (Exception ex) {
                 log.error(sm.getString
                           ("coyoteConnector.protocolRegistrationFailed"), ex);
