@@ -1,4 +1,4 @@
-<html>
+<%@ page import="javax.servlet.jsp.tagext.*" %><html>
 <body>
 <% /** 	Name : positiveGetInfoString
 	Description : Create a TagInfo object and call the getInfoString() method

@@ -1,4 +1,4 @@
-<html>
+<%@ page import="javax.servlet.jsp.tagext.*" %><html>
 <title>positiveTagGetAttributeString</title>
 <body>
 <% 
