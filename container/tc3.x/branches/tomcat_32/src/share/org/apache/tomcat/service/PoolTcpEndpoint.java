@@ -98,7 +98,7 @@ public class PoolTcpEndpoint  { // implements Endpoint {
     private static StringManager sm = StringManager.getManager("org.apache.tomcat.service");
 
     private static final int BACKLOG = 100;
-    private static final int TIMEOUT = 1000;
+    private static final int TIMEOUT = 300000;  // 5 minutes
 
     private boolean isPool = true;
 
@@ -290,8 +290,11 @@ public class PoolTcpEndpoint  { // implements Endpoint {
         		            accepted = null;
         		        }
     		        }
-			if( factory != null && accepted != null)
-			    factory.initSocket( accepted );
+
+                    if(accepted != null)
+                        accepted.setSoTimeout(timeout);
+            if( factory != null && accepted != null)
+                factory.initSocket( accepted );
     	        }
     	    }
 	    
