@@ -1764,7 +1764,6 @@ public class WebappClassLoader
                 } catch (MalformedURLException e) {
                     return null;
                 }
-                entry.certificates = jarEntry.getCertificates();
                 contentLength = (int) jarEntry.getSize();
                 try {
                     entry.manifest = jarFiles[i].getManifest();
@@ -1806,6 +1805,12 @@ public class WebappClassLoader
             }
 
             entry.binaryContent = binaryContent;
+
+            // The certificates are only available after the JarEntry 
+            // associated input stream has been fully read
+            if (jarEntry != null) {
+                entry.certificates = jarEntry.getCertificates();
+            }
 
         }
 
