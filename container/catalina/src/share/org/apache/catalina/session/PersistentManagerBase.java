@@ -377,6 +377,26 @@ public abstract class PersistentManagerBase
 
 
     /**
+     * Return true, if the session id is loaded in memory
+     * otherwise false is returned
+     *
+     * @param id The session id for the session to be searched for
+     *
+     * @exception IOException if an input/output error occurs while
+     *  processing this request
+     */
+    public boolean isLoaded( String id ){
+        try {
+            if ( super.findSession(id) != null )
+                return true;
+        } catch (IOException e) {
+            log("checking isLoaded for id, " + id + ", "+e.getMessage(), e);
+        }
+        return false;
+    }
+
+
+    /**
      * Return the maximum number of active Sessions allowed, or -1 for
      * no limit.
      */
