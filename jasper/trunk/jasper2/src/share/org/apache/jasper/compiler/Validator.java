@@ -660,6 +660,8 @@ class Validator {
             if (n.getNamedAttributeNodes().size() != 0) {
 		err.jspError(n, "jsp.error.namedAttribute.invalidUse");
             }
+
+	    visitBody(n);
         }
 
 	public void visit(Node.CustomTag n) throws JasperException {
