@@ -478,7 +478,7 @@ public interface HttpServletResponse extends ServletResponse {
      * field in the response.
      */
 
-     public static final int SC_TEMPORARY_DIRECT = 307;
+     public static final int SC_TEMPORARY_REDIRECT = 307;
 
     /**
      * Status code (400) indicating the request sent by the client was
