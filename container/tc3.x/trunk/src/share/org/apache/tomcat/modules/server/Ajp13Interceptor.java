@@ -164,7 +164,7 @@ public class Ajp13Interceptor extends PoolTcpConnector
 		req.recycle();
 		res.recycle();
             }
-            log("Closing connection", Logger.DEBUG);
+            log("Closing connection", Log.DEBUG);
             con.close();
 	    socket.close();
         } catch (Exception e) {
