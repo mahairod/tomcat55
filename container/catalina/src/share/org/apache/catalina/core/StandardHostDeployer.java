@@ -396,7 +396,11 @@ public class StandardHostDeployer implements Deployer {
 
         // Expand war file if host wants wars unpacked
         if (isWAR && host.isUnpackWARs()) {
-            docBase = ExpandWar.expand(host, war, contextPath);
+            if (contextPath.equals("")) {
+                docBase = ExpandWar.expand(host, war, "/ROOT");
+            } else {
+                docBase = ExpandWar.expand(host, war, contextPath);
+            }
         }
 
         // Install the new web application
