@@ -6,6 +6,7 @@ set _CP=%CP%
 
 rem Identify the custom class path components we need
 set CP=%TOMCAT_HOME%\lib\ant.jar;%TOMCAT_HOME%\lib\servlet.jar
+set CP=%TOMCAT_HOME%\lib\jaxp.jar;%TOMCAT_HOME%\lib\parser.jar
 set CP=%CP%;%JAVA_HOME%\lib\tools.jar
 
 rem Execute ANT to perform the requird build target
