@@ -85,7 +85,7 @@
 
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${jasper.build}/classes"
-     classpath="${parser.jar}:${jaxp.jar}:${servlet.jar}"
+     classpath="${tools.jar}:${parser.jar}:${jaxp.jar}:${servlet.jar}"
      deprecation="off" debug="on" optimize="off"
      excludes="**/CVS/**"/>
 
