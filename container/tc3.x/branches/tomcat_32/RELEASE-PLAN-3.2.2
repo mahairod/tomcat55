@@ -1,0 +1,67 @@
+$Id$
+
+NOTE:  This document is the first cut at a release plan for the next
+       dot release of Tomcat.  Nothing in this document should be
+       considered authoritative until it has been discussed and approved
+       on the TOMCAT-DEV mailing list, at which point this note will
+       be removed.
+
+
+
+			Tomcat 3.2.2 Release Plan
+			=========================
+
+Objective: 
+
+    The objective of the Tomcat 3.2.2 release is to make the bug
+    fixes that have been made to the Tomcat 3.2 branch since the 
+    release of Tomcat 3.2.1 available in a public release.
+
+
+Plan:
+
+    Because the code base for the 3.2 branch has been quite stable,
+    only a single two week beta release is planned prior to the 
+    final release.  If bugs are found during the beta cycle that 
+    require non-trivial code changes to fix, then a second two week
+    beta release will be made and the date for the final release
+    will be moved back accordingly.
+    
+    The code freeze date proposed below is to allow time for a
+    release plan vote to be held on tomcat-dev and to allow developers 
+    time to complete fixes that they feel should be included in this 
+    release.
+
+    Tomcat 3.2.2 Beta Release:
+
+        Code Freeze/Tag Date:   February 25, 2001
+        Release Manager:        Marc Saegesser
+
+        The beta release will allow users to install and verify
+        bugs fixed in Tomcat 3.2.2 and to verify that no new
+        bugs have been introduced. 
+    
+        The RELEASE-NOTES file will be updated to indicate bugs
+        that have been fixed in this release.
+
+    Tomcat 3.2.2 Final Release:
+
+        Code Freeze/Tag Date:   March 11, 2001
+        Release Manager:        Marc Saegesser
+
+
+Release Criteria:
+    
+    Any bug introduced after Tomcat 3.2.1 MUST be fixed.  Bugs that existed 
+    prior to the release of Tomcat 3.2.1 that are not fixed before the 
+    code freeze/beta release will not be fixed in Tomcat 3.2.2.  Once 
+    Tomcat 3.2.2 is finalized the tomcat_32 branch will be unfrozen and 
+    developers may commit fixes for a future release.
+
+    The Tomcat 3.2.2 release MUST run the jakarta-watchdog test suite with no 
+    errors on the following platforms:  Linux, Solaris, Windows 9x, 
+    Windows NT/2000.  It is desirable to have successful test reports on 
+    MacOS 9/X, and FreeBSD.
+    
+    A release vote must be held on the tomcat-dev mailing list and the vote
+    must pass by "Majority Approval".
