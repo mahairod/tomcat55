@@ -95,10 +95,6 @@ Catalina    3114    Spanish translations of LocalString.properties files
 
 Catalina    3194    Javadoc errors during build
 
-Catalina    3285    Tomcat 4.0-b5 class loader fails on IBM JDK
-
-Catalina    3293    Allow content lengths > 2^31
-
 Catalina    3434    NT/2K Service installation on JDK 1.4 b2 fails 
 
 Jasper      3055    <jsp:plugin> tag ignores the name attribute
@@ -125,6 +121,8 @@ Catalina    1575    Slow server start due to SAX parsing
 Catalina    2570    Add ability to configure a default error handler
 
 Catalina    2823    Allow a <Manager> inside <DefaultContext>
+
+Catalina    3293    Allow content lengths > 2^31
 
 Jasper      2500    FileNotFoundException unintentionally caught
 

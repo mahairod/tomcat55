@@ -260,7 +260,7 @@ public class TagBeginGenerator
             return "new Byte((byte)" + Byte.valueOf(s).toString() + ")";
         } else if (c == char.class) {
             // non-normative, because a normative method would fail to compile
-            if (s.length() > 1) {
+            if (s.length() > 0) {
                 char ch = s.charAt(0);
                 // this trick avoids escaping issues
                 return "((char) " + (int) ch + ")";
@@ -271,7 +271,7 @@ public class TagBeginGenerator
             }
         } else if (c == Character.class) {
             // non-normative, because a normative method would fail to compile
-            if (s.length() > 1) {
+            if (s.length() > 0) {
                 char ch = s.charAt(0);
                 // this trick avoids escaping issues
                 return "new Character((char) " + (int) ch + ")";
@@ -293,7 +293,7 @@ public class TagBeginGenerator
         } else if (c == Integer.class) {
             return "new Integer(" + Integer.valueOf(s).toString() + ")";
         } else if (c == short.class) {
-            return Short.valueOf(s).toString();
+            return "((short) " + Short.valueOf(s).toString() + ")";
         } else if (c == Short.class) {
             return "new Short(" + Short.valueOf(s).toString() + ")";
         } else if (c == long.class) {
