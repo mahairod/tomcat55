@@ -85,6 +85,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.JspException;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.logging.Logger;

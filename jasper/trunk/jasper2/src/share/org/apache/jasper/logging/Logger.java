@@ -69,7 +69,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;	// for throwableToString()
-import org.apache.jasper.core.JasperException;	// for throwableToString()
 import org.apache.jasper.util.FastDateFormat;
 
 /**
@@ -210,13 +209,6 @@ public abstract class Logger {
 	    t.printStackTrace(w);
 	    if (t instanceof ServletException) {
 		Throwable cause = ((ServletException)t).getRootCause();
-		if (cause != null) {
-		    w.println(rootcause);
-		    printThrowable(w, cause, rootcause);
-		}
-	    }
-	    else if (t instanceof JasperException) {
-		Throwable cause = ((JasperException)t).getRootCause();
 		if (cause != null) {
 		    w.println(rootcause);
 		    printThrowable(w, cause, rootcause);
