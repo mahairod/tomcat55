@@ -396,7 +396,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("--%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%--");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%--");
 	}
 
 	new Node.Comment(reader.getText(start, stop), start, parent);
@@ -409,7 +409,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%!");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%!");
 	}
 
 	new Node.Declaration(parseScriptText(reader.getText(start, stop)),
@@ -423,7 +423,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%=");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%=");
 	}
 
 	new Node.Expression(parseScriptText(reader.getText(start, stop)),
@@ -437,7 +437,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%");
 	}
 
 	new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
@@ -457,7 +457,7 @@ public class Parser {
 
 	if (!reader.matches("/>")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:param");
+			 "&lt;jsp:param");
 	}
 
 	new Node.ParamAction(attrs, start, parent);
@@ -498,7 +498,7 @@ public class Parser {
 	    
 	if (!reader.matches(">")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:include");
+			 "&lt;jsp:include");
 	}
 
 	reader.skipSpaces();
@@ -525,7 +525,7 @@ public class Parser {
 
 	if (!reader.matches(">")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:forward");
+			 "&lt;jsp:forward");
 	}
 
 	reader.skipSpaces();
@@ -542,7 +542,7 @@ public class Parser {
 
 	if (!reader.matches("/>")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:getProperty");
+			 "&lt;jsp:getProperty");
 	}
 
 	new Node.GetProperty(attrs, start, parent);
@@ -557,7 +557,7 @@ public class Parser {
 
 	if (!reader.matches("/>")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:setProperty");
+			 "&lt;jsp:setProperty");
 	}
 
 	new Node.SetProperty(attrs, start, parent);
@@ -578,7 +578,7 @@ public class Parser {
 
 	if (!reader.matches(">")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:useBean");
+			 "&lt;jsp:useBean");
 	}
 
 	Node beanNode = new Node.UseBean(attrs, start, parent);
@@ -813,7 +813,8 @@ public class Parser {
 	Mark bodyStart = reader.mark();
 	Mark bodyEnd = reader.skipUntilETag(tag);
 	if (bodyEnd == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<"+tag+">");
+	    err.jspError(start, "jsp.error.unterminated",
+			 "&lt;" + tag + "&gt;");
 	}
 	new Node.TemplateText(reader.getText(bodyStart, bodyEnd), bodyStart,
 			      parent);
@@ -831,7 +832,7 @@ public class Parser {
 	    }
 	    parseElements(parent);
 	}
-	err.jspError(start, "jsp.error.unterminated", "<"+tag+">");
+	err.jspError(start, "jsp.error.unterminated", "&lt;" + tag + "&gt;");
     }
 
     
