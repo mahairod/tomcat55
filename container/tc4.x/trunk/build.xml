@@ -335,7 +335,7 @@
       </fileset>
     </copy>
     <fixcrlf srcdir="${tomcat.dist}/${final-src.name}" 
-     excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.ico" eol="lf"/>
+     excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico" eol="lf"/>
     <tar longfile="gnu" tarfile="${tomcat.dist}/${final-src.name}.tar">
       <tarfileset dir="${tomcat.dist}">
         <include name="${final-src.name}/**" />
