@@ -27,9 +27,9 @@ files to make them available to web applications:</p>
     application archive.</li>
 <li>For classes and resources that must be shared across all web applications,
     place unpacked classes and resources under
-    <code>$CATALINA_HOME/shared/classes</code>, or place JAR files
+    <code>$CATALINA_BASE/shared/classes</code>, or place JAR files
     containing those classes and resources under
-    <code>$CATALINA_HOME/shared/lib</code>.</li>
+    <code>$CATALINA_BASE/shared/lib</code>.</li>
 </ul>
 
 </section>
@@ -172,8 +172,8 @@ loaders as it is initialized:</p>
     web applications (unless Tomcat internal classes also need access,
     in which case you should put them in the <strong>Common</strong>
     class loader instead).  All unpacked classes and resources in
-    <code>$CATALINA_HOME/shared/classes</code>, as well as classes and
-    resources in JAR files under <code>$CATALINA_HOME/shared/lib</code>, are
+    <code>$CATALINA_BASE/shared/classes</code>, as well as classes and
+    resources in JAR files under <code>$CATALINA_BASE/shared/lib</code>, are
     made visible through this class loader. If multiple Tomcat instances are
     run from the same binary using the $CATALINA_BASE environment variable,
     then this classloader repositories are relative to $CATALINA_BASE rather
@@ -220,8 +220,8 @@ loading looks in the following repositories, in this order:</p>
 <li><em>$CATALINA_HOME/common/classes</em></li>
 <li><em>$CATALINA_HOME/common/endorsed/*.jar</em></li>
 <li><em>$CATALINA_HOME/common/lib/*.jar</em></li>
-<li><em>$CATALINA_HOME/shared/classes</em></li>
-<li><em>$CATALINA_HOME/shared/lib/*.jar</em></li>
+<li><em>$CATALINA_BASE/shared/classes</em></li>
+<li><em>$CATALINA_BASE/shared/lib/*.jar</em></li>
 </ul>
 
 </section>
