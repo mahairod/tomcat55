@@ -19,8 +19,8 @@ wrappers that put the ant.jar file on the classpath and calls:
 To build, execute the either of the following commands in this
 directory:
 
-        (unix)% compile 
-        (dos)> compile.bat 
+        (unix)% ./build.sh
+        (dos)> .\build.bat 
 
 This will build tests into a build directory located in this directory.
 
@@ -30,13 +30,13 @@ need to clean-up the initial environment of your command prompt window.
 To build a 'distribution' build (without the tests, and with all the
 classes jarrd up nice) execute:
 
-        (unix)% compile dist
-        (dos)> compile.bat dist
+        (unix)% ./build.sh dist
+        (dos)> .\build.bat dist
 
 To clean out the build (removes the build dir):
 
-        (unix)% compile clean
-        (dos)> compile.bat clean
+        (unix)% ./build.sh clean
+        (dos)> .\build.bat clean
 
 NOTE: To build Jcheck you will need "servlet-2.2.0.jar" in your CLASSPATH.
       It has all the Servlet 2.2 and JSP 1.1 public APIs. It can be found
@@ -56,7 +56,8 @@ Tests can be run in two different ways:
    down automatically by the script. You will need the following classes in
    your CLASSPATH:
 
-	- JDK classes (and tools.jar for JDK 1.2)
+	- JDK classes (classes.zip if you are using JDK 1.1.x,
+		       and tools.jar if you are using JDK 1.2)
 	- servlet.jar (Servlet 2.2 and JSP 1.1 public APIs)
 	- webserver.jar (tomcat servlet container)
 	- jasper.jar (JSP engine)
@@ -66,23 +67,23 @@ Tests can be run in two different ways:
 	
    - Running Servlet tests
 
-        (unix)% compile
-        (unix)% cd build
-        (unix)% runTest servlet
+        (unix)% ./build.sh
+        (unix)% cd ../build/jakarta-check
+        (unix)% ./runTest.sh servlet
 
-        (dos)> compile
-        (dos)> cd build
-        (dos)> runTest.bat servlet
+        (dos)> .\build.bat
+        (dos)> cd ..\build\jakarta-check
+        (dos)> .\runTest.bat servlet
 
    - Running JSP tests
 
-        (unix)% compile
-        (unix)% cd build
-        (unix)% runTest jsp
+        (unix)% ./build.sh
+        (unix)% cd ../build/jakarta-check
+        (unix)% ./runTest.sh jsp
 
-        (dos)> compile
-        (dos)> cd build
-        (dos)> runTest.bat jsp
+        (dos)> .\build.bat
+        (dos)> cd ..\build\jakarta-check
+        (dos)> .\runTest.bat jsp
 
 2) Running test against other servers:
 
@@ -91,26 +92,26 @@ Tests can be run in two different ways:
 	The server-side web-application is in build/servlet-tests.war 
      file. Install this war file on the server you want to test. Then 
 
-        (unix)% compile
-        (unix)% cd build
-        (unix)% runClient servlet {host} {port}
+        (unix)% ./build.sh
+        (unix)% cd ../build/jakarta-check
+        (unix)% ./runClient.sh servlet {host} {port}
 
-        (dos)> compile
-        (dos)> cd build
-        (dos)> runClient.bat servlet {host} {port}
+        (dos)> .\build.bat
+        (dos)> cd ..\build\jakarta-check
+        (dos)> .\runClient.bat servlet {host} {port}
 
    - Running JSP tests.
 
 	The server-side web-application is in build/jsp-tests.war 
      file. Install this war file on the server you want to test. Then 
 
-        (unix)% compile
-        (unix)% cd build
-        (unix)% runClient jsp {host} {port}
+        (unix)% ./build.sh
+        (unix)% cd ../build/jakarta-check
+        (unix)% ./runClient.sh jsp {host} {port}
 
-        (dos)> compile
-        (dos)> cd build
-        (dos)> runSClient.bat jsp {host} {port}
+        (dos)> .\build.bat
+        (dos)> cd ..\build\jakarta-check
+        (dos)> .\runClient.bat jsp {host} {port}
 
 
 BEFORE COMMITTING CHANGES
