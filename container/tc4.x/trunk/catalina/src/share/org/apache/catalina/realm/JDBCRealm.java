@@ -384,7 +384,14 @@ public class JDBCRealm
         }
 
         // Validate the user's credentials
-        if (digest(credentials).equalsIgnoreCase(dbCredentials)) {
+        boolean validated = false;
+        if (hasMessageDigest()) {
+            // Hex hashes should be compared case-insensitive
+            validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
+        } else
+            validated = (digest(credentials).equals(dbCredentials));
+
+        if (validated) {
             if (debug >= 2)
                 log(sm.getString("jdbcRealm.authenticateSuccess",
                                  username));

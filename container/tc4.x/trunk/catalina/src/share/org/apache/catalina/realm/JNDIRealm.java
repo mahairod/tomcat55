@@ -750,7 +750,15 @@ public class JNDIRealm extends RealmBase {
         // Validate the credentials specified by the user
         if (debug >= 3)
             log("  validating credentials");
-        if (digest(credentials).equalsIgnoreCase(valueString)) {
+
+        boolean validated = false;
+        if (hasMessageDigest()) {
+            // Hex hashes should be compared case-insensitive
+            validated = (digest(credentials).equalsIgnoreCase(valueString));
+        } else
+            validated = (digest(credentials).equals(valueString));
+
+        if (validated) {
             if (debug >= 2)
                 log(sm.getString("jndiRealm.authenticateSuccess",
                                  username));

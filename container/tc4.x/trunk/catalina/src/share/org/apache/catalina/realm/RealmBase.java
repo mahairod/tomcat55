@@ -571,7 +571,7 @@ public abstract class RealmBase
     protected String digest(String credentials)  {
 
         // If no MessageDigest instance is specified, return unchanged
-        if (md == null)
+        if (hasMessageDigest() == false)
             return (credentials);
 
         // Digest the user credentials and return as hexadecimal
@@ -588,6 +588,9 @@ public abstract class RealmBase
 
     }
 
+    protected boolean hasMessageDigest() {
+        return !(md == null);
+    }
 
     /**
      * Return the digest associated with given principal's user name.
