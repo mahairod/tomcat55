@@ -456,8 +456,9 @@ public class XmlMapper
 			      String publicId,
 			      String systemId)
     {
-	System.out.println("Notation: " + name + " " + publicId +
-			   " " + systemId);
+        if (debug >= 1)
+            System.out.println("Notation: " + name + " " + publicId +
+                               " " + systemId);
     }
 
     public  void unparsedEntityDecl (String name,
@@ -465,8 +466,9 @@ public class XmlMapper
 				     String systemId,
 				     String notationName)
     {
-	System.out.println("Unparsed: " + name + " " + publicId +
-			   " " + systemId + " " + notationName);
+        if (debug >= 1)
+            System.out.println("Unparsed: " + name + " " + publicId +
+                               " " + systemId + " " + notationName);
     }
 
 
