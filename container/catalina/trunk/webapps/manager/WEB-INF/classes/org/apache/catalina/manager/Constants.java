@@ -73,37 +73,14 @@ public class Constants {
         "<html>\n" +
         "<head>\n" +
         "<style>\n" +
-        "  P {\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    background: white;\n" +
-        "    color: black;\n" +
-        "    font-size: 12px;\n" +
-        "  }\n" +
-        "  H1 {\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-weight: bold;\n" +
-        "    font-size: 20px;\n" +
-        "    color: black;\n" +
-        "  }\n" +
-        "  H2 {\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-weight: bold;\n" +
-        "    font-size: 14px;\n" +
-        "    color: black;\n" +
-        "  }\n" +
-        "  H3 {\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-weight: bold;\n" +
-        "    font-size: 12px;\n" +
-        "    color: black;\n" +
-        "  }\n" +
+        org.apache.catalina.util.TomcatCSS.TOMCAT_CSS +
         "  table {\n" +
         "    width: 100%;\n" +
         "  }\n" +
         "  td.page-title {\n" +
         "    text-align: center;\n" +
         "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    font-weight: bold;\n" +
         "    background: white;\n" +
         "    color: black;\n" +
@@ -111,7 +88,7 @@ public class Constants {
         "  td.title {\n" +
         "    text-align: left;\n" +
         "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    font-style:italic;\n" +
         "    font-weight: bold;\n" +
         "    background: #D2A41C;\n" +
@@ -119,49 +96,49 @@ public class Constants {
         "  td.header-left {\n" +
         "    text-align: left;\n" +
         "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    font-weight: bold;\n" +
         "    background: #FFDC75;\n" +
         "  }\n" +
         "  td.header-center {\n" +
         "    text-align: center;\n" +
         "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    font-weight: bold;\n" +
         "    background: #FFDC75;\n" +
         "  }\n" +
         "  td.row-left {\n" +
         "    text-align: left;\n" +
         "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
         "    background: white;\n" +
         "  }\n" +
         "  td.row-center {\n" +
         "    text-align: center;\n" +
         "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
         "    background: white;\n" +
         "  }\n" +
         "  td.row-right {\n" +
         "    text-align: right;\n" +
         "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
         "    background: white;\n" +
         "  }\n" +
         "  TH {\n" +
         "    text-align: center;\n" +
         "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    font-weight: bold;\n" +
         "    background: #FFDC75;\n" +
         "  }\n" +
         "  TD {\n" +
         "    text-align: center;\n" +
         "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
+        "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
         "    background: white;\n" +
         "  }\n" +
