@@ -80,6 +80,7 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
+import javax.naming.directory.DirContext;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -104,6 +105,7 @@ import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.net.ServerSocketFactory;
+import org.apache.catalina.session.PersistentManager;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.BaseModelMBean;
 
@@ -134,6 +136,7 @@ public class StandardServerMBean extends BaseModelMBean {
      */
     private static String exceptions[][] = {
         { "org.apache.catalina.core.StandardContext", "configured" },
+        { "org.apache.catalina.core.StandardContext", "name" },
         { "org.apache.catalina.core.StandardContext", "publicId" },
         { "org.apache.catalina.core.StandardContext", "workDir" },
         { "org.apache.catalina.session.StandardManager", "distributable" },
@@ -594,6 +597,12 @@ public class StandardServerMBean extends BaseModelMBean {
         }
         
         // Store nested <Resources> element
+        DirContext resources = context.getResources();
+        if (resources != null) {
+            storeResources(writer, indent + 2, resources);
+        }
+
+        /*
         ContextResource[] resources = context.findResources();
         for (int i = 0; i < resources.length; i++) {
             for (int j = 0; j < indent + 2; j++) {
@@ -647,6 +656,7 @@ public class StandardServerMBean extends BaseModelMBean {
                 }
             }
         }
+        */
         
         
         // Store nested <ResourceLink> elements
@@ -937,7 +947,7 @@ public class StandardServerMBean extends BaseModelMBean {
         }
 
         // Store nested <Cluster> elements
-        ; // FIXME
+        ; // FIXME - But it's not supported by any standard Host implementation
 
         // Store nested <Context> elements (or other relevant containers)
         Container children[] = host.findChildren();
@@ -1098,7 +1108,12 @@ public class StandardServerMBean extends BaseModelMBean {
         writer.println(">");
 
         // Store nested <Store> element
-        ; // FIXME
+        if (manager instanceof PersistentManager) {
+            Store store = ((PersistentManager) manager).getStore();
+            if (store != null) {
+                storeStore(writer, indent + 2, store);
+            }
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
@@ -1126,6 +1141,35 @@ public class StandardServerMBean extends BaseModelMBean {
         }
         writer.print("<Realm");
         storeAttributes(writer, realm);
+        writer.println("/>");
+
+    }
+
+
+    /**
+     * Store the specified Resources properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param resources Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeResources(PrintWriter writer, int indent,
+                                DirContext resources) throws Exception {
+
+        if (resources instanceof org.apache.naming.resources.FileDirContext) {
+            return;
+        }
+        if (resources instanceof org.apache.naming.resources.WARDirContext) {
+            return;
+        }
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Resources");
+        storeAttributes(writer, resources);
         writer.println("/>");
 
     }
