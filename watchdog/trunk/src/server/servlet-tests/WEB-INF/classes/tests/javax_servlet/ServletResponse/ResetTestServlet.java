@@ -103,18 +103,16 @@ public class ResetTestServlet extends GenericServletTest {
 
 			props.put(Constants.Response.Title, getTitle());
 			props.put(Constants.Response.Description,getDescription());
-
 			sos = response.getOutputStream();
 
 			//set buffer size
 			response.setBufferSize(20);
 
-
 			//Write some data to the stream
 			response.setContentType("text/html");
 
+			// Reset the response
 			response.reset();
-
 
 			props.put(Constants.Response.Status,"true");
 			props.put(Constants.Response.Message,"");
@@ -134,8 +132,8 @@ public class ResetTestServlet extends GenericServletTest {
 
 
 		props.put(Constants.Response.TestClass,this.getClass().getName());
-
 		props.save(sos, this.getClass().getName());	 
+
 	}	
 
 

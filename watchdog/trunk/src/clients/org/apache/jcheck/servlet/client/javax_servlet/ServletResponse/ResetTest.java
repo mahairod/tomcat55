@@ -95,11 +95,15 @@ public class ResetTest extends GenericClientTest {
 		 *	(text/plain) here
 		 */
 
-			if(connection.getContentType().equals("text/html")) {
+			String contentType = connection.getContentType();
+			if (contentType == null)
+			    contentType = "";
+			if (contentType.equals("text/html")) {
 				Exception e = new Exception("Problem with clearBuffer");
 				testResult = getTestResult(testResult,e);
 			}	     		     	
 			else {
+
 
 				// if it comes here it is 
 				// obvious that it passes
