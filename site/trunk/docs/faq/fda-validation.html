@@ -28,6 +28,8 @@
     <li><a href="#hasAnyoneDoneIt">Has anyone actually done it?</a></li>
     <li><a href="#isTomcatItselfValidated">Is Tomcat itself validated?</a></li>
     <li><a href="#supportAroundValidation">What kind of support is there around validating Tomcat?</a></li>
+    <li><a href="#signedReleases">How do I know I have a validated release?  How do I
+        know no one has tampered with the release package?</a></li>
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -115,12 +117,41 @@
           <a href="http://www.jboss.org/services/prodsupport">JBoss</a>, 
           who offer 24/7/365 enterprise-level support for Tomcat.</li>
       <li>The Tomcat <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">mailing lists</a> are
-          extremely active and contain memebers of many of the above organizations, including contractors
+          extremely active and contain members of many of the above organizations, including contractors
           available for hire.</li>
     </ul>
     </p>
   </div><br>
 
+  <b style="font-size: larger">
+    <a name="signedReleases">
+      How do I know I have a validated release?  How do I know no one
+      has tampered with the release package?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+      All Tomcat releases are signed using the Release Manager's
+      <a href="http://www.pgpi.org/doc/pgpintro">PGP</a> key.  The key
+      is also available in the <i>KEYS</i> file that ships with every
+      Tomcat release.  The same <i>KEYS</i> file is also available in the
+      Tomcat CVS repository 
+      (<a href="http://cvs.apache.org/viewcvs.cgi/jakarta-tomcat-5/KEYS">here</a>).
+      The PGP signatures are available on all the Tomcat download pages, 
+      and can (and should!) be used to verify the release really is the
+      signed distribution.
+    </p>
+    <p>
+      As for tampering: every Tomcat release is also digested using the MD5
+      algorithm as specified in 
+      <a href="http://www.faqs.org/rfcs/rfc1321.html">RFC1321</a>.  The MD5
+      digest is included in all the download pages.  Users run MD5 on their
+      local machine to verify that the digest of what they downlaoded is the
+      same as that published in the Apache download pages.  That way, users
+      are assured the distribution has not been modified since the Release Manager
+      signed it.
+    </p>
+  </div><br>
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
         Copyright &copy; 1999-2003, Apache Software Foundation
         </em></font></div></td></tr></table></body></html>
