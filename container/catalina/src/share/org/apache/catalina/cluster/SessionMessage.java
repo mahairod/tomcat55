@@ -70,17 +70,13 @@ import java.security.Principal;
  * Description:  A very simple straight forward implementation of 
  *               session replication of servers in a cluster.<BR>
  *               This session replication is implemented "live". By live
- *               I mean, when a session attribute is added into a session on Node A
- *               a message is broadcasted to other messages and setAttribute is called on the replicated 
- *               sessions.<BR>
+ *               I mean, when a session attribute is added into a session 
+ *               on Node A a message is broadcasted to other messages 
+ *               and setAttribute is called on the replicated sessions.<BR>
  *               A full description of this implementation can be found under
- *               <href="http://www.filip.net/tomcat/">Filip's Tomcat Page</a><BR>            
+ *               <href="http://www.filip.net/tomcat/">Filip's Tomcat 
+ *               Page</a><BR>            
  *               
- * Copyright:    See apache license
- * Company:      www.filip.net
- * @author  <a href="mailto:mail@filip.net">Filip Hanik</a>
- * @version 1.0 for 4.0
- * 
  * <B>Class Description:</B><BR>
  * The SessionMessage class is a class that is used when a session has been 
  * created, modified, expired in a Tomcat cluster node.<BR>
@@ -100,12 +96,16 @@ import java.security.Principal;
  * </ul>
  * 
  * These message are being sent and received from and to the
- * InMemoryReplicationManager
+ * JGManager
  * 
+ * @author Filip Hanik
  * @see JGManager
  */
 public class SessionMessage
     implements java.io.Serializable {
+
+
+    // -------------------------------------------------------------- Constants
 
 
     /**
@@ -130,8 +130,8 @@ public class SessionMessage
 
     /**
      * Event type used when a session has been accessed (ie, last access time
-     * has been updated. This is used so that the replicated sessions will not expire 
-     * on the network
+     * has been updated. This is used so that the replicated sessions will 
+     * not expire on the network
      */
     public static final int EVT_SESSION_ACCESSED = 3;
 
@@ -183,22 +183,30 @@ public class SessionMessage
     public static final int EVT_SET_SESSION_NOTE = 11;
 
 
+    // ----------------------------------------------------- Instance Variables
+
+
     /**
      * Private serializable variables to keep the messages state
      */
     private String webapp;
-    private int mEvtType = -1;
-    private byte[] mSession;
-    private String mSessionID;
-    private String mAttributeName;
-    private Object mAttributeValue;
-    private SerializablePrincipal mPrincipal;
+    private int eventType = -1;
+    private byte[] session;
+    private String sessionID;
+    private String attrName;
+    private Object attrValue;
+    private SerializablePrincipal principal;
+
+
+    // ------------------------------------------------------------ Constructor
 
 
     /**
      * Creates a session message. Depending on what event type you want this
-     * message to represent, you populate the different parameters in the constructor<BR>
-     * The following rules apply dependent on what event type argument you use:<BR>
+     * message to represent, you populate the different parameters in 
+     * the constructor<BR>
+     * The following rules apply dependent on what event type argument 
+     * you use:<BR>
      * <B>EVT_SESSION_CREATED</B><BR>
      *    The parameters: session, sessionID must be set.<BR>
      * <B>EVT_SESSION_EXPIRED</B><BR>
@@ -224,75 +232,108 @@ public class SessionMessage
      * @param attrName - the name of the attribute added/removed
      * @param attrValue - the value of the attribute added
      */
-    public SessionMessage( String webapp,
-                           int eventtype,
-                           byte[] session,
-                           String sessionID,
-                           String attrName,
-                           Object attrValue,
-                           SerializablePrincipal principal)
-    {
+    public SessionMessage(String webapp,
+                          int eventType,
+                          byte[] session,
+                          String sessionID,
+                          String attrName,
+                          Object attrValue,
+                          SerializablePrincipal principal) {
         this.webapp = webapp;
-        mEvtType = eventtype;
-        mSession = session;
-        mSessionID = sessionID;
-        mAttributeName = attrName;
-        mAttributeValue = attrValue;
-        mPrincipal = principal;
+        this.eventType = eventType;
+        this.session = session;
+        this.sessionID = sessionID;
+        this.attrName = attrName;
+        this.attrValue = attrValue;
+        this.principal = principal;
     }
-    
+
+
+    // --------------------------------------------------------- Public Methods
+
+
     public String getWebapp() {
         return (this.webapp);
     }
+
 
     /**
      * returns the event type
      * @return one of the event types EVT_XXXX
      */
-    public int getEventType() { return mEvtType; }
+    public int getEventType() {
+        return eventType;
+    }
+
 
     /**
      * @return the serialized data for the session
      */
-    public byte[] getSession() { return mSession;}
+    public byte[] getSession() {
+        return session;
+    }
+
+
     /**
      * @return the session ID for the session
      */
-    public String getSessionID(){ return mSessionID; }
+    public String getSessionID() {
+        return sessionID;
+    }
+
+
     /**
      * @return the name of the attribute 
      */
-    public String getAttributeName() { return mAttributeName; }
+    public String getAttributeName() {
+        return attrName;
+    }
+
+
     /**
      * the value of the attribute
      */
-    public Object getAttributeValue() 
-    { 
-        return mAttributeValue; 
+    public Object getAttributeValue() {
+        return attrValue;
     }
-    
-    public SerializablePrincipal getPrincipal() { return mPrincipal;}
-    
+
+
+    public SerializablePrincipal getPrincipal() {
+        return principal;
+    }
+
+
     /**
      * @return the event type in a string representating, useful for debugging
      */
-    public String getEventTypeString()
-    {
-        switch (mEvtType)
-        {
-            case EVT_SESSION_CREATED : return "SESSION-CREATED";
-            case EVT_SESSION_EXPIRED_WNOTIFY : return "SESSION-EXPIRED-WITH-NOTIFY";
-            case EVT_SESSION_EXPIRED_WONOTIFY : return "SESSION-EXPIRED-WITHOUT-NOTIFY";
-            case EVT_ATTRIBUTE_ADDED : return "SESSION-ATTRIBUTE-ADDED";
-            case EVT_ATTRIBUTE_REMOVED_WNOTIFY : return "SESSION-ATTRIBUTE-REMOVED-WITH-NOTIFY";
-            case EVT_ATTRIBUTE_REMOVED_WONOTIFY: return "SESSION-ATTRIBUTE-REMOVED-WITHOUT-NOTIFY";
-            case EVT_SESSION_ACCESSED : return "SESSION-ACCESSED";
-            case EVT_GET_ALL_SESSIONS : return "SESSION-GET-ALL";
-            case EVT_SET_SESSION_NOTE: return "SET-SESSION-NOTE";
-            case EVT_SET_USER_PRINCIPAL : return "SET-USER-PRINCIPAL";
-            case EVT_REMOVE_SESSION_NOTE : return "REMOVE-SESSION-NOTE";
-            
-            default : return "UNKNOWN-EVENT-TYPE";
+    public String getEventTypeString() {
+        switch (eventType) {
+        case EVT_SESSION_CREATED : 
+            return "SESSION-CREATED";
+        case EVT_SESSION_EXPIRED_WNOTIFY : 
+            return "SESSION-EXPIRED-WITH-NOTIFY";
+        case EVT_SESSION_EXPIRED_WONOTIFY : 
+            return "SESSION-EXPIRED-WITHOUT-NOTIFY";
+        case EVT_ATTRIBUTE_ADDED : 
+            return "SESSION-ATTRIBUTE-ADDED";
+        case EVT_ATTRIBUTE_REMOVED_WNOTIFY : 
+            return "SESSION-ATTRIBUTE-REMOVED-WITH-NOTIFY";
+        case EVT_ATTRIBUTE_REMOVED_WONOTIFY: 
+            return "SESSION-ATTRIBUTE-REMOVED-WITHOUT-NOTIFY";
+        case EVT_SESSION_ACCESSED : 
+            return "SESSION-ACCESSED";
+        case EVT_GET_ALL_SESSIONS : 
+            return "SESSION-GET-ALL";
+        case EVT_SET_SESSION_NOTE: 
+            return "SET-SESSION-NOTE";
+        case EVT_SET_USER_PRINCIPAL : 
+            return "SET-USER-PRINCIPAL";
+        case EVT_REMOVE_SESSION_NOTE : 
+            return "REMOVE-SESSION-NOTE";
+        default : 
+            return "UNKNOWN-EVENT-TYPE";
         }
-    }    
-}//SessionMessage
+    }
+
+
+}
