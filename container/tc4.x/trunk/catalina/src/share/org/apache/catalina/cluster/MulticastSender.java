@@ -80,18 +80,23 @@ import java.io.ObjectStreamClass;
  * packets to a Cluster.
  *
  * @author Bip Thelin
- * @version $Revision$
+ * @version $Revision$, $Date$
  */
 
-public class MulticastSender {
+public class MulticastSender
+    extends ClusterSessionBase implements ClusterSender {
 
     // ----------------------------------------------------- Instance Variables
-
 
     /**
      * The unique message ID
      */
     private static String senderId = null;
+
+    /**
+     * The name of our component, used for logging.
+     */
+    private String senderName = "MulticastSender";
 
     /**
      * The MulticastSocket to use
@@ -130,11 +135,45 @@ public class MulticastSender {
     }
 
     /**
+     * Return a <code>String</code> containing the name of this
+     * implementation, used for logging
+     *
+     * @return The name of the implementation
+     */
+    public String getName() {
+        return(this.senderName);
+    }
+
+    /**
+     * Send an object using a multicastSocket
+     *
+     * @param o The object to be sent.
+     */
+    public void send(Object o) {
+        ObjectOutputStream oos = null;
+        ByteArrayOutputStream bos = null;
+
+        try {        
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(new BufferedOutputStream(bos));
+        
+            oos.writeObject(o);
+            oos.flush();
+        
+            byte[] obs = bos.toByteArray();
+
+            send(obs);
+        } catch (IOException e) {
+            log("An error occured when trying to replicate.");
+        }
+    }
+    
+    /**
      * Send multicast data
      *
      * @param b data to be sent
      */
-    public synchronized void send(byte[] b) {
+    public void send(byte[] b) {
         ReplicationWrapper out = new ReplicationWrapper(b, senderId);
         ObjectOutputStream oos = null;
         ByteArrayOutputStream bos = null;
@@ -148,12 +187,11 @@ public class MulticastSender {
         
             byte[] obs = bos.toByteArray();
             int size = obs.length;
-            System.out.println("size: "+size);
             DatagramPacket p = new DatagramPacket(obs, size,
                                                   multicastAddress, multicastPort);
-            multicastSocket.send(p);
+            send(p);
         } catch (IOException e) {
-            //            log("An error occured when trying to replicate.");
+            log("An error occured when trying to replicate.");
         }
     }
 
@@ -162,11 +200,11 @@ public class MulticastSender {
      *
      * @param p data to be sent
      */
-    public synchronized void send(DatagramPacket p) {
+    private synchronized void send(DatagramPacket p) {
         try {
             multicastSocket.send(p);
         } catch (IOException e) {
-            //            log("An error occured when trying to replicate.");
+            log("An error occured when trying to replicate.");
         }
     }
 }

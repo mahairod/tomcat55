@@ -84,13 +84,13 @@ import java.util.Vector;
  * it onto an internal stack and let it be picked up when needed.
  *
  * @author Bip Thelin
- * @version $Revision$
+ * @version $Revision$, $Date$
  */
 
-public class MulticastReceiver implements Runnable {
+public final class MulticastReceiver
+    extends ClusterSessionBase implements ClusterReceiver {
 
     // ----------------------------------------------------- Instance Variables
-
 
     /**
      * The unique message ID
@@ -106,6 +106,11 @@ public class MulticastReceiver implements Runnable {
      * Our Thread name
      */
     private String threadName = "MulticastReceiver";
+
+    /**
+     * The name of our component, used for logging.
+     */
+    private String receiverName = "MulticastReceiver";
 
     /**
      * The stack that keeps incoming requests
@@ -147,7 +152,37 @@ public class MulticastReceiver implements Runnable {
     }
 
     /**
-     * Receive the objects currently in our stack
+     * Return a <code>String</code> containing the name of this
+     * implementation, used for logging
+     *
+     * @return The name of the implementation
+     */
+    public String getName() {
+        return(this.receiverName);
+    }
+
+    /**
+     * Set the time in seconds for this component to
+     * Sleep before it checks for new received data in the Cluster
+     *
+     * @param checkInterval The time to sleep
+     */
+    public void setCheckInterval(int checkInterval) {
+        this.checkInterval = checkInterval;
+    }
+
+    /**
+     * Get the time in seconds this Cluster sleeps
+     *
+     * @return The time in seconds this Cluster sleeps
+     */
+    public int getCheckInterval() {
+        return(this.checkInterval);
+    }
+
+    /**
+     * Receive the objects currently in our stack and clear
+     * if afterwards.
      *
      * @return An array with objects
      */
@@ -199,11 +234,11 @@ public class MulticastReceiver implements Runnable {
             if(obj.getSenderId().equals(this.senderId))
                 stack.add(obj);
         } catch (IOException e) {
-            System.out.println("An error occured when trying to replicate: "+
-                               e.toString());
+            log("An error occured when trying to replicate: "+
+                e.toString());
         } catch (ClassNotFoundException e) {
-            System.out.println("An error occured when trying to replicate: "+
-                               e.toString());
+            log("An error occured when trying to replicate: "+
+                e.toString());
         }
     }
 

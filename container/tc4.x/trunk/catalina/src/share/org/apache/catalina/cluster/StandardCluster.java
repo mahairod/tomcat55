@@ -76,9 +76,6 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
-import org.apache.catalina.cluster.ClusterMemberInfo;
-import org.apache.catalina.cluster.MulticastSender;
-import org.apache.catalina.cluster.MulticastReceiver;
 import org.apache.catalina.util.LifecycleSupport;
 
 /**
@@ -86,7 +83,7 @@ import org.apache.catalina.util.LifecycleSupport;
  * a cluster and provides callers with a valid multicast receiver/sender.
  *
  * @author Bip Thelin
- * @version $Revision$
+ * @version $Revision$, $Date$
  */
 
 public final class StandardCluster
@@ -162,7 +159,7 @@ public final class StandardCluster
     /**
      * The debug level for this Container
      */
-    private int debug = 99;
+    private int debug = 0;
 
     /**
      * The interval for the background thread to sleep
@@ -191,13 +188,21 @@ public final class StandardCluster
     }
 
     /**
-     * Return the name of the cluster that this Server is currently
-     * configured to operate within.
+     * Set the debug level for this component
      *
-     * @return The name of the cluster associated with this server
+     * @param debug The debug level
      */
-    public String getClusterName() {
-        return(this.clusterName);
+    public void setDebug(int debug) {
+        this.debug = debug;
+    }
+
+    /**
+     * Get the debug level for this component
+     *
+     * @return The debug level
+     */
+    public int getDebug() {
+        return(this.debug);
     }
 
     /**
@@ -215,6 +220,16 @@ public final class StandardCluster
     }
 
     /**
+     * Return the name of the cluster that this Server is currently
+     * configured to operate within.
+     *
+     * @return The name of the cluster associated with this server
+     */
+    public String getClusterName() {
+        return(this.clusterName);
+    }
+
+    /**
      * Set the Container associated with our Cluster
      *
      * @param container The Container to use
@@ -228,12 +243,12 @@ public final class StandardCluster
     }
 
     /**
-     * Get the Port associated with our Cluster
+     * Get the Container associated with our Cluster
      *
-     * @return The Port associated with our Cluster
+     * @return The Container associated with our Cluster
      */
-    public int getMulticastPort() {
-        return(this.multicastPort);
+    public Container getContainer() {
+        return(this.container);
     }
 
     /**
@@ -250,12 +265,12 @@ public final class StandardCluster
     }
 
     /**
-     * Get the Groupaddress associated with our Cluster
+     * Get the Port associated with our Cluster
      *
-     * @return The Groupaddress associated with our Cluster
+     * @return The Port associated with our Cluster
      */
-    public InetAddress getMulticastAddress() {
-        return(this.multicastAddress);
+    public int getMulticastPort() {
+        return(this.multicastPort);
     }
 
     /**
@@ -276,12 +291,35 @@ public final class StandardCluster
     }
 
     /**
-     * Get the Container associated with our Cluster
+     * Get the Groupaddress associated with our Cluster
      *
-     * @return The Container associated with our Cluster
+     * @return The Groupaddress associated with our Cluster
      */
-    public Container getContainer() {
-        return(this.container);
+    public InetAddress getMulticastAddress() {
+        return(this.multicastAddress);
+    }
+
+    /**
+     * Set the time in seconds for this component to
+     * Sleep before it checks for new received data in the Cluster
+     *
+     * @param checkInterval The time to sleep
+     */
+    public void setCheckInterval(int checkInterval) {
+        int oldCheckInterval = this.checkInterval;
+        this.checkInterval = checkInterval;
+        support.firePropertyChange("checkInterval",
+                                   oldCheckInterval,
+                                   this.checkInterval);
+    }
+
+    /**
+     * Get the time in seconds this Cluster sleeps
+     *
+     * @return The time in seconds this Cluster sleeps
+     */
+    public int getCheckInterval() {
+        return(this.checkInterval);
     }
 
     // --------------------------------------------------------- Public Methods
@@ -309,31 +347,50 @@ public final class StandardCluster
     }
 
     /**
-     * Returns a <code>MulticastSender</code> which is the interface
-     * to use when communicating in the Cluster. 
+     * Returns a <code>ClusterSender</code> which is the interface
+     * to use when sending information in the Cluster. senderId is
+     * used as a identifier so that information sent through this
+     * instance can only be used with the respectice
+     * <code>ClusterReceiver</code>
      *
-     * @return The MulticastSender to use
+     * @return The ClusterSender
      */
-    public MulticastSender getMulticastSender(String senderId) {
+    public ClusterSender getClusterSender(String senderId) {
+        Logger logger = null;
         MulticastSender send = new MulticastSender(senderId,
                                                    multicastSocket,
                                                    multicastAddress,
                                                    multicastPort);
+        if (container != null)
+            logger = container.getLogger();
+
+        send.setLogger(logger);
+        send.setDebug(debug);
 
         return(send);
     }
 
     /**
-     * Returns a <code>MulticastReceiver</code> which is the interface
-     * to use when communicating in the Cluster. 
+     * Returns a <code>ClusterReceiver</code> which is the interface
+     * to use when receiving information in the Cluster. senderId is
+     * used as a indentifier, only information send through the
+     * <code>ClusterSender</code> with the same senderId can be received.
      *
-     * @return The MulticastSender to use
+     * @return The ClusterReceiver
      */
-    public MulticastReceiver getMulticastReceiver(String senderId) {
+    public ClusterReceiver getClusterReceiver(String senderId) {
+        Logger logger = null;
         MulticastReceiver recv = new MulticastReceiver(senderId,
                                                        multicastSocket,
                                                        multicastAddress,
                                                        multicastPort);
+
+        if (container != null)
+            logger = container.getLogger();
+
+        recv.setDebug(debug);
+        recv.setLogger(logger);
+        recv.setCheckInterval(checkInterval);
         recv.start();
 
         return(recv);
