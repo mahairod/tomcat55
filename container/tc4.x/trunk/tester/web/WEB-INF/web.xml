@@ -120,6 +120,21 @@
 
     <filter-mapping>
         <filter-name>UpperCaseFilter</filter-name>
+        <url-pattern>/FilterRequest01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedFilterRequest01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>UpperCaseFilter</filter-name>
+        <url-pattern>/WrappedFilterRequest01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>UpperCaseFilter</filter-name>
         <url-pattern>/FilterResponse01</url-pattern>
     </filter-mapping>
 
@@ -450,6 +465,11 @@
     <servlet>
         <servlet-name>ErrorPage09</servlet-name>
         <jsp-file>/ErrorPage09.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FilterRequest01</servlet-name>
+        <servlet-class>org.apache.tester.FilterRequest01</servlet-class>
     </servlet>
 
     <servlet>
@@ -844,6 +864,16 @@
     <servlet-mapping>
         <servlet-name>ErrorPage09</servlet-name>
         <url-pattern>/WrappedErrorPage09</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterRequest01</servlet-name>
+        <url-pattern>/FilterRequest01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterRequest01</servlet-name>
+        <url-pattern>/WrappedFilterRequest01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -59,44 +59,64 @@ package org.apache.tester;
 
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 
 /**
- * Filter that simply transforms its output to upper case.
+ * Positive test for being able to filter input.  The input will be echoed
+ * back in the response, after having been converted to upper case by the
+ * associated filter.  Use request parameter <code>type</code> to determine
+ * whether to call getReader() ("reader") or getInputStream() ("stream").
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseFilter implements Filter {
+public class FilterRequest01 extends HttpServlet {
 
-
-    private FilterConfig config = null;
-
-    public void destroy() {
-        ; // No action required
-    }
-
-    public void init(FilterConfig config) throws ServletException {
-        this.config = config;
-    }
-
-    public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain)
+    public void service(HttpServletRequest request,
+                        HttpServletResponse response)
         throws IOException, ServletException {
 
-        HttpServletRequest wrequest =
-            new UpperCaseRequest((HttpServletRequest) request);
-        HttpServletResponse wresponse =
-            new UpperCaseResponse((HttpServletResponse) response);
-        StaticLogger.write("UpperCaseFilter.doFilter() begin");
-        chain.doFilter(wrequest, wresponse);
-        StaticLogger.write("UpperCaseFilter.doFilter() end");
+        response.setContentType("text/plain");
+        PrintWriter writer = response.getWriter();
+        StringBuffer sb = new StringBuffer();
+
+        String type = request.getParameter("type");
+        if (type == null)
+            type = "reader";
+        if (type.equalsIgnoreCase("reader")) {
+            BufferedReader br = request.getReader();
+            while (true) {
+                int c = br.read();
+                if (c < 0)
+                    break;
+                sb.append((char) c);
+            }
+            br.close();
+        } else {
+            ServletInputStream sis = request.getInputStream();
+            while (true) {
+                int c = sis.read();
+                if (c < 0)
+                    break;
+                sb.append((char) c);
+            }
+            sis.close();
+        }
+
+        writer.println(sb.toString());
+        while (true) {
+            String message = StaticLogger.read();
+            if (message == null)
+                break;
+            writer.println(message);
+        }
+        StaticLogger.reset();
 
     }
-
 
 }

@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterResponse,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest"/>
 
 
   <target name="ROOT">
@@ -343,6 +343,43 @@
           status="200"
       outContent="ErrorPage10 PASSED"/>
 
+
+  </target>
+
+
+  <target name="FilterRequest">
+
+    <!-- ========== Apply Upper Case Filter =============================== -->
+
+    <!-- Input via buffered reader -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/FilterRequest01?type=reader"
+           debug="${debug}"
+          status="200"
+       inContent="FilterRequest01 Unwrapped Reader PASSED"
+      outContent="FILTERREQUEST01 UNWRAPPED READER PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedFilterRequest01?type=reader"
+           debug="${debug}"
+          status="200"
+       inContent="FilterRequest01 Wrapped Reader PASSED"
+      outContent="FILTERREQUEST01 WRAPPED READER PASSED"/>
+
+    <!-- Input via servlet input stream -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/FilterRequest01?type=reader"
+           debug="${debug}"
+          status="200"
+       inContent="FilterRequest01 Unwrapped Stream PASSED"
+      outContent="FILTERREQUEST01 UNWRAPPED STREAM PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedFilterRequest01?type=reader"
+           debug="${debug}"
+          status="200"
+       inContent="FilterRequest01 Wrapped Stream PASSED"
+      outContent="FILTERREQUEST01 WRAPPED STREAM PASSED"/>
 
   </target>
 

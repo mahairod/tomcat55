@@ -65,38 +65,33 @@ import javax.servlet.http.*;
 
 
 /**
- * Filter that simply transforms its output to upper case.
+ * HttpServletRequest wrapper that converts all input characters to
+ * upper case.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseFilter implements Filter {
+public class UpperCaseRequest extends HttpServletRequestWrapper {
 
 
-    private FilterConfig config = null;
+    HttpServletRequest request = null;
 
-    public void destroy() {
-        ; // No action required
+    public UpperCaseRequest(HttpServletRequest request) {
+        super(request);
+        this.request = request;
     }
 
-    public void init(FilterConfig config) throws ServletException {
-        this.config = config;
+    public ServletInputStream getInputStream() throws IOException {
+        return (new UpperCaseInputStream(request.getInputStream()));
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain)
-        throws IOException, ServletException {
-
-        HttpServletRequest wrequest =
-            new UpperCaseRequest((HttpServletRequest) request);
-        HttpServletResponse wresponse =
-            new UpperCaseResponse((HttpServletResponse) response);
-        StaticLogger.write("UpperCaseFilter.doFilter() begin");
-        chain.doFilter(wrequest, wresponse);
-        StaticLogger.write("UpperCaseFilter.doFilter() end");
-
+    public BufferedReader getReader() throws IOException {
+        return (new UpperCaseReader(request.getReader()));
     }
 
 
 }
+
+
+

@@ -65,38 +65,49 @@ import javax.servlet.http.*;
 
 
 /**
- * Filter that simply transforms its output to upper case.
+ * BufferedReader that converts all characters to upper case.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseFilter implements Filter {
+public class UpperCaseReader extends BufferedReader {
 
-
-    private FilterConfig config = null;
-
-    public void destroy() {
-        ; // No action required
+    public UpperCaseReader(BufferedReader reader) throws IOException {
+        super(reader);
     }
 
-    public void init(FilterConfig config) throws ServletException {
-        this.config = config;
+    public int read() throws IOException {
+        int c = super.read();
+        if (c < 0)
+            return (c);
+        char ch = (char) c;
+        if (Character.isLowerCase(ch))
+            ch = Character.toUpperCase(ch);
+        return ((int) ch);
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain)
-        throws IOException, ServletException {
-
-        HttpServletRequest wrequest =
-            new UpperCaseRequest((HttpServletRequest) request);
-        HttpServletResponse wresponse =
-            new UpperCaseResponse((HttpServletResponse) response);
-        StaticLogger.write("UpperCaseFilter.doFilter() begin");
-        chain.doFilter(wrequest, wresponse);
-        StaticLogger.write("UpperCaseFilter.doFilter() end");
-
+    public int read(char buf[], int off, int len) throws IOException {
+        int n = 0;
+        for (int i = off; i < (off + len); i++) {
+            int c = super.read();
+            if (c < 0) {
+                if (n == 0)
+                    return (-1);
+                break;
+            }
+            char ch = (char) c;
+            if (Character.isLowerCase(ch))
+                ch = Character.toUpperCase(ch);
+            buf[i] = ch;
+            n++;
+        }
+        return (n);
     }
 
+    public int read(char buf[]) throws IOException {
+        return (read(buf, 0, buf.length));
+    }
 
 }
+
