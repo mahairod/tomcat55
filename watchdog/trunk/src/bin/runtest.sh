@@ -41,7 +41,7 @@ fi
 CLASSPATH=${appClassPath}:${sysJars}
 
 TOMCAT_HOME=../tomcat
-source ${TOMCAT_HOME}/env.tomcat
+. ${TOMCAT_HOME}/env.tomcat
 
 export CLASSPATH
 
