@@ -174,8 +174,13 @@ public final class ApplicationContextFacade
 
 
     public ServletContext getContext(String uripath) {
-        ServletContext theContext = (ServletContext)
-            doPrivileged("getContext", new Object[]{uripath});
+        ServletContext theContext = null;
+        if (System.getSecurityManager() != null) {
+            theContext = (ServletContext)
+                doPrivileged("getContext", new Object[]{uripath});
+        } else {
+            theContext = context.getContext(uripath);
+        }
         if ((theContext != null) &&
             (theContext instanceof ApplicationContext)){
             theContext = ((ApplicationContext)theContext).getFacade();
@@ -195,123 +200,215 @@ public final class ApplicationContextFacade
 
 
     public String getMimeType(String file) {
-        return (String)doPrivileged("getMimeType", new Object[]{file});
+        if (System.getSecurityManager() != null) {
+            return (String)doPrivileged("getMimeType", new Object[]{file});
+        } else {
+            return context.getMimeType(file);
+        }
     }
 
 
     public Set getResourcePaths(String path) {
-         return (Set)doPrivileged("getResourcePaths", new Object[]{path});
+        if (System.getSecurityManager() != null){
+            return (Set)doPrivileged("getResourcePaths", new Object[]{path});
+        } else {
+            return context.getResourcePaths(path);
+        }
     }
 
 
     public URL getResource(String path)
         throws MalformedURLException {
-        try{    
-            return (URL)invokeMethod(context, "getResource", new Object[]{path});
-        }catch(Throwable t){
-            if (t instanceof MalformedURLException){
-                throw (MalformedURLException)t;
+        if (System.getSecurityManager() != null) {
+            try {
+                return (URL) invokeMethod(context, "getResource", 
+                                          new Object[]{path});
+            } catch(Throwable t) {
+                if (t instanceof MalformedURLException){
+                    throw (MalformedURLException)t;
+                }
+                return null;
             }
-            return null;
+        } else {
+            return context.getResource(path);
         }
     }
 
 
     public InputStream getResourceAsStream(String path) {
-        return (InputStream)doPrivileged("getResourceAsStream", new Object[]{path});
+        if (System.getSecurityManager() != null) {
+            return (InputStream) doPrivileged("getResourceAsStream", 
+                                              new Object[]{path});
+        } else {
+            return context.getResourceAsStream(path);
+        }
     }
 
 
     public RequestDispatcher getRequestDispatcher(final String path) {
-        return (RequestDispatcher)doPrivileged("getRequestDispatcher", new Object[]{path});
+        if (System.getSecurityManager() != null) {
+            return (RequestDispatcher) doPrivileged("getRequestDispatcher", 
+                                                    new Object[]{path});
+        } else {
+            return context.getRequestDispatcher(path);
+        }
     }
 
 
     public RequestDispatcher getNamedDispatcher(String name) {
-        return (RequestDispatcher)doPrivileged("getNamedDispatcher", new Object[]{name});
+        if (System.getSecurityManager() != null) {
+            return (RequestDispatcher) doPrivileged("getNamedDispatcher", 
+                                                    new Object[]{name});
+        } else {
+            return context.getNamedDispatcher(name);
+        }
     }
 
 
     public Servlet getServlet(String name)
         throws ServletException {
-        try{
-            return (Servlet)invokeMethod(context, "getServlet", new Object[]{name});
-        } catch (Throwable t){
-            if (t instanceof ServletException){
-                throw (ServletException) t;
+        if (System.getSecurityManager() != null) {
+            try {
+                return (Servlet) invokeMethod(context, "getServlet", 
+                                              new Object[]{name});
+            } catch (Throwable t) {
+                if (t instanceof ServletException) {
+                    throw (ServletException) t;
+                }
+                return null;
             }
-            return null;
+        } else {
+            return context.getServlet(name);
         }
     }
 
 
     public Enumeration getServlets() {
-        return (Enumeration)doPrivileged("getServlets", null);
+        if (System.getSecurityManager() != null) {
+            return (Enumeration) doPrivileged("getServlets", null);
+        } else {
+            return context.getServlets();
+        }
     }
 
 
     public Enumeration getServletNames() {
-        return (Enumeration)doPrivileged("getServletNames", null);
+        if (System.getSecurityManager() != null) {
+            return (Enumeration) doPrivileged("getServletNames", null);
+        } else {
+            return context.getServletNames();
+        }
    }
 
 
     public void log(String msg) {
-        doPrivileged("log", new Object[]{msg} );
+        if (System.getSecurityManager() != null) {
+            doPrivileged("log", new Object[]{msg} );
+        } else {
+            context.log(msg);
+        }
     }
 
 
     public void log(Exception exception, String msg) {
-        doPrivileged("log", new Class[]{Exception.class, String.class}, new Object[]{exception,msg});
+        if (System.getSecurityManager() != null) {
+            doPrivileged("log", new Class[]{Exception.class, String.class}, 
+                         new Object[]{exception,msg});
+        } else {
+            context.log(exception, msg);
+        }
     }
 
 
     public void log(String message, Throwable throwable) {
-        doPrivileged("log", new Class[]{String.class, Throwable.class}, new Object[]{message, throwable});
+        if (System.getSecurityManager() != null) {
+            doPrivileged("log", new Class[]{String.class, Throwable.class}, 
+                         new Object[]{message, throwable});
+        } else {
+            context.log(message, throwable);
+        }
     }
 
 
     public String getRealPath(String path) {
-        return (String)doPrivileged("getRealPath", new Object[]{path});
+        if (System.getSecurityManager() != null) {
+            return (String) doPrivileged("getRealPath", new Object[]{path});
+        } else {
+            return context.getRealPath(path);
+        }
     }
 
 
     public String getServerInfo() {
-        return (String)doPrivileged("getServerInfo", null);
+        if (System.getSecurityManager() != null) {
+            return (String) doPrivileged("getServerInfo", null);
+        } else {
+            return context.getServerInfo();
+        }
     }
 
 
     public String getInitParameter(String name) {
-        return (String)doPrivileged("getInitParameter", new Object[]{name});
+        if (System.getSecurityManager() != null) {
+            return (String) doPrivileged("getInitParameter", 
+                                         new Object[]{name});
+        } else {
+            return context.getInitParameter(name);
+        }
     }
 
 
     public Enumeration getInitParameterNames() {
-        return (Enumeration)doPrivileged("getInitParameterNames", null);
+        if (System.getSecurityManager() != null) {
+            return (Enumeration) doPrivileged("getInitParameterNames", null);
+        } else {
+            return context.getInitParameterNames();
+        }
     }
 
 
     public Object getAttribute(String name) {
-        return doPrivileged("getAttribute",new Object[]{name});
+        if (System.getSecurityManager() != null) {
+            return doPrivileged("getAttribute", new Object[]{name});
+        } else {
+            return context.getAttribute(name);
+        }
      }
 
 
     public Enumeration getAttributeNames() {
-        return (Enumeration)doPrivileged("getAttributeNames", null);
+        if (System.getSecurityManager() != null) {
+            return (Enumeration) doPrivileged("getAttributeNames", null);
+        } else {
+            return context.getAttributeNames();
+        }
     }
 
 
     public void setAttribute(String name, Object object) {
-        doPrivileged("setAttribute", new Object[]{name,object});
+        if (System.getSecurityManager() != null) {
+            doPrivileged("setAttribute", new Object[]{name,object});
+        } else {
+            context.setAttribute(name, object);
+        }
     }
 
 
     public void removeAttribute(String name) {
-        doPrivileged("removeAttribute", new Object[]{name});
+        if (System.getSecurityManager() != null) {
+            doPrivileged("removeAttribute", new Object[]{name});
+        } else {
+            context.removeAttribute(name);
+        }
     }
 
 
     public String getServletContextName() {
-        return (String)doPrivileged("getServletContextName", null);
+        if (System.getSecurityManager() != null) {
+            return (String) doPrivileged("getServletContextName", null);
+        } else {
+            return context.getServletContextName();
+        }
     }
 
        
