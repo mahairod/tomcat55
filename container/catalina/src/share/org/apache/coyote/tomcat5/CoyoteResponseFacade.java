@@ -105,7 +105,27 @@ public class CoyoteResponseFacade
             return null;
         }            
     }
-     
+
+    private final class DateHeaderPrivilegedAction implements PrivilegedAction {
+        private String name;
+        private long value;
+        private boolean add;
+
+        DateHeaderPrivilegedAction(String name, long value, boolean add) {
+            this.name = name;
+            this.value = value;
+            this.add = add;
+        }
+
+        public Object run() {
+            if(add) {
+                response.addDateHeader(name, value);
+            } else {
+                response.setDateHeader(name, value);
+            }
+            return null;
+        }
+    }
     
     // ----------------------------------------------------------- Constructors
 
@@ -391,7 +411,12 @@ public class CoyoteResponseFacade
         if (isCommitted())
             return;
 
-        response.setDateHeader(name, date);
+        if(System.getSecurityManager() != null) {
+            AccessController.doPrivileged(new DateHeaderPrivilegedAction
+                                             (name, date, false));
+        } else {
+            response.setDateHeader(name, date);
+        }
 
     }
 
@@ -401,7 +426,12 @@ public class CoyoteResponseFacade
         if (isCommitted())
             return;
 
-        response.addDateHeader(name, date);
+        if(System.getSecurityManager() != null) {
+            AccessController.doPrivileged(new DateHeaderPrivilegedAction
+                                             (name, date, true));
+        } else {
+            response.addDateHeader(name, date);
+        }
 
     }
 
