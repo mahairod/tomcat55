@@ -623,7 +623,7 @@ public final class TldConfig  {
 
         DirContext resources = context.getResources();
 	if (resources != null) {
-	    tldScanResourcePathsWebInf(resources, resourcePaths);
+	    tldScanResourcePathsWebInf(resources, "/WEB-INF", resourcePaths);
 	    tldScanResourcePathsWebInfLibJars(resources, resourcePaths);
 	}
 
@@ -633,33 +633,46 @@ public final class TldConfig  {
     }
 
     /*
-     * Scans TLDs in the /WEB-INF subdirectory of the web application.
+     * Scans the web application's subdirectory identified by rootPath,
+     * along with its subdirectories, for TLDs.
+     *
+     * Initially, rootPath equals /WEB-INF. The /WEB-INF/classes and
+     * /WEB-INF/lib subdirectories are excluded from the search, as per the
+     * JSP 2.0 spec.
      *
      * @param resources The web application's resources
-     * @param resourcePaths The set of resource paths to add to
+     * @param rootPath The path whose subdirectories are to be searched for
+     * TLDs
+     * @param tldPaths The set of TLD resource paths to add to
      */
     private void tldScanResourcePathsWebInf(DirContext resources,
-					    Set resourcePaths) 
+                                            String rootPath,
+					    Set tldPaths) 
             throws IOException {
-
+		
         if (log.isTraceEnabled()) {
-            log.trace("  Scanning TLDs in /WEB-INF subdirectory");
+            log.trace("  Scanning TLDs in " + rootPath + " subdirectory");
         }
 
 	try {
-	    NamingEnumeration items = resources.list("/WEB-INF");
+	    NamingEnumeration items = resources.list(rootPath);
 	    while (items.hasMoreElements()) {
 		NameClassPair item = (NameClassPair) items.nextElement();
-		String resourcePath = "/WEB-INF/" + item.getName();
-		// FIXME - JSP 2.0 is not explicit about whether we should
-		// scan subdirectories of /WEB-INF for TLDs also
-		if (!resourcePath.endsWith(".tld")) {
+		String resourcePath = rootPath + "/" + item.getName();
+		if (!resourcePath.endsWith(".tld")
+                        && (resourcePath.startsWith("/WEB-INF/classes")
+                            || resourcePath.startsWith("/WEB-INF/lib"))) {
 		    continue;
 		}
-		if (log.isTraceEnabled()) {
-		    log.trace("   Adding path '" + resourcePath + "'");
-		}
-		resourcePaths.add(resourcePath);
+                if (resourcePath.endsWith(".tld")) {
+		    if (log.isTraceEnabled()) {
+		        log.trace("   Adding path '" + resourcePath + "'");
+		    }
+		    tldPaths.add(resourcePath);
+                } else {
+                    tldScanResourcePathsWebInf(resources, resourcePath,
+                                               tldPaths);
+                }
 	    }
 	} catch (NamingException e) {
 	    ; // Silent catch: it's valid that no /WEB-INF directory exists
