@@ -93,8 +93,10 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -1189,9 +1191,10 @@ public abstract class ContainerBase
     public synchronized void start() throws LifecycleException {
 
         // Validate and update our current component state
-        if (started)
-            throw new LifecycleException
-                (sm.getString("containerBase.alreadyStarted", logName()));
+        if (started) {
+            log.info(sm.getString("containerBase.alreadyStarted", logName()));
+            return;
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
@@ -1330,10 +1333,18 @@ public abstract class ContainerBase
     public synchronized void addValve(Valve valve) {
 
         pipeline.addValve(valve);
+        // If we are registered and the valve is not - create a default name
+//        if( domain != null && valve instanceof ValveBase &&
+//                ((ValveBase)valve).getObjectName()==null ) {
+//            try {
+//                ObjectName oname=((ValveBase)valve).createObjectName(domain, this.getObjectName());
+//                Registry.getRegistry().registerComponent(valve, oname, valve.getClass().getName());
+//            } catch( Throwable t ) {
+//                log.info( "Can't register valve " + valve , t );
+//            }
+//        }
         fireContainerEvent(ADD_VALVE_EVENT, valve);
-
     }
-
 
     /**
      * <p>Return the Valve instance that has been distinguished as the basic
@@ -1367,6 +1378,14 @@ public abstract class ContainerBase
     public synchronized void removeValve(Valve valve) {
 
         pipeline.removeValve(valve);
+//        if( domain != null && valve instanceof ValveBase ) {
+//            try {
+//                ObjectName oname=((ValveBase)valve).getObjectName();
+//                Registry.getRegistry().getMBeanServer().unregisterMBean(oname);
+//            } catch( Throwable t ) {
+//                log.info( "Can't unregister valve " + valve , t );
+//            }
+//        }
         fireContainerEvent(REMOVE_VALVE_EVENT, valve);
 
     }
