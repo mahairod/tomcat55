@@ -1513,8 +1513,7 @@ public class StandardContext
 
 
     /**
-     * Add a new context initialization parameter, replacing any existing
-     * value for the specified name.
+     * Add a new context initialization parameter.
      *
      * @param name Name of the new parameter
      * @param value Value of the new  parameter
