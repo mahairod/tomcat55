@@ -799,13 +799,6 @@
       </fileset>
     </jar>
 
-    <!-- Servlets - Snoop Servlet -->
-    <jar jarfile="${catalina.deploy}/server/lib/servlets-snoop.jar">
-      <fileset dir="${catalina.build}/server/classes">
-        <include name="org/apache/catalina/servlets/Snoop*" />
-      </fileset>
-    </jar>
-
     <!-- Servlets - SSI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.renametojar">
       <fileset dir="${catalina.build}/server/classes">
