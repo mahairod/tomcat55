@@ -47,9 +47,10 @@
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.alias.create"/>
             </controls:action>              
-            <%--
-            <controls:action url="">  <bean:message key="actions.alias.delete"/> </controls:action>
-            --%>
+            <controls:action url='<%= "/DeleteAlias.do?hostName=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.alias.delete"/>
+            </controls:action>              
             <controls:action disabled="true"> ------------------------------------- </controls:action> 
             <controls:action url='<%= "/AddLogger.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
