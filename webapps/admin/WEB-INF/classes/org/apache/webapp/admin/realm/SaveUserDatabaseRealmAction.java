@@ -223,6 +223,10 @@ public final class SaveUserDatabaseRealmAction extends Action {
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createUserDatabaseRealmTypes);
+                if (rObjectName==null) {
+                    request.setAttribute("warning", "error.userdbrealm");
+                    return (mapping.findForward("Save Unsuccessful"));
+                }
 
                 // Add the new Realm to our tree control node
                 TreeControl control = (TreeControl)
