@@ -441,7 +441,11 @@ final class ApplicationDispatcher
             ((ResponseFacade) response).finish();
         } else {
             // Close anyway
-            response.flushBuffer();
+            try {
+                response.flushBuffer();
+            } catch (IllegalStateException f) {
+                ;
+            }
             try {
                 PrintWriter writer = response.getWriter();
                 writer.flush();
