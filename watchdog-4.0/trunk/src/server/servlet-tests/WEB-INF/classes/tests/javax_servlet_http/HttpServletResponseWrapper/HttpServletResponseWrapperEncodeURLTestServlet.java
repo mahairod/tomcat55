@@ -71,14 +71,11 @@ import java.io.PrintWriter;
 public class HttpServletResponseWrapperEncodeURLTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-
         String expectedResult = "/HttpServletResponseWrapperRedirectedTest";
-        HttpSession session = request.getSession(true);
         PrintWriter out = response.getWriter();
         out.println( "in HttpServletResponseWrapperEncodeURLTest servlet<BR>" );
         String result = null;
         result = response.encodeURL( expectedResult );
-
         if ( result.equals( expectedResult ) ) {
             out.println( "HttpServletResponseWrapperEncodeURLTest test PASSED<BR>" );
         } else {
