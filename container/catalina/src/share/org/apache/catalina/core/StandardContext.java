@@ -4780,7 +4780,9 @@ public class StandardContext
         if( started ) {
             stop();
         }
-        parent.removeChild(this);
+        if (parent != null) {
+            parent.removeChild(this);
+        }
     }
 
     public void create() throws Exception{
