@@ -238,5 +238,11 @@ public class Constants {
         "</body>\n" +
         "</html>";
 
+	public static final String XML_DECLARATION =
+		"<?xml version=\"1.0\"?>";
+		
+	public static final String XML_STYLE =
+		"<?xml-stylesheet type=\"text/xsl\" href=\"xform.xsl\" ?>";
+
 }
 
