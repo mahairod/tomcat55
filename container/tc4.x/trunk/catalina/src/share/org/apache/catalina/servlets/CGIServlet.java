@@ -1083,8 +1083,10 @@ public class CGIServlet extends HttpServlet {
 		    //NOOP per CGI specification section 11.2
 		} else if("HOST".equalsIgnoreCase(header)) {
 		    String host = req.getHeader(header);
+        int idx =  host.indexOf(":");
+        if(idx < 0) idx = host.length();
 		    envp.put("HTTP_" + header.replace('-', '_'),
-			     host.substring(0, host.indexOf(":")));
+			     host.substring(0, idx));
 		} else {
 		    envp.put("HTTP_" + header.replace('-', '_'),
 			     req.getHeader(header));
@@ -1550,12 +1552,12 @@ public class CGIServlet extends HttpServlet {
 		}
 	    }
 
-	    String postIn = getPostInput(params);
+	    /*String postIn = getPostInput(params);
 	    int contentLength = (postIn.length()
 		    + System.getProperty("line.separator").length());
 	    if ("POST".equals(env.get("REQUEST_METHOD"))) {
 		env.put("CONTENT_LENGTH", new Integer(contentLength));
-	    }
+	    }*/
 
         StringBuffer perlCommand = new StringBuffer("perl ");
         if (command.endsWith(".pl") || command.endsWith(".cgi")) {
@@ -1571,7 +1573,7 @@ public class CGIServlet extends HttpServlet {
 	     * First  -- parameters
 	     * Second -- any remaining input
 	     */
-	    commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
+	    /*commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
 	    if (debug >= 2 ) {
 		log("runCGI stdin=[" + stdin + "], qs="
 		    + env.get("QUERY_STRING"));
@@ -1590,7 +1592,7 @@ public class CGIServlet extends HttpServlet {
 		/* assume if nothing is available after a time, that nothing is
 		 * coming...
 		 */
-		if (stdin.available() <= 0) {
+		/*if (stdin.available() <= 0) {
 		    if (debug >= 2 ) {
 			log("runCGI stdin is NOT available ["
 			    + stdin.available() + "]");
@@ -1627,8 +1629,17 @@ public class CGIServlet extends HttpServlet {
 		}
 	    }
 	    commandsStdIn.flush();
-	    commandsStdIn.close();
-	
+	    commandsStdIn.close();*/
+      String sContentLength = (String) env.get("CONTENT_LENGTH");
+      if(!"".equals(sContentLength)) {
+          commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
+          byte[] content = new byte[Integer.parseInt(sContentLength)];
+          stdin.read(content);
+          commandsStdIn.write(content);
+          commandsStdIn.flush();
+          commandsStdIn.close();
+      }
+
 	    /* we want to wait for the process to exit,  Process.waitFor()
 	     * is useless in our situation; see
 	     * http://developer.java.sun.com/developer/
