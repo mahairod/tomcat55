@@ -130,11 +130,30 @@ public class TcpEndpointConnector  implements ServerConnector {
     public void setContextManager( ContextManager ctx ) {
 	this.cm=ctx;
     }
+
+    public void setTcpConnectionHandler( TcpConnectionHandler handler) {
+	this.con=handler;
+    }
+
+    public TcpConnectionHandler getTcpConnectionHandler() {
+	return con;
+    }
+
+    public void setPort( int port ) {
+	this.port=port;
+    }
+
+    public void setPort(  String portS ) {
+	this.port=string2Int( portS );
+    }
+
+    public int getPort() {
+	return port;
+    }
     
     public void setProperty( String prop, String value) {
 	if("port".equals(prop) ) {
-	    //	    System.out.println("XXX");
-	    port=string2Int(value);
+	    setPort( value );
 	}
 	if("handler".equals(prop)) {
 	    try {

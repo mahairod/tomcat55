@@ -99,17 +99,20 @@ fi
 if [ "$1" = "start" ] ; then 
   shift 
   echo Using classpath: ${CLASSPATH}
-  $JAVACMD org.apache.tomcat.shell.Startup "$@" &
+  $JAVACMD org.apache.tomcat.startup.Tomcat "$@" &
+#   $JAVACMD org.apache.tomcat.shell.Startup "$@" &
 
 elif [ "$1" = "stop" ] ; then 
   shift 
   echo Using classpath: ${CLASSPATH}
-  $JAVACMD org.apache.tomcat.shell.Shutdown "$@"
+  $JAVACMD org.apache.tomcat.startup.Tomcat -stop "$@"
+#   $JAVACMD org.apache.tomcat.shell.Shutdown "$@"
 
 elif [ "$1" = "run" ] ; then 
   shift 
   echo Using classpath: ${CLASSPATH}
-  $JAVACMD org.apache.tomcat.shell.Startup "$@" 
+  $JAVACMD org.apache.tomcat.startup.Tomcat "$@" 
+#  $JAVACMD org.apache.tomcat.shell.Startup "$@" 
   # no &
 
 ## Call it with source tomcat.sh to set the env for tomcat

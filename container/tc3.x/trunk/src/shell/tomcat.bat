@@ -39,19 +39,22 @@ goto cleanup
 :startServer
 echo Starting tomcat in new window
 echo Using classpath: %CLASSPATH%
-start java org.apache.tomcat.shell.Startup %2 %3 %4 %5 %6 %7 %8 %9
+rem start java org.apache.tomcat.shell.Startup %2 %3 %4 %5 %6 %7 %8 %9
+start java org.apache.tomcat.startup.Tomcat %2 %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :runServer
 rem Start the Tomcat Server
 echo Using classpath: %CLASSPATH%
-java org.apache.tomcat.shell.Startup %2 %3 %4 %5 %6 %7 %8 %9
+rem java org.apache.tomcat.shell.Startup %2 %3 %4 %5 %6 %7 %8 %9
+java org.apache.tomcat.startup.Tomcat %2 %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :stopServer
 rem Stop the Tomcat Server
 echo Using classpath: %CLASSPATH%
-java org.apache.tomcat.shell.Shutdown %2 %3 %4 %5 %6 %7 %8 %9
+rem java org.apache.tomcat.shell.Shutdown %2 %3 %4 %5 %6 %7 %8 %9
+java org.apache.tomcat.startup.Tomcat -stop %2 %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 goto cleanup
 
