@@ -140,7 +140,7 @@ public class McastServiceImpl
     /**
      * When was the service started
      */
-    protected long serviceStartTime = 0;
+    protected long serviceStartTime = System.currentTimeMillis();
 
     /**
      * Create a new mcast service impl
@@ -186,6 +186,7 @@ public class McastServiceImpl
      */
     public synchronized void start() throws IOException {
         if ( doRun ) throw new IllegalStateException("Service already running.");
+        serviceStartTime = System.currentTimeMillis();
         socket.joinGroup(address);
         doRun = true;
         sender = new SenderThread(sendFrequency);
@@ -194,7 +195,7 @@ public class McastServiceImpl
         receiver.setDaemon(true);
         receiver.start();
         sender.start();
-        serviceStartTime = System.currentTimeMillis();
+
     }
 
     /**

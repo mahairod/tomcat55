@@ -167,26 +167,30 @@ public class TcpReplicationThread extends WorkerThread
         // loop while data available, channel is non-blocking
         while ((count = channel.read (buffer)) > 0) {
             buffer.flip();		// make buffer readable
-            if (reader.append(buffer.array(),0,count)) {
+            int pkgcnt = reader.append(buffer.array(),0,count);
+            while ( pkgcnt > 0 ) {
                 if (synchronous) {
                     sendAck(key,channel);
                 } //end if
+                pkgcnt--;
             }
             buffer.clear();		// make buffer empty
         }
         //check to see if any data is available
-        if ( reader.execute() ) {
+        int pkgcnt = reader.execute();
+        while ( pkgcnt > 0 ) {
             if (synchronous) {
                 sendAck(key,channel);
-            }//end if
-        }//end if
+            } //end if
+            pkgcnt--;
+        }
         if (count < 0) {
             // close channel on EOF, invalidates the key
             channel.close();
             return;
         }
-        // resume interest in OP_READ
-        key.interestOps (key.interestOps() | SelectionKey.OP_READ);
+        // resume interest in OP_READ, OP_WRITE
+        key.interestOps (key.interestOps() | SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         // cycle the selector so this key is active again
         key.selector().wakeup();
     }
