@@ -60,6 +60,7 @@ public class ReplicationListener implements Runnable,ClusterReceiver
                 tcpListenAddress = java.net.InetAddress.getLocalHost().
                     getHostAddress();
             }
+            log.debug("Starting replication listener on address:"+tcpListenAddress);
             bind = java.net.InetAddress.getByName(tcpListenAddress);
             Thread t = new Thread(this,"ClusterReceiver");
             t.setDaemon(true);
