@@ -611,6 +611,11 @@ public class SimpleTcpCluster
         svcproperties.setProperty("mcastAddress",addr);
     }
 
+
+    public void setMcastBindAddress(String bindaddr) {
+        svcproperties.setProperty("mcastBindAddress",bindaddr);
+    }
+
     public void setMcastPort(int port) {
         svcproperties.setProperty("mcastPort",String.valueOf(port));
     }

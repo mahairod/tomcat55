@@ -144,7 +144,9 @@ public class ReplicationListener extends Thread
             // selected set contains keys of the ready channels
             try {
 
+                //System.out.println("Selecting with timeout="+timeout);
                 int n = selector.select(timeout);
+                //System.out.println("select returned="+n);
                 if (n == 0) {
                     continue; // nothing to do
                 }
@@ -160,18 +162,23 @@ public class ReplicationListener extends Thread
                         SocketChannel channel = server.accept();
                         registerChannel(selector,
                                         channel,
-                                        SelectionKey.OP_READ |
-                                        SelectionKey.OP_WRITE,
+                                        SelectionKey.OP_READ,
                                         new ObjectReader(channel, selector,
                             callback));
                     }
                     // is there data to read on this channel?
+                    //System.out.println("key readable="+key.isReadable());
                     if (key.isReadable()) {
                         readDataFromSocket(key);
+                    } else {
+                        //System.out.println("This shouldn't get called");
+                        key.interestOps(key.interestOps() & (~key.OP_WRITE));
                     }
+
                     // remove key from selected set, it's been handled
                     it.remove();
                 }
+                System.out.println("Done with loop");
             }
             catch (java.nio.channels.CancelledKeyException nx) {
                 log.warn(
