@@ -38,7 +38,7 @@ public class NamingContextBindingsEnumeration
 
 
     public NamingContextBindingsEnumeration(Iterator entries) {
-        enum = entries;
+    	iterator = entries;
     }
 
 
@@ -48,7 +48,7 @@ public class NamingContextBindingsEnumeration
     /**
      * Underlying enumeration.
      */
-    protected Iterator enum;
+    protected Iterator iterator;
 
 
     // --------------------------------------------------------- Public Methods
@@ -68,7 +68,7 @@ public class NamingContextBindingsEnumeration
      */
     public boolean hasMore()
         throws NamingException {
-        return enum.hasNext();
+        return iterator.hasNext();
     }
 
 
@@ -81,12 +81,12 @@ public class NamingContextBindingsEnumeration
 
 
     public boolean hasMoreElements() {
-        return enum.hasNext();
+        return iterator.hasNext();
     }
 
 
     public Object nextElement() {
-        NamingEntry entry = (NamingEntry) enum.next();
+        NamingEntry entry = (NamingEntry) iterator.next();
         return new Binding(entry.name, entry.value.getClass().getName(), 
                            entry.value, true);
     }
