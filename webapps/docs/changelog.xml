@@ -82,6 +82,9 @@
       <fix>
         <bug>32429</bug>: CGIServlet calculates number of lines received on stderr incorrectly. (markt)
       </fix>
+      <fix>
+        <bug>32431</bug>: Fix typo in code that passes data to CGI script. (markt)
+      </fix>
     </changelog>
   </subsection>
 
