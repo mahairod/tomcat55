@@ -91,9 +91,9 @@ public interface HttpServletRequest extends ServletRequest {
     */
     public static final String FORM_AUTH = "FORM";
     /**
-    * String identifier for Basic authentication. Value "CERT-CLIENT"
+    * String identifier for Basic authentication. Value "CLIENT_CERT"
     */
-    public static final String CLIENT_CERT_AUTH = "CERT-CLIENT";
+    public static final String CLIENT_CERT_AUTH = "CLIENT_CERT";
     /**
     * String identifier for Basic authentication. Value "DIGEST"
     */
