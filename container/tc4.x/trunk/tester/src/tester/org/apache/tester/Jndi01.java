@@ -66,6 +66,10 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.apache.tester.SessionBean;
+import org.apache.tester.shared.SharedSessionBean;
+import org.apache.tester.unpshared.UnpSharedSessionBean;
+import org.apache.tester.unshared.UnsharedSessionBean;
 
 
 /**
@@ -80,6 +84,8 @@ import javax.servlet.http.*;
 public class Jndi01 extends HttpServlet {
 
     public void init() throws ServletException {
+
+        // Access the naming context from init()
         Context ctx = null;
         try {
             ctx = new InitialContext();
@@ -90,6 +96,37 @@ public class Jndi01 extends HttpServlet {
             log("Cannot create context in init()", e);
             throw new ServletException(e);
         }
+
+        // Access some application beans from init()
+
+        try {
+            SessionBean sb = new SessionBean();
+            log("OK Accessing SessionBean");
+        } catch (Throwable t) {
+            log("FAIL Accessing SessionBean", t);
+        }
+
+        try {
+            SharedSessionBean sb = new SharedSessionBean();
+            log("OK Accessing SharedSessionBean");
+        } catch (Throwable t) {
+            log("FAIL Accessing SharedSessionBean", t);
+        }
+
+        try {
+            UnpSharedSessionBean sb = new UnpSharedSessionBean();
+            log("OK Accessing UnpSharedSessionBean");
+        } catch (Throwable t) {
+            log("FAIL Accessing UnpSharedSessionBean", t);
+        }
+
+        try {
+            UnsharedSessionBean sb = new UnsharedSessionBean();
+            log("OK Accessing UnsharedSessionBean");
+        } catch (Throwable t) {
+            log("FAIL Accessing UnsharedSessionBean", t);
+        }
+
     }
 
     public void destroy() {
