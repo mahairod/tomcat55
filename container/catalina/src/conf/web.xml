@@ -226,7 +226,7 @@
   <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->
   <!--            to $CATALINA_HOME/server/lib/servlets-cgi.jar             -->
 
-<!--
+
     <servlet>
         <servlet-name>cgi</servlet-name>
         <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
@@ -244,7 +244,7 @@
         </init-param>
          <load-on-startup>5</load-on-startup>
     </servlet>
--->
+
 
 
   <!-- ================ Built In Servlet Mappings ========================= -->
@@ -287,12 +287,12 @@
 -->
 
     <!-- The mapping for the CGI Gateway servlet -->
-<!--
+
     <servlet-mapping>
         <servlet-name>cgi</servlet-name>
         <url-pattern>/cgi-bin/*</url-pattern>
     </servlet-mapping>
--->
+
 
 
   <!-- ==================== Default Session Configuration ================= -->
