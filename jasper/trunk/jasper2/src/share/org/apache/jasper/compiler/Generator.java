@@ -1867,22 +1867,22 @@ class Generator {
                 return;
             }
 
-            if (textSize <= 3) {
-                // Spcial case small text strings
-                n.setBeginJavaLine(out.getJavaLine());
-                out.printil("out.write(" + quote(text.charAt(0)) + ");");
-                if (textSize > 1) {
-                    out.printil("out.write(" + quote(text.charAt(1)) + ");");
-                }
-                if (textSize > 2) {
-                    out.printil("out.write(" + quote(text.charAt(2)) + ");");
-                }
-                n.setEndJavaLine(out.getJavaLine());
-                return;
-            }
-
             if (ctxt.getOptions().genStringAsCharArray()) {
-                // Generate Strings as char arrays, for performance
+                if (textSize <= 3) {
+                   // Spcial case small text strings
+                   n.setBeginJavaLine(out.getJavaLine());
+                   out.printil("out.write(" + quote(text.charAt(0)) + ");");
+                   if (textSize > 1) {
+                       out.printil("out.write(" + quote(text.charAt(1)) + ");");
+                   }
+                   if (textSize > 2) {
+                       out.printil("out.write(" + quote(text.charAt(2)) + ");");
+                   }
+                   n.setEndJavaLine(out.getJavaLine());
+                   return;
+               }
+
+               // Generate Strings as char arrays, for performance
                 ServletWriter caOut;
                 if (charArrayBuffer == null) {
                     charArrayBuffer = new GenBuffer(null);
