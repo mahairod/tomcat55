@@ -149,13 +149,6 @@
         on demand.</p>
       </attribute>
 
-      <attribute name="useNaming" required="false">
-        <p>Set to <code>true</code> (the default) to have Catalina enable a
-        JNDI <code>InitialContext</code> for this web application that is
-        compatible with Java2 Enterprise Edition (J2EE) platform
-        conventions.</p>
-      </attribute>
-
       <attribute name="wrapperClass" required="false">
         <p>Java class name of the <code>org.apache.catalina.Wrapper</code>
         implementation class that will be used for servlets managed by this
@@ -181,6 +174,20 @@
         to the associated <a href="logger.html">Logger</a>.  Higher numbers
         generate more detailed output.  If not specified, the default
         debugging detail level is zero (0).</p>
+      </attribute>
+
+      <attribute name="swallowOutput" required="false">
+        <p>If the value of this flag is <code>true</code>, the bytes output to
+        System.out and System.err by the web application will be redirected to
+        the web application logger. If not specified, the default value
+        of the flag is <code>false</code>.</p>
+      </attribute>
+
+      <attribute name="useNaming" required="false">
+        <p>Set to <code>true</code> (the default) to have Catalina enable a
+        JNDI <code>InitialContext</code> for this web application that is
+        compatible with Java2 Enterprise Edition (J2EE) platform
+        conventions.</p>
       </attribute>
 
       <attribute name="workDir" required="false">
