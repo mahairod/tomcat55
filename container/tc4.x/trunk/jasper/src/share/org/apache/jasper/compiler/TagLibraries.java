@@ -57,6 +57,7 @@ package org.apache.jasper.compiler;
 import java.lang.reflect.Constructor;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
 
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
@@ -111,6 +112,10 @@ public class TagLibraries {
 
     public void putTagCache(String prefix, String shortTagName, TagCache tc) {
 	tagCaches.put(new TagID(prefix, shortTagName), tc);
+    }
+
+    public Enumeration getTagLibInfos() {
+	return tagLibInfos.elements();
     }
 
     private Hashtable tagLibInfos;
