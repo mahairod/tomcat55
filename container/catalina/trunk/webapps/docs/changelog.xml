@@ -13,13 +13,25 @@
 
 <body>
 
-<section name="Tomcat 5.0.4 (remm)">
+<section name="Tomcat 5.0.4 Alpha (remm)">
 
   <subsection name="General">
 
     <changelog>
 
-
+      <scode>
+      <bug>19912</bug>, <bug>19939</bug>, <bug>19940</bug>, <bug>19941</bug>: 
+      Many small typo fixes in resources, submitted by Chris Pepper (yoavs)
+      </scode>
+      <update>
+      Upgrade to commons-fileupload 1.0 (remm)
+      </update>
+      <update>
+      Upgrade to Struts 1.1 (remm)
+      </update>
+      <scode>
+      Improve packaging to reduce total size of the Tomcat download (remm)
+      </scode>
 
     </changelog>
 
@@ -29,7 +41,63 @@
 
     <changelog>
 
-
+      <scode>
+      Cleanup Catalina and subcomponents Javadoc generation (remm)
+      </scode>
+      <fix>
+      Fix NPE in ApplicationHttpRequest when the object is created by a named 
+      dispatcher (jfarcand)
+      </fix>
+      <fix>
+      Escape '/' in the configFile name of a context, and strip out 
+      leading '/' (remm)
+      </fix>
+      <fix>
+      Initialize the context mapper after starting the context so that 
+      the welcome files are correctly set (remm)
+      </fix>
+      <fix>
+      <bug>19607</bug>: Remove Context XML descriptor on undeploy (remm)
+      </fix>
+      <update>
+      <bug>4829</bug>: Improve deployer so that the unpackWARs flag value is
+      respected regardless of how the context is deployed (remm)
+      </update>
+      <fix>
+      If a context XML file is added for an existing context, or if the context
+      XML file is updated, the context will be redeployed (remm)
+      </fix>
+      <update>
+      Add logging on initialization of the URL stream handler (remm)
+      </update>
+      <fix>
+      Add some Coyote inner classes to the preload list (jfarcand)
+      </fix>
+      <update>
+      Remove session recycling, which was previously disabled after security
+      concerns were raised (remm)
+      </update>
+      <update>
+      Implement proper handling of the context docBase when it is deployed from
+      a context XML descriptor, using a new custom digester rule (remm)
+      </update>
+      <fix>
+      <bug>21419</bug>: Fix failure to start context when the Context element 
+      is included in server.xml, submitted by Torsten Fohrer (remm)
+      </fix>
+      <fix>
+      The pathinfo needs to be set in the ErrorDispatcherValve when 
+      sreq.getAttribute(Globals.EXCEPTION_ATTR) returns null and also non null
+      (jfarcand)
+      </fix>
+      <fix>
+      <bug>21045</bug>: Update the message keys of the manager servlet (remm)
+      </fix>
+      <fix>
+      In the manager servlet, use the configFile when undeploying, 
+      to properly remove the config file even if it does not match the 
+      context path (remm)
+      </fix>
 
     </changelog>
 
@@ -39,7 +107,31 @@
 
     <changelog>
 
-
+      <fix>
+      Allow '*' as a valid URL (keith)
+      </fix>
+      <add>
+      Add support for enabling subset of supported SSL cipher suites (luehe)
+      </add>
+      <add>
+      Add support for enabling subset of supported SSL cipher suites in JSSE 
+      implementation (luehe)
+      </add>
+      <fix>
+      Wrap encodeURL method call inside a doPrivileged block (jfarcand)
+      </fix>
+      <update>
+      Add support for mapping host aliases (remm)
+      </update>
+      <update>
+      <bug>21219</bug>: Close the HTTP connection after certain error codes, 
+      or an unexpected exception, similar to HTTPd behavior (billbarker)
+      </update>
+      <add>
+      Add support for enabling subset of supported SSL cipher suites 
+      in PureTLS implementation (billbarker)
+      </add>
+      
 
     </changelog>
 
@@ -49,7 +141,40 @@
 
     <changelog>
 
-
+      <fix>
+      Improve web.xml insertion oode so that the order of element is respected
+      (remm)
+      </fix>
+      <update>
+      <bug>19622</bug>: Add encoding configuration to JspC (yoavs)
+      </update>
+      <fix>
+      Remove comments generation when JspC is including meppings into web.xml,
+      so that character coding issues are avoided (remm)
+      </fix>
+      <fix>
+      Support regenerating the web.xml with JspC without manually removing the
+      generated servlet mappings (remm)
+      </fix>
+      <update>
+      Add detailed message about a likely Javac configuration problem whenever
+      compilation fails and all messages and traces are empty (remm)
+      </update>
+      <fix>
+      Allow the "value" attrbute of &lt;jsp:param&gt; action be non 
+      String types (kinman)
+      </fix>
+      <fix>
+      Improve rare error message when static including fails (remm)
+      </fix>
+      <fix>
+      <bug>21067</bug>: EL expression that returns an array causes 
+      compilation error (kinman)
+      </fix>
+      <fix>
+      <bug>21440</bug>: Partial fix for &lt;jsp:include&gt; whose target 
+      performs a 'forward' does not behave as expected (luehe)
+      </fix>
 
     </changelog>
 
@@ -59,17 +184,26 @@
 
     <changelog>
 
-
-
-    </changelog>
-
-  </subsection>
-
-  <subsection name="Deployer">
-
-    <changelog>
-
-
+      <fix>
+      Remove parallel initialization of the admin webapp, which is not a best
+      practice pattern (remm)
+      </fix>
+      <docs>
+      Add deployer documentation (remm)
+      </docs>
+      <docs>
+      Add some documentation on the JMXProxy servlet (funkman)
+      </docs>
+      <fix>
+      Fix broken Javadocs links (remm)
+      </fix>
+      <update>
+      Add a bugzilla query for all open TC 5 bugs, hoping people will help 
+      address them (remm)
+      </update>
+      <docs>
+      Update Host documentation based on the new and updated flags (remm)
+      </docs>
 
     </changelog>
 
