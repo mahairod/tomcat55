@@ -65,6 +65,7 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.io.*;
+import java.net.URLClassLoader;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.tagext.*;
@@ -424,6 +425,11 @@ class TagFileProcessor {
                                                 ctxt.getRuntimeContext(),
                                                 (JarFile) ctxt.getTagFileJars().get(tagFilePath));
                     rctxt.addWrapper(tagFilePath,wrapper);
+
+		// Use same classloader and classpath for compiling tag files
+		wrapper.getJspEngineContext().setClassLoader(
+				(URLClassLoader) ctxt.getClassLoader());
+		wrapper.getJspEngineContext().setClassPath(ctxt.getClassPath());
             }
 
             Class tagClazz;
