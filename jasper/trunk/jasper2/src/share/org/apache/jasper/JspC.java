@@ -159,7 +159,7 @@ public class JspC implements Options {
 
     String ieClassId = DEFAULT_IE_CLASS_ID;
 
-    String targetPackage = "org.apache.jsp";
+    String targetPackage;
 
     String targetClassName;
 
