@@ -151,6 +151,7 @@ The only supported means of building Tomcat is with the "ant build"
 described above.
 However, some developers like to work on Java code with a Java IDE,
 and the following steps have been used by some developers.
+</p>
 
 <p>
 Note that you <b>must</b> complete all the above steps to fetch
@@ -207,7 +208,9 @@ The same caveats apply as for Eclipse, above.
 <p>
 The same general idea should work in most IDEs; it has been reported
 to work in Idea, for example.
-<p>
+</p>
+
+</section>
 
 </body>
 </document>
