@@ -18,10 +18,9 @@ public class RepeatSimpleTag extends SimpleTagSupport {
     private int num;
 
     public void doTag() throws JspException, IOException {
-        HashMap params = new HashMap();
         for (int i=0; i<num; i++) {
-            params.put( "count", String.valueOf( i + 1 ) );
-	    getJspBody().invoke(null, params);
+            jspContext.setAttribute("count", String.valueOf( i + 1 ) );
+	    getJspBody().invoke(null);
         }
     }
 

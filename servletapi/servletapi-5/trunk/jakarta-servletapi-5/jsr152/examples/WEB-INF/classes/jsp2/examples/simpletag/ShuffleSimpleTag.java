@@ -23,34 +23,34 @@ public class ShuffleSimpleTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         switch( (int)(Math.random() * 6) ) {
             case 0:
-                fragment1.invoke( null, null );
-                fragment2.invoke( null, null );
-                fragment3.invoke( null, null );
+                fragment1.invoke( null );
+                fragment2.invoke( null );
+                fragment3.invoke( null );
                 break;
             case 1:
-                fragment1.invoke( null, null );
-                fragment3.invoke( null, null );
-                fragment2.invoke( null, null );
+                fragment1.invoke( null );
+                fragment3.invoke( null );
+                fragment2.invoke( null );
                 break;
             case 2:
-                fragment2.invoke( null, null );
-                fragment1.invoke( null, null );
-                fragment3.invoke( null, null );
+                fragment2.invoke( null );
+                fragment1.invoke( null );
+                fragment3.invoke( null );
                 break;
             case 3:
-                fragment2.invoke( null, null );
-                fragment3.invoke( null, null );
-                fragment1.invoke( null, null );
+                fragment2.invoke( null );
+                fragment3.invoke( null );
+                fragment1.invoke( null );
                 break;
             case 4:
-                fragment3.invoke( null, null );
-                fragment1.invoke( null, null );
-                fragment2.invoke( null, null );
+                fragment3.invoke( null );
+                fragment1.invoke( null );
+                fragment2.invoke( null );
                 break;
             case 5:
-                fragment3.invoke( null, null );
-                fragment2.invoke( null, null );
-                fragment1.invoke( null, null );
+                fragment3.invoke( null );
+                fragment2.invoke( null );
+                fragment1.invoke( null );
                 break;
         }
     }
