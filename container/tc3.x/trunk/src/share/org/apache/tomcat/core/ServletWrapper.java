@@ -78,11 +78,6 @@ import javax.servlet.http.*;
  * @author Harish Prabandham
  * @author costin@dnt.ro
  */
-
-//
-// WARNING: Some of the APIs in this class are used by J2EE. 
-// Please talk to harishp@eng.sun.com before making any changes.
-//
 public class ServletWrapper {
     protected StringManager sm = StringManager.getManager("org.apache.tomcat.core");
 

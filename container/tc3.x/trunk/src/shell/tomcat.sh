@@ -68,7 +68,6 @@ for i in ${TOMCAT_HOME}/lib/* ; do
 done
 
 CLASSPATH=${CLASSPATH}:${JAVA_HOME}/lib/tools.jar
-echo XXX $CLASSPATH
 
 
 # Backdoor classpath setting for development purposes when all classes

@@ -661,6 +661,14 @@ public class RequestImpl  implements Request {
 
     public String toString() {
 	StringBuffer sb=new StringBuffer();
+	sb.append( "R( " + getRequestURI() + " ");
+	if( context!=null) sb.append( context.getPath() );
+	sb.append(")");
+	return sb.toString();
+    }
+
+    public String toStringDebug() {
+	StringBuffer sb=new StringBuffer();
 	sb.append( "Request( " + context ).append("\n");
 	sb.append( "    URI:" + getRequestURI()  ).append("\n");
 	sb.append( "    SP:" + getServletPath() );
