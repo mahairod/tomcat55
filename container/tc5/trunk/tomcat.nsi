@@ -6,6 +6,7 @@ Name "Apache Tomcat @VERSION@"
 OutFile tomcat-installer.exe
 CRCCheck on
 SetCompress force
+SetCompressor bzip2
 SetDatablockOptimize on
 
 BGGradient 000000 800000 FFFFFF
