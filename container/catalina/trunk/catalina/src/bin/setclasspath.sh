@@ -20,6 +20,7 @@ else
   if [ ! -r "$JAVA_HOME"/bin/java -o ! -r "$JAVA_HOME"/bin/jdb -o ! -r "$JAVA_HOME"/bin/javac ]; then
     echo "The JAVA_HOME environment variable is not defined correctly"
     echo "This environment variable is needed to run this program"
+    echo "NB: JAVA_HOME should point to a JDK not a JRE"
     exit 1
   fi
 fi
