@@ -155,9 +155,9 @@ public final class BootstrapService
                                                      commonLoader);
 
             unpacked[0] = new File(getCatalinaHome(),
-                                   "classes");
+                                   "shared" + File.separator + "classes");
             packed[0] = new File(getCatalinaHome(),
-                                 "lib");
+                                 "shared" + File.separator + "lib");
             sharedLoader =
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                      commonLoader);

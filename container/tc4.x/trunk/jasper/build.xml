@@ -23,7 +23,7 @@
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
-    <pathelement location="${jasper.build}/classes"/>
+    <pathelement location="${jasper.build}/shared/classes"/>
   </path>
 
   <!-- Construct unit tests classpath -->
@@ -32,7 +32,7 @@
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
-    <pathelement location="${jasper.build}/classes"/>
+    <pathelement location="${jasper.build}/shared/classes"/>
     <pathelement location="${jasper.build}/tests"/>
   </path>
 
@@ -44,11 +44,10 @@
 
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
-    <mkdir dir="${jasper.build}/classes"/>
-    <mkdir dir="${jasper.build}/common"/>
     <mkdir dir="${jasper.build}/common/classes"/>
     <mkdir dir="${jasper.build}/common/lib"/>
-    <mkdir dir="${jasper.build}/lib"/>
+    <mkdir dir="${jasper.build}/shared/classes"/>
+    <mkdir dir="${jasper.build}/shared/lib"/>
 
   </target>
 
@@ -72,7 +71,7 @@
   <target name="build-main" depends="build-static">
 
     <!-- Compile internal server components -->
-    <javac srcdir="src/share" destdir="${jasper.build}/classes"
+    <javac srcdir="src/share" destdir="${jasper.build}/shared/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
@@ -80,7 +79,7 @@
     </javac>
 
     <!-- Copy static resource files -->
-    <copy todir="${jasper.build}/classes">
+    <copy todir="${jasper.build}/shared/classes">
       <fileset dir="src/share">
         <include name="**/*.properties"/>
         <include name="**/*.dtd"/>
@@ -143,10 +142,10 @@
   <target name="deploy-prepare">
     <mkdir dir="${jasper.deploy}"/>
     <mkdir dir="${jasper.deploy}/bin"/>
-    <mkdir dir="${jasper.deploy}/classes"/>
-    <mkdir dir="${jasper.deploy}/common"/>
+    <mkdir dir="${jasper.deploy}/common/classes"/>
     <mkdir dir="${jasper.deploy}/common/lib"/>
-    <mkdir dir="${jasper.deploy}/lib"/>
+    <mkdir dir="${jasper.deploy}/shared/classes"/>
+    <mkdir dir="${jasper.deploy}/shared/lib"/>
   </target>
 
 
@@ -163,8 +162,8 @@
     <chmod perm="+x" file="${jasper.deploy}/bin/jspc.sh"/>
 
     <!-- Runtime Library -->
-    <copy todir="${jasper.deploy}/lib">
-      <fileset dir="${jasper.build}/lib" />
+    <copy todir="${jasper.deploy}/shared/lib">
+      <fileset dir="${jasper.build}/shared/lib" />
     </copy>
 
   </target>
@@ -175,8 +174,8 @@
    description="Build and deploy Jasper component">
  
    <!-- Jasper Compiler JAR File -->
-   <jar  jarfile="${jasper.deploy}/lib/jasper-compiler.jar">
-      <fileset dir="${jasper.build}/classes">
+   <jar  jarfile="${jasper.deploy}/shared/lib/jasper-compiler.jar">
+      <fileset dir="${jasper.build}/shared/classes">
         <include name="org/apache/jasper/compiler/**" />
         <include name="org/apache/jasper/parser/**" />
         <include name="org/apache/jasper/servlet/**" />
@@ -187,8 +186,8 @@
     </jar>
 
     <!-- Jasper Runtime JAR File -->
-    <jar  jarfile="${jasper.deploy}/lib/jasper-runtime.jar">
-      <fileset dir="${jasper.build}/classes">
+    <jar  jarfile="${jasper.deploy}/shared/lib/jasper-runtime.jar">
+      <fileset dir="${jasper.build}/shared/classes">
         <include name="org/apache/jasper/Constants.class" />
         <include name="org/apache/jasper/JasperException.class" />
         <include name="org/apache/jasper/core/**" />
@@ -217,9 +216,9 @@
     <chmod perm="+x" file="${jasper.dist}/bin/jspc.sh"/>
 
     <!-- Jasper Compiler and Runtime JAR Files -->
-    <mkdir dir="${jasper.dist}/lib"/>
-    <copy todir="${jasper.dist}/lib">
-      <fileset dir="${jasper.build}/lib"/>
+    <mkdir dir="${jasper.dist}/shared/lib"/>
+    <copy todir="${jasper.dist}/shared/lib">
+      <fileset dir="${jasper.build}/shared/lib"/>
     </copy>
 
 

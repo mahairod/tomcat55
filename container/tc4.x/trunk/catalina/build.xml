@@ -35,7 +35,7 @@
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${xerces.jar}"/>
-    <pathelement location="${catalina.build}/classes"/>
+    <pathelement location="${catalina.build}/server/classes"/>
   </path>
 
   <!-- Construct unit tests classpath -->
@@ -55,7 +55,7 @@
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${xerces.jar}"/>
-    <pathelement location="${catalina.build}/classes"/>
+    <pathelement location="${catalina.build}/server/classes"/>
     <pathelement location="${catalina.build}/tests"/>
   </path>
 
@@ -377,15 +377,15 @@
 
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
-    <mkdir dir="${catalina.build}/classes"/>
-    <mkdir dir="${catalina.build}/common"/>
     <mkdir dir="${catalina.build}/common/classes"/>
     <mkdir dir="${catalina.build}/common/lib"/>
     <mkdir dir="${catalina.build}/conf"/>
-    <mkdir dir="${catalina.build}/lib"/>
-    <mkdir dir="${catalina.build}/server"/>
+    <mkdir dir="${catalina.build}/logs"/>
     <mkdir dir="${catalina.build}/server/classes"/>
     <mkdir dir="${catalina.build}/server/lib"/>
+    <mkdir dir="${catalina.build}/shared/classes"/>
+    <mkdir dir="${catalina.build}/shared/lib"/>
+    <mkdir dir="${catalina.build}/work"/>
 
   </target>
 
@@ -468,13 +468,13 @@
   <target name="build-main" depends="build-static">
 
     <!-- Compile Service API -->
-    <javac srcdir="../service/java" destdir="${catalina.build}/classes"
+    <javac srcdir="../service/java" destdir="${catalina.build}/server/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**" />
 
     <!-- Compile internal server components -->
-    <javac srcdir="src/share" destdir="${catalina.build}/classes"
+    <javac srcdir="src/share" destdir="${catalina.build}/server/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
@@ -504,7 +504,7 @@
     </javac>
 
     <!-- Copy static resource files -->
-    <copy todir="${catalina.build}/classes">
+    <copy todir="${catalina.build}/server/classes">
       <fileset dir="src/share">
         <exclude name="**/*.java"/>
       </fileset>
@@ -607,11 +607,10 @@
     <mkdir dir="${catalina.deploy}"/>
     <mkdir dir="${catalina.deploy}/bin"/>
     <mkdir dir="${catalina.deploy}/conf"/>
-    <mkdir dir="${catalina.deploy}/lib"/>
     <mkdir dir="${catalina.deploy}/logs"/>
-    <mkdir dir="${catalina.deploy}/common"/>
+    <mkdir dir="${catalina.deploy}/common/classes"/>
     <mkdir dir="${catalina.deploy}/common/lib"/>
-    <mkdir dir="${catalina.deploy}/server"/>
+    <mkdir dir="${catalina.deploy}/server/classes"/>
     <mkdir dir="${catalina.deploy}/server/lib"/>
     <mkdir dir="${catalina.deploy}/work"/>
   </target>
@@ -624,7 +623,7 @@
     <copy todir="${catalina.deploy}/bin">
       <fileset dir="${catalina.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
@@ -632,6 +631,9 @@
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
 
     <!-- Common Extensions -->
+    <copy todir="${catalina.deploy}/common/classes">
+      <fileset dir="${catalina.build}/common/classes" />
+    </copy>
     <copy todir="${catalina.deploy}/common/lib">
       <fileset dir="${catalina.build}/common/lib" />
     </copy>
@@ -641,14 +643,20 @@
       <fileset dir="${catalina.build}/conf" />
     </copy>
 
-    <!-- Shared Extensions -->
-    <copy todir="${catalina.deploy}/lib">
-      <fileset dir="${catalina.build}/lib" />
-    </copy>
-
     <!-- Server Components -->
+    <copy todir="${catalina.deploy}/server/classes">
+      <fileset dir="${catalina.build}/server/classes" />
+    </copy>
     <copy todir="${catalina.deploy}/server/lib">
       <fileset dir="${catalina.build}/server/lib" />
+    </copy>
+
+    <!-- Shared Extensions -->
+    <copy todir="${catalina.deploy}/shared/classes">
+      <fileset dir="${catalina.build}/shared/classes" />
+    </copy>
+    <copy todir="${catalina.deploy}/shared/lib">
+      <fileset dir="${catalina.build}/shared/lib" />
     </copy>
 
   </target>
@@ -661,7 +669,7 @@
     <!-- Catalina Bootstrap JAR File -->
     <jar jarfile="${catalina.deploy}/bin/bootstrap.jar" 
          manifest="etc/bootstrap.MF">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/service/Service.class" />
         <include name="org/apache/service/ServiceController.class" />
         <include name="org/apache/catalina/startup/Bootstrap.class" />
@@ -677,7 +685,7 @@
 
     <!-- Catalina Main JAR File -->
     <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <exclude name="org/apache/naming/**" />
         <exclude name="**/connector/warp/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
@@ -694,7 +702,7 @@
 
     <!-- Naming - Common JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-common.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/naming/*" />
         <include name="org/apache/naming/factory/Constants.class" />
         <include name="org/apache/naming/java/*" />
@@ -703,8 +711,8 @@
     </jar>
 
     <!-- Naming - Factory JAR File -->
-    <jar jarfile="${catalina.deploy}/lib/naming-factory.jar">
-      <fileset dir="${catalina.build}/classes">
+    <jar jarfile="${catalina.deploy}/shared/lib/naming-factory.jar">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/naming/factory/**" />
         <exclude name="org/apache/naming/factory/Constants.class" />
       </fileset>
@@ -712,14 +720,14 @@
 
     <!-- Naming - Resources JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/naming/resources/*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Common Files -->
     <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/Constants.class" />
         <include name="org/apache/catalina/servlets/*.properties" />
       </fileset>
@@ -727,42 +735,42 @@
 
     <!-- Servlets - CGI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-cgi.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/CGI*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Default File-Serving Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-default.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/Default*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Invoker Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-invoker.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/Invoker*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Manager Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-manager.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/*Manager*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Snoop Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-snoop.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/Snoop*" />
       </fileset>
     </jar>
 
     <!-- Servlets - SSI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/Ssi*" />
         <include name="org/apache/catalina/util/ssi/**" />
       </fileset>
@@ -770,14 +778,14 @@
 
     <!-- Servlets - Webdav Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-webdav.jar">
-      <fileset dir="${catalina.build}/classes">
+      <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/Webdav*" />
       </fileset>
     </jar>
 
     <!-- WARP Connector JAR File -->
     <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
-          basedir="${catalina.build}/classes" 
+          basedir="${catalina.build}/server/classes" 
           includes="**/connector/warp/**" />
 
   </target>
@@ -800,6 +808,10 @@
     <chmod perm="+x" file="${catalina.dist}/bin/shutdown.sh"/>
 
     <!-- Common Extensions -->    
+    <mkdir dir="${catalina.dist}/common/classes"/>
+    <copy todir="${catalina.dist}/common/classes">
+      <fileset dir="${catalina.build}/common/classes" />
+    </copy>
     <mkdir dir="${catalina.dist}/common/lib"/>
     <copy todir="${catalina.dist}/common/lib">
       <fileset dir="${catalina.build}/common/lib" />
@@ -811,16 +823,24 @@
       <fileset dir="${catalina.build}/conf" />
     </copy>
 
-    <!-- Shared Extensions -->
-    <mkdir dir="${catalina.dist}/lib"/>
-    <copy todir="${catalina.dist}/lib">
-      <fileset dir="${catalina.build}/lib" />
-    </copy>
-
     <!-- Server Components -->
+    <mkdir dir="${catalina.dist}/server/classes"/>
+    <copy todir="${catalina.dist}/server/classes">
+      <fileset dir="${catalina.build}/server/classes" />
+    </copy>
     <mkdir dir="${catalina.dist}/server/lib"/>
     <copy todir="${catalina.dist}/server/lib">
       <fileset dir="${catalina.build}/server/lib" />
+    </copy>
+
+    <!-- Shared Extensions -->
+    <mkdir dir="${catalina.dist}/shared/classes"/>
+    <copy todir="${catalina.dist}/shared/classes">
+      <fileset dir="${catalina.build}/shared/classes" />
+    </copy>
+    <mkdir dir="${catalina.dist}/shared/lib"/>
+    <copy todir="${catalina.dist}/shared/lib">
+      <fileset dir="${catalina.build}/shared/lib" />
     </copy>
 
   </target>

@@ -34,8 +34,8 @@
     <copy todir="${tester.build}/bin">
       <fileset dir="src/bin" />
     </copy>
-    <fixcrlf srcdir="${tester.build}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${tester.build}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${tester.build}/bin" includes="*.sh"  eol="lf"/>
+    <fixcrlf srcdir="${tester.build}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${tester.build}/bin/tester.sh"/>
 
     <!-- Compiled Classes -->
@@ -142,21 +142,21 @@
     <copy todir="${tester.deploy}/bin">
       <fileset dir="${tester.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${tester.deploy}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${tester.deploy}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${tester.deploy}/bin" includes="*.sh"  eol="lf"/>
+    <fixcrlf srcdir="${tester.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${tester.deploy}/bin/tester.sh"/>
 
     <!-- Unpacked Shared Classes -->
-    <mkdir   dir="${tester.deploy}/classes"/>
-    <copy  todir="${tester.deploy}/classes">
+    <mkdir   dir="${tester.deploy}/shared/classes"/>
+    <copy  todir="${tester.deploy}/shared/classes">
       <fileset dir="${tester.build}/classes">
         <include name="**/unpshared/*"/>
       </fileset>
     </copy>
 
     <!-- Shared Library -->
-    <mkdir   dir="${tester.deploy}/lib"/>
-    <jar jarfile="${tester.deploy}/lib/tester-shared.jar">
+    <mkdir   dir="${tester.deploy}/shared/lib"/>
+    <jar jarfile="${tester.deploy}/shared/lib/tester-shared.jar">
       <fileset dir="${tester.build}/classes">
         <include name="**/shared/*"/>
       </fileset>
@@ -192,8 +192,8 @@
     <copy todir="${tester.dist}/bin">
       <fileset dir="${tester.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${tester.dist}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${tester.dist}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${tester.dist}/bin" includes="*.sh"  eol="lf"/>
+    <fixcrlf srcdir="${tester.dist}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${tester.dist}/bin/tester.sh"/>
 
     <mkdir   dir="${tester.dist}/webapps"/>
