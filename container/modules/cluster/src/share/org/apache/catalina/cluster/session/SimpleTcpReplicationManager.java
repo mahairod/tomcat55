@@ -140,7 +140,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
 
     protected String name;
 
-    protected int debug = 10;
+    protected int debug = 0;
 
     protected boolean distributable = true;
 
