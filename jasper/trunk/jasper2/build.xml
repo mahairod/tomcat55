@@ -178,7 +178,8 @@
      version="true"
      windowtitle="Jasper Internal API Documentation"
      doctitle="Jasper API"
-     bottom="Copyright &#169; 2000 Apache Software Foundation.  All Rights Reserved."
+     bottom="Copyright &#169; 2000-2004 Apache Software Foundation.  All Rights Reserved."
+     additionalparam="-breakiterator"
     />
   </target>
 

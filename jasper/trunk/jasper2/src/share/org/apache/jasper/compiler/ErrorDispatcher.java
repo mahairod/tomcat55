@@ -501,7 +501,7 @@ public class ErrorDispatcher {
      * @param page
      * @param errMsgBuf
      * @param lineNum
-     * @return
+     * @return JavacErrorDetail The error details
      * @throws JasperException
      */
     public static JavacErrorDetail createJavacError(String fname, Node.Nodes page, 
