@@ -278,12 +278,20 @@ public class CoyoteRequestFacade
 
 
     public String[] getParameterValues(String name) {
+        String[] ret = null;
+
         if (System.getSecurityManager() != null){
-            return (String[]) AccessController.doPrivileged(
+            ret = (String[]) AccessController.doPrivileged(
                 new GetParameterValuePrivilegedAction(name));
         } else {
-            return request.getParameterValues(name);
+            ret = request.getParameterValues(name);
         }
+
+        if (ret != null) {
+            ret = (String[]) ret.clone();
+	}
+
+        return ret;
     }
 
 
@@ -389,12 +397,20 @@ public class CoyoteRequestFacade
 
 
     public Cookie[] getCookies() {
+        Cookie[] ret = null;
+
         if (System.getSecurityManager() != null){
-            return (Cookie[])AccessController.doPrivileged(
+            ret = (Cookie[])AccessController.doPrivileged(
                 new GetCookiesPrivilegedAction());
         } else {
-            return request.getCookies();
-        }        
+            ret = request.getCookies();
+        }
+
+        if (ret != null) {
+            ret = (Cookie[]) ret.clone();
+        }
+
+        return ret;  
     }
 
 
