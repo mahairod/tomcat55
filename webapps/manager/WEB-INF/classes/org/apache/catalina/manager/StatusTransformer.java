@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.tomcat.util.compat.JdkCompat;
 
 import javax.management.MBeanServer;
@@ -404,7 +405,7 @@ public class StatusTransformer {
                         (pName, "currentQueryString");
                     if ((queryString != null) && (!queryString.equals(""))) {
                         writer.write("?");
-                        writer.print(queryString);
+                        writer.print(RequestUtil.filter(queryString));
                     }
                     writer.write(" ");
                     writer.write(filter(mBeanServer.getAttribute
@@ -459,7 +460,7 @@ public class StatusTransformer {
                         (pName, "currentQueryString");
                     if ((queryString != null) && (!queryString.equals(""))) {
                         writer.write(" currentQueryString=\"" 
-                                     + queryString + "\"");
+                                     + RequestUtil.filter(queryString) + "\"");
                     } else {
                         writer.write(" currentQueryString=\"&#63;\"");
                     }
