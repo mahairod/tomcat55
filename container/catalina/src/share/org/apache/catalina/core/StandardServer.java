@@ -863,7 +863,7 @@ public final class StandardServer
             // Open an output writer for the new configuration file
             PrintWriter writer = null;
             try {
-                writer = new PrintWriter(new FileWriter(config));
+                writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(config), "UTF8"));
             } catch (IOException e) {
                 if (writer != null) {
                     try {
@@ -874,7 +874,8 @@ public final class StandardServer
                 }
                 throw (e);
             }
-
+            
+            writer.println("<?xml version='1.0' encoding='utf-8'?>");
             writer.print("<Context");
             storeAttributes(writer, context);
             writer.println(">");
@@ -1202,7 +1203,7 @@ public final class StandardServer
             // Open an output writer for the new configuration file
             writer = null;
             try {
-                writer = new PrintWriter(new FileWriter(config));
+                writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(config), "UTF8"));
             } catch (IOException e) {
                 if (writer != null) {
                     try {
@@ -1214,6 +1215,7 @@ public final class StandardServer
                 throw (e);
             }
 
+            writer.println("<?xml version='1.0' encoding='utf-8'?>");
             indent = 0;
 
         }
@@ -1222,6 +1224,7 @@ public final class StandardServer
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
+        
         writer.print("<Context");
         storeAttributes(writer, context);
         writer.println(">");
