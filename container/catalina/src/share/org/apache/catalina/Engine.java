@@ -92,30 +92,4 @@ public interface Engine extends Container {
     public void setService(Service service);
 
 
-    /**
-     * Set the DefaultContext
-     * for new web applications.
-     *
-     * @param defaultContext The new DefaultContext
-     */
-    public void addDefaultContext(DefaultContext defaultContext);
-
-
-    /**
-     * Retrieve the DefaultContext for new web applications.
-     */
-    public DefaultContext getDefaultContext();
-    
-    
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Import the DefaultContext config into a web application context.
-     *
-     * @param context web application context to import default context
-     */
-    public void importDefaultContext(Context context);
-
-
 }

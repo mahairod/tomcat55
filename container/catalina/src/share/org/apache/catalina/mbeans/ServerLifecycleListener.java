@@ -25,7 +25,6 @@ import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
@@ -270,7 +269,7 @@ public class ServerLifecycleListener
             } catch (Exception e) {
                 log.error("Exception handling Container property change", e);
             }
-        } else if (event.getSource() instanceof DefaultContext) {
+        }/* else if (event.getSource() instanceof DefaultContext) {
             try {
                 processDefaultContextPropertyChange
                     ((DefaultContext) event.getSource(),
@@ -280,7 +279,7 @@ public class ServerLifecycleListener
             } catch (Exception e) {
                 log.error("Exception handling DefaultContext property change", e);
             }
-        } else if (event.getSource() instanceof NamingResources) {
+        }*/ else if (event.getSource() instanceof NamingResources) {
             try {
                 processNamingResourcesPropertyChange
                     ((NamingResources) event.getSource(),
@@ -482,6 +481,7 @@ public class ServerLifecycleListener
      *
      * @exception Exception if an exception is thrown during MBean creation
      */
+    /*
     protected void createMBeans(DefaultContext dcontext) throws Exception {
 
         // Create the MBean for the DefaultContext itself
@@ -511,6 +511,7 @@ public class ServerLifecycleListener
         createMBeans(resources);
 
     }
+    */
 
 
     /**
@@ -544,13 +545,6 @@ public class ServerLifecycleListener
         Container hosts[] = engine.findChildren();
         for (int j = 0; j < hosts.length; j++) {
             createMBeans((Host) hosts[j]);
-        }
-
-        // Create the MBeans for DefaultContext
-        DefaultContext dcontext = engine.getDefaultContext();
-        if (dcontext != null) {
-            dcontext.setParent(engine);
-            createMBeans(dcontext);
         }
 
     }
@@ -588,13 +582,6 @@ public class ServerLifecycleListener
         Container contexts[] = host.findChildren();
         for (int k = 0; k < contexts.length; k++) {
             createMBeans((Context) contexts[k]);
-        }
-
-        // Create the MBeans for DefaultContext
-        DefaultContext dcontext = host.getDefaultContext();
-        if (dcontext != null) {
-            dcontext.setParent(host);
-            createMBeans(dcontext);
         }
 
     }
@@ -863,6 +850,7 @@ public class ServerLifecycleListener
      *
      * @exception Exception if an exception is thrown during MBean destruction
      */
+    /*
     protected void destroyMBeans(DefaultContext dcontext) throws Exception {
 
         Manager dManager = dcontext.getManager();
@@ -892,6 +880,7 @@ public class ServerLifecycleListener
         dcontext.removePropertyChangeListener(this);
 
     }
+    */
 
 
     /**
@@ -1137,20 +1126,7 @@ public class ServerLifecycleListener
                 ",oldValue=" + oldValue +
                 ",newValue=" + newValue + "]");
         }
-        if ("defaultContext".equals(propertyName)) {
-            if (oldValue != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Removing MBean for DefaultContext " + oldValue);
-                }
-                destroyMBeans((DefaultContext) oldValue);
-            }
-            if (newValue != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Creating MBean for DefaultContext " + newValue);
-                }
-                createMBeans((DefaultContext) newValue);
-            }
-        } else if ("loader".equals(propertyName)) {
+        if ("loader".equals(propertyName)) {
             if (oldValue != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Removing MBean for Loader " + oldValue);
@@ -1224,6 +1200,7 @@ public class ServerLifecycleListener
      *
      * @exception Exception if an exception is thrown
      */
+    /*
     protected void processDefaultContextPropertyChange(DefaultContext defaultContext,
                                                   String propertyName,
                                                   Object oldValue,
@@ -1297,7 +1274,7 @@ public class ServerLifecycleListener
             }
         }
 
-    }
+    }*/
 
 
     /**

@@ -23,7 +23,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 
-import org.apache.catalina.core.StandardDefaultContext;
+import org.apache.catalina.Context;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
@@ -96,7 +96,7 @@ public class DefaultContextMBean extends BaseModelMBean {
      */
     private NamingResources getNamingResources() {
         
-        return ((StandardDefaultContext)this.resource).getNamingResources();
+        return ((Context)this.resource).getNamingResources();
     
     }
     

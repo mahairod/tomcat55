@@ -30,7 +30,6 @@ import javax.management.modelmbean.ModelMBean;
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Group;
 import org.apache.catalina.Host;
@@ -300,6 +299,8 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
+    // FIXME
+    /*
     static ModelMBean createMBean(DefaultContext context)
         throws Exception {
 
@@ -321,6 +322,7 @@ public class MBeanUtils {
         return (mbean);
 
     }
+    */
 
 
     /**
@@ -859,7 +861,7 @@ public class MBeanUtils {
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
                         ",name=" + environment.getName());
-        } else if (container instanceof DefaultContext) {
+        }/* else if (container instanceof DefaultContext) {
             container = ((DefaultContext)container).getParent();
             if (container instanceof Host) {
                 Host host = (Host) container;
@@ -873,7 +875,7 @@ public class MBeanUtils {
                 name = new ObjectName(domain + ":type=Environment" + 
                         ",resourcetype=ServiceDefaultContext,name=" + environment.getName());
             }
-        }
+        }*/
         
         return (name);
 
@@ -913,7 +915,7 @@ public class MBeanUtils {
                         ",host=" + host.getName() +
                         ",class=" + resource.getType() +
                         ",name=" + quotedResourceName);
-        } else if (container instanceof DefaultContext) {            
+        }/* else if (container instanceof DefaultContext) {            
             container = ((DefaultContext)container).getParent();
             if (container instanceof Host) {
                 Host host = (Host) container;
@@ -929,7 +931,7 @@ public class MBeanUtils {
                         ",resourcetype=ServiceDefaultContext,class=" + resource.getType() +
                         ",name=" + quotedResourceName);
             }
-        }
+        }*/
         
         return (name);
 
@@ -969,7 +971,7 @@ public class MBeanUtils {
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
                         ",name=" + quotedResourceLinkName);
-        } else if (container instanceof DefaultContext) {            
+        }/* else if (container instanceof DefaultContext) {            
             container = ((DefaultContext)container).getParent();
             if (container instanceof Host) {
                 Host host = (Host) container;
@@ -983,7 +985,7 @@ public class MBeanUtils {
                 name = new ObjectName(domain + ":type=ResourceLink" + 
                         ",resourcetype=ServiceDefaultContext,name=" + quotedResourceLinkName);
             }
-        }
+        }*/
         
         return (name);
 
@@ -999,6 +1001,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
+    /*
     static ObjectName createObjectName(String domain,
                                               DefaultContext context)
         throws MalformedObjectNameException {
@@ -1019,6 +1022,7 @@ public class MBeanUtils {
         return (name);
 
     }
+    */
 
     /**
      * Create an <code>ObjectName</code> for this
@@ -1119,7 +1123,7 @@ public class MBeanUtils {
             Service service = engine.getService();
             name = new ObjectName(domain + ":type=Loader,path=" + path +
                               ",host=" + host.getName());
-        } else if (container == null) {
+        }/* else if (container == null) {
             // What is that ???
             DefaultContext defaultContext = loader.getDefaultContext();
             if (defaultContext != null) {
@@ -1134,7 +1138,7 @@ public class MBeanUtils {
                             parent.getName());
                 }
             }
-        }
+        }*/
 
         return (name);
 
@@ -1175,7 +1179,7 @@ public class MBeanUtils {
             Service service = engine.getService();
             name = new ObjectName(domain + ":type=Manager,path=" + path +
                               ",host=" + host.getName());
-        } else if (container == null) {
+        }/* else if (container == null) {
             DefaultContext defaultContext = manager.getDefaultContext();
             if (defaultContext != null) {
                 Container parent = defaultContext.getParent();
@@ -1189,7 +1193,7 @@ public class MBeanUtils {
                             parent.getName());
                 }
             }
-        }
+        }*/
 
         return (name);
 
@@ -1224,7 +1228,7 @@ public class MBeanUtils {
             name = new ObjectName(domain + ":type=NamingResources" + 
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName());
-        } else if (container instanceof DefaultContext) {
+        }/* else if (container instanceof DefaultContext) {
             container = ((DefaultContext)container).getParent();
             if (container instanceof Host) {
                 Host host = (Host) container;
@@ -1237,7 +1241,7 @@ public class MBeanUtils {
                 name = new ObjectName(domain + ":type=NamingResources" + 
                         ",resourcetype=ServiceDefaultContext");
             }
-        }
+        }*/
         
         return (name);
 
@@ -1800,6 +1804,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
+    /*
     static void destroyMBean(DefaultContext context)
         throws Exception {
 
@@ -1816,6 +1821,7 @@ public class MBeanUtils {
             mserver.unregisterMBean(oname);
 
     }
+    */
 
 
     /**

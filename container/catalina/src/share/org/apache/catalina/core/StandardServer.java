@@ -43,7 +43,6 @@ import javax.naming.directory.DirContext;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
@@ -1283,154 +1282,6 @@ public final class StandardServer
 
 
     /**
-     * Store the specified DefaultContext properties.
-     *
-     * @param writer PrintWriter to which we are storing
-     * @param indent Number of spaces to indent this element
-     * @param dcontext  Object whose properties are being stored
-     *
-     * @exception Exception if an exception occurs while storing
-     */
-    private void storeDefaultContext(PrintWriter writer, int indent,
-                                     DefaultContext dcontext)
-        throws Exception {
-
-        // Store the beginning of this element
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }
-        writer.print("<DefaultContext");
-        storeAttributes(writer, dcontext);
-        writer.println(">");
-
-        // Store nested <InstanceListener> elements
-        String iListeners[] = dcontext.findInstanceListeners();
-        for (int i = 0; i < iListeners.length; i++) {
-            for (int j = 0; j < indent; j++) {
-                writer.print(' ');
-            }
-            writer.print("<InstanceListener>");
-            writer.print(iListeners[i]);
-            writer.println("</InstanceListener>");
-        }
-
-        // Store nested <Listener> elements
-        if (dcontext instanceof Lifecycle) {
-            LifecycleListener listeners[] =
-                ((Lifecycle) dcontext).findLifecycleListeners();
-            for (int i = 0; i < listeners.length; i++) {
-                if (listeners[i].getClass().getName().equals
-                    (SERVER_LISTENER_CLASS_NAME)) {
-                    continue;
-                }
-                storeListener(writer, indent + 2, listeners[i]);
-            }
-        }
-
-        // Store nested <Loader> element
-        Loader loader = dcontext.getLoader();
-        if (loader != null) {
-            storeLoader(writer, indent + 2, loader);
-        }
-
-        // Store nested <Logger> element
-        /* Nested logger not currently supported on DefaultContext
-        Logger logger = dcontext.getLogger();
-        if (logger != null) {
-            Logger parentLogger = null;
-            if (dcontext.getParent() != null) {
-                parentLogger = dcontext.getParent().getLogger();
-            }
-            if (logger != parentLogger) {
-                storeLogger(writer, indent + 2, logger);
-            }
-        }
-        */
-
-        // Store nested <Manager> element
-        Manager manager = dcontext.getManager();
-        if (manager != null) {
-            storeManager(writer, indent + 2, manager);
-        }
-
-        // Store nested <Parameter> elements
-        ApplicationParameter[] appParams =
-            dcontext.findApplicationParameters();
-        for (int i = 0; i < appParams.length; i++) {
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<Parameter");
-            storeAttributes(writer, false, appParams[i]);
-            writer.println("/>");
-        }
-
-        // Store nested <Realm> element
-        /* Nested realm not currently supported on DefaultContext
-        Realm realm = dcontext.getRealm();
-        if (realm != null) {
-            Realm parentRealm = null;
-            if (dcontext.getParent() != null) {
-                parentRealm = dcontext.getParent().getRealm();
-            }
-            if (realm != parentRealm) {
-                storeRealm(writer, indent + 2, realm);
-            }
-        }
-        */
-
-        // Store nested <Resources> element
-        DirContext resources = dcontext.getResources();
-        if (resources != null) {
-            storeResources(writer, indent + 2, resources);
-        }
-
-        // Store nested <Valve> elements
-        if (dcontext instanceof Pipeline) {
-            Valve valves[] = ((Pipeline) dcontext).getValves();
-            for (int i = 0; i < valves.length; i++) {
-                storeValve(writer, indent + 2, valves[i]);
-            }
-        }
-
-        // Store nested <WrapperLifecycle> elements
-        String wLifecycles[] = dcontext.findWrapperLifecycles();
-        for (int i = 0; i < wLifecycles.length; i++) {
-            for (int j = 0; j < indent; j++) {
-                writer.print(' ');
-            }
-            writer.print("<WrapperLifecycle>");
-            writer.print(wLifecycles[i]);
-            writer.println("</WrapperLifecycle>");
-        }
-
-        // Store nested <WrapperListener> elements
-        String wListeners[] = dcontext.findWrapperListeners();
-        for (int i = 0; i < wListeners.length; i++) {
-            for (int j = 0; j < indent; j++) {
-                writer.print(' ');
-            }
-            writer.print("<WrapperListener>");
-            writer.print(wListeners[i]);
-            writer.println("</WrapperListener>");
-        }
-
-        // Store nested naming resources elements
-        NamingResources nresources = dcontext.getNamingResources();
-        if (nresources != null) {
-            storeNamingResources(writer, indent + 2, nresources);
-        }
-
-        // Store the ending of this element
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }
-        writer.println("</DefaultContext>");
-
-    }
-
-
-    /**
      * Store the specified Engine properties.
      *
      * @param writer PrintWriter to which we are storing
@@ -1449,15 +1300,6 @@ public final class StandardServer
         writer.print("<Engine");
         storeAttributes(writer, engine);
         writer.println(">");
-
-        // Store nested <DefaultContext> element
-        if (engine instanceof StandardEngine) {
-            DefaultContext dcontext =
-                ((StandardEngine) engine).getDefaultContext();
-            if (dcontext != null) {
-                storeDefaultContext(writer, indent + 2, dcontext);
-            }
-        }
 
         // Store nested <Host> elements (or other relevant containers)
         Container children[] = engine.findChildren();
@@ -1556,23 +1398,6 @@ public final class StandardServer
                 storeEngine(writer, indent + 2, (Engine) children[i]);
             } else if (children[i] instanceof Host) {
                 storeHost(writer, indent + 2, (Host) children[i]);
-            }
-        }
-
-        // Store nested <DefaultContext> element
-        if (host instanceof StandardHost) {
-            DefaultContext dcontext =
-                ((StandardHost) host).getDefaultContext();
-            if (dcontext != null) {
-                Container parent = host.getParent();
-                if ((parent != null) &&
-                    (parent instanceof StandardEngine)) {
-                    DefaultContext pcontext =
-                        ((StandardEngine) parent).getDefaultContext();
-                    if (dcontext != pcontext) {
-                        storeDefaultContext(writer, indent + 2, dcontext);
-                    }
-                }
             }
         }
 
