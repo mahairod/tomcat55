@@ -116,10 +116,6 @@ public class Zip extends Task {
         }
     }
     
-    public void setManifest(String manifestFilename) {
-    manifest = project.resolveFile(manifestFilename);
-    }
-
     public void execute() throws BuildException {
         project.log("Building zip: " + zipFile.getAbsolutePath());
     
@@ -141,7 +137,7 @@ public class Zip extends Task {
                         zipFile(f, zOut, s);
                     }
                 } else {
-                    project.log("Ignored: " + s);
+                    project.log("Zip Ignored: " + s, Project.MSG_WARN);
                 }
             }
     
@@ -168,7 +164,7 @@ public class Zip extends Task {
                     zipFile(file, zOut, vPath + f);
                 }
             } else {
-                project.log("Ignored: " + f);
+                project.log("Zip Ignored: " + f, Project.MSG_WARN);
             }
         }
     }
@@ -195,7 +191,6 @@ public class Zip extends Task {
         fIn.close();
     }
 }
-
 
 
 
