@@ -149,10 +149,13 @@
         lot better (remm)
       </update>
       <update>
-        <bug>33857</bug>: Update information on automatic mod_jk configuration in Apache-HowTo. (yoavs)
+        <bug>33857</bug>: Update information on automatic mod_jk configuration in Apache-HowTo (yoavs)
       </update>
       <fix>
         Fix sync block placement in Mapper.addContext (remm)
+      </fix>
+      <fix>
+        <bug>32741</bug>: Fix spelling of "committed" [patch from Ben Souther] (yoavs)
       </fix>
      </changelog>
    </subsection>
