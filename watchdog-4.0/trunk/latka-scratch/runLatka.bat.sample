@@ -1,1 +1,0 @@
-java -classpath "build/classes;/cvs/jakarta/jakarta-commons/latka/target/jakarta-commons-latka-1.0-dev.jar;/lib/maven-repo/log4j.jar;src/resources;/lib/maven-repo/jdom.jar;/lib/maven-repo/jakarta-regexp.jar;/lib/maven-repo/commons-httpclient.jar" org.apache.watchdog.Watchdog
