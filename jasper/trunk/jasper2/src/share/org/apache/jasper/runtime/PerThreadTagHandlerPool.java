@@ -98,7 +98,7 @@ public class PerThreadTagHandlerPool extends TagHandlerPool {
     }
 
     protected void init(Servlet servlet) {
-        String maxSizeS=TagHandlerPool.getOption(servlet, OPTION_MAXSIZE, null);
+        String maxSizeS=TagHandlerPool.getOption(servlet.getServletConfig(), OPTION_MAXSIZE, null);
         maxSize=Integer.parseInt(maxSizeS);
         if( maxSize <0  ) {
             maxSize=MAX_SIZE;

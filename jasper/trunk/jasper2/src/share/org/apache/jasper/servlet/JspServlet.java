@@ -124,10 +124,10 @@ public class JspServlet extends HttpServlet {
         // Initialize the JSP Runtime Context
         rctxt = new JspRuntimeContext(context,options);
 
-	if (log.isInfoEnabled()) {
-	    log.info(Localizer.getMessage("jsp.message.scratch.dir.is", 
+	if (log.isDebugEnabled()) {
+	    log.debug(Localizer.getMessage("jsp.message.scratch.dir.is",
 					  options.getScratchDir().toString()));
-	    log.info(Localizer.getMessage("jsp.message.dont.modify.servlets"));
+	    log.debug(Localizer.getMessage("jsp.message.dont.modify.servlets"));
 	}
     }
 
