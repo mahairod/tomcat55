@@ -586,8 +586,8 @@ public class StatusTransformer {
             }
 
             ObjectName queryJspMonitor = new ObjectName
-                (objectName.getDomain() + ":type=JspMonitor,path=" + contextName 
-                 + ",host=" + hostName + ",*");
+                (objectName.getDomain() + ":type=JspMonitor,WebModule=" +
+                 webModuleName + ",*");
             Set jspMonitorsON = mBeanServer.queryNames(queryJspMonitor, null);
             ObjectName jspMonitorON = null;
             iterator2 = jspMonitorsON.iterator();
@@ -682,8 +682,7 @@ public class StatusTransformer {
         if (mode == 0) {
             writer.print("<br>");
             writer.print(" JSPs loaded: ");
-            writer.print(mBeanServer.getAttribute
-                         (objectName, "jspCount"));
+            writer.print(mBeanServer.getAttribute(objectName, "jspCount"));
         } else if (mode == 1) {
             // for now we don't write out anything
         }
