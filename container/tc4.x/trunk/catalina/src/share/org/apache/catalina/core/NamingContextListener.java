@@ -306,7 +306,7 @@ public class NamingContextListener
                         (container, container, 
                          ((Container) container).getLoader().getClassLoader());
             } catch (NamingException e) {
-                log(sm.getString("naming.namingContextBindingFailed", e));
+                log(sm.getString("naming.bindFailed", e));
             }
 
             if (container instanceof Server) {
