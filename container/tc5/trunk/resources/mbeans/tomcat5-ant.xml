@@ -145,8 +145,12 @@
   <target name="run" depends="init,jmx-console"
         description="Start tomcat as an mbean, no server.xml">
 
+    <property name="catalina.useNaming" value="false" />
+
+<!--
     <modelerRegistry resource="org/apache/catalina/mbeans/mbeans-descriptors.xml" />
     <modelerRegistry resource="org/apache/catalina/loader/mbeans-descriptors.xml" />
+-->
     <mkdir dir="${tomcat.home}/work/${domain}/" />
 
     <jmx-service>
@@ -166,7 +170,6 @@
          <attribute name="name" value="Tomcat-Standalone"/>
        </mbean>
 
-
        <mbean name="${domain}:type=Engine" 
               code="org.apache.catalina.core.StandardEngine"
               modeler="true">
@@ -180,60 +183,38 @@
               code="org.apache.catalina.realm.JAASRealm" modeler="true">
        </mbean>
 -->
+
        <mbean name="${domain}:type=Realm" 
               code="org.apache.catalina.realm.MemoryRealm" modeler="true">
          <attribute name="pathname"
                     value="${tomcat.home}/conf/tomcat-users.xml" />
        </mbean>
 
-<!--
-       <mbean name="${domain}:type=Connector,port=9009" 
-              code="org.apache.coyote.tomcat5.CoyoteConnector"
-              modeler="true">
-         <attribute name="protocolHandlerClassName"
-                    value="org.apache.jk.server.JkCoyoteHandler" />
-       </mbean>
--->
-
-       <mbean name="${domain}:type=Channel,name=ChannelUn" 
-              code="org.apache.jk.common.ChannelUn"
-              modeler="true">
-          <attribute name="file" value="${tomcat.home}/work/${domain}/jk2.channel" />
-       </mbean>
-
-
        <mbean name="${domain}:type=Connector,port=9080" 
-              code="org.apache.coyote.tomcat5.CoyoteConnector"
+              code="org.apache.catalina.connector.Connector"
               modeler="true">
           <attribute name="port" value="9080" />
        </mbean>
 
 
-<!--
-       <mbean name="${domain}:type=DefaultContext,host=localhost,service=Tomcat-Standalone" 
-              code="org.apache.catalina.core.StandardDefaultContext"
-              modeler="true">
-       </mbean>
--->
+<!-- Optional: when the context is created it'll create a host if none is found. -->
+<!-- Setting appBase will make use of auto deployment. Regular deployment can be used using
+     static declarations of MBeans for each of the individual contexts -->
 
-
-<!-- Optional: when the context is created it'll create a host if none is found.
--->
        <mbean name="${domain}:type=Host,host=localhost" 
               code="org.apache.catalina.core.StandardHost" modeler="true">
          <attribute name="name" value="localhost"/>
+         <attribute name="appBase" value="webapps"/>
        </mbean>
 
-
+       <!-- 
        <mbean name="${jsr77Domain}:j2eeType=WebModule,name=//localhost/,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
          <attribute name="docBase" value="${tomcat.webapps}/ROOT" />
-         <!-- Required for now -->
          <attribute name="privileged" value="true" />
          <attribute name="engineName" value="${domain}" />
        </mbean>
 
-<!-- 
        <mbean name="${jsr77Domain}:j2eeType=WebModule,name=//localhost/servlets-examples,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
          <attribute name="docBase" value="${tomcat.webapps}/servlets-examples" />
@@ -254,7 +235,6 @@
          <attribute name="privileged" value="true" />
          <attribute name="engineName" value="${domain}" />
        </mbean>
--->
 
        <mbean name="${jsr77Domain}:j2eeType=WebModule,name=//localhost/manager,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
@@ -262,22 +242,23 @@
          <attribute name="engineName" value="${domain}" />
          <attribute name="privileged" value="true" />
        </mbean>
+       -->
 
-       <!-- The realm must be declared after the web module (for now). -->
+       <!-- The realm must be declared after the web module (for now).
        <mbean name="${domain}:type=Realm,host=localhost,path=manager" 
               code="org.apache.catalina.realm.MemoryRealm" modeler="true">
          <attribute name="pathname"
                     value="${tomcat.home}/conf/tomcat-users.xml" />
        </mbean>
+       -->
 
-
-<!--
+       <!--
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/admin,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
          <attribute name="docBase" value="${tomcat.webapps}/admin" />
          <attribute name="privileged" value="true" />
        </mbean>
--->
+       -->
 
     </jmx-service>
   </target>
