@@ -109,10 +109,11 @@ public class GetPropertyGenerator
 	    } else {
                 // Get the class name and then introspect at runtime.
 		writer.println("out.print(" +
-			       Constants.JSP_RUNTIME_PACKAGE +
-			       ".JspRuntimeLibrary.toString(JspRuntimeLibrary." +
+			       Constants.JSP_RUNTIME_PACKAGE + ".JspRuntimeLibrary.toString(" +
+			       Constants.JSP_RUNTIME_PACKAGE + ".JspRuntimeLibrary." +
 			       "handleGetProperty(pageContext.findAttribute(" +
-			       "\"" + name + "\"), \"" + property + "\")));");
+			       "\"" + name + "\"), \"" + property + "\")));"
+	        );
 	    }
     }
     
