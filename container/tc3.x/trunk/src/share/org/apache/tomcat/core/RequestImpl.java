@@ -441,7 +441,7 @@ public class RequestImpl  implements Request {
 	    return null;
 
 	// no session exists, create flag
-	serverSession =sM.createSession( );
+	serverSession =sM.getNewSession( );
 	reqSessionId = serverSession.getId();
 
 	// XXX XXX will be changed - post-request Interceptors
