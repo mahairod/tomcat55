@@ -266,6 +266,94 @@ public class StandardHostDeployer implements Deployer {
 
 
     /**
+     * Install a new web application, whose web application archive is at the
+     * specified URL, into this container with the specified context path.
+     * A context path of "" (the empty string) should be used for the root
+     * application for this container.  Otherwise, the context path must
+     * start with a slash.
+     * <p>
+     * If this application is successfully installed, a ContainerEvent of type
+     * <code>PRE_INSTALL_EVENT</code> will be sent to registered listeners
+     * before the associated Context is started, and a ContainerEvent of type
+     * <code>INSTALL_EVENT</code> will be sent to all registered listeners
+     * after the associated Context is started, with the newly created
+     * <code>Context</code> as an argument.
+     *
+     * @param contextPath The context path to which this application should
+     *  be installed (must be unique)
+     * @param war A URL of type "jar:" that points to a WAR file, or type
+     *  "file:" that points to an unpacked directory structure containing
+     *  the web application to be installed
+     * @param configFile The path to a file to save the Context information.
+     *  If configFile is null, the Context information is saved in server.xml;
+     *  if it is NOT null, the Context information is saved in configFile.
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalStateException if the specified context path
+     *  is already attached to an existing web application
+     * @exception IOException if an input/output error was encountered
+     *  during installation
+     */
+    public synchronized void install(String contextPath, URL war,
+        String configFile) throws IOException {
+
+        // Validate the format and state of our arguments
+        if (contextPath == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathRequired"));
+        if (!contextPath.equals("") && !contextPath.startsWith("/"))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathFormat", contextPath));
+        if (findDeployedApp(contextPath) != null)
+            throw new IllegalStateException
+                (sm.getString("standardHost.pathUsed", contextPath));
+        if (war == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warRequired"));
+
+        // Calculate the document base for the new web application
+        host.log(sm.getString("standardHost.installing",
+                              contextPath, war.toString()));
+        String url = war.toString();
+        String docBase = null;
+        if (url.startsWith("jar:")) {
+            url = url.substring(4, url.length() - 2);
+        }
+        if (url.startsWith("file://"))
+            docBase = url.substring(7);
+        else if (url.startsWith("file:"))
+            docBase = url.substring(5);
+        else
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warURL", url));
+
+        // Install the new web application
+        try {
+            Class clazz = Class.forName(host.getContextClass());
+            Context context = (Context) clazz.newInstance();
+            context.setPath(contextPath);
+            context.setDocBase(docBase);
+            context.setConfigFile(configFile);
+            if (context instanceof Lifecycle) {
+                clazz = Class.forName(host.getConfigClass());
+                LifecycleListener listener =
+                    (LifecycleListener) clazz.newInstance();
+                ((Lifecycle) context).addLifecycleListener(listener);
+            }
+            host.fireContainerEvent(PRE_INSTALL_EVENT, context);
+            host.addChild(context);
+            host.fireContainerEvent(INSTALL_EVENT, context);
+        } catch (Exception e) {
+            host.log(sm.getString("standardHost.installError", contextPath),
+                     e);
+            throw new IOException(e.toString());
+        }
+
+    }
+
+
+    /**
      * <p>Install a new web application, whose context configuration file
      * (consisting of a <code>&lt;Context&gt;</code> element) and (optional)
      * web application archive are at the specified URLs.</p>

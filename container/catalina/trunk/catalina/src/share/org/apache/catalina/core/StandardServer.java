@@ -203,7 +203,7 @@ public final class StandardServer
     /**
      * ServerLifecycleListener classname.
      */
-    private static String SERVER_LISTENER_CLASS_NAME = 
+    private static String SERVER_LISTENER_CLASS_NAME =
         "org.apache.catalina.mbeans.ServerLifecycleListener";
 
 
@@ -382,7 +382,7 @@ public final class StandardServer
 
     /**
      * Set the global naming resources.
-     * 
+     *
      * @param namingResources The new global naming resources
      */
     public void setGlobalNamingResources
@@ -828,7 +828,7 @@ public final class StandardServer
             }
         }
             return(filtered.toString());
-    } 
+    }
 
 
     /**
@@ -1078,6 +1078,33 @@ public final class StandardServer
     private void storeContext(PrintWriter writer, int indent,
                               Context context) throws Exception {
 
+        String configFile = context.getConfigFile();
+
+        if (configFile != null) {
+
+            File config = new File(configFile);
+            if (!config.isAbsolute()) {
+                config = new File(System.getProperty("catalina.base"),
+                                        configFile);
+            }
+
+            // Open an output writer for the new configuration file
+            writer = null;
+            try {
+                writer = new PrintWriter(new FileWriter(config));
+            } catch (IOException e) {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (Throwable t) {
+                        ;
+                    }
+                }
+                throw (e);
+            }
+
+        }
+
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
@@ -1156,7 +1183,7 @@ public final class StandardServer
                 storeRealm(writer, indent + 2, realm);
             }
         }
-        
+
         // Store nested <Resources> element
         DirContext resources = context.getResources();
         if (resources != null) {
@@ -1204,6 +1231,21 @@ public final class StandardServer
             writer.print(' ');
         }
         writer.println("</Context>");
+
+        if (configFile != null) {
+
+             // Flush and close the output file
+            try {
+                 writer.flush();
+            } catch (Exception e) {
+                 throw (e);
+            }
+            try {
+                 writer.close();
+            } catch (Exception e) {
+                 throw (e);
+            }
+        }
 
     }
 
@@ -1304,7 +1346,7 @@ public final class StandardServer
             }
         }
         */
-        
+
         // Store nested <Resources> element
         DirContext resources = dcontext.getResources();
         if (resources != null) {
@@ -1474,7 +1516,7 @@ public final class StandardServer
 
     }
 
-    
+
     /**
      * Store the specified Host properties.
      *
@@ -1718,7 +1760,7 @@ public final class StandardServer
     private void storeNamingResources(PrintWriter writer, int indent,
                                       NamingResources resources)
         throws Exception {
-       
+
         // Store nested <Ejb> elements
         ContextEjb[] ejbs = resources.findEjbs();
         if (ejbs.length > 0) {
@@ -1731,7 +1773,7 @@ public final class StandardServer
                 writer.println("/>");
             }
         }
-                
+
         // Store nested <Environment> elements
         ContextEnvironment[] envs = resources.findEnvironments();
         if (envs.length > 0) {
@@ -1744,7 +1786,7 @@ public final class StandardServer
                 writer.println("/>");
             }
         }
-                
+
         // Store nested <LocalEjb> elements
         ContextLocalEjb[] lejbs = resources.findLocalEjbs();
         if (lejbs.length > 0) {
@@ -1757,7 +1799,7 @@ public final class StandardServer
                 writer.println("/>");
             }
         }
-                
+
         // Store nested <Resource> elements
         ContextResource[] dresources = resources.findResources();
         for (int i = 0; i < dresources.length; i++) {
@@ -1844,11 +1886,11 @@ public final class StandardServer
             writer.print("<ResourceLink");
             storeAttributes(writer, false, resourceLinks[i]);
             writer.println("/>");
-        }       
+        }
 
     }
-    
-    
+
+
     /**
      * Store the specified Realm properties.
      *
@@ -1946,7 +1988,7 @@ public final class StandardServer
             }
             writer.println("</GlobalNamingResources>");
         }
-        
+
         // Store nested <Service> elements
         Service services[] = server.findServices();
         for (int i = 0; i < services.length; i++) {
@@ -2137,7 +2179,7 @@ public final class StandardServer
 
 
     /**
-     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Get the lifecycle listeners associated with this lifecycle. If this
      * Lifecycle has no listeners registered, a zero-length array is returned.
      */
     public LifecycleListener[] findLifecycleListeners() {

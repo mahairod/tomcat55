@@ -214,6 +214,12 @@ public class StandardContext
 
 
     /**
+     * The path to a file to save this Context information.
+     */
+    private String configFile = null;
+
+
+    /**
      * The "correctly configured" flag for this Context.
      */
     private boolean configured = false;
@@ -378,7 +384,7 @@ public class StandardContext
      * Should the next call to <code>addWelcomeFile()</code> cause replacement
      * of any existing welcome files?  This will be set before processing the
      * web application's deployment descriptor, so that application specified
-     * choices <strong>replace</strong>, rather than append to, those defined 
+     * choices <strong>replace</strong>, rather than append to, those defined
      * in the global descriptor.
      */
     private boolean replaceWelcomeFiles = false;
@@ -616,6 +622,26 @@ public class StandardContext
         support.firePropertyChange("charsetMapper", oldCharsetMapper,
                                    this.charsetMapper);
 
+    }
+
+    /**
+     * Return the path to a file to save this Context information.
+     */
+    public String getConfigFile() {
+
+        return (this.configFile);
+
+    }
+
+
+    /**
+     * Set the path to a file to save this Context information.
+     *
+     * @param configFile The path to a file to save this Context information.
+     */
+    public void setConfigFile(String configFile) {
+
+        this.configFile = configFile;
     }
 
 
@@ -864,7 +890,7 @@ public class StandardContext
 
     /**
      * Set the naming resources for this web application.
-     * 
+     *
      * @param namingResources The new naming resources
      */
     public void setNamingResources(NamingResources namingResources) {
@@ -965,7 +991,7 @@ public class StandardContext
 
     /**
      * Set the privileged flag for this web application.
-     * 
+     *
      * @param privileged The new privileged flag
      */
     public void setPrivileged(boolean privileged) {
@@ -3342,9 +3368,9 @@ public class StandardContext
                 ok = false;
             }
             if (ok) {
-                DirContext dirContext = 
+                DirContext dirContext =
                     ((ProxyDirContext) resources).getDirContext();
-                if ((dirContext != null) 
+                if ((dirContext != null)
                     && (dirContext instanceof BaseDirContext)) {
                     ((BaseDirContext) dirContext).allocate();
                 }
@@ -3436,7 +3462,7 @@ public class StandardContext
                         ((Lifecycle) children[i]).start();
                 }
 
-                // Start the Valves in our pipeline (including the basic), 
+                // Start the Valves in our pipeline (including the basic),
                 // if any
                 if (pipeline instanceof Lifecycle)
                     ((Lifecycle) pipeline).start();
@@ -3579,7 +3605,7 @@ public class StandardContext
                 if (resources instanceof Lifecycle) {
                     ((Lifecycle) resources).stop();
                 } else if (resources instanceof ProxyDirContext) {
-                    DirContext dirContext = 
+                    DirContext dirContext =
                         ((ProxyDirContext) resources).getDirContext();
                     if (dirContext != null) {
                         if (debug >= 1) {
@@ -3719,12 +3745,12 @@ public class StandardContext
     /**
      * Bind current thread, both for CL purposes and for JNDI ENC support
      * during : startup, shutdown and realoading of the context.
-     * 
+     *
      * @return the previous context class loader
      */
     private ClassLoader bindThread() {
 
-        ClassLoader oldContextClassLoader = 
+        ClassLoader oldContextClassLoader =
             Thread.currentThread().getContextClassLoader();
 
         if (getResources() == null)
