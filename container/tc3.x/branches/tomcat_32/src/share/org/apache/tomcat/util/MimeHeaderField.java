@@ -336,26 +336,29 @@ public class MimeHeaderField {
 	return parseDate( value );
     }
 
-    long parseDate( MessageString value ) {
-	String dateString=value.toString();
-	Date date=null;
+    long parseDate( MessageString value )
+    {
+        String dateString=value.toString();
+        Date date=null;
         try {
-            date = DateTool.rfc1123Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-
-        try {
-	    date = DateTool.rfc1036Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-            date = DateTool.asctimeFormat.parse(dateString);
-	    return date.getTime();
-        } catch (ParseException pe) {
+            date = DateTool.rfc1123Parse(dateString);
+            return date.getTime();
+        } catch (ParseException e){
         }
-	String msg = sm.getString("httpDate.pe", dateString);
-	throw new IllegalArgumentException(msg);
+        try {
+            date = DateTool.rfc1036Parse(dateString);
+            return date.getTime();
+        } catch (ParseException e)
+        {
+        }
+        try {
+            date = DateTool.asctimeParse(dateString);
+            return date.getTime();
+        } catch (ParseException pe){
+        }
+
+        String msg = sm.getString("httpDate.pe", dateString);
+        throw new IllegalArgumentException(msg);
     }
 
     /**

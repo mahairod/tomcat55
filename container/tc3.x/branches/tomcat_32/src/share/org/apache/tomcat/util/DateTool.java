@@ -110,38 +110,67 @@ public class DateTool {
 
     /** DateFormat to be used to format dates
      */
-    public final static SimpleDateFormat rfc1123Format =
-	new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
+    private final static SimpleDateFormat rfc1123Format = new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
     
     /** DateFormat to be used to format old netscape cookies
      */
-    public final static SimpleDateFormat oldCookieFormat =
-	new SimpleDateFormat(OLD_COOKIE_PATTERN, LOCALE_US);
+    private final static SimpleDateFormat oldCookieFormat = new SimpleDateFormat(OLD_COOKIE_PATTERN, LOCALE_US);
     
-    public final static SimpleDateFormat rfc1036Format =
-	new SimpleDateFormat(rfc1036Pattern, LOCALE_US);
+    private final static SimpleDateFormat rfc1036Format = new SimpleDateFormat(rfc1036Pattern, LOCALE_US);
     
-    public final static SimpleDateFormat asctimeFormat =
-	new SimpleDateFormat(asctimePattern, LOCALE_US);
+    private final static SimpleDateFormat asctimeFormat = new SimpleDateFormat(asctimePattern, LOCALE_US);
     
     static {
-	rfc1123Format.setTimeZone(GMT_ZONE);
-	oldCookieFormat.setTimeZone(GMT_ZONE);
-	rfc1036Format.setTimeZone(GMT_ZONE);
-	asctimeFormat.setTimeZone(GMT_ZONE);
+        rfc1123Format.setTimeZone(GMT_ZONE);
+        oldCookieFormat.setTimeZone(GMT_ZONE);
+        rfc1036Format.setTimeZone(GMT_ZONE);
+        asctimeFormat.setTimeZone(GMT_ZONE);
     }
     
     private static String rfc1123DS;
     private static long   rfc1123Sec;
 
+
+    public static Date rfc1123Parse(String dateString) throws ParseException
+    {
+        synchronized(rfc1123Format){
+            return rfc1123Format.parse(dateString);
+        }
+    }
+
+    public static Date rfc1036Parse(String dateString) throws ParseException
+    {
+        synchronized(rfc1036Format){
+            return rfc1036Format.parse(dateString);
+        }
+    }
+
+    public static Date asctimeParse(String dateString) throws ParseException
+    {
+        synchronized(asctimeFormat){
+            return asctimeFormat.parse(dateString);
+        }
+    }
+
+    public static void formatOldCookie(Date d, StringBuffer buf)
+    {
+        synchronized(oldCookieFormat){
+            oldCookieFormat.format(d, buf, new FieldPosition(0));
+        }
+    }
+
     /**
      */
-    public static String format1123( Date d ) {
+    public static String format1123( Date d )
+    {
         long dt = d.getTime() % 1000;
         if ((rfc1123DS != null) && (dt == rfc1123Sec))
                 return rfc1123DS;
 
-        rfc1123DS  = rfc1123Format.format( d );
+        synchronized(rfc1123Format){
+            rfc1123DS  = rfc1123Format.format( d );
+        }
+
         rfc1123Sec = dt;
         return rfc1123DS;
     }
