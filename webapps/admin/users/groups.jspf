@@ -7,22 +7,23 @@
    cellspacing="0" cellpadding="0" width="100%">
     <tr class="header-row">
       <logic:present name="checkboxes">
-        <th scope="col" width="5%"><div align="left" class="table-header-text">
+        <td width="5%"><div align="left" class="table-header-text">
           &nbsp;
-        </th>
+        </td>
       </logic:present>
-      <th scope="col" width="20%"><div align="left" class="table-header-text">
+      <td width="20%"><div align="left" class="table-header-text">
         <bean:message key="users.list.groupname"/>
-      </div></th>
-      <th scope="col"><div align="left" class="table-header-text">
+      </div></td>
+      <td><div align="left" class="table-header-text">
         <bean:message key="users.list.description"/>
-      </div></th>
+      </div></td>
     </tr>
+    <logic:present name="groupsForm">
     <logic:iterate name="groupsForm" property="groups"
                      id="group" type="java.lang.String">
       <tr class="line-row">
         <logic:present name="checkboxes">
-          <td scope="row"><div align="center" class="table-normal-text">
+          <td><div align="center" class="table-normal-text">
             <logic:present name="userForm">
              <label for="groups"></label>
               <html:multibox property="groups" value="<%= group %>" styleId="groups"/>
@@ -34,7 +35,7 @@
             </logic:notPresent>
           </td>
         </logic:present>
-        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
+        <td><div align="left" class="table-normal-text">&nbsp;
           <html:link page='<%= "/users/setUpGroup.do?objectName=" + 
                                URLEncoder.encode(group) +
                                "&databaseName=" +
@@ -42,11 +43,12 @@
             <controls:attribute name="group" attribute="groupname"/>
           </html:link>
         </div></td>
-        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
+        <td><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="group" attribute="description"/>
         </div></td>
       </tr>
     </logic:iterate>
+    </logic:present>
   </table>
 
 </td></tr></table>
