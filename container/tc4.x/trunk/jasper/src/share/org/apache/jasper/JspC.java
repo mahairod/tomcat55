@@ -69,6 +69,7 @@ import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.TagLibraries;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.CommandLineCompiler;
+import org.apache.jasper.compiler.TldLocationsCache;
 
 //import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.servlet.JasperLoader;
@@ -80,7 +81,9 @@ import org.apache.jasper.logging.JasperLogger;
  * Shell for the jspc compiler.  Handles all options associated with the 
  * command line and creates compilation contexts which it then compiles
  * according to the specified options.
+ *
  * @author Danno Ferrin
+ * @author Pierre Delisle
  */
 public class JspC implements Options { //, JspCompilationContext {
 
@@ -148,6 +151,11 @@ public class JspC implements Options { //, JspCompilationContext {
 
     Vector extensions;
 
+    /**
+     * Cache for the TLD locations
+     */
+    private TldLocationsCache tldLocationsCache = null;
+
     public boolean getKeepGenerated() {
         // isn't this why we are running jspc?
         return true;
@@ -198,6 +206,10 @@ public class JspC implements Options { //, JspCompilationContext {
     public String getJspCompilerPath() {
        // we don't compile, so this is meanlingless
         return null;
+    }
+
+    public TldLocationsCache getTldLocationsCache() {
+	return tldLocationsCache;
     }
 
     public String getClassPath() {

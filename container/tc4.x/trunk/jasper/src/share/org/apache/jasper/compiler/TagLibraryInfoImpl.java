@@ -180,16 +180,18 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         URL url = null;
         boolean relativeURL = false;
 
+	//p("prefix: " + prefix + "  uriIn: " + uriIn);
+	//if (location != null) p("location: " + location[0]);
 	if (location == null) {
 	    // The URI points to the TLD itself or to a jar
 	    // file where the TLD is located
-	    int uriType = TagLibrariesGlobal.uriType(uri);
-	    if (uriType == TagLibrariesGlobal.ABS_URI) {
+	    int uriType = TldLocationsCache.uriType(uri);
+	    if (uriType == TldLocationsCache.ABS_URI) {
 		throw new JasperException(
                     Constants.getString("jsp.error.taglibDirective.absUriCannotBeResolved",
 					new Object[] {uri}));
 	    } else if (uriType == 
-		       TagLibrariesGlobal.NOROOT_REL_URI) {
+		       TldLocationsCache.NOROOT_REL_URI) {
 		uri = ctxt.resolveRelativeUri(uri);
 	    }
 	    location = new String[2];
@@ -213,23 +215,23 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    parseTLD(location[0], in);
 	} else {
 	    // Location points to a jar file
-	    p("JAR FILE: " + location[0]);
+	    // p("JAR FILE: " + location[0]);
 	    // tag library in jar file
 	    JarFile jarFile = null;
 	    ZipEntry jarEntry = null;
 	    InputStream stream = null;
 	    try {
 		url = ctxt.getResource(location[0]);
-		p("url = " + url);
+		// p("url = " + url);
 		if (url == null) return;
 		url = new URL("jar:" + url.toString() + "!/");
 		JarURLConnection conn =
 		    (JarURLConnection) url.openConnection();
 		conn.connect(); //@@@ necessary???
 		jarFile = conn.getJarFile();
-		p("jarFile: " + jarFile);
+		// p("jarFile: " + jarFile);
 		jarEntry = jarFile.getEntry(location[1]);
-		p("jarEntry name: " + jarEntry.getName());
+		// p("jarEntry name: " + jarEntry.getName());
 		stream = jarFile.getInputStream(jarEntry);
 		parseTLD(location[0], stream);
 		// FIXME @@@

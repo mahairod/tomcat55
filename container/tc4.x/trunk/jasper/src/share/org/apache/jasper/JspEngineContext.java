@@ -94,6 +94,7 @@ import org.apache.jasper.logging.Logger;
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
+ * @author Pierre Delisle
  */
 public class JspEngineContext implements JspCompilationContext {
     JspReader reader;
@@ -372,5 +373,9 @@ public class JspEngineContext implements JspCompilationContext {
         }
     }
 
-   
+    public String[] getTldLocation(String uri) throws JasperException {
+	String[] location = 
+	    options.getTldLocationsCache().getLocation(uri);
+	return location;
+    }
 }

@@ -84,7 +84,8 @@ import java.net.MalformedURLException;
  * over to other pages being compiled.  Things like the taglib classloaders
  * and directives.
  *
- *@author Danno Ferrin
+ * @author Danno Ferrin
+ * @author Pierre Delisle
  */
 public class CommandLineContext implements JspCompilationContext {
 
@@ -391,5 +392,10 @@ public class CommandLineContext implements JspCompilationContext {
         return f.getAbsolutePath();
     }
 
+    public String[] getTldLocation(String uri) throws JasperException {
+	String[] location = 
+	    options.getTldLocationsCache().getLocation(uri);
+	return location;
+    }
 }
 

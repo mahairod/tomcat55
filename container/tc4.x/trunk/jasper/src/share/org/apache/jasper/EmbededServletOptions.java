@@ -68,11 +68,14 @@ import javax.servlet.ServletContext;
 
 import org.apache.jasper.logging.Logger;
 
+import org.apache.jasper.compiler.TldLocationsCache;
+
 /**
  * A class to hold all init parameters specific to the JSP engine. 
  *
  * @author Anil K. Vijendran
  * @author Hans Bergsten
+ * @author Pierre Delisle
  */
 public final class EmbededServletOptions implements Options {
     /**
@@ -134,6 +137,11 @@ public final class EmbededServletOptions implements Options {
      * Path of the compiler to use for compiling JSP pages.
      */
     public String jspCompilerPath = null;
+
+    /**
+     * Cache for the TLD locations
+     */
+    private TldLocationsCache tldLocationsCache = null;
 
     /**
      * Are we keeping generated code around?
@@ -204,6 +212,10 @@ public final class EmbededServletOptions implements Options {
      */
     public String getJspCompilerPath() {
         return jspCompilerPath;
+    }
+
+    public TldLocationsCache getTldLocationsCache() {
+	return tldLocationsCache;
     }
 
     /**
@@ -308,6 +320,10 @@ public final class EmbededServletOptions implements Options {
                                   Logger.FATAL);
             }
         }
+
+	// Setup the global Tag Libraries location cache for this
+	// web-application.
+	tldLocationsCache = new TldLocationsCache(context);
     }
 }
 

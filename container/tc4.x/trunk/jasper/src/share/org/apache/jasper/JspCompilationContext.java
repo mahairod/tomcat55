@@ -84,6 +84,7 @@ import org.apache.jasper.compiler.Compiler;
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
+ * @author Pierre Delisle
  */
 public interface JspCompilationContext {
 
@@ -215,5 +216,21 @@ public interface JspCompilationContext {
 
     static interface Interface1 {
     }
+
+    /**
+     * Get the 'location' of the TLD associated with 
+     * a given taglib 'uri'.
+     * 
+     * @returns An array of two Strings. The first one is
+     * real path to the TLD. If the path to the TLD points
+     * to a jar file, then the second string is the
+     * name of the entry for the TLD in the jar file.
+     * Returns null if the uri is not associated to
+     * a tag library 'exposed' in the web application.
+     * A tag library is 'exposed' either explicitely in 
+     * web.xml or implicitely via the uri tag in the TLD 
+     * of a taglib deployed in a jar file (WEB-INF/lib).
+     */
+    public String[] getTldLocation(String uri) throws JasperException;
 }
 

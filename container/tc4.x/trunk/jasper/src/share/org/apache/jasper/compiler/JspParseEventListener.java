@@ -738,7 +738,7 @@ public class JspParseEventListener extends BaseJspListener {
 	    TagLibraryInfo tl = null;
 
 	    String[] location = 
-		TagLibrariesGlobal.getLocation(uri);
+		ctxt.getTldLocation(uri);
 	    if (location == null) {
 		tl = new TagLibraryInfoImpl(ctxt, prefix, uri);
 	    } else {
