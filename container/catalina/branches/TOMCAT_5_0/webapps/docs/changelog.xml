@@ -38,6 +38,9 @@
         configure the port. (funkman)
       </update>
       <fix>
+        Fix memory leak when Security Manager is turned on. (jfarcand)
+      </fix>
+      <fix>
         <bug>28914</bug>: threadPriority attribute ignored. (yoavs)
       </fix>
       <fix>
