@@ -138,6 +138,10 @@ public interface JspCompilationContext {
      */
     public String getServletJavaFileName();
 
+    public String getJspPath();
+
+    public String getClassFileName();
+
     /**
      * Are we keeping generated code around?
      */

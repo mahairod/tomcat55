@@ -230,7 +230,7 @@ public class Compiler {
         }
 
         // Build includes path
-        javac.setIncludes(((JspEngineContext) ctxt).getJspPath());
+        javac.setIncludes(ctxt.getJspPath());
 
         // Start capturing the System.err output for this thread
         SystemLogHandler.setThread();
@@ -278,7 +278,7 @@ public class Compiler {
             return true;
         }
 
-        File classFile = new File(((JspEngineContext) ctxt).getClassFileName());
+        File classFile = new File(ctxt.getClassFileName());
         if (!classFile.exists()) {
             return true;
         }
