@@ -407,25 +407,12 @@ public abstract class Node {
      */
     public static class AttributeDirective extends Node {
 
-        /* Use to collect all the parameters to this fragment attribut
-         * during parsing of the tag file.
-         */
-        private Vector fragmentInputs;
-
 	public AttributeDirective(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
-	}
-
-	public void setFragmentInputs(Vector v) {
-	    fragmentInputs = v;
-	}
-
-	public Vector getFragmentInputs() {
-	    return fragmentInputs;
 	}
     }
 
@@ -435,20 +422,6 @@ public abstract class Node {
     public static class VariableDirective extends Node {
 
 	public VariableDirective(Attributes attrs, Mark start, Node parent) {
-	    super(attrs, start, parent);
-	}
-
-	public void accept(Visitor v) throws JasperException {
-	    v.visit(this);
-	}
-    }
-
-    /**
-     * Represents a fragment-input directive
-     */
-    public static class FragmentInputDirective extends Node {
-
-	public FragmentInputDirective(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
 	}
 
@@ -1097,37 +1070,20 @@ public abstract class Node {
 	}
 
         /**
-         * Checks to see if the attribute or fragment attribute of the
-         * given name is of type JspFragment.
+         * Checks to see if the attribute of the given name is of type
+	 * JspFragment.
          */
         public boolean checkIfAttributeIsJspFragment( String name ) {
             boolean result = false;
 
-            // The attribute is of type JspFragment if it appears in
-            // the TagInfo Fragment Attributes list, or if it appears in the
-            // Attributes list and is of the right type.
-            
-            TagFragmentAttributeInfo[] fragmentAttributes = 
-                tagInfo.getFragmentAttributes();
-            for( int i = 0; i < fragmentAttributes.length; i++ ) {
-                if( fragmentAttributes[i].getName().equals( name ) ) {
-                    result = true;
-                    break;
-                }
-            }
-            
-            if( !result ) {
-                TagAttributeInfo[] attributes = tagInfo.getAttributes();
-                for( int i = 0; i < attributes.length; i++ ) {
-                    if( attributes[i].getName().equals( name ) &&
-                        "javax.servlet.jsp.tagext.JspFragment".equals(
-                        attributes[i].getTypeName() ) )
-                    {
-                        result = true;
-                        break;
-                    }
-                }
-            }
+	    TagAttributeInfo[] attributes = tagInfo.getAttributes();
+	    for (int i = 0; i < attributes.length; i++) {
+		if (attributes[i].getName().equals(name) &&
+		            attributes[i].isFragment()) {
+		    result = true;
+		    break;
+		}
+	    }
             
             return result;
         }
@@ -1556,10 +1512,6 @@ public abstract class Node {
 	}
 
 	public void visit(VariableDirective n) throws JasperException {
-	    doVisit(n);
-	}
-
-	public void visit(FragmentInputDirective n) throws JasperException {
 	    doVisit(n);
 	}
 

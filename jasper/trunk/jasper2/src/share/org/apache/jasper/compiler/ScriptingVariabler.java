@@ -133,7 +133,8 @@ public class ScriptingVariabler {
 	    if (tagVarInfos != null) {
 		for (int i=0; i<tagVarInfos.length; i++) {
 		    if (tagVarInfos[i].getScope() != scope
-			    || !tagVarInfos[i].getDeclare()) {
+			    || !tagVarInfos[i].getDeclare()
+			    || tagVarInfos[i].getFragment() != null) {
 			continue;
 		    }
 		    String varName = tagVarInfos[i].getNameGiven();

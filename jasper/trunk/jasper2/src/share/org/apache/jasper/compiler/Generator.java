@@ -2337,16 +2337,15 @@ public class Generator {
 	    // Set parent
 	    if (!simpleTag) {
 		if (parent != null) {
-		    out.printin("if (!(");
+		    out.printin("if (");
 		    out.print(parent);
-		    out.println(" instanceof javax.servlet.jsp.tagext.Tag))");
+		    out.println(" instanceof javax.servlet.jsp.tagext.SimpleTag)");
 		    out.pushIndent();
 		    out.printin(tagHandlerVar);
 		    out.print(".setParent(");
 		    out.print("new javax.servlet.jsp.tagext.TagAdapter(");
+		    out.print("(javax.servlet.jsp.tagext.SimpleTag) ");
 		    out.print(parent);
-		    out.print(", ");
-		    out.print("null"); // XXX
 		    out.println("));");
 		    out.popIndent();
 		    out.printil("else");
@@ -2857,34 +2856,32 @@ public class Generator {
 	}
 
 	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
-	TagFragmentAttributeInfo[] fragAttrInfos
-	    = tagInfo.getFragmentAttributes();
 
-	// Declare "normal" attributes
+	// Declare attributes
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
-		out.printin("private String ");
+		out.printin("private ");
+		if (attrInfos[i].isFragment()) {
+		    out.print("javax.servlet.jsp.tagext.JspFragment ");
+		} else {
+		    out.print("String ");
+		}
 		out.print(attrInfos[i].getName());
 		out.println(";");
 	    }
 	    out.println();
 	}
 
-	// Declare fragment attributes
-	if (fragAttrInfos != null) {
-	    for (int i=0; i<fragAttrInfos.length; i++) {
-		out.printin("private javax.servlet.jsp.tagext.JspFragment ");
-		out.print(fragAttrInfos[i].getName());
-		out.println(";");
-	    }
-	    out.println();
-	}
-
-	// Define getter and setter methods for "normal" attributes
+	// Define attribute getter and setter methods
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		// getter method
-		out.printin("public String ");
+		out.printin("public ");
+		if (attrInfos[i].isFragment()) {
+		    out.print("javax.servlet.jsp.tagext.JspFragment ");
+		} else {
+		    out.print("String ");
+		}
 		out.print(toGetterMethod(attrInfos[i].getName()));
 		out.println(" {");
 		out.pushIndent();
@@ -2898,7 +2895,11 @@ public class Generator {
 		// setter method
 		out.printin("public void ");
 		out.print(toSetterMethodName(attrInfos[i].getName()));
-		out.printin("(String ");
+		if (attrInfos[i].isFragment()) {
+		    out.printin("(javax.servlet.jsp.tagext.JspFragment ");
+		} else {
+		    out.printin("(String ");
+		}
 		out.print(attrInfos[i].getName());
 		out.println(") {");
 		out.pushIndent();
@@ -2906,39 +2907,6 @@ public class Generator {
 		out.print(attrInfos[i].getName());
 		out.print(" = ");
 		out.print(attrInfos[i].getName());
-		out.println(";");
-		out.popIndent();
-		out.printil("}");
-		out.println();
-	    }
-	}
-
-	// Define getter and setter methods for fragment attributes
-	if (fragAttrInfos != null) {
-	    for (int i=0; i<fragAttrInfos.length; i++) {
-		// getter method
-		out.printin("public javax.servlet.jsp.tagext.JspFragment ");
-		out.print(toGetterMethod(fragAttrInfos[i].getName()));
-		out.println(" {");
-		out.pushIndent();
-		out.printin("return this.");
-		out.print(fragAttrInfos[i].getName());
-		out.println(";");
-		out.popIndent();
-		out.printil("}");
-		out.println();
-
-		// setter method
-		out.printin("public void ");
-		out.print(toSetterMethodName(fragAttrInfos[i].getName()));
-		out.printin("(javax.servlet.jsp.tagext.JspFragment ");
-		out.print(fragAttrInfos[i].getName());
-		out.println(") {");
-		out.pushIndent();
-		out.printin("this.");
-		out.print(fragAttrInfos[i].getName());
-		out.print(" = ");
-		out.print(fragAttrInfos[i].getName());
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
@@ -2982,20 +2950,6 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		String attrName = attrInfos[i].getName();
-		out.printin("pageContext.setAttribute(");
-		out.print(quote(attrName));
-		out.print(", ");
-		out.print(toGetterMethod(attrName));
-		out.println(");");
-	    }
-	}
-
-	// fragment attributes
-	TagFragmentAttributeInfo[] fragAttrInfos
-	    = tagInfo.getFragmentAttributes();
-	if (fragAttrInfos != null) {
-	    for (int i=0; i<fragAttrInfos.length; i++) {
-		String attrName = fragAttrInfos[i].getName();
 		out.printin("pageContext.setAttribute(");
 		out.print(quote(attrName));
 		out.print(", ");

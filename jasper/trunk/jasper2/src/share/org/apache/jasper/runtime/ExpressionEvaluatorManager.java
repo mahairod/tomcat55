@@ -96,16 +96,25 @@ public class ExpressionEvaluatorManager {
 				   Map prefixMap,
                                    Map elFunctions,
                                    String defaultPrefix ) 
-           throws JspException
+	throws JspException // XXX EL (should throw ELException)
     {
 
         // the evaluator we'll use
         ExpressionEvaluator target = getEvaluatorByName(EVALUATOR_CLASS);
 
         // delegate the call
-        return (target.evaluate(
-            expression, expectedType, jspContext, prefixMap, elFunctions,
-	    defaultPrefix));
+        Object ret = null;
+	try {
+	    ret = (target.evaluate(expression,
+				   expectedType,
+				   jspContext.getVariableResolver(),
+				   null, // XXX EL (FunctionMapper)
+				   defaultPrefix));
+	} catch (ELException ele) {
+	    throw new JspException(ele);
+	}
+
+	return ret;
     }
 
     /**

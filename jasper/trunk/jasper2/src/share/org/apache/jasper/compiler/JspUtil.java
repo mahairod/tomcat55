@@ -622,8 +622,6 @@ public class JspUtil {
      * @param where the approximate location of the expressions in the JSP page
      * @param expressions a string containing zero or more "${}" expressions
      * @param err an error dispatcher to use
-     * @param extraInfo info (such as the name of the current attribute)
-     *        to be included in any error messages
      */
     public static void validateExpressions(Mark where,
                                            String expressions,
@@ -639,7 +637,8 @@ public class JspUtil {
         } catch (javax.servlet.jsp.JspException uglyEx) {
             err.jspError(where, "jsp.error.internal.evaluator_not_found");
         }
-        String errMsg = el.validate(expressions);
+	String errMsg = null; // XXX EL
+        // String errMsg = el.validate(expressions);
         if (errMsg != null)
             err.jspError(where, "jsp.error.invalid.expression", expressions,
                 errMsg);

@@ -88,6 +88,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
+import javax.servlet.jsp.el.VariableResolver;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.logging.Logger;
@@ -404,6 +405,15 @@ public class PageContextImpl extends PageContext {
         context.getRequestDispatcher(path).include(
 	    request, new ServletResponseWrapperInclude(response, out));
         */
+    }
+
+    public void include(String relativeUrlPath, boolean flush) 
+	    throws ServletException, IOException {
+	include(relativeUrlPath, false); // XXX
+    }
+
+    public VariableResolver getVariableResolver() {
+	return null; // XXX
     }
 
     public void forward(String relativeUrlPath)

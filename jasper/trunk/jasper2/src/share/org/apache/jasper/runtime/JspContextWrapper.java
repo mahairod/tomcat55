@@ -80,6 +80,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
+import javax.servlet.jsp.el.VariableResolver;
 
 /**
  * A wrapper class for PageContext class used for providing a tempory
@@ -212,6 +213,15 @@ public class JspContextWrapper extends PageContext {
 	throws ServletException, IOException
     {
 	pageContext.include(relativeUrlPath);
+    }
+
+    public void include(String relativeUrlPath, boolean flush) 
+	    throws ServletException, IOException {
+	include(relativeUrlPath, false); // XXX
+    }
+
+    public VariableResolver getVariableResolver() {
+	return null; // XXX
     }
 
     public BodyContent pushBody() {

@@ -404,7 +404,6 @@ public class Parser {
      *			    | 'taglib' TagLibDirective)
      *                      | 'attribute AttributeDirective
      *                      | 'variable VariableDirective
-     *                      | 'fragment-input FragmentInputDirective
      *		       S? '%>'
      */
     private void parseDirective(Node parent) throws JasperException {
@@ -445,13 +444,6 @@ public class Parser {
 					    directive);
 	    }
 	    parseVariableDirective(parent);
-	} else if (reader.matches("fragment-input")) {
-	    directive = "&lt;%@ fragment-input";
-	    if (!isTagFile) {
-		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
-					    directive);
-	    }
-	    parseFragmentInputDirective(parent);
 	} else {
 	    err.jspError(reader.mark(), "jsp.error.invalid.directive");
 	}
@@ -489,17 +481,6 @@ public class Parser {
 	Attributes attrs = parseAttributes();
 	Node.VariableDirective n =
 		new Node.VariableDirective(attrs, start, parent);
-    }
-
-    /*
-     * Parses a fragment input directive with the following syntax:
-     *   PageDirective ::= ( S Attribute)*
-     */
-    private void parseFragmentInputDirective(Node parent)
-		throws JasperException {
-	Attributes attrs = parseAttributes();
-	Node.FragmentInputDirective n =
-		new Node.FragmentInputDirective(attrs, start, parent);
     }
 
     /*

@@ -257,13 +257,6 @@ public class JspDocumentParser extends DefaultHandler
 		    locator);
 	    }
 	    node = new Node.VariableDirective(attrsCopy, start, current);
-	} else if (qName.equals(JSP_FRAGMENT_INPUT_DIRECTIVE)) {
-	    if (!isTagFile) {
-		throw new SAXParseException(
-		    err.getString("jsp.error.action.isnottagfile", qName),
-		    locator);
-	    }
-	    node = new Node.FragmentInputDirective(attrsCopy, start, current);
 	} else if (qName.equals(JSP_INVOKE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(

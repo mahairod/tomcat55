@@ -326,7 +326,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         
         Vector attributeVector = new Vector();
         Vector variableVector = new Vector();
-        Vector fragmentAttributeVector = new Vector();
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
             TreeNode element = (TreeNode) list.next();
@@ -356,9 +355,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 variableVector.addElement(createVariable(element));
             } else if ("attribute".equals(tname)) {
                 attributeVector.addElement(createAttribute(element));
-            } else if ("fragment-attribute".equals(tname)) {
-                fragmentAttributeVector.addElement(
-                                        createFragmentAttribute(element));
             } else if ("dynamic-attributes".equals(tname)) {
                 dynamicAttributes = JspUtil.booleanValue(element.getBody());
             } else if ("example".equals(tname)) {
@@ -377,10 +373,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	TagVariableInfo[] tagVariableInfos
             = new TagVariableInfo[variableVector.size()];
 	variableVector.copyInto(tagVariableInfos);
-
-        TagFragmentAttributeInfo [] fragmentAttributes
-            = new TagFragmentAttributeInfo[fragmentAttributeVector.size()];
-        fragmentAttributeVector.copyInto(fragmentAttributes);
 
         TagExtraInfo tei = null;
 
@@ -427,7 +419,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 				      smallIcon,
 				      largeIcon,
 				      tagVariableInfos,
-                                      fragmentAttributes,
                                       dynamicAttributes);
         return taginfo;
     }
@@ -473,47 +464,10 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 
     TagAttributeInfo createAttribute(TreeNode elem) {
         String name = null;
-        boolean required = false, rtexprvalue = false, reqTime = false;
+        boolean required = false, rtexprvalue = false, reqTime = false,
+	    isFragment = false;
         String type = null;
         
-        Iterator list = elem.findChildren();
-        while (list.hasNext()) {
-            TreeNode element = (TreeNode) list.next();
-            String tname = element.getName();
-
-            if ("name".equals(tname))
-                name = element.getBody();
-            else if ("required".equals(tname)) {
-                String s = element.getBody();
-                if (s != null)
-                    required = JspUtil.booleanValue(s);
-            } else if ("rtexprvalue".equals(tname)) {
-                String s = element.getBody();
-                if (s != null)
-                    rtexprvalue = JspUtil.booleanValue(s);
-            } else if ("type".equals(tname))
-                type = element.getBody();
-            else if ("description".equals(tname) ||    // Ignored elements
-		     false ) 
-	      ;
-            else {
-                Constants.message("jsp.warning.unknown.element.in.attribute", 
-                                  new Object[] {tname},
-                                  Logger.WARNING
-                                  );
-            }
-        }
-        
-        return new TagAttributeInfo(name, required, type, rtexprvalue);
-    }
-
-    TagFragmentAttributeInfo createFragmentAttribute(TreeNode elem) {
-
-        Vector fragmentInputVector = new Vector();
-        String name = null;
-        String description = null;
-        boolean required = false;
-
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
             TreeNode element = (TreeNode) list.next();
@@ -522,44 +476,22 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             if ("name".equals(tname)) {
                 name = element.getBody();
             } else if ("required".equals(tname)) {
-                required = JspUtil.booleanValue(element.getBody());
-            } else if ("fragment-input".equals(tname)) {
-                fragmentInputVector.addElement(createFragmentInput(element));
-            } else if ("description".equals(tname)) {
-                description = element.getBody();
-            } else {
-                Constants.message("jsp.warning.unknown.element.in.attribute",
-                                  new Object[] {tname},
-                                  Logger.WARNING
-                                  );
-            }
-        }
-
-        TagFragmentAttributeInfo.FragmentInput[] fragmentInputs =
-            new TagFragmentAttributeInfo.FragmentInput[fragmentInputVector.size()];
-        fragmentInputVector.copyInto(fragmentInputs);
-
-        return new TagFragmentAttributeInfo(name, required, description,
-                                            fragmentInputs);
-    }
-
-    TagFragmentAttributeInfo.FragmentInput createFragmentInput(TreeNode elem) {
-
-        String name = null;
-        String type = null;
-        String description = null;
-
-        Iterator list = elem.findChildren();
-        while (list.hasNext()) {
-            TreeNode element = (TreeNode) list.next();
-            String tname = element.getName();
-
-            if ("name".equals(tname)) {
-                name = element.getBody();
+                String s = element.getBody();
+                if (s != null)
+                    required = JspUtil.booleanValue(s);
+            } else if ("rtexprvalue".equals(tname)) {
+                String s = element.getBody();
+                if (s != null)
+                    rtexprvalue = JspUtil.booleanValue(s);
             } else if ("type".equals(tname)) {
                 type = element.getBody();
-            } else if ("description".equals(tname)) {
-                description = element.getBody();
+            } else if ("fragment".equals(tname)) {
+                String s = element.getBody();
+                if (s != null)
+                    isFragment = JspUtil.booleanValue(s);
+            } else if ("description".equals(tname) ||    // Ignored elements
+		       false) {
+		;
             } else {
                 Constants.message("jsp.warning.unknown.element.in.attribute", 
                                   new Object[] {tname},
@@ -567,8 +499,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                                   );
             }
         }
-        return new TagFragmentAttributeInfo.FragmentInput(name, type,
-                                                          description);
+        
+        return new TagAttributeInfo(name, required, type, rtexprvalue,
+				    isFragment);
     }
 
     TagVariableInfo createVariable(TreeNode elem) {
@@ -577,7 +510,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	String className = "java.lang.String";
 	boolean declare = true;
 	int scope = VariableInfo.NESTED;
-        
+	String fragment = null;
+
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
             TreeNode element = (TreeNode) list.next();
@@ -603,8 +537,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 			scope = VariableInfo.AT_END;
 		    }
 		}
-	    }
-            else if ("description".equals(tname) ||    // Ignored elements
+	    } else if ("fragment".equals(tname)) {
+                fragment = element.getBody();
+	    } else if ("description".equals(tname) ||    // Ignored elements
 		     false ) {
             } else {
                 Constants.message("jsp.warning.unknown.element.in.variable",
@@ -613,7 +548,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
         }
         return new TagVariableInfo(nameGiven, nameFromAttribute,
-				   className, declare, scope);
+				   className, declare, scope, fragment);
     }
 
     private TagLibraryValidator createValidator(TreeNode elem) {

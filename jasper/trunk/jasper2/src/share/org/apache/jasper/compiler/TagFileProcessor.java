@@ -116,6 +116,7 @@ public class TagFileProcessor {
 	    new JspUtil.ValidAttribute("variable-class"),
 	    new JspUtil.ValidAttribute("scope"),
 	    new JspUtil.ValidAttribute("declare"),
+	    new JspUtil.ValidAttribute("fragment"),
 	    new JspUtil.ValidAttribute("description")
 	};
 
@@ -193,19 +194,18 @@ public class TagFileProcessor {
 					n.getAttributeValue("fragment"));
 	    String type = n.getAttributeValue("type");
             if (fragment) {
-                n.setFragmentInputs(new Vector());
                 fragmentAttributesMap.put(name, n);
-
                 if (type != null) {
                     err.jspError("jsp.error.fragmentwithtype");
                 }
             } else {
                 if (type == null)
                     type = "java.lang.String";
+	    }
 
-                attributeVector.addElement(
-                    new TagAttributeInfo(name, required, type, rtexprvalue));
-            }
+	    attributeVector.addElement(
+                    new TagAttributeInfo(name, required, type, rtexprvalue,
+					 fragment));
         }
 
         public void visit(Node.VariableDirective n) throws JasperException {
@@ -235,30 +235,27 @@ public class TagFileProcessor {
                     scope = VariableInfo.AT_END;
                 }
             }
-            variableVector.addElement(
+
+            String fragment = n.getAttributeValue("fragment");
+	    if (fragment != null) {
+		if (declareStr != null || scopeStr != null) {
+		    err.jspError(n, "jsp.error.fragmentWithDeclareOrScope");
+		}
+
+		// Find the attribute node with matching name
+		Node.AttributeDirective attributeDirective =
+		    (Node.AttributeDirective) fragmentAttributesMap.get(fragment);
+		if (attributeDirective == null) {
+		    err.jspError(n, "jsp.error.nomatching.fragment", fragment);
+		}
+		variableVector.addElement(
+                    new TagVariableInfo(nameGiven, nameFromAttribute,
+                                        className, declare, scope, fragment));
+	    } else {
+		variableVector.addElement(
                     new TagVariableInfo(nameGiven, nameFromAttribute,
                                         className, declare, scope));
-        }
-
-        public void visit(Node.FragmentInputDirective n) throws JasperException{
-
-            JspUtil.checkAttributes("Fragment-input directive", n,
-                                    fragmentInputDirectiveAttrs, err);
-
-            String name = n.getAttributeValue("name");
-            String fragment = n.getAttributeValue("fragment");
-            String type = n.getAttributeValue("type");
-            String description = n.getAttributeValue("description");
-            boolean required = JspUtil.booleanValue(n.getAttributeValue("required"));
-            // Find the attribute node with matching name
-            Node.AttributeDirective attributeDirective =
-                (Node.AttributeDirective) fragmentAttributesMap.get(fragment);
-            if (attributeDirective == null) {
-                err.jspError(n, "jsp.error.nomatching.fragment", fragment);
-            }
-            attributeDirective.getFragmentInputs().addElement(
-                        new TagFragmentAttributeInfo.FragmentInput(name, type,
-                                                          description));
+	    }
         }
 
         public TagInfo getTagInfo() {
@@ -281,26 +278,6 @@ public class TagFileProcessor {
                     = new TagAttributeInfo[attributeVector.size()];
             attributeVector.copyInto(tagAttributeInfo);
 
-            // For each fragment attribute, construct the fragment inputs first
-            TagFragmentAttributeInfo [] fragmentAttributes
-                = new TagFragmentAttributeInfo[fragmentAttributesMap.size()];
-            Iterator iter = fragmentAttributesMap.values().iterator();
-            int i = 0;
-            while (iter.hasNext()) {
-                Node.AttributeDirective n = (Node.AttributeDirective)iter.next();
-                TagFragmentAttributeInfo.FragmentInput[] fragmentInputs =
-                    new TagFragmentAttributeInfo.FragmentInput[
-                                           n.getFragmentInputs().size()];
-                n.getFragmentInputs().copyInto(fragmentInputs);
-                String name = n.getAttributeValue("name");
-                boolean required = JspUtil.booleanValue(
-                                        n.getAttributeValue("required"));
-
-                fragmentAttributes[i++] = new TagFragmentAttributeInfo(
-                                                  name, required, "",
-                                                  fragmentInputs);
-            }
-
             return new TagInfo(name,
 			       tagclass,
 			       bodycontent,
@@ -312,9 +289,8 @@ public class TagFileProcessor {
                                smallIcon,
                                largeIcon,
                                tagVariableInfos,
-                               fragmentAttributes,
                                dynamicAttributes);
-        }
+	}
     }
 
     /**

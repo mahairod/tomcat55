@@ -67,7 +67,6 @@ import javax.servlet.jsp.tagext.PageData;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagFragmentAttributeInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.ValidationMessage;
@@ -286,13 +285,6 @@ public class Validator {
 
 	public void visit(Node.VariableDirective n) throws JasperException {
 	    // Do nothing, since this variable directive has already been
-	    // validated by TagFileProcessor when it created a TagInfo object
-	    // from the tag file in which the directive appeared
-	}
-
-	public void visit(Node.FragmentInputDirective n)
-	        throws JasperException {
-	    // Do nothing, since this fragment-input directive has already been
 	    // validated by TagFileProcessor when it created a TagInfo object
 	    // from the tag file in which the directive appeared
 	}
@@ -601,10 +593,10 @@ public class Validator {
 	     * Make sure there are no invalid attributes
 	     */
             Node.Nodes namedAttributeNodes = n.getNamedAttributeNodes();
-	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
 	    Node.JspAttribute[] jspAttrs
 		= new Node.JspAttribute[attrs.getLength()
 				       + namedAttributeNodes.size()];
+	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
 	    for (int i=0; i<attrs.getLength(); i++) {
 		boolean found = false;
 		for (int j=0; j<tldAttrs.length; j++) {
@@ -656,7 +648,6 @@ public class Validator {
 	    /*
 	     * Make sure there are no invalid named attributes
 	     */
-	    TagFragmentAttributeInfo[] tfais = tagInfo.getFragmentAttributes();
 	    for (int i=0; i<namedAttributeNodes.size(); i++) {
                 Node.NamedAttribute na = 
                     (Node.NamedAttribute)namedAttributeNodes.getNode( i );
@@ -676,21 +667,6 @@ public class Validator {
                                          TagData.REQUEST_TIME_VALUE);
 			found = true;
 			break;
-		    }
-		}
-		if (!found && (tfais != null)) {
-		    // check given named attribute against attributes of type
-		    // JspFragment
-		    for (int j=0; j<tfais.length; j++) {
-			if (na.getName().equals(tfais[j].getName())) {
-			    jspAttrs[attrs.getLength() + i]
-				= getJspAttribute(na.getName(), null, null,
-						  null, n, false);
-			    tagDataAttrs.put(na.getName(),
-					     TagData.REQUEST_TIME_VALUE);
-			    found = true;
-			    break;
-			}
 		    }
 		}
 		if (!found) {

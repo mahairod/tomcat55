@@ -56,11 +56,8 @@
 package org.apache.jasper.runtime;
 
 import java.util.Map;
-import javax.servlet.jsp.JspContext;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.ExpressionEvaluator;
-import javax.servlet.jsp.el.VariableResolver;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.el.*;
 import org.apache.taglibs.standard.lang.jstl.Evaluator;
 
 /**
@@ -109,15 +106,18 @@ public class ExpressionEvaluatorImpl
             (PageContext)jspContext, functionMap, defaultURI );
     }
 
-    public Object evaluate( String expression, 
-                            Class expectedType, 
-                            VariableResolver resolver,
-                            Map prefixMap,
-			    Map functionMap,
-                            String defaultURI )
-	throws JspException
-    {
-	// XXX
-	return null;
+    public Object evaluate(String expression, 
+			   Class expectedType, 
+			   VariableResolver vResolver,
+			   FunctionMapper fMapper,
+			   String defaultPrefix) throws ELException {
+	return null; // XXX EL
+    }
+
+    public Expression parseExpression(String expression, 
+				      Class expectedType, 
+				      FunctionMapper fMapper,
+				      String defaultPrefix) throws ELException {
+	return null; // XXX EL
     }
 }

@@ -104,6 +104,4 @@ public interface TagConstants {
 	= "jsp:directive.attribute";
     public static final String JSP_VARIABLE_DIRECTIVE
 	= "jsp:directive.variable";
-    public static final String JSP_FRAGMENT_INPUT_DIRECTIVE
-	= "jsp:directive.fragment-input";
 }
