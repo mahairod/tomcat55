@@ -429,6 +429,11 @@ public class ServletWrapper {
 	    } catch (InterruptedException e) { }
 	}
     }
-    
+
+    public String toString() {
+	String toS="Wrapper( " + servletClassName + ",";
+	if( servlet!=null ) toS=toS+ servlet.getClass().getName();
+	return toS + ")";
+    }
 
 }

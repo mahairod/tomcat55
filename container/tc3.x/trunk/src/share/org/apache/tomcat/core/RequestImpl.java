@@ -717,4 +717,15 @@ public class RequestImpl  implements Request {
 	if( reqA!=null) reqA.recycle();// XXX avoid double recycle
 	//	moreRequests = false;
     }
+
+    public String toString() {
+	StringBuffer sb=new StringBuffer();
+	sb.append( "Request( " + context );
+	sb.append( ",URI:" + getRequestURI()  ).append("\n");
+	sb.append( "    SP:" + getServletPath() );
+	sb.append( ",PI:" + getPathInfo() );
+	sb.append( ",LP:" + getLookupPath() );
+	sb.append( "," + getWrapper() +") ");
+	return sb.toString();
+    }
 }

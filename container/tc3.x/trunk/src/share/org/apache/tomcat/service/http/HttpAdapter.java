@@ -118,7 +118,11 @@ public class HttpAdapter  implements ServerConnector {
 	this.cm=ctx;
 	con.setContextManager( ctx );
     }
-    
+
+    public void setPort( String s ) {
+	vport=string2Int( s );
+    }
+
     public void setProperty( String prop, String value) {
 	if(HttpServer.VHOST_PORT.equals(prop) ) {
 	    //	    System.out.println("XXX");
