@@ -742,7 +742,12 @@ public final class StandardLoader
 	for (int i = 0; i < repositories.length; i++) {
 	    if (i > 0)
 		classpath.append(File.pathSeparator);
-	    classpath.append(repositories[i]);
+            String repository = repositories[i];
+            if (repository.startsWith("file:"))
+                repository = repository.substring(5);
+            if (repository.endsWith("/"))
+                repository = repository.substring(0, repository.length() - 1);
+            classpath.append(repository);
 	}
 	servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
 				    classpath.toString());
