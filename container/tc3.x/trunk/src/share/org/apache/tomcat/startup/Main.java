@@ -313,7 +313,13 @@ public class Main{
             IntrospectionUtils.execute(  proxy, "execute" );
         } catch( Exception ex ) {
             System.out.println("Guessed home=" + installDir);
+            System.out.println("Exception: " + ex);
             ex.printStackTrace();
+            if( ex instanceof InvocationTargetException ) {
+                Throwable t = ((InvocationTargetException)ex).getTargetException();
+                System.out.println("Root Exception: " + t );
+                t.printStackTrace();
+            }
         }
     }
 
