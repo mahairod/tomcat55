@@ -472,7 +472,7 @@ public final class ResourceAttributes extends BasicAttributes {
      * 
      * @param creationDate New creation date
      */
-    void setCreationDate(Date creationDate) {
+    public void setCreationDate(Date creationDate) {
         setProtectedAttribute(CREATION_DATE, creationDate);
     }
     
@@ -482,7 +482,7 @@ public final class ResourceAttributes extends BasicAttributes {
      * 
      * @param lastModified New last modified date
      */
-    void setLastModified(Date lastModified) {
+    public void setLastModified(Date lastModified) {
         setProtectedAttribute(LAST_MODIFIED, lastModified);
     }
     
@@ -492,7 +492,7 @@ public final class ResourceAttributes extends BasicAttributes {
      * 
      * @param contentLength New content length
      */
-    void setContentLength(long contentLength) {
+    public void setContentLength(long contentLength) {
         setProtectedAttribute(CONTENT_LENGTH, new Long(contentLength));
     }
     
@@ -502,7 +502,7 @@ public final class ResourceAttributes extends BasicAttributes {
      * 
      * @param name New name
      */
-    void setName(String name) {
+    public void setName(String name) {
         setProtectedAttribute(NAME, name);
     }
     
@@ -512,7 +512,7 @@ public final class ResourceAttributes extends BasicAttributes {
      * 
      * @param resourceType New resource type
      */
-    void setResourceType(String resourceType) {
+    public void setResourceType(String resourceType) {
         setProtectedAttribute(TYPE, resourceType);
     }
     
