@@ -290,7 +290,7 @@ public final class ContextConfig
             stream = servletContext.getResourceAsStream
                 (Constants.ApplicationWebXml);
         if (stream == null) {
-            log.error(sm.getString("contextConfig.applicationMissing") + " " + context);
+            log.info(sm.getString("contextConfig.applicationMissing") + " " + context);
             return;
         }
         
@@ -509,7 +509,7 @@ public final class ContextConfig
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
                     ((ContainerBase) context).addValve(certificates);
-                    log.error(sm.getString
+                    log.info(sm.getString
                         ("contextConfig.certificatesConfig.added"));
                     
                 }
