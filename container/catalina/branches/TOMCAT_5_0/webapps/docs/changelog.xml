@@ -23,6 +23,9 @@
       <fix>
         <bug>30756</bug>: Bad syntax in sample web.xml. (yoavs)
       </fix>
+      <update>
+        Enhanced Japanese resource bundles. (yoavs)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">
