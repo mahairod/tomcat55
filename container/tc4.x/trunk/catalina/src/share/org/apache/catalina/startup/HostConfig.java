@@ -596,9 +596,6 @@ public class HostConfig
             String contextName = contextNames[i];
             Context context = deployer.findDeployedApp(contextName);
 
-            if (!context.getReloadable())
-                continue;
-
             if (!(context instanceof Lifecycle))
                 continue;
 
