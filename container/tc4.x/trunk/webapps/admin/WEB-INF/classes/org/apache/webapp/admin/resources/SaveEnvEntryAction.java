@@ -189,13 +189,7 @@ public final class SaveEnvEntryAction extends Action {
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addEnvironment",
                                                      params, signature);
-                                                     
-                // FIX ME 
-                // "addEnvironment" should return the name of the new 
-                // mBean just created
-                objectName = ResourceUtils.ENVIRONMENT_TYPE + 
-                             ",name=" + params[0]; 
-                
+                                                                     
             } catch (Exception e) {
 
                 getServlet().log
