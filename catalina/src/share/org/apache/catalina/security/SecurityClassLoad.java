@@ -107,6 +107,9 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "core.ContainerBase$PrivilegedAddChild");
+        loader.loadClass
+            (basePackage +
+             "core.StandardWrapper$1");
     }
     
     
@@ -220,6 +223,12 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "CoyoteResponse$1");
+        loader.loadClass
+            (basePackage +
+             "CoyoteResponse$2");
+        loader.loadClass
+            (basePackage +
+             "CoyoteResponse$3");
     }
 
 }
