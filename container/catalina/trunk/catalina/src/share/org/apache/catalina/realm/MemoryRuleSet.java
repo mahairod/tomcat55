@@ -133,9 +133,7 @@ public class MemoryRuleSet extends RuleSetBase {
      */
     public void addRuleInstances(Digester digester) {
 
-        digester.addRule
-            (prefix + "user",
-             new MemoryUserRule(digester));
+        digester.addRule(prefix + "user", new MemoryUserRule());
 
     }
 
@@ -154,10 +152,7 @@ final class MemoryUserRule extends Rule {
      *
      * @param digester The <code>Digester</code> we are associated with.
      */
-    public MemoryUserRule(Digester digester) {
-
-        super(digester);
-
+    public MemoryUserRule() {
     }
 
 
@@ -166,7 +161,8 @@ final class MemoryUserRule extends Rule {
      *
      * @param attributes The attribute list for this element
      */
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
 
         String username = attributes.getValue("name");
         if (username == null) {

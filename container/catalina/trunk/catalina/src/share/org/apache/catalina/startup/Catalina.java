@@ -309,8 +309,6 @@ public class Catalina extends Embedded {
         long t1=System.currentTimeMillis();
         // Initialize the digester
         Digester digester = new CatalinaDigester();
-        if (debug>0)
-            digester.setDebug(debug);
         digester.setValidating(false);
         digester.setClassLoader(StandardServer.class.getClassLoader());
 
@@ -392,8 +390,7 @@ public class Catalina extends Embedded {
 
         // When the 'engine' is found, set the parentClassLoader.
         digester.addRule("Server/Service/Engine",
-                         new SetParentClassLoaderRule(digester,
-                                                      parentClassLoader));
+                         new SetParentClassLoaderRule(parentClassLoader));
 
         long t2=System.currentTimeMillis();
         log.debug("Digester for server.xml created " + ( t2-t1 ));
@@ -409,8 +406,6 @@ public class Catalina extends Embedded {
 
         // Initialize the digester
         Digester digester = new Digester();
-        if (debug>0)
-            digester.setDebug(debug);
 
         // Configure the rules we need for shutting down
         digester.addObjectCreate("Server",
@@ -711,20 +706,19 @@ public class Catalina extends Embedded {
 
 final class SetParentClassLoaderRule extends Rule {
 
-    public SetParentClassLoaderRule(Digester digester,
-                                    ClassLoader parentClassLoader) {
+    public SetParentClassLoaderRule(ClassLoader parentClassLoader) {
 
-        super(digester);
         this.parentClassLoader = parentClassLoader;
 
     }
 
     ClassLoader parentClassLoader = null;
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
 
-        if (digester.getDebug() >= 1)
-            digester.log("Setting parent class loader");
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("Setting parent class loader");
 
         Container top = (Container) digester.peek();
         top.setParentClassLoader(parentClassLoader);

@@ -65,7 +65,6 @@ package org.apache.catalina.startup;
 
 import java.lang.reflect.Method;
 import org.apache.catalina.Container;
-import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.xml.sax.Attributes;
 
@@ -91,10 +90,7 @@ public class CopyParentClassLoaderRule extends Rule {
      *
      * @param digester Digester we are associated with
      */
-    public CopyParentClassLoaderRule(Digester digester) {
-
-        super(digester);
-
+    public CopyParentClassLoaderRule() {
     }
 
 
@@ -108,10 +104,11 @@ public class CopyParentClassLoaderRule extends Rule {
      *
      * @exception Exception if a processing error occurs
      */
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
 
-        if (digester.getDebug() >= 1)
-            digester.log("Copying parent class loader");
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("Copying parent class loader");
         Container child = (Container) digester.peek(0);
         Object parent = digester.peek(1);
         Method method =

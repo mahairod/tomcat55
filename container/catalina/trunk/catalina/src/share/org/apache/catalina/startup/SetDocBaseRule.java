@@ -70,7 +70,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 import org.apache.catalina.core.StandardHost;
-import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.xml.sax.Attributes;
 
@@ -91,10 +90,7 @@ public class SetDocBaseRule extends Rule {
      *
      * @param digester Digester we are associated with
      */
-    public SetDocBaseRule(Digester digester) {
-
-        super(digester);
-
+    public SetDocBaseRule() {
     }
 
 
@@ -111,7 +107,8 @@ public class SetDocBaseRule extends Rule {
      *
      * @exception Exception if a processing error occurs
      */
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
 
         Context child = (Context) digester.peek(0);
         Deployer parent = (Deployer) digester.peek(1);

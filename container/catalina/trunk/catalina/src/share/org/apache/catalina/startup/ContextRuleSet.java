@@ -180,8 +180,7 @@ public class ContextRuleSet extends RuleSetBase {
 
         digester.addRule(prefix + "Context/Loader",
                          new CreateLoaderRule
-                             (digester,
-                              "org.apache.catalina.loader.WebappLoader",
+                             ("org.apache.catalina.loader.WebappLoader",
                               "className"));
         digester.addSetProperties(prefix + "Context/Loader");
         digester.addSetNext(prefix + "Context/Loader",
@@ -286,10 +285,8 @@ public class ContextRuleSet extends RuleSetBase {
 
 final class CreateLoaderRule extends Rule {
 
-    public CreateLoaderRule(Digester digester, String loaderClass,
-                            String attributeName) {
+    public CreateLoaderRule(String loaderClass, String attributeName) {
 
-        super(digester);
         this.loaderClass = loaderClass;
         this.attributeName = attributeName;
 
@@ -299,7 +296,8 @@ final class CreateLoaderRule extends Rule {
 
     private String loaderClass;
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
 
         // Look up the required parent class loader
         ClassLoader parentClassLoader = null;
@@ -323,16 +321,17 @@ final class CreateLoaderRule extends Rule {
 
         // Push the new loader onto the stack
         digester.push(loader);
-        if (digester.getDebug() >= 1)
-            digester.log("new " + loader.getClass().getName());
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("new " + loader.getClass().getName());
 
     }
 
-    public void end() throws Exception {
+    public void end(String namespace, String name)
+        throws Exception {
 
         Loader loader = (Loader) digester.pop();
-        if (digester.getDebug() >= 1)
-            digester.log("pop " + loader.getClass().getName());
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("pop " + loader.getClass().getName());
 
     }
 
