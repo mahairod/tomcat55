@@ -136,8 +136,8 @@ public final class ValveUtil {
         try {
             
             String objectName = DeleteLoggerAction.getObjectName(parent,
-            TomcatTreeBuilder.REALM_TYPE);
-            
+            TomcatTreeBuilder.VALVE_TYPE);
+                        
             ObjectName pname = new ObjectName(parent);
             StringBuffer sb = new StringBuffer(pname.getDomain());
             
@@ -157,8 +157,11 @@ public final class ValveUtil {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
                 return (null);
             }
+                        
+            // Ensure that the requested valve name is unique
             
-            // Ensure that the requested user database name is unique
+            // TBD -- do we need this check?
+            /*
             ObjectName oname =
             new ObjectName(objectName);
             if (mBServer.isRegistered(oname)) {
@@ -170,14 +173,16 @@ public final class ValveUtil {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);                
                 return (new ActionForward(mapping.getInput()));
             }
+            */
             
             // Look up our MBeanFactory MBean
             ObjectName fname =
             new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
             
             // Create a new StandardValve object
-            values = new String[1];
-            values[0] = parent;
+            values = new String[1];            
+            values[0] = parent;           
+            
             operation = "create" + valveType;
             if ("AccessLogValve".equalsIgnoreCase(valveType))
                 operation = "createAccessLoggerValve";
