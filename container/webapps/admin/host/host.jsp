@@ -195,10 +195,10 @@
             </controls:data>
         </controls:row>
         
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="deployxml">
-            <controls:label><bean:message key="host.deployXML"/>:</controls:label>
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="deployOnStartup">
+            <controls:label><bean:message key="host.deployOnStartup"/>:</controls:label>
             <controls:data>
-               <html:select property="deployXML" styleId="deployxml">
+               <html:select property="deployOnStartup" styleId="deployOnStartup">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -206,10 +206,10 @@
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="livedeploy">
-            <controls:label><bean:message key="host.liveDeploy"/>:</controls:label>
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="deployxml">
+            <controls:label><bean:message key="host.deployXML"/>:</controls:label>
             <controls:data>
-               <html:select property="liveDeploy" styleId="livedeploy">
+               <html:select property="deployXML" styleId="deployxml">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
