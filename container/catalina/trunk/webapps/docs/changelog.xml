@@ -143,6 +143,9 @@
       Update the application development documentation for changes in Tomcat 5
       (remm)
       </docs>
+      <update>
+      Add manager translation in German, submitted by Yann Cebron (remm)
+      </update>
 
     </changelog>
 
