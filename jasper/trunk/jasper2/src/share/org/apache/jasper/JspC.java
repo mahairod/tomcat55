@@ -1022,6 +1022,7 @@ public class JspC implements Options {
         URL urlsA[]=new URL[urls.size()];
         urls.toArray(urlsA);
         loader = new URLClassLoader(urlsA, this.getClass().getClassLoader());
+        Thread.currentThread().setContextClassLoader(loader);
     }
 
     /**
