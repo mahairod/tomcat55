@@ -88,7 +88,7 @@ final class ServletConfigImpl implements ServletConfig {
     // -------------------- public facade -------------------- 
     
     public ServletContext getServletContext() {
-	return servletW.getContext().getFacade();
+	return (ServletContext)servletW.getContext().getFacade();
     }
 
     public String getInitParameter(String name) {
