@@ -74,6 +74,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleException;
@@ -90,11 +94,34 @@ import org.apache.catalina.util.CustomObjectInputStream;
  * Store to make Sessions persistence.
  *
  * @author Bip Thelin
+ * @author Jean-Francois Arcand
  * @version $Revision$, $Date$
  */
 
 public final class DistributedManager extends PersistentManagerBase {
+    // ---------------------------------------------------- Security Classes
+     private class PrivilegedDoCreateSession
+        implements PrivilegedAction {
 
+        PrivilegedDoCreateSession() {            
+        }
+
+        public Object run(){
+           return doCreateSession();
+        }                       
+    }   
+     
+    private class PrivilegedDoProcessClusterReceiver
+        implements PrivilegedAction {
+
+        PrivilegedDoProcessClusterReceiver() {            
+        }
+
+        public Object run(){
+           doProcessClusterReceiver();
+           return null;
+        }                       
+    }   
 
     // ----------------------------------------------------- Instance Variables
 
@@ -149,6 +176,20 @@ public final class DistributedManager extends PersistentManagerBase {
      * @return The newly created Session
      */
     public Session createSession() {
+        if (System.getSecurityManager() != null){   
+           return (Session) AccessController.doPrivileged( new PrivilegedDoCreateSession() );
+        } else {
+            return doCreateSession();
+        }
+    }
+        
+        
+    /**
+     * Create a Session and replicate it in our Cluster
+     *
+     * @return The newly created Session
+     */
+    private Session doCreateSession(){   
         Session session = super.createSession();
         ObjectOutputStream oos = null;
         ByteArrayOutputStream bos = null;
@@ -198,6 +239,18 @@ public final class DistributedManager extends PersistentManagerBase {
      *
      */
     public void processClusterReceiver() {
+        if (System.getSecurityManager() != null){   
+           AccessController.doPrivileged( new PrivilegedDoProcessClusterReceiver() );
+        } else {
+            doProcessClusterReceiver();
+        }        
+    }
+    
+    /**
+     * Called from our background thread to process new received Sessions
+     *
+     */
+    private void doProcessClusterReceiver() {
         Object[] objs = clusterReceiver.getObjects();
         StandardSession _session = null;
         ByteArrayInputStream bis = null;

@@ -78,6 +78,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
@@ -106,6 +110,7 @@ import org.apache.catalina.util.LifecycleSupport;
  * <code>stop()</code> methods of this class at the correct times.
  *
  * @author Craig R. McClanahan
+ * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
 
@@ -113,7 +118,33 @@ public class StandardManager
     extends ManagerBase
     implements Lifecycle, PropertyChangeListener, Runnable {
 
+    // ---------------------------------------------------- Security Classes
+    private class PrivilegedDoLoad
+        implements PrivilegedExceptionAction {
 
+        PrivilegedDoLoad() {           
+        }
+
+        public Object run() throws Exception{
+           doLoad();
+           return null;
+        }                       
+    }
+        
+    private class PrivilegedDoUnload
+        implements PrivilegedExceptionAction {
+
+        PrivilegedDoUnload() {
+        }
+
+        public Object run() throws Exception{
+            doUnload();
+            return null;
+        }            
+           
+    }        
+
+    
     // ----------------------------------------------------- Instance Variables
 
 
@@ -347,7 +378,35 @@ public class StandardManager
      * @exception IOException if an input/output error occurs
      */
     public void load() throws ClassNotFoundException, IOException {
-
+        if (System.getSecurityManager() != null){   
+            try{
+                AccessController.doPrivileged( new PrivilegedDoLoad() );
+            } catch (PrivilegedActionException ex){
+                Exception exception = ex.getException();
+                if (exception instanceof ClassNotFoundException){
+                    throw (ClassNotFoundException)exception;
+                } else if (exception instanceof IOException){
+                    throw (IOException)exception;
+                }
+                if (debug >= 1)
+                    log("Unreported exception in load() "
+                        + exception);                
+            }
+        } else {
+            doLoad();
+        }       
+    }
+        
+    /**
+     * Load any currently active sessions that were previously unloaded
+     * to the appropriate persistence mechanism, if any.  If persistence is not
+     * supported, this method returns without doing anything.
+     *
+     * @exception ClassNotFoundException if a serialized class cannot be
+     *  found during the reload
+     * @exception IOException if an input/output error occurs
+     */
+    private void doLoad() throws ClassNotFoundException, IOException {    
         if (debug >= 1)
             log("Start: Loading persisted sessions");
 
@@ -463,6 +522,32 @@ public class StandardManager
      * @exception IOException if an input/output error occurs
      */
     public void unload() throws IOException {
+        if (System.getSecurityManager() != null){       
+            try{
+                AccessController.doPrivileged( new PrivilegedDoUnload() );
+            } catch (PrivilegedActionException ex){
+                Exception exception = ex.getException();
+                if (exception instanceof IOException){
+                    throw (IOException)exception;
+                }
+                if (debug >= 1)
+                    log("Unreported exception in unLoad() "
+                        + exception);                
+            }        
+        } else {
+            doUnload();
+        }       
+    }
+        
+        
+    /**
+     * Save any currently active sessions in the appropriate persistence
+     * mechanism, if any.  If persistence is not supported, this method
+     * returns without doing anything.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private void doUnload() throws IOException {   
 
         if (debug >= 1)
             log("Unloading persisted sessions");
