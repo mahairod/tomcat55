@@ -1110,12 +1110,6 @@ public class CGIServlet extends HttpServlet {
                 if ("AUTHORIZATION".equalsIgnoreCase(header) ||
                     "PROXY_AUTHORIZATION".equalsIgnoreCase(header)) {
                     //NOOP per CGI specification section 11.2
-                } else if("HOST".equalsIgnoreCase(header)) {
-                    String host = req.getHeader(header);
-                int idx =  host.indexOf(":");
-                if(idx < 0) idx = host.length();
-                    envp.put("HTTP_" + header.replace('-', '_'),
-                             host.substring(0, idx));
                 } else {
                     envp.put("HTTP_" + header.replace('-', '_'),
                              req.getHeader(header));
