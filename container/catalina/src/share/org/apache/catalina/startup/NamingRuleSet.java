@@ -90,9 +90,9 @@ public class NamingRuleSet extends RuleSetBase {
         digester.addObjectCreate(prefix + "Ejb",
                                  "org.apache.catalina.deploy.ContextEjb");
         digester.addRule(prefix + "Ejb", new SetAllPropertiesRule());
-        digester.addSetNext(prefix + "Ejb",
-                            "addEjb",
-                            "org.apache.catalina.deploy.ContextEjb");
+        digester.addRule(prefix + "Ejb",
+                new SetNextNamingRule("addEjb",
+                            "org.apache.catalina.deploy.ContextEjb"));
 
         digester.addObjectCreate(prefix + "Environment",
                                  "org.apache.catalina.deploy.ContextEnvironment");
