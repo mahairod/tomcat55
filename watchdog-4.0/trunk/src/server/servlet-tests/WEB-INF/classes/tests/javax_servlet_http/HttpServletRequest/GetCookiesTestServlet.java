@@ -85,37 +85,40 @@ public class GetCookiesTestServlet extends HttpServlet  {
 
 
 		PrintWriter out = response.getWriter( );
-		Cookie cookies[]=null;
+                String expectedName = "BestLanguage";
+                String expectedValue = "Java";
+                int expectedCount = 1;
+		String gotName = null;
+                String gotValue= null;
 
-		boolean gotCookie=false;
+		Cookie cookies[] = request.getCookies();
+                if (cookies == null) {
+                    out.println("GetCookiesTest test FAILED");
+                    out.println("getCookies() returned null");
+                    out.flush();
+                    return;
+                }
+                for (int i = 0; i < cookies.length; i++) {
+                    gotName = cookies[i].getName();
+                    if (gotName.equals(expectedName)) {
+                        gotValue = cookies[i].getValue();
+                    }
+                }
 
-		if((request.getCookies() instanceof Cookie[])) {
+                if ((expectedCount != cookies.length) ||
+                    !expectedName.equals(gotName) ||
+                    !expectedValue.equals(gotValue)) {
+                    out.println("GetCookiesTest test FAILED");
+                    out.println("Expected count = " + expectedCount +
+                                ", actual count = " + cookies.length);
+                    out.println("Expected name = " + expectedName +
+                                ", gotName = " + gotName);
+                    out.println("Expected value = " + expectedValue +
+                                ", gotValue = " + gotValue);
+                } else {
+                    out.println("GetCookiesTest test PASSED");
+                }
 
-			cookies = request.getCookies();
-			gotCookie=true;
-		}
-		else {
+        }
 
-			out.println("GetCookiesTest test FAILED");	
-			out.println("getCookies()did not return an object of type Cookie[]");
-		}
-
-		if(gotCookie) {
-
-			int j=cookies.length;
-
-			if(j<1) {
-				out.println("GetCookiesTest test FAILED");
-				out.println("getCookies failed to get all cookies set");
-				out.println("cookies : " + cookies );
-			}
-			else
-			{
-				out.println("GetCookiesTest test PASSED");
-			}
-				
-		 }
-
-
-	}
 }

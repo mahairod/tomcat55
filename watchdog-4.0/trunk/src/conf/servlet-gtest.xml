@@ -1032,7 +1032,7 @@
 
      <target name="GetCookiesTest" >
       <gtest request="GET /servlet-tests/GetCookiesTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="Cookie: BestLanguage=java" 
+           debug="0" host="${host}" port="${port}" requestHeaders="Cookie:BestLanguage=Java" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookiesTest.html" />
 	</target>
 
