@@ -2312,15 +2312,6 @@ public class StandardContext
 	    }
 	}
 
-        // Restart our session manager
-	if ((manager != null) && (manager instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) manager).start();
-	    } catch (LifecycleException e) {
-		log(sm.getString("standardContext.startingManager"), e);
-	    }
-	}
-
         // Create and register the associated naming context, if internal 
         // naming is used
         boolean ok = true;
@@ -2335,6 +2326,15 @@ public class StandardContext
         }
 
         DirContextURLStreamHandler.bind(getResources());
+
+        // Restart our session manager (AFTER naming context recreated/bound)
+        if ((manager != null) && (manager instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) manager).start();
+            } catch (LifecycleException e) {
+                log(sm.getString("standardContext.startingManager"), e); 
+            }
+        }
 
         // Restart our application event listeners and filters
         if (ok) {
