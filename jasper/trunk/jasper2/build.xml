@@ -200,7 +200,8 @@
     <!-- Compile unit test classes -->
 <!--
     <javac   srcdir="src/test" destdir="${jasper.build}/tests"
-             deprecation="off" debug="on" optimize="off"
+             deprecation="${compile.deprecation}"
+             debug="${compile.debug}" optimize="off"
              excludes="**/CVS/**">
       <classpath refid="test.classpath"/>
     </javac>
