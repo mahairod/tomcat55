@@ -415,10 +415,11 @@
            debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncoding_1Test.html" />
 
-
+<!-- FIXME - Causes hang because content length is set but no content sent
       <gtest request="GET /servlet-tests/GetContentLengthTest HTTP/1.0"
            debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain##Content-Length:20" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/GetContentLengthTest.html" />
+-->
 
       <gtest request="GET /servlet-tests/GetContentTypeTest HTTP/1.0"
            debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain" 
@@ -438,11 +439,11 @@
            goldenFile="${wgdir}/javax_servlet/ServletRequest/GetLocalesTest.html" />
 
 
-
+<!-- FIXME - Causes OutOfMemoryException in GTest client
       <gtest request="GET /servlet-tests/GetParameterNamesTest?BestLanguage=Java&amp;BestJSP=Tomcat HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterNamesTest.html" />
-
+-->
 
       <gtest request="GET /servlet-tests/GetParameterNames_1Test HTTP/1.0"
            debug="0" host="${host}" port="${port}"
@@ -692,6 +693,10 @@
       <gtest request="GET /servlet-tests/GetHeaderNamesTest HTTP/1.0"
            debug="0" host="${host}" port="${port}" requestHeaders="Authorization:Basic achegkliporV8y##Cookie:BestLanguage=java" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaderNamesTest.html" />
+
+      <gtest request="GET /servlet-tests/GetHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="User-Agent:Mozilla/4.0" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaderTest.html" />
 
       <gtest request="GET /servlet-tests/GetHeader_01Test HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
