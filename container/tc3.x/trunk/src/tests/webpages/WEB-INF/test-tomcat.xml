@@ -1212,6 +1212,12 @@ mod_webapp into mod_jk )
           <httpStatusMatch match="200"/>
           <responseMatch match="getRequestURI: /test/js%70/ShowPathInfo.jsp"/>
       </httpClient>
+      <httpClient >
+          <httpRequest path="/test/jsp/ShowPathInfo.jsp;jsessionid=123" 
+		      method="GET" />
+          <httpStatusMatch match="200"/>
+          <responseMatch match="getRequestURI: /test/jsp/ShowPathInfo.jsp"/>
+      </httpClient>
    </target>
 
    <target name="security_chk" depends="init,security_chk_url">
