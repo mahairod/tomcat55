@@ -57,7 +57,7 @@ package org.apache.tools.ant;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import org.apache.xerces.parsers.DOMParser;
+import java.lang.reflect.Method;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -68,16 +68,31 @@ import org.xml.sax.SAXException;
  * @author pier@apache.org
  */
 public class ApacheParser extends Parser {
+
+    Class DOMParser = null;
+    Method parse;
+    Method getDocument;
+
     /**
      * Parse the specified file and return a DOM Document.
      */
     public Document parse(File buildFile)
     throws SAXException, IOException {
-        DOMParser p=new DOMParser();
-        URL url=new URL("file","",buildFile.getAbsolutePath());
-        p.parse(url.toExternalForm());
-        return(p.getDocument());
+        try {
+            if (DOMParser == null) {
+                DOMParser = Class.forName("org.apache.xerces.parsers.DOMParser");
+                parse = DOMParser.getMethod("parse", new Class[]{String.class});
+                getDocument = DOMParser.getMethod("getDocument", new Class[]{});
+            }
+
+            Object p=DOMParser.newInstance();
+            URL url=new URL("file","",buildFile.getAbsolutePath());
+            parse.invoke(p, new Object[]{url.toExternalForm()});
+            return(org.w3c.dom.Document)getDocument.invoke(p, new Object[]{});
+        } catch (Exception e) {
+           if (e instanceof IOException) throw (IOException)e;
+           if (e instanceof SAXException) throw (SAXException)e;
+           throw new IOException(e.toString());
+        }
     }
 }
-
-        
