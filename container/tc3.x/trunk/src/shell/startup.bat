@@ -18,6 +18,6 @@ echo Unable to determine the value of TOMCAT_HOME.
 goto eof
 
 :start
-call %TOMCAT_HOME%\bin\tomcat start %*
+call %TOMCAT_HOME%\bin\tomcat start %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 :eof
