@@ -2815,8 +2815,8 @@ class WebdavStatus {
      * moved to another location, but that future references should
      * still use the original URI to access the resource.
      */
-    public static final int SC_MOVED_TEMPORARILY =
-        HttpServletResponse.SC_MOVED_TEMPORARILY;
+    public static final int SC_FOUND =
+        HttpServletResponse.SC_FOUND;
 
 
     /**
@@ -2998,7 +2998,7 @@ class WebdavStatus {
         addStatusCodeMap(SC_ACCEPTED, "Accepted");
         addStatusCodeMap(SC_NO_CONTENT, "No Content");
         addStatusCodeMap(SC_MOVED_PERMANENTLY, "Moved Permanently");
-        addStatusCodeMap(SC_MOVED_TEMPORARILY, "Moved Temporarily");
+        addStatusCodeMap(SC_FOUND, "Moved Temporarily");
         addStatusCodeMap(SC_NOT_MODIFIED, "Not Modified");
         addStatusCodeMap(SC_BAD_REQUEST, "Bad Request");
         addStatusCodeMap(SC_UNAUTHORIZED, "Unauthorized");
