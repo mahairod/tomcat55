@@ -231,7 +231,7 @@ public class FileUtil {
     }
     
     public static String patch(String path) {
-        String patchPath = path.trim();
+        String patchPath = path;
 
         // Move drive spec to the front of the path
         if (patchPath.length() >= 3 &&
