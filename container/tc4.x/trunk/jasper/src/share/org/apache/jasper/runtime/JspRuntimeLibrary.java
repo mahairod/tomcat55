@@ -74,6 +74,8 @@ import java.io.InputStreamReader;
 
 import java.beans.PropertyDescriptor;
 import java.beans.IndexedPropertyDescriptor;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -100,7 +102,9 @@ public class JspRuntimeLibrary {
 
  
    // __begin convertMethod
-    public static Object convert(String s, Class t) throws JasperException {
+    public static Object convert(String propertyName, String s, Class t, Class propertyEditorClass) 
+       throws JasperException 
+    {
         try {
             if (s == null) {
                 if (t.equals(Boolean.class) || t.equals(Boolean.TYPE))
@@ -108,8 +112,10 @@ public class JspRuntimeLibrary {
                 else
                     return null;
             }
-    
-            if ( t.equals(Boolean.class) || t.equals(Boolean.TYPE) ) {
+	    if (propertyEditorClass != null) {
+		return getValueFromBeanInfoPropertyEditor(
+				    t, propertyName, s, propertyEditorClass);
+	    } else if ( t.equals(Boolean.class) || t.equals(Boolean.TYPE) ) {
                 if (s.equalsIgnoreCase("on") || s.equalsIgnoreCase("true"))
                     s = "true";
                 else
@@ -133,11 +139,13 @@ public class JspRuntimeLibrary {
                 return s;
             } else if ( t.equals(java.io.File.class) ) {
                 return new java.io.File(s);
+	    } else {
+		return getValueFromPropertyEditorManager(
+                                            t, propertyName, s);
             }
         } catch (Exception ex) {
             throw new JasperException (ex);
         }
-        return s;
     }
     // __end convertMethod
 
@@ -163,7 +171,8 @@ public class JspRuntimeLibrary {
 					throws JasperException
     {
         java.lang.reflect.Method method = null;
-        Class                    type   = null;
+        Class type   = null;
+        Class propertyEditorClass = null;
 	try {
 	    java.beans.BeanInfo info
 		= java.beans.Introspector.getBeanInfo(bean.getClass());
@@ -174,6 +183,7 @@ public class JspRuntimeLibrary {
 		    if ( pd[i].getName().equals(prop) ) {
 			method = pd[i].getWriteMethod();
 			type   = pd[i].getPropertyType();
+			propertyEditorClass = pd[i].getPropertyEditorClass();
 			break;
 		    }
 		}
@@ -193,11 +203,12 @@ public class JspRuntimeLibrary {
 			method.invoke(bean, new Object[] { values });
 		    } else {
 			Object tmpval = null;
-			createTypedArray (bean, method, values, t); 
+			createTypedArray (prop, bean, method, values, t,
+					  propertyEditorClass); 
 		    }
 		} else {
 		    if(value == null) return;
-		    Object oval = convert(value, type);
+		    Object oval = convert(prop, value, type, propertyEditorClass);
 		    if ( oval != null )
 			method.invoke(bean, new Object[] { oval });
 		}
@@ -266,10 +277,20 @@ public class JspRuntimeLibrary {
      * This is a special case where params are passed through
      * the request and the property is indexed.
      */
-    public static void createTypedArray (Object bean, Method method, String []values, Class t)
+    public static void createTypedArray(String propertyName,
+					Object bean, Method method, String []values, Class t,
+					Class propertyEditorClass)
     throws JasperException {
 	try {
-	    if (t.equals(Integer.class)) {
+	    if (propertyEditorClass != null) {
+		Object[] tmpval = new Integer[values.length];
+		for (int i=0; i<values.length; i++) {
+		    tmpval[i] =  
+			getValueFromBeanInfoPropertyEditor(
+                                            t, propertyName, values[i], propertyEditorClass);
+		}
+		method.invoke (bean, new Object[] {tmpval});
+	    } else if (t.equals(Integer.class)) {
 		Integer []tmpval = new Integer[values.length];
 		for (int i = 0 ; i < values.length; i++)
 		    tmpval[i] =  new Integer (values[i]);
@@ -349,12 +370,18 @@ public class JspRuntimeLibrary {
 		for (int i = 0 ; i < values.length; i++)
 		    tmpval[i] = values[i].charAt(0);
 		method.invoke (bean, new Object[] {tmpval});
+	    } else {
+		Object[] tmpval = new Integer[values.length];
+		for (int i=0; i<values.length; i++) {
+		    tmpval[i] =  
+			getValueFromPropertyEditorManager(
+                                            t, propertyName, values[i]);
+		}
+		method.invoke (bean, new Object[] {tmpval});
 	    }
 	} catch (Exception ex) {
 	    throw new JasperException ("error in invoking method");
 	}
-
-	
     }
 
     /**
@@ -627,7 +654,47 @@ public class JspRuntimeLibrary {
 
 	return method;
     }
-    
+
+    //*********************************************************************
+    // PropertyEditor Support
+
+    public static Object getValueFromBeanInfoPropertyEditor(
+		           Class attrClass, String attrName, String attrValue,
+			   Class propertyEditorClass) 
+	throws JasperException 
+    {
+	try {
+	    PropertyEditor pe = (PropertyEditor)propertyEditorClass.newInstance();
+	    pe.setAsText(attrValue);
+	    return pe.getValue();
+	} catch (Exception ex) {
+	    throw new JasperException(
+	        "Unable to convert string '" + attrValue + "' to class " +
+		attrClass.getName() + " for attribute " + attrName +
+		": " + ex);
+	}
+    }
+
+    public static Object getValueFromPropertyEditorManager(
+	             Class attrClass, String attrName, String attrValue) 
+	throws JasperException 
+    {
+	try {
+	    PropertyEditor propEditor = 
+		PropertyEditorManager.findEditor(attrClass);
+	    if (propEditor != null) {
+		propEditor.setAsText(attrValue);
+		return propEditor.getValue();
+	    } else {
+		throw new IllegalArgumentException("Property Editor not registered with the PropertyEditorManager");
+	    }
+	} catch (IllegalArgumentException ex) {
+	    throw new JasperException(
+		"Unable to convert string '" + attrValue + "' to class " +
+		attrClass.getName() + " for attribute " + attrName +
+		": " + ex);
+	}
+    }
 }
 
 
