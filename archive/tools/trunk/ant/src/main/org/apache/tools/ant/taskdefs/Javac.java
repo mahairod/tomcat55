@@ -185,11 +185,17 @@ public class Javac extends Task {
 	argList.addElement("-d");
 	argList.addElement(destDir.getAbsolutePath());
 	argList.addElement("-classpath");
-	argList.addElement(classpath);
-	argList.addElement("-sourcepath");
-	argList.addElement(srcDir.getAbsolutePath());
-	argList.addElement("-target");
-	argList.addElement(target);
+	// Just add "sourcepath" to classpath ( for JDK1.1 )
+	String javaVersion = System.getProperty("java.version");
+	if (javaVersion.startsWith("1.1")) {
+	    argList.addElement(classpath + File.pathSeparator + srcDir.getAbsolutePath());
+	} else {
+	    argList.addElement(classpath);
+	    argList.addElement("-sourcepath");
+	    argList.addElement(srcDir.getAbsolutePath());
+	    argList.addElement("-target");
+	    argList.addElement(target);
+	}
 	if (debug) {
 	    argList.addElement("-g");
 	}

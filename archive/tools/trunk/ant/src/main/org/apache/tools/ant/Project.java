@@ -194,7 +194,7 @@ public class Project {
     }
 
     public File resolveFile(String fileName) {
-	File file = baseDir.getAbsoluteFile();
+	File file = new File( baseDir.getAbsolutePath());
 	StringTokenizer tok = new StringTokenizer(fileName, "/", false);
 	while (tok.hasMoreTokens()) {
 	    String part = tok.nextToken();
@@ -204,7 +204,7 @@ public class Project {
 		file = new File(file, part);
 	    }
 	}
-	return file.getAbsoluteFile();
+	return new File(file.getAbsolutePath());
     }
 }
 

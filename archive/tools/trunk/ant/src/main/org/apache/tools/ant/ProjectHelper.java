@@ -59,7 +59,7 @@ class ProjectHelper {
 	String baseDir = root.getAttribute("basedir");
 	if (!baseDir.equals("")) {
 	    try {
-		project.setBaseDir(new File(baseDir).getCanonicalFile());
+		project.setBaseDir(new File( new File(baseDir).getCanonicalPath()));
 	    } catch (IOException ioe) {
 		String msg = "Can't set basedir " + baseDir + " due to " +
 		    ioe.getMessage();
@@ -256,10 +256,13 @@ class ProjectHelper {
 		} catch (IllegalAccessException iae) {
 		    String msg = "Error setting value for attrib: " +
 			attr.getName();
+		    iae.printStackTrace();
 		    throw new BuildException(msg);
 		} catch (InvocationTargetException ie) {
 		    String msg = "Error setting value for attrib: " +
-			attr.getName();
+			attr.getName() + " in " + task.getClass().getName();
+		    ie.printStackTrace();
+		    ie.getTargetException().printStackTrace();
 		    throw new BuildException(msg);		    
 		}
 	    }
