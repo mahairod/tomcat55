@@ -555,6 +555,11 @@ public class ApacheConfig  extends BaseJkConfig {
     protected boolean addMapping( String fullPath, PrintWriter mod_jk ) {
         if( debug > 0 )
             log( "Adding map for " + fullPath );
+        if( fullPath.endsWith("/*") ) {
+            mod_jk.println(indent + "JkMount "
+                    + fullPath.substring(0, fullPath.length() - 2)
+                    + "  " + jkWorker );
+        }
 	mod_jk.println(indent + "JkMount " + fullPath + "  " + jkWorker );
 	return true;
     }

@@ -345,6 +345,10 @@ public class IISConfig extends BaseJkConfig  {
     protected boolean addMapping( String fullPath, PrintWriter uri_worker ) {
         if( debug > 0 )
             log( "Adding map for " + fullPath );
+        if( fullPath.endsWith("/*") ) {
+            uri_worker.println(fullPath.substring(0, fullPath.length() - 2)
+                    + "=$(default.worker)" );
+        }
         uri_worker.println(fullPath + "=$(default.worker)" );
         return true;
     }
