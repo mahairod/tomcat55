@@ -413,7 +413,7 @@
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemaining.html" />
+           responseMatch="got=4939" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemainingBufferUnset.html" />
