@@ -2,7 +2,7 @@
 ; Tomcat 4 script for Nullsoft Installer
 ; $Id$
 
-Name "Apache Tomcat @VERSION@"
+Name "Apache Tomcat 4.1"
 OutFile tomcat4.exe
 CRCCheck on
 SetCompress force
@@ -12,188 +12,179 @@ BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000000
 InstProgressFlags smooth colored
 
+PageEx license
+  LicenseText "You must read the following license before installing:"
+  LicenseData INSTALLLICENSE
+PageExEnd
+
+PageEx components
+  ComponentText "This will install the Apache Tomcat 4.1 servlet container on your computer:"
+PageExEnd
+
+PageEx directory
+  DirText "Please select a location to install Tomcat 4.1 (or use the default):"
+PageExEnd
+
+Page instfiles
+Page custom configure "" ": Basic settings"
+
+UninstPage uninstConfirm
+UninstPage instfiles
+ 
 Icon main.ico
 UninstallIcon uninst.ico 
-EnabledBitmap tickyes.bmp 
-DisabledBitmap tickno.bmp
 
-LicenseText "You must read the following license before installing:"
-LicenseData INSTALLLICENSE
-ComponentText "This will install the Apache Tomcat 4.1 servlet container on your computer:"
 InstType Normal
 InstType Minimum
 InstType "Full (w/ Source Code)"
 AutoCloseWindow false
 ShowInstDetails show
-DirText "Please select a location to install Tomcat 4.1 (or use the default):"
 SetOverwrite on
 SetDateSave on
 
 InstallDir "$PROGRAMFILES\Apache Group\Tomcat 4.1"
 InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1" ""
 
-Section "Tomcat (required)"
+SubSection /e "Main"
+  Section "Tomcat (required)"
 
-  SectionIn 1 2 3
+    SectionIn 1 2 3
 
-  SetOutPath $INSTDIR
-  File tomcat.ico
-  File LICENSE
-  File /r bin
-  Delete "$INSTDIR\bin\tomcat.exe"
-  File /r common
-  File /r shared
-  File /r logs
-  File /r server
-  File /r work
-  File /r temp
-  SetOutPath $INSTDIR\webapps
-  File webapps\*.xml
-  File /r webapps\ROOT
+    SetOutPath $INSTDIR
+    File tomcat.ico
+    File LICENSE
+    File /r bin
+    Delete "$INSTDIR\bin\tomcat.exe"
+    File /r common
+    File /nonfatal /r shared
+    File /nonfatal /r logs
+    File /r server
+    File /nonfatal /r work
+    File /nonfatal /r temp
+    SetOutPath $INSTDIR\webapps
+    File webapps\*.xml
+    File /r webapps\ROOT
 
-  Call findJavaPath
-  Pop $2
+    Call findJavaPath
+    Pop $2
 
-  CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+    CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
 
-  WriteUninstaller "$INSTDIR\uninst-tomcat4.exe"
+    WriteUninstaller "$INSTDIR\uninst-tomcat4.exe"
 
-SectionEnd
+  SectionEnd
 
-Section "NT Service (NT/2k/XP only)"
+  Section "NT Service (NT/2k/XP only)"
 
-  SectionIn 3
+    SectionIn 3
 
-  Call findJVMPath
-  Pop $2
+    Call findJVMPath
+    Pop $2
 
-  SetOutPath $INSTDIR\bin
-  File /oname=tomcat.exe bin\tomcat.exe
+    SetOutPath $INSTDIR\bin
+    File /oname=tomcat.exe bin\tomcat.exe
   
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 4.1" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -Dsun.io.useCanonCaches=false -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+    ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 4.1" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -Dsun.io.useCanonCaches=false -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
-  ClearErrors
+    ClearErrors
 
-SectionEnd
+  SectionEnd
 
-Section "JSP Development Shell Extensions"
+  Section "JSP Development Shell Extensions"
 
-  SectionIn 1 2 3
-  ; back up old value of .jsp
-  ReadRegStr $1 HKCR ".jsp" ""
-  StrCmp $1 "" Label1
+    SectionIn 1 2 3
+    ; back up old value of .jsp
+    ReadRegStr $1 HKCR ".jsp" ""
+    StrCmp $1 "" Label1
     StrCmp $1 "JSPFile" Label1
     WriteRegStr HKCR ".jsp" "backup_val" $1
 
-Label1:
+    Label1:
 
-  WriteRegStr HKCR ".jsp" "" "JSPFile"
-  WriteRegStr HKCR "JSPFile" "" "Java Server Pages source"
-  WriteRegStr HKCR "JSPFile\shell" "" "open"
-  WriteRegStr HKCR "JSPFile\DefaultIcon" "" "$INSTDIR\tomcat.ico"
-  WriteRegStr HKCR "JSPFile\shell\open\command" "" 'notepad.exe "%1"'
+    WriteRegStr HKCR ".jsp" "" "JSPFile"
+    WriteRegStr HKCR "JSPFile" "" "Java Server Pages source"
+    WriteRegStr HKCR "JSPFile\shell" "" "open"
+    WriteRegStr HKCR "JSPFile\DefaultIcon" "" "$INSTDIR\tomcat.ico"
+    WriteRegStr HKCR "JSPFile\shell\open\command" "" 'notepad.exe "%1"'
 
-SectionEnd
+  SectionEnd
 
-Section "Tomcat Start Menu Group"
+  Section "Tomcat Start Menu Group"
 
-  SectionIn 1 2 3
+    SectionIn 1 2 3
 
-  Call findJavaPath
-  Pop $2
+    Call findJavaPath
+    Pop $2
 
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
+    SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Home Page.lnk" \
-                 "http://jakarta.apache.org/tomcat"
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Home Page.lnk" \
+                   "http://jakarta.apache.org/tomcat"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Uninstall Tomcat 4.1.lnk" \
-                 "$INSTDIR\uninst-tomcat4.exe"
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Uninstall Tomcat 4.1.lnk" \
+                   "$INSTDIR\uninst-tomcat4.exe"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat 4.1 Program Directory.lnk" \
-                 "$INSTDIR"
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat 4.1 Program Directory.lnk" \
+                   "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Start Tomcat.lnk" \
-                 "$2\bin\java.exe" \
-                 '-jar -Duser.dir="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" "$INSTDIR\bin\bootstrap.jar" start' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Start Tomcat.lnk" \
+                   "$2\bin\java.exe" \
+                   '-jar -Duser.dir="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" "$INSTDIR\bin\bootstrap.jar" start' \
+                   "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Stop Tomcat.lnk" \
-                 "$2\bin\java.exe" \
-                 '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Stop Tomcat.lnk" \
+                   "$2\bin\java.exe" \
+                   '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
+                   "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
-SectionEnd
+  SectionEnd
+SubSectionEnd
 
-SectionDivider " documentation and examples "
+SubSection "Documentation and Examples"
+  Section "Tomcat Documentation"
 
-Section "Tomcat Documentation"
+    SectionIn 1 3
+    SetOutPath $INSTDIR\webapps
+    File /r webapps\tomcat-docs
 
-  SectionIn 1 3
-  SetOutPath $INSTDIR\webapps
-  File /r webapps\tomcat-docs
+    IfFileExists "$SMPROGRAMS\Apache Tomcat 4.1" 0 NoLinks
 
-  IfFileExists "$SMPROGRAMS\Apache Tomcat 4.1" 0 NoLinks
+    SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
 
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Documentation.lnk" \
+                   "$INSTDIR\webapps\tomcat-docs\index.html"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Documentation.lnk" \
-                 "$INSTDIR\webapps\tomcat-docs\index.html"
+    NoLinks:
 
- NoLinks:
+  SectionEnd
 
-SectionEnd
+  Section "Example Web Applications"
 
-Section "Example Web Applications"
+    SectionIn 1 3
 
-  SectionIn 1 3
+    SetOverwrite off
+    SetOutPath $INSTDIR\conf
+    File conf\server.xml
+    SetOverwrite on
+    SetOutPath $INSTDIR\webapps
+    File /r webapps\examples
+    File /r webapps\webdav
 
-  SetOverwrite off
-  SetOutPath $INSTDIR\conf
-  File conf\server.xml
-  SetOverwrite on
-  SetOutPath $INSTDIR\webapps
-  File /r webapps\examples
-  File /r webapps\webdav
+  SectionEnd
 
-SectionEnd
+SubSEctionEnd
+SubSection "Developer Resources"
 
-SectionDivider " developer resources "
+  Section "Tomcat Source Code"
 
-Section "Tomcat Source Code"
+    SectionIn 3
+    SetOutPath $INSTDIR
+    File /r src
+    File /r jtc-src
 
-  SectionIn 3
-  SetOutPath $INSTDIR
-  File /r src
-  File /r jtc-src
+  SectionEnd
 
-SectionEnd
-
-Section -post
-
-  SetOverwrite off
-  SetOutPath $INSTDIR\conf
-  File /oname=server.xml conf\server-noexamples.xml.config
-  SetOutPath $INSTDIR
-  File /r conf
-
-  SetOverwrite on
-
-  Call configure
-
-  Call startService
-
-  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\4.1" "" $INSTDIR
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
-                   "DisplayName" "Apache Tomcat 4.1 (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
-                   "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
-
-  Sleep 500
-  BringToFront
-
-SectionEnd
-
+SubSectionEnd
 
 Function .onInit
 
@@ -202,6 +193,9 @@ Function .onInit
   Call findJavaPath
   Pop $1
   MessageBox MB_OK "Using Java Development Kit found in $1"
+  
+  InitPluginsDir
+  File /oname=$PLUGINSDIR\config.ini config.ini
 
 FunctionEnd
 
@@ -306,22 +300,22 @@ FunctionEnd
 ; and build the configuration files
 ;
 Function configure
+  SetOverwrite off
+  SetOutPath $INSTDIR\conf
+  File /oname=server.xml conf\server-noexamples.xml.config
+  SetOutPath $INSTDIR
+  File /r conf
 
   ; Output files needed for the configuration dialog
   SetOverwrite on
-  GetTempFileName $8
-  GetTempFileName $7
-  File /oname=$8 "InstallOptions.dll"
-  File /oname=$7 "config.ini"
 
-  Push $7
-  CallInstDLL $8 dialog
+  Push $1
+  InstallOptions::dialog $PLUGINSDIR\config.ini
   Pop $1
-  StrCmp $1 "0" NoConfig
 
-  ReadINIStr $R0 $7 "Field 2" State
-  ReadINIStr $R1 $7 "Field 5" State
-  ReadINIStr $R2 $7 "Field 7" State
+  ReadINIStr $R0 $PLUGINSDIR\config.ini "Field 2" State
+  ReadINIStr $R1 $PLUGINSDIR\config.ini "Field 5" State
+  ReadINIStr $R2 $PLUGINSDIR\config.ini "Field 7" State
 
   StrCpy $R4 'port="$R0"'
   StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
@@ -363,11 +357,20 @@ Function configure
 
  NoLinks:
 
- NoConfig:
-
   Delete $7
   Delete $8
   RMDir /r "$TEMP\confinstall"
+
+  Call startService
+
+  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\4.1" "" $INSTDIR
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
+                   "DisplayName" "Apache Tomcat 4.1 (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
+                   "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
+
+  Sleep 500
+  BringToFront
 
 FunctionEnd
 
@@ -488,7 +491,7 @@ Section Uninstall
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
-      "Remove all files in your Tomcat 4.1 directory? (If you have anything\
+      "Remove all files in your Tomcat 4.1 directory? (If you have anything \
  you created that you want to keep, click No)" IDNO Removed
     Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
     RMDir /r "$INSTDIR"
