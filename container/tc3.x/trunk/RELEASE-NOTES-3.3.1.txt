@@ -249,6 +249,9 @@ Bug No.  Description
 6518	 Fix an edge condition where in some cases a JSP file beginning with
 	 a number wouldn't get mangled correctly.
 
+6604	 Fix a problem when using the AccessLog without a "Default Context" 
+	 defined.  
+
 Configuration:
 
 Bug No.  Description
