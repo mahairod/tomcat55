@@ -100,6 +100,9 @@
       <fix>
         <bug>31511</bug>: Don't call setenv.bat if not found in *using-launcher scripts. (yoavs)
       </fix>
+      <fix>
+        <bug>31549</bug>: Add name of resource to load failed messaged in WebappClassLoader. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
