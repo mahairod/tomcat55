@@ -114,7 +114,7 @@ public final class EmbededServletOptions implements Options {
     /**
      * Do we want to include debugging information in the class file?
      */
-    public boolean classDebugInfo = false;
+    public boolean classDebugInfo = true;
 
     /**
      * Background compile thread check interval in seconds.
