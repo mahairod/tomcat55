@@ -10,7 +10,7 @@
 
   <!-- ==================== Watchdog JSP tests ==================== -->
    
-   <target name="watchdog-JSP">
+   <target name="jsp-test">
       <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            goldenFile="${wgdir}/HelloWorld.html" />
@@ -561,16 +561,6 @@
       <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html" />
-   </target>
-
-   <target name="watchdog-Servlet">
-      <gtest request="GET /servlet-tests/ResetTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 200 OK" />
-   </target>
-
-
-   <target name="jsp-test" depends="watchdog-JSP,watchdog-Servlet">
    </target>
 
    <target name="main" depends="jsp-test" />

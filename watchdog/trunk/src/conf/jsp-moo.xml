@@ -1,0 +1,18 @@
+<project name="TestRun" default="main" basedir="." init="init">
+
+   <target name="init">
+     <property name="host" value="localhost" />
+     <property name="port" value="8080" />
+   </target>
+
+   <target name="main" depends="jsp-test" />
+
+  <target name="jsp-test" >
+    <!-- Sample configuration for future moo-based jsp test
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.jsp.client.HelloWorld" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSize" />
+    -->   
+   </target>
+
+</project>
+

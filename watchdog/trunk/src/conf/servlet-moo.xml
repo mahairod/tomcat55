@@ -5,17 +5,7 @@
      <property name="port" value="8080" />
    </target>
 
-   <target name="startup">
-     <java classname="org.apache.tomcat.shell.Startup" args="" />
-   </target>
-
-   <target name="shutdown">
-     <java classname="org.apache.tomcat.shell.Startup" args="" />
-   </target>
-
-   <target name="main" depends="servlet-test,jsp-test" />
-
-
+   <target name="main" depends="servlet-test" />
 
    <target name="servlet-test">
     <!-- HttpSession -->
@@ -235,14 +225,6 @@
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_3Test" />
 
   </target>
-
-
-  <target name="jsp-test" >
-<!-- Sample configuration for future moo-based jsp test
-    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.jsp.client.HelloWorld" />
-    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSize" />
--->   
-   </target>
 
 </project>
 
