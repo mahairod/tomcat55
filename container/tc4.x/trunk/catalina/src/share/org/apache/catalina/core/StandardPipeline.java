@@ -100,6 +100,12 @@ public class StandardPipeline
     implements Pipeline, Contained, Lifecycle, ValveContext {
 
 
+    // -------------------------------------------------------------- Constants
+
+
+    protected static final String STATE = "pipelineState";
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -171,16 +177,6 @@ public class StandardPipeline
      * Has this component been started yet?
      */
     protected boolean started = false;
-
-
-    /**
-     * The per-thread execution state for processing through this pipeline.
-     * The actual value is a java.lang.Integer object containing the subscript
-     * into the <code>valves</code> array, or a subscript equal to
-     * <code>valves.length</code> if the basic Valve is currently being
-     * processed.
-     */
-    protected ThreadLocal state = new ThreadLocal();
 
 
     /**
@@ -477,7 +473,7 @@ public class StandardPipeline
         throws IOException, ServletException {
 
         // Initialize the per-thread state for this thread
-        state.set(new Integer(0));
+        request.setNote(STATE, new PipelineState());
 
         // Invoke the first Valve in this pipeline for this request
         invokeNext(request, response);
@@ -566,9 +562,9 @@ public class StandardPipeline
         throws IOException, ServletException {
 
         // Identify the current subscript for the current request thread
-        Integer current = (Integer) state.get();
-        int subscript = current.intValue();
-        state.set(new Integer(subscript + 1));
+        PipelineState pipelineState = (PipelineState) request.getNote(STATE);
+        int subscript = pipelineState.stage;
+        pipelineState.stage = pipelineState.stage + 1;
 
         // Invoke the requested Valve for the current request thread
         if (subscript < valves.length) {
@@ -625,6 +621,18 @@ public class StandardPipeline
                                "]: " + message);
             throwable.printStackTrace(System.out);
         }
+
+    }
+
+
+    // ---------------------------------------------- PipelineState Inner Class
+
+
+    protected class PipelineState {
+
+
+        int stage = 0;
+
 
     }
 
