@@ -382,6 +382,8 @@ public class ManagerServlet
             resources(writer, type);
         } else if (command.equals("/roles")) {
             roles(writer);
+        } else if (command.equals("/save")) {
+            save(writer, path);
         } else if (command.equals("/serverinfo")) {
             serverinfo(writer);
         } else if (command.equals("/sessions")) {
@@ -533,6 +535,55 @@ public class ManagerServlet
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Store server configuration.
+     * 
+     * @param path Optional context path to save
+     */
+    protected synchronized void save(PrintWriter writer, String path) {
+
+        Server server = ServerFactory.getServer();
+
+        if (!(server instanceof StandardServer)) {
+            writer.println(sm.getString("managerServlet.saveFail", server));
+            return;
+        }
+
+        if ((path == null) || path.length() == 0 || !path.startsWith("/")) {
+            try {
+                ((StandardServer) server).storeConfig();
+                writer.println(sm.getString("managerServlet.saved"));
+            } catch (Exception e) {
+                log("managerServlet.storeConfig", e);
+                writer.println(sm.getString("managerServlet.exception",
+                                            e.toString()));
+                return;
+            }
+        } else {
+            String contextPath = path;
+            if (path.equals("/")) {
+                contextPath = "";
+            }
+            Context context =  deployer.findDeployedApp(contextPath);
+            if (context == null) {
+                writer.println(sm.getString("managerServlet.noContext", path));
+                return;
+            }
+            try {
+                ((StandardServer) server).storeContext(context);
+                writer.println(sm.getString("managerServlet.savedContext", 
+                               path));
+            } catch (Exception e) {
+                log("managerServlet.save[" + path + "]", e);
+                writer.println(sm.getString("managerServlet.exception",
+                                            e.toString()));
+                return;
+            }
+        }
+
+    }
 
 
     /**
@@ -957,15 +1008,17 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
-            return;
+                writer.println(sm.getString
+                               ("managerServlet.noContext", displayPath));
+                return;
             }
             DirContext resources = context.getResources();
             if (resources instanceof ProxyDirContext) {
                 resources = ((ProxyDirContext) resources).getDirContext();
             }
             if (resources instanceof WARDirContext) {
-                writer.println(sm.getString("managerServlet.noReload", displayPath));
+                writer.println(sm.getString
+                               ("managerServlet.noReload", displayPath));
                 return;
             }
             // It isn't possible for the manager to reload itself
@@ -974,7 +1027,8 @@ public class ManagerServlet
                 return;
             }
             context.reload();
-            writer.println(sm.getString("managerServlet.reloaded", displayPath));
+            writer.println
+                (sm.getString("managerServlet.reloaded", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.reload[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
