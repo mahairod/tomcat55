@@ -82,11 +82,6 @@ public interface Options {
     public boolean getKeepGenerated();
 
     /**
-     * Are we supporting large files?
-     */
-    public boolean getLargeFile();
-
-    /**
      * Returns true if tag handler pooling is enabled, false otherwise.
      */
     public boolean isPoolingEnabled();
@@ -131,6 +126,11 @@ public interface Options {
      * Ignored is suppressSmap() is true
      */
     public boolean isSmapDumped();
+
+    /**
+     * Should white spaces between directives or actions be trimmed?
+     */
+    public boolean getTrimSpaces();
 
     /**
      * Class ID for use in the plugin tag when the browser is IE. 

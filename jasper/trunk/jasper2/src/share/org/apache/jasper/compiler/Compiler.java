@@ -268,7 +268,7 @@ public class Compiler {
 	tagPluginManager.apply(pageNodes, errDispatcher, pageInfo);
 
         // Optimization: concatenate contiguous template texts.
-        TextOptimizer.concatenate(pageNodes);
+        TextOptimizer.concatenate(this, pageNodes);
 
 	// Generate static function mapper codes.
 	ELFunctionMapper.map(this, pageNodes);

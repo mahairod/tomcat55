@@ -105,12 +105,9 @@ public final class EmbeddedServletOptions implements Options {
     private boolean keepGenerated = true;
 
     /**
-     * Do you want support for "large" files? What this essentially
-     * means is that we generated code so that the HTML data in a JSP
-     * file is stored separately as opposed to those constant string
-     * data being used literally in the generated servlet. 
+     * Should white spaces between directives or actions be trimmed?
      */
-    private boolean largeFile = false;
+    private boolean trimSpaces = false;
 
     /**
      * Determines whether tag handler pooling is enabled.
@@ -228,10 +225,10 @@ public final class EmbeddedServletOptions implements Options {
     }
     
     /**
-     * Are we supporting large files?
+     * Should white spaces between directives or actions be trimmed?
      */
-    public boolean getLargeFile() {
-        return largeFile;
+    public boolean getTrimSpaces() {
+        return trimSpaces;
     }
     
     public boolean isPoolingEnabled() {
@@ -394,15 +391,15 @@ public final class EmbeddedServletOptions implements Options {
         }
             
 
-        String largeFile = config.getInitParameter("largefile"); 
-        if (largeFile != null) {
-            if (largeFile.equalsIgnoreCase("true")) {
-                this.largeFile = true;
-            } else if (largeFile.equalsIgnoreCase("false")) {
-                this.largeFile = false;
+        String trimsp = config.getInitParameter("trimSpaces"); 
+        if (trimsp != null) {
+            if (trimsp.equalsIgnoreCase("true")) {
+                trimSpaces = true;
+            } else if (trimsp.equalsIgnoreCase("false")) {
+                trimSpaces = false;
             } else {
 		if (log.isWarnEnabled()) {
-		    log.warn(Localizer.getMessage("jsp.warning.largeFile"));
+		    log.warn(Localizer.getMessage("jsp.warning.trimspaces"));
 		}
 	    }
         }

@@ -172,7 +172,7 @@ public class JspC implements Options {
     private static int die; 
     private String classPath = null;
     private URLClassLoader loader = null;
-    private boolean largeFile = false;
+    private boolean trimSpaces = false;
     private boolean xpoweredBy;
     private boolean mappedFile = false;
     private File scratchDir;
@@ -331,8 +331,12 @@ public class JspC implements Options {
         return true;
     }
 
-    public boolean getLargeFile() {
-        return largeFile;
+    public boolean getTrimSpaces() {
+        return trimSpaces;
+    }
+
+    public void setTrimSpaces(boolean ts) {
+        this.trimSpaces = ts;
     }
 
     public boolean isPoolingEnabled() {

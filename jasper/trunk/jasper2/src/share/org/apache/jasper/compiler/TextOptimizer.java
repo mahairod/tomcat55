@@ -61,6 +61,7 @@
 package org.apache.jasper.compiler;
 
 import org.apache.jasper.JasperException;
+import org.apache.jasper.Options;
 
 /**
  */
@@ -71,10 +72,15 @@ public class TextOptimizer {
      */
     static class TextCatVisitor extends Node.Visitor {
 
+        private Options options;
         private int textNodeCount = 0;
         private Node.TemplateText firstTextNode = null;
         private StringBuffer textBuffer;
         private final String emptyText = new String("");
+
+        public TextCatVisitor(Compiler compiler) {
+            options = compiler.getCompilationContext().getOptions();
+        }
 
         public void doVisit(Node n) throws JasperException {
             collectText();
@@ -112,6 +118,11 @@ public class TextOptimizer {
 
         public void visit(Node.TemplateText n) throws JasperException {
 
+            if (options.getTrimSpaces() && n.isAllSpace()) {
+                n.setText(emptyText);
+                return;
+            }
+
             if (textNodeCount++ == 0) {
                 firstTextNode = n;
                 textBuffer = new StringBuffer(n.getText());
@@ -137,9 +148,10 @@ public class TextOptimizer {
 
     }
 
-    public static void concatenate(Node.Nodes page) throws JasperException {
+    public static void concatenate(Compiler compiler, Node.Nodes page)
+            throws JasperException {
 
-        TextCatVisitor v = new TextCatVisitor();
+        TextCatVisitor v = new TextCatVisitor(compiler);
         page.visit(v);
 
 	// Cleanup, in case the page ends with a template text
