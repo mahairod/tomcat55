@@ -30,6 +30,7 @@ should be completed:</p>
    as a load balancer. Apache/mod_jk will also do or hardware of course</p>
 <p>Note: Remember that your session state is tracked by a cookie, so your URL must look the same from the out
    side otherwise, a new session will be created.</p>
+<p>Note: Clustering support currently requires the JDK version 1.4 or later.</p>
 </section>
 
 
