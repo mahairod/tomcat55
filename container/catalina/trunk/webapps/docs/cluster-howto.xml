@@ -4,7 +4,7 @@
 ]>
 <document url="cluster-howto.html">
 
-    &project; 
+    &project;
 
     <properties>
         <author email="fhanik@apache.org">Filip Hanik</author>
@@ -24,7 +24,7 @@ should be completed:</p>
 <li>Uncomment the <code>Valve(ReplicationValve)</code> element in server.xml</li>
 <li>If your Tomcat instances are running on the same machine, make sure the <code>tcpListenPort</code>
     attribute is unique for each instance.</li>
-<li>Make sure your <code>web.xml</code> has the <code>&lt;distributable/&gt;</code> element</li>    
+<li>Make sure your <code>web.xml</code> has the <code>&lt;distributable/&gt;</code> element</li>
 </ul>
 <p>Then all you have to do is start Tomcat, I suggest using <a href="http://balance.sourceforge.net">Balance</a>
    as a load balancer. Apache/mod_jk will also do or hardware of course</p>
@@ -43,8 +43,8 @@ should be completed:</p>
 </ol>
 
 <p>In this release of session replication, Tomcat performs an all-to-all replication of session state.
-   
-   This is an algorithm that is only efficient when the clusters are small. For large clusters, the next 
+
+   This is an algorithm that is only efficient when the clusters are small. For large clusters, the next
    release will support a primary-secondary session replication where the session will only be stored at one
    or maybe two backup servers.
    In order to keep the network traffic down in an all-to-all environment, you can split your cluster
@@ -63,7 +63,7 @@ should be completed:</p>
 </source>
 
 <p>What is important to mention here, is that session replication is only the beginning of clustering.
-   Another popular concept used to implement clusters is farming, ie, you deploy your apps only to one 
+   Another popular concept used to implement clusters is farming, ie, you deploy your apps only to one
    server, and the cluster will distribute the deployments across the entire cluster.
    This is all capabilities that can go into the next release.</p>
 <p>In the next section will go deeper into how session replication works and how to configure it.</p>
@@ -74,7 +74,7 @@ should be completed:</p>
 <p>To make it easy to understand how clustering works, I'm gonna take you through a series of scenarios.
    In the scenario I only plan to use two tomcat instances <code>TomcatA</code> and <code>TomcatB</code>.
    We will cover the following sequence of events:</p>
-   
+
 <ol>
 <li><code>TomcatA</code> starts up</li>
 <li><code>TomcatB</code> starts up</li>
@@ -105,12 +105,12 @@ should be completed:</p>
     <p>
         When TomcatB starts up, it follows the same sequence as TomcatA did with one exception.
         The cluster is started and will establish a membership (TomcatA,TomcatB).
-        TomcatB will now request the session state from a server that already exists in the cluster, 
-        in this case TomcatA. TomcatA responds to the request, and before TomcatB starts listening 
+        TomcatB will now request the session state from a server that already exists in the cluster,
+        in this case TomcatA. TomcatA responds to the request, and before TomcatB starts listening
         for HTTP requests, the state has been transferred from TomcatA to TomcatB.
-        In case TomcatA doesn't respond, TomcatB will time out after 60 seconds, and issue a log 
-        entry. The session state gets transferred for each web application that has distributable in 
-        its web.xml. Note: To use session replication efficiently, all your tomcat instances should be 
+        In case TomcatA doesn't respond, TomcatB will time out after 60 seconds, and issue a log
+        entry. The session state gets transferred for each web application that has distributable in
+        its web.xml. Note: To use session replication efficiently, all your tomcat instances should be
         configured the same.
     </p><p></p>
 </li>
@@ -124,17 +124,17 @@ should be completed:</p>
         the request returns to the user, back through the valve pipeline.
         For each request the entire session is replicated, this allows code that modifies attributes
         in the session without calling setAttribute or removeAttribute to be replicated.
-        a useDirtyFlag configuration parameter can be used to optimize the number of times 
-        a session is replicated.    
+        a useDirtyFlag configuration parameter can be used to optimize the number of times
+        a session is replicated.
     </p><p></p>
 
 </li>
 <li><b><code>TomcatA</code> crashes</b>
     <p>
-        When TomcatA crashes, TomcatB receives a notification that TomcatA has dropped out 
+        When TomcatA crashes, TomcatB receives a notification that TomcatA has dropped out
         of the cluster. TomcatB removes TomcatA from its membership list, and TomcatA will no longer
         be notified of any changes that occurs in TomcatB.
-        The load balancer will redirect the requests from TomcatA to TomcatB and all the sessions 
+        The load balancer will redirect the requests from TomcatA to TomcatB and all the sessions
         are current.
     </p><p></p>
 </li>
@@ -164,9 +164,9 @@ should be completed:</p>
 
 </li>
 <li><code>TomcatA</code> The session <code>S2</code> expires due to inactivity.
-    <p>The invalidate is call is intercepted the same was as when a session is invalidated by the user, 
+    <p>The invalidate is call is intercepted the same was as when a session is invalidated by the user,
        and the session is queued with invalidated sessions.
-       At this point, the invalidet session will not be replicated across until 
+       At this point, the invalidet session will not be replicated across until
        another request comes through the system and checks the invalid queue.
     </p><p></p>
 </li>
@@ -177,9 +177,9 @@ should be completed:</p>
 <p><b>Membership</b>
     Clustering membership is established using very simple multicast pings.
     Each Tomcat instance will periodically send out a multicast ping,
-    in the ping message the instance will broad cast its IP and TCP listen port 
+    in the ping message the instance will broad cast its IP and TCP listen port
     for replication.
-    If an instance has not received such a ping within a given timeframe, the 
+    If an instance has not received such a ping within a given timeframe, the
     member is considered dead. Very simple, and very effective!
     Of course, you need to enable multicasting on your system.
 </p>
@@ -189,13 +189,13 @@ should be completed:</p>
     Upon the next replication request, the sending instance will use the host and
     port info and establish a TCP socket. Using this socket it sends over the serialized data.
     The reason I choose TCP sockets is because it has built in flow control and guaranteed delivery.
-    So I know, when I send some data, it will make it there :)    
+    So I know, when I send some data, it will make it there :)
 </p>
 
 <p><b>Distributed locking and pages using frames</b>
     Tomcat does not keep session instances in sync across the cluster.
-    The implementation of such logic would be to much overhead and cause all 
-    kinds of problems. If your client accesses the same session 
+    The implementation of such logic would be to much overhead and cause all
+    kinds of problems. If your client accesses the same session
     simultanously using multiple requests, then the last request
     will override the other sessions in the cluster.
 </p>
@@ -208,9 +208,9 @@ should be completed:</p>
 <source>
         Server
           |
-        Service    
-          | 
-        Engine  
+        Service
+          |
+        Engine
        /     \
    Cluster ReplicationValve
       |
@@ -233,14 +233,27 @@ are for the actual TCP replication.
 <p>
     The membership is established by all the tomcat instances are sending broadcast messages
     on the same multicast IP and port.
-    
+
     The TCP listen port, is the port where the session replication is received from other members.
 </p>
 <p>
-    The replication valve is used to find out when the request has been completed and initiate the 
+    The replication valve is used to find out when the request has been completed and initiate the
     replication.
 </p>
-
+<p>
+    One of the most important performance considerations is the synchronous versus asynchronous replication
+    mode. In a synchronous replication mode the request doesn't return until the replicated session has been
+    sent over the wire and reinstantiated on all the other cluster nodes.
+    Using synchronous mode potentially becomes a bottleneck, but is a must if you cant have
+    sticky sessions, what is recommended here is to increase the number of threads that handle
+    incoming replication request. This is the tcpThreadCount property in the cluster
+    section of server.xml.
+    Asynchronous replication, should be used if you have sticky sessions until fail over, then
+    your replicated data is not time crucial, but the request time is, at this time leave the tcpThreadCount to
+    be number-of-nodes-1.
+    During async replication, the request is returned before the data has been replicated. async replication yields shorter
+    request times, and synchronous replication guarantees the session to be replicated before the request returns.
+</p>
 </section>
 
 
@@ -251,7 +264,7 @@ are for the actual TCP replication.
 
     A: Well, the other members will remove the instance from the cluster,
        but when you insert the cable again, the Tomcat instance might have completely flipped out.
-       This is because the OS might start going 100% CPU when a multicast message is sent. 
+       This is because the OS might start going 100% CPU when a multicast message is sent.
        There has not yet been a good solution for this, I will let you know when I have come up with one.
   </li>
 
