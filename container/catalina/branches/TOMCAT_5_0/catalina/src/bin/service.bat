@@ -76,10 +76,20 @@ set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
 set PR_INSTALL=%EXECUTABLE%
 set PR_LOGPATH=%CATALINA_HOME%\logs
 set PR_CLASSPATH=%JAVA_HOME%\lib\tools.jar;%CATALINA_HOME%\bin\bootstrap.jar
-rem Set the server jvm frrom JAVA_HOME
+rem Set the server jvm from JAVA_HOME
 set PR_JVM=%JAVA_HOME%\jre\bin\server\jvm.dll
-rem You can use the 'set PR_JVM=auto' for default JVM
+if exist "%PR_JVM%" goto foundJvm
+rem Set the client jvm from JAVA_HOME
+set PR_JVM=%JAVA_HOME%\jre\bin\client\jvm.dll
+if exist "%PR_JVM%" goto foundJvm
+set PR_JVM=auto
+:foundJvm
+echo Using JVM:              %PR_JVM%
 "%EXECUTABLE%" //IS//%SERVICE_NAME% --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
+if not errorlevel 1 goto installed
+echo Failed installing '%SERVICE_NAME%' service
+goto end
+:installed
 rem Clear the environment variables. They are not needed any more.
 set PR_DISPLAYNAME=
 set PR_DESCRIPTION=
