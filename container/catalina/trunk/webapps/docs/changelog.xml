@@ -131,6 +131,19 @@
       Add a limit to the size of a POST which will be processed 
       using getParameter (remm)
       </update>
+      <update>
+      Refactor postParseRequest to avoid throwing an exception (billbarker)
+      </update>
+      <fix>
+      Only set charset when it is explicitely set (billbarker)
+      </fix>
+      <fix>
+      Add new JMX connector attributes (remm)
+      </fix>
+      <update>
+      Add maxPostSize support for client cert, to allow limiting the size of
+      the buffered data (billbarker, remm)
+      </update>
 
     </changelog>
 
@@ -175,6 +188,9 @@
       '&lt;' operator used in simple Math throws an error: When used 
       with taglib (luehe)
       </fix>
+      <docs>
+      Fix JSPC classpath in the docs (remm)
+      </docs>
 
     </changelog>
 
@@ -231,6 +247,9 @@
       <update>
       Clustering code reorganization (fhanik)
       </update>
+      <add>
+      Added in member alive time (fhanik)
+      </add>
 
     </changelog>
 
