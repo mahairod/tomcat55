@@ -166,6 +166,7 @@ public final class SimpleHashtable implements Enumeration
     public Enumeration keys() {
 	currentBucket = 0;
 	current = null;
+	hasMoreElements();
 	return this;
     }
 
@@ -197,6 +198,9 @@ public final class SimpleHashtable implements Enumeration
 	    throw new IllegalStateException ();
 	retval = current.key;
 	current = current.next;
+	// Advance to the next position ( we may call next after next,
+	// without hasMore )
+	hasMoreElements();
 	return retval;
     }
 
