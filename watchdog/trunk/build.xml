@@ -6,7 +6,7 @@
    <property name="build.compiler" value="classic"/>
 
    <property name="watchdog.build" value="../build/watchdog"/>
-   <property name="watchdog.home" value="../dist/watchdog"/>
+   <property name="watchdog.dist" value="../dist/watchdog"/>
 
    <target name="prepare">
 
@@ -57,34 +57,34 @@
          XXX create "parametrized" targets
          XXX do we need all the files in tomcat_build ??
       -->
-      <mkdir dir="${watchdog.home}"/>
-      <mkdir dir="${watchdog.home}/conf" />
-      <mkdir dir="${watchdog.home}/lib" />
-      <mkdir dir="${watchdog.home}/webapps" />
-      <mkdir dir="${watchdog.home}/props" />  <!-- what is this for?? - akv -->
+      <mkdir dir="${watchdog.dist}"/>
+      <mkdir dir="${watchdog.dist}/conf" />
+      <mkdir dir="${watchdog.dist}/lib" />
+      <mkdir dir="${watchdog.dist}/webapps" />
+      <mkdir dir="${watchdog.dist}/props" />  <!-- what is this for?? - akv -->
 
       <copyfile src="../jakarta-tools/moo.jar"
-                dest="${watchdog.home}/lib/moo.jar"/>
+                dest="${watchdog.dist}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-tools/projectx-tr2.jar"
-                dest="${watchdog.home}/lib/xml.jar"/>
+                dest="${watchdog.dist}/lib/xml.jar"/>
 
-      <copydir src="src/bin" dest="${watchdog.home}"/>
-      <copydir src="src/conf" dest="${watchdog.home}/conf" />
-      <copydir src="src/props" dest="${watchdog.home}/props"/>
+      <copydir src="src/bin" dest="${watchdog.dist}"/>
+      <copydir src="src/conf" dest="${watchdog.dist}/conf" />
+      <copydir src="src/props" dest="${watchdog.dist}/props"/>
 
-      <chmod src="${watchdog.home}/runClient.sh" perm="+x"/>
-      <chmod src="${watchdog.home}/runTest.sh" perm="+x"/> 
+      <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
+      <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
 
-      <jar jarfile="${watchdog.home}/check-client.jar"
+      <jar jarfile="${watchdog.dist}/check-client.jar"
         basedir="${watchdog.build}/clients" 
         items="org" />
 
-      <jar jarfile="${watchdog.home}/webapps/servlet-tests.jar"
+      <jar jarfile="${watchdog.dist}/webapps/servlet-tests.war"
         basedir="${watchdog.build}/webapps/servlet-tests" 
         items="WEB-INF" />
 
-      <jar jarfile="${watchdog.home}/webapps/jsp-tests.jar"
+      <jar jarfile="${watchdog.dist}/webapps/jsp-tests.war"
         basedir="${watchdog.build}/webapps/jsp-tests" 
         items="WEB-INF,jsp,golden-files" />
 
@@ -93,18 +93,19 @@
       <mkdir dir="${watchdog.build}/tmp" />
       <mkdir dir="${watchdog.build}/tmp/META-INF" />
       <copyfile src="src/etc/ear-dd.xml" dest="${watchdog.build}/tmp/META-INF/application.xml" />
-      <copyfile src="${watchdog.home}/webapps/servlet-tests.jar" 
-                dest="${watchdog.build}/tmp/servlet-tests.jar" />
-      <copyfile src="${watchdog.home}/webapps/jsp-tests.jar" 
-                dest="${watchdog.build}/tmp/jsp-tests.jar" />
-      <jar jarfile="${watchdog.home}/jcheck.ear"
+      <copyfile src="${watchdog.dist}/webapps/servlet-tests.war" 
+                dest="${watchdog.build}/tmp/servlet-tests.war" />
+      <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
+                dest="${watchdog.build}/tmp/jsp-tests.war" />
+      <jar jarfile="${watchdog.dist}/jcheck.ear"
            basedir="${watchdog.build}/tmp" 
-           items="META-INF,jsp-tests.jar,servlet-tests.jar" />
+           items="META-INF,jsp-tests.war,servlet-tests.war" />
       
    </target>
 
    <target name="clean">
       <deltree dir="${watchdog.build}"/>
+      <deltree dir="${watchdog.dist}"/>
    </target>
 
 </project>
