@@ -210,7 +210,8 @@ public final class SaveServiceAction extends Action {
                 //String domain = (new ObjectName(serverObjectName)).getDomain();
                 // Ensure that the requested service name is unique
                 ObjectName oname =
-                    new ObjectName(engineName + TomcatTreeBuilder.SERVICE_TYPE);
+                    new ObjectName(engineName + TomcatTreeBuilder.SERVICE_TYPE + 
+                                ",serviceName="+sform.getServiceName());
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("serviceName",
@@ -218,7 +219,16 @@ public final class SaveServiceAction extends Action {
                     saveErrors(request, errors);
                     return (new ActionForward(mapping.getInput()));
                 }
-
+                
+                oname = new ObjectName(engineName + TomcatTreeBuilder.ENGINE_TYPE);
+                if (mBServer.isRegistered(oname)) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add("serviceName",
+                               new ActionError("error.serviceName.exists"));
+                    saveErrors(request, errors);
+                    return (new ActionForward(mapping.getInput()));
+                }
+                
                 // Look up our MBeanFactory MBean
                 ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
 

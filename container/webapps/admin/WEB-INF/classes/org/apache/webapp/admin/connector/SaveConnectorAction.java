@@ -179,10 +179,14 @@ public final class SaveConnectorAction extends Action {
                 String serviceName = cform.getServiceName();
                 ObjectName soname = new ObjectName(serviceName);
                 String domain = soname.getDomain();
-                ObjectName oname =
-                    new ObjectName(domain + TomcatTreeBuilder.CONNECTOR_TYPE +
-                                   ",port=" + cform.getPortText() +
-                                   ",address=" + cform.getAddress());
+                StringBuffer sb = new StringBuffer(domain);
+                sb.append(TomcatTreeBuilder.CONNECTOR_TYPE);
+                sb.append(",port=" + cform.getPortText());
+                String address = cform.getAddress();
+                if ((address!=null) && (address.length()>0)) {
+                    sb.append(",address=" + address);
+                }
+                ObjectName oname = new ObjectName(sb.toString());
                                                 
                 // Ensure that the requested connector name is unique
                 if (mBServer.isRegistered(oname)) {

@@ -420,7 +420,7 @@ public class ManagerServlet
         Server server = ServerFactory.getServer();
         if ((server != null) && (server instanceof StandardServer)) {
             try {
-                ((StandardServer) server).store();
+                ((StandardServer) server).storeConfig();
             } catch (Exception e) {
                 writer.println(sm.getString("managerServlet.saveFail",
                                             e.getMessage()));
@@ -1249,7 +1249,7 @@ public class ManagerServlet
         Server server = ServerFactory.getServer();
         if ((server != null) && (server instanceof StandardServer)) {
             try {
-                ((StandardServer) server).store();
+                ((StandardServer) server).storeConfig();
             } catch (Exception e) {
                 writer.println(sm.getString("managerServlet.saveFail",
                                             e.getMessage()));

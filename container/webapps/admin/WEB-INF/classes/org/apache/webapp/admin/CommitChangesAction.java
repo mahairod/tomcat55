@@ -144,7 +144,8 @@ public final class CommitChangesAction extends Action {
         
        ObjectName sname = null;    
         try {
-           sname = new ObjectName(TomcatTreeBuilder.SERVER_TYPE);
+           sname = new ObjectName(TomcatTreeBuilder.DEFAULT_DOMAIN +
+                                    TomcatTreeBuilder.SERVER_TYPE);
         } catch (Exception e) {
             String message = "Could not get Server Object";
             getServlet().log(message);
@@ -152,7 +153,7 @@ public final class CommitChangesAction extends Action {
             return (null);
         }
         
-       String operation = "store";
+       String operation = "storeConfig";
        try {           
             mBServer.invoke(sname, operation, null, null);            
         } catch (Throwable t) {
