@@ -34,7 +34,13 @@ shift
 goto setArgs
 :doneSetArgs
 
+rem Set classpath to handle when %0 does not contain any path
+set PRG_CLASSPATH=%PRG%\..
+if "%OS%" == "Windows_NT" goto gotClasspath
+set PRG_CLASSPATH=%PRG_CLASSPATH%;"%PATH%;."
+:gotClasspath
+
 rem Execute the Launcher using the "jspc" target
-"%JAVA_HOME%\bin\java.exe" -classpath %PRG%\..;"%PATH%" LauncherBootstrap -launchfile jasper.xml -verbose jspc %CMD_LINE_ARGS%
+"%JAVA_HOME%\bin\java.exe" -classpath %PRG_CLASSPATH% LauncherBootstrap -launchfile jasper.xml -verbose jspc %CMD_LINE_ARGS%
 
 :end
