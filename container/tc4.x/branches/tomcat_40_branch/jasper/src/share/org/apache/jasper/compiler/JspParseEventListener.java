@@ -354,13 +354,13 @@ public class JspParseEventListener implements ParseEventListener {
 	    writer.println("response.setContentType(\"" +
 			   servletContentType +
 			   ";charset=ISO-8859-1\");");
-	writer.println("pageContext = _jspxFactory.getPageContext(this, request, response,\n"
-					+ "\t\t\t"
-					+ writer.quoteString(error) + ", "
-					+ genSessionVariable + ", "
-					+ bufferSize + ", "
-					+ autoFlush
-					+ ");");
+	writer.println("pageContext = _jspxFactory.getPageContext(this, request, response,");
+	writer.println("\t\t\t"
+			+ writer.quoteString(error) + ", "
+			+ genSessionVariable + ", "
+			+ bufferSize + ", "
+			+ autoFlush
+			+ ");");
 	writer.println();
 
 	writer.println("application = pageContext.getServletContext();");
