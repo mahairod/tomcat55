@@ -506,10 +506,9 @@
       <param name="destfile" value="${commons-pool.jar}"/>
     </antcall>
 
-    <antcall target="downloadzip">
+    <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-dbcp.loc}" />
       <param name="destfile" value="${commons-dbcp.jar}" />
-      <param name="destdir" value="${commons-dbcp.home}" />
     </antcall>
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-modeler.loc}"/>

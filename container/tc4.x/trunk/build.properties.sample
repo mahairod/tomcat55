@@ -153,8 +153,8 @@ activation.jar=${activation.lib}/activation.jar
 
 
 # ----- Commons Daemon, version 1.0-Alpha or later -----
-commons-daemon.home=${base.path}/commons-daemon
-commons-daemon.lib=${commons-daemon.home}/dist
+commons-daemon.home=${base.path}/commons-daemon-1.0-Alpha
+commons-daemon.lib=${commons-daemon.home}
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
 #commons-daemon.loc=${base-jakarta.loc}/commons/daemon/binaries/daemon-1.0-Alpha.tar.gz
 commons-daemon.loc=http://www.apache.org/dist/jakarta/commons/daemon/binaries/commons-daemon-1.0-Alpha.tar.gz
@@ -162,15 +162,15 @@ commons-daemon.loc=http://www.apache.org/dist/jakarta/commons/daemon/binaries/co
 
 # ----- Commons DBCP, version 1.0 or later -----
 commons-dbcp.home=${base.path}/commons-dbcp-1.0
-commons-dbcp.lib=${commons-dbcp.home}/commons-dbcp-1.0
+commons-dbcp.lib=${commons-dbcp.home}
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
-commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/dbcp-1.0.tar.gz
+commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/commons-dbcp-1.0.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
 commons-pool.home=${base.path}/commons-pool-1.1
 commons-pool.lib=${commons-pool.home}
-commons-pool.jar=${commons-pool.lib}/commons-pool.jar
+commons-pool.jar=${commons-pool.lib}/commons-pool-1.1.jar
 commons-pool.loc=${base-jakarta.loc}/commons/pool/binaries/commons-pool-1.1.tar.gz
 
 
