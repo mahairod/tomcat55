@@ -1562,7 +1562,8 @@ public abstract class ContainerBase
     }
 
     public ObjectName createObjectName(String domain, ObjectName parent) {
-        log.info("Create ObjectName " + domain + " " + parent );
+        if( log.isDebugEnabled())
+            log.debug("Create ObjectName " + domain + " " + parent );
         return null;
     }
 
