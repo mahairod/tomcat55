@@ -50,6 +50,12 @@ General New Features:
 [4.1.10] Commons components:
          Upgrade to stable releases.
 
+[4.1.11] Administration Webapp:
+         Add support for DefaultContext.
+
+[4.1.11] Documentation:
+         New JK and JK 2 documentation.
+
 
 ---------------------
 Catalina New Features:
@@ -167,6 +173,9 @@ Generic Bug Fixes:
 
 [4.1.9] Administration Webapp:
         Specify charset in JSP pages.
+
+[4.1.11] Administration Webapp:
+         Fix adding a context with the administration webapp.
 
 
 ------------------
@@ -395,6 +404,41 @@ Catalina Bug Fixes:
 [4.1.10] StandardContext:
          Add new "swallowOutput" flag, to allow configuring logger redirection.
 
+[4.1.11] catalina.policy:
+         Modify the file to reflect the new URLs to be used for codebase
+         declarations.
+
+[4.1.11] StandardContext:
+         Change the timing of the directory context allocation (now done 
+         during start which is more consistent with the lifecycle of other
+         components).
+
+[4.1.11] #12041
+         CGIServlet:
+         Better fix for bugzilla 12041 running an extra thread to deal 
+         with STDERR.
+
+[4.1.11] CGIServlet:
+         Fix for CGI scripts run from a POST operation never get any 
+         posted data.
+
+[4.1.11] DefaultServlet:
+         Assume text file when MIME type is unknown for including purposes.
+
+[4.1.11] ManagerServlet:
+         Allow manager to do operations on the root webapp.
+
+[4.1.11] BootstrapService:
+         Allow parameters to BootstrapService for jni/mod_jk2.
+
+[4.1.11] FileDirContext:
+         Add an option to allow symlinking (allowLinking).
+
+[4.1.11] FileDirContext:
+         Make the case sensitivity check based on the value of the 
+         "caseSensitive" flag rather than on the path separator. Most Unix OSes
+         can set that to false.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -541,6 +585,29 @@ Jasper Bug Fixes:
 
 [4.1.10] #12128
          Summary: JSP Comment end symbol not recognized in some cases
+
+[4.1.11] Compiler:
+         Update to work with Jikes with all features.
+
+[4.1.11] #12387
+         Compiler:
+         Work around limitations of the Ant path tokenization by using files.
+
+[4.1.11] Generator:
+         For the conversion of the value used in includes and others 
+         to a String, as was done in previous Tomcat releases.
+
+[4.1.11] Generator:
+         Added synchronization of NESTED and AT_BEGIN variables after call to
+         doStartTag() of tag handlers implementing IterationTag, but not
+         BodyTag.
+
+[4.1.11] #12432
+         Generator:
+         Can't compile JSP with nested custom tags that have VariableInfo.
+
+[4.1.11] JspServletWrapper:
+         Fix Jasper when "development" option is set to "false".
 
 
 ============================
