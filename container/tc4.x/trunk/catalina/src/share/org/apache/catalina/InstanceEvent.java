@@ -68,6 +68,8 @@ package org.apache.catalina;
 import java.util.EventObject;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 
 /**
@@ -147,7 +149,8 @@ public final class InstanceEvent
 
 
     /**
-     * Construct a new InstanceEvent with the specified parameters.
+     * Construct a new InstanceEvent with the specified parameters.  This
+     * constructor is used for filter lifecycle events.
      *
      * @param wrapper Wrapper managing this servlet instance
      * @param filter Filter instance for which this event occurred
@@ -165,7 +168,32 @@ public final class InstanceEvent
 
 
     /**
-     * Construct a new InstanceEvent with the specified parameters.
+     * Construct a new InstanceEvent with the specified parameters.  This
+     * constructor is used for filter processing events.
+     *
+     * @param wrapper Wrapper managing this servlet instance
+     * @param filter Filter instance for which this event occurred
+     * @param type Event type (required)
+     * @param request Servlet request we are processing
+     * @param response Servlet response we are processing
+     */
+    public InstanceEvent(Wrapper wrapper, Filter filter, String type,
+                         ServletRequest request, ServletResponse response) {
+
+      super(wrapper);
+      this.wrapper = wrapper;
+      this.filter = filter;
+      this.servlet = null;
+      this.type = type;
+      this.request = request;
+      this.response = response;
+
+    }
+
+
+    /**
+     * Construct a new InstanceEvent with the specified parameters.  This
+     * constructor is used for processing servlet lifecycle events.
      *
      * @param wrapper Wrapper managing this servlet instance
      * @param servlet Servlet instance for which this event occurred
@@ -182,6 +210,30 @@ public final class InstanceEvent
     }
 
 
+    /**
+     * Construct a new InstanceEvent with the specified parameters.  This
+     * constructor is used for processing servlet processing events.
+     *
+     * @param wrapper Wrapper managing this servlet instance
+     * @param servlet Servlet instance for which this event occurred
+     * @param type Event type (required)
+     * @param request Servlet request we are processing
+     * @param response Servlet response we are processing
+     */
+    public InstanceEvent(Wrapper wrapper, Servlet servlet, String type,
+                         ServletRequest request, ServletResponse response) {
+
+      super(wrapper);
+      this.wrapper = wrapper;
+      this.filter = null;
+      this.servlet = servlet;
+      this.type = type;
+      this.request = request;
+      this.response = response;
+
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -190,6 +242,20 @@ public final class InstanceEvent
      * and AFTER_FILTER_EVENT only).
      */
     private Filter filter = null;
+
+
+    /**
+     * The servlet request being processed (BEFORE_FILTER_EVENT,
+     * AFTER_FILTER_EVENT, BEFORE_SERVICE_EVENT, and AFTER_SERVICE_EVENT).
+     */
+    private ServletRequest request = null;
+
+
+    /**
+     * The servlet response being processed (BEFORE_FILTER_EVENT,
+     * AFTER_FILTER_EVENT, BEFORE_SERVICE_EVENT, and AFTER_SERVICE_EVENT).
+     */
+    private ServletResponse response = null;
 
 
     /**
@@ -220,6 +286,26 @@ public final class InstanceEvent
     public Filter getFilter() {
 
         return (this.filter);
+
+    }
+
+
+    /**
+     * Return the servlet request for which this event occurred.
+     */
+    public ServletRequest getRequest() {
+
+        return (this.request);
+
+    }
+
+
+    /**
+     * Return the servlet response for which this event occurred.
+     */
+    public ServletResponse getResponse() {
+
+        return (this.response);
 
     }
 

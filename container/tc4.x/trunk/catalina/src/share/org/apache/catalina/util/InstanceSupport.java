@@ -67,6 +67,8 @@ package org.apache.catalina.util;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Wrapper;
@@ -181,6 +183,35 @@ public final class InstanceSupport {
      * this notification synchronously using the calling thread.
      *
      * @param type Event type
+     * @param filter The relevant Filter for this event
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are processing
+     */
+    public void fireInstanceEvent(String type, Filter filter,
+                                  ServletRequest request,
+                                  ServletResponse response) {
+
+        if (listeners.length == 0)
+            return;
+
+        InstanceEvent event = new InstanceEvent(wrapper, filter, type,
+                                                request, response);
+        InstanceListener interested[] = null;
+        synchronized (listeners) {
+            interested = (InstanceListener[]) listeners.clone();
+        }
+        for (int i = 0; i < interested.length; i++)
+            interested[i].instanceEvent(event);
+
+    }
+
+
+    /**
+     * Notify all lifecycle event listeners that a particular event has
+     * occurred for this Container.  The default implementation performs
+     * this notification synchronously using the calling thread.
+     *
+     * @param type Event type
      * @param servlet The relevant Servlet for this event
      */
     public void fireInstanceEvent(String type, Servlet servlet) {
@@ -189,6 +220,35 @@ public final class InstanceSupport {
             return;
 
         InstanceEvent event = new InstanceEvent(wrapper, servlet, type);
+        InstanceListener interested[] = null;
+        synchronized (listeners) {
+            interested = (InstanceListener[]) listeners.clone();
+        }
+        for (int i = 0; i < interested.length; i++)
+            interested[i].instanceEvent(event);
+
+    }
+
+
+    /**
+     * Notify all lifecycle event listeners that a particular event has
+     * occurred for this Container.  The default implementation performs
+     * this notification synchronously using the calling thread.
+     *
+     * @param type Event type
+     * @param servlet The relevant Servlet for this event
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are processing
+     */
+    public void fireInstanceEvent(String type, Servlet servlet,
+                                  ServletRequest request,
+                                  ServletResponse response) {
+
+        if (listeners.length == 0)
+            return;
+
+        InstanceEvent event = new InstanceEvent(wrapper, servlet, type,
+                                                request, response);
         InstanceListener interested[] = null;
         synchronized (listeners) {
             interested = (InstanceListener[]) listeners.clone();

@@ -209,29 +209,29 @@ final class ApplicationFilterChain implements FilterChain {
             try {
                 filter = filterConfig.getFilter();
                 support.fireInstanceEvent(InstanceEvent.BEFORE_FILTER_EVENT,
-                                          filter);
+                                          filter, request, response);
                 filter.doFilter(request, response, this);
                 support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
-                                          filter);
+                                          filter, request, response);
             } catch (IOException e) {
                 if (filter != null)
                     support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
-                                              filter);
+                                              filter, request, response);
                 throw e;
             } catch (ServletException e) {
                 if (filter != null)
                     support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
-                                              filter);
+                                              filter, request, response);
                 throw e;
             } catch (RuntimeException e) {
                 if (filter != null)
                     support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
-                                              filter);
+                                              filter, request, response);
                 throw e;
             } catch (Throwable e) {
                 if (filter != null)
                     support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
-                                              filter);
+                                              filter, request, response);
                 throw new ServletException
                   (sm.getString("filterChain.filter"), e);
             }
@@ -241,7 +241,7 @@ final class ApplicationFilterChain implements FilterChain {
         // We fell off the end of the chain -- call the servlet instance
         try {
             support.fireInstanceEvent(InstanceEvent.BEFORE_SERVICE_EVENT,
-                                      servlet);
+                                      servlet, request, response);
             if ((request instanceof HttpServletRequest) &&
                 (response instanceof HttpServletResponse)) {
                 servlet.service((HttpServletRequest) request,
@@ -250,22 +250,22 @@ final class ApplicationFilterChain implements FilterChain {
                 servlet.service(request, response);
             }
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-                                      servlet);
+                                      servlet, request, response);
         } catch (IOException e) {
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-                                      servlet);
+                                      servlet, request, response);
             throw e;
         } catch (ServletException e) {
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-                                      servlet);
+                                      servlet, request, response);
             throw e;
         } catch (RuntimeException e) {
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-                                      servlet);
+                                      servlet, request, response);
             throw e;
         } catch (Throwable e) {
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-                                      servlet);
+                                      servlet, request, response);
             throw new ServletException
               (sm.getString("filterChain.servlet"), e);
         }
