@@ -69,6 +69,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -129,7 +130,7 @@ public class UserDatabaseRealm
      * The global JNDI name of the <code>UserDatabase</code> resource
      * we will be utilizing.
      */
-    protected String resourceName = "catalina/UserDatabase";
+    protected String resourceName = "java:/catalina/UserDatabase";
 
 
     /**
@@ -292,29 +293,11 @@ public class UserDatabaseRealm
      */
     public synchronized void start() throws LifecycleException {
 
-        // Acquire a reference to the UserDatabase object we will be using
-        Server server = null;
-        Container parent = container;
-        while (parent.getParent() != null) {
-            parent = parent.getParent();
-        }
-        if (!(parent instanceof Engine)) {
-            throw new LifecycleException
-                (sm.getString("userDatabaseRealm.noEngine"));
-        } else {
-            server = ((Engine) parent).getService().getServer();
-        }
-        // FIXME - getGlobalNamingContext() should be on Server interface
-        Context global =
-            ((org.apache.catalina.core.StandardServer) server).
-            getGlobalNamingContext();
-        if (global == null) {
-            throw new LifecycleException
-                (sm.getString("userDatabaseRealm.noGlobal"));
-        }
         try {
-            database = (UserDatabase) global.lookup(resourceName);
+            database = 
+                (UserDatabase) (new InitialContext()).lookup(resourceName);
         } catch (Throwable e) {
+            e.printStackTrace();
             log(sm.getString("userDatabaseRealm.lookup", resourceName), e);
             database = null;
         }
