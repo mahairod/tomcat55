@@ -19,6 +19,7 @@ package org.apache.catalina.core;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -461,13 +462,25 @@ public class StandardHostDeployer implements Deployer {
 
         // Install the new web application
         this.overrideDocBase = docBase;
-        if (config.toString().startsWith("file:")) {
-            this.overrideConfigFile = config.getFile();
+        String configPath = config.toString();
+        if (configPath.startsWith("file:")) {
+            if (configPath.startsWith("file://")) {
+                configPath = configPath.substring(7);
+            } else {
+                configPath = configPath.substring(5);
+            }
+            this.overrideConfigFile = (new File(configPath)).getAbsolutePath();
+        } else {
+            configPath = null;
         }
 
         InputStream stream = null;
         try {
-            stream = config.openStream();
+            if (configPath == null) {
+                stream = config.openStream();
+            } else {
+                stream = new FileInputStream(configPath);
+            }
             Digester digester = createDigester();
             digester.setClassLoader(this.getClass().getClassLoader());
             digester.clear();
