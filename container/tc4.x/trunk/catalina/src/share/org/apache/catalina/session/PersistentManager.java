@@ -376,7 +376,7 @@ public final class PersistentManager
         if (this.minIdleSwap == min)
             return;
         int oldMinIdleSwap = this.minIdleSwap;
-            this.minIdleSwap = min;
+        this.minIdleSwap = min;
         support.firePropertyChange("minIdleSwap",
                                    new Integer(oldMinIdleSwap),
                                    new Integer(this.minIdleSwap));
@@ -471,8 +471,9 @@ public final class PersistentManager
         
     /**
      * Load any currently active sessions that were previously unloaded
-     * to the appropriate persistence mechanism, if any.  If persistence is not
-     * supported, this method returns without doing anything.
+     * or backed up to the appropriate persistence mechanism, if any.  
+     * If persistence is not supported, this method returns without doing 
+     * anything.
      *
      * @exception ClassNotFoundException if a serialized class cannot be
      *  found during the reload
@@ -498,7 +499,6 @@ public final class PersistentManager
             }
             
             return;
-
         }
 
         String[] ids = store.keys();
@@ -700,7 +700,6 @@ public final class PersistentManager
             if (isSessionStale(session, timeNow))
                 session.expire();
         }
-
     }
 
 
@@ -896,18 +895,15 @@ public final class PersistentManager
                 || isSessionStale(session, System.currentTimeMillis()))
             return;
 
+        try {
+            store.save(session);
+        } catch (IOException e) {
+            log(sm.getString
+                ("persistentManager.serializeError", session.getId(), e));
+            throw e;
+        }
+ 
     }
-
-
-    /**
-     * Read the session in from Store, overriding the copy in
-     * the Manager's memory.
-     */
-//    private void recover() throws IOException {
-    
-            // FIXME: Do something
-    
-//    }
 
 
     /**
