@@ -257,9 +257,9 @@ public class EditContextAction extends Action {
             attribute = "debug";
             contextFm.setLdrDebugLvl
                 (((Integer) mBServer.getAttribute(lname, attribute)).toString());
-            attribute = "checkInterval";
-            contextFm.setLdrCheckInterval
-                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+            //attribute = "checkInterval";
+            //contextFm.setLdrCheckInterval
+            //    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
             attribute = "reloadable";
             contextFm.setLdrReloadable
                 (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
@@ -274,9 +274,9 @@ public class EditContextAction extends Action {
             attribute = "maxActiveSessions";
             contextFm.setMgrMaxSessions
                 (((Integer) mBServer.getAttribute(mname, attribute)).toString());
-            attribute = "checkInterval";
-            contextFm.setMgrCheckInterval
-                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            //attribute = "checkInterval";
+            //contextFm.setMgrCheckInterval
+            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
 
         } catch (Throwable t) {
             getServlet().log
