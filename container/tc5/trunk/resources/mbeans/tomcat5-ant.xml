@@ -4,6 +4,8 @@
   <property file="build.properties"/>
 
   <property name="tomcat.home" location="." />
+  <!-- That matches the build struct with build and embed at the same level -->
+  <property name="tomcat.webapps" location="${tomcat.home}/../build/webapps" />
 
   <path id="tomcatCP-extra" /> 
 
@@ -17,6 +19,8 @@
        -->
       <fileset dir="${tomcat.home}/lib" includes="*.jar"/>
       <pathelement  path="${tomcat.home}/conf"/>
+      <!-- my log4j.properties -->
+      <pathelement  path="/ws/log4j"/>
     </path>
 
     <taskdef resource="org/apache/commons/modeler/ant/ant.properties"
@@ -46,8 +50,8 @@
 
     <jmx-service>
       <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
-             name="jmx-console:type=HtmlAdaptorServer,port=9998">
-         <attribute name="Port" value="9998"/>
+             name="jmx-console:type=HtmlAdaptorServer,port=9988">
+         <attribute name="Port" value="9988"/>
      </mbean>
     </jmx-service>    
 
@@ -71,8 +75,58 @@
 
   </target>
 
+  <!-- ======================= Proxy test ================ -->
+  <target name="proxy-run" depends="init,jmx-console,proxy" />
 
-  <!-- ======================= Server.xml based ================ -->
+  <target name="proxy" depends="init"
+        description="Start a JMX proxy service">
+    <property name="localDomain" value="catalina.proxy" />
+    <property name="remoteDomain" value="catalina" />
+   
+    <jmx-service>
+       <mbean code="org.apache.commons.modeler.mbeans.SimpleRemoteConnector"
+              name="modjk:type=jmxProxy,name=apache8003" 
+              modeler="true" >
+         <attribute name="webServerPort"  value="8003"/>
+         <attribute name="statusPath"  value="/jkstatus"/>
+         <attribute name="filter"  value="*"/>
+         <attribute name="user"  value="tomcat"/>
+         <attribute name="pass"  value="tomcat"/>
+       </mbean>
+    </jmx-service>
+
+    <jmx-service>
+       <mbean code="org.apache.commons.modeler.mbeans.SimpleRemoteConnector"
+              name="Catalina9080:type=jmxProxy,name=tomcat9080" 
+              modeler="true" >
+         <attribute name="webServerPort"  value="9080"/>
+         <attribute name="statusPath"  value="/manager/jmxproxy"/>
+         <attribute name="domain"  value="Catalina"/>
+         <attribute name="user"  value="tomcat"/>
+         <attribute name="pass"  value="tomcat"/>
+       </mbean>
+    </jmx-service>
+
+    <jmx-service>
+       <mbean code="org.apache.commons.modeler.mbeans.SimpleRemoteConnector"
+              name="Catalina:type=jmxProxy,name=tomcat8080" 
+              modeler="true" >
+         <attribute name="webServerPort"  value="8080"/>
+         <attribute name="statusPath"  value="/manager/jmxproxy"/>
+         <attribute name="domain"  value="Catalina"/>
+         <attribute name="user"  value="tomcat"/>
+         <attribute name="pass"  value="tomcat"/>
+       </mbean>
+    </jmx-service>
+
+
+    <echo message="Proxy running"/>
+    <sleep hours="1"/>
+  </target>
+
+
+  <!-- ======================= Server.xml based - backward compat ================ -->
+
   <property name="domain" value="Catalina" />
 
   <target name="run" depends="init"
@@ -90,12 +144,13 @@
     <echo message="Tomcat5 running"/>
   </target>
 
+  <!-- ======================= JMX only  ================ -->
 
   <target name="run2" depends="init,jmx-console"
         description="Start tomcat as an mbean, no server.xml">
 
     <modelerRegistry resource="org/apache/catalina/mbeans/mbeans-descriptors.xml" />
-
+    <mkdir dir="${tomcat.home}/work/${domain}/" />
 
     <jmx-service>
 <!--
@@ -113,12 +168,19 @@
               code="org.apache.catalina.core.StandardEngine"
               modeler="true">
          <attribute name="name" value="Tomcat-Standalone"/>
-         <attribute name="baseDir" value="/opt/50"/>
+         <attribute name="baseDir" value="${tomcat.home}"/>
          <attribute name="defaultHost" value="localhost"/>
        </mbean>
 
+<!--
        <mbean name="${domain}:type=Realm" 
               code="org.apache.catalina.realm.JAASRealm" modeler="true">
+       </mbean>
+-->
+       <mbean name="${domain}:type=Realm" 
+              code="org.apache.catalina.realm.MemoryRealm" modeler="true">
+         <attribute name="pathname"
+                    value="${tomcat.home}/conf/tomcat-users.xml" />
        </mbean>
 
 <!--
@@ -129,6 +191,12 @@
                     value="org.apache.jk.server.JkCoyoteHandler" />
        </mbean>
 -->
+
+       <mbean name="${domain}:type=Channel,name=ChannelUn" 
+              code="org.apache.jk.common.ChannelUn"
+              modeler="true">
+          <attribute name="file" value="${tomcat.home}/work/${domain}/jk2.channel" />
+       </mbean>
 
 
        <mbean name="${domain}:type=Connector,port=9080" 
@@ -156,29 +224,43 @@
 
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="/opt/50/webapps/ROOT" />
+         <attribute name="docBase" value="${tomcat.webapps}/ROOT" />
          <!-- Required for now -->
          <attribute name="privileged" value="true" />
        </mbean>
 
+<!-- 
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/servlets-examples,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="/opt/50/webapps/servlets-examples" />
-         <!-- Required for now -->
+         <attribute name="docBase" value="${tomcat.webapps}/servlets-examples" />
          <attribute name="privileged" value="true" />
        </mbean>
 
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/jsp-examples,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="/opt/50/webapps/jsp-examples" />
-         <!-- Required for now -->
+         <attribute name="docBase" value="${tomcat.webapps}/jsp-examples" />
          <attribute name="privileged" value="true" />
        </mbean>
+-->
+
+       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/manager,J2EEApplication=none,J2EEServer=none" 
+              code="org.apache.catalina.core.StandardContext"  modeler="true">
+         <attribute name="docBase" value="${tomcat.webapps}/../server/webapps/manager" />
+         <attribute name="privileged" value="true" />
+       </mbean>
+
+       <!-- The realm must be declared after the web module. ( for now ) -->
+       <mbean name="${domain}:type=Realm,host=localhost,path=manager" 
+              code="org.apache.catalina.realm.MemoryRealm" modeler="true">
+         <attribute name="pathname"
+                    value="${tomcat.home}/conf/tomcat-users-manager.xml" />
+       </mbean>
+
 
 <!--
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/admin,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="/opt/50/server/webapps/admin" />
+         <attribute name="docBase" value="${tomcat.webapps}/../server/webapps/admin" />
          <attribute name="privileged" value="true" />
        </mbean>
 -->
@@ -189,6 +271,7 @@
     <echo message="Tomcat5 running"/>
 
     <!-- XXX hack - I need to make the threads non-daemon -->
+
     <sleep hours="1"/>
 
   </target>
