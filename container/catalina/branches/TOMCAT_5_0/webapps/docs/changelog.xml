@@ -89,6 +89,9 @@
       <fix>
         <bug>29485</bug>: Added JavaScript confirmation prompts to HTML Manager actions. (yoavs)
       </fix>
+      <fix>
+        <bug>31058</bug>: Ensure StatusTransformer escapes query string for XML. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
