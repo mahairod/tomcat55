@@ -3,12 +3,13 @@
 
   <properties>
     <author email="marc.saegesser@apropos.com">Marc A. Saegesser</author>
-    <title>Apache Tomcat</title>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Apache Jakarta Tomcat</title>
   </properties>
 
 <body>
 
-<section name="Apache Tomcat">
+<section name="Apache Jakarta Tomcat">
 
 <p>Tomcat is the servlet container that is used in the official
 Reference Implementation for the
@@ -40,7 +41,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.4/2.0</td>
-  <td>5.0.25</td>
+  <td>5.0.27</td>
 </tr>
 
 <tr>
