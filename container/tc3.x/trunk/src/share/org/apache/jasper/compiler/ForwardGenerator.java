@@ -111,10 +111,11 @@ public class ForwardGenerator
 		    sep = "?";
 		    initial = false;
 		} else sep = "&";
-		
+
+		// Bug 1705 - need "("
 		if (value.length == 1 && JspUtil.isExpression(value[0]))
 		    writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-				   key + "=\" + " + JspUtil.getExpr(value[0]) + ";");
+				   key + "=\" + (" + JspUtil.getExpr(value[0]) + ");");
 		else {
 		    if (value.length == 1)
 			writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
@@ -126,7 +127,7 @@ public class ForwardGenerator
 					       key + "=\" + \"" + value[i] + "\";");
 			    else
 				writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-					       key + "=\" +" + JspUtil.getExpr(value[i])+ ";");
+					       key + "=\" + (" + JspUtil.getExpr(value[i])+ ");");
 			    if (sep.equals("?")) sep = "&";			    
 			}
 		    }
