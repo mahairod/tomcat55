@@ -137,14 +137,17 @@ public final class BootstrapService
 
             File unpacked[] = new File[1];
             File packed[] = new File[1];
+            File packed2[] = new File[2];
             ClassLoaderFactory.setDebug(debug);
 
             unpacked[0] = new File(getCatalinaHome(),
                                    "common" + File.separator + "classes");
-            packed[0] = new File(getCatalinaHome(),
-                                 "common" + File.separator + "lib");
+            packed2[0] = new File(getCatalinaHome(),
+                                  "common" + File.separator + "endorsed");
+            packed2[1] = new File(getCatalinaHome(),
+                                  "common" + File.separator + "lib");
             commonLoader =
-                ClassLoaderFactory.createClassLoader(unpacked, packed, null);
+                ClassLoaderFactory.createClassLoader(unpacked, packed2, null);
 
             unpacked[0] = new File(getCatalinaHome(),
                                    "server" + File.separator + "classes");
@@ -154,9 +157,9 @@ public final class BootstrapService
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                      commonLoader);
 
-            unpacked[0] = new File(getCatalinaHome(),
+            unpacked[0] = new File(getCatalinaBase(),
                                    "shared" + File.separator + "classes");
-            packed[0] = new File(getCatalinaHome(),
+            packed[0] = new File(getCatalinaBase(),
                                  "shared" + File.separator + "lib");
             sharedLoader =
                 ClassLoaderFactory.createClassLoader(unpacked, packed,

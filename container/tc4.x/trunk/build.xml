@@ -112,6 +112,7 @@
     <mkdir dir="${tomcat.dist}/bin"/>
     <mkdir dir="${tomcat.dist}/common"/>
     <mkdir dir="${tomcat.dist}/common/classes"/>
+    <mkdir dir="${tomcat.dist}/common/endorsed"/>
     <mkdir dir="${tomcat.dist}/common/lib"/>
     <mkdir dir="${tomcat.dist}/conf"/>
     <mkdir dir="${tomcat.dist}/logs"/>
@@ -147,6 +148,9 @@
     </copy>
     <copy todir="${tomcat.dist}/common/classes">
       <fileset dir="${tomcat.build}/common/classes" />
+    </copy>
+    <copy todir="${tomcat.dist}/common/endorsed">
+      <fileset dir="${tomcat.build}/common/endorsed" />
     </copy>
     <copy todir="${tomcat.dist}/common/lib">
       <fileset dir="${tomcat.build}/common/lib" />
