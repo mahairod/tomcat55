@@ -152,7 +152,9 @@ public class Compiler {
         logger.setErrorPrintStream(System.err);
 	logger.setMessageOutputLevel(Project.MSG_INFO);
         project.addBuildListener( logger);
-        project.setBasedir( System.getProperty("catalina.home"));
+        if (System.getProperty("catalina.home") != null) {
+            project.setBasedir( System.getProperty("catalina.home"));
+        }
         
         if( options.getCompiler() != null ) {
             if( log.isDebugEnabled() )
