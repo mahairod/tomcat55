@@ -9,8 +9,50 @@
    <target name="main" depends="jsp-test" />
 
   <!-- ==================== Watchdog JSP tests ==================== -->
-   
+  
+ 
    <target name="jsp-test">
+<!-- Precompilation tests -->
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           returncode="200"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the request is not sent to the JSP" 
+	   testStrategy="No HTML page received when jsp_precompile has no value"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false&amp;test=insignificant HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/misc/precompilation/response.html"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the request is forwarded properly when jsp_precompile=false"
+	   testStrategy="The value of variable passed in the request is displayed if the request goes to the JSP"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/misc/precompilation/no_parameter.html"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the request is forwarded properly when jsp_precompile=fa
+lse"
+	   testStrategy="The request should be processed "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           returncode="200"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the request is not sent to the JSP"
+	   testStrategy="No HTML page received when jsp_precompile=true "
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           returncode="500"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the proper error code is returned if jsp_precompile is given an invalid value"
+	   testStrategy="check for status code 500"
+ 	/>
+<!--  End Precompilation Tests -->
       <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            goldenFile="${wgdir}/HelloWorld.html"
