@@ -23,8 +23,12 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.ErrorDispatcher;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class XMLEncodingDetector {
+
+    private static Log log = LogFactory.getLog(XMLEncodingDetector.class);
 
     /**
      * Autodetects the encoding of the XML document supplied by the given
@@ -51,7 +55,8 @@ public class XMLEncodingDetector {
             Class.forName("org.apache.xerces.util.SymbolTable");
             Class detectorClass=Class.forName("org.apache.jasper.xmlparser.XercesEncodingDetector");
             detector = (XMLEncodingDetector) detectorClass.newInstance();
-        } catch(Exception ex ) {
+        } catch (Exception ex) {
+            log.warn("Unable to parse XML prolog: Defaulting encoding to UTF8 ", ex);
             detector = new XMLEncodingDetector();
         }
         return detector.getEncodingMethod(fname, jarFile, ctxt, err);
