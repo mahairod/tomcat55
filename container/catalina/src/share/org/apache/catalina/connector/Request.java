@@ -863,6 +863,10 @@ public class Request
             if(attr != null) {
                 attributes.put(Globals.KEY_SIZE_ATTR, attr);
             }
+            attr = coyoteRequest.getAttribute(Globals.SSL_SESSION_ID_ATTR);
+            if(attr != null) {
+                attributes.put(Globals.SSL_SESSION_ID_ATTR, attr);
+            }
             attr = attributes.get(name);
         }
         return attr;
@@ -875,7 +879,8 @@ public class Request
     static boolean isSSLAttribute(String name) {
         return Globals.CERTIFICATES_ATTR.equals(name) ||
             Globals.CIPHER_SUITE_ATTR.equals(name) ||
-            Globals.KEY_SIZE_ATTR.equals(name);
+            Globals.KEY_SIZE_ATTR.equals(name)  ||
+            Globals.SSL_SESSION_ID_ATTR.equals(name);
     }
 
     /**

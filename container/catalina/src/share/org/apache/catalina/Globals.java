@@ -144,6 +144,13 @@ public final class Globals {
     public static final String KEY_SIZE_ATTR =
         "javax.servlet.request.key_size";
 
+    /**
+     * The request attribute under which we store the session id being used
+     * for this SSL connection (as an object of type java.lang.String).
+     */
+    public static final String SSL_SESSION_ID_ATTR =
+        "javax.servlet.request.ssl_session";
+
 
     /**
      * The servlet context attribute under which the managed bean Registry
