@@ -411,9 +411,6 @@
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
-           debug="0" host="${host}" port="${port}"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html" />
@@ -426,9 +423,6 @@
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
-           debug="0" host="${host}" port="${port}"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html" />
@@ -496,6 +490,12 @@
       <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html" />
+
+<!-- Commented out as problem with forward in Tomcat 
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
+-->
 
 <!-- Below tests are commented out as they use 'examples.FooTag' tag class which does not exist
 

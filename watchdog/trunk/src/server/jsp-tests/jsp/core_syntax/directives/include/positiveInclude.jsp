@@ -11,7 +11,7 @@
 %>     
 <!-- testing for include directive --> 
  
-<jsp:include page="includecommon.jsp" /> 
+<jsp:include page="includecommon.jsp" flush="true" /> 
  
 </body> 
 </html> 

@@ -1,9 +1,7 @@
-<html>
-<body>
-<%
-  
-   out.println(request.getProtocol());
-   
-   %>
-   </body>
-   </html>
+<html> 
+<body> 
+<% 
+   out.println(request.getProtocol()); 
+%> 
+</body> 
+</html>

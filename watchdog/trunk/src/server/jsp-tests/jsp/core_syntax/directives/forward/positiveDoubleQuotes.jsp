@@ -6,7 +6,6 @@
                      scriptlet expression in doublequotes to do forwarding
        Result :we expect the output without error to the forwarded file
  **/ %>
-<%@ page autoFlush="false" %>
 <% String test="includecommon"; %>
 <jsp:forward page= "<%= test+\".html\" %>" />
 </body>
