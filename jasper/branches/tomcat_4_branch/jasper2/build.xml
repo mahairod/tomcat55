@@ -18,6 +18,7 @@
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>
   <property name="ant.jar"           value="${ant.home}/lib/ant.jar"/>
+  <property name="ant-launcher.jar"  value="${ant.home}/lib/ant-launcher.jar"/>
 
   <!-- Construct Jasper classpath -->
   <path id="jasper.classpath">
@@ -47,6 +48,7 @@
   <target name="build-prepare">
 
     <available classname="junit.framework.TestCase" property="junit.present" />
+    <available file="${ant-launcher.jar}" property="ant-launcher.present" />
 
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
@@ -193,7 +195,7 @@
 
 
   <!-- ====================== DEPLOY: Create Jasper JARs ================== -->
-  <target name="deploy" depends="deploy-static,build-main"
+  <target name="deploy" depends="deploy-static,build-main,-copyLauncher"
    description="Build and deploy Jasper component">
     <echo message="Deploy to ${jasper.deploy}/common/lib" /> 
     <!-- Jasper Compiler JAR File -->
@@ -205,9 +207,12 @@
 
     <!-- Copy Ant JAR -->
     <copy todir="${jasper.deploy}/common/lib" file="${ant.jar}"/>
-
   </target>
-
+  <target name="-copyLauncher" if="ant-launcher.present" >
+    <!-- From 1.6 onwards, launcher classes are in separate jar -->
+    <!-- If it is present, copy it -->
+    <copy todir="${jasper.deploy}/common/lib" file="${ant-launcher.jar}"/>
+  </target>
 
   <!-- ================ DIST: Create Distribution ========================= -->
   <target name="dist" depends="build-main"
