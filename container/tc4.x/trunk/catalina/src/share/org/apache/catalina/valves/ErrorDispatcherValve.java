@@ -212,20 +212,20 @@ public class ErrorDispatcherValve
      */
     protected void throwable(Request request, Response response,
                              Throwable throwable) {
-
         Context context = request.getContext();
         if (context == null)
             return;
-
+        
         Throwable realError = throwable;
-        ErrorPage errorPage = findErrorPage(context, realError);
-        if ((errorPage == null) && (realError instanceof ServletException)) {
+        
+        if (realError instanceof ServletException) {
             realError = ((ServletException) realError).getRootCause();
-            if (realError != null)
-                errorPage = findErrorPage(context, realError);
-            else
+            if (realError == null) {
                 realError = throwable;
-        }
+            }
+        } 
+            
+        ErrorPage errorPage = findErrorPage(context, realError);
 
         if (errorPage != null) {
             response.setAppCommitted(false);
@@ -237,7 +237,7 @@ public class ErrorDispatcherValve
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               throwable.getMessage());
             sreq.setAttribute(Globals.EXCEPTION_ATTR,
-                              throwable);
+                              realError);
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
                 sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
@@ -246,7 +246,7 @@ public class ErrorDispatcherValve
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
             sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
-                              throwable.getClass());
+                              realError.getClass());
             if (custom(request, response, errorPage)) {
                 try {
                     sresp.flushBuffer();
