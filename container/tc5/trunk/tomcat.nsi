@@ -215,6 +215,7 @@ Section "Examples" SecExamples
   SetOutPath $INSTDIR\webapps
   File /r webapps\jsp-examples
   File /r webapps\servlets-examples
+  File /r webapps\webdav
 
 SectionEnd
 
@@ -493,6 +494,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\webapps\tomcat-docs"
   RMDir /r "$INSTDIR\webapps\servlets-examples"
   RMDir /r "$INSTDIR\webapps\jsp-examples"
+  RMDir /r "$INSTDIR\webapps\webdav"
   RMDir "$INSTDIR\webapps"
   RMDir /r "$INSTDIR\work"
   RMDir /r "$INSTDIR\temp"

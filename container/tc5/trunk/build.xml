@@ -561,6 +561,10 @@
         <property name="flags.hide" value="true" />
     </ant>
 
+    <ant dir="${catalina.home}/webapps/webdav" target="build-main">
+        <property name="webapps.build" value="${tomcat.build}/webapps" />
+    </ant>
+
     <!-- Precompiling and fixing webapps -->
     <antcall target="build-webapps-precompile" /> 
     <antcall target="fix-webapps" />
