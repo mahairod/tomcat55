@@ -245,8 +245,11 @@ final class StandardWrapperValve
         }
 
         // Create the filter chain for this request
-        ApplicationFilterChain filterChain =
-            createFilterChain(request, servlet);
+        // Modifications by Greg Murray
+        ApplicationFilterFactory factory = ApplicationFilterFactory.getInstance();
+        ApplicationFilterChain filterChain = factory.createFilterChain(sreq, wrapper, ApplicationFilterFactory.REQUEST);
+        // Greg Murray Modifcations complete
+
 
         // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
@@ -343,115 +346,6 @@ final class StandardWrapperValve
 
     // -------------------------------------------------------- Private Methods
 
-
-    /**
-     * Construct and return a FilterChain implementation that will wrap the
-     * execution of the specified servlet instance.  If we should not execute
-     * a filter chain at all, return <code>null</code>.
-     * <p>
-     * <strong>FIXME</strong> - Pool the chain instances!
-     *
-     * @param request The servlet request we are processing
-     * @param servlet The servlet instance to be wrapped
-     */
-    private ApplicationFilterChain createFilterChain(Request request,
-                                                     Servlet servlet) {
-
-        // If there is no servlet to execute, return null
-        if (servlet == null)
-            return (null);
-
-        // Create and initialize a filter chain object
-        ApplicationFilterChain filterChain =
-          new ApplicationFilterChain();
-        filterChain.setServlet(servlet);
-        StandardWrapper wrapper = (StandardWrapper) getContainer();
-        filterChain.setSupport(wrapper.getInstanceSupport());
-
-        // Acquire the filter mappings for this Context
-        StandardContext context = (StandardContext) wrapper.getParent();
-        FilterMap filterMaps[] = context.findFilterMaps();
-
-        // If there are no filter mappings, we are done
-        if ((filterMaps == null) || (filterMaps.length == 0))
-            return (filterChain);
-//        if (debug >= 1)
-//            log("createFilterChain:  Processing " + filterMaps.length +
-//                " filter map entries");
-
-        // Acquire the information we will need to match filter mappings
-        String requestPath = null;
-        if (request instanceof HttpRequest) {
-            HttpServletRequest hreq =
-                (HttpServletRequest) request.getRequest();
-            String contextPath = hreq.getContextPath();
-            if (contextPath == null)
-                contextPath = "";
-            String requestURI = ((HttpRequest) request).getDecodedRequestURI();
-            if (requestURI.length() >= contextPath.length())
-                requestPath = requestURI.substring(contextPath.length());
-        }
-        String servletName = wrapper.getName();
-//        if (debug >= 1) {
-//            log(" requestPath=" + requestPath);
-//            log(" servletName=" + servletName);
-//        }
-        int n = 0;
-
-        // Add the relevant path-mapped filters to this filter chain
-        for (int i = 0; i < filterMaps.length; i++) {
-//            if (debug >= 2)
-//                log(" Checking path-mapped filter '" +
-//                    filterMaps[i] + "'");
-            if (!matchFiltersURL(filterMaps[i], requestPath))
-                continue;
-            ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
-                context.findFilterConfig(filterMaps[i].getFilterName());
-            if (filterConfig == null) {
-//                if (debug >= 2)
-//                    log(" Missing path-mapped filter '" +
-//                        filterMaps[i] + "'");
-                ;       // FIXME - log configuration problem
-                continue;
-            }
-//            if (debug >= 2)
-//                log(" Adding path-mapped filter '" +
-//                    filterConfig.getFilterName() + "'");
-            filterChain.addFilter(filterConfig);
-            n++;
-        }
-
-        // Add filters that match on servlet name second
-        for (int i = 0; i < filterMaps.length; i++) {
-//            if (debug >= 2)
-//                log(" Checking servlet-mapped filter '" +
-//                    filterMaps[i] + "'");
-            if (!matchFiltersServlet(filterMaps[i], servletName))
-                continue;
-            ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
-                context.findFilterConfig(filterMaps[i].getFilterName());
-            if (filterConfig == null) {
-//                if (debug >= 2)
-//                    log(" Missing servlet-mapped filter '" +
-//                        filterMaps[i] + "'");
-                ;       // FIXME - log configuration problem
-                continue;
-            }
-//            if (debug >= 2)
-//                log(" Adding servlet-mapped filter '" +
-//                     filterMaps[i] + "'");
-            filterChain.addFilter(filterConfig);
-            n++;
-        }
-
-        // Return the completed filter chain
-//        if (debug >= 2)
-//            log(" Returning chain with " + n + " filters");
-        return (filterChain);
-
-    }
-
-
     /**
      * Handle the specified ServletException encountered while processing
      * the specified Request to produce the specified Response.  Any
@@ -524,87 +418,6 @@ final class StandardWrapperValve
             System.out.println("" + throwable);
             throwable.printStackTrace(System.out);
         }
-
-    }
-
-
-    /**
-     * Return <code>true</code> if the specified servlet name matches
-     * the requirements of the specified filter mapping; otherwise
-     * return <code>false</code>.
-     *
-     * @param filterMap Filter mapping being checked
-     * @param servletName Servlet name being checked
-     */
-    private boolean matchFiltersServlet(FilterMap filterMap,
-                                        String servletName) {
-
-//      if (debug >= 3)
-//          log("  Matching servlet name '" + servletName +
-//              "' against mapping " + filterMap);
-
-        if (servletName == null)
-            return (false);
-        else
-            return (servletName.equals(filterMap.getServletName()));
-
-    }
-
-
-    /**
-     * Return <code>true</code> if the context-relative request path
-     * matches the requirements of the specified filter mapping;
-     * otherwise, return <code>null</code>.
-     *
-     * @param filterMap Filter mapping being checked
-     * @param requestPath Context-relative request path of this request
-     */
-    private boolean matchFiltersURL(FilterMap filterMap,
-                                    String requestPath) {
-
-//      if (debug >= 3)
-//          log("  Matching request path '" + requestPath +
-//              "' against mapping " + filterMap);
-
-        if (requestPath == null)
-            return (false);
-
-        // Match on context relative request path
-        String testPath = filterMap.getURLPattern();
-        if (testPath == null)
-            return (false);
-
-        // Case 1 - Exact Match
-        if (testPath.equals(requestPath))
-            return (true);
-
-        // Case 2 - Path Match ("/.../*")
-        if (testPath.equals("/*"))
-            return (true);      // Optimize a common case
-        if (testPath.endsWith("/*")) {
-            String comparePath = requestPath;
-            while (true) {
-                if (testPath.equals(comparePath + "/*"))
-                    return (true);
-                int slash = comparePath.lastIndexOf('/');
-                if (slash < 0)
-                    break;
-                comparePath = comparePath.substring(0, slash);
-            }
-            return (false);
-        }
-
-        // Case 3 - Extension Match
-        if (testPath.startsWith("*.")) {
-            int slash = requestPath.lastIndexOf('/');
-            int period = requestPath.lastIndexOf('.');
-            if ((slash >= 0) && (period > slash))
-                return (testPath.equals("*." +
-                                        requestPath.substring(period + 1)));
-        }
-
-        // Case 4 - "Default" Match
-        return (false); // NOTE - Not relevant for selecting filters
 
     }
 
