@@ -422,8 +422,7 @@ public class ApplicationContext
 
         // Return the current context if requested
         String contextPath = context.getPath();
-        if ((contextPath.length() > 0) &&
-            (uri.startsWith(contextPath))) {
+        if ((contextPath.length() > 0) && (uri.equals(contextPath))) {
             return (this);
         }
 
