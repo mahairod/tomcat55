@@ -373,6 +373,28 @@ public class HttpRequestAdapter extends RequestImpl {
 	    queryString = new String( buf, qryIdx+1, endReq - qryIdx -1 );
 	}
 
+	// Perform URL decoding only if necessary
+	if ((requestURI != null) &&
+	    ((requestURI.indexOf('%') >= 0) || (requestURI.indexOf('+') >= 0))) {
+
+	    try {
+		requestURI = RequestUtil.URLDecode(requestURI);
+	    } catch (Exception e) {
+		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		return;
+	    }
+	}
+	if ((queryString != null) &&
+	    ((queryString.indexOf('%') >= 0) || (queryString.indexOf('+') >= 0))) {
+
+	    try {
+		queryString = RequestUtil.URLDecode(queryString);
+	    } catch (Exception e) {
+		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		return;
+	    }
+	}
+
 	//	loghelper.log("XXX " + method + " " + requestURI + " " + queryString + " " + protocol );
 
     }
