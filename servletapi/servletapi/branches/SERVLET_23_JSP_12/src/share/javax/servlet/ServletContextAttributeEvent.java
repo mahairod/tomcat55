@@ -70,13 +70,15 @@ package javax.servlet;
 
 public class ServletContextAttributeEvent extends ServletContextEvent { 
 	private String name;
-	private String value;
+	private Object value;
+
 	/** Construct a ServletContextAttributeEvent from the given context for the
 	** given attribute name and attribute value. 
 	*/
 	public ServletContextAttributeEvent(ServletContext source, String name, Object value) {
 	    super(source);
 	    this.name = name;
+	    this.value = value;
 	}
 	
 	/**
