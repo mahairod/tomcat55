@@ -1058,6 +1058,7 @@
     <!-- Naming - Resources JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar" index="true">
       <fileset dir="${classes.dir}">
+        <include name="org/apache/naming/JndiPermission.class" />
       	<include name="org/apache/naming/NameParserImpl.class" />
       	<include name="org/apache/naming/NamingContextBindingsEnumeration.class" />
       	<include name="org/apache/naming/NamingContextEnumeration.class" />
