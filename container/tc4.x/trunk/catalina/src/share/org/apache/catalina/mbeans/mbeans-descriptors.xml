@@ -10,52 +10,59 @@
  -->
 
 <mbeans-descriptors>
+  <mbean name="AccessLogValve"
+         description="Valve that generates a web server access log"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.valves.AccessLogValve">
 
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
 
-  <mbean         name="AccessLogValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="Valve that generates a web server access log"
-               domain="Catalina"
-                group="Valve"
-                 type="org.apache.catalina.valves.AccessLogValve">
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
 
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
+    <attribute name="containerName"
+               description="Object name of the container"
+               type="javax.management.ObjectName"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-    <attribute   name="directory"
-          description="The directory in which log files are created"
-                 type="java.lang.String"/>
+    <attribute name="directory"
+               description="The directory in which log files are created"
+               type="java.lang.String"/>
 
     <attribute   name="pattern"
-          description="The pattern used to format our access log lines"
-                 type="java.lang.String"/>
+               description="The pattern used to format our access log lines"
+               type="java.lang.String"/>
 
-    <attribute   name="prefix"
-          description="The prefix that is added to log file filenames"
-                 type="java.lang.String"/>
+    <attribute name="prefix"
+               description="The prefix that is added to log file filenames"
+               type="java.lang.String"/>
 
-    <attribute   name="resolveHosts"
-          description="Resolve hosts"
-                   is="true"
-                 type="boolean"/>
-                 
-    <attribute   name="rotatable"
-          description="Rotate log"
-                   is="true"
-                 type="boolean"/>
-                 
-    <attribute   name="suffix"
-          description="The suffix that is added to log file filenames"
-                 type="java.lang.String"/>
+    <attribute name="resolveHosts"
+               description="Resolve hosts"
+               is="true"
+               type="boolean"/>
 
+    <attribute name="rotatable"
+               description="Flag to indicate automatic log rotation."
+               is="true"
+               type="boolean"/>
+
+    <attribute name="suffix"
+               description="The suffix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <attribute name="condition"
+               description="The value to look for conditional logging."
+               type="java.lang.String"/>
+
+    <attribute name="fileDateFormat"
+               description="The format for the date date based log rotation."
+               type="java.lang.String"/>
   </mbean>
-
 
   <mbean         name="BasicAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
@@ -320,7 +327,7 @@
                   type="boolean"/>
 
     <attribute    name="disableUploadTimeout"
-           description="Should Tomcat ignore setting a timeout for uploads?" 
+           description="Should Tomcat ignore setting a timeout for uploads?"
                   type="boolean"/>
 
   </mbean>
@@ -350,7 +357,7 @@
                  type="boolean"/>
 
     <attribute   name="swallowOutput"
-          description="Flag to set to cause the system.out and system.err 
+          description="Flag to set to cause the system.out and system.err
       to be redirected to the logger when executing a servlet"
                  type="boolean"/>
 
@@ -491,6 +498,69 @@
 
   </mbean>
 
+  <mbean name="ExtendedAccessLogValve"
+         description="Valve that generates a web server access log"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.valves.ExtendedAccessLogValve">
+
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+
+    <attribute name="containerName"
+               description="Object name of the container"
+               type="javax.management.ObjectName"/>
+
+    <attribute name="directory"
+               description="The directory in which log files are created"
+               type="java.lang.String"/>
+
+    <attribute   name="pattern"
+               description="The pattern used to format our access log lines"
+               type="java.lang.String"/>
+
+    <attribute name="prefix"
+               description="The prefix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <attribute name="rotatable"
+               description="Rotate log"
+               is="true"
+               type="boolean"/>
+
+    <attribute name="condition"
+               description="The value to look for conditional logging."
+               type="java.lang.String"/>
+
+    <attribute name="checkExists"
+               description="Check for file existence before each logging."
+               is="true"
+               type="boolean"/>
+
+    <attribute name="suffix"
+               description="The suffix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <attribute name="fileDateFormat"
+               description="The format for the date date based log rotation."
+               type="java.lang.String"/>
+
+    <operation name="rotate"
+               description="Move the existing log file to a new name"
+               impact="ACTION"
+               returnType="boolean">
+      <parameter name="newFileName"
+                 description="File name to move the log file to."
+                 type="java.lang.String"/>
+    </operation>
+
+  </mbean>
 
   <mbean         name="FileLogger"
             className="org.apache.catalina.mbeans.ClassNameMBean"
@@ -1990,7 +2060,7 @@
             writeable="false"/>
 
     <attribute   name="swallowOutput"
-          description="Flag to set to cause the system.out and system.err 
+          description="Flag to set to cause the system.out and system.err
       to be redirected to the logger when executing a servlet"
                  type="boolean"/>
 
