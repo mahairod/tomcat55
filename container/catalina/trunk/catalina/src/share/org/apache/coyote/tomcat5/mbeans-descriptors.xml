@@ -2,6 +2,7 @@
 <mbeans-descriptors>
 
   <mbean         name="CoyoteConnector"
+            className="org.apache.catalina.mbeans.ConnectorMBean"
           description="Implementation of a Coyote connector"
                domain="Catalina"
                 group="Connector"
@@ -86,6 +87,23 @@
 
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at
+                       initialization time"
+                 type="int"/>
+
+    <attribute   name="maxSpareThreads"
+          description="The maximum number of unused request processing threads"
+                 type="int"/>
+
+    <attribute   name="maxThreads"
+          description="The maximum number of request processing threads to be created"
+                 type="int"/>
+
+    <attribute   name="minSpareThreads"
+          description="The number of request processing threads that will be created"
                  type="int"/>
 
     <attribute   name="minProcessors"
