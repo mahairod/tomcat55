@@ -112,11 +112,6 @@ code for each page instead of deleting it? <code>true</code> or
 pages in external data files, to reduce the size of the generated servlets?
 <code>true</code> or <code>false</code>, default <code>false</code>.</li>
 
-<li><strong>logVerbosityLevel</strong> - The level of detailed messages to be
-produced by this servlet.  Increasing levels cause the generation of more
-messages.  Valid values are <code>FATAL, ERROR, WARNING, INFORMATION,</code>
-and <code>DEBUG</code>. Default <code>WARNING</code>.</li>
-
 <li><strong>mappedfile</strong> - Should we generate static content with one 
 print statement per input line, to ease debugging?
 <code>true</code> or <code>false</code>, default <code>false</code>.</li>
