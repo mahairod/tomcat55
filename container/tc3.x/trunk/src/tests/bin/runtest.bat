@@ -42,8 +42,7 @@ echo Using classpath: %CLASSPATH%
 start java org.apache.tomcat.shell.Startup %1 %2 %3 %4 %5 %6 %7 %8 %9
 rem java org.apache.tomcat.shell.Startup %1 %2 %3 %4 %5 %6 %7 %8 %9
 sleep 5
-java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main \
-    -testfile %test%
+java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfile %test%
 java org.apache.tomcat.shell.Shutdown %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 rem clean up
