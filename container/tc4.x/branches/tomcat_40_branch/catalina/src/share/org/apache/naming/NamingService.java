@@ -196,10 +196,11 @@ public final class NamingService
             oldValue = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
             if (oldValue != null) {
                 oldIcValue = oldValue;
+            } else {
+                System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+                                   Constants.Package 
+                                   + ".java.javaURLContextFactory");
             }
-            System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                               Constants.Package 
-                               + ".java.javaURLContextFactory");
             
         } catch (Throwable t) {
             state = STOPPED;
