@@ -73,6 +73,8 @@ import org.apache.jasper.compiler.Node;
  */
 public class SmapUtil {
 
+    static final boolean verbose = false;
+
     //*********************************************************************
     // Constants
 
@@ -167,7 +169,6 @@ public class SmapUtil {
     // Installation logic (from Robert Field, JSR-045 spec lead)
     private static class SDEInstaller {
 
-	static final boolean verbose = false; 
         static final String nameSDE = "SourceDebugExtension";
 
         byte[] orig;
@@ -461,7 +462,12 @@ public class SmapUtil {
         for( int i = 0; i < numChildNodes; i++ ) {
           Node n = nodes.getNode( i );
           Mark mark = n.getStart();
-          System.out.println("Mark(start): line="+ mark.getLineNumber() + " col="+mark.getColumnNumber() +"Node: begLine="+n.getBeginJavaLine() +" endLine="+n.getEndJavaLine());
+
+          if (verbose) {
+            System.out.println("Mark(start): line="+ mark.getLineNumber() +
+                " col="+mark.getColumnNumber() +"Node: begLine="+
+                n.getBeginJavaLine() +" endLine="+n.getEndJavaLine());
+          }
           String unqualifiedName = unqualify(mark.getFile());
           s.addFile(unqualifiedName);
           s.addLineData(mark.getLineNumber(),
