@@ -77,6 +77,7 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	Hashtable attrs;
 	BeanRepository beanInfo;
 	boolean genSession;
+	boolean beanRT = false;
   
     public BeanGenerator (Mark start, Hashtable attrs, BeanRepository beanInfo,
 			  boolean genSession) {
@@ -161,13 +162,13 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	    String  clsname    = getAttribute ("class");
 	    String  type       = getAttribute ("type");
 	    String  beanName   = getAttribute ("beanName");
-
 	    
 	    if (type == null) type = clsname;
 
 	    // See if beanName is a request-time expression.
 	    if (beanName != null && JspUtil.isExpression (beanName)) {
 		beanName = JspUtil.getExpr (beanName);
+		beanRT = true;
 	    }
 	    
 	    if (scope == null || scope.equals ("page")) {
@@ -340,9 +341,14 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	if (beanName != null) clsname = beanName;
 	writer.println ("try {");
 	writer.pushIndent ();
-	writer.println(varname+" = ("+ convert + 
-		       ") Beans.instantiate(getClassLoader(), "+
-		       writer.quoteString(clsname) +");");
+	if (beanRT == false)
+	    writer.println(varname+" = ("+ convert + 
+			   ") Beans.instantiate(getClassLoader(), "+
+			   writer.quoteString(clsname) +");");
+	else
+	    writer.println(varname+" = ("+ convert + 
+			   ") Beans.instantiate(getClassLoader(), "+
+			   clsname +");");
 	writer.popIndent ();
 	writer.println ("} catch (Exception exc) {");
 	writer.pushIndent ();
