@@ -15,39 +15,13 @@
 
 
 <section name="Preface">
-<p>The will address various windows issues. Here are some great
-links of interest.</p>
-    <ul>
-     <li>
-        <a href="http://web.bvu.edu/staff/david/tcservcfg/">
-                    NT Service Config Utility
-        </a> (See this if you want to set JVM options!)
-     </li>
+<p>The will address various windows issues.
+    Please see the
+    <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">
+        Other Resources
+    </a> Link for more links related to Windows.
+</p>
 
-     <li>
-        <a href="http://tud.at/programm/apache-ssl-win32-howto.php3/">
-                    The Apache + SSL on Win32 HOWTO
-        </a>
-     </li>
-
-     <li>
-        <a href="http://www.onjava.com/pub/a/onjava/2002/12/18/tomcat.html">
-                    Configuring Tomcat with IIS Web Server
-        </a>
-     </li>
-
-     <li>
-        <a href="http://www.mattkelli.com/tech/tomcat/ntservice.htm">
-                    Setting up TomCat 4.1.12 to run as an NT Service
-        </a>
-     </li>
-
-     <li>
-        <a href="http://www.gregoire.org/howto/Apache2_Jk2_TC4.1.x_JSDK1.4.x.html">
-                    How To for Apache2, Tomcat4.1.x, mod_jk2, JSDK1.4 on Win2k
-        </a>
-     </li>
-   </ul>
 </section>
 
 <section name="Questions">

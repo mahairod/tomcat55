@@ -16,14 +16,25 @@
 
 <section name="Preface">
 <p>
-Questions that were not categorized.
-</p>
-<p>
   <em>Tomcat 4.1.27 has a bug with respect to webapp reloading which requires a hotfix.
     <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22096">
       Here are more details.
     </a>
   </em>
+</p>
+<p>
+ In Tomcat 5 - there has been issues with respect to character encoding.
+ ( Usually of the the form "<tt>request.setCharacterEncoding(String) doesn't work</tt>" )
+ Odds are, its not a bug. Before filing a bug report, see these bug reports as well
+    as any bug reports linked to these bug reports:
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23929">23929</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25360">25360</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25231">25231</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25235">25235</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22666">22666</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24557">24557</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=24345">24345</a>,
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=25848">25848</a>
 </p>
 </section>
 
@@ -410,6 +421,8 @@ Questions that were not categorized.
   <answer>
     <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/manager.html">
         Look at the Session manager component and tweak accordingly.
+        One way is to tell tomcat to persist sessions to a path
+        which does not exist. (So tomcat will not store, or be able to load the sessions)
     </a>
   </answer>
 
