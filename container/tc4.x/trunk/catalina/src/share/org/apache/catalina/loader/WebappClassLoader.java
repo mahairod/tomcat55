@@ -402,11 +402,13 @@ public class WebappClassLoader
      */
     public void setPermissions(String path) {
         if( securityManager != null ) {
+            Permission permission = null;
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
-                permissionList.add(new JndiPermission(path + "*"));
+                permission = new JndiPermission(path + "*");
             } else {
-                permissionList.add(new FilePermission(path + "-","read"));
+                permission = new FilePermission(path + "-","read");
             }
+            permissionList.add(permission);
         }
     }
 
