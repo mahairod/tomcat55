@@ -1566,7 +1566,8 @@ public class WebappClassLoader
 
         entry = findResourceInternal(name, classPath);
 
-        if ((entry == null) || (entry.binaryContent == null))
+        if ((entry == null) || (entry.binaryContent == null
+                && entry.loadedClass == null))
             throw new ClassNotFoundException(name);
 
         Class clazz = entry.loadedClass;
@@ -1620,26 +1621,22 @@ public class WebappClassLoader
 
         }
 
-        if (entry.loadedClass == null) {
-            synchronized (this) {
-                if (entry.loadedClass == null) {
-                    clazz = defineClass(name, entry.binaryContent, 0,
-                                        entry.binaryContent.length, 
-                                        codeSource);
-                    entry.loadedClass = clazz;
-                    entry.binaryContent = null;
-                    entry.source = null;
-                    entry.codeBase = null;
-                    entry.manifest = null;
-                    entry.certificates = null;
-                } else {
-                    clazz = entry.loadedClass;
-                }
+        synchronized (this) {
+            if (entry.loadedClass == null) {
+                clazz = defineClass(name, entry.binaryContent, 0,
+                        entry.binaryContent.length, 
+                        codeSource);
+                entry.loadedClass = clazz;
+                entry.binaryContent = null;
+                entry.source = null;
+                entry.codeBase = null;
+                entry.manifest = null;
+                entry.certificates = null;
+            } else {
+                clazz = entry.loadedClass;
             }
-        } else {
-            clazz = entry.loadedClass;
         }
-
+        
         return clazz;
 
     }
