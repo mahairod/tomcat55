@@ -541,10 +541,9 @@ static int ajpv12_handler(jserv_config *cfg, jserv_request *req,
     /* Send routing info var & SSL CLIENT Certificates DNs */
     if (r->subprocess_env) {
         ajpv12_sendstring( buffsocket, ap_table_get(r->subprocess_env, "JSERV_ROUTE"));
-	/* XXX commented out for tomcat release - need to be in sync with current JServ 
+	/* XXX uncommented out for tomcat 3.1 release - in sync with current JServ */
         ajpv12_sendstring( buffsocket, ap_table_get(r->subprocess_env, "SSL_CLIENT_DN"));
         ajpv12_sendstring( buffsocket, ap_table_get(r->subprocess_env, "SSL_CLIENT_IDN"));
-        */
     }
     else {
         ajpv12_sendstring( buffsocket, "");
