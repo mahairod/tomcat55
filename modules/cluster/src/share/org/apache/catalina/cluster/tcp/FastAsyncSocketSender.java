@@ -392,7 +392,7 @@ public class FastAsyncSocketSender extends DataSender {
                         entry = entry.next();
                     } while (entry != null);
                 } else {
-                    log.error(sm.getString("syncSocketSender.queue.empty",sender.getAddress(), new Integer(sender.getPort())));
+                    log.error(sm.getString("AsyncSocketSender.queue.empty",sender.getAddress(), new Integer(sender.getPort())));
                 }
             }
         }
