@@ -73,7 +73,8 @@ public class JspServlet extends HttpServlet {
         logger.setTimestamp("false");
         logger.setVerbosityLevel(
             config.getInitParameter("logVerbosityLevel"));
-
+        Constants.jasperLog.setVerbosityLevel(
+                config.getInitParameter("logVerbosityLevel"));
         options = new EmbededServletOptions(config, context);
 
         // Initialize the JSP Runtime Context
