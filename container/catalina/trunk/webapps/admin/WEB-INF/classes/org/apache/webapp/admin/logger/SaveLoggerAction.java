@@ -176,8 +176,7 @@ public final class SaveLoggerAction extends Action {
 
             try {
    
-                String parent = lform.getParentObjectName();       
-                String engine = lform.getEngineObjectName();  
+                String parent = lform.getParentObjectName();           
                 String objectName = DeleteLoggerAction.getObjectName(
                                         parent, TomcatTreeBuilder.LOGGER_TYPE);
                 ObjectName pname = new ObjectName(parent);
@@ -187,9 +186,7 @@ public final class SaveLoggerAction extends Action {
                 // Parent in this case needs to be the container mBean for the service 
                 try {                                                        
                     if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
-                        ObjectName ename = new ObjectName(engine);
-                        String engineName = ename.getKeyProperty("name");
-                        sb.append(":type=Engine,name="+engineName);;
+                        sb.append(":type=Engine");;
                         parent = sb.toString();
                     }
                 } catch (Exception e) {

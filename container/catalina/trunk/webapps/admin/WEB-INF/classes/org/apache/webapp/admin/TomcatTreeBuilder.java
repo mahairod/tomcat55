@@ -200,13 +200,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
         String domain = serverNode.getDomain();
         Iterator serviceNames =
             Lists.getServices(mBServer, serverName).iterator();
-        Iterator engineNames = 
-            Lists.getEngines(mBServer, serverName).iterator();
-        // single engine should exist
-        String engineName = "";
-        if (engineNames.hasNext()) {
-            engineName = (String) engineNames.next();
-        }
         while (serviceNames.hasNext()) {
             String serviceName = (String) serviceNames.next();
             ObjectName objectName = new ObjectName(serviceName);
@@ -218,8 +211,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     nodeLabel,
                                     "EditService.do?select=" +
                                     URLEncoder.encode(serviceName) +
-                                    "&engine=" +
-                                    URLEncoder.encode(engineName) +
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",

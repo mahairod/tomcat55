@@ -114,11 +114,6 @@ public class RealmForm extends ActionForm {
     private String parentObjectName = null;
         
     /**
-     * The object name of the parent engine of this realm (if exists).
-     */
-    private String engineObjectName = null;
-    
-    /**
      * Set of valid values for debug level.
      */
     private List debugLvlVals = null;
@@ -226,25 +221,7 @@ public class RealmForm extends ActionForm {
         this.parentObjectName = parentObjectName;
 
     }
-
-    /**
-     * Return the engine object name of the Realm this bean refers to.
-     */
-    public String getEngineObjectName() {
-
-        return this.engineObjectName;
-
-    }
-
-
-    /**
-     * Set the engine object name of the Realm this bean refers to.
-     */
-    public void setEngineObjectName(String engineObjectName) {
-
-        this.engineObjectName = engineObjectName;
-
-    }    
+    
         
    /**
      * Return the realmTypeVals.

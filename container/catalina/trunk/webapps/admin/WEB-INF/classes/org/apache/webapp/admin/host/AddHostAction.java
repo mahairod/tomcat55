@@ -125,7 +125,6 @@ public class AddHostAction extends Action {
         // the service Name is needed to retrieve the engine mBean to
         // which the new host mBean will be added.
         String serviceName = request.getParameter("select");
-        String engine = request.getParameter("engine");
 
         // Fill in the form values for display and editing
         HostForm hostFm = new HostForm();
@@ -135,7 +134,6 @@ public class AddHostAction extends Action {
         hostFm.setHostName("");
         hostFm.setDebugLvl("0");
         hostFm.setServiceName(serviceName);
-        hostFm.setEngine(engine);
         hostFm.setAppBase("");
         hostFm.setAutoDeploy("true");
         hostFm.setDeployXML("true");

@@ -150,13 +150,12 @@ public final class SaveRequestDumperValveAction extends Action {
         String adminAction = vform.getAdminAction();
         String vObjectName = vform.getObjectName();
         String parent = vform.getParentObjectName();
-        String engine = vform.getEngineObjectName();
         String valveType = vform.getValveType();
             
         // Perform a "Create Valve" transaction (if requested)
         if ("Create".equals(adminAction)) {
         
-            vObjectName = ValveUtil.createValve(parent, engine, valveType, 
+            vObjectName = ValveUtil.createValve(parent, valveType, 
                                 response, request, mapping, 
                                 (ApplicationServlet) getServlet());
            

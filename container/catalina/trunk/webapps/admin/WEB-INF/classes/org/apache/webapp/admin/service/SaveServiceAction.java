@@ -326,8 +326,7 @@ public final class SaveServiceAction extends Action {
                                                 "Service.gif",
                                                 nodeLabel,
                                                 "EditService.do?select=" +
-                                                encodedName + "&engine=" +
-                                                eObjectName,
+                                                encodedName,
                                                 "content",
                                                 true, engineName);
                         parentNode.addChild(childNode);

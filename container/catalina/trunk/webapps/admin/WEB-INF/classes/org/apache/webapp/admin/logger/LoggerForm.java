@@ -94,12 +94,7 @@ public final class LoggerForm extends ActionForm {
      * The object name of the parent of this Logger.
      */
     private String parentObjectName = null;
-    
-    /**
-     * The object name of the parent engine of this Logger (if exists).
-     */
-    private String engineObjectName = null;
-       
+   
     /**
      * The text for the logger type. 
      * Specifies if it is a FileLogger, or SysErr or SysOut Logger.
@@ -205,28 +200,7 @@ public final class LoggerForm extends ActionForm {
         this.parentObjectName = parentObjectName;
 
     }
-
-
-    /**
-     * Return the engine object name of the Logger this bean refers to.
-     */
-    public String getEngineObjectName() {
-
-        return this.engineObjectName;
-
-    }
-
-
-    /**
-     * Set the engine object name of the Logger this bean refers to.
-     */
-    public void setEngineObjectName(String engineObjectName) {
-
-        this.engineObjectName = engineObjectName;
-
-    }
     
-        
     /**
      * Return the Logger type.
      */
