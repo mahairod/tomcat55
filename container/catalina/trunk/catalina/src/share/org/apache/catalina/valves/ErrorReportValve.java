@@ -238,9 +238,6 @@ public class ErrorReportValve
             return;
         HttpServletResponse hres = (HttpServletResponse) response;
         int statusCode = hresponse.getStatus();
-        String message = RequestUtil.filter(hresponse.getMessage());
-        if (message == null)
-            message = "";
 
         // Do nothing on a 1xx, 2xx and 3xx status
         if (statusCode < 400)
@@ -265,6 +262,10 @@ public class ErrorReportValve
 
         }
 
+        String message = RequestUtil.filter(hresponse.getMessage());
+        if (message == null)
+            message = "";
+    
         // Do nothing if there is no report for the specified status code
         String report = null;
         try {
