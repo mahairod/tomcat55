@@ -3823,12 +3823,12 @@ public class StandardContext
             dependencyCheck = validator.validateApplication(getResources(),
                                                             this);
         } catch (IOException ioe) {
+            log.error("Error in dependencyCheck", ioe);
             dependencyCheck = false;
         }
 
         if (!dependencyCheck) {
             // do not make application available if depency check fails
-            log.error( "Error in dependencyCheck");
             ok = false;
         }
 
@@ -3981,15 +3981,17 @@ public class StandardContext
         }
 
         // JMX registration
-        registerJMX();
+        if (ok) {
+            registerJMX();
 
-        // Notify our interested LifecycleListeners
-        lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
+        }
+
         startTime=System.currentTimeMillis();
-
         
         // Send j2ee.state.running notification 
-        if (this.getObjectName() != null) {
+        if (ok && (this.getObjectName() != null)) {
             Notification notification = 
                 new Notification("j2ee.state.running", this.getObjectName(), 
                                 sequenceNumber++);
