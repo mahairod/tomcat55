@@ -1597,38 +1597,20 @@ class Parser {
     }
 
     /*
-     * JspBodyBody ::=      ( S? '>' 
-     *                        ( (   ScriptlessBody 
-     *                            | Body
-     *                            | TagDependentBody
-     *                          ) - ''
-     *                        ) '</jsp:body>' 
-     *                      )
-     *                  |   ( ATTR[ !value ] S? JspBodyEmptyBody )
-     *
-     * JspBodyEmptyBody ::=     '/>'
-     *                      |   '></jsp:body>'
-     *                      |   <TRANSLATION_ERROR>
-     *
+     * Parses jsp:body action.
      */
     private void parseJspBody(Node parent, String bodyType) 
         throws JasperException 
     {
         Mark start = reader.mark();
-        reader.skipSpaces();
-
-        if (!reader.matches(">")) {
-	    err.jspError(reader.mark(),
-			 "jsp.error.attributes.not.allowed",
-			 "&lt;jsp:body&gt;" );
-	}
-
 	Node bodyNode = new Node.JspBody(start, parent);
-	if( reader.matches( "</jsp:body>" ) ) {
-	    // Body was empty.  This is illegal, according to the grammar.
-	    err.jspError(reader.mark(),"jsp.error.empty.body.not.allowed",
-			 "&lt;jsp:body&gt;" );
-	} else {
+
+	reader.skipSpaces();
+	if (!reader.matches("/>")) {
+	    if (!reader.matches(">")) {
+		err.jspError(start, "jsp.error.unterminated",
+			     "&lt;jsp:body");
+	    }
 	    parseBody( bodyNode, "jsp:body", bodyType );
 	}
     }
