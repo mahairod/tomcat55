@@ -826,31 +826,3 @@ final class StandardSession
 	}
 }
 
-/**
- * 
- * @author duncan@eng.sun.com
- */
-
- class SessionContextImpl implements HttpSessionContext {
-
-    /**
-     *
-     * @deprecated
-     */
-    
-    public HttpSession getSession(String sessionId) {
-        return null;
-    }
-
-    /**
-     *
-     * @deprecated
-     */
-
-    public Enumeration getIds() {
-        // cheap hack to get an empty enum
-        Vector v = new Vector();
-
-        return v.elements();
-    }
-}
