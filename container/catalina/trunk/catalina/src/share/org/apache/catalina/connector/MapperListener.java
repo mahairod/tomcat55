@@ -150,6 +150,19 @@ public class MapperListener
 
     }
 
+    /**
+     * unregister this from JMImplementation:type=MBeanServerDelegate
+     */
+    public void destroy() {
+        try {
+
+            ObjectName objectName = new ObjectName(
+                    "JMImplementation:type=MBeanServerDelegate");
+            mBeanServer.removeNotificationListener(objectName, this);
+        } catch (Exception e) {
+            log.warn("Error unregistering MBeanServerDelegate", e);
+        }
+    }
 
     // ------------------------------------------- NotificationListener Methods
 
@@ -183,12 +196,12 @@ public class MapperListener
                    (engineName != null) ) )  {
                 return;
             }
-
-            log.debug( "Handle " + objectName );    
+            if(log.isDebugEnabled())
+                log.debug( "Handle " + objectName  + " type : " + notification.getType());    
             if (notification.getType().equals
                 (MBeanServerNotification.REGISTRATION_NOTIFICATION)) {
                 String type=objectName.getKeyProperty("type");
-                if( "Host".equals( type )) {
+                if( "Host".equals( type ) && domain.equals(objectName.getDomain())) {
                     try {
                         registerHost(objectName);
                     } catch (Exception e) {
@@ -214,7 +227,7 @@ public class MapperListener
             } else if (notification.getType().equals
                        (MBeanServerNotification.UNREGISTRATION_NOTIFICATION)) {
                 String type=objectName.getKeyProperty("type");
-                if( "Host".equals( type )) {
+                if( "Host".equals( type )&& domain.equals(objectName.getDomain())) {
                     try {
                         unregisterHost(objectName);
                     } catch (Exception e) {
@@ -276,8 +289,8 @@ public class MapperListener
                 }
             }
             
-            if (!isRegisteredWithAlias)
-                log.warn("Unknown default host: " + defaultHost);
+            if (!isRegisteredWithAlias && log.isWarnEnabled())
+                log.warn(sm.getString("mapperListener.unknownDefaultHost", defaultHost));
         }
         // This should probablt be called later 
         if( defaultHost != null ) {
@@ -295,6 +308,10 @@ public class MapperListener
             String[] aliases = (String[])
                 mBeanServer.invoke(objectName, "findAliases", null, null);
             mapper.addHost(name, aliases, objectName);
+            if(log.isDebugEnabled())
+                log.debug(sm.getString
+                     ("mapperListener.registerHost", name, domain));
+
         }
     }
 
@@ -306,6 +323,9 @@ public class MapperListener
         throws Exception {
         String name=objectName.getKeyProperty("host");
         mapper.removeHost(name);
+        if(log.isDebugEnabled())
+            log.debug(sm.getString
+                 ("mapperListener.unregisterHost", name, domain));
     }
 
 
@@ -350,7 +370,8 @@ public class MapperListener
             contextName = "";
         }
 
-        log.debug(sm.getString
+        if(log.isDebugEnabled())
+             log.debug(sm.getString
                   ("mapperListener.registerContext", contextName));
 
         Object context = 
@@ -408,8 +429,8 @@ public class MapperListener
         if (contextName.equals("/")) {
             contextName = "";
         }
-
-        log.debug(sm.getString
+        if(log.isDebugEnabled())
+            log.debug(sm.getString
                   ("mapperListener.unregisterContext", contextName));
 
         mapper.removeContext(hostName, contextName);
@@ -458,8 +479,8 @@ public class MapperListener
         if (contextName.equals("/")) {
             contextName = "";
         }
-
-        log.debug(sm.getString
+        if(log.isDebugEnabled())
+            log.debug(sm.getString
                   ("mapperListener.registerWrapper", 
                    wrapperName, contextName));
 
@@ -476,6 +497,8 @@ public class MapperListener
         }
 
     }
+
+
 
 
 }
