@@ -66,6 +66,7 @@ package org.apache.tomcat.service.http;
 
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.helper.*;
 import org.apache.tomcat.logging.*;
 import java.io.*;
 import java.net.*;
@@ -107,7 +108,7 @@ public class HttpResponseAdapter extends  Response {
     public void endHeaders()  throws IOException {
 	super.endHeaders();
 	
-	sendStatus( status, Response.getMessage( status ));
+	sendStatus( status, RequestUtil.getMessage( status ));
 
 	int count=headers.size();
 	for( int i=0; i<count; i++ ) {
