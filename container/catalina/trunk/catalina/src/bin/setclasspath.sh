@@ -53,7 +53,7 @@ fi
 
 # Set standard commands for invoking Java.
 _RUNJAVA="$JAVA_HOME"/bin/java
-if [ ! "$os400" ]; then
+if [ $os400 = false ]; then
   _RUNJDB="$JAVA_HOME"/bin/jdb
 fi
 _RUNJAVAC="$JAVA_HOME"/bin/javac
