@@ -95,6 +95,7 @@ public class JspFactoryImpl extends JspFactory {
 		pc =  new PageContextImpl(this);
 	    }
 
+	    //	    System.out.println("JspFactoryImpl.getPC"  + pc);
 	    pc.initialize(servlet, request, response, errorPageURL, 
                           needsSession, bufferSize, autoflush);
 	    
@@ -108,8 +109,9 @@ public class JspFactoryImpl extends JspFactory {
 
     public void releasePageContext(PageContext pc) {
         pc.release();
-	if( usePool)
+	if( usePool) {
 	    pool.put( pc );
+	}
     }
 
     static class SunJspEngineInfo extends JspEngineInfo {

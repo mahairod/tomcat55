@@ -299,6 +299,7 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	// Reset the buffer.
 	bufferCount = 0;
 	totalCount = 0;
+	//	System.out.println("Reset buffer ");
     }
 
     /** Reuse the object instance, avoid GC

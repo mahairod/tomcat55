@@ -389,6 +389,8 @@ public class ResponseImpl implements Response {
 
     // Reset the response buffer but not headers and cookies
     public void resetBuffer() throws IllegalStateException {
+	if( usingWriter && writer != null )
+	    writer.flush();
 
 	out.reset();	// May throw IllegalStateException
 

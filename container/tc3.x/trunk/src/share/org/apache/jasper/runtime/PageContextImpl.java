@@ -178,6 +178,7 @@ public class PageContextImpl extends PageContext {
 	    throw new IllegalStateException("Page needs a session and none is available");
 
 	// initialize the initial out ...
+	//	System.out.println("Initialize PageContextImpl " + out );
 	if( out == null ) {
 	    out = _createOut(bufferSize, autoFlush); // throws
 	} else

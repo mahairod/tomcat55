@@ -162,8 +162,10 @@ public class JspWriterImpl extends JspWriter {
     }
 
     protected void initOut() throws IOException {
-        if (out == null) 
+        if (out == null) {
             out = response.getWriter();
+	    //System.out.println("JspWriterImpl: initOut: " + this + " " +out);
+	}
     }
 	
 
