@@ -459,15 +459,6 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
             log("Received SessionMessage sender="+sender,3);
             switch ( msg.getEventType() ) {
                 case SessionMessage.EVT_GET_ALL_SESSIONS: {
-                    try {
-                        //hack, because we don't want to send the data until the
-                        //manager is started up on the other side.
-                        Thread.currentThread().sleep(5000);
-                    }
-                    catch ( Exception ignore ) {
-                        //do nothing
-                    }
-
                     //get a list of all the session from this manager
                     Object[] sessions = findSessions();
                     java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
