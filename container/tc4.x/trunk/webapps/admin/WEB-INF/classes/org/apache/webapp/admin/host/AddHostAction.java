@@ -59,7 +59,7 @@
  *
  */
 
-package org.apache.webapp.admin.service;
+package org.apache.webapp.admin.host;
 
 import java.util.Iterator;
 import java.io.IOException;
@@ -87,13 +87,13 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Implementation of <strong>Action</strong> that validates
- * add service actions.
+ * add host actions.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class AddServiceAction extends Action {
+public final class AddHostAction extends Action {
     
     private static MBeanServer mBServer = null;
     private static MessageResources resources = null;
@@ -142,100 +142,104 @@ public final class AddServiceAction extends Action {
         }
         
         String serviceName = request.getParameter("serviceName");
-        String engineName = request.getParameter("engineName");
+        String hostName = request.getParameter("name");
+        String unpackWARs = request.getParameter("unpackWARs");
+        String appBase = request.getParameter("appBase");
         String debugLvlText = request.getParameter("debugLvl");
-        String defaultHost = request.getParameter("defaultHost");
         
         ObjectInstance mBeanFactory = null;
         
         // unique mBean name of the new service that is created.
-        String newService = null;
+        String newHost = null;
         
-        // Get hold of the parent server.
-        ObjectName server = null;
+        // Get hold of the parent engine.
+        ObjectName engine = null;
         try {
-            Iterator serverItr =
-            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder.WILDCARD), null).iterator();
+            Iterator engineItr =
+            mBServer.queryMBeans(new ObjectName(
+            TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName),
+            null).iterator();
             
-            ObjectInstance objInstance = (ObjectInstance)serverItr.next();
-            server = (objInstance).getObjectName();
+            ObjectInstance objInstance = (ObjectInstance)engineItr.next();
+            engine = (objInstance).getObjectName();
             
         } catch (Exception e) {
-            throw new ServletException("Error getting server mBean", e);
+            throw new ServletException("Error getting engine mBean", e);
         }
         
-        // invoke createStandardService operation on the mBean factory.
+        // invoke createStandardHost operation on the mBean factory.
         try {
             mBeanFactory = TomcatTreeBuilder.getMBeanFactory();
             ObjectName factory = mBeanFactory.getObjectName();
             
             Object[] params = new Object[2];
-            // mBean name of the parent server
-            params[0] = new String(server.toString());
-            // name of the new service to be added
-            params[1] = new String(serviceName);
+            // mBean name of the parent engine
+            params[0] = new String(engine.toString());
+            // name of the new host to be added
+            params[1] = new String(hostName);
             
             String[] types = new String[2];
             types[0]= "java.lang.String";
             types[1]= "java.lang.String";
             
-            newService = (String)
-            mBServer.invoke(factory, "createStandardService", params, types);
+            newHost = (String)
+            mBServer.invoke(factory, "createStandardHost", params, types);
             
-        } catch (Exception e) {
+        } catch (Throwable t) {
             getServlet().log
-            (resources.getMessage(locale, "users.error.invoke","createStandardService"), e);
+            (resources.getMessage(locale, "users.error.invoke",
+            "createStandardHost"), t);
             response.sendError
             (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.invoke","createStandardService"));
+            resources.getMessage(locale, "users.error.invoke","createStandardHost"));
             return (null);
-        }
+        } 
         
         // add the newly created service to the server mBean.
         try {
             Object[] params = new Object[1];
-            params[0] = new String(newService);
+            params[0] = new String(newHost);
             
             String[] type = new String[1];
             type[0]= "java.lang.String";
             
-            mBServer.invoke(server, "addService", params, type);
+            mBServer.invoke(engine, "addHost", params, type);
             
         } catch (Exception e) {
             getServlet().log
             (resources.getMessage(locale, "users.error.invoke",
-            "addService"), e);
+            "addHost"), e);
             response.sendError
             (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
             resources.getMessage(locale, "users.error.invoke",
-            "addService"));
+            "addHost"));
             return (null);
         }
         
-        // set the attributes read from the form to this newly created service.
+        // set the attributes read from the form to this newly created host.
         String attribute = null;
         try{
-            ObjectName serviceObjName = new ObjectName(newService);
-            
-            if (engineName != null) {
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(attribute=SetUpServiceAction.NAME_PROP_NAME,
-                engineName));
-            }
+            ObjectName hostObjName = new ObjectName(newHost);
             
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(attribute=SetUpServiceAction.DEBUG_PROP_NAME,
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.DEBUG_PROP_NAME,
                 debugLvl));
             }
             
-            if(defaultHost != null) {
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(attribute=SetUpServiceAction.HOST_PROP_NAME,
-                defaultHost));
+            if (unpackWARs != null) {
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.UNPACKWARS_PROP_NAME,
+                new Boolean(unpackWARs)));
             }
+            
+            if(appBase != null) {
+                mBServer.setAttribute(hostObjName,
+                new Attribute(attribute=SetUpHostAction.APPBASE_PROP_NAME,
+                appBase));
+            }
+            
         }catch(Exception e){
             getServlet().log
             (resources.getMessage(locale, "users.error.set.attribute",

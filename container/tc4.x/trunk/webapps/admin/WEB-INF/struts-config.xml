@@ -39,6 +39,10 @@
     <form-bean      name="hostForm"
                     type="org.apache.webapp.admin.host.HostForm"/>
 
+    <!-- Add Host form bean -->
+    <form-bean      name="addHostForm"
+                    type="org.apache.webapp.admin.host.AddHostForm"/>
+
     <!-- Delete Host form bean -->
     <form-bean      name="deleteHostForm"
                     type="org.apache.webapp.admin.host.DeleteHostForm"/>
@@ -143,6 +147,10 @@
         
     <forward        name="Host"
                     path="/host/host.jsp"
+                redirect="false"/>
+
+    <forward        name="Add Host"
+                    path="/host/addHost.jsp"
                 redirect="false"/>
  
     <forward        name="Delete Host"
@@ -303,6 +311,13 @@
                name="hostForm"
                scope="session">
     </action>
+
+    <!-- Set up add Host datastructure -->
+    <action    path="/setUpAddHost"
+               type="org.apache.webapp.admin.host.SetUpAddHostAction"
+               name="addHostForm"
+               scope="session">
+    </action>
     
     <!-- Set up delete Host datastructure -->
     <action    path="/setUpDeleteHost"
@@ -391,6 +406,14 @@
                name="hostForm"
               scope="session"
               input="/host/host.jsp">
+    </action>
+
+    <!-- Process a add host change -->
+    <action    path="/addHost"
+               type="org.apache.webapp.admin.host.AddHostAction"
+               name="addHostForm"
+              scope="session"
+              input="/host/addHost.jsp">
     </action>
 
     <!-- Process a delete host change -->

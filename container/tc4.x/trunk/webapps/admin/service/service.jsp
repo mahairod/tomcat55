@@ -38,8 +38,10 @@
             <controls:action url="">  <bean:message key="actions.connector.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.connector.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.host.create"/> </controls:action>
             --%>
+            <controls:action url='<%= "/setUpAddHost.do?serviceName=" + serviceName %>'>  
+                    <bean:message key="actions.host.create"/> 
+            </controls:action>
             <controls:action url='<%= "/setUpDeleteHost.do?serviceName=" + serviceName %>'>  
                     <bean:message key="actions.host.delete"/> 
             </controls:action>

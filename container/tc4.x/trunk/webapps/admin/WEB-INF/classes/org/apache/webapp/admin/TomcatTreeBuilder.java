@@ -143,7 +143,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
         mBServer.queryMBeans(new ObjectName(FACTORY_TYPE + WILDCARD), null).iterator();
         ObjectInstance mBeanFactory = (ObjectInstance)factoryItr.next();
         
-        System.out.println(" mbean factory= " + (mBeanFactory.getObjectName()).toString());
         return mBeanFactory;
     }
     
