@@ -109,8 +109,8 @@
     <jar name="common/lib/naming-common.jar"/>
     <jar name="common/lib/naming-resources.jar"/>
 
-    <jar name="shared/lib/jasper-compiler.jar" id="jasper-compiler"/>
-    <jar name="shared/lib/jasper-runtime.jar" id="jasper-runtime"/>
+    <jar name="common/lib/jasper-compiler.jar" id="jasper-compiler"/>
+    <jar name="common/lib/jasper-runtime.jar" id="jasper-runtime"/>
 
     <javadoc nested="dist/webapps/tomcat-docs">
       <description dir="catalina/docs/api">Catalina API</description>
