@@ -104,6 +104,45 @@ struct jk_uri_worker_map {
     unsigned size;
 };
 
+
+/*
+ * We are now in a security nightmare, it maybe that somebody sent 
+ * us a uri that looks like /top-secret.jsp. and the web server will 
+ * fumble and return the jsp content. 
+ *
+ * To solve that we will check for path info following the suffix, we 
+ * will also check that the end of the uri is not .suffix.
+ */
+static int check_security_fraud(jk_uri_worker_map_t *uw_map, 
+                                const char *uri, 
+                                jk_logger_t *l)
+{
+    unsigned i;    
+
+    for(i = 0 ; i < uw_map->size ; i++) {
+        if(MATCH_TYPE_SUFFIX == uw_map->maps[i].match_type) {
+            char *suffix_start;
+            for(suffix_start = strstr(uri, uw_map->maps[i].suffix) ;
+                suffix_start ;
+                suffix_start = strstr(uri, uw_map->maps[i].suffix)) {
+
+                char *after_suffix = suffix_start + strlen(uw_map->maps[i].suffix);
+                if((('.' == *after_suffix) || ('/' == *after_suffix)) && 
+                   (0 == strncmp(uw_map->maps[i].context, uri, uw_map->maps[i].ctxt_len))) {
+                    /* 
+                     * Security violation !!!
+                     * this is a fraud.
+                     */
+                    return i;
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
+
 int uri_worker_map_alloc(jk_uri_worker_map_t **uw_map,
                          jk_map_t *init_data,
                          jk_logger_t *l)
@@ -283,12 +322,22 @@ char *map_uri_to_worker(jk_uri_worker_map_t *uw_map,
                         const char *uri,
                         jk_logger_t *l)
 {
-    jk_log(l, JK_LOG_DEBUG, "Into jk_uri_worker_map_t::map_uri_to_worker\n");    
+    jk_log(l, JK_LOG_DEBUG, 
+           "Into jk_uri_worker_map_t::map_uri_to_worker\n");    
 
     if(uw_map && uri && '/' == uri[0]) {
         unsigned i;
         unsigned best_match = -1;
         unsigned longest_match = 0;
+        char clean_uri[4096];
+        char *url_rewrite = strstr(uri, JK_PATH_SESSION_IDENTIFIER);
+        
+        if(url_rewrite) {
+            strcpy(clean_uri, uri);
+            url_rewrite = strstr(clean_uri, JK_PATH_SESSION_IDENTIFIER);
+            *url_rewrite = '\0';
+            uri = clean_uri;
+        }
 
         for(i = 0 ; i < uw_map->size ; i++) {
 
@@ -320,7 +369,7 @@ char *map_uri_to_worker(jk_uri_worker_map_t *uw_map,
 
                         /* for WinXX, fix the JsP != jsp problems */
 #ifdef WIN32                        
-                        if(0 == strcasecmp(suffix, uw_map->maps[i].suffix)) {
+                        if(0 == strcasecmp(suffix, uw_map->maps[i].suffix))  {
 #else
                         if(0 == strcmp(suffix, uw_map->maps[i].suffix)) {
 #endif
@@ -338,11 +387,30 @@ char *map_uri_to_worker(jk_uri_worker_map_t *uw_map,
             jk_log(l, JK_LOG_DEBUG, "jk_uri_worker_map_t::uri_worker_map_open, done with %s\n",
                    uw_map->maps[best_match].worker_name); 
             return uw_map->maps[best_match].worker_name;
-        }
+        } else {
+            /*
+             * We are now in a security nightmare, it maybe that somebody sent 
+             * us a uri that looks like /top-secret.jsp. and the web server will 
+             * fumble and return the jsp content. 
+             *
+             * To solve that we will check for path info following the suffix, we 
+             * will also check that the end of the uri is not .suffix.
+             */
+            int fraud = check_security_fraud(uw_map, uri, l);
+
+            if(fraud >= 0) {
+                jk_log(l, JK_LOG_EMERG, 
+                       "In jk_uri_worker_map_t::map_uri_to_worker, found a security fraud in [%s]\n",
+                       uri);    
+                return uw_map->maps[fraud].worker_name;
+            }
+       }        
     } else {
-        jk_log(l, JK_LOG_ERROR, "In jk_uri_worker_map_t::map_uri_to_worker, wrong parameters\n");    
+        jk_log(l, JK_LOG_ERROR, 
+               "In jk_uri_worker_map_t::map_uri_to_worker, wrong parameters\n");    
     }
 
-    jk_log(l, JK_LOG_DEBUG, "jk_uri_worker_map_t::uri_worker_map_open, done with NULL\n"); 
+    jk_log(l, JK_LOG_DEBUG, 
+           "jk_uri_worker_map_t::map_uri_to_worker, done without a match\n"); 
     return NULL;
 }
