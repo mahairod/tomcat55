@@ -66,6 +66,9 @@
       <fix>
         <bug>29914</bug>: Better lifecycle support for DefaultContext. (yoavs)
       </fix>
+      <fix>
+        Set the FORM notes even when caching so that clustering with SSO works properly. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
