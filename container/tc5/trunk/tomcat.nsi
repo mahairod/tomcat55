@@ -207,11 +207,6 @@ NoDocumentaion:
                  '//GT//Tomcat5' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat (old).lnk" \
-                 "$2\bin\java.exe" \
-                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
-
 SectionEnd
 
 Section "Examples" SecExamples
