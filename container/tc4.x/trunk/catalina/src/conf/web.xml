@@ -158,6 +158,11 @@
   <!--                       relative to the context root, instead of       -->
   <!--                       the server root?  (0=false, 1=true) [0]        -->
 
+  <!-- IMPORTANT: To use the SSI servlet, you also need to rename the       -->
+  <!--            $CATALINA_HOME/server/lib/servlets-ssi.renametojar file   -->
+  <!--            to $CATALINA_HOME/server/lib/servlets-ssi.jar             -->
+
+<!--
   <servlet>
     <servlet-name>ssi</servlet-name>
     <servlet-class>org.apache.catalina.servlets.SsiInvokerServlet</servlet-class>
@@ -177,10 +182,9 @@
       <param-name>isVirtualWebappRelative</param-name>
       <param-value>0</param-value>
     </init-param>
-<!--
     <load-on-startup>4</load-on-startup>
--->
   </servlet>
+-->
 
 
   <!-- Common Gateway Includes (CGI) processing servlet, which supports     -->
@@ -202,6 +206,11 @@
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
 
+  <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
+  <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->
+  <!--            to $CATALINA_HOME/server/lib/servlets-cgi.jar             -->
+
+<!--
   <servlet>
     <servlet-name>cgi</servlet-name>
     <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
@@ -217,10 +226,9 @@
       <param-name>cgiPathPrefix</param-name>
       <param-value>WEB-INF/cgi</param-value>
     </init-param>
-<!--
      <load-on-startup>5</load-on-startup>
--->
    </servlet>
+-->
 
 
   <!-- ================ Built In Servlet Mappings ========================= -->
