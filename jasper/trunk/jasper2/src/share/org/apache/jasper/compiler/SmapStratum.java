@@ -208,7 +208,7 @@ public class SmapStratum {
      * Combines consecutive LineInfos wherever possible
      */
     public void optimizeLineSection() {
-        
+
         //Incorporate each LineInfo into the previous LineInfo's 
         //outputLineIncrement, if possible
         int i=0;
@@ -216,15 +216,17 @@ public class SmapStratum {
             LineInfo li = (LineInfo)lineData.get(i);
             LineInfo liNext = (LineInfo)lineData.get(i+1);
             if (liNext.inputStartLine == li.inputStartLine
-             && liNext.inputLineCount==1
-              && li.inputLineCount==1) {
-                li.setOutputLineIncrement(liNext.outputStartLine - li.outputStartLine + liNext.outputLineIncrement);
+                && liNext.inputLineCount==1
+                && li.inputLineCount==1
+                && liNext.outputStartLine == li.outputStartLine + li.inputLineCount*li.outputLineIncrement) {
+                li.setOutputLineIncrement
+                    (liNext.outputStartLine - li.outputStartLine + liNext.outputLineIncrement);
                 lineData.remove(i+1);
             } else {
                 i++; 
             }
         }
-        
+
         //Incorporate each LineInfo into the previous LineInfo's
         //inputLineCount, if possible
         i=0;
