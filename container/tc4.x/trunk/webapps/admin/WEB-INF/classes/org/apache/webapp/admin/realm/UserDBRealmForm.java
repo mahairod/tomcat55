@@ -263,6 +263,9 @@ public final class UserDBRealmForm extends ActionForm {
             if ((resource == null) || (resource.length() < 1)) {
                 errors.add("resource",
                 new ActionError("error.resource.required"));
+            } else if (!resource.startsWith("java:")) {
+                errors.add("resource",
+                new ActionError("error.resource.javaprefix"));
             }
         }
         return errors;

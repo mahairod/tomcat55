@@ -197,9 +197,7 @@ public class SetUpUserDBRealmAction extends Action {
             t.printStackTrace(System.out);
             //forward to error page
         }
-        
-        // Stash the form bean and forward to the display page
-        request.setAttribute("userdbRealmForm", realmFm);
+ 
         // Forward back to the appropriate Realm page
         return (mapping.findForward("UserDBRealm"));
         
