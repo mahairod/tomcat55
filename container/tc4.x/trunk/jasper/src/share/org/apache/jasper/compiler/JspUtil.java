@@ -131,6 +131,23 @@ public class JspUtil {
 	return returnString;
     }
 
+    /**
+     * Takes a potential expression and converts it into XML form
+     */
+    public static String getExprInXml(String expression) {
+        String returnString;
+        int length = expression.length();
+
+        if (expression.startsWith(OPEN_EXPR) 
+         && expression.endsWith(CLOSE_EXPR)) {
+            returnString = expression.substring (1, length - 1);
+        } else {
+            returnString = expression;
+        }
+
+        return returnString;
+    }
+
     // Parses the XML document contained in the InputStream.
     public static Document parseXMLDoc(InputStream in, String dtdResource, 
     					  String dtdId) throws JasperException 

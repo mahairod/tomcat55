@@ -150,7 +150,7 @@ public class XmlOutputter {
                 String name = (String)enum.nextElement();
                 String value = (String)attrs.get(name);
                 buff.append("  ").append(name).append("=\"");
-		buff.append(value).append("\"\n");
+		buff.append(JspUtil.getExprInXml(value)).append("\"\n");
             }
             buff.append(">\n");
         }
