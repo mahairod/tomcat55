@@ -1447,12 +1447,10 @@ class Generator {
 	    if (n.getBody() != null)
 		n.getBody().visit(new ParamVisitor(false)); 
 
-	    out.printil("out.write(" + quote(">") + ");");
+	    out.printil("out.write(" + quote("/>") + ");");
 	    out.printil("out.write(\"\\n\");");
 
 	    out.printil("out.write(" + quote("<NOEMBED>") + ");");
-	    out.printil("out.write(\"\\n\");");
-	    out.printil("out.write(" + quote("</COMMENT>") + ");");
 	    out.printil("out.write(\"\\n\");");
 
 	    /*
@@ -1463,8 +1461,12 @@ class Generator {
 		out.printil("out.write(\"\\n\");");
 	    }
 
-	    out.printil("out.write(" + quote("</NOEMBED></EMBED>") + ");");
+	    out.printil("out.write(" + quote("</NOEMBED>") + ");");
 	    out.printil("out.write(\"\\n\");");
+
+	    out.printil("out.write(" + quote("</COMMENT>") + ");");
+	    out.printil("out.write(\"\\n\");");
+
 	    out.printil("out.write(" + quote("</OBJECT>") + ");");
 	    out.printil("out.write(\"\\n\");");
 
