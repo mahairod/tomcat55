@@ -958,10 +958,11 @@ public class JspRuntimeLibrary {
         HttpServletRequest hrequest = (HttpServletRequest) request;
         String uri = (String)
             request.getAttribute("javax.servlet.include.servlet_path");
-        if (uri == null)
-            uri = hrequest.getServletPath();
+        if (uri != null) {
+            return uri + '/' + relativePath;
+        }
+        uri = hrequest.getServletPath();
         return (uri.substring(0, uri.lastIndexOf('/')) + '/' + relativePath);
-        
 
     }
 
