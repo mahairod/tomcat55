@@ -171,9 +171,31 @@ public class ServerLifecycleListener
      */
     public void lifecycleEvent(LifecycleEvent event) {
 
+        Lifecycle lifecycle = event.getLifecycle();
         if (Lifecycle.START_EVENT.equals(event.getType())) {
+            // Ignore events from StandardContext objects to avoid
+            // reregistering the context
+            if (lifecycle instanceof StandardContext)
+                return;
             createMBeans();
         } else if (Lifecycle.STOP_EVENT.equals(event.getType())) {
+        } else if (Lifecycle.RELOAD_EVENT.equals(event.getType())) {
+            // Give context a new handle to the MBean server if the
+            // context has been reloaded since reloading causes the
+            // context to lose its previous handle to the server
+            if (lifecycle instanceof StandardContext) {
+                // If the context is privileged, give a reference to it
+                // in a servlet context attribute
+                StandardContext context = (StandardContext)lifecycle;
+                if (context.getPrivileged()) {
+                    context.getServletContext().setAttribute
+                        (Globals.MBEAN_REGISTRY_ATTR,
+                         MBeanUtils.createRegistry());
+                    context.getServletContext().setAttribute
+                        (Globals.MBEAN_SERVER_ATTR,
+                         MBeanUtils.createServer());
+                }
+            }
         }
 
     }
@@ -246,8 +268,8 @@ public class ServerLifecycleListener
             log("Creating MBean for Context " + context);
         MBeanUtils.createMBean(context);
         if (context instanceof StandardContext) {
-            ((StandardContext) context).
-                addPropertyChangeListener(this);
+            ((StandardContext) context).addPropertyChangeListener(this);
+            ((StandardContext) context).addLifecycleListener(this);
         }
 
         // If the context is privileged, give a reference to it
