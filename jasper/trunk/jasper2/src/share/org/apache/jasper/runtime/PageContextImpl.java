@@ -581,11 +581,13 @@ public class PageContextImpl
             } catch (IllegalStateException ise) {
                 include(errorPageURL);
             }
+
             // The error page could be inside an include.
 
             Object newException=request.getAttribute("javax.servlet.error.exception");
 
-            if( (newException!= null) && (newException==origException) ) {
+            if ((origException == null) || 
+                ((newException != null) && (newException == origException))) {
                 request.removeAttribute("javax.servlet.error.exception");
             }
 
