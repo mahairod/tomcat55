@@ -70,31 +70,8 @@
   <subsection name="Standard Implementation">
 
     <p>The standard implementation of <strong>Resources</strong> is
-    <strong>org.apache.naming.resources.FileDirContext</strong>.
-    It supports the following additional attributes (in addition to the
-    common attributes listed above):</p>
-
-    <attributes>
-
-      <attribute name="cached" required="false">
-        <p>This boolean flag indicates if the resources should be cached. It
-        defaults to <code>true</code>. This flag only has an effect if the
-        <em>cachingAllowed</em> attribute of the containing
-        <a href="context.html">
-Context</a> is set to <code>true</code>.</p>
-      </attribute>
-
-      <attribute name="caseSensitive" required="false">
-        <p>This is the functional equivalent to the <em>caseSensitive</em> 
-        of a <a href="context.html">Context</a>.</p>
-      </attribute>
-
-      <attribute name="docBase" required="false">
-        <p>This is the functional equivalent to the <em>Document Base</em> 
-        of a <a href="context.html">Context</a>.</p>
-      </attribute>
-
-    </attributes>
+    <strong>org.apache.naming.resources.FileDirContext</strong>, and 
+    is configured by its parent Context element.</p>
 
   </subsection>
 
