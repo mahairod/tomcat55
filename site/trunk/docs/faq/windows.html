@@ -1,10 +1,10 @@
-<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Windows Questions</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><style>
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Windows Questions</title><meta name="author" value="Tim Funk"><meta name="email" value="funkman@apache.org"><style>
       dt { font-size : larger;  font-weight : bold }
       dd {padding-bottom : 10px;}
-    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+    </style></head><body bgcolor="#ffffff" text="#000000" link="#525D76" alink="#525D76" vlink="#525D76"><table border="0" width="100%" cellspacing="4"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img src="http://jakarta.apache.org//images/jakarta-logo.gif" align="left" alt="The Jakarta Project" border="0"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img src="../images/tomcat.gif" align="right" alt="
       Tomcat FAQ
-    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/HowTo">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="logging.html">Logging</a></li><li><a href="os2.html">OS/2, z/OS</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/">Wiki</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Windows Questions</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/windows.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
-                    </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+    " border="0"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr noshade="" size="1"></td></tr><tr><!--LEFT SIDE NAVIGATION--><td width="20%" valign="top" nowrap="true"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/HowTo">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="otherOperatingSystems.html">Other Operating Systems</a></li><li><a href="logging.html">Logging</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/">Wiki</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td width="80%" valign="top" align="left"><table border="0" width="100%" cellspacing="4"><tr><td align="left" valign="top" nowrap="true"><h1>Tomcat FAQ</h1><h2>Windows Questions</h2></td><td align="right" valign="top" nowrap="true"><small><a href="printer/windows.html"><img src="../images/printer.gif" border="0" alt="Printer Friendly Version"><br>print-friendly<br>version
+                    </a></small></td></tr></table><table border="0" cellspacing="0" cellpadding="2"><tr><td bgcolor="#525D76"><font color="#ffffff" face="arial,helvetica.sanserif"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
 <p>The will address various windows issues.
     Please see the
     <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">
@@ -12,7 +12,7 @@
     </a> Link for more links related to Windows.
 </p>
 
-</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+</blockquote></td></tr></table><table border="0" cellspacing="0" cellpadding="2"><tr><td bgcolor="#525D76"><font color="#ffffff" face="arial,helvetica.sanserif"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
   <ul>
      <li><a href="#out">
          Why do I get Out of Environment Space?
@@ -31,8 +31,13 @@
       <li><a href="#ntlm">
          Can I use NTLM authentication?
       </a> </li>
+
+      <li><a href="#lock">
+         I want to redeploy web applications, how do I prevent resources 
+         from getting locked?
+      </a> </li>
   </ul>
-</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+</blockquote></td></tr></table><table border="0" cellspacing="0" cellpadding="2"><tr><td bgcolor="#525D76"><font color="#ffffff" face="arial,helvetica.sanserif"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
 
   <b style="font-size: larger">
     <a name="out">
@@ -90,7 +95,38 @@
   </div><br>
 
 
+  <b style="font-size: larger">
+    <a name="lock">
+         I want to redeploy web applications, how do I prevent resources 
+         from getting locked?
+      </a>
+  </b>
+  <div style="padding-left : 20px;">
+      Most locking issues will occur with JARs from /WEB-INF/lib, and are 
+      useally caused by access through URLs. Tomcat has mechanisms to allow
+      avoiding locking. In Tomcat 5.0, a mechanism exists to prevent locking
+      when accessing resources using the getResource method of the URL 
+      classloader (many applications, such as Xerces, do not set the use of
+      caching to false before opening the URL connection, causing locking). 
+      If such a call occurs, resources inside the JARs will be extracted to
+      the work directory of the web application. In Tomcat 5.5, this mechanism 
+      is disabled by default (as it has a non negligible influence on startup
+      times, and is often useless), and can be enabled using the antiJARLocking
+      attribute of the Context element. There is another lock prevention 
+      mechanism in Tomcat 5.5 (antiResourceLocking attribute), which will cause
+      the web application files to be copied to the temp folder and run from 
+      this location. This has a larger impact on web application startup times,
+      but obviously prevents locking on all resources of the web application.
+      This also allows more flexible management operations as none of the web
+      application resources will be locked, even while the web application is
+      running (as a special note, when making changes JSPs without reloading
+      the application, the changes has to be duplicated to the path where the
+      web application resources have been copied in the temp folder).
+      The antiResourceLocking attribute should not be used at the same time as
+      the antiJARLocking attribute.
+  </div><br>
 
-</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr noshade="" size="1"></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font color="#525D76" size="-1"><em>
         Copyright &copy; 1999-2003, Apache Software Foundation
         </em></font></div></td></tr></table></body></html>
