@@ -63,7 +63,6 @@
 package org.apache.tomcat.request;
 
 import org.apache.tomcat.core.*;
-import org.apache.tomcat.helper.*;
 import org.apache.tomcat.util.*;
 import java.security.*;
 import java.security.Principal;
