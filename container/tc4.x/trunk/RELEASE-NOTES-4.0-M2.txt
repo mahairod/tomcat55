@@ -1,0 +1,188 @@
+                Apache Tomcat Version 4.0 Milestone 2
+                =====================================
+                            Release Notes
+                            =============
+
+$Id$
+
+
+============
+INTRODUCTION:
+============
+This document describes the changes that have been made in the current
+milestone release of Apache Tomcat, relative to the previous milestone
+release.
+
+
+============
+NEW FEATURES:
+============
+
+Catalina: New Class Loader Structure
+------------------------------------
+To implement the Servlet Spec 2.3 requirements related to declaring a
+dependency on external optional packages, a new class loader for the
+shared contents of $CATALINA_HOME/lib is now created, and made visible
+to all web applications.  See Section 9.6.1 of the Servlet 2.3 spec.
+
+Jasper:  Support for PropertyEditors
+------------------------------------
+Jasper now supports the new JSP 1.2 requirement that if a bean class has
+declared a PropertyEditor for one or more bean properties, those editors
+will be used to perform String-to-object conversions.
+
+Jasper:  Logs to ServletContext.log()
+-------------------------------------
+Log messages created by Jasper now default to using the ServletContext.log()
+method, which will cause them to appear on whatever log the administrator
+has configured for this web application.
+
+Catalina:  Locale To Character Set Mapping
+------------------------------------------
+Previously, the mapping from locales to character sets was done by a
+hard coded mapping table in org.apache.catalina.util.LocaleToCharsetMap.
+This has been made more flexible in the following respects:
+* The mapping table used by default is now initialized from an external
+  property resource file that can be edited and replaced.
+* The character set mapping implementation component is now pluggable
+  on a per-web-application basis.
+
+Catalina:  New Configuration Component in SERVER.XML
+----------------------------------------------------
+A new configurable component, <Service> has been introduced between <Server>
+and <Engine>.  A Service is a grouping of one or more connectors that share
+a particular Container (normally an Engine) to process incoming requests.  A
+single Server instance can contain any number of Services.
+
+Catalina:  Developer Document Added
+-----------------------------------
+A new developer document ("catalina/docs/dev/classloaders.html") has been added
+describing the new class loader hierarchy created when Catalina is executed.
+
+Catalina:  JMX Management Capability
+------------------------------------
+Catalina now includes a JMX compatible MBean
+(org.apache.catalina.startup.CatalinaManager) that wraps the standard startup
+class (org.apache.catalina.startup.Catalina), making Catalina manageable in a
+JMX agent.
+
+Jasper:  Expanded Acceptance of XML Syntax
+------------------------------------------
+In conformance with the direction of the expert group for the JSP 1.2
+specification, Jasper know accepts well-formed (in the XML sense) XML fragments
+anywhere that #PCDATA can appear in an XML-syntax JSP page, without having to
+wrap these fragments inside CDATA sections.
+
+Catalina:  New Deployer Interface
+---------------------------------
+A new top-level interface called Deployer has been created.  It defines a
+Container into which web applications (which will be represented by a Context
+implementation) can be deployed or undeployed.  StandardHost has been
+extended to support this interface, which means that Catalina can now deploy
+and undeploy applications on the fly, without having to be restarted.
+
+Catalina:  New Manager Web Application
+--------------------------------------
+A new web application (by default attached to the "/manager" context path)
+has been added to take advantage of the new hot deploy capabilities of
+Catalina.  This application is useful when you wish to script deploy, reload,
+or undeploy operations under control of a client application via HTTP commands.
+As such, it is complementary to administrative applications with a more
+human-oriented user interface that have yet to be created.  See a new
+document in the source distribution (catalina/docs/manager.html) for a more
+complete description of this new application.
+
+
+=========
+BUG FIXES:
+=========
+
+Catalina:  Handling of the "Range" header in the default file-serving servlet
+is now more robust.
+
+Catalina:  On a request that triggers form-based login processing, save the
+query parameters from the original request even if it was a POST.
+
+Jasper:  Fix a parsing bug related to include files with improper tag nesting.
+
+Webapps:  Correct build.xml relative references that caused a top-level build
+from a fresh checkout of the jakarta-tomcat-4.0 module to fail.
+
+Catalina:  Finish implementing the new Servlet 2.3 functionality on the
+WrappedRequest class.
+
+Catalina:  Modify the information string returned by
+ServletContext.getServerInfo() to include a slash in the usual format.
+
+Catalina:  Clean up error handling behavior in the invoker servlet.  Now
+returns 404 errors (instead of 500) if you specify no servlet name or class
+at all, or if you specify a non-existent servlet name or class.
+
+Jasper:  Add conversions for JSP to XJSP run-time attributes to
+XMLOutputter.
+
+Catalina:  Set the "catalina.home" property to the current working directory
+if it has not been set in the startup script.
+
+Catalina:  XML parse errors (due to DTD violations) when reading the web.xml
+file for either the default ($CATALINA_HOME/conf/web.xml) or application
+specific (WEB-INF/web.xml) settings are now reported in the log files, and
+cause the application to be unavailable until the errors are fixed and the
+application restarted.
+
+
+==============================
+KNOWN PROBLEMS IN THIS RELEASE:
+==============================
+
+No Web Connectors Available
+---------------------------
+Current releases of Tomcat 4.0 only run in stand-alone mode.  A new web
+connector for Apache will be integrated shortly, followed by integration
+with the other servers currently supported by Tomcat 3.x.
+
+
+Referencing A Non-Existent JSP Page
+-----------------------------------
+If you request a JSP page that does not exist, you get an error 500 reporting
+a java.io.FileNotFoundException.  This should cause an error 404 instead.
+This will be fixed in a future release.
+
+
+Including A Static File
+-----------------------
+If you use a <jsp:include> element to include a static resource (such as
+an HTML file containing static text) that is served by the default servlet,
+you will receive the following message:
+
+    IllegalStateException: getWriter() has already been called for
+    this response
+
+This occurs because the default file-serving servlet currently always uses
+the servlet output stream to write its response, and the JSP page has already
+grabbed the associated writer.  This will be fixed in a future release.
+
+
+URL Decoding Incomplete
+-----------------------
+Currently, Catalina does not decode the values returned by getServletPath()
+and getPathInfo(), as required by the Servlet Specification.  This will be
+dealt with after clarifications to the requirements are completed in the
+JSR-053 expert group.
+
+
+Redeploying From a Web Application Archive
+------------------------------------------
+If you attempt to undeploy, then redeploy, an application from the same
+web application archive file URL (where the URL refers to an actual WAR
+file, not to a directory), the redeploy will fail with error "zip file is
+closed".  There appears to be a problem in the JDK's JarURLConnection class
+where JAR files are cached, even after they are closed, so that a request
+for a connection to the same URL returns the previous JarFile object instead
+of a new one.  As a workaround, you should do one of the following:
+* Change the URL of the web application archive each time you redeploy.
+* Deploy from an unpacked directory (on the same server) instead of from
+  a WAR file (this is often more convenient in a development environment
+  anyway).
+
+
