@@ -871,6 +871,8 @@
 
     <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-coyote.jar}"/>
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat4-coyote.jar}"/>
 
   </target>
 
