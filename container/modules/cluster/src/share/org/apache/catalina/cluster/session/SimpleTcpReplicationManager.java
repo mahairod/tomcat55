@@ -229,29 +229,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
             throw new IllegalStateException(sm.getString("standardManager.createSession.ise"));
 
 
-        // Recycle or create a Session instance
-        Session session = null;
-        //modified to make sure we only recycle sessions that are of type=ReplicatedSession
-        //I personally believe the VM does a much better job pooling object instances
-        //than the synchronized penalty gives us
-        synchronized (recycled) {
-            int size = recycled.size();
-            int index = size;
-            if (size > 0) {
-                do
-                {
-                    index--;
-                    session = (Session) recycled.get(index);
-                    recycled.remove(index);
-                } while ( index > 0 && (session instanceof ReplicatedSession));
-            }
-        }//synchronized
-
-        //set the current manager
-        if (session != null)
-            session.setManager(this);
-        else
-            session = new ReplicatedSession(this);
+        Session session = new ReplicatedSession(this);
 
         // Initialize the properties of the new session and return it
         session.setNew(true);
