@@ -126,7 +126,9 @@ import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.session.PersistentManagerBase;
 import org.apache.catalina.session.StandardManager;
+import org.apache.catalina.session.StoreBase;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
@@ -4300,9 +4302,17 @@ public class StandardContext
         if (!started)
             return;
 
-        if ((getManager() != null) 
-            && (getManager() instanceof StandardManager)) {
-            ((StandardManager) getManager()).processExpires();
+        if (getManager() != null) {
+            if (getManager() instanceof StandardManager) {
+                ((StandardManager) getManager()).processExpires();
+            } else if (getManager() instanceof PersistentManagerBase) {
+                PersistentManagerBase pManager = 
+                    (PersistentManagerBase) getManager();
+                if ((pManager.getStore() != null) 
+                    && (pManager.getStore() instanceof StoreBase)) {
+                    ((StoreBase) pManager.getStore()).processExpires();
+                }
+            }
         }
 
         if (getLoader() != null) {
