@@ -149,10 +149,17 @@ tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
 
 
-# ----- Xerces XML Parser, version 1.4.3 or later -----
+# ----- Xerces XML Parser, version 1.4.3 but less than 2.0.0beta4 -----
 xerces.home=${base.path}/xerces-1_4_3
 xerces.lib=${xerces.home}
 xerces.jar=${xerces.lib}/xerces.jar
+
+
+# ----- Xerces XML Parser, version 2.0.0beta4 or later -----
+#xerces.home=${base.path}/xerces-2_0_0_beta4
+#xerces.lib=${xerces.home}
+#xercesImpl.jar=${xerces.lib}/xercesImpl.jar
+#xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
 
 # ----- Commons DBCP, version 20011030 or later -----

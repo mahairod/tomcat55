@@ -23,6 +23,8 @@
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
+    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
   </path>
 
@@ -32,6 +34,8 @@
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
+    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
     <pathelement location="${jasper.build}/tests"/>
   </path>
