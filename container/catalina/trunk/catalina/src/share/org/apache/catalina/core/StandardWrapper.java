@@ -378,8 +378,16 @@ public class StandardWrapper
      */
     public int getLoadOnStartup() {
 
-        return (this.loadOnStartup);
-
+        if (isJspServlet && loadOnStartup < 0) {
+            /*
+             * JspServlet must always be preloaded, because its instance is
+             * used during registerJMX (when registering the JSP
+             * monitoring mbean)
+             */
+             return Integer.MAX_VALUE;
+        } else {
+            return (this.loadOnStartup);
+        }
     }
 
 
