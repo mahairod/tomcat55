@@ -77,8 +77,8 @@ import javax.management.ObjectName;
 import javax.management.OperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBean;
+
 import org.apache.catalina.Connector;
-import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -98,6 +98,8 @@ import org.apache.catalina.Service;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.Contained;
 import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -166,6 +168,7 @@ public class MBeanUtils {
      */
     private static MBeanServer mserver = createServer();
 
+    static boolean jsr77Names=false;
 
     // --------------------------------------------------------- Static Methods
 
@@ -258,11 +261,33 @@ public class MBeanUtils {
         ModelMBean mbean = managed.createMBean(context);
         ObjectName oname = createObjectName(domain, context);
         mserver.registerMBean(mbean, oname);
+        if( jsr77Names ) {
+            oname = createObjectName77(domain, context);
+            mserver.registerMBean(mbean, oname);
+        }
+        return (mbean);
+    }
+
+    public static ModelMBean createMBean(Wrapper wrapper)
+        throws Exception {
+
+        String mname = createManagedName(wrapper);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            Exception e = new Exception("ManagedBean is not found with "+mname);
+            throw new MBeanException(e);
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(wrapper);
+        ObjectName oname = createObjectName(domain, wrapper);
+        mserver.registerMBean(mbean, oname);
         return (mbean);
 
     }
 
-    
+
     /**
      * Create, register, and return an MBean for this
      * <code>ContextEnvironment</code> object.
@@ -563,6 +588,9 @@ public class MBeanUtils {
             domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(factory);
         ObjectName oname = createObjectName(domain, factory);
+        if( mserver.isRegistered(oname)) {
+            mserver.unregisterMBean(oname);
+        }
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -904,7 +932,57 @@ public class MBeanUtils {
 
     }
 
-    
+    public static ObjectName createObjectName77(String domain,
+                                                Context context)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        Host host = (Host)context.getParent();
+        Service service = ((Engine)host.getParent()).getService();
+        String path = context.getPath();
+        if (path.length() < 1)
+            path = "/";
+        String localName= "//" +
+                ((host.getName()==null)? "DEFAULT" : host.getName()) + path;
+        name = new ObjectName(domain + ":j2eeType=WebModule,name=" +
+                              localName + ",j2eeApplication=none,j2eeServer=none");
+        return (name);
+    }
+
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>Context</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param context The Context to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              Wrapper wrapper)
+            throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        Context context=(Context)wrapper.getParent();
+        Host host = (Host)context.getParent();
+        Service service = ((Engine)host.getParent()).getService();
+        String sname=wrapper.getJspFile();
+        if( sname==null ) {
+            sname=wrapper.getName();
+        }
+        String path = context.getPath();
+        if (path.length() < 1)
+            path = "/";
+        String hostName=host.getName();
+        String webMod="//" + ((hostName==null)? "DEFAULT" :hostName ) + path;
+        name = new ObjectName(domain + ":j2eeType=Servlet,name=" +
+                sname + ",WebModule=" +
+                webMod + ",J2EEAppilication=none,J2EEServer=none");
+
+        return (name);
+
+    }
+
     /**
      * Create an <code>ObjectName</code> for this
      * <code>Service</code> object.
@@ -1726,7 +1804,10 @@ public class MBeanUtils {
             domain = mserver.getDefaultDomain();
         ObjectName oname = createObjectName(domain, context);
         mserver.unregisterMBean(oname);
-
+        if( jsr77Names ) {
+            oname = createObjectName77(domain, context);
+            mserver.unregisterMBean(oname);
+        }
     }
 
     
@@ -1754,7 +1835,31 @@ public class MBeanUtils {
 
     }
     
-    
+    /**
+     * Deregister the MBean for this
+     * <code>Wrapper</code> object.
+     *
+     * @param wrapper The Wrapper to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Wrapper wrapper)
+        throws Exception {
+
+        String mname = createManagedName(wrapper);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, wrapper);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
     /**
      * Deregister the MBean for this
      * <code>ContextResource</code> object.
