@@ -930,21 +930,28 @@ public class JspUtil {
 	    }
 	}
 
-        //Make sure the class name consists of legal Java identifiers
-        String classNameComponents[] = path.substring(begin).split("/");
+        className += makeJavaPackage(path.substring(begin));
+  
+       return className;
+    }
+
+    /**
+     * Converts the given path to a Java package or fully-qualified class name
+     *
+     * @param path Path to convert
+     *
+     * @return Java package corresponding to the given path
+     */
+    public static final String makeJavaPackage(String path) {
+        String classNameComponents[] = path.split("/");
         StringBuffer legalClassNames = new StringBuffer();
         for (int i = 0; i < classNameComponents.length; i++) {
             legalClassNames.append(makeJavaIdentifier(classNameComponents[i]));
-            if (isJavaKeyword(classNameComponents[i])) {
-                legalClassNames.append('_');
-            }
             if (i < classNameComponents.length - 1) {
                 legalClassNames.append('.');
             }
         }
-        className += legalClassNames.toString();
-  
-	return className;
+        return legalClassNames.toString();
     }
 
     /**
@@ -969,6 +976,9 @@ public class JspUtil {
             } else {
                 modifiedIdentifier.append(mangleChar(ch));
             }
+        }
+        if (isJavaKeyword(modifiedIdentifier.toString())) {
+            modifiedIdentifier.append('_');
         }
         return modifiedIdentifier.toString();
     }

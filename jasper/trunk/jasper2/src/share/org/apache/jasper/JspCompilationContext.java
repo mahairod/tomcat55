@@ -399,33 +399,10 @@ public class JspCompilationContext {
 
     private String getDerivedPackageName() {
 	if (derivedPackageName == null) {
-            StringBuffer modifiedPackageName = new StringBuffer();
             int iSep = jspUri.lastIndexOf('/');
-            // Start after the first slash
-            int nameStart = 1;
-            for (int i = 1; i < iSep; i++) {
-                char ch = jspUri.charAt(i);
-                if (i == nameStart && !Character.isJavaIdentifierStart(ch)) {
-                    modifiedPackageName.append('_');
-                }
-                if (Character.isJavaIdentifierPart(ch) && ch != '_') {
-                    modifiedPackageName.append(ch);
-                } else if (ch == '/') {
-                    if (JspUtil.isJavaKeyword(jspUri.substring(nameStart, i))) {
-                        modifiedPackageName.append('_');
-                    }
-                    nameStart = i+1;
-                    modifiedPackageName.append('.');
-                } else {
-                    modifiedPackageName.append(JspUtil.mangleChar(ch));
-                }
-            }
-            if (nameStart < iSep
-                    && JspUtil.isJavaKeyword(jspUri.substring(nameStart, iSep))) {
-                modifiedPackageName.append('_');
-            }
-            derivedPackageName = modifiedPackageName.toString();
-        }
+            derivedPackageName = (iSep > 0) ?
+                JspUtil.makeJavaPackage(jspUri.substring(1,iSep)) : "";
+         }
         return derivedPackageName;
     }
 	    
