@@ -131,8 +131,11 @@ public class SimpleRealm extends  BaseInterceptor {
 
 	if( debug > 0 ) log( "Verify user=" + user + " pass=" + password );
 	if( memoryRealm.checkPassword( user, password ) ) {
-	    req.setRemoteUser( user );
 	    if( debug > 0 ) log( "Auth ok, user=" + user );
+	    req.setRemoteUser( user );
+            Context ctx = req.getContext();
+            if (ctx != null)
+                req.setAuthType(ctx.getAuthMethod());
 	}
 	return 0;
     }
