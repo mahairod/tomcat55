@@ -88,6 +88,11 @@ public class TagInfo {
      * under request from some JSP code that is parsing a
      * TLD (Tag Library Descriptor).
      *
+     * Note that, since TagLibibraryInfo reflects both TLD information
+     * and taglib directive information, a TagInfo instance is
+     * dependent on a taglib directive.  This is probably a
+     * design error, which may be fixed in the future.
+     *
      * @param tagName The name of this tag
      * @param tagClassName The name of the tag handler class
      * @param bodycontent Information on the body content of these tags
