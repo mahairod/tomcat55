@@ -42,7 +42,7 @@ public final class JndiPermission extends BasicPermission {
     /**
      * Creates a new JndiPermission with no actions
      *
-     * @param String - JNDI resource path name
+     * @param name - JNDI resource path name
      */
     public JndiPermission(String name) {
         super(name);
@@ -51,8 +51,8 @@ public final class JndiPermission extends BasicPermission {
     /**
      * Creates a new JndiPermission with actions
      *
-     * @param String - JNDI resource path name
-     * @param String - JNDI actions (none defined)
+     * @param name - JNDI resource path name
+     * @param actions - JNDI actions (none defined)
      */
     public JndiPermission(String name, String actions) {
         super(name,actions);

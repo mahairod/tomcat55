@@ -326,8 +326,6 @@ public class SingleSignOn
      *
      * @param request The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param context The valve context used to invoke the next valve
-     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
@@ -516,9 +514,9 @@ public class SingleSignOn
      * <p>
      * If reauthentication is successful, the <code>Principal</code> and
      * authorization type associated with the SSO session will be bound
-     * to the given <code>HttpRequest</code> object via calls to 
-     * {@link HttpRequest#setAuthType HttpRequest.setAuthType()} and 
-     * {@link HttpRequest#setUserPrincipal HttpRequest.setUserPrincipal()}
+     * to the given <code>Request</code> object via calls to 
+     * {@link Request#setAuthType Request.setAuthType()} and 
+     * {@link Request#setUserPrincipal Request.setUserPrincipal()}
      * </p>
      *
      * @param ssoId     identifier of SingleSignOn session with which the

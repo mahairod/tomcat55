@@ -279,8 +279,7 @@ public class NamingResources implements Serializable {
     /**
      * Add a resource environment reference for this web application.
      *
-     * @param name The resource environment reference name
-     * @param type The resource environment reference type
+     * @param resource The resource
      */
     public void addResourceEnvRef(ContextResourceEnvRef resource) {
 

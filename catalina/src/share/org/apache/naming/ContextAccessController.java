@@ -51,7 +51,7 @@ public class ContextAccessController {
      * Set a security token for a context. Can be set only once.
      * 
      * @param name Name of the context
-     * @param context Security token
+     * @param token Security token
      */
     public static void setSecurityToken(Object name, Object token) {
         if ((!securityTokens.containsKey(name)) && (token != null)) {
@@ -64,7 +64,7 @@ public class ContextAccessController {
      * Remove a security token for a context.
      * 
      * @param name Name of the context
-     * @param context Security token
+     * @param token Security token
      */
     public static void unsetSecurityToken(Object name, Object token) {
         if (checkSecurityToken(name, token)) {
@@ -79,7 +79,7 @@ public class ContextAccessController {
      * context, then returns true.
      * 
      * @param name Name of the context
-     * @param context Submitted security token
+     * @param token Submitted security token
      */
     public static boolean checkSecurityToken
         (Object name, Object token) {

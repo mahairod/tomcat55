@@ -27,7 +27,7 @@ import org.apache.catalina.UserDatabase;
 import org.apache.catalina.util.RequestUtil;
 
 /**
- * <p>Concrete implementation of {@link User} for the
+ * <p>Concrete implementation of {@link org.apache.catalina.User} for the
  * {@link MemoryUserDatabase} implementation of {@link UserDatabase}.</p>
  *
  * @author Craig R. McClanahan
