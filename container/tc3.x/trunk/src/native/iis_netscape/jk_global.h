@@ -125,7 +125,9 @@ extern "C" {
     #define PATH_ENV_VARIABLE       ("PATH")
 
     /* incompatible names... */
-    #define strcasecmp stricmp
+    #ifndef strcasecmp 
+        #define strcasecmp stricmp
+    #endif
 #else
     #define JK_METHOD
     #define C_LEVEL_TRY_START       
