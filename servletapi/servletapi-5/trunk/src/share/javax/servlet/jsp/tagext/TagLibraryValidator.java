@@ -90,9 +90,9 @@ import java.util.Map;
  * synchronization they may require.
  *
  * <p>
- * A JSP container may optionally support a jsp:id attribute to
+ * As of JSP 2.0, a JSP container must provide a jsp:id attribute to
  * provide higher quality validation errors.
- * When supported, the container will track the JSP pages
+ * The container will track the JSP pages
  * as passed to the container, and will assign to each element
  * a unique "id", which is passed as the value of the jsp:id
  * attribute.  Each XML element in the XML view available will

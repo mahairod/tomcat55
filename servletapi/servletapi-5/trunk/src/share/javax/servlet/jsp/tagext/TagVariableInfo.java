@@ -62,7 +62,7 @@ package javax.servlet.jsp.tagext;
  *
  * This object should be immutable.
  *
- * This information is only available in JSP 1.2 format
+ * This information is only available in JSP 2.0 format
 */
 
 public class TagVariableInfo {

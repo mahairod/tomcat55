@@ -56,6 +56,7 @@
 package javax.servlet.jsp.tagext;
 
 import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagFileInfo;
 
 import java.net.URL;
 
@@ -77,15 +78,33 @@ abstract public class TagLibraryInfo {
      * Constructor.
      *
      * This will invoke the constructors for TagInfo, and TagAttributeInfo
-     * after parsing the TLD file.
+     * after parsing the TLD file.  Sets tagdir to null.
      *
      * @param prefix the prefix actually used by the taglib directive
      * @param uri the URI actually used by the taglib directive
      */
-
     protected TagLibraryInfo(String prefix, String uri) {
+	this( prefix, uri, null );
+    }
+
+    /**
+     * JSP 2.0 Constructor.
+     *
+     * This will invoke the constructors for TagInfo, and TagAttributeInfo
+     * after parsing the TLD file.
+     *
+     * @param prefix the prefix actually used by the taglib directive
+     * @param uri the URI actually used by the taglib directive.  Either
+     *     uri or tagdir must be null.
+     * @param tagdir the directory of tag files, starting with /WEB-INF/tags/
+     *     if this directive is specifying the directory of an implicit 
+     *     tag library composed of tag files.  Either uri or tagdir 
+     *     must be null.
+     */
+    protected TagLibraryInfo(String prefix, String uri, String tagdir) {
 	this.prefix = prefix;
 	this.uri    = uri;
+	this.tagdir = tagdir;
     }
 
 
@@ -99,6 +118,16 @@ abstract public class TagLibraryInfo {
    
     public String getURI() {
         return uri;
+    }
+
+    /**
+     * The value of the tagdir attribute from the &lt;%@ taglib directive for
+     * this tag library.
+     *
+     * @return the value of the tagdir attribute
+     */
+    public String getTagdir() {
+	return tagdir;
     }
 
     /**
@@ -165,15 +194,23 @@ abstract public class TagLibraryInfo {
      *
      * @return the tags defined in this tag lib
      */
-   
     public TagInfo[] getTags() {
         return tags;
+    }
+
+    /**
+     * An array describing the tag files that are defined in this tag library.
+     *
+     * @return the tag files defined in this tag lib
+     */
+    public TagFileInfo[] getTagFiles() {
+        return tagFiles;
     }
 
 
     /**
      * Get the TagInfo for a given tag name, looking through all the
-     * tags in this tag library.
+     * tags in this tag library.  Returns null if no tag is found.
      *
      * @param shortname The short name (no prefix) of the tag
      * @return the TagInfo for that tag. 
@@ -190,6 +227,30 @@ abstract public class TagLibraryInfo {
         for (int i=0; i < tags.length; i++) {
             if (tags[i].getTagName().equals(shortname)) {
                 return tags[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the TagFileInfo for a given tag name, looking through all the
+     * tag files in this tag library.  Returns null if no tag file is found.
+     *
+     * @param shortname The short name (no prefix) of the tag
+     * @return the TagFileInfo for that tag file. 
+     */
+
+    public TagFileInfo getTagFile(String shortname) {
+        TagFileInfo tagFiles[] = getTagFiles();
+
+        if (tagFiles == null || tagFiles.length == 0) {
+            System.err.println("No tags");
+            return null;
+        }
+
+        for (int i=0; i < tagFiles.length; i++) {
+            if (tagFiles[i].getName().equals(shortname)) {
+                return tagFiles[i];
             }
         }
         return null;
@@ -234,8 +295,10 @@ abstract public class TagLibraryInfo {
 
     protected String        prefix;
     protected String        uri;
+    protected String        tagdir;
 
     protected TagInfo[]     tags;
+    protected TagFileInfo[] tagFiles;
     protected FunctionInfo[] functions;
 
     // Tag Library Data

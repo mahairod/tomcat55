@@ -69,7 +69,7 @@ public class SimpleTagSupport
     implements SimpleTag
 {
     /** Reference to the enclosing tag */
-    private Object parentTag;
+    private JspTag parentTag;
     
     /** The JSP context for the upcoming tag invocation */
     private JspContext jspContext;
@@ -93,14 +93,14 @@ public class SimpleTagSupport
     /**
      * Sets the parent of this tag, for collaboration purposes.
      */
-    public void setParent( Object parent ) {
+    public void setParent( JspTag parent ) {
         this.parentTag = parent;
     }
     
     /**
      * Returns the parent of this tag, for collaboration purposes.
      */ 
-    public Object getParent() {
+    public JspTag getParent() {
         return this.parentTag;
     }
     
@@ -138,5 +138,69 @@ public class SimpleTagSupport
         return this.jspBody;
     }
 
-    
+    /**
+     * Find the instance of a given class type that is closest to a given
+     * instance.
+     * This method uses the getParent method from the Tag and/or SimpleTag
+     * interfaces.  This method is used for coordination among 
+     * cooperating tags.
+     *
+     * <p>
+     * The current version of the specification only provides one formal
+     * way of indicating the observable type of a tag handler: its
+     * tag handler implementation class, described in the tag-class
+     * subelement of the tag element.  This is extended in an
+     * informal manner by allowing the tag library author to
+     * indicate in the description subelement an observable type.
+     * The type should be a subtype of the tag handler implementation
+     * class or void.
+     * This addititional constraint can be exploited by a
+     * specialized container that knows about that specific tag library,
+     * as in the case of the JSP standard tag library.
+     *
+     * <p>
+     * When a tag library author provides information on the
+     * observable type of a tag handler, client programmatic code
+     * should adhere to that constraint.  Specifically, the Class
+     * passed to findAncestorWithClass should be a subtype of the
+     * observable type.
+     * 
+     *
+     * @param from The instance from where to start looking.
+     * @param klass The subclass of JspTag or interface to be matched
+     * @return the nearest ancestor that implements the interface
+     * or is an instance of the class specified
+     */
+    public static final JspTag findAncestorWithClass(
+	JspTag from, Class klass) 
+    {
+	boolean isInterface = false;
+
+	if (from == null ||
+	    klass == null ||
+	    (!JspTag.class.isAssignableFrom(klass) &&
+	     !(isInterface = klass.isInterface()))) {
+	    return null;
+	}
+
+	for (;;) {
+	    JspTag tag = null;
+	    if( from instanceof SimpleTag ) {
+		tag = ((SimpleTag)from).getParent();
+	    }
+	    else if( from instanceof Tag ) {
+		tag = ((Tag)from).getParent();
+	    }
+
+	    if (tag == null) {
+		return null;
+	    }
+
+	    if ((isInterface && klass.isInstance(tag)) ||
+	        klass.isAssignableFrom(tag.getClass()))
+		return tag;
+	    else
+		from = tag;
+	}
+    }    
 }

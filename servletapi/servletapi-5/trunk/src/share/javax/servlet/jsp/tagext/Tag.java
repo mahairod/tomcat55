@@ -127,7 +127,7 @@ import javax.servlet.jsp.*;
  * "passed through" to the current out.
 */
 
-public interface Tag {
+public interface Tag extends JspTag {
 
     /**
      * Skip body evaluation.

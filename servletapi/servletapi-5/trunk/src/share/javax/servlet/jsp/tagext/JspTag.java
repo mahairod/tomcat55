@@ -54,81 +54,9 @@
  */
 package javax.servlet.jsp.tagext;
 
-import javax.servlet.jsp.JspContext;
-
 /**
- * Interface for defining "simple tag handlers." 
- * <p>
- * Instead of supporting <code>doStartTag()</code> and <code>doEndTag()</code>, 
- * the <code>SimpleTag</code> interface provides a simple 
- * <code>doTag()</code> method, which is called once and only once for any 
- * given tag invocation.  All tag logic, iteration, body evaluations, etc. 
- * are to be performed in this single method.  Thus, simple tag handlers 
- * have the equivalent power of <code>IterationTag</code>, but with a much 
- * simpler lifecycle and interface.
- * <p>
- * To support body content, the <code>setJspBody()</code> 
- * method is provided.  The container invokes the <code>setJspBody()</code> 
- * method with a <code>JspFragment</code> object encapsulating the body of 
- * the tag.  The tag handler implementation can call 
- * <code>invoke()</code> on that fragment to evaluate the body as
- * many times as it needs.
- * 
- * @see SimpleTagSupport
+ * Serves as a base class for Tag and SimpleTag.  
+ * This is mostly for organizational and type-safety purposes.
  */
-
-public interface SimpleTag extends JspTag {
-    
-    /**
-     * Skip the rest of the page.
-     * Valid return value for doTag().
-     */
-    public final static int SKIP_PAGE = 5;
-
-    /**
-     * Continue evaluating the page.
-     * Valid return value for doTag().
-     */
-    public final static int EVAL_PAGE = 6;
-    
-    /** 
-     * Called by the container to invoke this tag.
-     * The implementation of this method is provided by the tag library
-     * developer, and handles all tag processing, body iteration, etc.
-     * 
-     * @return SKIP_PAGE to abort the processing, or EVAL_PAGE to continue. 
-     */ 
-    public int doTag() 
-        throws javax.servlet.jsp.JspException; 
-    
-    /**
-     * Sets the parent of this tag, for collaboration purposes.
-     */
-    public void setParent( JspTag parent );
-    
-    /**
-     * Returns the parent of this tag, for collaboration purposes.
-     */ 
-    public JspTag getParent();
-    
-    /**
-     * Stores the provided page context in the protected 
-     * jspContext field.
-     * 
-     * @see Tag#setPageContext
-     */
-    public void setJspContext( JspContext pc );
-                
-    /** 
-     * Provides the body of this tag as a JspFragment object, able to be 
-     * invoked zero or more times by the tag handler. 
-     * <p>
-     * This method is invoked by the JSP page implementation 
-     * object prior to <code>doTag()</code>. 
-     * 
-     * @param body The fragment encapsulating the body of this tag. 
-     */ 
-    public void setJspBody( JspFragment jspBody );
-
-    
+public interface JspTag {
 }
