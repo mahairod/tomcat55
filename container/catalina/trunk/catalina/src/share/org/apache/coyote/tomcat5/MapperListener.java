@@ -347,9 +347,11 @@ public class MapperListener
                   ("mapperListener.registerContext", contextName));
 
         Object context = 
-            mBeanServer.getAttribute(objectName, "mappingObject");
+            mBeanServer.invoke(objectName, "findMappingObject", null, null);
+            //mBeanServer.getAttribute(objectName, "mappingObject");
         javax.naming.Context resources = (javax.naming.Context)
-            mBeanServer.getAttribute(objectName, "staticResources");
+            mBeanServer.invoke(objectName, "findStaticResources", null, null);
+            //mBeanServer.getAttribute(objectName, "staticResources");
         String[] welcomeFiles = (String[])
             mBeanServer.getAttribute(objectName, "welcomeFiles");
 
