@@ -254,6 +254,8 @@
        includes="webapps/**" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="work/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
+       includes="temp/**" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="LICENSE" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
@@ -290,6 +292,7 @@
         <include name="server/**" />
         <include name="webapps/**" />
         <include name="work/**" />
+        <include name="temp/**" />
         <include name="LICENSE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES-*" />
