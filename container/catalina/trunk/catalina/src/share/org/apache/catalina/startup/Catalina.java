@@ -302,9 +302,8 @@ public class Catalina extends Embedded {
                             "addLifecycleListener",
                             "org.apache.catalina.LifecycleListener");
 
-        digester.addObjectCreate("Server/Service/Connector",
-                                 "org.apache.catalina.connector.Connector",
-                                 "className");
+        digester.addRule("Server/Service/Connector",
+                         new ConnectorCreateRule());
         digester.addRule("Server/Service/Connector", 
                          new SetAllPropertiesRule());
         digester.addSetNext("Server/Service/Connector",

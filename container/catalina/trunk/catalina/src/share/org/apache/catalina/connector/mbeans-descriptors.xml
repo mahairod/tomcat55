@@ -93,15 +93,6 @@
           description="Maximum size in bytes of a POST which will be handled by the servlet API provided features"
                  type="int"/>
 
-    <attribute   name="maxProcessors"
-          description="The maximum number of processors allowed (deprecated)"
-                 type="int"/>
-
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at
-                       initialization time (deprecated)"
-                 type="int"/>
-
     <attribute   name="maxSpareThreads"
           description="The maximum number of unused request processing threads"
                  type="int"/>
@@ -112,11 +103,6 @@
 
     <attribute   name="minSpareThreads"
           description="The number of request processing threads that will be created"
-                 type="int"/>
-
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at
-                       initialization time"
                  type="int"/>
 
     <attribute   name="port"

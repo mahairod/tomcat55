@@ -390,29 +390,22 @@ public class Embedded  extends StandardService implements Lifecycle {
 
         try {
 
-            Class clazz = 
-                Class.forName("org.apache.catalina.connector.Connector");
-            connector = (Connector) clazz.newInstance();
+            if (protocol.equals("ajp")) {
+                connector = new Connector("org.apache.jk.server.JkCoyoteHandler");
+            } else if (protocol.equals("memory")) {
+                connector = new Connector("org.apache.coyote.memory.MemoryProtocolHandler");
+            } else if (protocol.equals("https")) {
+                connector = new Connector();
+                connector.setScheme("https");
+                connector.setSecure(true);
+                // FIXME !!!! SET SSL PROPERTIES
+            }
 
             if (address != null) {
                 IntrospectionUtils.setProperty(connector, "address", 
                                                "" + address);
             }
             IntrospectionUtils.setProperty(connector, "port", "" + port);
-
-            if (protocol.equals("ajp")) {
-                IntrospectionUtils.setProperty
-                    (connector, "protocolHandlerClassName",
-                     "org.apache.jk.server.JkCoyoteHandler");
-            } else if (protocol.equals("memory")) {
-                IntrospectionUtils.setProperty
-                    (connector, "protocolHandlerClassName",
-                     "org.apache.coyote.memory.MemoryProtocolHandler");
-            } else if (protocol.equals("https")) {
-                connector.setScheme("https");
-                connector.setSecure(true);
-                // FIXME !!!! SET SSL PROPERTIES
-            }
 
         } catch (Exception e) {
             log.error("Couldn't create connector.");

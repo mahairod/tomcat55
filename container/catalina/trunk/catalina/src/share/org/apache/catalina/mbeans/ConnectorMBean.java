@@ -75,48 +75,30 @@ public class ConnectorMBean extends ClassNameMBean {
      * @exception ReflectionException if a Java reflection exception
      *  occurs when invoking the getter
      */
-    public Object getAttribute(String name)
-        throws AttributeNotFoundException, MBeanException,
-        ReflectionException {
-		
- 	Object attribute = null;
+    public Object getAttribute(String name) throws AttributeNotFoundException,
+            MBeanException, ReflectionException {
+
+        Object attribute = null;
         // Validate the input parameters
         if (name == null)
-            throw new RuntimeOperationsException
-                (new IllegalArgumentException("Attribute name is null"),
-                 "Attribute name is null");
-		 
-        Connector connector = null;
-	try {
-	    connector = (Connector) getManagedResource();
-	} catch (InstanceNotFoundException e) {
-	    throw new MBeanException(e);
-	} catch (InvalidTargetObjectTypeException e) {
-	   throw new MBeanException(e);
-        } 	    
-	
-	if (isProtocolProperty(name)) {
-                
-            name = translateAttributeName(name);
-                
-            ProtocolHandler protocolHandler = connector.getProtocolHandler();
-	    /* check the Protocol first, since JkCoyote has an independent
-             * configure method.
-             */
-            try {
-                if( protocolHandler != null ) {
-                    attribute = IntrospectionUtils.getAttribute(protocolHandler, name);
-                } else {
-                    attribute = connector.getProperty(name);
-                }
-            } catch (Exception e) {
-                throw new MBeanException(e);
+            throw new RuntimeOperationsException(new IllegalArgumentException(
+                    "Attribute name is null"), "Attribute name is null");
+
+        Object result = null;
+        try {
+            Connector connector = (Connector) getManagedResource();
+            result = IntrospectionUtils.getProperty(connector, name);
+            // FIXME: I don't understand why this is needed
+            if (result == null) {
+                result = IntrospectionUtils.getProperty(connector.getProtocolHandler(), name);
             }
-	} else {
-	    attribute = super.getAttribute(name);
-	}
-	
-        return attribute;
+        } catch (InstanceNotFoundException e) {
+            throw new MBeanException(e);
+        } catch (InvalidTargetObjectTypeException e) {
+            throw new MBeanException(e);
+        }
+
+        return result;
 
     }
 
@@ -135,92 +117,29 @@ public class ConnectorMBean extends ClassNameMBean {
      *  occurs when invoking the getter
      */
      public void setAttribute(Attribute attribute)
-        throws AttributeNotFoundException, MBeanException,
-        ReflectionException {
+            throws AttributeNotFoundException, MBeanException,
+            ReflectionException {
 
         // Validate the input parameters
         if (attribute == null)
-            throw new RuntimeOperationsException
-                (new IllegalArgumentException("Attribute is null"),
-                 "Attribute is null");
+            throw new RuntimeOperationsException(new IllegalArgumentException(
+                    "Attribute is null"), "Attribute is null");
         String name = attribute.getName();
         Object value = attribute.getValue();
         if (name == null)
-            throw new RuntimeOperationsException
-                (new IllegalArgumentException("Attribute name is null"),
-                 "Attribute name is null"); 
-		 
-        Connector connector = null;
-	try {
-	    connector = (Connector) getManagedResource();
-	} catch (InstanceNotFoundException e) {
-	    throw new MBeanException(e);
-	} catch (InvalidTargetObjectTypeException e) {
-	   throw new MBeanException(e);
-        } 	    
-	
-        if (isProtocolProperty(name)) {
+            throw new RuntimeOperationsException(new IllegalArgumentException(
+                    "Attribute name is null"), "Attribute name is null");
 
-            name = translateAttributeName(name);
-            
-            ProtocolHandler protocolHandler = connector.getProtocolHandler();
-	    /* check the Protocol first, since JkCoyote has an independent
-             * configure method.
-             */
-            try {
-                if( protocolHandler != null ) {
-                    IntrospectionUtils.setAttribute(protocolHandler, name, value);
-                } else {
-                    connector.setProperty(name, value);
-                }
-            } catch (Exception e) {
-                throw new MBeanException(e);
-            }
+        try {
+            Connector connector = (Connector) getManagedResource();
+            IntrospectionUtils.setProperty(connector, name, String.valueOf(value));
+        } catch (InstanceNotFoundException e) {
+            throw new MBeanException(e);
+        } catch (InvalidTargetObjectTypeException e) {
+            throw new MBeanException(e);
+        }
   
-	} else {
-	    super.setAttribute(attribute);
-	}
-	
     }
 
 
-    // ------------------------------------------------------------- Operations
-    
-    // ------------------------------------------------------------- Methods
-
-    /**
-     * Test for a property that is really on the Protocol.
-     */
-    private boolean isProtocolProperty(String name) {
-        return ("algorithm").equals(name) || 
-            ("keystoreType").equals(name) ||
-            ("maxThreads").equals(name) || 
-            ("maxSpareThreads").equals(name) ||
-            ("minSpareThreads").equals(name);
-    }    
-
-    /*
-     * Translate the attribute name from the legacy Factory names to their
-     * internal protocol names.
-     */
-    private String translateAttributeName(String name) {
-	if ("clientAuth".equals(name)) {
-	    return "clientauth";
-	} else if ("keystoreFile".equals(name)) {
-	    return "keystore";
-	} else if ("randomFile".equals(name)) {
-	    return "randomfile";
-	} else if ("rootFile".equals(name)) {
-	    return "rootfile";
-	} else if ("keystorePass".equals(name)) {
-	    return "keypass";
-	} else if ("keystoreType".equals(name)) {
-	    return "keytype";
-	} else if ("sslProtocol".equals(name)) {
-	    return "protocol";
-	} else if ("sslProtocols".equals(name)) {
-	    return "protocols";
-	}
-	return name;
-    }
 }
