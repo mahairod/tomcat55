@@ -65,7 +65,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -122,6 +124,7 @@ import org.apache.catalina.util.StringManager;
  * can be implemented.
  *
  * @author Craig R. McClanahan
+ * @author Jason Brittain
  * @version $Revision$ $Date$
  */
 
@@ -140,6 +143,7 @@ public final class AccessLogValve
 
 	super();
 	setPattern("common");
+        
 
     }
 
@@ -151,7 +155,7 @@ public final class AccessLogValve
      * The as-of date for the currently open log file, or a zero-length
      * string if there is no open log file.
      */
-    private String date = "";
+    private String dateStamp = "";
 
 
     /**
@@ -179,6 +183,14 @@ public final class AccessLogValve
     protected static final String months[] =
     { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+
+    /**
+     * If the current log pattern is the same as the common access log
+     * format pattern, then we'll set this variable to true and log in
+     * a more optimal and hard-coded way.
+     */
+    private boolean common = false;
 
 
     /**
@@ -216,6 +228,60 @@ public final class AccessLogValve
      * The PrintWriter to which we are currently logging, if any.
      */
     private PrintWriter writer = null;
+
+
+    /**
+     * A date formatter to format a Date into a date in the format
+     * "yyyy-MM-dd".
+     */
+    private SimpleDateFormat dateFormatter = null;
+
+
+    /**
+     * A date formatter to format Dates into a day string in the format
+     * "dd".
+     */
+    private SimpleDateFormat dayFormatter = null;
+
+
+    /**
+     * A date formatter to format a Date into a month string in the format
+     * "MM".
+     */
+    private SimpleDateFormat monthFormatter = null;
+
+
+    /**
+     * A date formatter to format a Date into a year string in the format
+     * "yyyy".
+     */
+    private SimpleDateFormat yearFormatter = null;
+
+
+    /**
+     * A date formatter to format a Date into a time in the format
+     * "kk:mm:ss" (kk is a 24-hour representation of the hour).
+     */
+    private SimpleDateFormat timeFormatter = null;
+
+
+    /**
+     * The time zone relative to GMT.
+     */
+    private String timeZone = null;
+
+
+    /**
+     * The system time when we last updated the Date that this valve
+     * uses for log lines.
+     */
+    private Date currentDate = null;
+
+
+    /**
+     * When formatting log lines, we often use strings like this one (" ").
+     */
+    private String space = " ";
 
 
     // ------------------------------------------------------------- Properties
@@ -275,6 +341,11 @@ public final class AccessLogValve
 	if (pattern.equals(Constants.AccessLog.COMMON_ALIAS))
 	    pattern = Constants.AccessLog.COMMON_PATTERN;
 	this.pattern = pattern;
+
+        if (this.pattern.equals(Constants.AccessLog.COMMON_PATTERN))
+            common = true;
+        else
+            common = false;
 
     }
 
@@ -342,21 +413,77 @@ public final class AccessLogValve
 	// Pass this request on to the next valve in our pipeline
 	invokeNext(request, response);
 
-	// Generate a message based on the defined pattern
-	StringBuffer result = new StringBuffer();
-	boolean replace = false;
-	for (int i = 0; i < pattern.length(); i++) {
-	    char ch = pattern.charAt(i);
-	    if (replace) {
-		result.append(replace(ch, request, response));
-		replace = false;
-	    } else if (ch == '%')
-		replace = true;
-	    else
-		result.append(ch);
-	}
-	log(result.toString());
+        Date date = getDate();
+        StringBuffer result = new StringBuffer();
 
+        // Check to see if we should log using the "common" access log pattern
+        if (common) {
+            String value = null;
+
+            ServletRequest req = request.getRequest();
+            HttpServletRequest hreq = null;
+            if (req instanceof HttpServletRequest)
+                hreq = (HttpServletRequest) req;
+
+            result.append(req.getRemoteHost());
+
+            result.append(" - ");
+            
+            if (hreq != null)
+                value = hreq.getRemoteUser();
+            if (value == null)
+                result.append("- ");
+            else {
+                result.append(value);
+                result.append(space);
+            }
+
+            result.append("[");
+            result.append(dayFormatter.format(date));            // Day
+            result.append('/');
+            result.append(lookup(monthFormatter.format(date))); // Month
+            result.append('/');
+            result.append(yearFormatter.format(date));            // Year
+            result.append(':');
+            result.append(timeFormatter.format(date));        // Time
+            result.append(space);
+            result.append(timeZone);                            // Time Zone
+            result.append("] \"");
+
+            result.append(hreq.getMethod());
+            result.append(space);
+            result.append(hreq.getRequestURI());
+            result.append(space);
+            result.append(hreq.getProtocol());
+            result.append("\" ");
+
+            result.append(((HttpResponse) response).getStatus());
+
+            result.append(space);
+
+            int length = response.getContentCount();
+            if (length <= 0)
+                value = "-";
+            else
+                value = "" + length;
+            result.append(value);
+        } else {
+            // Generate a message based on the defined pattern
+            boolean replace = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char ch = pattern.charAt(i);
+                if (replace) {
+                    result.append(replace(ch, date, request, response));
+                    replace = false;
+                } else if (ch == '%') {
+                    replace = true;
+                } else {
+                    result.append(ch);
+                }
+            }
+        }
+        log(result.toString(), date);
+        
     }
 
 
@@ -373,7 +500,7 @@ public final class AccessLogValve
 	writer.flush();
 	writer.close();
 	writer = null;
-	date = "";
+	dateStamp = "";
 
     }
 
@@ -383,26 +510,32 @@ public final class AccessLogValve
      * has changed since the previous log call.
      *
      * @param message Message to be logged
+     * @param date the current Date object (so this method doesn't need to
+     *        create a new one)
      */
-    public void log(String message) {
+    public void log(String message, Date date) {
 
-	// Check for a change of date
-	Timestamp ts = new Timestamp(System.currentTimeMillis());
-	String tsString = ts.toString().substring(0, 19);
-	String tsDate = tsString.substring(0, 10);
+        // Only do a logfile switch check once a second, max.
+        if ((System.currentTimeMillis() - currentDate.getTime()) > 1000) {
+            // We need a new currentDate
+            currentDate = new Date();
 
-	// If the date has changed, switch log files
-	if (!date.equals(tsDate)) {
-	    synchronized (this) {
-		close();
-		date = tsDate;
-		open();
-	    }
-	}
+            // Check for a change of date
+            String tsDate = dateFormatter.format(currentDate);
+
+            // If the date has changed, switch log files
+            if (!dateStamp.equals(tsDate)) {
+                synchronized (this) {
+                    close();
+                    dateStamp = tsDate;
+                    open();
+                }
+            }
+        }
 
 	// Log this message
 	if (writer != null) {
-	    writer.println(message);
+            writer.println(message);
 	}
 
     }
@@ -428,7 +561,7 @@ public final class AccessLogValve
 
 
     /**
-     * Open the new log file for the date specified by <code>date</code>.
+     * Open the new log file for the date specified by <code>dateStamp</code>.
      */
     private void open() {
 
@@ -442,7 +575,7 @@ public final class AccessLogValve
 	// Open the current log file
 	try {
 	    String pathname = dir.getAbsolutePath() + File.separator +
-		prefix + date + suffix;
+		prefix + dateStamp + suffix;
 	    writer = new PrintWriter(new FileWriter(pathname, true), true);
 	} catch (IOException e) {
 	    writer = null;
@@ -455,10 +588,13 @@ public final class AccessLogValve
      * Return the replacement text for the specified pattern character.
      *
      * @param pattern Pattern character identifying the desired text
+     * @param date the current Date so that this method doesn't need to
+     *        create one
      * @param request Request being processed
      * @param response Response being processed
      */
-    private String replace(char pattern, Request request, Response response) {
+    private String replace(char pattern, Date date, Request request, 
+                           Response response) {
 
 	String value = null;
 
@@ -506,8 +642,8 @@ public final class AccessLogValve
 		value = "";
 	} else if (pattern == 'r') {
 	    if (hreq != null)
-		value = hreq.getMethod() + " " + hreq.getRequestURI() + " " +
-		    hreq.getProtocol();
+		value = hreq.getMethod() + space + hreq.getRequestURI() 
+                    + space + hreq.getProtocol();
 	    else
 		value = "- - " + req.getProtocol();
 	} else if (pattern == 's') {
@@ -516,18 +652,16 @@ public final class AccessLogValve
 	    else
 		value = "-";
 	} else if (pattern == 't') {
-	    String timestamp =
-		new Timestamp(System.currentTimeMillis()).toString();
 	    StringBuffer temp = new StringBuffer("[");
-	    temp.append(timestamp.substring(8, 10));		// Day
+            temp.append(dayFormatter.format(date));		// Day
 	    temp.append('/');
-	    temp.append(lookup(timestamp.substring(5, 7)));	// Month
+	    temp.append(lookup(monthFormatter.format(date)));   // Month
 	    temp.append('/');
-	    temp.append(timestamp.substring(0, 4));		// Year
+	    temp.append(yearFormatter.format(date));            // Year
 	    temp.append(':');
-	    temp.append(timestamp.substring(11, 19));		// Time
+	    temp.append(timeFormatter.format(date));            // Time
 	    temp.append(' ');
-	    temp.append("-0800");				// FIXME!!!
+	    temp.append(timeZone);                              // Timezone
 	    temp.append(']');
 	    value = temp.toString();
 	} else if (pattern == 'u') {
@@ -551,6 +685,25 @@ public final class AccessLogValve
 	else
 	    return (value);
 
+    }
+
+
+    /**
+     * This method returns a Date object that is accurate to within one
+     * second.  If a thread calls this method to get a Date and it's been
+     * less than 1 second since a new Date was created, this method
+     * simply gives out the same Date again so that the system doesn't
+     * spend time creating Date objects unnecessarily.
+     */
+    private Date getDate() {
+        
+        // Only create a new Date once per second, max.
+        if ((System.currentTimeMillis() - currentDate.getTime()) > 1000) {
+            currentDate = new Date();
+        }
+        
+        return currentDate;
+        
     }
 
 
@@ -599,6 +752,26 @@ public final class AccessLogValve
 		(sm.getString("accessLogValve.alreadyStarted"));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
+
+        // Initialize the timeZone, Date formatters, and currentDate
+        TimeZone tz = TimeZone.getDefault();
+        timeZone = "" + (tz.getRawOffset() / (60 * 60 * 10));
+        if (timeZone.length() < 5)
+            timeZone = timeZone.substring(0, 1) + "0" +
+                timeZone.substring(1, timeZone.length());
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormatter.setTimeZone(tz);
+        dayFormatter = new SimpleDateFormat("dd");
+        dayFormatter.setTimeZone(tz);
+        monthFormatter = new SimpleDateFormat("MM");
+        monthFormatter.setTimeZone(tz);
+        yearFormatter = new SimpleDateFormat("yyyy");
+        yearFormatter.setTimeZone(tz);
+        timeFormatter = new SimpleDateFormat("kk:mm:ss");
+        timeFormatter.setTimeZone(tz);
+        currentDate = new Date();
+
+        open();
 
     }
 
