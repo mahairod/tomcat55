@@ -91,6 +91,8 @@ extern "C" {
     typedef long long   jk_pool_atom_t;
 #elif defined(NETWARE)
     typedef long long   jk_pool_atom_t;
+#else
+    typedef long long   jk_pool_atom_t;
 #endif
 
 /* 
