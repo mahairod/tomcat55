@@ -22,6 +22,8 @@
   VIProductVersion @VERSION@.0
 
 !include "MUI.nsh"
+!include "StrFunc.nsh"
+${StrRep}
 
 ;--------------------------------
 ;Configuration
@@ -426,9 +428,19 @@ Function configure
   IfSilent 0 +2
   StrCpy $R5 ''
 
-  IfSilent +2 0
+  IfSilent Silent 0
+
+  ; Escape XML
+  Push $R1
+  Call xmlEscape
+  Pop $R1
+  Push $R2
+  Call xmlEscape
+  Pop $R2
+  
   StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
 
+Silent:
   DetailPrint 'HTTP/1.1 Connector configured on port "$R0"'
   DetailPrint 'Admin user added: "$R1"'
 
@@ -450,6 +462,7 @@ Function configure
   DetailPrint "server.xml written"
 
   ; Build final tomcat-users.xml
+  
   Delete "$INSTDIR\conf\tomcat-users.xml"
   FileOpen $R9 "$INSTDIR\conf\tomcat-users.xml" w
 
@@ -465,6 +478,16 @@ Function configure
 
   RMDir /r "$TEMP\confinstall"
 
+FunctionEnd
+
+
+Function xmlEscape
+  Pop $0
+  ${StrRep} $0 $0 "&" "&amp;"
+  ${StrRep} $0 $0 "$\"" "&quot;"
+  ${StrRep} $0 $0 "<" "&lt;"
+  ${StrRep} $0 $0 ">" "&gt;"
+  Push $0
 FunctionEnd
 
 
