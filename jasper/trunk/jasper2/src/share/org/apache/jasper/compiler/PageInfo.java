@@ -105,6 +105,9 @@ class PageInfo {
     private String isELIgnoredValue;
     private boolean isELIgnored = false;
     private String omitXmlDecl = null;
+    private String doctypeName = null;
+    private String doctypePublic = null;
+    private String doctypeSystem = null;
 
     private boolean isJspPrefixHijacked;
 
@@ -227,6 +230,29 @@ class PageInfo {
 	omitXmlDecl = omit;
     }
 
+    public String getDoctypeName() {
+	return doctypeName;
+    }
+
+    public void setDoctypeName(String doctypeName) {
+	this.doctypeName = doctypeName;
+    }
+
+    public String getDoctypeSystem() {
+	return doctypeSystem;
+    }
+
+    public void setDoctypeSystem(String doctypeSystem) {
+	this.doctypeSystem = doctypeSystem;
+    }
+
+    public String getDoctypePublic() {
+	return doctypePublic;
+    }
+
+    public void setDoctypePublic(String doctypePublic) {
+	this.doctypePublic = doctypePublic;
+    }
 
     /* Tag library and XML namespace management methods */
 

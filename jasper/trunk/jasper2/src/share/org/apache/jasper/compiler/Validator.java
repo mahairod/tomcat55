@@ -408,7 +408,10 @@ class Validator {
 	    new JspUtil.ValidAttribute("scope") };
 
 	private static final JspUtil.ValidAttribute[] jspOutputAttrs = {
-	    new JspUtil.ValidAttribute("omit-xml-declaration") };
+	    new JspUtil.ValidAttribute("omit-xml-declaration"),
+	    new JspUtil.ValidAttribute("doctype-root-element"),
+	    new JspUtil.ValidAttribute("doctype-public"),
+	    new JspUtil.ValidAttribute("doctype-system") };
 
 	/*
 	 * Constructor
@@ -813,12 +816,61 @@ class Validator {
                 err.jspError(n, "jsp.error.jspoutput.nonemptybody");
 	    }
 
-	    if (pageInfo.getOmitXmlDecl() != null) {
-                err.jspError(n, "jsp.error.multiple.jspoutput");
+	    String omitXmlDecl = n.getAttributeValue("omit-xml-declaration");
+	    String doctypeName = n.getAttributeValue("doctype-root-element");
+	    String doctypePublic = n.getAttributeValue("doctype-public");
+	    String doctypeSystem = n.getAttributeValue("doctype-system");
+
+	    String omitXmlDeclOld = pageInfo.getOmitXmlDecl();
+	    String doctypeNameOld = pageInfo.getDoctypeName();
+	    String doctypePublicOld = pageInfo.getDoctypePublic();
+	    String doctypeSystemOld = pageInfo.getDoctypeSystem();
+
+	    if (omitXmlDecl != null && omitXmlDeclOld != null &&
+			!omitXmlDecl.equals(omitXmlDeclOld) ) {
+                err.jspError(n, "jsp.error.jspoutput.conflict",
+			"omit-xml-declaration", omitXmlDeclOld, omitXmlDecl);
 	    }
 
-	    pageInfo.setOmitXmlDecl(
-			n.getAttributeValue("omit-xml-declaration"));
+	    if (doctypeName != null && doctypeNameOld != null &&
+			!doctypeName.equals(doctypeNameOld) ) {
+                err.jspError(n, "jsp.error.jspoutput.conflict",
+			"doctype-root-element", doctypeNameOld, doctypeName);
+	    }
+
+	    if (doctypePublic != null && doctypePublicOld != null &&
+			!doctypePublic.equals(doctypePublicOld) ) {
+                err.jspError(n, "jsp.error.jspoutput.conflict",
+			"doctype-public", doctypePublicOld, doctypePublic);
+	    }
+
+	    if (doctypeSystem != null && doctypeSystemOld != null &&
+			!doctypeSystem.equals(doctypeSystemOld) ) {
+                err.jspError(n, "jsp.error.jspoutput.conflict",
+			"doctype-system", doctypeSystemOld, doctypeSystem);
+	    }
+
+	    if (doctypeName == null && doctypeSystem != null ||
+		doctypeName != null && doctypeSystem == null) {
+		err.jspError(n, "jsp.error.jspoutput.doctypenamesystem");
+	    }
+
+	    if (doctypePublic != null && doctypeSystem == null) {
+		err.jspError(n, "jsp.error.jspoutput.doctypepulicsystem");
+	    }
+
+	    if (omitXmlDecl != null) {
+		pageInfo.setOmitXmlDecl(omitXmlDecl);
+	    }
+	    if (doctypeName != null) {
+		pageInfo.setDoctypeName(doctypeName);
+	    }
+	    if (doctypeSystem != null) {
+		pageInfo.setDoctypeSystem(doctypeSystem);
+	    }
+	    if (doctypePublic != null) {
+		pageInfo.setDoctypePublic(doctypePublic);
+	    }
 	}
 
 	public void visit(Node.InvokeAction n) throws JasperException {

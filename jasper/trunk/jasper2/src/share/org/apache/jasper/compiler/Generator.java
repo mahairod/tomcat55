@@ -594,14 +594,18 @@ class Generator {
     }
 
     /**
-     * Generates an XML declaration, under the following conditions:
-     *
-     * - 'omit-xml-declaration' attribute of <jsp:output> action is set to
-     *   "no" or "false"
-     * - JSP document without a <jsp:root>
+     * Generates an XML Prolog, which includes an XML declaration and
+     * an XML doctype declaration.
      */
-    private void generateXmlDeclaration(Node.Nodes page) {
+    private void generateXmlProlog(Node.Nodes page) {
 
+	/*
+	 * An XML declaration is generated under the following conditions:
+	 *
+	 * - 'omit-xml-declaration' attribute of <jsp:output> action is set to
+	 *   "no" or "false"
+	 * - JSP document without a <jsp:root>
+	 */
 	String omitXmlDecl = pageInfo.getOmitXmlDecl();
 	if ((omitXmlDecl != null && !JspUtil.booleanValue(omitXmlDecl))
 	    || (omitXmlDecl == null && page.getRoot().isXmlSyntax()
@@ -610,6 +614,31 @@ class Generator {
 	    String charSet = cType.substring(cType.indexOf("charset=")+8);
 	    out.printil("out.write(\"<?xml version=\\\"1.0\\\" encoding=\\\"" +
 			charSet + "\\\"?>\\n\");");
+	}
+
+	/*
+	 * Output a DOCTYPE declaration if the doctype-root-element appears.
+	 * If doctype-public appears:
+	 *     <!DOCTYPE name PUBLIC "doctypePublic" "doctypeSystem">
+	 * else
+	 *     <!DOCTYPE name SYSTEM "doctypeSystem" >
+	 */
+
+	String doctypeName = pageInfo.getDoctypeName();
+	if (doctypeName != null) {
+	    String doctypePublic = pageInfo.getDoctypePublic();
+	    String doctypeSystem = pageInfo.getDoctypeSystem();
+	    out.printin("out.write(\"<!DOCTYPE ");
+	    out.print(doctypeName);
+	    if (doctypePublic == null) {
+		out.print(" SYSTEM \\\"");
+	    } else {
+		out.print(" PUBLIC \\\"");
+		out.print(doctypePublic);
+		out.print("\\\" \\\"");
+	    }
+	    out.print(doctypeSystem);
+	    out.println("\\\">\\n\");");
 	}
     }
 
@@ -2916,7 +2945,7 @@ class Generator {
 		return;
 	    }
 
-	    gen.generateXmlDeclaration(page);
+	    gen.generateXmlProlog(page);
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
 					       out,
@@ -2927,7 +2956,7 @@ class Generator {
 	    gen.generateTagHandlerPostamble(tagInfo);
 	} else {
 	    gen.generatePreamble(page);
-	    gen.generateXmlDeclaration(page);
+	    gen.generateXmlProlog(page);
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
 					       out,

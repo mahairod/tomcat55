@@ -240,7 +240,7 @@ public class ErrorDispatcher {
      * resource bundle for localized error messages, it is used as the error
      * message.
      *
-     * @param n Node that caused the error
+     * @param where Error location
      * @param errCode Error code
      * @param arg1 First argument for parametric replacement
      * @param arg2 Second argument for parametric replacement
@@ -269,6 +269,26 @@ public class ErrorDispatcher {
     public void jspError(Node n, String errCode, String arg1, String arg2)
 	        throws JasperException {
 	dispatch(n.getStart(), errCode, new Object[] {arg1, arg2}, null);
+    }
+
+    /*
+     * Dispatches the given JSP parse error to the configured error handler.
+     *
+     * The given error code is localized. If it is not found in the
+     * resource bundle for localized error messages, it is used as the error
+     * message.
+     *
+     * @param n Node that caused the error
+     * @param errCode Error code
+     * @param arg1 First argument for parametric replacement
+     * @param arg2 Second argument for parametric replacement
+     * @param arg3 Third argument for parametric replacement
+     */
+
+    public void jspError(Node n, String errCode, String arg1, String arg2,
+                         String arg3)
+	        throws JasperException {
+	dispatch(n.getStart(), errCode, new Object[] {arg1, arg2, arg3}, null);
     }
 
     /*
