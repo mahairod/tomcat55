@@ -14,6 +14,48 @@
 
 <body>
 
+<section name="Tomcat 5.0.28">
+  <subsection name="General">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Catalina">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Coyote">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>29971</bug>: Commented out page directive is parsed. (luehe)
+      </fix>
+      <fix>
+        <bug>30067</bug>: 'Scripting elements are disallowed here' exception behind scriptless tag. (luehe)
+      </fix>
+      <fix>
+        <bug>30073</bug>: NPE when compiling .jspx with broken xml format in jspcmode. (luehe)
+      </fix>
+    </changelog>
+  </subsection>
+
+  <subsection name="Cluster">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Webapps">
+    <changelog>
+    </changelog>
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.27 (yoavs)">
   <subsection name="General">
     <changelog>
