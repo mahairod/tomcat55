@@ -59,6 +59,13 @@
 
 package org.apache.jasper.servlet;
 
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.Hashtable;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.MalformedURLException;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
@@ -69,13 +76,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.TagInfo;
-
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.util.Hashtable;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
+import javax.servlet.jsp.tagext.TagData;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -83,7 +84,6 @@ import org.apache.jasper.Options;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.runtime.HttpJspBase;
-
 import org.apache.jasper.logging.Logger;
 
 /**
@@ -135,13 +135,14 @@ public class JspServletWrapper {
      */
     public JspServletWrapper(ServletContext servletContext, Options options,
 			     String tagFilePath, TagInfo tagInfo,
-			     JspRuntimeContext rctxt, Hashtable tagFileJars)
+			     TagData tagData, JspRuntimeContext rctxt,
+			     Hashtable tagFileJars)
             throws JasperException {
 
         this.config = null;	// not used
         this.options = options;
 	this.jspUri = tagFilePath;
-        ctxt = new JspCompilationContext(jspUri, tagInfo, options,
+        ctxt = new JspCompilationContext(jspUri, tagInfo, tagData, options,
 					 servletContext, this, rctxt,
 					 tagFileJars);
 

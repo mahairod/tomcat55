@@ -66,16 +66,8 @@ import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
 
+import javax.servlet.jsp.tagext.*;
 import javax.servlet.jsp.el.FunctionMapper;
-
-import javax.servlet.jsp.tagext.FunctionInfo;
-import javax.servlet.jsp.tagext.PageData;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.TagData;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.ValidationMessage;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
@@ -303,10 +295,10 @@ public class Validator {
 
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
+	private TagInfo tagInfo;
+	private TagData tagData;
         
-        /**
-         * A FunctionMapper, used to validate EL expressions.
-         */
+	// A FunctionMapper, used to validate EL expressions.
         private FunctionMapper functionMapper;
 
 	private static final JspUtil.ValidAttribute[] jspRootAttrs = {
@@ -387,6 +379,8 @@ public class Validator {
 	ValidateVisitor(Compiler compiler) {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
+	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
+	    this.tagData = compiler.getCompilationContext().getTagData();
             this.functionMapper = new ValidatorFunctionMapper( this.pageInfo, 
                 this.err );
 	}
@@ -853,11 +847,59 @@ public class Validator {
         }
 
 	public void visit(Node.InvokeAction n) throws JasperException {
+
             JspUtil.checkAttributes("Invoke", n, invokeAttrs, err);
 	    if (n.getAttributeValue("var") != null
 		    && n.getAttributeValue("varReader") != null) {
 		err.jspError(n, "jsp.error.invoke.varAndVarReader");
 	    }
+
+	    Node.Nodes subelements = n.getBody();
+	    if (subelements != null) {
+		for (int i=0; i<subelements.size(); i++) {
+		    Node subelem = subelements.getNode(i);
+		    if (!(subelem instanceof Node.ParamAction)) {
+			err.jspError(n, "jsp.error.invoke.invalidBodyContent");
+		    }
+		}
+	    }
+
+	    /*
+	     * One <jsp:param> element must be present for each variable
+	     * declared using the variable directive that has a 'fragment'
+	     * attribute equal to the name of the fragment being invoked.
+	     */
+	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	    if (tagVars != null) {
+		String frag = n.getAttributeValue("fragment");
+		for (int i=0; i<tagVars.length; i++) {
+		    String varName = tagVars[i].getNameGiven();
+		    if (varName == null) {
+			varName = tagData.getAttributeString(
+			                tagVars[i].getNameFromAttribute());
+		    }
+		    String tagVarFrag = tagVars[i].getFragment();
+		    if (tagVarFrag == null || !tagVarFrag.equals(frag))
+			continue;
+		    if (subelements == null) {
+			err.jspError(n, "jsp.error.invoke.missingParam",
+				     varName);
+		    }
+		    boolean found = false;
+		    for (int j=0; j<subelements.size() && !found; j++) {
+			Node subelem = subelements.getNode(j);
+			String paramName = subelem.getAttributeValue("name");
+			if (varName.equals(paramName)) {
+			    found = true;
+			}
+		    }
+		    if (!found) {
+			err.jspError(n, "jsp.error.invoke.missingParam",
+				     varName);
+		    }
+		}
+	    }
+
             visitBody(n);
 	}
 

@@ -66,7 +66,7 @@ import java.net.*;
 import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagInfo;
-
+import javax.servlet.jsp.tagext.TagData;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
@@ -123,6 +123,7 @@ public class JspCompilationContext {
 
     protected boolean isTagFile;
     protected TagInfo tagInfo;
+    protected TagData tagData;
 
     // jspURI _must_ be relative to the context
     public JspCompilationContext(String jspUri,
@@ -157,6 +158,7 @@ public class JspCompilationContext {
 
     public JspCompilationContext(String tagfile,
 				 TagInfo tagInfo, 
+				 TagData tagData,
                                  Options options,
                                  ServletContext context,
 				 JspServletWrapper jsw,
@@ -166,6 +168,7 @@ public class JspCompilationContext {
         this(tagfile, false, options, context, jsw, rctxt);
         this.isTagFile = true;
         this.tagInfo = tagInfo;
+	this.tagData = tagData;
 	this.tagFileJars = tagFileJars;
 	if (tagFileJars != null && tagFileJars.get(tagfile) != null) {
 	    isPackagedTagFile = true;
@@ -357,6 +360,10 @@ public class JspCompilationContext {
 
     public TagInfo getTagInfo() {
 	return tagInfo;
+    }
+
+    public TagData getTagData() {
+	return tagData;
     }
 
     /**

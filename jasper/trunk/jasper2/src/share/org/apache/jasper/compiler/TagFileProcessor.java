@@ -333,7 +333,8 @@ public class TagFileProcessor {
      * Compiles and loads a tagfile.
      */
     public static Class loadTagFile(JspCompilationContext ctxt,
-				    String tagFilePath, TagInfo tagInfo)
+				    String tagFilePath, TagInfo tagInfo,
+				    TagData tagData)
 	throws JasperException {
 
 	JspRuntimeContext rctxt = ctxt.getRuntimeContext();
@@ -347,6 +348,7 @@ public class TagFileProcessor {
 						    ctxt.getOptions(),
 						    tagFilePath,
                                                     tagInfo,
+						    tagData,
 						    ctxt.getRuntimeContext(),
 						    ctxt.getTagFileJars());
 		}
@@ -372,7 +374,8 @@ public class TagFileProcessor {
 	    TagFileInfo tagFileInfo = n.getTagFileInfo();
 	    if (tagFileInfo != null) {
 		String tagFilePath = tagFileInfo.getPath();
-		Class c = loadTagFile(ctxt, tagFilePath, n.getTagInfo());
+		Class c = loadTagFile(ctxt, tagFilePath, n.getTagInfo(),
+				      n.getTagData());
 		n.setTagHandlerClass(c);
 	    }
 	}
