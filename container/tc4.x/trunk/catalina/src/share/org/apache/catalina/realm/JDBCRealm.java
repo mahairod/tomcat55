@@ -225,7 +225,7 @@ public class JDBCRealm
      *
      */
 
-    private String digest=null;
+    private String digest="";
 
    // ------------------------------------------------------------- Properties
 
@@ -441,7 +441,7 @@ public class JDBCRealm
 		    log(sm.getString("jdbcRealm.authDBReOpenFail"));
 		    return null;
 		}
-// XXX Commented it gives problems on Oracle 8i Drivers                
+// XXX Commented it gives problems on Oracle 8i Drivers
 //		dbConnection.setReadOnly(true);
 	    }
 
@@ -468,9 +468,9 @@ public class JDBCRealm
 	    ResultSet rs1 = preparedAuthenticate.executeQuery();
 	    boolean found = false;
 	    if (rs1.next()) {
-                if (digest!= null && digest.equalsIgnoreCase("No")){
-                    if (credentials.equals(rs1.getString(1))) {
-                        if (debug >= 2)
+                if( digest=="" || digest.equalsIgnoreCase("No")){
+                    if(credentials.equals(rs1.getString(1))) {
+                        if(debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
                                              username));
                         found = true;
