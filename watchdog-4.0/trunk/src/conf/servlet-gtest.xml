@@ -634,6 +634,7 @@
   
     <gtest request="GET /servlet-tests/DoFilterTest HTTP/1.0"
         debug="0" host="${host}" port="${port}"
+        testName="DoFilterTest"
         goldenFile="${wgdir}/javax_servlet/Filter/DoFilterTest.html"
         assertion="The doFilter method of the Filter is called by the container each time a request/response pair is passed through the stack due to a client request for the Servlet in the stack.  Java Servlet Specification v2.3, Sec. 14"
         testStrategy="Client attempts to access a servlet and the filter configured for that servlet should be invoked."
@@ -641,9 +642,20 @@
   
     <gtest request="GET /servlet-tests/InitFilterConfigTest HTTP/1.0"
         debug="0" host="${host}" port="${port}"
+        testName="InitFilterConfigTest"
         goldenFile="${wgdir}/javax_servlet/Filter/InitFilterConfigTest.html"
         assertion="The container calls this method when the Filter is instantiated and passes in a FilterConfig object. Java Servlet Specification v2.3, Sec. 14"
         testStrategy="Client attempts to access a servlet and the filter configured for that servlet."
+    />
+
+<!-- javax_servlet_FilterConfig tests -->
+
+    <gtest request="GET /servlet-tests/FilterChainTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        testName="FilterChainTest"
+        goldenFile="${wgdir}/javax_servlet/FilterConfig/FilterChainTest.html"
+        assertion="The next filter in the chain to be invoked, or if the calling filter is the last filter in the chain, causes the resource at the end of the chain to be invoked.  Java Servlet Specification v2.3, Sec. 14"
+        testStrategy="Access the servlet.  Both configured filters for that servlet should be invoked"
     />
   
   <!-- javax_servlet_http_Cookie tests -->
@@ -1346,6 +1358,86 @@
            debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/ContainsHeader_01Test.html" />
      </target>
+
+     <target name="ServletToServletErrorPageTest">
+        <gtest request="GET /servlet-tests/ServletToServletErrorPageTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenfile="${wgdir}/javax_servlet/Error/ServletToServletErrorPageTest.html"
+           testName="ServletToServletErrorPageTest"
+           assertion="Servlet error handlers can be installed for specific Exception types."
+           testStrategy="The target servlet will generage a java.lang.ArithmeticException.  The Servlet error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+        />
+     </target> 
+
+     <target name="ServletToServletError501PageTest"> 
+         <gtest request="GET /servlet-tests/ServletToServletError501PageTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenfile="${wgdir}/javax_servlet/Error/ServletToServletError501PageTest.html"
+            testName="ServletToServletError501PageTest"
+            assertion="Servlet error handlers can be installed for specific HTTP status codes."
+            testStrategy="The target servlet will class HttpServletResponse.sendError( int status, String message ).  The Servlet error page should display non-null values for status_code, message, request_uri, and servlet_name"
+         />
+     </target> 
+                                                        
+     <target name="ServletToJSPErrorPageTest">
+         <gtest request="GET /servlet-tests/ServletToJSPErrorPageTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPErrorPageTest.html"
+            testName="ServletToJSPErrorPageTest"
+            assertion="JSP error handlers can be installed for specific Exception types."
+            testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+         />
+     </target> 
+
+     <target name="ServletToJSPError502PageTest">
+         <gtest request="GET /servlet-tests/ServletToJSPError502PageTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPError502PageTest.html"
+            testName="ServletToJSPError502PageTest"
+            assertion="JSP error handlers can be installed for specific HTTP status codes."
+            testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, message, request_uri, and servlet_name"
+         />
+     </target>
+
+    <target name="ServletToHTMLErrorPageTest">
+        <gtest request="GET /servlet-tests/ServletToHTMLErrorPageTest HTTP/1.0" 
+           debug="0" host="${host}" port="${port}" 
+           goldenfile="${wgdir}/javax_servlet/Error/ServletToHTMLErrorPageTest.html"
+           testName="ServletToHTMLErrorPageTest"
+           assertion="Static HTML page error handlers can be installed for specific Exception types."
+           testStrategy="The target servlet will generage a java.lang.NumberFormatException.  The static HTML error page should be returned to the client."
+        />
+    </target>
+
+    <target name="DoFilterTest">
+        <gtest request="GET /servlet-tests/DoFilterTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           testName="DoFilterTest"
+           goldenFile="${wgdir}/javax_servlet/Filter/DoFilterTest.html"
+           assertion="The doFilter method of the Filter is called by the container each time a request/response pair is passed through the stack due to a client request for the Servlet in the stack.  Java Servlet Specification v2.3, Sec. 14"
+           testStrategy="Client attempts to access a servlet and the filter configured for that servlet should be invoked."
+        />
+    </target>
+
+    <target name="InitFilterConfigTest">
+        <gtest request="GET /servlet-tests/InitFilterConfigTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           testName="InitFilterConfigTest"
+           goldenFile="${wgdir}/javax_servlet/Filter/InitFilterConfigTest.html"
+           assertion="The container calls this method when the Filter is instantiated and passes in a FilterConfig object. Java Servlet Specification v2.3, Sec. 14"
+           testStrategy="Client attempts to access a servlet and the filter configured for that servlet."
+        />
+    </target>
+
+    <target name="FilterChainTest">
+        <gtest request="GET /servlet-tests/FilterChainTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           testName="FilterChainTest"
+           goldenFile="${wgdir}/javax_servlet/FilterConfig/FilterChainTest.html"
+           assertion="The next filter in the chain to be invoked, or if the calling filter is the last filter in the chain, causes the resource at the end of the chain to be invoked.  Java Servlet Specification v2.3, Sec. 14"
+           testStrategy="Access the servlet.  Both configured filters for that servlet should be invoked"
+        />
+    </target>
 
 <!-- sample of all the various test options allowed
     <gtest description="Content Type Test"
