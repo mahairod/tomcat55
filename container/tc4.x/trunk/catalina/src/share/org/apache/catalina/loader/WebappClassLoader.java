@@ -1607,7 +1607,7 @@ public class WebappClassLoader
                     definePackage(packageName, null, null, null, null, null,
                                   null, null);
                 } else {
-                    definePackage(packageName, entry.manifest, entry.source);
+                    definePackage(packageName, entry.manifest, entry.codeBase);
                 }
             }
 
@@ -1615,7 +1615,7 @@ public class WebappClassLoader
 
         // Create the code source object
         CodeSource codeSource =
-            new CodeSource(entry.source, entry.certificates);
+            new CodeSource(entry.codeBase, entry.certificates);
 
         if (securityManager != null) {
 
@@ -1623,7 +1623,7 @@ public class WebappClassLoader
             if (pkg != null) {
                 boolean sealCheck = true;
                 if (pkg.isSealed()) {
-                    sealCheck = pkg.isSealed(entry.source);
+                    sealCheck = pkg.isSealed(entry.codeBase);
                 } else {
                     sealCheck = (entry.manifest == null)
                         || !isPackageSealed(packageName, entry.manifest);
@@ -1636,7 +1636,7 @@ public class WebappClassLoader
 
         }
 
-        synchronized(entry) {
+        synchronized (entry) {
             // Since all threads use the same ResourceEntry instance, it is
             // the one which will contain the class
             if (entry.loadedClass == null) {
@@ -1699,6 +1699,7 @@ public class WebappClassLoader
                 entry = new ResourceEntry();
                 try {
                     entry.source = getURL(new File(files[i], path));
+                    entry.codeBase = entry.source;
                 } catch (MalformedURLException e) {
                     return null;
                 }
@@ -1756,11 +1757,11 @@ public class WebappClassLoader
 
                 entry = new ResourceEntry();
                 try {
-                    String jarFakeUrl = getURL(jarRealFiles[i]).toString();
+                    entry.codeBase = getURL(jarRealFiles[i]);
+                    String jarFakeUrl = entry.codeBase.toString();
                     jarFakeUrl = "jar:" + jarFakeUrl + "!/" + path;
                     entry.source = new URL(jarFakeUrl);
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
                     return null;
                 }
                 entry.certificates = jarEntry.getCertificates();
@@ -2038,37 +2039,43 @@ public class WebappClassLoader
          * The "last modified" time of the origin file at the time this class
          * was loaded, in milliseconds since the epoch.
          */
-        long lastModified;
+        protected long lastModified = -1;
 
 
         /**
          * Binary content of the resource.
          */
-        byte[] binaryContent;
+        protected byte[] binaryContent = null;
 
 
         /**
          * Loaded class.
          */
-        Class loadedClass;
+        protected Class loadedClass = null;
 
 
         /**
          * URL source from where the object was loaded.
          */
-        URL source;
+        protected URL source = null;
+
+
+        /**
+         * URL of the codebase from where the object was loaded.
+         */
+        protected URL codeBase = null;
 
 
         /**
          * Manifest (if the resource was loaded from a JAR).
          */
-        Manifest manifest = null;
+        protected Manifest manifest = null;
 
 
         /**
          * Certificates (if the resource was loaded from a JAR).
          */
-        Certificate[] certificates = null;
+        protected Certificate[] certificates = null;
 
 
     }
