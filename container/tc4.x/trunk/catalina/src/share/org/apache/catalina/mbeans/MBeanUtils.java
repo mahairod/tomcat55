@@ -96,7 +96,6 @@ import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.http.HttpConnector;
-import org.apache.catalina.connector.warp.WarpConnector;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
@@ -606,14 +605,6 @@ public class MBeanUtils {
                                   httpConnector.getService().getName() +
                                   ",port=" + httpConnector.getPort() +
                                   ",address=" + httpConnector.getAddress());
-            return (name);
-        } else if (connector instanceof WarpConnector) {
-            WarpConnector warpConnector = (WarpConnector) connector;
-            name = new ObjectName(domain + ":type=Connector" +
-                                  ",service=" +
-                                  warpConnector.getService().getName() +
-                                  ",port=" + warpConnector.getPort() +
-                                  ",address=" + warpConnector.getAddress());
             return (name);
         } else {
             throw new MalformedObjectNameException
