@@ -15,6 +15,10 @@
   <property name="jasper.jaxp.parser.jar" value="crimson.jar"/>
   <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
 
+  <property name="test.failonerror"  value="true"/>
+  <property name="test.runner"       value="junit.textui.TestRunner"/>
+
+
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${jasper.jaxp.home}/jaxp.jar"/>
   <property name="parser.jar"      value="${jasper.jaxp.home}/${jasper.jaxp.parser.jar}"/>
@@ -22,8 +26,20 @@
   <property name="tools.jar"       value="${java.home}/lib/tools.jar"/>
 
 
+  <!-- Construct unit tests classpath -->
+  <path id="test.classpath">
+    <pathelement location="${parser.jar}"/>
+    <pathelement location="${jaxp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${jasper.build}/classes"/>
+    <pathelement location="${jasper.build}/tests"/>
+  </path>
+
+
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+    <available classname="junit.framework.TestCase" property="junit.present" />
     <available file="${jaxp.jar}" property="jaxp.jar.present" />
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
@@ -76,6 +92,21 @@
   </target>
 
 
+  <!-- =============== BUILD: Compile Unit Tests ========================== -->
+
+  <target name="build-tests" depends="build-main" if="junit.present">
+    <mkdir      dir="${jasper.build}/tests"/>
+    <!-- Compile unit test classes -->
+<!--
+    <javac   srcdir="src/test" destdir="${jasper.build}/tests"
+             deprecation="off" debug="on" optimize="off" target="1.2"
+             excludes="**/CVS/**">
+      <classpath refid="test.classpath"/>
+    </javac>
+-->
+  </target>
+
+
   <!-- ================ BUILD: Create Jasper Javadocs ===================== -->
   <target name="javadoc" depends="build-main">
     <delete dir="${jasper.build}/javadoc"/>
@@ -102,6 +133,13 @@
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
   <target name="all" depends="build-clean,build-main"/>
 
+
+  <!-- ==================== BUILD: Execute Unit Tests ===================== -->
+  <target name="test" if="junit.present"
+   description="Run all unit test cases"
+   depends="build-tests"
+>
+  </target>
 
   <!-- ====================== DEPLOY: Create Directories ================== -->
   <target name="deploy-prepare">

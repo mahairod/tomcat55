@@ -14,12 +14,14 @@
   <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
 
 
+
   <!-- ================== Derived Property Values ========================= -->
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+    <available classname="junit.framework.TestCase" property="junit.present" />
     <mkdir dir="${webapps.build}"/>
     <mkdir dir="${webapps.dist}"/>
   </target>
@@ -48,6 +50,12 @@
   <!-- ================= BUILD: Compile Server Components ================= -->
   <!-- Update the depends list for each subproject -->
   <target name="build" depends="build-prepare,ROOT,examples,manager,webdav"/>
+
+
+  <!-- ==================== BUILD: Execute Unit Tests ===================== -->
+  <target name="test" if="junit.present"
+   description="Run all unit test cases">
+  </target>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->

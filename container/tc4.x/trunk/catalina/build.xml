@@ -17,6 +17,9 @@
   <property name="servletapi.home"   value="../../jakarta-servletapi-4/dist"/>
   <property name="avalon.dist"       value="../../dist/avalon"/>
 
+  <property name="test.failonerror"  value="true"/>
+  <property name="test.runner"       value="junit.textui.TestRunner"/>
+
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${catalina.jaxp.home}/jaxp.jar"/>
   <property name="parser.jar"      value="${catalina.jaxp.home}/${catalina.jaxp.parser.jar}"/>
@@ -28,8 +31,24 @@
   <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.2.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
+  <!-- Construct unit tests classpath -->
+  <path id="test.classpath">
+    <pathelement location="${parser.jar}"/>
+    <pathelement location="${jaxp.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${catalina.build}/classes"/>
+    <pathelement location="${catalina.build}/tests"/>
+  </path>
+
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+    <available classname="junit.framework.TestCase" property="junit.present" />
     <available file="${jaxp.jar}" property="jaxp.jar.present" />
     <available property="avalon.present" 
      classname="org.apache.avalon.blocks.Block" />
@@ -107,7 +126,6 @@
      classname="org.apache.avalon.blocks.Block" />
     <available property="javamail.present"
      classname="javax.mail.internet.MimeMessage" />
-
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
              classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
@@ -156,6 +174,19 @@
   </target>
 
 
+  <!-- =============== BUILD: Compile Unit Tests ========================== -->
+
+  <target name="build-tests" depends="build-main" if="junit.present">
+    <mkdir      dir="${catalina.build}/tests"/>
+    <!-- Compile unit test classes -->
+    <javac   srcdir="src/test" destdir="${catalina.build}/tests"
+             deprecation="off" debug="on" optimize="off" target="1.2"
+             excludes="**/CVS/**">
+      <classpath refid="test.classpath"/>
+    </javac>
+  </target>
+
+
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
   <target name="javadoc" depends="build-main">
     <delete dir="${catalina.build}/javadoc"/>
@@ -197,6 +228,25 @@
 
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
   <target name="all" depends="build-clean,build-main"/>
+
+
+  <!-- ==================== BUILD: Execute Unit Tests ===================== -->
+  <target name="test" if="junit.present"
+   description="Run all unit test cases"
+   depends="build-tests,test-util"
+>
+  </target>
+
+  <target name="test-util" if="junit.present">
+
+    <echo message="Running CookieTools tests"/>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <arg value="org.apache.catalina.util.CookieToolsTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+  </target>
 
 
   <!-- ====================== DEPLOY: Create Directories ================== -->

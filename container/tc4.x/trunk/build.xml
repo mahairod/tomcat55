@@ -55,6 +55,13 @@
   </target>
 
 
+  <!-- ======================= COMBO: Test All Components ================= -->
+  <target name="test">
+    <ant dir="./catalina" target="test"/>
+    <ant dir="./jasper"   target="test"/>
+    <ant dir="./webapps"  target="test"/>
+  </target>
+
 
   <!-- ====================== DIST: Create Directories ==================== -->
   <target name="dist-prepare">
