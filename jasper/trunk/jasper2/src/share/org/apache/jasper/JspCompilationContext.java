@@ -61,19 +61,16 @@
 
 package org.apache.jasper;
 
+import java.io.*;
+import java.net.*;
+import java.util.Set;
+import javax.servlet.ServletContext;
+import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.servlet.JspServletWrapper;
 import org.apache.jasper.servlet.JasperLoader;
-import javax.servlet.ServletContext;
-import org.apache.jasper.compiler.JspRuntimeContext;
 
 /**
  * A place holder for various things that are used through out the JSP
@@ -233,6 +230,10 @@ public class JspCompilationContext {
 
     public URL getResource(String res) throws MalformedURLException {
         return context.getResource(canonicalURI(res));
+    }
+
+    public Set getResourcePaths(String path) {
+        return context.getResourcePaths(canonicalURI(path));
     }
 
     /** 

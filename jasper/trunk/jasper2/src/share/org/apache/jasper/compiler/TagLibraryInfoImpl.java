@@ -442,12 +442,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             String tname = child.getName();
             if ("path".equals(tname)) {
 		String tagFilePath = child.getBody();
-		try {
-		    tagInfo = TagFileProcessor.parseTagFile(parserController,
-							    tagFilePath);
-		} catch (FileNotFoundException e) {
-		    err.jspError("jsp.error.file.not.found", tagFilePath);
-		}
+		tagInfo = TagFileProcessor.parseTagFile(parserController,
+							tagFilePath);
 		break;
 	    }
 	}

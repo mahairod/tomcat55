@@ -274,15 +274,22 @@ public class TagFileProcessor {
                                fragmentAttributes,
                                dynamicAttributes);
         }
-
     }
 
     public static TagInfo parseTagFile(ParserController pc, String tagfile)
-                throws FileNotFoundException, JasperException {
+                throws JasperException {
 
-        Node.Nodes page = pc.parse(tagfile);
+        Node.Nodes page = null;
+	try {
+	    page = pc.parse(tagfile);
+	} catch (FileNotFoundException e) {
+	    pc.getCompiler().getErrorDispatcher().jspError(
+                                        "jsp.error.file.not.found", tagfile);
+	}
+
         TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler());
         page.visit(tagFileVisitor);
+
         return tagFileVisitor.getTagInfo();
     }
 }

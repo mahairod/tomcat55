@@ -368,13 +368,28 @@ public class Parser {
 	Attributes attrs = parseAttributes();
 	String uri = attrs.getValue("uri");
 	String prefix = attrs.getValue("prefix");
-	if (uri != null && prefix != null) {
-	    // Errors to be checked in Validator
-	    String[] location = ctxt.getTldLocation(uri);
-	    TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, parserController,
-						       prefix, uri, location,
-						       err);
-	    taglibs.put(prefix, tl);
+	if (prefix != null) {
+	    TagLibraryInfo tagLibInfo = null;
+	    if (uri != null) {
+		// Errors to be checked in Validator
+		String[] location = ctxt.getTldLocation(uri);
+		tagLibInfo = new TagLibraryInfoImpl(ctxt, parserController,
+						    prefix, uri, location,
+						    err);
+	    } else {
+		String tagdir = attrs.getValue("tagdir");
+		if (tagdir != null) {
+		    tagLibInfo = ImplicitTagLibraryInfo.getTabLibraryInfo(
+                                                    ctxt,
+						    parserController,
+						    prefix, 
+						    tagdir,
+						    err);
+		}
+	    }
+	    if (tagLibInfo != null) {
+		taglibs.put(prefix, tagLibInfo);
+	    }
 	}
 
 	new Node.TaglibDirective(attrs, start, parent);
