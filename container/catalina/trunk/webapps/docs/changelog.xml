@@ -107,6 +107,26 @@
       addValve or removeValve is called and the associated pipeline is started
       or on start and stop of the pipeline (remm)
       </fix>
+      <update>
+      Update security constraints processing to be compliant with the new
+      behavior specified in the Servlet 2.4 specification, where security
+      constraints must now be combined. <code>SecurityConstraint 
+      Realm.findSecurityConstraint</code> is changed to
+      <code>SecurityConstraint[] findSecurityConstraints</code>, and 
+      implemented in RealmBase. (billbarker)
+      </update>
+      <fix>
+      Fix problems updating a WAR for a context which had a context file
+      (it would be ignored) (remm)
+      </fix>
+      <fix>
+      Do not redeploy a context when a context file is added, and the 
+      context wasn't deployed with the auto deployer (remm)
+      </fix>
+      <fix>
+      The SetDocBaseRule will not throw a NPE, and will attempt to guess 
+      the context docbase if not set (remm)
+      </fix>
 
     </changelog>
 
@@ -133,7 +153,6 @@
       directories, and will always process physical welcome files mapping
       (billbarker)
       </fix>
-      
 
     </changelog>
 
@@ -195,6 +214,15 @@
       <docs>
       Add some Windows setup documentation (remm)
       </docs>
+      <update>
+      Allow a WAR uploaded using the HTML manager to contain 
+      a META-INF/context.xml context file, for consistency with the Ant deploy
+      task (remm)
+      </update>
+      <fix>
+      Remove work directory when undeploying a web application using the
+      manager (remm)
+      </fix>
 
     </changelog>
 
