@@ -128,7 +128,6 @@
 
     <!-- ========== JNDI Naming Context =================================== -->
 
-<!-- JNDI naming context currently allows changes
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Jndi01" debug="${debug}"
       outContent="Jndi01 PASSED"/>
@@ -136,7 +135,6 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedJndi01" debug="${debug}"
       outContent="Jndi01 PASSED"/>
--->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Jndi02" debug="${debug}"
