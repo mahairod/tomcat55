@@ -670,9 +670,11 @@ public class WebappLoader
 
     public void destroy() {
         if( controller==oname ) {
+            oname = null;
             // Self-registration, undo it
             Registry.getRegistry().unregisterComponent(oname);
         }
+        initialized = false;
 
     }
 
