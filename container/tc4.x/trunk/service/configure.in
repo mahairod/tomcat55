@@ -107,12 +107,16 @@ then
   unset _prevdir
 else
   CFLAGS="$CFLAGS -I$JAVA_HOME/include -I$JAVA_HOME/include/$supported_os"
-  LDFLAGS="$LDFLAGS -ldl"
+  if test "$supported_os" != "win32"
+  then
+    LDFLAGS="$LDFLAGS -ldl"
+  fi
 fi
 if test "$supported_os" = "solaris"
 then
   LDFLAGS="$LDFLAGS -lthread"
 fi
+
 
 dnl -------------------------------------------------------------------------
 dnl Random programs we need to compile locally

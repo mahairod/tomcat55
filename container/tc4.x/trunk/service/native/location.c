@@ -74,6 +74,8 @@ char *location_home[] = {
 #elif defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_BSD)
     "/usr/java",
     "/usr/local/java",
+#elfif define(OS_CYGWIN)
+    "/cygdrive/c/WINNT/system32/java",
 #endif
     NULL,
 };
@@ -94,6 +96,8 @@ char *location_jvm_cfg[] = {
 char *location_jvm_default[] = {
 #if defined(OS_DARWIN)
     "$JAVA_HOME/../Libraries/libjvm.dylib",
+#elif defined(OS_CYGWIN)
+    "$JAVA_HOME/jre/bin/classic/jvm.dll",           // Sun JDK 1.3
 #elif defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_BSD)
     "$JAVA_HOME/jre/lib/" CPU "/classic/libjvm.so", // Sun JDK 1.2
     "$JAVA_HOME/jre/lib/" CPU "/client/libjvm.so",  // Sun JDK 1.3
@@ -129,6 +133,8 @@ char *location_jvm_default[] = {
 char *location_jvm_configured[] = {
 #if defined(OS_DARWIN)
     "$JAVA_HOME/../Libraries/lib$VM_NAME.dylib",
+#elif defined(OS_CYGWIN)
+    "$JAVA_HOME/jre/bin/$VM_NAME/jvm.dll",          // Sun JDK 1.3
 #elif defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_BSD)
     "$JAVA_HOME/jre/lib/" CPU "/$VM_NAME/libjvm.so",// Sun JDK 1.3
     "$JAVA_HOME/lib/" CPU "/$VM_NAME/libjvm.so",    // Sun JRE 1.3

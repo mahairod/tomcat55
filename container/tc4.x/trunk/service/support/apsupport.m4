@@ -87,6 +87,10 @@ AC_DEFUN(AP_SUPPORTED_HOST,[
     CFLAGS="$CFLAGS -DOS_LINUX -DDSO_DLFCN"
     supported_os="linux"
     ;;
+  cygwin)
+    CFLAGS="$CFLAGS -DOS_CYGWIN -DDSO_DLFCN"
+    supported_os="win32"
+    ;;
   *)
     AC_MSG_RESULT([failed])
     AC_MSG_ERROR([Unsupported operating system "$host_os"])

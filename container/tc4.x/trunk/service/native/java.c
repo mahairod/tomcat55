@@ -58,6 +58,9 @@
 /* @version $Id$ */
 #include "jsvc.h"
 
+#ifdef OS_CYGWIN
+typedef long long __int64;
+#endif
 #include <jni.h>
 
 static JavaVM *jvm=NULL;
