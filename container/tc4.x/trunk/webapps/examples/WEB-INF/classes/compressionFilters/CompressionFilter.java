@@ -195,7 +195,11 @@ public class CompressionFilter implements Filter{
                 if (debug > 0) {
                     System.out.println("doFilter gets called with compression");
                 }
-                chain.doFilter(request, wrappedResponse);
+                try {
+                    chain.doFilter(request, wrappedResponse);
+                } finally {
+                    wrappedResponse.finishResponse();
+                }
                 return;
             }
         }

@@ -162,6 +162,21 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
     }
 
 
+    /**
+     * Finish a response.
+     */
+    public void finishResponse() {
+        try {
+            if (writer != null) {
+                writer.close();
+            } else {
+                if (stream != null)
+                    stream.close();
+            }
+        } catch (IOException e) {
+        }
+    }
+
 
     // ------------------------------------------------ ServletResponse Methods
 
@@ -219,6 +234,10 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
         writer = new PrintWriter(stream);
         return (writer);
 
+    }
+
+
+    public void setContentLength(int length) {
     }
 
 }

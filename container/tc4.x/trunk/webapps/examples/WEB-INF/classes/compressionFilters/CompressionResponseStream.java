@@ -177,17 +177,22 @@ public class CompressionResponseStream
      */
     public void close() throws IOException {
 
+        //System.out.println("close() @ CompressionResponseStream");
         if (closed)
-	        throw new IOException("This output stream has already been closed");
+            throw new IOException("This output stream has already been closed");
 
-        flush();
-
-        if (gzipstream!=null) {
+        if (gzipstream != null) {
+            flushToGZip();
             gzipstream.close();
+        } else {
+            if (bufferCount > 0) {
+                output.write(buffer, 0, bufferCount);
+                bufferCount = 0;
+            }
         }
 
         output.close();
-	    closed = true;
+        closed = true;
 
     }
 
@@ -201,12 +206,6 @@ public class CompressionResponseStream
         //System.out.println("flush() @ CompressionResponseStream");
         if (closed) {
             throw new IOException("Cannot flush a closed output stream");
-        }
-
-        if (bufferCount > 0) {
-            //System.out.println("writing to original stream");
-            output.write(buffer, 0, bufferCount);
-            bufferCount = 0;
         }
 
         if (gzipstream!=null) {
@@ -247,8 +246,8 @@ public class CompressionResponseStream
         if (compressionThresholdReached) {
             writeToGZip(b);
         } else {
-	        buffer[bufferCount++] = (byte) b;
-	        count++;
+            buffer[bufferCount++] = (byte) b;
+            count++;
         }
 
     }
@@ -267,7 +266,6 @@ public class CompressionResponseStream
         //System.out.println("writeToGZip (int b) compressing");
         if (gzipstream == null) {
             gzipstream = new GZIPOutputStream(output);
-            flushToGZip();
             response.addHeader("Content-Encoding", "gzip");
         }
         gzipstream.write(b);
@@ -312,7 +310,7 @@ public class CompressionResponseStream
             bufferCount += len;
             count += len;
             return;
-	    }
+        }
 
         // buffer full, start writing to gzipstream
 
@@ -326,7 +324,6 @@ public class CompressionResponseStream
         //System.out.println("writeToGZip 2 compressing");
         if (gzipstream == null) {
             gzipstream = new GZIPOutputStream(output);
-            flushToGZip();
             response.addHeader("Content-Encoding", "gzip");
         }
         gzipstream.write(b, off, len);
