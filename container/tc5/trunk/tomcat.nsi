@@ -466,41 +466,6 @@ Function copyFile
 FunctionEnd
 
 
-; =====================
-; StartService Function
-; =====================
-;
-; Start Tomcat NT Service
-;
-Function startService
-
-  IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net start "Tomcat5"'
-  BringToFront
-
- NoService:
-
-FunctionEnd
-
-
-; =====================
-; StopService Function
-; =====================
-;
-; Stop Tomcat NT Service
-;
-Function un.stopService
-
-  IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net stop "Tomcat5"'
-  Sleep 1000
-  BringToFront
-
- NoService:
-
-FunctionEnd
-
-
 ;--------------------------------
 ;Uninstaller Section
 
@@ -509,10 +474,7 @@ Section Uninstall
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
 
-  ; Stopping NT service (if in use)
-  Call un.stopService
-
-  ;ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 5.0"'
+  ; Delete Tomcat service
   ExecWait '"$INSTDIR\bin\tomcatw.exe" //DS//Tomcat5'
   ClearErrors
 
