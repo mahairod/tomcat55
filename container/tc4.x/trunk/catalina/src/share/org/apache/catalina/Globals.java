@@ -98,7 +98,7 @@ public final class Globals {
      * used for loading servlets (as an object of type java.lang.ClassLoader).
      */
     public static final String CLASS_LOADER_ATTR =
-    "org.apache.catalina.classloader";
+        "org.apache.catalina.classloader";
 
 
     /**
@@ -106,7 +106,7 @@ public final class Globals {
      * context can be used to manipulate static files.
      */
     public static final String RESOURCES_ATTR =
-    "org.apache.catalina.resources";
+        "org.apache.catalina.resources";
 
 
     /**
@@ -115,7 +115,7 @@ public final class Globals {
      * delimited with the appropriate path delimiter for this platform.
      */
     public static final String CLASS_PATH_ATTR =
-    "org.apache.catalina.jsp_classpath";
+        "org.apache.catalina.jsp_classpath";
 
 
     /**
@@ -147,7 +147,7 @@ public final class Globals {
      * (as an object of type Class) to an error page.
      */
     public static final String EXCEPTION_TYPE_ATTR =
-    "javax.servlet.error.exception_type";
+        "javax.servlet.error.exception_type";
 
 
     /**
@@ -155,7 +155,7 @@ public final class Globals {
      * (as an object of type STring) to an error page.
      */
     public static final String ERROR_MESSAGE_ATTR =
-    "javax.servlet.error.message";
+        "javax.servlet.error.message";
 
 
     /**
@@ -248,7 +248,7 @@ public final class Globals {
      * (as an object of type Integer) to an error page.
      */
     public static final String STATUS_CODE_ATTR =
-    "javax.servlet.error.status_code";
+        "javax.servlet.error.status_code";
 
 
     /**
@@ -256,7 +256,7 @@ public final class Globals {
      * welcome files (as an object of type String[]) for this application.
      */
     public static final String WELCOME_FILES_ATTR =
-    "org.apache.catalina.WELCOME_FILES";
+        "org.apache.catalina.WELCOME_FILES";
 
 
     /**
@@ -265,7 +265,7 @@ public final class Globals {
      * within this web application.
      */
     public static final String WORK_DIR_ATTR =
-    "javax.servlet.context.tempdir";
+        "javax.servlet.context.tempdir";
 
 
 }

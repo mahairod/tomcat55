@@ -85,7 +85,7 @@ public final class LifecycleException extends Exception {
      */
     public LifecycleException() {
 
-    this(null, null);
+        this(null, null);
 
     }
 
@@ -97,7 +97,7 @@ public final class LifecycleException extends Exception {
      */
     public LifecycleException(String message) {
 
-    this(message, null);
+        this(message, null);
 
     }
 
@@ -109,7 +109,7 @@ public final class LifecycleException extends Exception {
      */
     public LifecycleException(Throwable throwable) {
 
-    this(null, throwable);
+        this(null, throwable);
 
     }
 
@@ -123,9 +123,9 @@ public final class LifecycleException extends Exception {
      */
     public LifecycleException(String message, Throwable throwable) {
 
-    super();
-    this.message = message;
-    this.throwable = throwable;
+        super();
+        this.message = message;
+        this.throwable = throwable;
 
     }
 
@@ -153,7 +153,7 @@ public final class LifecycleException extends Exception {
      */
     public String getMessage() {
 
-    return (message);
+        return (message);
 
     }
 
@@ -163,7 +163,7 @@ public final class LifecycleException extends Exception {
      */
     public Throwable getThrowable() {
 
-    return (throwable);
+        return (throwable);
 
     }
 
@@ -173,17 +173,17 @@ public final class LifecycleException extends Exception {
      */
     public String toString() {
 
-    StringBuffer sb = new StringBuffer("LifecycleException:  ");
-    if (message != null) {
-        sb.append(message);
-        if (throwable != null) {
-        sb.append(":  ");
+        StringBuffer sb = new StringBuffer("LifecycleException:  ");
+        if (message != null) {
+            sb.append(message);
+            if (throwable != null) {
+                sb.append(":  ");
+            }
         }
-    }
-    if (throwable != null) {
-        sb.append(throwable.toString());
-    }
-    return (sb.toString());
+        if (throwable != null) {
+            sb.append(throwable.toString());
+        }
+        return (sb.toString());
 
     }
 

@@ -229,7 +229,7 @@ public final class InstanceEvent
      */
     public Servlet getServlet() {
 
-    return (this.servlet);
+        return (this.servlet);
 
     }
 
@@ -239,7 +239,7 @@ public final class InstanceEvent
      */
     public String getType() {
 
-    return (this.type);
+        return (this.type);
 
     }
 
@@ -250,7 +250,7 @@ public final class InstanceEvent
      */
     public Wrapper getWrapper() {
 
-    return (this.wrapper);
+        return (this.wrapper);
 
     }
 

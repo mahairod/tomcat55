@@ -93,7 +93,7 @@ public final class LifecycleEvent
      */
     public LifecycleEvent(Lifecycle lifecycle, String type) {
 
-    this(lifecycle, type, null);
+        this(lifecycle, type, null);
 
     }
 
@@ -107,10 +107,10 @@ public final class LifecycleEvent
      */
     public LifecycleEvent(Lifecycle lifecycle, String type, Object data) {
 
-    super(lifecycle);
-    this.lifecycle = lifecycle;
-    this.type = type;
-    this.data = data;
+        super(lifecycle);
+        this.lifecycle = lifecycle;
+        this.type = type;
+        this.data = data;
 
     }
 
@@ -144,7 +144,7 @@ public final class LifecycleEvent
      */
     public Object getData() {
 
-    return (this.data);
+        return (this.data);
 
     }
 
@@ -154,7 +154,7 @@ public final class LifecycleEvent
      */
     public Lifecycle getLifecycle() {
 
-    return (this.lifecycle);
+        return (this.lifecycle);
 
     }
 
@@ -164,7 +164,7 @@ public final class LifecycleEvent
      */
     public String getType() {
 
-    return (this.type);
+        return (this.type);
 
     }
 

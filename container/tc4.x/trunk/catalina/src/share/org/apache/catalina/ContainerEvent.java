@@ -106,10 +106,10 @@ public final class ContainerEvent
      */
     public ContainerEvent(Container container, String type, Object data) {
 
-    super(container);
-    this.container = container;
-    this.type = type;
-    this.data = data;
+        super(container);
+        this.container = container;
+        this.type = type;
+        this.data = data;
 
     }
 
@@ -119,7 +119,7 @@ public final class ContainerEvent
      */
     public Object getData() {
 
-    return (this.data);
+        return (this.data);
 
     }
 
@@ -129,7 +129,7 @@ public final class ContainerEvent
      */
     public Container getContainer() {
 
-    return (this.container);
+        return (this.container);
 
     }
 
@@ -139,7 +139,7 @@ public final class ContainerEvent
      */
     public String getType() {
 
-    return (this.type);
+        return (this.type);
 
     }
 
@@ -149,8 +149,8 @@ public final class ContainerEvent
      */
     public String toString() {
 
-    return ("ContainerEvent['" + getContainer().getName() + "','" +
-        getType() + "']");
+        return ("ContainerEvent['" + getContainer().getName() + "','" +
+                getType() + "']");
 
     }
 
