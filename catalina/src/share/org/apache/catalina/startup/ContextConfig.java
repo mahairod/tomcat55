@@ -782,6 +782,7 @@ public final class ContextConfig
         } else {
             docBase = file.getCanonicalPath();
         }
+        file = new File(docBase);
 
         if (docBase.toLowerCase().endsWith(".war") && !file.isDirectory() && unpackWARs) {
             URL war = new URL("jar:" + (new File(docBase)).toURL() + "!/");
