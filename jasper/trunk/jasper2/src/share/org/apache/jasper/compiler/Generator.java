@@ -2785,7 +2785,8 @@ class Generator {
             out.printil("HttpSession session = pageContext.getSession();");
             out.printil("ServletContext application = pageContext.getServletContext();");
         }
-        if (ci.hasUseBean() || ci.hasIncludeAction() || ci.hasSetProperty()) {
+        if (ci.hasUseBean() || ci.hasIncludeAction() || ci.hasSetProperty() ||
+                ci.hasParamAction()) {
             out.printil("HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();");
         }
         if (ci.hasIncludeAction()) {

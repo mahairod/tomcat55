@@ -1166,6 +1166,7 @@ abstract class Node implements TagConstants {
 					// contain no scripting elements.
 	private boolean hasUseBean;
 	private boolean hasIncludeAction;
+	private boolean hasParamAction;
 	private boolean hasSetProperty;
 	private boolean hasScriptingVars;
 
@@ -1191,6 +1192,14 @@ abstract class Node implements TagConstants {
 
 	public boolean hasIncludeAction() {
 	    return hasIncludeAction;
+	}
+
+	public void setHasParamAction(boolean i) {
+	    hasParamAction = i;
+	}
+
+	public boolean hasParamAction() {
+	    return hasParamAction;
 	}
 
 	public void setHasSetProperty(boolean s) {

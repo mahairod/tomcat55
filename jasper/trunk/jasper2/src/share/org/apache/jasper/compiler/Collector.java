@@ -85,6 +85,7 @@ class Collector {
 	private boolean scriptingElementSeen = false;
 	private boolean usebeanSeen = false;
 	private boolean includeActionSeen = false;
+	private boolean paramActionSeen = false;
 	private boolean setPropertySeen = false;
 	private boolean hasScriptingVars = false;
 	private boolean tagFileSeen = false;
@@ -93,6 +94,7 @@ class Collector {
 	    if (n.getValue().isExpression()) {
 		scriptingElementSeen = true;
 	    }
+	    paramActionSeen = true;
 	}
 
 	public void visit(Node.IncludeAction n) throws JasperException {
@@ -167,6 +169,8 @@ class Collector {
 	    usebeanSeen = false;
 	    boolean includeActionSeenSave = includeActionSeen;
 	    includeActionSeen = false;
+	    boolean paramActionSeenSave = paramActionSeen;
+	    paramActionSeen = false;
 	    boolean setPropertySeenSave = setPropertySeen;
 	    setPropertySeen = false;
 	    boolean hasScriptingVarsSave = hasScriptingVars;
@@ -196,6 +200,7 @@ class Collector {
 	    ci.setScriptless(! scriptingElementSeen);
 	    ci.setHasUseBean(usebeanSeen);
 	    ci.setHasIncludeAction(includeActionSeen);
+	    ci.setHasParamAction(paramActionSeen);
 	    ci.setHasSetProperty(setPropertySeen);
 	    ci.setHasScriptingVars(hasScriptingVars);
 
@@ -204,6 +209,7 @@ class Collector {
 	    usebeanSeen = usebeanSeen || usebeanSeenSave;
 	    setPropertySeen = setPropertySeen || setPropertySeenSave;
 	    includeActionSeen = includeActionSeen || includeActionSeenSave;
+	    paramActionSeen = paramActionSeen || paramActionSeenSave;
 	    hasScriptingVars = hasScriptingVars || hasScriptingVarsSave;
         }
 
