@@ -478,7 +478,7 @@ public final class StandardManager implements Runnable  {
 	    if (maxInactiveInterval < 0)
 		continue;
 	    int timeIdle = // Truncate, do not round up
-		(int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+		(int) ((timeNow - session.getLatestAccessedTime()) / 1000L);
 	    if (timeIdle >= maxInactiveInterval)
 		session.expire();
 	}

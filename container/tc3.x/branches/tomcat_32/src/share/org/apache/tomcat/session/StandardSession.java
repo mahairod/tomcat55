@@ -271,6 +271,14 @@ final class StandardSession
 
 
     /**
+     *
+     */
+    public long getLatestAccessedTime()
+    {
+        return this.thisAccessedTime;
+    }
+
+    /**
      * Return the Manager within which this Session is valid.
      */
     public StandardManager getManager() {
