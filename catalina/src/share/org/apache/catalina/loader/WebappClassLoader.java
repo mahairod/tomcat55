@@ -1249,7 +1249,7 @@ public class WebappClassLoader
         // Don't load classes if class loader is stopped
         if (!started) {
             log.info(sm.getString("webappClassLoader.stopped"));
-            throw new IncompatibleClassChangeError(name);
+            throw new ThreadDeath();
         }
 
         // (0) Check our previously loaded local class cache
