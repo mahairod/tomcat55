@@ -457,6 +457,8 @@ public class URLTestCase extends TestCase {
         positive("http://a/b/c/d;p?q", "g?y/../x");
         positive("http://a/b/c/d;p?q", "g#s/./x");
         positive("http://a/b/c/d;p?q", "g#s/../x");
+        positive("http://a/b", "c");
+        positive("http://a/b/", "c");
 
     }
 

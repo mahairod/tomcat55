@@ -736,8 +736,8 @@ public final class URL implements Serializable {
             throw new MalformedURLException
                 ("Base path does not start with '/'");
         if (!path.endsWith("/"))
-            path += '/';
-        path += "../" + spec.substring(start, limit);
+            path += "/../";
+        path += spec.substring(start, limit);
         if (query != null)
             file = path + "?" + query;
         else
