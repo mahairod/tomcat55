@@ -380,6 +380,7 @@ public abstract class ResponseBase
 	// flush the necessary headers
 	if (this.stream == null) {
 	    ServletOutputStream sos = getOutputStream();
+            sos.flush();
 	    sos.close();
 	    return;
 	}

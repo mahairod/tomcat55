@@ -482,17 +482,19 @@ public class HttpResponseBase
 	    outputWriter.print(message);
 	}
 	outputWriter.print("\r\n");
-        //	log(request.getRequest().getProtocol() + " " + status + " " + message);
+        //        System.out.println("sendHeaders: " +
+        //                           request.getRequest().getProtocol() +
+        //                           " " + status + " " + message);
 
 	// Send the content-length and content-type headers (if any)
 	if (getContentType() != null) {
 	    outputWriter.print("Content-Type: " + getContentType() + "\r\n");
-            //	    log(" Content-Type: " + getContentType());
+            //            System.out.println(" Content-Type: " + getContentType());
 	}
-	if (getContentLength() >= 0) {
+	if (getContentLength() > 0) {
 	    outputWriter.print("Content-Length: " + getContentLength() +
 			       "\r\n");
-            //	    log("  Content-Length: " + getContentLength());
+            //            System.out.println(" Content-Length: " + getContentLength());
 	}
 
 	// Send all specified headers (if any)
@@ -508,7 +510,7 @@ public class HttpResponseBase
 		    outputWriter.print(": ");
 		    outputWriter.print(value);
 		    outputWriter.print("\r\n");
-                    //                    log(" " + name + ": " + value);
+                    //                    System.out.println(" " + name + ": " + value);
 		}
 	    }
 	}
@@ -543,14 +545,17 @@ public class HttpResponseBase
 		outputWriter.print(": ");
 		outputWriter.print(CookieTools.getCookieHeaderValue(cookie));
 		outputWriter.print("\r\n");
-                //                log(" " + CookieTools.getCookieHeaderName(cookie) + ": " +
-                //                    CookieTools.getCookieHeaderValue(cookie));
+                //                System.out.println(" " +
+                //                                   CookieTools.getCookieHeaderName(cookie) +
+                //                                   ": " +
+                //                                   CookieTools.getCookieHeaderValue(cookie));
 	    }
 	}
 
 	// Send a terminating blank line to mark the end of the headers
 	outputWriter.print("\r\n");
 	outputWriter.flush();
+        //        System.out.println("----------");
 
         // The response is now committed
         committed = true;

@@ -66,6 +66,7 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -147,13 +148,31 @@ final class StandardContextValve
 	    return;	// NOTE - Not much else we can do generically
 	}
 
+        // Disallow any direct access to resources under WEB-INF or META-INF
+        String contextPath =
+            ((HttpServletRequest) request.getRequest()).getContextPath();
+        String requestURI =
+            ((HttpServletRequest) request.getRequest()).getRequestURI();
+        String relativeURI =
+            requestURI.substring(contextPath.length()).toUpperCase();
+        if (relativeURI.equals("/META-INF") ||
+            relativeURI.equals("/WEB-INF") ||
+            relativeURI.startsWith("/META-INF/") ||
+            relativeURI.startsWith("/WEB-INF/")) {
+            notFound(requestURI, (HttpServletResponse) response.getResponse());
+            try {
+                response.finishResponse();
+            } catch (IOException e) {
+                ;
+            }
+            return;
+        }
+
 	// Select the Wrapper to be used for this Request
 	StandardContext context = (StandardContext) getContainer();
 	Wrapper wrapper = (Wrapper) context.map(request, true);
 	if (wrapper == null) {
-	    ((HttpServletResponse) response.getResponse()).sendError
-		(HttpServletResponse.SC_NOT_FOUND,
-		 sm.getString("standardContext.notFound"));
+            notFound(requestURI, (HttpServletResponse) response.getResponse());
             try {
                 response.finishResponse();
             } catch (IOException e) {
@@ -179,6 +198,45 @@ final class StandardContextValve
         if (context.isUseNaming()) {
             // Unbind the thread to the context
             ContextBindings.unbindThread(context.getName(), context);
+        }
+
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Report a "not found" error for the specified resource.  FIXME:  We
+     * should really be using the error reporting settings for this web
+     * application, but currently that code runs at the wrapper level rather
+     * than the context level.
+     *
+     * @param requestURI The request URI for the requested resource
+     * @param response The response we are creating
+     */
+    private void notFound(String requestURI, HttpServletResponse response) {
+
+        try {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            // response.setMessage(requestURI);
+            response.setContentType("text/html");
+            PrintWriter writer = response.getWriter();
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("<title>Tomcat Error Report</title>");
+            writer.println("<body bgcolor=\"white\">");
+            writer.println("<br><br>");
+            writer.println("<h1>HTTP Status 404 - " + requestURI + "</h1>");
+            writer.println(sm.getString("standardContext.notFound",
+                                        requestURI));
+            writer.println("</body>");
+            writer.println("</html>");
+            writer.flush();
+        } catch (IllegalStateException e) {
+            ;
+        } catch (IOException e) {
+            ;
         }
 
     }
