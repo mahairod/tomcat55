@@ -891,11 +891,18 @@ public abstract class ResponseBase
             return;     // Ignore any call from an included servlet
 
         this.locale = locale;
-        if ((this.encoding == null) && (this.context != null)) {
+        if (this.context != null) {
             CharsetMapper mapper = context.getCharsetMapper();
             this.encoding = mapper.getCharset(locale);
-            if ((contentType != null) && (contentType.indexOf(';') < 0)) {
-                contentType = contentType + ";charset=" + encoding;
+            if (contentType != null) {
+                if (contentType.indexOf(';') < 0) {
+                    contentType = contentType + ";charset=" + encoding;
+                } else {
+                    // Replace the previous charset
+                    int i = contentType.indexOf(';');
+                    contentType = contentType.substring(0, i) 
+                        + ";charset=" + encoding;
+                }
             }
         }
 
