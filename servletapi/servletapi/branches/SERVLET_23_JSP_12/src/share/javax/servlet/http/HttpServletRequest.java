@@ -82,12 +82,29 @@ import java.util.Enumeration;
 
 public interface HttpServletRequest extends ServletRequest {
 
-
+    /**
+    * String identifier for Basic authentication. Value "BASIC"
+    */
+    public static final String BASIC_AUTH = "BASIC";
+    /**
+    * String identifier for Basic authentication. Value "FORM"
+    */
+    public static final String FORM_AUTH = "FORM";
+    /**
+    * String identifier for Basic authentication. Value "CERT-CLIENT"
+    */
+    public static final String CLIENT_CERT_AUTH = "CERT-CLIENT";
+    /**
+    * String identifier for Basic authentication. Value "DIGEST"
+    */
+    public static final String DIGEST_AUTH = "DIGEST";
 
     /**
      * Returns the name of the authentication scheme used to protect
-     * the servlet, for example, "BASIC" or "SSL," or <code>null</code>
-     * if the servlet was not protected. 
+     * the servlet. All servlet containers support "BASIC", 
+     * "FORM", and "CLIENT-CERT" and may support "DIGEST".
+     * If the servlet is not authenticated <code>null</code>
+     * null is returned. 
      *
      * <p>Same as the value of the CGI variable AUTH_TYPE.
      *
