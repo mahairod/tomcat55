@@ -80,6 +80,8 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.loggers.deletes"/> 
               </controls:action>
+               <%-- cannot delete or add a Realm for the service the admin app runs on --%>
+              <logic:notEqual name="serviceName" value='<%= adminServiceName %>'>
               <controls:action disabled="true"> 
                 ------------------------------------- 
               </controls:action>
@@ -91,6 +93,7 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.realms.deletes"/> 
               </controls:action>
+              </logic:notEqual>
               <controls:action disabled="true"> 
                 ------------------------------------- 
               </controls:action>
