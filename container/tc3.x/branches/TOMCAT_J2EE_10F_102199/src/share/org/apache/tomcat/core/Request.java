@@ -380,6 +380,17 @@ public abstract class Request {
 
     public void setQueryString(String queryString) {
         this.queryString = queryString;
+
+        Hashtable parameters = null;
+
+        // catch any parse exceptions
+
+        try {
+            parameters = HttpUtils.parseQueryString(queryString);
+        } catch (Exception e) {
+        }
+
+        this.parameters = parameters;
     }
     
     public String getRemoteUser() {
