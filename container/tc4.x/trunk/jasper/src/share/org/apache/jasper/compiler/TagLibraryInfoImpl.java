@@ -80,7 +80,7 @@ import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagLibraryValidator;
-import javax.servlet.jsp.tagext.PageInfo;
+import javax.servlet.jsp.tagext.PageData;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -412,7 +412,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Class tlvClass = 
 		    ctxt.getClassLoader().loadClass(validatorclass);
                 tlv = (TagLibraryValidator) tlvClass.newInstance();
-                tlv.setTagLibraryInfo(this);
+                //@@@ removed in 1.2PFD tlv.setTagLibraryInfo(this);
                 this.tagLibraryValidator = tlv;
             } catch (Exception ex) {
                 Constants.message("jsp.warning.tlvclass.is.null",
@@ -588,10 +588,10 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
      * @param thePage The JSP page object
      * @return A string indicating whether the page is valid or not.
      */
-    public String validate(PageInfo thePage) {
+    public String validate(PageData thePage) {
 	TagLibraryValidator tlv = getTagLibraryValidator();
 	if (tlv == null) return null;
-	return tlv.validate(thePage);
+	return tlv.validate(getPrefixString(), getURI(), thePage);
     }
 
     protected TagLibraryValidator tagLibraryValidator; 

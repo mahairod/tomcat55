@@ -66,7 +66,7 @@ import java.util.Enumeration;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
-import javax.servlet.jsp.tagext.PageInfo;
+import javax.servlet.jsp.tagext.PageData;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
@@ -182,7 +182,7 @@ public class XmlOutputter {
     private static final String PROLOG =
 	"<!DOCTYPE jsp:root\n  PUBLIC \"-//Sun Microsystems Inc.//DTD JavaServer Pages Version 1.1//EN\"\n  \"http://java.sun.com/products/jsp/dtd/jspcore_1_2.dtd\">\n";
 
-    PageInfo getPageInfo() {
+    PageData getPageData() {
 	StringBuffer buff = new StringBuffer();
 
         buff.append(PROLOG);
@@ -190,7 +190,7 @@ public class XmlOutputter {
 	buff.append(sb.toString());
 	InputStream is = 
 	    new ByteArrayInputStream(buff.toString().getBytes());
-	PageInfo pageInfo = new PageInfoImpl(is);
-        return pageInfo;
+	PageData pageData = new PageDataImpl(is);
+        return pageData;
     }
 }    

@@ -63,14 +63,14 @@ package org.apache.jasper.compiler;
 
 import java.io.InputStream;
 
-import javax.servlet.jsp.tagext.PageInfo;
+import javax.servlet.jsp.tagext.PageData;
 
 /**
- * Implementation of abstract class javax.servlet.jsp.tagext.PageInfo.
+ * Implementation of abstract class javax.servlet.jsp.tagext.PageData.
  *
  * @author Pierre Delisle
  */
-public class PageInfoImpl extends PageInfo {
+public class PageDataImpl extends PageData {
     /**
      * The XML input stream representing the JSP translation unit.
      */
@@ -79,12 +79,12 @@ public class PageInfoImpl extends PageInfo {
     //*********************************************************************
     // Constructor
 
-    public PageInfoImpl(InputStream is) {
+    public PageDataImpl(InputStream is) {
 	this.is = is;
     }
 
     //*********************************************************************
-    // PageInfo methods
+    // PageData methods
 
     public InputStream getInputStream() {
 	return is;

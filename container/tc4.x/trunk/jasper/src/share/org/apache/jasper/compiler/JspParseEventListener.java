@@ -998,7 +998,7 @@ public class JspParseEventListener extends BaseJspListener {
         while (enum.hasMoreElements()) {
             TagLibraryInfo tli = (TagLibraryInfo)enum.nextElement();
 	    //@@@ remove cast when TagLibraryInfo is fixed in spec
-            String msg = ((TagLibraryInfoImpl)tli).validate(xo.getPageInfo());
+            String msg = ((TagLibraryInfoImpl)tli).validate(xo.getPageData());
             if (msg != null) {
                 throw new JasperException(
 		    Constants.getString(
