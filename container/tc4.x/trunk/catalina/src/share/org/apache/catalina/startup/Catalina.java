@@ -673,7 +673,7 @@ public class Catalina {
             String oldValue =
                 System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
             if (oldValue != null) {
-                value = oldValue + ":" + value;
+                value = value + ":" + oldValue;
             }
             System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
             System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
