@@ -13,10 +13,10 @@
 
 <!-- Body -->
 <frameset rows="117,685*" cols="*" frameborder="NO" border="3" framespacing="3">
-  <frame name="banner" src='<%= response.encodeURL("banner.jsp") %>' scrolling="no">
+  <frame name="banner" src='<%= response.encodeURL("banner.jsp") %>' scrolling="no" title="commit and logout banner">
   <frameset cols="300,*" frameborder="YES" border="2">
-    <frame name="tree" src='<%= response.encodeURL("setUpTree.do") %>' scrolling="auto">
-    <frame name="content" src='<%= response.encodeURL("blank.jsp") %>' scrolling="auto">
+    <frame name="tree" src='<%= response.encodeURL("setUpTree.do") %>' scrolling="auto" title="application navigation tree">
+    <frame name="content" src='<%= response.encodeURL("blank.jsp") %>' scrolling="auto" title="content editing">
   </frameset>
 </frameset>
 

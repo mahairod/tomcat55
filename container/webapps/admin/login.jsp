@@ -38,7 +38,7 @@
     <tr>
     <!-- banner -->
      <td height="183">
-        <div align="center"><img src="images/Login.jpg" width="490" height="228"></div>
+        <div align="center"><img src="images/Login.jpg" alt="Tomcat Web Server Administration Tool" width="490" height="228"></div>
       </td>
     </tr>
 
@@ -48,19 +48,19 @@
      <table width="100%" border="0" cellspacing="2" cellpadding="5">
      <tr>
       <th align="right">
-        <font color="#FFFFFF"><bean:message key="prompt.username"/></font>
+        <font color="#FFFFFF"><label for="username"><bean:message key="prompt.username"/></label></font>
       </th>
       <td align="left">
-        <input type="text" name="j_username" size="16" maxlength="16"/>
+        <input type="text" name="j_username" size="16" maxlength="16" id="username"/>
       </td>
     </tr>
     <p>
     <tr>
       <th align="right">
-        <font color="#FFFFFF"><bean:message key="prompt.password"/></font>
+        <font color="#FFFFFF"><label for="password"><bean:message key="prompt.password"/></label></font>
       </th>
       <td align="left">
-        <input type="password" name="j_password" size="16" maxlength="16"/>
+        <input type="password" name="j_password" size="16" maxlength="16" id="password"/>
       </td>
     </tr>
 

@@ -24,9 +24,9 @@
           <bean:message key="actions.hosts.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+            <controls:actions label="Host Actions">
               <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
               <controls:action> --------------------------------- </controls:action>
             </controls:actions>
@@ -61,8 +61,9 @@
                 <font color='red'>*</font>
               </logic:match>
               <logic:notMatch name="host" value='<%= "host="+request.getServerName()+"," %>'>
+              <label for="hosts"></label>
               <html:multibox property="hosts"
-                                value="<%= host.toString() %>"/>
+                                value="<%= host.toString() %>" styleId="hosts"/>
               </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;

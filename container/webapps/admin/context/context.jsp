@@ -37,9 +37,9 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Context Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
             <logic:notEqual name="contextForm" property="adminAction" value="Create">
@@ -109,10 +109,10 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="cookies">
             <controls:label><bean:message key="context.cookies"/>:</controls:label>
             <controls:data>
-                <html:select property="cookies">
+                <html:select property="cookies" styleId="cookies">
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -120,10 +120,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="crossContext">
             <controls:label><bean:message key="context.cross.context"/>:</controls:label>
             <controls:data>
-                <html:select property="crossContext">
+                <html:select property="crossContext" styleId="crossContext">
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -131,10 +131,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="debugLvl">
+               <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="contextForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -143,11 +143,11 @@
         </controls:row>
 
 <%-- input only allowed on create transaction --%>
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="docbase">
             <controls:label><bean:message key="context.docBase"/>:</controls:label>
             <controls:data>
               <logic:equal name="contextForm" property="adminAction" value="Create">
-               <html:text property="docBase" size="30"/>
+               <html:text property="docBase" size="30" styleId="docbase"/>
               </logic:equal>
               <logic:equal name="contextForm" property="adminAction" value="Edit">
                <bean:write name="contextForm" property="docBase"/>
@@ -156,10 +156,10 @@
             </controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="override">
             <controls:label><bean:message key="context.override"/>:</controls:label>
             <controls:data>
-                <html:select property="override">
+                <html:select property="override" styleId="override">
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -168,11 +168,11 @@
         </controls:row>
 
 <%-- input only allowed on create transaction --%>
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="path">
             <controls:label><bean:message key="context.path"/>:</controls:label>
             <controls:data>
              <logic:equal name="contextForm" property="adminAction" value="Create">
-               <html:text property="path" size="30"/>
+               <html:text property="path" size="30" styleId="path"/>
              </logic:equal>
              <logic:equal name="contextForm" property="adminAction" value="Edit">
                <bean:write name="contextForm" property="path"/>
@@ -181,10 +181,10 @@
             </controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="reloadable">
             <controls:label><bean:message key="context.reloadable"/>:</controls:label>
             <controls:data>
-                <html:select property="reloadable">
+                <html:select property="reloadable" styleId="reloadable">
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -192,10 +192,21 @@
             </controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="swallowOutput">
+            <controls:label><bean:message key="context.swallowOutput"/>:</controls:label>
+            <controls:data>
+                <html:select property="swallowOutput" styleId="swallowOutput">
+                     <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="usernaming">
             <controls:label><bean:message key="context.usenaming"/>:</controls:label>
             <controls:data>
-                <html:select property="useNaming">
+                <html:select property="useNaming" styleId="usernaming">
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -204,11 +215,11 @@
         </controls:row>
 
 <%-- input only allowed on create transaction >
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="workdir">
             <controls:label><bean:message key="context.workdir"/>:</controls:label>
             <controls:data>
              <logic:equal name="contextForm" property="adminAction" value="Create">
-               <html:text property="workDir" size="30"/>
+               <html:text property="workDir" size="30" styleId="workdir"/>
              </logic:equal>
              <logic:equal name="contextForm" property="adminAction" value="Edit">
                <bean:write name="contextForm" property="workDir"/>
@@ -241,17 +252,17 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="checkInterval">
             <controls:label><bean:message key="context.checkInterval"/>:</controls:label>
             <controls:data>
-                <html:text property="ldrCheckInterval" size="5"/>
+                <html:text property="ldrCheckInterval" size="5" styleId="checkInterval"/>
             </controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debugLvlVals">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="ldrDebugLvl">
+               <html:select property="ldrDebugLvl" styleId="debugLvlVals">
                      <bean:define id="debugLvlVals" name="contextForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -259,10 +270,10 @@
             </controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="reloadable">
             <controls:label><bean:message key="context.reloadable"/>:</controls:label>
             <controls:data>
-                <html:select property="ldrReloadable">
+                <html:select property="ldrReloadable" styleId="reloadable">
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -292,17 +303,17 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="checkInterval">
             <controls:label><bean:message key="context.checkInterval"/>:</controls:label>
             <controls:data>
-                <html:text property="mgrCheckInterval" size="5"/>
+                <html:text property="mgrCheckInterval" size="5" styleId="checkInterval"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="mgrDebugLvl">
+               <html:select property="mgrDebugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="contextForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -310,17 +321,17 @@
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="sessionId">
             <controls:label><bean:message key="context.sessionId"/>:</controls:label>
             <controls:data>
-               <html:textarea property="mgrSessionIDInit" cols="30" rows="2"/>
+               <html:textarea property="mgrSessionIDInit" cols="30" rows="2" styleId="sessionId"/>
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxSessions">
             <controls:label><bean:message key="context.max.sessions"/>:</controls:label>
             <controls:data>
-               <html:text property="mgrMaxSessions" size="5"/>
+               <html:text property="mgrMaxSessions" size="5" styleId="maxSessions"/>
             </controls:data>
         </controls:row>
    </controls:table>

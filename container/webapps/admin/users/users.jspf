@@ -23,8 +23,9 @@
       <tr class="line-row">
         <logic:present name="checkboxes">
           <td><div align="center" class="table-normal-text">
+            <label for="users"></label>
             <input type="checkbox" name="users"
-                  value="<%= user %>">
+                  value="<%= user %>" styleId="users">
           </td>
         </logic:present>
         <td><div align="left" class="table-normal-text">&nbsp;
