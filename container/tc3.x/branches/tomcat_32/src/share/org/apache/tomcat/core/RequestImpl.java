@@ -573,7 +573,13 @@ public class RequestImpl  implements Request {
 
 
     public void setPathInfo(String pathInfo) {
-        this.pathInfo = pathInfo;
+        try{
+            this.pathInfo = RequestUtil.URLDecode(pathInfo);
+        }catch(Exception e){
+            if(contextM != null)
+                contextM.log("RequestImpl.setPathInfo: Unable to decode pathInfo, using encoded version.  pathInfo = " + pathInfo);
+            this.pathInfo = pathInfo;
+        }
     }
 
     /** Set query string - will be called by forward
@@ -585,7 +591,13 @@ public class RequestImpl  implements Request {
     }
 
     public void setServletPath(String servletPath) {
-	this.servletPath = servletPath;
+        try{
+            this.servletPath = RequestUtil.URLDecode(servletPath);
+        }catch(Exception e){
+            if(contextM != null)
+                contextM.log("RequestImpl.setServletPath: Unable to decode servlet path, using encoded version.  path = " + servletPath);
+            this.servletPath = servletPath;
+        }
     }
 
 
