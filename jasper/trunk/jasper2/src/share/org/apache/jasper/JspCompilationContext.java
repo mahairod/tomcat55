@@ -318,7 +318,7 @@ public class JspCompilationContext {
 	}
         for (int i = iSep; i < iEnd; i++) {
             char ch = jspUri.charAt(i);
-            if (Character.isLetterOrDigit(ch)) {
+            if (Character.isJavaIdentifierPart(ch)) {
                 modifiedClassName.append(ch);
             } else if (ch == '.') {
                 modifiedClassName.append('_');

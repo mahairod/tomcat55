@@ -132,6 +132,8 @@ public class JspC implements Options {
     public static final String SWITCH_WEBAPP_XML = "-webxml";
     public static final String SWITCH_MAPPED = "-mapped";
     public static final String SWITCH_DIE = "-die";
+    public static final String SHOW_SUCCESS ="-s";
+    public static final String LIST_ERRORS = "-l";
 
     public static final int NO_WEBXML = 0;
     public static final int INC_WEBXML = 10;
@@ -196,6 +198,9 @@ public class JspC implements Options {
      * Cache for the TLD locations
      */
     private TldLocationsCache tldLocationsCache = null;
+
+    private boolean listErrors = false;
+    private boolean showSuccess = false;
 
     public boolean getKeepGenerated() {
         // isn't this why we are running jspc?
@@ -387,11 +392,11 @@ public class JspC implements Options {
         if (dirset) {
             int indexOfSlash = clctxt.getJspFile().lastIndexOf('/');
             
-            String pathName = "";
+            /* String pathName = "";
             if (indexOfSlash != -1) {
                 pathName = clctxt.getJspFile().substring(0, indexOfSlash);
-            }
-            String tmpDir = outputDir + File.separatorChar + pathName;
+            } */
+            String tmpDir = outputDir + File.separatorChar; // + pathName;
             File f = new File(tmpDir);
             if (!f.exists()) {
                 f.mkdirs();
@@ -520,6 +525,8 @@ public class JspC implements Options {
     {
         try {
             String jspUri=file.replace('\\','/');
+            String baseDir = scratchDir.getCanonicalPath();
+            this.setOutputDir( baseDir + jspUri.substring( 0, jspUri.lastIndexOf( '/' ) ) );
             JspCompilationContext clctxt = new JspCompilationContext
                 ( jspUri, false,  this, context, null, null );
 
@@ -541,6 +548,7 @@ public class JspC implements Options {
             clctxt.setClassPath(classPath);
 
             Compiler clc = clctxt.createCompiler();
+            this.setOutputDir( baseDir );
 
             if( compile ) {
                 // Generate both .class and .java
@@ -557,7 +565,9 @@ public class JspC implements Options {
 
             // Generate mapping
             generateWebMapping( file, clctxt );
-
+            if ( showSuccess ) {
+                log.println( "Built File: " + file );
+            }
             return true;
         } catch (FileNotFoundException fne) {
             Constants.message("jspc.error.fileDoesNotExist", 
@@ -566,7 +576,10 @@ public class JspC implements Options {
         } catch (Exception e) {
             Constants.message("jspc.error.generalException", 
                     new Object[] {file, e}, Logger.ERROR);
-            if (dieLevel != NO_DIE_LEVEL) {
+            if ( listErrors ) {
+	        log.println( "Error in File: " + file );
+		return true;
+            } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
             }
             throw new JasperException( e );
@@ -874,6 +887,10 @@ public class JspC implements Options {
                 setUriroot( nextArg());
             } else if (tok.equals(SWITCH_FILE_WEBAPP)) {
                 setUriroot( nextArg());
+            } else if ( tok.equals( SHOW_SUCCESS ) ) {
+                showSuccess = true;
+            } else if ( tok.equals( LIST_ERRORS ) ) {
+                listErrors = true;
             } else if (tok.equals(SWITCH_WEBAPP_INC)) {
                 webxmlFile = nextArg();
                 if (webxmlFile != null) {
@@ -912,6 +929,14 @@ public class JspC implements Options {
         }
         
         Constants.jasperLog.setVerbosityLevel(verbosityLevel);
+    }
+
+    /**
+     * allows user to set where the log goes other than System.out
+     * @param log
+     */
+    public static void setLog( PrintStream log ) {
+	    JspC.log = log;
     }
     
     /** 
