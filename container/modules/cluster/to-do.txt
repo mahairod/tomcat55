@@ -7,4 +7,5 @@ wish to be replicated
 6. Implement context attribute replication (?)
 7. JMX friendly
 8. Documentation
+9. Add a flag for replicated  attribute events, to enable or disable them
 
