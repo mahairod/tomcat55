@@ -229,8 +229,9 @@ public class TyrexDataSourceFactory
                     return ds;
                     
                 } catch (Throwable t) {
-                    // Another factory could handle this, so just give up
-                    return null;
+                    log("Cannot create DataSource, Exception", t);
+                    throw new NamingException
+                        ("Exception creating DataSource: " + t.getMessage());
                 }
                 
             } else {
@@ -243,6 +244,20 @@ public class TyrexDataSourceFactory
         
     }
 
+
+    // -------------------------------------------------------- Private Methods
+
+
+    private void log(String message) {
+        System.out.print("TyrexDataSourceFactory:  ");
+        System.out.println(message);
+    }
+
+
+    private void log(String message, Throwable exception) {
+        log(message);
+        exception.printStackTrace(System.out);
+    }
 
 }
 
