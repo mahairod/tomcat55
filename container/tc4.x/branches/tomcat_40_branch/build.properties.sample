@@ -18,6 +18,7 @@ compile.optimize=on
 
 # ----- Build Control Flags
 #full.dist=on
+#light.dist=on
 #build.sysclasspath=ignore
 #flags.hide=on
 
