@@ -898,37 +898,28 @@ public class WebappLoader
             String contextRoot = servletContext.getRealPath("/");
             if (contextRoot != null) {
                 try {
-                    contextRoot = 
-                        (new File(contextRoot)).getCanonicalPath() 
-                        + File.separator;
+                    contextRoot = (new File(contextRoot)).getCanonicalPath();
                     classLoader.addPermission(contextRoot);
                 } catch (IOException e) {
                     // Ignore
                 }
             }
 
-            URL classesURL =
-                servletContext.getResource("/WEB-INF/classes/");
-            if (classesURL != null)
-                classLoader.addPermission(classesURL);
-
+            URL classesURL = servletContext.getResource("/WEB-INF/classes/");
+            classLoader.addPermission(classesURL);
             URL libURL = servletContext.getResource("/WEB-INF/lib/");
-            if (libURL != null) {
-                classLoader.addPermission(libURL);
-            }
+            classLoader.addPermission(libURL);
 
             if (contextRoot != null) {
 
                 if (libURL != null) {
                     File rootDir = new File(contextRoot);
                     File libDir = new File(rootDir, "WEB-INF/lib/");
-                    String path = null;
                     try {
-                        path = libDir.getCanonicalPath() + File.separator;
+                        String path = libDir.getCanonicalPath();
+                        classLoader.addPermission(path);
                     } catch (IOException e) {
                     }
-                    if (path != null)
-                        classLoader.addPermission(path);
                 }
 
             } else {
@@ -936,23 +927,19 @@ public class WebappLoader
                 if (workDir != null) {
                     if (libURL != null) {
                         File libDir = new File(workDir, "WEB-INF/lib/");
-                        String path = null;
                         try {
-                            path = libDir.getCanonicalPath() + File.separator;
+                            String path = libDir.getCanonicalPath();
+                            classLoader.addPermission(path);
                         } catch (IOException e) {
                         }
-                        classLoader.addPermission(path);
                     }
                     if (classesURL != null) {
-                        File classesDir =
-                            new File(workDir, "WEB-INF/classes/");
-                        String path = null;
+                        File classesDir = new File(workDir, "WEB-INF/classes/");
                         try {
-                            path = classesDir.getCanonicalPath()
-                                + File.separator;
+                            String path = classesDir.getCanonicalPath();
+                            classLoader.addPermission(path);
                         } catch (IOException e) {
                         }
-                        classLoader.addPermission(path);
                     }
                 }
 
