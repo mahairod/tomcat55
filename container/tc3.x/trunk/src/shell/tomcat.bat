@@ -45,7 +45,7 @@ if not "%TOMCAT_HOME%" == "" goto gotTomcatHome
 set TOMCAT_HOME=.
 :gotTomcatHome
 
-set PATH=%JAVA_HOME%\bin;%PATH%
+set PATH="%JAVA_HOME%\bin";%PATH%
 
 
 rem ----- Set Up The Runtime Classpath --------------------------------------
