@@ -206,7 +206,7 @@ public final class ValveUtil {
                     nodeLabel,
                     "EditValve.do?select=" + encodedName +
                     "&nodeLabel=" + URLEncoder.encode(nodeLabel) +
-                    "&parent=" + URLEncoder.encode(parent),
+                    "&parent=" + URLEncoder.encode(parentNodeName),
                     "content",
                     true);
                     parentNode.addChild(childNode);

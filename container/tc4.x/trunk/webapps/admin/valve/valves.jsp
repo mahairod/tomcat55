@@ -18,6 +18,10 @@
 
 <html:form method="post" action="/DeleteValves">
 
+  <bean:define id="thisParentName" type="java.lang.String"
+               name="valvesForm" property="parentObjectName"/>
+  <html:hidden property="parentObjectName"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
@@ -69,7 +73,8 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditValve.do?select=" + 
-                         java.net.URLEncoder.encode(valve.toString()) %>'>
+                         java.net.URLEncoder.encode(valve.toString()) +
+                         "&parent="+ URLEncoder.encode(thisParentName) %>'>  
                 <controls:attribute name="valve" attribute="className"/>
               </html:link>
             </div></td>

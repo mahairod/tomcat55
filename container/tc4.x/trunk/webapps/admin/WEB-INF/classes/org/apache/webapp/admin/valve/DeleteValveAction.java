@@ -170,6 +170,7 @@ public class DeleteValveAction extends Action {
         // Accumulate a list of all available valves
         ArrayList list = new ArrayList();
         String parent = request.getParameter("parent");
+        valvesForm.setParentObjectName(parent);
         
         try {
             Iterator items = (Lists.getValves(mBServer, parent)).iterator();

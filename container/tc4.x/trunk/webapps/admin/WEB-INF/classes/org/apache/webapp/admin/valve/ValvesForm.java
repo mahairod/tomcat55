@@ -93,7 +93,20 @@ public class ValvesForm extends ActionForm {
         this.valves = valves;
     }
 
-
+     /* 
+      * The parent object name of the valve to be deleted. 
+      */
+   
+    private String parentObjectName = null;
+    
+    public String getParentObjectName() {
+        return (this.parentObjectName);
+    }
+    
+    public void setParentObjectName(String parentObjectName) {
+        this.parentObjectName = parentObjectName;
+    }
+    
     // --------------------------------------------------------- Public Methods
 
 
@@ -106,7 +119,7 @@ public class ValvesForm extends ActionForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
 
         this.valves = new String[0];
-
+        this.parentObjectName = null;
     }
         
 
