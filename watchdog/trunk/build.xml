@@ -1,32 +1,45 @@
-<project name="jakarta-check" default="core" basedir=".">
+<project name="jakarta-check" default="corenew" basedir=".">
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
   <property name="build.compiler" value="classic"/>
 
-  <target name="server">
-     <mkdir dir="../build/tomcat/servlet-tests" />
-     <mkdir dir="../build/tomcat/jsp-tests" />
+  <property name="dest" value="../build/jakarta-check"/>
 
-    <copydir src="src/server/servlet-tests" dest="../build/tomcat/servlet-tests"/>
-    <copydir src="src/server/jsp-tests" dest="../build/tomcat/jsp-tests"/>
+  <target name="corenew">
+     <mkdir dir="${dest}" />
+     <mkdir dir="${dest}/classes" />
+     <mkdir dir="${dest}/conf" />
+     <mkdir dir="${dest}/props" />
+
+     <mkdir dir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
+     <mkdir dir="${dest}/webapps/jsp-tests" />
+
+     <copydir src="src/server/servlet-tests" dest="${dest}/webapps/servlet-tests"/>
+     <copydir src="src/server/jsp-tests" dest="${dest}/webapps/jsp-tests"/>
+
+     <javac srcdir="src/server/servlet-tests/WEB-INF/classes" destdir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
+     <javac srcdir="src/server/jsp-tests/WEB-INF/classes" destdir="${dest}/webapps/jsp-tests/WEB-INF/classes" />
+
+     <copydir src="src/bin" dest="${dest}"/>
+     <copydir src="src/conf" dest="${dest}/conf" />
+     <copydir src="src/props" dest="${dest}/props"/>
      
-    <javac srcdir="src/server/servlet-tests/WEB-INF/classes" destdir="../build/tomcat/servlet-tests/WEB-INF/classes" />
-    <javac srcdir="src/server/jsp-tests/WEB-INF/classes" destdir="../build/tomcat/jsp-tests/WEB-INF/classes" />
+     <javac srcdir="src/clients" destdir="${dest}/classes" />    
 
-  </target>
-
-  <target name="client">
-     <mkdir dir="../build/jakarta-check" />
-     <mkdir dir="../build/jakarta-check/bin" />
-     <mkdir dir="../build/jakarta-check/classes" />
-     <mkdir dir="../build/jakarta-check/src" />
-
-    <copydir src="src/shell" dest="../build/jakarta-check/bin"/>
-    <copydir src="src/clients" dest="../build/jakarta-check/src"/>
+     <chmod src="${dest}/runClient.sh" perm="+x" />
+ 
+     <!-- Need to copy moo - the deployment file must be self-contained, with no 
+          external dependencies -->
      
-    <javac srcdir="src/clients" destdir="../build/jakarta-check/classes" />    
-  </target>
+     <javac srcdir="../jakarta-tools/moo/src/share" destdir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
+     <javac srcdir="../jakarta-tools/moo/src/share" destdir="${dest}/webapps/jsp-tests/WEB-INF/classes" />
+
+     <!-- Build moo in the client directory too, avoid separate moo.jar problems -->
+
+     <javac srcdir="../jakarta-tools/moo/src/share" destdir="${dest}/classes" />
+
+ </target>
 
 
   <target name="core">

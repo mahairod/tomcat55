@@ -1,0 +1,14 @@
+# $Id$
+
+org.apache.jcheck.jsp.client.HelloWorld
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBeanNameClass
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBeanNameRes
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBodyExists
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBodyNew
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDPage1
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDPage2
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDRequest1
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDRequest2
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveNoBody
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positivePageScope
+org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveTypeAssignable
