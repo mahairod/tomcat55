@@ -47,6 +47,7 @@
            includes="manager-howto.xml,html-manager-howto.xml">
       <param name="relative-path" expression="."/>
       <param name="project-menu" expression="nomenu"/>
+      <param name="standalone" expression="standalone"/>
     </style>
 
     <!-- Images Subdirectory -->

@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="processes.html">
 
   &project;
 
@@ -62,7 +62,7 @@ once (no matter how many web applications you plan to develop).</p>
 the <code>build.xml</code> and <code>build.properties</code> files you will
 be using.  The directory structure is described in <a href="source.html">the
 previous section</a>, or you can use the
-<a href="sample">sample application</a> as a starting point.</p>
+<a href="sample/">sample application</a> as a starting point.</p>
 
 <p>Create your project source directory, and define it within your CVS
 repository.  This might be done by a series of commands like this, where

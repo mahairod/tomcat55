@@ -59,6 +59,8 @@ General New Features:
 [4.1.15] i18n:
          Complete French language translation.
 
+[4.1.19] Documentation:
+         Added printer friendly versions of the documents.
 
 ---------------------
 Catalina New Features:
