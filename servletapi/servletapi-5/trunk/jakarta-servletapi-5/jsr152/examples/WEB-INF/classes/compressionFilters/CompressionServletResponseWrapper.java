@@ -144,7 +144,24 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      */
     private int debug = 0;
 
+    /**
+     * Content type
+     */
+    protected String contentType = null;
+
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Set content type
+     */
+    public void setContentType(String contentType) {
+        if (debug > 1) {
+            System.out.println("setContentType to "+contentType);
+        }
+        this.contentType = contentType;
+        origResponse.setContentType(contentType);
+    }
 
 
     /**
@@ -259,13 +276,50 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
         if (debug > 1) {
             System.out.println("stream is set to "+stream+" in getWriter");
         }
-        writer = new PrintWriter(stream);
+        //String charset = getCharsetFromContentType(contentType);
+        String charEnc = origResponse.getCharacterEncoding();
+        if (debug > 1) {
+            System.out.println("character encoding is " + charEnc);
+        }
+        // HttpServletResponse.getCharacterEncoding() shouldn't return null
+        // according the spec, so feel free to remove that "if"
+        if (charEnc != null) {
+            writer = new PrintWriter(new OutputStreamWriter(stream, charEnc));
+        } else {
+            writer = new PrintWriter(stream);
+        }
+        
         return (writer);
 
     }
 
 
     public void setContentLength(int length) {
+    }
+
+
+    /**
+     * Returns character from content type. This method was taken from tomcat.
+     * @author rajo
+     */
+    private static String getCharsetFromContentType(String type) {
+
+        if (type == null) {
+            return null;
+        }
+        int semi = type.indexOf(";");
+        if (semi == -1) {
+            return null;
+        }
+        String afterSemi = type.substring(semi + 1);
+        int charsetLocation = afterSemi.indexOf("charset=");
+        if(charsetLocation == -1) {
+            return null;
+        } else {
+            String afterCharset = afterSemi.substring(charsetLocation + 8);
+            String encoding = afterCharset.trim();
+            return encoding;
+        }
     }
 
 }
