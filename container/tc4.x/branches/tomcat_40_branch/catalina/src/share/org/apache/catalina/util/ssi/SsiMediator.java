@@ -404,13 +404,12 @@ public class SsiMediator {
             }else if (path.indexOf('/', 1)==-1) {
                 //root context
                 servletContext = servletContext.getContext("/");
-            } else if (!contextPath.equals("")) {
+            } else if (!contextPath.equals("") &&
+                       (normalized !=null) && (normalized.startsWith(contextPath))) {
                 //starts with the context path of this webapp
-                if ((normalized !=null) && (normalized.startsWith(contextPath))) {
-                    // strip off the context path
-                    servletContext = servletContext.getContext(contextPath);
-                    normalized = normalized.substring(contextPath.length());
-                }
+                // strip off the context path
+                servletContext = servletContext.getContext(contextPath);
+                normalized = normalized.substring(contextPath.length());
             } else if (normalized != null){
                 // find which context is the right one to handle
                 String context = normalized.substring(0, path.indexOf('/', 1));
