@@ -397,12 +397,12 @@ public class Compiler {
             try {
                 URL includeUrl = ctxt.getResource(include);
                 if (includeUrl == null) {
-                    System.out.println("Compiler: outdated, no includeUri " + include );
+                    //System.out.println("Compiler: outdated, no includeUri " + include );
                     return true;
                 }
                 if (includeUrl.openConnection().getLastModified() >
                     targetLastModified) {
-                    System.out.println("Compiler: outdated, include old " + include );
+                    //System.out.println("Compiler: outdated, include old " + include );
                     return true;
                 }
             } catch (Exception e) {
