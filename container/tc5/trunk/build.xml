@@ -1251,6 +1251,7 @@
 
   <target name="download" depends="proxyflags" 
           description="Download binary packages" >
+    <mkdir dir="${base.path}" />
 
     <!-- commons-digester needs ../LICENSE -->
     <!-- That is ugly XXX needs a review -->
@@ -1338,12 +1339,7 @@
     </antcall>
 
 <!--
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${commons-modeler.loc}"/>
-      <param name="destfile" value="${commons-modeler.jar}"/>
-    </antcall>
---> 
-
+    This is our own stuff - don't get binaries, we'll build it ourself
     <antcall target="cvsbuild">
       <param name="location" value="${commons-modeler.cvs.loc}"/>
       <param name="subdir" value="${commons-modeler.home}"/>
@@ -1355,6 +1351,7 @@
       <param name="subdir" value="${commons-el.home}"/>
       <param name="destfile" value="${commons-el.jar}"/>
     </antcall>
+--> 
 
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
