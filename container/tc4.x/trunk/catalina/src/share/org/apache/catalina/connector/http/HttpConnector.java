@@ -805,18 +805,24 @@ public final class HttpConnector
 
 	synchronized (processors) {
 	    if (processors.size() > 0) {
-                //                if (debug >= 2)
-                //                    log("createProcessor: Reusing existing processor");
+                // if (debug >= 2)
+                // log("createProcessor: Reusing existing processor");
 		return ((HttpProcessor) processors.pop());
             }
 	    if ((maxProcessors > 0) && (curProcessors < maxProcessors)) {
-                //                if (debug >= 2)
-                //                    log("createProcessor: Creating new processor");
+                // if (debug >= 2)
+                // log("createProcessor: Creating new processor");
 	        return (newProcessor());
             } else {
-                //                if (debug >= 2)
-                //                    log("createProcessor: Cannot create new processor");
-	        return (null);
+                if (maxProcessors < 0) {
+                    // if (debug >= 2)
+                    // log("createProcessor: Creating new processor");
+                    return (newProcessor());
+	        } else {
+                    // if (debug >= 2)
+                    // log("createProcessor: Cannot create new processor");
+                    return (null);
+                }
             }
 	}
 

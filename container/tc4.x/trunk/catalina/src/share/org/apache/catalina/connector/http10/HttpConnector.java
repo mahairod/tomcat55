@@ -742,10 +742,15 @@ public final class HttpConnector
 	synchronized (processors) {
 	    if (processors.size() > 0)
 		return ((HttpProcessor) processors.pop());
-	    if ((maxProcessors > 0) && (curProcessors < maxProcessors))
+	    if ((maxProcessors > 0) && (curProcessors < maxProcessors)) {
 	        return (newProcessor());
-	    else
-	        return (null);
+	    } else {
+                if (maxProcessors < 0) {
+                    return (newProcessor());
+                } else {
+                    return (null);
+                }
+            }
 	}
 
     }
