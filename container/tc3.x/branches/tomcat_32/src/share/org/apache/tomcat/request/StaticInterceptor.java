@@ -186,7 +186,12 @@ public class StaticInterceptor extends BaseInterceptor {
 	if (localization == FILE_LOC)
 	    absPath = ctx.getRealPath (pathInfo,
 				       RequestUtil.getLocale(req),
-				       Locale.getDefault());
+				       Locale.getDefault(), "file");
+	else if (localization == DOCB_LOC)
+	    absPath = ctx.getRealPath (pathInfo,
+				       RequestUtil.getLocale(req),
+				       Locale.getDefault(), "docbase");
+
 	else
 	    absPath = ctx.getRealPath( pathInfo );
 
@@ -213,8 +218,10 @@ public class StaticInterceptor extends BaseInterceptor {
 
 	// Directory, check if we have a welcome file
 	String welcomeFile = null;
-	if (localization == FILE_LOC)
-	    welcomeFile = getWelcomeFile(ctx, file,
+
+	//
+	if (localization == FILE_LOC || localization == DOCB_LOC)
+	    welcomeFile = getWelcomeFile(ctx, pathInfo,
 					 RequestUtil.getLocale(req),
 				         Locale.getDefault());
 	else
@@ -275,31 +282,69 @@ public class StaticInterceptor extends BaseInterceptor {
 	return null;
     }
 
-    private String getWelcomeFile(Context context, File dir,
+    private String getWelcomeFile(Context context, String path,
 				  Locale loc, Locale fbloc) {
 	Enumeration enum = context.getWelcomeFiles();
+
+	String docBase = context.getAbsolutePath();
+	StringBuffer sb = new StringBuffer(docBase);
 
 	while (enum.hasMoreElements()) {
 	    String fileName = (String)enum.nextElement();
 
-	    int  ftype = fileName.lastIndexOf ('.');
-	    String fbasen = (ftype != -1)
-				? fileName.substring (0, ftype)
-				: fileName;
-
-	    String fPath = dir.getAbsolutePath()
-			 + File.separatorChar
-			 + fileName;
-
-	    String retPath = FileUtil.getLocalizedResource (fPath,
-							    loc,
-							    fbloc);
-	    if ((new File(retPath)).exists())
+	    String retPath = null;
+	    
+	    if (localization == FILE_LOC)
 	    {
-		int pathPos = retPath.lastIndexOf (fbasen);
-		return retPath.substring (pathPos);
+		//  preserve the basename of the path, so that the
+		//  localized version can be identified following
+		//  the lookup
+		//
+		int  ftype = fileName.lastIndexOf ('.');
+		String fbasen = (ftype != -1) 
+				    ? fileName.substring (0, ftype)
+				    : fileName;
+
+		String fp = concatPath(docBase, fileName);
+
+		retPath = FileUtil.getLocalizedResource (
+						 	 fp,
+						    	 loc,
+							 fbloc);
+		if (new File(retPath).exists())
+		{
+		    int pathPos = retPath.lastIndexOf (fbasen);
+		    return retPath.substring (pathPos);
+		}
+	    }
+	    else 	// localize according to DOCBASE
+	    {
+		//  make sure there is a File.separator between the
+		//  passed path and the welcome file
+		//
+		if (null != path)
+		{
+		    sb = new StringBuffer(path);
+		    if (! path.endsWith(File.separator))
+			sb.append(File.separatorChar);
+		}
+		else
+		    sb = new StringBuffer();
+
+		sb.append (fileName);
+
+		retPath = FileUtil.getDocBaseLocalizedResource (
+							docBase,
+							sb.toString(),
+							loc,
+							fbloc);
+		if ((new File(retPath)).exists())
+		{
+		    return retPath.substring(docBase.length());
+		}
 	    }
 	}
+
 	return null;
     }
 }
@@ -332,10 +377,7 @@ class FileHandler extends ServletWrapper  {
 	    subReq=req.getChild();
 
 	Context ctx=subReq.getContext();
-   // If this file is being included, use javax.servlet.include.servlet_path.
-   String pathInfo = (String)subReq.getAttribute("javax.servlet.include.servlet_path");
-   if(pathInfo == null)
-      pathInfo=subReq.getServletPath();
+	String pathInfo=subReq.getServletPath();
 	String absPath = (String)subReq.getNote( realFileNote );
 	if( absPath==null ) 
 	    absPath=ctx.getRealPath( pathInfo );
