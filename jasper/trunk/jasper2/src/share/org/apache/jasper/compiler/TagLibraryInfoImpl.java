@@ -293,9 +293,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             else if ("display-name".equals(tname) ||    // Ignored elements
                      "small-icon".equals(tname) ||
                      "large-icon".equals(tname) ||
-                     "listener".equals(tname))
+                     "listener".equals(tname)) {
                 ;
-            else {
+	    } else if ("taglib-extension".equals(tname)) {
+		// Recognized but ignored
+            } else {
                 Constants.message("jsp.warning.unknown.element.in.TLD", 
                                   new Object[] {tname},
                                   Logger.WARNING
@@ -360,6 +362,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 dynamicAttributes = JspUtil.booleanValue(element.getBody());
             } else if ("example".equals(tname)) {
                 // Ignored elements
+	    } else if ("tag-extension".equals(tname)) {
+		// Ignored
             } else {
                 Constants.message("jsp.warning.unknown.element.in.tag", 
                                   new Object[] {tname},
