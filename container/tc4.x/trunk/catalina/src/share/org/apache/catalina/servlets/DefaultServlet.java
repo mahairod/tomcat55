@@ -914,6 +914,15 @@ public class DefaultServlet
 		+ normalized.substring(index + 1);
 	}
         
+	// Replace "&" with "%26"
+        while (true) {
+	    int index = normalized.indexOf("&");
+	    if (index < 0)
+		break;
+	    normalized = normalized.substring(0, index) + "%26"
+		+ normalized.substring(index + 1);
+	}
+        
         return normalized;
         
     }
