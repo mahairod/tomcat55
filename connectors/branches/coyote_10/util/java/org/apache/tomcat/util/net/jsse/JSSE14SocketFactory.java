@@ -161,7 +161,7 @@ public class JSSE14SocketFactory  extends JSSESocketFactory {
                 KeyStore trustStore = 
                     initKeyStore( trustStoreFile, trustStorePassword);
             
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
 
                 tmf.init(trustStore);
                 tm = tmf.getTrustManagers();
