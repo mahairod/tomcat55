@@ -281,7 +281,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     public Session createSession()
     {
         //create a session and notify the other nodes in the cluster
-        Session session =  createSession(distributable,true);
+        Session session =  createSession(getDistributable(),true);
         add(session);
         return session;
     }
@@ -303,6 +303,11 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     
     public SessionMessage requestCompleted(String sessionId)
     {
+        if (  !getDistributable() ) {
+            log.warn("Received requestCompleted message, although this context["+
+                     getName()+"] is not distributable. Ignoring message");
+            return null;
+        }
         //notify javagroups
         try
         {
@@ -523,6 +528,11 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         try  {
             log("Received SessionMessage of type="+msg.getEventTypeString(),3);
             log("Received SessionMessage sender="+sender,3);
+            if (  !this.getDistributable() ) {
+                log.warn("Received replication message, although this context["+
+                         getName()+"] is not distributable. Ignoring message");
+                return;
+            }
             switch ( msg.getEventType() ) {
                 case SessionMessage.EVT_GET_ALL_SESSIONS: {
                     //get a list of all the session from this manager
