@@ -3926,7 +3926,7 @@ public class StandardContext
             if (log.isDebugEnabled())
                 log.debug("Configuring default Resources");
             try {
-                if ((docBase != null) && (docBase.endsWith(".war")) && (!(new File(docBase)).isDirectory()))
+                if ((docBase != null) && (docBase.endsWith(".war")) && (!(new File(getBasePath())).isDirectory()))
                     setResources(new WARDirContext());
                 else
                     setResources(new FileDirContext());
