@@ -146,21 +146,6 @@ final class HttpResponseImpl
 
 
     /**
-     * Return a PrintWriter that can be used to render error messages,
-     * regardless of whether a stream or writer has already been acquired.
-     */
-    public PrintWriter getReporter() {
-
-        try {
-            return (new PrintWriter(getOutputStream()));
-        } catch (IOException e) {
-            return (new PrintWriter(output));
-        }
-
-    }
-
-
-    /**
      * Send an error response with the specified status and message.
      *
      * @param status HTTP status code to send

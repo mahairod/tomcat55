@@ -430,6 +430,11 @@ public abstract class ResponseBase
      */
     public PrintWriter getReporter() {
 
+        try {
+            flushBuffer();
+        } catch (IOException e) {
+            ;
+        }
 	return (new PrintWriter(output));
 
     }

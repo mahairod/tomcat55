@@ -547,9 +547,13 @@ final class StandardWrapperValve
 	    if (rootCause != null)
 		realError = rootCause;
 	}
+        if (debug >= 1)
+            log("Handling exception: " + realError.toString());
         ErrorPage errorPage =
 	    context.findErrorPage(realError.getClass().getName());
 	if (errorPage != null) {
+            //            if (debug >= 1)
+            //                log(" Sending to custom error page " + errorPage);
 	    request.getRequest().setAttribute(Globals.EXCEPTION_TYPE_ATTR,
 					      realError.getClass());
 	    if (custom(request, response, errorPage))
@@ -557,21 +561,31 @@ final class StandardWrapperValve
 	}
 
 	// Reset the response (if possible)
+        //        if (debug >= 1)
+        //            log(" Resetting response");
 	try {
 	    response.getResponse().reset();
 	} catch (IllegalStateException e) {
+            //            if (debug >= 1)
+            //                log("  IllegalStateException: " + e.toString());
 	    ;
 	}
 
 	// Indicate an INTERNAL SERVER ERROR status (if possible)
 	try {
+            //            if (debug >= 1)
+            //                log(" Sending INTERNAL_SERVER_ERROR");
 	    ServletResponse sresponse = response.getResponse();
 	    if (sresponse instanceof HttpServletResponse)
 		((HttpServletResponse) sresponse).sendError
 		    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	} catch (IllegalStateException e) {
+            //            if (debug >= 1)
+            //                log("  IllegalStateException: " + e.toString());
 	    ;
 	} catch (IOException e) {
+            //            if (debug >= 1)
+            //                log("  IOException: " + e.toString());
 	    ;
 	}
 
@@ -580,17 +594,20 @@ final class StandardWrapperValve
 	if (exception instanceof ServletException)
 	    rootCause = ((ServletException) exception).getRootCause();
 	try {
+            //            if (debug >= 1)
+            //                log(" Setting content type to text/html");
 	    try {
 		response.getResponse().setContentType("text/html");
 	    } catch (Throwable t) {
+                //                if (debug >= 1)
+                //                    log("  Throwable: " + t.toString());
 		;
 	    }
+            //            if (debug >= 1)
+            //                log(" Getting reporter writer");
 	    PrintWriter writer = response.getReporter();
-	    try {
-		response.getResponse().flushBuffer();
-	    } catch (IOException e) {
-		;
-	    }
+            //            if (debug >= 1)
+            //                log(" Writing standard error report page");
 	    writer.println("<html>");
 	    writer.println("<head>");
 	    writer.println("<title>" +
@@ -621,8 +638,12 @@ final class StandardWrapperValve
 	    writer.println("</html>");
 	    writer.flush();
 	} catch (IllegalStateException e) {
+            //            if (debug >= 1)
+            //                log("  IllegalStateException:", e);
 	    ;
 	}
+        //        if (debug >= 1)
+        //            log(" Finished with exception() report");
 
     }
 
@@ -849,11 +870,6 @@ final class StandardWrapperValve
 		;
 	    }
 	    PrintWriter writer = response.getReporter();
-	    try {
-		hres.flushBuffer();
-	    } catch (IOException e) {
-		;
-	    }
 	    writer.println("<html>");
 	    writer.println("<head>");
 	    writer.println("<title>" +
