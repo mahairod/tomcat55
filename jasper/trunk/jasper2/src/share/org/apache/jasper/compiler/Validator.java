@@ -125,9 +125,6 @@ class Validator {
 	private boolean infoSeen = false;
 	private boolean pageEncodingSeen = false;
 
-	private Node.Root oldPageDirectiveRoot = null;
-	private Node.Root currentPageDirectiveRoot = null;
-
 	/*
 	 * Constructor
 	 */
@@ -137,16 +134,19 @@ class Validator {
 	    JspCompilationContext ctxt = compiler.getCompilationContext();
 	}
 
+	public void visit(Node.IncludeDirective n) throws JasperException {
+            // Since pageDirectiveSeen flag only applies to the Current page
+            // save it here and restore it after the file is included.
+            boolean pageEncodingSeenSave = pageEncodingSeen;
+            pageEncodingSeen = false;
+            visitBody(n);
+            pageEncodingSeen = pageEncodingSeenSave;
+        }
+
 	public void visit(Node.PageDirective n) throws JasperException {    
 
             JspUtil.checkAttributes("Page directive", n,
                                     pageDirectiveAttrs, err);
-
-	    oldPageDirectiveRoot = currentPageDirectiveRoot;
-	    currentPageDirectiveRoot = n.getRoot();
-	    if (oldPageDirectiveRoot != currentPageDirectiveRoot) {
-		pageEncodingSeen = false;
-	    }
 
 	    // JSP.2.10.1
 	    Attributes attrs = n.getAttributes();
