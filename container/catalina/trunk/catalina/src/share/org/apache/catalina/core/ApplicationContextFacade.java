@@ -533,19 +533,26 @@ public final class ApplicationContextFacade
      * Throw the real exception.
      * @param ex The current exception
      */
-    private void handleException(Exception ex, String methodName) throws Throwable{
+    private void handleException(Exception ex, String methodName)
+	    throws Throwable {
+
         Throwable realException;
-        if (ex instanceof InvocationTargetException){
-            realException = ((InvocationTargetException)ex).getTargetException();
-        } else if (ex instanceof PrivilegedActionException){
-            realException =  ((PrivilegedActionException)ex).getException();
+
+        if (sysLog.isDebugEnabled()) {   
+            sysLog.debug("ApplicationContextFacade." + methodName, ex);
+        }
+
+	if (ex instanceof PrivilegedActionException) {
+            ex = ((PrivilegedActionException) ex).getException();
+	}
+
+        if (ex instanceof InvocationTargetException) {
+            realException =
+		((InvocationTargetException) ex).getTargetException();
         } else {
             realException = ex;
         }   
 
-        if (sysLog.isDebugEnabled() ){   
-            sysLog.debug("ApplicationContextFacade." + methodName,ex);
-        }
         throw realException;
     }
 }
