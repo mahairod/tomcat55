@@ -16,7 +16,7 @@
 #   CATALINA_TMPDIR (Optional) Directory path location of temporary directory
 #                   the JVM should use (java.io.tmpdir).  Defaults to
 #                   $CATALINA_BASE/temp.
-
+#
 #   JAVA_HOME       Must point at your Java Development Kit installation.
 #
 #   JAVA_OPTS       (Optional) Java runtime options used when the "start",
