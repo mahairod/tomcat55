@@ -343,6 +343,26 @@ public final class StandardWrapper
 
 
     /**
+     * Set the load-on-startup order value from a (possibly null) string.
+     * Per the specification, any missing or non-numeric value is converted
+     * to a zero, so that this servlet will still be loaded at startup
+     * time, but in an arbitrary order.
+     *
+     * @param value New load-on-startup value
+     */
+    public void setLoadOnStartupString(String value) {
+
+	try {
+	    setLoadOnStartup(Integer.parseInt(value));
+	} catch (NumberFormatException e) {
+	    setLoadOnStartup(0);
+	}
+
+    }
+	    
+
+
+    /**
      * Set the parent Container of this Wrapper, but only if it is a Context.
      *
      * @param container Proposed parent Container
@@ -973,7 +993,7 @@ public final class StandardWrapper
 	super.start();
 
 	// Load and initialize an instance of this servlet if requested
-	if (loadOnStartup <= 0)
+	if (loadOnStartup < 0)
 	    return;
         try {
 	    load();

@@ -502,8 +502,7 @@ public final class ContextConfig
 	mapper.addRule("web-app/servlet/jsp-file",
 		       mapper.methodSetter("setJspFile", 0));
 	mapper.addRule("web-app/servlet/load-on-startup",
-		       mapper.methodSetter("setLoadOnStartup", 0,
-					   new String[]{"int"}));
+		       mapper.methodSetter("setLoadOnStartupString", 0));
 	mapper.addRule("web-app/servlet/security-role-ref",
 		       mapper.methodSetter("addSecurityReference", 2));
 	mapper.addRule("web-app/servlet/security-role-ref/role-link",
