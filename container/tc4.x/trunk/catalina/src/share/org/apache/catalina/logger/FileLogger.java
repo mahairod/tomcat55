@@ -279,9 +279,11 @@ public final class FileLogger
         // If the date has changed, switch log files
         if (!date.equals(tsDate)) {
             synchronized (this) {
-                close();
-                date = tsDate;
-                open();
+                if (!date.equals(tsDate)) {
+                    close();
+                    date = tsDate;
+                    open();
+                }
             }
         }
 
