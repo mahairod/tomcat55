@@ -594,6 +594,10 @@ public class SmapUtil {
             visitBody(n);
         }
 
+        public void visit(Node.ELExpression n) throws JasperException {
+            doSmap(n);
+        }
+
         public void visit(Node.TemplateText n) throws JasperException {
             Mark mark = n.getStart();
             if (mark == null) {
