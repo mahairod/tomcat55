@@ -204,7 +204,7 @@ static HANDLE wrapper_execute (wrapper_config *cfg) {
 
     /* Setup command line */
     commandline=ap_pstrcat(wrapper_pool, cfg->bin, " ", binparam, " ", 
-                           cfg->class, " \"", cfg->config->properties, "\" ",
+                           cfg->class,
                            cfg->classparam, NULL);
                            
     /* Setup environment */

@@ -244,7 +244,6 @@ pid_t wrapper_spawn(void) {
         binparams = binparams->next;
     }
     if (cfg->class[0]!='\0') arg[x++]=strdup(cfg->class);
-    arg[x++]=strdup(cfg->config->properties);
     if (cfg->classparam[0]!='\0') arg[x++]=strdup(cfg->classparam);
     arg[x]=NULL;
 
