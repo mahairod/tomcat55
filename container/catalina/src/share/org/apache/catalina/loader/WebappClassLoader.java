@@ -1496,7 +1496,10 @@ public class WebappClassLoader
             deleteDir(loaderDir);
         }
 
+        // Clear the classloader reference in common-logging
         org.apache.commons.logging.LogFactory.release(this);
+        // Clear the classloader reference in the VM's bean introspector
+        java.beans.Introspector.flushCaches();
 
     }
 
