@@ -67,24 +67,62 @@ package org.apache.jasper34.core;
  *
  * @author Anil K. Vijendran
  */
-public interface Mangler {
+public abstract class Mangler {
+    protected String baseDir;
+    protected String classDir;
+    protected String srcFile;
+    
+
+    public void init( String classDir, String baseDir, String srcFile ) {
+	this.srcFile=srcFile;
+	this.baseDir=baseDir;
+	this.classDir=classDir;
+    }
+    
     
     /** The class name ( without package ) of the
      *  generated servlet, including the version number
      */
-    String getClassName();
+    public abstract String getClassName();
 
     /** The package name. It is based on the .jsp path, with
      *  all unsafe components escaped.
      */
-    String getPackageName();
+    public abstract String getPackageName();
 
     /** The full name of the .java file, including
      *  version number ( based on className and outputDir )
      */
-    String getJavaFileName();
+    public abstract String getJavaFileName();
 
     /** The full name of the .class file ( without version number)
      */
-    String getClassFileName();
+    public abstract String getClassFileName();
+
+    // -------------------- Utils --------------------
+
+    /** The class name ( package + class + versioning ) of the
+     *  compilation result
+     */
+    public String getServletClassName() {
+	if( getPackageName() !=null ) {
+	    return getPackageName()  + "." + getClassName();
+	} else {
+	    return getClassName();
+	}
+    }
+    
+    // -------------------- Versioning support --------------------
+
+    public int getVersion() {
+	return 0;
+    }
+
+    public void nextVersion() {
+    }
+
+    // -------------------- Utils --------------------
+
+    
+    
 }
