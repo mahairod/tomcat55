@@ -273,7 +273,7 @@
 
   <!-- ==================== Default Session Configuration ================= -->
 
-  <!-- You can set the default session timeout (in seconds) for all newly   -->
+  <!-- You can set the default session timeout (in minutes) for all newly   -->
   <!-- created sessions by modifying the value below.                       -->
 
   <session-config>
