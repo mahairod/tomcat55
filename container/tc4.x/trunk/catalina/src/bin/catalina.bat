@@ -68,7 +68,7 @@ if "%1" == "start" goto doStart
 if "%1" == "stop" goto doStop
 
 :doUsage
-echo Usage:  catalina ( env | run | start | stop )
+echo Usage:  catalina ( env ^| run ^| start ^| stop )
 echo Commands:
 echo   env -   Set up environment variables that Catalina would use
 echo   run -   Start Catalina in the current window
