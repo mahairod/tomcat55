@@ -85,6 +85,7 @@ import org.apache.catalina.Request;
  *
  * @author Craig R. McClanahan
  * @author Remy Maucherat
+ * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
 
@@ -258,5 +259,37 @@ public class RequestFacade implements ServletRequest {
         return request.getRealPath(path);
     }
 
+    /**
+     * Returns the Internet Protocol (IP) source port of the client
+     * or last proxy that sent the request.
+     */    
+    public int getRemotePort(){
+        return request.getRemotePort();
+    }
 
+
+    /**
+     * Returns the host name of the Internet Protocol (IP) interface on
+     * which the request was received.
+     */
+    public String getLocalName(){
+        return request.getLocalName();
+    }
+
+    /**
+     * Returns the Internet Protocol (IP) address of the interface on
+     * which the request  was received.
+     */       
+    public String getLocalAddr(){
+        return request.getLocalAddr();
+    }
+
+    
+    /**
+     * Returns the Internet Protocol (IP) port number of the interface
+     * on which the request was received.
+     */
+    public int getLocalPort(){
+        return request.getLocalPort();
+    }
 }
