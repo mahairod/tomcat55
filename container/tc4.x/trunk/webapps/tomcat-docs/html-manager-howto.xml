@@ -315,19 +315,19 @@ page for the <code>java.net.JarURLConnection</code> class.  Use only URLs that
 refer to the entire WAR file.</p>
 
 <p>In this example the web application located in the directory
-<code>/path/to/foo</code> on the Tomcat server is installed as the
-web application context named <code>/footoo</code>.
+<code>C:\path\to\foo</code> on the Tomcat server (running on Windows)
+is installed as the web application context named <code>/footoo</code>.
 <source>
 Context Path: /footoo
-WAR or Directory URL: file:/path/to/foo
+WAR or Directory URL: file:C:/path/to/foo
 </source>
 </p>
 
 <p>In this example the ".war" file <code>/path/to/bar.war</code> on the
-Tomcat server is installed as the web application context named
-<code>/bar</code>. Notice that there is no <code>path</code> parameter
-so the context path defaults to the name of the web application archive
-file without the ".war" extension.
+Tomcat server (running on Unix) is installed as the web application
+context named <code>/bar</code>. Notice that there is no <code>path</code>
+parameter so the context path defaults to the name of the web application
+archive file without the ".war" extension.
 <source>
 WAR or Directory URL: jar:file:/path/to/bar.war!/
 </source>
@@ -369,9 +369,9 @@ configuration file.</p>
 <p>A Context configuration ".xml" file can contain valid XML for a
 web application Context just as if it were configured in your
 Tomcat <code>server.xml</code> configuration file. Here is an
-example:
+example for Tomcat running on Windows:
 <source>
-&lt;Context path="/foobar" docBase="/path/to/application/foobar"
+&lt;Context path="/foobar" docBase="C:\path\to\application\foobar"
          debug="0"&gt;
 
   &lt;!-- Link to the user database we will get roles from --&gt;
@@ -387,15 +387,15 @@ to select a web application ".war" file or directory it overrides any
 docBase configured in the context configuration ".xml" file.</p>
 
 <p>Here is an example of installing an application using a Context
-configuration ".xml" file.
+configuration ".xml" file for Tomcat running on Windows.
 <source>
-XML Configuration file URL: file:/path/to/context.xml
+XML Configuration file URL: file:C:/path/to/context.xml
 </source>
 </p>
 
 <p>Here is an example of installing an application using a Context
 configuration ".xml" file and a web application ".war" file located
-on the server.
+on the server (Tomcat running on Unix).
 <source>
 XML Configuration file URL: file:/path/to/context.xml
 WAR or Directory URL: jar:file:/path/to/bar.war!/
