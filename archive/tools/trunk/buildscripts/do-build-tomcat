@@ -1,0 +1,12 @@
+#!/bin/sh
+
+BASEDIR=`dirname $0`
+. ${BASEDIR}/env-client
+
+# XXX will become do-build-tomcat
+
+echo "<build name=\"jakarta-tomcat\">"
+cd ${BUILD_DIR}/ws/jakarta-tomcat
+sh build.sh dist
+echo "</build>"
+

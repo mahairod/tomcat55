@@ -12,15 +12,8 @@ cd /x3/www/jakarta.apache.org/builds/tomcat/standalone/nightly
 
 # Get Canonical Unix build
 
-ftp ftp://tokyo.javasoft.com/pub/tomcat-$TDSTRING.log
-ftp ftp://tokyo.javasoft.com/pub/tomcat-$TDSTRING.tar.Z
-cat tomcat-$TDSTRING.log | mail -s "Unix Standalone Build $TDSTRING" tomcat-dev@jakarta.apache.org 
-mv tomcat-$TDSTRING.log tomcat-$TDSTRING-sparc-sol-7-jdk117.log
-cp tomcat-$TDSTRING.tar.Z tomcat-foo.tar.Z
-uncompress tomcat-foo.tar.Z
-mv tomcat-foo.tar tomcat-$TDSTRING.tar
-bzip2 --stdout tomcat-$TDSTRING.tar > tomcat-$TDSTRING.bz2
-gzip tomcat-$TDSTRING.tar
+ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-sparc-solaris2.4-$TDSTRING.log
+ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-$TDSTRING.tar.Z
 
 # Get Canoncial Windows build
 
@@ -31,9 +24,26 @@ gzip tomcat-$TDSTRING.tar
 # Solaris Intel
 
 # Linux Sparc
+ftp ftp://kyoto.javasoft.com/pub/tomcat/tomcat-sparc-Linux-$TDSTRING.log
 
 # Linux Intel
+ftp ftp://osaka.javasoft.com/pub/tomcat/tomcat-i386-Linux-$TDSTRING.log
 
 # FBSD Intel
 
 # Windows NT
+
+
+
+## Post processing
+cat tomcat-sparc-solaris2.4-$TDSTRING.log | mail -s "Unix Standalone Build $TDSTRING" tomcat-dev@jakarta.apache.org 
+
+# XXX mv tomcat-$TDSTRING.log tomcat-$TDSTRING-sparc-sol-7-jdk117.log
+
+# Re-Compress of standard Java builds
+cp tomcat-$TDSTRING.tar.Z tomcat-foo.tar.Z
+uncompress tomcat-foo.tar.Z
+mv tomcat-foo.tar tomcat-$TDSTRING.tar
+bzip2 --stdout tomcat-$TDSTRING.tar > tomcat-$TDSTRING.bz2
+gzip tomcat-$TDSTRING.tar
+

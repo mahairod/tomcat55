@@ -3,10 +3,40 @@
 BASEDIR=`dirname $0`
 . ${BASEDIR}/env-client
 
-# XXX will become do-build-tomcat
+## Try to keep the log file XML-like, so we can XSL-extract
+# usefull info from it
+echo "<build-report>" > $TLOGFILE
+echo "<build-start>" `date` "</build-start>"  >> $TLOGFILE    
+echo "<build-id>$TDSTRING</build-id>"  >> $TLOGFILE    
+## echo "<platform>" `uname -a` "</platform>" >> $TLOGFILE
+echo "<hostname>$HOSTNAME</hostname>" >> $TLOGFILE
+echo "<hosttype>$HOSTTYPE</hosttype>" >> $TLOGFILE
+echo "<ostype>$OSTYPE</ostype>" >> $TLOGFILE
 
-echo "<build name=\"jakarta-tomcat\">"
-cd ${BUILD_DIR}/ws/jakarta-tomcat
-sh build.sh dist
-echo "</build>"
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-build-tomcat 2>&1 >> $TLOGFILE
+
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-build-test 2>&1 >> $TLOGFILE
+
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-build-apache1.3 2>&1 >> $TLOGFILE
+
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-test 2>&1 >> $TLOGFILE
+
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-package 2>&1 >> $TLOGFILE
+
+echo "<build-end>" `date` "</build-end>"  >> $TLOGFILE    
+echo "</build-report>" >> $TLOGFILE
+
+
+
+
 

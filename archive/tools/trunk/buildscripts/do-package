@@ -12,3 +12,8 @@ cd ${BUILD_DIR}/result
 compress -f tomcat-$TDSTRING.tar
 
 cp tomcat-$TDSTRING.tar.Z tomcat-$TDSTRING.log $FTP_DIR
+
+cd /opt/apache-1.3.9
+tar cf ${BUILD_DIR}/result/tomcat-$TDSTRING.tar *
+cd ${BUILD_DIR}/result
+compress -f tomcat-$TDSTRING.tar

@@ -1,41 +1,40 @@
 #!/bin/sh
 
+# This script defines:
+#
+# Layout/directory  variables
+# BUILD_DIR TOOLS_DIR SCRIPT_DIR SRC_DIR
+# APACHE_HOME
+# FTP_DIR
+#
+# TLOGFILE
+#
+# TDSTRING
+#
+# We also use some pre-defined shell variables:
+# OSTYPE
+# HOSTTYPE
+#
+# 
+
 # This the client nightly build sh script. This was originally written
 # for tokyo, a sparc solaris client.
 
 TYEAR=`date +%Y`
 TMONTH=`date +%m`
 TDAY=`date +%d`
-TDSTRING=$TYEAR-$TMONTH-$TDAY
-TSEP=-----------------------------------------------
-
-#
-# WARNING: right now, all these scripts are deadly specific to tokyo
-# we need to define the following parametrs in a nightly.conf file
-# that is unique to the client.
-#
-# For example, we should have a tokyo.conf file for tokyo that
-# contains the following information:
-#
-#       $WS_DIR
-#       $RESULT_DIR
-#       $FTP_PICKUP_DIR
-#       $BUILD_STANDALONE       boolean flag to build tomcat standalone
-#       $BUILD_INTEGRATED       boolean flag to build tomcat+apache
-#
-# other hosts should have a hostname.conf file and this script should
-# be called via `client-nightly hostname.conf` from the cron job
-#
+TDSTRING=$TYEAR$TMONTH$TDAY
 
 # default, may be overriden in host-specific
 BUILD_DIR=$HOME
+SRC_DIR=$HOME/ws
 ## Better ? BUILD_DIR=/tmp/$TDSTRING
 
 ## XXX Duncan specific, cut build
 TOOLS_DIR=$HOME/build/jakarta-tools
 SCRIPT_DIR=${TOOLS_DIR}/buildscripts
 
-TLOGFILE=${BUILD_DIR}/result/tomcat-$TDSTRING.log
+TLOGFILE=${BUILD_DIR}/result/tomcat-${HOSTTYPE}-${OSTYPE}-$TDSTRING.log
 
 if [ "$APACHE_HOME" = "" ] ; then 
     APACHE_HOME=/opt/apache-1.3.9
@@ -45,10 +44,9 @@ if [ "$CVSROOT" = "" ] ; then
     CVSROOT=:pserver:anoncvs@dev.apache.org:/home/cvspublic
 fi
 
-FTP_DIR=/export/home/ftp/pub
-
 export TDSTRING TLOGFILE TSEP BUILD_DIR TOOLS_DIR SCRIPT_DIR CVSROOT FTP_DIR
 
+## Override with platform specific, host specific and user specific options
 
 # per arch - "official"
 if [ -f ${SCRIPT_DIR}/env-${HOSTTYPE}-${OSTYPE} ]; then 
