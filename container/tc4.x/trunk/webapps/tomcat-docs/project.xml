@@ -29,6 +29,7 @@
         <item name="Manager App HOW-TO"    href="manager-howto.html"/>
         <item name="Proxy Support HOW-TO"  href="proxy-howto.html"/>
         <item name="Realm HOW-TO"          href="realm-howto.html"/>
+        <item name="Security Mgr. HOW-TO"  href="security-manager-howto.html"/>
         <item name="SSL Config HOW-TO"     href="ssl-howto.html"/>
     </menu>
 
