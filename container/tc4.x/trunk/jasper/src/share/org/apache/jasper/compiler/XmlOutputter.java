@@ -98,7 +98,9 @@ public class XmlOutputter {
      */
     private int jspRootLevel = 0;
 
-    public static final String JSP_NAMESPACE = "http://java.sun.com/JSP/TagLibraryDescriptor";
+    public static final String JSP_NAMESPACE = "http://java.sun.com/jsp_1_2";
+    // FLAG: JSP 1.2 PFD2 implement later
+    // public static final String JSP_NAMESPACE = "http://java.sun.com/JSP/TagLibraryDescriptor";
     public static final String JSP_VERSION = "1.2";
 
 
@@ -110,7 +112,8 @@ public class XmlOutputter {
 	rootAttrs = new AttributesImpl();
 
         rootAttrs.addAttribute("", "xmlns:jsp", "xmlns:jsp", "CDATA", JSP_NAMESPACE);
-        rootAttrs.addAttribute("", "version", "version", "CDATA", JSP_VERSION);
+        // FLAG: JSP 1.2 PFD2 implement later
+        // rootAttrs.addAttribute("", "version", "version", "CDATA", JSP_VERSION);
     }
 
     //*********************************************************************
