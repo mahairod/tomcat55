@@ -36,8 +36,6 @@ rem
 rem $Id$
 rem ---------------------------------------------------------------------------
 
-set CATALINA_OPTS=%CATALINA_OPTS% -Dsun.io.useCanonCaches=false
-
 rem Guess CATALINA_HOME if not defined
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
