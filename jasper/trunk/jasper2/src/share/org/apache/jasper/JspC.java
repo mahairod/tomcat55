@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -80,6 +81,7 @@ import org.apache.tools.ant.AntClassLoader;
  * @author Danno Ferrin
  * @author Pierre Delisle
  * @author Costin Manolache
+ * @author Yoav Shapira
  */
 public class JspC implements Options {
 
@@ -112,6 +114,8 @@ public class JspC implements Options {
     private static final String SWITCH_DIE = "-die";
     private static final String SWITCH_POOLING = "-poolingEnabled";
     private static final String SWITCH_ENCODING = "-javaEncoding";
+    private static final String SWITCH_ADD_EXTENSION = "-addExtension";
+
     private static final String SHOW_SUCCESS ="-s";
     private static final String LIST_ERRORS = "-l";
     private static final int NO_WEBXML = 0;
@@ -151,7 +155,13 @@ public class JspC implements Options {
     private String compilerSourceVM = "1.4";
 
     private boolean classDebugInfo = true;
-    private Vector extensions;
+
+    /**
+     * The file extensions to be handled as JSP files.
+     * Default list is .jsp and .jspx.
+     */
+    private List extensions;
+
     private Vector pages = new Vector();
     private boolean errorOnUseBeanInvalidClassAttribute = true;
 
@@ -284,6 +294,8 @@ public class JspC implements Options {
                 setCompilerSourceVM(nextArg());
             } else if (tok.equals(SWITCH_TARGET)) {
                 setCompilerTargetVM(nextArg());
+            } else if (tok.equals(SWITCH_ADD_EXTENSION)) {
+                addExtension(nextArg());
             } else {
                 if (tok.startsWith("-")) {
                     throw new JasperException("Unrecognized option: " + tok +
@@ -499,7 +511,7 @@ public class JspC implements Options {
     }
 
     public TldLocationsCache getTldLocationsCache() {
-    return tldLocationsCache;
+        return tldLocationsCache;
     }
 
     /**
@@ -534,6 +546,32 @@ public class JspC implements Options {
 
     public void setClassPath(String s) {
         classPath=s;
+    }
+
+    /**
+     * Returns the list of file extensions
+     * that are treated as JSP files.
+     *
+     * @return The list of extensions
+     */
+    public List getExtensions() {
+        return extensions;
+    }
+
+    /**
+     * Adds the given file extension to the
+     * list of extensions handled as JSP files.
+     *
+     * @param extension The extension to add, e.g. "myjsp"
+     */
+    public void addExtension(final String extension) {
+        if(extension != null) {
+            if(extensions == null) {
+                extensions = new Vector();
+            }
+
+            extensions.add(extension);
+        }
     }
 
     /**
@@ -851,11 +889,13 @@ public class JspC implements Options {
     public void scanFiles( File base ) throws JasperException {
         Stack dirs = new Stack();
         dirs.push(base);
-        if (extensions == null) {
-            extensions = new Vector();
-            extensions.addElement("jsp");
-            extensions.addElement("jspx");
+
+        // Make sure default extensions are always included
+        if ((getExtensions() == null) || (getExtensions().size() < 2)) {
+            addExtension("jsp");
+            addExtension("jspx");
         }
+
         while (!dirs.isEmpty()) {
             String s = dirs.pop().toString();
             File f = new File(s);
@@ -870,7 +910,7 @@ public class JspC implements Options {
                         String path = f2.getPath();
                         String uri = path.substring(uriRoot.length());
                         ext = files[i].substring(files[i].lastIndexOf('.') +1);
-                        if (extensions.contains(ext) ||
+                        if (getExtensions().contains(ext) ||
                             jspConfig.isJspPage(uri)) {
                             pages.addElement(path);
                         }
