@@ -131,8 +131,10 @@ public class PageContextImpl extends PageContext {
 	    throw new IllegalStateException("Page needs a session and none is available");
 
 	// initialize the initial out ...
-
-	this.out = _createOut(bufferSize, autoFlush); // throws
+	if( out == null ) 
+	    out = _createOut(bufferSize, autoFlush); // throws
+	else
+	    ((JspWriterImpl)out).init(response, bufferSize, autoFlush );
 
 	if (this.out == null)
 	    throw new IllegalStateException("failed initialize JspWriter");
@@ -162,7 +164,7 @@ public class PageContextImpl extends PageContext {
 	autoFlush    = true;
 	request      = null;
 	response     = null;
-	out	     = null; // out is closed elsewhere
+	// Reuse	out	     = null; // out is closed elsewhere
 	session      = null;
 
 	attributes.clear();
