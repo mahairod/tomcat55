@@ -157,6 +157,7 @@ public class StandardContext
      */
     static {
         urlEncoder = new URLEncoder();
+        urlEncoder.addSafeCharacter('~');
         urlEncoder.addSafeCharacter('-');
         urlEncoder.addSafeCharacter('_');
         urlEncoder.addSafeCharacter('.');
