@@ -931,8 +931,13 @@ public class ContextManager {
 	Context ctx = req.getContext();
 	if(ctx==null) ctx=getContext("");
 
-	ctx.log( code + " "  + req + " " +
-		 req.getAttribute("javax.servlet.error.message"));
+	// don't log normal cases ( redirect and need_auth ), they are not
+	// error
+	// XXX this log was intended to debug the status code generation.
+	// it can be removed for all cases.
+	if( code != 302 && code != 401 )
+	    ctx.log( code + " "  + req + " " +
+		     req.getAttribute("javax.servlet.error.message"));
 
 	errorPath = ctx.getErrorPage( code );
 	if( errorPath != null ) {
@@ -1214,7 +1219,7 @@ public class ContextManager {
      * @deprecated
      */
     public void setPort(int port) {
-	/*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	if( debug > 20 )/*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
 	this.port=port;
     }
 
@@ -1235,7 +1240,7 @@ public class ContextManager {
      * @deprecated
      */
     public void setHostName( String host) {
-	/*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	if( debug > 20 ) /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
 	this.hostname=host;
     }
 
@@ -1264,7 +1269,7 @@ public class ContextManager {
      * @deprecated Path is not "unique key".
      */
     public Enumeration getContextNames() {
-	/*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	if( debug>20 ) /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
         return contexts.keys();
     }
 

@@ -272,7 +272,7 @@ public class ServletWrapper extends Handler {
 	// make sure the servlet in loaded before calling preInit
 	// Jsp case - maybe another Jsp engine is used
 	if( servlet==null && path != null &&  servletClassName == null) {
-	    System.out.println("Handle Jsp init " + servletClassName);
+	    //	    System.out.println("Handle Jsp init " + servletClassName);
 	    handleJspInit();
 	}
 	// Will throw exception if it can't load, let upper

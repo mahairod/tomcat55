@@ -1030,13 +1030,7 @@ public class Context {
     public boolean allowAttribute( String name ) {
 	// check if we can access this attribute.
 	if( isTrusted() ) return true;
-	if( true ) {
-	    // XXX  XXX XXX
-	    log( "Illegal access to internal attribute ", null, Logger.ERROR);
-	    return true;
-	}
-	 	
-	// XXX We may check Permissions, etc 
+	log( "Illegal access to internal attribute ", null, Logger.ERROR);
 	return false;
     }
 }
