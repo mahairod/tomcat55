@@ -194,7 +194,7 @@ public class DigestAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

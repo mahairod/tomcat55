@@ -323,7 +323,7 @@ final class ApplicationDispatcher
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

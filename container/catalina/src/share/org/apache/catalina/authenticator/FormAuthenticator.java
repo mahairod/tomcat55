@@ -122,7 +122,7 @@ public class FormAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
