@@ -523,11 +523,22 @@ public class NamingContextListener
      */
     public void propertyChange(PropertyChangeEvent event) {
 
+        if (!initialized)
+            return;
+
         Object source = event.getSource();
         if (source == namingResources) {
+
+            // Setting the context in read/write mode
+            ContextAccessController.setWritable(getName(), container);
+
             processGlobalResourcesChange(event.getPropertyName(),
                                          event.getOldValue(),
                                          event.getNewValue());
+
+            // Setting the context in read only mode
+            ContextAccessController.setReadOnly(getName());
+
         }
 
     }

@@ -71,6 +71,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import javax.naming.directory.DirContext;
+import org.apache.naming.ContextAccessController;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
@@ -1212,7 +1213,6 @@ public class StandardDefaultContext
         }
 
         if (listener == null) {
-            System.out.println("Not found");
             return;
         }
 
@@ -1222,6 +1222,9 @@ public class StandardDefaultContext
             contexts.put(context, context);
 
             NamingResources contextResources = context.getNamingResources();
+
+            // Setting the context in read/write mode
+            ContextAccessController.setWritable(listener.getName(), context);
 
             // Send notifications to the listener to add the appropriate 
             // resources
@@ -1257,6 +1260,9 @@ public class StandardDefaultContext
                 listener.addResourceEnvRef
                     (envRefs[i], findResourceEnvRef(envRefs[i]));
             }
+
+            // Setting the context in read only mode
+            ContextAccessController.setReadOnly(listener.getName());
 
             // Add listener to the NamingResources listener list
             namingResources.addPropertyChangeListener(listener);
