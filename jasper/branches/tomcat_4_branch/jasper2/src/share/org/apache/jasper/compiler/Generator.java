@@ -545,7 +545,7 @@ public class Generator {
 
 	private Hashtable tagVarNumbers;
 	private String parent;
-	private String pushBodyCount;
+	private String pushBodyCountVar;
 
 	private ServletWriter out;
 	private MethodsBuffer methodsBuffer;
@@ -1177,17 +1177,17 @@ public class Generator {
 
 	    String tmpParent = parent;
 	    parent = tagHandlerVar;
-	    String tmpPushBodyCount = null;
+	    String tmpPushBodyCountVar = null;
 	    if (n.implementsTryCatchFinally()) {
-		tmpPushBodyCount = pushBodyCount;
-		pushBodyCount = tagPushBodyCountVar;
+		tmpPushBodyCountVar = pushBodyCountVar;
+		pushBodyCountVar = tagPushBodyCountVar;
 	    }
 
 	    visitBody(n);
 
 	    parent = tmpParent;
 	    if (n.implementsTryCatchFinally()) {
-		pushBodyCount = tmpPushBodyCount;
+		pushBodyCountVar = tmpPushBodyCountVar;
 	    }
 
 	    generateCustomEnd(n, tagHandlerVar, tagEvalVar,
@@ -1390,8 +1390,8 @@ public class Generator {
 		    if (n.implementsTryCatchFinally()) {
 			out.printin(tagPushBodyCountVar);
 			out.println("++;");
-		    } else if (pushBodyCount != null) {
-			out.printin(pushBodyCount);
+		    } else if (pushBodyCountVar != null) {
+			out.printin(pushBodyCountVar);
 			out.println("++;");
 		    }
 		    out.printil("out = _bc;");
@@ -1458,8 +1458,8 @@ public class Generator {
 		    if (n.implementsTryCatchFinally()) {
 			out.printin(tagPushBodyCountVar);
 			out.println("--;");
-		    } else if (pushBodyCount != null) {
-			out.printin(pushBodyCount);
+		    } else if (pushBodyCountVar != null) {
+			out.printin(pushBodyCountVar);
 			out.println("--;");
 		    }
 		    out.popIndent();
