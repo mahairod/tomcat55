@@ -3,7 +3,6 @@
 
   <!-- ==================== Initialization properties ===================== -->
   <property name="ant.home" value="../jakarta-ant"/>
-  <property name="build.compiler" value="classic"/>
   <property name="debug" value="on"/>
   <property name="j2ee.home" value="../../j2ee/build/unix"/>
   <property name="jaxp" value="../jaxp-1.0.1" />
