@@ -3,6 +3,9 @@
      Every start all application are deployed only to all running cluster nodes
      	New registered nodes don't get the applications!
      	Deploy must send a GET_ALL_APP to all other Deployers.
+        FH: Correction, you should not send GET_ALL_APP to all deployers, only
+to the main one. Which could be another property of the Member object, it
+would not make sense to transfer the same webapp over and over again.
      		Only watchEnabled Deployer send this member all deployed application.
      Add JMX Support
      	Resend Deployed Applications to all or one cluster node.
