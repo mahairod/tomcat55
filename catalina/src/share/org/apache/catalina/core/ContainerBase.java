@@ -1600,6 +1600,10 @@ public abstract class ContainerBase
         return domain;
     }
 
+    public void setDomain(String domain) {
+        this.domain=domain;
+    }
+    
     public String getType() {
         return type;
     }
