@@ -121,10 +121,12 @@ public abstract class HttpJspBase
     {
 
 	PageContext pageContext=null;
+	JspWriter out=null;
 	try {
 	    try {
 		_jspx_init(); // need to be in init !
 		pageContext = _getPageContext( request, response ); 
+		out=pageContext.getOut();
 		_jspService(pageContext, request, response );
 	    } catch (Exception ex) {
 		if (pageContext != null)
@@ -138,9 +140,12 @@ public abstract class HttpJspBase
 	    IOException err=null;
 	    if( pageContext!=null ) {
 		try {
-		    JspWriterImpl out=(JspWriterImpl)pageContext.getOut();
-		    if( out != null )
-			out.flushBuffer();
+		    // it can also be BodyContent !
+		    // XXX how do we flush body content ?
+		    // We only flush the top level out, what if we have
+		    // a stack ?
+		    if( out instanceof JspWriterImpl )
+			((JspWriterImpl)out).flushBuffer();
 		} catch( IOException ex ) {
 		    err=ex;
 		    // handlePageException( ex );
