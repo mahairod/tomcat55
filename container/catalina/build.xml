@@ -52,6 +52,7 @@
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-daemon.jar}"/>
+    <pathelement location="${commons-daemon-launcher.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
