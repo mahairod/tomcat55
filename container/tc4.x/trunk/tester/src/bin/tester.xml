@@ -331,6 +331,88 @@
 
   <target name="RequestDispatcher">
 
+    <!-- ========== Basic Forward and Include Functionality =============== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward00?path=/Forward00a"
+      outContent="Forward00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward00?path=/Forward00a"
+      outContent="Forward00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward00?path=/Forward00b"
+      outContent="Forward00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward00?path=/Forward00b"
+      outContent="Forward00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward00?path=/Forward00c.jsp"
+      outContent="Forward00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward00?path=/Forward00c.jsp"
+      outContent="Forward00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward00?path=!Forward00d"
+      outContent="Forward00d PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward00?path=!Forward00d"
+      outContent="Forward00d PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward00?path=!Forward00e"
+      outContent="Forward00e PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward00?path=!Forward00e"
+      outContent="Forward00e PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=/Include00a"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=/Include00a"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=/Include00b"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=/Include00b"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=/Include00c.jsp"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=/Include00c.jsp"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=!Include00d"
+      outContent="Include00d PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=!Include00d"
+      outContent="Include00d PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=!Include00e"
+      outContent="Include00e PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=!Include00e"
+      outContent="Include00e PASSED" debug="${debug}"/>
+
     <!-- ========== Forward and Include to Static Resource ================ -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"

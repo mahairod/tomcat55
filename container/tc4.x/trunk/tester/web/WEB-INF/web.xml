@@ -104,6 +104,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward00</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedForward01</url-pattern>
     </filter-mapping>
 
@@ -140,6 +145,11 @@
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedGolden01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude00</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -343,6 +353,31 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Forward00</servlet-name>
+        <servlet-class>org.apache.tester.Forward00</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward00a</servlet-name>
+        <servlet-class>org.apache.tester.Forward00a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward00b</servlet-name>
+        <jsp-file>/Forward00b.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward00d</servlet-name>
+        <servlet-class>org.apache.tester.Forward00d</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward00e</servlet-name>
+        <jsp-file>/Forward00e.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
         <servlet-name>Forward01</servlet-name>
         <servlet-class>org.apache.tester.Forward01</servlet-class>
     </servlet>
@@ -385,6 +420,31 @@
     <servlet>
         <servlet-name>Golden01</servlet-name>
         <servlet-class>org.apache.tester.Golden01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include00</servlet-name>
+        <servlet-class>org.apache.tester.Include00</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include00a</servlet-name>
+        <servlet-class>org.apache.tester.Include00a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include00b</servlet-name>
+        <jsp-file>/Include00b.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include00d</servlet-name>
+        <servlet-class>org.apache.tester.Include00d</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include00e</servlet-name>
+        <jsp-file>/Include00e.jsp</jsp-file>
     </servlet>
 
     <servlet>
@@ -632,6 +692,26 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>Forward00</servlet-name>
+        <url-pattern>/Forward00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward00</servlet-name>
+        <url-pattern>/WrappedForward00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward00a</servlet-name>
+        <url-pattern>/Forward00a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward00b</servlet-name>
+        <url-pattern>/Forward00b</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>Forward01</servlet-name>
         <url-pattern>/Forward01</url-pattern>
     </servlet-mapping>
@@ -719,6 +799,26 @@
     <servlet-mapping>
         <servlet-name>Golden01</servlet-name>
         <url-pattern>/WrappedGolden01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include00</servlet-name>
+        <url-pattern>/Include00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include00</servlet-name>
+        <url-pattern>/WrappedInclude00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include00a</servlet-name>
+        <url-pattern>/Include00a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include00b</servlet-name>
+        <url-pattern>/Include00b</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
