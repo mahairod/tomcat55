@@ -24,6 +24,16 @@
          request="/index.html"
           status="200"/>
 
+    <!-- Should be able to use relative path to document root -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="/examples/.." debug="${debug}"
+          status="200"/>
+
+    <!-- Should not be able to use relative path above document root -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="/examples/../.." debug="${debug}"
+          status="404"/>
+
   </target>
 
 
