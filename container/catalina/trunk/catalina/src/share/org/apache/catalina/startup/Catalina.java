@@ -429,6 +429,7 @@ public class Catalina extends Embedded {
      * Start a new server instance.
      */
     public void load() {
+
         initDirs();
 
         // Before digester - it may be needed
@@ -503,8 +504,6 @@ public class Catalina extends Embedded {
      */
     public void load(String args[]) {
 
-        setCatalinaHome();
-        setCatalinaBase();
         try {
             if (arguments(args))
                 load();
