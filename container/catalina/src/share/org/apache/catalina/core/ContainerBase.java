@@ -980,7 +980,8 @@ public abstract class ContainerBase
 
         // Validate and update our current component state
         if (started) {
-            log.info(sm.getString("containerBase.alreadyStarted", logName()));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("containerBase.alreadyStarted", logName()));
             return;
         }
         
@@ -1037,7 +1038,8 @@ public abstract class ContainerBase
 
         // Validate and update our current component state
         if (!started) {
-            log.info(sm.getString("containerBase.notStarted", logName()));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("containerBase.notStarted", logName()));
             return;
         }
 
@@ -1136,7 +1138,8 @@ public abstract class ContainerBase
                 if( controller == oname ) {
                     Registry.getRegistry(null, null)
                         .unregisterComponent(oname);
-                    log.debug("unregistering " + oname);
+                    if(log.isDebugEnabled())
+                        log.debug("unregistering " + oname);
                 }
             } catch( Throwable t ) {
                 log.error("Error unregistering ", t );

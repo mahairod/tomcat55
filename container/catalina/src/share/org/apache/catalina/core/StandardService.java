@@ -513,7 +513,7 @@ public class StandardService
                 }
             }
         }
-
+        // FIXME pero -- Why container stop first? KeepAlive connetions can send request! 
         // Stop our defined Connectors first
         synchronized (connectors) {
             for (int i = 0; i < connectors.length; i++) {
@@ -561,7 +561,7 @@ public class StandardService
                 Registry.getRegistry(null, null)
                     .registerComponent(this, oname, null);
             } catch (Exception e) {
-                log.error("Error registering ",e);
+                log.error(sm.getString("standardService.register.failed",domain),e);
             }
             
             
@@ -584,14 +584,14 @@ public class StandardService
     
     public void destroy() throws LifecycleException {
         if( started ) stop();
-        // unregister should be here probably
+        // FIXME unregister should be here probably -- stop doing that ?
     }
 
     public void init() {
         try {
             initialize();
         } catch( Throwable t ) {
-            t.printStackTrace();
+            log.error(sm.getString("standardService.initialize.failed",domain),t);
         }
     }
 
