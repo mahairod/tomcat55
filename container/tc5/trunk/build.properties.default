@@ -61,10 +61,10 @@ commons-beanutils.loc=${base-jakarta.loc}/commons/beanutils/binaries/commons-bea
 
 
 # ----- Commons Collections, version 2.0 or later -----
-commons-collections.home=${base.path}/commons-collections-2.1
+commons-collections.home=${base.path}/commons-collections-2.1.1
 commons-collections.lib=${commons-collections.home}
-commons-collections.jar=${commons-collections.lib}/commons-collections.jar
-commons-collections.loc=${base-jakarta.loc}/commons/collections/binaries/collections-2.1.tar.gz
+commons-collections.jar=${commons-collections.lib}/commons-collections-2.1.1.jar
+commons-collections.loc=${base-jakarta.loc}/commons/collections/binaries/commons-collections-2.1.1.tar.gz
 
 
 # ----- Commons Launcher, version 0.9 or later -----
