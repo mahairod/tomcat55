@@ -238,3 +238,17 @@ tyrex.jar=${tyrex.lib}/tyrex-1.0.jar
 tyrex.loc=http://telia.dl.sourceforge.net/sourceforge/tyrex/tyrex-1.0.jar
 
 
+# ----- Servlet 2.3, version 20020801 or later -----
+servlet23api.home=${base.path}/servletapi-4
+servlet23api.lib=${servlet23api.home}/lib
+servlet23api.jar=${servlet23api.lib}/servlet23api.jar
+servlet23api.loc=jakarta-servletapi-4
+
+
+# ----- Watchdog, version 20020801 or later -----
+watchdog.home=${base.path}/watchdog-4.0
+watchdog.webapps=${watchdog.home}/dist/webapps
+watchdog.war=${watchdog.webapps}/servlet-tests.war
+watchdog.loc=jakarta-watchdog-4.0
+
+

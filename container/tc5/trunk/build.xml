@@ -29,8 +29,6 @@
            value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
-  <property name="watchdog.home"
-           value="${basedir}/../jakarta-watchdog-4.0"/>
 
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${catalina.home}/build"/>
@@ -53,7 +51,6 @@
     <echo message="catalina.home=${catalina.home}"/>
     <echo message="jasper.home=${jasper.home}"/>
     <echo message="jtc.home=${jtc.home}"/>
-    <echo message="watchdog.home=${watchdog.home}"/>
 
     <ant dir="${catalina.home}" target="flags.display"/>
 
@@ -157,10 +154,6 @@
   <!-- ======================= WATCHDOG: Run Watchdog Tests================ -->
   <target name="watchdog"
    description="Watchdog Servlet Container Tests">
-    <ant dir="${watchdog.home}" target="dist">
-      <property name="servlet23api.home" value="${api.home}"/>
-      <property name="servlet22api.home" value="${api.home}"/>
-    </ant>
     <property name="catalina.base" location="${tomcat.build}/tmp/tomcat"/>
     <delete dir="${catalina.base}"/>
     <mkdir dir="${catalina.base}"/>
@@ -662,6 +655,18 @@
       <param name="destfile" value="${tyrex.jar}"/>
       <param name="destdir" value="${tyrex.home}"/>
     </antcall>
+    <antcall target="cvsbuild">
+      <param name="location" value="${servlet23api.loc}"/>
+      <param name="subdir" value="${servlet23api.home}"/>
+      <param name="destfile" value="${servlet23api.jar}"/>
+    </antcall>
+    <antcall target="cvsbuild">
+      <param name="servlet22api.home" value="${servlet23api.home}"/>
+      <param name="location" value="${watchdog.loc}"/>
+      <param name="subdir" value="${watchdog.home}"/>
+      <param name="destfile" value="${watchdog.war}"/>
+    </antcall>
+
   </target>
 
   <target name="proxyflags">
