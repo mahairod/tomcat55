@@ -37,6 +37,9 @@
       <fix>
         Give proper permission to the balancer app when running under the security manager. (jfarcand)
       </fix>
+      <fix>
+        <bug>30869</bug>: Make sure JAAS realm name is legal. (yoavs)
+      </fix>
   </subsection>
 
   <subsection name="Coyote">
