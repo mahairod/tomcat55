@@ -369,7 +369,7 @@ public final class JspRuntimeContext implements Runnable {
         if( policy != null ) {
             try {          
                 // Get the permissions for the web app context
-                String contextDir = options.getScratchDir().toString();
+                String contextDir = context.getRealPath("/");
                 if( contextDir == null ) {
                     contextDir = options.getScratchDir().toString();
                 }
