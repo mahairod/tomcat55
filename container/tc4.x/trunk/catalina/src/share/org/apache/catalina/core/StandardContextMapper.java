@@ -65,6 +65,7 @@
 package org.apache.catalina.core;
 
 
+import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -176,6 +177,9 @@ public final class StandardContextMapper
      *
      * @param request Request being processed
      * @param update Update the Request to reflect the mapping selection?
+     *
+     * @exception IllegalArgumentException if the relative portion of the
+     *  path cannot be URL decoded
      */
     public Container map(Request request, boolean update) {
 
@@ -195,6 +199,19 @@ public final class StandardContextMapper
 	    context.log("Mapping contextPath='" + contextPath +
 			"' with requestURI='" + requestURI +
 			"' and relativeURI='" + relativeURI + "'");
+
+        // Decode the relative URI, because we will ultimately return both
+        // servletPath and pathInfo as decoded strings
+        try {
+            relativeURI = URLDecoder.decode(relativeURI);
+            if (debug >= 1)
+                context.log("Decoded relativeURI='" + relativeURI + "'");
+        } catch (Exception e) {
+            //            context.log(sm.getString("standardContext.urlDecode",
+            //                                     relativeURI), e);
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.urlDecode", relativeURI));
+        }
 
 	// Apply the standard request URI mapping rules from the specification
 	Wrapper wrapper = null;

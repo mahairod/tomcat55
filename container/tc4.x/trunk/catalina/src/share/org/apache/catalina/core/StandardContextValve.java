@@ -79,6 +79,7 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -185,7 +186,18 @@ final class StandardContextValve
         }
 
 	// Select the Wrapper to be used for this Request
-	Wrapper wrapper = (Wrapper) context.map(request, true);
+	Wrapper wrapper = null;
+        try {
+            wrapper = (Wrapper) context.map(request, true);
+        } catch (IllegalArgumentException e) {
+            badRequest(requestURI, (HttpServletResponse) response.getResponse());
+            try {
+                response.finishResponse();
+            } catch (IOException f) {
+                ;
+            }
+            return;
+        }
 	if (wrapper == null) {
             notFound(requestURI, (HttpServletResponse) response.getResponse());
             try {
@@ -226,6 +238,41 @@ final class StandardContextValve
 
 
     /**
+     * Report a "bad request" error for the specified resource.  FIXME:  We
+     * should really be using the error reporting settings for this web
+     * application, but currently that code runs at the wrapper level rather
+     * than the context level.
+     *
+     * @param requestURI The request URI for the requested resource
+     * @param response The response we are creating
+     */
+    private void badRequest(String requestURI, HttpServletResponse response) {
+
+        try {
+            requestURI = RequestUtil.filter(requestURI);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("text/html");
+            PrintWriter writer = response.getWriter();
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("<title>Tomcat Error Report</title>");
+            writer.println("<body bgcolor=\"white\">");
+            writer.println("<br><br>");
+            writer.println("<h1>HTTP Status 400 - " + requestURI + "</h1>");
+            writer.println(sm.getString("standardContext.badRequest",
+                                        requestURI));
+            writer.println("</body>");
+            writer.println("</html>");
+            writer.flush();
+        } catch (IllegalStateException e) {
+            ;
+        } catch (IOException e) {
+            ;
+        }
+
+    }
+
+    /**
      * Report a "not found" error for the specified resource.  FIXME:  We
      * should really be using the error reporting settings for this web
      * application, but currently that code runs at the wrapper level rather
@@ -237,8 +284,8 @@ final class StandardContextValve
     private void notFound(String requestURI, HttpServletResponse response) {
 
         try {
+            requestURI = RequestUtil.filter(requestURI);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            // response.setMessage(requestURI);
             response.setContentType("text/html");
             PrintWriter writer = response.getWriter();
             writer.println("<html>");

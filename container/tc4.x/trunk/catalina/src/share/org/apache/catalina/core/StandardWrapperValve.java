@@ -93,6 +93,7 @@ import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.util.InstanceSupport;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -622,44 +623,6 @@ final class StandardWrapperValve
 
 
     /**
-     * Filter the specified message string for characters that are sensitive
-     * in HTML.  This avoids potential attacks caused by including JavaScript
-     * codes in the request URL that is often reported in error messages.
-     *
-     * @param message The message string to be filtered
-     */
-    private String filter(String message) {
-
-        if (message == null)
-            return (null);
-
-        char content[] = new char[message.length()];
-        message.getChars(0, message.length(), content, 0);
-        StringBuffer result = new StringBuffer(content.length + 50);
-        for (int i = 0; i < content.length; i++) {
-            switch (content[i]) {
-            case '<':
-                result.append("&lt;");
-                break;
-            case '>':
-                result.append("&gt;");
-                break;
-            case '&':
-                result.append("&amp;");
-                break;
-            case '"':
-                result.append("&quot;");
-                break;
-            default:
-                result.append(content[i]);
-            }
-        }
-        return (result.toString());
-
-    }
-
-
-    /**
      * Log a message on the Logger associated with our Container (if any)
      *
      * @param message Message to be logged
@@ -811,7 +774,7 @@ final class StandardWrapperValve
 	HttpServletResponse hres =
 	    (HttpServletResponse) response.getResponse();
 	int statusCode = hresponse.getStatus();
-	String message = filter(hresponse.getMessage());
+	String message = RequestUtil.filter(hresponse.getMessage());
 	if (message == null)
 	    message = "";
 
