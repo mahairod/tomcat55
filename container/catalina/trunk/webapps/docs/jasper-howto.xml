@@ -162,7 +162,7 @@ i.e. only one JSP page can be compiled at a time.  Set fork to
 <code>true</code> so that Ant compiles JSP pages in a seperate JVM.
 This removes the synchronization of JSP page compiles and prevents
 all the javac classes from being instantiated and subsequently garbage
-collected by the JVM Tomcat is running in.</li
+collected by the JVM Tomcat is running in.</li>
 </ul>
 </p>
 
