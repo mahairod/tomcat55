@@ -61,7 +61,7 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
      * The string resources for this package.
      */
     protected static final StringManager sm = StringManager
-            .getManager("org.apache.catalina.cluster.session");
+            .getManager(Constants.Package);
 
     private boolean enabled = true;
 
@@ -82,11 +82,11 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
 
             if (Lifecycle.AFTER_START_EVENT.equals(event.getType())) {
                 if (log.isDebugEnabled())
-                    log.debug("SessionID Binder Listener started");
+                    log.debug(sm.getString("jvmRoute.listener.started"));
                 startSessionIDListener((StandardHost) event.getSource());
             } else if (Lifecycle.BEFORE_STOP_EVENT.equals(event.getType())) {
                 if (log.isDebugEnabled())
-                    log.debug("SessionID Binder Listener stopped");
+                    log.debug(sm.getString("jvmRoute.listener.stopped"));
                 stopSessionIDListener((StandardHost) event.getSource());
             }
         }

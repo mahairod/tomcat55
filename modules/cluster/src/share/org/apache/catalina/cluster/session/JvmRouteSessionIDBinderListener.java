@@ -29,7 +29,8 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.util.StringManager;
 
 /**
- * Receive SessionID cluster change from other backup node after primary session node is failed.
+ * Receive SessionID cluster change from other backup node after primary session
+ * node is failed.
  * 
  * @author Peter Rossbach
  * @version 1.0
@@ -49,8 +50,7 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
     /**
      * The string manager for this package.
      */
-    private StringManager sm = StringManager
-            .getManager("org.apache.catalina.cluster.session");
+    private StringManager sm = StringManager.getManager(Constants.Package);
 
     protected CatalinaCluster cluster = null;
 
@@ -62,12 +62,12 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
     private long numberOfSessions = 0;
 
     /*--Constructor---------------------------------------------*/
-    
+
     public JvmRouteSessionIDBinderListener() {
     }
 
     /*--Logic---------------------------------------------------*/
-    
+
     /**
      * Return descriptive information about this implementation.
      */
@@ -86,6 +86,7 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
 
     /**
      * Add this Mover as Cluster Listener ( receiver)
+     * 
      * @throws LifecycleException
      */
     public void start() throws LifecycleException {
@@ -94,18 +95,19 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
         getCluster().addClusterListener(this);
         started = true;
         if (log.isInfoEnabled())
-            log.info("Cluster JvmRouteSessionIDBinderListener started.");
+            log.info(sm.getString("jvmRoute.clusterListener.started"));
     }
 
     /**
      * Remove this from Cluster Listener
+     * 
      * @throws LifecycleException
      */
     public void stop() throws LifecycleException {
         started = false;
         getCluster().removeClusterListener(this);
         if (log.isInfoEnabled())
-            log.info("Cluster JvmRouteSessionIDBinderListener stopped.");
+            log.info(sm.getString("jvmRoute.clusterListener.stopped"));
     }
 
     /**
@@ -119,13 +121,11 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
         if (msg instanceof SessionIDMessage && msg != null) {
             SessionIDMessage sessionmsg = (SessionIDMessage) msg;
             if (log.isDebugEnabled())
-                log
-                        .debug("Cluster JvmRouteSessionIDBinderListener received session ID "
-                                + sessionmsg.getOrignalSessionID()
-                                + " set to "
-                                + sessionmsg.getBackupSessionID()
-                                + " for context path"
-                                + sessionmsg.getContextPath());
+                log.debug(sm.getString(
+                        "jvmRoute.receiveMessage.sessionIDChanged", sessionmsg
+                                .getOrignalSessionID(), sessionmsg
+                                .getBackupSessionID(), sessionmsg
+                                .getContextPath()));
             Container host = getCluster().getContainer();
             if (host != null) {
                 Context context = (Context) host.findChild(sessionmsg
@@ -137,25 +137,25 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
                         if (session != null) {
                             session.setId(sessionmsg.getBackupSessionID());
                         } else if (log.isInfoEnabled())
-                            log.info("Lost Session "
-                                    + sessionmsg.getOrignalSessionID());
+                            log.info(sm.getString("jvmRoute.lostSession",
+                                    sessionmsg.getOrignalSessionID(),
+                                    sessionmsg.getContextPath()));
                     } catch (IOException e) {
                         log.error(e);
                     }
 
                 } else if (log.isErrorEnabled())
-                    log.error("Context " + sessionmsg.getContextPath()
-                            + "not found at "
-                            + ((StandardEngine) host.getParent()).getJvmRoute()
-                            + "!");
+                    log.error(sm.getString("jvmRoute.contextNotFound",
+                            sessionmsg.getContextPath(), ((StandardEngine) host
+                                    .getParent()).getJvmRoute()));
             } else if (log.isErrorEnabled())
-                log.error("No host found " + sessionmsg.getContextPath());
+                log.error(sm.getString("jvmRoute.hostNotFound", sessionmsg.getContextPath()));
         }
     }
 
     /**
      * Accept only SessionIDMessages
-	 * 
+     * 
      * @param msg
      *            ClusterMessage
      * @return boolean - returns true to indicate that messageReceived should be

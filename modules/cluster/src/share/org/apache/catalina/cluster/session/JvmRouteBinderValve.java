@@ -59,15 +59,14 @@ import org.apache.catalina.valves.ValveBase;
  * conf/enginename/hostname/context.xml.default for all host application
  * 
  * <pre>
- * 
- *                    &lt;Context&gt;
- *                      &lt;Valve className=&quot;org.apache.catalina.cluster.session.JvmRouteBinderValve&quot; /&gt;  
- *                    &lt;/Context&gt;
- *  
+ *  &lt;Context&gt;
+ *  &lt;Valve className=&quot;org.apache.catalina.cluster.session.JvmRouteBinderValve&quot; /&gt;  
+ *  &lt;/Context&gt;
  * </pre>
  * 
+ * 
  * @author Peter Rossbach
- * @version 1.0
+ * @version 1.1
  */
 public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
 
@@ -78,7 +77,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
     /**
      * The descriptive information about this implementation.
      */
-    protected static final String info = "org.apache.catalina.session.JvmRouteBinderValve/1.0";
+    protected static final String info = "org.apache.catalina.session.JvmRouteBinderValve/1.1";
 
     /*--Instance Variables--------------------------------------*/
 
@@ -100,8 +99,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
     /**
      * The string manager for this package.
      */
-    protected StringManager sm = StringManager
-            .getManager("org.apache.catalina.cluster.session");
+    protected StringManager sm = StringManager.getManager(Constants.Package);
 
     /**
      * Has this component been started yet?
@@ -118,7 +116,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
      */
     protected long numberOfSessions = 0;
 
-    protected String sessionIdAttribute = "JvmRouteOrignalSessionID";
+    protected String sessionIdAttribute = "org.apache.catalina.cluster.session.JvmRouteOrignalSessionID";
 
     /**
      * The lifecycle event support for this component.
@@ -216,20 +214,19 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
             String jvmRoute = getLocalJvmRoute();
             if (jvmRoute == null) {
                 if (log.isWarnEnabled())
-                    log.warn("No engine jvmRoute!");
+                    log.warn(sm.getString("jvmRoute.missingJvmRouteAttribute"));
                 return;
             }
             if (request.isRequestedSessionIdFromURL()) {
-                if (log.isInfoEnabled())
-                    log.info("Skip reassign jvm route check, sessionid comes from URL!");
+                if (log.isDebugEnabled())
+                    log.debug(sm.getString("jvmRoute.skipURLSessionIDs"));
             } else {
                 handleJvmRoute(session.getId(), jvmRoute, request, response);
             }
             if (log.isInfoEnabled()) {
                 long t2 = System.currentTimeMillis();
                 long time = t2 - t1;
-                if (log.isInfoEnabled())
-                    log.info("Turnover Check time " + time + "msec");
+                log.info(sm.getString("jvmRoute.turnoverInfo", new Long(time)));
             }
         }
     }
@@ -254,13 +251,11 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
             if (container.getManager() instanceof DeltaManager) {
                 manager = container.getManager();
                 if (log.isDebugEnabled())
-                    log.debug("Found Cluster DeltaManager "
-                            + container.getManager() + " at "
-                            + getContainer().getName());
+                    log.debug(sm.getString("jvmRoute.foundManager", container
+                            .getManager(), getContainer().getName()));
             } else if (log.isDebugEnabled())
-                log.debug("No Cluster DeltaManager "
-                        + container.getManager() + " at "
-                        + getContainer().getName());
+                log.debug(sm.getString("jvmRoute.notFoundManager", container
+                        .getManager(), getContainer().getName()));
         }
         return manager;
     }
@@ -288,9 +283,8 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
         }
         if (requestJvmRoute != null && !requestJvmRoute.equals(localJvmRoute)) {
             if (log.isDebugEnabled()) {
-                log.debug("We have detected a failover with differen jvmRoute."
-                        + " old one: " + requestJvmRoute + " new one: "
-                        + localJvmRoute + ". Will reset the session id.");
+                log.debug(sm.getString("jvmRoute.failover", requestJvmRoute,
+                        localJvmRoute, sessionId));
             }
             // OK - turnover the session ?
             String newSessionID = sessionId.substring(0, index) + "."
@@ -307,7 +301,8 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
                 numberOfSessions++;
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("Unable to find session= [" + sessionId + "]");
+                    log.debug(sm.getString("jvmRoute.cannotFindSession",
+                            sessionId));
                 }
             }
         }
@@ -336,16 +331,19 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
         setNewSessionCookie(newSessionID, request, response);
         // set orginal sessionid at request, to allow application detect the
         // change
-        if (sessionIdAttribute != null && !"".equals(sessionIdAttribute))
+        if (sessionIdAttribute != null && !"".equals(sessionIdAttribute)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Set Orginal Session id at request attriute " + sessionIdAttribute+ " value: " + sessionId);
+            }
             request.setAttribute(sessionIdAttribute, sessionId);
+        }
         // now sending the change to all other clusternode!
         sendSessionIDClusterBackup(sessionId, newSessionID);
         lifecycle
                 .fireLifecycleEvent("After session migration", catalinaSession);
         if (log.isDebugEnabled()) {
-            log
-                    .debug("Changed catalina session to= ["
-                            + newSessionID + "] old one= [" + sessionId + "]");
+            log.debug(sm.getString("jvmRoute.changeSession", sessionId,
+                    newSessionID));
         }
     }
 
@@ -401,10 +399,10 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
                     newCookie.setSecure(true);
                 }
                 if (log.isDebugEnabled()) {
-                    log.debug("Setting cookie with session id:" + sessionId
-                            + " & name: " + Globals.SESSION_COOKIE_NAME
-                            + " & path: " + newCookie.getPath() + " & secure: "
-                            + newCookie.getSecure());
+                    log.debug(sm.getString("jvmRoute.newSessionCookie",
+                            sessionId, Globals.SESSION_COOKIE_NAME, newCookie
+                                    .getPath(), new Boolean(newCookie
+                                    .getSecure())));
                 }
                 response.addCookie(newCookie);
             }
@@ -469,13 +467,12 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
                 && ((Host) container).getCluster() != null)
             cluster = (CatalinaCluster) ((Host) container).getCluster();
         if (cluster == null) {
-            throw new RuntimeException(
-                    "No clustering support at container "
-                            + container.getName());
+            throw new RuntimeException("No clustering support at container "
+                    + container.getName());
         }
 
         if (log.isInfoEnabled())
-            log.info("JvmRouteBinderValve started");
+            log.info(sm.getString("jvmRoute.valve.started"));
 
     }
 
@@ -503,7 +500,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
 
         numberOfSessions = 0;
         if (log.isInfoEnabled())
-            log.info("JvmRouteBinderValve stopped)");
+            log.info(sm.getString("jvmRoute.valve.stopped"));
 
     }
 
