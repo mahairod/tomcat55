@@ -433,6 +433,24 @@ public final class NamingResources {
 
 
     /**
+     * Return the resource parameters with the specified name, if any;
+     * otherwise return <code>null</code>.
+     *
+     * @param name Name of the desired resource parameters
+     */
+    public ResourceParams[] findResourceParams() {
+
+        synchronized (resourceParams) {
+            ResourceParams results[] = 
+                new ResourceParams[resourceParams.size()];
+            return ((ResourceParams[]) resourceParams.values()
+                    .toArray(results));
+        }
+
+    }
+
+
+    /**
      * Remove any EJB resource reference with the specified name.
      *
      * @param name Name of the EJB resource reference to remove
