@@ -6,6 +6,11 @@
 
 <web-app>
 
+    <display-name>Servlet 2.4 Examples</display-name>
+    <description>
+      Servlet 2.4 Examples.
+    </description>
+
     <!-- Define servlet-mapped and path-mapped example filters -->
     <filter>
         <filter-name>Servlet Mapped Filter</filter-name>
