@@ -145,19 +145,31 @@ public class AddConnectorAction extends Action {
             connectorFm.setScheme("http");       
         }
         connectorFm.setAcceptCountText("10");
+        connectorFm.setCompression("off");
+        connectorFm.setConnLingerText("-1");
         connectorFm.setConnTimeOutText("60000");
+        connectorFm.setConnUploadTimeOutText("300000");
         connectorFm.setBufferSizeText("2048");
+        connectorFm.setDisableUploadTimeout("false");
         connectorFm.setEnableLookups("true");
         connectorFm.setAddress("");
         connectorFm.setPortText("");
         connectorFm.setRedirectPortText("-1");
         connectorFm.setMinProcessorsText("5");
         connectorFm.setMaxProcessorsText("20");
+        connectorFm.setMaxKeepAliveText("100");
+        connectorFm.setSecure("false");
+        connectorFm.setTcpNoDelay("true");
+        connectorFm.setXpoweredBy("false");
 
         //supported only by HTTPS
+        connectorFm.setAlgorithm("SunX509");
         connectorFm.setClientAuthentication("false");
+        connectorFm.setCiphers("");
         connectorFm.setKeyStoreFileName("");
         connectorFm.setKeyStorePassword("");
+        connectorFm.setKeyStoreType("JKS");
+        connectorFm.setSslProtocol("TLS");
                        
         // supported only by Coyote connectors
         connectorFm.setProxyName("");
