@@ -468,6 +468,20 @@ public class Catalina {
 	mapper.addRule(prefix + "", mapper.addChild
 		       ("addChild", "org.apache.catalina.Container"));
 
+        mapper.addRule(prefix + "/ResourceParams", mapper.objectCreate
+                       ("org.apache.catalina.deploy.ResourceParams"));
+        mapper.addRule(prefix + "/ResourceParams",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/ResourceParams", mapper.addChild
+                       ("addResourceParams", 
+                        "org.apache.catalina.deploy.ResourceParams"));
+	mapper.addRule(prefix + "/ResourceParams/parameter",
+		       mapper.methodSetter("addParameter", 2));
+	mapper.addRule(prefix + "/ResourceParams/parameter/name",
+		       mapper.methodParam(0));
+	mapper.addRule(prefix + "/ResourceParams/parameter/value",
+		       mapper.methodParam(1));
+
         mapper.addRule(prefix + "/Ejb", mapper.objectCreate
                        ("org.apache.catalina.deploy.ContextEjb"));
         mapper.addRule(prefix + "/Ejb",

@@ -72,6 +72,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Hashtable;
+import java.util.Enumeration;
 import java.util.StringTokenizer;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -115,6 +116,7 @@ import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.StandardLoader;
@@ -350,6 +352,12 @@ public final class StandardContext
      * The resource references for this web application, keyed by name.
      */
     private HashMap resources = new HashMap();
+
+
+    /**
+     * The resource parameters for this web application, keyed by name.
+     */
+    private HashMap resourceParams = new HashMap();
 
 
     /**
@@ -1079,6 +1087,22 @@ public final class StandardContext
 	    envs.put(environment.getName(), environment);
 	}
 	fireContainerEvent("addEnvironment", environment.getName());
+
+    }
+
+
+    /**
+     * Add resource parameters for this web application.
+     *
+     * @param resourceParameters New resource parameters
+     */
+    public void addResourceParams(ResourceParams resourceParameters) {
+
+	synchronized (resourceParams) {
+	    resourceParams.put(resourceParameters.getName(), 
+                               resourceParameters);
+	}
+	fireContainerEvent("addResourceParams", resourceParameters.getName());
 
     }
 
@@ -3133,7 +3157,7 @@ public final class StandardContext
                 (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink(),
                  ejb.getRunAs());
             // Adding the additional parameters, if any
-            addAdditionalParameters(envCtx, ref, ejb.getName());
+            addAdditionalParameters(ref, ejb.getName());
             try {
                 createSubcontexts(compCtx, ejb.getName());
                 compCtx.bind(ejb.getName(), ref);
@@ -3153,7 +3177,7 @@ public final class StandardContext
                 (resource.getType(), resource.getDescription(),
                  resource.getScope(), resource.getAuth());
             // Adding the additional parameters, if any
-            addAdditionalParameters(envCtx, ref, resource.getName());
+            addAdditionalParameters(ref, resource.getName());
             try {
                 createSubcontexts(compCtx, resource.getName());
                 compCtx.bind(resource.getName(), ref);
@@ -3172,7 +3196,7 @@ public final class StandardContext
             // Create a reference to the resource env.
             Reference ref = new ResourceEnvRef(type);
             // Adding the additional parameters, if any
-            addAdditionalParameters(envCtx, ref, key);
+            addAdditionalParameters(ref, key);
             try {
                 createSubcontexts(compCtx, key);
                 compCtx.bind(key, ref);
@@ -3224,17 +3248,18 @@ public final class StandardContext
     /**
      * Add additional parameters to the reference.
      */
-    private void addAdditionalParameters(javax.naming.Context ctx,
-                                         Reference ref, String name) {
-        try {
-            NamingEnumeration enum = ctx.listBindings(name);
-            while (enum.hasMore()) {
-                Binding binding = (Binding) enum.next();
-                StringRefAddr refAddr = new StringRefAddr
-                    (binding.getName(), binding.getObject().toString());
-                ref.add(refAddr);
-            }
-        } catch (NamingException e) {
+    private void addAdditionalParameters(Reference ref, String name) {
+        ResourceParams resourceParameters = 
+            (ResourceParams) resourceParams.get(name);
+        if (resourceParameters == null)
+            return;
+        Hashtable params = resourceParameters.getParameters();
+        Enumeration enum = params.keys();
+        while (enum.hasMoreElements()) {
+            String paramName = (String) enum.nextElement();
+            String paramValue = (String) params.get(paramName);
+            StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+            ref.add(refAddr);
         }
     }
 
