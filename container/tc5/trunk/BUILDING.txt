@@ -1,10 +1,10 @@
 $Id$
 
 
-                 Building The Tomcat 5 Servlet/JSP Container
+                 Building The Tomcat 5.5 Servlet/JSP Container
                  ===========================================
 
-This subproject contains the source code for Tomcat 5, a container that
+This subproject contains the source code for Tomcat 5.5, a container that
 implements the Servlet 2.4 and JSP 2.0 specifications from the Java
 Community Process <http://www.jcp.org/>.  In order to build a binary
 distribution version of the container from a source distribution, 
@@ -47,12 +47,12 @@ do the following:
   available, which will be used to actually perform the build.
 
 
-(2) Building Tomcat 5
+(2) Building Tomcat 5.5
 
 (2.1) Download main build script and build binary distribution
 
 * Download the main build.xml script from:
-  http://jakarta.apache.org/tomcat/tomcat-5.0-doc/build.xml
+  http://jakarta.apache.org/tomcat/tomcat-5.5-doc/build.xml
 
 * Create a new directory, and copy the newly download build.xml to it. This
   directory will be referred to as the ${tomcat.source} directory in the rest

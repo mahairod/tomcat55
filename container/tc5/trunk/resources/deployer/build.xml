@@ -51,7 +51,9 @@
 
     <javac destdir="${webapp.path}/WEB-INF/classes"
            optimize="off"
-           debug="on" failonerror="false"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
+           failonerror="false"
            srcdir="${webapp.path}/WEB-INF/classes"
            encoding="UTF-8"
 	   excludes="**/*.smap">

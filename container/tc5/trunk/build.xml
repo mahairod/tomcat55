@@ -65,6 +65,8 @@
   <!-- Some compilers will disable debugging if true. And it doesn't do anything 
        in most cases -->
   <property name="compile.optimize"     value="false"/>
+  <property name="compile.debug"        value="true" />
+  <property name="compile.deprecation"  value="false" />
 
 
   <!-- =================== DETECT: Display configuration ================== -->
@@ -335,7 +337,9 @@
 
     <javac destdir="${ROOT.base}/WEB-INF/classes"
            optimize="off"
-           debug="on" failonerror="false"
+           debug="${compile.debug}" 
+           deprecation="${compile.deprecation}"
+           failonerror="false"
            srcdir="${ROOT.base}/WEB-INF/src" 
 	   excludes="**/*.smap">
       <classpath>
@@ -360,7 +364,9 @@
 
     <javac destdir="${jsp-examples.base}/WEB-INF/classes"
            optimize="off"
-           debug="on" failonerror="false"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
+           failonerror="false"
            srcdir="${jsp-examples.base}/WEB-INF/src" 
 	   excludes="**/*.smap">
       <classpath>
@@ -383,7 +389,9 @@
 
     <javac destdir="${admin.base}/WEB-INF/classes"
            optimize="off"
-           debug="on" failonerror="false"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
+           failonerror="false"
            srcdir="${admin.base}/WEB-INF/src" 
 	   excludes="**/*.smap">
       <classpath>
@@ -569,9 +577,11 @@
     </move>
   	<mkdir dir="${tomcat-dbcp.home}/classes"/>
     <javac destdir="classes"
-           optimize="off" debug="on"
+           optimize="off"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
            sourcepath="${tomcat-dbcp.home}/src/java"
-          srcdir="src/java" >
+           srcdir="src/java" >
       <include name="**" />
     </javac>
     <jar jarfile="${tomcat-dbcp.jar}"
