@@ -1731,26 +1731,22 @@ public class StandardContext
      */
     public void addChild(Container child) {
 
+        // Global JspServlet
+        Wrapper oldJspServlet = null;
+
         if (!(child instanceof Wrapper)) {
             throw new IllegalArgumentException
                 (sm.getString("standardContext.notWrapper"));
         }
 
         Wrapper wrapper = (Wrapper) child;
+        boolean isJspServlet = "jsp".equals(child.getName());
 
-        /*
-         * Allow webapp to override JspServlet inherited from global web.xml.
-         * The webapp-specific JspServlet inherits all the mappings specified
-         * in the global web.xml, and may add additional ones.
-         */
-        if ("jsp".equals(wrapper.getName())) {
-            Wrapper jspServlet = (Wrapper) findChild("jsp");
-            if (jspServlet != null) {
-                String[] jspMappings = jspServlet.findMappings();
-                for (int i=0; jspMappings!=null && i<jspMappings.length; i++) {
-                    wrapper.addMapping(jspMappings[i]);
-                }
-                removeChild(jspServlet);
+        // Allow webapp to override JspServlet inherited from global web.xml.
+        if (isJspServlet) {
+            oldJspServlet = (Wrapper) findChild("jsp");
+            if (oldJspServlet != null) {
+                removeChild(oldJspServlet);
             }
         }
 
@@ -1768,6 +1764,16 @@ public class StandardContext
 
         super.addChild(child);
 
+        if (isJspServlet && oldJspServlet != null) {
+            /*
+             * The webapp-specific JspServlet inherits all the mappings
+             * specified in the global web.xml, and may add additional ones.
+             */
+            String[] jspMappings = oldJspServlet.findMappings();
+            for (int i=0; jspMappings!=null && i<jspMappings.length; i++) {
+                addServletMapping(jspMappings[i], child.getName());
+            }
+        }
     }
 
 
