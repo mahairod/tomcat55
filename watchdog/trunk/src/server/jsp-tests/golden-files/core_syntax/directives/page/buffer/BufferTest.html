@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE>
+        BufferTest
+
+      </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1>
+
+         BufferTest
+      </H1>
+
+      
+
+      
+      
+
+      <H3>
+
+        Summary
+
+      </H3>
+      
+      The default buffer size of 8kb. It writes out to the implicit object.
+
+      
+
+
+      
+
+<H3> Positive Tests </H3>
+
+<p><b>positiveBuffCreate Test: </b> Create a buffer size of say 12kb. Keep autoflush set to "false" (default). Write characters to the out object. Invoke the flush() method on out to flush the output to the client.</p>
+      <A NAME="positiveBuffCreate"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>BufferTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="BufferTest.java">BufferTest.java</A>
+    
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.directives.page.buffer.BufferTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveBuffCreate -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+      <p><b>positiveBuffAutoflush Test: </b>Set autoflush to "true". Use default buffer size of 8kb. Write more than 8kb of data to out object.</p>
+      <A NAME="positiveBuffAutoflush"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>BufferTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="BufferTest.java">BufferTest.java</A>
+    
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.directives.page.buffer.BufferTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveBuffAutoflush -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      <H3> Negative Tests </H3>
+ 
+ 	<p><b>negativeBuffOverflow Test: </b>Use the default buffer size of 8kb. Write more than 8kb of characters to the implicit out object, with 
+ 	autoFlush set to "false".</p>
+ 	<A NAME="negativeBuffOverflow"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>BufferTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="BufferTest.java">BufferTest.java</A>
+    
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.directives.page.buffer.BufferTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeBuffOverflow -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+
+      </BODY>
+
+</HTML>
