@@ -30,6 +30,9 @@
       <fix>
         <bug>28914</bug>: threadPriority attribute ignored. (yoavs)
       </fix>
+      <fix>
+        <bug>30763</bug>: added failOnError attribute to UndeployTask. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>

@@ -34,6 +34,12 @@ public class UndeployTask extends AbstractCatalinaTask {
 
     // ------------------------------------------------------------- Properties
 
+    /**
+     * Whether to fail (with a BuildException) if
+     * an error occurs.  The default behavior is
+     * to do so.
+     */
+    protected boolean failOnError = true;
 
     /**
      * The context path of the web application we are managing.
@@ -46,6 +52,23 @@ public class UndeployTask extends AbstractCatalinaTask {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    /**
+     * Returns the value of the failOnError
+     * property.
+     */
+    public boolean isFailOnError() {
+      return failOnError;
+    }
+
+    /**
+     * Sets the value of the failOnError property.
+     *
+     * @param newFailOnError New attribute value
+     */
+    public void setFailOnError(boolean newFailOnError) {
+      failOnError = newFailOnError;
     }
 
 
@@ -64,9 +87,15 @@ public class UndeployTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        execute("/undeploy?path=" + this.path);
+
+        try {
+          execute("/undeploy?path=" + this.path);
+        } catch (BuildException e) {
+	  if( isFailOnError() ) {
+	    throw e;
+          }
+        }
 
     }
-
 
 }
