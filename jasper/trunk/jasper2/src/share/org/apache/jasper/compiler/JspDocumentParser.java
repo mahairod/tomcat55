@@ -83,7 +83,7 @@ import org.apache.jasper.JspCompilationContext;
 class JspDocumentParser extends DefaultHandler
             implements LexicalHandler, TagConstants {
 
-    private static final String XMLNS = "xmlns:";
+    private static final String XMLNS_ATTR = "xmlns";
     private static final String XMLNS_JSP = "xmlns:jsp";
     private static final String JSP_VERSION = "version";
     private static final String LEXICAL_HANDLER_PROPERTY
@@ -249,8 +249,8 @@ class JspDocumentParser extends DefaultHandler
 	    node = parseStandardAction(qName, localName, attrsCopy, xmlnsAttrs,
 				       start, current);
 	} else {
-	    node = parseCustomAction(qName, attrsCopy, xmlnsAttrs, start,
-				     current);
+	    node = parseCustomAction(qName, localName, uri, attrsCopy,
+				     xmlnsAttrs, start, current);
 	    if (node == null) {
 		node = new Node.UninterpretedTag(qName, localName, attrsCopy,
 						 xmlnsAttrs, start, current);
@@ -630,19 +630,17 @@ class JspDocumentParser extends DefaultHandler
      * and returns the corresponding Node object.
      */
     private Node parseCustomAction(String qName,
+				   String localName,
+				   String uri,
 				   Attributes attrs,
 				   Attributes xmlnsAttrs,
 				   Mark start,
 				   Node parent) throws SAXException {
-	int colon = qName.indexOf(':');
-	if (colon == -1) {
-	    return null;
-	}
 
-	String prefix = qName.substring(0, colon);
-	String shortName = qName.substring(colon + 1);
-	if (shortName.length() == 0) {
-	    return null;
+	String prefix = "";
+	int colon = qName.indexOf(':');
+	if (colon != -1) {
+	    prefix = qName.substring(0, colon);
 	}
 
 	// Check if this is a user-defined (custom) tag
@@ -650,11 +648,12 @@ class JspDocumentParser extends DefaultHandler
         if (tagLibInfo == null) {
             return null;
 	}
-	TagInfo tagInfo = tagLibInfo.getTag(shortName);
-        TagFileInfo tagFileInfo = tagLibInfo.getTagFile(shortName);
+
+	TagInfo tagInfo = tagLibInfo.getTag(localName);
+        TagFileInfo tagFileInfo = tagLibInfo.getTagFile(localName);
 	if (tagInfo == null && tagFileInfo == null) {
-	    throw new SAXException(Localizer.getMessage("jsp.error.bad_tag",
-							shortName, prefix));
+	    throw new SAXException(Localizer.getMessage("jsp.error.xml.bad_tag",
+							localName, uri));
 	}
 	Class tagHandlerClass = null;
 	if (tagFileInfo == null) {
@@ -664,13 +663,13 @@ class JspDocumentParser extends DefaultHandler
 	    } catch (Exception e) {
 	        throw new SAXException(
 		        Localizer.getMessage("jsp.error.unable.loadclass",
-					     shortName, prefix));
+					     localName, prefix));
 	    }
 	} else {
             tagInfo = tagFileInfo.getTagInfo();
         }
        
-	return new Node.CustomTag(qName, prefix, shortName, attrs, xmlnsAttrs,
+	return new Node.CustomTag(qName, prefix, localName, attrs, xmlnsAttrs,
 				  start, parent, tagInfo, tagFileInfo,
 				  tagHandlerClass);
     }
@@ -694,7 +693,7 @@ class JspDocumentParser extends DefaultHandler
 	int len = attrs.getLength();
 	for (int i=len-1; i>=0; i--) {
 	    String qName = attrs.getQName(i);
-	    if (qName.startsWith(XMLNS)) {
+	    if (qName.startsWith(XMLNS_ATTR)) {
 		if (result == null) {
 		    result = new AttributesImpl();
 		}
@@ -713,29 +712,27 @@ class JspDocumentParser extends DefaultHandler
      * and adds the corresponding TagLibraryInfo objects to the set of custom
      * tag libraries.
      */
-    private void addCustomTagLibraries(Attributes attrs)
+    private void addCustomTagLibraries(Attributes xmlnsAttrs)
 	    throws JasperException 
     {
-        if (attrs == null) {
+        if (xmlnsAttrs == null) {
 	    return;
 	}
 
-	int len = attrs.getLength();
+	int len = xmlnsAttrs.getLength();
         for (int i=len-1; i>=0; i--) {
-	    String qName = attrs.getQName(i);
+	    String qName = xmlnsAttrs.getQName(i);
 	    if (qName.startsWith(XMLNS_JSP)) {
 		continue;
 	    }
 
-	    // get the prefix
-	    String prefix = null;
-	    try {
-		prefix = qName.substring(XMLNS.length());
-	    } catch (StringIndexOutOfBoundsException e) {
-		continue;
+	    // Get the prefix
+	    String prefix = "";
+	    int colon = qName.indexOf(':');
+	    if (colon != -1) {
+		prefix = qName.substring(colon + 1);
 	    }
-
-	    if( taglibs.containsKey( prefix ) ) {
+	    if (taglibs.containsKey(prefix)) {
 		// Prefix already in taglib map.
 		throw new JasperException(
 		        Localizer.getMessage(
@@ -743,48 +740,43 @@ class JspDocumentParser extends DefaultHandler
 				prefix));
 	    }
 
-	    // get the uri
-	    String uri = attrs.getValue(i);
-
-	    TagLibraryInfo tagLibInfo = null;
-	    if (uri.startsWith(URN_JSPTAGDIR)) {
-		/*
-		 * uri references tag file directory
-		 * (is of the form "urn:jsptagdir:path")
-		 */
-		String tagdir = uri.substring(URN_JSPTAGDIR.length());
-		tagLibInfo = new ImplicitTagLibraryInfo(ctxt,
-							parserController,
-							prefix, 
-							tagdir,
-							err);
-	    } else {
-		/*
-		 * uri references TLD file
-		 */
-		if (uri.startsWith(URN_JSPTLD)) {
-		    // uri is of the form "urn:jsptld:path"
-		    uri = uri.substring(URN_JSPTLD.length());
-		}
-
-		TldLocationsCache cache
-		    = ctxt.getOptions().getTldLocationsCache();
-		tagLibInfo = cache.getTagLibraryInfo(uri);
-		if (tagLibInfo == null) {
-		    // get the location
-		    String[] location = ctxt.getTldLocation(uri);
-		    
-		    tagLibInfo = new TagLibraryInfoImpl(ctxt,
-							parserController,
-							prefix,
-							uri,
-							location,
-							err);
-		}
-	    }
-                
+	    TagLibraryInfo tagLibInfo = getTaglibInfo(xmlnsAttrs.getValue(i),
+						      prefix);
 	    taglibs.put(prefix, tagLibInfo);
 	}
+    }
+
+    /*
+     * XXX
+     */
+    private TagLibraryInfo getTaglibInfo(String uri, String prefix)
+                throws JasperException {
+
+	TagLibraryInfo result = null;
+
+	if (uri.startsWith(URN_JSPTAGDIR)) {
+	    // uri (of the form "urn:jsptagdir:path") references tag file dir
+	    String tagdir = uri.substring(URN_JSPTAGDIR.length());
+	    result = new ImplicitTagLibraryInfo(ctxt, parserController, prefix,
+						tagdir, err);
+	} else {
+	    // uri references TLD file
+	    if (uri.startsWith(URN_JSPTLD)) {
+		// uri is of the form "urn:jsptld:path"
+		uri = uri.substring(URN_JSPTLD.length());
+	    }
+
+	    TldLocationsCache cache = ctxt.getOptions().getTldLocationsCache();
+	    result = cache.getTagLibraryInfo(uri);
+	    if (result == null) {
+		// get the location
+		String[] location = ctxt.getTldLocation(uri);
+		result = new TagLibraryInfoImpl(ctxt, parserController, prefix,
+						uri, location, err);
+	    }
+	}
+
+	return result;
     }
 
     /*
