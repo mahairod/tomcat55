@@ -73,34 +73,58 @@ import javax.net.ssl.SSLSocket;
 import java.security.cert.CertificateFactory;
 import javax.security.cert.X509Certificate;
 import javax.servlet.ServletException;
+import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.RequestWrapper;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
 
 /**
- * Implementation of a Valve that checks if the socket underlying this
- * request is an SSLSocket or not.  If it is, and if the client has presented
- * a certificate chain to authenticate itself, the array of certificates is
- * exposed as a request attribute.
- * <p>
- * In addition, this Valve exposes the cipher suite and key size being used
- * on this SSL connection as request attributes.  Although this function is
- * unrelated to certificates, the two tasks have been combined here to minimize
- * the amount of code that has to check for the existence of JSSE classes.
+ * Implementation of a Valve that deals with SSL client certificates, as
+ * follows:
+ * <ul>
+ * <li>If this request was not received on an SSL socket, simply pass it
+ *     on unmodified.</li>
+ * <li>If this request was received on an SSL socket:
+ *     <ul>
+ *     <li>If this web application is using client certificate authentication,
+ *         and no certificate chain is present (because the underlying socket
+ *         did not default to requiring it), force an SSL handshake to acquire
+ *         the client certificate chain.</li>
+ *     <li>If there is a client certificate chain present, expose it as a
+ *         request attribute.</li>
+ *     <li>Expose the cipher suite and key size used on this SSL socket
+ *         as request attributes.</li>
+ * </ul>
+ *
+ * The above tasks have been combined into a single Valve to minimize the
+ * amount of code that has to check for the existence of JSSE classes.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
 public final class CertificatesValve
-    extends ValveBase {
+    extends ValveBase implements Lifecycle {
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * Are certificates required for authentication by this web application?
+     */
+    protected boolean certificates = false;
 
 
     /**
@@ -108,7 +132,7 @@ public final class CertificatesValve
      * when using a cipher suite containing the specified cipher name.  The
      * underlying data came from the TLS Specification (RFC 2246), Appendix C.
      */
-    private static final CipherData ciphers[] = {
+    protected static final CipherData ciphers[] = {
         new CipherData("_WITH_NULL_", 0),
         new CipherData("_WITH_IDEA_CBC_", 128),
         new CipherData("_WITH_RC2_CBC_40_", 40),
@@ -121,10 +145,22 @@ public final class CertificatesValve
 
 
     /**
+     * The debugging detail level for this component.
+     */
+    protected int debug = 0;
+
+
+    /**
      * The descriptive information related to this implementation.
      */
-    private static final String info =
+    protected static final String info =
 	"org.apache.catalina.valves.CertificatesValve/1.0";
+
+
+    /**
+     * The lifecycle event support for this component.
+     */
+    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
 
     /**
@@ -134,7 +170,33 @@ public final class CertificatesValve
 	StringManager.getManager(Constants.Package);
 
 
+    /**
+     * Has this component been started yet?
+     */
+    protected boolean started = false;
+
+
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the debugging detail level for this component.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level for this component.
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
+
+    }
 
 
     /**
@@ -166,6 +228,12 @@ public final class CertificatesValve
         Request actual = request;
         while (actual instanceof RequestWrapper)
             actual = ((RequestWrapper) actual).getWrappedRequest();
+        //        if (debug >= 2)
+        //            log("Processing request");
+
+        // Verify the existence of a certificate chain if appropriate
+        if (certificates)
+            verify(request, actual);
 
         // Expose the certificate chain if appropriate
         expose(request, actual);
@@ -176,7 +244,99 @@ public final class CertificatesValve
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Lifecycle Methods
+
+
+    /**
+     * Add a LifecycleEvent listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+
+        lifecycle.addLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Remove a LifecycleEvent listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+
+        lifecycle.removeLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Prepare for the beginning of active use of the public methods of this
+     * component.  This method should be called before any of the public
+     * methods of this component are utilized.  It should also send a
+     * LifecycleEvent of type START_EVENT to any registered listeners.
+     *
+     * @exception IllegalStateException if this component has already been
+     *  started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents this component from being used
+     */
+    public void start() throws LifecycleException {
+
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("certificatesValve.alreadyStarted"));
+        started = true;
+        if (debug >= 1)
+            log("Starting");
+
+        // Check what type of authentication (if any) we are doing
+        certificates = false;
+        if (container instanceof Context) {
+            Context context = (Context) container;
+            LoginConfig loginConfig = context.getLoginConfig();
+            if (loginConfig != null) {
+                String authMethod = loginConfig.getAuthMethod();
+                if ("CLIENT-CERT".equalsIgnoreCase(authMethod))
+                    certificates = true;
+            }
+        }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(Lifecycle.START_EVENT, null);
+
+    }
+
+
+    /**
+     * Gracefully terminate the active use of the public methods of this
+     * component.  This method should be the last one called on a given
+     * instance of this component.  It should also send a LifecycleEvent
+     * of type STOP_EVENT to any registered listeners.
+     *
+     * @exception IllegalStateException if this component has not been started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that needs to be reported
+     */
+    public void stop() throws LifecycleException {
+
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("certificatesValve.notStarted"));
+        lifecycle.fireLifecycleEvent(Lifecycle.STOP_EVENT, null);
+        started = false;
+        if (debug >= 1)
+            log("Stopping");
+
+        certificates = false;
+
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -185,7 +345,7 @@ public final class CertificatesValve
      * @param request The possibly wrapped Request being processed
      * @param actual The actual underlying Request object
      */
-    private void expose(Request request, Request actual) {
+    protected void expose(Request request, Request actual) {
 
 	// Ensure that this request came in on an SSLSocket
         if (actual.getSocket() == null)
@@ -198,6 +358,8 @@ public final class CertificatesValve
         SSLSession session = socket.getSession();
         if (session == null)
             return;
+        //        if (debug >= 2)
+        //            log(" expose: Has current SSLSession");
 
         // Expose the cipher suite and key size
         String cipherSuite = session.getCipherSuite();
@@ -218,10 +380,15 @@ public final class CertificatesValve
         }
         request.getRequest().setAttribute(Globals.KEY_SIZE_ATTR,
                                           keySize);
+        //        if (debug >= 2)
+        //            log(" expose: Has cipher suite " + cipherSuite +
+        //                " and key size " + keySize);
 
 	// If we have cached certificates, return them
 	Object cached = session.getValue(Globals.CERTIFICATES_ATTR);
 	if (cached != null) {
+            //            if (debug >= 2)
+            //                log(" expose: Has cached certificates");
 	    request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR,
 	                                      cached);
 	    return;
@@ -253,8 +420,119 @@ public final class CertificatesValve
         if ((x509Certs == null) || (x509Certs.length < 1))
             return;
         session.putValue(Globals.CERTIFICATES_ATTR, x509Certs);
+        log(" expose: Exposing converted certificates");
         request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR,
                                           x509Certs);
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any).
+     *
+     * @param message Message to be logged
+     */
+    protected void log(String message) {
+
+	Logger logger = container.getLogger();
+	if (logger != null)
+	    logger.log("CertificatesValve[" + container.getName() + "]: " +
+		       message);
+	else
+	    System.out.println("CertificatesValve[" + container.getName() +
+			       "]: " + message);
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any).
+     *
+     * @param message Message to be logged
+     * @param throwable Associated exception
+     */
+    protected void log(String message, Throwable throwable) {
+
+	Logger logger = container.getLogger();
+	if (logger != null)
+	    logger.log("CertificatesValve[" + container.getName() + "]: " +
+		       message, throwable);
+	else {
+	    System.out.println("CertificatesValve[" + container.getName() +
+                               "]: " + message);
+	    throwable.printStackTrace(System.out);
+	}
+
+    }
+
+
+    /**
+     * Verify that a client certificate chain exists if our web application
+     * is doing client certificate authentication.
+     *
+     * @param request The possibly wrapped Request being processed
+     * @param actual The actual underlying Request object
+     */
+    protected void verify(Request request, Request actual) {
+
+	// Ensure that this request came in on an SSLSocket
+        if (actual.getSocket() == null)
+            return;
+        if (!(actual.getSocket() instanceof SSLSocket))
+            return;
+        SSLSocket socket = (SSLSocket) actual.getSocket();
+
+	// Look up the current SSLSession
+        SSLSession session = socket.getSession();
+        if (session == null)
+            return;
+        //        if (debug >= 2)
+        //            log(" verify: Has current SSLSession");
+
+        // Verify that there is a client certificate chain present
+        X509Certificate jsseCerts[] = null;
+        try {
+            jsseCerts = session.getPeerCertificateChain();
+            if (jsseCerts == null)
+                jsseCerts = new X509Certificate[0];
+        } catch (SSLPeerUnverifiedException e) {
+            log(" verify: SSLPeerUnverifiedException");
+            jsseCerts = new X509Certificate[0];
+        }
+        //        if (debug >= 2)
+        //            log(" verify: Certificate chain has " +
+        //                jsseCerts.length + " certificates");
+        if (jsseCerts.length > 0)
+            return;
+
+        // Force a new handshake to request the client certificates
+        //        if (debug >= 2)
+        //            log(" verify: Invalidating current session");
+        session.invalidate();
+        //        if (debug >= 2)
+        //            log(" verify: Forcing new SSL handshake");
+        socket.setNeedClientAuth(true);
+        try {
+            socket.startHandshake();
+        } catch (IOException e) {
+            log(" verify: ", e);
+        }
+
+        // Revalidate the existence of the required certificates
+        session = socket.getSession();
+        if (session == null)
+            return;
+        try {
+            jsseCerts = session.getPeerCertificateChain();
+            if (jsseCerts == null)
+                jsseCerts = new X509Certificate[0];
+        } catch (SSLPeerUnverifiedException e) {
+            log(" verify: SSLPeerUnverifiedException");
+            jsseCerts = new X509Certificate[0];
+        }
+        //        if (debug >= 2)
+        //            log(" verify: Certificate chain has " +
+        //                jsseCerts.length + " certificates");
 
     }
 
