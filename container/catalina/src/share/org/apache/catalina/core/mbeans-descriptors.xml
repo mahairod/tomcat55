@@ -444,8 +444,11 @@
 
     <operation name="addChild"
                description="Add a context"
-               impact="ACTION"
-               returnType="org.apache.catalina.Container"/>
+               impact="ACTION">
+      <parameter name="child"
+                 description="Context to be added"
+                 type="org.apache.catalina.Container"/>
+    </operation>
       
     <operation   name="removeAlias"
                description="Remove the specified alias name from the aliases for this  Host"
