@@ -139,7 +139,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
              false);
         TreeControlNode userdbs = new TreeControlNode
             ("Globally Administer UserDatabase Entries",
-             "EnvironmentEntries.gif",
+             "Realm.gif",
              resources.getMessage("resources.treeBuilder.databases"),
              "resources/listUserDatabases.do?forward=" +
              URLEncoder.encode("UserDatabases List Setup"),
@@ -154,10 +154,9 @@ public class ResourcesTreeBuilder implements TreeBuilder {
              "content",
              false);
         root.addChild(subtree);
-        subtree.addChild(userdbs);
         subtree.addChild(datasources);
         subtree.addChild(envs);
-
+        subtree.addChild(userdbs);
     }
 
 }
