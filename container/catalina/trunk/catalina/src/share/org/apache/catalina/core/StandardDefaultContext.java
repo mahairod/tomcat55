@@ -66,24 +66,23 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Enumeration;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.naming.directory.DirContext;
-import org.apache.naming.ContextAccessController;
 import org.apache.catalina.Container;
-import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
-import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Manager;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -91,7 +90,11 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
+import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.modeler.ManagedBean;
+import org.apache.commons.modeler.Registry;
+import org.apache.naming.ContextAccessController;
 
 /**
  * Used to store the default configuration a Host will use
@@ -104,7 +107,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class StandardDefaultContext 
-    implements DefaultContext, LifecycleListener {
+    implements DefaultContext, LifecycleListener, MBeanRegistration {
 
 
     // ----------------------------------------------------------- Constructors
@@ -1059,18 +1062,6 @@ public class StandardDefaultContext
 
 
     /**
-     * Remove any environment entry with the specified name.
-     *
-     * @param name Name of the environment entry to remove
-     */
-    public void removeEnvironment(String name) {
-
-        namingResources.removeEnvironment(name);
-
-    }
-
-
-    /**
      * Remove a class name from the set of InstanceListener classes that
      * will be added to newly created Wrappers.
      *
@@ -1130,17 +1121,67 @@ public class StandardDefaultContext
         support.removePropertyChangeListener(listener);
 
     }
-    
-    
+
+    /**
+     * Remove any environment entry with the specified name.
+     *
+     * @param name Name of the environment entry to remove
+     */
+    public void removeEnvironment(String envName) {
+
+        NamingResources nresources = getNamingResources();
+        if (nresources == null) {
+            return;
+        }
+        ContextEnvironment env = nresources.findEnvironment(envName);
+        if (env == null) {
+            throw new IllegalArgumentException
+                ("Invalid environment name '" + envName + "'");
+        }
+        nresources.removeEnvironment(envName);
+    }
+
+
     /**
      * Remove any resource reference with the specified name.
      *
-     * @param name Name of the resource reference to remove
+     * @param resourceName Name of the resource reference to remove
      */
-    public void removeResource(String name) {
+    public void removeResource(String resourceName) {
 
-        namingResources.removeResource(name);
+        // That should be done in the UI
+        // resourceName = URLDecoder.decode(resourceName);
+        NamingResources nresources = getNamingResources();
+        if (nresources == null) {
+            return;
+        }
+        ContextResource resource = nresources.findResource(resourceName);
+        if (resource == null) {
+            throw new IllegalArgumentException
+                ("Invalid resource name '" + resourceName + "'");
+        }
+        nresources.removeResource(resourceName);
+    }
 
+
+    /**
+     * Remove any resource link with the specified name.
+     *
+     * @param resourceName Name of the resource reference to remove
+     */
+    public void removeResourceLink(String resourceLinkName) {
+
+        //resourceLinkName = URLDecoder.decode(resourceLinkName);
+        NamingResources nresources = getNamingResources();
+        if (nresources == null) {
+            return;
+        }
+        ContextResourceLink resource = nresources.findResourceLink(resourceLinkName);
+        if (resource == null) {
+            throw new IllegalArgumentException
+                ("Invalid resource name '" + resourceLinkName + "'");
+        }
+        nresources.removeResourceLink(resourceLinkName);
     }
 
 
@@ -1154,19 +1195,6 @@ public class StandardDefaultContext
         namingResources.removeResourceEnvRef(name);
 
     }
-
-
-    /**
-     * Remove any resource link with the specified name.
-     *
-     * @param name Name of the resource link to remove
-     */
-    public void removeResourceLink(String name) {
-
-        namingResources.removeResourceLink(name);
-
-    }
-
 
     /**
      * Remove a class name from the set of LifecycleListener classes that
@@ -1433,5 +1461,223 @@ public class StandardDefaultContext
 
     }
 
+    // -------------------- JMX stuff  --------------------
+    protected String type;
+    protected String domain;
+    protected String suffix;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
 
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    protected String getJSR77Suffix() {
+        return suffix;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+
+        type=name.getKeyProperty("type");
+        if( type==null ) {
+            type=name.getKeyProperty("j2eeType");
+        }
+
+        String j2eeApp=name.getKeyProperty("J2EEApplication");
+        String j2eeServer=name.getKeyProperty("J2EEServer");
+        if( j2eeApp==null ) {
+            j2eeApp="none";
+        }
+        if( j2eeServer==null ) {
+            j2eeServer="none";
+        }
+        suffix=",J2EEApplication=" + j2eeApp + ",J2EEServer=" + j2eeServer;
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
+
+    /**
+     * Return the MBean Names of the set of defined environment entries for
+     * this web application
+     */
+    public String[] getEnvironments() {
+        ContextEnvironment[] envs = getNamingResources().findEnvironments();
+        ArrayList results = new ArrayList();
+        for (int i = 0; i < envs.length; i++) {
+            try {
+                ObjectName oname =
+                    MBeanUtils.createObjectName(this.getDomain(), envs[i]);
+                results.add(oname.toString());
+            } catch (MalformedObjectNameException e) {
+                throw new IllegalArgumentException
+                    ("Cannot create object name for environment " + envs[i]);
+            }
+        }
+        return ((String[]) results.toArray(new String[results.size()]));
+
+    }
+
+
+    /**
+     * Return the MBean Names of all the defined resource references for this
+     * application.
+     * XXX This changed - due to conflict
+     */
+    public String[] getResourceNames() {
+
+        ContextResource[] resources = getNamingResources().findResources();
+        ArrayList results = new ArrayList();
+        for (int i = 0; i < resources.length; i++) {
+            try {
+                ObjectName oname =
+                    MBeanUtils.createObjectName(getDomain(), resources[i]);
+                results.add(oname.toString());
+            } catch (MalformedObjectNameException e) {
+                throw new IllegalArgumentException
+                    ("Cannot create object name for resource " + resources[i]);
+            }
+        }
+        return ((String[]) results.toArray(new String[results.size()]));
+
+    }
+
+
+    /**
+     * Return the MBean Names of all the defined resource links for this
+     * application
+     */
+    public String[] getResourceLinks() {
+
+        ContextResourceLink[] links = getNamingResources().findResourceLinks();
+        ArrayList results = new ArrayList();
+        for (int i = 0; i < links.length; i++) {
+            try {
+                ObjectName oname =
+                    MBeanUtils.createObjectName(getDomain(), links[i]);
+                results.add(oname.toString());
+            } catch (MalformedObjectNameException e) {
+                throw new IllegalArgumentException
+                    ("Cannot create object name for resource " + links[i]);
+            }
+        }
+        return ((String[]) results.toArray(new String[results.size()]));
+
+    }
+
+    // ------------------------------------------------------------- Operations
+
+
+    /**
+     * Add an environment entry for this web application.
+     *
+     * @param envName New environment entry name
+     */
+    public String addEnvironment(String envName, String type)
+        throws MalformedObjectNameException {
+
+        NamingResources nresources = getNamingResources();
+        if (nresources == null) {
+            return null;
+        }
+        ContextEnvironment env = nresources.findEnvironment(envName);
+        if (env != null) {
+            throw new IllegalArgumentException
+                ("Invalid environment name - already exists '" + envName + "'");
+        }
+        env = new ContextEnvironment();
+        env.setName(envName);
+        env.setType(type);
+        nresources.addEnvironment(env);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextEnvironment");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), env);
+        return (oname.toString());
+
+    }
+
+
+    /**
+     * Add a resource reference for this web application.
+     *
+     * @param resourceName New resource reference name
+     */
+    public String addResource(String resourceName, String type)
+        throws MalformedObjectNameException {
+
+        NamingResources nresources = getNamingResources();
+        if (nresources == null) {
+            return null;
+        }
+        ContextResource resource = nresources.findResource(resourceName);
+        if (resource != null) {
+            throw new IllegalArgumentException
+                ("Invalid resource name - already exists'" + resourceName + "'");
+        }
+        resource = new ContextResource();
+        resource.setName(resourceName);
+        resource.setType(type);
+        nresources.addResource(resource);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextResource");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), resource);
+
+        return (oname.toString());
+    }
+
+
+    /**
+     * Add a resource link for this web application.
+     *
+     * @param resourceLinkName New resource link name
+     */
+    public String addResourceLink(String resourceLinkName, String global,
+                String name, String type) throws MalformedObjectNameException {
+
+        NamingResources nresources = getNamingResources();
+        if (nresources == null) {
+            return null;
+        }
+        ContextResourceLink resourceLink =
+                                nresources.findResourceLink(resourceLinkName);
+        if (resourceLink != null) {
+            throw new IllegalArgumentException
+                ("Invalid resource link name - already exists'" +
+                                                        resourceLinkName + "'");
+        }
+        resourceLink = new ContextResourceLink();
+        resourceLink.setGlobal(global);
+        resourceLink.setName(resourceLinkName);
+        resourceLink.setType(type);
+        nresources.addResourceLink(resourceLink);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextResourceLink");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
+        return (oname.toString());
+    }
 }
