@@ -50,6 +50,12 @@
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
 
+      <!-- Something strange in J2EE, lib/moo.jar is not read - this is a temp. fix -->
+      <javac srcdir="../jakarta-tools/moo/src/share"
+             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
+      <javac srcdir="../jakarta-tools/moo/src/share"
+             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
+
       <javac srcdir="src/clients" destdir="${watchdog.build}/clients" />    
    </target>
 
@@ -78,7 +84,7 @@
       <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
       <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
 
-      <jar jarfile="${watchdog.dist}/client.jar"
+      <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
         items="org" />
 
