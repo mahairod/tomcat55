@@ -6,7 +6,12 @@
 
 <web-app>
 
-  <!-- Define the Manager Servlet -->
+  <!-- Define the Manager Servlet
+       Change servlet-class to: org.apache.catalina.servlets.HTMLManagerServlet
+       to get a Servlet with a more intuitive HTML interface, don't change if you
+       have software that is expected to parse the output from ManagerServlet
+       since they're not compatible.
+   -->
   <servlet>
     <servlet-name>Manager</servlet-name>
     <servlet-class>org.apache.catalina.servlets.ManagerServlet</servlet-class>
