@@ -82,7 +82,7 @@
          IP address of the remote client.
     -->
 
-    <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8081 -->
+    <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8080 -->
     <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
                port="8080" minProcessors="5" maxProcessors="75"
                enableLookups="true" redirectPort="8443"
