@@ -78,8 +78,6 @@ public interface RequestInterceptor {
      *  in notification.
      */
     public Enumeration getMethods();
-
-
     
     /** Will detect the context path for a request.
      *  It need to set: context, contextPath, lookupPath

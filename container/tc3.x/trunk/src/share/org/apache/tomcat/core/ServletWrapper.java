@@ -468,14 +468,23 @@ public class ServletWrapper {
 	// 	}
 	ContextInterceptor cI[]=context.getContextInterceptors();
 	for( int i=0; i<cI.length; i++ ) {
-	    cI[i].preServletInit( context, this ); // ignore the error - like in the original code
+	    try {
+		cI[i].preServletInit( context, this ); // ignore the error - like in the original code
+	    } catch( TomcatException ex) {
+		ex.printStackTrace();
+	    }
 	}
 	servlet.init(servletConfig);
 	// if an exception is thrown in init, no end interceptors will be called.
 	// that was in the origianl code
 
 	for( int i=cI.length-1; i>=0; i-- ) {
-	    cI[i].postServletInit( context, this ); // ignore the error - like in the original code
+	    try {
+		cI[i].postServletInit( context, this ); // ignore the error - like in the original code
+	    } catch( TomcatException ex) {
+		ex.printStackTrace();
+	    }
+
 	}
 	// 	for( int i=v.size()-1; i>=0 ; i-- ) {
 	// 	    try { 
@@ -502,11 +511,21 @@ public class ServletWrapper {
 	// 	}
 	ContextInterceptor cI[]=context.getContextInterceptors();
 	for( int i=0; i<cI.length; i++ ) {
-	    cI[i].preServletDestroy( context, this ); // ignore the error - like in the original code
+	    try {
+		cI[i].preServletDestroy( context, this ); // ignore the error - like in the original code
+	    } catch( TomcatException ex) {
+		ex.printStackTrace();
+	    }
+
 	}
 	servlet.destroy();
 	for( int i=cI.length-1; i>=0; i-- ) {
-	    cI[i].postServletDestroy( context, this ); // ignore the error - like in the original code
+	    try {
+		cI[i].postServletDestroy( context, this ); // ignore the error - like in the original code
+	    } catch( TomcatException ex) {
+		ex.printStackTrace();
+	    }
+
 	}
 	// if an exception is thrown in init, no end interceptors will be called.
 	// that was in the origianl code
