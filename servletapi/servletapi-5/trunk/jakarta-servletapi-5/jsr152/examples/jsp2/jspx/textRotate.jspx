@@ -5,7 +5,7 @@
   -->
 <svg xmlns="http://www.w3.org/2000/svg"
      width="450" height="500" viewBox="0 0 450 500"
-     xmlns:c="http://java.sun.com/jstl/core_rt"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
      xmlns:jsp="http://java.sun.com/JSP/Page">
   <jsp:directive.page contentType="image/svg+xml" />
   <title>JSP 2.0 JSPX</title>
