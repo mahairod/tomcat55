@@ -153,6 +153,21 @@ a secure connection should check the protocol type associated with the
 page request and take the appropriate action of <code>https</code> is not
 specified.</p>
 
+<p>Finally, using name-based virtual hosts on a secured connection can be
+problematic.  This is a design limitation of the SSL protocol itself.  The SSL
+handshake, where the client browser accepts the server certificate, must occur
+before the HTTP request is accessed.  As a result, the request information
+containing the virtual host name cannot be determined prior to authentication,
+ant it is therefore not possible to assign multiple certificates to a single
+IP address.  If all virtual hosts on a single IP address need to authenticate
+against the same certificate, the addition of multiple virtual hosts should not
+interfere with normal SSL operations on the server.  Be aware, however, that
+most client browsers will compare the server's domain name against the domain
+name listed in the certificate, if any (applicable primarily to official,
+CA-signed certificates).  If the domain names do not match, these browsers will
+display a warning to the client user.  In general, only address-based virtual
+hosts are commonly used with SSL in a production environment.</p>
+
 </section>
 
 <section name="Configuration">
