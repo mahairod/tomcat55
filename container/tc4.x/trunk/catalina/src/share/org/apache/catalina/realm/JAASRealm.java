@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,7 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -89,18 +90,44 @@ import org.apache.catalina.util.StringManager;
  * specify the <em>application name</em> used to select the set of relevant
  * <code>LoginModules</code> required.</p>
  *
- * <p><strong>FIXME</strong> - The following issues need to be addressed before
- * the use of this module is practical:</p>
+ * <p>The JAAS Specification describes the result of a successful login as a
+ * <code>javax.security.auth.Subject</code> instance, which can contain zero
+ * or more <code>java.security.Principal</code> objects in the return value
+ * of the <code>Subject.getPrincipals()</code> method.  However, it provides
+ * no guidance on how to distinguish Principals that describe the individual
+ * user (and are thus appropriate to return as the value of
+ * request.getUserPrincipal() in a web application) from the Principal(s)
+ * that describe the authorized roles for this user.  To maintain as much
+ * independence as possible from the underlying <code>LoginMethod</code>
+ * implementation executed by JAAS, the following policy is implemented by
+ * this Realm:</p>
  * <ul>
- * <li>If the <code>Subject</code> returned by the
- *     underyling JAAS <code>LoginMethod</code> implementation returns more
- *     than one <code>Principal</code>, the selected one exposed to web
- *     applications is arbitrary (it will be the first one returned by an
- *     Iterator over the returned Set).</li>
- * <li>It is not clear how roles should be mapped to Principals in a JAAS
- *     environment.  Therefore, authenticated Principals will appear to have
- *     no associated roles, and <code>hasRole()</code> will always
- *     return false.</li>
+ * <li>The JAAS <code>LoginModule</code> is assumed to return a
+ *     <code>Subject with at least one <code>Principal</code> instance
+ *     representing the user himself or herself, and zero or more separate
+ *     <code>Principals</code> representing the security roles authorized
+ *     for this user.</li>
+ * <li>On the <code>Principal</code> representing the user, the Principal
+ *     name is an appropriate value to return via the Servlet API method
+ *     <code>HttpServletRequest.getRemoteUser()</code>.</li>
+ * <li>On the <code>Principals</code> representing the security roles, the
+ *     name is the name of the authorized security role.</li>
+ * <li>This Realm will be configured with two lists of fully qualified Java
+ *     class names of classes that implement
+ *     <code>java.security.Principal</code> - one that identifies class(es)
+ *     representing a user, and one that identifies class(es) representing
+ *     a security role.</li>
+ * <li>As this Realm iterates over the <code>Principals</code> returned by
+ *     <code>Subject.getPrincipals()</code>, it will identify the first
+ *     <code>Principal</code> that matches the "user classes" list as the
+ *     <code>Principal</code> for this user.</li>
+ * <li>As this Realm iterates over the <code>Princpals</code> returned by
+ *     <code>Subject.getPrincipals()</code>, it will accumulate the set of
+ *     all <code>Principals</code> matching the "role classes" list as
+ *     identifying the security roles for this user.</li>
+ * <li>It is a configuration error for the JAAS login method to return a
+ *     validated <code>Subject</code> without a <code>Principal</code> that
+ *     matches the "user classes" list.</li>
  * </ul>
  *
  * @author Craig R. McClanahan
@@ -135,13 +162,89 @@ public class JAASRealm
 
 
     /**
+     * The list of role class names, split out for easy processing.
+     */
+    protected ArrayList roleClasses = new ArrayList();
+
+
+    /**
      * The string manager for this package.
      */
     protected static final StringManager sm =
         StringManager.getManager(Constants.Package);
 
 
+    /**
+     * The set of user class names, split out for easy processing.
+     */
+    protected ArrayList userClasses = new ArrayList();
+
+
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Comma-delimited list of <code>javax.security.Principal</code> classes
+     * that represent security roles.
+     */
+    protected String roleClassNames = null;
+
+    public String getRoleClassNames() {
+        return (this.roleClassNames);
+    }
+
+    public void setRoleClassNames(String roleClassNames) {
+        this.roleClassNames = roleClassNames;
+        roleClasses.clear();
+        String temp = this.roleClassNames;
+        if (temp == null) {
+            return;
+        }
+        while (true) {
+            int comma = temp.indexOf(',');
+            if (comma < 0) {
+                break;
+            }
+            roleClasses.add(temp.substring(0, comma).trim());
+            temp = temp.substring(comma + 1);
+        }
+        temp = temp.trim();
+        if (temp.length() > 0) {
+            roleClasses.add(temp);
+        }
+    }
+
+
+    /**
+     * Comma-delimited list of <code>javax.security.Principal</code> classes
+     * that represent individual users.
+     */
+    protected String userClassNames = null;
+
+    public String getUserClassNames() {
+        return (this.userClassNames);
+    }
+
+    public void setUserClassNames(String userClassNames) {
+        this.userClassNames = userClassNames;
+        userClasses.clear();
+        String temp = this.roleClassNames;
+        if (temp == null) {
+            return;
+        }
+        while (true) {
+            int comma = temp.indexOf(',');
+            if (comma < 0) {
+                break;
+            }
+            userClasses.add(temp.substring(0, comma).trim());
+            temp = temp.substring(comma + 1);
+        }
+        temp = temp.trim();
+        if (temp.length() > 0) {
+            userClasses.add(temp);
+        }
+    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -201,9 +304,15 @@ public class JAASRealm
         }
 
         // Return the appropriate Principal for this authenticated Subject
-        if (debug >= 2)
+        Principal principal = createPrincipal(subject);
+        if (principal == null) {
+            log(sm.getString("jaasRealm.authenticateError", username));
+            return (null);
+        }
+        if (debug >= 2) {
             log(sm.getString("jaasRealm.authenticateSuccess", username));
-        return (selectPrincipal(subject));
+        }
+        return (principal);
 
     }
 
@@ -245,23 +354,38 @@ public class JAASRealm
 
 
     /**
-     * Select and return the appropriate <code>Principal</code> to represent
-     * the authenticated <code>Subject</code>.  The default implementation
-     * simply returns the first <code>Principal</code> returned by an
-     * iteration of the <code>Set</code> returned by calling
-     * <code>subject.getPrincipals().iterator()</code>.  Subclasses can be
-     * more intelligent, based on knowledge of the login methods in use.
+     * Construct and return a <code>java.security.Principal</code> instance
+     * representing the authenticated user for the specified Subject.  If no
+     * such Principal can be constructed, return <code>null</code>.
      *
-     * @param subject The <code>Subject</code> representing the
-     *  authenticated user
+     * @param subject The Subject representing the logged in user
      */
-    protected Principal selectPrincipal(Subject subject) {
+    protected Principal createPrincipal(Subject subject) {
 
+        // Prepare to scan the Principals for this Subject
+        String username = null;
+        String password = null; // Will not be carried forward
+        ArrayList roles = new ArrayList();
+
+        // Scan the Principals for this Subject
         Iterator principals = subject.getPrincipals().iterator();
         while (principals.hasNext()) {
-            return ((Principal) principals.next());
+            Principal principal = (Principal) principals.next();
+            String principalClass = principal.getClass().getName();
+            if ((username == null) && userClasses.contains(principalClass)) {
+                username = principal.getName();
+            }
+            if (roleClasses.contains(principalClass)) {
+                roles.add(principal.getName());
+            }
         }
-        return (null); // Should never happen
+
+        // Create the resulting Principal for our authenticated user
+        if (username != null) {
+            return (new GenericPrincipal(this, username, password, roles));
+        } else {
+            return (null);
+        }
 
     }
 
