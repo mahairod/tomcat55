@@ -233,7 +233,8 @@ public class DefaultServlet
 	}
 	try {
 	    value = getServletConfig().getInitParameter("readonly");
-	    readOnly = (new Boolean(value)).booleanValue();
+            if (value != null)
+                readOnly = (new Boolean(value)).booleanValue();
 	} catch (Throwable t) {
 	    ;
 	}
