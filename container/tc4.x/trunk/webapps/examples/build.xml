@@ -19,6 +19,7 @@
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
   <property name="mail.jar"        value="${mail.home}/mail.jar"/>
   <property name="activation.jar"  value="${activation.home}/activation.jar"/>
+  <property name="jndi.jar"        value="${jndi.home}/lib/jndi.jar"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
