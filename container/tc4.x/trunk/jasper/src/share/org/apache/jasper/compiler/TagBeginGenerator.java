@@ -217,13 +217,20 @@ public class TagBeginGenerator
                 Class c[] = m.getParameterTypes();
                 // assert(c.length > 0)
 
-                if (attributes[i].canBeRequestTime() && 
-                        JspUtil.isExpression(attrValue, isXml)) {
-                    attrValue = JspUtil.getExpr(attrValue, isXml);
-                } else {
-                    attrValue = convertString(c[0], attrValue, writer, attrName,
-                                              tc.getPropertyEditorClass(attrName));
+                // match tld defined attribute to its element value
+                for(int j = 0; j < attributes.length; j++) {
+                    if (attrs.getLocalName(i).equals(attributes[j].getName())) {
+                        if (attributes[j].canBeRequestTime() && 
+                            JspUtil.isExpression(attrValue, isXml)) {
+                            attrValue = JspUtil.getExpr(attrValue, isXml);
+                        } else {
+                            attrValue = convertString(c[0], attrValue, writer, attrName,
+                                                      tc.getPropertyEditorClass(attrName));
+                        }
+                    }
                 }
+
+
                 writer.println(thVarName+"."+m.getName()+"("+attrValue+");");
             }
         }
