@@ -600,11 +600,16 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createJDBCRealm(String parent)
+    public String createJDBCRealm(String parent, String driverName, 
+    	String connectionName, String connectionPassword, String connectionURL)
         throws Exception {
 
         // Create a new JDBCRealm instance
         JDBCRealm realm = new JDBCRealm();
+	realm.setDriverName(driverName);
+	realm.setConnectionName(connectionName);
+	realm.setConnectionPassword(connectionPassword);
+	realm.setConnectionURL(connectionURL);
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
