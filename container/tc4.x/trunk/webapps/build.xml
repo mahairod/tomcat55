@@ -81,18 +81,29 @@
 
     <!-- Administrative Applications -->
     <mkdir     dir="${webapps.deploy}/server/webapps"/>
+
+    <copy    todir="${webapps.deploy}/webapps"
+              file="${webapps.build}/admin/admin.xml"/>
     <mkdir     dir="${webapps.deploy}/server/webapps/admin"/>
     <copy    todir="${webapps.deploy}/server/webapps/admin">
       <fileset dir="${webapps.build}/admin" excludes="admin.xml"/>
     </copy>
+    <mkdir     dir="${webapps.deploy}/server/webapps/admin/WEB-INF/lib"/>
+    <copy    todir="${webapps.deploy}/server/webapps/admin/WEB-INF/lib">
+      <fileset dir="${webapps.deploy}/shared/lib" includes="jasper-*.jar"/>
+    </copy>
+
     <copy    todir="${webapps.deploy}/webapps"
               file="${webapps.build}/manager/manager.xml"/>
     <mkdir     dir="${webapps.deploy}/server/webapps/manager"/>
     <copy    todir="${webapps.deploy}/server/webapps/manager">
       <fileset dir="${webapps.build}/manager" excludes="manager.xml"/>
     </copy>
-    <copy    todir="${webapps.deploy}/webapps"
-              file="${webapps.build}/admin/admin.xml"/>
+    <mkdir     dir="${webapps.deploy}/server/webapps/manager/WEB-INF/lib"/>
+    <copy    todir="${webapps.deploy}/server/webapps/manager/WEB-INF/lib">
+      <fileset dir="${webapps.deploy}/shared/lib" includes="jasper-*.jar"/>
+    </copy>
+
   </target>
 
 
