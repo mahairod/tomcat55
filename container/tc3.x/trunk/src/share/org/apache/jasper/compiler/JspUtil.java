@@ -169,6 +169,29 @@ public class JspUtil {
         tld = builder.getDocument();
 	return tld;
     }
+    
+    public static String escapeQueryString(String unescString) {
+	if ( unescString == null )
+	    return null;
+	
+	String escString    = "";
+	String shellSpChars = "&;`'\"|*?~<>^()[]{}$\\\n";
+	
+	for(int index=0; index<unescString.length(); index++) {
+	    char nextChar = unescString.charAt(index);
+	    
+	    if( shellSpChars.indexOf(nextChar) != -1 )
+		escString += "\\";
+	    
+	    escString += nextChar;
+	}
+	return escString;
+    }
+    
 }
+
+
+
+
 
 
