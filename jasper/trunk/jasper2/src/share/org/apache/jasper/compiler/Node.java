@@ -85,11 +85,6 @@ public abstract class Node {
     protected Node parent;
 
     /**
-     * The root node of this page.
-     */
-    private static Root currentRoot;
-
-    /**
      * Constructor.
      * @param start The location of the jsp page
      * @param parent The enclosing node
@@ -155,10 +150,6 @@ public abstract class Node {
 	return parent;
     }
 
-    public Node getCurrentRoot() {
-	return currentRoot;
-    }
-
     public int getBeginJavaLine() {
 	return beginJavaLine;
     }
@@ -176,25 +167,17 @@ public abstract class Node {
     }
 
     /**
-     * Warning: This method is valid only when used from the correct context,
-     * namely when the Root node for the current page has been visited first,
-     * and the proper bookkeeping (<tt>pushCurrentRoot/popCurrentRoot</tt>)
-     * has been performed.
-     *
      * @return true if the current page is in xml syntax, false otherwise.
      */
     public boolean isXmlSyntax() {
-	return currentRoot.isXmlSyntax();
-    }
+	Node r = this;
+	while (!(r instanceof Node.Root)) {
+	    r = r.getParent();
+	    if (r == null)
+		return false;
+	}
 
-    public static void pushCurrentRoot(Root root) {
-	root.setParentRoot(currentRoot);
-	currentRoot = root;
-    }
-
-    public static Root popCurrentRoot() {
-	currentRoot = currentRoot.getParentRoot();
-	return currentRoot;
+	return r.isXmlSyntax();
     }
 
     /**
@@ -237,6 +220,12 @@ public abstract class Node {
 
 	Root(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+
+	    // Figure out and set the parent root
+	    Node r = parent;
+	    while ((r != null) && !(r instanceof Node.Root))
+		r = r.getParent();
+	    parentRoot = (Node.Root) r;
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -247,12 +236,12 @@ public abstract class Node {
 	    return false;
 	}
 
+	/**
+	 * @ return The enclosing root to this root.  Usually represents the
+	 * page that includes this one.
+	 */
 	public Root getParentRoot() {
 	    return parentRoot;
-	}
-
-	public void setParentRoot(Root root) {
-	    parentRoot = root;
 	}
     }
     
@@ -860,17 +849,13 @@ public abstract class Node {
 	}
 
 	public void visit(Root n) throws JasperException {
-	    Node.pushCurrentRoot(n);
 	    doVisit(n);
 	    visitBody(n);
-	    Node.popCurrentRoot();
 	}
 
 	public void visit(JspRoot n) throws JasperException {
-	    Node.pushCurrentRoot(n);
 	    doVisit(n);
 	    visitBody(n);
-	    Node.popCurrentRoot();
 	}
 
 	public void visit(PageDirective n) throws JasperException {

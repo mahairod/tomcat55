@@ -184,7 +184,6 @@ public class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
-	    Node.pushCurrentRoot(n);
 	    Attributes attrs = n.getAttributes();
 	    if (attrs == null) {
 		throw new JasperException("Missing attributes in jsp:root");
@@ -203,7 +202,7 @@ public class PageDataImpl extends PageData implements TagConstants {
 				       attrs.getValue(i));
 	    }
 	    visitBody(n);
-	    if (Node.popCurrentRoot() == this.root) {
+	    if (n == this.root) {
 		// top-level jsp:root element
 		root.setAttributes(rootAttrs);
 	    }
@@ -249,9 +248,7 @@ public class PageDataImpl extends PageData implements TagConstants {
 	 * Visits root node of JSP page in JSP syntax.
 	 */
 	public void visit(Node.Root n) throws JasperException {
-	    Node.pushCurrentRoot(n);
 	    appendTag(JSP_ROOT_TAG, n.getAttributes(), n.getBody());
-	    Node.popCurrentRoot();
 	}
 
 	/*
@@ -261,14 +258,12 @@ public class PageDataImpl extends PageData implements TagConstants {
 	 * include directive) are ignored.
 	 */
 	public void visit(Node.JspRoot n) throws JasperException {
-	    Node.pushCurrentRoot(n);
 	    if (n == this.root) {
 		// top-level jsp:root element
 		appendTag(JSP_ROOT_TAG, n.getAttributes(), n.getBody());
 	    } else {
 		visitBody(n);
 	    }
-	    Node.popCurrentRoot();
 	}
 
 	public void visit(Node.PageDirective n) throws JasperException {
