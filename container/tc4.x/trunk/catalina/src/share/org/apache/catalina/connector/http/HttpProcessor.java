@@ -1131,7 +1131,11 @@ final class HttpProcessor
                 continue;
 
             // Process the request from this socket
-            process(socket);
+            try {
+                process(socket);
+            } catch (Throwable t) {
+                log("process.invoke", t);
+            }
 
             // Finish up this request
             connector.recycle(this);
