@@ -208,7 +208,7 @@ public class JspConfig {
     }
 
     /**
-     * Find a property that best match the supplied resource.
+     * Find a property that best matches the supplied resource.
      * @param uri the resource supplied.
      * @return a JspProperty if a match is found, null otherwise
      */
