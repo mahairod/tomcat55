@@ -154,7 +154,7 @@ goto cleanup
 
 :runSecure
 rem Running Tomcat with a SecurityManager
-%_RUNJAVA% %TOMCAT_OPTS% -Djava.security.manager -Djava.security.policy=="%TOMCAT_HOME%/conf/tomcat.policy" -Dtomcat.home="%TOMCAT_HOME%" org.apache.tomcat.startup.Tomcat %3 %4 %5 %6 %7 %8 %9
+%_RUNJAVA% %TOMCAT_OPTS% -Djava.security.manager -Djava.security.policy="%TOMCAT_HOME%/conf/tomcat.policy" -Dtomcat.home="%TOMCAT_HOME%" org.apache.tomcat.startup.Tomcat %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :stopServer
