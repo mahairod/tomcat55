@@ -218,14 +218,7 @@ public class MapperListener
                     }
                 }
             }
-            if ( ! "*".equals( domain ) &&
-                    ! domain.equals( objectName.getDomain() ) &&
-                    ! domain.equals( engineName ) ) {
-                // A different domain - not ours
-                if( j2eeType!=null )
-                    log.debug("MBean in different domain " + objectName);
-                return;
-            }
+
             log.debug( "Handle " + objectName );    
             if (notification.getType().equals
                 (MBeanServerNotification.REGISTRATION_NOTIFICATION)) {
