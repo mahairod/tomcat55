@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="os2.html">
+
+  &project;
+
+  <properties>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>OS/2 Questions</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This section of the FAQ deals with topics specific to the OS/2
+    system and related/derivative platforms.
+  </p>
+</section>
+
+<section name="Questions">
+  <ul>
+
+     <li>
+       <a href="#rexxScripts">
+         Are there Rexx scripts to run Tomcat on OS/2?
+       </a>
+      </li>
+
+     <li>
+       <a href="#portedScripted">
+         Are there other scripts to run Tomcat on OS/2?
+       </a>
+     </li>
+
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="rexxScripts">
+      Are there Rexx scripts to run Tomcat on OS/2?
+    </a>
+  </question>
+  <answer>
+      Yes, at <a href="http://hobbes.nmsu.edu/cgi-bin/h-search?key=tomcat_5-0-27_os2.zip">NMSU.edu.</a>
+      If the above link doesn't work, try a search on hobbes.nmsu.edu, as the above link is specific
+      to Tomcat 5.0.27.
+  </answer>
+
+  <question>
+    <a name="portedScripts">
+      Are there other scripts to run Tomcat on OS/2?
+    </a>
+  </question>
+  <answer>
+    Yes, at <a href="http://www.netbeans.org/issues/show_bug.cgi?id=42678">NetBeans.org.</a>
+    Note again that the above scripts may be specific to a Tomcat version or branch.
+  </answer>
+
+</section>
+
+
+</body>
+</document>
