@@ -20,6 +20,7 @@ package org.apache.catalina.startup;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -32,6 +33,7 @@ import org.apache.catalina.Authenticator;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -272,12 +274,27 @@ public final class ContextConfig
      */
     protected void applicationWebConfig() {
 
+        String altDDName = null;
+
         // Open the application web.xml file, if it exists
         InputStream stream = null;
         ServletContext servletContext = context.getServletContext();
-        if (servletContext != null)
-            stream = servletContext.getResourceAsStream
-                (Constants.ApplicationWebXml);
+        if (servletContext != null) {
+            altDDName = (String)servletContext.getAttribute(
+                                                        Globals.ALT_DD_ATTR);
+            if (altDDName != null) {
+                try {
+                    stream = new FileInputStream(altDDName);
+                } catch (FileNotFoundException e) {
+                    log.error(sm.getString("contextConfig.altDDNotFound",
+                                           altDDName));
+                }
+            }
+            else {
+                stream = servletContext.getResourceAsStream
+                    (Constants.ApplicationWebXml);
+            }
+        }
         if (stream == null) {
             log.info(sm.getString("contextConfig.applicationMissing") + " " + context);
             return;
@@ -293,8 +310,12 @@ public final class ContextConfig
         // Process the application web.xml file
         synchronized (webDigester) {
             try {
-                url =
-                    servletContext.getResource(Constants.ApplicationWebXml);
+                if (altDDName != null) {
+                    url = new File(altDDName).toURL();
+                } else {
+                    url = servletContext.getResource(
+                                                Constants.ApplicationWebXml);
+                }
                 if( url!=null ) {
                     InputSource is = new InputSource(url.toExternalForm());
                     is.setByteStream(stream);
