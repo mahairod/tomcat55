@@ -89,7 +89,7 @@ final class HttpServletRequestFacade implements HttpServletRequest {
     HttpSessionFacade sessionFacade;
     ServletInputStreamFacade isFacade=null;
     BufferedReader reader;
-    
+    static final NO_SESSION_FACADE=true;   
     private boolean usingStream = false;
     private boolean usingReader = false;
 
@@ -385,6 +385,7 @@ final class HttpServletRequestFacade implements HttpServletRequest {
      */
     public HttpSession getSession(boolean create) {
 	HttpSession realSession = request.getSession( create );
+	if( NO_SESSION_FACADE ) return realSession;
 	// No real session, return null
 	if( realSession == null ) {
 	    if( sessionFacade!= null) sessionFacade.recycle();
