@@ -65,6 +65,11 @@ import java.net.*;
 import java.util.*;
 import java.text.*;
 
+/**
+ *   This class needs javadoc. To contribute please send patches to
+ *   the tomcat-dev 
+ *   <a href="http://jakarta.apache.org/site/mail.html">mailing list</a>.
+ */
 public class RecycleBufferedInputStream extends BufferedInputStream {
     public RecycleBufferedInputStream( InputStream is ) {
 	super( is );
@@ -73,12 +78,12 @@ public class RecycleBufferedInputStream extends BufferedInputStream {
     public void setInputStream( InputStream is ) {
 	this.count=0;
 	this.in=is;
+	this.pos=0;
     }
 
     public void recycle() {
 	this.in=null;
 	this.count=0;
+	this.pos=0;
     }
-
-    
 }
