@@ -109,10 +109,19 @@
 
 
   <!-- ================= BUILD: Compile Server Components ================= -->
-  <target name="build-main" depends="build-static">
+  <target name="build-main" depends="build-static,build-only">
+    <!-- Extra operations: Supporting JAR Files -->
+    <copy todir="${jasper.build}/shared/lib" file="${commons-el.jar}"/>
+  </target>
+
+  <!-- Just build jasper -->
+  <target name="build-only">
+    <property name="jasper.classes" value="${jasper.build}/shared/classes"/>
+    <property name="jasper-compiler.jar" value="${jasper.build}/shared/lib/jasper-compiler.jar"/>
+    <property name="jasper-runtime.jar" value="${jasper.build}/shared/lib/jasper-runtime.jar"/>
 
     <!-- Compile internal server components -->
-    <javac srcdir="src/share" destdir="${jasper.build}/shared/classes"
+    <javac srcdir="src/share" destdir="${jasper.classes}"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
@@ -120,7 +129,7 @@
     </javac>
 
     <!-- Copy static resource files -->
-    <copy todir="${jasper.build}/shared/classes">
+    <copy todir="${jasper.classes}">
       <fileset dir="src/share">
         <include name="**/*.properties"/>
         <include name="**/*.dtd"/>
@@ -128,8 +137,8 @@
     </copy>
 
    <!-- Jasper Compiler JAR File -->
-   <jar  jarfile="${jasper.build}/shared/lib/jasper-compiler.jar">
-      <fileset dir="${jasper.build}/shared/classes">
+   <jar  jarfile="${jasper-compiler.jar}">
+      <fileset dir="${jasper.classes}">
         <include name="org/apache/jasper/compiler/**" />
         <include name="org/apache/jasper/xmlparser/**" />
         <include name="org/apache/jasper/servlet/**" />
@@ -141,8 +150,8 @@
     </jar>
 
     <!-- Jasper Runtime JAR File -->
-    <jar  jarfile="${jasper.build}/shared/lib/jasper-runtime.jar">
-      <fileset dir="${jasper.build}/shared/classes">
+    <jar  jarfile="${jasper-runtime.jar}">
+      <fileset dir="${jasper.classes}">
         <include name="org/apache/jasper/Constants.class" />
         <include name="org/apache/jasper/JasperException.class" />
         <include name="org/apache/jasper/compiler/Localizer.class" />
@@ -151,9 +160,6 @@
         <include name="org/apache/jasper/util/**" />
       </fileset>
     </jar>
-
-    <!-- Supporting JAR Files -->
-    <copy todir="${jasper.build}/shared/lib" file="${commons-el.jar}"/>
 
   </target>
 
