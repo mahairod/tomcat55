@@ -30,7 +30,7 @@ Database Connection Pool (DBCP) Configurations</a><br />
 <section name="Introduction">
 
 <p>JNDI Datasource configuration is covered extensively in the
-JNDI-Resources-HOWTO however, feedback from <code>tomcat-user</code> has
+JNDI-Resources-HOWTO.  However, feedback from <code>tomcat-user</code> has
 shown that specifics for individual configurations can be rather tricky.</p>
 
 <p>Here then are some example configurations that have been posted to
@@ -41,6 +41,12 @@ and/or feedback posted to <code>tomcat-user</code> YMMV :-). Please let us
 know if you have any other tested configurations that you feel may be of use
 to the wider audience, or if you feel we can improve this section in anyway.</p>
 
+<p>
+<b>Please note that JNDI resource configuration has changed somewhat between
+Tomcat 5.0.x and Tomcat 5.5.x.</b>  You will most likely need to modify your JNDI
+resource configurations to match the syntax in the example below in order
+to make them work in Tomcat 5.5.x.
+</p>
 </section>
 
 <section name="Database Connection Pool (DBCP) Configurations">
@@ -335,16 +341,65 @@ Connection conn = ds.getConnection();
 
 <subsection name="PostgreSQL">
 <h3>0.    Introduction</h3>
-<p>PostgreSQL is configured in a similar manner to Oracle. Again, highlighting the differences.
-These notes are untested as yet and we would appreciate feedback.</p>
-<h3>1.    server.xml configuration</h3>
+<p>PostgreSQL is configured in a similar manner to Oracle.</p>
+
+<h3>1. Required files </h3>
+<p>
+Copy the Postgres JDBC jar to $CATALINA_HOME/common/lib. As with Oracle, the
+jars need to be in this directory in order for DBCP's Classloader to find
+them. This has to be done regardless of which configuration step you take next.
+</p>
+
+<h3>2. Resource configuration</h3>
+
+<p>
+You have two choices here: define a datasource that is shared across all Tomcat
+applications, or define a datasource specifically for one application.
+</p>
+
+<h4>2a. Shared resource configuration</h4>
+<p>
+Use this option if you wish to define a datasource that is shared across
+multiple Tomcat applications, or if you just prefer defining your datasource
+in this file.
+</p>
+<p><i>This author has not had success here, although others have reported so.
+Clarification would be appreciated here.</i></p>
+
 <source>
 &lt;Resource name="jdbc/postgres" auth="Container"
           type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
           url="jdbc:postgresql://127.0.0.1:5432/mydb"
-          username="myuser" password="mypasswd" maxActive="20" maxIdle="10" maxWait="-1"/> 
+          username="myuser" password="mypasswd" maxActive="20" maxIdle="10" maxWait="-1"/&gt;
 </source>
-<h3>2.    web.xml configuration</h3>
+<h4>2b. Application-specific resource configuration</h4>
+
+<p>
+Use this option if you wish to define a datasource specific to your application,
+not visible to other Tomcat applications. This method is less invasive to your
+Tomcat installation.
+</p>
+
+<p>
+Create a resource definition file for your application defining the
+datasource. This file must have the same name as your application, so if
+your application deploys as <code>someApp.war</code>, this filename must
+be <code>someApp.xml</code>. This file should look something like the following.
+</p>
+
+<source>
+&lt;Context path="/someApp" docBase="someApp"
+   crossContext="true" reloadable="true" debug="1"&gt;
+
+&lt;Resource name="jdbc/postgres" auth="Container"
+          type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+          url="jdbc:postgresql://127.0.0.1:5432/mydb"
+          username="myuser" password="mypasswd" maxActive="20" maxIdle="10"
+maxWait="-1"/&gt;
+&lt;/Context&gt;
+</source>
+
+<h3>3. web.xml configuration</h3>
 <source>
 &lt;resource-ref&gt;
  &lt;description&gt;postgreSQL Datasource example&lt;/description&gt;
@@ -353,10 +408,32 @@ These notes are untested as yet and we would appreciate feedback.</p>
  &lt;res-auth&gt;Container&lt;/res-auth&gt;
 &lt;/resource-ref&gt;
 </source>
+
+<h4>4. Accessing the datasource</h4>
+<p>
+When accessing the datasource programmatically, remember to prepend
+<code>java:/comp/env</code> to your JNDI lookup, as in the following snippet of
+code. Note also that "jdbc/postgres" can be replaced with any value you prefer, provided
+you change it in the above resource definition file as well.
+</p>
+
+<source>
+InitialContext cxt = new InitialContext();
+if ( cxt == null ) {
+   throw new Exception("Uh oh -- no context!");
+}
+
+DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
+
+if ( cxt == null ) {
+   throw new Exception("Data source not found!");
+}
+</source>
+
 </subsection>
 </section>
 
-<section name="Non DBCP Solutions">
+<section name="Non-DBCP Solutions">
 <p>
 These solutions either utilise a single connection to the database (not recommended for anything other
 than testing!) or some other pooling technology.
