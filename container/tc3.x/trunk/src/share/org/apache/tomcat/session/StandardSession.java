@@ -653,9 +653,11 @@ final class StandardSession
 	    if (object == null)
 		return;
 	    attributes.remove(name);
-	    if (object instanceof HttpSessionBindingListener)
+	    //	    System.out.println( "Removing attribute " + name );
+	    if (object instanceof HttpSessionBindingListener) {
 		((HttpSessionBindingListener) object).valueUnbound
 		    (new HttpSessionBindingEvent((HttpSession) this, name));
+	    }
 	}
 
     }
