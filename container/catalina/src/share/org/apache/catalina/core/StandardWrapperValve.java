@@ -248,7 +248,7 @@ final class StandardWrapperValve
             String contextPath = hreq.getContextPath();
             if (contextPath == null)
                 contextPath = "";
-            String requestURI = ((HttpRequest) hreq).getDecodedRequestURI();
+            String requestURI = ((HttpRequest) request).getDecodedRequestURI();
             if (requestURI.length() >= contextPath.length())
                 requestPath = requestURI.substring(contextPath.length());
         }
