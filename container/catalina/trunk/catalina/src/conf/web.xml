@@ -59,9 +59,7 @@
 
     <servlet>
         <servlet-name>default</servlet-name>
-        <servlet-class>
-          org.apache.catalina.servlets.DefaultServlet
-        </servlet-class>
+        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
         <init-param>
             <param-name>debug</param-name>
             <param-value>0</param-value>
@@ -841,11 +839,11 @@
     </mime-mapping>
     <mime-mapping>
         <extension>xht</extension>
-        <mime-type>application/xhtml+xml</mime-type>
+        <mime-type>application/xhtml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xhtml</extension>
-        <mime-type>application/xhtml+xml</mime-type>
+        <mime-type>application/xhtml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xml</extension>
@@ -869,11 +867,11 @@
     </mime-mapping>
     <mime-mapping>
         <extension>svg</extension>
-        <mime-type>image/svg+xml</mime-type>
+        <mime-type>image/svg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>svgz</extension>
-        <mime-type>image/svg+xml</mime-type>
+        <mime-type>image/svg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>vsd</extension>
