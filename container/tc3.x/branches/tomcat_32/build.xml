@@ -11,7 +11,7 @@
     <property name="tomcat.home" value="../dist/tomcat"/>
     <property name="j2ee.home" value="../../j2ee/build/unix"/>
     <property name="optimize" value="true" />
-    <property name="jaxp" value="../jaxp1.0.1" />
+    <property name="jaxp" value="../jaxp-1.0.1" />
   </target>
 
   <!-- ==================== Copy static files ==================== -->
