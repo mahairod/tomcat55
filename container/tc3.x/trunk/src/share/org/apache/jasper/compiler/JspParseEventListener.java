@@ -849,7 +849,6 @@ public class JspParseEventListener extends BaseJspListener {
 	    cdg = new CharDataGenerator(chars);
 
         
-        // FIXME: change null
         Generator gen
             = new GeneratorWrapper(cdg,
                                    start, stop);
