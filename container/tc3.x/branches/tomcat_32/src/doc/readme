@@ -251,4 +251,32 @@ typically insufficient to run Tomcat.  Here are a couple of ways to avoid it.
      JAVA_HOME.  This may be done by adding a "SET JAVA_HOME=path to your jdk"
      line to your autoexec.bat or to the startup.bat and shutdown.bat files
      themselves.
-   
+
+6.7 URL's are now case sensitive on all operating systems
+
+As of Tomcat 3.2, URL's are case sensitive for all operating systems,
+including operating systems which have case insensitive file systems, such as
+Windows.  This represents a change from Tomcat 3.1, where URL's were case
+insensitive on case insensitive OS's.  This was done for a number of reasons,
+security and portability among them.
+
+A "non-portable" web application, i.e. one with case mismatches, which worked
+on a case insensitive OS under Tomcat 3.1 will show its non-portability when
+run under Tomcat 3.2.
+
+This can also cause URL's that look correct to actually be incorrect.  In
+Windows Explorer, a directory whose name fits within the MS-DOS 8.3 format
+may be displayed using a "formated" name.  For example, a directory named
+"MYDIR" may display as "Mydir".  A URL like "http://localhost/mysite/Mydir/
+index.jsp" would return "File Not Found" because the correct URL would be
+"http://localhost/mysite/MYDIR/index.jsp".  If you find URL's being
+mysteriously "not found", check for case mismatch.  Use the Windows Explorer
+Properties dialog or an MS-DOS window to check the actual case of the file
+and directory names.
+
+This can cause an additional problem when Tomcat is used with a case
+insensitive web server, such as IIS, where the web server serves the static
+content.  The web server could serve a static page with mismatched case in the
+URL. If that static page contains relative links to resources served by
+Tomcat, then invoking those links would carry the mismatched case to Tomcat
+where it cause the resource not to be found.
