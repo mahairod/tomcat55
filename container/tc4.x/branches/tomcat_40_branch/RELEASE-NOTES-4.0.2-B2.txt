@@ -37,6 +37,8 @@ General New Features:
      ***** Please note the revised documentation below related to *****
      ***** using XML parsers with Tomcat 4.0 based applications.  *****
 
+mod_jk: Upgrade to mod_jk 1.4.
+
 
 ---------------------
 Catalina New Features:
@@ -74,11 +76,14 @@ Catalina Bug Fixes:
 DefaultServlet: Fix incorrect content length which was returned with a partial
   content response.
 
+StandardContextMapper: '/' is now handled as a special case.
+
 
 ----------------
 Jasper Bug Fixes:
 ----------------
 
+JspReader: Fix incorrect removal of '\n' at eof.
 
 
 -----------------
@@ -92,6 +97,8 @@ Webapps Bug Fixes:
 Bugzilla Bugs Resolved:
 ----------------------
 
+5368  StandardContextValve changes session state from new to old too late for 
+      other Valves
 5617  416 Requested Range Not Satisfiable used incorrectly
 5618  Content-Range missing for 416 error
 
@@ -111,6 +118,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Jasper and Jikes
 * Tomcat 4.0 and Apache Cocoon 2.0
 * Enabling SSI and CGI Support
+* Tomcat 4.0 and Sun JDK 1.4 beta 3
 
 
 ---------------------
@@ -331,6 +339,16 @@ On Unix:
   line 165 and 213, as well as the associated servlet mappings 
   line 265 and 274. Alternately, these servlet declarations and mappings can
   be added to your web application deployment descriptor.
+
+
+---------------------------------
+Tomcat 4.0 and Sun JDK 1.4 beta 3:
+---------------------------------
+
+Some unpredictable clq*assloading behavior has been reported when Tomcat is 
+used with Sun JDK 1.4. For this reason, it is recommended to use this release 
+of Tomcat with Sun JDK 1.3.1.
+
 
 
 
