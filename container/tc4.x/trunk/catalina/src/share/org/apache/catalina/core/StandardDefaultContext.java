@@ -197,6 +197,12 @@ public class StandardDefaultContext
 
 
     /**
+     * The swallowOutput flag for this web application.
+     */
+    private boolean swallowOutput = false;
+
+
+    /**
      * The set of classnames of LifecycleListeners that will be added
      * to each newly created Wrapper by <code>createWrapper()</code>.
      */
@@ -362,6 +368,28 @@ public class StandardDefaultContext
     public void setReloadable(boolean reloadable) {
         boolean oldReloadable = this.reloadable;
         this.reloadable = reloadable;
+
+    }
+
+
+    /**
+     * Return the swallowOutput flag for this web application.
+     */
+    public boolean getSwallowOutput() {
+
+        return (this.swallowOutput);
+
+    }
+
+
+    /**
+     * Set the swallowOutput flag for this web application.
+     *
+     * @param swallowOutput The new swallowOutput flag
+     */
+    public void setSwallowOutput(boolean swallowOutput) {
+        boolean oldSwallowOutput = this.swallowOutput;
+        this.swallowOutput = swallowOutput;
 
     }
 
@@ -1293,6 +1321,7 @@ public class StandardDefaultContext
 
         if (context instanceof StandardContext) {
             ((StandardContext)context).setUseNaming(isUseNaming());
+            ((StandardContext)context).setSwallowOutput(getSwallowOutput());
             if (!contexts.containsKey(context)) {
                 ((StandardContext) context).addLifecycleListener(this);
             }

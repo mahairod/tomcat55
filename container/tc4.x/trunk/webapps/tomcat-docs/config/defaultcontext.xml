@@ -37,7 +37,7 @@
 
   <subsection name="Common Attributes">
 
-    <p>All implementations of <strong>Host</strong>
+    <p>All implementations of <strong>DefaultContext</strong>
     support the following attributes:</p>
 
     <attributes>
@@ -71,13 +71,6 @@
         on demand.</p>
       </attribute>
 
-      <attribute name="useNaming" required="false">
-        <p>Set to <code>true</code> (the default) to have Catalina enable a
-        JNDI <code>InitialContext</code> for this web application that is
-        compatible with Java2 Enterprise Edition (J2EE) platform
-        conventions.</p>
-      </attribute>
-
       <attribute name="wrapperClass" required="false">
         <p>Java class name of the <code>org.apache.catalina.Wrapper</code>
         implementation class that will be used for servlets managed by this
@@ -97,6 +90,21 @@
     common attributes listed above):</p>
 
     <attributes>
+
+      <attribute name="swallowOutput" required="false">
+        <p>If the value of this flag is <code>true</code>, the bytes output to
+        System.out and System.err by the web application will be redirected to
+        the web application logger. If not specified, the default value
+        of the flag is <code>false</code>.</p>
+      </attribute>
+
+      <attribute name="useNaming" required="false">
+        <p>Set to <code>true</code> (the default) to have Catalina enable a
+        JNDI <code>InitialContext</code> for this web application that is
+        compatible with Java2 Enterprise Edition (J2EE) platform
+        conventions.</p>
+      </attribute>
+
     </attributes>
 
   </subsection>
@@ -105,9 +113,9 @@
 </section>
 
 
+<!--
 <section name="Nested Components">
 
-<!--
   <p>You can nest at most one instance of the following utility components
   by nesting a corresponding element inside your
   <strong>DefaultContext</strong> element:</p>
@@ -136,10 +144,9 @@
       resources associated with each web application.  Normally, the
       default configuration of the resource manager will be sufficient.</li>
   </ul>
--->
 
 </section>
-
+-->
 
 <section name="Special Features">
 

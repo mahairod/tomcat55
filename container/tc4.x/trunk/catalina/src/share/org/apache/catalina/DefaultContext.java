@@ -91,18 +91,6 @@ public interface DefaultContext {
 
 
     /**
-     * Returns true if the internal naming support is used.
-     */
-    public boolean isUseNaming();
-
-
-    /**
-     * Enables or disables naming.
-     */
-    public void setUseNaming(boolean useNaming);
-
-
-    /**
      * Return the "use cookies for session ids" flag.
      */
     public boolean getCookies();
