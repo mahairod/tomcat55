@@ -481,6 +481,10 @@
       <param name="destfile" value="${commons-logging.jar}"/>
     </antcall>
     -->
+
+    <!-- commons-logging/dbcp/pool need ../LICENSE -->
+    <!-- That is ugly XXX needs a review -->
+    <copy file="LICENSE" tofile="../LICENSE"/>
     <antcall target="cvsbuild">
       <param name="location" value="${commons-logging.loc}"/>
       <param name="subdir" value="${commons-logging.home}"/>
@@ -499,13 +503,6 @@
       <param name="sourcefile" value="${regexp.loc}"/>
       <param name="destfile" value="${regexp.jar}"/>
     </antcall>
-    <!-- Servlet api needs something different. -->
-
-    <antcall target="cvsbuild">
-      <param name="location" value="${servlet.loc}"/>
-      <param name="subdir" value="${servlet.home}"/>
-      <param name="destfile" value="${servlet.jar}"/>
-    </antcall>
 
     <antcall target="downloadgz">
       <!-- xerces2 brings 2 files, test for one of them -->
@@ -513,9 +510,10 @@
       <param name="destfile" value="${xmlParserAPIs.jar}"/>
     </antcall>
 
-    <antcall target="downloadgz">
+    <antcall target="cvsbuild">
       <param name="location" value="${commons-daemon.loc}"/>
       <param name="subdir" value="${commons-daemon.home}"/>
+      <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
 
     <!-- commons-dbcp/pool need something different. -->
@@ -525,9 +523,6 @@
       <param name="destfile" value="${commons-pool.jar}"/>
     </antcall>
 
-    <!-- commons-dbcp needs pool and ../LICENSE -->
-    <!-- That is ugly XXX needs a review -->
-    <copy file="LICENSE" tofile="../LICENSE"/>
     <antcall target="cvsbuild">
       <param name="location" value="${commons-dbcp.loc}"/>
       <param name="subdir" value="${commons-dbcp.home}"/>

@@ -29,7 +29,6 @@ compile.optimize=on
 
 
 # ----- CVS setup -----
-#Proxy to download subproject
 #proxy.host=proxy.domain
 #proxy.port=8080
 #proxy.use=on
@@ -69,7 +68,7 @@ commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
 commons-daemon.bin=${commons-daemon.home}/bin
 commons-daemon-launcher.jar=${commons-daemon.bin}/commons-launcher.jar
 commons-daemon-launcher-bootstrap.class=${commons-daemon.bin}/LauncherBootstrap.class
-commons-daemon.loc=http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-daemon/commons-daemon-20020730.tar.gz
+commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
 # ----- Commons Digester, version 1.2 or later -----
