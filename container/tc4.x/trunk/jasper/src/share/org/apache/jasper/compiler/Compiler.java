@@ -311,26 +311,37 @@ public class Compiler {
             int beginColon=line.indexOf(':', 2); // Drive letter on Windows !!
             int endColon=line.indexOf(':', beginColon+1);
 
-            if (beginColon<0 || endColon<0) {
-                errorMsg.append(line);
-                errorMsg.append('\n');
-                continue;
+            if (!(beginColon<0 || endColon<0 ||
+			line.startsWith("Note: "))){ // deprecation warning
+
+                try {
+                    String nr = line.substring(beginColon+1, endColon);
+                    int lineNr = Integer.parseInt( nr );
+                    //System.out.println("lineNr: " + lineNr);
+
+                    // Now do the mapping
+                    String mapping = findMapping(map, lineNr);
+                    if (mapping == null)
+                        errorMsg.append('\n');
+                    else
+                        errorMsg.append(mapping);
+                }
+                catch (NumberFormatException ex) {
+                    // If for some reason our guess at the location of the line
+                    // number failed, time to give up.
+                }
             }
-
-            String nr = line.substring(beginColon+1, endColon);
-            int lineNr = Integer.parseInt( nr );
-
-            //System.out.println("lineNr: " + lineNr);
-
-            // Now do the mapping
-            String mapping = findMapping(map, lineNr);
-            if (mapping == null)
-                errorMsg.append('\n');
-            else
-                errorMsg.append(mapping);
-            errorMsg.append(line);
+            // Replace '<' in line with "&lt;", ">" with "&gt;" in line
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (c == '<')
+                    errorMsg.append("&lt;");
+                else if (c == '>')
+                    errorMsg.append("&gt;");
+                else
+                    errorMsg.append(c);
+            }
             errorMsg.append('\n');
-
         }
         br.close();
         map.clear();
