@@ -2515,10 +2515,12 @@ public class Generator {
 		if (attrs[i].isExpression()) {
 		    // Do nothing
 		} else if (attrs[i].isNamedAttribute()) {
-		    attrValue = convertString(
+		    if (!n.checkIfAttributeIsJspFragment(attrs[i].getName())) {
+			attrValue = convertString(
                                 c[0], attrValue, attrName,
 				handlerInfo.getPropertyEditorClass(attrName),
 				false);
+		    }
 		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
                     attrValue = JspUtil.interpreterCall(this.isTagFile,
