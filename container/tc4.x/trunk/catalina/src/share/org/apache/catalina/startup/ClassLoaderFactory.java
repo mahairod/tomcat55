@@ -256,11 +256,12 @@ public final class ClassLoaderFactory {
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
-        ClassLoader classLoader = null;
+        StandardClassLoader classLoader = null;
         if (parent == null)
             classLoader = new StandardClassLoader(array);
         else
             classLoader = new StandardClassLoader(array, parent);
+        classLoader.setDelegate(true);
         return (classLoader);
 
     }
