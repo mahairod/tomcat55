@@ -31,13 +31,38 @@ manual.  If you are using a different source code control environment, you
 will need to figure out the corresponding commands for your system.</p>
 
 
+<subsection name="One-Time Setup of Ant and Tomcat for Development">
+
+<p>In order to take advantage of the special Ant tasks that interact with the
+<em>Manager</em> web application, you need to perform the following tasks
+once (no matter how many web applications you plan to develop).</p>
+<ul>
+<li><em>Configure the Ant custom tasks</em>.  The implementation code for the
+    Ant custom tasks is in a JAR file named
+    <code>$CATALINA_HOME/server/lib/catalina-ant.jar</code>, which must be
+    copied in to the <code>lib</code> directory of your Ant installation.
+    <br/><br/></li>
+<li><em>Define one or more Tomcat users</em>.  The <em>Manager</em> web
+    application runs under a security constraint that requires a user to be
+    logged in, and have the security role <code>manager</code> assigned to
+    him or her.  How such users are defined depends on which Realm you have
+    configured in Tomcat's <code>conf/server.xml</code> file -- see the
+    <a href="../realm-howto.html">Realm Configuration HOW-TO</a> for more
+    information.  You may define any number of users (with any username
+    and password that you like) with the <code>manager</code> role.
+    <br/><br/></li>
+</ul>
+
+</subsection>
+
+
 <subsection name="Create Project Source Code Directory">
 
 <p>The first step is to create a new project source directory, and customize
-the <code>build.xml</code> and build script you will be using.  The directory
-structure is described in <a href="source.html">the previous section</a>,
-or you can use the <a href="sample">sample application</a> as a starting
-point.</p>
+the <code>build.xml</code> and <code>build.properties</code> files you will
+be using.  The directory structure is described in <a href="source.html">the
+previous section</a>, or you can use the
+<a href="sample">sample application</a> as a starting point.</p>
 
 <p>Create your project source directory, and define it within your CVS
 repository.  This might be done by a series of commands like this, where
@@ -80,6 +105,30 @@ cvs commit
 development directory.  Committing makes those changes visible to other
 developers on your team that are sharing the same CVS repository.</p>
 
+<p>The next step is to customize the Ant <em>properties</em> that are
+named in the <code>build.xml</code> script.  This is done by creating a
+file named <code>build.properties</code> in your project's top-level
+directory.  The supported properties are listed in the comments inside
+the sample <code>build.xml</code> script.  At a minimum, you will generally
+need to define the <code>catalina.home</code> property defining where
+Tomcat 4 is installed, and the manager application username and password.
+You might end up with something like this:</p>
+<source>
+# Context path to install this application on
+app.path=/hello
+
+# Tomcat 4 installation directory
+catalina.home=/usr/local/jakarta-tomcat-4.0
+
+# Manager webapp username and password
+manager.username=myusername
+manager.password=mypassword
+</source>
+
+<p>In general, you will <strong>not</strong> want to check the
+<code>build.properties</code> file in to the CVS repository, because it
+is unique to each developer's environment.</p>
+
 <p>Now, create the initial version of the web application deployment
 descriptor.  You can base <code>web.xml</code> on the
 <a href="web.xml.txt">basic web.xml file</a>, or code it from scratch.</p>
@@ -90,51 +139,6 @@ emacs web.xml
 cvs add web.xml
 cvs commit
 </source>
-
-</subsection>
-
-
-<subsection name="Customize for Tomcat Location">
-
-<p>In order for Tomcat to recognize your application, you must deploy it
-as described under <a href="deployment.html">Deployment</a>.  Any of the
-proposed techniques can be used.  For our purposes, we will assume that
-you are using the <em>unpacked directory hierarchy</em> approach, and a
-<code>build.xml</code> script based on the example included with this manual.
-</p>
-
-<p>In order to successfully execute the <code>deploy</code> target, you
-must ensure that the <code>catalina.home</code> property receives the
-correct value, which must be the pathname of the directory into which you
-have installed Tomcat 4.  You can make this customization by one of the
-following techniques:</p>
-<ul>
-<li>Change the property definition in the <code>build.xml</code> file so
-    that it reflects the Tomcat 4 location.  The modified property setting
-    might look like this:
-<source>
-&lt;property name="catalina.home" value="/usr/local/jakarta-tomcat-4.0"/&gt;
-</source></li>
-<li>Set up a <code>build.properties</code> file in your top-level source
-    directory that defines the location oF Tomcat.  For example, the file
-    might contain:
-<source>
-catalina.home=/usr/local/jakarta-tomcat-4.0
-</source></li>
-</ul>
-
-<p>The first technique would be appropriate if all of your developers are
-sharing a common copy of Tomcat 4 for their deployment and testing.  If,
-however, each developer is using their own copy of Tomcat 4, in separate
-directories, the latter technique is preferred (because it lets each
-developer define their own value for the <code>catalina.home</code>
-property.</p>
-
-<p><strong>NOTE</strong> - If you utilize the <code>build.properties</code>
-approach, be sure that you do <strong>NOT</strong> check in the
-<code>build.properties</code> file for any of your developers in to the
-source code archives.  For this reason, the <code>.cvsignore</code> file
-you created earlier should include this filename.</p>
 
 </subsection>
 
@@ -216,20 +220,42 @@ conditional checking did not catch.</p>
 
 <subsection name="Test Your Web Application">
 
-<p>To test your application, you will want to deploy it under Tomcat.  If you
-have customized the <code>catalina.home</code> property as described above,
-this is very easy.  First, deploy the application into Tomcat:</p>
-<source>
-cd {my home directory}
-cd myapp
-ant deploy
-</source>
-
-<p>and then restart Tomcat.  To access your application, point your
-browser at <code>http://localhost:8080/myapp/</code> and begin testing.
-When you discover something that needs to change, fix it in
-the source directory (not in the Tomcat deployment directory), redeploy,
-and restart Tomcat.</p>
+<p>To test your application, you will want to install it under Tomcat.  The
+quickest way to do that is to use the custom Ant tasks that are included in
+the sample <code>build.xml</code> script.  Using these commands might follow
+a pattern like this:</p>
+<ul>
+<li><em>Start Tomcat 4 if needed</em>.  If Tomcat 4 is not already running,
+    you will need to start it in the usual way.
+    <br/><br/></li>
+<li><em>Compile your application</em>.  Use the <code>ant compile</code>
+    command (or just <code>ant</code>, since this is the default).  Make
+    sure that there are no compilation errors.
+    <br/><br/></li>
+<li><em>Install the application</em>.  Use the <code>ant install</code>
+    command.  This tells Tomcat to immediately start running your app on
+    the context path defined in the <code>app.path</code> build property.
+    Tomcat does <strong>NOT</strong> have to be restarted for this to
+    take effect.<br/><br/></li>
+<li><em>Test the application</em>.  Using your browser or other testing
+    tools, test the functionality of your application.
+    <br/><br/></li>
+<li><em>Modify and rebuild as needed</em>.  As you discover that changes
+    are required, make those changes in the original <strong>source</strong>
+    files, not in the output build directory, and re-issue the
+    <code>ant compile</code> command.  This ensures that your changes will
+    be available to be saved (via <code>cvs commit</code>) later on --
+    the output build directory is deleted and recreated as necessary.
+    <br/><br/></li>
+<li><em>Reload the application</em>.  Tomcat will recognize changes in
+    JSP pages automatically, but it will continue to use the old versions
+    of any servlet or JavaBean classes until the application is reloaded.
+    You can trigger this by executing the <code>ant reload</code> command.
+    <br/><br/></li>
+<li><em>Remove the application when you re done</em>.  When you are through
+    working on this application, you can remove it from live execution by
+    running the <code>ant remove</code> command.</li>
+</ul>
 
 <p>Do not forget to commit your changes to the source code repository when
 you have completed your testing!</p>
@@ -261,8 +287,6 @@ following general steps are required:</p>
 </ul>
 
 </subsection>
-
-
 
 
 </section>

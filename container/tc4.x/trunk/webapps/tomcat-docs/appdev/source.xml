@@ -86,10 +86,12 @@ created on a temporary basis:</p>
 <li><strong>build/</strong> - When you execute a default build
     (<code>ant</code>), this directory will contain an exact image
     of the files in the web application archive for this application.
-    For containers like Tomcat that allow you to deploy
-    unpacked directory structures, you need only copy this directory structure
-    into a subdirectory of <code>$CATALINA_HOME/webapps</code> in order to
-    deploy and test it.<br/><br/></li>
+    Tomcat 4 allows you to deploy an application in an unpacked
+    directory like this, either by copying it to the
+    <code>$CATALINA_HOME/webapps</code> directory, or by <em>installing</em>
+    it via the "Manager" web application.  The latter approach is very
+    useful during development, and will be illustrated below.
+    <br/><br/></li>
 <li><strong>dist/</strong> - When you execute the <code>ant dist</code>
     target, this directory will be created.  It will create an exact image
     of the binary distribution for your web application, including an license
@@ -120,7 +122,7 @@ build is performed.</p>
   <p>Therefore, this manual recommends that you <strong>NOT</strong> store
   a copy of the packages you depend on inside the source control archives
   of your applications.  Instead, the external dependencies should be
-  integrated as part of the process of <strong>deploying</strong> your
+  integrated as part of the process of <strong>building</strong> your
   application.  In that way, you can always pick up the appropriate version
   of the JAR files from wherever your development system administrator has
   installed them, without having to worry about updating your application
@@ -132,6 +134,12 @@ build is performed.</p>
   when these files change.  The build properties used by a particular
   developer can be customized on a per-application basis, or defaulted to
   "standard" build properties stored in the developer's home directory.</p>
+
+  <p>In many cases, your development system administrator will have already
+  installed the required JAR files into Tomcat 4's <code>common/lib</code>
+  or <code>shared/lib</code> directories.  If this has been done, you need
+  to take no actions at all - the example <code>build.xml</code> file
+  automatically constructs a compile classpath that includes these files.</p>
 
   </subsection>
 
@@ -233,34 +241,19 @@ provided:</p>
     you have not made source code modifications that will result in
     problems at runtime due to not recompiling all affected classes.
     <br/><br/></li>
-<li><strong>prepare</strong> - This target "prepares" the <code>build</code>
-    directory, creating subdirectories as required.  A common use of this
-    target is to copy static files (documentation, HTML pages, and JSP pages)
-    from the source directory to the build directory.  When
-    executed, this target will only create directories if they do not
-    exist, and only copy files if the destination file does not exist,
-    or the source version of the file is newer.  This target is generally
-    invoked indirectly, by virtue of a <code>depends</code> attribute on
-    some other task.
-    <br/><br/></li>
 <li><strong>compile</strong> - This target is used to compile any source code
     that has been changed since the last time compilation took place.  The
-    resulting class files are created in the <code>build</code> directory, so
-    that they can be executed when the application is deployed.  Because
+    resulting class files are created in the <code>WEB-INF/classes</code>
+    subdirectory of your <code>build</code> directory, exactly where the
+    structure of a web application requires them to be.  Because
     this command is executed so often during development, it is normally
     made the "default" target so that a simple <code>ant</code> command will
     execute it.
     <br/><br/></li>
 <li><strong>all</strong> - This target is a short cut for running the
-    <code>clean</code> target, followed by the <code>compiile</code> target.
+    <code>clean</code> target, followed by the <code>compile</code> target.
     Thus, it guarantees that you will recompile the entire application, to
     ensure that you have not unknowingly introduced any incompatible changes.
-    <br/><br/></li>
-<li><strong>deploy</strong> - This target is used to install your
-    application into a servlet container (we will continue to use Tomcat
-    in our examples) so that it can be tested.  If your application requires
-    external JAR files, they will be copied to the <code>/WEB-INF/lib</code>
-    directory at deployment time.
     <br/><br/></li>
 <li><strong>javadoc</strong> - This target creates Javadoc API documentation
     for the Java classes in this web application.  The example
@@ -279,6 +272,30 @@ provided:</p>
     web application archive will have also picked up any external dependencies
     that were included at deployment time.</li>
 </ul>
+
+<p>For interactive development and testing of your web application using
+Tomcat 4, the following additional targets are defined:</p>
+<ul>
+<li><strong>install</strong> - Tell the currently running Tomcat 4 to make
+    the application you are developing immediately available for execution
+    and testing.  This action does not require Tomcat 4 to be restarted, but
+    it is also not remembered after Tomcat is restarted the next time.
+    <br/><br/></li>
+<li><strong>reload</strong> - Once the application is installed, you can
+    continue to make changes and recompile using the <code>compile</code>
+    target.  Tomcat 4 will automatically recognize changes made to JSP pages,
+    but not to servlet or JavaBean classes - this command will tell Tomcat
+    to restart the currently installed application so that such changes are
+    recognized.
+    <br/><br/></li>
+<li><strong>remove</strong> - When you have completed your development and
+    testing activities, you can optionally tell Tomcat 4 to remove this
+    application from service.
+    </li>
+</ul>
+
+<p>Using the development and testing targets requires some additional
+one-time setup that is described on the next page.</p>
 
 </section>
 

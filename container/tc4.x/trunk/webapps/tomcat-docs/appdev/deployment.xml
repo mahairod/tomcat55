@@ -100,6 +100,46 @@ API Specification, version 2.3, which you should consult for more details.</p>
 </section>
 
 
+<section name="Shared Library Files">
+
+<p>Like most servlet containers, Tomcat 4 also supports mechanisms to install
+library JAR files (or unpacked classes) once, and make them visible to all
+installed web applications (without having to be included inside the web
+application itself.  The details of how Tomcat locates and shares such
+classes are described in the
+<a href="../class-loader-howto.html">Class Loader HOW-TO</a> documentation.
+For the purposes of our discussion, there are two locations that are commonly
+used within a Tomcat 4 installation for shared code:</p>
+<ul>
+<li><strong>$CATALINA_HOME/common/lib</strong> - JAR files placed here are
+    visible both to web applications and internal Tomcat code.  This is a
+    good place to put JDBC drivers that are required for both your application
+    and internal Tomcat use (such as for a JDBCRealm).
+    <br/><br/></li>
+<li><strong>$CATALINA_HOME/shared/lib</strong> - JAR files placed here are
+    visible to all web applications, but not to internal Tomcat code.  This
+    is the right place for shared libraries that are specific to your
+    application.<br/><br/></li>
+</ul>
+
+<p>Out of the box, a standard Tomcat 4 installation includes a variety
+of pre-installed shared library files, including:</p>
+<ul>
+<li>The <em>JavaMail 1.2</em> (and associated <em>JavaBeans Activation
+    Framework</em>) APIs, so you can write mail-enabled web applications.
+    <br/><br/></li>
+<li>The <em>JDBC 2.0 Optional Package</em> APIs, which define things like
+    <code>javax.sql.DataSource</code>.<br/><br/></li>
+<li>The <em>Servlet 2.3</em> and <em>JSP 1.2</em> APIs that are fundamental
+    to writing servlets and JavaServer Pages.<br/><br/></li>
+<li>An <em>XML Parser</em> compliant with the JAXP (version 1.1) APIs, so
+    your application can perform DOM-based or SAX-based processing of
+    XML documents.<br/><br/></li>
+</ul>
+
+</section>
+
+
 <section name="Web Application Deployment Descriptor">
 
     <blockquote><em>
@@ -172,6 +212,11 @@ approaches:</p>
     deploy and undeploy applications on a running Tomcat server without
     restarting it.  See the administrator documentation (TODO: hyperlink)
     for more information on using the Manager web application.<br/><br/></li>
+<li><em>Use "Manager" Ant Tasks In Your Build Script</em>.  Tomcat 4
+    includes a set of custom task definitions for the <code>Ant</code>
+    build tool that allow you to automate the execution of commands to the
+    "Manager" web application.  These tasks are used in the example
+    build script discussed later, and are explained there.<br/><br/></li>
 <li><em>Add a <code>&lt;Context&gt;</code> entry in the
     <code>$CATALINA_HOME/conf/server.xml</code> configuration file</em>.
     This approach is described briefly below, and allows you to position
@@ -186,8 +231,8 @@ approaches:</p>
 container, but all containers compatible with the Servlet API Specification
 (version 2.2 or later) are required to accept a web application archive file.
 Note that other containers are <strong>NOT</strong> required to accept an
-unpacked directory structure (as Tomcat does), but this feature is commonly
-available.</p>
+unpacked directory structure (as Tomcat does), or to provide mechanisms for
+shared library files, but these features are commonly available.</p>
 
 </section>
 

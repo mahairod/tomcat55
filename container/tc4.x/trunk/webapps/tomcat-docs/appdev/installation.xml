@@ -54,7 +54,7 @@ pathname to the directory in which Tomcat 4 has been installed.</p>
 
 <p>Binary downloads of the <strong>Ant</strong> build tool are available from
 <a href="http://jakarta.apache.org/downloads/binindex.html">http://jakarta.apache.org/downloads/binindex.html</a>.
-This manual assumes you are using Ant 1.3.  The instructions should
+This manual assumes you are using Ant 1.4 or later.  The instructions should
 also be compatible with later versions, but this has not been tested.</p>
 
 <p>Download and install Ant from the distribution directory mentioned above.
