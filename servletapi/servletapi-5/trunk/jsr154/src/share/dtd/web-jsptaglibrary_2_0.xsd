@@ -10,7 +10,7 @@
 
   <xsd:annotation>
     <xsd:documentation>
-      @(#)web-jsptaglibrary_2_0.xsds	1.32 03/02/03
+      @(#)web-jsptaglibrary_2_0.xsds	1.33 03/18/03
     </xsd:documentation>
   </xsd:annotation>
   <xsd:annotation>
@@ -334,7 +334,7 @@
 
 	    The listener-class element declares a class in the
 	    application that must be registered as a web
-	    application listener bean.  See the Servlet 2.3
+	    application listener bean.  See the Servlet
 	    specification for details.
 
 	  </xsd:documentation>
