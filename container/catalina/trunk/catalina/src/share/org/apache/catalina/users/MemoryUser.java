@@ -70,7 +70,7 @@ import java.util.Iterator;
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
 import org.apache.catalina.UserDatabase;
-
+import org.apache.catalina.util.RequestUtil;
 
 /**
  * <p>Concrete implementation of {@link User} for the
@@ -294,13 +294,13 @@ public class MemoryUser extends AbstractUser {
     public String toString() {
 
         StringBuffer sb = new StringBuffer("<user username=\"");
-        sb.append(username);
+        sb.append(RequestUtil.filter(username));
         sb.append("\" password=\"");
-        sb.append(password);
+        sb.append(RequestUtil.filter(password));
         sb.append("\"");
         if (fullName != null) {
             sb.append(" fullName=\"");
-            sb.append(fullName);
+            sb.append(RequestUtil.filter(fullName));
             sb.append("\"");
         }
         synchronized (groups) {
@@ -313,7 +313,7 @@ public class MemoryUser extends AbstractUser {
                         sb.append(',');
                     }
                     n++;
-                    sb.append(((Group) values.next()).getGroupname());
+                    sb.append(RequestUtil.filter(((Group) values.next()).getGroupname()));
                 }
                 sb.append("\"");
             }
@@ -328,7 +328,7 @@ public class MemoryUser extends AbstractUser {
                         sb.append(',');
                     }
                     n++;
-                    sb.append(((Role) values.next()).getRolename());
+                    sb.append(RequestUtil.filter(((Role) values.next()).getRolename()));
                 }
                 sb.append("\"");
             }
