@@ -64,6 +64,8 @@ package org.apache.webapp.admin;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 import java.net.URLEncoder;
 import javax.servlet.ServletException;
@@ -117,7 +119,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String WILDCARD = ",*";
     
     private static MBeanServer mBServer = null;
-    //private static ObjectInstance mBeanFactory = null;
     
     public void buildTree(TreeControl treeControl,
     ApplicationServlet servlet,
@@ -302,20 +303,30 @@ public class TomcatTreeBuilder implements TreeBuilder{
         TreeControlNode contextNode = null;
         String encodedContextName;
         
+        // arraylist to store and sort the list of available contexts.
+        ArrayList contextList = new ArrayList();
         while(contextItr.hasNext()){
             
             ObjectInstance contextObj = (ObjectInstance)contextItr.next();
-            
+            contextList.add(contextObj.getObjectName().toString());
+        }
+
+        // sorting the list so that the contexts displayed in the tree are in
+        // alphabetic order.
+        Collections.sort(contextList);
+        
+        for (int i=0; i<contextList.size(); i++) {
+            String context = (String)contextList.get(i);
+            ObjectName oName = new ObjectName(context);
             String contextName =
-            (String)mBServer.getAttribute(contextObj.getObjectName(), "path");
+            (String)mBServer.getAttribute(oName , "path");
             
-            encodedContextName =  URLEncoder.encode(contextObj.getObjectName().toString());
-            
+            encodedContextName =  URLEncoder.encode(context);
             String nodeLabel="Context (" + contextName + ")";
             String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
             
             contextNode =
-            new TreeControlNode(contextObj.getObjectName().toString(),
+            new TreeControlNode(context,
             "folder_16_pad.gif",
             nodeLabel,
             "setUpContext.do?select=" + encodedContextName
@@ -329,6 +340,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 getRealms(contextNode, serviceName, hostName, contextName, 2);
             }
         }
+        
+        
     }
     
     
@@ -471,7 +484,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             new TreeControlNode(realmObj.getObjectName().toString(),
             "folder_16_pad.gif",
             nodeLabel,
-            setUpAction +".do?select=" + encodedRealmName            
+            setUpAction +".do?select=" + encodedRealmName
             +"&nodeLabel="+ encodedNodeLabel
             +"&type="+ encodedRealmType,
             "content", true);
