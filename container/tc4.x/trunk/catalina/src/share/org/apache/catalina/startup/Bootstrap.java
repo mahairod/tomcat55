@@ -116,10 +116,20 @@ public final class Bootstrap {
                 debug = 1;
         }
 
+        // Check to see if JNDI is already present in the system classpath
+        boolean loadJNDI = true;
+        try {
+            Class.forName("javax.naming.Context");
+            loadJNDI = false;
+        } catch (ClassNotFoundException e) {
+        }
+
         // Construct the class loaders we will need
-        ClassLoader commonLoader = createCommonLoader();
-        ClassLoader catalinaLoader = createCatalinaLoader(commonLoader);
-        ClassLoader sharedLoader = createSharedLoader(commonLoader);
+        ClassLoader commonLoader = createCommonLoader(loadJNDI);
+        ClassLoader catalinaLoader =
+            createCatalinaLoader(commonLoader, loadJNDI);
+        ClassLoader sharedLoader =
+            createSharedLoader(commonLoader, loadJNDI);
 
         Thread.currentThread().setContextClassLoader(catalinaLoader);
 
@@ -215,19 +225,13 @@ public final class Bootstrap {
     /**
      * Construct and return the class loader to be used for loading
      * of the shared system classes.
+     *
+     * @param loadJNDI Should we load JNDI classes if present?
      */
-    private static ClassLoader createCommonLoader() {
+    private static ClassLoader createCommonLoader(boolean loadJNDI) {
 
         if (debug >= 1)
             log("Creating COMMON class loader");
-
-        // Check to see if JNDI is already present in the system classpath
-        boolean loadJNDI = true;
-        try {
-            Class.forName("javax.naming.Context");
-            loadJNDI = false;
-        } catch (ClassNotFoundException e) {
-        }
 
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
@@ -263,9 +267,11 @@ public final class Bootstrap {
         String filenames[] = directory.list();
         for (int i = 0; i < filenames.length; i++) {
             String filename = filenames[i].toLowerCase();
-            if ((!filename.endsWith(".jar")) ||
-                (filename.indexOf("bootstrap.jar") != -1) ||
-                ((!loadJNDI) && (filename.indexOf("jndi.jar") != -1)))
+            if (!filename.endsWith(".jar"))
+                continue;
+            if ((!loadJNDI) && filename.equals("jndi.jar"))
+                continue;
+            if (filename.equals("bootstrap.jar"))
                 continue;
             File file = new File(directory, filenames[i]);
             try {
@@ -293,8 +299,12 @@ public final class Bootstrap {
     /**
      * Construct and return the class loader to be used for loading
      * Catalina internal classes.
+     *
+     * @param parent Parent class loader to be assigned
+     * @param loadJNDI Should we load JNDI classes if present?
      */
-    private static ClassLoader createCatalinaLoader(ClassLoader parent) {
+    private static ClassLoader createCatalinaLoader(ClassLoader parent,
+                                                    boolean loadJNDI) {
 
         if (debug >= 1)
             log("Creating CATALINA class loader");
@@ -332,7 +342,10 @@ public final class Bootstrap {
         }
         String filenames[] = directory.list();
         for (int i = 0; i < filenames.length; i++) {
-            if (!filenames[i].toLowerCase().endsWith(".jar"))
+            String filename = filenames[i].toLowerCase();
+            if (!filename.endsWith(".jar"))
+                continue;
+            if ((!loadJNDI) && filename.equals("jndi.jar"))
                 continue;
             File file = new File(directory, filenames[i]);
             try {
@@ -360,8 +373,12 @@ public final class Bootstrap {
     /**
      * Construct and return the class loader to be used for shared
      * extensions by web applications loaded with Catalina.
+     *
+     * @param parent Parent class loader to be assigned
+     * @param loadJNDI Should we load JNDI classes if present?
      */
-    private static ClassLoader createSharedLoader(ClassLoader parent) {
+    private static ClassLoader createSharedLoader(ClassLoader parent,
+                                                  boolean loadJNDI) {
 
         if (debug >= 1)
             log("Creating SHARED class loader");
@@ -399,7 +416,10 @@ public final class Bootstrap {
         }
         String filenames[] = directory.list();
         for (int i = 0; i < filenames.length; i++) {
-            if (!filenames[i].toLowerCase().endsWith(".jar"))
+            String filename = filenames[i].toLowerCase();
+            if (!filename.endsWith(".jar"))
+                continue;
+            if ((!loadJNDI) && filename.equals("jndi.jar"))
                 continue;
             File file = new File(directory, filenames[i]);
             try {
