@@ -139,10 +139,17 @@ public class Catalina extends Embedded {
      */
     protected boolean stopping = false;
 
+
+    /**
+     * Use shutdown hook flag.
+     */
+    protected boolean useShutdownHook = true;
+
+
     /**
      * Shutdown hook.
      */
-    protected Thread shutdownHook = new CatalinaShutdownHook();
+    protected Thread shutdownHook = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -160,6 +167,16 @@ public class Catalina extends Embedded {
 
     public String getConfigFile() {
         return configFile;
+    }
+
+
+    public void setUseShutdownHook(boolean useShutdownHook) {
+        this.useShutdownHook = useShutdownHook;
+    }
+
+
+    public boolean getUseShutdownHook() {
+        return useShutdownHook;
     }
 
 
@@ -589,7 +606,12 @@ public class Catalina extends Embedded {
 
         try {
             // Register shutdown hook
-            Runtime.getRuntime().addShutdownHook(shutdownHook);
+            if (useShutdownHook) {
+                if (shutdownHook == null) {
+                    shutdownHook = new CatalinaShutdownHook();
+                }
+                Runtime.getRuntime().addShutdownHook(shutdownHook);
+            }
         } catch (Throwable t) {
             // This will fail on JDK 1.2. Ignoring, as Tomcat can run
             // fine without the shutdown hook.
@@ -611,7 +633,9 @@ public class Catalina extends Embedded {
         try {
             // Remove the ShutdownHook first so that server.stop() 
             // doesn't get invoked twice
-            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            if (useShutdownHook) {
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            }
         } catch (Throwable t) {
             // This will fail on JDK 1.2. Ignoring, as Tomcat can run
             // fine without the shutdown hook.
