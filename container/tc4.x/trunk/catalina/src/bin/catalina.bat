@@ -36,7 +36,8 @@ if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
 set CATALINA_HOME=..
 :gotCatalinaHome
 if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
-echo Unable to determine the value of CATALINA_HOME
+echo Cannot find catalina.bat in %CATALINA_HOME%\bin
+echo Please check your CATALINA_HOME setting
 goto cleanup
 :okCatalinaHome
 
