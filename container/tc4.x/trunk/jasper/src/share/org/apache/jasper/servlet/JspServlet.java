@@ -96,6 +96,7 @@ import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.TldLocationsCache;
 
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.logging.DefaultLogger;
 import org.apache.jasper.logging.JasperLogger;
 
 /**
@@ -253,7 +254,8 @@ public class JspServlet extends HttpServlet {
         this.serverInfo = context.getServerInfo();
         
 	// Setup logging 
-        Constants.jasperLog = new JasperLogger(this.context);
+        //        Constants.jasperLog = new JasperLogger(this.context);
+        Constants.jasperLog = new DefaultLogger(this.context);
 	Constants.jasperLog.setName("JASPER_LOG");
 	Constants.jasperLog.setTimestamp("false");
 	Constants.jasperLog.setVerbosityLevel(

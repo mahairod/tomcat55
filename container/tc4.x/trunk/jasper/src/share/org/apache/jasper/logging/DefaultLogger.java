@@ -58,6 +58,7 @@ package org.apache.jasper.logging;
 
 import java.io.Writer;
 import java.io.IOException;
+import javax.servlet.ServletContext;
 
 /**
  * Trivial logger that sends all messages to the default sink.  To
@@ -74,12 +75,45 @@ public class DefaultLogger extends Logger {
 	newline = separator.toCharArray();
     }
     
+
+    /**
+     * Default constructor leaves the debug output going to the
+     * default sink.
+     */
+    public DefaultLogger() {
+        super();
+    }
+
+
+    /**
+     * The servlet context we are associated with.
+     */
+    protected ServletContext servletContext;
+
+
+    /**
+     * Construct a logger that writes output to the servlet context log
+     * for the current web application.
+     *
+     * @param servletContext The servlet context for our web application
+     */
+    public DefaultLogger(ServletContext servletContext) {
+        super();
+        this.servletContext = servletContext;
+    }
+
+
+
     /**
      * Prints log message to default sink
      * 
      * @param	message		the message to log.
      */
     protected void realLog(String message) {
+        if (servletContext != null) {
+            servletContext.log(message);
+            return;
+        }
 	try {
 	    defaultSink.write(message);
 	    defaultSink.write(newline);
@@ -97,6 +131,10 @@ public class DefaultLogger extends Logger {
      * @param	t		the exception that was thrown.
      */
     protected void realLog(String message, Throwable t) {
+        if (servletContext != null) {
+            servletContext.log(message, t);
+            return;
+        }
 	try {
 	    defaultSink.write(message);
 	    defaultSink.write(newline);
