@@ -114,8 +114,11 @@ public interface WebApplicationDescriptor extends WebDescriptor {
     
     public LoginConfiguration getLoginConfiguration();
     public void setLoginConfiguration(LoginConfiguration loginConfiguration);
-    // XXXX missing from DTD ?
+    // XXX
+    // commented out in anticipation they'll eventually be supported
+/*
     public Enumeration getLocalizedContentDescriptors();
     public void addLocalizedContentDescriptor(LocalizedContentDescriptor localizedContentDescriptor);
+*/
 }
 

@@ -74,8 +74,8 @@ import java.util.Enumeration;
  */
 
 public class XMLTree {
-    private String name = null;
-    private String value = null;
+    private String name = "";
+    private String value = "";
     private Hashtable attributes = new Hashtable();
     private Vector elements = new Vector();
 
@@ -95,11 +95,11 @@ public class XMLTree {
     }
 
     public void setValue(String value) {
-	if (value != null) {
-	    this.value = value.trim();
-	} else {
-	    this.value = value;
-	}
+	if (value == null) {
+            value = "";
+        }
+
+	this.value = value.trim();
     }
 
     public Object getAttribute(Object key) {

@@ -348,20 +348,19 @@ public class RequestImpl extends Request {
     public void setQueryString(String queryString) {
         this.queryString = queryString;
 
-        Hashtable parameters = null;
-
         // catch any parse exceptions
 
 	try {
-            parameters = HttpUtils.parseQueryString(queryString);
+            setParameters(HttpUtils.parseQueryString(queryString));
 	} catch (Exception e) {
+            this.parameters.clear();
         }
-
-        setParameters(parameters);
     }
 
     public void setParameters(Hashtable parameters) {
-	this.parameters = parameters;
+        if (parameters != null) {
+	    this.parameters = parameters;
+        }
     }
 
     public void setContentLength( int  len ) {

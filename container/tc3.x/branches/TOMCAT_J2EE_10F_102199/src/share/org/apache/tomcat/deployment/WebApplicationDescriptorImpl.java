@@ -86,7 +86,11 @@ implements WebApplicationDescriptor {
     private Vector resourceReferences = new Vector();
     private Vector securityRoles = new Vector();
     private Vector securityConstraints = new Vector();
+    // XXX
+    // commented out in anticipation they'll eventually be supported 
+/*
     private Vector localizedContentDescriptors = new Vector();
+*/
     private LoginConfiguration loginConfiguration;
     private Vector environmentEntries;
     
@@ -180,6 +184,9 @@ implements WebApplicationDescriptor {
         securityConstraints.addElement(securityConstraint);
     }
     
+    // XXX
+    // commented out in anticipation they'll eventually be supported 
+/*
     public Enumeration getLocalizedContentDescriptors() {
 	return localizedContentDescriptors.elements();
     }
@@ -189,6 +196,7 @@ implements WebApplicationDescriptor {
 	this.localizedContentDescriptors.addElement(
 	    localizedContentDescriptor);
     }
+*/
     
     public LoginConfiguration getLoginConfiguration() {
 	return this.loginConfiguration;
@@ -226,7 +234,12 @@ implements WebApplicationDescriptor {
 	s = s + " \n resourceReferences" + resourceReferences;
 	s = s + " \n securityRoles" + securityRoles;
 	s = s + " \n securityConstraints" + securityConstraints;
+
+      // XXX
+      // commented out in anticipation they'll eventually be supported 
+/*
 	s = s + " \n localizedContentDescriptors" + localizedContentDescriptors;
+*/
 	s = s + " \n loginConfiguration " + loginConfiguration;
 	s = s + " \n environmentEntries " + environmentEntries;
 

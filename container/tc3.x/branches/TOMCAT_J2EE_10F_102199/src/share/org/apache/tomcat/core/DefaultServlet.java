@@ -283,12 +283,16 @@ public class DefaultServlet extends HttpServlet {
 
 	while (enum.hasMoreElements()) {
 	    String fileName = (String)enum.nextElement();
-	    File f = new File(file, fileName);
 
-	    if (f.exists()) {
-	        welcomeFile = fileName;
+            if (fileName != null &&
+                fileName.trim().length() > 0) {
+	        File f = new File(file, fileName);
 
-		break;
+	        if (f.exists()) {
+	            welcomeFile = fileName;
+
+		    break;
+                }
 	    }
 	}
 

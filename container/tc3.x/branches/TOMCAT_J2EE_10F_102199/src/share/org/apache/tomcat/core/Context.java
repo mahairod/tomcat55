@@ -662,27 +662,25 @@ public class Context {
     private void clearDir(File dir) {
         String[] files = dir.list();
 
-        if (files == null) {
-            return;
-        }
+        if (files != null) {
+	    for (int i = 0; i < files.length; i++) {
+	        File f = new File(dir, files[i]);
 
-	for (int i = 0; i < files.length; i++) {
-	    File f = new File(dir, files[i]);
+	        if (f.isDirectory()) {
+		    clearDir(f);
+	        }
 
-	    if (f.isDirectory()) {
-		clearDir(f);
+	        try {
+	            f.delete();
+	        } catch (Exception e) {
+	        }
 	    }
 
 	    try {
-	        f.delete();
+	        dir.delete();
 	    } catch (Exception e) {
 	    }
-	}
-
-	try {
-	    dir.delete();
-	} catch (Exception e) {
-	}
+        }
     }
 
     private void processWebApp(InputStream is) {
