@@ -623,6 +623,7 @@ public class ServletWriter extends JavaSourceGenerator {
 	// 			   idx + " " + s );
 	if( idx>=0 ) return idx;
 
+	s=s.replace( '\\', '/' );
 	internalFileRegister.addElement( s );
 	idx=internalFileRegister.size() -1 ; // added item
 	internalFileMap.append("\"").append( s ).append("\" ,\n");

@@ -78,8 +78,7 @@ public abstract class HttpJspBase
     extends HttpServlet 
     implements HttpJspPage 
 {
-    protected PageContext pageContext;
-    protected JspFactory _jspxFactory = null;
+    protected static JspFactory _jspxFactory = null;
 
     protected HttpJspBase() {
     }

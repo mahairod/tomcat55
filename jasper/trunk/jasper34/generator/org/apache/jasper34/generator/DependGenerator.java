@@ -87,6 +87,7 @@ public class DependGenerator extends GeneratorBase
     }
     
     public void generateDepends(ServletWriter writer) {
+	file=file.replace( '\\', '/' );
 	writer.println( "\"" + file + "\",");
     }
 }
