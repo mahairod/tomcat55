@@ -253,9 +253,17 @@ final class StandardWrapperValve
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
-            throwable = e;
-            exception(request, response, e);
+            //            throwable = e;
+            //            exception(request, response, e);
             wrapper.unavailable(e);
+            long available = wrapper.getAvailable();
+            if ((available > 0L) && (available < Long.MAX_VALUE))
+                hres.setDateHeader("Retry-After", available);
+            hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                           sm.getString("standardWrapper.isUnavailable",
+                                        wrapper.getName()));
+            // Do not save exception in 'throwable', because we
+            // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
@@ -277,8 +285,10 @@ final class StandardWrapperValve
         } catch (Throwable e) {
             log(sm.getString("standardWrapper.releaseFilters",
                              wrapper.getName()), e);
-            throwable = e;
-            exception(request, response, e);
+            if (throwable == null) {
+                throwable = e;
+                exception(request, response, e);
+            }
         }
 
         // Deallocate the allocated servlet instance
@@ -286,17 +296,31 @@ final class StandardWrapperValve
             if (servlet != null) {
                 wrapper.deallocate(servlet);
             }
-        } catch (ServletException e) {
-            log(sm.getString("standardWrapper.deallocateException",
-                             wrapper.getName()), e);
-            throwable = e;
-            exception(request, response, e);
         } catch (Throwable e) {
             log(sm.getString("standardWrapper.deallocateException",
                              wrapper.getName()), e);
-            throwable = e;
-            exception(request, response, e);
+            if (throwable == null) {
+                throwable = e;
+                exception(request, response, e);
+            }
         }
+
+        // If this servlet has been marked permanently unavailable,
+        // unload it and release this instance
+        try {
+            if ((servlet != null) &&
+                (wrapper.getAvailable() == Long.MAX_VALUE)) {
+                wrapper.unload();
+            }
+        } catch (Throwable e) {
+            log(sm.getString("standardWrapper.unloadException",
+                             wrapper.getName()), e);
+            if (throwable == null) {
+                throwable = e;
+                exception(request, response, e);
+            }
+        }
+
 
         // Generate a response for the generated HTTP status and message
         if (throwable == null) {
