@@ -17,5 +17,11 @@
       <context-root>servlet-tests</context-root>
     </web>
   </module>
+  <module>
+    <web>
+      <web-uri>servlet-compat.war</web-uri>
+      <context-root>servlet-compat</context-root>
+    </web>
+  </module>
 </application>
 
