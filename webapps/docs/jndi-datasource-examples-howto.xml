@@ -57,25 +57,14 @@ of configuration parameters.
 
 <subsection name="Installation">
 <p>DBCP uses the Jakarta-Commons Database Connection Pool. It relies on
-number of Jakarta-Commons componenets:
+number of Jakarta-Commons components:
 <ul>
-<li>Jakarta-Commons DBCP 1.0</li>
-<li>Jakarta-Commons Collections 2.0</li>
-<li>Jakarta-Commons Pool 1.0</li>
+<li>Jakarta-Commons DBCP</li>
+<li>Jakarta-Commons Collections</li>
+<li>Jakarta-Commons Pool</li>
 </ul>
-These jar files along with your the jar file for your JDBC driver should
-be installed in <code>$CATALINA_HOME/common/lib</code>.
-<blockquote>
-<strong>NOTE:</strong>Third Party drivers should be in jarfiles, not zipfiles.
-Tomcat only adds <code>$CATALINA_HOME/common/lib/*.jar</code> to the classpath.
-</blockquote>
-<blockquote>
-<strong>NOTE:</strong>
-Do not install these jarfiles in your <code>/WEB-INF/lib</code>, or
-<code>$JAVA_HOME/jre/lib/ext</code>, or anywhere else.  You will
-experience problems if you install them anyplace other than
-<code>$CATALINA_HOME/common/lib</code>.
-</blockquote>
+These libraries are located in a single JAR at 
+<code>$CATALINA_HOME/common/lib/naming-factory-dbcp.jar</code>.
 </p>
 
 </subsection>
@@ -104,40 +93,30 @@ which opened these resources and never closed them.</p>
 
 <p>
 To configure a DBCP DataSource so that abandoned dB connections are
-removed and recycled add the following <code>paramater</code> to the
-<code>ResourceParams</code> configuration for your DBCP DataSource
-<code>Resource</code>:
+removed and recycled add the following attribute to the
+<code>Resource</code> configuration for your DBCP DataSource:
 <source>
-            &lt;parameter&gt;
-              &lt;name&gt;removeAbandoned&lt;/name&gt;
-              &lt;value&gt;true&lt;/value&gt;
-            &lt;/parameter&gt;
+            removeAbandoned="true"
 </source>
 When available db connections run low DBCP will recover and recyle
 any abandoned dB connections it finds. The default is <code>false</code>.
 </p>
 
 <p>
-Use the <code>removeAbandonedTimeout</code> parameter to set the number
+Use the <code>removeAbandonedTimeout</code> attribute to set the number
 of seconds a dB connection has been idle before it is considered abandoned.
 <source>
-            &lt;parameter&gt;
-              &lt;name&gt;removeAbandonedTimeout&lt;/name&gt;
-              &lt;value&gt;60&lt;/value&gt;
-            &lt;/parameter&gt;
+            removeAbandonedTimeout="60"
 </source>
 The default timeout for removing abandoned connections is 300 seconds.
 </p>
 
 <p>
-The <code>logAbandoned</code> parameter can be set to <code>true</code>
+The <code>logAbandoned</code> attribute can be set to <code>true</code>
 if you want DBCP to log a stack trace of the code which abandoned the
 dB connection resources.
 <source>
-            &lt;parameter&gt;
-              &lt;name&gt;logAbandoned&lt;/name&gt;
-              &lt;value&gt;true&lt;/value&gt;
-            &lt;/parameter&gt;
+            logAbandoned="true"
 </source>
 The default is <code>false</code>.
 </p>
@@ -210,77 +189,39 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
              prefix="localhost_DBTest_log." suffix=".txt"
              timestamp="true"/&gt;
 
-  &lt;Resource name="jdbc/TestDB"
-               auth="Container"
-               type="javax.sql.DataSource"/&gt;
-
-  &lt;ResourceParams name="jdbc/TestDB"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;factory&lt;/name&gt;
-      &lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;
-    &lt;/parameter&gt;
-
-    &lt;!-- Maximum number of dB connections in pool. Make sure you
+    &lt;!-- maxActive: Maximum number of dB connections in pool. Make sure you
          configure your mysqld max_connections large enough to handle
          all of your db connections. Set to 0 for no limit.
          --&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxActive&lt;/name&gt;
-      &lt;value&gt;100&lt;/value&gt;
-    &lt;/parameter&gt;
 
-    &lt;!-- Maximum number of idle dB connections to retain in pool.
+    &lt;!-- maxIdle: Maximum number of idle dB connections to retain in pool.
          Set to -1 for no limit.  See also the DBCP documentation on this
          and the minEvictableIdleTimeMillis configuration parameter.
          --&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxIdle&lt;/name&gt;
-      &lt;value&gt;30&lt;/value&gt;
-    &lt;/parameter&gt;
 
-    &lt;!-- Maximum time to wait for a dB connection to become available
+    &lt;!-- maxWait: Maximum time to wait for a dB connection to become available
          in ms, in this example 10 seconds. An Exception is thrown if
          this timeout is exceeded.  Set to -1 to wait indefinitely.
          --&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxWait&lt;/name&gt;
-      &lt;value&gt;10000&lt;/value&gt;
-    &lt;/parameter&gt;
 
-    &lt;!-- MySQL dB username and password for dB connections  --&gt;
-    &lt;parameter&gt;
-     &lt;name&gt;username&lt;/name&gt;
-     &lt;value&gt;javauser&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-     &lt;name&gt;password&lt;/name&gt;
-     &lt;value&gt;javadude&lt;/value&gt;
-    &lt;/parameter&gt;
+    &lt;!-- username and password: MySQL dB username and password for dB connections  --&gt;
 
-    &lt;!-- Class name for the old mm.mysql JDBC driver - uncomment this entry and comment next
-         if you want to use this driver - we recommend using Connector/J though
-    &lt;parameter&gt;
-       &lt;name&gt;driverClassName&lt;/name&gt;
-       &lt;value&gt;org.gjt.mm.mysql.Driver&lt;/value&gt;
-    &lt;/parameter&gt;
-     --&gt;
+    &lt;!-- driverClassName: Class name for the old mm.mysql JDBC driver is
+         org.gjt.mm.mysql.Driver - we recommend using Connector/J though.
+         Class name for the official MySQL Connector/J driver is com.mysql.jdbc.Driver.
+         --&gt;
     
-    &lt;!-- Class name for the official MySQL Connector/J driver --&gt;
-    &lt;parameter&gt;
-       &lt;name&gt;driverClassName&lt;/name&gt;
-       &lt;value&gt;com.mysql.jdbc.Driver&lt;/value&gt;
-    &lt;/parameter&gt;
-    
-    &lt;!-- The JDBC connection url for connecting to your MySQL dB.
+    &lt;!-- url: The JDBC connection url for connecting to your MySQL dB.
          The autoReconnect=true argument to the url makes sure that the
          mm.mysql JDBC Driver will automatically reconnect if mysqld closed the
          connection.  mysqld by default closes idle connections after 8 hours.
          --&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;url&lt;/name&gt;
-      &lt;value&gt;jdbc:mysql://localhost:3306/javatest?autoReconnect=true&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
+
+  &lt;Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource"
+               maxActive="100" maxIdle="30" maxWait="10000"
+               username="javauser" password="javadude" driverClassName="com.mysql.jdbc.Driver"
+               url="jdbc:mysql://localhost:3306/javatest?autoReconnect=true"/&gt;
+
 &lt;/Context&gt;
 </source>
 </p>
@@ -364,42 +305,10 @@ to the schema called myschema in the sid called mysid. (Note: with the thin driv
 <p>Use of the OCI driver should simply involve a changing thin to oci in the URL string.
 <source>
 &lt;Resource name="jdbc/myoracle" auth="Container"
-              type="javax.sql.DataSource"/&gt; 
-
-&lt;ResourceParams name="jdbc/myoracle"&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;factory&lt;/name&gt;
-    &lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;driverClassName&lt;/name&gt;
-    &lt;value&gt;oracle.jdbc.driver.OracleDriver&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;url&lt;/name&gt;
-    &lt;value&gt;jdbc:oracle:thin:myschema@127.0.0.1:1521:mysid&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;username&lt;/name&gt;
-    &lt;value&gt;scott&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;password&lt;/name&gt;
-    &lt;value&gt;tiger&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;maxActive&lt;/name&gt;
-    &lt;value&gt;20&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;maxIdle&lt;/name&gt;
-    &lt;value&gt;10&lt;/value&gt;
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;maxWait&lt;/name&gt;
-    &lt;value&gt;-1&lt;/value&gt;
-  &lt;/parameter&gt;
-&lt;/ResourceParams&gt;
+              type="javax.sql.DataSource" driverClassName="oracle.jdbc.driver.OracleDriver"
+              url="jdbc:oracle:thin:myschema@127.0.0.1:1521:mysid"
+              username="scott" password="tiger" maxActive="20" maxIdle="10"
+              maxWait="-1"/&gt; 
 </source>
 </p>
 
@@ -434,42 +343,9 @@ These notes are untested as yet and we would appreciate feedback.</p>
 <h3>1.    server.xml configuration</h3>
 <source>
 &lt;Resource name="jdbc/postgres" auth="Container"
-          type="javax.sql.DataSource"/> 
-
-&lt;ResourceParams name="jdbc/postgres">
-  &lt;parameter>
-    &lt;name>factory&lt;/name>
-    &lt;value>org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value>
-  &lt;/parameter>
-  &lt;parameter>
-    &lt;name>driverClassName&lt;/name>
-    &lt;value>org.postgresql.Driver&lt;/value>
-  &lt;/parameter>
-  &lt;parameter>
-    &lt;name>url&lt;/name>
-    &lt;value>jdbc:postgresql://127.0.0.1:5432/mydb&lt;/value>
-  &lt;/parameter>
-  &lt;parameter>
-    &lt;name>username&lt;/name>
-    &lt;value>myuser&lt;/value>
-  &lt;/parameter>
-  &lt;parameter>
-    &lt;name>password&lt;/name>
-    &lt;value>mypasswd&lt;/value>
-  &lt;/parameter>
-  &lt;parameter>
-    &lt;name>maxActive&lt;/name>
-    &lt;value>20&lt;/value>
-  &lt;/parameter>
-  &lt;parameter>
-    &lt;name>maxIdle&lt;/name>
-    &lt;value>10&lt;/value>
-  &lt;/parameter&gt;
-  &lt;parameter&gt;
-    &lt;name&gt;maxWait&lt;/name&gt;
-    &lt;value&gt;-1&lt;/value&gt;
-  &lt;/parameter&gt;
-&lt;/ResourceParams&gt; 
+          type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+          url="jdbc:postgresql://127.0.0.1:5432/mydb"
+          username="myuser" password="mypasswd" maxActive="20" maxIdle="10" maxWait="-1"/> 
 </source>
 <h3>2.    web.xml configuration</h3>
 <source>
