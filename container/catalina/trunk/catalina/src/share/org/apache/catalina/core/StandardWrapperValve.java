@@ -284,8 +284,17 @@ final class StandardWrapperValve
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
             hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+            Throwable rootCause = e;
+            while (rootCause instanceof ServletException) {
+                Throwable t = ((ServletException) rootCause).getRootCause();
+                if (t != null) {
+                    rootCause = t;
+                } else {
+                    break;
+                }
+            }
             log.error(sm.getString("standardWrapper.serviceException",
-                             wrapper.getName()), e);
+                                   wrapper.getName()), rootCause);
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
