@@ -1756,7 +1756,20 @@ public class WebappClassLoader
             return false;
         if (name.startsWith("java."))
             return false;
-        if (name.startsWith("javax.servlet."))
+
+        // Looking up the package
+        String packageName = null;
+        int pos = name.lastIndexOf('.');
+        if (pos != -1)
+            packageName = name.substring(0, pos);
+
+        if (packageName.equals("javax.servlet"))
+            return false;
+        if (packageName.equals("javax.servlet.http"))
+            return false;
+        if (packageName.equals("javax.servlet.jsp"))
+            return false;
+        if (packageName.equals("javax.servlet.jsp.tagext"))
             return false;
 
         return true;
