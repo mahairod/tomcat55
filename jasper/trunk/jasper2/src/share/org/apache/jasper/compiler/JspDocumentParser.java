@@ -291,12 +291,14 @@ class JspDocumentParser extends DefaultHandler
 	 * and any leading and trailing white-space-only textual nodes in a
 	 * jsp:attribute whose 'trim' attribute is set to FALSE, which are to
 	 * be kept verbatim.
+	 * JSP.6.2.3 defines white space characters.
 	 */
 	boolean isAllSpace = true;
 	if (!(current instanceof Node.JspText)
 	        && !(current instanceof Node.NamedAttribute)) {
 	    for (int i=offset; i<offset+len; i++) {
-		if (!Character.isSpace(buf[i])) {
+		if (!(buf[i] == ' ' || buf[i] == '\n' || buf[i] == '\r' ||
+			buf[i] == '\t' )) {
 		    isAllSpace = false;
 		    break;
 		}
