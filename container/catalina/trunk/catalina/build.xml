@@ -655,6 +655,7 @@
     <ant dir="${tomcat-jk.home}" target="build-main">
       <property name="tomcat5.home" value="${catalina.deploy}"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
+      <property name="commons-modeler.jar" value="${commons-modeler.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
 
