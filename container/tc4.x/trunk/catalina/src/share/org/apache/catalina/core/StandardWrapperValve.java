@@ -878,7 +878,7 @@ final class StandardWrapperValve
         // Render a default HTML status report page
         try {
             try {
-                hres.setContentType("text/html; charset=UTF-8");
+                hres.setContentType("text/html");
             } catch (Throwable t) {
                 if (debug >= 1)
                     log("status.setContentType", t);
