@@ -61,7 +61,7 @@
 package org.apache.tools.moo.jsp;
 
 import org.apache.tools.moo.jsp.Constants;
-import org.apache.tools.moo.cookie.CookieJar;
+import org.apache.tools.moo.cookie.CookieManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -81,7 +81,7 @@ import java.lang.NullPointerException;
  */
 public class MapManager {
 
-    private CookieJar cookieJar = new CookieJar();
+    private CookieManager cookieManager = new CookieManager("cookies__");
 
     //maps is a hashtable from client test (key) to server test (value)
     private Hashtable maps = new Hashtable();
@@ -198,8 +198,8 @@ public class MapManager {
     }
 
 
-    public CookieJar getCookieJar() {
-        return this.cookieJar;
+    public CookieManager getCookieManager() {
+        return this.cookieManager;
     }
 
 }
