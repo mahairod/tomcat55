@@ -872,10 +872,13 @@ public final class HttpConnector
     private void log(String message) {
 
         Logger logger = container.getLogger();
+        String localName = threadName;
+        if (localName == null)
+            localName = "HttpConnector";
         if (logger != null)
-            logger.log(threadName + " " + message);
+            logger.log(localName + " " + message);
         else
-            System.out.println(threadName + " " + message);
+            System.out.println(localName + " " + message);
 
     }
 
@@ -889,10 +892,13 @@ public final class HttpConnector
     private void log(String message, Throwable throwable) {
 
         Logger logger = container.getLogger();
+        String localName = threadName;
+        if (localName == null)
+            localName = "HttpConnector";
         if (logger != null)
-            logger.log(threadName + " " + message, throwable);
+            logger.log(localName + " " + message, throwable);
         else {
-            System.out.println(threadName + " " + message);
+            System.out.println(localName + " " + message);
             throwable.printStackTrace(System.out);
         }
 
