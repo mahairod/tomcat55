@@ -88,6 +88,7 @@ ${StrRep}
     LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
     LangString DESC_SecAdmin ${LANG_ENGLISH} "Installs the administration web application."
     LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
+    LangString DESC_SecCompat ${LANG_ENGLISH} "Installs Java2™ compatibility package. This release of Apache Tomcat was packaged to run on J2SE 5.0 or later. It can be run on earlier JVMs by installng this package."
 
   ;Language
   !insertmacro MUI_LANGUAGE English
@@ -114,7 +115,7 @@ SubSection "Tomcat" SecTomcat
 
 Section "Core" SecTomcatCore
 
-  SectionIn 1 2 3
+  SectionIn 1 2 3 RO
 
   IfSilent +2 0
   Call checkJvm
@@ -215,8 +216,18 @@ Section "Start Menu Items" SecMenu
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Welcome.lnk" \
                  "http://127.0.0.1:$R0/"
 
+  IfFileExists "$INSTDIR\server\webapps\admin" 0 NoAdminApp
+
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Administration.lnk" \
                  "http://127.0.0.1:$R0/admin/"
+NoAdminApp:
+
+  IfFileExists "$INSTDIR\server\webapps\manager" 0 NoManagerApp
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Manager.lnk" \
+                 "http://127.0.0.1:$R0/manager/html"
+
+NoManagerApp:
 
   IfFileExists "$INSTDIR\webapps\webapps\tomcat-docs" 0 NoDocumentaion
 
@@ -283,6 +294,15 @@ Section "Webapps" SecWebapps
 
 SectionEnd
 
+Section "Compatibility" SecCompat
+
+  SetOutPath $INSTDIR
+  File /oname=bin\jmx.jar ..\compat\bin\jmx.jar
+  File /oname=common\endorsed\xercesImpl.jar ..\compat\common\endorsed\xercesImpl.jar
+  File /oname=common\endorsed\xml-apis.jar  ..\compat\common\endorsed\xml-apis.jar
+
+SectionEnd
+
 Section -post
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --JvmOptions "-Dcatalina.home=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR\temp" --StdOutput "$INSTDIR\logs\stdout.log" --StdError "$INSTDIR\logs\stderr.log"'
@@ -330,6 +350,7 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} $(DESC_SecTomcatSource)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCompat} $(DESC_SecCompat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} $(DESC_SecMenu)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDocs} $(DESC_SecDocs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
@@ -437,14 +458,14 @@ Function checkJvm
 
   !insertmacro MUI_INSTALLOPTIONS_READ $3 "jvm.ini" "Field 2" "State"
   IfFileExists "$3\bin\java.exe" NoErrors1
-  MessageBox MB_OK "No Java Virtual Machine found."
+  MessageBox MB_OK|MB_ICONSTOP "No Java Virtual Machine found in folder:$\r$\n$3"
   Quit
 NoErrors1:
   StrCpy "$JavaHome" $3
   Call findJVMPath
   Pop $4
   StrCmp $4 "" 0 NoErrors2
-  MessageBox MB_OK "No Java Virtual Machine found."
+  MessageBox MB_OK|MB_ICONSTOP "No Java Virtual Machine found in folder:$\r$\n$3"
   Quit
 NoErrors2:
 
