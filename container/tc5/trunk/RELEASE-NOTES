@@ -21,9 +21,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Security manager URLs
 * Symlinking static resources
 * Enabling invoker servlet
-* Container provided authentication
-* Administration web application
-* Deployment descriptors validation
+* Privileged web applications and log4j
 * When all else fails
 
 
@@ -205,31 +203,15 @@ Using the invoker servlet in a production environment is not recommended and
 is unsupported.
 
 
----------------------------------
-Container provided authentication:
----------------------------------
+-------------------------------------
+Privileged web applications and log4j:
+-------------------------------------
 
-Support for the Servlet API PFD 3 specification may not be complete yet for
-security constraint matching. This will be resolved in a future Tomcat beta
-release.
+Apache log4j, or other logging systems, cannot be used inside privileged web
+applications, due to classloading problems caused by commons-logging.
 
-
-------------------------------
-Administration web application:
-------------------------------
-
-Due to changes in the configuration file format, the administration web 
-application does not support editing hosts or connectors. This will be 
-resolved in a future Tomcat beta release.
-
-
----------------------------------
-Deployment descriptors validation:
----------------------------------
-
-Validation of Servlet 2.4 and JSP 2.0 deployment descriptors (using XML 
-schema for validation) does not properly work at this time. The cause of this
-problem is investigated.
+Note that privileged contexts are only useful to write web application which
+extend the container functionality.
 
 
 -------------------
