@@ -283,8 +283,11 @@ public final class SaveJDBCRealmAction extends Action {
                                   new Attribute("debug", new Integer(debug)));
 
             attribute = "digest";
-            mBServer.setAttribute(roname,
-                                  new Attribute("digest",  rform.getDigest()));
+            String digest = rform.getDigest();
+            if ((digest != null) && (digest.length()>0)) {
+                mBServer.setAttribute(roname,
+                                  new Attribute("digest",  digest));
+            }                               
 
             attribute = "driverName";
             mBServer.setAttribute(roname,
