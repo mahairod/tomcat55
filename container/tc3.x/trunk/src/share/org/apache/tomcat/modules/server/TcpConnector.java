@@ -71,9 +71,6 @@ import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.logging.*;
-//import org.apache.tomcat.server.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 class TcpConnector
 {

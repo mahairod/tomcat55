@@ -70,8 +70,6 @@ import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.net.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.logging.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 
 public class Ajp13ConnectionHandler extends PoolTcpConnector

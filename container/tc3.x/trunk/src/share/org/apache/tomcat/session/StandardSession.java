@@ -469,11 +469,8 @@ final class StandardSession
      *  Java Servlet API.
      */
     public HttpSessionContext getSessionContext() {
-
-	if (sessionContext == null)
-	    sessionContext = new SessionContextImpl();
-	return (sessionContext);
-
+	return null; // XXX XXX XXX temp - will go away as we refactor
+	// the session manager for recycling and modularization
     }
 
 

@@ -67,7 +67,6 @@ import java.io.IOException;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.helper.*;
-import javax.servlet.ServletInputStream;
 import java.util.Vector;
 import java.io.File;
 

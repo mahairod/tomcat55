@@ -156,7 +156,7 @@ public class CookieTools {
 	}
     }
 
-    static void maybeQuote (int version, StringBuffer buf,
+    public static void maybeQuote (int version, StringBuffer buf,
                                     String value)
     {
 	if (version == 0 || isToken (value))

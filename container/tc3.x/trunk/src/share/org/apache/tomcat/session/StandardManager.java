@@ -382,12 +382,12 @@ public final class StandardManager implements Runnable  {
     }
 
     public void handleReload(Request req, ClassLoader newLoader) {
-	Hashtable sessions = sessionM.getSessions();
+	Hashtable sessions = getSessions();
 
 	sessions = SessionSerializer.doSerialization( newLoader, sessions);
 
 	// put the new sessions into the manager
-	sessionM.setSessions(sessions);
+	setSessions(sessions);
     }
 
     /**
