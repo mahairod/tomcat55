@@ -14,10 +14,10 @@
 <!-- Body -->
 
 <frameset rows="100,*" border="0">
-  <frame name="banner" src="banner.jsp" scrolling="no">
+  <frame name="banner" src='<%= response.encodeURL("banner.jsp") %>' scrolling="no">
   <frameset cols="300,*" border="0">
-    <frame name="tree" src="tree-control-test.jsp" scrolling="auto">
-    <frame name="content" src="sample.jsp" scrolling="auto">
+    <frame name="tree" src='<%= response.encodeURL("tree-control-test.jsp") %>' scrolling="auto">
+    <frame name="content" src='<%= response.encodeURL("sample.jsp") %>' scrolling="auto">
   </frameset>
 </frameset>
 
