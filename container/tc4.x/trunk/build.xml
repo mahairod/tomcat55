@@ -56,6 +56,7 @@
     <mkdir dir="${tomcat.dist}"/>
     <mkdir dir="${tomcat.dist}/bin"/>
     <mkdir dir="${tomcat.dist}/conf"/>
+    <mkdir dir="${tomcat.dist}/jasper"/>
     <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/logs"/>
     <mkdir dir="${tomcat.dist}/server"/>
@@ -80,6 +81,9 @@
     </copy>
     <copy todir="${tomcat.dist}/conf">
       <fileset dir="${tomcat.build}/conf" />
+    </copy>
+    <copy todir="${tomcat.dist}/jasper">
+      <fileset dir="${tomcat.build}/jasper" />
     </copy>
     <copy todir="${tomcat.dist}/lib">
       <fileset dir="${tomcat.build}/lib" />

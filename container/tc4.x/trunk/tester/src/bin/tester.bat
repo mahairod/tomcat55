@@ -59,7 +59,7 @@ set _RUNJAVA="%JAVA_HOME%\bin\java"
 
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
-set CP=%CATALINA_HOME%\webapps\tester\WEB-INF\lib\tester.jar;%CATALINA_HOME%\lib\jaxp.jar;%CATALINA_HOME%\lib\crimson.jar;%ANT_HOME%\lib\ant.jar
+set CP=%CATALINA_HOME%\webapps\tester\WEB-INF\lib\tester.jar;%CATALINA_HOME%\server\jaxp.jar;%CATALINA_HOME%\server\crimson.jar;%ANT_HOME%\lib\ant.jar
 set CLASSPATH=%CP%
 echo Using CLASSPATH: %CLASSPATH%
 

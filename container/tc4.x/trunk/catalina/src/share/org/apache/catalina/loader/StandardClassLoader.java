@@ -593,7 +593,11 @@ public class StandardClassLoader
             sb.append(required.next().toString());
             sb.append("\r\n");
         }
-        sb.append("\r\n");
+        if (getParent() != null) {
+            sb.append("----------> Parent Classloader:\r\n");
+            sb.append(getParent().toString());
+            sb.append("\r\n");
+        }
         return (sb.toString());
 
     }

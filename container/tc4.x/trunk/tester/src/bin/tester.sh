@@ -37,7 +37,7 @@ fi
 
 # ----- Set Up The System Classpath -------------------------------------------
 
-CP=$CATALINA_HOME/webapps/tester/WEB-INF/lib/tester.jar:$CATALINA_HOME/lib/jaxp.jar:$CATALINA_HOME/lib/crimson.jar:$ANT_HOME/lib/ant.jar
+CP=$CATALINA_HOME/webapps/tester/WEB-INF/lib/tester.jar:$CATALINA_HOME/server/jaxp.jar:$CATALINA_HOME/server/crimson.jar:$ANT_HOME/lib/ant.jar
 
 echo Using CLASSPATH: $CP
 

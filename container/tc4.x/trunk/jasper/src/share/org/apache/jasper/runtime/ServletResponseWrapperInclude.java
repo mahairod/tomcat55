@@ -59,7 +59,7 @@
  *
  */ 
 
-package org.apache.jasper.compiler;
+package org.apache.jasper.runtime;
 
 import java.lang.IllegalStateException;
 import java.io.PrintWriter;

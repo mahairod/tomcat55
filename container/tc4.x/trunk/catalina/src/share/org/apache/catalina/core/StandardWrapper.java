@@ -65,7 +65,9 @@
 package org.apache.catalina.core;
 
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.servlet.Servlet;
@@ -86,6 +88,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
 
@@ -164,6 +167,12 @@ public final class StandardWrapper
      * The support object for our instance listeners.
      */
     private InstanceSupport instanceSupport = new InstanceSupport(this);
+
+
+    /**
+     * The specialized class loader for the Jasper JSP servlet.
+     */
+    private ClassLoader jasperLoader = null;
 
 
     /**
@@ -715,6 +724,13 @@ public final class StandardWrapper
 	          ("standardWrapper.containerServlet", getName()));
         }
 
+        // Special case class loader for the Jasper JSP servlet
+        if (this.name.equals(Constants.JSP_SERVLET_NAME)) {
+            if (jasperLoader == null)
+                jasperLoader = createJasperLoader(classLoader);
+            classLoader = jasperLoader;
+        }
+
 	// Load the specified servlet class from the appropriate class loader
 	Class classClass = null;
 	try {
@@ -902,6 +918,7 @@ public final class StandardWrapper
 
 	// Deregister the destroyed instance
 	instance = null;
+        jasperLoader = null;
 	fireContainerEvent("unload", this);
 
     }
@@ -976,6 +993,51 @@ public final class StandardWrapper
     protected void addDefaultMapper(String mapperClass) {
 
 	;	// No need for a default Mapper on a Wrapper
+
+    }
+
+
+    /**
+     * Create and return a custom class loader for the Jasper JSP servlet
+     * that picks up the relevant classes from the "jasper" subdirectory
+     * underneath "catalina.home".
+     *
+     * @param classLoader The web app class loader to be our parent
+     *
+     * @exception IllegalArgumentException if an error occurs building a
+     *  URL for one of the repository JAR files
+     */
+    protected ClassLoader createJasperLoader(ClassLoader classLoader) {
+
+        // Create a new class loader with the webapp class loader as parent
+        StandardClassLoader jasperLoader =
+            new StandardClassLoader(classLoader);
+
+        // Accumulate the list of repositories to be added for this loader
+        File directory = new File(System.getProperty("catalina.home"),
+                                  "jasper");
+        if (!directory.exists() || !directory.canRead() ||
+            !directory.isDirectory())
+            return (jasperLoader);
+        String filenames[] = directory.list();
+        for (int i = 0; i < filenames.length; i++) {
+            if (!filenames[i].endsWith(".jar"))
+                continue;
+            File file = new File(directory, filenames[i]);
+            try {
+                URL url = new URL("file", null, file.getCanonicalPath());
+                jasperLoader.addRepository(url.toString());
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e.toString());
+            }
+        }
+
+        // Return the configured class loader
+        if (debug >= 1) {
+            log("Created Jasper Class Loader");
+            log(jasperLoader.toString());
+        }
+        return (jasperLoader);
 
     }
 

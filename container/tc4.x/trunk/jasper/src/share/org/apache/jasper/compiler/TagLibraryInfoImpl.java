@@ -90,9 +90,6 @@ import javax.servlet.jsp.tagext.PageData;
 import javax.servlet.jsp.tagext.VariableInfo;
 import javax.servlet.jsp.tagext.TagVariableInfo;
 
-// import org.w3c.dom.*;
-// import org.xml.sax.*;
-
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -214,7 +211,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 					new Object[] {location[0]}));
 	    }
 	    // Now parse the tld.
-	    parseTLD(location[0], in);
+	    parseTLD(ctxt, location[0], in);
 	} else {
 	    // Location points to a jar file
 	    // tag library in jar file
@@ -231,7 +228,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		jarFile = conn.getJarFile();
 		jarEntry = jarFile.getEntry(location[1]);
 		stream = jarFile.getInputStream(jarEntry);
-		parseTLD(location[0], stream);
+		parseTLD(ctxt, location[0], stream);
 		// FIXME @@@
 		// -- it seems that the JarURLConnection class caches JarFile 
 		// objects for particular URLs, and there is no way to get 
@@ -263,14 +260,16 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
     
         
-    private void parseTLD(String uri, InputStream in) 
+    private void parseTLD(JspCompilationContext ctxt,
+                          String uri, InputStream in) 
         throws JasperException
     {
 
         Vector tagVector = new Vector();
 
         // Create an iterator over the child elements of our <taglib> element
-        ParserUtils pu = new ParserUtils();
+        ClassLoader cl = ctxt.getClassLoader();
+        ParserUtils pu = ParserUtils.createParserUtils(cl);
         TreeNode tld = pu.parseXMLDocument(uri, in);
         Iterator list = tld.findChildren();
 
