@@ -228,9 +228,10 @@ of Tomcat 4.0.
 * Unpack the reference implementation into a convenient location so that
   it resides in its own subdirectory.
 
-* You will also need the "LDAP Provider" (ldap.jar), available on the
-  same download page.  Be sure that you unpack "ldap.jar" into the "lib"
-  subdirectory of the JNDI directory, parallel to "jndi.jar".
+* You will also need the LDAP Service Provider Maintenance package,
+  (version 1.2.3 or later) available on the same download page. Be sure
+  that you unpack "ldap.jar" and "jaas.jar" into the "lib" subdirectory of
+  the JNDI directory, parallel to "jndi.jar".
 
 
 (11) Steps (12)-(23) are optional, but are necessary to build a complete binary
