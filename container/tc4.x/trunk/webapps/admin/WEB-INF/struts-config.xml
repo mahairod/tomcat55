@@ -119,7 +119,7 @@
                     type="org.apache.webapp.admin.resources.UserDatabaseForm"/>
 
     <form-bean      name="userDatabasesForm"
-                    type="org.apache.webapp.admin.resources.userDatabasesForm"/>
+                    type="org.apache.webapp.admin.resources.UserDatabasesForm"/>
 
     <form-bean      name="dataSourceForm"
                     type="org.apache.webapp.admin.resources.DataSourceForm"/>
