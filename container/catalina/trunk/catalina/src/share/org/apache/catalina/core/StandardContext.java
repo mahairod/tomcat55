@@ -3254,7 +3254,9 @@ public class StandardContext
             name = (String) servletMappings.remove(pattern);
         }
         Wrapper wrapper = (Wrapper) findChild(name);
-        wrapper.removeMapping(pattern);
+        if( wrapper != null ) {
+            wrapper.removeMapping(pattern);
+        }
         fireContainerEvent("removeServletMapping", pattern);
 
     }
@@ -4682,6 +4684,16 @@ public class StandardContext
         return name;
     }
 
+    public void preDeregister() {
+        if( started ) {
+            try {
+                stop();
+            } catch( Exception ex ) {
+                log.error( "error stopping ", ex);
+            }
+        }
+    }
+
     public void init() throws Exception {
 
         if( this.getParent() != null ) {
@@ -4694,12 +4706,17 @@ public class StandardContext
             log.error( "No name attribute " +name );
             return;
         }
+        if( ! path.startsWith( "//")) {
+            log.error("Invalid name " + name);
+        }
+        path=path.substring(2);
         int delim=path.indexOf( "/" );
         String hostName="localhost"; // Should be default...
         if( delim > 0 ) {
             hostName=path.substring(0, delim);
             this.setName( path.substring(delim));
         } else {
+            log.info("Setting path " +  path );
             this.setName( path );
         }
         // XXX The service and domain should be the same.
