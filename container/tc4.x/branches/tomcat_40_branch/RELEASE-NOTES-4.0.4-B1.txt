@@ -46,6 +46,9 @@ Authenticator:  Make authenticator non-final so that they can be subclassed.
 
 BaseDirContext:  Add lifecycle management, to allow releasing used resources.
 
+StandardHost: Added the workDir attribute to the Host configuration.
+  This makes it easier to set the base directory where the work directories for
+  application Context's are placed when virtual hosting sites with Tomcat.
 
 -------------------
 Jasper New Features:
@@ -94,6 +97,15 @@ ApplicationContext:  Fix security problem which could allow a servlet to serve
   resources from outside the Catalina home directory, using the request
   dispatcher. This also implements the specification requirement that the 
   request dispatcher cannot extend outside the current servlet context.
+
+
+ServletContext tempdir (workDir):  Fixed a spec compliance bug, SRV.3.7.1
+  states that the tempdir for a Servlet Context must be unique.
+  
+  Added the Engine name as a directory path component when creating
+  the default work directory for a web application.  This fixes a bug
+  where the same work directory would be used for the http and https version
+  of a virtual host.
 
 
 ----------------
