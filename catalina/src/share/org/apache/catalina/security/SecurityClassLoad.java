@@ -115,6 +115,21 @@ public final class SecurityClassLoad {
              "core.ApplicationContext$PrivilegedLogThrowable");
         loader.loadClass
             (basePackage +
+             "core.ApplicationContext$PrivilegedGetNamedDispatcher");
+        loader.loadClass
+            (basePackage +
+             "core.ApplicationContext$PrivilegedGetInitParameter");
+        loader.loadClass
+            (basePackage +
+             "core.ApplicationContext$PrivilegedGetInitParameterNames");
+        loader.loadClass
+            (basePackage +
+             "core.ApplicationContext$1");
+        loader.loadClass
+            (basePackage +
+             "core.ApplicationContext$2");
+        loader.loadClass
+            (basePackage +
              "core.ApplicationDispatcher$PrivilegedForward");
         loader.loadClass
             (basePackage +
