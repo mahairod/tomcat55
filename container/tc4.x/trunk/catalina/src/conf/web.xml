@@ -34,25 +34,6 @@
     <load-on-startup>2</load-on-startup>
   </servlet>
 
-  <!-- The JASPER_LOG logger creation servlet -->
-  <servlet>
-    <servlet-name>jasper_log</servlet-name>
-    <servlet-class>org.apache.tomcat.servlets.TomcatLogServlet</servlet-class>
-    <init-param>
-      <param-name>name</param-name>
-      <param-value>JASPER_LOG</param-value>
-    </init-param>
-    <init-param>
-      <param-name>path</param-name>
-      <param-value>logs/jasper.log</param-value>
-    </init-param>
-    <init-param>
-      <param-name>verbosityLevel</param-name>
-      <param-value>DEBUG</param-value>
-    </init-param>
-    <load-on-startup>3</load-on-startup>
-  </servlet>
-
   <!-- The JSP page compiler and execution servlet -->
   <servlet>
     <servlet-name>jsp</servlet-name>
@@ -64,7 +45,9 @@
       <param-value>org.apache.jasper.compiler.JikesJavaCompiler</param-value>
     </init-param>
 -->
+<!--
     <load-on-startup>4</load-on-startup>
+-->
   </servlet>
 
 
@@ -82,6 +65,7 @@
   </servlet-mapping>
 
   <!-- The mapping for the JSP servlet -->
+  <!-- Comment this out if you do not want "jsp" service -->
   <servlet-mapping>
     <servlet-name>jsp</servlet-name>
     <url-pattern>*.jsp</url-pattern>
