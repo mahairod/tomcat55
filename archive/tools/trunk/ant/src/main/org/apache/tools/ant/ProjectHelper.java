@@ -71,7 +71,7 @@ import org.w3c.dom.*;
 
 public class ProjectHelper {
 
-    static void configureProject(Project project, File buildFile)
+    public static void configureProject(Project project, File buildFile)
 	throws BuildException
     {
 
@@ -105,21 +105,25 @@ public class ProjectHelper {
 	project.setName(root.getAttribute("name"));
 	project.setDefaultTarget(root.getAttribute("default"));
 
-	String baseDir = root.getAttribute("basedir");
-	if (!baseDir.equals("")) {
-	    try {
-		project.setBaseDir(new File(new File(baseDir)
-					    .getCanonicalPath()));
-	    } catch (IOException ioe) {
-		String msg = "Can't set basedir " + baseDir + " due to " +
-		    ioe.getMessage();
-		throw new BuildException(msg);
+	if( project.getProperty( "basedir" ) == null) {
+	    String baseDir = root.getAttribute("basedir");
+	    if (!baseDir.equals("")) {
+		try {
+		    project.setBaseDir(new File(new File(baseDir)
+			.getCanonicalPath()));
+		} catch (IOException ioe) {
+		    String msg = "Can't set basedir " + baseDir + " due to " +
+			ioe.getMessage();
+		    throw new BuildException(msg);
+		}
+	    } else {
+		// Using clunky JDK1.1 methods here
+		String absPath = buildFile.getAbsolutePath();
+		String parentPath = new File(absPath).getParent();
+		project.setBaseDir(new File(parentPath));
 	    }
 	} else {
-            // Using clunky JDK1.1 methods here
-            String absPath = buildFile.getAbsolutePath();
-            String parentPath = new File(absPath).getParent();
-	    project.setBaseDir(new File(parentPath));
+	    project.setBaseDir( new File( project.getProperty("basedir")));
 	}
 
 	// set up any properties that may be in the config file

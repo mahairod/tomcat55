@@ -119,7 +119,7 @@ public class Main {
 	    } else if (arg.equals("-verbose") || arg.equals("-v") ||
 		       arg.equals("v")) {
 		msgOutputLevel = Project.MSG_VERBOSE;
-            } else if (arg.equals("-buildfile") || arg.equals("-file")) {
+            } else if (arg.equals("-buildfile") || arg.equals("-file") || arg.equals("-f")) {
 		try {
 		    buildFile = new File(args[i+1]);
 		    i++;
@@ -210,6 +210,7 @@ public class Main {
 	} catch (BuildException be) {
 	    String msg = "BUILD CONFIG ERROR: ";
 	    System.out.println(msg + be.getMessage());
+	    be.printStackTrace();
 	    exit(1);
 	}
 

@@ -144,6 +144,9 @@ public class Project {
     public void setOutputLevel(int msgOutputLevel) {
 	this.msgOutputLevel = msgOutputLevel;
     }
+    public int getOutputLevel() {
+	return this.msgOutputLevel;
+    }
     
     public void log(String msg) {
 	log(msg, MSG_INFO);
