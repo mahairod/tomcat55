@@ -280,8 +280,10 @@ public final class ContextConfig
 	if ((constraints == null) || (constraints.length == 0))
 	    return;
 	LoginConfig loginConfig = context.getLoginConfig();
-	if (loginConfig == null)
-	    return;
+	if (loginConfig == null) {
+            loginConfig = new LoginConfig("NONE", null, null, null);
+            context.setLoginConfig(loginConfig);
+        }
 
 	// Has an authenticator been configured already?
 	if (context instanceof Authenticator)

@@ -80,6 +80,39 @@ import org.apache.catalina.util.RequestUtil;
 public final class LoginConfig {
 
 
+    // ----------------------------------------------------------- Constructors
+
+
+    /**
+     * Construct a new LoginConfig with default properties.
+     */
+    public LoginConfig() {
+
+        super();
+
+    }
+
+
+    /**
+     * Construct a new LoginConfig with the specified properties.
+     *
+     * @param authMethod The authentication method
+     * @param realmName The realm name
+     * @param loginPage The login page URI
+     * @param errorPage The error page URI
+     */
+    public LoginConfig(String authMethod, String realmName,
+                       String loginPage, String errorPage) {
+
+        super();
+        setAuthMethod(authMethod);
+        setRealmName(realmName);
+        setLoginPage(loginPage);
+        setErrorPage(errorPage);
+
+    }
+
+
     // ------------------------------------------------------------- Properties
 
 
