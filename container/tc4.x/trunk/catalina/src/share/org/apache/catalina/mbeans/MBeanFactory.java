@@ -201,8 +201,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             ((StandardContext)context).addValve(accessLogger);
         } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(accessLogger);
@@ -339,8 +342,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setLogger(fileLogger);
         } else if (type.equals("Engine")) {
             engine.setLogger(fileLogger);
@@ -525,8 +531,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setRealm(realm);
         } else if (type.equals("Engine")) {
             engine.setRealm(realm);
@@ -565,8 +574,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setRealm(realm);
         } else if (type.equals("Engine")) {
             engine.setRealm(realm);
@@ -605,8 +617,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setRealm(realm);
         } else if (type.equals("Engine")) {
             engine.setRealm(realm);
@@ -645,8 +660,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             ((StandardContext)context).addValve(valve);
         } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -685,8 +703,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             ((StandardContext)context).addValve(valve);
         } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -725,8 +746,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             ((StandardContext)context).addValve(valve);
         } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -765,8 +789,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             ((StandardContext)context).addValve(valve);
         } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
@@ -970,8 +997,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {        
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setLogger(logger);
         } else if (type.equals("Engine")) {
             engine.setLogger(logger);
@@ -1010,8 +1040,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setLogger(logger);
         } else if (type.equals("Engine")) {
             engine.setLogger(logger);
@@ -1040,7 +1073,6 @@ public class MBeanFactory extends BaseModelMBean {
 
          // Create a new UserDatabaseRealm instance
         UserDatabaseRealm realm = new UserDatabaseRealm();
-
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
@@ -1049,8 +1081,11 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = (Engine) service.getContainer();
         if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            Context context =
-                    (Context) host.findChild(pname.getKeyProperty("path"));
+            String pathStr = pname.getKeyProperty("path");
+            if (pathStr.equals("/")) {
+                pathStr = "";
+            }
+            Context context = (Context) host.findChild(pathStr);
             context.setRealm(realm);
         } else if (type.equals("Engine")) {
             engine.setRealm(realm);
@@ -1064,7 +1099,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), realm);
         return (oname.toString());
-
+        
     }
 
     
