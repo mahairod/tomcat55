@@ -143,7 +143,7 @@ public class Compiler {
         //  - compiling the generated servlets (pass -encoding to javac).
         // XXX - There are really three encodings of interest.
 
-        String jspEncoding = "8859_1";          // default per JSP spec
+        String jspEncoding = "ISO-8859-1";          // default per JSP spec
 
 	// We try UTF8 by default. If it fails, we use the java encoding 
 	// specified for JspServlet init parameter "javaEncoding".

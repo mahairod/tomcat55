@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -270,11 +274,11 @@ public class PluginGenerator
 	writer.indent ();
 	writer.print ("out.print (\"<EMBED type=\\\"");
 	if (type.equals ("applet")) 
-	    writer.print ("application/x-java-applet;");
+	    writer.print ("application/x-java-applet");
 	else if (type.equals ("bean"))
-	    writer.print ("application/x-java-bean;");
+	    writer.print ("application/x-java-bean");
 	if (jreversion != null) {
-	    writer.print ("version=");
+	    writer.print (";version=");
 	    writer.print (jreversion);
 	}
 	writer.print ("\\\" ");
@@ -317,8 +321,9 @@ public class PluginGenerator
 	writer.indent ();
 	writer.print ("out.println (");
 	writer.print (" _jspxNSString [i][0] + ");
-	writer.print ("\"=\"");
+	writer.print ("\"=\\\"\"");
 	writer.print (" + _jspxNSString[i][1]");
+	writer.print (" + \"\\\"\"");
 	writer.print (");");
 	writer.println ();
 	writer.popIndent ();
