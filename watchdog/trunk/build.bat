@@ -15,12 +15,9 @@ set CLASSPATH=.\src\lib\ant.jar;.\src\lib\moo.jar;.\src\lib\xml.jar
 goto next
 
 :next
-echo Using classapth: %CLASSPATH%
+echo Using classpath: %CLASSPATH%
 
 java org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-if "%1"=="dist" goto ear
-goto clean
 
 :clean
 

@@ -1,55 +1,55 @@
-<project name="jakarta-check" default="main" basedir=".">
+<project name="jakarta-watchdog" default="main" basedir=".">
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
 
    <property name="build.compiler" value="classic"/>
 
-   <property name="jakarta-check.build" value="../build/jakarta-check"/>
-   <property name="jakarta-check.home" value="../dist/jakarta-check"/>
+   <property name="watchdog.build" value="../build/watchdog"/>
+   <property name="watchdog.home" value="../dist/watchdog"/>
 
    <target name="prepare">
 
-      <mkdir dir="${jakarta-check.build}"/>
-      <mkdir dir="${jakarta-check.build}/clients"/>
-      <mkdir dir="${jakarta-check.build}/conf" />
-      <mkdir dir="${jakarta-check.build}/lib" />
-      <mkdir dir="${jakarta-check.build}/props" />  <!-- what is this for?? - akv -->
+      <mkdir dir="${watchdog.build}"/>
+      <mkdir dir="${watchdog.build}/clients"/>
+      <mkdir dir="${watchdog.build}/conf" />
+      <mkdir dir="${watchdog.build}/lib" />
+      <mkdir dir="${watchdog.build}/props" />  <!-- what is this for?? - akv -->
 
-      <mkdir dir="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/classes"/>
-      <mkdir dir="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/lib"/>
-      <mkdir dir="${jakarta-check.build}/webapps/jsp-tests/WEB-INF/lib"/>
-      <mkdir dir="${jakarta-check.build}/webapps/jsp-tests"/>
+      <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
+      <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
+      <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
+      <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
 
-      <copydir src="src/server/servlet-tests" dest="${jakarta-check.build}/webapps/servlet-tests"/>
-      <copydir src="src/server/jsp-tests" dest="${jakarta-check.build}/webapps/jsp-tests"/>
-      <copyfile src="../jakarta-tools/moo.jar" dest="${jakarta-check.build}/lib/moo.jar"/>
+      <copydir src="src/server/servlet-tests" dest="${watchdog.build}/webapps/servlet-tests"/>
+      <copydir src="src/server/jsp-tests" dest="${watchdog.build}/webapps/jsp-tests"/>
+      <copyfile src="../jakarta-tools/moo.jar" dest="${watchdog.build}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-tools/projectx-tr2.jar"
-                dest="${jakarta-check.build}/lib/xml.jar"/>
+                dest="${watchdog.build}/lib/xml.jar"/>
 
 
-      <copydir src="src/bin" dest="${jakarta-check.build}"/>
-      <copydir src="src/conf" dest="${jakarta-check.build}/conf" />
-      <copydir src="src/props" dest="${jakarta-check.build}/props"/>
+      <copydir src="src/bin" dest="${watchdog.build}"/>
+      <copydir src="src/conf" dest="${watchdog.build}/conf" />
+      <copydir src="src/props" dest="${watchdog.build}/props"/>
 
       <copyfile src="../jakarta-tools/moo.jar" 
-                dest="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
+                dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
       <copyfile src="../jakarta-tools/moo.jar" 
-                dest="${jakarta-check.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
+                dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
 
-      <chmod src="${jakarta-check.build}/runClient.sh" perm="+x"/>
-      <chmod src="${jakarta-check.build}/runTest.sh" perm="+x"/> 
+      <chmod src="${watchdog.build}/runClient.sh" perm="+x"/>
+      <chmod src="${watchdog.build}/runTest.sh" perm="+x"/> 
    </target>       
    <target name="main" depends="prepare">
 
       <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
-             destdir="${jakarta-check.build}/webapps/servlet-tests/WEB-INF/classes"/>
+             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
 
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
-             destdir="${jakarta-check.build}/webapps/jsp-tests/WEB-INF/classes"/>
+             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
 
-      <javac srcdir="src/clients" destdir="${jakarta-check.build}/clients" />    
+      <javac srcdir="src/clients" destdir="${watchdog.build}/clients" />    
    </target>
 
    <target name="dist" depends="main">
@@ -57,54 +57,54 @@
          XXX create "parametrized" targets
          XXX do we need all the files in tomcat_build ??
       -->
-      <mkdir dir="${jakarta-check.home}"/>
-      <mkdir dir="${jakarta-check.home}/conf" />
-      <mkdir dir="${jakarta-check.home}/lib" />
-      <mkdir dir="${jakarta-check.home}/webapps" />
-      <mkdir dir="${jakarta-check.home}/props" />  <!-- what is this for?? - akv -->
+      <mkdir dir="${watchdog.home}"/>
+      <mkdir dir="${watchdog.home}/conf" />
+      <mkdir dir="${watchdog.home}/lib" />
+      <mkdir dir="${watchdog.home}/webapps" />
+      <mkdir dir="${watchdog.home}/props" />  <!-- what is this for?? - akv -->
 
       <copyfile src="../jakarta-tools/moo.jar"
-                dest="${jakarta-check.home}/lib/moo.jar"/>
+                dest="${watchdog.home}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-tools/projectx-tr2.jar"
-                dest="${jakarta-check.home}/lib/xml.jar"/>
+                dest="${watchdog.home}/lib/xml.jar"/>
 
-      <copydir src="src/bin" dest="${jakarta-check.home}"/>
-      <copydir src="src/conf" dest="${jakarta-check.home}/conf" />
-      <copydir src="src/props" dest="${jakarta-check.home}/props"/>
+      <copydir src="src/bin" dest="${watchdog.home}"/>
+      <copydir src="src/conf" dest="${watchdog.home}/conf" />
+      <copydir src="src/props" dest="${watchdog.home}/props"/>
 
-      <chmod src="${jakarta-check.home}/runClient.sh" perm="+x"/>
-      <chmod src="${jakarta-check.home}/runTest.sh" perm="+x"/> 
+      <chmod src="${watchdog.home}/runClient.sh" perm="+x"/>
+      <chmod src="${watchdog.home}/runTest.sh" perm="+x"/> 
 
-      <jar jarfile="${jakarta-check.home}/check-client.jar"
-        basedir="${jakarta-check.build}/clients" 
+      <jar jarfile="${watchdog.home}/check-client.jar"
+        basedir="${watchdog.build}/clients" 
         items="org" />
 
-      <jar jarfile="${jakarta-check.home}/webapps/servlet-tests.jar"
-        basedir="${jakarta-check.build}/webapps/servlet-tests" 
+      <jar jarfile="${watchdog.home}/webapps/servlet-tests.jar"
+        basedir="${watchdog.build}/webapps/servlet-tests" 
         items="WEB-INF" />
 
-      <jar jarfile="${jakarta-check.home}/webapps/jsp-tests.jar"
-        basedir="${jakarta-check.build}/webapps/jsp-tests" 
+      <jar jarfile="${watchdog.home}/webapps/jsp-tests.jar"
+        basedir="${watchdog.build}/webapps/jsp-tests" 
         items="WEB-INF,jsp,golden-files" />
 
       <!-- build EAR -->
 
-      <mkdir dir="${jakarta-check.build}/tmp" />
-      <mkdir dir="${jakarta-check.build}/tmp/META-INF" />
-      <copyfile src="src/etc/ear-dd.xml" dest="${jakarta-check.build}/tmp/META-INF/application.xml" />
-      <copyfile src="${jakarta-check.home}/webapps/servlet-tests.jar" 
-                dest="${jakarta-check.build}/tmp/servlet-tests.jar" />
-      <copyfile src="${jakarta-check.home}/webapps/jsp-tests.jar" 
-                dest="${jakarta-check.build}/tmp/jsp-tests.jar" />
-      <jar jarfile="${jakarta-check.home}/jcheck.ear"
-           basedir="${jakarta-check.build}/tmp" 
+      <mkdir dir="${watchdog.build}/tmp" />
+      <mkdir dir="${watchdog.build}/tmp/META-INF" />
+      <copyfile src="src/etc/ear-dd.xml" dest="${watchdog.build}/tmp/META-INF/application.xml" />
+      <copyfile src="${watchdog.home}/webapps/servlet-tests.jar" 
+                dest="${watchdog.build}/tmp/servlet-tests.jar" />
+      <copyfile src="${watchdog.home}/webapps/jsp-tests.jar" 
+                dest="${watchdog.build}/tmp/jsp-tests.jar" />
+      <jar jarfile="${watchdog.home}/jcheck.ear"
+           basedir="${watchdog.build}/tmp" 
            items="META-INF,jsp-tests.jar,servlet-tests.jar" />
       
    </target>
 
    <target name="clean">
-      <deltree dir="${jakarta-check.build}"/>
+      <deltree dir="${watchdog.build}"/>
    </target>
 
 </project>
