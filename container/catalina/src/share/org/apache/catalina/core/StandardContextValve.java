@@ -255,7 +255,8 @@ final class StandardContextValve
 
         wrapper.getPipeline().invoke(request, response);
 
-        if (instances.length > 0) {
+        if ((instances !=null ) &&
+                (instances.length > 0)) {
             // create post-service event
             for (int i = 0; i < instances.length; i++) {
                 if (instances[i] == null)
