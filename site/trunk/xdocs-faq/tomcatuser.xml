@@ -16,7 +16,7 @@
 
 <section name="Preface">
 <p>
-    This is about the tomcat user list.
+    This is about the Tomcat user list.
     <a href="mailto:tomcat-user-subscribe@jakarta.apache.org">Subscribe</a>
     and
     <a href="http://jakarta.apache.org/site/mail.html">general information</a>
@@ -28,16 +28,31 @@
         digest form.
     </a>
 
-    If you post
-    to tomcat-user, use
-    <a href="http://www.rfc-editor.org/rfc/rfc1855.txt">good etiquette</a>,
-    <a href="http://www.catb.org/~esr/faqs/smart-questions.html">
-        ask good questions,
-    </a>
-    and use
-    <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?MailListUserBestPractices">
-    Best Practices</a>, and also please read the docs, faqs, readme,
+
+    If you post to tomcat-user, use good etiquette, ask good questions,
+    and use Best Practices, and also please read the docs, faqs, readme,
     and search the archives before asking a question.
+
+    <br/><br/>
+    Here are some links about how to use mailing lists and standard etiquette
+    in using mailing lists. These links are not Tomcat specific! Please do
+    not contact the author of these documents with questions.
+    <ul>
+      <li>
+        <a href="http://www.rfc-editor.org/rfc/rfc1855.txt">
+          Netiquette Guidelines (RFC 1855)
+        </a></li>
+      <li>
+        <a href="http://www.catb.org/~esr/faqs/smart-questions.html">
+        How To Ask Questions The Smart Way
+        </a>
+      </li>
+      <li>
+        <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?MailListUserBestPractices">
+            Mailing List Best Practices</a>
+      </li>
+    </ul>
+
 </p>
 </section>
 
@@ -54,6 +69,14 @@
      <li>
        <a href="#unsubscribe">
          How do I unsubscribe?
+        </a>
+      </li>
+
+
+
+      <li>
+       <a href="#wheretopost">
+         Should I post to tomcat-user or tomcat-dev?
         </a>
       </li>
 
@@ -150,6 +173,29 @@
       the moderator has an opportunity to remove you from the list.
   </answer>
 
+
+  <question>
+      <a name="wheretopost">
+         Should I post to tomcat-user or tomcat-dev?
+      </a>
+  </question>
+  <answer>
+    tomcat-user is for user based questions for tomcat. That means anyone who is
+    developing any type of software to be used with tomcat.
+    <br/><br/>
+
+    tomcat-dev is the forum to discuss changes to the Tomcat's source code. If your question
+    is not related to changing the source code as maintained by the tomcat committers,
+    then it does not belong here, it belongs in tomcat-user.
+
+    <br/><br/>
+
+    If you wish to extend tomcat using your own Valve, Realm, or anything else ... those
+    discussions belong in tomcat-user. You might be using Tomcat's internal API but unless
+    your changes are going back into the official source tree, the question belongs
+    in tomcat-user.
+
+  </answer>
 
 </section>
 
