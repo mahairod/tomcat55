@@ -530,6 +530,10 @@ public class PageContextImpl
 	outs[depth].setWriter(writer);
         out = outs[depth];
 
+	// Update the value of the "out" attribute in the page scope
+	// attribute namespace of this PageContext
+	setAttribute(OUT, out);
+
         return outs[depth];
     }
 
@@ -540,6 +544,11 @@ public class PageContextImpl
         } else {
             out = baseOut;
         }
+
+	// Update the value of the "out" attribute in the page scope
+	// attribute namespace of this PageContext
+	setAttribute(OUT, out);
+
         return out;
     }
 
