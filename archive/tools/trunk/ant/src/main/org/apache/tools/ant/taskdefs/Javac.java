@@ -43,6 +43,14 @@ public class Javac extends Task {
 	compileClasspath = classpath;
     }
 
+    public void setDeprecation(String deprecation) {
+        if (deprecation.equalsIgnoreCase("on") || deprecation.equalsIgnoreCase("true"))
+            this.deprecation = true;
+        else if (deprecation.equalsIgnoreCase("off") || deprecation.equalsIgnoreCase("false"))
+            this.deprecation = false;
+    }
+    
+
     public void setDebug(String debugString) {
 	if (debugString.equalsIgnoreCase("on")) {
 	    debug = true;
@@ -182,6 +190,10 @@ public class Javac extends Task {
 	project.log("Using classic compiler", project.MSG_VERBOSE);
 	String classpath = getCompileClasspath();
 	Vector argList = new Vector();
+
+        if (deprecation == true)
+            argList.addElement("-deprecation");
+        
 	argList.addElement("-d");
 	argList.addElement(destDir.getAbsolutePath());
 	argList.addElement("-classpath");
