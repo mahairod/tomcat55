@@ -112,20 +112,9 @@ public interface JspCompilationContext {
     
     /**
      * The scratch directory to generate code into.
-     *
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
      */
     public String getOutputDir();
     
-    /**
-     * The scratch directory to generate code into for javac.
-     *
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
-     */
-    public String getJavacOutputDir();
-
     /**
      * Path of the JSP URI. Note that this is not a file name. This is
      * the context rooted URI of the JSP file. 
