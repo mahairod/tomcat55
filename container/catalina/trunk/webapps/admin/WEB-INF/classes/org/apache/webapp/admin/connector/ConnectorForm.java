@@ -112,17 +112,35 @@ public final class ConnectorForm extends ActionForm {
      */
     private String nodeLabel = null;
     
-    
     /**
      * The text for the accept Count.
      */
     private String acceptCountText = null;
     
     /**
+     * The text for the algorithm.
+     */
+    private String algorithm = null;
+    
+    /**
+     * The text for the ciphers.
+     */
+    private String ciphers = null;
+    
+    /**
+     * The text for the Connection Linger.
+     */
+    private String connLingerText = null;
+    
+    /**
      * The text for the Connection Time Out.
      */
     private String connTimeOutText = null;
     
+    /**
+     * The text for the Connection Upload Time Out.
+     */
+    private String connUploadTimeOutText = null;
     
     /**
      * The text for the debug level.
@@ -135,9 +153,19 @@ public final class ConnectorForm extends ActionForm {
     private String bufferSizeText = null;
     
     /**
+     * The value of disable upload timeout.
+     */
+    private String disableUploadTimeout = "false";
+    
+    /**
      * The value of enable Lookups.
      */
     private String enableLookups = "false";
+    
+    /**
+     * The value of compression.
+     */
+    private String compression = "off";
     
     /**
      * The text for the address.
@@ -154,6 +182,10 @@ public final class ConnectorForm extends ActionForm {
      */
     private String maxProcessorsText = null;
     
+    /**
+     * The text for the maxKeepAlive.
+     */
+    private String maxKeepAliveText = null;
     
     /**
      * The text for the port.
@@ -195,7 +227,17 @@ public final class ConnectorForm extends ActionForm {
      * The keyStore Password.
      */
     private String keyStorePassword = null;
+    
+    /**
+     * The keyStore Type.
+     */
+    private String keyStoreType = null;
 
+    /**
+     * The text for the Ssl Protocol.
+     */
+    private String sslProtocol= null;
+    
     /**
      * Set of valid values for debug level.
      */
@@ -211,6 +253,20 @@ public final class ConnectorForm extends ActionForm {
      */    
     private List connectorTypeVals = null;
 
+    /**
+     * The value of secure.
+     */
+    private String secure = "false";
+    /**
+     * The value of tcpNoDelay.
+     */
+    private String tcpNoDelay = "true";
+    
+    /**
+     * The value of xpoweredBy.
+     */
+    private String xpoweredBy = "false";
+    
     // ------------------------------------------------------------- Properties
     
    /**
@@ -345,6 +401,64 @@ public final class ConnectorForm extends ActionForm {
     }
     
     /**
+     * Return the algorithm.
+     */
+    public String getAlgorithm() {
+        
+        return this.algorithm;
+        
+    }
+    
+    
+    /**
+     * Set the algorithm.
+     */
+    
+    public void setAlgorithm(String algorithm) {
+        
+        this.algorithm = algorithm;
+        
+    }
+    
+    /**
+     * Return the ciphers.
+     */
+    public String getCiphers() {
+        
+        return this.ciphers;
+        
+    }
+    
+    /**
+     * Set the ciphers.
+     */
+    
+    public void setCiphers(String ciphers) {
+        
+        this.ciphers = ciphers;
+        
+    }
+    
+    /**
+     * Return the connLingerText.
+     */
+    public String getConnLingerText() {
+        
+        return this.connLingerText;
+        
+    }
+    
+    /**
+     * Set the connLingerText.
+     */
+    
+    public void setConnLingerText(String connLingerText) {
+        
+        this.connLingerText = connLingerText;
+        
+    }
+    
+    /**
      * Return the connTimeOutText.
      */
     public String getConnTimeOutText() {
@@ -363,6 +477,24 @@ public final class ConnectorForm extends ActionForm {
         
     }
        
+    /**
+     * Return the connUploadTimeOutText.
+     */
+    public String getConnUploadTimeOutText() {
+        
+        return this.connUploadTimeOutText;
+        
+    }
+    
+    /**
+     * Set the connUploadTimeOutText.
+     */
+    
+    public void setConnUploadTimeOutText(String connUploadTimeOutText) {
+        
+        this.connUploadTimeOutText = connUploadTimeOutText;
+        
+    }
     /**
      * Return the bufferSizeText.
      */
@@ -392,7 +524,7 @@ public final class ConnectorForm extends ActionForm {
     }
     
     /**
-     * Set the connTimeOutText.
+     * Set the address.
      */
     
     public void setAddress(String address) {
@@ -478,7 +610,7 @@ public final class ConnectorForm extends ActionForm {
 
     }
 
-          /**
+    /**
      * Return the object name of the service this connector belongs to.
      */
     public String getKeyStorePassword() {
@@ -497,6 +629,43 @@ public final class ConnectorForm extends ActionForm {
 
     }
 
+    /**
+     * Return the keystore type.
+     */
+    public String getKeyStoreType() {
+
+        return this.keyStoreType;
+
+    }
+
+
+    /**
+     * Set the keystore type.
+     */
+    public void setKeyStoreType(String keyStoreType) {
+
+        this.keyStoreType = keyStoreType;
+
+    }
+    /**
+     * Return the sslProtocol
+     */
+    public String getSslProtocol() {
+
+        return this.sslProtocol;
+
+    }
+
+
+    /**
+     * Set the sslProtocol.
+     */
+    public void setSslProtocol(String sslProtocol) {
+
+        this.sslProtocol = sslProtocol;
+
+    }
+    
     /**
      * Return the debugVals.
      */
@@ -535,7 +704,6 @@ public final class ConnectorForm extends ActionForm {
         
     }
     
-    
     /**
      * Return the Enable lookup Text.
      */
@@ -552,6 +720,44 @@ public final class ConnectorForm extends ActionForm {
     public void setEnableLookups(String enableLookups) {
         
         this.enableLookups = enableLookups;
+        
+    }
+    
+    /**
+     * Return the disableUploadTimeout.
+     */
+    
+    public String getDisableUploadTimeout() {
+        
+        return this.disableUploadTimeout;
+        
+    }
+    
+    /**
+     * Set the disableUploadTimeout.
+     */
+    public void setDisableUploadTimeout(String disableUploadTimeout) {
+        
+        this.disableUploadTimeout = disableUploadTimeout;
+        
+    }
+    
+    /**
+     * Return the compression Text.
+     */
+    
+    public String getCompression() {
+        
+        return this.compression;
+        
+    }
+    
+    /**
+     * Set the Compression Text.
+     */
+    public void setCompression(String compression) {
+        
+        this.compression = compression;
         
     }
     
@@ -606,6 +812,26 @@ public final class ConnectorForm extends ActionForm {
     public void setMaxProcessorsText(String maxProcessorsText) {
         
         this.maxProcessorsText = maxProcessorsText;
+        
+    }
+    
+    /**
+     * Return the maxKeepAliveText.
+     */
+    public String getMaxKeepAliveText() {
+        
+        return this.maxKeepAliveText;
+        
+    }
+    
+    
+    /**
+     * Set the maxKeepAliveText.
+     */
+    
+    public void setMaxKeepAliveText(String maxKeepAliveText) {
+        
+        this.maxKeepAliveText = maxKeepAliveText;
         
     }
     
@@ -682,6 +908,60 @@ public final class ConnectorForm extends ActionForm {
         
     }
     
+     /**
+     * Return the secure Text.
+     */
+    public String getSecure() {
+        
+        return this.secure;
+        
+    }
+    
+    /**
+     * Set the secure Text.
+     */
+    public void setSecure(String secure) {
+        
+        this.secure = secure;
+        
+    }    
+    
+    /**
+     * Return the tcpNoDelay Text.
+     */
+    public String getTcpNoDelay() {
+        
+        return this.tcpNoDelay;
+        
+    }
+    
+    /**
+     * Set the tcpNoDelay Text.
+     */
+    public void setTcpNoDelay(String tcpNoDelay) {
+        
+        this.tcpNoDelay = tcpNoDelay;
+        
+    }   
+    
+    /**
+     * Return the xpoweredBy Text.
+     */
+    public String getXpoweredBy() {
+        
+        return this.xpoweredBy;
+        
+    }
+    
+    /**
+     * Set the xpoweredBy Text.
+     */
+    public void setXpoweredBy(String xpoweredBy) {
+        
+        this.xpoweredBy = xpoweredBy;
+        
+    }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -696,12 +976,16 @@ public final class ConnectorForm extends ActionForm {
         this.connectorType = null;
         this.portText = null;
         this.acceptCountText = null;
+        this.connLingerText = null;
         this.connTimeOutText = null;
+        this.connUploadTimeOutText = null;
         this.bufferSizeText = null;
         this.address = null;
         this.enableLookups = "false";
+        this.compression = "off";
         this.minProcessorsText = null;
         this.maxProcessorsText = null;
+        this.maxKeepAliveText = null;
         this.portText = null;
         this.redirectPortText = null;
         this.proxyName = null;
@@ -709,6 +993,9 @@ public final class ConnectorForm extends ActionForm {
         this.keyStoreFileName = null;
         this.keyStorePassword = null;        
         this.clientAuthentication = "false";
+        this.secure = "false";
+        this.tcpNoDelay = "false";
+        this.xpoweredBy = "false";
         
     }
     
@@ -736,7 +1023,7 @@ public final class ConnectorForm extends ActionForm {
             
             /* general */
             numberCheck("acceptCountText", acceptCountText, true, 0, 128);
-            numberCheck("connTimeOutText", connTimeOutText, true, -1, 60000);
+            //numberCheck("connTimeOutText", connTimeOutText, true, -1, 60000);
             numberCheck("bufferSizeText", bufferSizeText, true, 1, 8192);
   
             /* The IP address can also be null -- which means open the

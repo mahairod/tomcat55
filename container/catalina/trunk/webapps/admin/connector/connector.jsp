@@ -103,11 +103,34 @@
             </controls:data>
         </controls:row>
 
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="compression">
+            <controls:label><bean:message key="connector.compression"/>:</controls:label>
+            <controls:data>
+               <html:text property="compression" size="10" styleId="compression"/>
+            </controls:data>
+        </controls:row>
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="linger">
+            <controls:label><bean:message key="connector.connection.linger"/><br>
+                (<bean:message key="connector.milliseconds"/>) :</controls:label>
+            <controls:data>
+               <html:text property="connLingerText" size="10" styleId="linger"/>
+            </controls:data>
+        </controls:row>
+
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="timeout">
             <controls:label><bean:message key="connector.connection.timeout"/><br>
                 (<bean:message key="connector.milliseconds"/>) :</controls:label>
             <controls:data>
                <html:text property="connTimeOutText" size="10" styleId="timeout"/>
+            </controls:data>
+        </controls:row>
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="upload">
+            <controls:label><bean:message key="connector.connection.uploadTimeout"/><br>
+                (<bean:message key="connector.milliseconds"/>) :</controls:label>
+            <controls:data>
+               <html:text property="connUploadTimeOutText" size="10" styleId="upload"/>
             </controls:data>
         </controls:row>
 
@@ -126,6 +149,17 @@
             <controls:label><bean:message key="connector.default.buffer"/>:</controls:label>
             <controls:data>
                <html:text property="bufferSizeText" size="5" styleId="buffersize"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="disableUpload">
+            <controls:label><bean:message key="connector.connection.disableUploadTimeout"/>:</controls:label>
+            <controls:data>
+                <html:select property="disableUploadTimeout" styleId="disableUpload">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
             </controls:data>
         </controls:row>
 
@@ -151,6 +185,46 @@
                &nbsp;<bean:write name="connectorForm" property="address"/>
                <html:hidden property="address"/>
              </logic:equal>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxkeepalive">
+            <controls:label><bean:message key="connector.maxkeepalive"/>:</controls:label>
+            <controls:data>
+              <html:text property="maxKeepAliveText" size="5" maxlength="5" styleId="maxkeepalive"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="secure">
+            <controls:label><bean:message key="connector.secure"/>:</controls:label>
+            <controls:data>
+                <html:select property="secure" styleId="secure">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="tcpNoDelay">
+            <controls:label><bean:message key="connector.tcpNoDelay"/>:</controls:label>
+            <controls:data>
+                <html:select property="tcpNoDelay" styleId="tcpNoDelay">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="xpoweredby">
+            <controls:label><bean:message key="connector.xpoweredby"/>:</controls:label>
+            <controls:data>
+                <html:select property="xpoweredBy" styleId="xpoweredby">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
             </controls:data>
         </controls:row>
 
@@ -231,6 +305,20 @@
             <controls:data>&nbsp;</controls:data>
         </controls:row>
 
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="algorithm">
+            <controls:label><bean:message key="connector.algorithm"/>:</controls:label>
+            <controls:data>
+               <html:text property="algorithm" size="10" styleId="algorithm"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="ciphers">
+            <controls:label><bean:message key="connector.ciphers"/>:</controls:label>
+            <controls:data>
+               <html:text property="ciphers" size="10" styleId="ciphers"/>
+            </controls:data>
+        </controls:row>
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="clientauth">
             <controls:label><bean:message key="connector.client.auth"/>:</controls:label>
             <controls:data>
@@ -269,6 +357,26 @@
             </controls:data>
         </controls:row>
         </logic:equal>
+
+        <%-- Input allowed only on create --%>
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="keytype">
+            <controls:label><bean:message key="connector.keystore.type"/>:</controls:label>
+            <controls:data>
+            <logic:equal name="connectorForm" property="adminAction" value="Create">
+                <html:text property="keyStoreType" size="30" styleId="keytype"/>
+             </logic:equal>
+             <logic:equal name="connectorForm" property="adminAction" value="Edit">
+               <bean:write name="connectorForm" property="keyStoreType"/>
+             </logic:equal>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="sslProtocol">
+            <controls:label><bean:message key="connector.sslProtocol"/>:</controls:label>
+            <controls:data>
+               <html:text property="sslProtocol" size="10" styleId="sslProtocol"/>
+            </controls:data>
+        </controls:row>
 
     </logic:equal>
    </controls:table>
