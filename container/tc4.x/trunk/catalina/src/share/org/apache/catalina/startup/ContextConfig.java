@@ -325,8 +325,12 @@ public final class ContextConfig
 	    mapper.setDebug(3);
 	mapper.setValidating(true);
 	File resourceFile = new File(System.getProperty("catalina.home"),
-				     Constants.WebDtdResourcePath);
-	mapper.registerDTDFile(Constants.WebDtdPublicId,
+				     Constants.WebDtdResourcePath_22);
+	mapper.registerDTDFile(Constants.WebDtdPublicId_22,
+			       resourceFile.toString());
+	resourceFile = new File(System.getProperty("catalina.home"),
+				Constants.WebDtdResourcePath_23);
+	mapper.registerDTDFile(Constants.WebDtdPublicId_23,
 			       resourceFile.toString());
 
 	mapper.addRule("web-app/context-param",

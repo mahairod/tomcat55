@@ -79,9 +79,14 @@ public final class Constants {
     public static final String ApplicationWebXml = "/WEB-INF/web.xml";
     public static final String DefaultWebXml = "conf/web.xml";
 
-    public static final String WebDtdPublicId =
+    public static final String WebDtdPublicId_22 =
 	"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN";
-    public static final String WebDtdResourcePath =
-	"conf/web.dtd";
+    public static final String WebDtdResourcePath_22 =
+	"conf/web_22.dtd";
+
+    public static final String WebDtdPublicId_23 =
+	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN";
+    public static final String WebDtdResourcePath_23 =
+	"conf/web_23.dtd";
 
 }
