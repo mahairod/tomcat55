@@ -191,8 +191,6 @@ public class JspC implements Options {
     CharArrayWriter servletout;
     CharArrayWriter mappingout;
 
-    static PrintStream logStream;
-
     JspCServletContext context;
     /*
      * Maintain a dummy JspRuntimeContext for compiling tag files
@@ -349,6 +347,10 @@ public class JspC implements Options {
 
     public void setValidateXml( boolean b ) {
         org.apache.jasper.xmlparser.ParserUtils.validating=b;
+    }
+
+    public void setListErrors( boolean b ) {
+        listErrors = b;
     }
 
     public void setOutputDir( String s ) {
@@ -580,7 +582,7 @@ public class JspC implements Options {
             // Generate mapping
             generateWebMapping( file, clctxt );
             if ( showSuccess ) {
-                logStream.println( "Built File: " + file );
+                log.info( "Built File: " + file );
             }
             return true;
         } catch (FileNotFoundException fne) {
@@ -594,9 +596,7 @@ public class JspC implements Options {
 					   file),
 		      e);
             if ( listErrors ) {
-	        logStream.println( "Error in File: " + file );
-		logStream.println(e.getMessage());
-		e.printStackTrace(logStream);
+	        log.warn( "Error in File: " + file, e );
 		return true;
             } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
@@ -831,7 +831,6 @@ public class JspC implements Options {
            System.out.println(Localizer.getMessage("jspc.usage"));
         } else {
             try {
-                logStream = System.out;
                 JspC jspc = new JspC();
                 jspc.setArgs(arg);
                 jspc.execute();
@@ -943,14 +942,6 @@ public class JspC implements Options {
             if( file==null ) break;
             pages.addElement( file );
         }
-    }
-
-    /**
-     * allows user to set where the log goes other than System.out
-     * @param log
-     */
-    public static void setLog( PrintStream log ) {
-	    JspC.logStream = log;
     }
 
     /**
