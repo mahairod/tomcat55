@@ -97,11 +97,17 @@ public class TagPluginManager {
 	    return;
 	}
 
-	page.visit(new Node.Visitor() {
-            public void visit(Node.CustomTag n) {
-		invokePlugin(n);
+        page.visit(new Node.Visitor() {
+            public void visit(Node.CustomTag n)
+                throws JasperException {
+                invokePlugin(n);
+                Node.Nodes body = n.getBody();
+                if (body != null) {
+                    body.visit(this);
+                }
             }
-	});
+        });
+
     }
  
     private void init(ErrorDispatcher err) throws JasperException {
