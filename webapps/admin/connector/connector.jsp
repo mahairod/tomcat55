@@ -105,7 +105,7 @@
 
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.connection.timeout"/><br>
-                (milliseconds) :</controls:label>
+                (<bean:message key="connector.milliseconds"/>) :</controls:label>
             <controls:data>
                <html:text property="connTimeOutText" size="10"/>
             </controls:data>
