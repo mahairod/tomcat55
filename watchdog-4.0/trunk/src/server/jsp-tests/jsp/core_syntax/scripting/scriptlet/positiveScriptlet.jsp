@@ -11,5 +11,6 @@
 <%! int i=5; %>
 <% i++; %>
 <% out.println(i); %>
+<% i--; %>
 </body>
 </html>
