@@ -13,6 +13,8 @@
 
 <!-- Body -->
 
+<body bgcolor="white">
+
 <table border="1" cellpadding="5">
 
   <tr>

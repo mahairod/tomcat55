@@ -13,6 +13,8 @@
 
 <!-- Body -->
 
+<body bgcolor="white">
+
 <center>
 
 <h2>

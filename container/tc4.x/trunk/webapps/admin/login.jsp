@@ -7,11 +7,25 @@
 
 <html:html locale="true">
 
+<!-- Make sure window is not in a frame -->
+
+<script language="JavaScript" type="text/javascript">
+
+  <!--
+    if (window.self != window.top) {
+      window.open(window.location, "_top");
+    }
+  // -->
+
+</script>
+
 <!-- Standard Content -->
 
 <%@ include file="header.jsp" %>
 
 <!-- Body -->
+
+<body bgcolor="white">
 
 <center>
 

@@ -74,7 +74,7 @@
                type="org.apache.webapp.admin.SampleAction"
                name="sampleForm"
               scope="session"
-              input="/tree-control-test.jsp">
+              input="/sample.jsp">
     </action>
 
     <!-- Process a set-locale action -->
