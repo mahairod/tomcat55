@@ -4,7 +4,7 @@
   <property file="build.properties"/>
 
   <property name="tomcat.home" location="." />
-  <!-- That matches the build struct with build and embed at the same level -->
+  <!-- This matches the build struct with build and embed at the same level -->
   <property name="tomcat.webapps" location="${tomcat.home}/../build/webapps" />
 
   <path id="tomcatCP-extra" /> 
@@ -15,8 +15,7 @@
     <path id="tomcatCP" >
       <path refid="tomcatCP-extra"/>
 
-      <!-- Just include everything for now 
-       -->
+      <!-- Just include everything for now -->
       <fileset dir="${tomcat.home}/lib" includes="*.jar"/>
       <pathelement  path="${tomcat.home}/conf"/>
       <!-- my log4j.properties -->
@@ -39,7 +38,7 @@
 
   <!-- ==================== Console - for debugging. ==================== 
        Call this target if you want the console added.
-    -->
+  -->
 
   <target name="jmx-console" depends="jmx-console-ri,jmx-console-mx4j" />
 
@@ -257,7 +256,7 @@
          <attribute name="privileged" value="true" />
        </mbean>
 
-       <!-- The realm must be declared after the web module. ( for now ) -->
+       <!-- The realm must be declared after the web module (for now). -->
        <mbean name="${domain}:type=Realm,host=localhost,path=manager" 
               code="org.apache.catalina.realm.MemoryRealm" modeler="true">
          <attribute name="pathname"
@@ -409,8 +408,7 @@
   </target>
 
   <!-- ==================== Await ==================== 
-       Call this target if you want the build file to hung in "await". Tomcat stop or ^C will stop 
-       the ant execution
+       Call this target if you want the build file to hang in "await". Tomcat stop or ^C will stop the ant execution.
     -->
   <target name="await" depends="init"
         description="Wait for tomcat stop. Call this target after run">
