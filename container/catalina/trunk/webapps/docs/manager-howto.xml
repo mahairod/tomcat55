@@ -286,6 +286,10 @@ is used as the path.  The application can
 later be undeployed (and the corresponding application directory removed)
 by use of the <code>/undeploy</code>.</p>
 
+<p>The .WAR file may include Tomcat specific deployment configuration, by 
+including a Context configuration XML file in 
+<code>/META-INF/context.xml</code>.</p>
+
 <p>URL parameters include:
 <ul>
 <li><code>update</code>: When set to true, any existing update will be

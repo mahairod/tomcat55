@@ -413,6 +413,10 @@ extension is used as the context path name.</p>
 <p>Use the <i>Browse</i> button to select a WAR file to upload to the
 server from your local desktop system.</p>
 
+<p>The .WAR file may include Tomcat specific deployment configuration, by 
+including a Context configuration XML file in 
+<code>/META-INF/context.xml</code>.</p>
+
 <p>Upload of a WAR file could fail for the following reasons:</p>
 <ul>
 <li><em>File uploaded must be a .war</em>
