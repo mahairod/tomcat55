@@ -79,4 +79,7 @@ public final class Constants {
         Globals.SERVER_INFO + " (HTTP/1.1 Connector)";
     public static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
 
+    public static final int PROCESSOR_IDLE = 0;
+    public static final int PROCESSOR_ACTIVE = 1;
+
 }

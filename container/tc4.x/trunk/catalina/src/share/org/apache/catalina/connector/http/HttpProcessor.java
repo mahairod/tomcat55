@@ -311,6 +311,12 @@ final class HttpProcessor
     private HttpRequestLine requestLine = new HttpRequestLine();
 
 
+    /**
+     * Processor state
+     */
+    private int status = Constants.PROCESSOR_IDLE;
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -686,6 +692,11 @@ final class HttpProcessor
 
         // Parse the incoming request line
         input.readRequestLine(requestLine);
+        
+        // When the previous method returns, we're actually processing a 
+        // request
+        status = Constants.PROCESSOR_ACTIVE;
+        
         String method =
             new String(requestLine.method, 0, requestLine.methodEnd);
         String uri = null;
@@ -1022,9 +1033,14 @@ final class HttpProcessor
                 keepAlive = false;
             }
 
+            // End of request processing
+            status = Constants.PROCESSOR_IDLE;
+
             // Recycling the request and the response objects
             request.recycle();
             response.recycle();
+
+            ok = !stopped;
 
         }
 
@@ -1112,11 +1128,15 @@ final class HttpProcessor
 
         stopped = true;
         assign(null);
-        synchronized (threadSync) {
-            try {
-                threadSync.wait(5000);
-            } catch (InterruptedException e) {
-                ;
+
+        if (status != Constants.PROCESSOR_IDLE) {
+            // Only wait if the processor is actually processing a command
+            synchronized (threadSync) {
+                try {
+                    threadSync.wait(5000);
+                } catch (InterruptedException e) {
+                    ;
+                }
             }
         }
         thread = null;
