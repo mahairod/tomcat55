@@ -86,6 +86,10 @@
     </javac>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/LocalStrings.properties"
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/cluster/session/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/cluster/session/mbeans-descriptors.xml"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/mbeans-descriptors.xml"/>
   </target>
 
 

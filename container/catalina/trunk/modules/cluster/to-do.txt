@@ -7,6 +7,10 @@
 to the main one. Which could be another property of the Member object, it
 would not make sense to transfer the same webapp over and over again.
      		Only watchEnabled Deployer send this member all deployed application.
+		pero:
+		   Yes very true, but currently we distribute also all wars from watch node at begining.
+		   Waiting to start other nodes is only change to not got these war's!
+		   I have made some experiments to register war deployment at new memberAdded to cluster.	   
      Add JMX Support
      	Resend Deployed Applications to all or one cluster node.
      	Show all watch Resource
