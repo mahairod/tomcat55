@@ -80,7 +80,7 @@ import javax.servlet.ServletException;
  * Simple <code>ServletContext</code> implementation without
  * HTTP-specific methods.
  *
- * @author Peter Robbach (pr@webapp.de)
+ * @author Peter Rossbach (pr@webapp.de)
  */
 
 public class JspCServletContext implements ServletContext {
@@ -320,9 +320,9 @@ public class JspCServletContext implements ServletContext {
         for (int i = 0; i < theFiles.length; i++) {
             File testFile = new File(basePath + File.separator + theFiles[i]);
             if (testFile.isFile())
-                thePaths.add("/" + theFiles[i]);
+                thePaths.add(path + theFiles[i]);
             else if (testFile.isDirectory())
-                thePaths.add("/" + theFiles[i] + "/");
+                thePaths.add(path + theFiles[i] + "/");
         }
         return (thePaths);
 

@@ -224,8 +224,13 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    ZipEntry jarEntry = null;
 	    InputStream stream = null;
 	    try {
-		url = ctxt.getResource(location[0]);
-		if (url == null) return;
+                String path = location[0] ;
+                if(ctxt.getClassLoader() != null &&
+                   java.net.URLClassLoader.class.equals(ctxt.getClassLoader().getClass())
+                       && path.startsWith("/"))
+                   path = path.substring(1,path.length()) ;
+                url = ctxt.getResource(path);
+                if (url == null) return;
 		url = new URL("jar:" + url.toString() + "!/");
 		JarURLConnection conn =
 		    (JarURLConnection) url.openConnection();
@@ -359,9 +364,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                      "description".equals(tname))
                 info = element.getBody();
             else if ("variable".equals(tname)) {
-                if (teiclass != null)
-                    throw new JasperException
-                        (Constants.getString("tld.error.variableNotAllowed"));
                 variableVector.addElement(createVariable(element));
             } else if ("attribute".equals(tname))
                 attributeVector.addElement(createAttribute(element));
