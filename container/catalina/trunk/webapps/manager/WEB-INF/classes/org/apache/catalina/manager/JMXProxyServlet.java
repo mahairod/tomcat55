@@ -128,7 +128,7 @@ public class JMXProxyServlet extends HttpServlet  {
         String qryString= request.getQueryString();
 
         if( mBeanServer==null ) {
-            writer.println("Error: No mbean server");
+            writer.println("Error - No mbean server");
             return;
         }
 
@@ -158,28 +158,35 @@ public class JMXProxyServlet extends HttpServlet  {
             String type=registry.getType(oname, att);
             Object valueObj=registry.convertValue(type, val );
             mBeanServer.setAttribute( oname, new Attribute(att, valueObj));
-            writer.println("Result: ok");
+            writer.println("OK - Attribute set");
         } catch( Exception ex ) {
-            writer.println("Error: " + ex.toString());
+            writer.println("Error - " + ex.toString());
         }
     }
 
     public void listBeans( PrintWriter writer, String qry )
     {
+
+        Set names = null;
         try {
-            Set names=mBeanServer.queryNames(new ObjectName(qry), null);
-            writer.println("MbeanCount: " + names.size());
+            names=mBeanServer.queryNames(new ObjectName(qry), null);
+            writer.println("OK - Number of results: " + names.size());
             writer.println();
+        } catch (Exception e) {
+            writer.println("Error - " + e.toString());
+            return;
+        }
 
-            Iterator it=names.iterator();
-            while( it.hasNext()) {
-                ObjectName oname=(ObjectName)it.next();
+        Iterator it=names.iterator();
+        while( it.hasNext()) {
+            ObjectName oname=(ObjectName)it.next();
+            writer.println( "Name: " + oname.toString());
 
-                writer.println( "Name: " + oname.toString());
+            try {
                 MBeanInfo minfo=mBeanServer.getMBeanInfo(oname);
                 // can't be null - I thinl
                 String code=minfo.getClassName();
-                if( "org.apache.commons.modeler.BaseModelMBean".equals( code ) ) {
+                if ("org.apache.commons.modeler.BaseModelMBean".equals(code)) {
                     code=(String)mBeanServer.getAttribute(oname, "modelerType");
                 }
                 writer.println("modelerType: " + code);
@@ -209,10 +216,10 @@ public class JMXProxyServlet extends HttpServlet  {
                     String valueString=value.toString();
                     writer.println( attName + ": " + escape(valueString));
                 }
-                writer.println();
+            } catch (Exception e) {
+                // Ignore
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            writer.println();
         }
 
     }
