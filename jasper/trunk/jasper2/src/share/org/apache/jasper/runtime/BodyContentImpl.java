@@ -547,15 +547,6 @@ public class BodyContentImpl extends BodyContent {
 	}
     }
 
-    public static void main (String[] args) throws Exception {
-	char[] buff = {'f','o','o','b','a','r','b','a','z','y'};
-   	BodyContentImpl bodyContent
-	    = new BodyContentImpl(new JspWriterImpl(null, 100, false));
-	bodyContent.println (buff);
-	System.out.println (bodyContent.getString ());
-	bodyContent.writeOut (new PrintWriter (System.out));
-    }
-
     /**
      * Sets the writer to which all output is written.
      */
@@ -595,8 +586,8 @@ public class BodyContentImpl extends BodyContent {
             return;
         }
 
-        if (len < Constants.DEFAULT_TAG_BUFFER_SIZE) {
-            len = Constants.DEFAULT_TAG_BUFFER_SIZE;
+        if (len < cb.length) {
+            len = cb.length;
         }
 
         bufferSize = cb.length + len;
