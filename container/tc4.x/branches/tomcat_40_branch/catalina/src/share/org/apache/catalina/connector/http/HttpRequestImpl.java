@@ -267,6 +267,16 @@ final class HttpRequestImpl
 
 
     /**
+     * Clear the collection of Headers associated with this Request.
+     */
+    public void clearHeaders() {
+
+        nextHeader = 0;
+
+    }
+
+
+    /**
      * Return the first value of the specified header, if any; otherwise,
      * return <code>null</code>
      *
