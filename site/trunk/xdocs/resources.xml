@@ -8,16 +8,50 @@
 
 <body>
 
-<section name="Note">
+<section name="Free Tools">
 
   <p>The Apache Tomcat project doesn't endorse any of the products mentioned
-     here. They are mentioned just because they are Tomcat centric and may
-     be useful references. The books are listed by descending publication
-     date.</p>
+     here.</p>
+
+  <ul>
+    <li>
+      <a href="http://openknows.free.fr/">Tomcat for Eclipse</a>
+    </li>
+    <li>
+      <a href="http://www.sysdeo.com/eclipse/tomcatPlugin.html">Sysdeo Eclipse Tomcat Launcher plugin</a>
+    </li>
+    <li>
+      <a href="http://www.day.com/en/product/communiqu1/cqenterprise/communiqu1/dnlogin.html">DAY Communique JSP Debugger</a>
+    </li>
+  </ul>
+
+</section>
+
+<section name="Articles">
+
+  <ul>
+    <li>
+      <b><a href="articles/performance.pdf">Tomcat Performance</a></b>, 
+      by Peter Lin
+    </li>
+    <li>
+      <b><a href="http://www.ubeans.com/tomcat/index.html">Tomcat 4.0 Load 
+      Balancing with Apache 1.3</a></b>, by Pascal Forget
+    </li>
+    <li>
+      <b><a href="http://www.theserverside.com/resources/article.jsp?l=Tomcat">
+      In Memory Session Replication in Tomcat 4.0</a></b>, by Filip Hanik
+    </li>
+  </ul>
 
 </section>
 
 <section name="Books">
+
+  <p>The Apache Tomcat project doesn't endorse any of the books mentioned
+     here. They are mentioned just because they are Tomcat centric and may
+     be useful references. The books are listed by descending publication
+     date.</p>
 
   <p>Tomcat committers' names are indicated in bold.</p>
 
@@ -29,10 +63,6 @@
     <li>
       <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0764526065/qid=1043089531/sr=1-9/ref=sr_1_9/002-9433156-6683214?v=glance&amp;s=books">Apache Tomcat Bible</a></b>, by Jon Eaves, Warner Godfrey, Rupert Jones<br/>
       <i>Hungry Minds, Inc (06/2003)</i>
-    </li>
-    <li>
-      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/1861008546/qid=1043089531/sr=1-7/ref=sr_1_7/002-9433156-6683214?v=glance&amp;s=books">Apache Tomcat Performance Handbook</a></b>, by Peter Lin, <b>Remy Maucherat</b><br/>
-      <i>? (05/2003)</i>
     </li>
     <li>
       <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0596003188/qid=1043089531/sr=1-6/ref=sr_1_6/002-9433156-6683214?v=glance&amp;s=books">Tomcat: The Definitive Guide</a></b>, by Jason Brittain, <b>Ian F. Darwin</b><br/>
@@ -63,28 +93,6 @@
     </li>
   </ul>
 
-</section>
-
-<section name="Articles">
-
-  <ul>
-    <li>
-      <b><a href="http://www.ubeans.com/tomcat/index.html">Apache 1.3.23 + Tomcat 4.0.2 + Load Balancing</a></b>, by Pascal Forget
-    </li>
-    <li>
-      <b><a href="http://www.theserverside.com/resources/article.jsp?l=Tomcat">Clustering Technologies - In Memory Session Replication in Tomcat 4</a></b>, by Filip Hanik
-    </li>
-  </ul>
-
-</section>
-
-<section name="Tools">
-
-  <ul>
-    <li>
-      <a href="http://www.day.com/en/product/communiqu1/cqenterprise/communiqu1/dnlogin.html">DAY Communique JSP Debugger</a>
-    </li>
-  </ul>
 </section>
 
 </body>
