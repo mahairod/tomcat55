@@ -942,6 +942,12 @@ public class ContextManager {
 	errorPath = ctx.getErrorPage( code );
 	if( errorPath != null ) {
 	    errorServlet=getHandlerForPath( ctx, errorPath );
+
+	    // Make sure Jsps will work
+	    req.setAttribute( "javax.servlet.include.request_uri",
+				  ctx.getPath()  + "/" + errorPath );
+	    req.setAttribute( "javax.servlet.include.servlet_path", errorPath );
+
 	}
 	if( debug>0 )
 	    ctx.log( "Handler " + errorServlet + " " + errorPath);

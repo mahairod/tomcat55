@@ -134,8 +134,11 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	    if(page==null || errorPage==null) {
 		ctx.log( "Form login without form pages, defaulting to basic "
 			 + page + " " + errorPage);
-		ctx.addServlet( new BasicAuthHandler());
-		ctx.addErrorPage( "401", "tomcat.basicAuthHandler");
+		// if the user specifies a 401 page do nothing
+		if( null==ctx.getErrorPage( "401" )) {
+		    ctx.addServlet( new BasicAuthHandler());
+		    ctx.addErrorPage( "401", "tomcat.basicAuthHandler");
+		}
 		return;
 	    }
 
@@ -192,8 +195,10 @@ public class AccessInterceptor extends  BaseInterceptor  {
 			 " to tomcat.formSecurityCheck for " +
 			 page);
 	} else if( "BASIC".equals( login_type )) {
-	    ctx.addServlet( new BasicAuthHandler());
-	    ctx.addErrorPage( "401", "tomcat.basicAuthHandler");
+	    if( null==ctx.getErrorPage( "401" )) {
+		ctx.addServlet( new BasicAuthHandler());
+		ctx.addErrorPage( "401", "tomcat.basicAuthHandler");
+	    }
 	} else {
 	    // if unknown, leave the normal 404 error handler to deal
 	    // with unauthorized access.

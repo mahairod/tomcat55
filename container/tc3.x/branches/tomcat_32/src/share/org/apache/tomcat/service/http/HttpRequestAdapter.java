@@ -73,6 +73,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class HttpRequestAdapter extends RequestImpl {
+    private static StringManager sm1=
+	StringManager.getManager("org.apache.tomcat.util");
     private Socket socket;
     private boolean moreRequests = false;
     RecycleBufferedInputStream sin;
@@ -171,7 +173,7 @@ public class HttpRequestAdapter extends RequestImpl {
 
 		    if (len == -1) {
                         String msg =
-                            sm.getString("mimeHeader.connection.ioe");
+                            sm1.getString("mimeHeader.connection.ioe");
 
 			throw new IOException (msg);
 		    }
