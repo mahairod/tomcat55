@@ -295,7 +295,7 @@ public class DeltaSession
     /**
      * The access count for this session
      */
-    protected transient int accessCount = 1;
+    protected transient int accessCount = 0;
     
     // ----------------------------------------------------- Session Properties
 
@@ -816,7 +816,7 @@ public class DeltaSession
         id = null;
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
-        accessCount = 1;
+        accessCount = 0;
         notes.clear();
         setPrincipal(null);
         isNew = false;
