@@ -9,8 +9,7 @@
     <hr>
     <p>The new &lt;jsp:attribute&gt; and &lt;jsp:body&gt; 
     standard actions can be used to specify the value of any standard
-    action or custom action attribute, as long as it accepts a request-time
-    value.</p>
+    action or custom action attribute.</p>
     <p>This example uses the &lt;jsp:attribute&gt;
     standard action to use the output of a custom action invocation
     (one that simply outputs "Hello, World!") to set the value of a
