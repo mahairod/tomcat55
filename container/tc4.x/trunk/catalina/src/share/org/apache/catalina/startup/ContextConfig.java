@@ -722,16 +722,20 @@ public final class ContextConfig
         }
 
         // Removing Ejbs
+        /*
         ContextEjb[] contextEjbs = context.findEjbs();
         for (i = 0; i < contextEjbs.length; i++) {
             context.removeEjb(contextEjbs[i].getName());
         }
+        */
 
         // Removing environments
+        /*
         ContextEnvironment[] contextEnvironments = context.findEnvironments();
         for (i = 0; i < contextEnvironments.length; i++) {
             context.removeEnvironment(contextEnvironments[i].getName());
         }
+        */
 
         // Removing errors pages
         ErrorPage[] errorPages = context.findErrorPages();
@@ -758,10 +762,12 @@ public final class ContextConfig
         }
 
         // Removing local ejbs
+        /*
         ContextLocalEjb[] contextLocalEjbs = context.findLocalEjbs();
         for (i = 0; i < contextLocalEjbs.length; i++) {
             context.removeLocalEjb(contextLocalEjbs[i].getName());
         }
+        */
 
         // Removing Mime mappings
         String[] mimeMappings = context.findMimeMappings();
@@ -776,23 +782,29 @@ public final class ContextConfig
         }
 
         // Removing resource env refs
+        /*
         String[] resourceEnvRefs = context.findResourceEnvRefs();
         for (i = 0; i < resourceEnvRefs.length; i++) {
             context.removeResourceEnvRef(resourceEnvRefs[i]);
         }
+        */
 
         // Removing resource links
+        /*
         ContextResourceLink[] contextResourceLinks = 
             context.findResourceLinks();
         for (i = 0; i < contextResourceLinks.length; i++) {
             context.removeResourceLink(contextResourceLinks[i].getName());
         }
+        */
 
         // Removing resources
+        /*
         ContextResource[] contextResources = context.findResources();
         for (i = 0; i < contextResources.length; i++) {
             context.removeResource(contextResources[i].getName());
         }
+        */
 
         // Removing sercurity role
         String[] securityRoles = context.findSecurityRoles();
