@@ -809,11 +809,6 @@ public class WebappLoader
         if (!(container instanceof Context))
             return;
 
-        if (((Context) container).getPrivileged()) {
-            classLoader.addPermission(new java.security.AllPermission());
-            return;
-        }
-
         // Tell the class loader the root of the context
         ServletContext servletContext =
             ((Context) container).getServletContext();

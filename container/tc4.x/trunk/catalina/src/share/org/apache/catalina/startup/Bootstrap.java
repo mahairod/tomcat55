@@ -196,6 +196,9 @@ public final class Bootstrap {
                      "core.ApplicationDispatcher$PrivilegedInclude");
                 catalinaLoader.loadClass
                     (basePackage +
+                     "core.ContainerBase$PrivilegedAddChild");
+                catalinaLoader.loadClass
+                    (basePackage +
                      "connector.HttpRequestBase$PrivilegedGetSession");
                 catalinaLoader.loadClass
                     (basePackage +

@@ -73,6 +73,24 @@ grant codeBase "file:${catalina.home}/shared/lib/naming-factory.jar" {
         permission java.security.AllPermission;                    
 };
 
+// These permissions apply to the privileged admin and manager web applications
+grant codeBase "jar:file:${catalina.home}/server/webapps/admin/WEB-INF/lib/jasper-compiler.jar!/-" {
+        permission java.security.AllPermission;  
+};
+
+grant codeBase "jar:file:${catalina.home}/server/webapps/admin/WEB-INF/lib/jasper-runtime.jar!/-" {
+        permission java.security.AllPermission;                                
+};
+
+grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-compiler.jar!/
+-" {
+        permission java.security.AllPermission;                                
+};                                                           
+
+grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-runtime.jar!/-
+" {
+        permission java.security.AllPermission;                                
+};
 
 // ========== WEB APPLICATION PERMISSIONS =====================================
 

@@ -68,6 +68,8 @@ package org.apache.catalina.core;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -159,6 +161,29 @@ import org.apache.catalina.util.StringManager;
 
 public abstract class ContainerBase
     implements Container, Lifecycle, Pipeline {
+
+
+    /**
+     * Perform addChild with the permissions of this class.
+     * addChild can be called with the XML parser on the stack,
+     * this allows the XML parser to have fewer privileges than
+     * Tomcat.
+     */
+    protected class PrivilegedAddChild
+        implements PrivilegedAction {
+
+        private Container child;
+
+        PrivilegedAddChild(Container child) {
+            this.child = child;
+        }
+
+        public Object run() {
+            addChildInternal(child);
+            return null;
+        }
+
+    }
 
 
     // ----------------------------------------------------- Instance Variables
@@ -774,6 +799,16 @@ public abstract class ContainerBase
      *  child Containers
      */
     public void addChild(Container child) {
+        if (System.getSecurityManager() != null) {
+            PrivilegedAction dp =
+                new PrivilegedAddChild(child);
+            AccessController.doPrivileged(dp);
+        } else {
+            addChildInternal(child);
+        }
+    }
+
+    private void addChildInternal(Container child) {
 
         synchronized(children) {
             if (children.get(child.getName()) != null)
