@@ -1,6 +1,7 @@
 package org.apache.tomcat.task;
 
 import java.util.Date;
+import java.text.DateFormat;
 import java.util.Locale;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -20,6 +21,8 @@ public class RfcDateParser {
     private boolean isGMT = false;
 
     private static boolean usingJDK = false;
+
+    private static DateFormat dateFormat = DateFormat.getInstance();
 
     static final String[] standardFormats = {
 	"EEEE', 'dd-MMM-yy HH:mm:ss z",   // RFC 850 (obsoleted by 1036)
@@ -111,7 +114,7 @@ public class RfcDateParser {
 	Date fInternalDate = null;
 	
 	try {
-	    fInternalDate  = new Date(dateString);
+	    fInternalDate  = dateFormat.parse( dateString );
 	}
 	catch (Exception ex) {
 	}
@@ -167,7 +170,7 @@ public class RfcDateParser {
 		}
 
 		try {
-		    fInternalDate  = new Date(newString);
+		    fInternalDate  = dateFormat.parse( newString );
 		}
 		catch (Exception ex) {
 		}

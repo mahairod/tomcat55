@@ -608,7 +608,7 @@ public class CookieController {
 	
 	
 	properties.put("enableCookies", isDisabled ? "false" : "true");
-	properties.save(new FileOutputStream("ServerAutoRun.properties"),"comments");
+	properties.store(new FileOutputStream("ServerAutoRun.properties"),"comments");
 	}
 	catch ( Exception e )
 	{
