@@ -134,7 +134,7 @@ class TagFileProcessor {
         private String displayName = null;
         private String smallIcon = null;
         private String largeIcon = null;
-        private boolean dynamicAttrs = false;
+        private String dynamicAttrs;
         
         private Vector attributeVector;
         private Vector variableVector;
@@ -164,8 +164,7 @@ class TagFileProcessor {
                 err.jspError(n, "jsp.error.tagdirective.badbodycontent",
                              bodycontent);
             }
-            dynamicAttrs = JspUtil.booleanValue(
-	                    n.getAttributeValue("dynamic-attributes"));
+            dynamicAttrs = n.getAttributeValue("dynamic-attributes");
             smallIcon = n.getAttributeValue("small-icon");
             largeIcon = n.getAttributeValue("large-icon");
             description = n.getAttributeValue("description");
@@ -303,7 +302,7 @@ class TagFileProcessor {
                 = new TagAttributeInfo[attributeVector.size()];
             attributeVector.copyInto(tagAttributeInfo);
 
-            return new TagInfo(name,
+            return new JasperTagInfo(name,
 			       tagClassName,
 			       bodycontent,
 			       description,

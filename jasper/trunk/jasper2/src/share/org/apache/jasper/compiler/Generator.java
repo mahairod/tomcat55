@@ -2880,7 +2880,7 @@ class Generator {
             gen.compileTagHandlerPoolList(page);
         }
 	if (gen.ctxt.isTagFile()) {
-	    TagInfo tagInfo = gen.ctxt.getTagInfo();
+	    JasperTagInfo tagInfo = (JasperTagInfo) gen.ctxt.getTagInfo();
 	    gen.generateTagHandlerPreamble(tagInfo, page);
 
 	    if (gen.ctxt.isPrototypeMode()) {
@@ -2913,7 +2913,8 @@ class Generator {
     /*
      * Generates tag handler preamble.
      */
-    private void generateTagHandlerPreamble(TagInfo tagInfo, Node.Nodes tag )
+    private void generateTagHandlerPreamble(JasperTagInfo tagInfo,
+					    Node.Nodes tag )
         throws JasperException 
     {
 
@@ -3063,7 +3064,7 @@ class Generator {
 	        throws JasperException {
 
 	if (tagInfo.hasDynamicAttributes()) {
-	    out.printil("private java.util.HashMap dynamicAttrs = new java.util.HashMap();");
+	    out.printil("private java.util.HashMap _jspx_dynamic_attrs = new java.util.HashMap();");
 	}
 
 	// Declare attributes
@@ -3218,15 +3219,13 @@ class Generator {
     public void generateSetDynamicAttribute() {
         out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws javax.servlet.jsp.JspException {");
 	out.pushIndent();
-	out.printil("if (uri != null)");
+	/* 
+	 * According to the spec, only dynamic attributes with no uri are to
+	 * be present in the Map; all other dynamic attributes are ignored.
+	 */
+	out.printil("if (uri == null)");
 	out.pushIndent();
-	// XXX Specification still needs to clarify what the variable name
-	// looks like. Assume <uri>_<localName> for now.
-	out.printil("dynamicAttrs.put(uri + \"_\" + localName, value);");
-	out.popIndent();
-	out.printil("else");
-	out.pushIndent();
-	out.printil("dynamicAttrs.put(localName, value);");
+	out.printil("_jspx_dynamic_attrs.put(localName, value);");
 	out.popIndent();
 	out.popIndent();
 	out.printil("}");
@@ -3237,7 +3236,7 @@ class Generator {
      * Also, if the tag accepts dynamic attributes, a page-scoped variable
      * is made available for each dynamic attribute that was passed in.
      */
-    private void generatePageScopedVariables(TagInfo tagInfo) {
+    private void generatePageScopedVariables(JasperTagInfo tagInfo) {
 
 	// "normal" attributes
 	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
@@ -3253,14 +3252,11 @@ class Generator {
 	    out.popIndent();
 	}
 
-	// dynamic attributes
+	// Expose the Map containing dynamic attributes as a page-scoped var
 	if (tagInfo.hasDynamicAttributes()) {
-	    out.printil("for (java.util.Iterator i = dynamicAttrs.entrySet().iterator(); i.hasNext(); ) {");
-	    out.pushIndent();
-	    out.printil("java.util.Map.Entry e = (java.util.Map.Entry) i.next();");
-	    out.printil("pageContext.setAttribute((String) e.getKey(), e.getValue());");
-	    out.popIndent();
-	    out.printil("}");
+	    out.printin("pageContext.setAttribute(\"");
+	    out.print(tagInfo.getDynamicAttributesMapName());
+	    out.print("\", _jspx_dynamic_attrs);");
 	}
     }
 

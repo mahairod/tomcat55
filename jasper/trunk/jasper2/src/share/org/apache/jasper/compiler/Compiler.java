@@ -196,6 +196,7 @@ public class Compiler {
         throws Exception
     {
         long t1=System.currentTimeMillis();
+
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader(),
 						   errDispatcher));
