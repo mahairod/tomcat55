@@ -148,15 +148,15 @@ public final class TldConfig  {
 
 
     /**
-     * Attribute value used to turn on/off XML validation
+     * Attribute value used to turn on/off TLD validation
      */
-     private static boolean xmlValidation = false;
+     private static boolean tldValidation = false;
 
 
     /**
-     * Attribute value used to turn on/off XML namespace awarenes.
+     * Attribute value used to turn on/off TLD  namespace awarenes.
      */
-    private static boolean xmlNamespaceAware = false;
+    private static boolean tldNamespaceAware = false;
 
     private boolean rescan=true;
 
@@ -185,8 +185,8 @@ public final class TldConfig  {
      * parsing xml instances.
      * @param xmlValidation true to enable xml instance validation
      */
-    public void setXmlValidation(boolean xmlValidation){
-        TldConfig.xmlValidation = xmlValidation;
+    public void setTldValidation(boolean tldValidation){
+        this.tldValidation = tldValidation;
     }
 
     /**
@@ -194,8 +194,8 @@ public final class TldConfig  {
      * @return true if validation is enabled.
      *
      */
-    public boolean getXmlValidation(){
-        return xmlValidation;
+    public boolean getTldValidation(){
+        return tldValidation;
     }
 
     /**
@@ -203,8 +203,8 @@ public final class TldConfig  {
      * @return true if namespace awarenes is enabled.
      *
      */
-    public boolean getXmlNamespaceAware(){
-        return xmlNamespaceAware;
+    public boolean getTldNamespaceAware(){
+        return tldNamespaceAware;
     }
 
 
@@ -213,8 +213,8 @@ public final class TldConfig  {
      * parsing xml instances.
      * @param xmlNamespaceAware true to enable namespace awareness
      */
-    public void setXmlNamespaceAware(boolean xmlNamespaceAware){
-        TldConfig.xmlNamespaceAware = xmlNamespaceAware;
+    public void setTldNamespaceAware(boolean tldNamespaceAware){
+        this.tldNamespaceAware = tldNamespaceAware;
     }    
 
 
@@ -404,8 +404,8 @@ public final class TldConfig  {
      */
     private static Digester createTldDigester() {
 
-        return DigesterFactory.newDigester(xmlValidation, 
-                                           xmlNamespaceAware, 
+        return DigesterFactory.newDigester(tldValidation, 
+                                           tldNamespaceAware, 
                                            new TldRuleSet());
 
     }

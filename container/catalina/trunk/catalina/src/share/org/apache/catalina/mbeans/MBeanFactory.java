@@ -739,7 +739,26 @@ public class MBeanFactory extends BaseModelMBean {
         return (oname.toString());
 
     }
-
+    
+    
+   /**
+     * Create a new StandardContext.
+     *
+     * @param parent MBean Name of the associated parent component
+     * @param path The context path for this Context
+     * @param docBase Document base directory (or WAR) for this Context
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public String createStandardContext(String parent, 
+                                        String path,
+                                        String docBase)
+        throws Exception {
+                                            
+        // XXX for backward compatibility. Remove it once supported by the admin
+        return 
+            createStandardContext(parent,path,docBase,false,false,false,false);                                  
+    }
 
    /**
      * Create a new StandardContext.
@@ -750,8 +769,13 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardContext(String parent, String path,
-                                        String docBase)
+    public String createStandardContext(String parent, 
+                                        String path,
+                                        String docBase,
+                                        boolean xmlValidation,
+                                        boolean xmlNamespaceAware,
+                                        boolean tldValidation,
+                                        boolean tldNamespaceAware)
         throws Exception {
 
         // Create a new StandardContext instance
@@ -759,6 +783,11 @@ public class MBeanFactory extends BaseModelMBean {
         path = getPathStr(path);
         context.setPath(path);
         context.setDocBase(docBase);
+        context.setXmlValidation(xmlValidation);
+        context.setXmlNamespaceAware(xmlNamespaceAware);
+        context.setTldValidation(tldValidation);
+        context.setTldNamespaceAware(tldNamespaceAware);
+        
         ContextConfig contextConfig = new ContextConfig();
         context.addLifecycleListener(contextConfig);
 

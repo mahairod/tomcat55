@@ -575,11 +575,37 @@ public class StandardContext
     private long startTime;
     private long tldScanTime;
 
-    /** Name of the engine. If null, the domain is used.
+    /** 
+     * Name of the engine. If null, the domain is used.
      */ 
     private String engineName = null;
     private String j2EEApplication="none";
     private String j2EEServer="none";
+
+
+    /**
+     * Attribute value used to turn on/off XML validation
+     */
+     private boolean webXmlValidation = false;
+
+
+    /**
+     * Attribute value used to turn on/off XML namespace validation
+     */
+     private boolean webXmlNamespaceAware = false;
+
+
+    /**
+     * Attribute value used to turn on/off XML validation
+     */
+     private boolean tldValidation = false;
+
+
+    /**
+     * Attribute value used to turn on/off TLD XML namespace validation
+     */
+     private boolean tldNamespaceAware = false;
+
 
     // ----------------------------------------------------- Context Properties
 
@@ -4179,10 +4205,24 @@ public class StandardContext
                 // Read tldListeners. XXX Option to disable
                 TldConfig tldConfig = new TldConfig();
                 tldConfig.setContext(this);
-                tldConfig.setXmlValidation
-                    (((StandardHost) getParent()).getXmlValidation());
-                tldConfig.setXmlNamespaceAware
-                    (((StandardHost) getParent()).getXmlNamespaceAware());
+
+                // (1)  check if the attribute has been defined
+                //      on the context element.
+                tldConfig.setTldValidation(tldValidation);
+                tldConfig.setTldNamespaceAware(tldNamespaceAware);
+
+                // (2) if the attribute wasn't defined on the context
+                //     try the host.
+                if (!tldValidation){
+                    tldConfig.setTldValidation
+                        (((StandardHost) getParent()).getXmlValidation());
+                }
+
+                if (!tldNamespaceAware){
+                    tldConfig.setTldNamespaceAware
+                        (((StandardHost) getParent()).getXmlNamespaceAware());
+                }
+                    
                 try {
                     tldConfig.execute();
                 } catch (Exception ex) {
@@ -5415,10 +5455,88 @@ public class StandardContext
 
     }
 
+     /**
+     * Set the validation feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlValidation true to enable xml instance validation
+     */
+    public void setXmlValidation(boolean webXmlValidation){
+        
+        this.webXmlValidation = webXmlValidation;
+
+    }
+
+    /**
+     * Get the server.xml <context> attribute's xmlValidation.
+     * @return true if validation is enabled.
+     *
+     */
+    public boolean getXmlValidation(){
+        return webXmlValidation;
+    }
 
 
-    /** Support for "stateManageable" JSR77 
-     * 
+    /**
+     * Get the server.xml <context> attribute's xmlNamespaceAware.
+     * @return true if namespace awarenes is enabled.
+     */
+    public boolean getXmlNamespaceAware(){
+        return webXmlNamespaceAware;
+    }
+
+
+    /**
+     * Set the namespace aware feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlNamespaceAware true to enable namespace awareness
+     */
+    public void setXmlNamespaceAware(boolean webXmlNamespaceAware){
+        this.webXmlNamespaceAware= webXmlNamespaceAware;
+    }    
+
+
+    /**
+     * Set the validation feature of the XML parser used when
+     * parsing tlds files. 
+     * @param tldXmlValidation true to enable xml instance validation
+     */
+    public void setTldValidation(boolean tldValidation){
+        
+        this.tldValidation = tldValidation;
+
+    }
+
+    /**
+     * Get the server.xml <context> attribute's webXmlValidation.
+     * @return true if validation is enabled.
+     *
+     */
+    public boolean getTldValidation(){
+        return tldValidation;
+    }
+
+
+    /**
+     * Get the server.xml <host> attribute's xmlNamespaceAware.
+     * @return true if namespace awarenes is enabled.
+     */
+    public boolean getTldNamespaceAware(){
+        return tldNamespaceAware;
+    }
+
+
+    /**
+     * Set the namespace aware feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlNamespaceAware true to enable namespace awareness
+     */
+    public void setTldNamespaceAware(boolean tldNamespaceAware){
+        this.tldNamespaceAware= tldNamespaceAware;
+    }    
+
+
+    /** 
+     * Support for "stateManageable" JSR77 
      */
     public boolean isStateManageable() {
         return true;

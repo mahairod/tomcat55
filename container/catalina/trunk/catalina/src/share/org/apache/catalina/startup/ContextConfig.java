@@ -251,7 +251,6 @@ public final class ContextConfig
                     if (context instanceof StandardContext) {
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
-                    webDigester.setUseContextClassLoader(false);
                     webDigester.push(context);
                     webDigester.parse(is);
                 } else {
@@ -582,8 +581,19 @@ public final class ContextConfig
         if( !context.getOverride() ) {
             if( container instanceof Host ) {
                 ((Host)container).importDefaultContext(context);
-                xmlValidation = ((Host)container).getXmlValidation();
-                xmlNamespaceAware = ((Host)container).getXmlNamespaceAware();
+
+                // Reset the value only if the attribute wasn't
+                // set on the context.
+                xmlValidation = context.getXmlValidation();
+                if (!xmlValidation) {
+                    xmlValidation = ((Host)container).getXmlValidation();
+                }
+                
+                xmlNamespaceAware = context.getXmlNamespaceAware();
+                if (!xmlNamespaceAware){
+                    xmlNamespaceAware 
+                                = ((Host)container).getXmlNamespaceAware();
+                }
 
                 container = container.getParent();
             }
