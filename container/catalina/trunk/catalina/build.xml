@@ -672,10 +672,8 @@
       <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
 
-    <copy todir="${catalina.deploy}/server/lib"
-           file="${tomcat-jk2.jar}"/>
-    <copy todir="${catalina.deploy}/bin"
-           file="${tomcat-jni.jar}"/>
+    <copy tofile="${catalina.deploy}/server/lib/tomcat-ajp.jar"
+            file="${tomcat-jk2.jar}"/>
     <copy todir="${catalina.deploy}/conf"
            file="${jk2.properties}"/>
 

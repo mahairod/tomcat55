@@ -99,8 +99,6 @@ public final class TldConfig  {
         noTldJars.add("jmx.jar");
         noTldJars.add("jmx-tools.jar");
         noTldJars.add("jsp-api.jar");
-        noTldJars.add("jkshm.jar");
-        noTldJars.add("jkconfig.jar");
         noTldJars.add("naming-common.jar");
         noTldJars.add("naming-resources.jar");
         noTldJars.add("naming-factory.jar");
@@ -112,9 +110,7 @@ public final class TldConfig  {
         noTldJars.add("servlets-webdav.jar");
         noTldJars.add("tomcat-util.jar");
         noTldJars.add("tomcat-http11.jar");
-        noTldJars.add("tomcat-jni.jar");
-        noTldJars.add("tomcat-jk.jar");
-        noTldJars.add("tomcat-jk2.jar");
+        noTldJars.add("tomcat-ajp.jar");
         noTldJars.add("tomcat-coyote.jar");
         noTldJars.add("xercesImpl.jar");
         noTldJars.add("xmlParserAPIs.jar");
