@@ -183,9 +183,22 @@ public class StandardManager
     protected boolean started = false;
 
 
-    int rejectedSessions=0;
-    int expiredSessions=0;
-    long processingTime=0;
+    /**
+     * Number of session creations that failed due to maxActiveSessions.
+     */
+    protected int rejectedSessions = 0;
+
+
+    /**
+     * Number of sessions that expired.
+     */
+    protected int expiredSessions = 0;
+
+
+    /**
+     * Processing time during session expiration.
+     */
+    protected long processingTime = 0;
 
 
     // ------------------------------------------------------------- Properties
@@ -338,7 +351,7 @@ public class StandardManager
     public Session createSession() {
 
         if ((maxActiveSessions >= 0) &&
-          (sessions.size() >= maxActiveSessions)) {
+            (sessions.size() >= maxActiveSessions)) {
             rejectedSessions++;
             throw new IllegalStateException
                 (sm.getString("standardManager.createSession.ise"));
