@@ -69,6 +69,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Iterator;
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
@@ -135,6 +136,20 @@ public interface Request {
 
 
     /**
+     * Get filter chain associated with the request.
+     */
+    public FilterChain getFilterChain();
+
+
+    /**
+     * Set filter chain associated with the request.
+     * 
+     * @param filterChain new filter chain
+     */
+    public void setFilterChain(FilterChain filterChain);
+
+
+    /**
      * Return descriptive information about this Request implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
@@ -192,6 +207,20 @@ public interface Request {
      * @param stream The new input stream
      */
     public void setStream(InputStream stream);
+
+
+    /**
+     * Get valve context.
+     */
+    public ValveContext getValveContext();
+
+
+    /**
+     * Set valve context.
+     * 
+     * @param valveContext New valve context object
+     */
+    public void setValveContext(ValveContext valveContext);
 
 
     /**
