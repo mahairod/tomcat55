@@ -139,6 +139,12 @@ public class InputBuffer extends Reader
     private int markPos = -1;
 
 
+    /**
+     * Buffer size.
+     */
+    private int size = -1;
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -159,6 +165,7 @@ public class InputBuffer extends Reader
      */
     public InputBuffer(int size) {
 
+        this.size = size;
         bb = new ByteChunk(size);
         bb.setLimit(size);
         bb.setByteInputChannel(this);
@@ -208,7 +215,15 @@ public class InputBuffer extends Reader
 	bytesRead = 0;
 	charsRead = 0;
 
-        cb.recycle();
+        // If usage of mark made the buffer too big, reallocate it
+        if (cb.getChars().length > size) {
+            cb = new CharChunk(size);
+            cb.setLimit(size);
+            cb.setCharInputChannel(this);
+            cb.setCharOutputChannel(this);
+        } else {
+            cb.recycle();
+        }
         markPos = -1;
         bb.recycle(); 
         closed = false;
@@ -406,7 +421,11 @@ public class InputBuffer extends Reader
 
     public void mark(int readAheadLimit)
         throws IOException {
-        cb.setLimit(cb.getEnd() + readAheadLimit);
+        if (cb.getLength() <= 0) {
+            cb.setOffset(0);
+            cb.setEnd(0);
+        }
+        cb.setLimit(cb.getStart() + readAheadLimit);
         markPos = cb.getStart();
     }
 
@@ -420,7 +439,6 @@ public class InputBuffer extends Reader
                 throw new IOException();
             } else {
                 cb.setOffset(markPos);
-                markPos = -1;
             }
         } else {
             bb.recycle();
