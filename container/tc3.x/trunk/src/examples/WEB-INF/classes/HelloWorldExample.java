@@ -26,13 +26,13 @@ public class HelloWorldExample extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         out.println("<html>");
-        out.println("<body bgcolor=\"white\">");
         out.println("<head>");
 
 	String title = rb.getString("helloworld.title");
 
 	out.println("<title>" + title + "</title>");
         out.println("</head>");
+        out.println("<body bgcolor=\"white\">");
         out.println("<body>");
 
 	// note that all links are created to be relative. this
