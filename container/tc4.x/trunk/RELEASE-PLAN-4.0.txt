@@ -48,25 +48,19 @@ Bugs That Must Be Addressed Before Final Release:
 
 Connectors  3509    Apache 1.3.20 and mod_webapp and Tomcat 4b7 HANGS
                     (likely to be the same issue as 1788)
+                    (WILL BE NOTED AS AN ISSUE ON THE RELEASE NOTES)
 
-Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4
+Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4,
+                    and WebDAV.  (WILL BE NOTED AS AN ISSUE ON THE RELEASE
+                    NOTES)
 
 
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
 
-Jasper      3055    <jsp:plugin> tag ignores the name attribute
-
-Servletapi  3196    Javadoc errors during build
-
-Servletapi  3344    Typo in javadocs
-
 
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):
 -----------------------------------------------------
-
-Jasper      3529    JSPC cannot handle tag libraries (reopened)
-                    (under investigation)
 
 Jasper      3640    Fix for JSPC handling of tag libraries in a JAR
                     (probably related to 3529)

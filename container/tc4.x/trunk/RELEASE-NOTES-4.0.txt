@@ -108,6 +108,12 @@ JakartaCommentGenerator.
 Compiler:  Remove a spurious "null" in an error message when no mapping back
 to the original source file can be performed.
 
+JspC:  Fix bugs that made it impossible to precompile JSP pages that referenced
+custom tag libraries with the "jspc" command line tool.
+
+Compiler:  If the user specifies a "name" attribute on the <jsp:plugin> tag,
+carry this through to the generated <embed> and <object> tags.
+
 
 -----------------
 Webapps Bug Fixes:
@@ -136,13 +142,14 @@ inside Apache 1.3.  The current state of this support is summarized as follows:
   web.xml file for your web application.  See the documentation included
   with the connector for configuration requirements.
 
-* The version of the connector to be published with Tomcat 4.0 final has had
-  all outstanding bugs fixed for Unix platforms.  However, a known issue
-  remains with the connector on Windows platforms.  For more information, see
+* The version of the connector to be published with Tomcat 4.0 final has
+  the following known issues:
 
     http://nagoya.apache.org/bugzilla/show_bug.cgi?id=3509
 
-  This problem will be addressed in a future release of the connector.
+    http://nagoya.apache.org/bugzilla/show_bug.cgi?id=3534
+
+  These problems will be addressed in a future release of the connector.
 
 
 -------------------------------------
@@ -165,18 +172,6 @@ time.
 To avoid this problem, place classes that load native libraries outside of the
 web application, and ensure that the loadLibrary() call is executed only once
 during the lifetime of a particular JVM.
-
-
--------------------------
-JSP Command Line Compiles:
--------------------------
-
-Tomcat 4.0 includes a command-line utility (jspc.bat or jscp.sh) to precompile
-individual JSP pages, or all JSP pages in an application.  If the page(s) you
-are compiling include references to custom tag libraries, you MUST use the
-"-webapp" command line option so that the entire web application (including
-all the required tag library descriptors and JAR files) is available to the
-compiler.
 
 
 ----------------------------------
