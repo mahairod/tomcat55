@@ -64,11 +64,11 @@
 
 package org.apache.tomcat.facade;
 
-import org.apache.tomcat.core.*;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.servlet.*;
-import javax.servlet.http.*;
+
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionContext;
 
 /**
  * 
