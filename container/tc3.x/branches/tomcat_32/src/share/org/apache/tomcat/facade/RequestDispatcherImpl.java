@@ -188,7 +188,28 @@ final class RequestDispatcherImpl implements RequestDispatcher {
 
 	// CM should have set the wrapper - call it
 	ServletWrapper wr=realRequest.getWrapper();
-	if( wr!=null ) wr.service(realRequest, realResponse);
+        Throwable t = null;
+        if( wr != null ) {
+            try {
+                wr.service(realRequest, realResponse);
+            } catch (Throwable t1) {
+                t = t1;
+            }
+        }
+
+        // Clean up the request and response as needed
+        ;       // No action required
+
+        // Rethrow any exception thrown by the forwarded-to servlet
+        if (t != null) {
+            if (t instanceof IOException)
+                throw (IOException) t;
+            else if (t instanceof ServletException)
+                throw (ServletException) t;
+            else
+                throw new ServletException
+                    (sm.getString("dispatcher.forwardException", t));
+        }
 
 	// close the response - output after this point will be discarded.
 	realResponse.finish();
@@ -348,12 +369,17 @@ final class RequestDispatcherImpl implements RequestDispatcher {
 	    realResponse.setIncluded( false );
 	}
 
+        // Rethrow any exception thrown by the included servlet
 	if (t != null) {
 	    if (t instanceof IOException)
 		throw (IOException) t;
 	    else if (t instanceof ServletException)
 		throw (ServletException) t;
+            else
+                throw new ServletException
+                    (sm.getString("dispatcher.includeException", t));
 	}
+
     }
 
 	
@@ -364,13 +390,48 @@ final class RequestDispatcherImpl implements RequestDispatcher {
     public void includeNamed(ServletRequest request, ServletResponse response)
 	throws ServletException, IOException
     {
-	// Use the original request - as in specification !
 
 	// We got here if name!=null, so assert it
 	ServletWrapper wrapper = context.getServletByName( name );
-	Request realR=((HttpServletRequestFacade)request).getRealRequest();
-	if( wrapper!=null)
-	    wrapper.service( realR, realR.getResponse());
+
+	// Use the original request - as in specification !
+        Request realRequest = ((HttpServletRequestFacade)request).
+	    getRealRequest();
+	Response realResponse = realRequest.getResponse();
+
+        // Set the "included" flag so that things like header setting in the
+        // included servlet will be correctly ignored
+	boolean old_included=realResponse.isIncluded();
+	if( ! old_included ) {
+	    realResponse.setIncluded( true );
+	}
+
+        // Call the included servlet
+        Throwable t = null;
+	if( wrapper!=null) {
+            try {
+                wrapper.service( realRequest, realRequest.getResponse());
+            } catch (Throwable t1) {
+                t = t1;
+            }
+        }
+
+        // Clean up the request and response as needed
+	if( ! old_included ) {
+	    realResponse.setIncluded( false );
+	}
+
+        // Rethrow any exception thrown by the included servlet
+	if (t != null) {
+	    if (t instanceof IOException)
+		throw (IOException) t;
+	    else if (t instanceof ServletException)
+		throw (ServletException) t;
+            else
+                throw new ServletException
+                    (sm.getString("dispatcher.includeException", t));
+	}
+
     }
 
     /** Named forward
@@ -378,11 +439,39 @@ final class RequestDispatcherImpl implements RequestDispatcher {
     public void forwardNamed(ServletRequest request, ServletResponse response)
 	throws ServletException, IOException
     {
-	ServletWrapper wrapper = context.getServletByName( name );
-	Request realR=((HttpServletRequestFacade)request).getRealRequest();
 
-	if( wrapper!=null)
-	    wrapper.service( realR, realR.getResponse());
+	// We got here if name!=null, so assert it
+	ServletWrapper wrapper = context.getServletByName( name );
+
+	// Use the original request - as in specification !
+        Request realRequest = ((HttpServletRequestFacade)request).
+	    getRealRequest();
+	Response realResponse = realRequest.getResponse();
+
+        // Call the forwarded-to servlet
+        Throwable t = null;
+	if( wrapper!=null) {
+            try {
+                wrapper.service( realRequest, realRequest.getResponse());
+            } catch (Throwable t1) {
+                t = t1;
+            }
+        }
+
+        // Clean up the request and response as needed
+        ;       // No action required
+
+        // Rethrow any exception thrown by the forwarded-to servlet
+	if (t != null) {
+	    if (t instanceof IOException)
+		throw (IOException) t;
+	    else if (t instanceof ServletException)
+		throw (ServletException) t;
+            else
+                throw new ServletException
+                    (sm.getString("dispatcher.forwardException", t));
+	}
+
     }    
 
     /**
