@@ -450,6 +450,25 @@ final class ApplicationDispatcher
             wrequest.setRequestURI(sb.toString());
             wrequest.setServletPath(servletPath);
             wrequest.setPathInfo(pathInfo);
+        
+            if (sb.length() > 0)
+                wrequest.setAttribute(Globals.FORWARD_REQUEST_URI_ATTR,
+                                      sb.toString());
+            if (contextPath != null)
+                wrequest.setAttribute(Globals.FORWARD_CONTEXT_PATH_ATTR,
+                                      contextPath);
+            if (servletPath != null)
+                wrequest.setAttribute(Globals.FORWARD_SERVLET_PATH_ATTR,
+                                      servletPath);
+            if (pathInfo != null)
+                wrequest.setAttribute(Globals.FORWARD_PATH_INFO_ATTR,
+                                      pathInfo);
+            if (queryString != null) {
+                wrequest.setAttribute(Globals.FORWARD_QUERY_STRING_ATTR,
+                                      queryString);
+                wrequest.mergeParameters(queryString);
+            }
+            
             if (queryString != null) {
                 wrequest.setQueryString(queryString);
                 wrequest.mergeParameters(queryString);
@@ -599,19 +618,19 @@ final class ApplicationDispatcher
             if (pathInfo != null)
                 sb.append(pathInfo);
             if (sb.length() > 0)
-                wrequest.setAttribute(Globals.REQUEST_URI_ATTR,
+                wrequest.setAttribute(Globals.INCLUDE_REQUEST_URI_ATTR,
                                       sb.toString());
             if (contextPath != null)
-                wrequest.setAttribute(Globals.CONTEXT_PATH_ATTR,
+                wrequest.setAttribute(Globals.INCLUDE_CONTEXT_PATH_ATTR,
                                       contextPath);
             if (servletPath != null)
-                wrequest.setAttribute(Globals.SERVLET_PATH_ATTR,
+                wrequest.setAttribute(Globals.INCLUDE_SERVLET_PATH_ATTR,
                                       servletPath);
             if (pathInfo != null)
-                wrequest.setAttribute(Globals.PATH_INFO_ATTR,
+                wrequest.setAttribute(Globals.INCLUDE_PATH_INFO_ATTR,
                                       pathInfo);
             if (queryString != null) {
-                wrequest.setAttribute(Globals.QUERY_STRING_ATTR,
+                wrequest.setAttribute(Globals.INCLUDE_QUERY_STRING_ATTR,
                                       queryString);
                 wrequest.mergeParameters(queryString);
             }

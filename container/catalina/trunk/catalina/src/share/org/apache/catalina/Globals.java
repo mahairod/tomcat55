@@ -126,8 +126,16 @@ public final class Globals {
      * The request attribute under which the original context path is stored
      * on an included dispatcher request.
      */
-    public static final String CONTEXT_PATH_ATTR =
+    public static final String INCLUDE_CONTEXT_PATH_ATTR =
         "javax.servlet.include.context_path";
+
+    
+    /**
+     * The request attribute under which the original context path is stored
+     * on an forwarded dispatcher request.
+     */
+    public static final String FORWARD_CONTEXT_PATH_ATTR =
+        "javax.servlet.forward.context_path";
 
 
     /**
@@ -216,26 +224,50 @@ public final class Globals {
      * The request attribute under which the original path info is stored
      * on an included dispatcher request.
      */
-    public static final String PATH_INFO_ATTR =
+    public static final String INCLUDE_PATH_INFO_ATTR =
         "javax.servlet.include.path_info";
+    
+    
+    /**
+     * The request attribute under which the original path info is stored
+     * on an forwarded dispatcher request.
+     */
+    public static final String FORWARD_PATH_INFO_ATTR =
+        "javax.servlet.forward.path_info";
 
 
     /**
      * The request attribute under which the original query string is stored
      * on an included dispatcher request.
      */
-    public static final String QUERY_STRING_ATTR =
+    public static final String INCLUDE_QUERY_STRING_ATTR =
         "javax.servlet.include.query_string";
 
-
+    
+    /**
+     * The request attribute under which the original query string is stored
+     * on an forwarded dispatcher request.
+     */
+    public static final String FORWARD_QUERY_STRING_ATTR =
+        "javax.servlet.forward.query_string";
+    
+    
     /**
      * The request attribute under which the original request URI is stored
      * on an included dispatcher request.
      */
-    public static final String REQUEST_URI_ATTR =
+    public static final String INCLUDE_REQUEST_URI_ATTR =
         "javax.servlet.include.request_uri";
 
 
+    /**
+     * The request attribute under which the original request URI is stored
+     * on an forwarded dispatcher request.
+     */
+    public static final String FORWARD_REQUEST_URI_ATTR =
+        "javax.servlet.forward.request_uri";
+    
+    
     /**
      * The request attribute under which we forward a servlet name to
      * an error page.
@@ -248,10 +280,18 @@ public final class Globals {
      * The request attribute under which the original servlet path is stored
      * on an included dispatcher request.
      */
-    public static final String SERVLET_PATH_ATTR =
+    public static final String INCLUDE_SERVLET_PATH_ATTR =
         "javax.servlet.include.servlet_path";
 
 
+    /**
+     * The request attribute under which the original servlet path is stored
+     * on an forwarded dispatcher request.
+     */
+    public static final String FORWARD_SERVLET_PATH_ATTR =
+        "javax.servlet.forward.servlet_path";
+
+    
     /**
      * The name of the cookie used to pass the session identifier back
      * and forth with the client.
