@@ -1,11 +1,11 @@
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperConstructorTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperConstructorTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperConstructorTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who constructs a Wrapper object from the response object.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTest.html" ignoreWhitespace="true" label="Construct a request object wrapping the given request, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper" />
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddCookieTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddCookieTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddCookieTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addCookie method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call addCookie(Cookie cookie) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper.addCookie() method" />
@@ -14,7 +14,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddDateHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddDateHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddDateHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addDateHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call addDateHeader(String long) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper.addDateHeader() method" />
@@ -23,7 +23,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to return addHeader(String name, String value) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. addHeader() method" />
@@ -36,7 +36,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddIntHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperAddIntHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddIntHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addIntHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call addIntHeader(String name, int value) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. addIntHeader(String,Int) method" />
@@ -45,7 +45,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperContainsHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperContainsHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperContainsHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses containsHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call containsHeader(String name) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. containsHeader(String) method" />
@@ -55,7 +55,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperEncodeURLTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperEncodeURLTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperEncodeURLTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses encodeURL method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call encodeURL(String url) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper.encodeURL() method" />
@@ -63,7 +63,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperEncodeRedirectURLTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperEncodeRedirectURLTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperEncodeRedirectURLTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses encodeRedirectURL method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to return encodeRedirectURL(String url) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. encodeRedirectURL(String) method" />
@@ -71,7 +71,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendErrorTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendErrorTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendError method.-->
     <statusCode code="410" label="Test for default behavior of this method is to call sendError(int sc) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper.sendError(int) method" />
@@ -79,7 +79,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet whose response has been wrapped. The wrapper object will call sendError() and then add a header. The header should not be visible to the client.-->
     <statusCode code="410" label="Test that headers added after a call to sendError(int,String), will be ignored by the container and will not be sent to the client. See Servlet Specification 2.3 section SRV.5.2." />
@@ -87,7 +87,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendErrorIgnoreHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorIgnoreHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendErrorIgnoreHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorIgnoreHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet whose response has been wrapped. The wrapper object will call sendError() and then add a header. The header should not be visible to the client.-->
     <statusCode code="410" label="Test that headers added after a call to sendError(int), will be ignored by the container and will not be sent to the client. See Servlet Specification 2.3 section SRV.5.2." />
@@ -95,7 +95,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendRedirectTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendRedirectTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendRedirectTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendRedirectTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendRedirect method.-->
     <statusCode code="302" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the server root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
@@ -103,7 +103,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendRedirectIgnoreHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendRedirectIgnoreHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet whose response has been wrapped. The wrapper object will call sendRedirect() and then add a header. The header should not be visible to the client.-->
     <statusCode code="302" label="Test that headers added after a call to sendRedirect(), will be ignored by the container and will not be sent to the client. See Servlet Specification 2.3 section SRV.5.2." />
@@ -111,15 +111,15 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendRedirectForWebAppTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendRedirectForWebAppTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSendRedirectForWebAppTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendRedirectForWebAppTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendRedirect method.-->
     <statusCode code="302" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
-    <responseHeader headerName="Location" headerValue="http://${host}:${port}/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperRedirectedTest" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
+    <responseHeader headerName="Location" headerValue="http://${host}:${port}/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperRedirectedTest" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetDateHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetDateHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetDateHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses setDateHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call setDateHeader(String, long) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. setDateHeader(String name, long date) method" />
@@ -128,7 +128,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses setHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to return setHeader(String, String) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. setHeader(String name, String value) method" />
@@ -138,7 +138,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetIntHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetIntHeaderTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetIntHeaderTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses setIntHeader method.-->
     <goldenFile fileName="${servlet-wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTest.html" ignoreWhitespace="true" label="Test for default behavior of this method is to call setIntHeader(String, int) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. setIntHeader(String name, int value) method" />
@@ -148,7 +148,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetStatusMsgTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetStatusMsgTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetStatusMsgTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetStatusMsgTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses setStatus method.-->
     <statusCode label="Test for default behavior of this method is to call setStatus(int, String) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. setStatus(int sc, String msg) method" />
@@ -157,7 +157,7 @@
   </validate>
 </request>
 
-<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetStatusTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetStatusTestServlet">
+<request followRedirects="false" version="1.0" label="HttpServletResponseWrapperSetStatusTest" path="/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetStatusTestServlet">
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses setStatus method.-->
     <statusCode label="Test for default behavior of this method is to call setStatus(int) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper.setStatus(int sc) method" />

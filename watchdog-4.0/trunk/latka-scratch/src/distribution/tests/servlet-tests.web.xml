@@ -404,7 +404,7 @@
     
     <filter-name>SReqWFilter</filter-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/*</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/*</url-pattern>
     
   
   </filter-mapping>
@@ -413,7 +413,7 @@
     
     <filter-name>SResWFilter</filter-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/*</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/*</url-pattern>
     
   
   </filter-mapping>
@@ -422,7 +422,7 @@
     
     <filter-name>HSReqWFilter</filter-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/*</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/*</url-pattern>
     
   
   </filter-mapping>
@@ -431,7 +431,7 @@
     
     <filter-name>HSResWFilter</filter-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/*</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/*</url-pattern>
     
   
   </filter-mapping>
@@ -6692,7 +6692,7 @@
     
     <servlet-name>ServletRequestWrapperGetInputStream_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetInputStream_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetInputStream_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6701,7 +6701,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameterTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameterTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameterTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6710,7 +6710,7 @@
     
     <servlet-name>ServletRequestWrapperGetLocalesTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetLocalesTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetLocalesTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6719,7 +6719,7 @@
     
     <servlet-name>ServletRequestWrapperGetReaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetReaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetReaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6728,7 +6728,7 @@
     
     <servlet-name>ServletRequestWrapperGetInputStreamTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetInputStreamTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetInputStreamTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6737,7 +6737,7 @@
     
     <servlet-name>ServletRequestWrapperGetRequestDispatcherTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRequestDispatcherTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetRequestDispatcherTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6746,7 +6746,7 @@
     
     <servlet-name>ServletRequestWrapperIsSecureTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperIsSecureTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperIsSecureTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6755,7 +6755,7 @@
     
     <servlet-name>ServletRequestWrapperGetAttributeNamesTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetAttributeNamesTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetAttributeNamesTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6764,7 +6764,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameter_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameter_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameter_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6773,7 +6773,7 @@
     
     <servlet-name>ServletRequestWrapperGetContentLengthTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetContentLengthTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetContentLengthTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6782,7 +6782,7 @@
     
     <servlet-name>ServletRequestWrapperGetServerPortTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetServerPortTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetServerPortTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6791,7 +6791,7 @@
     
     <servlet-name>ServletRequestWrapperGetAttribute_01Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetAttribute_01TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetAttribute_01TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6800,7 +6800,7 @@
     
     <servlet-name>ServletRequestWrapperGetServerNameTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetServerNameTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetServerNameTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6809,7 +6809,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameterNamesTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameterNamesTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameterNamesTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6818,7 +6818,7 @@
     
     <servlet-name>ServletRequestWrapperGetReader_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetReader_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetReader_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6827,7 +6827,7 @@
     
     <servlet-name>ServletRequestWrapperGetAttributeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetAttributeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetAttributeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6836,7 +6836,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameterValuesTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameterValuesTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameterValuesTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6845,7 +6845,7 @@
     
     <servlet-name>ServletRequestWrapperGetSchemeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetSchemeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetSchemeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6854,7 +6854,7 @@
     
     <servlet-name>ServletRequestWrapperGetRemoteAddrTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRemoteAddrTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetRemoteAddrTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6863,7 +6863,7 @@
     
     <servlet-name>ServletRequestWrapperGetProtocolTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetProtocolTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetProtocolTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6872,7 +6872,7 @@
     
     <servlet-name>ServletRequestWrapperGetRemoteHostTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRemoteHostTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetRemoteHostTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6881,7 +6881,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameterMapTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameterMapTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameterMapTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6890,7 +6890,7 @@
     
     <servlet-name>ServletRequestWrapperRemoveAttributeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperRemoveAttributeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperRemoveAttributeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6899,7 +6899,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameterValues_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameterValues_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameterValues_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6908,7 +6908,7 @@
     
     <servlet-name>ServletRequestWrapperGetContentTypeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetContentTypeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetContentTypeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6917,7 +6917,7 @@
     
     <servlet-name>ServletRequestWrapperSetAttributeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperSetAttributeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperSetAttributeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6926,7 +6926,7 @@
     
     <servlet-name>ServletRequestWrapperGetCharacterEncodingTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetCharacterEncodingTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetCharacterEncodingTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6935,7 +6935,7 @@
     
     <servlet-name>ServletRequestWrapperGetLocaleTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetLocaleTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetLocaleTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -6944,7 +6944,7 @@
     
     <servlet-name>ServletRequestWrapperGetParameterNames_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetParameterNames_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletRequestWrapper/filtered/ServletRequestWrapperGetParameterNames_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7084,7 +7084,7 @@
     
     <servlet-name>ServletResponseWrapperGetLocaleTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperGetLocaleTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperGetLocaleTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7093,7 +7093,7 @@
     
     <servlet-name>ServletResponseWrapperSetContentLengthTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperSetContentLengthTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperSetContentLengthTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7102,7 +7102,7 @@
     
     <servlet-name>ServletResponseWrapperGetWriter_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperGetWriter_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperGetWriter_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7111,7 +7111,7 @@
     
     <servlet-name>ServletResponseWrapperGetBufferSizeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperGetBufferSizeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperGetBufferSizeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7120,7 +7120,7 @@
     
     <servlet-name>ServletResponseWrapperResetBufferTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperResetBufferTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperResetBufferTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7129,7 +7129,7 @@
     
     <servlet-name>ServletResponseWrapperSetLocaleTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperSetLocaleTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperSetLocaleTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7138,7 +7138,7 @@
     
     <servlet-name>ServletResponseWrapperSetBufferSizeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperSetBufferSizeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperSetBufferSizeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7147,7 +7147,7 @@
     
     <servlet-name>ServletResponseWrapperResetTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperResetTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperResetTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7156,7 +7156,7 @@
     
     <servlet-name>ServletResponseWrapperSetBufferSize_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperSetBufferSize_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperSetBufferSize_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7165,7 +7165,7 @@
     
     <servlet-name>ServletResponseWrapperIsCommittedTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperIsCommittedTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperIsCommittedTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7174,7 +7174,7 @@
     
     <servlet-name>ServletResponseWrapperSetContentTypeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperSetContentTypeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperSetContentTypeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7183,7 +7183,7 @@
     
     <servlet-name>ServletResponseWrapperReset_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperReset_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperReset_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7192,7 +7192,7 @@
     
     <servlet-name>ServletResponseWrapperGetOutputStream_1Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperGetOutputStream_1TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperGetOutputStream_1TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7201,7 +7201,7 @@
     
     <servlet-name>ServletResponseWrapperFlushBufferTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperFlushBufferTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperFlushBufferTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7210,7 +7210,7 @@
     
     <servlet-name>ServletResponseWrapperGetCharacterEncodingTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/ServletResponseWrapperGetCharacterEncodingTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet/ServletResponseWrapper/filtered/ServletResponseWrapperGetCharacterEncodingTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7981,7 +7981,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetMethodTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetMethodTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetMethodTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7990,7 +7990,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetAuthTypeTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetAuthTypeTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetAuthTypeTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -7999,7 +7999,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetPathTranslatedTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetPathTranslatedTestServlet/*</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetPathTranslatedTestServlet/*</url-pattern>
       
   </servlet-mapping>
   
@@ -8007,7 +8007,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetSessionBooleanTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetSessionBooleanTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetSessionBooleanTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8016,7 +8016,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetIntHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetIntHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetIntHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8025,7 +8025,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetHeaderNamesTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetHeaderNamesTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetHeaderNamesTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8034,7 +8034,7 @@
     
     <servlet-name>HttpServletRequestWrapperConstructorTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperConstructorTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperConstructorTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8043,7 +8043,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetRequestURLTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRequestURLTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetRequestURLTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8052,7 +8052,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8061,7 +8061,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetCookiesTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetCookiesTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetCookiesTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8070,7 +8070,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetRequestURITest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRequestURITestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetRequestURITestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8079,7 +8079,7 @@
     
     <servlet-name>HttpServletRequestWrapperIsRequestedSessionIdFromCookie_01Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperIsRequestedSessionIdFromCookie_01TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperIsRequestedSessionIdFromCookie_01TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8088,7 +8088,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetContextPathTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetContextPathTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetContextPathTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8097,7 +8097,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetRemoteUserTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRemoteUserTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetRemoteUserTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8106,7 +8106,7 @@
     
     <servlet-name>HttpServletRequestWrapperIsRequestedSessionIdFromURL_01Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperIsRequestedSessionIdFromURL_01TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperIsRequestedSessionIdFromURL_01TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8115,7 +8115,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetSessionTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetSessionTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetSessionTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8124,7 +8124,7 @@
     
     <servlet-name>HttpServletRequestWrapperIsRequestedSessionIdValid_01Test</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperIsRequestedSessionIdValid_01TestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperIsRequestedSessionIdValid_01TestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8133,7 +8133,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetQueryStringTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetQueryStringTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetQueryStringTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8142,7 +8142,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetRequestedSessionIdTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRequestedSessionIdTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetRequestedSessionIdTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8151,7 +8151,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetHeadersTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetHeadersTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetHeadersTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8160,7 +8160,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetDateHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetDateHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetDateHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8169,7 +8169,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetPathInfoTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetPathInfoTestServlet/*</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetPathInfoTestServlet/*</url-pattern>
     
   
   </servlet-mapping>
@@ -8178,7 +8178,7 @@
     
     <servlet-name>HttpServletRequestWrapperGetServletPathTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetServletPathTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetServletPathTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8372,7 +8372,7 @@
     
     <servlet-name>HttpServletResponseWrapperSetStatusTestServlet</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetStatusTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetStatusTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8381,7 +8381,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendRedirectTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendRedirectTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendRedirectTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8390,7 +8390,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendErrorTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8399,7 +8399,7 @@
     
     <servlet-name>HttpServletResponseWrapperEncodeRedirectURLTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperEncodeRedirectURLTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8408,7 +8408,7 @@
     
     <servlet-name>HttpServletResponseWrapperSetStatusMsgTestServlet</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetStatusMsgTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetStatusMsgTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8417,7 +8417,7 @@
     
     <servlet-name>HttpServletResponseWrapperAddDateHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddDateHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8426,7 +8426,7 @@
     
     <servlet-name>HttpServletResponseWrapperContainsHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperContainsHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8435,7 +8435,7 @@
     
     <servlet-name>HttpServletResponseWrapperSetDateHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetDateHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8444,7 +8444,7 @@
     
     <servlet-name>HttpServletResponseWrapperAddHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8453,7 +8453,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendErrorIgnoreHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorIgnoreHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorIgnoreHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8462,7 +8462,7 @@
     
     <servlet-name>HttpServletResponseWrapperConstructorTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperConstructorTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8471,7 +8471,7 @@
     
     <servlet-name>HttpServletResponseWrapperAddCookieTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddCookieTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8480,7 +8480,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendRedirectIgnoreHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendRedirectIgnoreHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendRedirectIgnoreHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8489,7 +8489,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendRedirectForWebAppTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendRedirectForWebAppTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendRedirectForWebAppTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8498,7 +8498,7 @@
     
     <servlet-name>HttpServletResponseWrapperEncodeURLTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperEncodeURLTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8507,7 +8507,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendErrorMsgTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorMsgTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorMsgTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8516,7 +8516,7 @@
     
     <servlet-name>HttpServletResponseWrapperRedirectedTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperRedirectedTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperRedirectedTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8525,7 +8525,7 @@
     
     <servlet-name>HttpServletResponseWrapperSetIntHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetIntHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8534,7 +8534,7 @@
     
     <servlet-name>HttpServletResponseWrapperAddIntHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperAddIntHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8543,7 +8543,7 @@
     
     <servlet-name>HttpServletResponseWrapperSetHeaderTestServlet</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSetHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
@@ -8552,7 +8552,7 @@
     
     <servlet-name>HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest</servlet-name>
     
-    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTestServlet</url-pattern>
+    <url-pattern>/tests/javax_servlet_http/HttpServletResponseWrapper/filtered/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTestServlet</url-pattern>
     
   
   </servlet-mapping>
