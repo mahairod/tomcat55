@@ -187,7 +187,7 @@
 
 
   <!-- ================= DIST: Create Windows Installer =================== -->
-  <target name="installer" depends="dist">
+  <target name="installer" depends="dist, dist-source">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
     <echo message="NSIS must be installed in the default directory"/>
     <copy todir="${tomcat.dist}">
