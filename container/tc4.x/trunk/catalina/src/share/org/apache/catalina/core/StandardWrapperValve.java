@@ -247,8 +247,8 @@ final class StandardWrapperValve
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
-            ;   // No reporting to the response
-            ;   // No change in availability status
+            throwable = e;
+            exception(request, response, e);
         } catch (UnavailableException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
