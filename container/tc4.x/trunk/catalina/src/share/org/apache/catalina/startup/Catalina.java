@@ -495,8 +495,13 @@ public class Catalina {
             try {
                 server.initialize();
                 ((Lifecycle) server).start();
-                // Register shutdown hook
-                Runtime.getRuntime().addShutdownHook(shutdownHook);
+                try {
+                    // Register shutdown hook
+                    Runtime.getRuntime().addShutdownHook(shutdownHook);
+                } catch (Throwable t) {
+                    // This will fail on JDK 1.2. Ignoring, as Tomcat can run
+                    // fine without the shutdown hook.
+                }
                 // Wait for the server to be told to shut down
                 server.await();
             } catch (LifecycleException e) {
@@ -512,9 +517,14 @@ public class Catalina {
         // Shut down the server
         if (server instanceof Lifecycle) {
             try {
-                // Remove the ShutdownHook first so that server.stop() doesn't
-                // get invoked twice
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
+                try {
+                    // Remove the ShutdownHook first so that server.stop() 
+                    // doesn't get invoked twice
+                    Runtime.getRuntime().removeShutdownHook(shutdownHook);
+                } catch (Throwable t) {
+                    // This will fail on JDK 1.2. Ignoring, as Tomcat can run
+                    // fine without the shutdown hook.
+                }
                 ((Lifecycle) server).stop();
             } catch (LifecycleException e) {
                 System.out.println("Catalina.stop: " + e);
