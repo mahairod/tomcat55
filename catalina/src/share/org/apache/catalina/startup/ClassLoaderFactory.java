@@ -222,7 +222,7 @@ public final class ClassLoaderFactory {
             }
         }
 
-        // Add remote URLs
+        // Add URLs
         if (urls != null) {
             for (int i = 0; i < urls.length; i++) {
                 list.add(urls[i].toString());
