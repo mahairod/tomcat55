@@ -201,24 +201,6 @@
   </tag>
 
 <tag>
-    <name>propertyEditor</name>
-    <tag-class>tags.PropertyEditorTag</tag-class>
-    <description>
-        A tag that Uses ProprtyEditorSupport class
-    </description>
-
-    <attribute>
-      <name>url</name>
-      <required>false</required>
-    </attribute>
-
-    <attribute>
-      <name>locale</name>
-      <required>false</required>
-    </attribute>
-</tag>
-
-<tag>
     <name>iterator</name>
     <tag-class>tags.SimpleIteratorTag</tag-class>
     <description>
@@ -310,21 +292,5 @@
       <required>true</required>
     </attribute>
 </tag>
-
-<tag>
-    <name>thirdWinner</name>
-    <tag-class>tags.TagSupport.thirdPrizeTag</tag-class>
-    <description>
-    A tag that sets the third prize winner and also returns it to a   
-    nested tag
-    </description>
-    <attribute>
-      <name>winner</name>
-      <required>true</required>
-    </attribute>
-</tag>
-
-
-
 
 </taglib>
