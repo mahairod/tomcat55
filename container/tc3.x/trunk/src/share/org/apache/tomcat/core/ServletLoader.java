@@ -73,10 +73,14 @@ import java.util.*;
  * 
  * @author James Duncan Davidson [duncan@eng.sun.com]
  * @author James Todd [gonzo@eng.sun.com]
+ * @author Harish Prabandham
  */
 
-class ServletLoader
-extends ClassLoader {
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
+class ServletLoader extends ClassLoader {
     private StringManager sm =
         StringManager.getManager(Constants.Package);
     private Container container;

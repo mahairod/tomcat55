@@ -80,6 +80,11 @@ import javax.servlet.http.*;
  * @author Harish Prabandham
  */
 
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
+
 public class Context {
     
     private StringManager sm =
@@ -921,7 +926,16 @@ public class Context {
 	    }
 	}
 
-	for (int i = loadServlets.size() - 1; i >= 0; i--) {
+        // Changed because this is exactly opposite of what we want....
+        // Servlets were being loaded in the exact opposite order.
+        // Priorities IMO, should start with 0.
+        // Only System Servlets should be at 0 and rest of the servlets
+        // should be +ve integers.
+        // WARNING: Please do not change this without talking to:
+        // harishp@eng.sun.com (J2EE impact)
+	// for (int i = loadServlets.size() - 1; i >= 0; i--) {
+
+	for(int i = 0; i < loadServlets.size(); ++i) {
             String servletName = (String)loadServlets.elementAt(i);
 	    LookupResult result =
 	        container.lookupServletByName(servletName);

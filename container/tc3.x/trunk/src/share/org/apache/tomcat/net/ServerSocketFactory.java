@@ -92,6 +92,11 @@ import java.net.*;
  * @author Harish Prabandham
  */
 
+
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 public abstract class ServerSocketFactory implements Cloneable {
 
     //
@@ -184,3 +189,4 @@ public abstract class ServerSocketFactory implements Cloneable {
         int backlog, InetAddress ifAddress)
     throws IOException, InstantiationException;
 }
+

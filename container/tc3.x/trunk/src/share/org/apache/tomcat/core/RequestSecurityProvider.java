@@ -71,6 +71,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author Harish Prabandham
  */
 
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 public interface RequestSecurityProvider {
     public boolean isUserInRole(Context context,
         HttpServletRequest req, String role);

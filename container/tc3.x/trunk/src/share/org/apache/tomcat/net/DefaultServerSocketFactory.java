@@ -76,6 +76,11 @@ import java.net.*;
  */
 
 // Default implementation of server sockets.
+
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 class DefaultServerSocketFactory extends ServerSocketFactory {
 
     DefaultServerSocketFactory () {

@@ -80,6 +80,10 @@ import java.util.*;
  * @author Harish Prabandham
  */
 
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 public class EndpointManager {
 
     private StringManager sm =

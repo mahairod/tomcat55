@@ -63,6 +63,7 @@
 
 
 package org.apache.tomcat.core;
+import javax.servlet.Servlet;
 
 /**
  * For intercepting calls before & after the init() destroy()
@@ -71,8 +72,10 @@ package org.apache.tomcat.core;
  * @author Harish Prabandham
  */
 
-import javax.servlet.Servlet;
-
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 public interface LifecycleInterceptor {
     // called immediately before calling init() or destroy() method
 

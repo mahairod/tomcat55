@@ -71,6 +71,11 @@ package org.apache.tomcat.core;
  * @author Harish Prabandham
  */
 
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
+
 public final class InterceptorException
 extends java.lang.Exception {
     private Exception exception;

@@ -81,6 +81,10 @@ import javax.servlet.http.*;
  * @author Harish Prabandham
  */
 
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 class ServletWrapper {
 
     private StringManager sm =
@@ -539,6 +543,11 @@ class ServletWrapper {
     }
 }
 
+
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 abstract class InvocationHandler {
     protected Servlet servlet;
     protected Context context;
@@ -558,8 +567,12 @@ abstract class InvocationHandler {
     throws InterceptorException;
 }
 
-abstract class LifecycleInvocationHandler
-extends InvocationHandler {
+
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
+abstract class LifecycleInvocationHandler extends InvocationHandler {
     LifecycleInvocationHandler(Context context, Servlet servlet) {
 	super(context, servlet);
     }
@@ -575,8 +588,11 @@ extends InvocationHandler {
     }
 }
 
-class ServiceInvocationHandler
-extends InvocationHandler {
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
+class ServiceInvocationHandler extends InvocationHandler {
     private HttpServletRequestFacade request;
     private HttpServletResponseFacade response;
 

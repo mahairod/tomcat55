@@ -97,6 +97,11 @@ import java.util.*;
  *  and options.
  *  
  */
+
+//
+// WARNING: Some of the APIs in this class are used by J2EE. 
+// Please talk to harishp@eng.sun.com before making any changes.
+//
 public class HttpServer implements Server {
     // XXX move to Constants
     public static final String VHOST_PORT="vhost_port";
