@@ -27,7 +27,7 @@ files to make them available to web applications:</p>
     application archive.</li>
 <li>For classes and resources that must be shared across all web applications,
     place unpacked classes and resources under
-    <code>$CATALINA_HOME/shared/classes</code>, or place JAR files
+    <code>$CATALINA_BASE/shared/classes</code>, or place JAR files
     containing those classes and resources under
     <code>$CATALINA_BASE/shared/lib</code>.</li>
 </ul>
