@@ -77,17 +77,7 @@ import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.logging.Logger;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.Attributes;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.InputSource;
-import org.xml.sax.helpers.AttributesImpl;
 
 // EL interpreter (subject to change)
 import javax.servlet.jsp.el.ExpressionEvaluator;
@@ -115,8 +105,6 @@ public class JspUtil {
     private static final String OPEN_EXPR_XML  = "%=";
     private static final String CLOSE_EXPR_XML = "%";
 
-    private static ErrorHandler errorHandler = new MyErrorHandler();
-    private static EntityResolver entityResolver = new MyEntityResolver();
     private static int tempSequenceNumber = 0;
     private static ExpressionEvaluatorImpl expressionEvaluator = 
         new ExpressionEvaluatorImpl( null );
@@ -728,52 +716,6 @@ public class JspUtil {
         public Class[] getParameterTypes() {
             return this.parameterTypes;
         }    
-    }
-}
-
-class MyEntityResolver implements EntityResolver {
-    public InputSource resolveEntity(String publicId, String systemId)
-	throws SAXException
-    {
-	for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
-	    String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
-	    if (cachedDtdPublicId.equals(publicId)) {
-		String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
-		InputStream input =
-		    this.getClass().getResourceAsStream(resourcePath);
-		if (input == null) {
-		    throw new SAXException(
-                        Constants.getString("jsp.error.internal.filenotfound", 
-					    new Object[]{resourcePath}));
-		}
-		InputSource isrc =
-		    new InputSource(input);
-		return isrc;
-	    }
-	}
-	Constants.message("jsp.error.parse.xml.invalidPublicId",
-				new Object[]{publicId}, Logger.ERROR);
-        return null;
-    }
-}
-
-class MyErrorHandler implements ErrorHandler {
-    public void warning(SAXParseException ex)
-	throws SAXException
-    {
-	// We ignore warnings
-    }
-
-    public void error(SAXParseException ex)
-	throws SAXException
-    {
-	throw ex;
-    }
-
-    public void fatalError(SAXParseException ex)
-	throws SAXException
-    {
-	throw ex;
     }
 }
 
