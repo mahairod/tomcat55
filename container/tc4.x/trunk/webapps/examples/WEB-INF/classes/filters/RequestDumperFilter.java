@@ -183,6 +183,8 @@ public final class RequestDumperFilter implements Filter {
 	    HttpServletRequest hrequest = (HttpServletRequest) request;
 	    writer.println("       contextPath=" + hrequest.getContextPath());
 	    Cookie cookies[] = hrequest.getCookies();
+            if (cookies == null)
+                cookies = new Cookie[0];
 	    for (int i = 0; i < cookies.length; i++) {
 	        writer.println("            cookie=" + cookies[i].getName() +
 			       "=" + cookies[i].getValue());
