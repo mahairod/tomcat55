@@ -85,8 +85,8 @@ Context</a> is set to <code>true</code>.</p>
       </attribute>
 
       <attribute name="caseSensitive" required="false">
-        <p>This boolean flag toggles case sensitivity for resourceson 
-        the Windows platform. Defaults to <code>true</code>.</p>
+        <p>This is the functional equivalent to the <em>caseSensitive</em> 
+        of a <a href="context.html">Context</a>.</p>
       </attribute>
 
       <attribute name="docBase" required="false">

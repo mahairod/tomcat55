@@ -134,7 +134,6 @@ public class StandardContext
      */
     private boolean available = false;
 
-
     /**
      * The Locale to character set mapper for this application.
      */
@@ -417,6 +416,24 @@ public class StandardContext
 
 
     /**
+     * Case sensitivity.
+     */
+    protected boolean caseSensitive = true;
+
+
+    /**
+     * Allow linking.
+     */
+    protected boolean allowLinking = false;
+
+
+    /**
+     * Cache TTL in ms.
+     */
+    protected int cacheTTL = 5000;
+
+
+    /**
      * Caching allowed flag.
      */
     protected boolean cachingAllowed = true;
@@ -427,6 +444,7 @@ public class StandardContext
      */
     protected DirContext webappResources = null;
 
+    
 
     // ----------------------------------------------------- Context Properties
 
@@ -444,6 +462,55 @@ public class StandardContext
      */
     public void setCachingAllowed(boolean cachingAllowed) {
         this.cachingAllowed = cachingAllowed;
+    }
+
+
+
+    /**
+     * Set case sensitivity.
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+
+    /**
+     * Is case sensitive ?
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+
+    /**
+     * Set allow linking.
+     */
+    public void setAllowLinking(boolean allowLinking) {
+        this.allowLinking = allowLinking;
+    }
+
+
+    /**
+     * Is linking allowed.
+     */
+    public boolean isAllowLinking() {
+        return allowLinking;
+    }
+
+
+    /**
+     * Set cache TTL.
+     */
+    public void setCacheTTL(int cacheTTL) {
+        this.cacheTTL = cacheTTL;
+    }
+
+
+    /**
+     * Get cache TTL.
+     */
+    public int getCacheTTL() {
+        return cacheTTL;
     }
 
 
@@ -3281,8 +3348,19 @@ public class StandardContext
         try {
             ProxyDirContext proxyDirContext = 
                 new ProxyDirContext(env, webappResources);
+            if (webappResources instanceof FileDirContext) {
+                filesystemBased = true;
+                ((FileDirContext) webappResources).setCaseSensitive
+                    (isCaseSensitive());
+                ((FileDirContext) webappResources).setAllowLinking
+                    (isAllowLinking());
+            }
+
             if (webappResources instanceof BaseDirContext) {
                 ((BaseDirContext) webappResources).setDocBase(getBasePath());
+                ((BaseDirContext) webappResources).setCached
+                    (isCachingAllowed());
+                ((BaseDirContext) webappResources).setCacheTTL(getCacheTTL());
                 ((BaseDirContext) webappResources).allocate();
             }
             this.resources = proxyDirContext;
