@@ -1,19 +1,14 @@
-#!/bin/ksh
+#!/bin/sh
 
 BASEDIR=`dirname $0`
 . ${BASEDIR}/env-client
 
 echo PACKAGE:
 
-export TYEAR=`date +%Y`
-export TMONTH=`date +%m`
-export TDAY=`date +%d`
-export TDSTRING=$TYEAR-$TMONTH-$TDAY
+cd ${BUILD_DIR}/ws/dist/tomcat
 
-cd ws/dist/tomcat
-
-tar cf ../../../result/tomcat-$TDSTRING.tar *
-cd ../../..
-cd result
+tar cf ${BUILD_DIR}/result/tomcat-$TDSTRING.tar *
+cd ${BUILD_DIR}/result
 compress -f tomcat-$TDSTRING.tar
-cp tomcat-$TDSTRING.tar.Z tomcat-$TDSTRING.log /export/home/ftp/pub
+
+cp tomcat-$TDSTRING.tar.Z tomcat-$TDSTRING.log $FTP_DIR

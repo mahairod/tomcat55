@@ -14,18 +14,29 @@ echo "<hostname>$HOSTNAME</hostname>" >> $TLOGFILE
 echo "<hosttype>$HOSTTYPE</hosttype>" >> $TLOGFILE
 echo "<ostype>$OSTYPE</ostype>" >> $TLOGFILE
 
-# echo $TSEP | cat >> $TLOGFILE
-${SCRIPT_DIR}/do-checkout >> $TLOGFILE
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-checkout 2>&1 >> $TLOGFILE
 
-# echo $TSEP | cat >> $TLOGFILE
-${SCRIPT_DIR}/do-build >> $TLOGFILE
-${SCRIPT_DIR}/do-build-test >> $TLOGFILE
-${SCRIPT_DIR}/do-build-apache1.3 >> $TLOGFILE
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-build 2>&1 >> $TLOGFILE
 
-# echo $TSEP | cat >> $TLOGFILE
-${SCRIPT_DIR}/do-test >> $TLOGFILE
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-build-test 2>&1 >> $TLOGFILE
 
-${SCRIPT_DIR}/do-package 
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-build-apache1.3 2>&1 >> $TLOGFILE
+
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-test 2>&1 >> $TLOGFILE
+
+echo  >> $TLOGFILE
+echo  >> $TLOGFILE
+${SCRIPT_DIR}/do-package 2>&1 >> $TLOGFILE
 
 echo "</build-report>" >> $TLOGFILE
 

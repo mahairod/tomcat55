@@ -341,7 +341,7 @@ implements Testable {
             String key = (String)enum.nextElement();
             Vector values = new Vector();
             //(Vector)queryString.get(key);
-            values.add(0,queryString.get(key));
+            values.addElement(queryString.get(key));
 
             Enumeration valuesEnum = values.elements();
 

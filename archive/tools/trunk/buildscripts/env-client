@@ -45,7 +45,9 @@ if [ "$CVSROOT" = "" ] ; then
     CVSROOT=:pserver:anoncvs@dev.apache.org:/home/cvspublic
 fi
 
-export TDSTRING TLOGFILE TSEP BUILD_DIR TOOLS_DIR SCRIPT_DIR CVSROOT
+FTP_DIR=/export/home/ftp/pub
+
+export TDSTRING TLOGFILE TSEP BUILD_DIR TOOLS_DIR SCRIPT_DIR CVSROOT FTP_DIR
 
 
 # per arch - "official"
