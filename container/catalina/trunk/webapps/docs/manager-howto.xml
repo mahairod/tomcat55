@@ -21,12 +21,11 @@
 Configuring Manager Application Access</a><br />
 <a href="#Supported Manager Commands">Supported Manager Commands</a><br />
 <blockquote>
-<a href="#Deploy A New Application">Deploy A New Application</a><br />
-<a href="#Install A New Application">Install A New Application</a><br />
+<a href="#Deploy A New Application Remotely">Deploy A New Application Remotely</a><br />
+<a href="#Deploy A New Application from a Local Path">Deploy A New Application from a Local Path</a><br />
 <a href="#List Currently Deployed and Installed Applications">
 List Currently Deployed and Installed Applications</a><br />
 <a href="#Reload An Existing Application">Reload An Existing Application</a><br />
-<a href="#Remove an Existing Application">Remove an Existing Application</a><br />
 <a href="#List OS and JVM Properties">List OS and JVM Properties</a><br />
 <a href="#List Available Global JNDI Resources">
 List Available Global JNDI Resources</a><br />
@@ -265,7 +264,7 @@ its message strings in resource bundles, so it is possible that the strings
 have been translated for your platform.  The examples below show the English
 version of the messages.</p>
 
-<subsection name="Deploy A New Application">
+<subsection name="Deploy A New Application Remotely">
 
 <source>
 http://localhost:8080/manager/deploy?path=/foo
@@ -280,10 +279,21 @@ is used as the path.  The application can
 later be undeployed (and the corresponding application directory removed)
 by use of the <code>/undeploy</code>.</p>
 
-<p><strong>NOTE</strong> - Since this command requires an HTTP PUT request,
-it is usable only from tools (such as the custom Ant tasks described below).
-To install a new web application without copying, consider the
-<code>/install</code> command described below.  This command is the logical
+<p>URL parameters include:
+<ul>
+<li><code>update</code>: When set to true, any existing update will be
+    undeployed first. The default value is set to false.</li>
+<li><code>tag</code>: Specifying a tag name, this allows associating the 
+    deployed webapp with a version number. The application version can 
+    be later redeployed when needed using only the tag.</li>
+<li><code>pause</code>: Pause webapps so that incoming connections are not lost
+    during an application update. This option is only used with the update
+    parameter, and its default is false. Note that a large amount of request
+    processors may be used if the amount of incoming requests is large.</li>
+</ul>
+</p>
+
+<p><strong>NOTE</strong> - This command is the logical
 opposite of the <code>/undeploy</code> command.</p>
 
 <p>If installation and startup is successful, you will receive a response
@@ -300,7 +310,10 @@ error message.  Possible causes for problems include:</p>
     <p>The context paths for all currently running web applications must be
     unique.  Therefore, you must either remove or undeploy the existing web
     application using this context path, or choose a different context path
-    for the new one.</p>
+    for the new one. The <code>update</code> parameter may be specified as
+    a parameter on the URL, with a value of <code>true</code> to avoid this
+    error. In that case, an undeploy will be performed on an existing 
+    application before performing the deployment.</p>
     </blockquote></li>
 <li><em>Encountered exception</em>
     <blockquote>
@@ -324,13 +337,24 @@ error message.  Possible causes for problems include:</p>
 
 </subsection>
 
-<subsection name="Install A New Application">
+<subsection name="Deploy A New Application from a Local Path">
 
 <p>Install and start a new web application, attached to the specified context
 <code>path</code> (which must not be in use by any other web application).
 This command is the logical opposite of the <code>/remove</code> command.</p>
 
 <p>There are a number of different ways the install command can be used.</p>
+
+<h3>Install a version of a previously deployed webapp</h3>
+
+<p>This can be used to deploy a previous version of a web applicaion, which
+has been deployed using the <code>tag</code> attribute. Note that the work 
+directory for the manager webapp will contain the previously deployed WARs; 
+removing it would make the deployment fail.
+<source>
+http://localhost:8080/manager/deploy?path=/footoo&amp;tag=footag
+</source>
+</p>
 
 <h3>Install a Directory or WAR by URL</h3>
 
@@ -347,7 +371,7 @@ the entire WAR file.</p>
 <code>/path/to/foo</code> on the Tomcat server is installed as the 
 web application context named <code>/footoo</code>.
 <source>
-http://localhost:8080/manager/install?path=/footoo&amp;war=file:/path/to/foo
+http://localhost:8080/manager/deploy?path=/footoo&amp;war=file:/path/to/foo
 </source>
 </p>
 
@@ -357,7 +381,7 @@ Tomcat server is installed as the web application context named
 so the context path defaults to the name of the web application archive
 file without the ".war" extension.
 <source>
-http://localhost:8080/manager/install?war=jar:file:/path/to/bar.war!/
+http://localhost:8080/manager/deploy?war=jar:file:/path/to/bar.war!/
 </source>
 </p>
 
@@ -373,7 +397,7 @@ installed as the web application context named <code>/foo</code>. Notice
 that there is no <code>path</code> parameter so the context path defaults
 to the name of the web application directory.
 <source>
-http://localhost:8080/manager/install?war=foo
+http://localhost:8080/manager/deploy?war=foo
 </source>
 </p>
 
@@ -381,7 +405,7 @@ http://localhost:8080/manager/install?war=foo
 Host appBase directory on the Tomcat server is installed as the web
 application context named <code>/bartoo</code>.
 <source>
-http://localhost:8080/manager/install?path=/bartoo&amp;war=bar.war
+http://localhost:8080/manager/deploy?path=/bartoo&amp;war=bar.war
 </source>
 </p>
 
@@ -416,7 +440,7 @@ docBase configured in the context configuration ".xml" file.</p>
 <p>Here is an example of installing an application using a Context
 configuration ".xml" file.
 <source>
-http://localhost:8080/manager/install?config=file:/path/context.xml
+http://localhost:8080/manager/deploy?config=file:/path/context.xml
 </source>
 </p>
 
@@ -424,7 +448,7 @@ http://localhost:8080/manager/install?config=file:/path/context.xml
 configuration ".xml" file and a web application ".war" file located
 on the server.
 <source>
-http://localhost:8080/manager/install?config=file:/path/context.xml&amp;war=jar:file:/path/bar.war!/
+http://localhost:8080/manager/deploy?config=file:/path/context.xml&amp;war=jar:file:/path/bar.war!/
 </source>
 </p>
 
@@ -451,7 +475,7 @@ files located outside of their Host appBase.</p>
 <p>If installation and startup is successful, you will receive a response
 like this:</p>
 <source>
-OK - Installed application at context path /foo
+OK - Deployed application at context path /foo
 </source>
 
 <p>Otherwise, the response will start with <code>FAIL</code> and include an
@@ -462,7 +486,10 @@ error message.  Possible causes for problems include:</p>
     <p>The context paths for all currently running web applications must be
     unique.  Therefore, you must either remove or undeploy the existing web
     application using this context path, or choose a different context path
-    for the new one.</p>
+    for the new one. The <code>update</code> parameter may be specified as
+    a parameter on the URL, with a value of <code>true</code> to avoid this
+    error. In that case, an undeploy will be performed on an existing 
+    application before performing the deployment.</p>
     </blockquote></li>
 <li><em>Document base does not exist or is not a readable directory</em>
     <blockquote>
@@ -584,56 +611,6 @@ error message.  Possible causes for problems include:</p>
     is installed from an unpacked directory.  If you are using a WAR file,
     you should <code>remove</code> and then <code>install</code> the
     application again to pick up your changes.
-    </blockquote></li>
-</ul>
-
-</subsection>
-
-<subsection name="Remove an Existing Application">
-
-<source>
-http://localhost:8080/manager/remove?path=/examples
-</source>
-
-<p><strong><font color="red">WARNING</font> - This command will delete the
-contents of the web application directory and/or ".war" file if it exists within
-the <code>appBase</code> directory (typically "webapps") for this virtual host
-</strong>.  The web application temporary work directory is also deleted.  If
-you simply want to take an application out of service, you should use the
-<code>/stop</code> command instead.</p>
-
-<p>Signal an existing application to gracefully shut itself down, and then
-remove it from Tomcat (which also makes this context path available for
-reuse later).  This command is the logical opposite of the
-<code>/install</code> command.</p>
-
-<p>If this command succeeds, you will see a response like this:</p>
-<source>
-OK - Removed application at context path /examples
-</source>
-
-<p>Otherwise, the response will start with <code>FAIL</code> and include an
-error message.  Possible causes for problems include:</p>
-<ul>
-<li><em>Encountered exception</em>
-    <blockquote>
-    <p>An exception was encountered trying to remove the web application.
-    Check the Tomcat 4 logs for the details.</p>
-    </blockquote></li>
-<li><em>Invalid context path was specified</em>
-    <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
-    </blockquote></li>
-<li><em>No context exists for path /foo</em>
-    <blockquote>
-    <p>There is no deployed or installed application on the context path
-    that you specified.</p>
-    </blockquote></li>
-<li><em>No context path was specified</em>
-    <blockquote>
-    The <code>path</code> parameter is required.
     </blockquote></li>
 </ul>
 
@@ -881,8 +858,9 @@ http://localhost:8080/manager/undeploy?path=/examples
 <p><strong><font color="red">WARNING</font> - This command will
 delete the contents of the web application directory if it exists within the
 <code>appBase</code> directory (typically "webapps") for this virtual host
-</strong>.  If you simply want to take an application out of service,
-you should use the <code>/stop</code> command instead.</p>
+</strong>.  This will also delete the source .WAR if expanding occurred, as 
+well as the XML Context definition. If you simply want to take an application 
+out of service, you should use the <code>/stop</code> command instead.</p>
 
 <p>Signal an existing application to gracefully shut itself down, and
 remove it from Tomcat (which also makes this context path available for
@@ -968,10 +946,8 @@ file might look something like this:</p>
 
   &lt;!-- Configure the custom Ant tasks for the Manager application --&gt;
   &lt;taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/&gt;
-  &lt;taskdef name="install"   classname="org.apache.catalina.ant.InstallTask"/&gt;
   &lt;taskdef name="list"      classname="org.apache.catalina.ant.ListTask"/&gt;
   &lt;taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/&gt;
-  &lt;taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask"/&gt;
   &lt;taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask"/&gt;
   &lt;taskdef name="roles"     classname="org.apache.catalina.ant.RolesTask"/&gt;
   &lt;taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/&gt;
@@ -983,9 +959,9 @@ file might look something like this:</p>
     &lt;!-- ... construct web application in ${build} subdirectory ... --&gt;
   &lt;/target&gt;
 
-  &lt;target name="install" description="Install web application"
+  &lt;target name="deploy" description="Install web application"
           depends="compile"&gt;
-    &lt;install url="${url}" username="${username}" password="${password}"
+    &lt;deploy url="${url}" username="${username}" password="${password}"
             path="${path}" war="file://${build}"/&gt;
   &lt;/target&gt;
 
@@ -995,7 +971,7 @@ file might look something like this:</p>
             path="${path}"/&gt;
   &lt;/target&gt;
 
-  &lt;target name="remove" description="Remove web application"&gt;
+  &lt;target name="undeploy" description="Remove web application"&gt;
     &lt;remove url="${url}" username="${username}" password="${password}"
             path="${path}"/&gt;
   &lt;/target&gt;
@@ -1004,7 +980,7 @@ file might look something like this:</p>
 </pre></td></tr>
 </table>
 
-<p>Now, you can execute commands like <code>ant install</code> to install th
+<p>Now, you can execute commands like <code>ant deploy</code> to deploy the
 applcation to a running instance of Tomcat, or <code>ant reload</code> to
 tell Tomcat to reload it.  Note also that most of the interesting values in
 this <code>build.xml</code> file are defined as replaceable properties, so
