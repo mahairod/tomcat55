@@ -12,7 +12,7 @@
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
-  <property name="year"                  value="2003" />
+  <property name="year"                  value="2004" />
   <property name="version"               value="5.0" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
@@ -627,9 +627,9 @@
 
   </target>
 
-  <!-- ====================== Embeded target =================== -->
+  <!-- ====================== Embed target =================== -->
 
-  <target name="embed" description="Create a set of jars for embeded tomcat" > 
+  <target name="embed" description="Create a set of jars for embedded tomcat" > 
     <!-- Generic libraries ( share ?) -->
     <copy todir="embed/lib" file="${commons-logging.jar}"/>
     <copy todir="embed/lib" file="${commons-digester.jar}"/>
