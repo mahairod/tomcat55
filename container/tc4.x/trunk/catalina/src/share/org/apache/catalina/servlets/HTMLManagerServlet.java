@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +36,8 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.DiskFileUpload;
+import org.apache.commons.fileupload.FileItem;
 
 /**
 * Servlet that enables remote management of the web applications installed
@@ -145,8 +145,11 @@ public final class HTMLManagerServlet extends ManagerServlet {
         response.setLocale(locale);
         response.setContentType("text/html; charset=" + charset);
 
-        String message = "";
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
 
+        boolean uploadFailed = true;
+        
         // Create a new file upload handler
         DiskFileUpload upload = new DiskFileUpload();
 
@@ -160,6 +163,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
         // Parse the request
         String war = null;
         FileItem warUpload = null;
+        File xmlFile = null;
+        
         try {
             List items = upload.parseRequest(request);
         
@@ -179,14 +184,14 @@ public final class HTMLManagerServlet extends ManagerServlet {
             }
             while(true) {
                 if (warUpload == null) {
-                    message = sm.getString
-                        ("htmlManagerServlet.installUploadNoFile");
+                    writer.println(sm.getString
+                        ("htmlManagerServlet.installUploadNoFile"));
                     break;
                 }
                 war = warUpload.getName();
                 if (!war.toLowerCase().endsWith(".war")) {
-                    message = sm.getString
-                        ("htmlManagerServlet.installUploadNotWar",war);
+                    writer.println(sm.getString
+                        ("htmlManagerServlet.installUploadNotWar",war));
                     break;
                 }
                 // Get the filename if uploaded name includes a path
@@ -196,6 +201,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 if (war.lastIndexOf('/') >= 0) {
                     war = war.substring(war.lastIndexOf('/') + 1);
                 }
+                
+                String xmlName = war.substring(0,war.length()-4) + ".xml";
+                
                 // Identify the appBase of the owning Host of this Context
                 // (if any)
                 String appBase = null;
@@ -208,8 +216,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 }
                 File file = new File(appBaseDir,war);
                 if (file.exists()) {
-                    message = sm.getString
-                        ("htmlManagerServlet.installUploadWarExists",war);
+                    writer.println(sm.getString
+                        ("htmlManagerServlet.installUploadWarExists",war));
                     break;
                 }
                 warUpload.write(file);
@@ -221,12 +229,20 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     file.delete();
                     throw e;
                 }
+                
+                // Extract the context.xml file, if any
+                xmlFile = new File(appBaseDir, xmlName);
+                extractXml(file, xmlFile);
+                
+                uploadFailed = false;
+                
                 break;
             }
         } catch(Exception e) {
-            message = sm.getString
+            String message = sm.getString
                 ("htmlManagerServlet.installUploadFail", e.getMessage());
             log(message, e);
+            writer.println(message);
         } finally {
             if (warUpload != null) {
                 warUpload.delete();
@@ -234,10 +250,18 @@ public final class HTMLManagerServlet extends ManagerServlet {
             warUpload = null;
         }
 
-        // If there were no errors, install the WAR
-        if (message.length() == 0) {
-            message = install(null, null, war);
+        // Define the context.xml URL if present
+        String xmlURL = null;
+        if (xmlFile != null && xmlFile.exists()) {
+            xmlURL = new String("file:" + xmlFile.getAbsolutePath());
         }
+
+        // If there were no errors, install the WAR
+        if (!uploadFailed) {
+            install(writer, xmlURL, null, war);
+        }
+
+        String message = stringWriter.toString();
 
         list(request, response, message);
     }
@@ -528,6 +552,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         return stringWriter.toString();
     }
 
+    
     // ------------------------------------------------------ Private Constants
 
     // These HTML sections are broken in relatively small sections, because of
