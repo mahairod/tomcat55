@@ -4,6 +4,10 @@
 
 BUILDFILE=build.xml
 
+if [ "$ANT_HOME" = "" ] ; then
+  ANT_HOME=../jakarta-ant
+fi
+
 if test -z "${JAVA_HOME}" ; then
     echo "ERROR: JAVA_HOME not found in your environment."
     echo "Please, set the JAVA_HOME variable in your environment to match the"
@@ -20,7 +24,7 @@ if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
    CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
 fi
 
-CLASSPATH=${CLASSPATH}:../jakarta-ant/lib/ant.jar
+CLASSPATH=${CLASSPATH}:$ANT_HOME/lib/ant.jar
 
 # convert the unix path to windows
 if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
