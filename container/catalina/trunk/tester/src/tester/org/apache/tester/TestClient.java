@@ -485,9 +485,9 @@ public class TestClient extends Task {
                     parseSession(value);
             }
             if (debug >= 1) {
-                log.println("DATA: " + outData);
+                log("DATA: " + outData);
                 if (outText.length() > 2)
-                    log.println("TEXT: " + outText);
+                    log("TEXT: " + outText);
             }
 
             // Validate the response against our criteria
@@ -546,9 +546,9 @@ public class TestClient extends Task {
 
         // Log the results of executing this request
         if (success)
-            log.println("OK " + summary);
+            log("OK " + summary);
         else {
-            log.println("FAIL " + summary + " " + result);
+            log("FAIL " + summary + " " + result);
             if (throwable != null)
                 throwable.printStackTrace(System.out);
         }
