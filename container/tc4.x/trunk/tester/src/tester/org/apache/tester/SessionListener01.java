@@ -64,7 +64,8 @@ import javax.servlet.http.*;
 
 /**
  * Application event listener for session events.  All events that occur
- * are logged appropriately to the static logger.
+ * are logged appropriately to the static logger.  In addition, session
+ * creation and destruction events are logged to the servlet context log.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -91,10 +92,16 @@ public class SessionListener01
 
     public void sessionCreated(HttpSessionEvent event) {
         StaticLogger.write("SessionListener01: sessionCreated()");
+        HttpSession session = event.getSession();
+        session.getServletContext().log("SessionListener01: sessionCreated(" +
+                                        session.getId() + ")");
     }
 
     public void sessionDestroyed(HttpSessionEvent event) {
         StaticLogger.write("SessionListener01: sessionDestroyed()");
+        HttpSession session = event.getSession();
+        session.getServletContext().log("SessionListener01: sessionDestroyed("
+                                        + session.getId() + ")");
     }
 
 

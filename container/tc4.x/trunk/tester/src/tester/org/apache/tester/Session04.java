@@ -77,6 +77,8 @@ public class Session04 extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
 
+        log("Session04 - Starting, requestedSessionId = " +
+            request.getRequestedSessionId());
         response.setContentType("text/plain");
         PrintWriter writer = response.getWriter();
 
@@ -184,6 +186,7 @@ public class Session04 extends HttpServlet {
             writer.println(message);
         }
         StaticLogger.reset();
+        log("Session04 - Stopping");
 
     }
 
