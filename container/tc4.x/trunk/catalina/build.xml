@@ -26,6 +26,7 @@
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${jaas.jar}"/>
@@ -54,6 +55,7 @@
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${jaas.jar}"/>
@@ -102,6 +104,9 @@
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
      classpath="${commons-digester.jar}"/>
+    <available property="logging.present"
+     classname="org.apache.commons.logging.Log"
+     classpath="${commons-logging.jar}"/>
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
      classpath="${commons-modeler.jar}"/>
@@ -193,6 +198,7 @@
     <available property="jta.jar.present" file="${jta.jar}" />
     <available property="junit.jar.present" file="${junit.jar}" />
     <available property="ldap.jar.present" file="${ldap.jar}" />
+    <available property="logging.jar.present" file="${commons-logging.jar}" />
     <available property="modeler.jar.present" file="${commons-modeler.jar}" />
     <available property="pool.jar.present" file="${commons-pool.jar}" />
     <available property="regexp.jar.present" file="${regexp.jar}" />
@@ -381,6 +387,12 @@
         <equals arg1="${modeler.present}" arg2="true" />
       </or>
     </condition>
+    <condition property="copy.logging.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${logging.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.pool.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -433,6 +445,7 @@
     <echo message="digester.present=${digester.present}" />
     <echo message="jaxp.present=${jaxp.present}" />
     <echo message="jndi.present=${jndi.present}" />
+    <echo message="logging.present=${logging.present}" />
     <echo message="regexp.present=${regexp.present}" />
     <echo message="servlet.present=${servlet.present}" />
 
@@ -496,6 +509,7 @@
     <echo message="copy.jndi.jar=${copy.jndi.jar}" />
     <echo message="copy.jta.jar=${copy.jta.jar}" />
     <echo message="copy.ldap.jar=${copy.ldap.jar}" />
+    <echo message="copy.logging.jar=${copy.logging.jar}" />
     <echo message="copy.modeler.jar=${copy.modeler.jar}" />
     <echo message="copy.pool.jar=${copy.pool.jar}" />
     <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
@@ -613,6 +627,8 @@
            file="${commons-beanutils.jar}"/>
     <copy todir="${catalina.build}/server/lib"
            file="${commons-digester.jar}"/>
+    <copy todir="${catalina.build}/common/lib"
+           file="${commons-logging.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
 <!-- Not needed for stand alone use
     <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>

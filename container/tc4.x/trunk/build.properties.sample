@@ -56,6 +56,12 @@ commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 
 
+# ----- Commons Logging, version 0.1 or later -----
+commons-logging.home=${base.path}/commons-logging-1.1.1
+commons-logging.lib=${commons-logging.home}
+commons-logging.jar=${commons-logging.lib}/commons-logging.jar
+
+
 # ----- Commons Modeler, version 20011026 or later -----
 commons-modeler.home=${base.path}/commons-modeler
 commons-modeler.lib=${commons-modeler.home}

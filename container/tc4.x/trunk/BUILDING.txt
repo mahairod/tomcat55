@@ -180,14 +180,30 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(9) Steps (10)-(22) are optional, but are necessary to build a complete binary
-    distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
-    build.properties file (see step (23)) to build a complete distribution.
-    Regular contributors to Tomcat are encouraged to use the complete build 
-    option.
+(9) Download and Install the Commons Logging Binary Distribution
+
+* Download a binary distribution (nightly build for now) from:
+
+    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-logging
+
+  On a Windows platform, you will need:
+    commons-logging-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    commons-logging-YYYYMMDD.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
 
 
-(10) Download and Install JDBC Optional Package API Binary Distribution
+(10) Steps (11)-(23) are optional, but are necessary to build a complete binary
+     distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
+     build.properties file (see step (23)) to build a complete distribution.
+     Regular contributors to Tomcat are encouraged to use the complete build 
+     option.
+
+
+(11) Download and Install JDBC Optional Package API Binary Distribution
 
 * Download the JDBC Optional Pacakge API package (version 2.0) from:
 
@@ -196,7 +212,7 @@ of Tomcat 4.0.
 * Place the jar in a convenient location.
 
 
-(11) Download and Install the JMX 1.0 Reference Implementation
+(12) Download and Install the JMX 1.0 Reference Implementation
 
 NOTE:  This step is only required if you wish to build the Config/Admin
 web application.
@@ -210,7 +226,7 @@ web application.
   it resides in its own subdirectory.
 
 
-(12) Download and Install the JNDI 1.2.1 Reference Implementation
+(13) Download and Install the JNDI 1.2.1 Reference Implementation
 
 * Download the Java Naming and Directory Interface (JNDI) package,
   (version 1.2.1 or later) from
@@ -225,7 +241,7 @@ web application.
   subdirectory of the JNDI directory, parallel to "jndi.jar".
 
 
-(13) Download and Install the Java Activation Framework 1.0.1
+(14) Download and Install the Java Activation Framework 1.0.1
 
 * Download the Java Activation Framework package (version 1.0.1 or later) from
 
@@ -235,7 +251,7 @@ web application.
   resised in its own subdirectory.
 
 
-(14) Download and Install JavaMail 1.2
+(15) Download and Install JavaMail 1.2
 
 * Download the JavaMail package (version 1.2 or later) from
 
@@ -245,7 +261,7 @@ web application.
   it resides in its own subdirectory.
 
 
-(15) Download and Install the JSSE 1.0.2 Reference Implementation
+(16) Download and Install the JSSE 1.0.2 Reference Implementation
 
 * Download the Java Secure Sockets Extension (JSSE) package,
   (version 1.0.2 or later) from
@@ -256,7 +272,7 @@ web application.
   it resides in its own subdirectory.
 
 
-(16) Download and Install the Java Transaction APIs
+(17) Download and Install the Java Transaction APIs
 
 * Download the Java Transaction API (JTA) package (version 1.0.1) from:
 
@@ -266,7 +282,7 @@ web application.
   own subdirectory.
 
 
-(17) Download and Install the Struts Binary Distribution
+(18) Download and Install the Struts Binary Distribution
 
 * Download a binary distribution of Struts 1.0 from:
 
@@ -282,7 +298,7 @@ web application.
   distribution resides in its own directory.
 
 
-(18) Download and Install the Tyrex Data Source Package
+(19) Download and Install the Tyrex Data Source Package
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -295,7 +311,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(19) Download and Install the JUnit Testing Package (OPTIONAL)
+(20) Download and Install the JUnit Testing Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build and execute the unit
 tests that are part of the Tomcat 4.0 source base.
@@ -308,7 +324,7 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(20) Download and Install the Commons Modeler Binary Distribution
+(21) Download and Install the Commons Modeler Binary Distribution
 
 NOTE:  This step is only required if you wish to build the Config/Admin
 web application.
@@ -327,7 +343,7 @@ web application.
   distribution resides in its own directory.
 
 
-(21) Download and Install the Commons DBCP Binary Distribution
+(22) Download and Install the Commons DBCP Binary Distribution
 
 NOTE:  This step is only required if you wish to use the database JDBC data
 source factory.
@@ -346,7 +362,7 @@ source factory.
   distribution resides in its own directory.
 
 
-(22) Download and Install the Commons Pool Binary Distribution
+(23) Download and Install the Commons Pool Binary Distribution
 
 NOTE:  This step is only required if you wish to use the database JDBC data
 source factory.
@@ -365,7 +381,7 @@ source factory.
   distribution resides in its own directory.
 
 
-(23) Customize Build Properties For This Subproject
+(24) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -389,7 +405,7 @@ repository.  This file is local to your own development environment, and
 each developer will have their own version.
 
 
-(24) Build A Binary Distribution
+(25) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 
