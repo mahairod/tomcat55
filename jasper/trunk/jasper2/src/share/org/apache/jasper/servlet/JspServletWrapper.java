@@ -157,7 +157,7 @@ public class JspServletWrapper {
         return config.getServletContext();
     }
 
-    /*
+    /**
      * Sets the compilation exception for this JspServletWrapper.
      *
      * @param je The compilation exception
@@ -165,7 +165,6 @@ public class JspServletWrapper {
     public void setCompilationException(JasperException je) {
         this.compileException = je;
     }
-
 
     /**
      * Compile (if needed) and load a tag file
@@ -266,28 +265,37 @@ public class JspServletWrapper {
                      Localizer.getMessage("jsp.error.unavailable"));
             }
 
+            /*
+             * (1) Compile
+             */
             if (options.getDevelopment() || firstTime ) {
                 synchronized (this) {
                     if (firstTime) {
                         firstTime = false;
                     }
+                    // The following sets reload to true, if necessary
                     ctxt.compile();
                 }
             } else {
                 if (compileException != null) {
+                    // Throw cached compilation exception
                     throw compileException;
                 }
             }
 
-            if (reload) {
-                getServlet();
-            }
+            /*
+             * (2) (Re)load servlet class file
+             */
+            getServlet();
 
-            // If a page is to only to be precompiled return.
+            // If a page is to be precompiled only, return.
             if (precompile) {
                 return;
             }
 
+            /*
+             * (3) Service request
+             */
             if (theServlet instanceof SingleThreadModel) {
                // sync on the wrapper so that the freshness
                // of the page is determined right before servicing
