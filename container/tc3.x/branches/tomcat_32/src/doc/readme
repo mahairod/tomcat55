@@ -329,7 +329,11 @@ This section highlights the bugs fixed in this release.
      alone. (#345)
   -  Simple held on to a reference to removed objects preventing 
      garbage collection.
-    
+  -  Tomcat 3.2.4 now ships with JAXP 1.1.  Prior releases used 
+     JAXP 1.0.1.  Tomcat 3.2.4 remains completely compatible with
+     the older version of JAXP and there is no requirement for users
+     to upgrade to JAXP 1.1 unless their applications require the new
+     version.
      
 
 7.2 Security Vulnerabilities fixed in Tomcat 3.2.4
