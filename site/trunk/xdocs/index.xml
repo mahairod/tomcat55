@@ -68,7 +68,7 @@ Version 3.3 provides a much more modular design and allows the servlet
 container to be customized by adding and removing modules that control the 
 processing of servlet requests.  This version also contains many 
 performance improvements.  Version 3.3 is currently under development and 
-the beta process is expected to begin shortly.</p> 
+has begun beta testing.</p> 
 
 <p><strong>Tomcat 4.0</strong>.  Tomcat 4.0 is the next generatation of 
 Tomcat.  The 4.0 servlet container (Catalina) has been developed from the 
