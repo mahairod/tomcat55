@@ -804,6 +804,14 @@ public class WebappLoader
 
         try {
 
+            URL rootURL = servletContext.getResource("/");
+            classLoader.setPermissions(rootURL);
+
+            String contextRoot = servletContext.getRealPath("/");
+            if (contextRoot != null) {
+                classLoader.setPermissions(contextRoot);
+            }
+
             URL classesURL =
                 servletContext.getResource("/WEB-INF/classes/");
             if (classesURL != null)
@@ -814,7 +822,6 @@ public class WebappLoader
                 classLoader.setPermissions(libURL);
             }
 
-            String contextRoot = servletContext.getRealPath("/");
             if (contextRoot != null) {
 
                 if (libURL != null) {
