@@ -449,6 +449,14 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
     }
 
     /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+        return null; // FIXME: lifecycle.findLifecycleListeners();
+    }
+
+    /**
      * Remove a <code>LifecycleEvent</code> listener from this
      * <code>Connector</code>.
      *
@@ -479,8 +487,9 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
                 InetAddress addr=InetAddress.getByName(this.getAddress());
                 this.server=fact.createSocket(port,accc,addr);
             }
-        } catch (IOException e) {
-            throw new LifecycleException("Error creating server socket",e);
+        } catch (Exception e) {
+            throw new LifecycleException("Error creating server socket ("+
+                e.getClass().getName()+")",e);
         }
     }
 

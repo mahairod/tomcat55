@@ -77,6 +77,52 @@ public class WarpRequest extends HttpRequestBase {
         this.setStream(this.localstream);
     }
 
+    /** Process the SSL attributes */
+    public Object getAttribute(String name) {
+
+        /* Use cached values */
+        Object object = super.getAttribute(name);
+	if (object != null)
+            return object;
+
+	/* Fill the cache and return value if possible */
+        if (!localstream.request.isSecure()) return null;
+
+        /* Client Certificate */
+        if (name.equals("javax.servlet.request.X509Certificate")) {
+            WarpCertificates cert = null;
+            try {
+                cert = new WarpCertificates(localstream.getX509Certificates());
+            } catch (IOException e) {
+                return null;
+            }
+            super.setAttribute("javax.servlet.request.X509Certificate",
+                cert.getCertificates());
+        }
+
+        /* other ssl parameters */
+        if (name.equals("javax.servlet.request.cipher_suite") ||
+            name.equals("javax.servlet.request.key_size") ||
+            name.equals("javax.servlet.request.ssl_session")) {
+            WarpSSLData ssldata = null;
+            try {
+                ssldata = localstream.getSSL();
+            } catch (IOException e) {
+                return null;
+            }
+            if (ssldata == null) return null;
+
+            super.setAttribute("javax.servlet.request.cipher_suite",
+                ssldata.ciph);
+            if (ssldata.size!=0)
+                super.setAttribute("javax.servlet.request.key_size",
+                    new Integer (ssldata.size));
+            super.setAttribute("javax.servlet.request.ssl_session",
+                ssldata.sess);
+        }
+        return(super.getAttribute(name));
+    }
+
     public void setHost(Host host) {
         this.host=host;
     }
@@ -128,6 +174,7 @@ public class WarpRequest extends HttpRequestBase {
             this.packet=new WarpPacket();
             this.packet.setType(Constants.TYPE_CBK_DATA);
         }
+
         
         public int read()
         throws IOException {
@@ -139,7 +186,7 @@ public class WarpRequest extends HttpRequestBase {
                 throw new IOException("Invalid WARP packet type for body");
 
             if (this.packet.pointer<this.packet.size)
-                return((int)this.packet.buffer[this.packet.pointer++]);
+                return(((int)this.packet.buffer[this.packet.pointer++])&0x0ff);
 
             this.packet.reset();
             this.packet.setType(Constants.TYPE_CBK_READ);
@@ -150,6 +197,46 @@ public class WarpRequest extends HttpRequestBase {
             this.request.getConnection().recv(packet);
             return(this.read());
         }
+
+        public String getX509Certificates()
+        throws IOException {
+            if (closed) throw new IOException("Stream closed");
+            this.packet.reset();
+            this.packet.setType(Constants.TYPE_ASK_SSL_CLIENT);
+            this.request.getConnection().send(packet);
+            packet.reset();
+
+            this.request.getConnection().recv(packet);
+            if (closed) throw new IOException("Stream closed");
+            if (packet.getType()==Constants.TYPE_REP_SSL_NO) return(null);
+            if (packet.getType()!=Constants.TYPE_REP_SSL_CERT)
+               throw new IOException("Invalid WARP packet type for CC");
+            return(this.packet.readString());
+        }
+
+        /** Read the data from the SSL environment. */
+        public WarpSSLData getSSL()
+        throws IOException {
+          
+            if (closed) throw new IOException("Stream closed");
+            this.packet.reset();
+            this.packet.setType(Constants.TYPE_ASK_SSL);
+            this.request.getConnection().send(packet);
+            packet.reset();
+
+            this.request.getConnection().recv(packet);
+            if (closed) throw new IOException("Stream closed");
+            if (packet.getType()==Constants.TYPE_REP_SSL_NO) return(null);
+            if (packet.getType()!=Constants.TYPE_REP_SSL)
+               throw new IOException("Invalid WARP packet type for SSL data");
+            WarpSSLData ssldata  = new WarpSSLData();
+            ssldata.ciph = this.packet.readString();
+            ssldata.sess = this.packet.readString();
+            ssldata.size = this.packet.readInteger();
+            return(ssldata);
+        }
+
+
         
         public void close()
         throws IOException {
