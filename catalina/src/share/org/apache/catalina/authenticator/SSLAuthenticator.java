@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.coyote.ActionCode;
 import org.apache.catalina.Globals;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Request;
@@ -130,8 +131,10 @@ public class SSLAuthenticator
         X509Certificate certs[] = (X509Certificate[])
             request.getRequest().getAttribute(Globals.CERTIFICATES_ATTR);
         if ((certs == null) || (certs.length < 1)) {
+            request.getCoyoteRequest().action
+                              (ActionCode.ACTION_REQ_SSL_CERTIFICATE, null);
             certs = (X509Certificate[])
-                request.getRequest().getAttribute(Globals.SSL_CERTIFICATE_ATTR);
+                request.getRequest().getAttribute(Globals.CERTIFICATES_ATTR);
         }
         if ((certs == null) || (certs.length < 1)) {
             if (container.getLogger().isDebugEnabled())

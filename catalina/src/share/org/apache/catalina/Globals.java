@@ -43,11 +43,6 @@ public final class Globals {
         "javax.servlet.request.X509Certificate";
 
     /**
-     * SSL Certificate Request Attributite.
-     */
-    public static final String SSL_CERTIFICATE_ATTR = "org.apache.coyote.request.X509Certificate";
-
-    /**
      * The request attribute under which we store the name of the cipher suite
      * being used on an SSL connection (as an object of type
      * java.lang.String).
