@@ -242,7 +242,8 @@ public final class Options {
                 // Not running in a Servlet 2.2 container.
                 // Try to get the JDK 1.2 java.io.tmpdir property
                 dir = System.getProperty("java.io.tmpdir");
-                scratchDir = new File(dir);
+		if (dir != null)
+                    scratchDir = new File(dir);
             }
         }
                 
