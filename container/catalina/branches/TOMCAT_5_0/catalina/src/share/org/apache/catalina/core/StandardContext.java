@@ -4497,7 +4497,11 @@ public class StandardContext
         }
 
         // Stop our application listeners
-        listenerStop();
+        // I think this should be after the children are stopped,
+        // because now servlet destroy() is called AFTER 
+        // contextDestroyed, which is a Spec violation as noted
+        // Bugzilla 30762.
+        // listenerStop();
 
         // Finalize our character set mapper
         setCharsetMapper(null);
@@ -4538,6 +4542,9 @@ public class StandardContext
             if ((loader != null) && (loader instanceof Lifecycle)) {
                 ((Lifecycle) loader).stop();
             }
+
+            // Now stop the listeners, Bugzilla 30762
+            listenerStop();
 
         } finally {
 

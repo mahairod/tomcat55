@@ -91,7 +91,10 @@
       </fix>
       <fix>
         <bug>30179</bug>: Improved Bootstrap catalina.properties handling. (yoavs)
-    </fix>
+      </fix>
+      <fix>
+        <bug>30762</bug>: Servlet#destroy was called before contextDestroyed. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
