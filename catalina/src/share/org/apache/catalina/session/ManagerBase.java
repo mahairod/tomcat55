@@ -160,6 +160,12 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * Number of sessions that have expired.
+     */
+    protected int expiredSessions = 0;
+
+
+    /**
      * The set of currently active Sessions for this Manager, keyed by
      * session identifier.
      */
@@ -543,6 +549,26 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         support.firePropertyChange("randomClass", oldRandomClass,
                                    this.randomClass);
 
+    }
+
+
+    /**
+     * Gets the number of sessions that have expired.
+     *
+     * @return Number of sessions that have expired
+     */
+    public int getExpiredSessions() {
+        return expiredSessions;
+    }
+
+
+    /**
+     * Sets the number of sessions that have expired.
+     *
+     * @param expiredSessions Number of sessions that have expired
+     */
+    public void setExpiredSessions(int expiredSessions) {
+        this.expiredSessions = expiredSessions;
     }
 
 
