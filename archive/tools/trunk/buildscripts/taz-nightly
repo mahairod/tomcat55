@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# This is the script that is run on taz every night to collect the
+# builds from various locations
+
+export TYEAR=`date +%Y`
+export TMONTH=`date +%m`
+export TDAY=`date +%d`
+export TDSTRING=$TYEAR-$TMONTH-$TDAY
+
+cd /x3/www/jakarta.apache.org/builds/tomcat/standalone/nightly
+
+# Get Canonical Unix build
+
+ftp ftp://tokyo.javasoft.com/pub/tomcat-$TDSTRING.log
+ftp ftp://tokyo.javasoft.com/pub/tomcat-$TDSTRING.tar.Z
+cat tomcat-$TDSTRING.log | mail -s "Unix Standalone Build $TDSTRING" tomcat-dev@jakarta.apache.org 
+mv tomcat-$TDSTRING.log tomcat-$TDSTRING-sparc-sol-7-jdk117.log
+cp tomcat-$TDSTRING.tar.Z tomcat-foo.tar.Z
+uncompress tomcat-foo.tar.Z
+mv tomcat-foo.tar tomcat-$TDSTRING.tar
+gzip tomcat-$TDSTRING.tar
+
+# Get Canoncial Windows build
+
+# Get Integrated Builds
+
+# Solaris Sparc
+
+# Solaris Intel
+
+# Linux Sparc
+
+# Linux Intel
+
+# FBSD Intel
+
+# Windows NT

@@ -1,0 +1,5 @@
+#!/bin/ksh
+echo TEST:
+cd ws/build/tomcat/test
+sh runtest.sh
+

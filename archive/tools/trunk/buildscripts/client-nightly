@@ -1,0 +1,60 @@
+#!/bin/ksh
+
+# This the client nightly build sh script. This was originally written
+# for tokyo, a sparc solaris client.
+
+export TYEAR=`date +%Y`
+export TMONTH=`date +%m`
+export TDAY=`date +%d`
+export TDSTRING=$TYEAR-$TMONTH-$TDAY
+export TLOGFILE=result/tomcat-$TDSTRING.log
+export TSEP=-----------------------------------------------
+
+echo Build: $TDSTRING | cat > $TLOGFILE
+echo Platform: `uname -a` | cat >> $TLOGFILE
+
+#
+# WARNING: right now, all these scripts are deadly specific to tokyo
+# we need to define the following parametrs in a nightly.conf file
+# that is unique to the client.
+#
+# For example, we should have a tokyo.conf file for tokyo that
+# contains the following information:
+#
+#       $WS_DIR
+#       $RESULT_DIR
+#       $FTP_PICKUP_DIR
+#       $BUILD_STANDALONE       boolean flag to build tomcat standalone
+#       $BUILD_INTEGRATED       boolean flag to build tomcat+apache
+#
+# other hosts should have a hostname.conf file and this script should
+# be called via `client-nightly hostname.conf` from the cron job
+#
+
+if [ -d result ]; then
+  echo 
+else
+  mkdir result
+fi
+
+if [ -d ws ]; then
+  rm -rf ws
+fi
+
+mkdir ws
+
+echo $TSEP | cat >> $TLOGFILE
+do-checkout 
+
+echo $TSEP | cat >> $TLOGFILE
+do-build >> $TLOGFILE
+
+echo $TSEP | cat >> $TLOGFILE
+do-test >> $TLOGFILE
+
+do-package 
+
+
+
+
+

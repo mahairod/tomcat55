@@ -1,0 +1,6 @@
+#!/bin/ksh
+echo BUILD:
+cd ws
+cd jakarta-tomcat
+sh build.sh dist
+sh build.sh test
