@@ -439,6 +439,8 @@ public class ApplicationContext
         } else {
             uriMB.recycle();
         }
+
+        // Get query string
         String queryString = null;
         int pos = path.indexOf('?');
         if (pos >= 0) {
@@ -446,7 +448,7 @@ public class ApplicationContext
         } else {
             pos = path.length();
         }
-
+ 
         // Retrieve the thread local mapping data
         MappingData mappingData = (MappingData) localMappingData.get();
         if (mappingData == null) {
@@ -458,10 +460,23 @@ public class ApplicationContext
         CharChunk uriCC = uriMB.getCharChunk();
         try {
             uriCC.append(context.getPath(), 0, context.getPath().length());
-            uriCC.append(path, 0, pos);
+            /*
+             * Ignore any trailing path params (separated by ';') for mapping
+             * purposes
+             */
+            int semicolon = path.indexOf(';');
+            uriCC.append(path, 0, semicolon > 0 ? semicolon : pos);
             context.getMapper().map(uriMB, mappingData);
             if (mappingData.wrapper == null) {
                 return (null);
+            }
+            /*
+             * Append any trailing path params (separated by ';') that were
+             * ignored for mapping purposes, so that they're reflected in the
+             * RequestDispatcher's requestURI
+             */
+            if (semicolon > 0) {
+                uriCC.append(path, semicolon, pos - semicolon);
             }
         } catch (Exception e) {
             // Should never happen
@@ -474,7 +489,7 @@ public class ApplicationContext
         String pathInfo = mappingData.pathInfo.toString();
 
         mappingData.recycle();
-
+        
         // Construct a RequestDispatcher to process this request
         return (RequestDispatcher) new ApplicationDispatcher
             (wrapper, uriCC.toString(), wrapperPath, pathInfo, 
