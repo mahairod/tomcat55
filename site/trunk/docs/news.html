@@ -107,7 +107,21 @@
       </td></tr>
       <tr><td>
         <blockquote>
-                                    <h3>20 November 2001 - Apache Tomcat 3.2.4 Released</h3>
+                                    <h3>14 January 2002 - Apache Tomcat 3.3 Updated to 3.3a</h3>
+                                                <p><b>Important Notice:</b> The Tomcat 3.3 release has been updated to
+3.3a to deal with a DOS vulnerability on Windows systems. The
+vulnerability allows a special HTTP request to hang and never complete.
+This prevents the thread handling the request from handling any further requests
+until Tomcat is restarted. Other systems are not affected, and both
+Tomcat 3.2.x and Tomcat 4.x do not  have this vunerability.</p>
+                                                <p>It is recommended that everyone using Tomcat 3.3 on a Windows system
+upgrade to 3.3a. This is possible using the full Tomcat 3.3a binary
+distribution, or by updating jar(s) in an existing Tomcat 3.3 installation.
+These may be found 
+<a href="http://www.apache.org/dist/jakarta/jakarta-tomcat/release/v3.3/bin">here</a>
+along with additional information.</p>
+                                                <hr noshade="" size="1" />
+                                                <h3>20 November 2001 - Apache Tomcat 3.2.4 Released</h3>
                                                 <p>Tomcat 3.2.4 is now available for download
 <a href="http://www.apache.org/dist/jakarta/jakarta-tomcat/release/v3.2.4">here</a></p>
                                                 <p>Tomcat 3.2.4 fixes bugs found since the Tomcat 3.2.3 release in July, 
@@ -351,7 +365,7 @@ the subject <b>[NEWS]</b> to <b>marcsaeg at apache dot org</b>.
                 </td></tr>
                 <tr><td colspan="2">
                     <div align="center"><font color="#525D76" size="-1"><em>
-                    Copyright &#169; 1999-2001, Apache Software Foundation
+                    Copyright &#169; 1999-2002, Apache Software Foundation
                     </em></font></div>
                 </td></tr>
             </table>
