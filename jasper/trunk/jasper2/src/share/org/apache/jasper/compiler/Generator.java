@@ -843,7 +843,7 @@ class Generator {
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,
                         "${" + new String(n.getText()) + "}", String.class,
-			null, "_jspx_fnmap", true )
+			null, "_jspx_fnmap", false )
                     + ");");
             } else {
                 out.printil("out.write(" +
