@@ -1381,7 +1381,11 @@ class Parser implements TagConstants {
 	CharArrayWriter ttext = new CharArrayWriter();
 	// Output the first character
 	int ch = reader.nextChar();
-	ttext.write(ch);
+        if (ch == '\\') {
+            reader.pushChar();
+        } else {
+            ttext.write(ch);
+        }
 
 	while (reader.hasMoreInput()) {
 	    ch = reader.nextChar();
