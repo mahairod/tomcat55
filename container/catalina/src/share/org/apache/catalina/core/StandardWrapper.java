@@ -1559,24 +1559,6 @@ public class StandardWrapper
     }
 
 
-    /**
-     * Log the abbreviated name of this Container for logging messages.
-     */
-    protected String logName() {
-
-        StringBuffer sb = new StringBuffer("StandardWrapper[");
-        if (getParent() != null)
-            sb.append(getParent().getName());
-        else
-            sb.append("null");
-        sb.append(':');
-        sb.append(getName());
-        sb.append(']');
-        return (sb.toString());
-
-    }
-
-
     private Method[] getAllDeclaredMethods(Class c) {
 
         if (c.equals(javax.servlet.http.HttpServlet.class)) {
