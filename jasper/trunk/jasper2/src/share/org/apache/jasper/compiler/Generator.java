@@ -645,10 +645,10 @@ class Generator {
 		}
 		out.println(");");
 	    }
+	    out.popIndent();
+	    out.printil("}");
+	    out.println();
 	}
-	out.popIndent();
-	out.printil("}");
-	out.println();
     }
     
     /**
