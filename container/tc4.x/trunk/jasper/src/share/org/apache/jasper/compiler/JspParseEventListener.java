@@ -87,12 +87,14 @@ import org.apache.jasper.logging.Logger;
  * JSP code generator "backend".
  *
  * @author Anil K. Vijendran
+ * @author Pierre Delisle
  */
 public class JspParseEventListener extends BaseJspListener {
 
     private static CommentGenerator commentGenerator = new JakartaCommentGenerator();
 
     JspCompilationContext ctxt;
+    ParserController parserCtl;
 
     String jspServletBase = Constants.JSP_SERVLET_BASE;
     String serviceMethodName = Constants.SERVICE_METHOD_NAME;
@@ -134,6 +136,10 @@ public class JspParseEventListener extends BaseJspListener {
     private Stack tagHandlerStack;
     private Hashtable tagVarNumbers;
 
+    // The XML Outputter where the XML stream of the JSP page
+    // is generated.
+    private XmlOutputter xo = new XmlOutputter();
+
     final void addGenerator(Generator gen) throws JasperException {
         gen.init(ctxt);
         generators.addElement(gen);
@@ -151,9 +157,11 @@ public class JspParseEventListener extends BaseJspListener {
      * Package private since I want everyone to come in through
      * org.apache.jasper.compiler.Main.
      */
-    JspParseEventListener(JspCompilationContext ctxt) {
+    JspParseEventListener(JspCompilationContext ctxt,
+			  ParserController parserCtl) {
 	super(ctxt.getReader(), ctxt.getWriter());
         this.ctxt = ctxt;
+        this.parserCtl = parserCtl;
 	this.beanInfo = new BeanRepository(ctxt.getClassLoader());
         this.libraries = new TagLibraries(ctxt.getClassLoader());
 
@@ -372,10 +380,13 @@ public class JspParseEventListener extends BaseJspListener {
     }
 
 
-    public void handleComment(Mark start, Mark stop) throws JasperException {
+    public void handleComment(Mark start, Mark stop, char[] text) 
+	throws JasperException 
+    {
         Constants.message("jsp.message.htmlcomment",
-                          new Object[] { reader.getChars(start, stop) },
-                          Logger.DEBUG);
+			  new Object[] { text },
+			  Logger.DEBUG);
+	//@@@ xo
     }
 
     interface PageDirectiveHandler {
@@ -723,13 +734,23 @@ public class JspParseEventListener extends BaseJspListener {
 					   Constants.getString("jsp.error.include.missing.file"));
 
             // jsp.error.include.bad.file needs taking care of here??
+	    /* NOT COMPILED
             try {
                 reader.pushFile(file, encoding);
             } catch (FileNotFoundException fnfe) {
                 throw new CompileException(start,
 					   Constants.getString("jsp.error.include.bad.file"));
             }
+	    */
+	    try {
+		parserCtl.parse(file, encoding);
+	    } catch (Exception fnfe) {
+		throw new CompileException(
+					   start,
+					   Constants.getString("jsp.error.include.bad.file"));
+	    }
 	}
+	xo.append("jsp:directive." + directive, attrs);
     }
 
 
@@ -778,31 +799,34 @@ public class JspParseEventListener extends BaseJspListener {
         }
     }
 
-    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs)
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs,
+				  char[] text)
 	throws JasperException
     {
         Generator gen
-            = new GeneratorWrapper(new DeclarationGenerator(reader.getChars(
-	    			   start, stop)), start, stop);
+            = new GeneratorWrapper(new DeclarationGenerator(text), start, stop);
 	addGenerator(gen);
+        xo.append("jsp:declaration", attrs, text);
     }
 
-    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs)
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs,
+				char[] text)
 	throws JasperException
     {
         Generator gen
-            = new GeneratorWrapper(new ScriptletGenerator(reader.getChars(
-	    			   start, stop)), start, stop);
+            = new GeneratorWrapper(new ScriptletGenerator(text), start, stop);
 	addGenerator(gen);
+	xo.append("jsp:scriptlet", attrs, text);
     }
 
-    public void handleExpression(Mark start, Mark stop, Hashtable attrs)
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs,
+				 char[] text)
 	throws JasperException
     {
         Generator gen
-            = new GeneratorWrapper(new ExpressionGenerator(reader.getChars(
-	    			   start, stop)), start, stop);
+            = new GeneratorWrapper(new ExpressionGenerator(text), start, stop);
 	addGenerator(gen);
+	xo.append("jsp:expression", attrs, text);
     }
 
     public void handleBean(Mark start, Mark stop, Hashtable attrs)
@@ -814,6 +838,7 @@ public class JspParseEventListener extends BaseJspListener {
                                    start, stop);
 
 	addGenerator(gen);
+	xo.append("jsp:useBean", attrs);
     }
 
     public void handleBeanEnd(Mark start, Mark stop, Hashtable attrs)
@@ -824,6 +849,7 @@ public class JspParseEventListener extends BaseJspListener {
                                    start, stop);
 	// End the block started by useBean body.
 	addGenerator(gen);
+	xo.append("jsp:useBean");
     }
 
     public void handleGetProperty(Mark start, Mark stop, Hashtable attrs)
@@ -834,6 +860,7 @@ public class JspParseEventListener extends BaseJspListener {
 	    			   beanInfo), start, stop);
 
 	addGenerator(gen);
+	xo.append("jsp:getProperty", attrs);
     }
 
     public void handleSetProperty(Mark start, Mark stop, Hashtable attrs)
@@ -844,6 +871,7 @@ public class JspParseEventListener extends BaseJspListener {
 	    			   beanInfo), start, stop);
 
 	addGenerator(gen);
+	xo.append("jsp:setProperty", attrs);
     }
 
     public void handlePlugin(Mark start, Mark stop, Hashtable attrs,
@@ -857,6 +885,7 @@ public class JspParseEventListener extends BaseJspListener {
 	Generator gen = new GeneratorWrapper (new PluginGenerator (start, attrs,
 					      param, fallback), start, stop);
 	addGenerator (gen);
+	//@@@ xo
     }
 
     public void handleForward(Mark start, Mark stop, Hashtable attrs, Hashtable param)
@@ -867,6 +896,7 @@ public class JspParseEventListener extends BaseJspListener {
                                    start, stop);
 
 	addGenerator(gen);
+	//@@@ xo
     }
 
     public void handleInclude(Mark start, Mark stop, Hashtable attrs, Hashtable param)
@@ -877,6 +907,7 @@ public class JspParseEventListener extends BaseJspListener {
                                    start, stop);
 
 	addGenerator(gen);
+	//@@@ xo
     }
 
 
@@ -896,6 +927,7 @@ public class JspParseEventListener extends BaseJspListener {
                                    start, stop);
 
 	addGenerator(gen);
+        xo.append(chars);
     }
 
     public void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix,
@@ -908,6 +940,7 @@ public class JspParseEventListener extends BaseJspListener {
         Generator gen = new GeneratorWrapper(tbg, start, stop);
 
 	addGenerator(gen);
+        xo.append(prefix+":"+shortTagName, attrs);
     }
 
     public void handleTagEnd(Mark start, Mark stop, String prefix,
@@ -920,9 +953,37 @@ public class JspParseEventListener extends BaseJspListener {
         Generator gen = new GeneratorWrapper(teg, start, stop);
 
 	addGenerator(gen);
+        xo.append(prefix+":"+shortTagName);
     }
 
     public TagLibraries getTagLibraries() {
 	return libraries;
+    }
+
+    public void handleRootEnd() {
+	xo.append("jsp:root");
+    }
+    
+    public void handleRootBegin(Hashtable attrs) {
+        xo.addRootAttrs(attrs);
+    }
+    
+    /**
+     * validate the XML stream of the JSP document against the
+     * libraries used by the document.
+     */
+    public void validate() throws JasperException {
+        Enumeration enum = libraries.getTagLibInfos();
+        while (enum.hasMoreElements()) {
+            TagLibraryInfo tli = (TagLibraryInfo)enum.nextElement();
+	    //@@@ remove cast when TagLibraryInfo is fixed in spec
+            String msg = ((TagLibraryInfoImpl)tli).validate(xo.getPageInfo());
+            if (msg != null) {
+                throw new JasperException(
+		    Constants.getString(
+                        "jsp.error.taglibraryvalidator.invalidpage",
+			new Object[]{tli.getShortName(), msg}));
+            }
+        }
     }
 }
