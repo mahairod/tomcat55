@@ -211,27 +211,6 @@ class AJPRequestAdapter extends RequestAdapterImpl {
 
 
 class Ajp11 {
-    // -------------------- AJP specific --------------------
-    // Table for HEX to DEC byte translation
-    static final int[] DEC = {
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 01, 02, 03, 04, 05, 06, 07,  8,  9, 00, 00, 00, 00, 00, 00,
-        00, 10, 11, 12, 13, 14, 15, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 10, 11, 12, 13, 14, 15, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-        00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-    };
-    
     public static final int CH_REQUEST_DATA=1;
 
     public static void readAJPData(InputStream in, Hashtable env_vars, MimeHeaders headers ) throws IOException {
@@ -252,14 +231,8 @@ class Ajp11 {
                 }
                 
                 // Convert the hex length in decimal
-                len =  DEC[hex[0]];
-                len = len << 4;
-                len += DEC[hex[1]];
-                len = len << 4;
-                len += DEC[hex[2]];
-                len = len << 4;
-                len += DEC[hex[3]];
-    
+                len=HexUtils.convert2Int(hex);
+
                 // if nothing to read return the previous string and let
                 // the caller method understand that len = 0 to finish
                 if (len == 0) // throw new AllDataRead();
