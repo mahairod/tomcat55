@@ -57,18 +57,6 @@ public class StandardService
 
 
     /**
-     * The set of Connectors associated with this Service.
-     */
-    private Connector connectors[] = new Connector[0];
-
-
-    /**
-     * The Container associated with this Service.
-     */
-    private Container container = null;
-
-
-    /**
      * The debugging detail level for this component.
      */
     private int debug = 0;
@@ -79,12 +67,6 @@ public class StandardService
      */
     private static final String info =
         "org.apache.catalina.core.StandardService/1.0";
-
-
-    /**
-     * Has this component been initialized?
-     */
-    private boolean initialized = false;
 
 
     /**
@@ -120,6 +102,26 @@ public class StandardService
      * The property change support for this component.
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
+
+
+    /**
+     * The set of Connectors associated with this Service.
+     */
+    protected Connector connectors[] = new Connector[0];
+
+
+    /**
+     * The Container associated with this Service. (In the case of the
+     * org.apache.catalina.startup.Embedded subclass, this holds the most
+     * recently added Engine.)
+     */
+    protected Container container = null;
+
+
+    /**
+     * Has this component been initialized?
+     */
+    protected boolean initialized = false;
 
 
     // ------------------------------------------------------------- Properties
@@ -285,7 +287,7 @@ public class StandardService
                 try {
                     connector.initialize();
                 } catch (LifecycleException e) {
-                    e.printStackTrace(System.err);
+                    log.error("Connector.initialize", e);
                 }
             }
 
@@ -293,7 +295,7 @@ public class StandardService
                 try {
                     ((Lifecycle) connector).start();
                 } catch (LifecycleException e) {
-                    ;
+                    log.error("Connector.start", e);
                 }
             }
 
@@ -360,7 +362,7 @@ public class StandardService
                 try {
                     ((Lifecycle) connectors[j]).stop();
                 } catch (LifecycleException e) {
-                    ;
+                    log.error("Connector.stop", e);
                 }
             }
             connectors[j].setContainer(null);
