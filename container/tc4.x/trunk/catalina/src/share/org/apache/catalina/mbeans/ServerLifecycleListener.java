@@ -85,10 +85,14 @@ import org.apache.catalina.Manager;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardEngine;
+import org.apache.catalina.core.StandardHost;
 
 
 /**
@@ -259,6 +263,12 @@ public class ServerLifecycleListener
                             // FIX ME
                             //loader.addLifecycleListener(this);
                         }
+                        Logger cLogger = context.getLogger();
+                        if (cLogger != null) {
+                            if (debug >= 3)
+                                log("Creating MBean for Logger " + cLogger);
+                            MBeanUtils.createMBean(cLogger);
+                        }
                         Manager manager = context.getManager();
                         if (manager != null) {
                             if (debug >= 5)
@@ -267,10 +277,65 @@ public class ServerLifecycleListener
                             // FIX ME
                             //manager.addLifecycleListener(this);
                         }
+                        Realm cRealm = context.getRealm();
+                        if (cRealm != null) {
+                            if (debug >= 3)
+                                log("Creating MBean for Realm " + cRealm);
+                            MBeanUtils.createMBean(cRealm);
+                        }
+                        if (context instanceof StandardContext) {
+                            Valve cValves[] = ((StandardContext)context).getValves();
+                            for (int l=0; l<=cValves.length; l++) {
+                                if (debug >= 3)
+                                    log("Creating MBean for Valve " + cValves[l]);
+                                MBeanUtils.createMBean(cValves[l]);
+                            }
+                        }
 
+                    }
+                    Logger hLogger = host.getLogger();
+                    if (hLogger != null) {
+                        if (debug >= 3)
+                            log("Creating MBean for Logger " + hLogger);
+                        MBeanUtils.createMBean(hLogger);
+                    }
+                    Realm hRealm = host.getRealm();
+                    if (hRealm != null) {
+                        if (debug >= 3)
+                            log("Creating MBean for Realm " + hRealm);
+                        MBeanUtils.createMBean(hRealm);
+                    }
+                    if (host instanceof StandardHost) {
+                        Valve hValves[] = ((StandardHost)host).getValves();
+                        for (int k=0; k<=hValves.length; k++) {
+                            if (debug >= 3)
+                                log("Creating MBean for Valve " + hValves[k]);
+                            MBeanUtils.createMBean(hValves[k]);
+                        }
                     }
 
                 }
+                Logger eLogger = engine.getLogger();
+                if (eLogger != null) {
+                    if (debug >= 3)
+                        log("Creating MBean for Logger " + eLogger);
+                    MBeanUtils.createMBean(eLogger);
+                }
+                Realm eRealm = engine.getRealm();
+                if (eRealm != null) {
+                    if (debug >= 3)
+                        log("Creating MBean for Realm " + eRealm);
+                    MBeanUtils.createMBean(eRealm);
+                }
+                if (engine instanceof StandardEngine) {
+                    Valve eValves[] = ((StandardEngine)engine).getValves();
+                    for (int j=0; j<=eValves.length; j++) {
+                        if (debug >= 3)
+                            log("Creating MBean for Valve " + eValves[j]);
+                        MBeanUtils.createMBean(eValves[j]);
+                    }
+                }
+
 
             }
 
