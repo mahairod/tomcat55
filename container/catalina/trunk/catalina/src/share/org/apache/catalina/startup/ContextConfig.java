@@ -1201,7 +1201,7 @@ public final class ContextConfig
             // FIXME - Servlet 2.4 DTD implies that the location MUST be
             // a context-relative path starting with '/'?
             if (!resourcePath.startsWith("/")) {
-                resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
+                resourcePath = "/WEB-INF/" + resourcePath;
             }
             if (log.isTraceEnabled()) {
                 log.trace("   Adding path '" + resourcePath +
