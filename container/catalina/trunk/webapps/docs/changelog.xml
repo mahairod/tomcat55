@@ -26,6 +26,39 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.4 (yoavs)">
+  <subsection name="General">
+    <changelog>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Catalina">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Coyote">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Cluster">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Webapps">
+    <changelog>
+    </changelog>
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.5.3 (yoavs)">
 
   <subsection name="General">
