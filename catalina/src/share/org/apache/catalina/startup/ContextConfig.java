@@ -545,10 +545,23 @@ public final class ContextConfig
      * web application deployment descriptor (web.xml).
      */
     private static Digester createWebDigester() {
+        Digester webDigester = 
+            createWebXmlDigester(xmlNamespaceAware, xmlValidation);
+        webDigester.addRuleSet(webRuleSet);
+        return webDigester;
+    }
+
+
+    /**
+     * Create (if necessary) and return a Digester configured to process the
+     * web application deployment descriptor (web.xml).
+     */
+    public static Digester createWebXmlDigester(boolean namespaceAware,
+                                                boolean validation) {
         URL url = null;
         Digester webDigester = new Digester();
-        webDigester.setNamespaceAware(xmlNamespaceAware);
-        webDigester.setValidating(xmlValidation);
+        webDigester.setNamespaceAware(namespaceAware);
+        webDigester.setValidating(validation);
        
         if (webDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
             webDigester = patchXerces(webDigester);
@@ -572,7 +585,6 @@ public final class ContextConfig
         webEntityResolver = registerLocalSchema(webEntityResolver);
 
         webDigester.setEntityResolver(webEntityResolver);
-        webDigester.addRuleSet(webRuleSet);
         return (webDigester);
     }
 
