@@ -1852,10 +1852,10 @@ public class Generator {
 	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
-		out.print(toGetterMethod(n.getTextAttribute("fragment")));
+		out.printin(toGetterMethod(n.getTextAttribute("fragment")));
 		out.println(".invoke(_jspx_sout, _jspx_params);");
 	    } else {
-		out.print(toGetterMethod(n.getTextAttribute("fragment")));
+		out.printin(toGetterMethod(n.getTextAttribute("fragment")));
 		out.println(".invoke(null, _jspx_params);");
 	    }
 
@@ -2921,7 +2921,29 @@ public class Generator {
 	out.println();
 	out.pushIndent();
 	
-	// Class body begins here
+	/*
+	 * Class body begins here
+	 */
+
+	// Declare parameter map for fragment/body invocation. This must be
+	// declared as an instance variable (as opposed to a local variable in
+	// doTag()), so that it is accessible:
+	//
+	// - from the JspFragmentHelper subclass specific to the automatically
+	//   generated tag handler, in case the fragment/body invocation is
+	//   contained in a fragment body, as in:
+	//     <my:simple>
+	//       <jsp:invoke fragment="frag"/>
+	//     </my:simple>
+	//
+	// - from the invocation of a classic tag handler that is separated out
+        //   into its own method, if the fragment/body invocation is
+	//   encapsulated in a custom action, as in:
+	//     <my:classic>
+	//       <jsp:invoke fragment="frag"/>
+	//     </my:classic>
+	out.printil("private java.util.Map _jspx_params = null;");
+
 	generateDeclarations(tag);
 
 	// Static initializations here
@@ -2961,9 +2983,6 @@ public class Generator {
 	out.printil("javax.servlet.ServletConfig config = " +
             "pageContext.getServletConfig();");
         
-	// Declare parameter map for fragment/body invocation
-	out.printil("java.util.Map _jspx_params = null;");
-
 	// Declare writer used for storing result of fragment/body invocation
 	// if 'varReader' or 'var' attribute is specified
 	out.printil("java.io.Writer _jspx_sout = null;");
