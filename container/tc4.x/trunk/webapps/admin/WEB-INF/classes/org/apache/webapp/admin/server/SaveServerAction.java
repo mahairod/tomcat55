@@ -183,7 +183,13 @@ public final class SaveServerAction extends Action {
                 port = 0;
             }
             mBServer.setAttribute(soname,
-                                  new Attribute("port", new Integer(port)));        
+                                  new Attribute("port", new Integer(port)));   
+            // set port warning as port < 1024 requires
+            // special software capabilities
+            if (port < 1024) {    
+                request.setAttribute("warning", "server.port.warning");
+            }
+            
             attribute = "shutdown";
             mBServer.setAttribute(soname,
                                   new Attribute("shutdown", sform.getShutdownText()));
