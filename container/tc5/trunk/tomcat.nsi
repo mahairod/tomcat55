@@ -9,9 +9,12 @@ SetCompress force
 SetCompressor bzip2
 SetDatablockOptimize on
 
-BGGradient 000000 800000 FFFFFF
-InstallColors FF8080 000000
-InstProgressFlags smooth colored
+XPStyle On
+SetFont Tahoma 8
+CheckBitmap modern.bmp
+InstallColors /windows
+InstProgressFlags smooth
+BrandingText /TRIMRIGHT
 
 Icon main.ico
 UninstallIcon uninst.ico 
