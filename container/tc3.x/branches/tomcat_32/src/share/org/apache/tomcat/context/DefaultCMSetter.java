@@ -379,6 +379,23 @@ class StatusHandler extends ServletWrapper {
 	    .append(msg)
 	    .append("</b><br>");
 
+	// add unavailable time if present
+	if ( sc == 503) {
+            Integer ut = (Integer)req.getAttribute("tomcat.servlet.error.unavailableTime");
+            if ( ut != null) {
+                // if permanent
+                if (ut.intValue() < 0) {
+		    buf.append("<br>")
+                	.append(sm.getString("defaulterrorpage.service.permanently.unavailable"))
+			.append("<br>");
+                } else {
+		    buf.append("<br>")
+                	.append(sm.getString("defaulterrorpage.service.unavailable",ut))
+			.append("<br>");
+                }
+	    }
+	}
+
 	buf.append("</body>\r\n");
 
 	if( res.isUsingStream() ) {

@@ -1081,6 +1081,7 @@ public class ContextManager {
 	    ctx.log( "UnavailableException in: " + req +
 			", time remaining " + unavailableTime + " seconds : " + msg, t);
 	    req.setAttribute("javax.servlet.error.message", msg );
+            req.setAttribute("tomcat.servlet.error.unavailableTime", new Integer(unavailableTime));
 	    res.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE); // 503
 	    handleStatus( req, res, HttpServletResponse.SC_SERVICE_UNAVAILABLE );
 	    // indicate error handling has been called
