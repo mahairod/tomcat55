@@ -31,11 +31,6 @@ files to make them available to web applications:</p>
     classes and resources under <code>$CATALINA_HOME/lib</code>.</li>
 </ul>
 
-<p><strong>WARNING</strong> - Unlike Tomcat 3.x, Tomcat 4 does
-<strong>NOT</strong> make an XML parser visible to web applications by default.
-If you need to do this, see <a href="#Tomcat 4 and XML Parsers">Tomcat 4 and
-XML Parsers</a>, below.</p>
-
 </section>
 
 
@@ -100,11 +95,11 @@ loaders as it is initialized:</p>
     of the <code>CLASSPATH</code> environment variable itself, and instead
     build the System class loader from the following repositories:
     <ul>
-    <li><em>$CATALINA_HOME/bin/bootstrap.jar</em> - Contains the main() method
-        that is used to initialize the Tomcat 4 server, and the class loader
-        implementation classes it depends on.</li>
-    <li><em>$JAVA_HOME/lib/tools.jar</em> - Contains the "javac" compiler used
-        to convert JSP pages into servlet classes.</li>
+    <li><em>$CATALINA_HOME/bin/bootstrap.jar</em> - Contains the main() 
+        method that is used to initialize the Tomcat 4 server, and 
+        the class loader implementation classes it depends on.</li>
+    <li><em>$JAVA_HOME/lib/tools.jar</em> - Contains the "javac" 
+        compiler used to convert JSP pages into servlet classes.</li>
     </ul></li>
 <li><strong>Common</strong> - This class loader contains additional classes
     that are made visible to both Tomcat internal classes and to all web
@@ -115,16 +110,25 @@ loaders as it is initialized:</p>
     <code>$CATALINA_HOME/common/lib</code>, are made visible through this
     class loader.  By default, that includes the following:
     <ul>
+    <li><em>activation.jar</em> - The Java activation framework.</li>
+    <li><em>jdbc2_0-stdext.jar</em> - JDBC 2.0 standard extension 
+        (included as a standard part of JDBC 3.0).</li>
     <li><em>jndi.jar</em> - The Java Naming and Directory Interface API
-        classes (loaded <strong>ONLY</strong> on a JDK 1.2 system, because they
-        are included automatically on JDK 1.3 and later).</li>
-    <li><em>naming.jar</em> - The JNDI implementation used by Tomcat 4 to
-        represent the default JNDI naming context provided to web
-        applications.</li>
-    <li><em>resources.jar</em> - Resource factory classes for the JNDI naming
-        context that is used internally to represent the static resources of
-        a web application.</li>
+        classes (loaded <strong>ONLY</strong> on a JDK 1.2 system, because 
+        they are included automatically on JDK 1.3 and later).</li>
+    <li><em>jta-spec.jar</em> - The Java Transaction API interfaces.</li>
+    <li><em>mail.jar</em> - Java Mail.</li>
+    <li><em>naming-common.jar</em> - The JNDI implementation used 
+        by Tomcat 4 to represent the default JNDI naming context provided 
+        to web applications.</li>
+    <li><em>naming-resources.jar</em> - JNDI Directory Context 
+        implementations which are used to abstract access to the static 
+        resources of a web application.</li>
     <li><em>servlet.jar</em> - The Servlet and JSP API classes.</li>
+    <li><em>tyrex-0.9.7.jar</em> - JTA/JTS/OTS compliant transaction
+        manager and DataSource connection pool implementation.</li>
+    <li><em>xerces.jar</em> - The Xerces 1.x XML parser (also includes the
+        JAXP 1.1 interfaces).</li>
     </ul></li>
 <li><strong>Catalina</strong> - This class loader is initialized to include
     all classes and resources required to implement Tomcat 4 itself.  These
@@ -137,18 +141,19 @@ loaders as it is initialized:</p>
     <ul>
     <li><em>catalina.jar</em> - Implementation of the Catalina servlet
         container portion of Tomcat 4.</li>
-    <li><em>crimson.jar</em> - Parser portion of the JAXP/1.1 reference
-        implementation, used to parse web application deployment descriptor
-        (<code>web.xml</code>) files, as well as the server configuration file
-        (<code>$CATALINA_HOME/conf/server.xml</code>).</li>
     <li><em>jakarta-regexp-X.Y.jar</em> - The binary distribution of the
         <a href="http://jakarta.apache.org/regexp/">Jakarta Regexp</a>
         regular expression processing library, used in the implementation of
         request filters.</li>
-    <li><em>jaxp.jar</em> - JAXP API portion of the JAXP/1.1 reference
-        implementation, used to parse web application deployment descriptor
-        (<code>web.xml</code>) files, as well as the server configuration file
-        (<code>$CATALINA_HOME/conf/server.xml</code>).</li>
+    <li><em>servlets-xxxx.jar</em> - The standard suite of servlets
+        which provide basic services, like static page serving, WebDAV support,
+        CGI, SSI, and more.</li>
+    <li><em>tomcat-util.jar</em> - Utility components used by modules from
+        the jakarta-tomcat-connectors subproject.</li>
+    <li><em>tomcat-ajp.jar</em> - The Java portion of the AJP 1.x connector
+        (also know as the JK connector), which provides support for
+        connecting native webservers, and load balancing between multiple
+        Tomcat instances.</li>
     <li><em>warp.jar</em> - Classes for the Java portion of the
         <code>mod_webapp</code> web server connector, which allows Tomcat to
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>
@@ -161,10 +166,11 @@ loaders as it is initialized:</p>
     in JAR files under <code>$CATALINA_HOME/lib</code>, are made visible
     through this class loader.  By default, that includes the following:
     <ul>
+    <li><em>jasper-compiler.jar</em> - The Jasper JSP page compiler.</li>
     <li><em>jasper-runtime.jar</em> - The runtime support classes required
         to execute JSP pages that have already been translated into Java
         servlets and then compiled.</li>
-    <li><em>namingfactory.jar</em> - JNDI object factories for resources
+    <li><em>naming-factory.jar</em> - JNDI object factories for resources
         supported by the default JNDI naming context provided to web
         applications.</li>
     </ul></li>
@@ -205,59 +211,6 @@ loading looks in the following repositories, in this order:</p>
 <li><em>$CATALINA_HOME/classes</em></li>
 <li><em>$CATALINA_HOME/lib/*.jar</em></li>
 </ul>
-
-</section>
-
-
-<section name="Tomcat 4 and XML Parsers">
-
-<p>Tomcat 4 itself utilizes XML parsing for three processing activities:</p>
-<ul>
-<li>Parsing the <code>server.xml</code> configuration file</li>
-<li>Parsing <code>web.xml</code> deployment descriptors</li>
-<li>Parsing JSP pages in XML syntax</li>
-</ul>
-
-<p>By default, the Java API for XML Processing (Version 1.1) reference
-implementation is utilized for all of these purposes.  However, this parser
-is <strong>not</strong> visible to web applications -- instead, the XML
-parser stored in <code>$CATALINA_HOME/server/lib</code> is used for parsing
-<code>web.xml</code> and <code>server.xml</code> files, while the parser
-stored in <code>$CATALINA_HOME/jasper</code> is used for parsing JSP pages
-in XML syntax.</p>
-
-<p>To make an XML parser available to your web applications, you have several
-options:</p>
-<ul>
-<li>To utilize an XML parser in a single web application, simply include the
-    parser's JAR files in the <code>/WEB-INF/web.xml</code> directory of that
-    web application.  This will work, no matter what parser might be used by
-    Tomcat 4 internally, or by other web applications running in the same
-    instance of Tomcat 4.</li>
-<li>If you wish to make the JAXP/1.1 reference implementation parser available
-    to all web applications, simply move the "jaxp.jar" and "crimson.jar" files
-    from the <code>$CATALINA_HOME/jasper</code> directory into the
-    <code>$CATALINA_HOME/lib</code> directory.  Jasper will continue to use
-    this parser for processing JSP pages in XML syntax.</li>
-<li>If you wish to make another XML parser that is JAXP/1.1 compatible
-    (such as Xerces 1.3.1 or later), install that parser's JAR files into the
-    <code>$CATALINA_HOME/lib</code> directory, and remove "jaxp.jar" and
-    "crimson.jar" from the <code>$CATALINA_HOME/jasper</code> directory.
-    Jasper will then utilize the new XML parser as well.</li>
-</ul>
-
-<p><strong>WARNING</strong> - Do not attempt to use a JAXP/1.0 (rather than
-JAXP/1.1) compliant parser with Tomcat 4.  Tomcat relies on the extra features
-that were added in JAXP/1.1 to perform its parsing activities.</p>
-
-<p><strong>WARNING</strong> - The final release of the JAXP/1.1 reference
-implementation includes JAR files with the <code>sealed</code> attribute.
-This causes class loading problems (most commonly visible through "package
-sealing violation" exceptions) on JDK 1.3 and later platforms.  To avoid
-these problems, <em>modified</em> versions of "jaxp.jar" and "crimson.jar"
-are shipped with Tomcat 4.  You must <strong>NOT</strong> replace these files
-with standard JAXP/1.1 JAR files, until a subsequent JAXP release occurs that
-has the "sealed" attribute removed.</p>
 
 </section>
 
