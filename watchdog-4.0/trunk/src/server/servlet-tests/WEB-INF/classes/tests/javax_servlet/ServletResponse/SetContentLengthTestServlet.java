@@ -75,7 +75,7 @@ public class SetContentLengthTestServlet extends GenericServlet {
     public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
         PrintWriter out = response.getWriter();
-        response.setContentLength( PASSED.length() );
+        response.setContentLength( PASSED.length() + 1 );
         out.println( PASSED );
     }
 }

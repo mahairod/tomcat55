@@ -94,6 +94,9 @@ public class ServletRequestWrapperGetRemoteHostTestServlet extends GenericServle
                     if ( result.toLowerCase().indexOf( expectedResult[ i ] ) > -1 ) {
                         found = true;
                     }
+                    if (result.toLowerCase().equals("localhost") && expectedResult[i].equals("127.0.0.1")) {
+                        found = true;
+                    }
 
                     i++;
                 }
