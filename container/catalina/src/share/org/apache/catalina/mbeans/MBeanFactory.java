@@ -65,6 +65,7 @@ package org.apache.catalina.mbeans;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Vector;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -431,7 +432,7 @@ public class MBeanFactory extends BaseModelMBean {
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("CoyoteConnector");
         ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
+            MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
         return (oname.toString());
 
     }
@@ -868,14 +869,40 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("name"));
+        Service service = server.findService(name);
         service.setContainer(engine);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("StandardEngine");
+        //ManagedBean managed = registry.findManagedBean("StandardEngine");
         ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), engine);
+            MBeanUtils.createObjectName(name, engine);
         return (oname.toString());
+
+    }
+
+
+    public Vector createStandardEngineService(String parent, 
+            String engineName, String defaultHost, String serviceName)
+        throws Exception {
+
+        // Create a new StandardService instance
+        StandardService service = new StandardService();
+        service.setName(serviceName);
+        // Create a new StandardEngine instance
+        StandardEngine engine = new StandardEngine();
+        engine.setName(engineName);
+        engine.setDefaultHost(defaultHost);
+        service.setContainer(engine);
+        // Add the new instance to its parent component
+        Server server = ServerFactory.getServer();
+        server.addService(service);
+        Vector onames = new Vector();
+        ObjectName oname =
+            MBeanUtils.createObjectName(engineName, engine);
+        onames.add(0, oname);
+        oname = MBeanUtils.createObjectName(engineName, service);
+        onames.add(1, oname);
+        return (onames);
 
     }
 
@@ -986,7 +1013,7 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardService(String parent, String name)
+    public String createStandardService(String parent, String name, String domain)
         throws Exception {
 
         // Create a new StandardService instance
@@ -998,9 +1025,9 @@ public class MBeanFactory extends BaseModelMBean {
         server.addService(service);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("StandardService");
+        //ManagedBean managed = registry.findManagedBean("StandardService");
         ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), service);
+            MBeanUtils.createObjectName(domain, service);
         return (oname.toString());
 
     }

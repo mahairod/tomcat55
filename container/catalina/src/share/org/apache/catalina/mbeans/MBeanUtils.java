@@ -1500,8 +1500,7 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        name = new ObjectName(domain + ":type=Service,name=" +
-                              service.getName());
+        name = new ObjectName(domain + ":type=Service");
         return (name);
 
     }

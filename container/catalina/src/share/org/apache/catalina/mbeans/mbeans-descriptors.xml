@@ -922,6 +922,24 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="createStandardEngineService"
+          description="Create a new StandardEngine and StandardService"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="parent"
+          description="MBean Name of the associated parent Service"
+                 type="java.lang.String"/>
+      <parameter name="engineName"
+          description="Unique name of this Engine"
+                 type="java.lang.String"/>
+      <parameter name="defaultHost"
+          description="Default host name for this Engine"
+                 type="java.lang.String"/>
+      <parameter name="serviceName"
+          description="Unique name of this Service"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="createStandardHost"
           description="Create a new StandardHost"
                impact="ACTION"
