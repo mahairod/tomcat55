@@ -92,7 +92,9 @@ import com.sun.net.ssl.TrustManagerFactory;
  * <li><strong>clientAuth</strong> - Require client authentication if
  *     set to <code>true</code>. [false]</li>
  * <li><strong>keystoreFile</strong> - Pathname to the Key Store file to be
- *     loaded. ["./keystore" in the user home directory]</li>
+ *     loaded.  This must be an absolute path, or a relative path that
+ *     is resolved against the "catalina.base" system property.
+ *     ["./keystore" in the user home directory]</li>
  * <li><strong>keystorePass</strong> - Password for the Key Store file to be
  *     loaded. ["changeit"]</li>
  * <li><strong>keystoreType</strong> - Type of the Key Store file to be
@@ -193,7 +195,11 @@ public class SSLServerSocketFactory
     }
 
     public void setKeystoreFile(String keystoreFile) {
-        this.keystoreFile = keystoreFile;
+        File file = new File(keystoreFile);
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.base"),
+                            keystoreFile);
+        this.keystoreFile = file.getAbsolutePath();
     }
 
 

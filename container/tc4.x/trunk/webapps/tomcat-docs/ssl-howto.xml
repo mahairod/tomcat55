@@ -359,7 +359,9 @@ values, depending on how you configured your keystore earlier:</p>
     <td>Add this attribute if the keystore file you created is not in
         the default place that Tomcat expects (a file named
         <code>.keystore</code> in the user home directory under
-        which Tomcat is running).</td>
+        which Tomcat is running).  You can specify an absolute pathname,
+        or a relative pathname that is resolved against the
+        <code>$CATALINA_BASE</code> environment variable.</td>
   </tr>
   <tr>
     <td><code>keystorePass</code></td>
