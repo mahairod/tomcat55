@@ -89,7 +89,7 @@ import org.apache.catalina.deploy.LoginConfig;
  * @version $Revision$ $Date$
  */
 
-public final class SSLAuthenticator
+public class SSLAuthenticator
     extends AuthenticatorBase {
 
 
@@ -99,7 +99,7 @@ public final class SSLAuthenticator
     /**
      * Descriptive information about this implementation.
      */
-    private static final String info =
+    protected static final String info =
         "org.apache.catalina.authenticator.SSLAuthenticator/1.0";
 
 

@@ -91,7 +91,7 @@ import org.apache.catalina.util.MD5Encoder;
  * @version $Revision$ $Date$
  */
 
-public final class DigestAuthenticator
+public class DigestAuthenticator
     extends AuthenticatorBase {
 
 
@@ -101,31 +101,31 @@ public final class DigestAuthenticator
     /**
      * Indicates that no once tokens are used only once.
      */
-    private static final int USE_ONCE = 1;
+    protected static final int USE_ONCE = 1;
 
 
     /**
      * Indicates that no once tokens are used only once.
      */
-    private static final int USE_NEVER_EXPIRES = Integer.MAX_VALUE;
+    protected static final int USE_NEVER_EXPIRES = Integer.MAX_VALUE;
 
 
     /**
      * Indicates that no once tokens are used only once.
      */
-    private static final int TIMEOUT_INFINITE = Integer.MAX_VALUE;
+    protected static final int TIMEOUT_INFINITE = Integer.MAX_VALUE;
 
 
     /**
      * The MD5 helper object for this class.
      */
-    private static final MD5Encoder md5Encoder = new MD5Encoder();
+    protected static final MD5Encoder md5Encoder = new MD5Encoder();
 
 
     /**
      * Descriptive information about this implementation.
      */
-    private static final String info =
+    protected static final String info =
         "org.apache.catalina.authenticator.DigestAuthenticator/1.0";
 
 
@@ -150,13 +150,13 @@ public final class DigestAuthenticator
     /**
      * MD5 message digest provider.
      */
-    private static MessageDigest md5Helper;
+    protected static MessageDigest md5Helper;
 
 
     /**
      * No once hashtable.
      */
-    private Hashtable nOnceTokens = new Hashtable();
+    protected Hashtable nOnceTokens = new Hashtable();
 
 
     /**
@@ -164,7 +164,7 @@ public final class DigestAuthenticator
      * better security level (since the token is generated more often), but at
      * the expense of a bigger server overhead.
      */
-    private long nOnceTimeout = TIMEOUT_INFINITE;
+    protected long nOnceTimeout = TIMEOUT_INFINITE;
 
 
     /**
@@ -172,13 +172,13 @@ public final class DigestAuthenticator
      * would produce more overhead, since a token would have to be generated
      * more often, but would be more secure.
      */
-    private int nOnceUses = USE_ONCE;
+    protected int nOnceUses = USE_ONCE;
 
 
     /**
      * Private key.
      */
-    private String key = "Catalina";
+    protected String key = "Catalina";
 
 
     // ------------------------------------------------------------- Properties
@@ -252,7 +252,7 @@ public final class DigestAuthenticator
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -267,8 +267,9 @@ public final class DigestAuthenticator
      *              should be performed
      * @param realm Realm used to authenticate Principals
      */
-    private static Principal findPrincipal(HttpServletRequest request,
-                                           String authorization, Realm realm) {
+    protected static Principal findPrincipal(HttpServletRequest request,
+                                             String authorization,
+                                             Realm realm) {
 
         //System.out.println("Authorization token : " + authorization);
         // Validate the authorization credentials format
@@ -343,7 +344,7 @@ public final class DigestAuthenticator
      *
      * @param authorization Authorization string to be parsed
      */
-    private String parseUsername(String authorization) {
+    protected String parseUsername(String authorization) {
 
         //System.out.println("Authorization token : " + authorization);
         // Validate the authorization credentials format
@@ -377,7 +378,7 @@ public final class DigestAuthenticator
     /**
      * Removes the quotes on a string.
      */
-    private static String removeQuotes(String quotedString) {
+    protected static String removeQuotes(String quotedString) {
         if (quotedString.length() > 2) {
             return quotedString.substring(1, quotedString.length() - 1);
         } else {
@@ -393,7 +394,8 @@ public final class DigestAuthenticator
      *
      * @param request HTTP Servlet request
      */
-    private String generateNOnce(HttpServletRequest request) {
+    protected String generateNOnce(HttpServletRequest request) {
+
         long currentTime = System.currentTimeMillis();
 
         String nOnceValue = request.getRemoteAddr() + ":" +
@@ -436,10 +438,10 @@ public final class DigestAuthenticator
      *              should be performed
      * @param nOnce nonce token
      */
-    private void setAuthenticateHeader(HttpServletRequest request,
-                                       HttpServletResponse response,
-                                       LoginConfig config,
-                                       String nOnce) {
+    protected void setAuthenticateHeader(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         LoginConfig config,
+                                         String nOnce) {
 
         // Get the realm name
         String realmName = config.getRealmName();

@@ -87,7 +87,7 @@ import org.apache.catalina.util.Base64;
  * @version $Revision$ $Date$
  */
 
-public final class BasicAuthenticator
+public class BasicAuthenticator
     extends AuthenticatorBase {
 
 
@@ -97,13 +97,13 @@ public final class BasicAuthenticator
     /**
      * The Base64 helper object for this class.
      */
-    private static final Base64 base64Helper = new Base64();
+    protected static final Base64 base64Helper = new Base64();
 
 
     /**
      * Descriptive information about this implementation.
      */
-    private static final String info =
+    protected static final String info =
         "org.apache.catalina.authenticator.BasicAuthenticator/1.0";
 
 
@@ -180,7 +180,7 @@ public final class BasicAuthenticator
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -189,7 +189,7 @@ public final class BasicAuthenticator
      *
      * @param authorization Authorization credentials from this request
      */
-    private String parseUsername(String authorization) {
+    protected String parseUsername(String authorization) {
 
         if (authorization == null)
             return (null);
@@ -216,7 +216,7 @@ public final class BasicAuthenticator
      *
      * @param authorization Authorization credentials from this request
      */
-    private String parsePassword(String authorization) {
+    protected String parsePassword(String authorization) {
 
         if (authorization == null)
             return (null);

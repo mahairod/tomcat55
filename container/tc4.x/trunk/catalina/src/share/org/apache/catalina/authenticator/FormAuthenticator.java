@@ -91,7 +91,7 @@ import org.apache.catalina.deploy.LoginConfig;
  * @version $Revision$ $Date$
  */
 
-public final class FormAuthenticator
+public class FormAuthenticator
     extends AuthenticatorBase {
 
 
@@ -101,7 +101,7 @@ public final class FormAuthenticator
     /**
      * Descriptive information about this implementation.
      */
-    private static final String info =
+    protected static final String info =
         "org.apache.catalina.authenticator.FormAuthenticator/1.0";
 
 
@@ -296,7 +296,7 @@ public final class FormAuthenticator
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -305,7 +305,7 @@ public final class FormAuthenticator
      *
      * @param request The request to be verified
      */
-    private boolean matchRequest(HttpRequest request) {
+    protected boolean matchRequest(HttpRequest request) {
 
       // Has a session been created?
       Session session = getSession(request, false);
@@ -341,7 +341,7 @@ public final class FormAuthenticator
      * @param request The request to be restored
      * @param session The session containing the saved information
      */
-    private boolean restoreRequest(HttpRequest request, Session session) {
+    protected boolean restoreRequest(HttpRequest request, Session session) {
 
         // Retrieve and remove the SavedRequest object from our session
         SavedRequest saved = (SavedRequest)
