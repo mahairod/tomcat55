@@ -111,6 +111,9 @@ Bug No.  Description
 
 5497	 Ignore the If-Modified-Since header when including a static page.
 
+	 Do not return a body with 304 responses (forbidden by HTTP/1.x and
+	 confusing to NS < 6.x).
+
 Configuration:
 
 Bug No.  Description
