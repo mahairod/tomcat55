@@ -111,6 +111,7 @@ public class EditRealmAction extends Action {
     
     private HttpSession session = null;
     private Locale locale = null;
+    private HttpServletRequest request = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -137,6 +138,7 @@ public class EditRealmAction extends Action {
         
         // Acquire the resources that we need
         session = request.getSession();
+        this.request = request;
         locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
@@ -217,6 +219,8 @@ public class EditRealmAction extends Action {
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setAllowDeletion(allowDeletion(rname));
+        
         String attribute = null;
         try {
 
@@ -254,6 +258,8 @@ public class EditRealmAction extends Action {
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setAllowDeletion(allowDeletion(rname));
+
         String attribute = null;
         try {
 
@@ -291,6 +297,8 @@ public class EditRealmAction extends Action {
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setAllowDeletion(allowDeletion(rname));
+
         String attribute = null;
         try {
 
@@ -353,6 +361,8 @@ public class EditRealmAction extends Action {
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setSearchVals(Lists.getBooleanValues());
+        realmFm.setAllowDeletion(allowDeletion(rname));
+
         String attribute = null;
         try {
 
@@ -404,4 +414,42 @@ public class EditRealmAction extends Action {
                                       attribute));
         }     
     }
+    
+    /*
+     * Check if "delete this realm" operation should be enabled.
+     * this operation is not allowed in case the realm is under service,
+     * host or context that the admin app runs on.
+     * return "true" if deletion is allowed.
+     */
+     
+    private String allowDeletion(ObjectName rname) {
+
+     boolean retVal = true;
+     try{
+        // admin app's values
+        String adminService = Lists.getAdminAppService(
+                              mBServer, rname.getDomain(),request);
+        String adminHost = request.getServerName();                                         
+        String adminContext = request.getContextPath();
+
+        String thisService = rname.getKeyProperty("service");
+        String thisHost = rname.getKeyProperty("host");
+        String thisContext = rname.getKeyProperty("path");
+        
+        // realm is under context
+        if (thisContext!=null) {
+            retVal = !(thisContext.equalsIgnoreCase(adminContext));            
+        } else if (thisHost != null) {
+            // realm is under host            
+            retVal = !(thisHost.equalsIgnoreCase(adminHost));
+        } else {
+            // realm is under service            
+            retVal = !(thisService.equalsIgnoreCase(adminService));
+        }
+                
+     } catch (Exception e) {
+           getServlet().log("Error getting admin service, host or context", e);           
+     }
+        return new Boolean(retVal).toString();
+    }    
 }

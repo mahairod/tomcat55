@@ -129,6 +129,12 @@ public final class MemoryRealmForm extends ActionForm {
      */
     private List realmTypeVals = null;
     
+    /**
+     * The text for whether "delete this realm" operation is allowed
+     * on the realm or not.
+     */
+    private String allowDeletion = null;
+ 
     // ------------------------------------------------------------- Properties
     
       /**
@@ -292,6 +298,24 @@ public final class MemoryRealmForm extends ActionForm {
     public void setNodeLabel(String nodeLabel) {
         
         this.nodeLabel = nodeLabel;
+        
+    }
+    
+    /**
+     * Return the allow deletion value.
+     */
+    public String getAllowDeletion() {
+        
+        return this.allowDeletion;
+        
+    }
+    
+    /**
+     * Set the allow Deletion value.
+     */
+    public void setAllowDeletion(String allowDeletion) {
+        
+        this.allowDeletion = allowDeletion;
         
     }
     
