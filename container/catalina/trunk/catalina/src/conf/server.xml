@@ -16,6 +16,7 @@
        administration web application -->
   <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.storeconfig.StoreConfigLifecycleListener"/>
 
   <!-- Global JNDI resources -->
   <GlobalNamingResources>
