@@ -252,19 +252,19 @@
     </operation>
     
     <operation   name="start"
-               description="Start the contex"
+               description="Start the context"
                impact="ACTION"
                returnType="void">
     </operation>
     
     <operation name="stop"
-               description="Stop the contex"
+               description="Stop the context"
                impact="ACTION"
                returnType="void">
     </operation>
     
     <operation name="destroy"
-               description="Destroy the contex"
+               description="Destroy the context"
                impact="ACTION"
                returnType="void">
     </operation>

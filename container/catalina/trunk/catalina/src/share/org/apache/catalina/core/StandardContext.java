@@ -1306,7 +1306,8 @@ public class StandardContext
         String loginPage = config.getLoginPage();
         if ((loginPage != null) && !loginPage.startsWith("/")) {
             if (isServlet22()) {
-                log.debug(sm.getString("standardContext.loginConfig.loginWarning",
+                if(log.isDebugEnabled())
+                    log.debug(sm.getString("standardContext.loginConfig.loginWarning",
                                  loginPage));
                 config.setLoginPage("/" + loginPage);
             } else {
@@ -1318,7 +1319,8 @@ public class StandardContext
         String errorPage = config.getErrorPage();
         if ((errorPage != null) && !errorPage.startsWith("/")) {
             if (isServlet22()) {
-                log.debug(sm.getString("standardContext.loginConfig.errorWarning",
+                if(log.isDebugEnabled())
+                    log.debug(sm.getString("standardContext.loginConfig.errorWarning",
                                  errorPage));
                 config.setErrorPage("/" + errorPage);
             } else {
@@ -1869,7 +1871,8 @@ public class StandardContext
         String jspFile = wrapper.getJspFile();
         if ((jspFile != null) && !jspFile.startsWith("/")) {
             if (isServlet22()) {
-                log.debug(sm.getString("standardContext.wrapper.warning", 
+                if(log.isDebugEnabled())
+                    log.debug(sm.getString("standardContext.wrapper.warning", 
                                        jspFile));
                 wrapper.setJspFile("/" + jspFile);
             } else {
@@ -1939,7 +1942,8 @@ public class StandardContext
         String location = errorPage.getLocation();
         if ((location != null) && !location.startsWith("/")) {
             if (isServlet22()) {
-                log.debug(sm.getString("standardContext.errorPage.warning",
+                if(log.isDebugEnabled())
+                    log.debug(sm.getString("standardContext.errorPage.warning",
                                  location));
                 errorPage.setLocation("/" + location);
             } else {
@@ -2064,7 +2068,8 @@ public class StandardContext
         if( findChild(servletName) != null) {
             addServletMapping(pattern, servletName, true);
         } else {
-            log.debug("Skiping " + pattern + " , no servlet " + servletName);
+            if(log.isDebugEnabled())
+                log.debug("Skiping " + pattern + " , no servlet " + servletName);
         }
     }
 
@@ -2899,7 +2904,8 @@ public class StandardContext
         //      if (!reloadable)
         //          throw new IllegalStateException
         //              (sm.getString("standardContext.notReloadable"));
-        log.info(sm.getString("standardContext.reloadingStarted"));
+        if(log.isInfoEnabled())
+            log.info(sm.getString("standardContext.reloadingStarted"));
 
         // Stop accepting requests temporarily
         setPaused(true);
@@ -3837,7 +3843,8 @@ public class StandardContext
     public synchronized void start() throws LifecycleException {
         //if (lazy ) return;
         if (started) {
-            log.info(sm.getString("containerBase.alreadyStarted", logName()));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("containerBase.alreadyStarted", logName()));
             return;
         }
         if( !initialized ) { 
@@ -3847,8 +3854,8 @@ public class StandardContext
                 throw new LifecycleException("Error initializaing ", ex);
             }
         }
-
-        log.debug("Starting " + ("".equals(getName()) ? "ROOT" : getName()));
+        if(log.isDebugEnabled())
+            log.debug("Starting " + ("".equals(getName()) ? "ROOT" : getName()));
 
         // Set JMX object name for proper pipeline registration
         preRegisterJMX();
@@ -3902,7 +3909,8 @@ public class StandardContext
                     );            
                 }
             } catch( Throwable t ) {
-                log.debug("No realm for this host " + realmName);
+                if(log.isDebugEnabled())
+                    log.debug("No realm for this host " + realmName);
             }
         }
         
@@ -4169,7 +4177,8 @@ public class StandardContext
             oos.close();
             fos.close();
         } catch( Throwable t ) {
-            log.info("Error saving context.ser ", t);
+            if(log.isInfoEnabled())
+                log.info("Error saving context.ser ", t);
         }
     }
 
@@ -4364,7 +4373,8 @@ public class StandardContext
         startupTime = 0;
         startTime = 0;
         tldScanTime = 0;
-        log.debug("resetContext " + oname + " " + mserver);
+        if(log.isDebugEnabled())
+            log.debug("resetContext " + oname + " " + mserver);
     }
 
     /**
@@ -4404,7 +4414,8 @@ public class StandardContext
             return (urlPattern);
         if (!isServlet22())
             return (urlPattern);
-        log.debug(sm.getString("standardContext.urlPattern.patternWarning",
+        if(log.isDebugEnabled())
+            log.debug(sm.getString("standardContext.urlPattern.patternWarning",
                          urlPattern));
         return ("/" + urlPattern);
 
@@ -4917,7 +4928,8 @@ public class StandardContext
                 controller = oname;
             }
         } catch(Exception ex) {
-            log.info("Error registering ctx with jmx " + this + " " +
+            if(log.isInfoEnabled())
+                log.info("Error registering ctx with jmx " + this + " " +
                      oname + " " + ex.toString(), ex );
         }
     }
@@ -4947,7 +4959,8 @@ public class StandardContext
                 ((StandardWrapper)children[i]).registerJMX( this );
             }
         } catch (Exception ex) {
-            log.info("Error registering wrapper with jmx " + this + " " +
+            if(log.isInfoEnabled())
+                log.info("Error registering wrapper with jmx " + this + " " +
                     oname + " " + ex.toString(), ex );
         }
     }
@@ -4990,7 +5003,8 @@ public class StandardContext
             ObjectName parentName=getParentName();
             
             if( ! mserver.isRegistered(parentName)) {
-                log.debug("No host, creating one " + parentName);
+                if(log.isDebugEnabled())
+                    log.debug("No host, creating one " + parentName);
                 StandardHost host=new StandardHost();
                 host.setName(hostName);
                 host.setAutoDeploy(false);
@@ -5001,7 +5015,8 @@ public class StandardContext
             ContextConfig config = new ContextConfig();
             this.addLifecycleListener(config);
 
-            log.debug( "AddChild " + parentName + " " + this);
+            if(log.isDebugEnabled())
+                 log.debug( "AddChild " + parentName + " " + this);
             try {
                 mserver.invoke(parentName, "addChild", new Object[] { this },
                                new String[] {"org.apache.catalina.Container"});
@@ -5047,7 +5062,8 @@ public class StandardContext
                 this.setName(path);
             }
         } else {
-            log.debug("Setting path " +  path );
+            if(log.isDebugEnabled())
+                log.debug("Setting path " +  path );
             this.setName( path );
         }
         // XXX The service and domain should be the same.
