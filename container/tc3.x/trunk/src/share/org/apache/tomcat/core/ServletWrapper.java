@@ -516,17 +516,6 @@ public class ServletWrapper {
 	    }
 	} 
     }
-
-    /** @deprecated
-     */
-    public void handleRequest(final HttpServletRequestFacade request,
-			      final HttpServletResponseFacade response)
-    {
-	Request rrequest=request.getRealRequest();
-	Response rresponse=rrequest.getResponse();
-	handleRequest( rrequest, rresponse );
-    }
-
     
     public String toString() {
 	String toS="Wrapper(" + config.getServletName() + " ";
