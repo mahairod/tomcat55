@@ -65,7 +65,6 @@ package org.apache.catalina.realm;
 
 
 import java.io.File;
-import java.security.MessageDigest;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -74,17 +73,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
-import org.apache.catalina.Container;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Realm;
-import org.apache.catalina.util.HexUtils;
-import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.util.Base64;
 
 
 /**
@@ -95,7 +85,7 @@ import org.apache.catalina.util.Base64;
 *
 * <p><strong>TODO</strong> - Support connection pooling (including message
 * format objects) so that <code>authenticate()</code> does not have to be
-* synchronized.</p>
+* synchronized and would fix the ugly connection logic. </p>
 *
 * @author Craig R. McClanahan
 * @author Carson McDonald
@@ -377,42 +367,52 @@ public class JDBCRealm
      * event is also logged, and the connection will be closed so that
      * a subsequent request will automatically re-open it.
      *
+     *
      * @param username Username of the Principal to look up
      * @param credentials Password or other credentials to use in
      *  authenticating this username
      */
-    public Principal authenticate(String username, String credentials) {
+    public synchronized Principal authenticate(String username, String credentials) {
 
-        Connection dbConnection = null;
+        // Number of tries is the numebr of attempts to connect to the database
+        // during this login attempt (if we need to open the database)
+        // This needs rewritten wuth better pooling support, the existing code
+        // needs signature changes since the Prepared statements needs cached
+        // with the connections.
+        // The code below will try twice if there is a SQLException so the
+        // connection may try to be opened again. On normal conditions (including
+        // invalid login - the above is only used once.
+        int numberOfTries = 2;
+        while (numberOfTries>0) {
+            try {
 
-        try {
+                // Ensure that we have an open database connection
+                open();
 
-            // Ensure that we have an open database connection
-            dbConnection = open();
+                // Acquire a Principal object for this user
+                Principal principal = authenticate(dbConnection,
+                                                   username, credentials);
 
-            // Acquire a Principal object for this user
-            Principal principal = authenticate(dbConnection,
-                                               username, credentials);
 
-            // Release the database connection we just used
-            release(dbConnection);
+                // Return the Principal (if any)
+                return (principal);
 
-            // Return the Principal (if any)
-            return (principal);
+            } catch (SQLException e) {
 
-        } catch (SQLException e) {
+                // Log the problem for posterity
+                log(sm.getString("jdbcRealm.exception"), e);
 
-            // Log the problem for posterity
-            log(sm.getString("jdbcRealm.exception"), e);
+                // Close the connection so that it gets reopened next time
+                if (dbConnection != null)
+                    close(dbConnection);
 
-            // Close the connection so that it gets reopened next time
-            if (dbConnection != null)
-                close(dbConnection);
+            }
 
-            // Return "not authenticated" for this request
-            return (null);
-
+            numberOfTries--;
         }
+
+        // Worst case scenario
+        return null;
 
     }
 
@@ -441,47 +441,70 @@ public class JDBCRealm
 
         // Look up the user's credentials
         String dbCredentials = null;
-        PreparedStatement stmt = credentials(dbConnection, username);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            dbCredentials = rs.getString(1).trim();
-        }
-        rs.close();
-        if (dbCredentials == null) {
-            return (null);
-        }
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
 
-        // Validate the user's credentials
-        boolean validated = false;
-        if (hasMessageDigest()) {
-            // Hex hashes should be compared case-insensitive
-            validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
-        } else
-            validated = (digest(credentials).equals(dbCredentials));
+        try {
+            stmt = credentials(dbConnection, username);
+            rs = stmt.executeQuery();
 
-        if (validated) {
-            if (debug >= 2)
-                log(sm.getString("jdbcRealm.authenticateSuccess",
-                                 username));
-        } else {
-            if (debug >= 2)
-                log(sm.getString("jdbcRealm.authenticateFailure",
-                                 username));
-            return (null);
+            if (rs.next()) {
+                dbCredentials = rs.getString(1);
+            }
+            rs.close();
+            rs = null;
+            if (dbCredentials == null) {
+                return (null);
+            }
+
+            dbCredentials = dbCredentials.trim();
+
+
+            // Validate the user's credentials
+            boolean validated = false;
+            if (hasMessageDigest()) {
+                // Hex hashes should be compared case-insensitive
+                validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
+            } else {
+                validated = (digest(credentials).equals(dbCredentials));
+            }
+
+            if (validated) {
+                if (debug >= 2)
+                    log(sm.getString("jdbcRealm.authenticateSuccess",
+                                     username));
+            } else {
+                if (debug >= 2)
+                    log(sm.getString("jdbcRealm.authenticateFailure",
+                                     username));
+                return (null);
+            }
+
+            // Accumulate the user's roles
+            ArrayList roleList = new ArrayList();
+            stmt = roles(dbConnection, username);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                String role = rs.getString(1);
+                if (null!=role) {
+                    roleList.add(role.trim());
+                }
+            }
+            rs.close();
+            rs = null;
+
+            // Create and return a suitable Principal for this user
+            return (new GenericPrincipal(this, username, credentials, roleList));
+        } finally {
+            if (rs!=null) {
+                try {
+                    rs.close();
+                } catch(SQLException e) {
+                    log(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                }
+            }
+            dbConnection.commit();
         }
-
-        // Accumulate the user's roles
-        ArrayList list = new ArrayList();
-        stmt = roles(dbConnection, username);
-        rs = stmt.executeQuery();
-        while (rs.next()) {
-            list.add(rs.getString(1).trim());
-        }
-        rs.close();
-        dbConnection.commit();
-
-        // Create and return a suitable Principal for this user
-        return (new GenericPrincipal(this, username, credentials, list));
 
     }
 
@@ -503,23 +526,25 @@ public class JDBCRealm
         } catch (Throwable f) {
             ;
         }
+        this.preparedCredentials = null;
+
+
         try {
             preparedRoles.close();
         } catch (Throwable f) {
             ;
         }
+        this.preparedRoles = null;
+
 
         // Close this database connection, and log any errors
         try {
             dbConnection.close();
         } catch (SQLException e) {
             log(sm.getString("jdbcRealm.close"), e); // Just log it here
+        } finally {
+           this.dbConnection = null;
         }
-
-        // Release resources associated with the closed connection
-        this.dbConnection = null;
-        this.preparedCredentials = null;
-        this.preparedRoles = null;
 
     }
 
@@ -674,11 +699,12 @@ public class JDBCRealm
      */
     public void start() throws LifecycleException {
 
-        // Validate that we can open our connection
+        // Validate that we can open our connection - but let tomcat
+        // startup in case the database is temporarily unavailable
         try {
             open();
         } catch (SQLException e) {
-            throw new LifecycleException(sm.getString("jdbcRealm.open"), e);
+            log(sm.getString("jdbcRealm.open"), e);
         }
 
         // Perform normal superclass initialization
