@@ -71,8 +71,11 @@
   <target name="deploy" depends="deploy-static"
    description="Build and deploy all components">
 
-    <echo>Target: API - Dist ...</echo>
-    <ant dir="${api.home}" target="dist"/>
+    <echo>Target: Servlet API - Dist ...</echo>
+    <ant dir="${api.home}/jsr154" target="dist"/>
+
+    <echo>Target: JSP API - Dist ...</echo>
+    <ant dir="${api.home}/jsr152" target="dist"/>
 
     <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="${catalina.home}" target="deploy"/>
@@ -97,25 +100,39 @@
   <target name="clean"
    description="Clean all components">
     <delete dir="${tomcat.build}"/>
-    <echo>Target: API - Clean ...</echo>
-    <ant dir="${api.home}" target="clean"/>
+
+    <echo>Target: Servlet API - Clean ...</echo>
+    <ant dir="${api.home}/jsr154" target="clean"/>
+
+    <echo>Target: JSP API - Clean ...</echo>
+    <ant dir="${api.home}/jsr152" target="clean"/>
+
     <echo>Target: Catalina - Clean ...</echo>
     <ant dir="${catalina.home}" target="clean"/>
+
     <echo>Target: Jasper - Clean ...</echo>
     <ant dir="${jasper.home}"   target="clean">
       <property name="catalina.home" value="${tomcat.build}"/>
     </ant>
+
     <delete dir="${tomcat.dist}"/>
+
   </target>
 
 
   <!-- ======================= COMBO: Build All Components ================ -->
   <target name="all"
    description="Clean, build, and deploy all components">
-    <echo>Target: API - Dist ...</echo>
-    <ant dir="${api.home}" target="dist"/>
+
+    <echo>Target: Servlet API - Dist ...</echo>
+    <ant dir="${api.home}/jsr154" target="dist"/>
+
+    <echo>Target: JSP API - Dist ...</echo>
+    <ant dir="${api.home}/jsr152" target="dist"/>
+
     <echo>Target: Catalina - All ...</echo>
     <ant dir="${catalina.home}" target="all"/>
+
     <echo>Target: Jasper - All ...</echo>
     <ant dir="${jasper.home}"   target="all">
       <property name="catalina.home" value="${tomcat.build}"/>
@@ -228,7 +245,11 @@
     </copy>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
-      <fileset dir="${api.home}/dist/docs/api" />
+      <fileset dir="${api.home}/jsr154/dist/docs/api" />
+    </copy>
+    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/jspapi"/>
+    <copy todir="${tomcat.dist}/webapps/tomcat-docs/jspapi">
+      <fileset dir="${api.home}/jsr152/dist/docs/api" />
     </copy>
   </target>
 
