@@ -781,6 +781,7 @@ public class StandardHost
                     log.debug( "Register host " + getName() + " with domain "+ domain );
                 oname=new ObjectName(domain + ":type=Host,host=" +
                         this.getName());
+                controller = oname;
                 Registry.getRegistry(null, null)
                     .registerComponent(this, oname, null);
             } catch( Throwable t ) {
@@ -789,6 +790,17 @@ public class StandardHost
         }
     }
 
+    public void destroy() throws Exception {
+        // destroy our child containers, if any
+        Container children[] = findChildren();
+        super.destroy();
+        for (int i = 0; i < children.length; i++) {
+            if(children[i] instanceof StandardContext)
+                ((StandardContext)children[i]).destroy();
+        }
+      
+    }
+    
     public ObjectName preRegister(MBeanServer server, ObjectName oname ) 
         throws Exception
     {
