@@ -7,7 +7,6 @@ released. None of these bugs are regression problems, so it should be
 acceptable to delay their resolution.
 
 
-5647    jk         AJP13 connector will not pass authentication requests
 4793    webapp     mod_webapp connector doesn´t work
 4930    webapp     java.io.StreamCorruptedException: Type code out of range, 
                    is 0 with Apache WebApp module
@@ -15,14 +14,9 @@ acceptable to delay their resolution.
                    via mod_webapp
 5201    catalina   Persistent sessions & EJB Statefull
 5402    webapp     WarpConnection raise IOException
-5483    jk         I18N fails using AJP 1.3 with Tomcat 4.01 
-                   final / Apache 1.3.22
 5644    jasper     JspC produces badly formed classnames if first char 
                    is a digit
 5735    catalina   HTTP connector running out of processors under heavy load
-5752    docs       Documentation: Resources link invalid on page 
-                   http://jakarta.apache.org/tomcat/tomcat-4.0-doc
-                   /config/context.html
 5795    catalina   Catalina Shutdown relies on localhost causing problems 
                    in a Clustered Solaris environment
 5827    catalina   DataInputStream.readInt returns wrong values
@@ -43,5 +37,11 @@ LATER - 5396    installer  Tomcat start shortcut fails when HTTPS is set
 FIXED - 5876    catalina   HttpResponseBase broken
 FIXED - 5908    catalina   java.lang.IllegalStateException: zip file closed
 FIXED - 5760    docs       Doc-bug: Inexact documented jars in "Class Loader INFO"
+FIXED - 5752    docs       Documentation: Resources link invalid on page 
+                   http://jakarta.apache.org/tomcat/tomcat-4.0-doc
+                   /config/context.html
+LATER - 5483    jk         I18N fails using AJP 1.3 with Tomcat 4.01 
+                   final / Apache 1.3.22
+FIXED - 5647    jk         AJP13 connector will not pass authentication requests
 
 

@@ -77,6 +77,8 @@ Catalina Bug Fixes:
 Jasper Bug Fixes:
 ----------------
 
+JspServlet: Set content type to text/html before writing the contents 
+  of an error.
 
 
 -----------------
@@ -91,10 +93,16 @@ Bugzilla Bugs Resolved:
 ----------------------
 
 5330  JNDI ENC context problem
+5647  AJP13 connector will not pass authentication requests
 5740  Content-type reset to text/html on response with status >= 400
+5752  Documentation: Resources link invalid on page 
+      http://jakarta.apache.org/tomcat/tomcat-4.0-doc/config/context.html
 5760  Doc-bug: Inexact documented jars in "Class Loader INFO"
 5876  HttpResponseBase broken
 5908  java.lang.IllegalStateException: zip file closed
+6108  jasper.sh doesn't use JAVA_HOME to find java
+6115  URL encoding of session id doesn't work correctly with anchors/fragments
+6151  Manager servlet behaves bad in IE without an "Expires: -1" http header
 
 
 ============================
