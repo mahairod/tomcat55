@@ -194,6 +194,14 @@ public class Main {
 	Project project = new Project();
 	project.setOutputLevel(msgOutputLevel);
 
+	// set user-define properties
+        Enumeration e = definedProps.keys();
+        while (e.hasMoreElements()) {
+            String arg = (String)e.nextElement();
+            String value = (String)definedProps.get(arg);
+            project.setUserProperty(arg, value);
+        }
+
         // first use the ProjectHelper to create the project object
         // from the given build file.
         
@@ -204,17 +212,6 @@ public class Main {
 	    System.out.println(msg + be.getMessage());
 	    exit(1);
 	}
-
-        // cycle through command line defined properties after the
-        // build.xml file properties have been set so that command line
-        // props take precedence
-        
-        Enumeration e = definedProps.keys();
-        while (e.hasMoreElements()) {
-            String arg = (String)e.nextElement();
-            String value = (String)definedProps.get(arg);
-            project.setProperty(arg, value);
-        }
 
         // make sure that we have a target to execute
         

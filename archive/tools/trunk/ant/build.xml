@@ -29,6 +29,7 @@
      <jar jarfile="${dist.dir}/ant/lib/ant.jar" basedir="${build.dir}" items="org" manifest="${manifest}"/>
      <copyfile src="../projectx-tr2.jar" dest="${dist.dir}/ant/lib/xml.jar"/>
      <copyfile src="../javac.jar" dest="${dist.dir}/ant/lib/javac.jar"/>
+     <copyfile src="../moo.jar" dest="${dist.dir}/ant/lib/moo.jar"/>
      <copyfile src="build.xml" dest="${dist.dir}/ant/lib/build.xml"/>
      <copydir src="src/bin" dest="${dist.dir}/ant/bin"/>
      <copydir src="docs" dest="${dist.dir}/ant/docs"/>
@@ -42,10 +43,20 @@
 
   <target name="clean">
     <deltree dir="${build.dir}"/>
-    <deltree dir="${dist.dir}/ant"/>
   </target>
 
-  
+  <!-- in progress !  -->
+
+  <target name="get.snapshot">
+    <get src="http://jakarta.apache.org/build/tmp/ant/ant.src.zip" dest="ant-src.zip" />
+    <expand src="ant-src.zip" dest="." />
+  </target>
+  <target name="make.snapshot">
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic"
+         package="jakarta-tools"
+         dest="."  />
+    <zip zipfile="/www/jakarta.apache.org/builds/tmp/ant/ant.src.zip" basedir="." items="jakarta-tools"/>
+  </target>
   
 </project>
 

@@ -97,6 +97,7 @@ public class Project {
     private int msgOutputLevel = MSG_INFO;
 
     private Hashtable properties = new Hashtable();
+    private Hashtable userProperties = new Hashtable();
     private String defaultTarget;
     private Hashtable taskClassDefinitions = new Hashtable();
     private Hashtable targets = new Hashtable();
@@ -161,9 +162,19 @@ public class Project {
     }
 
     public void setProperty(String name, String value) {
+	// command line properties take precedence
+	if( null!= userProperties.get(name))
+	    return;
         log("Setting project property: " + name + " to " +
             value, MSG_VERBOSE);
 	properties.put(name, value);
+    }
+
+    public void setUserProperty(String name, String value) {
+        log("Setting project property: " + name + " to " +
+            value, MSG_VERBOSE);
+	userProperties.put(name, value);
+	properties.put( name,value);
     }
 
     public String getProperty(String name) {
