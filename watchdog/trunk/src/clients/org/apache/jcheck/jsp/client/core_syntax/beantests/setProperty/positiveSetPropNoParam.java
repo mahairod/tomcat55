@@ -62,32 +62,65 @@ import org.apache.jcheck.jsp.util.*;
 import org.apache.tools.moo.jsp.*;
 import org.apache.tools.moo.TestResult;
 import java.net.HttpURLConnection;
+import java.util.Hashtable;
 
 public class positiveSetPropNoParam
 extends PositiveJspCheckTest {
 
-    StringManager sm = StringManager.getManager(UtilConstants.Package);
-
-    public String getDescription () {
-	return sm.getString("positiveSetPropNoParam.description");
-    }
-
-    public String getGoldenFile () {
-	return sm.getString("positiveSetPropNoParam.goldenFile");
-    }	
-
-    public TestResult
-    runTest () {
-        TestResult testResult = null;
-
-	try {
-	    setGoldenFileName (getGoldenFile());
-	    HttpURLConnection connection = getConnection();
-	    testResult = getTestResult(connection);
-	} catch (Exception e) {
-            testResult = getTestResult(testResult, e);
-	}
-
-	return testResult;
-    }
+    
+     StringManager sm= StringManager.getManager(UtilConstants.Package);
+     Hashtable query=new Hashtable();
+     String key="str";
+     String value="SAPPOTA";
+     
+     
+     public String getDescription()
+       {
+          return sm.getString("positiveSetPropNoParam.description");
+       }
+       
+     public String getGoldenFile()   
+     
+       {
+           return sm.getString("positiveSetPropNoParam.goldenFile");  
+           
+       }
+       
+       
+     public TestResult runTest()      
+     
+        {
+            TestResult tr=new TestResult();
+             query.put(key,value);
+                                
+            
+            try{
+            
+                    System.out.println("Connecting...setPropNoParam");
+                    setGoldenFileName(getGoldenFile());
+                    HttpURLConnection conn=getConnection(null,query,null,null);
+                    tr=getTestResult(conn);
+                    
+                }catch(Exception e){
+                    
+                      tr= getTestResult(tr,e);
+                      
+                 }
+                 
+             return tr;
+                                   
+         } 
+    
+    
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -62,9 +62,14 @@ import org.apache.jcheck.jsp.util.*;
 import org.apache.tools.moo.jsp.*;
 import org.apache.tools.moo.TestResult;
 import java.net.HttpURLConnection;
+import java.util.Hashtable;
 
 public class positiveSetPropParam
 extends PositiveJspCheckTest {
+
+     Hashtable query=new Hashtable();
+     String key="Name";
+     String value="MANGO";
 
     StringManager sm = StringManager.getManager(UtilConstants.Package);
 
@@ -81,8 +86,11 @@ extends PositiveJspCheckTest {
         TestResult testResult = null;
 
 	try {
+		
+            System.out.println("connecting....setPropParam"); 		
 	    setGoldenFileName (getGoldenFile());
-	    HttpURLConnection connection = getConnection();
+	    query.put(key,value);
+	    HttpURLConnection connection = getConnection(null,query,null,"GET");
 	    testResult = getTestResult(connection);
 	} catch (Exception e) {
             testResult = getTestResult(testResult, e);
@@ -91,3 +99,7 @@ extends PositiveJspCheckTest {
 	return testResult;
     }
 }
+
+
+
+
