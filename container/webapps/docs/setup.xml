@@ -78,6 +78,10 @@
        that GNU TAR is used, and that <code>CATALINA_HOME</code> is an 
        environment variable pointing to the base path of the Tomcat 
        installation.</p>
+  
+    <p>Please note that you should use the GNU make (gmake) instead of
+       the native BSD make on FreeBSD systems.</p>
+
 
 <source>
     cd $CATALINA_HOME/bin
