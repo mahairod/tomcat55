@@ -1573,20 +1573,27 @@ class Generator {
 	    out.printin("out.write(\"<");
 	    out.print(n.getQName());
 	    Attributes attrs = n.getAttributes();
+	    Node.JspAttribute[] jspAttrs = n.getJspAttributes();
 	    if (attrs != null) {
 		int attrsLength = attrs.getLength();
 		for (int i=0; i<attrsLength; i++) {
-		    String quote = DOUBLE_QUOTE;
-		    String value = attrs.getValue(i);
-		    if (value.indexOf('"') != -1) {
-			quote = SINGLE_QUOTE;
-		    }
 		    out.print(" ");
 		    out.print(attrs.getQName(i));
 		    out.print("=");
-		    out.print(quote);
-		    out.print(value);
-		    out.print(quote);
+		    if (jspAttrs[i].isELInterpreterInput()) {
+			out.print("\" + ");
+			out.print(attributeValue(jspAttrs[i], false, Object.class));
+			out.print(" + \"");
+		    } else {
+			String quote = DOUBLE_QUOTE;
+			String value = attrs.getValue(i);
+			if (value.indexOf('"') != -1) {
+			    quote = SINGLE_QUOTE;
+			}
+			out.print(quote);
+			out.print(value);
+			out.print(quote);
+		    }
 		}
 	    }
 

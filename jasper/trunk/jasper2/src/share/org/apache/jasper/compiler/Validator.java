@@ -682,6 +682,20 @@ class Validator {
 		err.jspError(n, "jsp.error.namedAttribute.invalidUse");
             }
 
+	    Attributes attrs = n.getAttributes();
+	    int attrSize = attrs.getLength();
+	    Node.JspAttribute[] jspAttrs = new Node.JspAttribute[attrSize];
+	    for (int i=0; i < attrSize; i++) {
+		jspAttrs[i] = getJspAttribute(attrs.getQName(i),
+					      attrs.getURI(i),
+					      attrs.getLocalName(i),
+					      attrs.getValue(i),
+					      java.lang.Object.class,
+					      n,
+					      false);
+	    }
+	    n.setJspAttributes(jspAttrs);
+
 	    visitBody(n);
         }
 
@@ -1081,8 +1095,7 @@ class Validator {
                 else {
                     // The attribute can contain expressions but is not a
                     // scriptlet expression; thus, we want to run it through 
-                    // the expression interpreter (final argument "true" in
-                    // Node.JspAttribute constructor).
+                    // the expression interpreter
 
                     // validate expression syntax if string contains
                     // expression(s)

@@ -1076,6 +1076,8 @@ abstract class Node implements TagConstants {
      */
     public static class UninterpretedTag extends Node {
 
+	private JspAttribute[] jspAttrs;
+
 	public UninterpretedTag(String qName, String localName,
 				Attributes attrs, Attributes xmlnsAttrs,
 				Mark start, Node parent) {
@@ -1084,6 +1086,14 @@ abstract class Node implements TagConstants {
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
+	}
+
+	public void setJspAttributes(JspAttribute[] jspAttrs) {
+	    this.jspAttrs = jspAttrs;
+	}
+
+	public JspAttribute[] getJspAttributes() {
+	    return jspAttrs;
 	}
     }
     
