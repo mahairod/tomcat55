@@ -158,11 +158,11 @@ public class Constants {
     public static final String TAGLIB_DTD_PUBLIC_ID_11 = 
 	"-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN";
     public static final String TAGLIB_DTD_RESOURCE_PATH_11 = 
-	"/org/apache/jasper/resources/web-jsptaglib_1_1.dtd";
+	"/javax/servlet/jsp/resources/web-jsptaglibrary_1_1.dtd";
     public static final String TAGLIB_DTD_PUBLIC_ID_12 = 
 	"-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN";
     public static final String TAGLIB_DTD_RESOURCE_PATH_12 = 
-	"/org/apache/jasper/resources/web-jsptaglib_1_2.dtd";
+	"/javax/servlet/jsp/resources/web-jsptaglibrary_1_2.dtd";
 
     /**
      * Public Id and the Resource path (of the cached copy) 
@@ -171,11 +171,11 @@ public class Constants {
     public static final String WEBAPP_DTD_PUBLIC_ID_22 = 
 	"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN";
     public static final String WEBAPP_DTD_RESOURCE_PATH_22 = 
-	"/org/apache/jasper/resources/web_22.dtd";
+	"/javax/servlet/resources/web-app_2_2.dtd";
     public static final String WEBAPP_DTD_PUBLIC_ID_23 = 
 	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN";
     public static final String WEBAPP_DTD_RESOURCE_PATH_23 = 
-	"/org/apache/jasper/resources/web_23.dtd";
+	"/javax/servlet/resources/web-app_2_3.dtd";
 
     /**
      * List of the Public IDs that we cache, and their
