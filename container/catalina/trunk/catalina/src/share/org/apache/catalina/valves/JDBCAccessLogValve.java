@@ -63,6 +63,7 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -82,7 +83,7 @@ import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-
+import org.apache.catalina.Logger;
 
 /**
  * <p>
@@ -153,14 +154,13 @@ import org.apache.catalina.util.StringManager;
  * <i>TO DO: provide option for excluding logging of certain MIME types.</i>
  * </p>
  * 
- * @version 1.0
  * @author Andre de Jesus
+ * @author Peter Rossbach
  */
 
 public final class JDBCAccessLogValve 
     extends ValveBase 
     implements Lifecycle {
-
 
     // ----------------------------------------------------------- Constructors
 
@@ -210,6 +210,23 @@ public final class JDBCAccessLogValve
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+   /**
+     * The connection username to use when trying to connect to the database.
+     */
+    protected String connectionName = null;
+
+
+    /**
+     * The connection URL to use when trying to connect to the database.
+     */
+    protected String connectionPassword = null;
+
+   /**
+     * Instance of the JDBC Driver class we use as a connection factory.
+     */
+    protected Driver driver = null;
 
 
     private String driverName;
@@ -262,7 +279,23 @@ public final class JDBCAccessLogValve
 
 
     // ------------------------------------------------------------- Properties
+ 
+    /**
+     * Return the username to use to connect to the database.
+     *
+     */
+    public String getConnectionName() {
+        return connectionName;
+    }
 
+    /**
+     * Set the username to use to connect to the database.
+     *
+     * @param connectionName Username
+     */
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
+    }
 
     /**
      * Sets the database driver name.
@@ -271,6 +304,23 @@ public final class JDBCAccessLogValve
      */
     public void setDriverName(String driverName) {
         this.driverName = driverName;
+    }
+
+   /**
+     * Return the password to use to connect to the database.
+     *
+     */
+    public String getConnectionPassword() {
+        return connectionPassword;
+    }
+
+    /**
+     * Set the password to use to connect to the database.
+     *
+     * @param connectionPassword User password
+     */
+    public void setConnectionPassword(String connectionPassword) {
+        this.connectionPassword = connectionPassword;
     }
 
     /**
@@ -457,25 +507,7 @@ public final class JDBCAccessLogValve
         if(bytes < 0)
             bytes = 0;
         int status = ((HttpResponse)response).getStatus();
-
-        synchronized (ps) {
-            try {
-                ps.setString(1, remoteHost);
-                ps.setString(2, user);
-                ps.setTimestamp(3, new Timestamp(getCurrentTimeMillis()));
-                ps.setString(4, query);
-                ps.setInt(5, status);
-                ps.setInt(6, bytes);
-            } catch(SQLException e) {
-                throw new ServletException(e);
-            }
-            if (pattern.equals("common")) {
-                try {
-                    ps.executeUpdate();
-                } catch(SQLException e) {
-                    throw new ServletException(e);
-                }
-            } else if (pattern.equals("combined")) {
+        if (pattern.equals("combined")) {
                 String virtualHost = "";
                 if(hreq != null)
                     virtualHost = hreq.getServerName();
@@ -488,16 +520,50 @@ public final class JDBCAccessLogValve
                 String userAgent = "";
                 if(hreq != null)
                     userAgent = hreq.getHeader("user-agent");
-                try {
-                    ps.setString(7, virtualHost);
-                    ps.setString(8, method);
-                    ps.setString(9, referer);
-                    ps.setString(10, userAgent);
-                    ps.executeUpdate();
-                } catch (SQLException e) {
-                    throw new ServletException(e);
+        }
+        synchronized (this) {
+          int numberOfTries = 2;
+          while (numberOfTries>0) {
+            try {
+                open();
+    
+                ps.setString(1, remoteHost);
+                ps.setString(2, user);
+                ps.setTimestamp(3, new Timestamp(getCurrentTimeMillis()));
+                ps.setString(4, query);
+                ps.setInt(5, status);
+                ps.setInt(6, bytes);
+                if (pattern.equals("combined")) {
+     
+                      String virtualHost = "";
+                      if(hreq != null)
+                         virtualHost = hreq.getServerName();
+                      String method = "";
+                      if(hreq != null)
+                         method = hreq.getMethod();
+                      String referer = "";
+                      if(hreq != null)
+                         referer = hreq.getHeader("referer");
+                      String userAgent = "";
+                      if(hreq != null)
+                         userAgent = hreq.getHeader("user-agent");
+                      ps.setString(7, virtualHost);
+                      ps.setString(8, method);
+                      ps.setString(9, referer);
+                      ps.setString(10, userAgent);
                 }
-            }
+                ps.executeUpdate();
+                return;
+              } catch (SQLException e) {
+                // Log the problem for posterity
+                log(sm.getString("jdbcAccessLogValve.exception"), e);
+
+                // Close the connection so that it gets reopened next time
+                if (conn != null)
+                    close();
+              }
+    	      numberOfTries--;        
+           }
         }
 
     }	
@@ -537,7 +603,87 @@ public final class JDBCAccessLogValve
 
     }
 
+    /**
+     * Open (if necessary) and return a database connection for use by
+     * this AccessLogValve.
+     *
+     * @exception SQLException if a database error occurs
+     */
+    protected void open() throws SQLException {
 
+        // Do nothing if there is a database connection already open
+        if (conn != null)
+            return ;
+
+        // Instantiate our database driver if necessary
+        if (driver == null) {
+            try {
+                Class clazz = Class.forName(driverName);
+                driver = (Driver) clazz.newInstance();
+            } catch (Throwable e) {
+                throw new SQLException(e.getMessage());
+            }
+        }
+
+        // Open a new connection
+        Properties props = new Properties();
+        props.put("autoReconnect", "true");
+        if (connectionName != null)
+            props.put("user", connectionName);
+        if (connectionPassword != null)
+            props.put("password", connectionPassword);
+        conn = driver.connect(connectionURL, props);
+        conn.setAutoCommit(true);
+        if (pattern.equals("common")) {
+                ps = conn.prepareStatement
+                    ("INSERT INTO " + tableName + " (" 
+                     + remoteHostField + ", " + userField + ", "
+                     + timestampField +", " + queryField + ", "
+                     + statusField + ", " + bytesField 
+                     + ") VALUES(?, ?, ?, ?, ?, ?)");
+        } else if (pattern.equals("combined")) {
+                ps = conn.prepareStatement
+                    ("INSERT INTO " + tableName + " (" 
+                     + remoteHostField + ", " + userField + ", "
+                     + timestampField + ", " + queryField + ", " 
+                     + statusField + ", " + bytesField + ", " 
+                     + virtualHostField + ", " + methodField + ", "
+                     + refererField + ", " + userAgentField
+                     + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        }
+    }
+
+    /**
+     * Close the specified database connection.
+     *
+     * @param dbConnection The connection to be closed
+     */
+    protected void close() {
+
+        // Do nothing if the database connection is already closed
+        if (conn == null)
+            return;
+
+        // Close our prepared statements (if any)
+        try {
+            ps.close();
+        } catch (Throwable f) {
+            ;
+        }
+        this.ps = null;
+
+
+
+        // Close this database connection, and log any errors
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            log(sm.getString("jdbcAccessLogValeve.close"), e); // Just log it here            
+        } finally {
+           this.conn = null;
+        }
+
+    }
     /**
      * Invoked by Tomcat on startup. The database connection is set here.
      * 
@@ -553,35 +699,7 @@ public final class JDBCAccessLogValve
         started = true;
 
         try {
-            Class.forName(driverName).newInstance(); 
-        } catch (ClassNotFoundException e) {
-            throw new LifecycleException(e);
-        } catch (InstantiationException e) {
-            throw new LifecycleException(e);
-        } catch (IllegalAccessException e) {
-            throw new LifecycleException(e);
-        }
-        Properties info = new Properties();
-        info.setProperty("autoReconnect", "true");
-        try {
-            conn = DriverManager.getConnection(connectionURL, info);
-            if (pattern.equals("common")) {
-                ps = conn.prepareStatement
-                    ("INSERT INTO " + tableName + " (" 
-                     + remoteHostField + ", " + userField + ", "
-                     + timestampField +", " + queryField + ", "
-                     + statusField + ", " + bytesField 
-                     + ") VALUES(?, ?, ?, ?, ?, ?)");
-            } else if (pattern.equals("combined")) {
-                ps = conn.prepareStatement
-                    ("INSERT INTO " + tableName + " (" 
-                     + remoteHostField + ", " + userField + ", "
-                     + timestampField + ", " + queryField + ", " 
-                     + statusField + ", " + bytesField + ", " 
-                     + virtualHostField + ", " + methodField + ", "
-                     + refererField + ", " + userAgentField
-                     + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            }
+            open() ;        
         } catch (SQLException e) {
             throw new LifecycleException(e);
         }
@@ -602,16 +720,9 @@ public final class JDBCAccessLogValve
                 (sm.getString("accessLogValve.notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
-
-        try {
-            if (ps != null)
-                ps.close();
-            if (conn != null)
-                conn.close();
-    	} catch (SQLException e) {
-            throw new LifecycleException(e);	
-        }
-
+        
+        close() ;
+    	
     }
 
 
@@ -623,5 +734,50 @@ public final class JDBCAccessLogValve
         return currentTimeMillis;
     }
 
+    /**
+     * Log a message on the Logger associated with our Container (if any)
+     *
+     * @param message Message to be logged
+     */
+    protected void log(String message) {
+
+        Logger logger = null;
+        String name = null;
+        if (container != null) {
+            logger = container.getLogger();
+            name = container.getName();
+        }
+
+        if (logger != null) {
+            logger.log(connectionURL+"[" + name + "]: " + message);
+        } else {
+            System.out.println(connectionURL+"[" + name + "]: " + message);
+        }
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any)
+     *
+     * @param message Message to be logged
+     * @param throwable Associated exception
+     */
+    protected void log(String message, Throwable throwable) {
+
+        Logger logger = null;
+        String name = null;
+        if (container != null) {
+            logger = container.getLogger();
+            name = container.getName();
+        }
+
+        if (logger != null) {
+            logger.log(connectionURL+"[" + name + "]: " + message, throwable);
+        } else {
+            System.out.println(connectionURL+"[" + name + "]: " + message);
+            throwable.printStackTrace(System.out);
+        }
+    }
 
 }
