@@ -35,4 +35,4 @@ wish to be replicated
 	pero:
 		Why different defaults from notifyListenersOnReplication at SimpleTcpCluster and DeltaManager exists?
 COMPLETED
-
+10. Add single sign on support
