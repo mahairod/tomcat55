@@ -110,7 +110,31 @@ public final class SSIFsize implements SSICommand {
 	}
     }
 
+    public String repeat( char aChar, int numChars ) {
+	if ( numChars < 0 ) {
+	    throw new IllegalArgumentException("Num chars can't be negative");
+	}
+	StringBuffer buf = new StringBuffer();
+	for ( int i=0; i < numChars; i++ ) {
+	    buf.append( aChar );
+	}
+	return buf.toString();
+    }
+
+    public String padLeft( String str, int maxChars ) {
+	String result = str;
+	int charsToAdd = maxChars - str.length();
+	if ( charsToAdd > 0 ) {
+	    result = repeat( ' ', charsToAdd ) + str;
+	}
+	return result;
+    }
+
+
+
+
     //We try to mimick Apache here, as we do everywhere
+    //All the 'magic' numbers are from the util_script.c Apache source file.
     protected String formatSize(long size, String format) {
         String retString = "";
 
@@ -119,16 +143,20 @@ public final class SSIFsize implements SSICommand {
 	    retString = decimalFormat.format( size );
         } else {
 	    if ( size == 0 ) {
-		retString = " 0k";
+		retString = "0k";
             } else if ( size < ONE_KILOBYTE ) {
-		retString = " 1k";
+		retString = "1k";
 	    } else if ( size < ONE_MEGABYTE ) {
-		DecimalFormat decimalFormat = new DecimalFormat(" 0k");
-		retString = decimalFormat.format( size  / (double) ONE_KILOBYTE );
-            } else {
-		DecimalFormat decimalFormat = new DecimalFormat(" #,##0.0M");
+		retString = Long.toString( (size + 512) / ONE_KILOBYTE );
+		retString += "k";
+            } else if ( size  < 99 * ONE_MEGABYTE ) {
+		DecimalFormat decimalFormat = new DecimalFormat("0.0M");
 		retString = decimalFormat.format( size  / (double) ONE_MEGABYTE );
+	    } else {
+		retString = Long.toString( (size + ( 529 * ONE_KILOBYTE) ) / ONE_MEGABYTE );
+		retString += "M";
 	    }
+	    retString = padLeft( retString, 5 );
         }
 
         return retString;
