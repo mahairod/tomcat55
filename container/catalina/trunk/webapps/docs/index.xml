@@ -9,6 +9,7 @@
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
     <author email="remm@apache.org">Remy Maucherat</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>Documentation Index</title>
   </properties>
 
@@ -91,6 +92,8 @@ Tomcat 5, and using many of the Tomcat features.</p>
     Configuring the default servlet and customizing directory listings.</li>
 <li><a href="cluster-howto.html"><strong>Tomcat Clustering</strong></a> -
     Enable session replication in a Tomcat environment.</li>
+<li><a href="balancer-howto.html"><strong>Balancer</strong></a> -
+    Configuring, using, and extending the load balancer application.</li>
 
 </ol>
 
