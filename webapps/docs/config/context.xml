@@ -165,7 +165,8 @@
         changes, and automatically reload the web application if a change
         is detected.  This feature is very useful during application
         development, but it requires significant runtime overhead and is
-        not recommended for use on deployed production applications.  You
+        not recommended for use on deployed production applications.  That's
+        why the default setting for this attribute is <i>false</i>.  You
         can use the <a href="../manager-howto.html">Manager</a> web
         application, however, to trigger reloads of deployed applications
         on demand.</p>
