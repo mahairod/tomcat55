@@ -767,13 +767,15 @@ public class DeltaManager
    
                    byte[] data = unloadDeltaRequest(deltaRequest);
                    msg = new SessionMessage(name, SessionMessage.EVT_SESSION_DELTA,
-                                            data, sessionId);
+                                            data, sessionId,
+                                            sessionId+System.currentTimeMillis());
                    session.resetDeltaRequest();
                } else if ( !session.isPrimarySession() ) {
                    msg = new SessionMessage(getName(),
                                          SessionMessage.EVT_SESSION_ACCESSED,
                                          null,
-                                         sessionId);
+                                         sessionId,
+                                         sessionId+System.currentTimeMillis());
                }
                session.setPrimarySession(true);
                //check to see if we need to send out an access message
@@ -783,7 +785,7 @@ public class DeltaManager
                        msg = new SessionMessage(getName(),
                                              SessionMessage.EVT_SESSION_ACCESSED,
                                              null,
-                                             sessionId);
+                                             sessionId+System.currentTimeMillis());
                    }
                    
                }

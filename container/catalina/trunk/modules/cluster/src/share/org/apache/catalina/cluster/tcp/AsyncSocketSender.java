@@ -34,12 +34,12 @@ public class AsyncSocketSender implements IDataSender {
     private SmartQueue queue = new SmartQueue();
     private boolean suspect;
     
+    private QueueThread queueThread = null;
+    
     public AsyncSocketSender(InetAddress host, int port)  {
         this.address = host;
         this.port = port;
-        QueueThread t = new QueueThread(this);
-        t.setDaemon(true);
-        t.start();
+        checkThread();
         log.info("Started async sender thread for TCP replication.");
     }
 
@@ -54,6 +54,16 @@ public class AsyncSocketSender implements IDataSender {
     public void connect() throws java.io.IOException  {
         sc = new Socket(getAddress(),getPort());
         isSocketConnected = true;
+        checkThread();
+        
+    }
+    
+    protected void checkThread() {
+        if ( queueThread == null ) {
+            queueThread = new QueueThread(this);
+            queueThread.setDaemon(true);
+            queueThread.start();
+        }
     }
 
     public void disconnect()  {
@@ -63,6 +73,11 @@ public class AsyncSocketSender implements IDataSender {
         }catch ( Exception x)
         {}
         isSocketConnected = false;
+        if ( queueThread != null ) {
+            queueThread.stopRunning();
+            queueThread = null;
+        }
+        
     }
 
     public boolean isConnected() {
@@ -112,15 +127,20 @@ public class AsyncSocketSender implements IDataSender {
     
     private class QueueThread extends Thread {
         AsyncSocketSender sender;
+        private boolean keepRunning = true;
 
         public QueueThread(AsyncSocketSender sender) {
             this.sender = sender;
             setName("Cluster-AsyncSocketSender-"+(threadCounter++));
         }
         
+        public void stopRunning() {
+            keepRunning = false;
+        }
+        
         public void run() {
-            while (true) {
-                SmartQueue.SmartEntry entry = sender.queue.remove();
+            while (keepRunning) {
+                SmartQueue.SmartEntry entry = sender.queue.remove(5000);
                 if ( entry != null ) {
                     try {
                         byte[] data = (byte[]) entry.getValue();
