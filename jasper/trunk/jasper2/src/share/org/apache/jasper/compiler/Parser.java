@@ -632,8 +632,8 @@ public class Parser {
 
         Node includeNode = new Node.IncludeAction( attrs, start, parent );
         
-        parseOptionalBody( includeNode, "jsp:include", 
-            JAVAX_BODY_CONTENT_PARAM );
+        parseOptionalBody(includeNode, "jsp:include", 
+			  JAVAX_BODY_CONTENT_PARAM);
     }
 
     /*
@@ -646,8 +646,26 @@ public class Parser {
 
         Node forwardNode = new Node.ForwardAction( attrs, start, parent );
         
-        parseOptionalBody( forwardNode, "jsp:forward", 
-            JAVAX_BODY_CONTENT_PARAM );
+        parseOptionalBody(forwardNode, "jsp:forward",
+			  JAVAX_BODY_CONTENT_PARAM);
+    }
+
+    private void parseInvoke(Node parent) throws JasperException {
+	Attributes attrs = parseAttributes();
+	reader.skipSpaces();
+
+        Node invokeNode = new Node.InvokeAction(attrs, start, parent);
+        
+        parseOptionalBody(invokeNode, "jsp:invoke", JAVAX_BODY_CONTENT_PARAM);
+    }
+
+    private void parseDoBody(Node parent) throws JasperException {
+	Attributes attrs = parseAttributes();
+	reader.skipSpaces();
+
+        Node doBodyNode = new Node.DoBodyAction(attrs, start, parent);
+        
+        parseOptionalBody(doBodyNode, "jsp:doBody", JAVAX_BODY_CONTENT_PARAM);
     }
 
     /*
@@ -920,6 +938,8 @@ public class Parser {
     /*
      * StandardAction ::=   'include'       StdActionContent
      *                    | 'forward'       StdActionContent
+     *                    | 'invoke'        StdActionContent
+     *                    | 'doBody'        StdActionContent
      *                    | 'getProperty'   StdActionContent
      *                    | 'setProperty'   StdActionContent
      *                    | 'useBean'       StdActionContent
@@ -932,6 +952,10 @@ public class Parser {
 	    parseInclude(parent);
 	} else if (reader.matches("forward")) {
 	    parseForward(parent);
+	} else if (reader.matches("invoke")) {
+	    parseInvoke(parent);
+	} else if (reader.matches("doBody")) {
+	    parseDoBody(parent);
 	} else if (reader.matches("getProperty")) {
 	    parseGetProperty(parent);
 	} else if (reader.matches("setProperty")) {
