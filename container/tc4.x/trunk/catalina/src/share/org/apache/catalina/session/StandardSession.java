@@ -300,7 +300,7 @@ class StandardSession
     /**
      * The current accessed time for this session.
      */
-    private long thisAccessedTime = creationTime;
+    private long lastUsedTime = creationTime;
 
 
     // ----------------------------------------------------- Session Properties
@@ -342,7 +342,7 @@ class StandardSession
 
         this.creationTime = time;
         this.lastAccessedTime = time;
-        this.thisAccessedTime = time;
+        this.lastUsedTime = time;
 
     }
 
@@ -439,6 +439,19 @@ class StandardSession
     public long getLastAccessedTime() {
 
         return (this.lastAccessedTime);
+
+    }
+
+
+    /**
+     * Return the last time a request was recieved associated with this
+     * session, as the number of milliseconds since midnight, January 1, 1970
+     * GMT.  Actions that your application takes, such as getting or setting
+     * a value associated with the session, do not affect the access time.
+     */
+    public long getLastUsedTime() {
+
+        return (this.lastUsedTime);
 
     }
 
@@ -579,8 +592,8 @@ class StandardSession
     public void access() {
 
         this.isNew = false;
-        this.lastAccessedTime = this.thisAccessedTime;
-        this.thisAccessedTime = System.currentTimeMillis();
+        this.lastAccessedTime = this.lastUsedTime;
+        this.lastUsedTime = System.currentTimeMillis();
 
     }
 
@@ -772,6 +785,7 @@ class StandardSession
         expiring = false;
         id = null;
         lastAccessedTime = 0L;
+        lastUsedTime = 0L;
         maxInactiveInterval = -1;
         notes.clear();
         setPrincipal(null);
@@ -1372,7 +1386,7 @@ class StandardSession
         maxInactiveInterval = ((Integer) stream.readObject()).intValue();
         isNew = ((Boolean) stream.readObject()).booleanValue();
         isValid = ((Boolean) stream.readObject()).booleanValue();
-        thisAccessedTime = ((Long) stream.readObject()).longValue();
+        lastUsedTime = ((Long) stream.readObject()).longValue();
         principal = null;        // Transient only
         //        setId((String) stream.readObject());
         id = (String) stream.readObject();
@@ -1429,7 +1443,7 @@ class StandardSession
         stream.writeObject(new Integer(maxInactiveInterval));
         stream.writeObject(new Boolean(isNew));
         stream.writeObject(new Boolean(isValid));
-        stream.writeObject(new Long(thisAccessedTime));
+        stream.writeObject(new Long(lastUsedTime));
         stream.writeObject(id);
         if (debug >= 2)
             log("writeObject() storing session " + id);

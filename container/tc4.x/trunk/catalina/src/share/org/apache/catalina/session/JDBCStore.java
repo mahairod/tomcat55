@@ -201,6 +201,11 @@ public class JDBCStore
      */
     protected PreparedStatement preparedLoadSql = null;
 
+    /**
+     * Variable to hold the <code>processExpires()</code> prepared statement.
+     */
+    protected PreparedStatement preparedExpiresSql = null;
+
     // ------------------------------------------------------------- Properties
 
     /**
@@ -630,6 +635,11 @@ public class JDBCStore
      * @exception IOException if an input/output error occurs
      */
     public void remove(String id) throws IOException {
+
+        if (id == null) {
+            return;
+        }
+
         String removeSql =
             "DELETE FROM " + sessionTable + " WHERE " + sessionIdCol +
             " = ?  AND " + sessionAppCol + " = ?";
@@ -742,7 +752,7 @@ public class JDBCStore
                 preparedSaveSql.setBinaryStream(3, in, size);
                 preparedSaveSql.setString(4, session.isValid()?"1":"0");
                 preparedSaveSql.setInt(5, session.getMaxInactiveInterval());
-                preparedSaveSql.setLong(6, session.getLastAccessedTime());
+                preparedSaveSql.setLong(6, ((StandardSession)session).getLastUsedTime());
                 preparedSaveSql.execute();
             } catch(SQLException e) {
                 log(sm.getString(getStoreName()+".SQLException", e));
@@ -767,6 +777,101 @@ public class JDBCStore
     }
 
     // --------------------------------------------------------- Protected Methods
+
+    /**
+     * Called by our background reaper thread to check if Sessions
+     * saved in our store are subject of being expired. If so expire
+     * the Session and remove it from the Store.
+     *
+     */
+    protected void processExpires() {
+
+        if(!started) {
+            return;
+        }
+
+        String expiresSql =
+            "SELECT " + sessionIdCol + " FROM " + sessionTable +
+            " WHERE " + sessionAppCol + " = ? AND ? > (" +
+            sessionLastAccessedCol + " + (" + sessionMaxInactiveCol +
+            "*1000))";
+
+        ResultSet rst = null;
+        String keys[] = null;
+        long timeNow = System.currentTimeMillis();
+
+        synchronized(this) {
+            Connection _conn = getConnection();
+
+            if(_conn == null) {
+                return;
+            }
+
+            try {
+                if(preparedExpiresSql == null) {
+                    preparedExpiresSql = _conn.prepareStatement(expiresSql);
+                }
+
+                preparedExpiresSql.setString(1, getName());
+                preparedExpiresSql.setLong(2,timeNow);
+                rst = preparedExpiresSql.executeQuery();
+                ArrayList tmpkeys = new ArrayList();
+                if (rst != null) {
+                    while(rst.next()) {
+                        tmpkeys.add(rst.getString(1));
+                    }
+                }
+                keys = (String[]) tmpkeys.toArray(new String[tmpkeys.size()]);
+            } catch(SQLException e) {
+                log(sm.getString(getStoreName()+".SQLException", e));
+                keys = new String[0];
+            } finally {
+                try {
+                    if(rst != null) {
+                        rst.close();
+                    }
+                } catch(SQLException e) {
+                    ;
+                }
+
+                release(_conn);
+            }
+        }
+
+        for (int i = 0; i < keys.length; i++) {
+            try {
+                StandardSession session = (StandardSession) load(keys[i]);
+                if (session == null) {
+                    continue;
+                }
+                if (!session.isValid()) {
+                    continue;
+                }
+                int maxInactiveInterval = session.getMaxInactiveInterval();
+                if (maxInactiveInterval < 0) {
+                    continue;
+                }
+                int timeIdle = // Truncate, do not round up
+                    (int) ((timeNow - ((StandardSession)session).getLastUsedTime()) / 1000L);
+                if (timeIdle >= maxInactiveInterval) {
+                    if ( ( (PersistentManagerBase) manager).isLoaded( keys[i] )) {
+                        // recycle old backup session
+                        session.recycle();
+                    } else {
+                        // expire swapped out session
+                        session.expire();
+                    }
+                    remove(session.getId());
+                }
+            } catch (IOException e) {
+                log (e.toString());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                log (e.toString());
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * Check the connection associated with this store, if it's
@@ -882,6 +987,14 @@ public class JDBCStore
                 }
             }
 
+            if( preparedExpiresSql != null ) {
+                try {
+                    preparedExpiresSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
+            }
+
             try {
                 conn.close();
             } catch (SQLException e) {
@@ -894,6 +1007,7 @@ public class JDBCStore
             this.preparedClearSql = null;
             this.preparedRemoveSql = null;
             this.preparedLoadSql = null;
+            this.preparedExpiresSql = null;
             this.conn = null;
         }
     }

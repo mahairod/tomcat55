@@ -786,7 +786,7 @@ public class StandardManager
             if (maxInactiveInterval < 0)
                 continue;
             int timeIdle = // Truncate, do not round up
-                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                (int) ((timeNow - session.getLastUsedTime()) / 1000L);
             if (timeIdle >= maxInactiveInterval) {
                 try {
                     expiredSessions++;

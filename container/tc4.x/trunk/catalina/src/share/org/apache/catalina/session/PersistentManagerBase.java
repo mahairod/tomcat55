@@ -67,6 +67,7 @@ package org.apache.catalina.session;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Hashtable;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
@@ -133,6 +134,20 @@ public abstract class PersistentManagerBase
      */
     private boolean started = false;
 
+
+    /**
+     * Map of Sessions which are not in swap but have
+     * been requested at least once.
+     *
+     * This is to improve performance when a JSESSIONID
+     * is sent by the client but no longer exists as a
+     * session so that the Store doesn't get banged on
+     * multiple times per request.
+     *
+     * This is a Hashtable to ensure use is thread safe.
+     *
+     */
+    private Hashtable sessionSwapIgnore = new Hashtable();
 
     /**
      * The background thread.
@@ -691,6 +706,10 @@ public abstract class PersistentManagerBase
         if (store == null)
             return null;
 
+        if (sessionSwapIgnore.contains(id)) {
+            return null;
+        }
+
         Session session = null;
         try {
             session = store.load(id);
@@ -700,14 +719,17 @@ public abstract class PersistentManagerBase
                 (sm.getString("persistentManager.deserializeError", id, e));
         }
 
-        if (session == null)
+        if (session == null) {
+            sessionSwapIgnore.put(id,id);
             return (null);
+        }
 
         if (!session.isValid()
                 || isSessionStale(session, System.currentTimeMillis())) {
             log("session swapped in is invalid or expired");
             session.expire();
             store.remove(id);
+            sessionSwapIgnore.put(id,id);
             return (null);
         }
 
@@ -762,6 +784,7 @@ public abstract class PersistentManagerBase
 
         try {
             store.save(session);
+            sessionSwapIgnore.remove(session.getId());
         } catch (IOException e) {
             log(sm.getString
                 ("persistentManager.serializeError", session.getId(), e));
@@ -938,8 +961,9 @@ public abstract class PersistentManagerBase
 
         int maxInactiveInterval = session.getMaxInactiveInterval();
         if (maxInactiveInterval >= 0) {
+            long lastAccessed = ((StandardSession)session).getLastUsedTime();
             int timeIdle = // Truncate, do not round up
-                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                (int) ((timeNow - lastAccessed) / 1000L);
             if (timeIdle >= maxInactiveInterval)
                 return true;
         }
@@ -994,8 +1018,9 @@ public abstract class PersistentManagerBase
                 StandardSession session = (StandardSession) sessions[i];
                 if (!session.isValid())
                     continue;
+                long lastAccessed = ((StandardSession)session).getLastUsedTime();
                 int timeIdle = // Truncate, do not round up
-                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                    (int) ((timeNow - lastAccessed) / 1000L);
                 if (timeIdle > maxIdleSwap && timeIdle > minIdleSwap) {
                     if (debug > 1)
                         log(sm.getString
@@ -1036,15 +1061,16 @@ public abstract class PersistentManagerBase
         long timeNow = System.currentTimeMillis();
 
         for (int i = 0; i < sessions.length && toswap > 0; i++) {
+            StandardSession session = (StandardSession)sessions[i];
             int timeIdle = // Truncate, do not round up
-                (int) ((timeNow - sessions[i].getLastAccessedTime()) / 1000L);
+                (int) ((timeNow - session.getLastUsedTime()) / 1000L);
             if (timeIdle > minIdleSwap) {
                 if(debug > 1)
                     log(sm.getString
                         ("persistentManager.swapTooManyActive",
-                         sessions[i].getId(), new Integer(timeIdle)));
+                         session.getId(), new Integer(timeIdle)));
                 try {
-                    swapOut(sessions[i]);
+                    swapOut(session);
                 } catch (IOException e) {
                     ;   // This is logged in writeSession()
                 }
@@ -1073,7 +1099,7 @@ public abstract class PersistentManagerBase
                 if (!session.isValid())
                     continue;
                 int timeIdle = // Truncate, do not round up
-                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                    (int) ((timeNow - session.getLastUsedTime()) / 1000L);
                 if (timeIdle > maxIdleBackup) {
                     if (debug > 1)
                         log(sm.getString
@@ -1160,6 +1186,7 @@ public abstract class PersistentManagerBase
             threadSleep();
             processExpires();
             processPersistenceChecks();
+            sessionSwapIgnore.clear();
         }
 
     }
