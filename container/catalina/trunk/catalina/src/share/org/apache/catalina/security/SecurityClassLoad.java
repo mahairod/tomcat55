@@ -117,55 +117,55 @@ public final class SecurityClassLoad {
     
     private final static void loadCoyotePackage(ClassLoader loader)
         throws Exception {
-        String basePackage = "org.apache.coyote.tomcat5.";
+        String basePackage = "org.apache.catalina.connector.";
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetAttributePrivilegedAction");
+             "RequestFacade$GetAttributePrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetParameterMapPrivilegedAction");
+             "RequestFacade$GetParameterMapPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetRequestDispatcherPrivilegedAction");
+             "RequestFacade$GetRequestDispatcherPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetParameterPrivilegedAction");
+             "RequestFacade$GetParameterPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetParameterNamesPrivilegedAction");
+             "RequestFacade$GetParameterNamesPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetParameterValuePrivilegedAction");
+             "RequestFacade$GetParameterValuePrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetCharacterEncodingPrivilegedAction");
+             "RequestFacade$GetCharacterEncodingPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetHeadersPrivilegedAction");
+             "RequestFacade$GetHeadersPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetHeaderNamesPrivilegedAction");  
+             "RequestFacade$GetHeaderNamesPrivilegedAction");  
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetCookiesPrivilegedAction");
+             "RequestFacade$GetCookiesPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetLocalePrivilegedAction");
+             "RequestFacade$GetLocalePrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetLocalesPrivilegedAction");
+             "RequestFacade$GetLocalesPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteResponseFacade$SetContentTypePrivilegedAction");
+             "ResponseFacade$SetContentTypePrivilegedAction");
         loader.loadClass
             (basePackage + 
-             "CoyoteResponseFacade$DateHeaderPrivilegedAction");
+             "ResponseFacade$DateHeaderPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteRequestFacade$GetSessionPrivilegedAction");
+             "RequestFacade$GetSessionPrivilegedAction");
         loader.loadClass
             (basePackage +
-             "CoyoteResponseFacade$1");
+             "ResponseFacade$1");
         loader.loadClass
             (basePackage +
              "OutputBuffer$1");
@@ -189,13 +189,13 @@ public final class SecurityClassLoad {
              "InputBuffer$1");
         loader.loadClass
             (basePackage +
-             "CoyoteResponse$1");
+             "Response$1");
         loader.loadClass
             (basePackage +
-             "CoyoteResponse$2");
+             "Response$2");
         loader.loadClass
             (basePackage +
-             "CoyoteResponse$3");
+             "Response$3");
     }
 
     private final static void loadJkPackage(ClassLoader loader)
