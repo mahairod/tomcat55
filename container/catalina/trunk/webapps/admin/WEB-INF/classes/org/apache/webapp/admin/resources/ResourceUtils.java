@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collections;
 
+import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -205,20 +206,8 @@ public class ResourceUtils {
                 mserver.getAttribute(oname, "driverClassName");
                 results.add(oname.toString());
             } catch (AttributeNotFoundException ex) {
-                // if context resource definition doesn't exist
-                // get the global resource definition
-                if (resourcetype.equals("Context")) {
-                    rname = new ObjectName( domain + RESOURCE_TYPE + 
-                        GLOBAL_TYPE + ",class=" + DATASOURCE_CLASS + ",*");
-                    Iterator globalIter = (mserver.queryMBeans(rname, null).iterator());
-                    while (globalIter.hasNext()) {
-                        ObjectInstance globalInstance = 
-                            (ObjectInstance) globalIter.next();
-                        ObjectName globalOname = globalInstance.getObjectName();
-                        mserver.getAttribute(globalOname, "driverClassName");
-                        results.add(globalOname.toString());
-                    }
-                }
+                mserver.setAttribute(oname, 
+                    new Attribute("driverClassName", ""));
             }
         }
 
