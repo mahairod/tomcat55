@@ -310,7 +310,9 @@ public final class CGIServlet extends HttpServlet {
      */
     private String cgiPathPrefix = null;
 
-
+    /** the command to use with the script */
+    private String cgiExecutable = "perl";
+    
     /**
      * Sets instance variables.
      * <P>
@@ -353,6 +355,11 @@ public final class CGIServlet extends HttpServlet {
         }
         log("init: loglevel set to " + debug);
 
+        value = getServletConfig().getInitParameter("executable");
+        if (value != null) {
+            cgiExecutable = value;
+        }
+        
         // Identify the internal container resources we need
         //Wrapper wrapper = (Wrapper) getServletConfig();
         //context = (Context) wrapper.getParent();
@@ -626,10 +633,11 @@ public final class CGIServlet extends HttpServlet {
             cgi.run();
         }
 
+        if (!cgiEnv.isValid()) {
+            res.setStatus(404);
+        }
 
-        //REMIND: change to debug method or something
-        if ((req.getParameter("X_TOMCAT_CGI_DEBUG") != null)
-            || (!cgiEnv.isValid())) {
+        if (debug >= 10) {
             try {
                 ServletOutputStream out = res.getOutputStream();
                 out.println("<HTML><HEAD><TITLE>$Name$</TITLE></HEAD>");
@@ -638,7 +646,6 @@ public final class CGIServlet extends HttpServlet {
                 if (cgiEnv.isValid()) {
                     out.println(cgiEnv.toString());
                 } else {
-                    res.setStatus(404);
                     out.println("<H3>");
                     out.println("CGI script not found or not specified.");
                     out.println("</H3>");
@@ -1543,19 +1550,34 @@ public final class CGIServlet extends HttpServlet {
 
             //create query arguments
             Enumeration paramNames = params.keys();
-            StringBuffer cmdAndArgs = new StringBuffer("\"" + command + "\"");
+            StringBuffer cmdAndArgs = new StringBuffer();
+            if (command.indexOf(" ") < 0) {
+                cmdAndArgs.append(command);
+            } else {
+                // Spaces used as delimiter, so need to use quotes
+                cmdAndArgs.append("\"");
+                cmdAndArgs.append(command);
+                cmdAndArgs.append("\"");
+            }
+            
             if (paramNames != null && paramNames.hasMoreElements()) {
                 cmdAndArgs.append(" ");
                 while (paramNames.hasMoreElements()) {
                     String k = (String) paramNames.nextElement();
                     String v = params.get(k).toString();
                     if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
-                        cmdAndArgs.append("\"");
-                        cmdAndArgs.append(k);
-                        cmdAndArgs.append("=");
+                        StringBuffer arg = new StringBuffer(k);
+                        arg.append("=");
                         v = java.net.URLEncoder.encode(v);
-                        cmdAndArgs.append(v);
-                        cmdAndArgs.append("\"");
+                        arg.append(v);
+                        if (arg.indexOf(" ") < 0) {
+                            cmdAndArgs.append(arg);
+                        } else {
+                            // Spaces used as delimiter, so need to use quotes
+                            cmdAndArgs.append("\"");
+                            cmdAndArgs.append(arg);
+                            cmdAndArgs.append("\"");
+                        }
                         cmdAndArgs.append(" ");
                     }
                 }
@@ -1569,9 +1591,10 @@ public final class CGIServlet extends HttpServlet {
             }*/
 
         //if (command.endsWith(".pl") || command.endsWith(".cgi")) {
-            StringBuffer perlCommand = new StringBuffer("perl ");
-            perlCommand.append(cmdAndArgs.toString());
-            cmdAndArgs = perlCommand;
+            StringBuffer command = new StringBuffer(cgiExecutable);
+            command.append(" ");
+            command.append(cmdAndArgs.toString());
+            cmdAndArgs = command;
         //}
 
             rt = Runtime.getRuntime();
