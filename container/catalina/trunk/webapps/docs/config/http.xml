@@ -57,6 +57,13 @@
 
   <attributes>
 
+    <attribute name="address" required="false">
+      <p>For servers with more than one IP address, this attribute
+      specifies which address will be used for listening on the specified
+      port.  By default, this port will be used on all IP addresses
+      associated with the server.</p>
+    </attribute>
+
     <attribute name="allowTrace" required="false">
       <p>A boolean value which can be used to enable or disable the TRACE
       HTTP method. If not specified, this attribute is set to false.</p>
@@ -136,13 +143,6 @@
       all possible request processing threads are in use.  Any requests
       received when the queue is full will be refused.  The default
       value is 10.</p>
-    </attribute>
-
-    <attribute name="address" required="false">
-      <p>For servers with more than one IP address, this attribute
-      specifies which address will be used for listening on the specified
-      port.  By default, this port will be used on all IP addresses
-      associated with the server.</p>
     </attribute>
 
     <attribute name="bufferSize" required="false">
