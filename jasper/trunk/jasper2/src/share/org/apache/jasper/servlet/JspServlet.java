@@ -182,6 +182,11 @@ public class JspServlet extends HttpServlet {
         if (value.equals("true")) {
             return (true);             // ?jsp_precompile=true
         } else if (value.equals("false")) {
+	    // Spec says if jsp_precompile=false, the request should not
+	    // be delivered to the JSP page; the easiest way to implement
+	    // this is to set the flag to true, and precompile the page anyway.
+	    // This still conforms to the spec, since it says the
+	    // precompilation request can be ignored.
             return (true);             // ?jsp_precompile=false
         } else {
             throw new ServletException("Cannot have request parameter " +
