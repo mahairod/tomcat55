@@ -605,6 +605,7 @@ public class StandardSession
         this.lastAccessedTime = this.thisAccessedTime;
         this.thisAccessedTime = System.currentTimeMillis();
 
+	evaluateIfValid();
     }
 
 
@@ -1501,6 +1502,28 @@ public class StandardSession
                 if (debug >= 2)
                     log("  storing attribute '" + saveNames.get(i) +
                         "' with value NOT_SERIALIZED");
+            }
+        }
+
+    }
+
+
+    private void evaluateIfValid() {
+        /*
+	 * If this session has expired or is in the process of expiring or
+	 * will never expire, return
+	 */
+        if (!this.isValid || expiring || maxInactiveInterval < 0)
+            return;
+
+        long timeNow = System.currentTimeMillis();
+        int timeIdle =  (int) ((timeNow - lastAccessedTime) / 1000L);
+
+        if (timeIdle >= maxInactiveInterval) {
+            try {
+                expire();
+            } catch (Throwable t) {
+                log(sm.getString("standardSession.expireException"), t);
             }
         }
 
