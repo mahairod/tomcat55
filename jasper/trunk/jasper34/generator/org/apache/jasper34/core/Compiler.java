@@ -56,13 +56,9 @@
  */ 
 package org.apache.jasper34.core;
 
-import java.util.Hashtable;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.util.*;
+import java.io.*;
+import java.net.*;
 
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.parser.*;
@@ -89,6 +85,7 @@ import org.apache.tomcat.util.log.*;
  */
 public class Compiler {
     protected ContainerLiaison containerL;
+    protected int debug=0;
     
     /**
      */
@@ -96,6 +93,10 @@ public class Compiler {
 	this.containerL=liaison;
     }
 
+    public void setDebug( int d ) {
+	debug=d;
+    }
+    
     // -------------------- Conversion methods --------------------
 
     /** 
@@ -107,16 +108,12 @@ public class Compiler {
     public boolean jsp2java(JspPageInfo pageInfo)
         throws FileNotFoundException, JasperException, Exception 
     {
-	// assert pageInfo has valid mangler, jspFile
-
         String javaFileName = pageInfo.getMangler().getJavaFileName();
-        //pageInfo.setServletJavaFileName(javaFileName);
 
-        containerL.message("jsp.message.java_file_name_is",
-                          new Object[] { javaFileName },
-                          Log.DEBUG);
+	// XXX
+	if( debug > 0 )
+	    containerL.logKey("jsp.message.java_file_name_is",javaFileName );
 
-        
         
         // Need the encoding specified in the JSP 'page' directive for
         //  - reading the JSP page
@@ -146,7 +143,14 @@ public class Compiler {
         JspReader reader = JspReader.
 	    createJspReader(pageInfo.getJspFile(),containerL,jspEncoding);
 
-	OutputStreamWriter osw; 
+// 	PrintWriter pW =
+// 	    createPrintWriter( javaFileName, javaEncoding,
+// 			       containerL.getOptions().getJavaEncoding());
+	// make sure the directory is created
+	File javaFile=new File(javaFileName);
+	new File( javaFile.getParent()).mkdirs();
+	
+	OutputStreamWriter osw=null; 
 	try {
 	    osw = new OutputStreamWriter(
 		      new FileOutputStream(javaFileName),javaEncoding);
@@ -173,13 +177,10 @@ public class Compiler {
 					new Object[] { "UTF8" }));		
 	    }
 	}
-
+	//return new PrintWriter( osw );
 	pageInfo.setJavaEncoding( javaEncoding );
 	
 	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
-
-	//        ctxt.setReader(reader);
-	//        ctxt.setWriter(writer);
 
         ParseEventListener listener =
 	    new JspParseEventListener(containerL,
@@ -192,123 +193,97 @@ public class Compiler {
         p.parse();
         listener.endPageProcessing();
         writer.close();
+
+	if( debug > 0 ) {
+	    File f = new File( pageInfo.getMangler().getJavaFileName());
+	    containerL.log( "Created file : " + f +  " " + f.lastModified());
+	}
 	
 	return true;
     }
 
     
-    /** 
-     * Compile the jsp file from the current engine context
-     *
-     * @return true if the class file was outdated the jsp file
-     *         was recomp iled. 
-     */
-    public boolean compile(JspPageInfo pageInfo, JavaCompiler javac)
-        throws FileNotFoundException, JasperException, Exception 
+    public void prepareCompiler( JavaCompiler javac, JspPageInfo pageInfo)
     {
-	jsp2java( pageInfo );
-	return javac( pageInfo, javac );
-    }
-
-    public void prepareCompiler( JavaCompiler javac, Options options,
-				 JspPageInfo pageInfo)
-    {
-	String sep = System.getProperty("path.separator");
-	String classpath = containerL.getClassPath(); 
+	Options options=pageInfo.getOptions();
+	if( debug > 0 ) logCompileInfo( pageInfo );
+	
         javac.setEncoding(pageInfo.getJavaEncoding());
-        javac.setClasspath( System.getProperty("java.class.path")+ sep + 
-                            System.getProperty("tc_path_add") + sep +
-                            classpath + sep + containerL.getOutputDir());
+        javac.setClasspath( computeCompilerClassPath( pageInfo ) );
         javac.setOutputDir(containerL.getOutputDir());
         javac.setClassDebugInfo(pageInfo.getOptions().getClassDebugInfo());
+	javac.setCompilerPath(options.getJspCompilerPath());
+    }
 
-	String compilerPath = options.getJspCompilerPath();
-        if (compilerPath != null)
-            javac.setCompilerPath(compilerPath);
+    public void logCompileInfo( JspPageInfo pageInfo ) {
+	Options options=pageInfo.getOptions();
+	containerL.log( "CLASSPATH= " + computeCompilerClassPath( pageInfo) );
+	if( debug > 2) {
+	    containerL.log( "Encoding= " + pageInfo.getJavaEncoding() );
+	    containerL.log( "OutputDir= " + containerL.getOutputDir() );
+	}
+	containerL.log( "DebugInfp= " +
+			pageInfo.getOptions().getClassDebugInfo());
+	if( options.getJspCompilerPath()!=null )
+	    containerL.log( "CompilerPath= " + options.getJspCompilerPath()); 
+    }
 
+    static String CPSEP = System.getProperty("path.separator");
+    
+    public String computeCompilerClassPath( JspPageInfo pageInfo ) {
+	StringBuffer sb=new StringBuffer();
+	String cp=System.getProperty("java.class.path");
+	sb.append( cp );
+	cp=System.getProperty("tc_path_add");
+	if( cp!=null )
+	    sb.append( CPSEP ).append(cp);
+	cp=containerL.getClassPath();
+	if( cp!=null )
+	    sb.append( CPSEP ).append(cp);
+	cp=pageInfo.getOptions().getClassPath();
+	if( cp!=null )
+	    sb.append( CPSEP ).append(cp);
+
+	sb.append( CPSEP ).append(containerL.getOutputDir());
+	// XXX cache it in ContainerLiaison
+	return sb.toString();
+    }
+
+    
+    /** Create a compier based on our options
+     */
+    public JavaCompiler createJavaCompiler(JspPageInfo pageInfo) {
+	String javacName=pageInfo.getOptions().getJspCompilerPlugin();
+	JavaCompiler javaC=JavaCompiler.createJavaCompiler( containerL,
+							    javacName );
+	return javaC;
     }
     
-    public boolean javac(JspPageInfo pageInfo, String javacName)
-        throws FileNotFoundException, JasperException, Exception 
+    /** Create a compier using a certain plugin
+     */
+    public JavaCompiler createJavaCompiler(JspPageInfo pageInfo,
+					   String javacName)
     {
-	JavaCompiler javaC=null;
-	try {
-	    Class jspCompilerPlugin=Class.forName(javacName);
-	    javaC=JavaCompiler.createJavaCompiler( containerL,
-						   jspCompilerPlugin );
-	} catch( Exception ex ) {
-	    throw ex;
-	}
-	return javac( pageInfo, javaC );
+	JavaCompiler javaC=JavaCompiler.createJavaCompiler( containerL,
+							    javacName );
+	return javaC;
     }
+    
 
-
-    public boolean javac(JspPageInfo pageInfo, JavaCompiler javac)
-        throws FileNotFoundException, JasperException, Exception 
-    {
-	prepareCompiler( javac, pageInfo.getOptions(), pageInfo);
-        ByteArrayOutputStream out = new ByteArrayOutputStream (256);
-
-	prepareCompiler( javac, pageInfo.getOptions(), pageInfo );
-	javac.setMsgOutput(out);
-        /**
-         * Execute the compiler
-         */
-        boolean status = javac.compile(pageInfo.getMangler().getJavaFileName());
-
-        if (!containerL.getOptions().getKeepGenerated()) {
+    public void postCompile( JspPageInfo pageInfo ) {
+        if (!pageInfo.getOptions().getKeepGenerated()) {
             File javaFile = new File(pageInfo.getMangler().getJavaFileName());
             javaFile.delete();
         }
-    
-        if (status == false) {
-            String msg = out.toString ();
-            throw new JasperException(containerL.getString("jsp.error.unable.compile")
-                                      + msg);
-        }
-
-        String classFile = containerL.getOutputDir() + File.separatorChar;
-
-        String pkgName = pageInfo.getMangler().getPackageName();
-        containerL.message("jsp.message.package_name_is",
-                          new Object[] { (pkgName==null)?
-                                          "[default package]":pkgName },
-			   Log.DEBUG);
-
-	String className = pageInfo.getMangler().getClassName();
-        //pageInfo.setServletClassName(className);
-        containerL.message("jsp.message.class_name_is",
-                          new Object[] { className },
-                          Log.DEBUG);
-
-	String classFileName = pageInfo.getMangler().getClassFileName();
-        containerL.message("jsp.message.class_file_name_is",
-                          new Object[] { classFileName },
-                          Log.DEBUG);
-
-
-
-        if (pkgName != null && !pkgName.equals(""))
-            classFile = classFile + pkgName.replace('.', File.separatorChar) + 
-                File.separatorChar;
-        classFile = classFile + className + ".class";
-
-        if (!classFile.equals(classFileName)) {
-            File classFileObject = new File(classFile);
-            File myClassFileObject = new File(classFileName);
-            if (myClassFileObject.exists())
-                myClassFileObject.delete();
-            if (classFileObject.renameTo(myClassFileObject) == false)
-                throw new JasperException(containerL.getString("jsp.error.unable.rename",
-                                                              new Object[] { 
-                                                                  classFileObject, 
-                                                                  myClassFileObject
-                                                              }));
-        }
-
-        return true;
     }
 
+    /* To compile a page:
+        - createJavaCompiler
+	- prepareCompiler
+	- compiler.compile()
+	- postCompile
+	- report error ( javac.getCompilerMessage() )
+    */
 
     // XXX move to parser
     /**
@@ -379,7 +354,7 @@ public class Compiler {
 	    System.getProperty("tc_path_add") + sep +
 	    containerL.getOutputDir(),
             "-d", containerL.getOutputDir(),
-            pageInfo.getServletJavaFileName()
+            pageInfo.getMangler().getJavaFileName()
         };
 
         StringBuffer b = new StringBuffer();
@@ -388,9 +363,8 @@ public class Compiler {
             b.append(" ");
         }
 
-        containerL.message("jsp.message.compiling_with",
-                          new Object[] { b.toString() },
-                          Log.DEBUG);
+        if( debug > 0 )
+	    containerL.logKey("jsp.message.compiling_with",  b.toString() );
 	return b.toString();
     }
 
