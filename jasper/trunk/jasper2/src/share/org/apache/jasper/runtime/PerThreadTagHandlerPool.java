@@ -62,7 +62,6 @@
 package org.apache.jasper.runtime;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;

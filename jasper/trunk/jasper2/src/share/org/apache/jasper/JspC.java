@@ -81,8 +81,6 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.compiler.Compiler;
