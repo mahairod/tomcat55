@@ -215,7 +215,7 @@
   </tr>
 </table>
 
-
+<BR>
 <%-- Session Manager Properties table --%>
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr> <td>  <div class="table-title-text">  

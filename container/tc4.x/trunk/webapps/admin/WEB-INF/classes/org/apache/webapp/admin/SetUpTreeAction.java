@@ -148,7 +148,7 @@ public class SetUpTreeAction extends Action {
 
             ArrayList treeBuilders = new ArrayList(INIT_PLUGIN_MAX);
             int i = 0;
-            StringTokenizer st = new StringTokenizer(treeBuildersStr, ", ");
+            StringTokenizer st = new StringTokenizer(treeBuildersStr, ",");
             while (st.hasMoreTokens()) {
                 treeBuilders.add(st.nextToken().trim());
             }
