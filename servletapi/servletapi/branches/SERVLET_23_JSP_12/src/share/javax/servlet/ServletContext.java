@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
+import java.util.Set;
 
 
 /**
@@ -171,6 +172,16 @@ public interface ServletContext {
      */
 
     public String getMimeType(String file);
+    
+    /**
+    * Return all the paths to resources held in the web application. All paths are
+    * java.lang.String objects, begin with a leading /, and are relative to the root
+    * of the web application.
+    *@return an immutable set containing the paths
+    * @since Servlet 2.3
+    */
+    
+    public Set getResourcePaths();
     
     
 
