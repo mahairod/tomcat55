@@ -199,10 +199,28 @@ class Parser {
      * Note: JSP and XML spec does not allow while spaces around Eq.  It is
      * added to be backward compatible with Tomcat, and with other xml parsers.
      */
-    private boolean parseAttribute(AttributesImpl attrs) throws JasperException {
-	String name = parseName();
-	if (name == null)
+    private boolean parseAttribute(AttributesImpl attrs)
+	        throws JasperException {
+
+	// Get the qualified name
+	String qName = parseName();
+	if (qName == null)
 	    return false;
+
+	// Determine prefix and local name components
+	String localName = qName;
+	String uri = "";
+	int index = qName.indexOf(':');
+	if (index != -1) {
+	    String prefix = qName.substring(0, index);
+	    TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(prefix);
+	    if (tagLibInfo == null) {
+		err.jspError(reader.mark(),
+			     "jsp.error.attribute.invalidPrefix", prefix);
+	    }
+	    uri = tagLibInfo.getURI();
+	    localName = qName.substring(index+1);
+	}
 
  	reader.skipSpaces();
 	if (!reader.matches("="))
@@ -218,8 +236,8 @@ class Parser {
 	    watchString = "%>";
 	watchString = watchString + quote;
 	
-	String attr = parseAttributeValue(watchString);
-	attrs.addAttribute("", name, name, "CDATA", attr);
+	String attrValue = parseAttributeValue(watchString);
+	attrs.addAttribute(uri, localName, qName, "CDATA", attrValue);
 	return true;
     }
 
