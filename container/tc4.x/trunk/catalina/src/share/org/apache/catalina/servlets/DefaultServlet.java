@@ -1023,8 +1023,8 @@ public class DefaultServlet
             } catch (IllegalStateException e) {
                 // If it fails, we try to get a Writer instead if we're
                 // trying to serve a text file
-                if ( (contentType != null)
-                     && (contentType.startsWith("text")) ) {
+                if ( (contentType == null)
+                     || (contentType.startsWith("text")) ) {
                     writer = response.getWriter();
                 } else {
                     throw e;
