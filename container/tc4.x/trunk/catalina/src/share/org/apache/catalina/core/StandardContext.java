@@ -2370,7 +2370,7 @@ public class StandardContext
      * @exception IllegalStateException if the <code>reloadable</code>
      *  property is set to <code>false</code>.
      */
-    public void reload() {
+    public synchronized void reload() {
 
         // Make sure reloading is enabled
         //      if (!reloadable)
@@ -3298,7 +3298,7 @@ public class StandardContext
      *
      * @exception LifecycleException if a startup error occurs
      */
-    public void start() throws LifecycleException {
+    public synchronized void start() throws LifecycleException {
 
         if (debug >= 1)
             log("Starting");
@@ -3411,7 +3411,7 @@ public class StandardContext
      *
      * @exception LifecycleException if a shutdown error occurs
      */
-    public void stop() throws LifecycleException {
+    public synchronized void stop() throws LifecycleException {
 
         if (debug >= 1)
             log("Stopping");
