@@ -79,6 +79,7 @@ import javax.management.modelmbean.ModelMBean;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Group;
 import org.apache.catalina.Host;
@@ -209,6 +210,33 @@ public class MBeanUtils {
      * @exception Exception if an MBean cannot be created or registered
      */
     public static ModelMBean createMBean(Context context)
+        throws Exception {
+
+        String mname = createManagedName(context);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return null;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(context);
+        ObjectName oname = createObjectName(domain, context);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+
+
+    /**
+     * Create, register, and return an MBean for this
+     * <code>DefaultContext</code> object.
+     *
+     * @param context The DefaultContext to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(DefaultContext context)
         throws Exception {
 
         String mname = createManagedName(context);
@@ -412,6 +440,8 @@ public class MBeanUtils {
         return (mbean);
 
     }
+
+
     /**
      * Create, register, and return an MBean for this
      * <code>Server</code> object.
@@ -620,6 +650,38 @@ public class MBeanUtils {
 
     }
 
+
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>DefaultContext</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param context The DefaultContext to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              DefaultContext context)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        Container container = context.getParent();
+        if (container instanceof Host) {
+            Host host = (Host) container;
+            Service service = ((Engine)host.getParent()).getService();
+            name = new ObjectName(domain + ":type=DefaultContext,host=" +
+                              host.getName() + ",service=" +
+                              service.getName());
+        } else if (container instanceof Engine) {
+            Engine engine = (Engine) container;
+            Service service = engine.getService();
+            name = new ObjectName(domain + ":type=DefaultContext,,service=" +
+                              service.getName());
+        }
+
+        return (name);
+
+    }
 
     /**
      * Create an <code>ObjectName</code> for this
@@ -1048,6 +1110,31 @@ public class MBeanUtils {
      * @exception Exception if an MBean cannot be deregistered
      */
     public static void destroyMBean(Context context)
+        throws Exception {
+
+        String mname = createManagedName(context);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, context);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>DefaultContext</code> object.
+     *
+     * @param context The DefaultContext to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(DefaultContext context)
         throws Exception {
 
         String mname = createManagedName(context);
