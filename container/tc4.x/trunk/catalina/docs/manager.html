@@ -30,10 +30,10 @@ complementary to other administrative applications that have a more
 human-oriented user interface.</p>
 
 <p><strong>WARNING</strong> - As of the Tomcat 4.0 milestone 2 release, there
-is a bug in the operation of the "deploy" command that prevents deploying,
-undeploying, and then redeploying an application from the same URL for a
-web application archive (WAR) file.  To work around this, either redeploy
-the application from a different WAR file URL, or deploy from an unpacked
+is a bug in the operation of the "install" command that prevents installing,
+removing, and then reinstalling an application from the same URL for a
+web application archive (WAR) file.  To work around this, either reinstall
+the application from a different WAR file URL, or install from an unpacked
 directory (on the same server that Tomcat is running on).</p>
 
 <a name="Commands"></a>
@@ -76,7 +76,7 @@ on your local host installation of Tomcat.</p>
 </ul>
 <p>Use <code>path=/</code> for the ROOT context.</p>
 <p>The syntax of the URL for a web application archive must conform to one
-of the following patterns to be successfully deployed:</p>
+of the following patterns to be successfully installed:</p>
 <ul>
 <li><b>file:/absolute/path/to/a/directory</b> - You can specify the absolute
     path of a directory that contains the unpacked version of a web
