@@ -220,6 +220,9 @@ class Ajp13Request extends Request
     
     public int doRead() throws IOException 
     {
+	if( contentLength == -1 ) {
+	    return ajp13.doRead();
+	}
 	if( available <= 0 )
 	    return -1;
 	available--;
@@ -228,6 +231,9 @@ class Ajp13Request extends Request
     
     public int doRead(byte[] b, int off, int len) throws IOException 
     {
+	if( contentLength == -1 ) {
+	    return ajp13.doRead(b,off,len);
+	}
 	if( available <= 0 )
 	    return -1;
 	int rd=ajp13.doRead( b,off, len );
