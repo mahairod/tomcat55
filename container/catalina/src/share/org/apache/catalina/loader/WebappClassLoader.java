@@ -1564,7 +1564,7 @@ public class WebappClassLoader
         ResourceEntry entry = new ResourceEntry();
         try {
             entry.source = getURI(new File(file, path));
-            entry.codeBase = entry.source;
+            entry.codeBase = getURL(new File(file, path));
         } catch (MalformedURLException e) {
             return null;
         }   
@@ -1618,7 +1618,7 @@ public class WebappClassLoader
                         new PrivilegedFindResource(files[i], path);
                     entry = (ResourceEntry)AccessController.doPrivileged(dp);
                  } else {
-                    entry = findResourceInternal(files[i], path);                     
+                    entry = findResourceInternal(files[i], path);
                  }
 
                 ResourceAttributes attributes =
@@ -1676,8 +1676,8 @@ public class WebappClassLoader
 
                 entry = new ResourceEntry();
                 try {
-                    entry.codeBase = getURI(jarRealFiles[i]);
-                    String jarFakeUrl = entry.codeBase.toString();
+                    entry.codeBase = getURL(jarRealFiles[i]);
+                    String jarFakeUrl = getURI(jarRealFiles[i]).toString();
                     jarFakeUrl = "jar:" + jarFakeUrl + "!/" + path;
                     entry.source = new URL(jarFakeUrl);
                 } catch (MalformedURLException e) {
