@@ -235,60 +235,6 @@ public class JspUtil {
     }
 
     /**
-     * Parses the XML document contained in the InputStream.
-     *
-     * @deprecated Use ParserUtils.parseXMLDocument() instead
-     */
-    public static Document parseXMLDoc(String uri, InputStream in) 
-	throws JasperException 
-    {
-	return parseXMLDocJaxp(uri, in);
-    }
-
-    /**
-     * Parses the XML document contained in the InputStream.
-     * This XML document is either web.xml or a tld.
-     * [The TLD has to be cached internally (see MyEntityResolver)]
-     *
-     * @deprecated Use ParserUtils.parseXMLDocument() instead
-     */
-    public static Document parseXMLDocJaxp(String uri, InputStream in)
-	throws JasperException
-    {
-	try {
-	    Document doc;
-	    DocumentBuilderFactory docFactory = 
-		DocumentBuilderFactory.newInstance();
-	    docFactory.setValidating(true);
-	    docFactory.setNamespaceAware(true);
-	    DocumentBuilder builder = docFactory.newDocumentBuilder();
-	    builder.setEntityResolver(entityResolver);
-	    builder.setErrorHandler(errorHandler);
-	    doc = builder.parse(in);
-	    return doc;
-	} catch (ParserConfigurationException ex) {
-            throw new JasperException(
-	        Constants.getString("jsp.error.parse.xml",
-				    new Object[]{uri, ex.getMessage()}));
-	} catch (SAXParseException ex) {
-            throw new JasperException(
-	        Constants.getString("jsp.error.parse.xml.line",
-				    new Object[]{uri,
-						 new Integer(ex.getLineNumber()),
-						 new Integer(ex.getColumnNumber()),
-						 ex.getMessage()}));
-	} catch (SAXException sx) {
-            throw new JasperException(
-                Constants.getString("jsp.error.parse.xml",
-				    new Object[]{uri, sx.getMessage()}));
-        } catch (IOException io) {
-            throw new JasperException(
-                Constants.getString("jsp.error.parse.xml",
-				    new Object[]{uri, io.toString()}));
-	}
-    }
-
-    /**
      * Checks if all mandatory attributes are present and if all attributes
      * present have valid names.  Checks attributes specified as XML-style
      * attributes as well as attributes specified using the jsp:attribute
@@ -477,36 +423,6 @@ public class JspUtil {
 	}
     }
     
-    public static Hashtable attrsToHashtable(Attributes attrs) {
-        int len = attrs.getLength();
-        Hashtable table = new Hashtable(len);
-        for (int i=0; i<len; i++) {
-            table.put(attrs.getQName(i), attrs.getValue(i));
-        }
-        return table;
-    }
-
-    /**
-     * Get the data for the first child associated with the
-     * Element provided as argument. It is assumed that this
-     * first child is of type Text.
-     *
-     * @param e the DOM Element to read from 
-     * @return the data associated with the first child of the DOM
-     *  element.
-     */
-    public static String getElementChildTextData(Element e) {
-	String s = null;
-	Text t = (Text)e.getFirstChild();
-	if (t != null) {
-	    s = t.getData();
-	    if (s != null) {
-		s = s.trim();
-	    }
-	}
-	return s;
-    }
-
     /**
      * Convert a String value to 'boolean'.
      * Besides the standard conversions done by
