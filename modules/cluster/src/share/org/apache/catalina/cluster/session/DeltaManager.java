@@ -693,7 +693,7 @@ public class DeltaManager
         started = false;
 
         // Expire all active sessions
-        if ( this.getExpireSessionsOnShutdown() ) {
+        {
             log.info("Expiring sessions upon shutdown");
             Session sessions[] = findSessions();
             for (int i = 0; i < sessions.length; i++) {
@@ -701,7 +701,7 @@ public class DeltaManager
                 if (!session.isValid())
                     continue;
                 try {
-                    session.expire();
+                    session.expire(true, this.getExpireSessionsOnShutdown());
                 }
                 catch (Throwable t) {
                     ;
