@@ -132,13 +132,13 @@ public interface Options {
     /**
      * Is the generation of SMAP info for JSR45 debugging suppressed?
      */
-    public boolean suppressSmap();
+    public boolean isSmapSuppressed();
 
     /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      * Ignored is suppressSmap() is true
      */
-    public boolean dumpSmap();
+    public boolean isSmapDumped();
 
     /**
      * Class ID for use in the plugin tag when the browser is IE. 

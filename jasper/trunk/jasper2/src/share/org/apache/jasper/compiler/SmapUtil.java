@@ -123,7 +123,7 @@ public class SmapUtil {
         evaluateNodes(pageNodes, s);
         g.addStratum(s, true);
 
-        if (ctxt.getOptions().dumpSmap()) {
+        if (ctxt.getOptions().isSmapDumped()) {
             File outSmap = new File(ctxt.getClassFileName() + ".smap");
             PrintWriter so = new PrintWriter(
                 new OutputStreamWriter(new FileOutputStream(outSmap),

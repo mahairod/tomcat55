@@ -302,7 +302,7 @@ public class Compiler {
         }
         
         //JSR45 Support - note this needs to be checked by a JSR45 guru
-        if (! options.suppressSmap()) {
+        if (! options.isSmapSuppressed()) {
             smapStr = SmapUtil.generateSmap(ctxt, pageNodes);
         }
 
@@ -430,7 +430,7 @@ public class Compiler {
 	}
 
         //JSR45 Support - note this needs to be checked by a JSR45 guru
-        if (! options.suppressSmap()) {
+        if (! options.isSmapSuppressed()) {
             SmapUtil.installSmap(ctxt.getClassFileName(), smap);
         }
     }

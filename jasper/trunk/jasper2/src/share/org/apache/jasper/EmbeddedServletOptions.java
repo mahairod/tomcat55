@@ -154,12 +154,12 @@ public final class EmbeddedServletOptions implements Options {
     /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
-    private boolean suppressSmap = false;
+    private boolean isSmapSuppressed = false;
 
     /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      */
-    private boolean dumpSmap = false;
+    private boolean isSmapDumped = false;
 
     /**
      * I want to see my generated servlets. Which directory are they
@@ -285,15 +285,15 @@ public final class EmbeddedServletOptions implements Options {
     /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
-    public boolean suppressSmap() {
-        return suppressSmap;
+    public boolean isSmapSuppressed() {
+        return isSmapSuppressed;
     }
 
     /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      */
-    public boolean dumpSmap() {
-        return dumpSmap;
+    public boolean isSmapDumped() {
+        return isSmapDumped;
     }
 
     /**
@@ -515,9 +515,9 @@ public final class EmbeddedServletOptions implements Options {
         String suppressSmap = config.getInitParameter("suppressSmap");
         if (suppressSmap != null) {
             if (suppressSmap.equalsIgnoreCase("true")) {
-                this.suppressSmap = true;
+		isSmapSuppressed = true;
             } else if (suppressSmap.equalsIgnoreCase("false")) {
-                this.suppressSmap = false;
+                isSmapSuppressed = false;
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage("jsp.warning.suppressSmap"));
@@ -528,9 +528,9 @@ public final class EmbeddedServletOptions implements Options {
         String dumpSmap = config.getInitParameter("dumpSmap");
         if (dumpSmap != null) {
             if (dumpSmap.equalsIgnoreCase("true")) {
-                this.dumpSmap = true;
+                isSmapDumped = true;
             } else if (dumpSmap.equalsIgnoreCase("false")) {
-                this.dumpSmap = false;
+                isSmapDumped = false;
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage("jsp.warning.dumpSmap"));

@@ -365,14 +365,14 @@ public class JspC implements Options {
     /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
-    public boolean suppressSmap() {
+    public boolean isSmapSuppressed() {
 	return true;
     }
 
    /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      */
-    public boolean dumpSmap() {
+    public boolean isSmapDumped() {
 	return false;
     }
 
