@@ -12,7 +12,7 @@
 
 		if (request.getParameter("name") == null) {
 	%>
-	<%@ include file="/jsp/error/error.html" %>
+	<%@ include file="/error/error.html" %>
 	<%
 		} else {
 		  foo.setName(request.getParameter("name"));

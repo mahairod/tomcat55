@@ -1,0 +1,41 @@
+/**
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * reserved.
+ */
+
+package jsp2.examples.simpletag;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+import javax.servlet.jsp.tagext.DynamicAttributes;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.io.IOException;
+
+/**
+ * SimpleTag handler that echoes all its attributes 
+ */
+public class EchoAttributesTag 
+    extends SimpleTagSupport
+    implements DynamicAttributes
+{
+    private HashMap attributes = new HashMap();
+
+    public void doTag() throws JspException, IOException {
+	JspWriter out = getJspContext().getOut();
+	Iterator i = attributes.keySet().iterator();
+	while( i.hasNext() ) {
+	    String key = (String)i.next();
+	    Object value = attributes.get( key );
+	    out.println( "<li>" + key + " = " + value + "</li>" );
+        }
+    }
+
+    public void setDynamicAttribute( String uri, String localName, 
+	Object value ) 
+	throws JspException
+    {
+	attributes.put( localName, value );
+    }
+}

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
-
-<web-app>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-app_2_4.xsd"
+    version="2.4">
 
     <!-- Define servlet-mapped and path-mapped example filters -->
     <filter>
@@ -169,23 +168,47 @@
         </url-pattern>
     </servlet-mapping>
 
-    <taglib>
-        <taglib-uri>
-	   http://jakarta.apache.org/tomcat/debug-taglib
-        </taglib-uri>
-        <taglib-location>
-           /WEB-INF/jsp/debug-taglib.tld
-        </taglib-location>
-    </taglib>
+    <jsp-config>
+        <taglib>
+	    <taglib-uri>
+	       http://jakarta.apache.org/tomcat/debug-taglib
+	    </taglib-uri>
+	    <taglib-location>
+	       /WEB-INF/jsp/debug-taglib.tld
+	    </taglib-location>
+	</taglib>
 
-    <taglib>
-        <taglib-uri>
-	   http://jakarta.apache.org/tomcat/examples-taglib
-        </taglib-uri>
-        <taglib-location>
-           /WEB-INF/jsp/example-taglib.tld
-        </taglib-location>
-    </taglib>
+	<taglib>
+	    <taglib-uri>
+	       http://jakarta.apache.org/tomcat/examples-taglib
+	    </taglib-uri>
+	    <taglib-location>
+	       /WEB-INF/jsp/example-taglib.tld
+	    </taglib-location>
+	</taglib>
+
+	<taglib>
+	    <taglib-uri>
+	       http://jakarta.apache.org/tomcat/jsp2-example-taglib
+	    </taglib-uri>
+	    <taglib-location>
+	       /WEB-INF/jsp2/jsp2-example-taglib.tld
+	    </taglib-location>
+	</taglib>
+
+	<jsp-property-group>
+	    <description>
+		Special property group for JSP Configuration JSP example.
+	    </description>
+	    <display-name>JSPConfiguration</display-name>
+	    <url-pattern>/jsp2/misc/config.jsp</url-pattern>
+	    <el-enabled>false</el-enabled>
+	    <page-encoding>ISO-8859-1</page-encoding>
+	    <scripting-enabled>false</scripting-enabled>
+	    <include-prelude>/jsp2/misc/prelude.jspf</include-prelude>
+	    <include-coda>/jsp2/misc/coda.jspf</include-coda>
+	</jsp-property-group>
+    </jsp-config>
 
     <resource-ref>
       <res-ref-name>mail/Session</res-ref-name>
@@ -198,7 +221,7 @@
       <web-resource-collection>
          <web-resource-name>Protected Area</web-resource-name>
 	 <!-- Define the context-relative URL(s) to be protected -->
-         <url-pattern>/jsp/security/protected/*</url-pattern>
+         <url-pattern>/security/protected/*</url-pattern>
 	 <!-- If you list http methods, only those methods are protected -->
 	 <http-method>DELETE</http-method>
          <http-method>GET</http-method>
@@ -217,8 +240,8 @@
       <auth-method>FORM</auth-method>
       <realm-name>Example Form-Based Authentication Area</realm-name>
       <form-login-config>
-        <form-login-page>/jsp/security/protected/login.jsp</form-login-page>
-        <form-error-page>/jsp/security/protected/error.jsp</form-error-page>
+        <form-login-page>/security/protected/login.jsp</form-login-page>
+        <form-error-page>/security/protected/error.jsp</form-error-page>
       </form-login-config>
     </login-config>
 
@@ -236,33 +259,33 @@
          The maximum number of tax exemptions allowed to be set.
       </env-entry-description>
       <env-entry-name>maxExemptions</env-entry-name>
-      <env-entry-value>15</env-entry-value>
       <env-entry-type>java.lang.Integer</env-entry-type>
+      <env-entry-value>15</env-entry-value>
     </env-entry-->
     <env-entry>
       <env-entry-name>minExemptions</env-entry-name>
-      <env-entry-value>1</env-entry-value>
       <env-entry-type>java.lang.Integer</env-entry-type>
+      <env-entry-value>1</env-entry-value>
     </env-entry>
     <env-entry>
       <env-entry-name>foo/name1</env-entry-name>
-      <env-entry-value>value1</env-entry-value>
       <env-entry-type>java.lang.String</env-entry-type>
+      <env-entry-value>value1</env-entry-value>
     </env-entry>
     <env-entry>
       <env-entry-name>foo/bar/name2</env-entry-name>
-      <env-entry-value>true</env-entry-value>
       <env-entry-type>java.lang.Boolean</env-entry-type>
+      <env-entry-value>true</env-entry-value>
     </env-entry>
     <env-entry>
       <env-entry-name>name3</env-entry-name>
-      <env-entry-value>1</env-entry-value>
       <env-entry-type>java.lang.Integer</env-entry-type>
+      <env-entry-value>1</env-entry-value>
     </env-entry>
     <env-entry>
       <env-entry-name>foo/name4</env-entry-name>
-      <env-entry-value>10</env-entry-value>
       <env-entry-type>java.lang.Integer</env-entry-type>
+      <env-entry-value>10</env-entry-value>
     </env-entry>
 
     <!-- EJB Reference -->

@@ -11,7 +11,7 @@
    if (percent < 0.5) { 
 %>
 
-<jsp:forward page="/jsp/forward/one.jsp"/>
+<jsp:forward page="/forward/one.jsp"/>
 
 <% } else { %>
 
