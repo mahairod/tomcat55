@@ -212,36 +212,6 @@ public class StandardServerMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Set the value of a specific attribute of this MBean.
-     *
-     * @param attribute The identification of the attribute to be set
-     *  and the new value
-     *
-     * @exception AttributeNotFoundException if this attribute is not
-     *  supported by this MBean
-     * @exception MBeanException if the initializer of an object
-     *  throws an exception
-     * @exception ReflectionException if a Java reflection exception
-     *  occurs when invoking the getter
-     */
-    public void setAttribute(javax.management.Attribute attribute)
-        throws javax.management.AttributeNotFoundException,
-               MBeanException,
-               javax.management.ReflectionException {
-
-        // KLUDGE - This is only here to force calling store()
-        // until the admin webapp calls it directly
-        super.setAttribute(attribute);
-        try {
-            store();
-        } catch (InstanceNotFoundException e) {
-            throw new MBeanException(e);
-        }
-
-    }
-
-
     // ------------------------------------------------------------- Operations
 
 

@@ -277,7 +277,12 @@ public final class StandardServer
     public void setGlobalNamingResources
         (NamingResources globalNamingResources) {
 
+        NamingResources oldGlobalNamingResources =
+            this.globalNamingResources;
         this.globalNamingResources = globalNamingResources;
+        support.firePropertyChange("globalNamingResources",
+                                   oldGlobalNamingResources,
+                                   this.globalNamingResources);
 
     }
 
