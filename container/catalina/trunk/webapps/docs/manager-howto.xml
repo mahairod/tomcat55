@@ -55,10 +55,10 @@ Using the JMX Proxy Servlet</a><br />
 to deploy a new web application, or undeploy an existing one, without having
 to shut down and restart the entire container.  In addition, you can request
 an existing application to reload itself, even if you have not declared it
-to be <code>reloadable</code> in the Tomcat 4 server
+to be <code>reloadable</code> in the Tomcat 5 server
 configuration file.</p>
 
-<p>To support these capabilities, Tomcat 4 includes a web application
+<p>To support these capabilities, Tomcat 5 includes a web application
 (installed by default on context path <code>/manager</code>) that supports
 the following functions:</p>
 <ul>
@@ -94,7 +94,7 @@ the following functions:</p>
     configuration. Here is an example:
 <pre>
 &lt;Context path="/manager" debug="0" privileged="true"
-         docBase="/usr/local/kinetic/tomcat4/server/webapps/manager"&gt;
+         docBase="/usr/local/kinetic/tomcat5/server/webapps/manager"&gt;
 &lt;/Context&gt;
 </pre>
 </li>
@@ -121,7 +121,7 @@ With Ant</a> for more information.</li>
 </ul>
 </p>
 
-<p>Future versions of Tomcat 4 will include administrative functionality that
+<p>Future versions of Tomcat 5 will include administrative functionality that
 is presented in (at least) the following forms:
 <ul>
 <li>As web services, so that Tomcat administration can be easily integrated
@@ -138,9 +138,9 @@ is presented in (at least) the following forms:
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
-    to refer to the directory into which you have installed Tomcat 4,
+    to refer to the directory into which you have installed Tomcat 5,
     and is the base directory against which most relative paths are
-    resolved.  However, if you have configured Tomcat 4 for multiple
+    resolved.  However, if you have configured Tomcat 5 for multiple
     instances by setting a CATALINA_BASE directory, you should use
     $CATALINA_BASE instead of $CATALINA_HOME for each of these
     references.</p>
@@ -164,7 +164,7 @@ depends on which <code>Realm</code> implementation you are using:</p>
 <ul>
 <li><em>MemoryRealm</em> - If you have not customized your
     <code>$CATALINA_HOME/conf/server.xml</code> to select a different one,
-    Tomcat 4 defaults to an XML-format file stored at
+    Tomcat 5 defaults to an XML-format file stored at
     <code>$CATALINA_HOME/conf/tomcat-users.xml</code>, which can be
     edited with any text editor.  This file contains an XML
     <code>&lt;user&gt;</code> for each individual user, which might
@@ -201,7 +201,7 @@ could be restricted by the remote IP address or host by adding a
 an example of restricting access to the localhost by IP address:
 <pre>
 &lt;Context path="/manager" debug="0" privileged="true"
-         docBase="/usr/local/kinetic/tomcat4/server/webapps/manager"&gt;
+         docBase="/usr/local/kinetic/tomcat5/server/webapps/manager"&gt;
          &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve"
                 allow="127.0.0.1"/&gt;
 &lt;/Context&gt;
@@ -329,7 +329,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to start the new web application.
-    Check the Tomcat 4 logs for the details, but likely explanations include
+    Check the Tomcat 5 logs for the details, but likely explanations include
     problems parsing your <code>/WEB-INF/web.xml</code> file, or missing
     classes encountered when initializing application event listeners and
     filters.</p>
@@ -513,7 +513,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to start the new web application.
-    Check the Tomcat 4 logs for the details, but likely explanations include
+    Check the Tomcat 5 logs for the details, but likely explanations include
     problems parsing your <code>/WEB-INF/web.xml</code> file, or missing
     classes encountered when initializing application event listeners and
     filters.</p>
@@ -597,7 +597,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to restart the web application.
-    Check the Tomcat 4 logs for the details.</p>
+    Check the Tomcat 5 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -641,7 +641,7 @@ include an error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to enumerate the system properties.
-    Check the Tomcat 4 logs for the details.</p>
+    Check the Tomcat 5 logs for the details.</p>
     </blockquote></li>
 </ul>
 
@@ -686,7 +686,7 @@ include an error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to enumerate the global JNDI
-    resources.  Check the Tomcat 4 logs for the details.</p>
+    resources.  Check the Tomcat 5 logs for the details.</p>
     </blockquote></li>
 <li><em>No global JNDI resources are available</em>
     <blockquote>
@@ -795,7 +795,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to start the web application.
-    Check the Tomcat 4 logs for the details.</p>
+    Check the Tomcat 5 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -838,7 +838,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to stop the web application.
-    Check the Tomcat 4 logs for the details.</p>
+    Check the Tomcat 5 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -891,7 +891,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to undeploy the web application.
-    Check the Tomcat 4 logs for the details.</p>
+    Check the Tomcat 5 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -918,7 +918,7 @@ error message.  Possible causes for problems include:</p>
 <section name="Executing Manager Commands With Ant">
 
 <p>In addition to the ability to execute Manager commands via HTTP requests,
-as documented above, Tomcat 4 includes a convenient set of Task definitions
+as documented above, Tomcat 5 includes a convenient set of Task definitions
 for the <em>Ant</em> (version 1.4 or later) build tool.  In order to use these
 commands, you must perform the following setup operations:</p>
 <ul>
@@ -927,7 +927,7 @@ commands, you must perform the following setup operations:</p>
     You must use version <strong>1.4</strong> or later.</li>
 <li>Install the Ant distribution in a convenient directory (called
     ANT_HOME in the remainder of these instructions).</li>
-<li>Copy the file <code>server/lib/catalina-ant.jar</code> from your Tomcat 4
+<li>Copy the file <code>server/lib/catalina-ant.jar</code> from your Tomcat 5
     installation into Ant's library directory (<code>$ANT_HOME/lib</code>).
     </li>
 <li>Add the <code>$ANT_HOME/bin</code> directory to your <code>PATH</code>
