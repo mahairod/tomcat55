@@ -113,8 +113,9 @@ import org.apache.catalina.util.StringManager;
  *     corresponding Engine with <code>engine.addChild(host)</code>.</li>
  * <li>Call <code>createContext()</code> to create at least one Context
  *     associated with each newly created Host, and then call its property
- *     setters as desired.  You <strong>MUST</strong> create a Context with
- *     a pathname equal to a zero-length string.  After you customize
+ *     setters as desired.  You <strong>SHOULD</strong> create a Context with
+ *     a pathname equal to a zero-length string, which will be used to process
+ *     all requests not mapped to some other Context.  After you customize
  *     this Context, add it to the corresponding Host with
  *     <code>host.addChild(context)</code>.</li>
  * <li>Call <code>addEngine()</code> to attach this Engine to the set of
