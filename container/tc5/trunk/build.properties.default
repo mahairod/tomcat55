@@ -33,7 +33,7 @@ compile.optimize=on
 
 # ----- CVS root for the jakarta repositories ------
 cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
-cvstag=""
+cvstag="HEAD"
 
 # ----- Default Base Path for Dependent Packages -----
 #base.path=/usr/share/java

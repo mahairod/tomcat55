@@ -1089,19 +1089,19 @@
   <target name="checkout" 
           description="Update or checkout required sources from CVS">
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-tomcat-catalina" 
+         command="checkout -P -r ${cvstag} jakarta-tomcat-catalina" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-tomcat-jasper" 
+         command="checkout -P -r ${cvstag} jakarta-tomcat-jasper" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-tomcat-connectors" 
+         command="checkout -P -r ${cvstag} jakarta-tomcat-connectors" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-servletapi-5" 
+         command="checkout -P -r ${cvstag} jakarta-servletapi-5" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-commons" 
+         command="checkout -P -r ${cvstag} jakarta-commons" 
          dest=".."/>
   </target>
 
