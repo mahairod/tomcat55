@@ -7,8 +7,10 @@
    </target>
 
    <!-- JSP - XML Syntax Tests -->
-   <!-- No test executions defined yet -->
-   <target name="jsp-xml"/>
+   <target name="jsp-xml">
+     <ant antfile="${watchdog.home}/conf/jsp-gtest-xml.xml"
+           target="jsp-test"/>
+   </target>
 
    <!-- JSP - All JSP Tests -->
    <target name="jsp-all" depends="jsp,jsp-xml"/>

@@ -14,6 +14,7 @@ public class GetWorkspaceInXML
 
 public static void main (String[] args )
 {
+    System.out.println("\n--> Executing getWorkspaceInXML.main()");
  String jsp_file=null;
  String xml_file=null ;
  String jsp_root_dir = System.getProperty("JSP_ROOT");
@@ -36,6 +37,8 @@ String extension="jsp" ; //files with extension .jsp
 
 FileLister lister = new FileLister(jsp_root_dir , extension) ;
 Object[] files = lister.listFiles();
+System.out.println("" + files.length + " files to process in " + 
+		   jsp_root_dir);
 
 for(int i=0; i< files.length;i++)
 {
@@ -43,6 +46,7 @@ jsp_file = (String)files[i];
 int index = jsp_file.lastIndexOf(".jsp");
 
   if(index !=-1)
+      if (jsp_file.endsWith("XML.jsp")) continue;
     xml_file = jsp_file.substring(0,index) + "XML" + ".jsp" ; 
 
 //it should convert only if the jsp file is newer than the XML file
@@ -50,6 +54,7 @@ int index = jsp_file.lastIndexOf(".jsp");
 File file_jsp = new File (jsp_file) ;
 File file_xml = new File (xml_file);
 
+System.out.println("processing " + jsp_file);
  if ( file_xml.exists()  )  //there was already a conversion
   {
 if( file_xml.lastModified() > file_jsp.lastModified() )
@@ -58,6 +63,7 @@ continue;
 
 //if we are here means we need to convert the jsp file to xml
 
+System.out.println("*** converting to " + xml_file);
 jsp2XML jsp_converter = new jsp2XML(jsp_file);
 String xml= jsp_converter.ConvertJsp2XML();
 

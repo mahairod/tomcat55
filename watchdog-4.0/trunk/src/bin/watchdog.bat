@@ -34,8 +34,17 @@ set CLASSPATH=%CLASSPATH%;%JAVA_HOME%\lib\classes.zip
 
 echo "using classpath=" %CLASSPATH%
 
+if not "%SUITE%"=="jsp-xml" goto runit
+if not "%TOMCAT_HOME%" == "" goto gotTomcatHome
+echo You must set TOMCAT_HOME to point at your TOMCAT-4.0 installation
+goto end
+:gotTomcatHome
+
+%JAVA_HOME%\bin\java -DJSP_ROOT=%TOMCAT_HOME%\webapps\jsp-tests\jsp -DWATCHDOG_HOME=%WATCHDOG_HOME% org.apache.jspxml.GetWorkspaceInXML
+
+:runit
 rem Execute the Requested Test Suite
-java org.apache.tools.ant.Main -Dport=%PORT% -Dhost=%HOST% "-Dwatchdog.home=%WATCHDOG_HOME%" -f "%WATCHDOG_HOME%\conf\runtest.xml" %SUITE%
+%JAVA_HOME%\bin\java org.apache.tools.ant.Main -Dport=%PORT% -Dhost=%HOST% "-Dwatchdog.home=%WATCHDOG_HOME%" -f "%WATCHDOG_HOME%\conf\runtest.xml" %SUITE%
 
 rem Restore Environment Variables
 set WATCHDOG_HOME=%_WATCHDOG_HOME%
