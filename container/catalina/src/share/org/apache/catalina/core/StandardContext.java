@@ -4252,11 +4252,6 @@ public class StandardContext
             }
         }
 
-        // Load and initialize all "load on startup" servlets
-        if (ok) {
-            loadOnStartup(findChildren());
-        }
-
         // Unbinding thread
         unbindThread(oldCCL);
 
@@ -4291,6 +4286,13 @@ public class StandardContext
                 new Notification("j2ee.state.running", this.getObjectName(), 
                                 sequenceNumber++);
             broadcaster.sendNotification(notification);
+        }
+
+        // Load and initialize all "load on startup" servlets
+        if (ok) {
+            oldCCL = bindThread();
+            loadOnStartup(findChildren());
+            unbindThread(oldCCL);
         }
 
         // Close all JARs right away to avoid always opening a peak number 
