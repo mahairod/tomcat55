@@ -153,7 +153,7 @@ public class Constants {
      * ID and location of the DTD for tag library descriptors. 
      */
     public static final String 
-        TAGLIB_DTD_PUBLIC_ID = "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN";
+        TAGLIB_DTD_PUBLIC_ID = "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN";
     public static final String
         TAGLIB_DTD_RESOURCE = "/org/apache/jasper/resources/web-jsptaglib_1_1.dtd";
 

@@ -248,18 +248,19 @@ public class TagBeginGenerator
 	writer.pushIndent();
 	
 
-        writer.println("if ("+evalVar+" != Tag.EVAL_BODY_INCLUDE) {");
-        writer.pushIndent();
+	if (implementsBodyTag) {
+	    writer.println("if ("+evalVar+" != Tag.EVAL_BODY_INCLUDE) {");
+	    writer.pushIndent();
 
-	writer.println("out = pageContext.pushBody();");
-	writer.println(thVarName+".setBodyContent((BodyContent) out);");
+	    writer.println("out = pageContext.pushBody();");
+	    writer.println(thVarName+".setBodyContent((BodyContent) out);");
 
-        writer.popIndent();
-        writer.println("}");
+	    writer.popIndent();
+	    writer.println("}");
+	    
+	    writer.println(thVarName+".doInitBody();");
+	}
         
-        if (implementsBodyTag)
-            writer.println(thVarName+".doInitBody();");
-
 	writer.println("do {");
 	writer.pushIndent();
         // Need to declare and update NESTED variables here
