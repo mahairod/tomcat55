@@ -296,6 +296,13 @@ public final class ContextConfig
 	    return;	// Cannot install a Valve even if it would be needed
 	}
 
+        // Has a Realm been configured for us to authenticate against?
+        if (context.getRealm() == null) {
+            log(sm.getString("contextConfig.missingRealm"));
+            ok = false;
+            return;
+        }
+
 	// Load our mapping properties if necessary
 	if (authenticators == null) {
 	    try {
