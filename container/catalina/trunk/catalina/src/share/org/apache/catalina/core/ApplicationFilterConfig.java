@@ -69,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import java.io.Serializable;
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -89,7 +90,7 @@ import org.apache.tomcat.util.log.SystemLogHandler;
  * @version $Revision$ $Date$
  */
 
-final class ApplicationFilterConfig implements FilterConfig {
+final class ApplicationFilterConfig implements FilterConfig, Serializable {
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( ApplicationFilterConfig.class );
@@ -138,7 +139,7 @@ final class ApplicationFilterConfig implements FilterConfig {
     /**
      * The application Filter we are configured for.
      */
-    private Filter filter = null;
+    private transient Filter filter = null;
 
 
     /**
