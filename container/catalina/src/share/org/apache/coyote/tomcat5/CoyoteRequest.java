@@ -1767,15 +1767,18 @@ public class CoyoteRequest
     public void setUserPrincipal(Principal principal) {
 
         if (System.getSecurityManager() != null){
+            HttpSession session = getSession(false);
             if ( (subject != null) && 
                  (!subject.getPrincipals().contains(principal)) ){
                 subject.getPrincipals().add(principal);         
-            } else if (getSession()
-                            .getAttribute(Globals.SUBJECT_ATTR) == null) {
+            } else if (session != null &&
+                        session.getAttribute(Globals.SUBJECT_ATTR) == null) {
                 subject = new Subject();
                 subject.getPrincipals().add(principal);         
             }
-            getSession().setAttribute(Globals.SUBJECT_ATTR, subject);
+            if (session != null){
+                session.setAttribute(Globals.SUBJECT_ATTR, subject);
+            }
         } 
 
         this.userPrincipal = principal;
