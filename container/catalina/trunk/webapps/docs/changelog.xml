@@ -32,8 +32,11 @@
 
   <subsection name="Catalina">
       <update>
-        Give proper permission to the balancer app when running under the security manager. (jfarcand)
+        Remove Digester code for Xerces workaround. (jfarcand)
       </update>
+      <fix>
+        Give proper permission to the balancer app when running under the security manager. (jfarcand)
+      </fix>
   </subsection>
 
   <subsection name="Coyote">
