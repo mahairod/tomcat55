@@ -498,6 +498,13 @@
     <mkdir  dir="${tomcat.dist}/src/${jasper.project}"/>
     <mkdir  dir="${tomcat.dist}/src/${jasper.project}/jasper2"/>
 
+    <!-- Main build file -->
+    <copy todir="${tomcat.dist}/src">
+      <fileset dir="${basedir}/resources">
+        <include name="build.xml" />
+      </fileset>
+    </copy>
+
     <!-- jakarta-tomcat-5 source -->
     <copy todir="${tomcat.dist}/src/${tomcat.project}">
       <fileset dir="${basedir}">
