@@ -238,6 +238,7 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
     public void remove(String contextPath, boolean undeploy) throws IOException {
         log.info("Cluster wide remove of web app " + contextPath);
         //step 1. Remove it locally
+        
         // FIXME
         /*
         if (getDeployer().findDeployedApp(contextPath) != null)
