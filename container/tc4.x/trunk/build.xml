@@ -261,7 +261,9 @@
      todir="${tomcat.dist}" />
     <copy file="${javaservice.home}/bin/JavaService.exe" 
      tofile="${tomcat.dist}/bin/tomcat.exe" />
-    <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" />
+    <filter token="VERSION" value="${version}"/>
+    <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
+     filtering="true"/>
     <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis-bz2.exe">
       <arg value="tomcat.nsi" />
     </exec>
