@@ -266,7 +266,9 @@ final class HttpResponseImpl
 
         if (getStatus() < HttpServletResponse.SC_BAD_REQUEST) {
             if ((!isStreamInitialized()) && (getContentLength() == -1)
-                && (getStatus() != SC_NOT_MODIFIED))
+                && (getStatus() >= 200)
+                && (getStatus() != SC_NOT_MODIFIED) 
+                && (getStatus() != SC_NO_CONTENT))
                 setContentLength(0);
         } else {
             setHeader("Connection", "close");
@@ -277,6 +279,21 @@ final class HttpResponseImpl
 
 
     // -------------------------------------------- HttpServletResponse Methods
+
+
+    /**
+     * Set the HTTP status to be returned with this response.
+     *
+     * @param status The new HTTP status
+     */
+    public void setStatus(int status) {
+
+        super.setStatus(status);
+
+        if (responseStream != null)
+            responseStream.checkChunking(this);
+
+    }
 
 
     /**

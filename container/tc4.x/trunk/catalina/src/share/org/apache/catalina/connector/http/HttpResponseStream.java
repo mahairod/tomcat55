@@ -189,7 +189,6 @@ public final class HttpResponseStream extends ResponseStream {
         useChunking = 
             (!response.isCommitted()
              && response.getContentLength() == -1
-             && response.getStatus() != HttpServletResponse.SC_PARTIAL_CONTENT
              && response.getStatus() != HttpServletResponse.SC_NOT_MODIFIED);
         if (!response.isChunkingAllowed() && useChunking) {
             // If we should chunk, but chunking is forbidden by the connector,
