@@ -119,6 +119,13 @@ public interface JspCompilationContext {
     public String getOutputDir();
     
     /**
+     * What is the scratch directory we are generating code into?
+     * FIXME: In some places this is called scratchDir and in some
+     * other places it is called outputDir.
+     */
+    public String getJavacOutputDir();
+
+    /**
      * Path of the JSP URI. Note that this is not a file name. This is
      * the context rooted URI of the JSP file. 
      */

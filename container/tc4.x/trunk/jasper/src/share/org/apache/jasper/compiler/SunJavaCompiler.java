@@ -126,14 +126,24 @@ public class SunJavaCompiler implements JavaCompiler {
     
     public boolean compile(String source) {
         Main compiler = new Main(out, "jsp->javac");
+	String[] args = null;
 
-        String[] args = new String[]
-        {
-            "-encoding", encoding,
-            "-classpath", classpath,
-            "-d", outdir,
-            source
-        };
+	if( outdir != null ) {
+            args = new String[]
+            {
+                "-encoding", encoding,
+                "-classpath", classpath,
+                "-d", outdir,
+                source
+            };
+	} else {
+            args = new String[]
+            {
+                "-encoding", encoding,
+                "-classpath", classpath,
+                source       
+            };
+	}
 
         return compiler.compile(args);
     }

@@ -153,14 +153,26 @@ public class JikesJavaCompiler implements JavaCompiler {
             } 
         }
 
-        String[] compilerCmd = new String[] {
-          quote + compilerPath + quote,
-          //XXX - add encoding once Jikes supports it
-          "-classpath", quote + classpath + MicrosoftClasspath + quote,
-          "-d", quote + outdir + quote,
-          "-nowarn",
-          quote + source + quote
-        };
+        String[] compilerCmd = null;
+
+	if( outdir != null ) {
+	    compilerCmd = new String[] {
+        	quote + compilerPath + quote,
+        	//XXX - add encoding once Jikes supports it
+        	"-classpath", quote + classpath + MicrosoftClasspath + quote,
+        	"-d", quote + outdir + quote,
+        	"-nowarn",
+        	quote + source + quote
+            };
+	} else {
+            compilerCmd = new String[] {
+                quote + compilerPath + quote,
+                //XXX - add encoding once Jikes supports it
+                "-classpath", quote + classpath + MicrosoftClasspath + quote,
+                "-nowarn",                
+                quote + source + quote    
+            };
+	}
 
         ByteArrayOutputStream tmpErr = new ByteArrayOutputStream(OUTPUT_BUFFER_SIZE);
 	try {

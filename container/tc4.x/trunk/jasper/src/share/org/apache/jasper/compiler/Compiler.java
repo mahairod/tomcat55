@@ -227,8 +227,7 @@ public class Compiler {
             "-encoding",
             javaEncoding,
             "-classpath",
-            System.getProperty("java.class.path")+ sep + classpath 
-            + sep + ctxt.getOutputDir(),
+            System.getProperty("java.class.path")+ sep + classpath,
             "-d", ctxt.getOutputDir(),
             javaFileName
         };
@@ -259,9 +258,8 @@ public class Compiler {
          * Configure the compiler object
          */
         javac.setEncoding(javaEncoding);
-        javac.setClasspath( System.getProperty("java.class.path")+ sep + 
-                            classpath + sep + ctxt.getOutputDir());
-        javac.setOutputDir(ctxt.getOutputDir());
+        javac.setClasspath( System.getProperty("java.class.path")+ sep + classpath);
+        javac.setOutputDir(ctxt.getJavacOutputDir());
         javac.setMsgOutput(out);
 
         /**
@@ -278,22 +276,6 @@ public class Compiler {
             String msg = out.toString ();
             throw new JasperException(Constants.getString("jsp.error.unable.compile")
                                       + msg);
-        }
-
-        String classFile = ctxt.getOutputDir() + File.separatorChar;
-        classFile = classFile + className + ".class";
-
-        if (!classFile.equals(classFileName)) {
-            File classFileObject = new File(classFile);
-            File myClassFileObject = new File(classFileName);
-            if (myClassFileObject.exists())
-                myClassFileObject.delete();
-            if (classFileObject.renameTo(myClassFileObject) == false)
-                throw new JasperException(Constants.getString("jsp.error.unable.rename",
-                                                              new Object[] { 
-                                                                  classFileObject, 
-                                                                  myClassFileObject
-                                                              }));
         }
 
         return true;

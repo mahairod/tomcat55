@@ -104,7 +104,7 @@ public class JspEngineContext implements JspCompilationContext {
     String jspFile;
     String outDir;
     String servletClassName;
-    String servletPackageName;
+    String servletPackageName = Constants.JSP_PACKAGE_NAME;
     String servletJavaFileName;
     String contentType;
     Options options;
@@ -204,6 +204,15 @@ public class JspEngineContext implements JspCompilationContext {
         return outDir;
     }
     
+    /**
+     * What is the scratch directory we are generating code into?
+     * FIXME: In some places this is called scratchDir and in some
+     * other places it is called outputDir.
+     */
+    public String getJavacOutputDir() {
+        return null;
+    }
+
     /**
      * Path of the JSP URI. Note that this is not a file name. This is
      * the context rooted URI of the JSP file. 

@@ -240,6 +240,7 @@ public class JspServlet extends HttpServlet {
     protected ServletEngine engine;
     protected String serverInfo;
     private PermissionCollection permissionCollection = null;
+    private CodeSource codeSource = null;
 
     static boolean firstTime = true;
 
@@ -288,8 +289,8 @@ public class JspServlet extends HttpServlet {
             try {          
 		// Get the permissions for the web app context
 		URL url = options.getScratchDir().toURL();
-		CodeSource cs = new CodeSource(url,null);
-		permissionCollection = policy.getPermissions(cs);
+		codeSource = new CodeSource(url,null);
+		permissionCollection = policy.getPermissions(codeSource);
 		// Create a file read permission for web app context directory
 		String contextDir = url.getFile();
 		if( contextDir.endsWith(File.separator) )
@@ -520,8 +521,11 @@ public class JspServlet extends HttpServlet {
                 File outputDir = new File(normalize(ctxt.getOutputDir()));
                 urls[0] = outputDir.toURL();
                 jsw.loader = new JasperLoader(urls,ctxt.getServletClassName(),
-					      parentClassLoader,permissionCollection);
-		jsw.servletClass = jsw.loader.loadClass(ctxt.getServletClassName());
+					      parentClassLoader,
+					      permissionCollection,
+					      codeSource);
+		jsw.servletClass = jsw.loader.loadClass(
+			Constants.JSP_PACKAGE_NAME + "." + ctxt.getServletClassName());
 	    } catch (ClassNotFoundException cex) {
 		throw new JasperException(
 		    Constants.getString("jsp.error.unable.load"),cex);

@@ -57,21 +57,14 @@
 
 package org.apache.jasper.servlet;
 
-import java.io.FileInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
 import java.security.PermissionCollection;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
-
-import java.security.*;
+import java.security.ProtectionDomain;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -93,14 +86,17 @@ import javax.servlet.http.*;
 public class JasperLoader extends URLClassLoader {
 
     private PermissionCollection permissionCollection = null;
+    private CodeSource codeSource = null;
     private String className = null;
     private ClassLoader parent = null;
     private SecurityManager securityManager = null;
 
     JasperLoader(URL [] urls, String className, ClassLoader parent,
-		 PermissionCollection permissionCollection) {
+		 PermissionCollection permissionCollection,
+		 CodeSource codeSource) {
 	super(urls,parent);
 	this.permissionCollection = permissionCollection;
+	this.codeSource = codeSource;
 	this.className = className;
 	this.parent = parent;
 	this.securityManager = System.getSecurityManager();
@@ -176,16 +172,27 @@ public class JasperLoader extends URLClassLoader {
         }
 
 	// Class is in a package, delegate to parent
-	if( dot >= 0 ) {
+	if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
 	    clazz = parent.loadClass(name);
 	    if( resolve )
 		resolveClass(clazz);
 	    return clazz;
 	}
 
-	// Only load unpackaged classes for the JSP page itself
-	if( name.startsWith(className) ) {
-	    clazz = findClass(name);
+	// Only load classes for this JSP page
+	if( name.startsWith(Constants.JSP_PACKAGE_NAME + "." + className) ) {
+	    String classFile = name.substring(Constants.JSP_PACKAGE_NAME.length()+1) +
+		".class";
+	    byte [] cdata = loadClassDataFromFile(classFile);
+	    if( cdata == null )
+		throw new ClassNotFoundException(name);
+	    if( System.getSecurityManager() != null ) {
+		ProtectionDomain pd = new ProtectionDomain(
+			codeSource,permissionCollection);
+		clazz = defineClass(name,cdata,0,cdata.length,pd);
+	    } else {
+		clazz = defineClass(name,cdata,0,cdata.length);
+	    }
 	    if( clazz != null ) {
 		if( resolve )                
 		    resolveClass(clazz);
@@ -208,6 +215,31 @@ public class JasperLoader extends URLClassLoader {
      */
     protected final PermissionCollection getPermissions(CodeSource codeSource) {
         return permissionCollection;
+    }
+
+
+    /**
+     * Load JSP class data from file.
+     */
+    protected byte[] loadClassDataFromFile(String fileName) {
+        byte[] classBytes = null;
+        try {
+            InputStream in = getResourceAsStream(fileName);
+            if (in == null) {
+		return null;
+	    }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte buf[] = new byte[1024];
+            for(int i = 0; (i = in.read(buf)) != -1; )
+                baos.write(buf, 0, i);
+            in.close();     
+            baos.close();    
+            classBytes = baos.toByteArray();
+        } catch(Exception ex) {
+	    ex.printStackTrace();
+            return null;     
+        }                    
+        return classBytes;
     }
 
 }

@@ -129,6 +129,11 @@ public class Constants {
     public static final String PRECOMPILE = "jsp_precompile";
 
     /**
+     * The default package name for compiled jsp pages.
+     */
+    public static final String JSP_PACKAGE_NAME = "org.apache.jsp";
+
+    /**
      * Servlet context and request attributes that the JSP engine
      * uses. 
      */
