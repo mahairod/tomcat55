@@ -72,12 +72,16 @@ public interface DynamicAttributes {
      * Called when a tag declared to accept dynamic attributes is passed
      * an attribute that is not declared in the Tag Library Descriptor.
      * 
-     * @param uri the namespace of the attribute, nor null if in the default
+     * @param uri the namespace of the attribute, or null if in the default
      *     namespace.
      * @param localName the name of the attribute being set.
      * @param value the value of the attribute
      * @throws AttributeNotSupportedException if the tag handler wishes to
-     *     signal that it does not accept the given attribute.
+     *     signal that it does not accept the given attribute.  The 
+     *     container must catch this exception and rethrow a JspException
+     *     to the calling page before calling doStartTag() or doTag(). 
+     *     If a message is provided in the AttributeNotSupportedException, 
+     *     the corresponding JspException must contain the same message.
      */
     public void setDynamicAttribute(
         String uri, String localName, Object value ) 

@@ -59,7 +59,7 @@ import javax.servlet.jsp.*;
 
 
 /**
- * Wraps any Object and exposes it using a Tag interface.  This is used
+ * Wraps any JspTag and exposes it using a Tag interface.  This is used
  * to allow collaboration between classic Tag handlers and SimpleTag
  * handlers.
  * <p>
@@ -78,13 +78,13 @@ public class TagAdapter
     private Tag parentTag;
     
     /** The tag that's being adapted */
-    private Object adaptee;
+    private JspTag adaptee;
     
     /**
      * Creates a new TagAdapter that wraps the given tag and 
      * returns the given parent tag when getParent() is called.
      */
-    public TagAdapter( Object adaptee, Tag parentTag ) {
+    public TagAdapter( JspTag adaptee, Tag parentTag ) {
         this.adaptee = adaptee;
         this.parentTag = parentTag;
     }
@@ -125,7 +125,7 @@ public class TagAdapter
      * This should be an instance of SimpleTag in JSP 2.0, but room
      * is left for other kinds of tags in future spec versions.
      */
-    public void setAdaptee( Object adaptee ) {
+    public void setAdaptee( JspTag adaptee ) {
         this.adaptee = adaptee;
     }
     
@@ -134,7 +134,7 @@ public class TagAdapter
      * This should be an instance of SimpleTag in JSP 2.0, but room
      * is left for other kinds of tags in future spec versions.
      */
-    public Object getAdaptee() {
+    public JspTag getAdaptee() {
         return this.adaptee;
     }
 

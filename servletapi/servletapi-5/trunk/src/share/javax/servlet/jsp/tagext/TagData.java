@@ -61,8 +61,9 @@ import java.util.Hashtable;
  * The (translation-time only) attribute/value information for a tag instance.
  *
  * <p>
- * TagData is only used as an argument to the isValid and getVariableInfo
- * methods of TagExtraInfo, which are invoked at translation time.
+ * TagData is only used as an argument to the isValid, validate, and 
+ * getVariableInfo methods of TagExtraInfo, which are invoked at 
+ * translation time.
  */
 
 public class TagData implements Cloneable {

@@ -54,14 +54,6 @@
     <xsd:group ref = "Bodygroup" minOccurs = "0" maxOccurs = "unbounded"/>
   </xsd:complexType>
 
-  <xsd:complexType name = "BasicType">
-    <xsd:simpleContent>
-      <xsd:extension base = "xsd:string">
-          <xsd:attribute ref = "jsp:id"/>
-      </xsd:extension>
-    </xsd:simpleContent>
-  </xsd:complexType>
-
   <!-- groups -->
 
   <xsd:group name = "Bodygroup">
@@ -82,20 +74,6 @@
     </xsd:choice>
   </xsd:group>
 
-
-  <!-- jsp:id attribute -->
-
-  <xsd:attribute name = "id" type = "xsd:string"/>
-
-<!--
-This should be requesting jsp:id to be unique within all elements
-in the document.
-
-  <xsd:unique name="dummy">
-    <xsd:selector xpath="*"/>
-    <xsd:field xpath="jsp:/@id"/>
-  </xsd:unique>
--->
 
   <!-- Simple types are next -->
 
@@ -323,10 +301,13 @@ in the document.
     <xsd:annotation>
       <xsd:documentation>
         directive.page is the "page directive".
+        The contentType default is not relevant for XML views of
+        JSP pages since it differs depending on the originating
+        syntax (text/html;ISO-8859-1 for JSP Pages in standard syntax, or
+        text/xml;UTF-8 for JSP Documents in XML syntax.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "language" default = "java" type = "xsd:string"/>
       <xsd:attribute name = "extends" type = "TypeName"/>
       <xsd:attribute name = "contentType" default = "text/html; ISO-8859-1" type = "ContentType"/>
@@ -339,6 +320,8 @@ in the document.
       <xsd:attribute name = "info" type = "xsd:string"/>
       <xsd:attribute name = "errorPage" type = "RelativeURL"/>
       <xsd:attribute name = "isErrorPage" default = "false" type = "Bool"/>
+      <xsd:attribute name = "isScriptingEnabled" default = "true" type = "Bool"/>
+      <xsd:attribute name = "isELEnabled" type = "Bool"/>
     </xsd:complexType>
   </xsd:element>
   
@@ -350,12 +333,11 @@ in the document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "file" use = "required" type = "RelativeURL"/>
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name = "scriptlet" type = "BasicType">
+  <xsd:element name = "scriptlet" type = "xsd:string">
     <xsd:annotation>
       <xsd:documentation>
         The representation of a scriplet.
@@ -363,7 +345,7 @@ in the document.
     </xsd:annotation>
   </xsd:element>
   
-  <xsd:element name = "declaration" type = "BasicType">
+  <xsd:element name = "declaration" type = "xsd:string">
     <xsd:annotation>
       <xsd:documentation>
         The reprsentation of a declaration.
@@ -371,7 +353,7 @@ in the document.
     </xsd:annotation>
   </xsd:element>
   
-  <xsd:element name = "expression" type = "BasicType">
+  <xsd:element name = "expression" type = "xsd:string">
     <xsd:annotation>
       <xsd:documentation>
         The representation of an expression.
@@ -379,7 +361,7 @@ in the document.
     </xsd:annotation>
   </xsd:element>
  
-  <xsd:element name = "text" type = "BasicType">
+  <xsd:element name = "text" type = "xsd:string">
     <xsd:annotation>
       <xsd:documentation>
         Verbatim template text.
@@ -401,7 +383,6 @@ in the document.
     <xsd:complexType>
       <xsd:complexContent>
         <xsd:extension base="Body">
-          <xsd:attribute ref = "jsp:id"/>
           <xsd:attribute name = "id" use = "required" type = "Identifier"/>
           <xsd:attribute name = "class" type = "TypeName"/>
           <xsd:attribute name = "type" type = "TypeName"/>
@@ -432,7 +413,6 @@ in the document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "name" use = "required" type = "Identifier"/>
       <xsd:attribute name = "property" use = "required" type = "SetProp"/>
       <xsd:attribute name = "param" type = "xsd:string"/>
@@ -455,7 +435,6 @@ in the document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "name" use = "required" type = "Identifier"/>
       <xsd:attribute name = "property" use = "required" type = "Identifier"/>
     </xsd:complexType>
@@ -466,7 +445,6 @@ in the document.
       <xsd:sequence>
         <xsd:element ref = "param" minOccurs = "0" maxOccurs = "unbounded"/>
       </xsd:sequence>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "flush" default = "false" type = "Bool"/>
       <xsd:attribute name = "page" use = "required" type = "RTERelativeURL"/>
     </xsd:complexType>
@@ -477,7 +455,6 @@ in the document.
       <xsd:sequence>
         <xsd:element ref = "param" minOccurs = "0" maxOccurs = "unbounded"/>
       </xsd:sequence>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "page" use = "required" type = "RTERelativeURL"/>
      </xsd:complexType>
   </xsd:element>
@@ -488,7 +465,6 @@ in the document.
         <xsd:element ref = "params" minOccurs = "0" maxOccurs = "1"/>
         <xsd:element name = "fallback" minOccurs = "0" maxOccurs = "1" type = "Body"/>
       </xsd:sequence>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "type" use = "required" type = "PlugInType"/>
       <xsd:attribute name = "code" type = "xsd:anyURI"/>
       <xsd:attribute name = "codebase" type = "xsd:anyURI"/>
@@ -514,13 +490,11 @@ in the document.
        <xsd:sequence>
          <xsd:element ref = "param" minOccurs = "1" maxOccurs = "unbounded"/>
        </xsd:sequence>
-      <xsd:attribute ref = "jsp:id"/>
     </xsd:complexType>
   </xsd:element>
 
   <xsd:element name = "param">
     <xsd:complexType>
-      <xsd:attribute ref = "jsp:id"/>
       <xsd:attribute name = "name" use = "required" type = "xsd:NMTOKEN"/>
       <xsd:attribute name = "value" use = "required" type = "xsd:string"/>
     </xsd:complexType>

@@ -58,6 +58,7 @@ package javax.servlet.jsp.el;
 import javax.servlet.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
+import java.util.Map;
 
 /**
  * <p>The interface for an expression-language validator and evaluator.
@@ -73,6 +74,11 @@ import javax.servlet.jsp.tagext.*;
  * they depend on transient state.  Implementations should not, however,
  * assume that only one object of each ExpressionEvaluator type will be
  * instantiated; global caching should therefore be static.</p>
+ *
+ * <p>There are two variants of the evaluation method.  The most general one
+ * uses a VariableResolver instance to resolve names into objects.  Most invocations
+ * will likely use the variant that uses a jspContext object and uses the default
+ * resolution rules.</p>
  */
 public interface ExpressionEvaluator {
 
@@ -85,26 +91,65 @@ public interface ExpressionEvaluator {
      */ 
     public String validate( String expression ); 
 
-    /** 
-     * Evaluates the expression at request time. 
+
+    /**
+     * Evaluates the expression at request time.   This variant uses a JspContext object
+     * that (implicitly) uses the default VariableResolver defined in the JSP 2.0 specification.
+     * 
+     * if the jspContext parameter is not a PageContext, the only implicit object available
+     * is pageScope.
+     * 
+     * If the jspContext parameter is a PageContext, all the implicit objects described in
+     * the specification are available.
      *
      * @param expression The expression to be evaluated
      * @param expectedType The expected type of the result of the evaluation
      * @param jspContext The context of the current evaluation, providing
      *      the source of data for implicit objects.
-     * @param elFunctions A Map with keys containing function names of
-     *      the form "namespace:function" and values as instances of
+     * @param prefixMap A Map with keys containing prefixes and values being
+     *     the URI corresponding to that prefix in the taglib machinery.
+     * @param functionMap A Map with keys containing function names of
+     *      the form "namespaceURI:function" and values as instances of
      *      java.lang.reflect.Method objects indicating the method to
      *      be invoked.  Can be null, in which case functions are not
      *      supported for this invocation.
-     * @param defaultPrefix The default prefix to use when a function is
+     * @param defaultURI The default URI to use when a function is
      *      encountered with no namespace.
      * @exception JspException Thrown if the expression evaluation failed.
      */ 
     public Object evaluate( String expression, 
                             Class expectedType, 
                             JspContext jspContext,
-                            java.util.Map elFunctions,
-                            String defaultPrefix ) 
+                            Map prefixMap,
+			    Map functionMap,
+                            String defaultURI ) 
+       throws JspException; 
+
+
+    /** 
+     * Evaluates the expression at request time.  This is the most general version that
+     * uses a VariableResolver object.
+     *
+     * @param expression The expression to be evaluated
+     * @param expectedType The expected type of the result of the evaluation
+     * @param resolver The variableResolver object to use, providing
+     *      the source of data for implicit objects.
+     * @param prefixMap A Map with keys containing prefixes and values being
+     *     the URI corresponding to that prefix in the taglib machinery.
+     * @param functionMap A Map with keys containing function names of
+     *      the form "namespaceURI:function" and values as instances of
+     *      java.lang.reflect.Method objects indicating the method to
+     *      be invoked.  Can be null, in which case functions are not
+     *      supported for this invocation.
+     * @param defaultURI  default URI to use when a function is
+     *      encountered with no namespace.
+     * @exception JspException Thrown if the expression evaluation failed.
+     */ 
+    public Object evaluate( String expression, 
+                            Class expectedType, 
+                            VariableResolver resolver,
+                            Map prefixMap,
+			    Map functionMap,
+                            String defaultURI )
        throws JspException; 
 } 

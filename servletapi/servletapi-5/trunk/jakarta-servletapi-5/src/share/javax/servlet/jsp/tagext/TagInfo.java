@@ -91,7 +91,7 @@ public class TagInfo {
     public static final String BODY_CONTENT_SCRIPTLESS = "SCRIPTLESS";
 
     /**
-     * Constructor for TagInfo from data in the JSP 1.1 format for TLD.
+     * Constructor for TagInfo from data in the JSP 2.0 format for TLD.
      * This class is to be instantiated only from the TagLibrary code
      * under request from some JSP code that is parsing a
      * TLD (Tag Library Descriptor).
@@ -287,16 +287,29 @@ public class TagInfo {
      * @param data The translation-time TagData instance.
      * @return Whether the data is valid.
      */
+    public boolean isValid(TagData data) {
+        TagExtraInfo tei = getTagExtraInfo();
+        if (tei == null) {
+	    return true;
+        }
+        return tei.isValid(data);
+    }
 
-
-   public boolean isValid(TagData data) {
-       TagExtraInfo tei = getTagExtraInfo();
-       if (tei == null) {
-	   return true;
-       }
-       return tei.isValid(data);
-   }
-
+    /**
+     * Translation-time validation of the attributes.
+     * This is a convenience method on the associated TagExtraInfo class.
+     *
+     * @param data The translation-time TagData instance.
+     * @return A null object, or zero length array if no errors, an
+     *     array of ValidationMessages otherwise.
+     */
+    public ValidationMessage[] validate( TagData data ) {
+	TagExtraInfo tei = getTagExtraInfo();
+	if( tei == null ) {
+	    return null;
+	}
+	return tei.validate( data );
+    }
 
     /**
      * Set the instance for extra tag information
@@ -381,7 +394,7 @@ public class TagInfo {
     }
 
 
-    // ============== JSP 1.2 TLD Information ========
+    // ============== JSP 2.0 TLD Information ========
 
 
     /**

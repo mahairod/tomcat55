@@ -59,9 +59,9 @@ package javax.servlet.jsp.tagext;
 /**
  * A validation message from a TagLibraryValidator.
  * <p>
- * A JSP container may (optionally) support a jsp:id attribute
+ * As of JSP 2.0, a JSP container must support a jsp:id attribute
  * to provide higher quality validation errors.
- * When supported, the container will track the JSP pages
+ * The container will track the JSP pages
  * as passed to the container, and will assign to each element
  * a unique "id", which is passed as the value of the jsp:id
  * attribute.  Each XML element in the XML view available will

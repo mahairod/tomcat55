@@ -67,15 +67,17 @@ import javax.servlet.jsp.JspContext;
  * have the equivalent power of <code>IterationTag</code>, but with a much 
  * simpler lifecycle and interface.
  * <p>
- * To support body content, the <code>setJspBody()</code> and 
- * <code>getJspBody()</code> methods are provided.  The container invokes 
- * the <code>setJspBody()</code> method with a <code>JspFragment</code> 
- * object encapsulating the body of the tag.  The tag handler implementation 
- * can call <code>getJspBody().invoke()</code> to evaluate the body as
+ * To support body content, the <code>setJspBody()</code> 
+ * method is provided.  The container invokes the <code>setJspBody()</code> 
+ * method with a <code>JspFragment</code> object encapsulating the body of 
+ * the tag.  The tag handler implementation can call 
+ * <code>invoke()</code> on that fragment to evaluate the body as
  * many times as it needs.
+ * 
+ * @see SimpleTagSupport
  */
 
-public interface SimpleTag {
+public interface SimpleTag extends JspTag {
     
     /**
      * Skip the rest of the page.
@@ -90,12 +92,11 @@ public interface SimpleTag {
     public final static int EVAL_PAGE = 6;
     
     /** 
-     * Used for an action declared to have an empty body.  The single 
-     * <code>doTag()</code> method replaces the <code>doStartTag()</code> and 
-     * <code>doEndTag()</code> methods inherited from the <code>Tag</code>
-     * interface. 
+     * Called by the container to invoke this tag.
+     * The implementation of this method is provided by the tag library
+     * developer, and handles all tag processing, body iteration, etc.
      * 
-     * @return SKIP_PAGE to abort the processing, or EVAL_PAGE * to continue. 
+     * @return SKIP_PAGE to abort the processing, or EVAL_PAGE to continue. 
      */ 
     public int doTag() 
         throws javax.servlet.jsp.JspException; 
@@ -103,12 +104,12 @@ public interface SimpleTag {
     /**
      * Sets the parent of this tag, for collaboration purposes.
      */
-    public void setParent( Object parent );
+    public void setParent( JspTag parent );
     
     /**
      * Returns the parent of this tag, for collaboration purposes.
      */ 
-    public Object getParent();
+    public JspTag getParent();
     
     /**
      * Stores the provided page context in the protected 

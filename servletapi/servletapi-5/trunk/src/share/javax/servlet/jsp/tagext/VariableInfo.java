@@ -78,7 +78,7 @@ package javax.servlet.jsp.tagext;
  * <p>
  * If a Fully Qualified Class Name is provided, it should refer to a
  * class that should be in the CLASSPATH for the Web Application (see
- * Servlet 2.3 specification - essentially it is WEB-INF/lib and
+ * Servlet 2.4 specification - essentially it is WEB-INF/lib and
  * WEB-INF/classes). Failure to be so will lead to a translation-time
  * error.
  *
@@ -87,7 +87,7 @@ package javax.servlet.jsp.tagext;
  * the class name must be that of a public class in the context of the
  * import directives of the page where the custom action appears (will
  * check if there is a JLS verbiage to refer to). The class must also
- * be in the CLASSPATH for the Web Application (see Servlet 2.3
+ * be in the CLASSPATH for the Web Application (see Servlet 2.4
  * specification - essentially it is WEB-INF/lib and
  * WEB-INF/classes). Failure to be so will lead to a translation-time
  * error.
@@ -122,7 +122,7 @@ package javax.servlet.jsp.tagext;
  * <IMG src="doc-files/VariableInfo-1.gif"/>
  *
  *<p>
- * The JSP 1.2 specification defines the interpretation of 3 values:
+ * The JSP 2.0 specification defines the interpretation of 3 values:
  * 
  * <ul>
  * <li> NESTED, if the scripting variable is available between
