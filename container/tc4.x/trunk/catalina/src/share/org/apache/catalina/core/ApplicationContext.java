@@ -75,6 +75,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import javax.naming.NamingException;
+import javax.naming.Binding;
 import javax.naming.directory.DirContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
@@ -475,19 +477,18 @@ public final class ApplicationContext
     public Set getResourcePaths() {
 
         ResourceSet set = new ResourceSet();
-        // FIXME !
-        /*
-        Resources resources = context.getResources();
+        DirContext resources = context.getResources();
         if (resources == null) {
             set.setLocked(true);
             return (set);
         }
-        String paths[] = resources.getResourcePaths();
-        if (paths == null)
-            paths = new String[0];
-        for (int i = 0; i < paths.length; i++)
-            set.add(paths[i]);
-        */
+        
+        try {
+            listPaths(set, resources, "");
+        } catch (NamingException e) {
+            // Ignore
+        }
+        
         set.setLocked(true);
         return (set);
 
@@ -728,6 +729,28 @@ public final class ApplicationContext
             }
         }
         parameters = results;
+
+    }
+
+
+    /**
+     * List resource paths (recursively), and store all of them in the given 
+     * Set.
+     */
+    private static void listPaths(Set set, DirContext resources, String path) 
+        throws NamingException {
+
+        Enumeration childPaths = resources.listBindings(path);
+        while (childPaths.hasMoreElements()) {
+            Binding binding = (Binding) childPaths.nextElement();
+            String name = binding.getName();
+            String childPath = path + "/" + name;
+            set.add(childPath);
+            Object object = binding.getObject();
+            if (object instanceof DirContext) {
+                listPaths(set, resources, childPath);
+            }
+        }
 
     }
 
