@@ -93,7 +93,7 @@ depends on which <code>Realm</code> implementation you are using:</p>
     <code>&lt;user&gt;</code> for each individual user, which might
     look something like this:
 <source>
-&lt;user name="craigmcc" password="secret" roles="standard,manager"&gt;
+&lt;user name="craigmcc" password="secret" roles="standard,manager" /&gt;
 </source>
     which defines the username and password used by this individual to
     log on, and the role names he or she is associated with.  You can
@@ -113,7 +113,7 @@ depends on which <code>Realm</code> implementation you are using:</p>
 </ul>
 
 <p>The first time you attempt to issue one of the Manager commands
-described in the next section, you will be challenged to logn on, using
+described in the next section, you will be challenged to log on using
 BASIC authentication.  The username and password you enter do not matter,
 as long as they identify a valid user in the users database who possesses
 the role <strong>manager</strong>.</p>
