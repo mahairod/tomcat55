@@ -66,6 +66,8 @@ package org.apache.tomcat.core;
 
 import javax.servlet.http.HttpServletRequest;
 
+// Not part of tomcat, will be moved to j2ee soon !
+
 /**
  * 
  * @author Harish Prabandham

@@ -385,16 +385,16 @@ public class ServletWrapper {
 
         if (path != null &&
 	    request.getAttribute(
-                Constants.Attribute.ERROR_EXCEPTION_TYPE) == null) {
+                Constants.ATTRIBUTE_ERROR_EXCEPTION_TYPE) == null) {
             RequestDispatcher rd = contextFacade.getRequestDispatcher(path);
 
             // XXX 
             // The spec should really be changed to allow us to include
             // the full exception object.  Oh well.
 
-            request.setAttribute(Constants.Attribute.ERROR_EXCEPTION_TYPE,
+            request.setAttribute(Constants.ATTRIBUTE_ERROR_EXCEPTION_TYPE,
 	        t.getClass().getName());
-            request.setAttribute(Constants.Attribute.ERROR_MESSAGE,
+            request.setAttribute(Constants.ATTRIBUTE_ERROR_MESSAGE,
                 t.getMessage());
 
             try {

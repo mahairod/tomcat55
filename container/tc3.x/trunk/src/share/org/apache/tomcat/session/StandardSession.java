@@ -180,7 +180,7 @@ final class StandardSession
      * The string manager for this package.
      */
     private StringManager sm =
-        StringManager.getManager(Constants.Package);
+        StringManager.getManager("org.apache.tomcat.session");
 
 
     /**

@@ -102,7 +102,7 @@ public final class HexUtils {
      * The string manager for this package.
      */
     private static StringManager sm =
-	StringManager.getManager(Constants.Package);
+	StringManager.getManager("org.apache.tomcat.util");
 
 
     /**

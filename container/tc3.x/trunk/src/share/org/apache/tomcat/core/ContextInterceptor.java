@@ -116,6 +116,22 @@ public interface ContextInterceptor {
      */
     public void removeMapping( Context ctx, String path ) throws TomcatException;
 
+    
+    /** Add a security restriction.
+     *
+     *  We treat the security-constraint as in Apache and most web servers,
+     *  and reverse from web.xml - instead of defining a set of roles and the
+     *  patterns that will be constrainted, we associate some constraints with
+     *  url patterns. ( i.e. path->constraint instead of constraint -> path-set )
+     *
+     *  XXX We should unify method + path
+     *  here and path in addMapping into UrlMatch and transport, roles and wrapper
+     *  under UrlAction ( or something like that ).
+     */
+    public void addSecurityConstraint( Context ctx, String path[], String methods[],
+				       String transport, String roles[] ) throws TomcatException;
+
+
     /** Servlet Init  notification
      */
     public void preServletInit( Context ctx, ServletWrapper sw ) throws TomcatException;

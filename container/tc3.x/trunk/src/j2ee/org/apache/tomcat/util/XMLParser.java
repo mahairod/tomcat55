@@ -65,6 +65,7 @@
 package org.apache.tomcat.util;
 
 import org.apache.tomcat.util.StringManager;
+import org.apache.tomcat.core.Constants;
 import com.sun.xml.tree.XmlDocument;
 import com.sun.xml.tree.ElementNode;
 import com.sun.xml.tree.XmlDocumentBuilder;
@@ -97,7 +98,7 @@ import java.lang.NullPointerException;
 public class XMLParser {
 
     private StringManager sm =
-        StringManager.getManager(Constants.Package);
+        StringManager.getManager("org.apache.tomcat.util");
     private XmlDocument doc = null;
     private static final boolean DefaultCheckType = false;
     private static final String DefaultContentType =
@@ -177,15 +178,16 @@ public class XMLParser {
 	    new ValidatingParser(true) : new Parser();
 	Resolver resolver = new Resolver();
 	XmlDocumentBuilder builder = new XmlDocumentBuilder();
-	URL serverURL = this.getClass().getResource(
-            Constants.DTD.Server.Resource);
+	// Server.xml is not validated and has no DTD ( and will change for a while)
+	// 	URL serverURL = this.getClass().getResource(
+	//             Constants.DTD.Server.Resource);
 	URL webApplicationURL = this.getClass().getResource(
-            Constants.DTD.WebApplication.Resource);
+            Constants.WEB_XML_Resource);
 
-	resolver.registerCatalogEntry(Constants.DTD.Server.PublicId,
-            serverURL.toString());
+// 	resolver.registerCatalogEntry(Constants.DTD.Server.PublicId,
+//             serverURL.toString());
 	resolver.registerCatalogEntry(
-	    Constants.DTD.WebApplication.PublicId,
+	    Constants.WEB_XML_PublicId,
 	    webApplicationURL.toString());
 
 	try {

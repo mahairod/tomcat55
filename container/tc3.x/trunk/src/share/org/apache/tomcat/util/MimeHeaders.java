@@ -101,7 +101,7 @@ import java.util.NoSuchElementException;
 public class MimeHeaders {
 
     private StringManager sm =
-        StringManager.getManager(Constants.Package);
+        StringManager.getManager("org.apache.tomcat.util");
 
     /**
      * The header fields.
@@ -594,7 +594,7 @@ public class MimeHeaders {
 
 class MimeHeadersEnumerator implements Enumeration {
     private StringManager sm =
-        StringManager.getManager(Constants.Package);
+        StringManager.getManager("org.apache.tomcat.util");
     private Hashtable hash;
     private Enumeration delegate;
 

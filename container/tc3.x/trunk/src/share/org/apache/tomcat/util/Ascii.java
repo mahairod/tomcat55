@@ -192,7 +192,7 @@ public class Ascii {
 
 	if (b == null || len <= 0 || !isDigit(c = b[off++])) {
             StringManager sm =
-                StringManager.getManager(Constants.Package);
+                StringManager.getManager("org.apache.tomcat.util");
             String msg = sm.getString("ascii.parseInit.nfe", b);
 
 	    throw new NumberFormatException(msg);
@@ -203,7 +203,7 @@ public class Ascii {
 	while (--len > 0) {
 	    if (!isDigit(c = b[off++])) {
                 StringManager sm =
-                    StringManager.getManager(Constants.Package);
+                    StringManager.getManager("org.apache.tomcat.util");
                 String msg = sm.getString("ascii.parseInit.nfe", b);
 
 		throw new NumberFormatException(msg);
