@@ -709,16 +709,19 @@ class Generator {
 	    if (!attr.isNamedAttribute() && (v == null))
 		return "";
 
-            if (attr.isExpression() || attr.isELInterpreterInput()) {
-		if (attr.isELInterpreterInput()) {
-		    boolean replaceESC = v.indexOf(Constants.ESC) > 0;
-		    v = JspUtil.interpreterCall(this.isTagFile,
+            if (attr.isExpression()){
+		if (encode) {
+		    return "org.apache.jasper.runtime.JspRuntimeLibrary.URLEncode(String.valueOf(" + v + "), request.getCharacterEncoding())";
+		}
+		return v;
+	    } else if (attr.isELInterpreterInput()) {
+		boolean replaceESC = v.indexOf(Constants.ESC) > 0;
+		v = JspUtil.interpreterCall(this.isTagFile,
 		        v, expectedType,
 			attr.getEL().getMapName(), false );
-		    // XXX ESC replacement hack
-		    if (replaceESC) {
-		        v = "(" + v + ").replace(" + Constants.ESCStr + ", '$')";
-		    }
+		// XXX ESC replacement hack
+		if (replaceESC) {
+		    v = "(" + v + ").replace(" + Constants.ESCStr + ", '$')";
 		}
 		if (encode) {
 		    return "org.apache.jasper.runtime.JspRuntimeLibrary.URLEncode(" + v + ", request.getCharacterEncoding())";
