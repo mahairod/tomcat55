@@ -15,7 +15,7 @@ import org.w3c.dom.*;
 /** micro-XPath match - match a path
  */
 class PathMatch implements XmlMatch {
-    String names[]=new String[6];
+    String names[]=new String[10];
     int pos=0;
     
     public PathMatch( String tagName ) {
