@@ -13,6 +13,7 @@
 
 
   <mbean         name="AccessLogValve"
+            className="org.apache.catalina.mbeans.ValveBaseMBean"
           description="Valve that generates a web server access log"
                domain="Catalina"
                 group="Valve"
@@ -20,11 +21,17 @@
 
     <attribute   name="container"
           description="The Container whose pipeline this Valve is a component of"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="directory"
           description="The directory in which log files are created"
                  type="java.lang.String"/>
+
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Valve"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="pattern"
           description="The pattern used to format our access log lines"
@@ -70,6 +77,11 @@
           description="The Manager implementation with which this Container is associated"
                  type="org.apache.catalina.Manager"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this default context"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+
     <attribute   name="reloadable"
           description="The reloadable flag for this web application"
                  type="boolean"/>
@@ -85,6 +97,7 @@
 
 
   <mbean         name="FileLogger"
+            className="org.apache.catalina.mbeans.LoggerMBean"
           description="Implementation of Logger that appends log messages to a file"
                domain="Catalina"
                 group="Logger"
@@ -92,11 +105,17 @@
 
     <attribute   name="container"
           description="The Container with which this Logger has been associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="directory"
           description="The directory in which log files are created"
                  type="java.lang.String"/>
+
+    <attribute   name="parent"
+          description="Parent (Container) that owns this logger"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="prefix"
           description="The prefix that is added to log file filenames"
@@ -120,6 +139,7 @@
 
 
   <mbean         name="Http10Connector"
+            className="org.apache.catalina.mbeans.HttpConnectorMBean"
           description="HTTP/1.0 Connector for Tomcat Standalone"
                domain="Catalina"
                 group="Connector"
@@ -162,6 +182,11 @@
           description="The maximum number of processors allowed"
                  type="int"/>
 
+    <attribute   name="parent"
+          description="Parent (Service) that owns this Connector"
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
+
     <attribute   name="port"
           description="TCP port number to listen on"
                  type="int"/>
@@ -196,6 +221,7 @@
 
 
   <mbean         name="Http11Connector"
+            className="org.apache.catalina.mbeans.HttpConnectorMBean"
           description="HTTP/1.1 Connector for Tomcat Standalone"
                domain="Catalina"
                 group="Connector"
@@ -242,6 +268,11 @@
           description="The maximum number of processors allowed"
                  type="int"/>
 
+    <attribute   name="parent"
+          description="Parent (Service) that owns this Connector"
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
+            
     <attribute   name="port"
           description="TCP port number to listen on"
                  type="int"/>
@@ -268,7 +299,8 @@
 
     <attribute   name="service"
           description="Service that owns this Connector"
-                 type="org.apache.catalina.Service"/>
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
 
     <constructor name="HttpConnector"/>
 
@@ -276,6 +308,7 @@
 
 
   <mbean         name="JDBCRealm"
+            className="org.apache.catalina.mbeans.RealmMBean"
           description="Implmentation of Realm that works with any JDBC supported database"
                domain="Catalina"
                 group="Realm"
@@ -295,7 +328,8 @@
 
     <attribute   name="container"
           description="The Container with which this Realm is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="debug"
           description="The debugging detail level for this component"
@@ -308,6 +342,11 @@
     <attribute   name="driverName"
           description="The JDBC driver to use"
                  type="java.lang.String"/>
+
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Realm"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="roleNameCol"
           description="The column in the user role table that names a role"
@@ -335,6 +374,7 @@
 
 
   <mbean         name="JNDIRealm"
+            className="org.apache.catalina.mbeans.RealmMBean"
           description="Implementation of Realm that works with a directory server accessed via the Java Naming and Directory Interface (JNDI) APIs"
                domain="Catalina"
                 group="Realm"
@@ -354,7 +394,8 @@
 
     <attribute   name="container"
           description="The Container with which this Realm is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="debug"
           description="The debugging detail level for this component"
@@ -364,6 +405,11 @@
           description="Digest algorithm used in storing passwords in a non-plaintext format"
                  type="java.lang.String"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Realm"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <attribute   name="roleBase"
           description="The base element for role searches"
                  type="java.lang.String"/>
@@ -386,6 +432,7 @@
 
 
   <mbean         name="MemoryRealm"
+            className="org.apache.catalina.mbeans.RealmMBean"
           description="Simple implementation of Realm that reads an XML file to configure the valid users, passwords, and roles"
                domain="Catalina"
                 group="Realm"
@@ -393,12 +440,18 @@
 
     <attribute   name="container"
           description="The Container with which this Realm is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Realm"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <attribute   name="pathname"
           description="The pathname of the XML file containing our database information"
                  type="java.lang.String"/>
@@ -409,6 +462,7 @@
 
 
   <mbean         name="RemoteAddrValve"
+            className="org.apache.catalina.mbeans.ValveBaseMBean"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's IP address"
                domain="Catalina"
                 group="Valve"
@@ -420,18 +474,25 @@
 
     <attribute   name="container"
           description="The Container with which this Valve is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="deny"
           description="The comma-delimited set of deny expressions"
                  type="java.lang.String"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Valve"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <constructor name="RemoteAddrValve"/>
 
   </mbean>
 
 
   <mbean         name="RemoteHostValve"
+            className="org.apache.catalina.mbeans.ValveBaseMBean"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's host name"
                domain="Catalina"
                 group="Valve"
@@ -443,18 +504,25 @@
 
     <attribute   name="container"
           description="The Container with which this Valve is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="deny"
           description="The comma-delimited set of deny expressions"
                  type="java.lang.String"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Valve"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <constructor name="RemoteHostValve"/>
 
   </mbean>
 
 
   <mbean         name="RequestDumperValve"
+            className="org.apache.catalina.mbeans.ValveBaseMBean"
           description="Implementation of a Valve that logs interesting contents from the specified Request and the corresponding Response"
                domain="Catalina"
                 group="Valve"
@@ -462,11 +530,17 @@
 
     <attribute   name="container"
           description="The Container with which this Realm is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
+
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Valve"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <constructor name="RequestDumperValve"/>
 
@@ -474,6 +548,7 @@
 
 
   <mbean         name="SingleSignOn"
+            className="org.apache.catalina.mbeans.ValveBaseMBean"
           description="A Valve that supports a 'single signon' user experience"
                domain="Catalina"
                 group="Valve"
@@ -481,14 +556,21 @@
 
     <attribute   name="container"
           description="The Container with which this Valve is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Valve"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <constructor name="SingleSignOn"/>
 
   </mbean>
 
 
   <mbean         name="StandardContext"
+            className="org.apache.catalina.mbeans.StandardContextMBean"
           description="Standard Context Component"
                domain="Catalina"
                 group="Context"
@@ -521,6 +603,11 @@
     <attribute   name="override"
           description="The DefaultContext override flag for this web application"
                  type="boolean"/>
+
+    <attribute   name="parent"
+          description="Parent (Host) that owns this Context"
+                 type="org.apache.catalina.Host"
+            writeable="false"/>
 
     <attribute   name="realm"
           description="The Realm implementation with which this Container is associated"
@@ -597,7 +684,8 @@
 
     <attribute   name="service"
           description="Service that owns this Engine"
-                 type="org.apache.catalina.Service"/>
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
 
     <constructor name="StandardEngine"/>
 
@@ -651,6 +739,7 @@
 
 
   <mbean         name="StandardHost"
+            className="org.apache.catalina.mbeans.StandardHostMBean"
           description="Standard Host Component"
                domain="Catalina"
                 group="Host"
@@ -667,6 +756,11 @@
     <attribute   name="logger"
           description="The Logger implementation with which this Container is associated"
                  type="org.apache.catalina.Logger"/>
+
+    <attribute   name="parent"
+          description="Parent (Engine) that owns this Host"
+                 type="org.apache.catalina.Engine"
+            writeable="false"/>
 
     <attribute   name="name"
           description="Unique name of this Host"
@@ -752,6 +846,7 @@
 
 
   <mbean         name="StandardManager"
+            className="org.apache.catalina.mbeans.ManagerMBean"
           description="Standard implementation of the Manager interface"
                domain="Catalina"
                 group="Manager"
@@ -767,7 +862,8 @@
 
     <attribute   name="container"
           description="The Container with which this Manager is associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="debug"
           description="The debugging detail level for this component"
@@ -792,6 +888,11 @@
     <attribute   name="name"
           description="The descriptive name of this Manager implementation (for logging)"
                  type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Manager"
+                 type="org.apache.catalina.Container"
             writeable="false"/>
 
     <attribute   name="pathname"
@@ -887,6 +988,7 @@
 
 
   <mbean         name="StandardService"
+            className="org.apache.catalina.mbeans.StandardServiceMBean"
           description="Standard Service Component"
                domain="Catalina"
                 group="Service"
@@ -894,11 +996,17 @@
 
     <attribute   name="container"
           description="The Container (Engine) processing requests for this Service"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="name"
           description="Unique name of this Service"
                  type="java.lang.String"/>
+
+    <attribute   name="parent"
+          description="Parent (Server) that owns this Service"
+                 type="org.apache.catalina.Server"
+            writeable="false"/>
 
     <attribute   name="server"
           description="The Server that owns this Service"
@@ -934,6 +1042,7 @@
 
 
   <mbean         name="SystemErrLogger"
+            className="org.apache.catalina.mbeans.LoggerMBean"
           description="Simple implementation of Logger that writes to System.err"
                domain="Catalina"
                 group="Logger"
@@ -941,8 +1050,14 @@
 
     <attribute   name="container"
           description="The Container with which this Logger has been associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this logger"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be filtered"
                  type="int"/>
@@ -953,6 +1068,7 @@
 
 
   <mbean         name="SystemOutLogger"
+            className="org.apache.catalina.mbeans.LoggerMBean"
           description="Simple implementation of Logger that writes to System.out"
                domain="Catalina"
                 group="Logger"
@@ -960,7 +1076,13 @@
 
     <attribute   name="container"
           description="The Container with which this Logger has been associated"
-                 type="org.apache.catalina.Container"/>
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+
+    <attribute   name="parent"
+          description="Parent (Container) that owns this logger"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
 
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be filtered"
@@ -972,6 +1094,7 @@
 
 
   <mbean         name="WarpConnector"
+            className="org.apache.catalina.mbeans.HttpConnectorMBean"
           description="WARP Connector Component"
                domain="Catalina"
                 group="Connector"
@@ -1014,6 +1137,11 @@
           description="The maximum number of processors allowed"
                  type="int"/>
 
+    <attribute   name="parent"
+          description="Parent (Service) that owns this Connector"
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
+            
     <attribute   name="port"
           description="TCP port number to listen on"
                  type="int"/>
@@ -1040,7 +1168,8 @@
 
     <attribute   name="service"
           description="Service that owns this Connector"
-                 type="org.apache.catalina.Service"/>
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
 
     <constructor name="HttpConnector"/>
 
@@ -1048,6 +1177,7 @@
 
 
   <mbean         name="WarpEngine"
+            className="org.apache.catalina.mbeans.StandardEngineMBean"
           description="Engine Component for WARP Connector"
                domain="Catalina"
                 group="Engine"
@@ -1069,9 +1199,15 @@
           description="Unique name of this Engine"
                  type="java.lang.String"/>
 
+    <attribute   name="parent"
+          description="Parent (Service) that owns this Engine"
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
+            
     <attribute   name="service"
           description="Service that owns this Engine"
-                 type="org.apache.catalina.Service"/>
+                 type="org.apache.catalina.Service"
+            writeable="false"/>
 
     <constructor name="StandardEngine"/>
 
@@ -1125,6 +1261,7 @@
 
 
   <mbean         name="WebappLoader"
+            className="org.apache.catalina.mbeans.LoaderMBean"
           description="Classloader implementation which is specialized for handling web applications"
                domain="Catalina"
                 group="Loader"
@@ -1146,6 +1283,11 @@
           description="The 'follow standard delegation model' flag that will be used to configure our ClassLoader"
                  type="boolean"/>
 
+    <attribute   name="parent"
+          description="Parent (Container) that owns this Loader"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+            
     <attribute   name="reloadable"
           description="The reloadable flag for this Loader"
                  type="boolean"/>
