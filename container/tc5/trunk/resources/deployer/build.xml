@@ -1,5 +1,7 @@
 <project name="Deployer" default="compile" basedir=".">
 
+  <property file="deployer.properties"/>
+
   <!-- Configure the directory into which the web application is built -->
   <property name="build"    value="${basedir}/build"/>
 
@@ -24,16 +26,10 @@
   <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask">
     <classpath refid="deployer.classpath" />
   </taskdef>
-  <taskdef name="install"   classname="org.apache.catalina.ant.InstallTask">
-    <classpath refid="deployer.classpath" />
-  </taskdef>
   <taskdef name="list"      classname="org.apache.catalina.ant.ListTask">
     <classpath refid="deployer.classpath" />
   </taskdef>
   <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask">
-    <classpath refid="deployer.classpath" />
-  </taskdef>
-  <taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask">
     <classpath refid="deployer.classpath" />
   </taskdef>
   <taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask">
@@ -49,6 +45,9 @@
     <classpath refid="deployer.classpath" />
   </taskdef>
   <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask">
+    <classpath refid="deployer.classpath" />
+  </taskdef>
+  <taskdef name="validator" classname="org.apache.catalina.ant.ValidatorTask">
     <classpath refid="deployer.classpath" />
   </taskdef>
   <taskdef name="jasper2"   classname="org.apache.jasper.JspC" > 
@@ -93,14 +92,16 @@
       <exclude name="tags/**" />
     </javac>
 
+    <validator path="${webapp.path}" />
+
     <jar destfile="${webapp.path}.war"
          basedir="${webapp.path}" />
 
   </target>
 
-  <target name="deploy" description="Compile and deploy web application">
+  <target name="deploy" description="Deploy web application">
     <deploy url="${url}" username="${username}" password="${password}"
-            path="${path}" war="${webapp.path}.war"/>
+            path="${path}" war="${webapp.path}.war" update="true" />
   </target>
 
   <target name="undeploy" description="Undeploy web application">
