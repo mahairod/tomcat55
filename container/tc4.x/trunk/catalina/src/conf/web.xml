@@ -376,6 +376,10 @@
     <mime-type>application/x-csh</mime-type>
   </mime-mapping>
   <mime-mapping>
+    <extension>css</extension>
+    <mime-type>text/css</mime-type>
+  </mime-mapping>
+  <mime-mapping>
     <extension>dib</extension>
     <mime-type>image/bmp</mime-type>
   </mime-mapping>
@@ -470,6 +474,10 @@
   <mime-mapping>
     <extension>jpg</extension>
     <mime-type>image/jpeg</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>js</extension>
+    <mime-type>text/javascript</mime-type>
   </mime-mapping>
   <mime-mapping>
     <extension>kar</extension>
