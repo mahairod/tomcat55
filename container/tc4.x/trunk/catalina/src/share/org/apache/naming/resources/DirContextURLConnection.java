@@ -100,6 +100,9 @@ public class DirContextURLConnection
     
     public DirContextURLConnection(DirContext context, URL url) {
         super(url);
+        if (context == null)
+            throw new IllegalArgumentException
+                ("Directory context can't be null");
         this.context = context;
     }
     
