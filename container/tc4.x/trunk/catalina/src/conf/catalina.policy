@@ -29,17 +29,15 @@ grant codeBase "file:${java.home}/jre/lib/ext/-" {
 // ========== CATALINA CODE PERMISSIONS =======================================
 
 
-// These permissions apply to the server startup code, and the servlet API
-// classes that are shared across all class loaders
+// These permissions apply to the server startup code
 grant codeBase "file:${catalina.home}/bin/bootstrap.jar" {
         permission java.security.AllPermission;
 };
 
-grant codeBase "file:${catalina.home}/bin/servlet.jar" {
-        permission java.security.AllPermission;
-};
-
-grant codeBase "file:${catalina.home}/bin/naming.jar" {
+// These permissions apply to the servlet API classes
+// and those that are shared across all class loaders
+// located in the "common" directory
+grant codeBase "file:${catalina.home}/common/-" {
         permission java.security.AllPermission;
 };
 
@@ -50,16 +48,22 @@ grant codeBase "file:${catalina.home}/server/-" {
 };
 
 // These permissions apply to the jasper page compiler
+// located in the "jasper" directory.
 grant codeBase "file:${catalina.home}/jasper/-" {
         permission java.security.AllPermission;
 };
 
-// These permissions apply to all extension libraries (including Jasper,
-// if present) installed in the "lib" directory
+// These permissions apply to shared web application libraries
+// including the Jasper runtime library installed in the "lib" directory
 grant codeBase "file:${catalina.home}/lib/-" {
         permission java.security.AllPermission;
 };
 
+// These permissions apply to shared web application classes
+// located in the "classes" directory
+grant codeBase "file:${catalina.home}/classes/-" {
+        permission java.security.AllPermission;
+};
 
 // ========== WEB APPLICATION PERMISSIONS =====================================
 
@@ -90,6 +94,7 @@ grant {
 	permission java.util.PropertyPermission "java.vm.vendor", "read";
 	permission java.util.PropertyPermission "java.vm.name", "read";
 	permission java.io.FilePermission "jndi:/WEB-INF/-", "read";
+	permission java.io.FilePermission "jar:jndi:/WEB-INF/lib/-", "read";
 };
 
 
