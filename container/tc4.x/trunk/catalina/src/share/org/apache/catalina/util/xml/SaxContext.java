@@ -19,6 +19,8 @@ import org.w3c.dom.*;
  *    provide access to the current stack and XML elements.
  *
  * @author costin@dnt.ro
+ *
+ * @deprecated Use the Commons Digester package for XML parsing
  */
 public interface SaxContext  {
 

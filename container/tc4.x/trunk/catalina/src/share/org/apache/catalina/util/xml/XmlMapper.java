@@ -19,6 +19,8 @@ import org.xml.sax.helpers.*;
  * SAX Handler - it will read the XML and construct java objects
  *
  * @author costin@dnt.ro
+ *
+ * @deprecated Use the Commons Digester package for XML parsing
  */
 public class XmlMapper
     extends HandlerBase

@@ -13,6 +13,8 @@ import org.xml.sax.helpers.*;
 import org.w3c.dom.*;
 
 /** micro-XPath match - match a path
+ *
+ * @deprecated Use the Commons Digester package for XML parsing
  */
 class PathMatch implements XmlMatch {
     String names[]=new String[10];

@@ -19,6 +19,8 @@ import org.w3c.dom.*;
 
     After all end actions are called, a special cleanup call will allow
     actions to remove temporary data.
+ *
+ * @deprecated Use the Commons Digester package for XML parsing
 */
 public abstract class XmlAction {
     public void start( SaxContext ctx) throws Exception {

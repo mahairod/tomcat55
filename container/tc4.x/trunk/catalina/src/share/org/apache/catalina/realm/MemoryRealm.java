@@ -78,10 +78,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.util.xml.SaxContext;
-import org.apache.catalina.util.xml.XmlAction;
-import org.apache.catalina.util.xml.XmlMapper;
-import org.xml.sax.AttributeList;
+import org.apache.commons.digester.Digester;
 
 
 /**
@@ -109,6 +106,12 @@ public final class MemoryRealm
      * The Container with which this Realm is associated.
      */
     private Container container = null;
+
+
+    /**
+     * The Digester we will use to process in-memory database files.
+     */
+    private static Digester digester = null;
 
 
     /**
@@ -266,6 +269,23 @@ public final class MemoryRealm
 
 
     /**
+     * Return a configured <code>Digester</code> to use for processing
+     * the XML input file, creating a new one if necessary.
+     */
+    protected synchronized Digester getDigester() {
+
+        if (digester == null) {
+            digester = new Digester();
+            digester.setDebug(this.debug);
+            digester.setValidating(false);
+            digester.addRuleSet(new MemoryRuleSet());
+        }
+        return (digester);
+
+    }
+
+
+    /**
      * Return a short name for this Realm implementation.
      */
     protected String getName() {
@@ -327,10 +347,12 @@ public final class MemoryRealm
         if (debug >= 1)
             log(sm.getString("memoryRealm.loadPath",
                              file.getAbsolutePath()));
-        XmlMapper mapper = new XmlMapper();
-        mapper.addRule("tomcat-users/user", new MemoryRealmUserAction());
+        Digester digester = getDigester();
         try {
-            mapper.readXml(file, this);
+            synchronized (digester) {
+                digester.push(this);
+                digester.parse(file);
+            }
         } catch (Exception e) {
             throw new LifecycleException("memoryRealm.readXml", e);
         }
@@ -354,34 +376,6 @@ public final class MemoryRealm
         super.stop();
 
         // No shutdown activities required
-
-    }
-
-
-}
-
-
-/**
- * Private class used when parsing the XML database file.
- */
-final class MemoryRealmUserAction extends XmlAction {
-
-
-    /**
-     * Process a <code>&lt;user&gt;</code> element from the XML database file.
-     *
-     * @param context The SAX context within which this element was encountered
-     */
-    public void start(SaxContext context) throws Exception {
-
-        int top = context.getTagCount() - 1;
-        AttributeList attributes = context.getAttributeList(top);
-        String username = attributes.getValue("name");
-        String password = attributes.getValue("password");
-        String roles = attributes.getValue("roles");
-
-        MemoryRealm realm = (MemoryRealm) context.getRoot();
-        realm.addUser(username, password, roles);
 
     }
 

@@ -14,6 +14,8 @@ import org.w3c.dom.*;
 
 /**
  * @author costin@dnt.ro
+ *
+ * @deprecated Use the Commons Digester package for XML parsing
  */
 interface XmlMatch {
     public boolean match( SaxContext ctx );

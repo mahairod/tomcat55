@@ -22,6 +22,9 @@
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
     <pathelement location="${activation.jar}"/>
+    <pathelement location="${commons-beanutils.jar}"/>
+    <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -42,6 +45,9 @@
   <path id="test.classpath">
     <pathelement location="${junit.jar}"/>
     <pathelement location="${activation.jar}"/>
+    <pathelement location="${commons-beanutils.jar}"/>
+    <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -74,6 +80,15 @@
      classname="org.apache.tools.ant.taskdefs.optional.TraXLiaison" />
 
     <!-- Class availability flags -->
+    <available property="beanutils.present"
+     classname="org.apache.commons.beanutils.BeanUtils"
+     classpath="${commons-beanutils.jar}"/>
+    <available property="collections.present"
+     classname="org.apache.commons.collections.FastHashMap"
+     classpath="${commons-collections.jar}"/>
+    <available property="digester.present"
+     classname="org.apache.commons.digester.Digester"
+     classpath="${commons-digester.jar}"/>
     <condition property="jaxp.present">
       <and>
         <available classname="javax.xml.parsers.SAXParser"
@@ -321,6 +336,9 @@
     <echo message="jdk.1.4.present=${jdk.1.4.present}" />
 
     <echo message="--- Required Libraries ---" />
+    <echo message="beanutils.present=${beanutils.present}" />
+    <echo message="collections.present=${collections.present}" />
+    <echo message="digester.present=${digester.present}" />
     <echo message="jaxp.present=${jaxp.present}" />
     <echo message="jndi.present=${jndi.present}" />
     <echo message="regexp.present=${regexp.present}" />
@@ -456,6 +474,12 @@
     </copy>
 
     <!-- Catalina Server Libraries -->
+    <copy todir="${catalina.build}/server/lib"
+           file="${commons-beanutils.jar}"/>
+    <copy todir="${catalina.build}/server/lib"
+           file="${commons-collections.jar}"/>
+    <copy todir="${catalina.build}/server/lib"
+           file="${commons-digester.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
 <!-- Not needed for stand alone use
     <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>

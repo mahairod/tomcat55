@@ -79,10 +79,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
 import org.apache.catalina.Loader;
-import org.apache.catalina.util.xml.SaxContext;
-import org.apache.catalina.util.xml.XmlAction;
-import org.apache.catalina.util.xml.XmlMapper;
-import org.xml.sax.AttributeList;
+import org.apache.commons.digester.Digester;
 
 
 /**
@@ -182,14 +179,12 @@ public class CatalinaService extends Catalina {
      */
     public void load() {
 
-        // Create and execute our mapper
-        XmlMapper mapper = createStartMapper();
+        // Create and execute our Digester
+        Digester digester = createStartDigester();
         File file = configFile();
         try {
-            mapper.readXml(file, this);
-        } catch (InvocationTargetException e) {
-            System.out.println("Catalina.start: InvocationTargetException");
-            e.getTargetException().printStackTrace(System.out);
+            digester.push(this);
+            digester.parse(file);
         } catch (Exception e) {
             System.out.println("Catalina.start: " + e);
             e.printStackTrace(System.out);
