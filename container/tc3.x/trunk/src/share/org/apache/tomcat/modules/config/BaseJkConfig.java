@@ -58,11 +58,16 @@
  */
 package org.apache.tomcat.modules.config;
 
-import org.apache.tomcat.core.*;
-import org.apache.tomcat.util.io.FileUtil;
-import java.io.*;
+import java.io.File;
+import java.io.PrintWriter;
 
+import org.apache.tomcat.core.BaseInterceptor;
+import org.apache.tomcat.core.Container;
+import org.apache.tomcat.core.Context;
+import org.apache.tomcat.core.ContextManager;
+import org.apache.tomcat.core.TomcatException;
 import org.apache.tomcat.modules.server.Ajp13Interceptor;
+import org.apache.tomcat.util.io.FileUtil;
 
 /**
     Base class for automatic jk based configurations based on

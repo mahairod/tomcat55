@@ -62,9 +62,11 @@
 
 package org.apache.tomcat.facade;
 
-import org.apache.tomcat.core.*;
 import org.apache.jasper.runtime.TagPoolManager;
 import org.apache.jasper.runtime.TagPoolManagerImpl;
+import org.apache.tomcat.core.BaseInterceptor;
+import org.apache.tomcat.core.Context;
+import org.apache.tomcat.core.TomcatException;
 
 /**
  * This interceptor sets up tag pooling if it is enabled, it will

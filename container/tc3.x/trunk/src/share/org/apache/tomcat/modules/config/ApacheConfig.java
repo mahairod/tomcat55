@@ -58,11 +58,20 @@
  */
 package org.apache.tomcat.modules.config;
 
-import org.apache.tomcat.core.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import org.apache.tomcat.core.Container;
+import org.apache.tomcat.core.Context;
+import org.apache.tomcat.core.ContextManager;
+import org.apache.tomcat.core.TomcatException;
 import org.apache.tomcat.util.io.FileUtil;
-import org.apache.tomcat.util.log.*;
-import java.io.*;
-import java.util.*;
+import org.apache.tomcat.util.log.Log;
 
 /* The idea is to keep all configuration in server.xml and
    the normal apache config files. We don't want people to

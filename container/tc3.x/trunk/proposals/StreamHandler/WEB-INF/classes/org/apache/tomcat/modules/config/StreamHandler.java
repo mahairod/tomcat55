@@ -58,8 +58,11 @@
  */
 package org.apache.tomcat.modules.config;
 
-import java.net.*;
-import org.apache.tomcat.core.*;
+import java.net.URL;
+
+import org.apache.tomcat.core.BaseInterceptor;
+import org.apache.tomcat.core.ContextManager;
+import org.apache.tomcat.core.TomcatException;
 import org.apache.tomcat.util.net.StreamHandlerFactory;
 
 /** 

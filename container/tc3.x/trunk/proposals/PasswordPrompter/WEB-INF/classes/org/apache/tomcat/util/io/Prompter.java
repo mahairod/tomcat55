@@ -52,7 +52,13 @@
 
 package org.apache.tomcat.util.io;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 /** 
  * This utility class allows for command-line interaction with

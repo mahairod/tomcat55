@@ -61,11 +61,16 @@
 
 package org.apache.tomcat.modules.aaa;
 
-import org.apache.tomcat.util.res.StringManager;
-import org.apache.tomcat.core.*;
-
 import java.security.MessageDigest;
 import java.security.Principal;
+
+import org.apache.tomcat.core.BaseInterceptor;
+import org.apache.tomcat.core.Context;
+import org.apache.tomcat.core.ContextManager;
+import org.apache.tomcat.core.Request;
+import org.apache.tomcat.core.Response;
+import org.apache.tomcat.core.TomcatException;
+import org.apache.tomcat.util.res.StringManager;
 
 /*
 *  Abstract Base class for Realms.

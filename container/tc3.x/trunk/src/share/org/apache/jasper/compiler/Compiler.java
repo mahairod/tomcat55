@@ -60,20 +60,18 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.util.Hashtable;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.PrintWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Hashtable;
 
-import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-import org.apache.jasper.compiler.ParseException;
-
-import org.apache.tomcat.util.log.*;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.tomcat.util.log.Log;
 
 /**
  * If you want to customize JSP compilation aspects, this class is
