@@ -65,6 +65,7 @@
 package org.apache.naming.resources;
 
 import java.util.Hashtable;
+import java.util.Date;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import javax.naming.Context;
@@ -104,6 +105,10 @@ public class ProxyDirContext implements DirContext {
         if (dirContext instanceof BaseDirContext) {
             // Initialize parameters based on the associated dir context, like
             // the caching policy.
+            if (((BaseDirContext) dirContext).isCached()) {
+                cache = new Hashtable();
+                cacheTTL = ((BaseDirContext) dirContext).getCacheTTL();
+            }
         }
     }
 
@@ -129,6 +134,19 @@ public class ProxyDirContext implements DirContext {
     protected DirContext dirContext;
 
 
+    /**
+     * Cache.
+     * Path -> Cache entry.
+     */
+    protected Hashtable cache = null;
+
+
+    /**
+     * Cache TTL.
+     */
+    protected int cacheTTL = 5000; // 5s
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -147,6 +165,14 @@ public class ProxyDirContext implements DirContext {
      */
     public Object lookup(Name name)
         throws NamingException {
+        CacheEntry entry = cacheLookup(name.toString());
+        if (entry != null) {
+            if (entry.resource != null) {
+                return entry.resource;
+            } else {
+                return entry.context;
+            }
+        }
         Object object = dirContext.lookup(parseName(name));
         if (object instanceof InputStream)
             return new Resource((InputStream) object);
@@ -164,12 +190,20 @@ public class ProxyDirContext implements DirContext {
      */
     public Object lookup(String name)
         throws NamingException {
+        CacheEntry entry = cacheLookup(name);
+        if (entry != null) {
+            if (entry.resource != null) {
+                return entry.resource;
+            } else {
+                return entry.context;
+            }
+        }
         Object object = dirContext.lookup(parseName(name));
         if (object instanceof InputStream) {
             return new Resource((InputStream) object);
-        } if (object instanceof DirContext) {
+        } else if (object instanceof DirContext) {
             return object;
-        } if (object instanceof Resource) {
+        } else if (object instanceof Resource) {
             return object;
         } else {
             return new Resource(new ByteArrayInputStream
@@ -193,6 +227,7 @@ public class ProxyDirContext implements DirContext {
     public void bind(Name name, Object obj)
         throws NamingException {
         dirContext.bind(parseName(name), obj);
+        cacheUnload(name.toString());
     }
 
 
@@ -209,6 +244,7 @@ public class ProxyDirContext implements DirContext {
     public void bind(String name, Object obj)
         throws NamingException {
         dirContext.bind(parseName(name), obj);
+        cacheUnload(name);
     }
 
 
@@ -230,6 +266,7 @@ public class ProxyDirContext implements DirContext {
     public void rebind(Name name, Object obj)
         throws NamingException {
         dirContext.rebind(parseName(name), obj);
+        cacheUnload(name.toString());
     }
 
 
@@ -245,6 +282,7 @@ public class ProxyDirContext implements DirContext {
     public void rebind(String name, Object obj)
         throws NamingException {
         dirContext.rebind(parseName(name), obj);
+        cacheUnload(name);
     }
 
 
@@ -265,6 +303,7 @@ public class ProxyDirContext implements DirContext {
     public void unbind(Name name)
         throws NamingException {
         dirContext.unbind(parseName(name));
+        cacheUnload(name.toString());
     }
 
 
@@ -279,6 +318,7 @@ public class ProxyDirContext implements DirContext {
     public void unbind(String name)
         throws NamingException {
         dirContext.unbind(parseName(name));
+        cacheUnload(name);
     }
 
 
@@ -296,6 +336,7 @@ public class ProxyDirContext implements DirContext {
     public void rename(Name oldName, Name newName)
         throws NamingException {
         dirContext.rename(parseName(oldName), parseName(newName));
+        cacheUnload(oldName.toString());
     }
 
 
@@ -311,6 +352,7 @@ public class ProxyDirContext implements DirContext {
     public void rename(String oldName, String newName)
         throws NamingException {
         dirContext.rename(parseName(oldName), parseName(newName));
+        cacheUnload(oldName);
     }
 
 
@@ -410,6 +452,7 @@ public class ProxyDirContext implements DirContext {
     public void destroySubcontext(Name name)
         throws NamingException {
         dirContext.destroySubcontext(parseName(name));
+        cacheUnload(name.toString());
     }
 
 
@@ -425,6 +468,7 @@ public class ProxyDirContext implements DirContext {
     public void destroySubcontext(String name)
         throws NamingException {
         dirContext.destroySubcontext(parseName(name));
+        cacheUnload(name);
     }
 
 
@@ -660,6 +704,10 @@ public class ProxyDirContext implements DirContext {
      */
     public Attributes getAttributes(Name name)
         throws NamingException {
+        CacheEntry entry = cacheLookup(name.toString());
+        if (entry != null) {
+            return entry.attributes;
+        }
         Attributes attributes = dirContext.getAttributes(parseName(name));
         if (!(attributes instanceof ResourceAttributes)) {
             attributes = new ResourceAttributes(attributes);
@@ -677,6 +725,10 @@ public class ProxyDirContext implements DirContext {
      */
     public Attributes getAttributes(String name)
         throws NamingException {
+        CacheEntry entry = cacheLookup(name);
+        if (entry != null) {
+            return entry.attributes;
+        }
         Attributes attributes = dirContext.getAttributes(parseName(name));
         if (!(attributes instanceof ResourceAttributes)) {
             attributes = new ResourceAttributes(attributes);
@@ -1218,6 +1270,178 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
 
         return name;
+
+    }
+
+
+    /**
+     * Lookup in cache.
+     */
+    protected CacheEntry cacheLookup(String name) {
+        if (cache == null)
+            return (null);
+        CacheEntry cacheEntry = (CacheEntry) cache.get(name);
+        if (cacheEntry == null) {
+            cacheEntry = new CacheEntry();
+            cacheEntry.name = name;
+            // Load entry
+            if (!cacheLoad(cacheEntry))
+                return null;
+            return (cacheEntry);
+        } else {
+            if (!validate(cacheEntry)) {
+                if (!revalidate(cacheEntry)) {
+                    cacheUnload(cacheEntry.name);
+                    return (null);
+                } else {
+                    cacheEntry.timestamp = 
+                        System.currentTimeMillis() + cacheTTL;
+                }
+            }
+            return (cacheEntry);
+        }
+    }
+
+
+    /**
+     * Validate entry.
+     */
+    protected boolean validate(CacheEntry entry) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime < entry.timestamp) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Revalidate entry.
+     */
+    protected boolean revalidate(CacheEntry entry) {
+        // Get the attributes at the given path, and check the last 
+        // modification date
+        if (entry.attributes == null)
+            return false;
+        Date lastModificationDate = entry.attributes.getLastModified();
+        if ((lastModificationDate == null) 
+            || (lastModificationDate.getTime() <= 0))
+            return false;
+        long lastModified = lastModificationDate.getTime();
+        try {
+            Attributes tempAttributes = dirContext.getAttributes(entry.name);
+            ResourceAttributes attributes = null;
+            if (!(tempAttributes instanceof ResourceAttributes)) {
+                attributes = new ResourceAttributes(tempAttributes);
+            } else {
+                attributes = (ResourceAttributes) tempAttributes;
+            }
+            lastModificationDate = attributes.getLastModified();
+            if (lastModificationDate == null)
+                return false;
+            return (lastModified == lastModificationDate.getTime());
+        } catch (NamingException e) {
+            return false;
+        }
+    }
+
+
+    /**
+     * Load entry into cache.
+     */
+    protected boolean cacheLoad(CacheEntry entry) {
+        if (cache == null)
+            return false;
+        String name = entry.name;
+        // Retrieve missing info
+        // Retrieving attributes
+        if (entry.attributes == null) {
+            try {
+                Attributes attributes = dirContext.getAttributes(entry.name);
+                if (!(attributes instanceof ResourceAttributes)) {
+                    entry.attributes = 
+                        new ResourceAttributes(attributes);
+                } else {
+                    entry.attributes = (ResourceAttributes) attributes;
+                }
+            } catch (NamingException e) {
+                return false;
+            }
+        }
+        // Retriving object
+        if ((entry.resource == null) && (entry.context == null)) {
+            try {
+                Object object = dirContext.lookup(name);
+                if (object instanceof InputStream) {
+                    entry.resource = new Resource((InputStream) object);
+                } else if (object instanceof DirContext) {
+                    entry.context = (DirContext) object;
+                } else if (object instanceof Resource) {
+                    entry.resource = (Resource) object;
+                } else {
+                    entry.resource = new Resource(new ByteArrayInputStream
+                        (object.toString().getBytes()));
+                }
+            } catch (NamingException e) {
+                return false;
+            }
+        }
+        // Load content
+        // TODO
+        
+        // Set timestamp
+        entry.timestamp = System.currentTimeMillis() + cacheTTL;
+        // Add new entry to cache
+        cache.put(name, entry);
+        return true;
+    }
+
+
+    /**
+     * Remove entry from cache.
+     */
+    protected boolean cacheUnload(String name) {
+        if (cache == null)
+            return false;
+        return (cache.remove(name) != null);
+    }
+
+
+    // ------------------------------------------------- CacheEntry Inner Class
+
+
+    protected class CacheEntry {
+
+
+        // ------------------------------------------------- Instance Variables
+
+
+        long timestamp = -1;
+        String name = null;
+        ResourceAttributes attributes = null;
+        Resource resource = null;
+        DirContext context = null;
+
+
+        // ----------------------------------------------------- Public Methods
+
+
+        public void recycle() {
+            timestamp = -1;
+            name = null;
+            attributes = null;
+            resource = null;
+            context = null;
+        }
+
+
+        public String toString() {
+            return ("Cache entry: " + name + "\n"
+                    + "Attributes: " + attributes + "\n"
+                    + "Resource: " + resource + "\n"
+                    + "Context: " + context);
+        }
+
 
     }
 
