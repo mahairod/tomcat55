@@ -200,7 +200,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    throw new IllegalStateException(sm.getString("hsrf.error.ise"));
 
 	else if (sc != HttpServletResponse.SC_UNAUTHORIZED)	// CRM: FIXME
-	    reset();
+	    response.resetBuffer(); // Keep headers and cookies that are set
 
 	setStatus( sc );
 	Request request=response.getRequest();
