@@ -286,6 +286,19 @@ public class DefaultServlet
      */
     protected String getRelativePath(HttpServletRequest request) {
         
+        // Are we being processed by a RequestDispatcher.include()?
+        if (request.getAttribute("javax.servlet.include.request_uri")!=null) {
+            String result = (String)
+                request.getAttribute("javax.servlet.include.path_info");
+            if (result == null)
+                result = (String)
+                    request.getAttribute("javax.servlet.include.servlet_path");
+            if ((result == null) || (result.equals("")))
+                result = "/";
+            return (result);
+        }
+
+        // No, extract the desired path directly from the request
         String result = request.getPathInfo();
         if (result == null) {
             result = request.getServletPath();
@@ -1288,7 +1301,7 @@ public class DefaultServlet
             
             try {
                 ostream = response.getOutputStream();
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalStateException e) {
                 // If it fails, we try to get a Writer instead if we're 
                 // trying to serve a text file
                 if ( (contentType != null) 
