@@ -160,6 +160,14 @@ public class StandardSession
 
 
     /**
+     * Set of attribute names which are not allowed to be persisted.
+     */
+    private static final String[] excludedAttributes = {
+        Globals.SUBJECT_ATTR
+    };
+
+
+    /**
      * We are currently processing a session expiration, so bypass
      * certain IllegalStateException tests.  NOTE:  This value is not
      * included in the serialized version of this object.
@@ -1385,7 +1393,8 @@ public class StandardSession
             }
             if (value == null)
                 continue;
-            else if ( (value instanceof Serializable) ) {
+            else if ( (value instanceof Serializable) 
+                    && (!exclude(keys[i]) )) {
                 saveNames.add(keys[i]);
                 saveValues.add(value);
             } else {
@@ -1413,6 +1422,21 @@ public class StandardSession
             }
         }
 
+    }
+
+
+    /**
+     * Exclude attribute that cannot be serialized.
+     * @param name the attribute's name
+     */
+    protected boolean exclude(String name){
+
+        for (int i = 0; i < excludedAttributes.length; i++) {
+            if (name.equalsIgnoreCase(excludedAttributes[i]))
+                return true;
+        }
+
+        return false;
     }
 
 
