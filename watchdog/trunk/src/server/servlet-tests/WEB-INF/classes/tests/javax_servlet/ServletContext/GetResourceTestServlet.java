@@ -101,7 +101,8 @@ public class GetResourceTestServlet extends ServletTest {
 		ServletConfig config = this.getServletConfig();
 		ServletContext context = config.getServletContext();
 
-		String path="/servlet/tests.javax_servlet.ServletContext.GetResourceTestServlet";
+		//		String path="/servlet/tests.javax_servlet.ServletContext.GetResourceTestServlet";
+		String path="/WEB-INF/web.xml";
 
 		URL resourceURL = context.getResource(path);
 
