@@ -71,6 +71,14 @@ public interface Valve {
 
 
     /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void backgroundProcess();
+
+
+    /**
      * <p>Perform request processing as required by this Valve.</p>
      *
      * <p>An individual Valve <b>MAY</b> perform the following actions, in

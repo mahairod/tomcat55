@@ -82,6 +82,12 @@ public interface Lifecycle {
     public static final String DESTROY_EVENT = "destroy";
 
 
+    /**
+     * The LifecycleEvent type for the "periodic" event.
+     */
+    public static final String PERIODIC_EVENT = "periodic";
+
+
     // --------------------------------------------------------- Public Methods
 
 

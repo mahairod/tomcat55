@@ -149,6 +149,15 @@ public abstract class ValveBase
 
 
     /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void backgroundProcess() {
+    }
+
+
+    /**
      * The implementation-specific logic represented by this Valve.  See the
      * Valve description for the normal design patterns for this method.
      * <p>

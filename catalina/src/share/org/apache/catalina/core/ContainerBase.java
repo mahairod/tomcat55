@@ -1249,6 +1249,48 @@ public abstract class ContainerBase
      * throwables will be caught and logged.
      */
     public void backgroundProcess() {
+        
+        if (!started)
+            return;
+
+        if (cluster != null) {
+            try {
+                cluster.backgroundProcess();
+            } catch (Exception e) {
+                log.warn(sm.getString("containerBase.backgroundProcess.cluster", cluster), e);                
+            }
+        }
+        if (loader != null) {
+            try {
+                loader.backgroundProcess();
+            } catch (Exception e) {
+                log.warn(sm.getString("containerBase.backgroundProcess.loader", loader), e);                
+            }
+        }
+        if (manager != null) {
+            try {
+                manager.backgroundProcess();
+            } catch (Exception e) {
+                log.warn(sm.getString("containerBase.backgroundProcess.manager", manager), e);                
+            }
+        }
+        if (realm != null) {
+            try {
+                realm.backgroundProcess();
+            } catch (Exception e) {
+                log.warn(sm.getString("containerBase.backgroundProcess.realm", realm), e);                
+            }
+        }
+        Valve current = pipeline.getFirst();
+        while (current != null) {
+            try {
+                current.backgroundProcess();
+            } catch (Exception e) {
+                log.warn(sm.getString("containerBase.backgroundProcess.valve", current), e);                
+            }
+            current = current.getNext();
+        }
+        lifecycle.fireLifecycleEvent(Lifecycle.PERIODIC_EVENT, null);
     }
 
 
