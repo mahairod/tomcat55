@@ -53,9 +53,7 @@
               file="appdev/build.xml.txt"/>
 
     <!-- Catalina Functional Specifications -->
-<!--
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina/funcspecs"/>
--->
 
     <!-- Catalina Javadocs -->
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina/docs/api"/>
@@ -115,7 +113,6 @@
     </style>
 
     <!-- Catalina Functional Specifications -->
-<!--
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina"/>
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina/funcspecs"/>
     <style basedir="funcspecs"
@@ -126,7 +123,6 @@
           includes="*.xml">
       <param name="relative-path" expression="../.."/>
     </style>
--->
 
     <!-- Server Configuration Reference -->
     <style basedir="config"
