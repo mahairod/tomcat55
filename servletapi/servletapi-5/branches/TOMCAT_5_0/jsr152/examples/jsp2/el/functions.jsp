@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="my" uri="http://jakarta.apache.org/tomcat/jsp2-example-taglib"%>
 
 <html>
@@ -30,7 +31,7 @@
     <blockquote>
       <u><b>Change Parameter</b></u>
       <form action="functions.jsp" method="GET">
-	  foo = <input type="text" name="foo" value="${param['foo']}">
+	  foo = <input type="text" name="foo" value="${fn:escapeXml(param["foo"])}">
           <input type="submit">
       </form>
       <br>
@@ -42,19 +43,19 @@
 	  </thead>
 	  <tr>
 	    <td>\${param["foo"]}</td>
-	    <td>${param["foo"]}&nbsp;</td>
+	    <td>${fn:escapeXml(param["foo"])}&nbsp;</td>
 	  </tr>
 	  <tr>
 	    <td>\${my:reverse(param["foo"])}</td>
-	    <td>${my:reverse(param["foo"])}&nbsp;</td>
+	    <td>${my:reverse(fn:escapeXml(param["foo"]))}&nbsp;</td>
 	  </tr>
 	  <tr>
 	    <td>\${my:reverse(my:reverse(param["foo"]))}</td>
-	    <td>${my:reverse(my:reverse(param["foo"]))}&nbsp;</td>
+	    <td>${my:reverse(my:reverse(fn:escapeXml(param["foo"])))}&nbsp;</td>
 	  </tr>
 	  <tr>
 	    <td>\${my:countVowels(param["foo"])}</td>
-	    <td>${my:countVowels(param["foo"])}&nbsp;</td>
+	    <td>${my:countVowels(fn:escapeXml(param["foo"]))}&nbsp;</td>
 	  </tr>
 	</table>
       </code>
