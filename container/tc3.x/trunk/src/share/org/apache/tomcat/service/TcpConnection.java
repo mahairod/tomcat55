@@ -80,14 +80,14 @@ public class TcpConnection  { // implements Endpoint {
 
     // -------------------- Properties --------------------
 
-    TcpEndpoint endpoint;
+    PoolTcpEndpoint endpoint;
     Socket socket;
 
-    public void setEndpoint(TcpEndpoint endpoint) {
+    public void setEndpoint(PoolTcpEndpoint endpoint) {
 	this.endpoint = endpoint;
     }
 
-    public TcpEndpoint getEndpoint() {
+    public PoolTcpEndpoint getEndpoint() {
 	return endpoint;
     }
 

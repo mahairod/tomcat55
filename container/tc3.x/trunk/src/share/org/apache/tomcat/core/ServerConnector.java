@@ -95,7 +95,12 @@ public interface ServerConnector {
      */
     public void stop() throws Exception;
 
-    /** Set the entry point to tomcat
+    /** Set the entry point to tomcat. This object will be used by the
+     *  protocol implementation. 
      */
-    public void setContextManager( ContextManager cm );
+    public void setServer( Object cm );
+
+    /** Set a config property
+     */
+    public void setAttribute( String s, Object value );
 }

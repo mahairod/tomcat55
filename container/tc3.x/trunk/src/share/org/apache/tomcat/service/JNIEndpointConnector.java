@@ -85,7 +85,7 @@ public class JNIEndpointConnector  implements ServerConnector {
     static JNIEndpoint ep;
     JNIConnectionHandler con = new JNIConnectionHandler();
 
-    ContextManager cm;
+    Object cm;
     String handlerNativeLib;
 
     boolean running = true;
@@ -104,7 +104,7 @@ public class JNIEndpointConnector  implements ServerConnector {
             throw new Exception("Missing connector native library name");
         }
 
-        con.setContextManager(cm);
+        con.setServer(cm);
         con.setNativeLibrary(handlerNativeLib);
         ep.setConnectionHandler(con);
         ep.startEndpoint();
@@ -114,7 +114,7 @@ public class JNIEndpointConnector  implements ServerConnector {
         ep.stopEndpoint();
     }
 
-    public void setContextManager(ContextManager ctx) {
+    public void setServer(Object ctx) {
         this.cm=ctx;
     }
 

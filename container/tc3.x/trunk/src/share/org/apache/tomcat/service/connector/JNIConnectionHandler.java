@@ -77,8 +77,8 @@ public class JNIConnectionHandler {
     public JNIConnectionHandler() {
     }
 
-    public void setContextManager(ContextManager contextM) {
-    	this.contextM=contextM;
+    public void setServer(Object contextM) {
+    	this.contextM=(ContextManager)contextM;
     }
 
     public void setNativeLibrary(String lib) {

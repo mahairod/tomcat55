@@ -92,7 +92,7 @@ import java.util.*;
  * @author Costin@eng.sun.com
  * @author Gal Shachor [shachor@il.ibm.com]
  */
-public class PoolTcpEndpoint extends TcpEndpoint  { // implements Endpoint {
+public class PoolTcpEndpoint  { // implements Endpoint {
 
     private StringManager sm = StringManager.getManager("org.apache.tomcat.service");
 
