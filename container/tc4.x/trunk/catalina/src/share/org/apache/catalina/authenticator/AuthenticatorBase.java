@@ -66,6 +66,7 @@ package org.apache.catalina.authenticator;
 
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -95,7 +96,6 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
@@ -1068,8 +1068,19 @@ public abstract class AuthenticatorBase
             throw new LifecycleException
                 (sm.getString("authenticator.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
-        if (context instanceof StandardContext)
-            setDebug(((StandardContext) context).getDebug());
+        if ("org.apache.catalina.core.StandardContext".equals
+            (context.getClass().getName())) {
+            try {
+                Class paramTypes[] = new Class[0];
+                Object paramValues[] = new Object[0];
+                Method method =
+                    context.getClass().getMethod("getDebug", paramTypes);
+                Integer result = (Integer) method.invoke(context, paramValues);
+                setDebug(result.intValue());
+            } catch (Exception e) {
+                log("Exception getting debug value", e);
+            }
+        }
         started = true;
 
         // Look up the SingleSignOn implementation in our request processing

@@ -72,6 +72,7 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -92,7 +93,6 @@ import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.SessionEvent;
 import org.apache.catalina.SessionListener;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
 
@@ -163,6 +163,24 @@ class StandardSession
      * version of this object.
      */
     private transient String authType = null;
+
+
+    /**
+     * The <code>java.lang.Method</code> for the
+     * <code>fireContainerEvent()</code> method of the
+     * <code>org.apache.catalina.core.StandardContext</code> method,
+     * if our Context implementation is of this class.  This value is
+     * computed dynamically the first time it is needed, or after
+     * a session reload (since it is declared transient).
+     */
+    private transient Method containerEventMethod = null;
+
+
+    /**
+     * The method signature for the <code>fireContainerEvent</code> method.
+     */
+    private static final Class containerEventTypes[] =
+    { String.class, Object.class };
 
 
     /**
@@ -360,7 +378,7 @@ class StandardSession
         fireSessionEvent(Session.SESSION_CREATED_EVENT, null);
 
         // Notify interested application event listeners
-        StandardContext context = (StandardContext) manager.getContainer();
+        Context context = (Context) manager.getContainer();
         Object listeners[] = context.getApplicationListeners();
         if (listeners != null) {
             HttpSessionEvent event =
@@ -371,14 +389,21 @@ class StandardSession
                 HttpSessionListener listener =
                     (HttpSessionListener) listeners[i];
                 try {
-                    context.fireContainerEvent("beforeSessionCreated",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "beforeSessionCreated",
+                                       listener);
                     listener.sessionCreated(event);
-                    context.fireContainerEvent("afterSessionCreated",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "afterSessionCreated",
+                                       listener);
                 } catch (Throwable t) {
-                    context.fireContainerEvent("afterSessionCreated",
-                                               listener);
+                    try {
+                        fireContainerEvent(context,
+                                           "afterSessionCreated",
+                                           listener);
+                    } catch (Exception e) {
+                        ;
+                    }
                     // FIXME - should we do anything besides log these?
                     log(sm.getString("standardSession.sessionEvent"), t);
                 }
@@ -616,7 +641,7 @@ class StandardSession
 
         // Notify interested application event listeners
         // FIXME - Assumes we call listeners in reverse order
-        StandardContext context = (StandardContext) manager.getContainer();
+        Context context = (Context) manager.getContainer();
         Object listeners[] = context.getApplicationListeners();
         if (notify && (listeners != null)) {
             HttpSessionEvent event =
@@ -628,14 +653,21 @@ class StandardSession
                 HttpSessionListener listener =
                     (HttpSessionListener) listeners[j];
                 try {
-                    context.fireContainerEvent("beforeSessionDestroyed",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "beforeSessionDestroyed",
+                                       listener);
                     listener.sessionDestroyed(event);
-                    context.fireContainerEvent("afterSessionDestroyed",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "afterSessionDestroyed",
+                                       listener);
                 } catch (Throwable t) {
-                    context.fireContainerEvent("afterSessionDestroyed",
-                                               listener);
+                    try {
+                        fireContainerEvent(context,
+                                           "afterSessionDestroyed",
+                                           listener);
+                    } catch (Exception e) {
+                        ;
+                    }
                     // FIXME - should we do anything besides log these?
                     log(sm.getString("standardSession.sessionEvent"), t);
                 }
@@ -1117,7 +1149,7 @@ class StandardSession
             ((HttpSessionBindingListener) value).valueUnbound(event);
 
         // Notify interested application event listeners
-        StandardContext context = (StandardContext) manager.getContainer();
+        Context context = (Context) manager.getContainer();
         Object listeners[] = context.getApplicationListeners();
         if (listeners == null)
             return;
@@ -1127,14 +1159,21 @@ class StandardSession
             HttpSessionAttributeListener listener =
                 (HttpSessionAttributeListener) listeners[i];
             try {
-                context.fireContainerEvent("beforeSessionAttributeRemoved",
-                                           listener);
+                fireContainerEvent(context,
+                                   "beforeSessionAttributeRemoved",
+                                   listener);
                 listener.attributeRemoved(event);
-                context.fireContainerEvent("afterSessionAttributeRemoved",
-                                           listener);
+                fireContainerEvent(context,
+                                   "afterSessionAttributeRemoved",
+                                   listener);
             } catch (Throwable t) {
-                context.fireContainerEvent("afterSessionAttributeRemoved",
-                                           listener);
+                try {
+                    fireContainerEvent(context,
+                                       "afterSessionAttributeRemoved",
+                                       listener);
+                } catch (Exception e) {
+                    ;
+                }
                 // FIXME - should we do anything besides log these?
                 log(sm.getString("standardSession.attributeEvent"), t);
             }
@@ -1232,7 +1271,7 @@ class StandardSession
             ((HttpSessionBindingListener) value).valueBound(event);
 
         // Notify interested application event listeners
-        StandardContext context = (StandardContext) manager.getContainer();
+        Context context = (Context) manager.getContainer();
         Object listeners[] = context.getApplicationListeners();
         if (listeners == null)
             return;
@@ -1243,25 +1282,36 @@ class StandardSession
                 (HttpSessionAttributeListener) listeners[i];
             try {
                 if (unbound != null) {
-                    context.fireContainerEvent("beforeSessionAttributeReplaced",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "beforeSessionAttributeReplaced",
+                                       listener);
                     listener.attributeReplaced(event);
-                    context.fireContainerEvent("afterSessionAttributeReplaced",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "afterSessionAttributeReplaced",
+                                       listener);
                 } else {
-                    context.fireContainerEvent("beforeSessionAttributeAdded",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "beforeSessionAttributeAdded",
+                                       listener);
                     listener.attributeAdded(event);
-                    context.fireContainerEvent("afterSessionAttributeAdded",
-                                               listener);
+                    fireContainerEvent(context,
+                                       "afterSessionAttributeAdded",
+                                       listener);
                 }
             } catch (Throwable t) {
-                if (unbound != null)
-                    context.fireContainerEvent("afterSessionAttributeReplaced",
-                                               listener);
-                else
-                    context.fireContainerEvent("afterSessionAttributeAdded",
-                                               listener);
+                try {
+                    if (unbound != null) {
+                        fireContainerEvent(context,
+                                           "afterSessionAttributeReplaced",
+                                           listener);
+                    } else {
+                        fireContainerEvent(context,
+                                           "afterSessionAttributeAdded",
+                                           listener);
+                    }
+                } catch (Exception e) {
+                    ;
+                }
                 // FIXME - should we do anything besides log these?
                 log(sm.getString("standardSession.attributeEvent"), t);
             }
@@ -1398,6 +1448,39 @@ class StandardSession
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Fire container events if the Context implementation is the
+     * <code>org.apache.catalina.core.StandardContext</code>.
+     *
+     * @param context Context for which to fire events
+     * @param type Event type
+     * @param data Event data
+     *
+     * @exception Exception occurred during event firing
+     */
+    private void fireContainerEvent(Context context,
+                                    String type, Object data)
+        throws Exception {
+
+        if (!"org.apache.catalina.core.StandardContext".equals
+            (context.getClass().getName())) {
+            return; // Container events are not supported
+        }
+        // NOTE:  Race condition is harmless, so do not synchronize
+        if (containerEventMethod == null) {
+            containerEventMethod =
+                context.getClass().getMethod("fireContainerEvent",
+                                             containerEventTypes);
+        }
+        Object containerEventParams[] = new Object[2];
+        containerEventParams[0] = type;
+        containerEventParams[1] = data;
+        containerEventMethod.invoke(context, containerEventParams);
+
+    }
+                                      
 
 
     /**
