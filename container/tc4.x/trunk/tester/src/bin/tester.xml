@@ -737,6 +737,68 @@
          request="${context.path}/Include07" debug="${debug}"
           golden="${golden.path}/Include07.txt"/>
 
+    <!-- ========== Forward Then Forward ================================== -->
+
+    <!-- Servlet to Servlet to Servlet -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward04"
+      outContent="Forward04b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward04"
+      outContent="Forward04b PASSED" debug="${debug}"/>
+
+    <!-- JSP to JSP to JSP -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward04.jsp"
+      outContent="Forward04b.jsp PASSED" debug="${debug}"/>
+
+    <!-- Servlet to JSP to Servlet -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward05"
+      outContent="Forward05b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward05"
+      outContent="Forward05b PASSED" debug="${debug}"/>
+
+    <!-- JSP to Servlet to JSP -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward05.jsp"
+      outContent="Forward05b.jsp PASSED" debug="${debug}"/>
+
+    <!-- Invoker to JSP to Invoker -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/servlet/Forward06"
+      outContent="Forward06b PASSED" debug="${debug}"/>
+
+    <!-- JSP to Invoker to JSP -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward06.jsp"
+      outContent="Forward06b.jsp PASSED" debug="${debug}"/>
+
+    <!-- Servlet to Invoker to Servlet -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward07"
+      outContent="Forward07b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward07"
+      outContent="Forward07b PASSED" debug="${debug}"/>
+
+    <!-- Invoker to Servlet to Invoker -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/servlet/Forward08"
+      outContent="Forward08b PASSED" debug="${debug}"/>
+
     <!-- ========== Response Wrapping ===================================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"

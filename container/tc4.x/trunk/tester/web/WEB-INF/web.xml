@@ -210,6 +210,16 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward05</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedGetHeaders01</url-pattern>
     </filter-mapping>
 
@@ -565,6 +575,81 @@
     <servlet>
         <servlet-name>Forward03a</servlet-name>
         <servlet-class>org.apache.tester.Forward03a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward04</servlet-name>
+        <servlet-class>org.apache.tester.Forward04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward04a</servlet-name>
+        <servlet-class>org.apache.tester.Forward04a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward04b</servlet-name>
+        <servlet-class>org.apache.tester.Forward04b</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward05</servlet-name>
+        <servlet-class>org.apache.tester.Forward05</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward05a</servlet-name>
+        <servlet-class>org.apache.tester.Forward05a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward05b</servlet-name>
+        <servlet-class>org.apache.tester.Forward05b</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward06</servlet-name>
+        <servlet-class>org.apache.tester.Forward06</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward06a</servlet-name>
+        <servlet-class>org.apache.tester.Forward06a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward06b</servlet-name>
+        <servlet-class>org.apache.tester.Forward06b</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward07</servlet-name>
+        <servlet-class>org.apache.tester.Forward07</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward07a</servlet-name>
+        <servlet-class>org.apache.tester.Forward07a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward07b</servlet-name>
+        <servlet-class>org.apache.tester.Forward07b</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward08</servlet-name>
+        <servlet-class>org.apache.tester.Forward08</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward08a</servlet-name>
+        <servlet-class>org.apache.tester.Forward08a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward08b</servlet-name>
+        <servlet-class>org.apache.tester.Forward08b</servlet-class>
     </servlet>
 
     <servlet>
@@ -1074,6 +1159,83 @@
     <servlet-mapping>
         <servlet-name>Forward03a</servlet-name>
         <url-pattern>/Forward03a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward04</servlet-name>
+        <url-pattern>/Forward04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward04</servlet-name>
+        <url-pattern>/WrappedForward04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward04a</servlet-name>
+        <url-pattern>/Forward04a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward04b</servlet-name>
+        <url-pattern>/Forward04b</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward05</servlet-name>
+        <url-pattern>/Forward05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward05</servlet-name>
+        <url-pattern>/WrappedForward05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward05a</servlet-name>
+        <url-pattern>/Forward05a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward05b</servlet-name>
+        <url-pattern>/Forward05b</url-pattern>
+    </servlet-mapping>
+
+    <!-- No mappings for Forward06 series, using invoker to access them -->
+
+    <servlet-mapping>
+        <servlet-name>Forward07</servlet-name>
+        <url-pattern>/Forward07</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward07</servlet-name>
+        <url-pattern>/WrappedForward07</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward07a</servlet-name>
+        <url-pattern>/Forward07a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward07b</servlet-name>
+        <url-pattern>/Forward07b</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward08</servlet-name>
+        <url-pattern>/WrappedForward08</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward08a</servlet-name>
+        <url-pattern>/Forward08a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward08b</servlet-name>
+        <url-pattern>/Forward08b</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
