@@ -101,7 +101,32 @@ There are two techniques by which Tomcat 4.0 can be stopped:
       ./shutdown.sh                           (Unix)
 
 
-(4) Troubleshooting:
+(4) Advanced Configuration - Multiple Tomcat 4 Instances
+
+In many circumstances, it is desireable to have a single copy of a Tomcat 4
+binary distribution shared among multiple users on the same server.  To make
+this possible, you must configure a CATALINA_BASE environment variable (in
+addition to CATALINA_HOME as described above) that points to a directory
+that is unique to your instance.
+
+When you do this, Tomcat 4 will calculate all relative references for files in
+the following directories based on the value for CATALINA_BASE instead of
+CATALINA_HOME:
+
+* conf - Server configuration files (including server.xml)
+
+* logs - Log and output files
+
+* webapps - Automatically loaded web applications
+
+* work - Temporary working directories for web applications
+
+If you do not set CATALINA_BASE to an explicit value, it will be initialized
+to the same value as is set for CATALINA_HOME (which means that the same
+directory is used for all relative path resoluations).
+
+
+(5) Troubleshooting:
 
 There are only really 3 things that can go wrong during the stand-alone
 Tomcat 4.0 install:

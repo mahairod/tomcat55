@@ -37,6 +37,16 @@
   implementations, see <strong>FIXME - link to "Realm Configuration HOW-TO"
   in the administrator's section</strong>.</p>
 
+    <blockquote><em>
+    <p>The description below uses the variable name $CATALINA_HOME
+    to refer to the directory into which you have installed Tomcat 4,
+    and is the base directory against which most relative paths are
+    resolved.  However, if you have configured Tomcat 4 for multiple
+    instances by setting a CATALINA_BASE directory, you should use
+    $CATALINA_BASE instead of $CATALINA_HOME for each of these
+    references.</p>
+    </em></blockquote>
+
 </section>
 
 
