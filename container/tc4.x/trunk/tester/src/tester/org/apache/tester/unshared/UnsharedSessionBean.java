@@ -55,7 +55,7 @@
  *                                                                           *
  * ========================================================================= */
 
-package org.apache.tester;
+package org.apache.tester.unshared;
 
 
 import java.io.Serializable;
@@ -63,52 +63,24 @@ import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionEvent;
+import org.apache.tester.SessionBean;
 
 
 /**
  * Simple JavaBean to use for session attribute tests.  It is Serializable
  * so that instances can be saved and restored across server restarts.
+ * <p>
+ * This bean is functionally equivalent to
+ * <code>org.apache.tester.SessionBean</code>, but will be deployed under
+ * <code>/WEB-INF/classes</code> instead of inside
+ * <code>/WEB-INF/lib/tester.jar</code>.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class SessionBean implements
+public class UnsharedSessionBean extends SessionBean implements
     HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
-
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The lifecycle events that have happened on this bean instance.
-     */
-    protected String lifecycle = "";
-
-    public String getLifecycle() {
-        return (this.lifecycle);
-    }
-
-    public void setLifecycle(String lifecycle) {
-        this.lifecycle = lifecycle;
-    }
-
-
-    /**
-     * A string property.
-     */
-    protected String stringProperty = "Default String Property Value";
-
-    public String getStringProperty() {
-        return (this.stringProperty);
-    }
-
-    public void setStringProperty(String stringProperty) {
-        this.stringProperty = stringProperty;
-    }
-
-
-    // --------------------------------------------------------- Public Methods
 
 
     /**
@@ -116,66 +88,12 @@ public class SessionBean implements
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("SessionBean[lifecycle=");
+        StringBuffer sb = new StringBuffer("UnsharedSessionBean[lifecycle=");
         sb.append(this.lifecycle);
         sb.append(",stringProperty=");
         sb.append(this.stringProperty);
         sb.append("]");
         return (sb.toString());
-
-    }
-
-
-    // ---------------------------------- HttpSessionActivationListener Methods
-
-
-    /**
-     * Receive notification that this session was activated.
-     *
-     * @param event The session event that has occurred
-     */
-    public void sessionDidActivate(HttpSessionEvent event) {
-
-        lifecycle += "/sda";
-
-    }
-
-
-    /**
-     * Receive notification that this session will be passivated.
-     *
-     * @param event The session event that has occurred
-     */
-    public void sessionWillPassivate(HttpSessionEvent event) {
-
-        lifecycle += "/swp";
-
-    }
-
-
-    // ------------------------------------- HttpSessionBindingListener Methods
-
-
-    /**
-     * Receive notification that this attribute has been bound.
-     *
-     * @param event The session event that has occurred
-     */
-    public void valueBound(HttpSessionBindingEvent event) {
-
-        lifecycle += "/vb";
-
-    }
-
-
-    /**
-     * Receive notification that this attribute has been unbound.
-     *
-     * @param event The session event that has occurred
-     */
-    public void valueUnbound(HttpSessionBindingEvent event) {
-
-        lifecycle += "/vu";
 
     }
 

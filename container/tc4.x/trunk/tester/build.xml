@@ -71,6 +71,10 @@
         <include name="**/*.txt"/>
       </fileset>
     </copy>
+<!--
+    <copy file="${tester.build}/classes/org/apache/tester/unshared/UnsharedSessionBean.class"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/unshared/UnsharedSessionBean.class"/>
+-->
     <copy file="src/tester/org/apache/tester/Resources01.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
     <copy file="src/tester/org/apache/tester/Resources03.txt"
@@ -85,8 +89,14 @@
 
     <!-- Create and install tester library -->
     <mkdir   dir="${tester.build}/web/WEB-INF/lib"/>
-    <jar jarfile="${tester.build}/web/WEB-INF/lib/tester.jar"
-         basedir="${tester.build}/classes"/>
+    <jar jarfile="${tester.build}/web/WEB-INF/lib/tester.jar">
+      <fileset dir="${tester.build}/classes">
+<!--
+        <exclude name="**/shared/*"/>
+        <exclude name="**/unshared/*"/>
+-->
+      </fileset>
+    </jar>
 
   </target>
 
@@ -135,6 +145,16 @@
     <fixcrlf srcdir="${tester.deploy}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${tester.deploy}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${tester.deploy}/bin/tester.sh"/>
+
+    <!-- Shared Library -->
+<!--
+    <mkdir   dir="${tester.deploy}/lib"/>
+    <jar jarfile="${tester.deploy}/lib/tester-shared.jar">
+      <fileset dir="${tester.build}/classes">
+        <include name="**/shared/*"/>
+      </fileset>
+    </jar>
+-->
 
     <!-- Web Application -->
     <mkdir  dir="${tester.deploy}/webapps/tester"/>

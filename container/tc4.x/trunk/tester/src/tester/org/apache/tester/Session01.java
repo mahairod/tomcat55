@@ -61,6 +61,9 @@ package org.apache.tester;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.apache.tester.shared.SharedSessionBean;
+import org.apache.tester.unshared.UnsharedSessionBean;
+
 
 /**
  * Part 1 of Session Tests.  Ensures that there is no current session, then
@@ -139,6 +142,16 @@ public class Session01 extends HttpServlet {
                 writer.println("Session01 FAILED - setAttribute(name,null)");
                 ok = false;
             }
+        }
+
+        // Create two more beans that will be used to test application restart
+        if (ok) {
+            SharedSessionBean ssb = new SharedSessionBean();
+            ssb.setStringProperty("Session01");
+            session.setAttribute("sharedSessionBean", ssb);
+            UnsharedSessionBean usb = new UnsharedSessionBean();
+            usb.setStringProperty("Session01");
+            session.setAttribute("unsharedSessionBean", usb);
         }
 
         // Report success if everything is still ok

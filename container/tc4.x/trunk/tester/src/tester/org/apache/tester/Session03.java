@@ -61,6 +61,9 @@ package org.apache.tester;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.apache.tester.shared.SharedSessionBean;
+import org.apache.tester.unshared.UnsharedSessionBean;
+
 
 /**
  * Part 3 of Session Tests.  Ensures that there is an existing session, and
@@ -127,6 +130,67 @@ public class Session03 extends HttpServlet {
 		ok = false;
 	    }
 	}
+
+        // Retrieve and validate the shared session bean
+        SharedSessionBean ssb = null;
+        if (ok) {
+            Object object = session.getAttribute("sharedSessionBean");
+            if (object == null) {
+                writer.println("Session03 FAILED - Cannot retrieve ssb");
+                ok = false;
+            } else if (!(object instanceof SharedSessionBean)) {
+                writer.println("Session03 FAILED - Shared attribute class "
+                               + object.getClass().getName());
+                ok = false;
+            } else {
+                ssb = (SharedSessionBean) object;
+                String value = ssb.getStringProperty();
+                if (!"Session01".equals(value)) {
+                    writer.println("Session03 FAILED - Shared property ="
+                                   + value);
+                    ok = false;
+                } else {
+                    session.removeAttribute("sharedSessionBean");
+                    String lifecycle = ssb.getLifecycle();
+                    if (!"/vb/swp/sda/vu".equals(lifecycle)) {
+                        writer.println("Session03 FAILED - Shared lifecycle ="
+                                       + lifecycle);
+                        ok = false;
+                    }
+                }
+            }
+        }
+
+        // Retrieve and validate the unshared session bean
+        UnsharedSessionBean usb = null;
+        if (ok) {
+            Object object = session.getAttribute("unsharedSessionBean");
+            if (object == null) {
+                writer.println("Session03 FAILED - Cannot retrieve usb");
+                ok = false;
+            } else if (!(object instanceof UnsharedSessionBean)) {
+                writer.println("Session03 FAILED - Unshared attribute class "
+                               + object.getClass().getName());
+                ok = false;
+            } else {
+                usb = (UnsharedSessionBean) object;
+                String value = usb.getStringProperty();
+                if (!"Session01".equals(value)) {
+                    writer.println("Session03 FAILED - Unshared property = "
+                                   + value);
+                    ok = false;
+                } else {
+                    session.removeAttribute("unsharedSessionBean");
+                    String lifecycle = usb.getLifecycle();
+                    if (!"/vb/swp/sda/vu".equals(lifecycle)) {
+                        writer.println("Session03 FAILED - Unshared lifecycle"
+                                       + " = " + lifecycle);
+                        ok = false;
+                    }
+                }
+            }
+        }
+
 
         // Report success if everything is still ok
         if (ok)
