@@ -42,7 +42,7 @@
   <property name="tomcat-http11.jar"
            value="${tomcat-http11.home}/build/lib/tomcat-http11.jar"/>
   <property name="tomcat-dbcp.jar" 
-           value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+           value="${base.path}/tomcat-deps/naming-factory-dbcp.jar"/>
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
     <pathelement location="${activation.jar}"/>
@@ -504,7 +504,7 @@
     <copy tofile="${catalina.build}/bin/jmx.jar" file="${jmx.jar}"/>
   </target>
   <target name="copy-launcher.jars" if="copy.launcher.jars">
-    <copy todir="${catalina.build}/common/lib" file="${ant.jar}"/>
+    <!-- <copy todir="${catalina.build}/common/lib" file="${ant.jar}"/> -->
     <copy todir="${catalina.build}/bin" file="${commons-launcher.jar}"/>
     <copy todir="${catalina.build}/bin" file="${commons-launcher.bootstrap.class}"/>
     <copy todir="${catalina.build}/bin">
@@ -527,7 +527,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-fileupload.jar,copy-jmx.jar,copy-launcher.jars,copy-modeler.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-fileupload.jar,copy-launcher.jars,copy-modeler.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
