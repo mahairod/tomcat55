@@ -38,7 +38,7 @@
     <mkdir dir="${servletapi.lib}"/>
 
     <uptodate property="docs.uptodate" targetfile="${servletapi.build}/docs/api/index.html">
-    <srcfiles dir="src/share" includes="**/*.java" />
+      <srcfiles dir="src/share" includes="**/*.java" />
     </uptodate>
   </target>
 
