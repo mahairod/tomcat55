@@ -763,135 +763,11 @@ public class DefaultServlet
                                      ResourceInfo resourceInfo)
         throws IOException {
 
-        String eTag = getETag(resourceInfo);
-        long fileLength = resourceInfo.length;
-        long lastModified = resourceInfo.date;
+        return checkIfMatch(request, response, resourceInfo) 
+            && checkIfModifiedSince(request, response, resourceInfo) 
+            && checkIfNoneMatch(request, response, resourceInfo) 
+            && checkIfUnmodifiedSince(request, response, resourceInfo);
 
-        StringTokenizer commaTokenizer;
-
-        String headerValue;
-
-        // Checking If-Match
-        headerValue = request.getHeader("If-Match");
-        if (headerValue != null) {
-            if (headerValue.indexOf('*') == -1) {
-
-                commaTokenizer = new StringTokenizer(headerValue, ",");
-                boolean conditionSatisfied = false;
-
-                while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
-                    String currentToken = commaTokenizer.nextToken();
-                    if (currentToken.trim().equals(eTag))
-                        conditionSatisfied = true;
-                }
-
-                // If none of the given ETags match, 412 Precodition failed is
-                // sent back
-                if (!conditionSatisfied) {
-                    response.sendError
-                        (HttpServletResponse.SC_PRECONDITION_FAILED);
-                    return false;
-                }
-
-            }
-        }
-
-        // Checking If-Modified-Since
-        headerValue = request.getHeader("If-Modified-Since");
-        if (headerValue != null) {
-
-            // If an If-None-Match header has been specified, if modified since
-            // is ignored.
-            if (request.getHeader("If-None-Match") == null) {
-
-                Date date = null;
-
-                // Parsing the HTTP Date
-                for (int i = 0; (date == null) && (i < formats.length); i++) {
-                    try {
-                        date = formats[i].parse(headerValue);
-                    } catch (ParseException e) {
-                        ;
-                    }
-                }
-
-                if ((date != null)
-                    && (lastModified <= (date.getTime() + 1000)) ) {
-                    // The entity has not been modified since the date
-                    // specified by the client. This is not an error case.
-                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                    return false;
-                }
-
-            }
-
-        }
-
-        // Checking If-None-Match
-        headerValue = request.getHeader("If-None-Match");
-        if (headerValue != null) {
-
-            boolean conditionSatisfied = false;
-
-            if (!headerValue.equals("*")) {
-
-                commaTokenizer = new StringTokenizer(headerValue, ",");
-
-                while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
-                    String currentToken = commaTokenizer.nextToken();
-                    if (currentToken.trim().equals(eTag))
-                        conditionSatisfied = true;
-                }
-
-            } else {
-                conditionSatisfied = true;
-            }
-
-            if (conditionSatisfied) {
-
-                // For GET and HEAD, we should respond with
-                // 304 Not Modified.
-                // For every other method, 412 Precondition Failed is sent
-                // back.
-                if ( ("GET".equals(request.getMethod()))
-                     || ("HEAD".equals(request.getMethod())) ) {
-                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                    return false;
-                } else {
-                    response.sendError
-                        (HttpServletResponse.SC_PRECONDITION_FAILED);
-                    return false;
-                }
-            }
-
-        }
-
-        // Checking If-Unmodified-Since
-        headerValue = request.getHeader("If-Unmodified-Since");
-        if (headerValue != null) {
-
-            Date date = null;
-
-            // Parsing the HTTP Date
-            for (int i = 0; (date == null) && (i < formats.length); i++) {
-                try {
-                    date = formats[i].parse(headerValue);
-                } catch (ParseException e) {
-                    ;
-                }
-            }
-
-            if ( (date != null) && (lastModified > date.getTime()) ) {
-                // The entity has not been modified since the date
-                // specified by the client. This is not an error case.
-                response.sendError
-                    (HttpServletResponse.SC_PRECONDITION_FAILED);
-                return false;
-            }
-
-        }
-
-        return true;
     }
 
 
@@ -1670,6 +1546,174 @@ public class DefaultServlet
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Check if the if-match condition is satisfied.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param resourceInfo File object
+     * @return boolean true if the resource meets the specified condition,
+     * and false if the condition is not satisfied, in which case request 
+     * processing is stopped
+     */
+    private boolean checkIfMatch(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 ResourceInfo resourceInfo)
+        throws IOException {
+
+        String eTag = getETag(resourceInfo);
+        String headerValue = request.getHeader("If-Match");
+        if (headerValue != null) {
+            if (headerValue.indexOf('*') == -1) {
+
+                StringTokenizer commaTokenizer = new StringTokenizer
+                    (headerValue, ",");
+                boolean conditionSatisfied = false;
+
+                while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
+                    String currentToken = commaTokenizer.nextToken();
+                    if (currentToken.trim().equals(eTag))
+                        conditionSatisfied = true;
+                }
+
+                // If none of the given ETags match, 412 Precodition failed is
+                // sent back
+                if (!conditionSatisfied) {
+                    response.sendError
+                        (HttpServletResponse.SC_PRECONDITION_FAILED);
+                    return false;
+                }
+
+            }
+        }
+        return true;
+
+    }
+
+
+    /**
+     * Check if the if-modified-since condition is satisfied.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param resourceInfo File object
+     * @return boolean true if the resource meets the specified condition,
+     * and false if the condition is not satisfied, in which case request 
+     * processing is stopped
+     */
+    private boolean checkIfModifiedSince(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         ResourceInfo resourceInfo)
+        throws IOException {
+
+        long headerValue = request.getDateHeader("If-Modified-Since");
+        long lastModified = resourceInfo.date;
+        if (headerValue != -1) {
+
+            // If an If-None-Match header has been specified, if modified since
+            // is ignored.
+            if ((request.getHeader("If-None-Match") == null) 
+                && (lastModified <= headerValue + 1000)) {
+                // The entity has not been modified since the date
+                // specified by the client. This is not an error case.
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+
+    /**
+     * Check if the if-none-match condition is satisfied.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param resourceInfo File object
+     * @return boolean true if the resource meets the specified condition,
+     * and false if the condition is not satisfied, in which case request 
+     * processing is stopped
+     */
+    private boolean checkIfNoneMatch(HttpServletRequest request,
+                                     HttpServletResponse response,
+                                     ResourceInfo resourceInfo)
+        throws IOException {
+
+        String eTag = getETag(resourceInfo);
+        String headerValue = request.getHeader("If-None-Match");
+        if (headerValue != null) {
+
+            boolean conditionSatisfied = false;
+
+            if (!headerValue.equals("*")) {
+
+                StringTokenizer commaTokenizer = 
+                    new StringTokenizer(headerValue, ",");
+
+                while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
+                    String currentToken = commaTokenizer.nextToken();
+                    if (currentToken.trim().equals(eTag))
+                        conditionSatisfied = true;
+                }
+
+            } else {
+                conditionSatisfied = true;
+            }
+
+            if (conditionSatisfied) {
+
+                // For GET and HEAD, we should respond with
+                // 304 Not Modified.
+                // For every other method, 412 Precondition Failed is sent
+                // back.
+                if ( ("GET".equals(request.getMethod()))
+                     || ("HEAD".equals(request.getMethod())) ) {
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                    return false;
+                } else {
+                    response.sendError
+                        (HttpServletResponse.SC_PRECONDITION_FAILED);
+                    return false;
+                }
+            }
+        }
+        return true;
+
+    }
+
+
+    /**
+     * Check if the if-unmodified-since condition is satisfied.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param resourceInfo File object
+     * @return boolean true if the resource meets the specified condition,
+     * and false if the condition is not satisfied, in which case request 
+     * processing is stopped
+     */
+    private boolean checkIfUnmodifiedSince(HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           ResourceInfo resourceInfo)
+        throws IOException {
+
+        long lastModified = resourceInfo.date;
+        long headerValue = request.getDateHeader("If-Unmodified-Since");
+        if (headerValue != -1) {
+            if ( lastModified > headerValue ) {
+                // The entity has not been modified since the date
+                // specified by the client. This is not an error case.
+                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return false;
+            }
+
+        }
+        return true;
+
+    }
 
 
     /**
