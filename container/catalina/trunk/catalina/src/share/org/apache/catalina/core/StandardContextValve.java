@@ -162,29 +162,11 @@ final class StandardContextValve
 
         // Disallow any direct access to resources under WEB-INF or META-INF
         HttpRequest hreq = (HttpRequest) request;
-        MessageBytes contextPathMB = hreq.getContextPathMB();
-        int length = contextPathMB.getLength();
-        MessageBytes decodedURIMB = hreq.getDecodedRequestURIMB();
-        decodedURIMB.toChars();
-        CharChunk decodedURIBC = decodedURIMB.getCharChunk();
-        int bcLength = decodedURIBC.getLength();
-        boolean notFound = false;
-        if (decodedURIBC.startsWithIgnoreCase("/META-INF", length)) {
-            if ((decodedURIBC.getLength() == ("/META-INF".length() + length)) 
-                || (decodedURIBC.getBuffer()["/META-INF".length() + length] 
-                    == '/')) {
-                notFound = true;
-            }
-        }
-        if (decodedURIBC.startsWithIgnoreCase("/WEB-INF", length)) {
-            if ((decodedURIBC.getLength() == ("/WEB-INF".length() + length)) 
-                || (decodedURIBC.getBuffer()["/WEB-INF".length() + length] 
-                    == '/')) {
-                System.out.println("Not found");
-                notFound = true;
-            }
-        }
-        if (notFound) {
+        MessageBytes requestPathMB = hreq.getRequestPathMB();
+        if ((requestPathMB.startsWithIgnoreCase("/META-INF/", 0))
+            || (requestPathMB.equalsIgnoreCase("/META-INF"))
+            || (requestPathMB.startsWithIgnoreCase("/WEB-INF/", 0))
+            || (requestPathMB.equalsIgnoreCase("/WEB-INF"))) {
             String requestURI = hreq.getDecodedRequestURI();
             notFound(requestURI, (HttpServletResponse) response.getResponse());
             return;

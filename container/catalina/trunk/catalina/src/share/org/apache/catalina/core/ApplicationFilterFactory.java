@@ -91,10 +91,14 @@ import org.apache.catalina.Wrapper;
 public final class ApplicationFilterFactory {
 
     public static final int ERROR = 1;
-    public static final int FORWARD =2;
-    public static final int INCLUDE  =4;
+    public static final Integer ERROR_INTEGER = new Integer(ERROR);
+    public static final int FORWARD = 2;
+    public static final Integer FORWARD_INTEGER = new Integer(FORWARD);
+    public static final int INCLUDE = 4;
+    public static final Integer INCLUDE_INTEGER = new Integer(INCLUDE);
     public static final int REQUEST = 8;
-    
+    public static final Integer REQUEST_INTEGER = new Integer(REQUEST);
+
     public static final String DISPATCHER_TYPE_ATTR="org.apache.catalina.core.DISPATCHER_TYPE";
     public static final String DISPATCHER_REQUEST_PATH_ATTR="org.apache.catalina.core.DISPATCHER_REQUEST_PATH";
 
