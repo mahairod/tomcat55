@@ -68,6 +68,10 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.Tag;
 
+import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
+
+
 /**
  * A container for all tag libraries that have been imported using
  * the taglib directive. 
@@ -85,13 +89,20 @@ public class TagLibraries {
         tagLibInfos.put(prefix, tli);
     }
     
-    public boolean isUserDefinedTag(String prefix, String shortTagName) {
+    public boolean isUserDefinedTag(String prefix, String shortTagName) 
+        throws JasperException
+    {
         TagLibraryInfo tli = (TagLibraryInfo) tagLibInfos.get(prefix);
         if (tli == null)
             return false;
         else if (tli.getTag(shortTagName) != null)
             return true;
-        return false;
+        throw new JasperException(Constants.getString("jsp.error.bad_tag",
+                                                      new Object[] {
+                                                          shortTagName,
+                                                          prefix
+                                                      }
+                                                      ));
     }
     
     public TagLibraryInfoImpl getTagLibInfo(String prefix) {
