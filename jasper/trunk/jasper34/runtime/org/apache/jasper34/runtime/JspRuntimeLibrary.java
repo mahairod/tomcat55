@@ -64,19 +64,14 @@ import java.util.Hashtable;
 
 import java.lang.reflect.Method;
 
-import java.io.Writer;
-import java.io.Reader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import java.beans.PropertyDescriptor;
 import java.beans.IndexedPropertyDescriptor;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.jsp.*;
 
 //import org.apache.jasper.JasperException;
 
@@ -651,7 +646,88 @@ public class JspRuntimeLibrary {
 	methods.put( prop, method );
 	return method;
     }
-    
+
+    public static void handleExceptionMapping( HttpJspBase jsp,
+					       Throwable ex )
+    {
+	int map[][]=jsp._getLineMap();
+	String fmap[]=jsp._getFileMap();
+
+	if( map==null ) return;
+
+
+	String trace=getTrace( ex );
+	if( trace==null ) return;
+
+	String classN=jsp.getClass().getName();
+
+	//log( "Trace " + trace );
+	//log("Finding " + classN );
+
+	try {
+	    BufferedReader br=new BufferedReader(new StringReader( trace ));
+	    String line;
+	    while( true ) {
+		line=br.readLine();
+		if(line==null ) break;
+		
+		if( line.indexOf( classN ) < 0 ) {
+		    // log( "Not Found " + line );
+		    continue;
+		}
+		//log( "Found " + line );
+		int col=line.indexOf( ':' );
+		int end=line.indexOf(')' );
+		if( col<0 || end<0 ) break;
+		
+		String nr=line.substring( col+1, end );
+		int lineNr= Integer.parseInt( nr );
+		// Now do the mapping
+		//log( "Java line number " + lineNr + " " + map );
+		int mapping[]= findMapping( map, lineNr );
+		if( mapping== null ) return;
+		log( "JSP location: " +
+		     fmap[mapping[2]] + ":" + mapping[3] );
+	    }
+	    br.close();
+	} catch( Exception ex1 ) {
+	    ex1.printStackTrace();
+	}
+    }
+
+    // Linear search - this happens only on error, and we're
+    // still experimenting
+    private static int[] findMapping( int map[][], int lineNr ) {
+	if( map==null ) return null;
+	for( int i=map.length-1; i>=0; i-- ) {
+	    if( map[i] == null ) continue;
+	    if( map[i][0] <= lineNr &&
+		map[i][1] > lineNr ) {
+		return map[i];
+	    }
+	    //log( "Not found " + map[i][0] + " " + map[i][1] );
+	}
+	return null;
+    }
+
+    public static String getTrace( Throwable ex ) {
+	try {
+	    StringWriter traceWriter=new StringWriter();
+	    PrintWriter traceWriterPW=new PrintWriter( traceWriter );
+	    
+	    ex.printStackTrace( traceWriterPW );
+	    traceWriterPW.flush();
+	    String trace=traceWriter.toString();
+	    traceWriterPW.close();
+	    return trace;
+	} catch( Exception ex1 ) {
+	    return null;
+	}
+    }
+
+    private static void log(String s ) {
+	System.out.println("JspRuntimeLibrary: " + s );
+    }
 }
 
 

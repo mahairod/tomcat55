@@ -129,6 +129,10 @@ public abstract class HttpJspBase
 		out=pageContext.getOut();
 		_jspService(pageContext, request, response );
 	    } catch (Exception ex) {
+		// Experimental/test line mappings
+		JspRuntimeLibrary.handleExceptionMapping( this, 
+							  ex );
+
 		if (pageContext != null)
 		    pageContext.handlePageException(ex);
 	    } catch (Error error) {
@@ -183,6 +187,24 @@ public abstract class HttpJspBase
     }
 
 
+    /** Return extra dependencies for this file ( TLDs, included files )
+     */
     public String[] _getDepends() { return null; }
+
+    /** Return the static chunks to be used with sendChunk()
+     */
     public String[] _getChunks() { return null; }
+
+    /** line mapping - the files used in lineMap
+     */
+    public String[] _getFileMap() { return null; }
+
+    /** Line map.
+	{ java_start, java_end,
+	  jsp_file_start_idx, jsp_file_start_line, jsp_file_start_col,
+	  jsp_file_end_idx, jsp_file_end_line, jsp_file_end_col
+	}
+	@see GeneratorBase.generateLineMap 
+    */
+    public int[][] _getLineMap() { return null; }
 }
