@@ -144,8 +144,6 @@ public class Ajp13ConnectorRequest extends RequestImpl
         requestURI = msg.getString();
         remoteAddr = msg.getString();
         remoteHost = msg.getString();
-        if(remoteHost == null)      //If we don't have a host then use the IP address
-            remoteHost = remoteAddr;
         serverName = msg.getString();
         serverPort = msg.getInt();
         bsc        = msg.getByte();

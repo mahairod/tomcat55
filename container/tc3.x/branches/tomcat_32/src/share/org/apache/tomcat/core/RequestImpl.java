@@ -813,9 +813,17 @@ public class RequestImpl  implements Request {
     }
 
     public String getRemoteHost() {
-        // This is belt and suspenders.  The request adapters should have set this correctly.
-        if(remoteHost == null || remoteHost.length() == 0)
+        // AJP12 defaults to empty string, AJP13 defaults to null
+        if(remoteHost != null && remoteHost.length() != 0)
+            return remoteHost;
+
+        try{
+            remoteHost = InetAddress.getByName(remoteAddr).getHostName();
+        }catch(Exception e){
+            // If anything went wrong then fall back to using the remote hosts IP address
             remoteHost = remoteAddr;
+        }
+
         return remoteHost;
     }
 
