@@ -10,6 +10,7 @@
         <author email="leslie.hughes@rubus.com">Les Hughes</author>
         <author email="david-tomcat@haraburda.com">David Haraburda</author>
         <author>Glenn Nielsen</author>
+        <author email="yoavs@apache.org">Yoav Shapira</author>
         <title>JNDI Datasource HOW-TO</title>
     </properties>
 
@@ -473,7 +474,7 @@ These notes are untested as yet and we would appreciate feedback.</p>
 <source>
 &lt;resource-ref&gt;
  &lt;description&gt;postgreSQL Datasource example&lt;/description&gt;
- &lt;res-ref-name&gt;jdbc/mydb&lt;/res-ref-name&gt;
+ &lt;res-ref-name&gt;jdbc/postgres&lt;/res-ref-name&gt;
  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
  &lt;res-auth&gt;Container&lt;/res-auth&gt;
 &lt;/resource-ref&gt;
@@ -650,6 +651,24 @@ obtained from a connection pool:
 </p>
 
 </subsection>
+
+<subsection name="Context versus GlobalNamingResources">
+<p>
+  Please note that although the above instructions place the JNDI declarations in a Context
+  element, it is possible and sometimes desirable to place these declarations in the 
+  <a href="config/globalresources.html">GlobalNamingResources</a> section of the server
+  configuration file.  A resource placed in the GlobalNamingResources section will be shared
+  among the Contexts of the server.
+</p>
+</subsection>
+
+<subsection name="JNDI Resource Naming and Realm Interaction">
+<p>
+  In order to get Realms to work, the realm must refer to the datasource as
+  defined in the &lt;GlobalNamingResources&gt; or &lt;Context&gt; section, not a datasource as renamed
+  using &lt;ResourceLink&gt;.
+</p>
+</subsection> 
 
 </section>
 
