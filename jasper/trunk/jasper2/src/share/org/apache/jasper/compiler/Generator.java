@@ -2109,9 +2109,6 @@ class Generator {
 				       String tagHandlerVar,
 				       String tagEvalVar) {
 
-	    VariableInfo[] varInfos = n.getVariableInfos();
-	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
-
 	    if (n.getBody() != null) {
 		if (n.implementsIterationTag()) {
 		    out.printin("int evalDoAfterBody = ");
@@ -3081,8 +3078,8 @@ class Generator {
         out.printil( "// Sync up variables with caller's page context:" );
         
         TagVariableInfo[] tagVariableInfo = tagInfo.getTagVariableInfos();
-        
-        for( int i = 0; i < tagVariableInfo.length; i++ ) {
+        for( int i = 0; tagVariableInfo != null
+		 && i < tagVariableInfo.length; i++ ) {
             // XXX - Spec bug: Note, we don't know the value of 
             // this attribute at translation time, because we're defining
             // the tag, and we don't know how page authors will call it.

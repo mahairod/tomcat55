@@ -662,7 +662,7 @@ class Validator {
 	     */
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    Attributes attrs = n.getAttributes();
-	    for (int i=0; i<tldAttrs.length; i++) {
+	    for (int i=0; tldAttrs != null && i<tldAttrs.length; i++) {
 		String attr = attrs.getValue(tldAttrs[i].getName());
 		Node.NamedAttribute jspAttr =
 			n.getNamedAttributeNode(tldAttrs[i].getName());
