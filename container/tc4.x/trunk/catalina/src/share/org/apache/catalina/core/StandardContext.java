@@ -3349,7 +3349,7 @@ public class StandardContext
         }
 
         // Setting the context in read only mode
-        ContextAccessController.setReadOnly(this);
+        ContextAccessController.setReadOnly(getName());
 
         ContextBindings.unbindThread(this, this);
 
