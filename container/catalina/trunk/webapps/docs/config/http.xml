@@ -79,9 +79,9 @@
     </attribute>
 
     <attribute name="maxPostSize" required="false">
-      <p>The maximum size in bytes of the POST which will be handled by 
-      the container FORM URL parameter parsing. The feature can be disbled by 
-      setting this attribute to a value inferior or equal to 0. 
+      <p>The maximum size in bytes of the POST which will be handled by
+      the container FORM URL parameter parsing. The feature can be disbled by
+      setting this attribute to a value inferior or equal to 0.
       If not specified, this attribute is set to 2097152 (2 megabytes).</p>
     </attribute>
 
@@ -116,9 +116,9 @@
 
     <attribute name="useBodyEncodingForURI" required="false">
       <p>This specifies if the encoding specified in contentType should be used
-      for URI query parameters, instead of using the URIEncoding. This 
-      setting is present for compatibility with Tomcat 4.1.x, where the 
-      encoding specified in the contentType, or explicitely set using 
+      for URI query parameters, instead of using the URIEncoding. This
+      setting is present for compatibility with Tomcat 4.1.x, where the
+      encoding specified in the contentType, or explicitely set using
       Request.setCharacterEncoding method was also used for the parameters from
       the URL. The default value is <code>false</code>.
       </p>
@@ -130,8 +130,8 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of the <strong>HTTP 
-  Connector</strong> is 
+  <p>The standard implementation of the <strong>HTTP
+  Connector</strong> is
   <strong>org.apache.coyote.tomcat5.CoyoteConnector</strong>.
   It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
@@ -171,7 +171,7 @@
 
     <attribute name="connectionLinger" required="false">
       <p>The number of milliseconds during which the sockets used by this
-      <strong>Connector</strong> will linger when they are closed. 
+      <strong>Connector</strong> will linger when they are closed.
       The default value is -1 (socket linger is disabled).</p>
     </attribute>
 
@@ -185,7 +185,7 @@
       <p>This flag allows the servlet container to use a different, longer
       connection timeout while a servlet is being executed, which in the end
       allows either the servlet a longer amount of time to complete its
-      execution, or a longer timeout during data upload. If not specified, 
+      execution, or a longer timeout during data upload. If not specified,
       this attribute is set to "false".</p>
     </attribute>
 
@@ -198,14 +198,14 @@
     <attribute name="maxKeepAliveRequests" required="false">
       <p>The maximum number of HTTP requests which can be pipelined until
       the connection is closed by the server. Setting this attribute to 1 will
-      disable HTTP/1.0 keep-alive, as well as HTTP/1.1 keep-alive and 
-      pipelining. Setting this to -1 will allow an unlimited amount of 
-      pipelined or keep-alive HTTP requests. 
+      disable HTTP/1.0 keep-alive, as well as HTTP/1.1 keep-alive and
+      pipelining. Setting this to -1 will allow an unlimited amount of
+      pipelined or keep-alive HTTP requests.
       If not specified, this attribute is set to 100.</p>
     </attribute>
 
     <attribute name="maxSpareThreads" required="false">
-      <p>The maximum number of unused request processing threads that 
+      <p>The maximum number of unused request processing threads that
       will be allowed to exist until the thread pool starts stopping the
       unnecessary threads.  The default value is 50.</p>
     </attribute>
@@ -221,14 +221,14 @@
       <p>The number of request processing threads that will be created
       when this <strong>Connector</strong> is first started.  The connector
       will also make sure it has the specified number of idle processing
-      threads available. This attribute should be set to a value smaller 
+      threads available. This attribute should be set to a value smaller
       than that set for <code>maxThreads</code>.  The default value is 4.</p>
     </attribute>
 
     <attribute name="noCompressionUserAgents" required="false">
       <p>The value is a comma separated list of regular expressions matching
-      user-agents of HTTP clients for which compression should not be used, 
-      because these clients, although they do advertise support for the 
+      user-agents of HTTP clients for which compression should not be used,
+      because these clients, although they do advertise support for the
       feature, have a broken implementation.
       The default value is an empty String (regexp matching disabled).</p>
     </attribute>
@@ -271,7 +271,7 @@
 
     <attribute name="socketBuffer" required="false">
       <p>The size (in bytes) of the buffer to be provided for socket
-      output buffering. -1 can be specified to disable the use of a buffer.  
+      output buffering. -1 can be specified to disable the use of a buffer.
       By default, a buffers of 9000 bytes will be used.</p>
     </attribute>
 
@@ -286,6 +286,11 @@
       The default value is <code>java.lang.Thread#NORM_PRIORITY</code>.
       See the JavaDoc for the java.lang.Thread class for more details on
       what this priority means.
+      </p>
+
+    <attribute name="server" required="false">
+      <p>The Server header for the http response.
+         Unless your paranoid, you won't need this feature.
       </p>
     </attribute>
 
@@ -314,11 +319,11 @@
 
   <p>This <strong>Connector</strong> supports all of the required features
   of the HTTP/1.1 protocol, as described in RFC 2616, including persistent
-  connections, pipelining, expectations and chunked encoding.  If the client 
-  (typically a browser) supports only HTTP/1.0, the 
-  <strong>Connector</strong> will gracefully fall back to supporting this 
-  protocol as well.  No special configuration is required to enable this 
-  support. The <strong>Connector</strong> also supports HTTP/1.0 
+  connections, pipelining, expectations and chunked encoding.  If the client
+  (typically a browser) supports only HTTP/1.0, the
+  <strong>Connector</strong> will gracefully fall back to supporting this
+  protocol as well.  No special configuration is required to enable this
+  support. The <strong>Connector</strong> also supports HTTP/1.0
   keep-alive.</p>
 
   <p>RFC 2616 requires that HTTP servers always begin their responses with
@@ -362,7 +367,7 @@
 
   <p>You can enable SSL support for a particular instance of this
   <strong>Connector</strong> by setting the <code>secure</code> attribute to
-  <code>true</code>.  In addition, you may need to configure the following 
+  <code>true</code>.  In addition, you may need to configure the following
   attributes:</p>
 
   <attributes>
@@ -403,7 +408,7 @@
       <p>The version of the SSL protocol to use.  If not specified,
       the default is "<code>TLS</code>".</p>
     </attribute>
- 
+
     <attribute name="ciphers" required="false">
       <p>A comma seperated list of the encryption ciphers that may be used.
       If not specified, then any available cipher may be used.</p>
