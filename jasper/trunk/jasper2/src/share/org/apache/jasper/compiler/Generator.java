@@ -1685,6 +1685,9 @@ class Generator {
                 out.pushIndent();
 
                 // Initilaize local variables used in this method.
+                if (! isTagFile) {
+                    out.printil("PageContext pageContext = _jspx_page_context;");
+                }
                 out.printil("JspWriter out = _jspx_page_context.getOut();");
                 generateLocalVariables(out, n);
             }
