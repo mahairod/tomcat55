@@ -5260,9 +5260,6 @@ public class StandardContext
     }
 
     private void registerJMX() {
-        if (oname == null) {
-            return;
-        }
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Checking for " + oname );
