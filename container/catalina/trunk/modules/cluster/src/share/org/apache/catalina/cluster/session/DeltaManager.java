@@ -128,6 +128,8 @@ public class DeltaManager
     private boolean useDirtyFlag;
     private boolean expireSessionsOnShutdown;
     private boolean printToScreen;
+    
+    private boolean notifyListenersOnReplication = false;
     // ------------------------------------------------------------- Constructor
     public DeltaManager() {
         super();
@@ -895,7 +897,7 @@ public class DeltaManager
                        DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
                        if (session != null) {
                            DeltaRequest dreq = loadDeltaRequest(session, delta);
-                           dreq.execute(session);
+                           dreq.execute(session,notifyListenersOnReplication);
                            session.setPrimarySession(false);
                        }
                        
@@ -984,6 +986,14 @@ public class DeltaManager
     }
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public boolean getNotifyListenersOnReplication() {
+        return notifyListenersOnReplication;
+    }
+    
+    public void setNotifyListenersOnReplication(boolean notifyListenersOnReplication) {
+        this.notifyListenersOnReplication = notifyListenersOnReplication;
     }
 
 

@@ -55,7 +55,7 @@ public class DeltaRequest implements Externalizable {
     public DeltaRequest() {
         
     }
-
+    
     public DeltaRequest(String sessionId, boolean recordAllActions) {
         this.recordAllActions=recordAllActions;
         setSessionId(sessionId);
@@ -108,8 +108,12 @@ public class DeltaRequest implements Externalizable {
         //add the action
         actions.addLast(info);
     }
-
+    
     public void execute(DeltaSession session) {
+        execute(session,true);
+    }
+
+    public void execute(DeltaSession session, boolean notifyListeners) {
         if ( !this.sessionId.equals( session.getId() ) )
             throw new java.lang.IllegalArgumentException("Session id mismatch, not executing the delta request");
         session.access();
@@ -118,9 +122,9 @@ public class DeltaRequest implements Externalizable {
             switch ( info.getType() ) {
                 case TYPE_ATTRIBUTE: {
                     if ( info.getAction() == ACTION_SET ) {
-                        session.setAttribute(info.getName(), info.getValue(),false);
+                        session.setAttribute(info.getName(), info.getValue(),notifyListeners,false);
                     }  else
-                        session.removeAttribute(info.getName(),true,false);
+                        session.removeAttribute(info.getName(),notifyListeners,false);
                     break;
                 }//case
                 case TYPE_ISNEW: {
@@ -215,7 +219,7 @@ public class DeltaRequest implements Externalizable {
             info.writeExternal(out);
         }
     }
-
+    
     public static class AttributeInfo implements java.io.Externalizable {
         private String name = null;
         private Object value = null;

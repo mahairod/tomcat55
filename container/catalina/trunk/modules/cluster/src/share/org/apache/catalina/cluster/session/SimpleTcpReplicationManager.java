@@ -100,6 +100,7 @@ implements org.apache.catalina.cluster.ClusterManager
      * Assumes false.
      */
     protected boolean stateTransferred = false;
+    private boolean notifyListenersOnReplication;
 
     /**
      * Constructor, just calls super()
@@ -598,5 +599,11 @@ implements org.apache.catalina.cluster.ClusterManager
 
     public void setName(String name) {
         this.name = name;
+    }
+    public boolean getNotifyListenersOnReplication() {
+        return notifyListenersOnReplication;
+    }
+    public void setNotifyListenersOnReplication(boolean notifyListenersOnReplication) {
+        this.notifyListenersOnReplication = notifyListenersOnReplication;
     }
 }

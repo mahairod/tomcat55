@@ -166,6 +166,11 @@ public class SimpleTcpCluster
      * Listeners of messages
      */
     protected Vector clusterListeners = new Vector();
+    
+    /**
+     * Currently only implemented for the delta manager
+     */
+    private boolean notifyListenersOnReplication = true;
 
     // ------------------------------------------------------------- Properties
 
@@ -284,7 +289,9 @@ public class SimpleTcpCluster
         manager.setDistributable(true);
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
         manager.setUseDirtyFlag(useDirtyFlag);
+        manager.setNotifyListenersOnReplication(notifyListenersOnReplication);
         managers.put(name,manager);
+        
         
         return manager;
     }
@@ -371,7 +378,8 @@ public class SimpleTcpCluster
                     clusterDeployer.setCluster(this);
                     Object deployer = IntrospectionUtils.getProperty(getContainer(), "deployer");
                     // FIXME: clusterDeployer.setDeployer( (org.apache.catalina.Deployer) deployer);
-                   clusterDeployer.start();
+                    // clusterDeployer.setDeployer( deployer);
+                    clusterDeployer.start();
                 }
             } catch (Throwable x) {
                 log.fatal("Unable to retrieve the container deployer. Cluster deployment disabled.",x);
@@ -682,6 +690,14 @@ public class SimpleTcpCluster
     }
     public void setClusterDeployer(org.apache.catalina.cluster.ClusterDeployer clusterDeployer) {
         this.clusterDeployer = clusterDeployer;
+    }
+    
+    public boolean getNotifyListenersOnReplication() {
+        return notifyListenersOnReplication;
+    }
+    
+    public void setNotifyListenersOnReplication(boolean notifyListenersOnReplication) {
+        this.notifyListenersOnReplication = notifyListenersOnReplication;
     }
     
  
