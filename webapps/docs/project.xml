@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Tomcat Documentation - Top Level Directory"
+<project name="Apache Jakarta Tomcat Documentation - Top Level Directory"
         href="http://jakarta.apache.org/tomcat/">
 
-    <title>The Tomcat 5 Servlet/JSP Container</title>
+    <title>The Apache Jakarta Tomcat 5 Servlet/JSP Container</title>
 
     <logo href="/images/tomcat.gif">
-      The Tomcat Servlet/JSP Container
+      The Apache Jakarta Tomcat Servlet/JSP Container
     </logo>
 
 
