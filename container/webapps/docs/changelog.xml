@@ -45,6 +45,9 @@
       <add>
         <bug>33739</bug>: Add reference to RUNNING.txt in setup.html. (yoavs)
       </add>
+      <fix>
+        <bug>33719</bug>: Update reference to Ant download page. (yoavs)
+      </fix>
     </changelog>
    </subsection>
 

@@ -30,10 +30,10 @@
   <section name="Current Status Summary">
     <p>
       <b>Tomcat 5.0.27</b> was released on June 17th, 2004.  At that time, the TOMCAT_5_0
-      branch was tagged in CVS, and work on Tomcat 5.5 began.  Until the first stable 
-      release of Tomcat 5.5, building from
-      CVS head may be unstable or broken: use the TOMCAT_5_0 branch tag to build
-      the Tomcat 5.0 releases.
+      branch was tagged in CVS, and work on Tomcat 5.5 began.  We have now had several
+      Tomcat 5.5 releases, including a couple of stable ones.  Accordingly, Tomcat 5.5
+      is now the focus on work.  Tomcat 5.0 is in maintenance mode and its releases
+      will become less and less frequent.
     </p>
     <p>
       <b>Tomcat 5.5</b> has several major goals.  They are discussed in the tomcat-dev
@@ -100,11 +100,8 @@
       <item priority="Medium" owner="fhanik">
         Enhance Cluster functionality for Tomcat 5.5.
       </item>
-      <item priority="Low" owner="yoavs, remm, funkman">
-        Update docs, site, and FAQ for Tomcat 5.5 once ready.
-      </item>
-      <item priority="Low" owner="everyone">
-        Continue fixing bugs ;)
+      <item priority="Medium" owner="everyone">
+        Continue fixing bugs and updating docs.
       </item>
     </status>
 

@@ -52,7 +52,7 @@ pathname to the directory in which Tomcat 5 has been installed.</p>
 <subsection name="Ant">
 
 <p>Binary downloads of the <strong>Ant</strong> build tool are available from
-<a href="http://jakarta.apache.org/downloads/binindex.html">http://jakarta.apache.org/downloads/binindex.html</a>.
+<a href="http://ant.apache.org/bindownload.cgi">http://ant.apache.org/bindownload.cgi</a>.
 This manual assumes you are using Ant 1.4 or later.  The instructions should
 also be compatible with later versions, but this has not been tested.</p>
 
