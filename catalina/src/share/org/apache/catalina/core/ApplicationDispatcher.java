@@ -162,6 +162,7 @@ final class ApplicationDispatcher
      *
      * @param wrapper The Wrapper associated with the resource that will
      *  be forwarded to or included (required)
+     * @param requestURI The request URI to this resource (if any)
      * @param servletPath The revised servlet path to this resource (if any)
      * @param pathInfo The revised extra path information to this resource
      *  (if any)
@@ -171,7 +172,7 @@ final class ApplicationDispatcher
      *  else <code>null</code>
      */
     public ApplicationDispatcher
-        (Wrapper wrapper, String servletPath,
+        (Wrapper wrapper, String requestURI, String servletPath,
          String pathInfo, String queryString, String name) {
 
         super();
@@ -179,6 +180,7 @@ final class ApplicationDispatcher
         // Save all of our configuration parameters
         this.wrapper = wrapper;
         this.context = (Context) wrapper.getParent();
+        this.requestURI = requestURI;
         this.servletPath = servletPath;
         this.origServletPath = servletPath;
         this.pathInfo = pathInfo;
@@ -276,6 +278,11 @@ final class ApplicationDispatcher
      */
     private String queryString = null;
 
+
+    /**
+     * The request URI for this RequestDispatcher.
+     */
+    private String requestURI = null;
 
     /**
      * The servlet path for this RequestDispatcher.
@@ -420,16 +427,18 @@ final class ApplicationDispatcher
 
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
-            StringBuffer sb = new StringBuffer();
             String contextPath = context.getPath();
+            /*
+            StringBuffer sb = new StringBuffer();
             if (contextPath != null)
                 sb.append(contextPath);
             if (servletPath != null)
                 sb.append(servletPath);
             if (pathInfo != null)
                 sb.append(pathInfo);
+            */
             wrequest.setContextPath(contextPath);
-            wrequest.setRequestURI(sb.toString());
+            wrequest.setRequestURI(requestURI);
             wrequest.setServletPath(servletPath);
             wrequest.setPathInfo(pathInfo);
         
@@ -464,23 +473,17 @@ final class ApplicationDispatcher
             // Servlet SRV.6.2.2. The Resquest/Response may have been wrapped
             // and may no longer be instance of RequestFacade 
             if (log.isDebugEnabled()){
-                log.debug( " The Response is vehiculed using a wrapper: " + response.getClass().getName() );
+                log.debug( " The Response is vehiculed using a wrapper: " 
+                           + response.getClass().getName() );
             }
 
             // Close anyway
             try {
-                response.flushBuffer();
-            } catch (IllegalStateException f) {
-                ;
-            }
-            try {
                 PrintWriter writer = response.getWriter();
-                writer.flush();
                 writer.close();
             } catch (IllegalStateException e) {
                 try {
                     ServletOutputStream stream = response.getOutputStream();
-                    stream.flush();
                     stream.close();
                 } catch (IllegalStateException f) {
                     ;
@@ -612,8 +615,9 @@ final class ApplicationDispatcher
 
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
-            StringBuffer sb = new StringBuffer();
             String contextPath = context.getPath();
+            /*
+            StringBuffer sb = new StringBuffer();
             if (contextPath != null)
                 sb.append(contextPath);
             if (servletPath != null)
@@ -621,8 +625,10 @@ final class ApplicationDispatcher
             if (pathInfo != null)
                 sb.append(pathInfo);
             if (sb.length() > 0)
+            */
+            if (requestURI != null)
                 wrequest.setAttribute(Globals.INCLUDE_REQUEST_URI_ATTR,
-                                      sb.toString());
+                                      requestURI);
             if (contextPath != null)
                 wrequest.setAttribute(Globals.INCLUDE_CONTEXT_PATH_ATTR,
                                       contextPath);
