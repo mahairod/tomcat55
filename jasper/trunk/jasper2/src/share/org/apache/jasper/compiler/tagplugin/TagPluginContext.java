@@ -82,6 +82,11 @@ public interface TagPluginContext {
     boolean isAttributeSpecified(String attribute);
 
     /**
+     * @return An unique temporary variable name that the plugin can use.
+     */
+    String getTemporaryVariableName();
+
+    /**
      * Generate Java source codes
      */
     void generateJavaSource(String s);
@@ -100,7 +105,7 @@ public interface TagPluginContext {
 
     /**
      * Abandon optimization for this tag handler, and instruct
-     * Jaser to generate the tag handler calls, as usual.
+     * Jasper to generate the tag handler calls, as usual.
      * Should be invoked if errors are detected, or when the tag body
      * is deemed too compilicated for optimization.
      */

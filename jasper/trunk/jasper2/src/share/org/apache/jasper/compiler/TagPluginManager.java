@@ -192,6 +192,10 @@ public class TagPluginManager {
 	    return getAttribute(attribute) != null;
 	}
 
+	public String getTemporaryVariableName() {
+	    return JspUtil.nextTemporaryVariableName();
+	}
+
 	public void generateJavaSource(String s) {
 	    curNodes.add(new Node.Scriptlet(node.getStart(), null));
 	}
