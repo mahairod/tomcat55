@@ -64,23 +64,23 @@
 package org.apache.catalina.cluster.tcp;
 
 import org.apache.catalina.cluster.io.XByteBuffer;
-import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.ClusterSender;
 
-
-public class ReplicationTransmitter
+ 
+public class ReplicationTransmitter implements ClusterSender
 {
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( ReplicationTransmitter.class );
 
     private java.util.HashMap map = new java.util.HashMap();
-    public ReplicationTransmitter(IDataSender[] senders)
+    public ReplicationTransmitter()
     {
-        for ( int i=0; i<senders.length; i++)
-            map.put(senders[i].getAddress().getHostAddress()+":"+senders[i].getPort(),senders[i]);
     }
 
     private static long nrOfRequests = 0;
     private static long totalBytes = 0;
+    private String replicationMode;
     private static synchronized void addStats(int length) {
         nrOfRequests++;
         totalBytes+=length;
@@ -89,20 +89,40 @@ public class ReplicationTransmitter
         }
 
     }
+    
+    public void setReplicationMode(String mode) {
+        String msg = IDataSenderFactory.validateMode(mode);
+        if (msg == null) {
+            log.debug("Setting replcation mode to " + mode);
+            this.replicationMode = mode;
+        }
+        else
+            throw new IllegalArgumentException(msg);
 
-    public synchronized void add(IDataSender sender)
+    }
+
+
+    public synchronized void add(Member member)
     {
-        String key = sender.getAddress().getHostAddress()+":"+sender.getPort();
-        if ( !map.containsKey(key) )
-            map.put(sender.getAddress().getHostAddress()+":"+sender.getPort(),sender);
+        try {
+            IDataSender sender = IDataSenderFactory.getIDataSender(
+                replicationMode, member);
+            String key = sender.getAddress().getHostAddress() + ":" +
+                sender.getPort();
+            if (!map.containsKey(key))
+                map.put(sender.getAddress().getHostAddress() + ":" +
+                        sender.getPort(), sender);
+        }catch ( java.io.IOException x ) {
+            log.error("Unable to create and add a IDataSender object.",x);
+        }
     }//add
 
-    public synchronized void remove(java.net.InetAddress addr,int port)
+    public synchronized void remove(Member member)
     {
-        String key = addr.getHostAddress()+":"+port;
-        IDataSender sender = (IDataSender)map.get(key);
-        if ( sender == null ) return;
-        sender.disconnect();
+        String key = member.getHost() + ":" + member.getPort();
+        IDataSender toberemoved = (IDataSender) map.get(key);
+        if (toberemoved == null)return;
+        toberemoved.disconnect();
         map.remove(key);
     }
 
@@ -117,10 +137,7 @@ public class ReplicationTransmitter
         while ( i.hasNext() )
         {
             IDataSender sender = (IDataSender)((java.util.Map.Entry)i.next()).getValue();
-            if ( sender.isConnected() )
-            {
-                try { sender.disconnect(); } catch ( Exception x ){}
-            }//end if
+            try { sender.disconnect(); } catch ( Exception x ){}
         }//while
     }//stop
 
@@ -158,10 +175,10 @@ public class ReplicationTransmitter
         }
 
     }
-    public void sendMessage(String sessionId, byte[] indata, java.net.InetAddress addr, int port) throws java.io.IOException
+    public void sendMessage(String sessionId, byte[] indata, Member member) throws java.io.IOException
     {
         byte[] data = XByteBuffer.createDataPackage(indata);
-        String key = addr.getHostAddress()+":"+port;
+        String key = member.getHost()+":"+member.getPort();
         IDataSender sender = (IDataSender)map.get(key);
         sendMessageData(sessionId,data,sender);
     }
@@ -184,6 +201,14 @@ public class ReplicationTransmitter
                 sender.setSuspect(true);
             }
         }//while
+    }
+    public String getReplicationMode() {
+        return replicationMode;
+    }
+    
+    public boolean getIsSenderSynchronized() {
+        return IDataSenderFactory.SYNC_MODE.equals(replicationMode) ||
+            IDataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode);
     }
 
 

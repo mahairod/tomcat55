@@ -328,4 +328,16 @@ public class McastMember implements Member, java.io.Serializable {
         }
         return new String(buf, charPos, 15 - charPos);
     }
+    public void setHost(String host) {
+        this.host = host;
+    }
+    public void setMsgCount(int msgCount) {
+        this.msgCount = msgCount;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setPort(int port) {
+        this.port = port;
+    }
 }

@@ -386,6 +386,7 @@ public class Catalina extends Embedded {
         digester.addRuleSet(new ContextRuleSet("Server/Service/Engine/Host/Default"));
         digester.addRuleSet(new NamingRuleSet("Server/Service/Engine/Host/DefaultContext/"));
         digester.addRuleSet(new ContextRuleSet("Server/Service/Engine/Host/"));
+        digester.addRuleSet(new ClusterRuleSet("Server/Service/Engine/Host/Cluster/"));
         digester.addRuleSet(new NamingRuleSet("Server/Service/Engine/Host/Context/"));
 
         // When the 'engine' is found, set the parentClassLoader.
