@@ -72,7 +72,7 @@
     ;Descriptions
     LangString DESC_SecTomcat ${LANG_ENGLISH} "Install the Tomcat Servlet container."
     LangString DESC_SecTomcatCore ${LANG_ENGLISH} "Install the Tomcat Servlet container core."
-    LangString DESC_SecTomcatService ${LANG_ENGLISH} "Install the Tomcat service, used to automatically start Tomcat in the background when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
+    LangString DESC_SecTomcatService ${LANG_ENGLISH} "Automatically start Tomcat when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
     LangString DESC_SecTomcatSource ${LANG_ENGLISH} "Install the Tomcat source code."
     LangString DESC_SecTomcatDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
     LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
@@ -202,14 +202,14 @@ NoDocumentaion:
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat (old).lnk" \
-                 "$2\bin\java.exe" \
-                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
-
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
                  "$INSTDIR\bin\tomcatw.exe" \
                  '//GT//Tomcat5' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat (old).lnk" \
+                 "$2\bin\java.exe" \
+                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
 SectionEnd
