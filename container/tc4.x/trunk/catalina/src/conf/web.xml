@@ -444,6 +444,10 @@
         <mime-type>application/mac-binhex40</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>htc</extension>
+        <mime-type>text/x-component</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>htm</extension>
         <mime-type>text/html</mime-type>
     </mime-mapping>
