@@ -231,6 +231,22 @@ public interface Container {
 
 
     /**
+     * Return the Cluster with which this Container is associated.  If there is
+     * no associated Cluster, return the Cluster associated with our parent
+     * Container (if any); otherwise return <code>null</code>.
+     */
+    public Cluster getCluster();
+
+
+    /**
+     * Set the Cluster with which this Container is associated.
+     *
+     * @param connector The Connector to be added
+     */
+    public void setCluster(Cluster cluster);
+
+
+    /**
      * Return a name string (suitable for use by humans) that describes this
      * Container.  Within the set of child containers belonging to a particular
      * parent, Container names must be unique.

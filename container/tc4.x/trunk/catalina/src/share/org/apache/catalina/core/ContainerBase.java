@@ -75,6 +75,7 @@ import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.naming.directory.DirContext;
 import org.apache.naming.resources.ProxyDirContext;
+import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
@@ -203,6 +204,12 @@ public abstract class ContainerBase
      * The Manager implementation with which this Container is associated.
      */
     protected Manager manager = null;
+
+    
+    /**
+     * The cluster with which this Container is associated.
+     */
+    protected Cluster cluster = null;
 
 
     /**
@@ -482,6 +489,60 @@ public abstract class ContainerBase
 	// Report this property change to interested listeners
 	support.firePropertyChange("manager", oldManager, this.manager);
 
+    }
+
+    /**
+     * Return the Cluster with which this Container is associated.  If there is
+     * no associated Cluster, return the Cluster associated with our parent
+     * Container (if any); otherwise return <code>null</code>.
+     */
+    public Cluster getCluster() {
+        if (cluster != null)
+            return (cluster);
+
+        if (parent != null)
+            return (parent.getCluster());
+
+        return (null);
+    }
+
+    /**
+     * Set the Cluster with which this Container is associated.
+     *
+     * @param manager The newly associated Cluster
+     */
+    public synchronized void setCluster(Cluster cluster) {
+        // Change components if necessary
+        Cluster oldCluster = this.cluster;
+        if (oldCluster == cluster)
+            return;
+        this.cluster = cluster;
+        
+        // Stop the old component if necessary
+        if (started && (oldCluster != null) &&
+            (oldCluster instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) oldCluster).stop();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setCluster: stop: ", e);
+            }
+        }
+        
+        // Start the new component if necessary
+        if (cluster != null)
+            cluster.setContainer(this);
+
+        if (started && (cluster != null) &&
+            (cluster instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) cluster).start();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setCluster: start: ", e);
+            }
+        }
+        
+        // Report this property change to interested listeners
+        support.firePropertyChange("cluster", oldCluster, this.cluster);
     }
 
 
@@ -1027,46 +1088,48 @@ public abstract class ContainerBase
      */
     public synchronized void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("containerBase.alreadyStarted", logName()));
-	addDefaultMapper(this.mapperClass);
-	started = true;
-
-	// Start our subordinate components, if any
-	if ((loader != null) && (loader instanceof Lifecycle))
-	    ((Lifecycle) loader).start();
-	if ((logger != null) && (logger instanceof Lifecycle))
-	    ((Lifecycle) logger).start();
-	if ((manager != null) && (manager instanceof Lifecycle))
-	    ((Lifecycle) manager).start();
-	if ((realm != null) && (realm instanceof Lifecycle))
-	    ((Lifecycle) realm).start();
-	if ((resources != null) && (resources instanceof Lifecycle))
-	    ((Lifecycle) resources).start();
-
-	// Start our Mappers, if any
-	Mapper mappers[] = findMappers();
-	for (int i = 0; i < mappers.length; i++) {
-	    if (mappers[i] instanceof Lifecycle)
-		((Lifecycle) mappers[i]).start();
-	}
-
-	// Start our child containers, if any
-	Container children[] = findChildren();
-	for (int i = 0; i < children.length; i++) {
-	    if (children[i] instanceof Lifecycle)
-		((Lifecycle) children[i]).start();
-	}
-
-	// Start the Valves in our pipeline (including the basic), if any
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("containerBase.alreadyStarted", logName()));
+        addDefaultMapper(this.mapperClass);
+        started = true;
+        
+        // Start our subordinate components, if any
+        if ((loader != null) && (loader instanceof Lifecycle))
+            ((Lifecycle) loader).start();
+        if ((logger != null) && (logger instanceof Lifecycle))
+            ((Lifecycle) logger).start();
+        if ((manager != null) && (manager instanceof Lifecycle))
+            ((Lifecycle) manager).start();
+        if ((cluster != null) && (cluster instanceof Lifecycle))
+            ((Lifecycle) cluster).start();
+        if ((realm != null) && (realm instanceof Lifecycle))
+            ((Lifecycle) realm).start();
+        if ((resources != null) && (resources instanceof Lifecycle))
+            ((Lifecycle) resources).start();
+        
+        // Start our Mappers, if any
+        Mapper mappers[] = findMappers();
+        for (int i = 0; i < mappers.length; i++) {
+            if (mappers[i] instanceof Lifecycle)
+                ((Lifecycle) mappers[i]).start();
+        }
+        
+        // Start our child containers, if any
+        Container children[] = findChildren();
+        for (int i = 0; i < children.length; i++) {
+            if (children[i] instanceof Lifecycle)
+                ((Lifecycle) children[i]).start();
+        }
+        
+        // Start the Valves in our pipeline (including the basic), if any
         if (pipeline instanceof Lifecycle)
             ((Lifecycle) pipeline).start();
-
-	// Notify our interested LifecycleListeners
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-
+        
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        
     }
 
 
@@ -1078,52 +1141,55 @@ public abstract class ContainerBase
      *  that needs to be reported
      */
     public synchronized void stop() throws LifecycleException {
+        
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("containerBase.notStarted", logName()));
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("containerBase.notStarted", logName()));
-
-	// Notify our interested LifecycleListeners
+        // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
-
-	// Stop the Valves in our pipeline (including the basic), if any
+        started = false;
+        
+        // Stop the Valves in our pipeline (including the basic), if any
         if (pipeline instanceof Lifecycle) {
             ((Lifecycle) pipeline).stop();
         }
-
-	// Stop our child containers, if any
-	Container children[] = findChildren();
-	for (int i = 0; i < children.length; i++) {
+        
+        // Stop our child containers, if any
+        Container children[] = findChildren();
+        for (int i = 0; i < children.length; i++) {
             if (children[i] instanceof Lifecycle)
                 ((Lifecycle) children[i]).stop();
-	}
-
-	// Stop our Mappers, if any
-	Mapper mappers[] = findMappers();
-	for (int i = 0; i < mappers.length; i++) {
-	    if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
-		((Lifecycle) mappers[(mappers.length-1)-i]).stop();
-	}
-
-	// Stop our subordinate components, if any
-	if ((resources != null) && (resources instanceof Lifecycle)) {
-	    ((Lifecycle) resources).stop();
         }
-	if ((realm != null) && (realm instanceof Lifecycle)) {
-	    ((Lifecycle) realm).stop();
+        
+        // Stop our Mappers, if any
+        Mapper mappers[] = findMappers();
+        for (int i = 0; i < mappers.length; i++) {
+            if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
+                ((Lifecycle) mappers[(mappers.length-1)-i]).stop();
         }
-	if ((manager != null) && (manager instanceof Lifecycle)) {
-	    ((Lifecycle) manager).stop();
+        
+        // Stop our subordinate components, if any
+        if ((resources != null) && (resources instanceof Lifecycle)) {
+            ((Lifecycle) resources).stop();
         }
-	if ((logger != null) && (logger instanceof Lifecycle)) {
-	    ((Lifecycle) logger).stop();
+        if ((realm != null) && (realm instanceof Lifecycle)) {
+            ((Lifecycle) realm).stop();
         }
-	if ((loader != null) && (loader instanceof Lifecycle)) {
-	    ((Lifecycle) loader).stop();
+        if ((cluster != null) && (cluster instanceof Lifecycle)) {
+            ((Lifecycle) cluster).stop();
+        }        
+        if ((manager != null) && (manager instanceof Lifecycle)) {
+            ((Lifecycle) manager).stop();
         }
-
+        if ((logger != null) && (logger instanceof Lifecycle)) {
+            ((Lifecycle) logger).stop();
+        }
+        if ((loader != null) && (loader instanceof Lifecycle)) {
+            ((Lifecycle) loader).stop();
+        }
+        
     }
 
 

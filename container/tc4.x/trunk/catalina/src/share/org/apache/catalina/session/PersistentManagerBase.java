@@ -161,7 +161,7 @@ public abstract class PersistentManagerBase
     /**
      * The background thread completion semaphore.
      */
-    private boolean threadDone = false;
+    protected boolean threadDone = false;
 
 
     /**
@@ -174,6 +174,35 @@ public abstract class PersistentManagerBase
      * Store object which will manage the Session store.
      */
     private Store store = null;
+
+
+    /**
+     * Whether to save and reload sessions when the Manager <code>unload</code>
+     * and <code>load</code> methods are called.
+     */
+    private boolean saveOnRestart = true;
+    
+    
+    /**
+     * How long a session must be idle before it should be backed up.
+     * -1 means sessions won't be backed up.
+     */
+    private int maxIdleBackup = -1;
+    
+    
+    /**
+     * Minimum time a session must be idle before it is swapped to disk.
+     * This overrides maxActiveSessions, to prevent thrashing if there are lots
+     * of active sessions. Setting to -1 means it's ignored.
+     */
+    private int minIdleSwap = -1;
+
+    /**
+     * The maximum time a session may be idle before it should be swapped
+     * to file just on general principle. Setting this to -1 means sessions
+     * should not be forced out.
+     */
+    private int maxIdleSwap = -1;
 
 
     // ------------------------------------------------------------- Properties
@@ -204,6 +233,110 @@ public abstract class PersistentManagerBase
 
     }
 
+
+
+    /**
+     * Indicates how many seconds old a session can get, after its last 
+     * use in a request, before it should be backed up to the store. -1
+     * means sessions are not backed up.
+     */
+    public int getMaxIdleBackup() {
+
+        return maxIdleBackup;
+
+    }
+    
+    
+    /**
+     * Sets the option to back sessions up to the Store after they
+     * are used in a request. Sessions remain available in memory
+     * after being backed up, so they are not passivated as they are 
+     * when swapped out. The value set indicates how old a session 
+     * may get (since its last use) before it must be backed up: -1 
+     * means sessions are not backed up.
+     * <p>
+     * Note that this is not a hard limit: sessions are checked 
+     * against this age limit periodically according to <b>checkInterval</b>.
+     * This value should be considered to indicate when a session is
+     * ripe for backing up.
+     * <p>
+     * So it is possible that a session may be idle for maxIdleBackup +
+     * checkInterval seconds, plus the time it takes to handle other
+     * session expiration, swapping, etc. tasks.
+     *
+     * @param backup The number of seconds after their last accessed
+     * time when they should be written to the Store. 
+     */
+    public void setMaxIdleBackup (int backup) {
+
+        if (backup == this.maxIdleBackup)
+            return;
+        int oldBackup = this.maxIdleBackup;
+        this.maxIdleBackup = backup;
+        support.firePropertyChange("maxIdleBackup",
+                                   new Integer(oldBackup),
+                                   new Integer(this.maxIdleBackup));
+                                   
+    }
+    
+    
+    /**
+     * The time in seconds after which a session should be swapped out of
+     * memory to disk.
+     */
+    public int getMaxIdleSwap() {
+
+        return maxIdleSwap;
+
+    }
+    
+    
+    /**
+     * Sets the time in seconds after which a session should be swapped out of
+     * memory to disk.
+     */
+    public void setMaxIdleSwap(int max) {
+
+        if (max == this.maxIdleSwap)
+            return;
+        int oldMaxIdleSwap = this.maxIdleSwap;
+        this.maxIdleSwap = max;
+        support.firePropertyChange("maxIdleSwap",
+                                   new Integer(oldMaxIdleSwap),
+                                   new Integer(this.maxIdleSwap));
+
+    }
+
+
+    /**
+     * The minimum time in seconds that a session must be idle before
+     * it can be swapped out of memory, or -1 if it can be swapped out
+     * at any time.
+     */
+    public int getMinIdleSwap() {
+
+        return minIdleSwap;
+
+    }
+    
+    
+    /**
+     * Sets the minimum time in seconds that a session must be idle before
+     * it can be swapped out of memory due to maxActiveSession. Set it to -1 
+     * if it can be swapped out at any time.
+     */
+    public void setMinIdleSwap(int min) {
+
+        if (this.minIdleSwap == min)
+            return;
+        int oldMinIdleSwap = this.minIdleSwap;
+        this.minIdleSwap = min;
+        support.firePropertyChange("minIdleSwap",
+                                   new Integer(oldMinIdleSwap),
+                                   new Integer(this.minIdleSwap));
+
+    }
+    
 
     /**
      * Set the Container with which this Manager has been associated.  If
@@ -326,6 +459,41 @@ public abstract class PersistentManagerBase
     }
 
 
+
+    /**
+     * Indicates whether sessions are saved when the Manager is shut down
+     * properly. This requires the unload() method to be called.
+     */
+    public boolean getSaveOnRestart() {
+
+        return saveOnRestart;
+
+    }
+    
+    
+    /**
+     * Set the option to save sessions to the Store when the Manager is
+     * shut down, then loaded when the Manager starts again. If set to 
+     * false, any sessions found in the Store may still be picked up when 
+     * the Manager is started again.
+     *
+     * @param save true if sessions should be saved on restart, false if
+     *     they should be ignored.
+     */
+    public void setSaveOnRestart(boolean saveOnRestart) {
+
+        if (saveOnRestart == this.saveOnRestart)
+            return;
+
+        boolean oldSaveOnRestart = this.saveOnRestart;
+        this.saveOnRestart = saveOnRestart;
+        support.firePropertyChange("saveOnRestart",
+                                   new Boolean(oldSaveOnRestart),
+                                   new Boolean(this.saveOnRestart));
+                                   
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -344,6 +512,20 @@ public abstract class PersistentManagerBase
             e.printStackTrace();
         }
     
+    }
+
+
+    /**
+     * Called by the background thread after active sessions have
+     * been checked for expiration, to allow sessions to be
+     * swapped out, backed up, etc.
+     */
+    public void processPersistenceChecks() {
+    
+            processMaxIdleSwaps();
+            processMaxActiveSwaps();
+            processMaxIdleBackups();
+
     }
     
 
@@ -440,15 +622,6 @@ public abstract class PersistentManagerBase
             }
         
     }
-
-
-    /**
-     * Called by the background thread after active sessions have
-     * been checked for expiration, to allow sessions to be
-     * swapped out, backed up, etc. This method must be implemented,
-     * but may be empty if it isn't needed.
-     */
-    public abstract void processPersistenceChecks();
 
 
     /**
@@ -676,34 +849,36 @@ public abstract class PersistentManagerBase
      * @exception LifecycleException if this component detects a fatal error
      *  that needs to be reported
      */
-    public void stop() throws LifecycleException {
+   public void stop() throws LifecycleException {
 
         if (debug >= 1)
             log("Stopping");
 
         // Validate and update our current component state
-        if (!started)
+        if (!isStarted())
             throw new LifecycleException
                 (sm.getString("standardManager.notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-        started = false;
+        setStarted(false);
 
         // Stop the background reaper thread
         threadStop();
 
-        // Swap out all active sessions
-        Session sessions[] = findSessions();
-        for (int i = 0; i < sessions.length; i++) {
-            StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid())
-                continue;
-            try {
-                swapOut(session);
-            } catch (IOException e) {
-                ;   // Logged upstream
+        if (getStore() != null && saveOnRestart) {
+            unload();
+        } else {
+            // Expire all active sessions
+            Session sessions[] = findSessions();
+            for (int i = 0; i < sessions.length; i++) {
+                StandardSession session = (StandardSession) sessions[i];
+                if (!session.isValid())
+                    continue;
+                session.expire();
             }
-
-       }
+        }
+        
+        if (getStore() != null && getStore() instanceof Lifecycle)
+            ((Lifecycle)getStore()).stop();
 
         // Require a new random number generator if we are restarted
         this.random = null;
@@ -749,7 +924,7 @@ public abstract class PersistentManagerBase
      *
      * FIXME: Probably belongs in the Session class.
      */
-    private boolean isSessionStale(Session session, long timeNow) {
+    protected boolean isSessionStale(Session session, long timeNow) {
 
         int maxInactiveInterval = session.getMaxInactiveInterval();
         if (maxInactiveInterval >= 0) {
@@ -767,7 +942,7 @@ public abstract class PersistentManagerBase
     /**
      * Invalidate all sessions that have expired.
      */
-    private void processExpires() {
+    protected void processExpires() {
 
         if (!started)
             return;
@@ -787,10 +962,127 @@ public abstract class PersistentManagerBase
 
 
     /**
+     * Swap idle sessions out to Store if they are idle too long.
+     */
+    protected void processMaxIdleSwaps() {
+
+        if (!isStarted() || maxIdleSwap < 0)
+            return;
+
+        Session sessions[] = findSessions();
+        long timeNow = System.currentTimeMillis();
+
+        // Swap out all sessions idle longer than maxIdleSwap
+        // FIXME: What's preventing us from mangling a session during
+        // a request?
+        if (maxIdleSwap >= 0) {
+            for (int i = 0; i < sessions.length; i++) {
+                StandardSession session = (StandardSession) sessions[i];
+                if (!session.isValid())
+                    continue;
+                int timeIdle = // Truncate, do not round up
+                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                if (timeIdle > maxIdleSwap && timeIdle > minIdleSwap) {
+                    if (debug > 1)
+                        log(sm.getString
+                            ("persistentManager.swapMaxIdle", 
+                             session.getId(), new Integer(timeIdle)));
+                    try {
+                        swapOut(session);
+                    } catch (IOException e) {
+                        ;   // This is logged in writeSession()
+                    }
+                }
+            }
+        }
+        
+    }
+
+
+    /**
+     * Swap idle sessions out to Store if too many are active
+     */
+    protected void processMaxActiveSwaps() {
+
+        if (!isStarted() || getMaxActiveSessions() < 0)
+            return;
+
+        Session sessions[] = findSessions();
+        
+        // FIXME: Smarter algorithm (LRU)
+        if (getMaxActiveSessions() >= sessions.length)
+            return;
+
+        if(debug > 0)
+            log(sm.getString
+                ("persistentManager.tooManyActive", 
+                 new Integer(sessions.length)));
+
+        int toswap = sessions.length - getMaxActiveSessions();
+        long timeNow = System.currentTimeMillis();
+        
+        for (int i = 0; i < sessions.length && toswap > 0; i++) {
+            int timeIdle = // Truncate, do not round up
+                (int) ((timeNow - sessions[i].getLastAccessedTime()) / 1000L);
+            if (timeIdle > minIdleSwap) {
+                if(debug > 1)
+                    log(sm.getString
+                        ("persistentManager.swapTooManyActive", 
+                         sessions[i].getId(), new Integer(timeIdle)));
+                try {
+                    swapOut(sessions[i]);
+                } catch (IOException e) {
+                    ;   // This is logged in writeSession()
+                }
+                toswap--;
+            }
+        }
+
+    }
+
+
+    /**
+     * Back up idle sessions.
+     */
+    protected void processMaxIdleBackups() {
+
+        if (!isStarted() || maxIdleBackup < 0)
+            return;
+        
+        Session sessions[] = findSessions();
+        long timeNow = System.currentTimeMillis();
+
+        // Back up all sessions idle longer than maxIdleBackup
+        if (maxIdleBackup >= 0) {
+            for (int i = 0; i < sessions.length; i++) {
+                StandardSession session = (StandardSession) sessions[i];
+                if (!session.isValid())
+                    continue;
+                int timeIdle = // Truncate, do not round up
+                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                if (timeIdle > maxIdleBackup) {
+                    if (debug > 1)
+                        log(sm.getString
+                            ("persistentManager.backupMaxIdle",
+                            session.getId(), new Integer(timeIdle)));
+        
+                    try {
+                        writeSession(session);
+                    } catch (IOException e) {
+                        ;   // This is logged in writeSession()
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    /**
      * Sleep for the duration specified by the <code>checkInterval</code>
      * property.
      */
-    private void threadSleep() {
+    protected void threadSleep() {
 
         try {
             Thread.sleep(checkInterval * 1000L);
@@ -805,7 +1097,7 @@ public abstract class PersistentManagerBase
      * Start the background thread that will periodically check for
      * session timeouts.
      */
-    private void threadStart() {
+    protected void threadStart() {
 
         if (thread != null)
             return;

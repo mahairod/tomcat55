@@ -61,63 +61,98 @@
  *
  */ 
 
+package org.apache.catalina;
 
-package org.apache.catalina.session;
+
+import java.beans.PropertyChangeListener;
+import java.util.Collection;
+import org.apache.catalina.cluster.ClusterMemberInfo;
+import org.apache.catalina.cluster.MulticastReceiver;
+import org.apache.catalina.cluster.MulticastSender;
 
 /**
- * Implementation of the <b>Manager</b> interface that makes use of
- * a Store to swap active Sessions to disk. It can be configured to
- * achieve several different goals:
+ * A <b>Cluster</b> works as a Cluster client/server for the local host
+ * Different Cluster implementations can be used to support Session replication
+ * or weighted loadbalancing.
  *
- * <li>Persist sessions across restarts of the Container</li>
- * <li>Fault tolerance, keep sessions backed up on disk to allow
- *     recovery in the event of unplanned restarts.</li>
- * <li>Limit the number of active sessions kept in memory by
- *     swapping less active sessions out to disk.</li>
- *
+ * @author Bip Thelin
  * @version $Revision$
- * @author Kief Morris (kief@kief.com)
  */
 
-public final class PersistentManager extends PersistentManagerBase {
-
-
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The descriptive information about this implementation.
-     */
-    private static final String info = "PersistentManager/1.0";
-
-
-    /**
-     * The descriptive name of this Manager implementation (for logging).
-     */
-    protected static String name = "PersistentManager";
-
+public interface Cluster {
 
     // ------------------------------------------------------------- Properties
 
-
     /**
-     * Return descriptive information about this Manager implementation and
+     * Return descriptive information about this Cluster implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
-    public String getInfo() {
+    public String getInfo();
 
-        return (this.info);
-
-    }
-   
     /**
-     * Return the descriptive short name of this Manager implementation.
+     * Return the name of the cluster that this Server is currently
+     * configured to operate within.
+     *
+     * @return The name of the cluster associated with this server
      */
-    public String getName() {
+    public String getClusterName();
 
-        return (name);
+    /**
+     * Set the name of the cluster to join, if no cluster with
+     * this name is present create one.
+     *
+     * @param clusterName The clustername to join
+     */
+    public void setClusterName(String clusterName);
 
-    }
- }
+    /**
+     * Set the Container associated with our Cluster
+     *
+     * @param container The Container to use
+     */
+    public void setContainer(Container container);
 
+    /**
+     * Get the Container associated with our Cluster
+     *
+     * @return The Container associated with our Cluster
+     */
+    public Container getContainer();
+
+    // --------------------------------------------------------- Public Methods
+
+    /**
+     * Returns a collection containing <code>ClusterMemberInfo</code>
+     * on the remote members of this Cluster. This method does
+     * not include the local host, to retrieve
+     * <code>ClusterMemberInfo</code> on the local host
+     * use <code>getLocalClusterInfo()</code> instead.
+     *
+     * @return Collection with all members in the Cluster
+     */
+    public Collection getRemoteClusterMembers();
+
+    /**
+     * Returns a <code>MulticastSender</code> which is the interface
+     * to use when communicating in the Cluster. 
+     *
+     * @return The MulticastSender to use
+     */
+    public MulticastSender getMulticastSender(String senderId);
+
+    /**
+     * Returns a <code>MulticastReceiver</code> which is the interface
+     * to use when communicating in the Cluster. 
+     *
+     * @return The MulticastSender to use
+     */
+    public MulticastReceiver getMulticastReceiver(String senderId);
+
+    /**
+     * Return cluster information about the local host
+     *
+     * @return Cluster information
+     */
+    public ClusterMemberInfo getLocalClusterInfo();
+}
