@@ -95,6 +95,7 @@ import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 
+import org.apache.commons.beanutils.PropertyUtils;
 
 /**
  * <p>Implementation of a Valve that outputs HTML error pages.</p>
@@ -335,10 +336,18 @@ public class ErrorReportValve
                 sb.append(stackTrace);
                 sb.append("</pre></p>");
                 // In case root cause is somehow heavily nested
-                if (rootCause instanceof ServletException)
-                    rootCause = ((ServletException) rootCause).getRootCause();
-                else
+                try {
+                    rootCause = (Throwable)PropertyUtils.getProperty
+                                                (rootCause, "rootCause");
+                } catch (ClassCastException e) {
                     rootCause = null;
+                } catch (IllegalAccessException e) {
+                    rootCause = null;
+                } catch (NoSuchMethodException e) {
+                    rootCause = null;
+                } catch (java.lang.reflect.InvocationTargetException e) {
+                    rootCause = null;
+                }
             }
 
             sb.append("<p><b>");
