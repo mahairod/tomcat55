@@ -259,10 +259,10 @@
             <controls:label><bean:message key="connector.keystore.password"/>:</controls:label>
             <controls:data>
              <logic:equal name="connectorForm" property="adminAction" value="Create">
-                <html:text property="keyStorePassword" size="30"/> 
+                <html:password property="keyStorePassword" size="30"/> 
              </logic:equal>
              <logic:equal name="connectorForm" property="adminAction" value="Edit">
-               <bean:write name="connectorForm" property="keyStoreFileName"/>
+                <bean:write name="connectorForm" property="keyStorePassword"/>
              </logic:equal>
             </controls:data>
         </controls:row>
