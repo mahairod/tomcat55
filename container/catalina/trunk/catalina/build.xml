@@ -861,7 +861,9 @@
 
 
   <!-- ====================== DEPLOY: Copy Static Files =================== -->
-  <target name="deploy-static" depends="build-main,deploy-prepare">
+  <target name="deploy-static" depends="build-main,deploy-prepare,deploy-static-only"/>
+
+  <target name="deploy-static-only" depends="deploy-prepare">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.deploy}/bin">
