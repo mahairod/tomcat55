@@ -175,7 +175,10 @@ public class PageDataImpl extends PageData implements TagConstants {
 
 	public void visit(Node.Root n) throws JasperException {
 	    visitBody(n);
-	    root.setAttributes(rootAttrs);
+	    if (n == this.root) {
+		// top-level page
+		this.root.setAttributes(rootAttrs);
+	    }
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
@@ -199,7 +202,7 @@ public class PageDataImpl extends PageData implements TagConstants {
 	    visitBody(n);
 	    if (n == this.root) {
 		// top-level jsp:root element
-		root.setAttributes(rootAttrs);
+		this.root.setAttributes(rootAttrs);
 	    }
 	}
 
@@ -211,7 +214,7 @@ public class PageDataImpl extends PageData implements TagConstants {
 	    if (attrs != null) {
 		String location = attrs.getValue("uri");
 		if (location == null) {
-		    // JSP 2.0 CLARIFICATION NEEDED
+		    // XXX JSP 2.0 CLARIFICATION NEEDED
 		    location = attrs.getValue("tagdir");
 		}
 		String prefix = attrs.getValue("prefix");
@@ -247,7 +250,12 @@ public class PageDataImpl extends PageData implements TagConstants {
 	 * Visits root node of JSP page in JSP syntax.
 	 */
 	public void visit(Node.Root n) throws JasperException {
-	    appendTag(JSP_ROOT, n.getAttributes(), n.getBody());
+	    if (n == this.root) {
+		// top-level page
+		appendTag(JSP_ROOT, n.getAttributes(), n.getBody());
+	    } else {
+		visitBody(n);
+	    }
 	}
 
 	/*
