@@ -147,7 +147,8 @@
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
 
     <copy todir="${tomcat.build}/bin" file="${commons-daemon.jar}" />
-    <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" />
+    <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" 
+            failonerror="false" />
 
     <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
   </target>
