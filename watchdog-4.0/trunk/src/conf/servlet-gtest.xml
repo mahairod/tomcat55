@@ -11,7 +11,7 @@
     <!-- ====================== Watchdog Servlet Tests ====================== -->
 
         <!-- BEGIN javax_servlet_Filter -->
-    <target name="watchdogservlet-test">
+    <target name="gtestservlet-test">
         <watchdog request="GET /servlet-tests/DoFilterTest HTTP/1.0"
             testName="DoFilterTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
