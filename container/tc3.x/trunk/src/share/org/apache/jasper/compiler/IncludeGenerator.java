@@ -119,7 +119,6 @@ public class IncludeGenerator
 	writer.println("{");
 	writer.pushIndent();
 	writer.println("String _jspx_qStr = \"\";");
-        writer.println("out.flush();");
 	
 	if (params.size() > 0) {
 	    Enumeration en = params.keys();

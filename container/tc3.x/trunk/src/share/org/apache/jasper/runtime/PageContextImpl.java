@@ -407,6 +407,7 @@ public class PageContextImpl extends PageContext {
         throws ServletException, IOException
     {
         String path = getAbsolutePathRelativeToContext(relativeUrlPath);
+        out.flush();
         context.getRequestDispatcher(path).include(request, response);
     }
 
