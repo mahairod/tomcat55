@@ -479,9 +479,6 @@ as your database structure conforms to the following requirements:</p>
         in the <em>users</em> table).</li>
     <li>Role name of a valid role associated with this user.</li>
     </ul></li>
-<li>Please note that the DataSourceRealm currently does not support DIGEST 
-    authentication (as opposed to BASIC authentication).  It does support
-    digested passwords as explained here.</li> 
 </ul>
 
 <h3>Quick Start</h3>
