@@ -58,7 +58,7 @@ if [ "$1" != "" ]; then
 fi
 
 java org.apache.tomcat.shell.Startup -config $webconf  $* &
-sleep 50
+sleep 20
 
 if [ "${default}" = jsp -o "${default}" = all ];then
 java -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main \

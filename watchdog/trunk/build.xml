@@ -8,6 +8,7 @@
 
    <property name="watchdog.build" value="../build/watchdog"/>
    <property name="watchdog.dist" value="../dist/watchdog"/>
+   <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../build/tomcat/classes" />
 
    <target name="prepare">
 
@@ -41,16 +42,29 @@
    </target>       
    <target name="main" depends="prepare">
 
+      <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
+             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
+             classpath="${watchdog-classpath}" 
+             deprecation="off" />
+
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
-             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
+             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
+             classpath="${watchdog-classpath}" 
+             deprecation="off" />
 
       <!-- Something strange in J2EE, lib/moo.jar is not read - this is a temp. fix -->
       <javac srcdir="../jakarta-tools/moo/src/share"
-             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
+             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
+             classpath="${watchdog-classpath}" 
+             deprecation="off" />
       <javac srcdir="../jakarta-tools/moo/src/share"
-             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
+             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
+             classpath="${watchdog-classpath}" 
+             deprecation="off" />
 
-      <javac srcdir="src/clients" destdir="${watchdog.build}/clients" />    
+      <javac srcdir="src/clients" destdir="${watchdog.build}/clients" 
+             classpath="${watchdog-classpath}" 
+             deprecation="off" />    
    </target>
 
    <target name="dist" depends="main">
