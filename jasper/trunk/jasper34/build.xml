@@ -23,7 +23,7 @@
   <!-- we'll use the common utils - or even better the connector, 
        since we'll want to take advantage of it -->
   <property name="tomcat_util.jar" 
-	    location="${jakarta-tomcat-jasper}/lib/tomcat_util.jar" />
+	    location="${tomcat.home}/lib/container/tomcat_util.jar" />
 
   <!-- For later use ( while merging with catalina ) -->
   <property name="servlet23.jar" 
