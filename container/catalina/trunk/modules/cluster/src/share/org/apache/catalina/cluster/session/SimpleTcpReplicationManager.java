@@ -128,7 +128,8 @@ implements org.apache.catalina.cluster.ClusterManager
     }
 
     public void setCluster(CatalinaCluster cluster) {
-        log.debug("Cluster associated with SimpleTcpReplicationManager");
+        if(log.isDebugEnabled())
+            log.debug("Cluster associated with SimpleTcpReplicationManager");
         this.cluster = cluster;
     }
 
@@ -139,7 +140,8 @@ implements org.apache.catalina.cluster.ClusterManager
 
     public void setPrintToScreen(boolean printtoscreen)
     {
-        log.debug("Setting screen debug to:"+printtoscreen);
+        if(log.isDebugEnabled())
+            log.debug("Setting screen debug to:"+printtoscreen);
         mPrintToScreen = printtoscreen;
     }
 
@@ -413,7 +415,8 @@ implements org.apache.catalina.cluster.ClusterManager
         try {
             //the channel is already running
             if ( mChannelStarted ) return;
-            log.info("Starting clustering manager...:"+getName());
+            if(log.isInfoEnabled())
+                log.info("Starting clustering manager...:"+getName());
             if ( cluster == null ) {
                 log.error("Starting... no cluster associated with this context:"+getName());
                 return;
@@ -429,7 +432,8 @@ implements org.apache.catalina.cluster.ClusterManager
                                        "GET-ALL",
                                        "GET-ALL-"+this.getName());
                 cluster.send(msg, mbr);
-                log.warn("Manager["+getName()+"], requesting session state from "+mbr+
+                if(log.isWarnEnabled())
+                     log.warn("Manager["+getName()+"], requesting session state from "+mbr+
                          ". This operation will timeout if no session state has been received within "+
                          "60 seconds");
                 long reqStart = System.currentTimeMillis();
@@ -445,10 +449,12 @@ implements org.apache.catalina.cluster.ClusterManager
                 if ( isTimeout || (!isStateTransferred()) ) {
                     log.error("Manager["+getName()+"], No session state received, timing out.");
                 }else {
-                    log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");
+                    if(log.isInfoEnabled())
+                        log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");
                 }
             } else {
-                log.info("Manager["+getName()+"], skipping state transfer. No members active in cluster group.");
+                if(log.isInfoEnabled())
+                    log.info("Manager["+getName()+"], skipping state transfer. No members active in cluster group.");
             }//end if
             mChannelStarted = true;
         }  catch ( Exception x ) {
@@ -504,8 +510,10 @@ implements org.apache.catalina.cluster.ClusterManager
      */
     protected void messageReceived( SessionMessage msg, Member sender ) {
         try  {
-            log.debug("Received SessionMessage of type="+msg.getEventTypeString());
-            log.debug("Received SessionMessage sender="+sender);
+            if(log.isInfoEnabled()) {
+                log.debug("Received SessionMessage of type="+msg.getEventTypeString());
+                log.debug("Received SessionMessage sender="+sender);
+            }
             switch ( msg.getEventType() ) {
                 case SessionMessage.EVT_GET_ALL_SESSIONS: {
                     //get a list of all the session from this manager

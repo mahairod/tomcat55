@@ -64,6 +64,9 @@
       <fix>
         <bug>32269</bug>: JNDIRealm fails with InvalidNameException to authenticate users if LDAP distinguished name (DN) contains slash or double quote character(s). (yoavs)
       </fix>
+     <fix>
+        Move processExpiresFrequency check to ManagerBase and reflect change to all subclasses (StandardManager, PersientManagerBase, DeltaManager). (pero)
+      </fix>
     </changelog>
   </subsection>
 
@@ -75,6 +78,14 @@
       <fix>
         <bug>32330</bug>: JspC changes context classloader. (yoavs)
       </fix>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Cluster">
+    <changelog>
+	   <add>
+          Better log support to DeltaManager to see detail information at debug level. (pero)
+       </add>
     </changelog>
   </subsection>
 
