@@ -267,6 +267,14 @@ public abstract class BaseDirContext implements DirContext {
     // --------------------------------------------------------- Public Methods
 
 
+    /**
+     * Release any resources allocated for this directory context.
+     */
+    public void release() {
+        ; // No action taken by the default implementation
+    }
+
+
     // -------------------------------------------------------- Context Methods
 
 
