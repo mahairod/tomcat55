@@ -1947,10 +1947,9 @@ class Generator {
                             }
                             sb.setLength(initLength);
                             count = JspUtil.CHUNKSIZE;
-
-                            // add a Smap for this line
-                            n.addSmap(srcLine);
                         }
+                        // add a Smap for this line
+                        n.addSmap(srcLine);
                         break;
                     case '\t' : // Not sure we need this
                         sb.append('\\').append('t');

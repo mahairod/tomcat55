@@ -89,8 +89,8 @@ public class ELFunctionMapper {
 	String ds = map.ds.toString();
 	if (ds.length() > 0) {
 	    Node root = page.getRoot();
-	    new Node.Declaration(map.ss.toString(), root.getStart(), root);
-	    new Node.Declaration("static {\n" + ds + "}\n", root.getStart(), root);
+	    new Node.Declaration(map.ss.toString(), null, root);
+	    new Node.Declaration("static {\n" + ds + "}\n", null, root);
 	}
     }
 
