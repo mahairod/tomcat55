@@ -71,17 +71,17 @@ commons-collections.loc=http://www.apache.org/dist/jakarta/commons/collections/b
 
 
 # ----- Commons Digester, version 1.1.1 or later -----
-commons-digester.home=${base.path}/commons-digester-1.4.1
+commons-digester.home=${base.path}/commons-digester-1.5
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.4.1.tar.gz
+commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.5.tar.gz
 
 
 # ----- Commons FileUpload, nightly build -----
-commons-fileupload.home=${base.path}/commons-fileupload-1.0-rc1
+commons-fileupload.home=${base.path}/commons-fileupload-1.0
 commons-fileupload.lib=${commons-fileupload.home}
-commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-rc1.jar
-commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0-rc1.tar.gz
+commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0.jar
+commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0.tar.gz
 
 
 # ----- Commons Logging, version 1.0.1 or later -----
@@ -124,9 +124,9 @@ servlet.loc=jakarta-servletapi-4
 
 # ----- Xerces XML Parser, version 2.0.0 or later -----
 # Note: Optional with JDK 1.4+, or if Xerces 1.x is present
-xerces.home=${base.path}/xerces-2_3_0
+xerces.home=${base.path}/xerces-2_4_0
 xerces.lib=${xerces.home}
-xerces.loc=http://xml.apache.org/dist/xerces-j/old_xerces2/Xerces-J-bin.2.3.0.tar.gz
+xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.4.0.tar.gz
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
@@ -157,10 +157,10 @@ commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/common
 
 
 # ----- Commons Modeler, version 1.0 or later -----
-commons-modeler.home=${base.path}/commons-modeler-1.1M1
+commons-modeler.home=${base.path}/commons-modeler-1.0
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
-commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.1-M1/commons-modeler-1.1M1.tar.gz
+commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.0/commons-modeler-1.0.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
@@ -227,10 +227,10 @@ puretls.jar=${puretls.lib}/puretls.jar
 
 
 # ----- Struts, version 1.0.1 or later -----
-struts.home=${base.path}/jakarta-struts-1.0.2
+struts.home=${base.path}/jakarta-struts-1.1
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
-struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.2/jakarta-struts-1.0.2.tar.gz
+struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.1/jakarta-struts-1.0.2.tar.gz
 
 
 # ----- Tyrex Data Source, version 1.0 -----
