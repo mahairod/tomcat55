@@ -536,6 +536,20 @@
       </fileset>
     </jar>
 
+  	<!-- Build baseline _en bundle to ease -->
+    <copy todir="${tomcat.build}/classes" includeemptydirs="false">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="**/LocalStrings.properties"/>
+      </fileset>
+      <mapper type="glob" from="*.properties" to="*_en.properties"/>
+    </copy>
+    <jar jarfile="${tomcat.build}/common/i18n/tomcat-i18n-en.jar">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="**/LocalStrings_en.properties" />
+        <exclude name="**/tomcat4/**" />
+      </fileset>
+    </jar>
+  	
   </target>
 	
   <!-- ====================== Build dependent code =================== -->
@@ -1321,6 +1335,9 @@
     </copy>
     <copy todir="${tomcat.dist}/common/endorsed">
       <fileset dir="${tomcat.build}/common/endorsed" />
+    </copy>
+    <copy todir="${tomcat.dist}/common/i18n">
+      <fileset dir="${tomcat.build}/common/i18n" />
     </copy>
     <copy todir="${tomcat.dist}/common/lib">
       <fileset dir="${tomcat.build}/common/lib" />
