@@ -1,4 +1,11 @@
 <project name="modeler-test" default="mini-tomcat" basedir=".">
+
+  <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="build.properties.default"/>
+  <property file="../build.properties.default"/>
+
   <property name="base.dir" location="/usr/share/java" />
   <property name="base.src" location="../.." />
   <property name="tomcat.src" location=".." />
@@ -7,7 +14,7 @@
 
   <property name="tomcat.home" location="${tomcat.src}/build" />
 
-  <property name="modeler.home" location="${jakarta-commons}/modeler/dist" />
+  <property name="commons-modeler.home" location="${jakarta-commons}/modeler/dist" />
   <property name="commons-logging.jar" location="${jakarta-commons}/logging/dist/commons-logging.jar" />
  
 
@@ -15,7 +22,7 @@
     <path id="myJars" >
       <fileset dir="${jmx.home}/lib" includes="*.jar"/>
       <pathelement path="${commons-logging.jar}" />
-      <fileset dir="${modeler.home}" includes="*.jar" />
+      <fileset dir="${commons-modeler.home}" includes="*.jar" />
 
       <fileset dir="${tomcat.home}/server/lib" >
         <include name="catalina.jar" />
