@@ -600,6 +600,8 @@ public class HostConfig
                 deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                         new Long(docBase.lastModified()));
                 addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
+            } else {
+                addWatchedResources(deployedApp, null, context);
             }
         } catch (Throwable t) {
             log.error(sm.getString("hostConfig.deployDescriptor.error",
@@ -767,6 +769,8 @@ public class HostConfig
                 deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                         new Long(docBase.lastModified()));
                 addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
+            } else {
+                addWatchedResources(deployedApp, null, context);
             }
         } catch (Throwable t) {
             log.error(sm.getString("hostConfig.deployJar.error", file), t);
@@ -871,13 +875,23 @@ public class HostConfig
     protected void addWatchedResources(DeployedApplication app, String docBase, Context context) {
         // FIXME: Feature idea. Add support for patterns (ex: WEB-INF/*, WEB-INF/*.xml), where
         //        we would only check if at least one resource is newer than app.timestamp
-        File docBaseFile = new File(docBase);
-        if (!docBaseFile.isAbsolute()) {
-            docBaseFile = new File(appBase(), docBase);
+        File docBaseFile = null;
+        if (docBase != null) {
+            docBaseFile = new File(docBase);
+            if (!docBaseFile.isAbsolute()) {
+                docBaseFile = new File(appBase(), docBase);
+            }
         }
         String[] watchedResources = context.findWatchedResources();
         for (int i = 0; i < watchedResources.length; i++) {
-            File resource = new File(docBaseFile, watchedResources[i]);
+            File resource = new File(watchedResources[i]);
+            if (!resource.isAbsolute()) {
+                if (docBase != null) {
+                    resource = new File(docBaseFile, watchedResources[i]);
+                } else {
+                    continue;
+                }
+            }
             app.reloadResources.put(resource.getAbsolutePath(), 
                     new Long(resource.lastModified()));
         }
