@@ -74,6 +74,8 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
@@ -216,6 +218,14 @@ public class ManagerServlet
      * The debugging detail level for this servlet.
      */
     protected int debug = 1;
+
+
+    /**
+     * File object representing the directory into which the deploy() command
+     * will store the WAR and context configuration files that have been
+     * uploaded.
+     */
+    protected File deployed = null;
 
 
     /**
@@ -435,6 +445,10 @@ public class ManagerServlet
             global = ((StandardServer) server).getGlobalNamingContext();
         }
 
+        // Calculate the directory into which we will be deploying applications
+        deployed = (File) getServletContext().getAttribute
+            ("javax.servlet.context.tempdir");
+
         // Log debugging messages as necessary
         if (debug >= 1) {
             log("init: Associated with Deployer '" +
@@ -488,46 +502,52 @@ public class ManagerServlet
         }
 
         // Upload the web application archive to a local WAR file
-        File tempDir = (File) getServletContext().getAttribute
-            ("javax.servlet.context.tempdir");
-        File localWar = new File(tempDir, basename + ".war");
-        localWar.delete();
+        File localWar = new File(deployed, basename + ".war");
+        if (debug >= 2) {
+            log("Uploading WAR file to " + localWar);
+        }
         try {
-            if (debug >= 2) {
-                log("Uploading WAR file to " + localWar);
-            }
-            ServletInputStream istream = request.getInputStream();
-            BufferedOutputStream ostream =
-                new BufferedOutputStream(new FileOutputStream(localWar), 1024);
-            byte buffer[] = new byte[1024];
-            while (true) {
-                int n = istream.read(buffer);
-                if (n < 0) {
-                    break;
-                }
-                ostream.write(buffer, 0, n);
-            }
-            ostream.flush();
-            ostream.close();
-            istream.close();
+            uploadWar(request, localWar);
         } catch (IOException e) {
             log("managerServlet.upload[" + displayPath + "]", e);
             writer.println(sm.getString("managerServlet.exception",
                                         e.toString()));
-            localWar.delete();
             return;
         }
 
-        // Deploy the local WAR file
+        // Extract the nested context deployment file (if any)
+        File localXml = new File(deployed, basename + ".xml");
+        if (debug >= 2) {
+            log("Extracting XML file to " + localXml);
+        }
         try {
-            deployer.install(path,
-                             new URL("jar:file:" +
-                                     localWar.getAbsolutePath() + "!/"));
+            extractXml(localWar, localXml);
+        } catch (IOException e) {
+            log("managerServlet.extract[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            return;
+        }
+
+        // Deploy this web application
+        try {
+            URL warURL =
+                new URL("jar:file:" + localWar.getAbsolutePath() + "!/");
+            URL xmlURL = null;
+            if (localXml.exists()) {
+                xmlURL = new URL("file:" + localXml.getAbsolutePath());
+            }
+            if (xmlURL != null) {
+                deployer.install(xmlURL, warURL);
+            } else {
+                deployer.install(path, warURL);
+            }
         } catch (Throwable t) {
             log("ManagerServlet.deploy[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
             localWar.delete();
+            localXml.delete();
             return;
         }
 
@@ -1034,16 +1054,14 @@ public class ManagerServlet
             }
 
             // Validate the docBase path of this application
-            File tempDir = (File) getServletContext().getAttribute
-                ("javax.servlet.context.tempdir");
-            String tempDirPath = tempDir.getCanonicalPath();
+            String deployedPath = deployed.getCanonicalPath();
             String docBase = context.getDocBase();
             File docBaseDir = new File(docBase);
             if (!docBaseDir.isAbsolute()) {
                 docBaseDir = new File(appBaseDir, docBase);
             }
             String docBasePath = docBaseDir.getCanonicalPath();
-            if (!docBasePath.startsWith(tempDirPath)) {
+            if (!docBasePath.startsWith(deployedPath)) {
                 writer.println(sm.getString("managerServlet.noDocBase",
                                             displayPath));
                 return;
@@ -1059,6 +1077,10 @@ public class ManagerServlet
             } else {
                 docBaseDir.delete();  // Delete the WAR file
             }
+            String docBaseXmlPath =
+                docBasePath.substring(0, docBasePath.length() - 4) + ".xml";
+            File docBaseXml = new File(docBaseXmlPath);
+            docBaseXml.delete();
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
 
@@ -1066,6 +1088,86 @@ public class ManagerServlet
             log("ManagerServlet.undeploy[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
+        }
+
+    }
+
+
+    // -------------------------------------------------------- Support Methods
+
+
+    /**
+     * Extract the context configuration file from the specified WAR,
+     * if it is present.  If it is not present, ensure that the corresponding
+     * file does not exist.
+     *
+     * @param war File object representing the WAR
+     * @param xml File object representing where to store the extracted
+     *  context configuration file (if it exists)
+     *
+     * @exception IOException if an i/o error occurs
+     */
+    protected void extractXml(File war, File xml) throws IOException {
+
+        xml.delete();
+        JarFile jar = null;
+        JarEntry entry = null;
+        InputStream istream = null;
+        BufferedOutputStream ostream = null;
+        try {
+            jar = new JarFile(war);
+            entry = jar.getJarEntry("META-INF/context.xml");
+            if (entry == null) {
+                return;
+            }
+            istream = jar.getInputStream(entry);
+            ostream =
+                new BufferedOutputStream(new FileOutputStream(xml), 1024);
+            byte buffer[] = new byte[1024];
+            while (true) {
+                int n = istream.read(buffer);
+                if (n < 0) {
+                    break;
+                }
+                ostream.write(buffer, 0, n);
+            }
+            ostream.flush();
+            ostream.close();
+            ostream = null;
+            istream.close();
+            istream = null;
+            entry = null;
+            jar.close();
+            jar = null;
+        } catch (IOException e) {
+            xml.delete();
+            throw e;
+        } finally {
+            if (ostream != null) {
+                try {
+                    ostream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                ostream = null;
+            }
+            if (istream != null) {
+                try {
+                    istream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                istream = null;
+            }
+            entry = null;
+            if (jar != null) {
+                try {
+                    jar.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                jar = null;
+            }
         }
 
     }
@@ -1092,6 +1194,63 @@ public class ManagerServlet
             }
         }
         dir.delete();
+
+    }
+
+
+    /**
+     * Upload the WAR file included in this request, and store it at the
+     * specified file location.
+     *
+     * @param request The servlet request we are processing
+     * @param file The file into which we should store the uploaded WAR
+     *
+     * @exception IOException if an I/O error occurs during processing
+     */
+    protected void uploadWar(HttpServletRequest request, File war)
+        throws IOException {
+
+        war.delete();
+        ServletInputStream istream = null;
+        BufferedOutputStream ostream = null;
+        try {
+            istream = request.getInputStream();
+            ostream =
+                new BufferedOutputStream(new FileOutputStream(war), 1024);
+            byte buffer[] = new byte[1024];
+            while (true) {
+                int n = istream.read(buffer);
+                if (n < 0) {
+                    break;
+                }
+                ostream.write(buffer, 0, n);
+            }
+            ostream.flush();
+            ostream.close();
+            ostream = null;
+            istream.close();
+            istream = null;
+        } catch (IOException e) {
+            war.delete();
+            throw e;
+        } finally {
+            if (ostream != null) {
+                try {
+                    ostream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                ostream = null;
+            }
+            if (istream != null) {
+                try {
+                    istream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                istream = null;
+            }
+        }
 
     }
 
