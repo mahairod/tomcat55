@@ -544,7 +544,7 @@ public final class ConnectorForm extends ActionForm {
         if (submit != null) {
             
             /* general */
-            numberCheck("acceptCountText", acceptCountText, true, 1, 128);
+            numberCheck("acceptCountText", acceptCountText, true, 0, 128);
             numberCheck("connTimeOutText", connTimeOutText, true, 0, 60000);
             numberCheck("bufferSizeText", bufferSizeText, true, 1, 8192);
             
