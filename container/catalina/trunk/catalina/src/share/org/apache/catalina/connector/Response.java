@@ -34,7 +34,6 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -381,7 +380,7 @@ public class Response
      * Return the <code>ServletResponse</code> for which this object
      * is the facade.
      */
-    public ServletResponse getResponse() {
+    public HttpServletResponse getResponse() {
         if (facade == null) {
             facade = new ResponseFacade(this);
         }

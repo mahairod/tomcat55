@@ -38,7 +38,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestAttributeEvent;
 import javax.servlet.ServletRequestAttributeListener;
 import javax.servlet.http.Cookie;
@@ -558,7 +557,7 @@ public class Request
      * Return the <code>ServletRequest</code> for which this object
      * is the facade.  This method must be implemented by a subclass.
      */
-    public ServletRequest getRequest() {
+    public HttpServletRequest getRequest() {
         if (facade == null) {
             facade = new RequestFacade(this);
         } 
