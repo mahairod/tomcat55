@@ -114,7 +114,41 @@ public class SessionIdGenerator {
      */
     public final static long ticDifference = 2000;
 
-    // ** NOTE that this must work together with get_jserv_session_balance()
+    /**
+     * A String initialization parameter used to increase the entropy of
+     * the initialization of our random number generator.
+     */
+    private static String entropy = null;
+
+
+    /**
+     * Return the entropy increaser value, or compute a semi-useful value
+     * if this String has not yet been set.
+     */
+    public static String getEntropy() {
+
+	// Calculate a semi-useful value if this has not been set
+	if (entropy == null)
+	    setEntropy((new Object()).toString());
+
+	return (entropy);
+
+    }
+
+
+    /**
+     * Set the entropy increaser value.
+     *
+     * @param entropy The new entropy increaser value
+     */
+    public static void setEntropy(String newEntropy) {
+
+	entropy = newEntropy;
+
+    }
+
+
+	 // ** NOTE that this must work together with get_jserv_session_balance()
     // ** in jserv_balance.c
     static synchronized public String getIdentifier (String jsIdent)
     {
@@ -133,10 +167,20 @@ public class SessionIdGenerator {
             }
             if (randomSource == null)
                 randomSource = new java.security.SecureRandom();
-        }
 
-        // random value ..
-        long n = randomSource.nextLong();
+				// Set the seed PRNG's seed value
+				long seed = System.currentTimeMillis();
+				char entropy[] = getEntropy().toCharArray();
+				for (int i = 0; i < entropy.length; i++) {
+					 long update = ((byte) entropy[i]) << ((i % 8) * 8);
+					 seed ^= update;		    
+				}
+				randomSource.setSeed(seed);
+		  }
+
+
+		  // random value ..
+		  long n = randomSource.nextLong();
         if (n < 0) n = -n;
         n %= maxRandomLen;
         // add maxLen to pad the leading characters with '0'; remove
