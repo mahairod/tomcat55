@@ -1989,6 +1989,12 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="reload"
+          description="Reload the webapplication"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
   </mbean>
 
 

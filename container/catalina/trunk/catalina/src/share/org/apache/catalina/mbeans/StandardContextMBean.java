@@ -137,6 +137,15 @@ public class StandardContextMBean extends BaseModelMBean {
     
     }
     
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public void reload() {
+        
+        ((StandardContext)this.resource).reload();
+    
+    }
+    
     
     /**
      * Return the MBean Names of the set of defined environment entries for  
