@@ -567,6 +567,9 @@ Catalina Bug Fixes:
          NamingResourcesMBean:
          Fix resource link creation.
 
+[4.1.18] CoyoteWriter, CoyoteResponse:
+         SECURITY: Fix writer reuse after an IOException occurred.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -707,6 +710,10 @@ Coyote Bug Fixes:
 [4.1.17] #15258
          JK 2 ChannelSocket:
          Bind all addresses by default.
+
+[4.1.18] #15456
+         JK 2 CoyoteHandler:
+         Fix NPE occurring in SSL mode.
 
 
 ----------------
