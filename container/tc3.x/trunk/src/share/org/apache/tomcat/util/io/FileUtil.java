@@ -128,7 +128,7 @@ public class FileUtil {
     // XXX tc_log is the default channel in tomcat, this component
     //should be able to log in a specific channel.
     static org.apache.commons.logging.Log logger =
-	org.apache.commons.logging.LogFactory.getLog(DependClassLoader.class);
+	org.apache.commons.logging.LogFactory.getLog(FileUtil.class);
 
     
     /** All the safety checks from getRealPath() and
@@ -405,9 +405,8 @@ public class FileUtil {
 		    fos.close();
 		}
 	    } catch( FileNotFoundException ex ) {
-		if(logger.isDebugEnabled())
-		    logger.debug("FileNotFoundException: " +
-				  ze.getName(), Logger.ERROR );
+		logger.error("FileNotFoundException: " +
+			     ze.getName(), ex);
 		throw ex;
 	    }
 	}
