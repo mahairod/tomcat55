@@ -131,6 +131,10 @@ public final class StandardService
     private static final StringManager sm =
         StringManager.getManager(Constants.Package);
 
+    /**
+     * The <code>Server</code> that owns this Service, if any.
+     */
+    private Server server = null;
 
     /**
      * Has this component been started?
@@ -226,6 +230,28 @@ public final class StandardService
     public void setName(String name) {
 
         this.name = name;
+
+    }
+
+
+    /**
+     * Return the <code>Server</code> with which we are associated (if any).
+     */
+    public Server getServer() {
+
+        return (this.server);
+
+    }
+
+
+    /**
+     * Set the <code>Server</code> with which we are associated (if any).
+     *
+     * @param server The server that owns this Service
+     */
+    public void setServer(Server server) {
+
+        this.server = server;
 
     }
 

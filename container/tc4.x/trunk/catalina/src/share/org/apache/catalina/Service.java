@@ -123,6 +123,20 @@ public interface Service {
     public void setName(String name);
 
 
+    /**
+     * Return the <code>Server</code> with which we are associated (if any).
+     */
+    public Server getServer();
+
+
+    /**
+     * Set the <code>Server</code> with which we are associated (if any).
+     *
+     * @param server The server that owns this Service
+     */
+    public void setServer(Server server);
+
+    
     // --------------------------------------------------------- Public Methods
 
 
