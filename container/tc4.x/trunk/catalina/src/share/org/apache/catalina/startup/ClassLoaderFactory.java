@@ -281,6 +281,14 @@ public final class ClassLoaderFactory {
         if (triggers == null)
             return (true);
         for (int i = 0; i < triggers.length; i++) {
+            Class clazz = null;
+            try {
+                clazz = Class.forName(triggers[i]);
+            } catch (Throwable t) {
+                clazz = null;
+            }
+            if (clazz == null)
+                continue;
             File file = new File(directory,
                                  triggers[i].replace('.', File.separatorChar) +
                                  ".class");
@@ -309,6 +317,14 @@ public final class ClassLoaderFactory {
             return (true);
         JarFile jarFile = new JarFile(jarfile);
         for (int i = 0; i < triggers.length; i++) {
+            Class clazz = null;
+            try {
+                clazz = Class.forName(triggers[i]);
+            } catch (Throwable t) {
+                clazz = null;
+            }
+            if (clazz == null)
+                continue;
             String name = triggers[i].replace('.', '/') + ".class";
             if (debug >= 2)
                 log(" Checking for " + name);
