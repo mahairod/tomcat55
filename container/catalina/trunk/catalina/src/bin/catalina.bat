@@ -106,6 +106,7 @@ if ""%1"" == ""debug"" goto doDebug
 if ""%1"" == ""run"" goto doRun
 if ""%1"" == ""start"" goto doStart
 if ""%1"" == ""stop"" goto doStop
+if ""%1"" == ""version"" goto doVersion
 
 echo Usage:  catalina ( commands ... )
 echo commands:
@@ -117,6 +118,7 @@ echo   run -security     Start in the current window with security manager
 echo   start             Start Catalina in a separate window
 echo   start -security   Start in a separate window with security manager
 echo   stop              Stop Catalina
+echo   version           What version of tomcat are you running?
 goto end
 
 :doDebug
@@ -155,6 +157,11 @@ goto execCmd
 shift
 set ACTION=stop
 goto execCmd
+
+:doVersion
+%_EXECJAVA% -classpath "%CATALINA_HOME%\server\lib\catalina.jar" org.apache.catalina.util.ServerInfo
+goto end
+
 
 :execCmd
 rem Get remaining unshifted command line arguments and save them in the

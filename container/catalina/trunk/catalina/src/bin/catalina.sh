@@ -254,6 +254,12 @@ elif [ "$1" = "stop" ] ; then
     fi
   fi
 
+elif [ "$1" = "version" ] ; then
+
+    "$_RUNJAVA"   \
+      -classpath "$CATALINA_HOME/server/lib/catalina.jar" \
+      org.apache.catalina.util.ServerInfo
+
 else
 
   echo "Usage: catalina.sh ( commands ... )"
@@ -272,6 +278,7 @@ else
   echo "  start -security   Start in a separate window with security manager"
   echo "  stop              Stop Catalina"
   echo "  stop -force       Stop Catalina (followed by kill -KILL)"
+  echo "  version           What version of tomcat are you running?"
   exit 1
 
 fi
