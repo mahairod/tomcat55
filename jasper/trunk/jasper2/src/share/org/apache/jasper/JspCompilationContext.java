@@ -528,6 +528,7 @@ public class JspCompilationContext {
             } catch (JasperException ex) {
                 throw ex;
             } catch (Exception ex) {
+                ex.printStackTrace();
                 throw new JasperException(
                     Constants.getString("jsp.error.unable.compile"),ex);
             }
