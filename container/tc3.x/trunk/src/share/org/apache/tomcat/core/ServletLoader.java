@@ -527,7 +527,7 @@ class JarFinder {
     }
 
     private String[] getJars(File dir, String path) {
-        File[] files = dir.listFiles();
+        File[] files = FileUtil.listFiles(dir);
 
         for (int i = 0; i < files.length; i++) {
             File file = files[i];

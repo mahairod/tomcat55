@@ -214,7 +214,7 @@ implements HttpServletRequest {
 
                 if (url != null &&
                     url.getProtocol().equals("file")) {
-                    pathTranslated = FilePathUtil.patch(url.getFile());
+                    pathTranslated = FileUtil.patch(url.getFile());
                 }
             } catch (MalformedURLException e) {
             }
