@@ -193,10 +193,14 @@ public class SetDocBaseRule extends Rule {
         }
 
         if (docBase.startsWith(canonicalAppBase.getPath())) {
-            docBase = docBase.substring
-                (canonicalAppBase.getPath().length() + 1);
+            docBase = docBase.substring(canonicalAppBase.getPath().length());
+            docBase = docBase.replace(File.separatorChar, '/');
+            if (docBase.startsWith("/")) {
+                docBase = docBase.substring(1);
+            }
+        } else {
+            docBase = docBase.replace(File.separatorChar, '/');
         }
-        docBase = docBase.replace(File.separatorChar, '/');
 
         child.setDocBase(docBase);
 
