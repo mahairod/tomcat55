@@ -348,18 +348,18 @@ public class JspParseEventListener extends BaseJspListener {
 	//writer.println("} catch (Throwable t) {");
 	writer.println("} catch (Exception ex) {");
 	writer.pushIndent();
-        writer.println("if (out.getBufferSize() != 0)");
+        writer.println("if (out != null && out.getBufferSize() != 0)");
         writer.pushIndent();
 	writer.println("out.clearBuffer();");
 	writer.popIndent();
-	writer.println("pageContext.handlePageException(ex);");
+	writer.println("if (pageContext != null) pageContext.handlePageException(ex);");
 	writer.popIndent();
 	writer.println("} finally {");
 	writer.pushIndent();
 	/* Do stuff here for finally actions... */
         //writer.println("out.close();");
-	writer.println("out.flush();");
-	writer.println("_jspxFactory.releasePageContext(pageContext);");
+	writer.println("if (out != null) out.flush();");
+	writer.println("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
 	writer.popIndent();
 	writer.println("}");
 	// Close the service method:
