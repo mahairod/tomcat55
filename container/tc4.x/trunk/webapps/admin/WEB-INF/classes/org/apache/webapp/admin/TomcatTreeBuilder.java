@@ -77,6 +77,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
@@ -118,7 +119,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String WILDCARD = ",*";
     
     private static MBeanServer mBServer = null;
-    
+
     public void buildTree(TreeControl treeControl,
                           ApplicationServlet servlet,
                           HttpServletRequest request) {
@@ -126,7 +127,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
         try {
             mBServer = servlet.getServer();
             TreeControlNode root = treeControl.getRoot();
-            getServers(root);
+            MessageResources resources = (MessageResources)
+            servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
+            getServers(root, resources);
         } catch(Throwable t){
             t.printStackTrace(System.out);
         }
@@ -147,12 +150,14 @@ public class TomcatTreeBuilder implements TreeBuilder{
     /**
      * Append nodes for all defined servers.
      *
-     * @param rootNode Root node for the tree control
+     * @param rootNode Root node for the tree control 
+     * @param resources The MessageResources for our localized messages
+     *  messages
      *
      * @exception Exception if an exception occurs building the tree
      */
-    public void getServers(TreeControlNode rootNode)
-        throws Exception {
+    public void getServers(TreeControlNode rootNode, MessageResources resources)
+                        throws Exception {
         
         Iterator serverNames =
             Lists.getServers(mBServer).iterator();
@@ -171,7 +176,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "content",
                                     true);
             rootNode.addChild(serverNode);
-            getServices(serverNode, serverName);
+            getServices(serverNode, serverName, resources);
         }
         
     }
@@ -182,11 +187,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
      *
      * @param serverNode Server node for the tree control
      * @param serverName Object name of the parent server
+     * @param resources The MessageResources for our localized messages
+     *  messages
      *
      * @exception Exception if an exception occurs building the tree
      */
-    public void getServices(TreeControlNode serverNode, String serverName)
-        throws Exception {
+    public void getServices(TreeControlNode serverNode, String serverName, 
+                        MessageResources resources) throws Exception {
 
         Iterator serviceNames =
             Lists.getServices(mBServer, serverName).iterator();
@@ -207,7 +214,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             serverNode.addChild(serviceNode);
             getConnectors(serviceNode, serviceName);
-            getHosts(serviceNode, serviceName);
+            getDefaultContexts(serviceNode, serviceName, "service", resources);
+            getHosts(serviceNode, serviceName, resources);
             getLoggers(serviceNode, serviceName);
             getRealms(serviceNode, serviceName);
             getValves(serviceNode, serviceName);
@@ -225,7 +233,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
      * @exception Exception if an exception occurs building the tree
      */
     public void getConnectors(TreeControlNode serviceNode, String serviceName)
-        throws Exception{
+                        throws Exception{
         
         Iterator connectorNames =
             Lists.getConnectors(mBServer, serviceName).iterator();
@@ -254,11 +262,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
      *
      * @param serviceNode Service node for the tree control
      * @param serviceName Object name of the parent service
+     * @param resources The MessageResources for our localized messages
+     *  messages
      *
      * @exception Exception if an exception occurs building the tree
      */
-    public void getHosts(TreeControlNode serviceNode, String serviceName)
-        throws Exception {
+    public void getHosts(TreeControlNode serviceNode, String serviceName, 
+        MessageResources resources) throws Exception {
         
         Iterator hostNames =
             Lists.getHosts(mBServer, serviceName).iterator();
@@ -278,7 +288,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "content",
                                     false);
             serviceNode.addChild(hostNode);
-            getContexts(hostNode, hostName);            
+            getContexts(hostNode, hostName, resources);            
+            getDefaultContexts(hostNode, hostName, "host", resources);
             getLoggers(hostNode, hostName);
             getRealms(hostNode, hostName);
             getValves(hostNode, hostName);
@@ -286,16 +297,19 @@ public class TomcatTreeBuilder implements TreeBuilder{
 
     }    
 
+    
     /**
      * Append nodes for all defined contexts for the specified host.
      *
      * @param hostNode Host node for the tree control
      * @param hostName Object name of the parent host
+     * @param resources The MessageResources for our localized messages
+     *  messages
      *
      * @exception Exception if an exception occurs building the tree
      */
-    public void getContexts(TreeControlNode hostNode, String hostName)
-        throws Exception {
+    public void getContexts(TreeControlNode hostNode, String hostName,
+                        MessageResources resources) throws Exception {
         
         Iterator contextNames =
             Lists.getContexts(mBServer, hostName).iterator();
@@ -315,11 +329,53 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "content",
                                     false);
             hostNode.addChild(contextNode);
+            getResources(contextNode, contextName, resources);
             getLoggers(contextNode, contextName);
             getRealms(contextNode, contextName);
             getValves(contextNode, contextName);
         }
     }
+    
+    
+    /**
+     * Append nodes for all defined default contexts for the specified host.
+     *
+     * @param hostNode Host node for the tree control
+     * @param containerName Object name of the parent container
+     * @param containerType The type of the parent container
+     * @param resources The MessageResources for our localized messages
+     *  messages
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
+    public void getDefaultContexts(TreeControlNode hostNode, String containerName, 
+                        String containerType, MessageResources resources) 
+                        throws Exception {
+        
+        Iterator defaultContextNames =
+            Lists.getDefaultContexts(mBServer, containerName, 
+                containerType).iterator();
+        while (defaultContextNames.hasNext()) {
+            String defaultContextName = (String) defaultContextNames.next();
+            ObjectName objectName = new ObjectName(defaultContextName);
+            String nodeLabel = "Default Context";
+            TreeControlNode defaultContextNode =
+                new TreeControlNode(defaultContextName,
+                                    "DefaultContext.gif",
+                                    nodeLabel,
+                                    "EditDefaultContext.do?select=" +
+                                    URLEncoder.encode(defaultContextName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    false);
+            hostNode.addChild(defaultContextNode);
+            getResources(defaultContextNode, defaultContextName, resources);
+            getLoggers(defaultContextNode, defaultContextName);
+            getRealms(defaultContextNode, defaultContextName);
+            getValves(defaultContextNode, defaultContextName);
+        }
+    }  
     
     
     /**
@@ -387,6 +443,95 @@ public class TomcatTreeBuilder implements TreeBuilder{
         
     }   
         
+    
+    /**
+     * Append nodes for any define resources for the specified Context.
+     *
+     * @param containerNode Container node for the tree control
+     * @param containerName Object name of the parent container
+     * @param resources The MessageResources for our localized messages
+     *  messages
+     */
+    public void getResources(TreeControlNode containerNode, String containerName,
+                              MessageResources resources) throws Exception {
+
+        ObjectName oname = new ObjectName(containerName);
+        String path = oname.getKeyProperty("path");
+        String defaultContext = oname.getKeyProperty("defaultContext");
+        TreeControlNode subtree = new TreeControlNode
+            ("Context Resource Administration " + containerName,
+             "folder_16_pad.gif",
+             resources.getMessage("resources.treeBuilder.subtreeNode"),
+             null,
+             "content",
+             true);        
+        containerNode.addChild(subtree);
+        if (path != null) {
+            TreeControlNode datasources = new TreeControlNode
+                ("Context Data Sources " + containerName,
+                "Datasource.gif",
+                resources.getMessage("resources.treeBuilder.datasources"),
+                "resources/listDataSources.do?parent="+
+                URLEncoder.encode(path)+"&parentType=path&forward=" +
+                URLEncoder.encode("DataSources List Setup"),
+                "content",
+                false);
+            TreeControlNode resourcelinks = new TreeControlNode
+                ("Resource Links " + containerName,
+                "Datasource.gif",
+                resources.getMessage("resources.treeBuilder.resourcelinks"),
+                "resources/listResourceLinks.do?parent="+
+                URLEncoder.encode(path)+"&parentType=path&forward=" +
+                URLEncoder.encode("ResourceLinks List Setup"),
+                "content",
+                false);
+            TreeControlNode envs = new TreeControlNode
+                ("Context Environment Entries "+ containerName,
+                "EnvironmentEntries.gif",
+                resources.getMessage("resources.env.entries"),
+                "resources/listEnvEntries.do?parent="+
+                URLEncoder.encode(path)+"&parentType=path&forward=" +
+                URLEncoder.encode("EnvEntries List Setup"),
+                "content",
+                false);
+            subtree.addChild(datasources);
+            subtree.addChild(resourcelinks);
+            subtree.addChild(envs);
+        } else if (defaultContext != null) {
+            TreeControlNode datasources = new TreeControlNode
+                ("Context Data Sources " + containerName,
+                "Datasource.gif",
+                resources.getMessage("resources.treeBuilder.datasources"),
+                "resources/listDataSources.do?parent="+
+                URLEncoder.encode(defaultContext)+"&parentType=defaultContext"+
+                "&forward=" + URLEncoder.encode("DataSources List Setup"),
+                "content",
+                false);
+            TreeControlNode resourcelinks = new TreeControlNode
+                ("Resource Links " + containerName,
+                "Datasource.gif",
+                resources.getMessage("resources.treeBuilder.resourcelinks"),
+                "resources/listResourceLinks.do?parent="+
+                URLEncoder.encode(defaultContext)+"&parentType=defaultContext"+
+                "&forward=" + URLEncoder.encode("ResourceLinks List Setup"),
+                "content",
+                false);
+            TreeControlNode envs = new TreeControlNode
+                ("Context Environment Entries "+ containerName,
+                "EnvironmentEntries.gif",
+                resources.getMessage("resources.env.entries"),
+                "resources/listEnvEntries.do?parent="+
+                URLEncoder.encode(defaultContext)+"&parentType=defaultContext"+
+                "&forward=" + URLEncoder.encode("EnvEntries List Setup"),
+                "content",
+                false);
+            subtree.addChild(datasources);
+            subtree.addChild(resourcelinks);
+            subtree.addChild(envs);
+        }
+    }
+    
+    
    /**
      * Append nodes for any defined valves for the specified container.
      *

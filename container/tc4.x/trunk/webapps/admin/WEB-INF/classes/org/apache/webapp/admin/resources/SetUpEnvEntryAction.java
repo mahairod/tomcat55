@@ -150,6 +150,8 @@ public final class SetUpEnvEntryAction extends Action {
         }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
+        String parentName = request.getParameter("parent");
 
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
@@ -163,6 +165,7 @@ public final class SetUpEnvEntryAction extends Action {
             envEntryForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.env.edit"));
             envEntryForm.setObjectName(objectName);
+            envEntryForm.setParentName(parentName);
             
             String attribute = null;
             try {

@@ -98,8 +98,45 @@ public final class EnvEntriesForm extends BaseForm {
     public void setEnvEntries(String envEntries[]) {
         this.envEntries = envEntries;
     }
+    
+    /**
+     * The parent name of this environment entry.
+     */
+    private String parentName = null;
+    
+    /**
+     * Return the parent name of the environment entry this bean refers to.
+     */
+    public String getParentName() {
+        return this.parentName;
+    }
 
+    /**
+     * Set the parent name of the environment entry this bean refers to.
+     */
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+    
+    /**
+     * The parent type of this environment entry.
+     */
+    private String parentType = null;
+    
+    /**
+     * Return the parent type of the environment entry this bean refers to.
+     */
+    public String getParentType() {
+        return this.parentType;
+    }
 
+    /**
+     * Set the parent type of the environment entry this bean refers to.
+     */
+    public void setParentType(String parentType) {
+        this.parentType = parentType;
+    }
+    
     // --------------------------------------------------------- Public Methods
 
 

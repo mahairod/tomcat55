@@ -83,6 +83,7 @@ public class ResourceUtils {
 
     public final static String ENVIRONMENT_TYPE = "Catalina:type=Environment";
     public final static String RESOURCE_TYPE = "Catalina:type=Resource";
+    public final static String RESOURCELINK_TYPE = "Catalina:type=ResourceLink";
     public final static String NAMINGRESOURCES_TYPE = "Catalina:type=NamingResources";
     
     // resource class names
@@ -100,13 +101,23 @@ public class ResourceUtils {
      *
      * @exception Exception if an error occurs
      */
-    public static EnvEntriesForm getEnvEntriesForm(MBeanServer mserver)
-        throws Exception {
+    public static EnvEntriesForm getEnvEntriesForm(MBeanServer mserver, 
+                        String parent, String parentType) throws Exception {
 
-        ObjectName ename = new ObjectName( NAMINGRESOURCES_TYPE );
-                        
-        String results[] =
-            (String[]) mserver.getAttribute(ename, "environments");
+        ObjectName ename = null;
+        if ((parent == null) || (parentType == null)) {
+            ename = new ObjectName(NAMINGRESOURCES_TYPE);
+        } else {
+            ename = new ObjectName( NAMINGRESOURCES_TYPE +
+                                        ","+parentType+"=" + parent);
+        }
+        
+        String results[] = null;
+        try {
+            results = (String[]) mserver.getAttribute(ename, "environments");
+        } catch (Exception e) {
+            // leave results null return empty forms
+        }
         if (results == null) {
             results = new String[0];
         }
@@ -114,6 +125,8 @@ public class ResourceUtils {
         
         EnvEntriesForm envEntriesForm = new EnvEntriesForm();
         envEntriesForm.setEnvEntries(results);
+        envEntriesForm.setParentName(parent);
+        envEntriesForm.setParentType(parentType);
         return (envEntriesForm);
 
     }
@@ -127,9 +140,9 @@ public class ResourceUtils {
      *
      * @exception Exception if an error occurs
      */
-    public static DataSourcesForm getDataSourcesForm(MBeanServer mserver)
-        throws Exception {
-
+    public static DataSourcesForm getDataSourcesForm(MBeanServer mserver, 
+                        String parent, String parentType) throws Exception {
+                            
         ObjectName rname = new ObjectName( RESOURCE_TYPE + 
                             ",class=" + DATASOURCE_CLASS + ",*");
                                  
@@ -146,6 +159,36 @@ public class ResourceUtils {
         dataSourcesForm.setDataSources((String[]) 
                         results.toArray(new String[results.size()]));        
         return (dataSourcesForm);
+
+    }
+
+    /**
+     * Construct and return a ResourceLinksForm identifying all currently defined
+     * resourcelinks in the specified resource database.
+     *
+     * @param mserver MBeanServer to be consulted
+     * @param name MBean Name of the resource link to be consulted
+     *
+     * @exception Exception if an error occurs
+     */
+    public static ResourceLinksForm getResourceLinksForm(MBeanServer mserver, 
+                        String parent, String parentType) throws Exception {
+
+        ObjectName rname = new ObjectName( RESOURCELINK_TYPE + ",*");
+                                 
+        Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
+        
+        ArrayList results = new ArrayList();        
+        while (iterator.hasNext()) {
+            ObjectInstance instance = (ObjectInstance) iterator.next(); 
+            results.add(instance.getObjectName().toString());
+        }
+
+        Collections.sort(results);        
+        ResourceLinksForm resourceLinksForm = new ResourceLinksForm();
+        resourceLinksForm.setResourceLinks((String[]) 
+                        results.toArray(new String[results.size()]));        
+        return (resourceLinksForm);
 
     }
     

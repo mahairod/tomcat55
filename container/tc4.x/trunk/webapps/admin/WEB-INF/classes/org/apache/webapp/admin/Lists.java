@@ -247,6 +247,66 @@ public class Lists {
 
 
     /**
+     * Return a list of <code>DefaultContext</code> object name strings
+     * for the specified <code>Host</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select default
+     * contexts
+     * @param containerType The type of the container for which to select 
+     * default contexts
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getDefaultContexts(MBeanServer mbserver, String 
+        container, String containerType) throws Exception {
+
+        return (getDefaultContexts(mbserver, new ObjectName(container), 
+            containerType));
+
+    }
+    
+    
+    /**
+     * Return a list of <code>DefaultContext</code> object name strings
+     * for the specified <code>Host</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select default
+     * contexts
+     * @param containerType The type of the container for which to select 
+     * default contexts
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getDefaultContexts(MBeanServer mbserver, ObjectName 
+        container, String containerType) throws Exception {
+
+        StringBuffer sb = new StringBuffer(container.getDomain());
+        if (containerType.equals("service")) {
+            sb.append(":type=DefaultContext,service=");
+            sb.append(container.getKeyProperty("service"));
+            sb.append(",*");
+        } else if (containerType.equals("host")) {
+            sb.append(":type=DefaultContext,host=");
+            sb.append(container.getKeyProperty("host"));
+            sb.append(",service=");
+            sb.append(container.getKeyProperty("service"));
+            sb.append(",*");
+        }
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList defaultContexts = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            defaultContexts.add(names.next().toString());
+        }
+        Collections.sort(defaultContexts);
+        return (defaultContexts);
+
+    }
+
+
+    /**
      * Return a list of <code>Context</code> object name strings
      * for the specified <code>Host</code> object name.
      *
@@ -261,7 +321,6 @@ public class Lists {
         return (getContexts(mbserver, new ObjectName(host)));
 
     }
-
 
     /**
      * Return a list of <code>Host</code> object name strings

@@ -155,7 +155,25 @@ public final class EnvEntryForm extends BaseForm {
     public void setOverride(boolean override) {
         this.override = override;
     }
+    
+    /**
+     * The name of the parent of this environment entry.
+     */
+    private String parentName = null;
+    
+    /**
+     * Return the parent name of the environment entry this bean refers to.
+     */
+    public String getParentName() {
+        return this.parentName;
+    }
 
+    /**
+     * Set the parent name of the environment entry this bean refers to.
+     */
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
 
     /**
      * Precomputed list of entry type labels and values.

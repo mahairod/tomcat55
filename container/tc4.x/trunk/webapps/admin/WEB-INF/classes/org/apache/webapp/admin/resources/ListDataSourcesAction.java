@@ -144,11 +144,21 @@ public class ListDataSourcesAction extends Action {
         }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-
+        
+        String parent = request.getParameter("parent");
+        String parentType = request.getParameter("parentType");
+        if (parent != null) {
+            parent = URLDecoder.decode(parent);
+        }
+        if (parentType != null) {
+            parentType = URLDecoder.decode(parentType);
+        }
+        
         // Create a form bean containing the requested MBean Names
         DataSourcesForm dataSourcesForm = null;
         try {
-              dataSourcesForm = ResourceUtils.getDataSourcesForm(mserver);
+              dataSourcesForm = 
+                ResourceUtils.getDataSourcesForm(mserver, parent, parentType);
         } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,

@@ -127,6 +127,12 @@
     <form-bean      name="dataSourcesForm"
                     type="org.apache.webapp.admin.resources.DataSourcesForm"/>
 
+    <form-bean      name="resourceLinkForm"
+                    type="org.apache.webapp.admin.resources.ResourceLinkForm"/>
+
+    <form-bean      name="resourceLinksForm"
+                    type="org.apache.webapp.admin.resources.ResourceLinksForm"/>
+
     <!-- ========== User Database Module ========== -->
 
     <form-bean      name="databaseForm"
@@ -358,6 +364,22 @@
 
     <forward        name="DataSources List Setup"
                     path="/resources/listDataSources.do?forward=DataSources+List"
+                redirect="false"/>
+
+    <forward        name="ResourceLink"
+                    path="/resources/resourceLink.jsp"
+                redirect="false"/>
+
+    <forward        name="ResourceLinks Delete List"
+                    path="/resources/deleteResourceLinks.jsp"
+                redirect="false"/>
+
+    <forward        name="ResourceLinks List"
+                    path="/resources/listResourceLinks.jsp"
+                redirect="false"/>
+
+    <forward        name="ResourceLinks List Setup"
+                    path="/resources/listResourceLinks.do?forward=ResourceLinks+List"
                 redirect="false"/>
                         
     <!-- ========== User Database Module ========== -->
@@ -783,6 +805,11 @@
                name="dataSourcesForm"
               scope="request"
                type="org.apache.webapp.admin.resources.DeleteDataSourcesAction"/>
+
+    <action    path="/resources/deleteResourceLinks"
+               name="resourceLinksForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.DeleteResourceLinksAction"/>
                
     <action    path="/resources/listEnvEntries"
                name="envEntriesForm"
@@ -798,6 +825,11 @@
                name="dataSourcesForm"
               scope="request"
                type="org.apache.webapp.admin.resources.ListDataSourcesAction"/>
+
+    <action    path="/resources/listResourceLinks"
+               name="resourceLinksForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.ListResourceLinksAction"/>
 
    <action    path="/resources/saveEnvEntry"
               input="/resources/envEntry.jsp"
@@ -817,6 +849,12 @@
               scope="request"
                type="org.apache.webapp.admin.resources.SaveDataSourceAction"/>
 
+    <action    path="/resources/saveResourceLink"
+              input="/resources/resourceLink.jsp"
+               name="resourceLinkForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.SaveResourceLinkAction"/>
+
    <action    path="/resources/setUpEnvEntry"
                type="org.apache.webapp.admin.resources.SetUpEnvEntryAction"/>
 
@@ -826,6 +864,8 @@
     <action    path="/resources/setUpDataSource"
                type="org.apache.webapp.admin.resources.SetUpDataSourceAction"/>
 
+    <action    path="/resources/setUpResourceLink"
+               type="org.apache.webapp.admin.resources.SetUpResourceLinkAction"/>
            
     <!-- ========== User Database Module ========== -->
 
