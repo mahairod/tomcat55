@@ -147,6 +147,22 @@ public class EditHostAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
 
+        String adminHost = null;
+        // Get the host name the admin app runs on
+        // this host cannot be deleted from the admin tool
+        try {
+            adminHost = Lists.getAdminAppHost(
+                                  mBServer, "Catalina" ,request);
+        } catch (Exception e) {
+            String message =
+                resources.getMessage("error.hostName.bad",
+                                        adminHost);
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
+        request.setAttribute("adminAppHost", adminHost);
+        
         // Set up the object names of the MBeans we are manipulating
         ObjectName hname = null;
         StringBuffer sb = null;

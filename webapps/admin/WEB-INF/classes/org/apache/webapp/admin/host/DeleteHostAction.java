@@ -90,6 +90,7 @@ import javax.management.JMException;
 import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
@@ -153,6 +154,22 @@ public class DeleteHostAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
+        String adminHost = null;
+        // Get the host name the admin app runs on
+        // this host cannot be deleted from the admin tool
+        try {
+            adminHost = Lists.getAdminAppHost(
+                                  mBServer, "Catalina" ,request);
+        } catch (Exception e) {
+            String message =
+                resources.getMessage("error.hostName.bad",
+                                        adminHost);
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
+        request.setAttribute("adminAppHost", adminHost);
+                
         String serviceName = request.getParameter("serviceName");
         // Set up a form bean containing the currently selected
         // objects to be deleted
