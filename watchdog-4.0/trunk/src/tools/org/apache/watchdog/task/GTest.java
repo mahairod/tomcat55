@@ -431,6 +431,7 @@ public class GTest extends Task implements TaskContainer {
      * @exception Exception if an error occurs
      */
     public void setRequest ( String s ) throws Exception {
+
         this.request = s;
         String addressString = request.substring( request.indexOf( "/" ), request.indexOf( "HTTP" ) ).trim();
 
@@ -915,6 +916,17 @@ public class GTest extends Task implements TaskContainer {
             }
         }
 
+	// replace any occurances of |host.ip| found in the
+        // query string with the IP of the client host
+	int startIdx = request.indexOf( "|h" );
+        int endIdx = request.indexOf( "p|" );
+	if ( startIdx > -1 && endIdx > -1 ) {
+	    String start = request.substring( 0, startIdx );
+            String stop  = request.substring( endIdx + 2 );
+	    String inetAddr =  InetAddress.getByName( host ).getHostAddress();
+	    request = start + inetAddr + stop;
+        }
+	    
         if ( debug > 0 ) {
             System.out.println( " REQUEST: " + request );
         }
