@@ -12,6 +12,7 @@
   <!-- Build Defaults -->
   <property name="catalina.home"     location=".."/>
   <property name="catalina.build"    value="${catalina.home}/catalina/build"/>
+  <property name="classes.dir" value="${catalina.build}/server/classes" />
   <property name="catalina.deploy"   value="${catalina.home}/build"/>
   <property name="catalina.dist"     value="${catalina.home}/dist"/>
   <property name="test.failonerror"  value="true"/>
@@ -69,7 +70,7 @@
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
-    <pathelement location="${catalina.build}/server/classes"/>
+    <pathelement location="${classes.dir}"/>
   </path>
 
   <!-- Construct unit tests classpath -->
@@ -100,7 +101,7 @@
     <pathelement location="${tyrex.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
-    <pathelement location="${catalina.build}/server/classes"/>
+    <pathelement location="${classes.dir}"/>
     <pathelement location="${catalina.build}/tests"/>
   </path>
 
@@ -153,7 +154,7 @@
      classpath="${commons-logging.jar}"/>
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
-     classpath="${commons-modeler.jar}"/>
+     classpath="${commons-modeler.jar}:${jmx.jar}"/>
     <available property="jaas.present"
      classname="javax.security.auth.Subject"
      classpath="${jaas.jar}" />
@@ -434,7 +435,7 @@
     <echo message="launcher.present=${launcher.present}" />
     <echo message="launcher.bootstrap.present=${launcher.bootstrap.present}" />
     <echo message="ldap.present=${ldap.present}" />
-    <echo message="modeler.present=${modeler.present}" />
+    <echo message="modeler.present=${modeler.present}"  />
     <echo message="pool.present=${pool.present}" />
     <echo message="tyrex.present=${tyrex.present}" />
 
@@ -489,7 +490,7 @@
     <mkdir dir="${catalina.build}/common/endorsed"/>
     <mkdir dir="${catalina.build}/conf"/>
     <mkdir dir="${catalina.build}/logs"/>
-    <mkdir dir="${catalina.build}/server/classes"/>
+    <mkdir dir="${classes.dir}"/>
     <mkdir dir="${catalina.build}/server/lib"/>
     <mkdir dir="${catalina.build}/shared/classes"/>
     <mkdir dir="${catalina.build}/shared/lib"/>
@@ -584,9 +585,8 @@
 
   <!-- ================ BUILD: Compile Catalina Components ================ -->
   <target name="build-catalina">
-
     <!-- Compile internal server components -->
-    <javac srcdir="src/share" destdir="${catalina.build}/server/classes"
+    <javac srcdir="src/share" destdir="${classes.dir}"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
@@ -625,7 +625,7 @@
 
     <!-- Copy static resource files -->
     <filter token="VERSION" value="${version}"/>
-    <copy todir="${catalina.build}/server/classes" filtering="true">
+    <copy todir="${classes.dir}" filtering="true">
       <fileset dir="src/share">
         <exclude name="**/*.java"/>
       </fileset>
@@ -835,13 +835,13 @@
 
 
   <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
-  <target name="catalina-jars" depends="deploy-static,build-catalina"
+  <target name="catalina-jars" depends="deploy-prepare,flags,flags.display,build-catalina"
           description="Build catalina jars">
 
     <!-- Catalina Bootstrap JAR File -->
     <jar jarfile="${catalina.deploy}/bin/bootstrap.jar" 
          manifest="etc/bootstrap.MF">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/catalina.properties" />
         <include name="org/apache/catalina/startup/CatalinaProperties.class" />
@@ -858,7 +858,8 @@
 
     <!-- Catalina Main JAR File -->
     <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
+        <include name="org/apache/catalina/**" />
         <exclude name="org/apache/catalina/ant/**" />
         <exclude name="org/apache/catalina/launcher/**" />
         <exclude name="org/apache/naming/**" />
@@ -878,7 +879,7 @@
 
     <!-- Catalina Ant Tasks JAR File -->
     <jar jarfile="${catalina.deploy}/server/lib/catalina-ant.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/ant/**" />
         <include name="org/apache/catalina/util/Base64.class" />
       </fileset>
@@ -886,7 +887,7 @@
 
     <!-- Naming - Common JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-common.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/naming/*" />
         <include name="org/apache/naming/factory/Constants.class" />
         <include name="org/apache/naming/factory/ResourceLinkFactory.class" />
@@ -897,7 +898,7 @@
 
     <!-- Naming - Factory JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-factory.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/naming/factory/**" />
         <exclude name="org/apache/naming/factory/Constants.class" />
         <exclude name="org/apache/naming/factory/ResourceLinkFactory.class" />
@@ -906,14 +907,14 @@
 
     <!-- Naming - Resources JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/naming/resources/*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Common Files -->
     <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/Constants.class" />
         <include name="org/apache/catalina/servlets/*.properties" />
       </fileset>
@@ -921,42 +922,42 @@
 
     <!-- Servlets - CGI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-cgi.renametojar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/CGI*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Default File-Serving Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-default.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/Default*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Invoker Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-invoker.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/Invoker*" />
       </fileset>
     </jar>
 
     <!-- Servlets - Manager Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-manager.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/*Manager*" />
       </fileset>
     </jar>
 
     <!-- Servlets - SSI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.renametojar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/ssi/**" />
       </fileset>
     </jar>
 
     <!-- Servlets - Webdav Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-webdav.jar">
-      <fileset dir="${catalina.build}/server/classes">
+      <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/Webdav*" />
       </fileset>
     </jar>
@@ -1005,9 +1006,11 @@
 
     <!-- Server Components -->
     <mkdir dir="${catalina.dist}/server/classes"/>
+    <!-- Do we want to copy the classes ? 
     <copy todir="${catalina.dist}/server/classes">
-      <fileset dir="${catalina.build}/server/classes" />
+      <fileset dir="${classes.dir}" />
     </copy>
+    -->
     <mkdir dir="${catalina.dist}/server/lib"/>
     <copy todir="${catalina.dist}/server/lib">
       <fileset dir="${catalina.build}/server/lib" />
