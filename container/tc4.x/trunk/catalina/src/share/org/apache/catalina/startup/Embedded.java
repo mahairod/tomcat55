@@ -89,7 +89,7 @@ import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemOutLogger;
-import org.apache.catalina.net.SSLServerSocketFactory;
+import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -512,7 +512,16 @@ public class Embedded implements Lifecycle {
         if (secure) {
             connector.setScheme("https");
             connector.setSecure(true);
-            connector.setFactory(new SSLServerSocketFactory());
+            try {
+                Class serverSocketFactoryClass = Class.forName
+                    ("org.apache.catalina.net.SSLServerSocketFactory");
+                ServerSocketFactory factory = 
+                    (ServerSocketFactory) 
+                    serverSocketFactoryClass.newInstance();
+                connector.setFactory(factory);
+            } catch (Exception e) {
+                logger.log("Couldn't load SSL server socket factory.");
+            }
         }
 
         return (connector);
