@@ -611,7 +611,7 @@
 
     <!-- Copy static resource files -->
     <filter token="VERSION" value="${version}"/>
-    <copy todir="${classes.dir}" filtering="true">
+    <copy todir="${classes.dir}" filtering="true" encoding="ISO-8859-1">
       <fileset dir="src/share">
         <exclude name="**/*.java"/>
         <exclude name="**/*.ser"/>
