@@ -169,6 +169,7 @@ public class HttpResponseBase
     public void finishResponse() throws IOException {
 
         sendHeaders();
+        committed = true;
         super.finishResponse();
 
     }
