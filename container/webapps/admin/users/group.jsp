@@ -17,7 +17,7 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/users/saveGroup" focus="groupname">
+<html:form method="POST" action="/users/saveGroup"> <!--focus="groupname"-->
 
   <html:hidden property="databaseName"/>
   <html:hidden property="objectName"/>
