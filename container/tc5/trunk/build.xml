@@ -83,10 +83,14 @@
     <mkdir dir="${tomcat.build}/server/lib" />
     <mkdir dir="${tomcat.build}/common/lib" />
 
+    <copy todir="${tomcat.build}/common/lib" file="${commons-logging-api.jar}" />
+    <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
+
     <uptodate property="servletapi.build.notrequired"
               targetfile="${servletapi.jar}">
       <srcfiles dir="${api.home}/jsr154/src" includes="**" />
     </uptodate>
+
     <uptodate property="jspapi.build.notrequired"
               targetfile="${jspapi.jar}">
       <srcfiles dir="${api.home}/jsr152/src" includes="**" />
@@ -433,23 +437,11 @@
 
   <!-- ====================== Build dependent code =================== -->
 
-  <target name="build-commons-logging" unless="commons-logging.build.notrequired" >
-    <echo>========== Building: commons-logging </echo>
-
-    <ant dir="${cvs.base}/jakarta-commons/logging" target="compile-only" >
-        <property name="commons-logging-api.jar" location="${tomcat.build}/common/lib/commons-logging-api.jar" />
-        <property name="commons-logging.jar" location="${tomcat.build}/server/lib/commons-logging.jar" />
-        <property name="build.home" value="${tomcat.build}" />
-    </ant>
-    <move todir="${tomcat.build}/common/lib/" file="${tomcat.build}/commons-logging-api.jar" />
-    <move todir="${tomcat.build}/server/lib/" file="${tomcat.build}/commons-logging.jar"/>
-  </target>
-
   <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" >
     <echo>========== Building: commons-modeler </echo>
 
     <ant dir="${cvs.base}/jakarta-commons/modeler" target="jar" >
-        <property name="commons-logging.jar" location="${tomcat.build}/server/lib/commons-logging.jar" />
+        <property name="commons-logging.jar" location="${commons-logging.jar}" />
         <property name="commons-modeler.jar" location="${tomcat.build}/server/lib/commons-modeler.jar" />
         <property name="jmx.jar" location="${jmx.jar}" />
         <property name="commons-digester.jar" location="${commons-digester.jar}" />
@@ -474,10 +466,6 @@
 
   <target name="build-depends" depends="init"
           description="Builds various dependent components">
-    <uptodate property="commons-logging.build.notrequired"
-              targetfile="${tomcat.build}/server/lib/commons-logging.jar">
-      <srcfiles dir="${cvs.base}/jakarta-commons/logging/src/java" includes="**" />
-    </uptodate>
     <uptodate property="commons-modeler.build.notrequired"
               targetfile="${tomcat.build}/server/lib/commons-modeler.jar">
       <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
@@ -486,7 +474,7 @@
               targetfile="${tomcat.build}/common/lib/commons-el.jar">
       <srcfiles dir="${cvs.base}/jakarta-commons/el/src/java" includes="**" />
     </uptodate>
-    <antcall target="build-commons-logging" />
+
     <antcall target="build-commons-modeler" />
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
