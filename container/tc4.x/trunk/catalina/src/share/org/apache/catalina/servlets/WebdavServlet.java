@@ -370,6 +370,8 @@ public class WebdavServlet
         
         resp.addHeader("Allow", methodsAllowed);
         
+        resp.addHeader("MS-Author-Via", "DAV");
+        
     }
 
 
