@@ -56,7 +56,9 @@
 package javax.servlet.jsp;
 
 /**
- * A generic exception known to the JSP engine
+ * A generic exception known to the JSP engine; uncaught
+ * JspExceptions will result in an invocation of the errorpage
+ * machinery.
  */
 
 public class JspException extends Exception {
