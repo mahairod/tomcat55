@@ -20,6 +20,8 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -27,8 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
 import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
@@ -104,13 +104,13 @@ public abstract class RequestFilterValve
     /**
      * The set of <code>allow</code> regular expressions we will evaluate.
      */
-    protected RE allows[] = new RE[0];
+    protected Pattern allows[] = new Pattern[0];
 
 
     /**
      * The set of <code>deny</code> regular expressions we will evaluate.
      */
-    protected RE denies[] = new RE[0];
+    protected Pattern denies[] = new Pattern[0];
 
 
     /**
@@ -214,13 +214,13 @@ public abstract class RequestFilterValve
      * @exception IllegalArgumentException if one of the patterns has
      *  invalid syntax
      */
-    protected RE[] precalculate(String list) {
+    protected Pattern[] precalculate(String list) {
 
         if (list == null)
-            return (new RE[0]);
+            return (new Pattern[0]);
         list = list.trim();
         if (list.length() < 1)
-            return (new RE[0]);
+            return (new Pattern[0]);
         list += ",";
 
         ArrayList reList = new ArrayList();
@@ -230,8 +230,8 @@ public abstract class RequestFilterValve
                 break;
             String pattern = list.substring(0, comma).trim();
             try {
-                reList.add(new RE(pattern));
-            } catch (RESyntaxException e) {
+                reList.add(Pattern.compile(pattern));
+            } catch (PatternSyntaxException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     (sm.getString("requestFilterValve.syntax", pattern));
                 jdkCompat.chainException(iae, e);
@@ -240,8 +240,8 @@ public abstract class RequestFilterValve
             list = list.substring(comma + 1);
         }
 
-        RE reArray[] = new RE[reList.size()];
-        return ((RE[]) reList.toArray(reArray));
+        Pattern reArray[] = new Pattern[reList.size()];
+        return ((Pattern[]) reList.toArray(reArray));
 
     }
 
@@ -263,7 +263,7 @@ public abstract class RequestFilterValve
 
         // Check the deny patterns, if any
         for (int i = 0; i < denies.length; i++) {
-            if (denies[i].match(property)) {
+            if (denies[i].matcher(property).matches()) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
@@ -271,7 +271,7 @@ public abstract class RequestFilterValve
 
         // Check the allow patterns, if any
         for (int i = 0; i < allows.length; i++) {
-            if (allows[i].match(property)) {
+            if (allows[i].matcher(property).matches()) {
                 getNext().invoke(request, response);
                 return;
             }
