@@ -44,8 +44,8 @@ New Features
 - Static resource content caching.
 
 
-Enhacements
------------
+Enhancements
+------------
 
 - Enhanced error reporting mechanism.
 - Enhance implementation of the filesystem access.
@@ -92,7 +92,7 @@ Bugzilla Bugs Resolved
         incorrect.
 3892    Can't compile 2092.jsp.
 3910    Web.xml mime type incorrect for jnlp.
-3936    GetResources does not work.
+3936    ClassLoader.getResources does not work.
 3949    Document with content-length of 0 results in resend headers.
 
 
@@ -113,19 +113,20 @@ Jasper      3779    The value of <jsp:param> should be URL encoded.
 Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped (bug 
                     confirmed, but conditions to reproduce it still unclear).
 
-Catalina    3973    Session.getAttribute() locks-up in 
-                    HttpSessionListener.sessionDestroyed().
+Catalina    3993    j_security_check gives 403 error.
 
 
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
+
+Jasper      3668    Validation error reporting.
 
 Jasper      3704    Forward errors not reported when response is committed.
 
 Jasper      3770    HttpSessionListener.sessionCreated() called twice for each
                     session.
 
-Jasper      3668    Validation error reporting.
+Catalina    3990    JNDI/LDAP Realm password authentication process.
 
 
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):
