@@ -835,6 +835,10 @@ public class WebappClassLoader
                 log("      findClassInternal(" + name + ")");
             try {
                 clazz = findClassInternal(name);
+            } catch(ClassNotFoundException cnfe) {
+                if (!hasExternalRepositories) {
+                    throw cnfe;
+                }
             } catch(AccessControlException ace) {
                 ace.printStackTrace();
                 throw new ClassNotFoundException(name);
@@ -1923,7 +1927,7 @@ public class WebappClassLoader
         } catch (IOException e) {
             // Ignore
         }
-        return new URL("file:" + realFile.getPath());
+        return realFile.toURL();
 
     }
 
