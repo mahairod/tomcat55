@@ -310,7 +310,7 @@ public final class NamingResources {
         } else {
             Object value = resourceLink.getType();
             if (value == null) {
-                value = new Integer(0);
+                value = "";
             }
             entries.put(resourceLink.getName(), value);
         }
@@ -542,6 +542,8 @@ public final class NamingResources {
      */
     public void removeEjb(String name) {
 
+        entries.remove(name);
+
         ContextEjb ejb = null;
         synchronized (ejbs) {
             ejb = (ContextEjb) ejbs.remove(name);
@@ -561,6 +563,8 @@ public final class NamingResources {
      */
     public void removeEnvironment(String name) {
 
+        entries.remove(name);
+
         ContextEnvironment environment = null;
         synchronized (envs) {
             environment = (ContextEnvironment) envs.remove(name);
@@ -579,6 +583,8 @@ public final class NamingResources {
      * @param name Name of the EJB resource reference to remove
      */
     public void removeLocalEjb(String name) {
+
+        entries.remove(name);
 
         ContextLocalEjb localEjb = null;
         synchronized (localEjbs) {
@@ -611,6 +617,8 @@ public final class NamingResources {
      */
     public void removeResource(String name) {
 
+        entries.remove(name);
+
         ContextResource resource = null;
         synchronized (resources) {
             resource = (ContextResource) resources.remove(name);
@@ -630,6 +638,8 @@ public final class NamingResources {
      */
     public void removeResourceEnvRef(String name) {
 
+        entries.remove(name);
+
         String type = null;
         synchronized (resourceEnvRefs) {
             type = (String) resourceEnvRefs.remove(name);
@@ -648,6 +658,8 @@ public final class NamingResources {
      * @param name Name of the resource link to remove
      */
     public void removeResourceLink(String name) {
+
+        entries.remove(name);
 
         ContextResourceLink resourceLink = null;
         synchronized (resourceLinks) {
