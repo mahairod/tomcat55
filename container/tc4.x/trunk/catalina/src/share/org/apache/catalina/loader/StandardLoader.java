@@ -609,6 +609,7 @@ public final class StandardLoader
 	        classLoader = new StandardClassLoader();
 	    else
 	        classLoader = new StandardClassLoader(parentClassLoader);
+            ((StandardClassLoader) classLoader).setDebug(this.debug);
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
             ((StandardClassLoader) classLoader).setDelegate(this.delegate);
