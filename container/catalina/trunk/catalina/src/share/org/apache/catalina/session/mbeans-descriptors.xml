@@ -22,10 +22,6 @@
                  type="java.lang.String"
             writeable="false"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="distributable"
           description="The distributable flag for Sessions created by this
                        Manager"
@@ -148,10 +144,6 @@
           description="Fully qualified class name of the managed object"
                  type="java.lang.String"
             writeable="false"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
 
     <attribute   name="distributable"
           description="The distributable flag for Sessions created by this
