@@ -7,8 +7,6 @@
 # This script is known to work with the standard Korn Shell under
 # Solaris and the MKS Korn shell under Windows.
 
-# Does this need to be ksh?? - akv
-
 host=localhost
 port=8080
 stest=./conf/servlet-testlist.txt
