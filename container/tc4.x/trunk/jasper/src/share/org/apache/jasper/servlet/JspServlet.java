@@ -323,9 +323,9 @@ public class JspServlet extends HttpServlet {
                     parentClassLoader.loadClass( basePackage +
                         "runtime.JspRuntimeLibrary$PrivilegedIntrospectHelper");
                     parentClassLoader.loadClass( basePackage +
-                        "servlet.JspServlet$JspServletWrapper");
-                    parentClassLoader.loadClass( basePackage +
 			"runtime.ServletResponseWrapperInclude");
+		    this.getClass().getClassLoader().loadClass( basePackage +
+                        "servlet.JspServlet$JspServletWrapper");
 		} catch (ClassNotFoundException ex) {
 		    System.out.println(
 			"Jasper JspServlet preload of class failed: " +
