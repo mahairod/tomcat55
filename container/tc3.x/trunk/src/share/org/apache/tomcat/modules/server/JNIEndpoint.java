@@ -95,13 +95,17 @@ public class JNIEndpoint {
 	// the handler is no longer useable
     	if( handler==null ) {
 	    running=false;
-	    notify();
+            synchronized(this) {
+                notify();
+            }
 	    return;
 	}
 
 	System.out.println("Running ...");
 	running=true;
-        notify();
+        synchronized(this) {
+            notify();
+        }
     }
 
     // -------------------- JNI Entry points
@@ -156,6 +160,9 @@ public class JNIEndpoint {
                 return 1;
             } catch(Throwable t) {
                 // Throwables are not allowed into the native code !!!
+                // print it out so that we can debug it later.
+                System.out.println("Caught throwable " + t);
+                t.printStackTrace();
             }
         }
         return 0;
