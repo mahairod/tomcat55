@@ -56,6 +56,12 @@ commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 
 
+# ----- Commons Modeler, version 20011026 or later -----
+commons-modeler.home=${base.path}/commons-modeler
+commons-modeler.lib=${commons-modeler.home}
+commons-modeler.jar=${commons-modeler.lib}/commons-digester.jar
+
+
 # ----- Jakarta Regular Expressions Library, version 1.2 -----
 regexp.jar=../lib/jakarta-regexp-1.2.jar
 
@@ -96,6 +102,7 @@ mail.jar=${mail.lib}/mail.jar
 jmx.home=${base.path}/jmx-ri_1.0.1/jmx
 jmx.lib=${jmx.home}/lib
 jmxri.jar=${jmx.lib}/jmxri.jar
+jmxtools.jar=${jmx.lib}/jmxtools.jar
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----

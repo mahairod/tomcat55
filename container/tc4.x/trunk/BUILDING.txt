@@ -179,9 +179,9 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(9) Steps (10)-(19) are optional, but are necessary to build a complete binary
+(9) Steps (10)-(20) are optional, but are necessary to build a complete binary
     distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
-    build.properties file (see step (20)) to build a complete distribution.
+    build.properties file (see step (21)) to build a complete distribution.
     Regular contributors to Tomcat are encouraged to use the complete build 
     option.
 
@@ -196,6 +196,9 @@ of Tomcat 4.0.
 
 
 (11) Download and Install the JMX 1.0 Reference Implementation
+
+NOTE:  This step is only required if you wish to build the Config/Admin
+web application.
 
 * Download the JMX Instrumentation and Agent Reference Implementation
   (version 1.0 or later) from
@@ -304,7 +307,26 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(20) Customize Build Properties For This Subproject
+(20) Download and Install the Commons Modeler Binary Distribution
+
+NOTE:  This step is only required if you wish to build the Config/Admin
+web application.
+
+* Download a binary distribution of version 20011026 or later from:
+
+    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-modeler
+
+  On a Windows platform, you will need:
+    commons-modeler-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    commons-modeler-YYYYMMDD.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
+
+
+(21) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -328,7 +350,7 @@ repository.  This file is local to your own development environment, and
 each developer will have their own version.
 
 
-(20) Build A Binary Distribution
+(22) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 

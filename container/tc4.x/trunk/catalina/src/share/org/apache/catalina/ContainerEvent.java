@@ -149,8 +149,8 @@ public final class ContainerEvent
      */
     public String toString() {
 
-        return ("ContainerEvent['" + getContainer().getName() + "','" +
-                getType() + "']");
+        return ("ContainerEvent['" + getContainer() + "','" +
+                getType() + "','" + getData() + "']");
 
     }
 

@@ -1,0 +1,1124 @@
+<?xml version="1.0"?>
+<!DOCTYPE mbeans-descriptors PUBLIC
+ "-//Apache Software Foundation//DTD Model MBeans Configuration File"
+ "http://jakarta.apache.org/commons/dtds/mbeans-descriptors.dtd">
+
+<!--
+     Descriptions of JMX MBeans for Catalina
+
+     $Id$
+ -->
+
+<mbeans-descriptors>
+
+
+  <mbean         name="AccessLogValve"
+          description="Valve that generates a web server access log"
+                group="VALVE"
+                 type="org.apache.catalina.valves.AccessLogValve">
+
+    <attribute   name="container"
+          description="The Container whose pipeline this Valve is a component of"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="directory"
+          description="The directory in which log files are created"
+                 type="java.lang.String"/>
+
+    <attribute   name="pattern"
+          description="The pattern used to format our access log lines"
+                 type="java.lang.String"/>
+
+    <attribute   name="prefix"
+          description="The prefix that is added to log file filenames"
+                 type="java.lang.String"/>
+
+    <attribute   name="resolveHosts"
+          description="Resolve hosts"
+                 is="true"
+                 type="boolean"/>
+
+    <attribute   name="suffix"
+          description="The suffix that is added to log file filenames"
+                 type="java.lang.String"/>
+
+    <constructor name="AccessLogValve"/>
+
+  </mbean>
+
+
+  <mbean         name="DefaultContext"
+          description="Used to store the default configuration a Host will use when creating a Context"
+                group="DEFAULT-CONTEXT"
+                 type="org.apache.catalina.core.StandardDefaultContext">
+
+    <attribute   name="cookies"
+          description="Should we attempt to use cookies for session id communication?"
+                 type="boolean"/>
+
+    <attribute   name="crossContext"
+          description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
+                 type="boolean"/>
+
+    <attribute   name="loader"
+          description="The Loader implementation with which this Container is associated"
+                 type="org.apache.catalina.Loader"/>
+
+    <attribute   name="manager"
+          description="The Manager implementation with which this Container is associated"
+                 type="org.apache.catalina.Manager"/>
+
+    <attribute   name="reloadable"
+          description="The reloadable flag for this web application"
+                 type="boolean"/>
+
+    <attribute   name="useNaming"
+          description="Create JNDI naming context?"
+                   is="true"
+                 type="boolean"/>
+
+    <constructor name="DefaultContext"/>
+
+  </mbean>
+
+
+  <mbean         name="FileLogger"
+          description="Implementation of Logger that appends log messages to a file"
+                group="LOGGER"
+                 type="org.apache.catalina.logger.FileLogger">
+
+    <attribute   name="container"
+          description="The Container with which this Logger has been associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="directory"
+          description="The directory in which log files are created"
+                 type="java.lang.String"/>
+
+    <attribute   name="prefix"
+          description="The prefix that is added to log file filenames"
+                 type="java.lang.String"/>
+
+    <attribute   name="suffix"
+          description="The suffix that is added to log file filenames"
+                 type="java.lang.String"/>
+
+    <attribute   name="timestamp"
+          description="Should logged messages be date/time stamped?"
+                 type="boolean"/>
+
+    <attribute   name="verbosity"
+          description="The verbosity level for above which log messages may be filtered"
+                 type="int"/>
+
+    <constructor name="FileLogger"/>
+
+  </mbean>
+
+
+  <mbean         name="Http10Connector"
+          description="HTTP/1.0 Connector for Tomcat Standalone"
+                group="CONNECTOR"
+                 type="org.apache.catalina.connector.http10.HttpConnector">
+
+    <attribute   name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+
+    <attribute   name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+
+    <attribute   name="bufferSize"
+          description="The input buffer size we should create on input streams"
+                 type="int"/>
+
+    <attribute   name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="container"
+          description="Container (Engine) processing our requests"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
+                 type="int"/>
+
+    <attribute   name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="port"
+          description="TCP port number to listen on"
+                 type="int"/>
+
+    <attribute   name="proxyName"
+          description="The server name to which we should pretend requests to this Connector were directed"
+                 type="java.lang.String"/>
+
+    <attribute   name="proxyPort"
+          description="The server port to which we should pretend requests to this Connector were directed"
+                 type="int"/>
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
+                 type="int"/>
+
+    <attribute   name="scheme"
+          description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secure"
+          description="Is this a secure (SSL) Connector?"
+                 type="boolean"/>
+
+    <attribute   name="service"
+          description="Service that owns this Connector"
+                 type="org.apache.catalina.Service"/>
+
+    <constructor name="HttpConnector"/>
+
+  </mbean>
+
+
+  <mbean         name="Http11Connector"
+          description="HTTP/1.1 Connector for Tomcat Standalone"
+                group="CONNECTOR"
+                 type="org.apache.catalina.connector.http.HttpConnector">
+
+    <attribute   name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+
+    <attribute   name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+
+    <attribute   name="bufferSize"
+          description="The input buffer size we should create on input streams"
+                 type="int"/>
+
+    <attribute   name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="container"
+          description="Container (Engine) processing our requests"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
+                 type="int"/>
+
+    <attribute   name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="port"
+          description="TCP port number to listen on"
+                 type="int"/>
+
+    <attribute   name="proxyName"
+          description="The server name to which we should pretend requests to this Connector were directed"
+                 type="java.lang.String"/>
+
+    <attribute   name="proxyPort"
+          description="The server port to which we should pretend requests to this Connector were directed"
+                 type="int"/>
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
+                 type="int"/>
+
+    <attribute   name="scheme"
+          description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secure"
+          description="Is this a secure (SSL) Connector?"
+                 type="boolean"/>
+
+    <attribute   name="service"
+          description="Service that owns this Connector"
+                 type="org.apache.catalina.Service"/>
+
+    <constructor name="HttpConnector"/>
+
+  </mbean>
+
+
+  <mbean         name="JDBCRealm"
+          description="Implmentation of Realm that works with any JDBC supported database"
+                group="REALM"
+                 type="org.apache.catalina.realm.JDBCRealm">
+
+    <attribute   name="connectionName"
+          description="The connection username to use when trying to connect to the database"
+                 type="java.lang.String"/>
+
+    <attribute   name="connectionPassword"
+          description="The connection URL to use when trying to connect to the database"
+                 type="java.lang.String"/>
+
+    <attribute   name="connectionURL"
+          description="The connection URL to use when trying to connect to the database"
+                 type="java.lang.String"/>
+
+    <attribute   name="container"
+          description="The Container with which this Realm is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="digest"
+          description="Digest algorithm used in storing passwords in a non-plaintext format"
+                 type="java.lang.String"/>
+
+    <attribute   name="driverName"
+          description="The JDBC driver to use"
+                 type="java.lang.String"/>
+
+    <attribute   name="roleNameCol"
+          description="The column in the user role table that names a role"
+                 type="java.lang.String"/>
+
+    <attribute   name="userCredCol"
+          description="The column in the user table that holds the user's credentials"
+                 type="java.lang.String"/>
+
+    <attribute   name="userNameCol"
+          description="The column in the user table that holds the user's username"
+                 type="java.lang.String"/>
+
+    <attribute   name="userRoleTable"
+          description="The table that holds the relation between user's and roles"
+                 type="java.lang.String"/>
+
+    <attribute   name="userTable"
+          description="The table that holds user data"
+                 type="java.lang.String"/>
+
+    <constructor name="JDBCRealm"/>
+
+  </mbean>
+
+
+  <mbean         name="JNDIRealm"
+          description="Implementation of Realm that works with a directory server accessed via the Java Naming and Directory Interface (JNDI) APIs"
+                group="REALM"
+                 type="org.apache.catalina.realm.JNDIRealm">
+
+    <attribute   name="connectionName"
+          description="The connection username for the server we will contact"
+                 type="java.lang.String"/>
+
+    <attribute   name="connectionPassword"
+          description="The connection password for the server we will contact"
+                 type="java.lang.String"/>
+
+    <attribute   name="connectionURL"
+          description="The connection URL for the server we will contact"
+                 type="java.lang.String"/>
+
+    <attribute   name="container"
+          description="The Container with which this Realm is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="digest"
+          description="Digest algorithm used in storing passwords in a non-plaintext format"
+                 type="java.lang.String"/>
+
+    <attribute   name="roleBase"
+          description="The base element for role searches"
+                 type="java.lang.String"/>
+
+    <attribute   name="roleSearch"
+          description="The message format used to select roles for a user"
+                 type="java.lang.String"/>
+
+    <attribute   name="roleSubtree"
+          description="Should we search the entire subtree for matching memberships?"
+                 type="boolean"/>
+
+    <attribute   name="userPattern"
+          description="The message format used to select a user"
+                 type="java.lang.String"/>
+
+    <constructor name="JNDIRealm"/>
+
+  </mbean>
+
+
+  <mbean         name="MemoryRealm"
+          description="Simple implementation of Realm that reads an XML file to configure the valid users, passwords, and roles"
+                group="REALM"
+                 type="org.apache.catalina.realm.MemoryRealm">
+
+    <attribute   name="container"
+          description="The Container with which this Realm is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="pathname"
+          description="The pathname of the XML file containing our database information"
+                 type="java.lang.String"/>
+
+    <constructor name="MemoryRealm"/>
+
+  </mbean>
+
+
+  <mbean         name="RemoteAddrValve"
+          description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's IP address"
+                group="VALVE"
+                 type="org.apache.catalina.valves.RemoteAddrValve">
+
+    <attribute   name="allow"
+          description="The comma-delimited set of allow expressions"
+                 type="java.lang.String"/>
+
+    <attribute   name="container"
+          description="The Container with which this Valve is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="deny"
+          description="The comma-delimited set of deny expressions"
+                 type="java.lang.String"/>
+
+    <constructor name="RemoteAddrValve"/>
+
+  </mbean>
+
+
+  <mbean         name="RemoteHostValve"
+          description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's host name"
+                group="VALVE"
+                 type="org.apache.catalina.valves.RemoteHostValve">
+
+    <attribute   name="allow"
+          description="The comma-delimited set of allow expressions"
+                 type="java.lang.String"/>
+
+    <attribute   name="container"
+          description="The Container with which this Valve is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="deny"
+          description="The comma-delimited set of deny expressions"
+                 type="java.lang.String"/>
+
+    <constructor name="RemoteHostValve"/>
+
+  </mbean>
+
+
+  <mbean         name="RequestDumperValve"
+          description="Implementation of a Valve that logs interesting contents from the specified Request and the corresponding Response"
+                group="VALVE"
+                 type="org.apache.catalina.valves.RequestDumperValve">
+
+    <attribute   name="container"
+          description="The Container with which this Realm is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <constructor name="RequestDumperValve"/>
+
+  </mbean>
+
+
+  <mbean         name="SingleSignOn"
+          description="A Valve that supports a 'single signon' user experience"
+                group="VALVE"
+                 type="org.apache.catalina.authenticator.SingleSignOn">
+
+    <attribute   name="container"
+          description="The Container with which this Valve is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <constructor name="SingleSignOn"/>
+
+  </mbean>
+
+
+  <mbean         name="StandardContext"
+          description="Standard Context Component"
+                group="CONTEXT"
+                 type="org.apache.catalina.core.StandardContext">
+
+    <attribute   name="cookies"
+          description="Should we attempt to use cookies for session id communication?"
+                 type="boolean"/>
+
+    <attribute   name="crossContext"
+          description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
+                 type="boolean"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="docBase"
+          description="The document root for this web application"
+                 type="java.lang.String"/>
+
+    <attribute   name="logger"
+          description="The Logger implementation with which this Container is associated"
+                 type="org.apache.catalina.Logger"/>
+
+    <attribute   name="name"
+          description="The context path for this Context"
+                 type="java.lang.String"/>
+
+    <attribute   name="override"
+          description="The DefaultContext override flag for this web application"
+                 type="boolean"/>
+
+    <attribute   name="realm"
+          description="The Realm implementation with which this Container is associated"
+                 type="org.apache.catalina.Realm"/>
+
+    <attribute   name="reloadable"
+          description="The reloadable flag for this web application"
+                 type="boolean"/>
+
+    <attribute   name="useNaming"
+          description="Create a JNDI naming context for this application?"
+                   is="true"
+                 type="boolean"/>
+
+    <attribute   name="workDir"
+          description="The pathname to the work directory for this context"
+                 type="java.lang.String"/>
+
+    <constructor name="StandardContext"/>
+
+    <operation   name="addValve"
+          description="Add a new Valve to the end of the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be added"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+    <operation   name="getValves"
+          description="Return the set of Valves in the pipeline associated with this Context"
+               impact="INFO"
+           returnType="org.apache.catalina.Valve[]"/>
+
+    <operation   name="removeValve"
+          description="Remove the specified Valve from the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be removed"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+  </mbean>
+
+
+  <mbean         name="StandardEngine"
+          description="Standard Engine Component"
+                group="ENGINE"
+                 type="org.apache.catalina.core.StandardEngine">
+
+    <attribute   name="debug"
+          description="Debugging detail level for this Engine"
+                 type="int"/>
+
+    <attribute   name="defaultHost"
+          description="Name of the default Host for this Engine"
+                 type="java.lang.String"/>
+
+    <attribute   name="logger"
+          description="The Logger implementation with which this Container is associated"
+                 type="org.apache.catalina.Logger"/>
+
+    <attribute   name="name"
+          description="Unique name of this Engine"
+                 type="java.lang.String"/>
+
+    <attribute   name="service"
+          description="Service that owns this Engine"
+                 type="org.apache.catalina.Service"/>
+
+    <constructor name="StandardEngine"/>
+
+    <operation   name="addChild"
+          description="Add a new child Container to those associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="child"
+          description="The new child Container to be added"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+
+    <operation   name="findChild"
+          description="Return the child Container, associated with this Container the specified name"
+               impact="INFO"
+           returnType="org.apache.catalina.Container">
+      <parameter name="name"
+          description="Name of the child Container to be retrieved"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="findChildren"
+          description="Return the set of children Containers associated with this Container"
+               impact="INFO"
+           returnType="org.apache.catalina.Container[]"/>
+
+    <operation   name="addValve"
+          description="Add a new Valve to the end of the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be added"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+    <operation   name="getValves"
+          description="Return the set of Valves in the pipeline associated with this Engine"
+               impact="INFO"
+           returnType="org.apache.catalina.Valve[]"/>
+
+    <operation   name="removeValve"
+          description="Remove the specified Valve from the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be removed"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+  </mbean>
+
+
+  <mbean         name="StandardHost"
+          description="Standard Host Component"
+                group="HOST"
+                 type="org.apache.catalina.core.StandardHost">
+
+    <attribute   name="appBase"
+          description="The application root for this Host"
+                 type="java.lang.String"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="logger"
+          description="The Logger implementation with which this Container is associated"
+                 type="org.apache.catalina.Logger"/>
+
+    <attribute   name="name"
+          description="Unique name of this Host"
+                 type="java.lang.String"/>
+
+    <attribute   name="unpackWARs"
+          description="Unpack WARs property"
+                 is="true"
+                 type="boolean"/>
+
+    <constructor name="StandardHost"/>
+
+    <operation   name="addAlias"
+          description="Add an alias name that should be mapped to this same Host"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="alias"
+          description="The alias to be added"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="findAliases"
+          description="Return the set of alias names for this Host"
+               impact="INFO"
+           returnType="java.lang.String[]"/>
+
+    <operation   name="removeAlias"
+          description="Remove the specified alias name from the aliases for this Host"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="alias"
+          description="Alias name to be removed"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="addChild"
+          description="Add a new child Container to those associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="child"
+          description="The new child Container to be added"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+
+    <operation   name="findChild"
+          description="Return the child Container, associated with this Container the specified name"
+               impact="INFO"
+           returnType="org.apache.catalina.Container">
+      <parameter name="name"
+          description="Name of the child Container to be retrieved"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="findChildren"
+          description="Return the set of children Containers associated with this Container"
+               impact="INFO"
+           returnType="org.apache.catalina.Container[]"/>
+
+    <operation   name="addValve"
+          description="Add a new Valve to the end of the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be added"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+    <operation   name="getValves"
+          description="Return the set of Valves in the pipeline associated with this Host"
+               impact="INFO"
+           returnType="org.apache.catalina.Valve[]"/>
+
+    <operation   name="removeValve"
+          description="Remove the specified Valve from the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be removed"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+  </mbean>
+
+
+  <mbean         name="StandardManager"
+          description="Standard implementation of the Manager interface"
+                group="MANAGER"
+                 type="org.apache.catalina.session.StandardManager">
+
+    <attribute   name="algorithm"
+          description="The message digest algorithm to be used when generating session identifiers"
+                 type="java.lang.String"/>
+
+    <attribute   name="checkInterval"
+          description="The interval (in seconds) between checks for expired sessions"
+                 type="int"/>
+
+    <attribute   name="container"
+          description="The Container with which this Manager is associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="distributable"
+          description="The distributable flag for Sessions created by this Manager"
+                 type="boolean"/>
+
+    <attribute   name="entropy"
+          description="A String initialization parameter used to increase the entropy of the initialization of our random number generator"
+                 type="java.lang.String"/>
+
+    <attribute   name="maxActiveSessions"
+          description="The maximum number of active Sessions allowed, or -1 for no limit"
+                 type="int"/>
+
+    <attribute   name="maxInactiveInterval"
+          description="The default maximum inactive interval for Sessions created by this Manager"
+                 type="int"/>
+
+    <attribute   name="name"
+          description="The descriptive name of this Manager implementation (for logging)"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="pathname"
+          description="Path name of the disk file in which active sessions"
+                 type="java.lang.String"/>
+
+    <constructor name="StandardManager"/>
+
+  </mbean>
+
+
+  <mbean         name="StandardResources"
+          description="Filesystem Directory Context implementation helper class"
+                group="RESOURCES"
+                 type="org.apache.naming.resources.FileDirContext">
+
+    <attribute   name="absoluteBase"
+          description="Absolute normalized filename of the base"
+                 type="java.lang.String"/>
+
+    <attribute   name="caseSensitive"
+          description="Case sensitivity"
+                   is="true"
+                 type="boolean"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="docBase"
+          description="The document base path"
+                 type="java.lang.String"/>
+
+    <attribute   name="cached"
+          description="Cached"
+                   is="true"
+                 type="boolean"/>
+
+    <attribute   name="cacheTTL"
+          description="Cache TTL"
+                 type="int"/>
+
+    <attribute   name="cacheObjectMaxSize"
+          description="Max size of resources which will have their content cached"
+                 type="int"/>
+
+    <constructor name="StandardResources"/>
+
+  </mbean>
+
+
+  <mbean         name="StandardServer"
+          description="Standard Server Component"
+                group="SERVER"
+                 type="org.apache.catalina.core.StandardServer">
+
+    <attribute   name="port"
+          description="TCP port for shutdown messages"
+                 type="int"/>
+
+    <attribute   name="shutdown"
+          description="Shutdown password"
+                 type="java.lang.String"/>
+
+    <constructor name="StandardServer"/>
+
+    <operation   name="addService"
+          description="Add a new child Service"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="service"
+          description="The Service to be added"
+                 type="org.apache.catalina.Service"/>
+    </operation>
+
+    <operation   name="findServices"
+          description="Return all child Services"
+               impact="INFO"
+           returnType="org.apache.catalina.Service[]"/>
+
+    <operation   name="removeService"
+          description="Remove an existing child Service"
+               impact="ACTION"
+           returnType="void"> <!-- void type? -->
+      <parameter name="service"
+          description="The service to be removed"
+                 type="org.apache.catalina.Service"/>
+    </operation>
+
+  </mbean>
+
+
+  <mbean         name="StandardService"
+          description="Standard Service Component"
+                group="SERVICE"
+                 type="org.apache.catalina.core.StandardService">
+
+    <attribute   name="container"
+          description="The Container (Engine) processing requests for this Service"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="name"
+          description="Unique name of this Service"
+                 type="java.lang.String"/>
+
+    <attribute   name="server"
+          description="The Server that owns this Service"
+                 type="org.apache.catalina.Server"
+            writeable="false"/>
+
+    <constructor name="StandardService"/>
+
+    <operation   name="addConnector"
+          description="Add a new associated Connector"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="connector"
+          description="The Connector to be added"
+                 type="org.apache.catalina.Connector"/>
+    </operation>
+
+    <operation   name="findConnectors"
+          description="Return all associated Connectors"
+               impact="ACTION"
+           returnType="org.apache.catalina.Connector[]"/>
+
+    <operation   name="removeConnector"
+          description="Remove an existing associated Connector"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="connector"
+          description="The Connector to be removed"
+                 type="org.apache.catalina.Connector"/>
+    </operation>
+
+  </mbean>
+
+
+  <mbean         name="SystemErrLogger"
+          description="Simple implementation of Logger that writes to System.err"
+                group="LOGGER"
+                 type="org.apache.catalina.logger.SystemErrLogger">
+
+    <attribute   name="container"
+          description="The Container with which this Logger has been associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="verbosity"
+          description="The verbosity level for above which log messages may be filtered"
+                 type="int"/>
+
+    <constructor name="SystemErrLogger"/>
+
+  </mbean>
+
+
+  <mbean         name="SystemOutLogger"
+          description="Simple implementation of Logger that writes to System.out"
+                group="LOGGER"
+                 type="org.apache.catalina.logger.SystemOutLogger">
+
+    <attribute   name="container"
+          description="The Container with which this Logger has been associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="verbosity"
+          description="The verbosity level for above which log messages may be filtered"
+                 type="int"/>
+
+    <constructor name="SystemOutLogger"/>
+
+  </mbean>
+
+
+  <mbean         name="WarpConnector"
+          description="WARP Connector Component"
+                group="CONNECTOR"
+                 type="org.apache.catalina.connector.http.HttpConnector">
+
+    <attribute   name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+
+    <attribute   name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+
+    <attribute   name="bufferSize"
+          description="The input buffer size we should create on input streams"
+                 type="int"/>
+
+    <attribute   name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="container"
+          description="Container (Engine) processing our requests"
+                 type="org.apache.catalina.Container"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
+                 type="int"/>
+
+    <attribute   name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="port"
+          description="TCP port number to listen on"
+                 type="int"/>
+
+    <attribute   name="proxyName"
+          description="The server name to which we should pretend requests to this Connector were directed"
+                 type="java.lang.String"/>
+
+    <attribute   name="proxyPort"
+          description="The server port to which we should pretend requests to this Connector were directed"
+                 type="int"/>
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
+                 type="int"/>
+
+    <attribute   name="scheme"
+          description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secure"
+          description="Is this a secure (SSL) Connector?"
+                 type="boolean"/>
+
+    <attribute   name="service"
+          description="Service that owns this Connector"
+                 type="org.apache.catalina.Service"/>
+
+    <constructor name="HttpConnector"/>
+
+  </mbean>
+
+
+  <mbean         name="WarpEngine"
+          description="Engine Component for WARP Connector"
+                group="ENGINE"
+                 type="org.apache.catalina.connector.warp.WarpEngine">
+
+    <attribute   name="debug"
+          description="Debugging detail level for this Engine"
+                 type="int"/>
+
+    <attribute   name="defaultHost"
+          description="Name of the default Host for this Engine"
+                 type="java.lang.String"/>
+
+    <attribute   name="logger"
+          description="The Logger implementation with which this Container is associated"
+                 type="org.apache.catalina.Logger"/>
+
+    <attribute   name="name"
+          description="Unique name of this Engine"
+                 type="java.lang.String"/>
+
+    <attribute   name="service"
+          description="Service that owns this Engine"
+                 type="org.apache.catalina.Service"/>
+
+    <constructor name="StandardEngine"/>
+
+    <operation   name="addChild"
+          description="Add a new child Container to those associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="child"
+          description="The new child Container to be added"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+
+    <operation   name="findChild"
+          description="Return the child Container, associated with this Container the specified name"
+               impact="INFO"
+           returnType="org.apache.catalina.Container">
+      <parameter name="name"
+          description="Name of the child Container to be retrieved"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="findChildren"
+          description="Return the set of children Containers associated with this Container"
+               impact="INFO"
+           returnType="org.apache.catalina.Container[]"/>
+
+    <operation   name="addValve"
+          description="Add a new Valve to the end of the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be added"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+    <operation   name="getValves"
+          description="Return the set of Valves in the pipeline associated with this Engine"
+               impact="INFO"
+           returnType="org.apache.catalina.Valve[]"/>
+
+    <operation   name="removeValve"
+          description="Remove the specified Valve from the pipeline associated with this Container"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="valve"
+          description="Valve to be removed"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+
+  </mbean>
+
+
+  <mbean         name="WebappLoader"
+          description="Classloader implementation which is specialized for handling web applications"
+                group="LOADER"
+                 type="org.apache.catalina.loader.WebappLoader">
+
+    <attribute   name="checkInterval"
+          description="The number of seconds between checks for modified classes"
+                 type="int"/>
+
+    <attribute   name="container"
+          description="The Container with which this Logger has been associated"
+                 type="org.apache.catalina.Container"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="delegate"
+          description="The 'follow standard delegation model' flag that will be used to configure our ClassLoader"
+                 type="boolean"/>
+
+    <attribute   name="reloadable"
+          description="The reloadable flag for this Loader"
+                 type="boolean"/>
+
+    <constructor name="WebappLoader"/>
+
+  </mbean>
+
+
+</mbeans-descriptors>

@@ -25,9 +25,11 @@
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${jmxtools.jar}"/>
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
@@ -48,9 +50,11 @@
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${jmxtools.jar}"/>
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
@@ -89,6 +93,9 @@
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
      classpath="${commons-digester.jar}"/>
+    <available property="modeler.present"
+     classname="org.apache.commons.modeler.Registry"
+     classpath="${commons-modeler.jar}"/>
     <condition property="jaxp.present">
       <and>
         <available classname="javax.xml.parsers.SAXParser"
@@ -108,6 +115,9 @@
     <available property="jmx.present"
      classname="javax.management.MBeanServer"
      classpath="${jmxri.jar}" />
+    <available property="jmxtools.present"
+     classname="com.sun.jdmk.Trace"
+     classpath="${jmxtools.jar}" />
     <available property="jndi.present"
      classname="javax.naming.Context"
      classpath="${jndi.jar}" />
@@ -158,6 +168,7 @@
     </condition>
     <available property="jdbc20ext.jar.present" file="${jdbc20ext.jar}" />
     <available property="jmxri.jar.present" file="${jmxri.jar}" />
+    <available property="jmxtools.jar.present" file="${jmxtools.jar}" />
     <available property="jcert.jar.present" file="${jcert.jar}" />
     <available property="jndi.jar.present" file="${jndi.jar}" />
     <available property="jnet.jar.present" file="${jnet.jar}" />
@@ -165,6 +176,7 @@
     <available property="jta.jar.present" file="${jta.jar}" />
     <available property="junit.jar.present" file="${junit.jar}" />
     <available property="ldap.jar.present" file="${ldap.jar}" />
+    <available property="modeler.jar.present" file="${commons-modeler.jar}" />
     <available property="regexp.jar.present" file="${regexp.jar}" />
     <available property="servlet.jar.present" file="${servlet.jar}" />
     <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
@@ -181,7 +193,11 @@
     <condition property="compile.jmx">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${jmx.present}" arg2="true" />
+        <and>
+          <equals arg1="${jmx.present}" arg2="true" />
+          <equals arg1="${jmxtools.present}" arg2="true" />
+          <equals arg1="${modeler.present}" arg2="true" />
+        </and>
       </or>
     </condition>
     <condition property="compile.jndi">
@@ -269,6 +285,12 @@
         <equals arg1="${jmxri.jar.present}" arg2="true" />
       </or>
     </condition>
+    <condition property="copy.jmxtools.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jmxtools.jar.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.jta.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -300,6 +322,12 @@
             <equals arg1="${jdk.1.4.present}" arg2="true" />
           </not>
         </and>
+      </or>
+    </condition>
+    <condition property="copy.modeler.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${modeler.present}" arg2="true" />
       </or>
     </condition>
     <condition property="copy.tyrex.jar">
@@ -354,10 +382,12 @@
     <echo message="--- Optional Libraries ---" />
     <echo message="javamail.present=${javamail.present}" />
     <echo message="jmx.present=${jmx.present}" />
+    <echo message="jmxtools.present=${jmxtools.present}" />
     <echo message="jsse.present=${jsse.present}" />
     <echo message="jta.present=${jta.present}" />
     <echo message="junit.present=${junit.present}" />
     <echo message="ldap.present=${ldap.present}" />
+    <echo message="modeler.present=${modeler.present}" />
     <echo message="tyrex.present=${tyrex.present}" />
 
     <echo message="--- Required JARs ---" />
@@ -371,9 +401,11 @@
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
     <echo message="jmxri.jar.present=${jmxri.jar.present}" />
+    <echo message="jmxtools.jar.present=${jmxtools.jar.present}" />
     <echo message="jta.jar.present=${jta.jar.present}" />
     <echo message="junit.jar.present=${junit.jar.present}" />
     <echo message="ldap.jar.present=${ldap.jar.present}" />
+    <echo message="modeler.jar.present=${modeler.jar.present}" />
     <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
     <echo message="tyrex.jar.present=${tyrex.jar.present}" />
 
@@ -392,9 +424,11 @@
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
     <echo message="copy.javamail.jar=${copy.javamail.jar}" />
     <echo message="copy.jmxri.jar=${copy.jmxri.jar}" />
+    <echo message="copy.jmxtools.jar=${copy.jmxtools.jar}" />
     <echo message="copy.jndi.jar=${copy.jndi.jar}" />
     <echo message="copy.jta.jar=${copy.jta.jar}" />
     <echo message="copy.ldap.jar=${copy.ldap.jar}" />
+    <echo message="copy.modeler.jar=${copy.modeler.jar}" />
     <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
     <echo message="copy.xerces.jar=${copy.xerces.jar}" />
 
@@ -432,6 +466,9 @@
   <target name="copy-jmxri.jar" if="copy.jmxri.jar">
     <copy todir="${catalina.build}/common/lib" file="${jmxri.jar}"/>
   </target>
+  <target name="copy-jmxtools.jar" if="copy.jmxtools.jar">
+    <copy todir="${catalina.build}/common/lib" file="${jmxtools.jar}"/>
+  </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
   </target>
@@ -450,6 +487,9 @@
     <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
     -->
   </target>
+  <target name="copy-modeler.jar" if="copy.modeler.jar">
+    <copy todir="${catalina.build}/server/lib" file="${commons-modeler.jar}"/>
+  </target>
   <target name="copy-tomcat-util.jar">
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
@@ -463,7 +503,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jmxtools.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -524,6 +564,8 @@
        unless="compile.tyrex"/>
       <exclude name="org/apache/naming/factory/TyrexTransactionFactory.java" 
        unless="compile.tyrex"/>
+      <exclude name="org/apache/catalina/mbeans/**"
+       unless="compile.jmx"/>
       <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
        unless="compile.jsse"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"

@@ -13,6 +13,13 @@
 <Server port="8005" shutdown="SHUTDOWN" debug="0">
 
 
+  <!-- Uncomment this entry to enable JMX MBeans support -->
+<!--
+  <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener"
+                debug="0" port="-1"/>
+-->
+
+
   <!-- A "Service" is a collection of one or more "Connectors" that share
        a single "Container" (and therefore the web applications visible
        within that Container).  Normally, that Container is an "Engine",
