@@ -57,6 +57,13 @@ public class FormAuthenticator
         "org.apache.catalina.authenticator.FormAuthenticator/1.0";
 
 
+    /**
+     * Character encoding to use to read the username and password parameters
+     * from the request. If not set, the encoding of the request body will be
+     * used.
+     */
+    protected String characterEncoding = null;
+    
     // ------------------------------------------------------------- Properties
 
 
@@ -65,11 +72,27 @@ public class FormAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (FormAuthenticator.info);
 
     }
 
 
+    /**
+     * Return the character encoding to use to read the username and password.
+     */
+    public String getCharacterEncoding() {
+        return characterEncoding;
+    }
+
+    
+    /**
+     * Set the character encoding to be used to read the username and password. 
+     */
+    public void setCharacterEncoding(String encoding) {
+        characterEncoding = encoding;
+    }
+    
+    
     // --------------------------------------------------------- Public Methods
 
 
@@ -220,6 +243,9 @@ public class FormAuthenticator
         // Yes -- Validate the specified credentials and redirect
         // to the error page if they are not correct
         Realm realm = context.getRealm();
+        if (characterEncoding != null) {
+            hreq.setCharacterEncoding(characterEncoding);
+        }
         String username = hreq.getParameter(Constants.FORM_USERNAME);
         String password = hreq.getParameter(Constants.FORM_PASSWORD);
         if (debug >= 1)
