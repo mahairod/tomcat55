@@ -935,12 +935,27 @@ final class HttpProcessor
         }
         
 	try {
+            shutdownInput(input);
             socket.close();
 	} catch (IOException e) {
 	    ;
 	}
 	socket = null;
 
+    }
+
+
+    protected void shutdownInput(InputStream input)
+        throws IOException {
+        try {
+            int available = input.available();
+            // skip any unread (bogus) bytes
+            if (available > 0) {
+                input.skip(available);
+            }
+        } catch (Exception e) {
+            ;
+        }
     }
 
 
