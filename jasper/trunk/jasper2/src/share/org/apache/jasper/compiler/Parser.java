@@ -448,23 +448,26 @@ class Parser implements TagConstants {
 	String prefix = attrs.getValue("prefix");
 	if (prefix != null) {
 	    if (uri != null) {
-		// Errors to be checked in Validator
-		String[] location = ctxt.getTldLocation(uri);
-		taglibs.put(uri,
-			    new TagLibraryInfoImpl(ctxt, parserController,
-						   prefix, uri, location,
-						   err));
+		if (taglibs.get(uri) == null) {
+		    String[] location = ctxt.getTldLocation(uri);
+		    taglibs.put(uri,
+				new TagLibraryInfoImpl(ctxt, parserController,
+						       prefix, uri, location,
+						       err));
+		}
 		prefixMapper.put(prefix, uri);
 	    } else {
 		String tagdir = attrs.getValue("tagdir");
 		if (tagdir != null) {
 		    String urnTagdir = URN_JSPTAGDIR + tagdir;
-		    taglibs.put(urnTagdir,
-				new ImplicitTagLibraryInfo(ctxt,
-							   parserController,
-							   prefix, 
-							   tagdir,
-							   err));
+		    if (taglibs.get(urnTagdir) == null) {
+			taglibs.put(urnTagdir,
+				    new ImplicitTagLibraryInfo(ctxt,
+							       parserController,
+							       prefix, 
+							       tagdir,
+							       err));
+		    }
 		    prefixMapper.put(prefix, urnTagdir);
 		}
 	    }
