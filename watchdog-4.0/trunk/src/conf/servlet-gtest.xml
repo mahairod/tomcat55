@@ -505,9 +505,9 @@
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/javax_servlet/ServletRequest/GetServerPortTest.html" />
 
-      <gtest request="GET /servlet-tests/SetAttributeTest HTTP/1.0"
+      <gtest request="GET /servlet-tests/ServletRequestSetAttributeTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           goldenFile="${wgdir}/javax_servlet/ServletRequest/SetAttributeTest.html" />
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestSetAttributeTest.html" />
 
 
   <!-- javax_servlet_ServletResponse tests -->
