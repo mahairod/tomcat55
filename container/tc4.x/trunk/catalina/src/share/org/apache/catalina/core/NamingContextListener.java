@@ -355,33 +355,130 @@ public class NamingContextListener
         String type = event.getType();
 
         if (type.equals("addEjb")) {
-            
+
+            String ejbName = (String) event.getData();
+            if (ejbName != null) {
+                ContextEjb ejb = namingResources.findEjb(ejbName);
+                addEjb(ejb);
+            }
+
         } else if (type.equals("addEnvironment")) {
-            
-        } else if (type.equals("addResourceParams")) {
-            
+
+            String environmentName = (String) event.getData();
+            if (environmentName != null) {
+                ContextEnvironment env = 
+                    namingResources.findEnvironment(environmentName);
+                addEnvironment(env);
+            }
+
+        } else if ((type.equals("addResourceParams")) 
+                   || (type.equals("removeResourceParams"))) {
+
+            String resourceParamsName = (String) event.getData();
+            if (resourceParamsName != null) {
+                ContextEjb ejb = namingResources.findEjb(resourceParamsName);
+                if (ejb != null) {
+                    removeEjb(resourceParamsName);
+                    addEjb(ejb);
+                }
+                ContextResource resource = 
+                    namingResources.findResource(resourceParamsName);
+                if (resource != null) {
+                    removeResource(resourceParamsName);
+                    addResource(resource);
+                }
+                String resourceEnvRefValue = 
+                    namingResources.findResourceEnvRef(resourceParamsName);
+                if (resourceEnvRefValue != null) {
+                    removeResourceEnvRef(resourceParamsName);
+                    addResourceEnvRef(resourceParamsName, resourceEnvRefValue);
+                }
+                ContextResourceLink resourceLink = 
+                    namingResources.findResourceLink(resourceParamsName);
+                if (resourceLink != null) {
+                    removeResourceLink(resourceParamsName);
+                    addResourceLink(resourceLink);
+                }
+            }
+
         } else if (type.equals("addLocalEjb")) {
-            
+
+            String localEjbName = (String) event.getData();
+            if (localEjbName != null) {
+                ContextLocalEjb localEjb = 
+                    namingResources.findLocalEjb(localEjbName);
+                addLocalEjb(localEjb);
+            }
+
         } else if (type.equals("addResource")) {
-            
+
+            String resourceName = (String) event.getData();
+            if (resourceName != null) {
+                ContextResource resource = 
+                    namingResources.findResource(resourceName);
+                addResource(resource);
+            }
+
         } else if (type.equals("addResourceLink")) {
-            
+
+            String resourceLinkName = (String) event.getData();
+            if (resourceLinkName != null) {
+                ContextResourceLink resourceLink = 
+                    namingResources.findResourceLink(resourceLinkName);
+                addResourceLink(resourceLink);
+            }
+
         } else if (type.equals("addResourceEnvRef")) {
-            
+
+            String resourceEnvRefName = (String) event.getData();
+            if (resourceEnvRefName != null) {
+                String resourceEnvRefValue = 
+                    namingResources.findResourceEnvRef(resourceEnvRefName);
+                addResourceEnvRef(resourceEnvRefName, resourceEnvRefValue);
+            }
+
         } else if (type.equals("removeEjb")) {
-            
+
+            String ejbName = (String) event.getData();
+            if (ejbName != null) {
+                removeEjb(ejbName);
+            }
+
         } else if (type.equals("removeEnvironment")) {
-            
-        } else if (type.equals("removeResourceParams")) {
-            
+
+            String environmentName = (String) event.getData();
+            if (environmentName != null) {
+                removeEnvironment(environmentName);
+            }
+
         } else if (type.equals("removeLocalEjb")) {
-            
+
+            String localEjbName = (String) event.getData();
+            if (localEjbName != null) {
+                removeLocalEjb(localEjbName);
+            }
+
         } else if (type.equals("removeResource")) {
-            
+
+            String resourceName = (String) event.getData();
+            if (resourceName != null) {
+                removeResource(resourceName);
+            }
+
         } else if (type.equals("removeResourceLink")) {
-            
+
+            String resourceLinkName = (String) event.getData();
+            if (resourceLinkName != null) {
+                removeResourceLink(resourceLinkName);
+            }
+
         } else if (type.equals("removeResourceEnvRef")) {
-            
+
+            String resourceEnvRefName = (String) event.getData();
+            if (resourceEnvRefName != null) {
+                removeResourceEnvRef(resourceEnvRefName);
+            }
+
         }
 
         // Setting the context in read only mode
@@ -622,7 +719,11 @@ public class NamingContextListener
      */
     private void removeEjb(String name) {
 
-
+        try {
+            envCtx.unbind(name);
+        } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+        }
 
     }
 
@@ -632,7 +733,11 @@ public class NamingContextListener
      */
     private void removeEnvironment(String name) {
 
-
+        try {
+            envCtx.unbind(name);
+        } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+        }
 
     }
 
@@ -642,7 +747,11 @@ public class NamingContextListener
      */
     private void removeLocalEjb(String name) {
 
-
+        try {
+            envCtx.unbind(name);
+        } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+        }
 
     }
 
@@ -652,7 +761,11 @@ public class NamingContextListener
      */
     private void removeResource(String name) {
 
-
+        try {
+            envCtx.unbind(name);
+        } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+        }
 
     }
 
@@ -662,7 +775,25 @@ public class NamingContextListener
      */
     private void removeResourceEnvRef(String name) {
 
+        try {
+            envCtx.unbind(name);
+        } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+        }
 
+    }
+
+
+    /**
+     * Set the specified resources in the naming context.
+     */
+    private void removeResourceLink(String name) {
+
+        try {
+            envCtx.unbind(name);
+        } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+        }
 
     }
 
