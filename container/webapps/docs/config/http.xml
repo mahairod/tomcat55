@@ -158,10 +158,8 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of the <strong>HTTP
-  Connector</strong> is
-  <strong>org.apache.coyote.tomcat5.CoyoteConnector</strong>.
-  It supports the following additional attributes (in addition to the
+  <p>
+  HTTP supports the following additional attributes (in addition to the
   common attributes listed above):</p>
 
   <attributes>
