@@ -66,34 +66,22 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
-import org.apache.catalina.util.InstanceSupport;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -124,6 +112,13 @@ final class StandardWrapperValve
      */
     private FilterDef filterDef = null;
 
+    // Some JMX statistics. This vavle is associated with a StandardWrapper.
+    // We exponse the StandardWrapper as JMX ( j2eeType=Servlet ). The fields
+    // are here for performance.
+    private long processingTime;
+    private long maxTime;
+    private int requestCount;
+    private int errorCount;
 
     /**
      * The descriptive information related to this implementation.
@@ -169,7 +164,8 @@ final class StandardWrapperValve
     public void invoke(Request request, Response response,
                        ValveContext valveContext)
         throws IOException, ServletException {
-
+        long t1=System.currentTimeMillis();
+        requestCount++;
         // Initialize local variables we may need
         boolean unavailable = false;
         Throwable throwable = null;
@@ -337,7 +333,10 @@ final class StandardWrapperValve
                 exception(request, response, e);
             }
         }
-
+        long t2=System.currentTimeMillis();
+        long time=t2-t1;
+        processingTime+=time;
+        if( time > maxTime ) maxTime=time;
     }
 
 
@@ -465,7 +464,7 @@ final class StandardWrapperValve
      */
     private void exception(Request request, Response response,
                            Throwable exception) {
-
+        errorCount++;
         ServletRequest sreq = request.getRequest();
         sreq.setAttribute(Globals.EXCEPTION_ATTR, exception);
 
@@ -519,10 +518,8 @@ final class StandardWrapperValve
             String containerName = null;
             if (container != null)
                 containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
+            log( "StandardWrapperValve[" + containerName
+                       + "]: " + message, throwable);
         }
 
     }
@@ -608,5 +605,35 @@ final class StandardWrapperValve
 
     }
 
+    public long getProcessingTime() {
+        return processingTime;
+    }
 
+    public void setProcessingTime(long processingTime) {
+        this.processingTime = processingTime;
+    }
+
+    public long getMaxTime() {
+        return maxTime;
+    }
+
+    public void setMaxTime(long maxTime) {
+        this.maxTime = maxTime;
+    }
+
+    public int getRequestCount() {
+        return requestCount;
+    }
+
+    public void setRequestCount(int requestCount) {
+        this.requestCount = requestCount;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public void setErrorCount(int errorCount) {
+        this.errorCount = errorCount;
+    }
 }

@@ -123,7 +123,8 @@ public final class StandardWrapper
     public StandardWrapper() {
 
         super();
-        pipeline.setBasic(new StandardWrapperValve());
+        swValve=new StandardWrapperValve();
+        pipeline.setBasic(swValve);
 
     }
 
@@ -172,6 +173,7 @@ public final class StandardWrapper
      */
     private Servlet instance = null;
 
+    private StandardWrapperValve swValve;
 
     /**
      * The support object for our instance listeners.
@@ -833,7 +835,6 @@ public final class StandardWrapper
         // Nothing to do if we already have an instance or an instance pool
         if (!singleThreadModel && (instance != null))
             return instance;
-
         PrintStream out = System.out;
         if (swallowOutput) {
             SystemLogHandler.startCapture();
@@ -1360,5 +1361,35 @@ public final class StandardWrapper
 
     }
 
+    public long getProcessingTime() {
+        return swValve.getProcessingTime();
+    }
 
+    public void setProcessingTime(long processingTime) {
+        swValve.setProcessingTime(processingTime);
+    }
+
+    public long getMaxTime() {
+        return swValve.getMaxTime();
+    }
+
+    public void setMaxTime(long maxTime) {
+        swValve.setMaxTime(maxTime);
+    }
+
+    public int getRequestCount() {
+        return swValve.getRequestCount();
+    }
+
+    public void setRequestCount(int requestCount) {
+        swValve.setRequestCount(requestCount);
+    }
+
+    public int getErrorCount() {
+        return swValve.getErrorCount();
+    }
+
+    public void setErrorCount(int errorCount) {
+           swValve.setErrorCount(errorCount);
+    }
 }
