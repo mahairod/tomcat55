@@ -891,7 +891,7 @@ class Validator {
 		    if (attrs.getLocalName(i).equals(tldAttrs[j].getName())
 			    && (attrs.getURI(i) == null
 				|| attrs.getURI(i).length() == 0
-				|| attrs.getURI(i) == n.getURI())) {
+				|| attrs.getURI(i).equals(n.getURI()))) {
 			if (tldAttrs[j].canBeRequestTime()) {
                             Class expectedType = String.class;
                             try {
