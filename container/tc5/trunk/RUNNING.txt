@@ -94,7 +94,7 @@ on the value of $CATALINA_BASE instead of $CATALINA_HOME	:
 If you do not pass the "-Dcatalina.base=$CATALINA_BASE" argument to the startup command, $CATALINA_BASE will default to the same value as $CATALINA_HOME (which means that the same directory is used for all relative path resolutions).
 
 The administration and manager web applications, which are defined in the
-$CATALINA_BASE/webapps/admin.xml and $CATALINA_BASE/webapps/manager.xml files, will
+$CATALINA_BASE/conf/Catalina/localhost/admin.xml and $CATALINA_BASE/conf/Catalina/localhost/manager.xml files, will
 not run in that configuration, unless either:
 - The path specified in the docBase attribute of the Context element is made
   absolute, and replaced respectively by $CATALINA_HOME/server/webapps/admin
