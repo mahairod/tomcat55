@@ -67,8 +67,10 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
@@ -163,6 +165,10 @@ public class RequestListenerValve
             } catch (Throwable t) {
                 log(sm.getString("requestListenerValve.requestInit",
                                  instances[i].getClass().getName()), t);
+
+                ServletRequest sreq = request.getRequest();
+                sreq.setAttribute(Globals.EXCEPTION_ATTR,t);
+                return;
             }
         }
 
@@ -182,6 +188,9 @@ public class RequestListenerValve
             } catch (Throwable t) {
                 log(sm.getString("requestListenerValve.requestDestroy",
                                  instances[i].getClass().getName()), t);
+
+                ServletRequest sreq = request.getRequest();
+                sreq.setAttribute(Globals.EXCEPTION_ATTR,t);
             }
         }
 
