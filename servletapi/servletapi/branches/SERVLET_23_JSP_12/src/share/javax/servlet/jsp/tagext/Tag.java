@@ -143,7 +143,9 @@ public interface Tag {
      * prior to doStartTag().
      * <p>
      * This value is *not* reset by doEndTag() and must be explicitly reset
-     * by a page implementation
+     * by a page implementation if it changes between calls to doStartTag().
+     *
+     * @param pc The page context for this tag handler.
      */
 
     void setPageContext(PageContext pc);
@@ -169,7 +171,6 @@ public interface Tag {
      * This method is used by the findAncestorWithClass() method in
      * TagSupport.
      *
-     * @param t The enclosing tag handler.
      * @returns the current parent, or null if none.
      * @seealso TagSupport.findAncestorWithClass().
      */
