@@ -50,10 +50,8 @@ installation. When we say, "This information can be found in your
 $CATALINA_HOME/README.txt file" we mean to look at the README.txt file at the
 root of your Tomcat install.</p>
 
-<p>For the complete description of the Tomcat distribution, each folder can be
-found in the <a href="README.txt">README.txt</a> file, residing in the root
-directory of your Tomcat installation. Here, we will cover the ones where
-you'll be spending the majority of your time.</p>
+<p>These are some of the key tomcat directories, all relative
+to <strong>$CATALINA_HOME</strong>:</p>
 
 <ul>
 <li><strong>/bin</strong> - Startup, shutdown, and other scripts. The
