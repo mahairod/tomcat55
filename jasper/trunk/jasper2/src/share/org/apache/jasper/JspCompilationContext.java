@@ -91,7 +91,7 @@ import org.apache.jasper.servlet.JasperLoader;
  */
 public class JspCompilationContext {
 
-    private Hashtable tagFileJars;
+    private Hashtable tagFileJarUrls;
     private boolean isPackagedTagFile;
 
     private String className;
@@ -126,7 +126,7 @@ public class JspCompilationContext {
     private boolean isTagFile;
     private boolean protoTypeMode;
     private TagInfo tagInfo;
-    private JarFile tagFileJar;
+    private URL tagFileJarUrl;
 
     private static final String javaKeywords[] = {
         "abstract", "boolean", "break", "byte", "case",
@@ -169,7 +169,7 @@ public class JspCompilationContext {
         }
 
         this.rctxt = rctxt;
-        this.tagFileJars = new Hashtable();
+        this.tagFileJarUrls = new Hashtable();
         this.basePackageName = Constants.JSP_PACKAGE_NAME;
     }
 
@@ -179,12 +179,12 @@ public class JspCompilationContext {
                                  ServletContext context,
                                  JspServletWrapper jsw,
                                  JspRuntimeContext rctxt,
-                                 JarFile tagFileJar) {
+                                 URL tagFileJarUrl) {
         this(tagfile, false, options, context, jsw, rctxt);
         this.isTagFile = true;
         this.tagInfo = tagInfo;
-        this.tagFileJar = tagFileJar;
-        if (tagFileJar != null) {
+        this.tagFileJarUrl = tagFileJarUrl;
+        if (tagFileJarUrl != null) {
             isPackagedTagFile = true;
         }
     }
@@ -309,8 +309,8 @@ public class JspCompilationContext {
      * The map is populated when parsing the tag-file elements of the TLDs
      * of any imported taglibs. 
      */
-    public Hashtable getTagFileJars() {
-        return this.tagFileJars;
+    public Hashtable getTagFileJarUrls() {
+        return this.tagFileJarUrls;
     }
 
     /**
@@ -319,8 +319,8 @@ public class JspCompilationContext {
      * JspCompilationContext does not correspond to a tag file, or if the
      * corresponding tag file is not packaged in a JAR.
      */
-    public JarFile getTagFileJar() {
-        return this.tagFileJar;
+    public URL getTagFileJarUrl() {
+        return this.tagFileJarUrl;
     }
 
     /* ==================== Common implementation ==================== */

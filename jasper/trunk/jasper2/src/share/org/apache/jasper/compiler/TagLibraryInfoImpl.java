@@ -162,7 +162,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	this.parserController = pc;
 	this.err = err;
         InputStream in = null;
-	boolean hasPackagedTagFiles = false;
         JarFile jarFile = null;
 
 	if (location == null) {
@@ -191,15 +190,15 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             } else {
                 // Tag library is packaged in JAR file
                 try {
-                    URL url = new URL("jar:" + location[0] + "!/");
-                    JarURLConnection conn = (JarURLConnection) url.openConnection();
+                    URL jarFileUrl = new URL("jar:" + location[0] + "!/");
+                    JarURLConnection conn =
+			(JarURLConnection) jarFileUrl.openConnection();
 		    conn.setUseCaches(false);
                     conn.connect();
                     jarFile = conn.getJarFile();
                     ZipEntry jarEntry = jarFile.getEntry(location[1]);
                     in = jarFile.getInputStream(jarEntry);
-                    hasPackagedTagFiles = parseTLD(ctxt, location[0], in,
-						   jarFile);
+                    parseTLD(ctxt, location[0], in, jarFileUrl);
                 } catch (Exception ex) {
                     err.jspError("jsp.error.tld.unable_to_read", location[0],
                                  location[1], ex.toString());
@@ -211,7 +210,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                     in.close();
                 } catch (Throwable t) {}
             }
-            if (jarFile != null && !hasPackagedTagFiles) {
+            if (jarFile != null) {
                 try {
                     jarFile.close();
                 } catch (Throwable t) {}
@@ -232,14 +231,13 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
      * given JAR (that is, one or more tag files whose path element starts
      * with /META-INF/tags), and false otherwise
      */
-    private boolean parseTLD(JspCompilationContext ctxt,
-			     String uri, InputStream in, JarFile jarFile) 
+    private void parseTLD(JspCompilationContext ctxt,
+			  String uri, InputStream in, URL jarFileUrl) 
         throws JasperException
     {
         Vector tagVector = new Vector();
         Vector tagFileVector = new Vector();
         Hashtable functionTable = new Hashtable();
-	boolean hasPackagedTagFiles = false;
 
         // Create an iterator over the child elements of our <taglib> element
         ParserUtils pu = new ParserUtils();
@@ -277,12 +275,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                 tagVector.addElement(createTagInfo(element));
             else if ("tag-file".equals(tname)) {
 		TagFileInfo tagFileInfo = createTagFileInfo(element, uri,
-							    jarFile);
+							    jarFileUrl);
                 tagFileVector.addElement(tagFileInfo);
-		if (tagFileInfo.getPath().startsWith("/META-INF/tags")) {
-		    // Tag file is packaged in JAR
-		    hasPackagedTagFiles = true;
-		}
 	    } else if ("function".equals(tname)) {         // JSP2.0
 		FunctionInfo funcInfo = createFunctionInfo(element);
 		String funcName = funcInfo.getName();
@@ -329,8 +323,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	while (enum.hasMoreElements()) {
 	    this.functions[i++] = (FunctionInfo) enum.nextElement();
 	}
-
-	return hasPackagedTagFiles;
     }
     
     /*
@@ -472,7 +464,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
      * @return TagInfo correspoding to tag file directives
      */
     private TagFileInfo createTagFileInfo(TreeNode elem, String uri,
-					  JarFile jarFile)
+					  URL jarFileUrl)
 	        throws JasperException {
 
 	String name = null;
@@ -496,7 +488,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 
 	if (path.startsWith("/META-INF/tags")) {
 	    // Tag file packaged in JAR
-	    ctxt.getTagFileJars().put(path, jarFile);
+	    ctxt.getTagFileJarUrls().put(path, jarFileUrl);
 	} else if (!path.startsWith("/WEB-INF/tags")) {
 	    err.jspError("jsp.error.tagfile.illegalPath", path);
 	}

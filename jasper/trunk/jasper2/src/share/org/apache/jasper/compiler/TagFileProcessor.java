@@ -65,7 +65,7 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.io.*;
-import java.net.URLClassLoader;
+import java.net.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.tagext.*;
@@ -474,7 +474,7 @@ class TagFileProcessor {
                                                 tagFilePath,
                                                 tagInfo,
                                                 ctxt.getRuntimeContext(),
-                                                (JarFile) ctxt.getTagFileJars().get(tagFilePath));
+                                                (URL) ctxt.getTagFileJarUrls().get(tagFilePath));
                     rctxt.addWrapper(tagFilePath,wrapper);
 
 		// Use same classloader and classpath for compiling tag files
@@ -498,7 +498,7 @@ class TagFileProcessor {
                                                 tagFilePath,
                                                 tagInfo,
                                                 ctxt.getRuntimeContext(),
-                                                (JarFile) ctxt.getTagFileJars().get(tagFilePath));
+                                                (URL) ctxt.getTagFileJarUrls().get(tagFilePath));
                     tagClazz = tempWrapper.loadTagFilePrototype();
                     tempVector.add(
                                tempWrapper.getJspEngineContext().getCompiler());
@@ -545,7 +545,7 @@ class TagFileProcessor {
             if (tagFileInfo != null) {
                 String tagFilePath = tagFileInfo.getPath();
 		JspCompilationContext ctxt = compiler.getCompilationContext();
-		if (ctxt.getTagFileJars().get(tagFilePath) == null) {
+		if (ctxt.getTagFileJarUrls().get(tagFilePath) == null) {
 		    // Omit tag file dependency info on jar files for now.
                     pageInfo.addDependant(tagFilePath);
 		}

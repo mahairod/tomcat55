@@ -150,7 +150,7 @@ public class JspServletWrapper {
 			     String tagFilePath,
 			     TagInfo tagInfo,
 			     JspRuntimeContext rctxt,
-			     JarFile tagFileJar)
+			     URL tagFileJarUrl)
 	    throws JasperException {
 
 	this.isTagFile = true;
@@ -160,7 +160,7 @@ public class JspServletWrapper {
 	this.tripCount = 0;
         ctxt = new JspCompilationContext(jspUri, tagInfo, options,
 					 servletContext, this, rctxt,
-					 tagFileJar);
+					 tagFileJarUrl);
     }
 
     public JspCompilationContext getJspEngineContext() {

@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.jar.JarFile;
+import java.net.URL;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagFileInfo;
@@ -101,7 +102,7 @@ class Parser implements TagConstants {
     private int scriptlessCount;
     private boolean isTagFile;
     private boolean directivesOnly;
-    private JarFile jarFile;
+    private URL jarFileUrl;
 
     // Virtual body content types, to make parsing a little easier.
     // These are not accessible from outside the parser.
@@ -116,7 +117,7 @@ class Parser implements TagConstants {
      * The constructor
      */
     private Parser(ParserController pc, JspReader reader, boolean isTagFile,
-		   boolean directivesOnly, JarFile jarFile) {
+		   boolean directivesOnly, URL jarFileUrl) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
@@ -127,7 +128,7 @@ class Parser implements TagConstants {
         this.scriptlessCount = 0;
 	this.isTagFile = isTagFile;
 	this.directivesOnly = directivesOnly;
-	this.jarFile = jarFile;
+	this.jarFileUrl = jarFileUrl;
         start = reader.mark();
     }
 
@@ -145,14 +146,14 @@ class Parser implements TagConstants {
 				   Node parent,
 				   boolean isTagFile,
 				   boolean directivesOnly,
-				   JarFile jarFile,
+				   URL jarFileUrl,
 				   String pageEnc,
 				   String jspConfigPageEnc,
 				   boolean isDefaultPageEncoding)
 		throws JasperException {
 
 	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly,
-				   jarFile);
+				   jarFileUrl);
 
 	Node.Root root = new Node.Root(reader.mark(), parent, false);
 	root.setPageEncoding(pageEnc);
@@ -379,7 +380,7 @@ class Parser implements TagConstants {
 	}
 
 	try {
-	    parserController.parse(file, parent, jarFile);
+	    parserController.parse(file, parent, jarFileUrl);
 	} catch (FileNotFoundException ex) {
 	    err.jspError(start, "jsp.error.file.not.found", file);
 	} catch (Exception ex) {
