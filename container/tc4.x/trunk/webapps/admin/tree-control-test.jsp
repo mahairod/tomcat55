@@ -14,7 +14,7 @@
 
 <!-- Body -->
 
-<table border="1" cellpadding="0" cellspacing="0" width="100%">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
 
   <!-- Application Header -->
   <tr>

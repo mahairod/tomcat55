@@ -23,43 +23,13 @@
     <bean:message key="index.here"/>
   </html:link>
 </h2>
-
-<html:errors/>
-
-<html:form method="POST" action="/sample" focus="someText">
-  <table border="0" cellspacing="5">
-    <tr>
-      <th align="right">
-        <bean:message key="prompt.someText"/>
-      </th>
-      <td align="left">
-        <html:text property="someText" size="16" maxlength="16"/>
-      </td>
-    </tr>
-    <tr>
-      <th align="right">
-        <bean:message key="prompt.moreText"/>
-      </th>
-      <td align="left">
-        <html:text property="moreText" size="16" maxlength="16"/>
-      </td>
-    </tr>
-    <tr>
-      <td align="right">
-        <html:submit>
-          <bean:message key="button.save"/>
-        </html:submit>
-      </td>
-      <td align="left">
-        <html:reset>
-          <bean:message key="button.reset"/>
-        </html:reset>
-      </td>
-    </tr>
-  </table>
-</html:form>
-
-</center>
+<p>
+<h2>
+  <bean:message key="index.redirect"/>
+  <html:link page="/tree-control-test.jsp">
+    <bean:message key="index.here"/>
+  </html:link>
+</h2>
 
 <!-- Select language -->
 
