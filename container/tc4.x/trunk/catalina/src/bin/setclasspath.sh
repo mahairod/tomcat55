@@ -10,20 +10,28 @@ if [ -z "$JAVA_HOME" ]; then
   echo "This environment variable is needed to run this program"
   exit 1
 fi
-if $os400; then
-  if [ ! -x "$JAVA_HOME"/bin/java -o ! -x "$JAVA_HOME"/bin/javac ]; then
-    echo "The JAVA_HOME environment variable is not defined correctly"
-    echo "This environment variable is needed to run this program"
-    echo "NB: JAVA_HOME should point to a JDK not a JRE"
+if [ ! -x "$JAVA_HOME"/bin/java ]; then
+  echo "Error: The JAVA_HOME/bin/java directory is missing or not executable."
+  echo "The JAVA_HOME environment variable is not defined correctly."
+  echo "This environment variable is needed to run this program."
+  echo "NB: JAVA_HOME should point to a JDK not a JRE."
+  exit 1
+fi
+if [ ! "$os400" ]; then
+  if [ ! -x "$JAVA_HOME"/bin/jdb ]; then
+    echo "Error: The JAVA_HOME/bin/jdb directory is missing or not executable."
+    echo "The JAVA_HOME environment variable is not defined correctly."
+    echo "This environment variable is needed to run this program."
+    echo "NB: JAVA_HOME should point to a JDK not a JRE."
     exit 1
   fi
-else
-  if [ ! -x "$JAVA_HOME"/bin/java -o ! -x "$JAVA_HOME"/bin/jdb -o ! -x "$JAVA_HOME"/bin/javac ]; then
-    echo "The JAVA_HOME environment variable is not defined correctly"
-    echo "This environment variable is needed to run this program"
-    echo "NB: JAVA_HOME should point to a JDK not a JRE"
-    exit 1
-  fi
+fi
+if [ ! -x "$JAVA_HOME"/bin/javac ]; then
+  echo "Error: The JAVA_HOME/bin/javac directory is missing or not executable."
+  echo "The JAVA_HOME environment variable is not defined correctly."
+  echo "This environment variable is needed to run this program."
+  echo "NB: JAVA_HOME should point to a JDK not a JRE."
+  exit 1
 fi
 if [ -z "$BASEDIR" ]; then
   echo "The BASEDIR environment variable is not defined"
