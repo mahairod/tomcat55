@@ -662,7 +662,11 @@ public class StandardManager
             StandardSession session = (StandardSession) sessions[i];
             if (!session.isValid())
                 continue;
-            session.expire();
+            try {
+                session.expire();
+            } catch (Throwable t) {
+                ;
+            }
         }
 
         // Require a new random number generator if we are restarted
