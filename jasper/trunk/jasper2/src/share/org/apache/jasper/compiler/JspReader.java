@@ -80,137 +80,50 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Mark Roth
  */
 
-public class JspReader {
+class JspReader {
 
-    protected Mark current  = null;
-    String master = null;
-
-    Vector sourceFiles = new Vector();
-    int currFileId = 0;
-    int size = 0;
-    
+    private Mark current;
+    private String master;
+    private Vector sourceFiles;
+    private int currFileId;
+    private int size;
     private JspCompilationContext context;
     private ErrorDispatcher err;
+    private Logger.Helper loghelper;
 
     /*
      * Set to true when using the JspReader on a single file where we read up
      * to the end and reset to the beginning many times.
      * (as in ParserCtl.figureOutJspDocument().
      */
-    boolean singleFile = false;
+    private boolean singleFile;
 
-    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
-    
-    public String getFile(int fileid) {
-	return (String) sourceFiles.elementAt(fileid);
-    }
-
-    /**
-     * Register a new source file.
-     * This method is used to implement file inclusion. Each included file
-     * gets a uniq identifier (which is the index in the array of source files).
-     * @return The index of the now registered file.
+    /*
+     * Constructor.
      */
-    protected int registerSourceFile(String file) {
-        if (sourceFiles.contains(file))
-            return -1;
-	sourceFiles.addElement(file);
-	this.size++;
-	return sourceFiles.size() - 1;
-    }
-    
+    public JspReader(JspCompilationContext ctx,
+		     String file,
+		     String encoding,
+		     InputStreamReader reader,
+		     ErrorDispatcher err)
+	    throws JasperException, FileNotFoundException {
 
-    /**
-     * Unregister the source file.
-     * This method is used to implement file inclusion. Each included file
-     * gets a uniq identifier (which is the index in the array of source
-     * files).
-     * @return The index of the now registered file.
-     */
-    protected int unregisterSourceFile(String file) {
-        if (!sourceFiles.contains(file))
-            return -1;
-	sourceFiles.removeElement(file);
-	this.size--;
-	return sourceFiles.size() - 1;
-    }
-
-    private void pushFile2(String file, String encoding, 
-			   InputStreamReader reader) 
-	        throws JasperException, FileNotFoundException {
-
-	// Register the file
-	String longName = file;
-
-	int fileid = registerSourceFile(longName);
-
-        if (fileid == -1) {
-            err.jspError("jsp.error.file.already.registered", file);
-	}
-
-	currFileId = fileid;
-
-	try {
-	    CharArrayWriter caw = new CharArrayWriter();
-	    char buf[] = new char[1024];
-	    for (int i = 0 ; (i = reader.read(buf)) != -1 ;)
-		caw.write(buf, 0, i);
-	    caw.close();
-	    if (current == null) {
-		current = new Mark(this, caw.toCharArray(), fileid, 
-				   getFile(fileid), master, encoding);
-	    } else {
-		current.pushStream(caw.toCharArray(), fileid, getFile(fileid),
-				   longName, encoding);
-	    }
-	} catch (Throwable ex) {
-	    loghelper.log("Exception parsing file ", ex);
-	    // Pop state being constructed:
-	    popFile();
-	    err.jspError("jsp.error.file.cannot.read", "ze file");
-	} finally {
-	    if (reader != null) {
-		try { reader.close(); } catch (Exception any) {}
-	    }
-	}
-    }
-
-    public boolean popFile() throws JasperException {
-	// Is stack created ? (will happen if the Jsp file we'r looking at is
-	// missing.
-	if (current == null) 
-		return false;
-
-	// Restore parser state:
-	//size--;
-	if (currFileId < 0) {
-	    err.jspError("jsp.error.no.more.content");
-	}
-	
-	String fName = getFile(currFileId);
-	currFileId = unregisterSourceFile(fName);
-	if (currFileId < -1) {
-	    err.jspError("jsp.error.file.not.registered", fName);
-	}
-
-	boolean result = current.popStream();
-	if (result)
-	    master = current.baseDir;
-	return (result);
-    }
-	
-    protected JspReader(JspCompilationContext ctx,
-			String file,
-			String encoding,
-			InputStreamReader reader,
-			ErrorDispatcher err) 
-	        throws JasperException, FileNotFoundException {
         this.context = ctx;
 	this.err = err;
+	sourceFiles = new Vector();
+	currFileId = 0;
+	size = 0;
+	singleFile = false;
+	loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
+
 	pushFile2(file, encoding, reader);
     }
-
-    public boolean hasMoreInput() throws JasperException {
+    
+    String getFile(int fileid) {
+	return (String) sourceFiles.elementAt(fileid);
+    }
+	
+    boolean hasMoreInput() throws JasperException {
 	if (current.cursor >= current.stream.length) {
             if (singleFile) return false; 
 	    while (popFile()) {
@@ -221,7 +134,7 @@ public class JspReader {
 	return true;
     }
     
-    public int nextChar() throws JasperException {
+    int nextChar() throws JasperException {
 	if (!hasMoreInput())
 	    return -1;
 	
@@ -289,19 +202,19 @@ public class JspReader {
 	return caw.toCharArray();
     }
 
-    public int peekChar() {
+    int peekChar() {
 	return current.stream[current.cursor];
     }
 
-    public Mark mark() {
+    Mark mark() {
 	return new Mark(current);
     }
 
-    public void reset(Mark mark) {
+    void reset(Mark mark) {
 	current = new Mark(mark);
     }
 
-    public boolean matchesIgnoreCase(String string) throws JasperException {
+    boolean matchesIgnoreCase(String string) throws JasperException {
 	Mark mark = mark();
 	int ch = 0;
 	int i = 0;
@@ -323,7 +236,7 @@ public class JspReader {
      *         in stream is positioned after the search string, <strong>
      *	       false</strong> otherwise, position in stream unchanged.
      */
-    public boolean matches(String string) throws JasperException {
+    boolean matches(String string) throws JasperException {
 	Mark mark = mark();
 	int ch = 0;
 	int i = 0;
@@ -337,7 +250,7 @@ public class JspReader {
 	return true;
     }
 
-    public boolean matchesETag(String tagName) throws JasperException {
+    boolean matchesETag(String tagName) throws JasperException {
 	Mark mark = mark();
 
 	if (!matches("</" + tagName))
@@ -350,7 +263,7 @@ public class JspReader {
 	return false;
     }
 
-    public boolean matchesETagWithoutLessThan(String tagName)
+    boolean matchesETagWithoutLessThan(String tagName)
         throws JasperException
     {
        Mark mark = mark();
@@ -372,8 +285,8 @@ public class JspReader {
      * characters are skipped.  If not, false is returned and the
      * position is restored to where we were before.
      */
-    public boolean matchesOptionalSpacesFollowedBy( String s )
-        throws JasperException
+    boolean matchesOptionalSpacesFollowedBy( String s )
+	throws JasperException
     {
         Mark mark = mark();
 
@@ -386,12 +299,7 @@ public class JspReader {
         return result;
     }
 
-    public void advance(int n) throws JasperException {
-	while (--n >= 0)
-	    nextChar();
-    }
-
-    public int skipSpaces() throws JasperException {
+    int skipSpaces() throws JasperException {
 	int i = 0;
 	while (isSpace()) {
 	    i++;
@@ -403,12 +311,13 @@ public class JspReader {
     /**
      * Skip until the given string is matched in the stream.
      * When returned, the context is positioned past the end of the match.
+     *
      * @param s The String to match.
      * @return A non-null <code>Mark</code> instance (positioned immediately
      *         before the search string) if found, <strong>null</strong>
      *         otherwise.
      */
-    public Mark skipUntil(String limit) throws JasperException {
+    Mark skipUntil(String limit) throws JasperException {
         Mark ret = null;
         int limlen = limit.length();
         int ch;
@@ -436,12 +345,13 @@ public class JspReader {
      * Skip until the given string is matched in the stream, but ignoring
      * chars initially escaped by a '\'.
      * When returned, the context is positioned past the end of the match.
+     *
      * @param s The String to match.
      * @return A non-null <code>Mark</code> instance (positioned immediately
      *         before the search string) if found, <strong>null</strong>
      *         otherwise.
      */
-    public Mark skipUntilIgnoreEsc(String limit) throws JasperException {
+    Mark skipUntilIgnoreEsc(String limit) throws JasperException {
 	Mark ret = null;
 	int limlen = limit.length();
 	int ch;
@@ -466,11 +376,12 @@ public class JspReader {
     /**
      * Skip until the given end tag is matched in the stream.
      * When returned, the context is positioned past the end of the tag.
+     *
      * @param tag The name of the tag whose ETag (</tag>) to match.
      * @return A non-null <code>Mark</code> instance (positioned immediately
      *	       before the ETag) if found, <strong>null</strong> otherwise.
      */
-    public Mark skipUntilETag(String tag) throws JasperException {
+    Mark skipUntilETag(String tag) throws JasperException {
 	Mark ret = skipUntil("</" + tag);
 	if (ret != null) {
 	    skipSpaces();
@@ -489,9 +400,10 @@ public class JspReader {
      * Parse a space delimited token.
      * If quoted the token will consume all characters up to a matching quote,
      * otherwise, it consumes up to the first delimiter character.
+     *
      * @param quoted If <strong>true</strong> accept quoted strings.
      */
-    public String parseToken(boolean quoted) throws JasperException {
+    String parseToken(boolean quoted) throws JasperException {
 	StringBuffer stringBuffer = new StringBuffer();
 	skipSpaces();
 	stringBuffer.setLength(0);
@@ -536,10 +448,15 @@ public class JspReader {
 	return stringBuffer.toString();
     }
 
+    void setSingleFile(boolean val) {
+        singleFile = val;
+    }
+
     /**
      * Parse utils - Is current character a token delimiter ?
      * Delimiters are currently defined to be =, &gt;, &lt;, ", and ' or any
      * any space character as defined by <code>isSpace</code>.
+     *
      * @return A boolean.
      */
     private boolean isDelimiter() throws JasperException {
@@ -568,8 +485,102 @@ public class JspReader {
 	}
     }
 
-    public void setSingleFile(boolean val) {
-        singleFile = val;
+    /**
+     * Register a new source file.
+     * This method is used to implement file inclusion. Each included file
+     * gets a unique identifier (which is the index in the array of source
+     * files).
+     *
+     * @return The index of the now registered file.
+     */
+    private int registerSourceFile(String file) {
+        if (sourceFiles.contains(file))
+            return -1;
+	sourceFiles.addElement(file);
+	this.size++;
+	return sourceFiles.size() - 1;
+    }
+    
+
+    /**
+     * Unregister the source file.
+     * This method is used to implement file inclusion. Each included file
+     * gets a uniq identifier (which is the index in the array of source
+     * files).
+     *
+     * @return The index of the now registered file.
+     */
+    private int unregisterSourceFile(String file) {
+        if (!sourceFiles.contains(file))
+            return -1;
+	sourceFiles.removeElement(file);
+	this.size--;
+	return sourceFiles.size() - 1;
+    }
+
+    private void pushFile2(String file, String encoding, 
+			   InputStreamReader reader) 
+	        throws JasperException, FileNotFoundException {
+
+	// Register the file
+	String longName = file;
+
+	int fileid = registerSourceFile(longName);
+
+        if (fileid == -1) {
+            err.jspError("jsp.error.file.already.registered", file);
+	}
+
+	currFileId = fileid;
+
+	try {
+	    CharArrayWriter caw = new CharArrayWriter();
+	    char buf[] = new char[1024];
+	    for (int i = 0 ; (i = reader.read(buf)) != -1 ;)
+		caw.write(buf, 0, i);
+	    caw.close();
+	    if (current == null) {
+		current = new Mark(this, caw.toCharArray(), fileid, 
+				   getFile(fileid), master, encoding);
+	    } else {
+		current.pushStream(caw.toCharArray(), fileid, getFile(fileid),
+				   longName, encoding);
+	    }
+	} catch (Throwable ex) {
+	    loghelper.log("Exception parsing file ", ex);
+	    // Pop state being constructed:
+	    popFile();
+	    err.jspError("jsp.error.file.cannot.read", "ze file");
+	} finally {
+	    if (reader != null) {
+		try { reader.close(); } catch (Exception any) {}
+	    }
+	}
+    }
+
+    private boolean popFile() throws JasperException {
+
+	// Is stack created ? (will happen if the Jsp file we're looking at is
+	// missing.
+	if (current == null) 
+	    return false;
+
+	// Restore parser state:
+	//size--;
+	if (currFileId < 0) {
+	    err.jspError("jsp.error.no.more.content");
+	}
+	
+	String fName = getFile(currFileId);
+	currFileId = unregisterSourceFile(fName);
+	if (currFileId < -1) {
+	    err.jspError("jsp.error.file.not.registered", fName);
+	}
+
+	boolean result = current.popStream();
+	if (result)
+	    master = current.baseDir;
+	return (result);
     }
 }
 

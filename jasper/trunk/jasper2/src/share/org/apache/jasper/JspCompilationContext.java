@@ -68,7 +68,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagData;
 import org.apache.jasper.compiler.JspRuntimeContext;
-import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.servlet.JspServletWrapper;
@@ -100,7 +99,6 @@ public class JspCompilationContext {
     protected String jspPath;
     protected String classFileName;
     protected String contentType;
-    protected JspReader reader;
     protected ServletWriter writer;
     protected Options options;
     protected JspServletWrapper jsw;
@@ -491,17 +489,6 @@ public class JspCompilationContext {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    /**
-     * Get the input reader for the JSP text. 
-     */
-    public JspReader getReader() { 
-        return reader;
-    }
-
-    public void setReader(JspReader reader) {
-        this.reader = reader;
     }
 
     /**

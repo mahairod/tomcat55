@@ -65,7 +65,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.TldLocationsCache;
