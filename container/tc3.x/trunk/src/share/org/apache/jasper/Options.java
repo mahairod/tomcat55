@@ -82,6 +82,12 @@ public interface Options {
      * Are we supporting large files?
      */
     public boolean getLargeFile();
+
+    /**
+     * Are we supporting HTML mapped servlets?
+     */
+    public boolean getMappedFile();
+    
     
     /**
      * Should errors be sent to client or thrown into stderr?

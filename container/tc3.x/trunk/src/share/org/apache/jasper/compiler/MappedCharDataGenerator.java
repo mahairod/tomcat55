@@ -58,65 +58,68 @@
  * <http://www.apache.org/>.
  *
  */ 
+
 package org.apache.jasper.compiler;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-
-import org.apache.jasper.JasperException;
-
 /**
- * Interface for the JSP code generation backend. At some point should
- * probably try and make this a SAX (XML) listener. 
+ * CharDataGenerator generates the character data present in the JSP
+ * file. Typically this is HTML which lands up as strings in
+ * out.println(...).
+ * 
+ * This generator will print the HTML line-by-line. This is a
+ * feature desired by lots of tool vendors.
  *
- * @author Anil K. Vijendran
+ * @author Mandar Raje
  */
-public interface ParseEventListener {
-    void beginPageProcessing() throws JasperException;
+public class MappedCharDataGenerator 
+    extends GeneratorBase
+    implements ServiceMethodPhase
+{
+    char[] chars;
+    
+    public MappedCharDataGenerator(char[] chars) {
+	this.chars = chars;
+    }
 
-    void handleComment(Mark start, Mark stop) throws JasperException;
-    void handleDirective(String directive, 
-			 Mark start, Mark stop, 
-			 Hashtable attrs) throws JasperException;
-    void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handleBean(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException;
-    void handleBeanEnd (Mark start, Mark stop, Hashtable attrs)
-	throws JasperException;
-    void handleGetProperty(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handleSetProperty(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handlePlugin(Mark start, Mark stop, Hashtable attrs, Hashtable param, 
-    			String fallback) throws JasperException;
-    void handleCharData(char[] chars) throws JasperException;
-
-
-    /*
-     * Custom tag support
-     */
-    TagLibraries getTagLibraries();
-
-    /*
-     * start: is either the start position at "<" if content type is JSP or empty, or
-     *        is the start of the body after the "/>" if content type is tag dependent
-     * stop: can be null if the body contained JSP tags... 
-     */
-    void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, String shortTagName,
-			TagLibraryInfoImpl tli, TagInfo ti) 
-	throws JasperException;
-
-    void handleTagEnd(Mark start, Mark stop, String prefix, String shortTagName,
-		      Hashtable attrs, TagLibraryInfoImpl tli, TagInfo ti)
-	throws JasperException;
-
-    void handleForward(Mark start, Mark stop, Hashtable attrs, Hashtable param)
-	throws JasperException;
-    void handleInclude(Mark start, Mark stop, Hashtable attrs, Hashtable param)
-	throws JasperException;
-
-    void endPageProcessing() throws JasperException;
+    public void generate(ServletWriter writer, Class phase) {
+	writer.indent();
+	writer.print("out.write(\"");
+	// Generate the char data:
+	int limit       = chars.length;
+	StringBuffer sb = new StringBuffer();
+	for (int i = 0 ; i < limit ; i++) {
+	    int ch = chars[i];
+	    switch(ch) {
+	    case '"':
+		sb.append("\\\"");
+		break;
+	    case '\\':
+		sb.append("\\\\");
+		break;
+	    case '\r':
+		continue;
+		/*
+		  case '\'':
+		  sb.append('\\');
+		  sb.append('\'');
+		  break;
+		*/
+	    case '\n':
+		sb.append("\\r\\n");
+		writer.print(sb.toString());
+		writer.print("\");\n");
+		sb = new StringBuffer();
+		writer.indent();
+		writer.print("out.write(\"");
+		break;
+	    case '\t':
+		sb.append("\\t");
+		break;
+	    default:
+		sb.append((char) ch);
+	    }
+	}
+	writer.print(sb.toString());
+	writer.print("\");\n");
+    }
 }

@@ -179,13 +179,13 @@ final class DelegatingListener implements ParseEventListener {
         delegate.handleInclude(start, stop, attrs, param);
     }
 
-    public void handleTagBegin(Mark start, Hashtable attrs, String prefix, 
+    public void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, 
 			       String shortTagName, TagLibraryInfoImpl tli, 
 			       TagInfo ti)
 	throws JasperException
     {
         doAction();
-        delegate.handleTagBegin(start, attrs, prefix, shortTagName, tli, ti);
+        delegate.handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti);
     }
     
     public void handleTagEnd(Mark start, Mark stop, String prefix, 

@@ -158,7 +158,7 @@ public class BaseJspListener implements ParseEventListener {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.include"));
     }
 
-    public void handleTagBegin(Mark start, Hashtable attrs, String prefix, 
+    public void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, 
 			       String shortTagName, TagLibraryInfoImpl tli, 
 			       TagInfo ti)
 	throws JasperException

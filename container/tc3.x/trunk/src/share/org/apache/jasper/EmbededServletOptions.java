@@ -87,7 +87,14 @@ public final class EmbededServletOptions implements Options {
      * data being used literally in the generated servlet. 
      */
     public boolean largeFile = false;
-
+    
+    /**
+     * Do you want support for "mapped" files? This will generate
+     * servlet that has a print statement per line of the JSP file.
+     * This seems like a really nice feature to have for debugging.
+     */
+    public boolean mappedFile = false;
+    
     /**
      * Do you want stack traces and such displayed in the client's
      * browser? If this is false, such messages go to the standard
@@ -136,6 +143,13 @@ public final class EmbededServletOptions implements Options {
      */
     public boolean getLargeFile() {
         return largeFile;
+    }
+    
+    /**
+     * Are we supporting HTML mapped servlets?
+     */
+    public boolean getMappedFile() {
+        return mappedFile;
     }
     
     /**
@@ -205,7 +219,16 @@ public final class EmbededServletOptions implements Options {
                 this.largeFile = false;
             else Constants.message ("jsp.warning.largeFile", Logger.WARNING);
         }
-
+	
+        String mapFile = config.getInitParameter("mappedfile"); 
+        if (mapFile != null) {
+            if (mapFile.equalsIgnoreCase("true"))
+                this.mappedFile = true;
+            else if (mapFile.equalsIgnoreCase("false"))
+                this.mappedFile = false;
+            else Constants.message ("jsp.warning.mappedFile", Logger.WARNING);
+        }
+	
         String senderr = config.getInitParameter("sendErrToClient");
         if (senderr != null) {
             if (senderr.equalsIgnoreCase("true"))
