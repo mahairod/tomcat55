@@ -240,12 +240,11 @@ public final class RemoteHostValveForm extends ValveForm {
         }
         
         for (int i = 0; i < denies.length; i++) {
-            if (denies[i].match("localhost") || 
-                        denies[i].match("127.0.0.1")) {
-                errors.add("deny",
-                new ActionError("error.denyHost"));
-            }
             if (denies[i].match(host)) {
+                if (allows.length < 1) {
+                    errors.add("deny",
+                        new ActionError("error.denyHost"));
+                }    
                 for (int j = 0; j < allows.length; j++) {
                     if (!allows[j].match(host)) { 
                         errors.add("deny",
@@ -253,6 +252,10 @@ public final class RemoteHostValveForm extends ValveForm {
                     }
                 }
             } else if (denies[i].match(ip)) {
+                if (allows.length < 1) {
+                    errors.add("deny",
+                        new ActionError("error.denyHost"));
+                }               
                 for (int j = 0; j < allows.length; j++) {
                     if (!allows[j].match(ip)) { 
                         errors.add("deny",
