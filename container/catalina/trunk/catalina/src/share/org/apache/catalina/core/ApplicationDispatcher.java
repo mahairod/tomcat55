@@ -694,7 +694,7 @@ final class ApplicationDispatcher
 
         // Check for the servlet being marked unavailable
         if (wrapper.isUnavailable()) {
-            log.error(sm.getString("applicationDispatcher.isUnavailable",
+            log(sm.getString("applicationDispatcher.isUnavailable",
                              wrapper.getName()));
             if (hresponse == null) {
                 ;       // NOTE - Not much we can do generically
@@ -720,12 +720,12 @@ final class ApplicationDispatcher
                 //                    log("    No servlet instance returned!");
             }
         } catch (ServletException e) {
-            log.error(sm.getString("applicationDispatcher.allocateException",
+            log(sm.getString("applicationDispatcher.allocateException",
                              wrapper.getName()), e);
             servletException = e;
             servlet = null;
         } catch (Throwable e) {
-            log.error(sm.getString("applicationDispatcher.allocateException",
+            log(sm.getString("applicationDispatcher.allocateException",
                              wrapper.getName()), e);
             servletException = new ServletException
                 (sm.getString("applicationDispatcher.allocateException",
@@ -758,14 +758,14 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log.error(sm.getString("applicationDispatcher.serviceException",
+            log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             ioException = e;
         } catch (UnavailableException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log.error(sm.getString("applicationDispatcher.serviceException",
+            log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             servletException = e;
             wrapper.unavailable(e);
@@ -773,14 +773,23 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log.error(sm.getString("applicationDispatcher.serviceException",
-                             wrapper.getName()), e);
+            Throwable rootCause = e;
+            while (rootCause instanceof ServletException) {
+                Throwable t = ((ServletException) rootCause).getRootCause();
+                if (t != null) {
+                    rootCause = t;
+                } else {
+                    break;
+                }
+            }
+            log(sm.getString("applicationDispatcher.serviceException",
+                             wrapper.getName()), rootCause);
             servletException = e;
         } catch (RuntimeException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log.error(sm.getString("applicationDispatcher.serviceException",
+            log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             runtimeException = e;
         }
@@ -833,16 +842,13 @@ final class ApplicationDispatcher
      * @param message Message to be logged
      */
     private void log(String message) {
-        // XXX remove it.
-        log.info( message);
-
-//        Logger logger = context.getLogger();
-//        if (logger != null)
-//            logger.log("ApplicationDispatcher[" + context.getPath() +
-//                       "]: " + message);
-//        else
-//            System.out.println("ApplicationDispatcher[" +
-//                               context.getPath() + "]: " + message);
+        Logger logger = context.getLogger();
+        if (logger != null)
+            logger.log("ApplicationDispatcher[" + context.getPath() +
+                       "]: " + message);
+        else
+            System.out.println("ApplicationDispatcher[" +
+                               context.getPath() + "]: " + message);
 
     }
 
@@ -854,16 +860,15 @@ final class ApplicationDispatcher
      * @param throwable Associated exception
      */
     private void log(String message, Throwable throwable) {
-        log.info( message, throwable);
-//        Logger logger = context.getLogger();
-//        if (logger != null)
-//            logger.log("ApplicationDispatcher[" + context.getPath() +
-//                       "] " + message, throwable);
-//        else {
-//            System.out.println("ApplicationDispatcher[" +
-//                               context.getPath() + "]: " + message);
-//            throwable.printStackTrace(System.out);
-//        }
+        Logger logger = context.getLogger();
+        if (logger != null)
+            logger.log("ApplicationDispatcher[" + context.getPath() +
+                       "] " + message, throwable);
+        else {
+            System.out.println("ApplicationDispatcher[" +
+                               context.getPath() + "]: " + message);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
