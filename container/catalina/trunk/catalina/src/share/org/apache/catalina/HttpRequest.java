@@ -212,6 +212,14 @@ public interface HttpRequest extends Request {
 
 
     /**
+     * Get the request path.
+     * 
+     * @return the request path
+     */
+    public MessageBytes getRequestPathMB();
+
+
+    /**
      * Set a flag indicating whether or not the requested session ID for this
      * request came in through a cookie.  This is normally called by the
      * HTTP Connector, when it parses the request headers.
