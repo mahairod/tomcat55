@@ -22,7 +22,6 @@
 
   <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,Security,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
 
-
   <target name="ROOT">
 
     <!-- ========== Basic Run State ======================================= -->
@@ -221,10 +220,12 @@
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage03" debug="${debug}"
+          status="500"
       outContent="ErrorPage04 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage03" debug="${debug}"
+          status="500"
       outContent="ErrorPage04 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -269,12 +270,12 @@
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/ErrorPage07"
            debug="${debug}"
-          status="503"/>
+          status="404"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/WrappedErrorPage07"
            debug="${debug}"
-          status="503"/>
+          status="404"/>
 
     <!-- ========== Exception Mapping (JSP Source) ======================== -->
 
@@ -293,25 +294,25 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage08?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage08?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage08?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage08?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <!-- ========== Exception Mapping (JSP Error Page) ==================== -->
@@ -651,7 +652,7 @@
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/Lifecycle03?step=1" debug="${debug}"
-          status="503"/>
+          status="404"/>
 
 <!-- NOTE - cannot do this as originally intended, because the
      servlet was marked as permanently unavailable, so just
@@ -664,7 +665,7 @@
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/Lifecycle03?step=2" debug="${debug}"
-          status="503"/>
+          status="404"/>
 
   </target>
 
