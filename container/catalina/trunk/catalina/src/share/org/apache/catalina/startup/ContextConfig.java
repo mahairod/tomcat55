@@ -67,19 +67,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Stack;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.naming.NamingException;
@@ -94,9 +88,7 @@ import org.apache.catalina.Authenticator;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -108,12 +100,8 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.deploy.ApplicationParameter;
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
@@ -121,10 +109,8 @@ import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.SchemaResolver;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
@@ -151,7 +137,7 @@ public final class ContextConfig
      * the name of the implemented authentication method, and the value is
      * the fully qualified Java class name of the corresponding Valve.
      */
-    private static ResourceBundle authenticators = null;
+    private static Properties authenticators = null;
 
 
     /**
@@ -169,7 +155,7 @@ public final class ContextConfig
     /**
      * The default web application's deployment descriptor location.
      */
-    private String defaultWebXml = Constants.DefaultWebXml;
+    private String defaultWebXml = null;
     
     
     /**
@@ -244,7 +230,7 @@ public final class ContextConfig
      * Return the location of the default deployment descriptor
      */
     public String getDefaultWebXml() {
-
+        if( defaultWebXml == null ) defaultWebXml=Constants.DefaultWebXml;
         return (this.defaultWebXml);
 
     }
@@ -334,6 +320,10 @@ public final class ContextConfig
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
                     webDigester.clear();
+//                    ClassLoader cl=Thread.currentThread().getContextClassLoader();
+//                    if( cl!=null )
+//                        webDigester.setClassLoader(cl);
+                    webDigester.setUseContextClassLoader(true);
                     webDigester.push(context);
                     webDigester.parse(is);
                 } else {
@@ -361,10 +351,9 @@ public final class ContextConfig
         webRuleSet.recycle();
 
         long t2=System.currentTimeMillis();
-        if( (t2-t1 ) > 200 ) 
-            log.debug("Processed  " + url + " "  + ( t2-t1));
-
-
+        if (context instanceof StandardContext) {
+            ((StandardContext) context).setStartupTime(t2-t1);
+        }
     }
 
 
@@ -413,9 +402,16 @@ public final class ContextConfig
         // Load our mapping properties if necessary
         if (authenticators == null) {
             try {
-                authenticators = ResourceBundle.getBundle
-                    ("org.apache.catalina.startup.Authenticators");
-            } catch (MissingResourceException e) {
+                InputStream is=this.getClass().getClassLoader().getResourceAsStream("org/apache/catalina/startup/Authenticators.properties");
+                if( is!=null ) {
+                    authenticators = new Properties();
+                    authenticators.load(is);
+                } else {
+                    log.error(sm.getString("contextConfig.authenticatorResources"));
+                    ok=false;
+                    return;
+                }
+            } catch (IOException e) {
                 log.error(sm.getString("contextConfig.authenticatorResources"), e);
                 ok = false;
                 return;
@@ -424,12 +420,8 @@ public final class ContextConfig
 
         // Identify the class name of the Valve we should configure
         String authenticatorName = null;
-        try {
-            authenticatorName =
-                authenticators.getString(loginConfig.getAuthMethod());
-        } catch (MissingResourceException e) {
-            authenticatorName = null;
-        }
+        authenticatorName =
+                authenticators.getProperty(loginConfig.getAuthMethod());
         if (authenticatorName == null) {
             log.error(sm.getString("contextConfig.authenticatorMissing",
                              loginConfig.getAuthMethod()));
@@ -631,21 +623,42 @@ public final class ContextConfig
         return (webDigester);
     }
 
+    private String getBaseDir() {
+        Container engineC=context.getParent().getParent();
+        if( engineC instanceof StandardEngine ) {
+            return ((StandardEngine)engineC).getBaseDir();
+        }
+        return System.getProperty("catalina.base");
+    }
 
     /**
      * Process the default configuration file, if it exists.
+     * The default config must be read with the container loader - so
+     * container servlets can be loaded
      */
     private void defaultConfig() {
         long t1=System.currentTimeMillis();
 
         // Open the default web.xml file, if it exists
+        if( defaultWebXml==null && context instanceof StandardContext ) {
+            defaultWebXml=((StandardContext)context).getDefaultWebXml();
+        }
+        // set the default if we don't have any overrides
+        if( defaultWebXml==null ) getDefaultWebXml();
+
         File file = new File(this.defaultWebXml);
         if (!file.isAbsolute()) {
-            file = new File(System.getProperty("catalina.base"),
+            file = new File(getBaseDir(),
                             this.defaultWebXml);
         }
-        FileInputStream stream = null;
+
+        InputStream stream = null;
+        //if( ! file.exists() ) {
+            // try using resource ??
+
+        //}
         try {
+            // XXX why all this instead of exists() ?
             stream = new FileInputStream(file.getCanonicalPath());
             stream.close();
             stream = null;
@@ -673,6 +686,9 @@ public final class ContextConfig
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
                 webDigester.clear();
+                webDigester.setClassLoader(this.getClass().getClassLoader());
+                //log.info( "Using cl: " + webDigester.getClassLoader());
+                webDigester.setUseContextClassLoader(false);
                 webDigester.push(context);
                 webDigester.parse(is);
             } catch (SAXParseException e) {
@@ -785,8 +801,8 @@ public final class ContextConfig
     private synchronized void start() {
         // Called from StandardContext.start()
 
-        if (debug > 0)
-            log.info(sm.getString("contextConfig.start"));
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("contextConfig.start"));
         context.setConfigured(false);
         ok = true;
 
@@ -821,6 +837,7 @@ public final class ContextConfig
                 ok = false;
             }
         }
+
 
         // Configure a certificates exposer valve, if required
         if (ok)
@@ -1019,7 +1036,6 @@ public final class ContextConfig
 
     }
 
-
     /**
      * Scan for and configure all tag library descriptors found in this
      * web application.
@@ -1027,6 +1043,7 @@ public final class ContextConfig
      * @exception Exception if a fatal input/output or parsing error occurs
      */
     private void tldScan() throws Exception {
+        long t1=System.currentTimeMillis();
 
         // Acquire this list of TLD resource paths to be processed
         Set resourcePaths = tldScanResourcePaths();
@@ -1036,19 +1053,14 @@ public final class ContextConfig
         while (paths.hasNext()) {
             String path = (String) paths.next();
             if (path.endsWith(".jar")) {
-                long t1=System.currentTimeMillis();
                 tldScanJar(path);
-                long t2=System.currentTimeMillis();
-                if( (t2-t1 ) > 200 ) 
-                    log.info("Processed tld jar  " + path + " "  + ( t2-t1));
             } else {
-                long t1=System.currentTimeMillis();
                 tldScanTld(path);
-                long t2=System.currentTimeMillis();
-                if( (t2-t1 ) > 200 ) 
-                    log.info("Processed tld  " + path + " "  + ( t2-t1));
-
             }
+        }
+        long t2=System.currentTimeMillis();
+        if( context instanceof StandardContext ) {
+            ((StandardContext)context).setTldScanTime(t2-t1);
         }
 
     }
@@ -1220,7 +1232,6 @@ public final class ContextConfig
      *  accumulating the list of resource paths
      */
     private Set tldScanResourcePaths() throws IOException {
-
         if (log.isDebugEnabled()) {
             log.debug(" Accumulating TLD resource paths");
         }
