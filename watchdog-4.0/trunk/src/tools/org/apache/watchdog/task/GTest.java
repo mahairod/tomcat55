@@ -709,7 +709,6 @@ public class GTest extends Task implements TaskContainer {
                                     if ( idx > -1 ) {
                                         String tempValue = currentHeaderValue.substring( 0, idx ) +
                                                            currentHeaderValue.substring( idx + 3 );
-                                        System.out.println( tempValue );
                                         if ( currentHeaderValue.equals( resVal ) || 
                                              tempValue.equals( resVal ) ) {
                                             numberFound++;
