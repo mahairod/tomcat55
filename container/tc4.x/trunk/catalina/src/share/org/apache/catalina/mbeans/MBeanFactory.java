@@ -925,7 +925,8 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
         Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        Context context = (Context) host.findChild(pname.getKeyProperty("path"));
+        String pathStr = getPathStr(pname.getKeyProperty("path"));
+        Context context = (Context) host.findChild(pathStr);
         context.setManager(manager);
 
         // Return the corresponding MBean name
@@ -1106,7 +1107,8 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
         Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        Context context = (Context) host.findChild(pname.getKeyProperty("path"));
+        String pathStr = getPathStr(pname.getKeyProperty("path"));
+        Context context = (Context) host.findChild(pathStr);
         context.setLoader(loader);
 
         // Return the corresponding MBean name
@@ -1179,7 +1181,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
         String hostName = oname.getKeyProperty("host");
-        String contextName = oname.getKeyProperty("path");
+        String contextName = getPathStr(oname.getKeyProperty("path"));
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
@@ -1229,6 +1231,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
         String hostName = oname.getKeyProperty("host");
+        
         String path = oname.getKeyProperty("path");
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
@@ -1258,6 +1261,7 @@ public class MBeanFactory extends BaseModelMBean {
             }
         } else {                // logger's container is Context
             StandardHost host = (StandardHost) engine.findChild(hostName);
+            path = getPathStr(path);
             StandardContext context = (StandardContext) host.findChild(path);
             Logger logger = context.getLogger();
             Container container = logger.getContainer();
@@ -1290,7 +1294,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
         String hostName = oname.getKeyProperty("host");
-        String contextName = oname.getKeyProperty("path");
+        String contextName = getPathStr(oname.getKeyProperty("path"));
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
@@ -1316,7 +1320,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
         String hostName = oname.getKeyProperty("host");
-        String contextName = oname.getKeyProperty("path");
+        String contextName = getPathStr(oname.getKeyProperty("path"));
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
@@ -1371,6 +1375,7 @@ public class MBeanFactory extends BaseModelMBean {
             }
         } else {                // realm's container is Context
             StandardHost host = (StandardHost) engine.findChild(hostName);
+            path = getPathStr(path);
             StandardContext context = (StandardContext) host.findChild(path);
             Realm realm = context.getRealm();
             Container container = realm.getContainer();
@@ -1464,6 +1469,7 @@ public class MBeanFactory extends BaseModelMBean {
             }
         } else {                // valve's container is Context
             StandardHost host = (StandardHost) engine.findChild(hostName);
+            path = getPathStr(path);
             StandardContext context = (StandardContext) host.findChild(path);
             Valve [] valves = context.getValves();
             for (int i = 0; i < valves.length; i++) {
