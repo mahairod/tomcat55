@@ -1021,7 +1021,6 @@ public class Generator {
             out.printil("out.println(" + quote(">") + ");");
 
             out.printil("out.println(" + quote("<NOEMBED>") + ");");
-            out.printil("out.println(" + quote("</COMMENT>") + ");");
 
             /*
              * Fallback
@@ -1032,6 +1031,7 @@ public class Generator {
             }
 
             out.printil("out.println(" + quote("</NOEMBED></EMBED>") + ");");
+            out.printil("out.println(" + quote("</COMMENT>") + ");");
             out.printil("out.println(" + quote("</OBJECT>") + ");");
 
             n.setEndJavaLine(out.getJavaLine());
