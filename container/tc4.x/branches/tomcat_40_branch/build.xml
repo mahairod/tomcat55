@@ -20,6 +20,13 @@
 
 
 
+  <!-- =================== DETECT: Display configuration ================== -->
+  <target name="detect"
+   description="Display configuration flags">
+    <ant dir="./catalina" target="flags.display"/>
+  </target>
+
+
   <!-- ===================== DEPLOY: Create Directories =================== -->
   <target name="deploy-prepare">
     <mkdir dir="${tomcat.build}"/>

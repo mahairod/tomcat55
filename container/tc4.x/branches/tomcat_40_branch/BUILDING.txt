@@ -138,17 +138,23 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(6) Download and Install JDBC Optional Package API
+(6) Steps (7) - (17) are optional, but are necessary to build a complete binary
+    distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
+    build.properties file (see step (18)) to build a complete distribution.
+    Regular contributors to Tomcat are encouraged to use the complete build 
+    option.
+
+
+(7) Download and Install JDBC Optional Package API Binary Distribution
 
 * Download the JDBC Optional Pacakge API package (version 2.0) from:
 
     http://java.sun.com/products/jdbc/download.html
 
-* Unpack the package into a convenient location so that it resides
-  in its own subdirectory.
+* Place the jar in a convenient location.
 
 
-(7) Download and Install the JMX 1.0 Reference Implementation
+(8) Download and Install the JMX 1.0 Reference Implementation
 
 * Download the JMX Instrumentation and Agent Reference Implementation
   (version 1.0 or later) from
@@ -159,7 +165,7 @@ of Tomcat 4.0.
   it resides in its own subdirectory.
 
 
-(8) Download and Install the JNDI 1.2.1 Reference Implementation
+(9) Download and Install the JNDI 1.2.1 Reference Implementation
 
 * Download the Java Naming and Directory Interface (JNDI) package,
   (version 1.2.1 or later) from
@@ -173,7 +179,7 @@ of Tomcat 4.0.
   same download page.  Be sure that you unpack "ldap.jar" into the "lib"
   subdirectory of the JNDI directory, parallel to "jndi.jar".
 
-(9) Download and Install the Java Activation Framework 1.0.1
+(10) Download and Install the Java Activation Framework 1.0.1
 
 * Download the Java Activation Framework package (version 1.0.1 or later) from
 
@@ -182,7 +188,7 @@ of Tomcat 4.0.
 * Unpack the package into a convenient location so that it
   resised in its own subdirectory.
 
-(10) Download and Install JavaMail 1.2
+(11) Download and Install JavaMail 1.2
 
 * Download the JavaMail package (version 1.2 or later) from
 
@@ -192,7 +198,7 @@ of Tomcat 4.0.
   it resides in its own subdirectory.
 
 
-(11) Download and Install the JSSE 1.0.2 Reference Implementation
+(12) Download and Install the JSSE 1.0.2 Reference Implementation
 
 * Download the Java Secure Sockets Extension (JSSE) package,
   (version 1.0.2 or later) from
@@ -203,7 +209,7 @@ of Tomcat 4.0.
   it resides in its own subdirectory.
 
 
-(12) Download and Install the Java Transaction APIs
+(13) Download and Install the Java Transaction APIs
 
 * Download the Java Transaction API (JTA) package (version 1.0.1) from:
 
@@ -213,7 +219,7 @@ of Tomcat 4.0.
   own subdirectory.
 
 
-(13) Download and Install the Tyrex Data Source Package
+(14) Download and Install the Tyrex Data Source Package
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -226,7 +232,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(14) Download and Install the JUnit Testing Package (OPTIONAL)
+(15) Download and Install the JUnit Testing Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build and execute the unit
 tests that are part of the Tomcat 4.0 source base.
@@ -239,7 +245,14 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(15) Customize Build Properties For This Subproject
+(16) Check out the jakarta-tomcat-connectors repository, using the "TOMCAT_4_1"
+     tag.
+
+
+(17) Compile the "util" module, and the "jk" module.
+
+
+(18) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -263,7 +276,7 @@ repository.  This file is local to your own development environment, and
 each developer will have their own version.
 
 
-(16) Build A Binary Distribution
+(19) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 

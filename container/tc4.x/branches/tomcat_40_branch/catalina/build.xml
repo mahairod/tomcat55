@@ -64,10 +64,304 @@
   </path>
 
 
+  <!-- =================== BUILD: Set compile flags ======================= -->
+  <target name="flags">
+
+    <!-- JDK flags -->
+    <available property="jdk.1.2.present" classname="java.util.HashMap" />
+    <available property="jdk.1.3.present" 
+     classname="java.lang.reflect.Proxy" />
+    <available property="jdk.1.4.present" classname="java.nio.Buffer" />
+
+    <!-- Ant flags -->
+    <available property="style.available"
+     classname="org.apache.tools.ant.taskdefs.optional.TraXLiaison" />
+
+    <!-- Class availability flags -->
+    <condition property="javamail.present">
+      <and>
+        <available classname="javax.activation.DataSource"
+         classpath="${activation.jar}" />
+        <available classname="javax.mail.Service"
+         classpath="${mail.jar}" />
+      </and>
+    </condition>
+    <available property="jmx.present"
+     classname="javax.management.MBeanServer"
+     classpath="${jmxri.jar}" />
+    <available property="jndi.present"
+     classname="javax.naming.Context"
+     classpath="${jndi.jar}" />
+    <condition property="jsse.present">
+      <and>
+        <available classname="javax.security.cert.Certificate"
+         classpath="${jcert.jar}" />
+        <available classname="javax.net.SocketFactory"
+         classpath="${jnet.jar}" />
+        <available classname="javax.net.ssl.SSLSocket"
+         classpath="${jsse.jar}" />
+      </and>
+    </condition>
+    <condition property="jta.present">
+      <and>
+        <available classname="javax.sql.XADataSource"
+         classpath="${jdbc20ext.jar}" />
+        <available classname="javax.transaction.UserTransaction"
+         classpath="${jta.jar}" />
+      </and>
+    </condition>
+    <available property="junit.present"
+     classname="junit.framework.TestCase"
+     classpath="${junit.jar}" />
+    <available property="ldap.present"
+     classname="com.sun.jndi.ldap.LdapClient"
+     classpath="${ldap.jar}" />
+    <available property="regexp.present"
+     classname="org.apache.regexp.RE"
+     classpath="${regexp.jar}" />
+    <available property="servlet.present"
+     classname="javax.servlet.Servlet"
+     classpath="${servlet.jar}" />
+    <available property="tyrex.present"
+     classname="tyrex.tm.Tyrex"
+     classpath="${tyrex.jar}" />
+
+    <!-- JAR files availability flags -->
+    <available property="ajp.jar.present" file="${ajp.jar}" />
+    <condition property="javamail.jar.present">
+      <and>
+        <available file="${activation.jar}" />
+        <available file="${mail.jar}" />
+      </and>
+    </condition>
+    <available property="jdbc20ext.jar.present" file="${jdbc20ext.jar}" />
+    <available property="jcert.jar.present" file="${jcert.jar}" />
+    <available property="jndi.jar.present" file="${jndi.jar}" />
+    <available property="jnet.jar.present" file="${jnet.jar}" />
+    <available property="jsse.jar.present" file="${jsse.jar}" />
+    <available property="jta.jar.present" file="${jta.jar}" />
+    <available property="junit.jar.present" file="${junit.jar}" />
+    <available property="ldap.jar.present" file="${ldap.jar}" />
+    <available property="regexp.jar.present" file="${regexp.jar}" />
+    <available property="servlet.jar.present" file="${servlet.jar}" />
+    <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
+    <available property="tyrex.jar.present" file="${tyrex.jar}" />
+
+    <!-- Conditional compilation flags (determined from the flags above) -->
+    <condition property="compile.javamail">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${javamail.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.jmx">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jmx.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.jndi">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jndi.present}" arg2="true" />
+        <equals arg1="${jdk.1.3.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.jsse">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jsse.present}" arg2="true" />
+        <equals arg1="${jdk.1.4.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.jta">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jta.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.junit">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${junit.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.ldap">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${ldap.present}" arg2="true" />
+        <equals arg1="${jdk.1.3.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="compile.tyrex">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${tyrex.present}" arg2="true" />
+      </or>
+    </condition>
+
+
+    <!-- Conditional copy flags (determined from the flags above) -->
+    <condition property="copy.ajp.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${ajp.jar.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.jdbc20ext.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${jdbc20ext.jar.present}" arg2="true" />
+          <not>
+            <equals arg1="${jdk.1.4.present}" arg2="true" />
+          </not>
+        </and>
+      </or>
+    </condition>
+    <condition property="copy.jndi.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${jndi.jar.present}" arg2="true" />
+          <not>
+            <or>
+              <equals arg1="${jdk.1.3.present}" arg2="true" />
+              <equals arg1="${jdk.1.4.present}" arg2="true" />
+            </or>
+          </not>
+        </and>
+      </or>
+    </condition>
+    <condition property="copy.javamail.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${javamail.jar.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.jta.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jta.jar.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.ldap.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${ldap.jar.present}" arg2="true" />
+          <not>
+            <or>
+              <equals arg1="${jdk.1.3.present}" arg2="true" />
+              <equals arg1="${jdk.1.4.present}" arg2="true" />
+            </or>
+          </not>
+        </and>
+      </or>
+    </condition>
+    <condition property="copy.jsse.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${jcert.jar.present}" arg2="true" />
+          <equals arg1="${jnet.jar.present}" arg2="true" />
+          <equals arg1="${jsse.jar.present}" arg2="true" />
+          <not>
+            <equals arg1="${jdk.1.4.present}" arg2="true" />
+          </not>
+        </and>
+      </or>
+    </condition>
+    <condition property="copy.tomcat-util.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${tomcat-util.jar.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.tyrex.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${tyrex.jar.present}" arg2="true" />
+      </or>
+    </condition>
+
+  </target>
+
+
+  <!-- =================== BUILD: Set compile flags ======================= -->
+  <target name="flags.display" depends="flags" unless="flags.hide">
+
+    <echo message="--- Build environment for Catalina ---" />
+
+    <echo message="If ${property_name} is displayed, then the property is not set)" />
+
+    <echo message="--- Build options ---" />
+    <echo message="full.dist=${full.dist}" />
+    <echo message="build.sysclasspath=${build.sysclasspath}" />
+    <echo message="compile.debug=${compile.debug}" />
+    <echo message="compile.deprecation=${compile.deprecation}" />
+    <echo message="compile.optimize=${compile.optimize}" />
+
+    <echo message="--- Ant Flags ---" />
+    <echo message="&lt;style&gt; task available (required)=${style.available}" />
+
+    <echo message="--- JDK ---" />
+    <echo message="jdk.1.2.present=${jdk.1.2.present}" />
+    <echo message="jdk.1.3.present=${jdk.1.3.present}" />
+    <echo message="jdk.1.4.present=${jdk.1.4.present}" />
+
+    <echo message="--- Required Libraries ---" />
+    <echo message="jndi.present=${jndi.present}" />
+    <echo message="regexp.present=${regexp.present}" />
+    <echo message="servlet.present=${servlet.present}" />
+
+    <echo message="--- Optional Libraries ---" />
+    <echo message="javamail.present=${javamail.present}" />
+    <echo message="jsse.present=${jsse.present}" />
+    <echo message="jta.present=${jta.present}" />
+    <echo message="junit.present=${junit.present}" />
+    <echo message="ldap.present=${ldap.present}" />
+    <echo message="tyrex.present=${tyrex.present}" />
+
+    <echo message="--- Required JARs ---" />
+    <echo message="jndi.jar.present(except JDK 1.3+)=${jndi.jar.present}" />
+    <echo message="regexp.jar.present=${regexp.jar.present}" />
+    <echo message="servlet.jar.present=${servlet.jar.present}" />
+    <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
+
+    <echo message="--- Optional JARs ---" />
+    <echo message="ajp.jar.present=${ajp.jar.present}" />
+    <echo message="javamail.jar.present=${javamail.jar.present}" />
+    <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
+    <echo message="jta.jar.present=${jta.jar.present}" />
+    <echo message="junit.jar.present=${junit.jar.present}" />
+    <echo message="ldap.jar.present=${ldap.jar.present}" />
+    <echo message="tyrex.jar.present=${tyrex.jar.present}" />
+
+    <echo message="--- Conditional compilation flags ---" />
+    <echo message="compile.javamail=${compile.javamail}" />
+    <echo message="compile.jmx=${compile.jmx}" />
+    <echo message="compile.jndi=${compile.jndi}" />
+    <echo message="compile.jsse=${compile.jsse}" />
+    <echo message="compile.jta=${compile.jta}" />
+    <echo message="compile.junit=${compile.junit}" />
+    <echo message="compile.ldap=${compile.ldap}" />
+    <echo message="compile.tyrex=${compile.tyrex}" />
+
+    <echo message="--- Distribution flags ---" />
+    <echo message="copy.ajp.jar=${copy.ajp.jar}" />
+    <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
+    <echo message="copy.jndi.jar=${copy.jndi.jar}" />
+    <echo message="copy.javamail.jar=${copy.javamail.jar}" />
+    <echo message="copy.jta.jar=${copy.jta.jar}" />
+    <echo message="copy.ldap.jar=${copy.ldap.jar}" />
+    <echo message="copy.tomcat-util.jar=${copy.tomcat-util.jar}" />
+    <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
+
+  </target>
+
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
-
-    <available classname="junit.framework.TestCase" property="junit.present" />
 
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
@@ -84,8 +378,46 @@
   </target>
 
 
+  <!-- ======================== BUILD: Copy JARs ========================== -->
+  <target name="copy-ajp.jar" if="copy.ajp.jar">
+    <copy todir="${catalina.build}/server/lib" file="${ajp.jar}"/>
+  </target>
+  <target name="copy-activation.jar" if="copy.javamail.jar">
+    <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
+  </target>
+  <target name="copy-jdbc20ext.jar" if="copy.jdbc20ext.jar">
+    <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
+  </target>
+  <target name="copy-jndi.jar" if="copy.jndi.jar">
+    <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
+  </target>
+  <target name="copy-jta.jar" if="copy.jta.jar">
+    <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
+  </target>
+  <target name="copy-ldap.jar" if="copy.ldap.jar">
+    <!-- Cannot redistribute LDAP
+    <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
+    -->
+  </target>
+  <target name="copy-jsse.jar" if="copy.jsse.jar">
+    <!-- Cannot redistribute JSSE
+    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
+    -->
+  </target>
+  <target name="copy-tomcat-util.jar" if="copy.tomcat-util.jar">
+    <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
+  </target>
+  <target name="copy-tyrex.jar" if="copy.tyrex.jar">
+    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
+  </target>
+
+
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-ajp.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -99,24 +431,9 @@
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
 
     <!-- Common Extensions -->
-    <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${copy.crimson.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${copy.jaxp.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
-<!-- Cannot redistribute JSSE
-    <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
--->
-    <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
-<!-- Connot redistribute LDAP
-    <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
--->
-    <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">
@@ -137,9 +454,6 @@
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static">
 
-    <available property="jdk.1.3.present"
-     classname="java.lang.reflect.Proxy" />
-
     <!-- Compile Service API -->
     <javac srcdir="../service/java" destdir="${catalina.build}/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
@@ -152,8 +466,28 @@
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
       <classpath refid="catalina.classpath" />
-      <exclude name="**/util/ProcessHelper.java" unless="jdk.1.3.present"/>
-      <exclude name="**/servlets/CGIServlet.java" unless="jdk.1.3.present"/>
+      <exclude name="org/apache/catalina/util/ProcessHelper.java" 
+       unless="jdk.1.3.present"/>
+      <exclude name="org/apache/catalina/servlets/CGIServlet.java" 
+       unless="jdk.1.3.present"/>
+      <exclude name="org/apache/naming/factory/TyrexDataSourceFactory.java" 
+       unless="compile.tyrex"/>
+      <exclude name="org/apache/naming/factory/TyrexTransactionFactory.java" 
+       unless="compile.tyrex"/>
+      <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
+       unless="compile.jsse"/>
+      <exclude name="org/apache/catalina/valves/CertificatesValve.java"
+       unless="compile.jsse"/>
+      <exclude name="org/apache/naming/factory/MailSessionFactory.java"
+       unless="compile.javamail"/>
+      <exclude name="org/apache/naming/factory/SendMailFactory.java"
+       unless="compile.javamail"/>
+      <exclude name="org/apache/catalina/startup/EmbeddedManager.java"
+       unless="compile.jmx"/>
+      <exclude name="org/apache/catalina/startup/CatalinaManager.java"
+       unless="compile.jmx"/>
+      <exclude name="org/apache/naming/NamingService.java"
+       unless="compile.jmx"/>
     </javac>
 
     <!-- Copy static resource files -->
@@ -167,7 +501,7 @@
 
 
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
-  <target name="javadoc" depends="build-main">
+  <target name="javadoc">
     <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
@@ -457,14 +791,6 @@
     <copy todir="${catalina.dist}/common/lib">
       <fileset dir="${catalina.build}/common/lib" />
     </copy>
-
-    <!-- Cannot redistribute JSSE -->
-    <echo>
-        Cannot redistribute JSSE. Deleting jars from distribution.
-    </echo>
-    <delete file="${catalina.deploy}/common/lib/jcert.jar"/>
-    <delete file="${catalina.deploy}/common/lib/jnet.jar"/>
-    <delete file="${catalina.deploy}/common/lib/jsse.jar"/>
 
     <!-- Configuration Files -->
     <mkdir dir="${catalina.dist}/conf"/>
