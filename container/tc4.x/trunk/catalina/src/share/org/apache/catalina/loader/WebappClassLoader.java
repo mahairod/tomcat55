@@ -687,13 +687,23 @@ public class WebappClassLoader
         // Checking for modified loaded resources
         int length = paths.length;
 
+        // A rare race condition can occur in the updates of the two arrays
+        // It's totally ok if the latest class added is not checked (it will
+        // be checked the next time
+        int length2 = lastModifiedDates.length;
+        if (length > length2)
+            length = length2;
+
         for (int i = 0; i < length; i++) {
             try {
                 long lastModified = 
                     ((ResourceAttributes) resources.getAttributes(paths[i]))
                     .getLastModified().getTime();
                 if (lastModified != lastModifiedDates[i]) {
-                    log("  Resource '" + paths[i] + "' was modified");
+                    log("  Resource '" + paths[i] 
+                        + "' was modified; Date is now: " 
+                        + new java.util.Date(lastModified) + " Was: "
+                        + new java.util.Date(lastModifiedDates[i]));
                     return (true);
                 }
             } catch (NamingException e) {
@@ -1535,19 +1545,19 @@ public class WebappClassLoader
 
                     int j;
 
-                    String[] result = new String[paths.length + 1];
-                    for (j = 0; j < paths.length; j++) {
-                        result[j] = paths[j];
-                    }
-                    result[paths.length] = fullPath;
-                    paths = result;
-
                     long[] result2 = new long[lastModifiedDates.length + 1];
                     for (j = 0; j < lastModifiedDates.length; j++) {
                         result2[j] = lastModifiedDates[j];
                     }
                     result2[lastModifiedDates.length] = entry.lastModified;
                     lastModifiedDates = result2;
+
+                    String[] result = new String[paths.length + 1];
+                    for (j = 0; j < paths.length; j++) {
+                        result[j] = paths[j];
+                    }
+                    result[paths.length] = fullPath;
+                    paths = result;
 
                 }
                 

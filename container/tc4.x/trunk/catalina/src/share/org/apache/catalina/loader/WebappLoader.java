@@ -1250,9 +1250,14 @@ public class WebappLoader
 	    // Wait for our check interval
 	    threadSleep();
 
-	    // Perform our modification check
-	    if (!classLoader.modified())
-		continue;
+            try {
+                // Perform our modification check
+                if (!classLoader.modified())
+                    continue;
+            } catch (Exception e) {
+                log(sm.getString("webappLoader.failModifiedCheck"), e);
+                continue;
+            }
 
 	    // Handle a need for reloading
 	    notifyContext();
