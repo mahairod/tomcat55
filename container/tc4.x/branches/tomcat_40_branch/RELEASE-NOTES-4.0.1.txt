@@ -67,6 +67,14 @@ Build.xml: Fixes for the DOS style CRLF problems.
 Scripts: Fix problems with the catalina.bat and jasper.bat scripts when
 they are run on Windows 9x.
 
+CGI Servlet: The CGI servlet will not be available to web applications, unless
+$CATALINA_HOME/server/lib/servlets-cgi.renametojar is renamed (as the name 
+implies) to $CATALINA_HOME/server/lib/servlets-cgi.jar.
+
+SSI Servlet: The SSI servlet and helper classes will not be available to web 
+applications, unless $CATALINA_HOME/server/lib/servlets-cgi.renametojar 
+is renamed (as the name implies) to $CATALINA_HOME/server/lib/servlets-cgi.jar.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -89,6 +97,11 @@ was thrown during the process being reported by this event. This applies to
 any of the "AFTER" events.
 
 Catalina.bat: Fix the path used for jsse.jar.
+
+Context: Add a new privileged flag.
+
+StandardWrapper: Only allow container servlets in privileged contexts, with the
+exception of the InvokerServlet.
 
 
 ----------------
@@ -118,6 +131,9 @@ Bugzilla Bugs Resolved:
 4078    "%JSSE_HOME%\jsse.jar" should be "%JSSE_HOME%\lib\jsse.jar" 
         in catalina.bat.
 4104    Null saved request at FormAuthenticator.authenticate().
+4134    WarpConnector.java: appbase -> appBase.
+4135    WarpConnector.java: setAddress(int port) possibly unused.
+4136    WarpConnector.java:Minor typos.
 
 
 ============================
@@ -322,6 +338,7 @@ Tomcat 4.0 and Apache Cocoon 2.0:
 
 For optimal performance with Apache Cocoon 2.0, it is recommended to use the
 HTTP/1.0 connector.
+
 
 
 
