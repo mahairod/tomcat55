@@ -161,6 +161,11 @@ public class JspC implements Options { //, JspCompilationContext {
     public boolean getMappedFile() {
 		return mappedFile;
 	}
+
+    // Off-line compiler, no need for security manager
+    public Object getProtectionDomain() {
+	return null;
+    }
     
     public boolean getSendErrorToClient() {
         // implied send to System.err

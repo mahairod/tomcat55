@@ -67,6 +67,8 @@ import java.io.IOException;
 import java.io.File;
 import java.io.ByteArrayOutputStream;
 
+import java.security.*;
+
 /**
   * A Plug-in class for specifying a 'jikes' compile.
   *
@@ -120,10 +122,41 @@ public class JikesJavaCompiler implements JavaCompiler {
     }
 
     /**
+     * When using a SecurityManager and a JSP page itself triggers
+     * another JSP due to an errorPage or from a jsp:include,
+     * the compile must be performed with the Permissions of
+     * this class using doPriviledged because the parent JSP
+     * may not have sufficient Permissions.
+     */
+    private boolean compile_priviledged(String source) {
+        class doInit implements PrivilegedAction {
+            String src;
+            Boolean result;
+            public doInit(String source ) {
+                src = source;
+            }
+            public Object run() {
+                result = new Boolean(compile_source(src));
+                return result;
+            }
+        }
+        doInit di = new doInit(source);
+        Boolean res = (Boolean)AccessController.doPrivileged(di);
+        return res.booleanValue();
+    }
+
+    public boolean compile(String source) {
+        if( System.getSecurityManager() == null )
+            return compile_source(source);
+        else
+            return compile_priviledged(source);
+    }
+
+    /**
      * Execute the compiler
      * @param source - file name of the source to be compiled
      */ 
-    public boolean compile(String source) {
+    private boolean compile_source(String source) {
 	Process p;
 	int exitValue = -1;
 

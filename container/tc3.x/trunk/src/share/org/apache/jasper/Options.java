@@ -121,4 +121,8 @@ public interface Options {
      */
     public String getJspCompilerPath();
     
+    /**
+     * ProtectionDomain for this JSP Context when using a SecurityManager
+     */
+    public Object getProtectionDomain();
 }
