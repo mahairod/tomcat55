@@ -251,8 +251,8 @@ public class JspServlet extends HttpServlet {
     }
 
     public void destroy() {
-	if (log.isInfoEnabled()) {
-	    log.info("JspServlet.destroy()");
+	if (log.isDebugEnabled()) {
+	    log.debug("JspServlet.destroy()");
 	}
         rctxt.destroy();
     }
