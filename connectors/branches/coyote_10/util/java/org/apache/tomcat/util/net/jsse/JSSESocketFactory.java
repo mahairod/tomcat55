@@ -89,7 +89,7 @@ import javax.net.ssl.HandshakeCompletedEvent;
  * @author Stefan Freyr Stefansson
  * @author EKR -- renamed to JSSESocketFactory
  */
-public class JSSESocketFactory
+public abstract class JSSESocketFactory
     extends org.apache.tomcat.util.net.ServerSocketFactory
 {
     String keystoreType;
@@ -146,91 +146,7 @@ public class JSSESocketFactory
     // -------------------- Internal methods
     /** Read the keystore, init the SSL socket factory
      */
-    void initProxy() throws IOException {
-	try {
-	    Security.addProvider (new sun.security.provider.Sun());
-	    Security.addProvider (new com.sun.net.ssl.internal.ssl.Provider());
-
-	    // Please don't change the name of the attribute - other
-	    // software may depend on it ( j2ee for sure )
-	    String keystoreFile=(String)attributes.get("keystore");
-	    if( keystoreFile==null) keystoreFile=defaultKeystoreFile;
-
-	    keystoreType=(String)attributes.get("keystoreType");
-	    if( keystoreType==null) keystoreType=defaultKeystoreType;
-
-	    //determine whether we want client authentication
-	    // the presence of the attribute enables client auth
-	    String clientAuthStr=(String)attributes.get("clientauth");
-	    if(clientAuthStr != null){
-		if(clientAuthStr.equals("true")){
-		    clientAuth=true;
-		} else if(clientAuthStr.equals("false")) {
-		    clientAuth=false;
-		} else {
-		    throw new IOException("Invalid value '" +
-					  clientAuthStr + 
-					  "' for 'clientauth' parameter:");
-		}
-	    }
-
-	    String keyPass=(String)attributes.get("keypass");
-	    if( keyPass==null) keyPass=defaultKeyPass;
-
-	    String keystorePass=(String)attributes.get("keystorePass");
-	    if( keystorePass==null) keystorePass=keyPass;
-
-	    //protocol for the SSL ie - TLS, SSL v3 etc.
-	    String protocol = (String)attributes.get("protocol");
-	    if(protocol == null) protocol = defaultProtocol;
-	    
-	    //Algorithm used to encode the certificate ie - SunX509
-	    String algorithm = (String)attributes.get("algorithm");
-	    if(algorithm == null) algorithm = defaultAlgorithm;
-	    
-	    // You can't use ssl without a server certificate.
-	    // Create a KeyStore ( to get server certs )
-	    KeyStore kstore = initKeyStore( keystoreFile, keystorePass );
-	    
-	    // Create a SSLContext ( to create the ssl factory )
-	    // This is the only way to use server sockets with JSSE 1.0.1
-	    com.sun.net.ssl.SSLContext context = 
-		com.sun.net.ssl.SSLContext.getInstance(protocol); //SSL
-
-	    // Key manager will extract the server key
-	    com.sun.net.ssl.KeyManagerFactory kmf = 
-		com.sun.net.ssl.KeyManagerFactory.getInstance(algorithm);
-	    kmf.init( kstore, keyPass.toCharArray());
-
-	    //  set up TrustManager
-	    com.sun.net.ssl.TrustManager[] tm = null;
-	    String trustStoreFile = System.getProperty("javax.net.ssl.trustStore");
-	    String trustStorePassword =
-	        System.getProperty("javax.net.ssl.trustStorePassword");
-	    if ( trustStoreFile != null && trustStorePassword != null ){
-            KeyStore trustStore = initKeyStore( trustStoreFile, trustStorePassword);
-            
-            com.sun.net.ssl.TrustManagerFactory tmf =
-                com.sun.net.ssl.TrustManagerFactory.getInstance("SunX509");
-
-            tmf.init(trustStore);
-            tm = tmf.getTrustManagers();
-        }
-
-	    // init context with the key managers
-	    context.init(kmf.getKeyManagers(), tm, 
-			 new java.security.SecureRandom());
-
-	    // create proxy
-	    sslProxy = context.getServerSocketFactory();
-
-	    return;
-	} catch(Exception e) {
-	    if( e instanceof IOException )
-		throw (IOException)e;
-	    throw new IOException(e.getMessage());
-	}
-    }
+    abstract void initProxy() throws IOException;
 
     public Socket acceptSocket(ServerSocket socket)
 	throws IOException
