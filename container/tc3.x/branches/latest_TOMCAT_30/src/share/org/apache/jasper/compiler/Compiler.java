@@ -66,6 +66,8 @@ import java.io.PrintWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
+import java.util.Hashtable;
+
 import org.apache.jasper.JspEngineContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
@@ -119,13 +121,42 @@ public abstract class Compiler {
                           new Object[] { classFileName },
                           Constants.MED_VERBOSITY);
 
-        JspReader reader = JspReader.createJspReader(ctxt.getJspFile(), ctxt.getServletContext());
+        
+        // Need the encoding specified in the JSP 'page' directive for
+        //  - reading the JSP page
+        //  - writing the JSP servlet source
+        //  - compiling the generated servlets (pass -encoding to javac).
+        // XXX - There are really three encodings of interest.
+
+        String jspEncoding = "8859_1";          // default per JSP spec
+        String javaEncoding = "UTF8";           // perhaps debatable?
+
+	// This seems to be a reasonable point to scan the JSP file
+	// for a 'contentType' directive. If it found then the set
+	// the value of 'jspEncoding to reflect the value specified.
+
+	// specifies whether the JSP contains a non-default encoding to
+	// save this agony (two-phase parsing).
+	
+	if (true) {
+	    JspReader tmpReader = JspReader.createJspReader(
+							    ctxt.getJspFile(),
+							    ctxt.getServletContext(),
+							    jspEncoding);
+	    String newEncode = changeEncodingIfNecessary(tmpReader);
+	    if (newEncode != null) jspEncoding = newEncode;
+							 
+	}	
+
+        JspReader reader = JspReader.createJspReader(ctxt.getJspFile(),
+						     ctxt.getServletContext(),
+						     jspEncoding);
 
         ServletWriter writer = 
             (new ServletWriter
                 (new PrintWriter
-                    (new EscapeUnicodeWriter
-                        (new FileOutputStream(javaFileName)))));
+                    (new java.io.OutputStreamWriter
+                        (new FileOutputStream(javaFileName), javaEncoding))));
 
         ctxt.setReader(reader);
         ctxt.setWriter(writer);
@@ -259,4 +290,42 @@ public abstract class Compiler {
     public void setMangler(Mangler mangler) {
         this.mangler = mangler;
     }
+
+    /**
+     * Change the encoding for the reader if specified.
+     */    
+    public String changeEncodingIfNecessary(JspReader tmpReader) {
+
+	// A lot of code replicated from Parser.java
+	// Main aim is to "get-it-to-work".
+	while (tmpReader.skipUntil("<%@") != null) {
+
+	    tmpReader.skipSpaces();
+
+	    // check if it is a page directive.
+	    if (tmpReader.matches("page")) {
+
+		tmpReader.advance(4);
+		tmpReader.skipSpaces();
+		
+		try {
+		    Hashtable attrs = tmpReader.parseTagAttributes();
+		    String ct = (String) attrs.get("contentType");
+		    if (ct != null) {
+			int loc = ct.indexOf("charset=");
+			if (loc > 0) {
+			    String encoding = ct.substring(loc + 8);
+			    return encoding;
+			}
+		    }
+		} catch (ParseException ex) {
+		    // Ignore the exception here, it will be caught later.
+		    return null;
+		}
+	    }
+	}
+	return null;
+    }
+    
 }
+

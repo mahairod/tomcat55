@@ -427,6 +427,8 @@ public class Response {
         // Use the setContentType() method so encoding is set properly
         String newType = constructLocalizedContentType(contentType, locale);
         setContentType(newType);
+
+	addHeader("Content-Language", contentLanguage);
     }
 
     String constructLocalizedContentType(String type, Locale loc) {
@@ -455,10 +457,12 @@ public class Response {
         if (encoding != null) {
 	    characterEncoding = encoding;
         }
+	addHeader("Content-Type", contentType);
     }
 
     public void setContentLength(int contentLength) {
 	this.contentLength = contentLength;
+	addHeader("Content-Length", (new Integer(contentLength)).toString());
     }
     
     public int getStatus() {
