@@ -1,60 +1,31 @@
-#!/bin/ksh
-
-# This the client nightly build sh script. This was originally written
-# for tokyo, a sparc solaris client.
+#!/bin/sh
 
 export BASEDIR=`dirname $0`
+. ${BASEDIR}/env-client
 
-export TYEAR=`date +%Y`
-export TMONTH=`date +%m`
-export TDAY=`date +%d`
-export TDSTRING=$TYEAR-$TMONTH-$TDAY
-export TLOGFILE=result/tomcat-$TDSTRING.log
-export TSEP=-----------------------------------------------
+${SCRIPT_DIR}/do-prepare-dir
 
-echo Build: $TDSTRING | cat > $TLOGFILE
-echo Platform: `uname -a` | cat >> $TLOGFILE
+## Try to keep the log file XML-like, so we can XSL-extract
+# usefull info from it
+echo "<build-report>" > $TLOGFILE
+echo "<build-id>$TDSTRING</build-id>"  >> $TLOGFILE    
+## echo "<platform>" `uname -a` "</platform>" >> $TLOGFILE
+echo "<hostname>$HOSTNAME</hostname>" >> $TLOGFILE
+echo "<hosttype>$HOSTTYPE</hosttype>" >> $TLOGFILE
+echo "<ostype>$OSTYPE</ostype>" >> $TLOGFILE
 
-#
-# WARNING: right now, all these scripts are deadly specific to tokyo
-# we need to define the following parametrs in a nightly.conf file
-# that is unique to the client.
-#
-# For example, we should have a tokyo.conf file for tokyo that
-# contains the following information:
-#
-#       $WS_DIR
-#       $RESULT_DIR
-#       $FTP_PICKUP_DIR
-#       $BUILD_STANDALONE       boolean flag to build tomcat standalone
-#       $BUILD_INTEGRATED       boolean flag to build tomcat+apache
-#
-# other hosts should have a hostname.conf file and this script should
-# be called via `client-nightly hostname.conf` from the cron job
-#
+# echo $TSEP | cat >> $TLOGFILE
+${SCRIPT_DIR}/do-checkout 
 
-if [ -d result ]; then
-  echo 
-else
-  mkdir result
-fi
+# echo $TSEP | cat >> $TLOGFILE
+${SCRIPT_DIR}/do-build >> $TLOGFILE
 
-if [ -d ws ]; then
-  rm -rf ws
-fi
+# echo $TSEP | cat >> $TLOGFILE
+${SCRIPT_DIR}/do-test >> $TLOGFILE
 
-mkdir ws
+${SCRIPT_DIR}/do-package 
 
-echo $TSEP | cat >> $TLOGFILE
-$BASEDIR/do-checkout 
-
-echo $TSEP | cat >> $TLOGFILE
-$BASEDIR/do-build >> $TLOGFILE
-
-echo $TSEP | cat >> $TLOGFILE
-$BASEDIR/do-test >> $TLOGFILE
-$BASEDIR/do-package
-./do-package 
+echo "</build-report>" >> $TLOGFILE
 
 
 

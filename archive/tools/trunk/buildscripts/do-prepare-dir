@@ -1,0 +1,21 @@
+#!/bin/sh
+
+BASEDIR=`dirname $0`
+. ${BASEDIR}/env-client
+
+if [ -d ${BUILD_DIR}/result ]; then
+  echo 
+else
+  mkdir ${BUILD_DIR}/result
+fi
+
+if [ -d ${BUILD_DIR}/ws ]; then
+  rm -rf ${BUILD_DIR}/ws
+fi
+
+mkdir ${BUILD_DIR}/ws
+
+
+
+
+

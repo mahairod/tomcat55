@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# This the client nightly build sh script. This was originally written
+# for tokyo, a sparc solaris client.
+
+TYEAR=`date +%Y`
+TMONTH=`date +%m`
+TDAY=`date +%d`
+TDSTRING=$TYEAR-$TMONTH-$TDAY
+TSEP=-----------------------------------------------
+
+#
+# WARNING: right now, all these scripts are deadly specific to tokyo
+# we need to define the following parametrs in a nightly.conf file
+# that is unique to the client.
+#
+# For example, we should have a tokyo.conf file for tokyo that
+# contains the following information:
+#
+#       $WS_DIR
+#       $RESULT_DIR
+#       $FTP_PICKUP_DIR
+#       $BUILD_STANDALONE       boolean flag to build tomcat standalone
+#       $BUILD_INTEGRATED       boolean flag to build tomcat+apache
+#
+# other hosts should have a hostname.conf file and this script should
+# be called via `client-nightly hostname.conf` from the cron job
+#
+
+# default, may be overriden in host-specific
+BUILD_DIR=$HOME
+## Better ? BUILD_DIR=/tmp/$TDSTRING
+
+## XXX Duncan specific, cut build
+TOOLS_DIR=$HOME/build/jakarta-tools
+SCRIPT_DIR=${TOOLS_DIR}/buildscripts
+
+TLOGFILE=${BUILD_DIR}/result/tomcat-$TDSTRING.log
+
+export TDSTRING TLOGFILE TSEP BUILD_DIR TOOLS_DIR SCRIPT_DIR
+
+
+# per arch - "official"
+if [ -f ${SCRIPT_DIR}/env-${HOSTTYPE}-${OSTYPE} ]; then 
+    .  ${SCRIPT_DIR}/env-${HOSTTYPE}-${OSTYPE}
+fi
+
+# per host - "official"
+if [ -f ${SCRIPT_DIR}/env-$HOSTNAME ]; then 
+    .  ${SCRIPT_DIR}/env-$HOSTNAME
+fi
+
+# local settings
+if [ -f ${HOME}/.env-jakarta ]; then 
+    .  ${HOME}/.env-jakarta
+fi
+
+
+
+

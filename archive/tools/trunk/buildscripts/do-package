@@ -1,5 +1,8 @@
 #!/bin/ksh
 
+BASEDIR=`dirname $0`
+. ${BASEDIR}/env-client
+
 echo PACKAGE:
 
 export TYEAR=`date +%Y`

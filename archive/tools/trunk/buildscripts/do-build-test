@@ -1,0 +1,16 @@
+#!/bin/ksh
+
+BASEDIR=`dirname $0`
+. ${BASEDIR}/env-client
+
+echo "<build name=\"jakarta-tomcat-test\">"
+cd ${BUILD_DIR}/ws/jakarta-tomcat
+sh build.sh test
+echo "</build>"
+
+echo "<build name=\"jakarta-watchdog\">"
+cd ${BUILD_DIR}/ws/jakarta-watchdog
+sh build.sh dist
+echo "</build>"
+
+
