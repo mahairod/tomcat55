@@ -398,7 +398,7 @@
         <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
             testName="checkResponseTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
-            goldenFile="${wgdir}/core_syntax/implicitobjects/checkResponse.html"
+            expectHeaders="TestHeader:Method call OK"
             assertion="The response scripting variable is implictly made made available to the scripting environment and and is associated with an object of type javax.servlet.http.HttpServletResponse or javax.servlet.ServletResponse (protocol dependant).  JavaServer Pages Specification v1.2, Sec. 2.8.3"
             testStrategy="Validate that the object associated with the  response scripting variable is of type  javax.servlet.Response (parent class of HttpServletResponse) and that a method can be called against it."
         />
@@ -2017,7 +2017,7 @@
         <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
             testName="checkResponseTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
-            goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkResponse.html"
+            expectHeaders="TestHeader:Method call OK"
             assertion="The response scripting variable is implictly made made available to the scripting environment and and is associated with an object of type javax.servlet.http.HttpServletResponse or javax.servlet.ServletResponse (protocol dependant).  JavaServer Pages Specification v1.2, Sec. 2.8.3"
             testStrategy="Validate that the object associated with the  response scripting variable is of type  javax.servlet.Response (parent class of HttpServletResponse) and that a method can be called against it."
         />
