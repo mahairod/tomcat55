@@ -59,7 +59,8 @@ package org.apache.jasper.logging;
 import java.io.Writer;
 import java.io.StringWriter;
 import java.io.PrintWriter;
-
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -162,8 +163,23 @@ public class JasperLogger extends Logger {
     private void init() {
 	if (logDaemon == null || logQueue == null) {
 	    logQueue = new Queue();
-	    logDaemon = new LogDaemon(logQueue, servletContext);
-	    logDaemon.start();
+            class createDaemon implements PrivilegedAction {
+                private Queue logQueue;
+                private ServletContext servletContext;
+                public createDaemon(Queue logQueue,
+                                    ServletContext servletContext) {
+                    this.logQueue = logQueue;
+                    this.servletContext = servletContext;
+                }
+                public Object run() {
+                    LogDaemon logDaemon =
+                        new LogDaemon(logQueue, servletContext);
+                    logDaemon.start();
+                    return (logDaemon);
+                }
+            }
+            createDaemon cd = new createDaemon(logQueue, servletContext);
+            logDaemon = (LogDaemon) AccessController.doPrivileged(cd);
 	}
     }
     
