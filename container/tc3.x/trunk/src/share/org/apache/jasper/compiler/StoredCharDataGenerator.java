@@ -97,12 +97,12 @@ public class StoredCharDataGenerator
     private final void generateInit(ServletWriter writer) {
         if (stringId == 0) {
             String name = writer.quoteString(fileName);
-            writer.println("ObjectInputStream oin = null;");
+            writer.println("java.io.ObjectInputStream oin = null;");
             writer.println("int numStrings = 0;");
             writer.println("try {");
             writer.pushIndent();
-            writer.println("FileInputStream fin = new FileInputStream("+name+");");
-            writer.println("oin = new ObjectInputStream(fin);");
+            writer.println("java.io.FileInputStream fin = new java.io.FileInputStream("+name+");");
+            writer.println("oin = new java.io.ObjectInputStream(fin);");
             writer.println("_jspx_html_data = (char[][]) oin.readObject();");
             writer.popIndent();
             writer.println("} catch (Exception ex) {");
