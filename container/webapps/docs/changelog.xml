@@ -50,7 +50,7 @@
       removed only on destroy, rather than on stop (remm)
       </update>
       <fix>
-      <bug>9723</bug>: Avoid unneccessray calls to RequestUtil.filter, 
+      <bug>9723</bug>: Avoid unnecessary calls to RequestUtil.filter, 
       submitted by Arvind Srinivasan (amyroh)
       </fix>
       <fix>
@@ -66,7 +66,7 @@
       usual "/" to "" conversion for the path) (remm)
       </fix>
       <update>
-      All the properties definied in catalina.properties will now be set as
+      All the properties defined in catalina.properties will now be set as
       system properties (remm)
       </update>
       <update>
@@ -87,11 +87,36 @@
       submitted by Mark Thomas (remm)
       </fix>
       <fix>
-      <bug>24368</bug>: Fix unhandled exceptionm submitted by Mark Thomas
+      <bug>24368</bug>: Fix unhandled exception submitted by Mark Thomas
       (remm)
       </fix>
       <fix>
       <bug>23764</bug>: fix SSO logout (remm)
+      </fix>
+      <fix>
+      <bug>24829</bug>: The command is the last parameter, not the first one
+      (remm)
+      </fix>
+      <fix>
+      <bug>24832</bug>: Merge code from JDBC realm, fixing the valve after 
+      a restart of the database, submitted by submitted by Peter Rossbach 
+      (remm)
+      </fix>
+      <update>
+      <bug>23881</bug>: SSO in embedded Tomcat, submitted by Brian Stansberry
+      (remm)
+      </update>
+      <update>
+      When calling ServletContext.log, append the application's name so 
+      we know from which application the log is coming (jfarcand)
+      </update>
+      <fix>
+      Don't throw an ISE if Session.getLastModified is called while the 
+      session is expiring, submitted by Brian Stansberry (remm)
+      </fix>
+      <fix>
+      <bug>9077</bug>: When a session timeouts, it won't logout of all webapps,
+      submitted by Brian Stansberry (remm)
       </fix>
 
     </changelog>
@@ -144,6 +169,25 @@
       Add maxPostSize support for client cert, to allow limiting the size of
       the buffered data (billbarker, remm)
       </update>
+      <fix>
+      Throw exception if keyAlias does not identify key entry in connector's
+      key store, to prevent infinite loop on
+      org.apache.tomcat.util.net.PoolTcpEndpoint acceptSocket (luehe)
+      </fix>
+      <fix>
+      The KeyStore implementation ("JKS") of the SUN provider converts 
+      alias names to lower case, so we need to do the same (luehe)
+      </fix>
+      <fix>
+      Fix character encoding for URL parameters: char decoding should only
+      occur after %xx decoding (remm)
+      </fix>
+      <fix>
+      Fixes to remote address and host resolution through JMX (amyroh)
+      </fix>
+      <update>
+      Add getters to the thread pool and HTTP connector (amyroh)
+      </update>
 
     </changelog>
 
@@ -158,21 +202,21 @@
       Matthias Ernst
       </fix>
       <update>
-      Concatenate text strings of adjecent TemplateText nodes, which may
+      Concatenate text strings of adjacent TemplateText nodes, which may
       reduce code size and improve performance (kinman)
       </update>
       <fix>
       <bug>10903</bug>: Generate errors for unbalanced end tags (kinman)
       </fix>
       <docs>
-      Add some javacdocs in EL related classes (kinman)
+      Add some javadocs in EL related classes (kinman)
       </docs>
       <fix>
       Use ISO-8859-1 as the default encoding for &lt;jsp:param&gt; since 
       it is the default encoding for the request object (kinman)
       </fix>
       <update>
-      A smal performance improvement: instantiate the bean object with its
+      A small performance improvement: instantiate the bean object with its
       constructor, if "class" attribute is specified in usebean, instead of
       going thru java.beans.Beans.instantiate() (kinman)
       </update>
@@ -191,6 +235,17 @@
       <docs>
       Fix JSPC classpath in the docs (remm)
       </docs>
+      <fix>
+      <bug>24904</bug>: Nested custom tag causes bogus compilation errors
+      (kinman)
+      </fix>
+      <fix>
+      <bug>24779</bug>: Jasper fails to compile a valid JSP document 
+      (xml syntax) when an EL string in template text contains a "[]" (kinman)
+      </fix>
+      <fix>
+      <bug>24957</bug>: Operators are mis-treated as functions (kinman)
+      </fix>
 
     </changelog>
 
@@ -220,14 +275,17 @@
       Include the manager in the embed package (remm)
       </update>
       <docs>
-      Document new Jasper, connector and default context attributes (remm)
+      Document new Jasper, Connector and DefaultContext attributes (remm)
       </docs>
       <docs>
       Remove Tyrex documentation for now (remm)
       </docs>
       <fix>
-      <bug>24787</bug>: Allow host aliases of more that 24 characters (remm)
+      <bug>24787</bug>: Allow host aliases of more than 24 characters (remm)
       </fix>
+      <update>
+      Update JSP examples to JSTL 1.1 (kinman)
+      </update>
 
     </changelog>
 
@@ -252,6 +310,10 @@
       </update>
       <add>
       Added in member alive time (fhanik)
+      </add>
+      <add>
+      New balancer webapp, which allows redirection to cluster nodes according
+      to simple rules (yoavs)
       </add>
 
     </changelog>
@@ -288,7 +350,7 @@
       Small tweaks to allow to execute the bootstrap JAR (remm)
       </update>
       <fix>
-      Explicitely add commons-logging-api on the classpath on Unix (remm)
+      Explicitly add commons-logging-api on the classpath on Unix (remm)
       </fix>
       <fix>
       <bug>23799</bug>: Canonicalize catalinaBase and catalinaHome (remm)
@@ -302,7 +364,7 @@
       everytime sendError is invoked (jfarcand)
       </fix>
       <update>
-      Add system property replacementto the Connector, to be expanded to other
+      Add system property replacement to the Connector, to be expanded to other
       elements (remm)
       </update>
       <update>
@@ -589,7 +651,7 @@
       <fix>
       Need to call the listener when the session is invalidated because 
       the interval between the time the session is marked invalid 
-      and the StandardrMmanager expires the session can't be predicted 
+      and the StandardrManager expires the session can't be predicted 
       (jfarcand)
       </fix>
       <fix>
@@ -670,7 +732,7 @@
 
       <fix>
       For template texts that generate multiple Java lines, addidtional mapping
-      informantion are kept in the TemplateText node, to aid SMAP generation
+      informations are kept in the TemplateText node, to aid SMAP generation
       (kinman)
       </fix>
       <fix>
