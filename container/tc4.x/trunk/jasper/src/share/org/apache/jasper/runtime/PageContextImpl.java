@@ -262,6 +262,7 @@ public class PageContextImpl extends PageContext {
 
 	    case REQUEST_SCOPE:
 		request.removeAttribute(name);
+            break;
 
 	    case SESSION_SCOPE:
 		if (session == null)
