@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *
@@ -75,16 +72,16 @@ import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -97,8 +94,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ManagerBase implements Manager {
-    private static org.apache.commons.logging.Log log=
-        org.apache.commons.logging.LogFactory.getLog( ManagerBase.class );
+    protected Log log = LogFactory.getLog(ManagerBase.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -211,13 +207,19 @@ public abstract class ManagerBase implements Manager {
      */
     protected HashMap sessions = new HashMap();
 
+    // Number of sessions created by this manager
+    protected int sessionCounter=0;
+
+    protected int maxActive=0;
+
+    // number of duplicated session ids - anything >0 means we have problems
+    protected int duplicates=0;
 
     /**
      * The string manager for this package.
      */
     protected static StringManager sm =
         StringManager.getManager(Constants.Package);
-
 
     /**
      * The property change support for this component.
@@ -244,7 +246,6 @@ public abstract class ManagerBase implements Manager {
 
 
     // ------------------------------------------------------------- Properties
-
 
     /**
      * Return the message digest algorithm for this Manager.
@@ -290,7 +291,8 @@ public abstract class ManagerBase implements Manager {
         Container oldContainer = this.container;
         this.container = container;
         support.firePropertyChange("container", oldContainer, this.container);
-
+        // TODO: find a good scheme for the log names
+        //log=LogFactory.getLog("tomcat.manager." + container.getName());
     }
 
 
@@ -337,6 +339,12 @@ public abstract class ManagerBase implements Manager {
 
         this.debug = debug;
 
+    }
+
+    /** Returns the name of the implementation class.
+     */
+    public String getClassName() {
+        return this.getClass().getName();
     }
 
 
@@ -515,6 +523,10 @@ public abstract class ManagerBase implements Manager {
             }
     }
 
+    public String getRandomFile() {
+        return devRandomSource;
+    }
+
 
     /**
      * Return the random number generator instance we should use for
@@ -594,8 +606,10 @@ public abstract class ManagerBase implements Manager {
 
         synchronized (sessions) {
             sessions.put(session.getId(), session);
+            if( sessions.size() > maxActive ) {
+                maxActive=sessions.size();
+            }
         }
-
     }
 
 
@@ -640,6 +654,7 @@ public abstract class ManagerBase implements Manager {
         }
         synchronized (sessions) {
             while (sessions.get(sessionId) != null){ // Guarantee uniqueness
+                duplicates++;
                 sessionId = generateSessionId();
                 // @todo Move appending of jvmRoute generateSessionId()???
                 if (jvmRoute != null) {
@@ -649,6 +664,7 @@ public abstract class ManagerBase implements Manager {
         }
 
         session.setId(sessionId);
+        sessionCounter++;
 
         return (session);
 
@@ -838,23 +854,10 @@ public abstract class ManagerBase implements Manager {
      * Log a message on the Logger associated with our Container (if any).
      *
      * @param message Message to be logged
+     * @deprecated
      */
     protected void log(String message) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log(getName() + "[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println(getName() + "[" + containerName
-                               + "]: " + message);
-        }
-
+        log.info( message );
     }
 
 
@@ -863,24 +866,10 @@ public abstract class ManagerBase implements Manager {
      *
      * @param message Message to be logged
      * @param throwable Associated exception
+     * @deprecated
      */
     protected void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log(getName() + "[" + container.getName() + "] "
-                       + message, throwable);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println(getName() + "[" + containerName
-                               + "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
-
+        log.info(message,throwable);
     }
 
 
@@ -890,11 +879,101 @@ public abstract class ManagerBase implements Manager {
      * @param session Session to be recycled
      */
     protected void recycle(Session session) {
-
         synchronized (recycled) {
             recycled.add(session);
         }
+    }
 
+    public void setSessionCounter(int sessionCounter) {
+        this.sessionCounter = sessionCounter;
+    }
+
+    /** Total sessions created by this manager.
+     *
+     * @return sessions created
+     */
+    public int getSessionCounter() {
+        return sessionCounter;
+    }
+
+    /** Number of duplicated session IDs generated by the random source.
+     *  Anything bigger than 0 means problems.
+     *
+     * @return
+     */
+    public int getDuplicates() {
+        return duplicates;
+    }
+
+    public void setDuplicates(int duplicates) {
+        this.duplicates = duplicates;
+    }
+
+    /** Returns the number of active sessions
+     *
+     * @return number of sessions active
+     */
+    public int getActiveSessions() {
+        return sessions.size();
+    }
+
+    /** Max number of concurent active sessions
+     *
+     * @return
+     */
+    public int getMaxActive() {
+        return maxActive;
+    }
+
+    public void setMaxActive(int maxActive) {
+        this.maxActive = maxActive;
+    }
+
+    /** For debugging: return a list of all session ids currently active
+     *
+     */
+    public String listSessionIds() {
+        StringBuffer sb=new StringBuffer();
+        Iterator keys=sessions.keySet().iterator();
+        while( keys.hasNext() ) {
+            sb.append(keys.next()).append(" ");
+        }
+        return sb.toString();
+    }
+
+    /** For debugging: get a session attribute
+     *
+     * @param sessionId
+     * @param key
+     * @return
+     */
+    public String getSessionAttribute( String sessionId, String key ) {
+        Session s=(Session)sessions.get(sessionId);
+        if( s==null ) {
+            log.info("Session not found " + sessionId);
+            return null;
+        }
+        Object o=s.getSession().getAttribute(key);
+        if( o==null ) return null;
+        return o.toString();
+    }
+
+    public void expireSession( String sessionId ) {
+        Session s=(Session)sessions.get(sessionId);
+        if( s==null ) {
+            log.info("Session not found " + sessionId);
+            return;
+        }
+        s.expire();
+    }
+
+    public String getLastAccessedTime( String sessionId ) {
+        Session s=(Session)sessions.get(sessionId);
+        if( s==null ) {
+            log.info("Session not found " + sessionId);
+            return "";
+        }
+        return new Date(s.getLastAccessedTime()).toString();
     }
 
 
