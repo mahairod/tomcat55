@@ -316,7 +316,7 @@ public class StandardSession
     /**
      * The access count for thsi session.
      */
-    protected transient int accessCount = 0;
+    protected transient int accessCount = 1;
 
 
     // ----------------------------------------------------- Session Properties
@@ -630,7 +630,6 @@ public class StandardSession
      */
     public void access() {
 
-        this.isNew = false;
         this.lastAccessedTime = this.thisAccessedTime;
         this.thisAccessedTime = System.currentTimeMillis();
 
@@ -646,6 +645,7 @@ public class StandardSession
      */
     public void endAccess() {
 
+        isNew = false;
         accessCount--;
 
     }
@@ -725,6 +725,7 @@ public class StandardSession
                     }
                 }
             }
+            accessCount = 0;
             setValid(false);
 
             // Remove this session from our manager's active sessions
@@ -839,7 +840,7 @@ public class StandardSession
         id = null;
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
-        accessCount = 0;
+        accessCount = 1;
         notes.clear();
         setPrincipal(null);
         isNew = false;
