@@ -15,8 +15,8 @@
 %>	 
 
 
-<%@ taglib uri="tld_nonroot_relative"  prefix="nonrelative" %>
+<%@ taglib uri="tld_nonroot_relative"  prefix="nonrel" %>
 
-<nonrelative:tldtag uri="Non Relative URI" />
+<nonrel:tldtag uri="Non Relative URI" />
 </body>
 </html>
