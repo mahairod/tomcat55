@@ -649,21 +649,17 @@
     </antcall>
 
     <antcall target="cvsbuild">
-      <param name="location" value="${commons-daemon.loc}"/>
-      <param name="subdir" value="${commons-daemon.home}"/>
-      <param name="destfile" value="${commons-daemon.jar}"/>
+      <param name="location" value="${commons-launcher.loc}"/>
+      <param name="subdir" value="${commons-launcher.home}"/>
+      <param name="destfile" value="${commons-launcher.jar}"/>
     </antcall>
     <copy
-      file="${commons-daemon.home}/dist/commons-daemon.jar"
-      tofile="${commons-daemon.jar}"
+      file="${commons-launcher.home}/dist/commons-launcher.jar"
+      tofile="${commons-launcher.jar}"
     />
     <copy
-      file="${commons-daemon.home}/dist/bin/commons-launcher.jar"
-      tofile="${commons-daemon-launcher.jar}"
-    />
-    <copy
-      file="${commons-daemon.home}/dist/bin/LauncherBootstrap.class"
-      tofile="${commons-daemon-launcher-bootstrap.class}"
+      file="${commons-launcher.home}/dist/bin/LauncherBootstrap.class"
+      tofile="${commons-launcher.bootstrap.class}"
     />
 
     <antcall target="downloadgz">

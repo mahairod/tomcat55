@@ -59,14 +59,13 @@ commons-collections.jar=${commons-collections.lib}/commons-collections.jar
 commons-collections.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-collections/v2.0/commons-collections-2.0.tar.gz
 
 
-# ----- Commons Daemon, version 20020731 or later -----
-commons-daemon.home=${base.path}/commons-daemon
-commons-daemon.lib=${commons-daemon.home}
-commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
-commons-daemon.bin=${commons-daemon.home}/bin
-commons-daemon-launcher.jar=${commons-daemon.bin}/commons-launcher.jar
-commons-daemon-launcher-bootstrap.class=${commons-daemon.bin}/LauncherBootstrap.class
-commons-daemon.loc=jakarta-commons-sandbox/daemon
+# ----- Commons Launcher, version 20021012 or later -----
+commons-launcher.home=${base.path}/commons-launcher
+commons-launcher.lib=${commons-launcher.home}
+commons-launcher.bin=${commons-launcher.home}/bin
+commons-launcher.jar=${commons-launcher.home}/commons-launcher.jar
+commons-launcher.bootstrap.class=${commons-launcher.bin}/LauncherBootstrap.class
+commons-launcher.loc=jakarta-commons-sandbox/launcher
 
 
 # ----- Commons Digester, version 20020820 or later -----

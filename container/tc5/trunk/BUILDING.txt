@@ -251,17 +251,17 @@ x installed (version 1.3.1 recommended), and do the following:
   distribution resides in its own directory.
 
 
-(11) Download and Install the Commons Daemon Binary Distribution
+(11) Download and Install the Commons Launcher Binary Distribution
 
-* Download a binary distribution of version 20020731 or later from:
+* Download a binary distribution of version 20021012 or later from:
 
-    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-daemon
+    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-launcher
 
   On a Windows platform, you will need:
-    commons-daemon-YYYYMMDD.zip
+    commons-launcher-YYYYMMDD.zip
 
   On a Unix platform, you will need:
-    commons-daemon-YYYYMMDD.tar.gz
+    commons-launcher-YYYYMMDD.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory.
