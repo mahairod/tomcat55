@@ -193,8 +193,7 @@ final class StandardHostValve
         }
 
         ErrorPage errorPage = findErrorPage(context, throwable);
-
-        if ((errorPage == null) && (throwable instanceof ServletException)) {
+        if ((errorPage == null) && (realError != throwable)) {
             errorPage = findErrorPage(context, realError);
         }
 
