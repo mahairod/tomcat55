@@ -44,6 +44,8 @@ NEW FEATURES:
 Catalina New Features:
 ---------------------
 
+Created a new Java SecurityManager permission called JndiPermission
+for use in setting security policy for file based JNDI named resources.
 
 -------------------
 Jasper New Features:
