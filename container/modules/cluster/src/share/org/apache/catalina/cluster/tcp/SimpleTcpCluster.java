@@ -338,7 +338,7 @@ public class SimpleTcpCluster
 
 
     public synchronized Manager createManager(String name) {
-        log.debug("Creating ClusterManager for context "+name + " using class "+getManagerClassName());
+        log.info("Creating ClusterManager for context "+name + " using class "+getManagerClassName());
         ClusterManager manager = null;
         try {
             manager = (ClusterManager)getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();
@@ -538,13 +538,12 @@ public class SimpleTcpCluster
                                       getClass().getClassLoader());
             Object myobj = stream.readObject();
             if ( myobj != null && myobj instanceof SessionMessage ) {
+                
                 SessionMessage msg = (SessionMessage)myobj;
-                //remove when checking in
-                perfMessageRecvd(msg.getTimestamp());
-                String name = msg.getContextName();
+                String ctxname = msg.getContextName();
                 //check if the message is a EVT_GET_ALL_SESSIONS,
                 //if so, wait until we are fully started up
-                if ( name == null ) {
+                if ( ctxname == null ) {
                     java.util.Iterator i = managers.keySet().iterator();
                     while ( i.hasNext() ) {
                         String key = (String)i.next();
@@ -557,11 +556,11 @@ public class SimpleTcpCluster
                         }
                     }//while
                 } else {
-                    ClusterManager mgr = (ClusterManager) managers.get(name);
+                    ClusterManager mgr = (ClusterManager) managers.get(ctxname);
                     if (mgr != null)
                         mgr.messageDataReceived(msg);
                     else
-                        log.warn("Context manager doesn't exist:" + name);
+                        log.warn("Context manager doesn't exist:" + ctxname);
                 }//end if
             }  else
                 log.warn("Received invalid message myobj="+myobj);
@@ -621,7 +620,7 @@ public class SimpleTcpCluster
      *  during installation
      */
     public void installContext(String contextPath, URL war) {
-        System.out.println("\n\n\n\nCluster Install called for context:"+contextPath+"\n\n\n\n");
+        log.debug("\n\n\n\nCluster Install called for context:"+contextPath+"\n\n\n\n");
     }
 
 
