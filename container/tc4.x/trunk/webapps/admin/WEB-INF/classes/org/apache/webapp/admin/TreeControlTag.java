@@ -397,6 +397,10 @@ public class TreeControlTag extends TagSupport {
 
         String action = replace(getAction(), "${name}", encodedNodeName);
 
+        
+        String updateTreeAction =
+            replace(getAction(), "tree=${name}", "select=" + encodedNodeName);
+
         out.print("    <td>");
         if ((action != null) && !node.isLeaf()) {
             out.print("<a href=\"");
@@ -448,6 +452,10 @@ public class TreeControlTag extends TagSupport {
                     out.print(target);
                     out.print("\"");
                 }
+                // to refresh the tree in the same 'self' frame
+                out.print(" onclick=\"");
+                out.print("self.location.href='" + updateTreeAction + "'");
+                out.print("\"");
                 out.print(">");
             }
             out.print("<img src=\"");
@@ -484,6 +492,10 @@ public class TreeControlTag extends TagSupport {
                     out.print(labelStyle);
                     out.print("\"");
                 }
+                // to refresh the tree in the same 'self' frame
+                out.print(" onclick=\"");
+                out.print("self.location.href='" + updateTreeAction + "'");
+                out.print("\"");
                 out.print(">");
             } else if (labelStyle != null) {
                 out.print("<span class=\"");
