@@ -87,6 +87,21 @@
       <srcfiles dir="${jtc.home}/util/java" includes="**" />
     </uptodate>
 
+    <uptodate property="tomcatjk.build.notrequired"
+              targetfile="${tomcat.build}/server/lib/tomcat-jk2.jar">
+      <srcfiles dir="${jtc.home}/jk/java" includes="**" />
+    </uptodate>
+
+    <uptodate property="tomcatcoyote.build.notrequired"
+              targetfile="${tomcat.build}/server/lib/tomcat-coyote.jar">
+      <srcfiles dir="${jtc.home}/coyote/src" includes="**" />
+    </uptodate>
+
+    <uptodate property="admin.build.notrequired" 
+              targetfile="${tomcat.build}/server/webapps/admin/WEB-INF/web.xml">
+      <srcfiles dir="${catalina.home}/webapps/admin" includes="**" />
+    </uptodate>
+
   </target>
 
 
@@ -125,8 +140,48 @@
     </ant>
   </target>
 
-  <target name="build" depends="init,build-servletapi,build-jspapi,build-tomcatutil"
+  <target name="build-tomcatjk" unless="tomcatjk.build.notrequired" >
+    <echo>========== Building: tomcat-jk </echo>
+
+    <ant dir="${jtc.home}/jk" target="build-main">
+      <property name="tomcat41.home" value="${tomcat.build}"/>
+      <property name="catalina.home" value="${tomcat.build}"/>
+      <property name="commons-logging.jar" value="${commons-logging.jar}"/>
+      <property name="jmx.jar" value="${jmx.jar}"/>
+    </ant>
+  </target>
+
+  <target name="build-tomcatcoyote" 
+          unless="tomcatcoyote.build.notrequired" 
+          depends="init">
+    <echo>========== Building: tomcat-coyote </echo>
+
+    <ant dir="${jtc.home}/coyote" target="compile.tomcat5">
+      <property name="catalina.home" value="${tomcat.build}"/>
+      <property name="tomcat5.detect" value="true"/>
+      <property name="servlet.jar"   value="${servlet-api.jar}"/>
+    </ant>
+  </target>
+
+
+  <target name="build-admin" unless="admin.build.notrequired" 
+          depends="init" >
+    <echo>========== Building: admin ( ${admin.build.notrequired} ) </echo>
+    <ant dir="${catalina.home}/webapps/admin" target="build-main">
+      <!-- property name="flags.hide" value="true" / -->
+      <property name="webapps.build" value="${tomcat.build}/server/webapps"/>
+    </ant>
+
+    <touch file="${tomcat.build}/server/webapps/admin/WEB-INF/web.xml" />
+  </target>
+
+
+  <target name="build" depends="init"
           description="Builds all components">
+
+    <antcall target="build-servletapi"/>
+    <antcall target="build-jspapi"/>
+    <antcall target="build-tomcatutil"/>
 
     <echo>========== Building: catalina </echo>
 
@@ -137,23 +192,10 @@
         <property name="flags.hide" value="true" />
     </ant>
 
-    <echo>========== Building: tomcat-coyote </echo>
+    <antcall target="build-tomcatcoyote"/>
 
-    <ant dir="${jtc.home}/coyote" target="compile.tomcat5">
-      <property name="catalina.home" value="${tomcat.build}"/>
-      <property name="tomcat5.detect" value="true"/>
-      <property name="servlet.jar"   value="${servlet-api.jar}"/>
-    </ant>
-
-    <echo>========== Building: tomcat-jk </echo>
-
-    <ant dir="${jtc.home}/jk" target="build-main">
-      <property name="tomcat41.home" value="${tomcat.build}"/>
-      <property name="catalina.home" value="${tomcat.build}"/>
-      <property name="commons-logging.jar" value="${commons-logging.jar}"/>
-      <property name="jmx.jar" value="${jmx.jar}"/>
-    </ant>
-
+    <antcall target="build-tomcatjk"/>
+      
     <echo>========== Building: tomcat-httpd </echo>
 
     <ant dir="${jtc.home}/http11" target="compile">
@@ -702,7 +744,8 @@
 
   <!-- ==================== Download or build the required binary packages ==================== -->
 
-  <target name="download" depends="proxyflags">
+  <target name="download" depends="proxyflags" 
+          description="Download binary packages" >
 
     <!-- commons-digester needs ../LICENSE -->
     <!-- That is ugly XXX needs a review -->
