@@ -398,30 +398,43 @@ public final class JspRuntimeContext implements Runnable {
                 if( docBase == null ) {
                     docBase = options.getScratchDir().toString();
                 }
-                if (!docBase.endsWith(File.separator)){
-                    docBase = docBase + File.separator;
+                String codeBase = docBase;
+                if (!codeBase.endsWith(File.separator)){
+                    codeBase = codeBase + File.separator;
                 }
-                File contextDir = new File(docBase);
+                File contextDir = new File(codeBase);
                 URL url = contextDir.getCanonicalFile().toURL();
                 codeSource = new CodeSource(url,null);
                 permissionCollection = policy.getPermissions(codeSource);
 
+                // Create a file read permission for web app context directory
+                if (!docBase.endsWith(File.separator)){
+                    permissionCollection.add
+                        (new FilePermission(docBase,"read"));
+                    docBase = docBase + File.separator;
+                } else {
+                    permissionCollection.add
+                        (new FilePermission
+                            (docBase.substring(0,docBase.length() - 1),"read"));
+                }
                 docBase = docBase + "-";
                 permissionCollection.add(new FilePermission(docBase,"read"));
 
-                // Create a file read permission for web app tempdir (work) directory
+                // Create a file read permission for web app tempdir (work)
+                // directory
                 String workDir = options.getScratchDir().toString();
-                if (workDir.endsWith(File.separator)) {
-                    workDir = workDir + "-";
-                } else {
-                    workDir = workDir + File.separator + "-";
+                if (!workDir.endsWith(File.separator)){
+                    permissionCollection.add
+                        (new FilePermission(workDir,"read"));
+                    workDir = workDir + File.separator;
                 }
+                workDir = workDir + "-";
                 permissionCollection.add(new FilePermission(workDir,"read"));
 
                 // Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
                 permissionCollection.add( new RuntimePermission(
                     "accessClassInPackage.org.apache.jasper.runtime") );
-                
+
                 if (parentClassLoader instanceof URLClassLoader) {
                     URL [] urls = parentClassLoader.getURLs();
                     String jarUrl = null;
