@@ -53,7 +53,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 
 package org.apache.jasper.compiler;
 
@@ -77,76 +77,78 @@ public class SmapStratum {
      * a particular stratum.
      */
     public static class LineInfo {
-	private int inputStartLine = -1;
-	private int outputStartLine = -1;
-	private int lineFileID = 0;
-	private int inputLineCount = 1;
-	private int outputLineIncrement = 1;
-	private boolean lineFileIDSet = false;
+        private int inputStartLine = -1;
+        private int outputStartLine = -1;
+        private int lineFileID = 0;
+        private int inputLineCount = 1;
+        private int outputLineIncrement = 1;
+        private boolean lineFileIDSet = false;
 
-	/** Sets InputStartLine. */
-	public void setInputStartLine(int inputStartLine) {
-	    if (inputStartLine < 0)
-		throw new IllegalArgumentException("" + inputStartLine);
-	    this.inputStartLine = inputStartLine;
-	}
+        /** Sets InputStartLine. */
+        public void setInputStartLine(int inputStartLine) {
+            if (inputStartLine < 0)
+                throw new IllegalArgumentException("" + inputStartLine);
+            this.inputStartLine = inputStartLine;
+        }
 
-	/** Sets OutputStartLine. */
-	public void setOutputStartLine(int outputStartLine) {
-	    if (outputStartLine < 0)
-		throw new IllegalArgumentException("" + outputStartLine);
-	    this.outputStartLine = outputStartLine;
-	}
+        /** Sets OutputStartLine. */
+        public void setOutputStartLine(int outputStartLine) {
+            if (outputStartLine < 0)
+                throw new IllegalArgumentException("" + outputStartLine);
+            this.outputStartLine = outputStartLine;
+        }
 
-	/**
-         * Sets lineFileID.  Should be called only when different from
-         * that of prior LineInfo object (in any given context) or 0
-         * if the current LineInfo has no (logical) predecessor.
-         * <tt>LineInfo</tt> will print this file number no matter what.
-         */
-	public void setLineFileID(int lineFileID) {
-	    if (lineFileID < 0)
-		throw new IllegalArgumentException("" + lineFileID);
-	    this.lineFileID = lineFileID;
-	    this.lineFileIDSet = true;
-	}
+        /**
+             * Sets lineFileID.  Should be called only when different from
+             * that of prior LineInfo object (in any given context) or 0
+             * if the current LineInfo has no (logical) predecessor.
+             * <tt>LineInfo</tt> will print this file number no matter what.
+             */
+        public void setLineFileID(int lineFileID) {
+            if (lineFileID < 0)
+                throw new IllegalArgumentException("" + lineFileID);
+            this.lineFileID = lineFileID;
+            this.lineFileIDSet = true;
+        }
 
-	/** Sets InputLineCount. */
-	public void setInputLineCount(int inputLineCount) {
-	    if (inputLineCount < 0)
-		throw new IllegalArgumentException("" + inputLineCount);
-	    this.inputLineCount = inputLineCount;
-	}
+        /** Sets InputLineCount. */
+        public void setInputLineCount(int inputLineCount) {
+            if (inputLineCount < 0)
+                throw new IllegalArgumentException("" + inputLineCount);
+            this.inputLineCount = inputLineCount;
+        }
 
-	/** Sets OutputLineIncrement. */
-	public void setOutputLineIncrement(int outputLineIncrement) {
-	    if (outputLineIncrement < 0)
-		throw new IllegalArgumentException("" + outputLineIncrement);
-	    this.outputLineIncrement = outputLineIncrement;
-	}
+        /** Sets OutputLineIncrement. */
+        public void setOutputLineIncrement(int outputLineIncrement) {
+            if (outputLineIncrement < 0)
+                throw new IllegalArgumentException("" + outputLineIncrement);
+            this.outputLineIncrement = outputLineIncrement;
+        }
 
         /**
          * Retrieves the current LineInfo as a String, print all values
          * only when appropriate (but LineInfoID if and only if it's been
          * specified, as its necessity is sensitive to context).
          */
-	public String getString() {
-	    if (inputStartLine == -1 || outputStartLine == -1)
-		throw new IllegalStateException();
-	    StringBuffer out = new StringBuffer();
-	    out.append(inputStartLine);
-	    if (lineFileIDSet)
-		out.append("#" + lineFileID);
-	    if (inputLineCount != 1)
-		out.append("," + inputLineCount);
-	    out.append(":" + outputStartLine);
-	    if (outputLineIncrement != 1)
-		out.append("," + outputLineIncrement);
-	    out.append('\n');
-	    return out.toString();
-	}
+        public String getString() {
+            if (inputStartLine == -1 || outputStartLine == -1)
+                throw new IllegalStateException();
+            StringBuffer out = new StringBuffer();
+            out.append(inputStartLine);
+            if (lineFileIDSet)
+                out.append("#" + lineFileID);
+            if (inputLineCount != 1)
+                out.append("," + inputLineCount);
+            out.append(":" + outputStartLine);
+            if (outputLineIncrement != 1)
+                out.append("," + outputLineIncrement);
+            out.append('\n');
+            return out.toString();
+        }
 
-	public String toString() { return getString(); }
+        public String toString() {
+            return getString();
+        }
     }
 
     //*********************************************************************
@@ -168,13 +170,12 @@ public class SmapStratum {
      * @param stratumName the name of the stratum (e.g., JSP)
      */
     public SmapStratum(String stratumName) {
-	this.stratumName = stratumName;
-	fileNameList = new ArrayList();
-	filePathList = new ArrayList();
-	lineData = new ArrayList();
-	lastFileID = 0;
+        this.stratumName = stratumName;
+        fileNameList = new ArrayList();
+        filePathList = new ArrayList();
+        lineData = new ArrayList();
+        lastFileID = 0;
     }
-
 
     //*********************************************************************
     // Methods to add mapping information
@@ -185,7 +186,7 @@ public class SmapStratum {
      * @param fileName the filename to add, unqualified by path.
      */
     public void addFile(String filename) {
-	addFile(filename, filename);
+        addFile(filename, filename);
     }
 
     /**
@@ -197,13 +198,13 @@ public class SmapStratum {
      *                 to a source compilation path
      */
     public void addFile(String filename, String filePath) {
-      int pathIndex = filePathList.indexOf(filePath);
-      if (pathIndex == -1) {
-        fileNameList.add(filename);
-        filePathList.add(filePath);
-      }
+        int pathIndex = filePathList.indexOf(filePath);
+        if (pathIndex == -1) {
+            fileNameList.add(filename);
+            filePathList.add(filePath);
+        }
     }
- 
+
     /**
      * Combines consecutive LineInfos wherever possible
      */
@@ -211,39 +212,45 @@ public class SmapStratum {
 
         //Incorporate each LineInfo into the previous LineInfo's 
         //outputLineIncrement, if possible
-        int i=0;
-        while (i < lineData.size()-1) {
+        int i = 0;
+        while (i < lineData.size() - 1) {
             LineInfo li = (LineInfo)lineData.get(i);
-            LineInfo liNext = (LineInfo)lineData.get(i+1);
+            LineInfo liNext = (LineInfo)lineData.get(i + 1);
             if (liNext.inputStartLine == li.inputStartLine
-                && liNext.inputLineCount==1
-                && li.inputLineCount==1
-                && liNext.outputStartLine == li.outputStartLine + li.inputLineCount*li.outputLineIncrement) {
-                li.setOutputLineIncrement
-                    (liNext.outputStartLine - li.outputStartLine + liNext.outputLineIncrement);
-                lineData.remove(i+1);
+                && liNext.inputLineCount == 1
+                && li.inputLineCount == 1
+                && liNext.outputStartLine
+                    == li.outputStartLine
+                        + li.inputLineCount * li.outputLineIncrement) {
+                li.setOutputLineIncrement(
+                    liNext.outputStartLine
+                        - li.outputStartLine
+                        + liNext.outputLineIncrement);
+                lineData.remove(i + 1);
             } else {
-                i++; 
+                i++;
             }
         }
 
         //Incorporate each LineInfo into the previous LineInfo's
         //inputLineCount, if possible
-        i=0;
-        while (i < lineData.size()-1) {
+        i = 0;
+        while (i < lineData.size() - 1) {
             LineInfo li = (LineInfo)lineData.get(i);
-            LineInfo liNext = (LineInfo)lineData.get(i+1);
+            LineInfo liNext = (LineInfo)lineData.get(i + 1);
             if (liNext.inputStartLine == li.inputStartLine + li.inputLineCount
-             && liNext.outputLineIncrement == li.outputLineIncrement
-              && liNext.outputStartLine == li.outputStartLine + li.inputLineCount*li.outputLineIncrement) {
-                  li.setInputLineCount(li.inputLineCount + liNext.inputLineCount);
-                  lineData.remove(i+1);
-             } else {
-                 i++;
-             }
+                && liNext.outputLineIncrement == li.outputLineIncrement
+                && liNext.outputStartLine
+                    == li.outputStartLine
+                        + li.inputLineCount * li.outputLineIncrement) {
+                li.setInputLineCount(li.inputLineCount + liNext.inputLineCount);
+                lineData.remove(i + 1);
+            } else {
+                i++;
+            }
         }
     }
-    
+
     /**
      * Adds complete information about a simple line mapping.  Specify
      * all the fields in this method; the back-end machinery takes care
@@ -267,16 +274,17 @@ public class SmapStratum {
      *        the subconscious urge to call this field
      *        <tt>OutputLineExcrement</tt>.</i>
      */
-    public void addLineData(int inputStartLine,
-				    String inputFileName,
-				    int inputLineCount,
-				    int outputStartLine,
-				    int outputLineIncrement) {
-	// check the input - what are you doing here??
-	int fileIndex = filePathList.indexOf(inputFileName);
-	if (fileIndex == -1)					// still
-	    throw new IllegalArgumentException(
-		"inputFileName: " + inputFileName);
+    public void addLineData(
+        int inputStartLine,
+        String inputFileName,
+        int inputLineCount,
+        int outputStartLine,
+        int outputLineIncrement) {
+        // check the input - what are you doing here??
+        int fileIndex = filePathList.indexOf(inputFileName);
+        if (fileIndex == -1) // still
+            throw new IllegalArgumentException(
+                "inputFileName: " + inputFileName);
 
         //Jasper incorrectly SMAPs certain Nodes, giving them an 
         //outputStartLine of 0.  This can cause a fatal error in
@@ -286,18 +294,18 @@ public class SmapStratum {
         if (outputStartLine == 0)
             return;
 
-	// build the LineInfo
-	LineInfo li = new LineInfo();
-	li.setInputStartLine(inputStartLine);
-	li.setInputLineCount(inputLineCount);
-	li.setOutputStartLine(outputStartLine);
-	li.setOutputLineIncrement(outputLineIncrement);
-	if (fileIndex != lastFileID)
-	    li.setLineFileID(fileIndex);
-	lastFileID = fileIndex;
+        // build the LineInfo
+        LineInfo li = new LineInfo();
+        li.setInputStartLine(inputStartLine);
+        li.setInputLineCount(inputLineCount);
+        li.setOutputStartLine(outputStartLine);
+        li.setOutputLineIncrement(outputLineIncrement);
+        if (fileIndex != lastFileID)
+            li.setLineFileID(fileIndex);
+        lastFileID = fileIndex;
 
-	// save it
-	lineData.add(li);
+        // save it
+        lineData.add(li);
     }
 
     //*********************************************************************
@@ -307,7 +315,7 @@ public class SmapStratum {
      * Returns the name of the stratum.
      */
     public String getStratumName() {
-	return stratumName;
+        return stratumName;
     }
 
     /**
@@ -315,21 +323,21 @@ public class SmapStratum {
      * followed by at least one FileSection and at least one LineSection.
      */
     public String getString() {
-	// check state and initialize buffer
-	if (fileNameList.size() == 0 || lineData.size() == 0)
-	    return null;
+        // check state and initialize buffer
+        if (fileNameList.size() == 0 || lineData.size() == 0)
+            return null;
 
-	StringBuffer out = new StringBuffer();
+        StringBuffer out = new StringBuffer();
 
-	// print StratumSection
-	out.append("*S " + stratumName + "\n");
+        // print StratumSection
+        out.append("*S " + stratumName + "\n");
 
-	// print FileSection
-	out.append("*F\n");
-	int bound = fileNameList.size();
-	for (int i = 0; i < bound; i++) {
-	    if (filePathList.get(i) != null) {
-		out.append("+ " + i + " " + fileNameList.get(i) + "\n");
+        // print FileSection
+        out.append("*F\n");
+        int bound = fileNameList.size();
+        for (int i = 0; i < bound; i++) {
+            if (filePathList.get(i) != null) {
+                out.append("+ " + i + " " + fileNameList.get(i) + "\n");
                 // Source paths must be relative, not absolute, so we
                 // remove the leading "/", if one exists.
                 String filePath = (String)filePathList.get(i);
@@ -337,22 +345,24 @@ public class SmapStratum {
                     filePath = filePath.substring(1);
                 }
                 out.append(filePath + "\n");
-	    } else {
-		out.append(i + " " + fileNameList.get(i) + "\n");
-	    }
-	}
+            } else {
+                out.append(i + " " + fileNameList.get(i) + "\n");
+            }
+        }
 
-	// print LineSection
-	out.append("*L\n");
-	bound = lineData.size();
-	for (int i = 0; i < bound; i++) {
-	    LineInfo li = (LineInfo) lineData.get(i);
-	    out.append(li.getString());
-	}
+        // print LineSection
+        out.append("*L\n");
+        bound = lineData.size();
+        for (int i = 0; i < bound; i++) {
+            LineInfo li = (LineInfo)lineData.get(i);
+            out.append(li.getString());
+        }
 
-	return out.toString();
+        return out.toString();
     }
 
-    public String toString() { return getString(); }
+    public String toString() {
+        return getString();
+    }
 
 }
