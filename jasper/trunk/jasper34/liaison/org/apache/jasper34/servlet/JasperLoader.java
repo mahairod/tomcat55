@@ -95,9 +95,10 @@ import javax.servlet.http.*;
  * @author Anil K. Vijendran
  * @author Harish Prabandham
  */
-public class JasperLoader extends JspLoader {
-//     ClassLoader parent;
-//     Options options;
+public class JasperLoader extends ClassLoader {
+    ClassLoader parent;
+    String scratchDir;
+    //Options options;
     Object pd;
 
     /*
@@ -107,19 +108,45 @@ public class JasperLoader extends JspLoader {
 	super();
     }
 
-//     public void setParentClassLoader( ClassLoader cl) 
-//     {
-// 	this.parent = cl;
-//     }
+    public void setParentClassLoader( ClassLoader cl) 
+    {
+	this.parent = cl;
+    }
     
-//     public void setOptions( Options options) {
-// 	this.options = options;
-//     }
+    //     public void setOptions( Options options) {
+    // 	this.options = options;
+    //     }
+    public void setScratchDir( String s ) {
+	scratchDir=s;
+    }
 
     public void setProtectionDomain( Object pd ) {
 	this.pd=pd;
     }
+
+    protected Vector jars = new Vector();
     
+    public void addJar(String jarFileName) throws IOException {
+        if (!jars.contains(jarFileName)) {
+            ContainerLiaison.message("jsp.message.adding_jar",
+                              new Object[] { jarFileName },
+                              Log.INFORMATION);
+            
+            jars.addElement(jarFileName);
+        }
+    }
+    
+    public String getClassPath() {
+        StringBuffer cpath = new StringBuffer();
+        String sep = System.getProperty("path.separator");
+
+        for(int i = 0; i < jars.size(); i++) {
+            cpath.append((String)jars.elementAt(i)+sep);
+        }
+        
+        return cpath.toString();
+    }
+
     protected synchronized Class loadClass(String name, boolean resolve)
 	throws ClassNotFoundException
     {
@@ -190,7 +217,7 @@ public class JasperLoader extends JspLoader {
                 return defClass(className, classBytes);
 	    } else {
                 String fileName = null;
-                String outputDir = options.getScratchDir().toString();
+                String outputDir = scratchDir;
             
                 if (className.indexOf('$', end) != -1) {
                     // this means we're loading an inner class
@@ -210,14 +237,14 @@ public class JasperLoader extends JspLoader {
                  */
 		classBytes = loadClassDataFromFile(fileName);
                 if( classBytes == null ) {
-                    throw new ClassNotFoundException(Constants.getString(
+                    throw new ClassNotFoundException(ContainerLiaison.getString(
                                              "jsp.error.unable.loadclass", 
                                               new Object[] {className})); 
                 }
                 return defClass(className, classBytes);
             }
 	} catch (Exception ex) {
-            throw new ClassNotFoundException(Constants.getString(
+            throw new ClassNotFoundException(ContainerLiaison.getString(
 	    				     "jsp.error.unable.loadclass", 
 					      new Object[] {className}));
 	}
@@ -318,7 +345,7 @@ public class JasperLoader extends JspLoader {
     }
 
     public String toString() {
-        Object obj = (options==null)?null: options.getScratchDir();
+        Object obj = scratchDir;
         String s = (obj==null)?"null":obj.toString();
 	    return "JspLoader@"+hashCode()+"( " + s  + " ) / " + parent;
     }

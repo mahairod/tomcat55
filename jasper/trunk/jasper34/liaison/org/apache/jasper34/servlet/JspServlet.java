@@ -76,6 +76,8 @@ import java.io.FileNotFoundException;
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.generator.*;
+import org.apache.jasper34.jsptree.*;
+import org.apache.jasper34.liaison.*;
 import org.apache.jasper34.core.Compiler;
 
 import org.apache.tomcat.util.log.Log;
@@ -89,7 +91,7 @@ import org.apache.tomcat.util.log.Log;
 public class JspServlet extends HttpServlet {
 
     Log loghelper = Log.getLog("JASPER_LOG", "JspServlet");
-
+    
     class JspServletWrapper {
         Servlet theServlet;
 	String jspUri;
@@ -138,15 +140,15 @@ public class JspServlet extends HttpServlet {
             } else 
                 accordingto = "according to the Servlet Engine";
             
-            Constants.message("jsp.message.cp_is", 
+            ContainerLiaison.message("jsp.message.cp_is", 
                               new Object[] { 
                                   accordingto,
                                   cp == null ? "" : cp
                               }, 
                               Log.INFORMATION);
 
-            if (loadJSP(jspUri, cp, isErrorPage, req, res) 
-                    || theServlet == null) {
+            if ( loadJSP(jspUri, cp, isErrorPage, req, res) 
+		 || theServlet == null) {
                 load();
             }
 	}
@@ -177,14 +179,14 @@ public class JspServlet extends HttpServlet {
 		try {
                     if (insecure_TMI) {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                                           Constants.getString
+                                           ContainerLiaison.getString
                                            ("jsp.error.file.not.found.TMI", 
                                             new Object[] {
                                                 ex.getMessage()
                                             }));
                     } else {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                                           Constants.getString
+                                           ContainerLiaison.getString
                                            ("jsp.error.file.not.found", 
                                             new Object[] {
                                                 // Too Much Information -- ex.getMessage()
@@ -192,17 +194,17 @@ public class JspServlet extends HttpServlet {
                     }
 		} catch (IllegalStateException ise) {
                     // logs are presumed to be secure, thus the TMI info can be logged
-		    Constants.jasperLog.log(Constants.getString
-					    ("jsp.error.file.not.found.TMI",
+		    ContainerLiaison.message(ContainerLiaison.getString
+					     ("jsp.error.file.not.found.TMI",
 					     new Object[] {
 						 ex.getMessage()
-					     }), ex,
+					     }), 
 					    Log.ERROR);
 		    // rethrow FileNotFoundException so someone higher up can handle
                     if (insecure_TMI)
                         throw ex;
                     else
-			throw new FileNotFoundException(Constants.getString
+			throw new FileNotFoundException(ContainerLiaison.getString
                                            ("jsp.error.file.not.found", 
                                             new Object[] {
                                                 // Too Much Information -- ex.getMessage()
@@ -223,10 +225,10 @@ public class JspServlet extends HttpServlet {
     protected Hashtable jsps = new Hashtable();
     //    protected Hashtable loadedJSPs = new Hashtable();
     protected ServletConfig config;
-    protected JasperLoader loader;
+    protected ClassLoader loader;
     protected Options options;
     protected ClassLoader parentClassLoader;
-    protected ServletEngine engine;
+    //    protected ServletEngine engine;
     protected String serverInfo;
     
     /** Set to true to provide Too Much Information on errors */
@@ -250,7 +252,7 @@ public class JspServlet extends HttpServlet {
 	this.context = config.getServletContext();
         this.serverInfo = context.getServerInfo();
         
-	options = new EmbededServletOptions(config, context);
+	options = new OptionsServletConfig(config, context);
 
 	parentClassLoader = (ClassLoader) context.getAttribute(Constants.SERVLET_CLASS_LOADER);
 	if (parentClassLoader == null)
@@ -258,13 +260,13 @@ public class JspServlet extends HttpServlet {
             
 	// getClass().getClassLoader() returns null in JDK 1.1.6/1.1.8
 	if (parentClassLoader != null) {
-            Constants.message("jsp.message.parent_class_loader_is", 
+            ContainerLiaison.message("jsp.message.parent_class_loader_is", 
                               new Object[] {
                                   parentClassLoader.toString()
                               }, Log.DEBUG);
             }
 	else {
-            Constants.message("jsp.message.parent_class_loader_is", 
+            ContainerLiaison.message("jsp.message.parent_class_loader_is", 
                               new Object[] {
                                   "<none>"
                               }, Log.DEBUG);
@@ -282,18 +284,18 @@ public class JspServlet extends HttpServlet {
 	    if( loader==null )
 		loader = new JasperLoader();
 
-	    loader.setParentClassLoader(parentClassLoader);
-	    loader.setOptions(options);
+	    ((JasperLoader)loader).setParentClassLoader(parentClassLoader);
+	    ((JasperLoader)loader).setScratchDir(options.getScratchDir().toString());
 	    Object pd=context.getAttribute("org.apache.tomcat.protection_domain");
-	    loader.setProtectionDomain( pd );
+	    ((JasperLoader)loader).setProtectionDomain( pd );
 	}
 	if (firstTime) {
 	    firstTime = false;
-	    Constants.message("jsp.message.scratch.dir.is", 
+	    ContainerLiaison.message("jsp.message.scratch.dir.is", 
 			      new Object[] { 
 				  options.getScratchDir().toString() 
 			      }, Log.INFORMATION );
-	    Constants.message("jsp.message.dont.modify.servlets", Log.INFORMATION);
+	    ContainerLiaison.message("jsp.message.dont.modify.servlets", Log.INFORMATION);
 	    JspFactory.setDefaultFactory(new JspFactoryImpl());
 	}
     }
@@ -365,25 +367,25 @@ public class JspServlet extends HttpServlet {
 
             boolean precompile = preCompile(request);
 
-	    Log jasperLog = Constants.jasperLog;
+// 	    Log jasperLog = Constants.jasperLog;
 	    
-            if (jasperLog != null &&
-		jasperLog.getLevel() >= Log.INFORMATION)
-		{
-		    jasperLog.log("JspEngine --> "+jspUri);
-		    jasperLog.log("\t     ServletPath: "+request.getServletPath());
-		    jasperLog.log("\t        PathInfo: "+request.getPathInfo());
-		    jasperLog.log("\t        RealPath: "
-				  +getServletConfig().getServletContext().getRealPath(jspUri));
-		    jasperLog.log("\t      RequestURI: "+request.getRequestURI());
-		    jasperLog.log("\t     QueryString: "+request.getQueryString());
-		    jasperLog.log("\t  Request Params: ");
-		    Enumeration e = request.getParameterNames();
-		    while (e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			jasperLog.log("\t\t "+name+" = "+request.getParameter(name));
-		    }
-		}
+//             if (jasperLog != null &&
+// 		jasperLog.getLevel() >= Log.INFORMATION)
+// 		{
+// 		    jasperLog.log("JspEngine --> "+jspUri);
+// 		    jasperLog.log("\t     ServletPath: "+request.getServletPath());
+// 		    jasperLog.log("\t        PathInfo: "+request.getPathInfo());
+// 		    jasperLog.log("\t        RealPath: "
+// 				  +getServletConfig().getServletContext().getRealPath(jspUri));
+// 		    jasperLog.log("\t      RequestURI: "+request.getRequestURI());
+// 		    jasperLog.log("\t     QueryString: "+request.getQueryString());
+// 		    jasperLog.log("\t  Request Params: ");
+// 		    Enumeration e = request.getParameterNames();
+// 		    while (e.hasMoreElements()) {
+// 			String name = (String) e.nextElement();
+// 			jasperLog.log("\t\t "+name+" = "+request.getParameter(name));
+// 		    }
+// 		}
             serviceJspFile(request, response, jspUri, null, precompile);
 	} catch (RuntimeException e) {
 	    throw e;
@@ -404,14 +406,13 @@ public class JspServlet extends HttpServlet {
     }
 
     public void destroy() {
-	if (Constants.jasperLog != null)
-	    Constants.jasperLog.log("JspServlet.destroy()", Log.INFORMATION);
+	//	if (Constants.jasperLog != null)
+	ContainerLiaison.message("JspServlet.destroy()", Log.INFORMATION);
 
 	Enumeration servlets = jsps.elements();
 	while (servlets.hasMoreElements()) 
 	    ((JspServletWrapper) servlets.nextElement()).destroy();
     }
-
 
     /*  Check if we need to reload a JSP page.
      *
@@ -426,8 +427,10 @@ public class JspServlet extends HttpServlet {
     {
 	// Loader knows how to set the right priviledges, and call
 	// doLoadeJsp
-	return loader.loadJSP( this,jspUri, classpath, isErrorPage, req, res );
+	return ((JasperLoader)loader).loadJSP( this,jspUri, classpath, isErrorPage, req, res );
     }
+
+
 
     /*  Check if we need to reload a JSP page.
      *
@@ -446,44 +449,61 @@ public class JspServlet extends HttpServlet {
 	}
 	//	Class jspClass = (Class) loadedJSPs.get(jspUri);
 	boolean firstTime = jsw.servletClass == null;
-   JspCompilationContext ctxt = new JspEngineContext(loader, classpath,
+   JspEngineContext ctxt = new JspEngineContext(loader, classpath,
                                                      context, jspUri, 
                                                      isErrorPage, options,
                                                      req, res);
+   
 	boolean outDated = false; 
+	ContainerLiaison containerL=ctxt;
+	
+        Compiler compiler = new Compiler(ctxt);
+	//compiler.setJavaCompiler(ctxt.getJavaCompiler());
 
-        Compiler compiler = ctxt.createCompiler();
+	ManglerOld mangler=new ManglerOld();
+        JspPageInfo pageInfo=new JspPageInfo( ctxt, options,
+					      mangler );
+       
+	pageInfo.setJspFile( jspUri );
+	pageInfo.setErrorPage( isErrorPage );
+	
+	mangler.init(pageInfo.getJspFile(), containerL.getOutputDir());
+	//	compiler.setMangler( mangler );
+	
         
         try {
-            outDated = compiler.isOutDated();
+            outDated = isOutDated( containerL, pageInfo.getJspFile(), mangler);
             if ( (jsw.servletClass == null) || outDated ) {
                 synchronized ( this ) {
                     if ((jsw.servletClass == null) ||
-			(compiler.isOutDated() ))  {
-                        outDated = compiler.compile();
+			( isOutDated(containerL, pageInfo.getJspFile(),
+				     mangler) ))  {
+                        outDated = compiler.compile(pageInfo,
+						    ctxt.getJavaCompiler());
                     }
 		}
             }
         } catch (FileNotFoundException ex) {
-			  compiler.removeGeneratedFiles();
+	    compiler.removeGeneratedFiles(pageInfo);
             throw ex;
         } catch (JasperException ex) {
             throw ex;
         } catch (Exception ex) {
-	    throw new JasperException(Constants.getString("jsp.error.unable.compile"),
+	    throw new JasperException(ContainerLiaison.getString("jsp.error.unable.compile"),
                                       ex);
 	}
 
 	// Reload only if it's outdated
 	if((jsw.servletClass == null) || outDated) {
 	    try {
-		if( null ==ctxt.getServletClassName() ) {
-		    compiler.computeServletClassName();
-		}
-		jsw.servletClass = loader.loadClass(ctxt.getFullClassName());
+// 		if( null ==ctxt.getServletClassName() ) {
+// 		    compiler.computeServletClassName();
+// 		}
+		jsw.servletClass =
+		    loader.loadClass(pageInfo.getFullClassName());
                         //loadClass(ctxt.getFullClassName(), true);
 	    } catch (ClassNotFoundException cex) {
-		throw new JasperException(Constants.getString("jsp.error.unable.load"), 
+		throw new JasperException(ContainerLiaison.getString("jsp.error.unable.load"), 
 					  cex);
 	    }
 	    
@@ -493,18 +513,28 @@ public class JspServlet extends HttpServlet {
 	return outDated;
     }
 
-        /**
+    /**
      * Determines whether the current JSP class is older than the JSP file
      * from whence it came
      */
-    public boolean isOutDated(File jsp, JspCompilationContext ctxt,
-			      Mangler mangler ) {
+    public boolean isOutDated(ContainerLiaison containerL, String jspS,
+			      Mangler mangler)
+    {
+	boolean outDated=false;
+	File jsp=new File( jspS );
         File jspReal = null;
-	boolean outDated;
-	
-        jspReal = new File(ctxt.getRealPath(jsp.getPath()));
 
-        File classFile = new File(mangler.getClassFileName());
+        String realPath = containerL.getRealPath(jsp.getPath());
+        if (realPath == null)
+            return true;
+
+        jspReal = new File(realPath);
+	
+	if(!jspReal.exists()){
+	    return true;
+	}
+	
+	File classFile = new File(mangler.getClassFileName());
         if (classFile.exists()) {
             outDated = classFile.lastModified() < jspReal.lastModified();
         } else {
@@ -513,5 +543,4 @@ public class JspServlet extends HttpServlet {
 
         return outDated;
     }
-
 }

@@ -78,17 +78,15 @@ import org.apache.tomcat.util.log.*;
  * engine. This is a per-request/per-context data structure. Some of
  * the instance variables are set at different points.
  *
- * JspLoader creates this object and passes this off to the "compiler"
- * subsystem, which then initializes the rest of the variables. 
- *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
  */
-public class JspEngineContext implements JspCompilationContext {
+public class JspEngineContext extends ContainerLiaison
+{
     JspReader reader;
     ServletWriter writer;
     ServletContext context;
-    JasperLoader loader;
+    ClassLoader loader;
     String classpath; // for compiling JSPs.
     boolean isErrPage;
     String jspFile;
@@ -101,7 +99,7 @@ public class JspEngineContext implements JspCompilationContext {
     HttpServletResponse res;
     
 
-    public JspEngineContext(JasperLoader loader, String classpath, 
+    public JspEngineContext(ClassLoader loader, String classpath, 
                             ServletContext context, String jspFile, 
                             boolean isErrPage, Options options, 
                             HttpServletRequest req, HttpServletResponse res) 
@@ -135,7 +133,7 @@ public class JspEngineContext implements JspCompilationContext {
      * The classpath that is passed off to the Java compiler. 
      */
     public String getClassPath() {
-        return loader.getClassPath() + classpath;
+        return ((JasperLoader)loader).getClassPath() + classpath;
     }
     
     /**
@@ -167,9 +165,9 @@ public class JspEngineContext implements JspCompilationContext {
         return loader;
     }
 
-    public void addJar( String jar ) throws IOException  {
-	loader.addJar( jar );
-    }
+//     public void addJar( String jar ) throws IOException  {
+// 	loader.addJar( jar );
+//     }
 
     /**
      * Are we processing something that has been declared as an
@@ -284,33 +282,18 @@ public class JspEngineContext implements JspCompilationContext {
      * jspCompilerPlugin is not specified or is not available, the 
      * SunJavaCompiler is used.
      */
-    public Compiler createCompiler() throws JasperException {
+    public JavaCompiler getJavaCompiler() throws JasperException {
 	String compilerPath = options.getJspCompilerPath();
-	Class jspCompilerPlugin = options.getJspCompilerPlugin();
-        JavaCompiler javac;
+	String jspCompilerPlugin = options.getJspCompilerPlugin();
 
-	if (jspCompilerPlugin != null) {
-            try {
-                javac = (JavaCompiler) jspCompilerPlugin.newInstance();
-            } catch (Exception ex) {
-		Constants.message("jsp.warning.compiler.class.cantcreate",
-				  new Object[] { jspCompilerPlugin, ex }, 
-				  Log.FATAL);
-                javac = new SunJavaCompiler();
-	    }
-	} else {
-            javac = new SunJavaCompiler();
-	}
-
+	JavaCompiler javac=JavaCompiler.createJavaCompiler( this,
+							    jspCompilerPlugin);
         if (compilerPath != null)
             javac.setCompilerPath(compilerPath);
 
-        Compiler jspCompiler = new JspCompiler(this);
-	jspCompiler.setJavaCompiler(javac);
-         
-        return jspCompiler;
+	return javac;
     }
-    
+
     /** 
      * Get the full value of a URI relative to this compilations context
      */
@@ -372,6 +355,6 @@ public class JspEngineContext implements JspCompilationContext {
 	TagLibReader reader=new TagLibReader( this, libs );
 	reader.readTagLib( tl, prefix, uri );
     }
-
+    
    
 }
