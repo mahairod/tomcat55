@@ -150,6 +150,12 @@
       2048 bytes will be provided.</p>
     </attribute>
 
+    <attribute name="restrictedUserAgents" required="false">
+      <p>The value is a comma separated list of MIME types for which HTTP
+      compression may be used.
+      The default value is <code>text/html,text/xml,text/plain</code>.</p>
+    </attribute>
+
     <attribute name="compression" required="false">
       <p>The <strong>Connector</strong> may use HTTP/1.1 GZIP compression in
       an attempt to save server bandwidth. The acceptable values for the
@@ -217,6 +223,14 @@
       than that set for <code>maxThreads</code>.  The default value is 4.</p>
     </attribute>
 
+    <attribute name="noCompressionUserAgents" required="false">
+      <p>The value is a comma separated list of regular expressions matching
+      user-agents of HTTP clients for which compression should not be used, 
+      because these clients, although they do advertise support for the 
+      feature, have a broken implementation.
+      The default value is an empty String (regexp matching disabled).</p>
+    </attribute>
+
     <attribute name="port" required="true">
       <p>The TCP port number on which this <strong>Connector</strong>
       will create a server socket and await incoming connections.  Your
@@ -243,6 +257,14 @@
       to be returned for calls to <code>request.getServerPort()</code>.
       See <a href="#Proxy Support">Proxy Support</a> for more
       information.</p>
+    </attribute>
+
+    <attribute name="restrictedUserAgents" required="false">
+      <p>The value is a comma separated list of regular expressions matching
+      user-agents of HTTP clients for which HTTP/1.1 or HTTP/1.0 keep alive
+      should not be used, even if the clients advertise support for these
+      features.
+      The default value is an empty String (regexp matching disabled).</p>
     </attribute>
 
     <attribute name="socketBuffer" required="false">
