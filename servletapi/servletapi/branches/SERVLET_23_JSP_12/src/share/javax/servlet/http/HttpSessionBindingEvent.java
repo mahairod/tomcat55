@@ -68,7 +68,7 @@ import java.util.EventObject;
  *
  * Either Sent to an object that implements
  * {@link HttpSessionBindingListener} when it is bound or 
- * unbound from a session, or to a {@link HttpSessionAttributesListener} 
+ * unbound from a session, or to a {@link HttpSessionAttributeListener} 
  * that has been configured in the deploymewnt descriptor when any attribute is
  * bound, unbound or replaced in a session.
  *
@@ -83,7 +83,7 @@ import java.util.EventObject;
  * @since v2.3
  * @see 		HttpSession
  * @see 		HttpSessionBindingListener
- * @see			HttpSessionAttributesListener
+ * @see			HttpSessionAttributeListener
  */
 
 public class HttpSessionBindingEvent extends HttpSessionEvent {
