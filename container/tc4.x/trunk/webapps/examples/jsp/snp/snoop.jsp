@@ -21,7 +21,7 @@ Query string: <% out.print(util.HTMLFilter.filter(request.getQueryString())); %>
 <br>
 Content length: <%= request.getContentLength() %>
 <br>
-Content type: <%= request.getContentType() %>
+Content type: <% out.print(util.HTMLFilter.filter(request.getContentType())); %>
 <br>
 Server name: <%= request.getServerName() %>
 <br>
