@@ -13,7 +13,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ *5
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
@@ -520,7 +520,7 @@ final class ApplicationDispatcher
                 AccessController.doPrivileged(dp);
             } catch (PrivilegedActionException pe) {
                 Exception e = pe.getException();
-                pe.printStackTrace();
+
                 if (e instanceof ServletException)
                     throw (ServletException) e;
                 throw (IOException) e;
