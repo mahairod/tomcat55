@@ -179,7 +179,6 @@ final class HttpResponseImpl
      */
     public void sendError(int status, String message) throws IOException {
 
-        setAllowChunking(false);
         addHeader("Connection", "close");
         super.sendError(status, message);
 
