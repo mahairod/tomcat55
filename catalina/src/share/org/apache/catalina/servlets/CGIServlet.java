@@ -898,7 +898,7 @@ public final class CGIServlet extends HttpServlet {
 
             File currentLocation = new File(webAppRootDir);
             StringTokenizer dirWalker =
-            new StringTokenizer(pathInfo, File.separator);
+            new StringTokenizer(pathInfo, "/");
             if (debug >= 3) {
                 log("findCGI: currentLoc=" + currentLocation);
             }
