@@ -116,6 +116,9 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "loader.WebappClassLoader$PrivilegedFindResource");
+        loader.loadClass
+            (basePackage +
+             "session.StandardManager$PrivilegedDoUnload");
     }
     
     
@@ -211,6 +214,12 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "CoyoteInputStream$5");
+        loader.loadClass
+            (basePackage +
+             "InputBuffer$1");
+        loader.loadClass
+            (basePackage +
+             "CoyoteResponse$1");
     }
 
 }

@@ -69,6 +69,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1388,7 +1391,23 @@ public class CoyoteResponse
                     String relativePath = request.getDecodedRequestURI();
                     int pos = relativePath.lastIndexOf('/');
                     relativePath = relativePath.substring(0, pos);
-                    String encodedURI = urlEncoder.encodeURL(relativePath);
+                    
+                    String encodedURI = null;
+                    final String frelativePath = relativePath;
+                    if (System.getSecurityManager() != null ){
+                        try{
+                            encodedURI = (String)AccessController.doPrivileged( 
+                                new PrivilegedExceptionAction(){                                
+                                    public Object run() throws IOException{
+                                        return urlEncoder.encodeURL(frelativePath);
+                                    }
+                           });   
+                        } catch (PrivilegedActionException pae){
+                            throw new IllegalArgumentException(location);
+                        }
+                    } else {
+                        encodedURI = urlEncoder.encodeURL(relativePath);
+                    }
                     redirectURLCC.append(encodedURI, 0, encodedURI.length());
                     redirectURLCC.append('/');
                 }
@@ -1446,3 +1465,4 @@ public class CoyoteResponse
 
 
 }
+
