@@ -864,11 +864,13 @@
       <param name="destfile" value="${commons-modeler.jar}"/>
     </antcall>
 
+<!--
     <antcall target="downloadzip">
       <param name="sourcefile" value="${javaservice.loc}"/>
       <param name="destfile" value="${javaservice.exe}"/>
       <param name="destdir" value="${javaservice.home}"/>
     </antcall>
+-->
     <antcall target="downloadgz">
       <param name="sourcefile" value="${jmx.loc}"/>
       <param name="destfile" value="${jmx.jar}"/>
