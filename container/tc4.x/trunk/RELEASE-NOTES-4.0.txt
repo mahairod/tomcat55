@@ -102,45 +102,6 @@ KNOWN ISSUES IN THIS RELEASE:
 ============================
 
 
---------------------------
-Tomcat 4.0 and XML Parsers:
---------------------------
-
-Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
-JAXP/1.1 reference implementation) to web applications.  This is no longer
-the case, because Jasper loads its parser with a new class loader instead.
-Keep the following points in mind when considering how to use XML parsers
-in Tomcat 4.0 and your web applications:
-
-* If you wish to make the JAXP/1.1 RI XML parser available to all web
-  applications, simply move the "jaxp.jar" and "crimson.jar" files from
-  the "$CATALINA_HOME/jasper" directory to the "$CATALINA_HOME/lib" directory.
-
-* If you wish to make another XML parser that is JAXP/1.1-compatible
-  available to all web applications, install that parser into the
-  "$CATALINA_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
-  from the "$CATALINA_HOME/jasper" directory.  It has been reported that
-  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
-  can not be.
-
-* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
-  directory of your web application, this should now be possible, because
-  of the modified JAXP 1.1 parser mentioned below.
-
-* Make sure you do *not* place an XML parser in your Java system extensions
-  directory ($JAVA_HOME/jre/lib/ext), or modify the startup scripts to include
-  such a parser in the CLASSPATH under which Tomcat executes.
-
-WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
-(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
-The "sealed" attribute has been removed from the manifest file for these
-two JARs, to avoid "package sealing violation" errors that were caused by
-them in a JDK 1.3 environment.  You MUST NOT replace these files with a
-different (or later) release of JAXP, unless that later release has had
-the sealed attribute removed, or you will encounter "package sealing violation"
-errors when trying to use a different XML parser in a web application.
-
-
 ---------------------
 Tomcat 4.0 and Apache:
 ---------------------
@@ -198,5 +159,43 @@ are compiling include references to custom tag libraries, you MUST use the
 "-webapp" command line option so that the entire web application (including
 all the required tag library descriptors and JAR files) is available to the
 compiler.
+
+
+----------------------------------
+Tomcat 4.0 Standard APIs Available:
+----------------------------------
+
+A standard installation of Tomcat 4 makes all of the following APIs available
+for use by web applications (by placing them in "common/lib" or "lib"):
+* activation.jar (Java Activation Framework)
+* crimson.jar (Unsealed version of JAXP/1.1 parser)
+* jaxp.jar (Unsealed version of JAXP/1.1 API classes)
+* jdbc2_0-stdext.jar (JDBC 2.0 Optional Package, javax.sql.*)
+* jndi.jar (JNDI 1.2 base API classes)
+* jta-spec1_0_1 (Java Transacation APIs)
+* ldap.jar (JNDI LDAP provider required by JNDIRealm)
+* mail.jar (JavaMail 1.2)
+* servlet.jar (Servlet 2.3 and JSP 1.2 APIs)
+* tyrex-0.9.7.0.jar (Tyrex XA-compatible data source from tyrex.exolab.org)
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+As described above, Tomcat 4.0 makes an XML parser (and many other standard
+APIs) available to web applications.  This parser is also used internally
+to parse web.xml files and the server.xml configuration file.  If you wish,
+you may replace the "jaxp.jar" and "crimson.jar" files in "common/lib" with
+another XML parser, as long as it is compatible with the JAXP/1.1 APIs.
+
+WARNING:  Tomcat 4.0 ships with a modified version of the JAXP/1.1
+"jaxp.jar" and "crimson.jar" files from JAXP/1.1 final release.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
 
 

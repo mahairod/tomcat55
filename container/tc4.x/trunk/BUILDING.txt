@@ -111,18 +111,15 @@ NOTE:  Alternatively, you can download the sources of the
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
-  "jakarta-regexp").  For the purposes of the remainder of this document,
-  the symbolic name "${regexp.home}" is used to refer to the full pathname
-  of this directory.
-
-FIXME:  This step and the associated stuff in build.xml files needs to be
-made independent of the actual jakarta-regexp version number.
+  "jakarta-regexp-x.y").
 
 
 (5) Download and Install the Servlet API Binary Distribution
 
 NOTE:  Alternatively, you can download the sources of the
-"jakarta-servletapi-4" subproject, and build a binary distribution yourself.
+"jakarta-servletapi-4" subproject, and build a binary distribution yourself,
+or use the binary distribution that is available with binary distributions
+of Tomcat 4.0.
 
 * Download a binary distribution from:
 
@@ -138,10 +135,7 @@ NOTE:  Alternatively, you can download the sources of the
   distribution resides in its own directory.
 
 
-(6) Download and Install JDBC Optional Package API (OPTIONAL)
-
-NOTE:  This step is only required if you wish to build the Tyrex connection
-pool implementation for JNDI-accessed data sources.
+(6) Download and Install JDBC Optional Package API
 
 * Download the JDBC Optional Pacakge API package (version 2.0) from:
 
@@ -164,10 +158,6 @@ pool implementation for JNDI-accessed data sources.
 
 (8) Download and Install the JNDI 1.2.1 Reference Implementation
 
-NOTE:  This step is required to build Tomcat 4.0, even when you are running
-a JDK 1.3 (or later) platform that includes the JNDI classes.  This is because
-the Tomcat build process includes "jndi.jar" into the binary distribution.
-
 * Download the Java Naming and Directory Interface (JNDI) package,
   (version 1.2.1 or later) from
 
@@ -176,6 +166,9 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
 * Unpack the reference implementation into a convenient location so that
   it resides in its own subdirectory.
 
+* You will also need the "LDAP Provider" (ldap.jar), available on the
+  same download page.  Be sure that you unpack "ldap.jar" into the "lib"
+  subdirectory of the JNDI directory, parallel to "jndi.jar".
 
 (9) Download and Install the Java Activation Framework 1.0.1
 
@@ -207,10 +200,7 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
   it resides in its own subdirectory.
 
 
-(12) Download and Install the Java Transaction APIs (OPTIONAL)
-
-NOTE:  This step is only required if you wish to build the Tyrex connection
-pool implementation for JNDI-accessed data sources.
+(12) Download and Install the Java Transaction APIs
 
 * Download the Java Transaction API (JTA) package (version 1.0.1) from:
 
@@ -220,20 +210,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(13) Download and Install the JUnit Testing Package (OPTIONAL)
-
-NOTE:  This step is only required if you wish to build and execute the unit
-tests that are part of the Tomcat 4.0 source base.
-
-* Download the JUnit unit test package (version 3.7 or later) from:
-
-    http://www.junit.org/
-
-* Unpack the package into a convenient location so that it resides in its
-  own subdirectory.
-
-
-(14) Download and Install the Tyrex Data Source Package (OPTIONAL)
+(13) Download and Install the Tyrex Data Source Package
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -241,6 +218,19 @@ pool implementation for JNDI-accessed data sources.
 * Download the Tyrex JAR or release (version 0.9.7) from:
 
     http://tyrex.exolab.org/download.html
+
+* Unpack the package into a convenient location so that it resides in its
+  own subdirectory.
+
+
+(14) Download and Install the JUnit Testing Package (OPTIONAL)
+
+NOTE:  This step is only required if you wish to build and execute the unit
+tests that are part of the Tomcat 4.0 source base.
+
+* Download the JUnit unit test package (version 3.7 or later) from:
+
+    http://www.junit.org/
 
 * Unpack the package into a convenient location so that it resides in its
   own subdirectory.
@@ -255,48 +245,22 @@ definitions local to this subproject) and/or your user home directory (for
 property definitions shared across subprojects).  You can use the included
 "build.properties.sample" file as a starting point for this.
 
-Tomcat has several external dependencies that are satisfied by configuring
-appropriate values in your <code>build.properties</code> file.  You must set
-the following properties:
+Tomcat has many external dependencies that are satisfied by configuring
+appropriate values in your <code>build.properties</code> file.  The easiest
+way to satisfy these dependencies is to copy the "build.properties.sample"
+file (in the top-level Tomcat source directory) to "build.properties", and
+then edit it to suit your environment.  On Unix, this would be done as:
 
-  Property Name     Description
-  ----------------  --------------------------------------------------------
+  cd ${tomcat.source}
+  cp build.properties.sample build.properties
+  emacs build.properties
 
-  activation.home   Pathname to directory containing the Java Activation
-                    Framework package, version 1.0.1 or later
+NOTE:  Be *sure* that you do not check "build.properties" in to the CVS
+repository.  This file is local to your own development environment, and
+each developer will have their own version.
 
-  jmx.home          Pathname to directory containing the Java Management
-                    Extensions (JMX) Reference Implementation, version 1.0
-                    or later
 
-  jndi.home         Pathname to directory containing the Java Naming and
-                    Directory Interface (JNDI) Reference Implementation,
-                    version 1.2.1 or later
-
-  jsse.home         Pathname to directory containing the Java Secure Sockets
-                    Extension (JSSE) Reference Implementation, version 1.0.2
-                    or later
-
-  junit.jar         Pathname to the "junit.jar" file from JUnit, version 3.7
-                    or later
-
-  mail.home         Pathname to the directory containing the JavaMail package,
-                    version 1.2 or later
-
-  regexp.home       Pathname to directory containing a binary distribution of
-                    the Jakarta Regexp Project, version 1.2
-
-  servletapi.home   Pathname to directory containing a binary distribution of
-                    the Servlet 2.3/JSP 1.2 API classes
-
-FIXME:  Properties for jdbc2_0-stdext.jar,
-jta-spec1_0_1.jar, tyrex-0.9.7.0.jar
-
-A short-cut to preparing your "build.properties" file is to make a copy of the
-"build.properties.sample" file included in the Tomcat source distribution,
-and then customize the paths within it.
-
-(17) Build A Binary Distribution
+(16) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 
