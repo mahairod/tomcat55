@@ -64,6 +64,7 @@ package org.apache.catalina.ant;
 
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -196,13 +197,23 @@ public class DeployTask extends AbstractCatalinaTask {
         String contentType = null;
         int contentLength = -1;
         if (war != null) {
-            try {
-                URL url = new URL(war);
-                URLConnection conn = url.openConnection();
-                contentLength = conn.getContentLength();
-                stream = new BufferedInputStream(conn.getInputStream(), 1024);
-            } catch (IOException e) {
-                throw new BuildException(e);
+            if (war.startsWith("file:")) {
+                try {
+                    URL url = new URL(war);
+                    URLConnection conn = url.openConnection();
+                    contentLength = conn.getContentLength();
+                    stream = new BufferedInputStream
+                        (conn.getInputStream(), 1024);
+                } catch (IOException e) {
+                    throw new BuildException(e);
+                }
+            } else {
+                try {
+                    stream = new BufferedInputStream
+                        (new FileInputStream(war), 1024);
+                } catch (IOException e) {
+                    throw new BuildException(e);
+                }
             }
             contentType = "application/octet-stream";
         }
@@ -226,8 +237,7 @@ public class DeployTask extends AbstractCatalinaTask {
             sb.append(URLEncoder.encode(tag));
         }
 
-        execute("/deploy?path=" + URLEncoder.encode(this.path), stream,
-                contentType, contentLength);
+        execute(sb.toString(), stream, contentType, contentLength);
 
     }
 
