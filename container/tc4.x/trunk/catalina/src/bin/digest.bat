@@ -57,7 +57,7 @@ if "%1" == "-a" (if "%2" neq "" (if "%3" neq "" goto doRun))
 :doUsage
 echo Usage:  digest -a [algorithm] [credentials]
 echo Commands:
-echo   algorithm   -   The algorithm to use, i.e. MD5, DES
+echo   algorithm   -   The algorithm to use, i.e. MD5, SHA1
 echo   credentials -   The credential to digest
 goto cleanup
 

@@ -81,7 +81,7 @@ if [ "$1" != "-a" ] || [ -z "$2" ] || [ -z "$3" ] ; then
 
   echo "Usage:  digest -a [algorithm] [credentials]"
   echo "Commands:"
-  echo "  algorithm   -   The algorithm to use, i.e. MD5, DES"
+  echo "  algorithm   -   The algorithm to use, i.e. MD5, SHA1"
   echo "  credentials -   The credential to digest"
 
   exit 1
