@@ -193,7 +193,7 @@ public class Compiler {
      * Compile the jsp file from the current engine context
      */
     public void generateJava()
-        throws FileNotFoundException, JasperException, Exception
+        throws Exception
     {
         long t1=System.currentTimeMillis();
 	// Setup page info area

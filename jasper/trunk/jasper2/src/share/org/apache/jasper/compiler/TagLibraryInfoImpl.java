@@ -192,7 +192,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		err.jspError("jsp.error.file.not.found", location[0]);
 	    }
 	    // Now parse the tld.
-	    parseTLD(ctxt, location[0], in);
+	    parseTLD(ctxt, location[0], in, null);
 	} else {
 	    // Location points to a jar file
 	    // tag library in jar file
@@ -214,7 +214,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		jarFile = conn.getJarFile();
 		jarEntry = jarFile.getEntry(location[1]);
 		stream = jarFile.getInputStream(jarEntry);
-		parseTLD(ctxt, location[0], stream);
+		parseTLD(ctxt, location[0], stream, jarFile);
 		// FIXME @@@
 		// -- it seems that the JarURLConnection class caches JarFile 
 		// objects for particular URLs, and there is no way to get 
@@ -248,7 +248,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
       
     private void parseTLD(JspCompilationContext ctxt,
-                          String uri, InputStream in) 
+                          String uri, InputStream in, JarFile jarFile) 
         throws JasperException
     {
         Vector tagVector = new Vector();
@@ -286,7 +286,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             else if ("tag".equals(tname))
                 tagVector.addElement(createTagInfo(element));
             else if ("tag-file".equals(tname))
-                tagFileVector.addElement(createTagFileInfo(element, uri));
+                tagFileVector.addElement(createTagFileInfo(element, uri,
+							   jarFile));
             else if ("function".equals(tname))          // JSP2.0
                 functionVector.addElement(createFunctionInfo(element));
             else if ("display-name".equals(tname) ||    // Ignored elements
@@ -429,7 +430,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
      *
      * @return TagInfo correspoding to tag file directives
      */
-    private TagFileInfo createTagFileInfo(TreeNode elem, String uri)
+    private TagFileInfo createTagFileInfo(TreeNode elem, String uri,
+					  JarFile jarFile)
 	        throws JasperException {
 
 	String name = null;
@@ -455,6 +457,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	if (!path.startsWith("/")) {
 	    // relative to uri of TLD file
             path = uri.substring(0, uri.lastIndexOf("/") + 1) + path;
+	} else if (path.startsWith("/META-INF/tags")) {
+	    // Tag file packaged in JAR
+	    ctxt.getTagFileJars().put(path, jarFile);
 	}
 	TagInfo tagInfo = TagFileProcessor.parseTagFile(parserController,
 							name, path,

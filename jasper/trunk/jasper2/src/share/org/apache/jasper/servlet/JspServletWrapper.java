@@ -72,6 +72,7 @@ import javax.servlet.jsp.tagext.TagInfo;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.Hashtable;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
@@ -134,14 +135,15 @@ public class JspServletWrapper {
      */
     public JspServletWrapper(ServletContext servletContext, Options options,
 			     String tagFilePath, TagInfo tagInfo,
-			     JspRuntimeContext rctxt)
+			     JspRuntimeContext rctxt, Hashtable tagFileJars)
             throws JasperException {
 
         this.config = null;	// not used
         this.options = options;
 	this.jspUri = tagFilePath;
         ctxt = new JspCompilationContext(jspUri, tagInfo, options,
-					 servletContext, this, rctxt);
+					 servletContext, this, rctxt,
+					 tagFileJars);
 
 	// Store tag file .java and .class files in standard location
 	// (/tagfiles/org/apache/jsp/), regardless of the original tag file

@@ -63,7 +63,7 @@ package org.apache.jasper;
 
 import java.io.*;
 import java.net.*;
-import java.util.Set;
+import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagInfo;
 
@@ -88,6 +88,9 @@ import org.apache.jasper.servlet.JasperLoader;
  * @author Costin Manolache
  */
 public class JspCompilationContext {
+
+    private Hashtable tagFileJars;
+    private boolean isPackagedTagFile;
 
     protected String servletClassName;
     protected String jspUri;
@@ -148,6 +151,8 @@ public class JspCompilationContext {
             baseURI += '/';
         }
         this.rctxt=rctxt;
+
+	this.tagFileJars = new Hashtable();
     }
 
     public JspCompilationContext(String tagfile,
@@ -155,12 +160,16 @@ public class JspCompilationContext {
                                  Options options,
                                  ServletContext context,
 				 JspServletWrapper jsw,
-                                 JspRuntimeContext rctxt) {
+                                 JspRuntimeContext rctxt,
+				 Hashtable tagFileJars) {
 
         this(tagfile, false, options, context, jsw, rctxt);
         this.isTagFile = true;
         this.tagInfo = tagInfo;
-        return;
+	this.tagFileJars = tagFileJars;
+	if (tagFileJars != null && tagFileJars.get(tagfile) != null) {
+	    isPackagedTagFile = true;
+	}
     }
 
     /* ==================== Methods to override ==================== */
@@ -268,7 +277,17 @@ public class JspCompilationContext {
         }
         return path;
     }
-    
+
+    /**
+     * Returns the tag-file-to-JAR-file mapping for tag files packaged in JARs.
+     *
+     * The mapping uses the tag file name as the key, and the JAR file 
+     * containing the tag file as the value. 
+     */
+    public Hashtable getTagFileJars() {
+	return tagFileJars;
+    }
+
     /* ==================== Common implementation ==================== */
 
     /**
@@ -521,7 +540,7 @@ public class JspCompilationContext {
     
     public void compile() throws JasperException, FileNotFoundException {
         createCompiler();
-	if (jspCompiler.isOutDated()) {
+	if (isPackagedTagFile || jspCompiler.isOutDated()) {
             try {
                 jspCompiler.compile();
                 reload = true;

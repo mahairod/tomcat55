@@ -56,6 +56,8 @@ package org.apache.jasper.compiler;
 
 import java.io.*;
 import java.util.*;
+import java.util.zip.*;
+import java.util.jar.*;
 import javax.servlet.jsp.tagext.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
@@ -154,7 +156,7 @@ public class ParserController {
      * @param inFileName The name of the JSP file to be parsed.
      */
     public Node.Nodes parse(String inFileName)
-	        throws FileNotFoundException, JasperException {
+	        throws FileNotFoundException, JasperException, IOException {
 	return parse(inFileName, null);
     }
 
@@ -166,15 +168,18 @@ public class ParserController {
      * @param parent The node for the 'include' directive.
      */
     public Node.Nodes parse(String inFileName, Node parent)
-	        throws FileNotFoundException, JasperException {
+	        throws FileNotFoundException, JasperException, IOException {
 
 	Node.Nodes parsedPage = null;
-        String absFileName = resolveFileName(inFileName);
 	String encoding = topFileEncoding;
         InputStreamReader reader = null;
+	String absFileName = resolveFileName(inFileName);
+
+	JarFile jarFile = (JarFile) ctxt.getTagFileJars().get(inFileName);
+
         try {
             // Figure out what type of JSP document we are dealing with
-            reader = getReader(absFileName, encoding);
+            reader = getReader(absFileName, encoding, jarFile);
             figureOutJspDocument(absFileName, encoding, reader);
 	    if (newEncoding != null)
 		encoding = newEncoding;
@@ -193,7 +198,7 @@ public class ParserController {
 
             // dispatch to the proper parser
 	    
-            reader = getReader(absFileName, encoding);
+            reader = getReader(absFileName, encoding, jarFile);
             if (isXml) {
                 parsedPage = JspDocumentParser.parse(this, absFileName,
 						     reader, parent,
@@ -332,17 +337,25 @@ public class ParserController {
 	return fileName;
     }
 
-    private InputStreamReader getReader(String file, String encoding)
-	throws FileNotFoundException, JasperException
-    {
+    private InputStreamReader getReader(String file, String encoding,
+					JarFile jarFile)
+	throws FileNotFoundException, JasperException, IOException {
+
         InputStream in;
         InputStreamReader reader;
 
+	if (jarFile != null) {
+	    ZipEntry jarEntry =
+		jarFile.getEntry(file.substring(1, file.length()));
+	    in = jarFile.getInputStream(jarEntry);
+	} else {
+	    in = ctxt.getResourceAsStream(file);
+	}
+	if (in == null) {
+	    throw new FileNotFoundException(file);
+	}
+
 	try {
-            in = ctxt.getResourceAsStream(file);
-            if (in == null) {
-                throw new FileNotFoundException(file);
-            }
             return new InputStreamReader(in, encoding);
 	} catch (UnsupportedEncodingException ex) {
 	    throw new JasperException(

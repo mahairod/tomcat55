@@ -63,7 +63,7 @@ compiler/TagFileProcessor.java,v 1.16 2002/05/24 23:57:42 kinman Exp $
 package org.apache.jasper.compiler;
 
 import java.util.*;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.tagext.*;
@@ -317,6 +317,9 @@ public class TagFileProcessor {
 	} catch (FileNotFoundException e) {
 	    pc.getCompiler().getErrorDispatcher().jspError(
                                         "jsp.error.file.not.found", tagfile);
+	} catch (IOException e) {
+	    pc.getCompiler().getErrorDispatcher().jspError(
+                                        "jsp.error.file.not.found", tagfile);
 	}
 
         TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler(),
@@ -344,7 +347,8 @@ public class TagFileProcessor {
 						    ctxt.getOptions(),
 						    tagFilePath,
                                                     tagInfo,
-						    ctxt.getRuntimeContext());
+						    ctxt.getRuntimeContext(),
+						    ctxt.getTagFileJars());
 		}
 	    }
 	}
