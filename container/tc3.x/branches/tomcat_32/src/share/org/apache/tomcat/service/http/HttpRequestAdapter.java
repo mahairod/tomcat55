@@ -303,7 +303,9 @@ public class HttpRequestAdapter extends RequestImpl {
     private  final int skipSpaces() {
 	while (off < count) {
 	    if ((buf[off] != (byte) ' ') 
-		&& (buf[off] != (byte) '\t')) {
+		&& (buf[off] != (byte) '\t')
+		&& (buf[off] != (byte) '\r')
+		&& (buf[off] != (byte) '\n')) {
 		return off;
 	    }
 	    off++;
@@ -316,7 +318,9 @@ public class HttpRequestAdapter extends RequestImpl {
     private  int findSpace() {
 	while (off < count) {
 	    if ((buf[off] == (byte) ' ') 
-		|| (buf[off] == (byte) '\t')) {
+		|| (buf[off] == (byte) '\t')
+		|| (buf[off] == (byte) '\r')
+		|| (buf[off] == (byte) '\n')) {
 		return off;
 	    }
 	    off++;
@@ -369,9 +373,8 @@ public class HttpRequestAdapter extends RequestImpl {
 	
 	method= new String( buf, startMethod, endMethod - startMethod );
 
-	if( endReq < 0 ) {
+	if( startProto < 0 ) {
 	    protocol=null;
-	    endReq=count;
 	} else {
 	    if( endProto < 0 ) endProto = count;
 	    protocol=new String( buf, startProto, endProto-startProto );
