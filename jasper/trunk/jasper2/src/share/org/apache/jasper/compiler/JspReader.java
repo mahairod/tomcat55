@@ -250,7 +250,7 @@ class JspReader {
     /**
      * search the stream for a match to a string
      * @param string The string to match
-     * @return <stront>true</strong> is one is found, the current position
+     * @return <strong>true</strong> is one is found, the current position
      *         in stream is positioned after the search string, <strong>
      *	       false</strong> otherwise, position in stream unchanged.
      */

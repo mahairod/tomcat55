@@ -668,8 +668,12 @@ class Parser {
 
     /*
      * XMLDeclarationBody ::=   ( S? '/>' )
-     *                        | ( S? '>' (Char* - (char* '<')) ETag )
+     *                        | ( S? '>' (Char* - (char* '<')) CDSect?)* ETag
      *                        | <TRANSLATION_ERROR>
+     * CDSect ::= CDStart CData CDEnd
+     * CDStart ::= '<![CDATA['
+     * CData ::= (Char* - (Char* ']]>' Char*))
+     * CDEnd ::= ']]>'
      */
     private void parseXMLDeclaration(Node parent) throws JasperException {
         reader.skipSpaces();
@@ -678,17 +682,35 @@ class Parser {
                 err.jspError(start, "jsp.error.unterminated",
                         "&lt;jsp:declaration&gt;");
             }
-            start = reader.mark();
-            Mark stop = reader.skipUntil("<");
-            if ((stop == null) || !reader.matchesETagWithoutLessThan(
-                "jsp:declaration" ) )
-            {
+	    Mark stop;
+            String text;
+            while (true) {
+                start = reader.mark();
+                stop = reader.skipUntil("<");
+                if (stop == null) {
+                    err.jspError(start, "jsp.error.unterminated",
+                        "&lt;jsp:declaration&gt;");
+                }
+		text = parseScriptText(reader.getText(start, stop));
+                new Node.Declaration(text, start, parent);
+                if (reader.matches("![CDATA[")) {
+                    start = reader.mark();
+                    stop = reader.skipUntil("]]>");
+                    if (stop == null) {
+                        err.jspError(start, "jsp.error.unterminated", "CDATA");
+                    }
+		    text = parseScriptText(reader.getText(start, stop));
+                    new Node.Declaration(text, start, parent);
+                }
+                else {
+                    break;
+                }
+	    }
+		
+            if (!reader.matchesETagWithoutLessThan( "jsp:declaration" ) ) {
                 err.jspError(start, "jsp.error.unterminated",
                         "&lt;jsp:declaration&gt;");
             }
-
-            new Node.Declaration(parseScriptText(reader.getText(start, stop)),
-				 start, parent);
         }
     }
 
@@ -708,7 +730,7 @@ class Parser {
 
     /*
      * XMLExpressionBody ::=   ( S? '/>' )
-     *                       | ( S? '>' (Char* - (char* '<')) ETag )
+     *                       | ( S? '>' (Char* - (char* '<')) CDSect?)* ETag )
      *                       | <TRANSLATION_ERROR>
      */
     private void parseXMLExpression(Node parent) throws JasperException {
@@ -718,17 +740,34 @@ class Parser {
                 err.jspError(start, "jsp.error.unterminated",
                     "&lt;jsp:expression&gt;");
             }
-            start = reader.mark();
-            Mark stop = reader.skipUntil("<");
-            if ((stop == null) || !reader.matchesETagWithoutLessThan(
-                "jsp:expression" ))
-            {
+            Mark stop;
+            String text;
+            while (true) {
+                start = reader.mark();
+                stop = reader.skipUntil("<");
+                if (stop == null) {
+                    err.jspError(start, "jsp.error.unterminated",
+                        "&lt;jsp:expression&gt;");
+                }
+                text = parseScriptText(reader.getText(start, stop));
+                new Node.Expression(text, start, parent);
+                if (reader.matches("![CDATA[")) {
+                    start = reader.mark();
+                    stop = reader.skipUntil("]]>");
+                    if (stop == null) {
+                        err.jspError(start, "jsp.error.unterminated", "CDATA");
+                    }
+                    text = parseScriptText(reader.getText(start, stop));
+                    new Node.Expression(text, start, parent);
+                }
+                else {
+                    break;
+                }
+            }
+            if (!reader.matchesETagWithoutLessThan( "jsp:expression" )) {
                 err.jspError(start, "jsp.error.unterminated",
                     "&lt;jsp:expression&gt;");
             }
-
-            new Node.Expression(parseScriptText(reader.getText(start, stop)),
-				start, parent);
         }
     }
 
@@ -779,7 +818,7 @@ class Parser {
 
     /*
      * XMLScriptletBody ::=   ( S? '/>' )
-     *                      | ( S? '>' (Char* - (char* '<')) ETag )
+     *                      | ( S? '>' (Char* - (char* '<')) CDSect?)* ETag )
      *                      | <TRANSLATION_ERROR>
      */
     private void parseXMLScriptlet(Node parent) throws JasperException {
@@ -789,17 +828,35 @@ class Parser {
                 err.jspError(start, "jsp.error.unterminated",
                     "&lt;jsp:scriptlet&gt;");
             }
-            start = reader.mark();
-            Mark stop = reader.skipUntil("<");
-            if ((stop == null) || !reader.matchesETagWithoutLessThan(
-                "jsp:scriptlet" ))
-            {
+            Mark stop;
+            String text;
+            while (true) {
+                start = reader.mark();
+                stop = reader.skipUntil("<");
+                if (stop == null) {
+                    err.jspError(start, "jsp.error.unterminated",
+                        "&lt;jsp:scriptlet&gt;");
+                }
+                text = parseScriptText(reader.getText(start, stop));
+                new Node.Scriptlet(text, start, parent);
+                if (reader.matches("![CDATA[")) {
+                    start = reader.mark();
+                    stop = reader.skipUntil("]]>");
+                    if (stop == null) {
+                        err.jspError(start, "jsp.error.unterminated", "CDATA");
+                    }
+                    text = parseScriptText(reader.getText(start, stop));
+                    new Node.Scriptlet(text, start, parent);
+                }
+                else {
+                    break;
+                }
+            }
+
+            if (!reader.matchesETagWithoutLessThan( "jsp:scriptlet" )) {
                 err.jspError(start, "jsp.error.unterminated",
                     "&lt;jsp:scriptlet&gt;");
             }
-
-            new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
-			       start, parent );
         }
     }
 	
@@ -1338,6 +1395,7 @@ class Parser {
      *                     | ( S? '>'
      *                         ( ( Char* - ( Char* ( '<' | '${' ) ) )
      *                           ( '${' ELExpressionBody )?
+     *                           CDSect?
      *                         )* ETag
      *                       )
      *                     | <TRANSLATION_ERROR>
@@ -1358,8 +1416,19 @@ class Parser {
                         "&lt;jsp:text&gt;" );
                     break;
                 }
-                if( ch == '<' ) break;
-                if( (lastCh == '$') && (ch == '{') ) {
+                if( ch == '<' ) {
+                    // Check for <![CDATA[
+                    if (!reader.matches("![CDATA["))
+                        break;
+                    start = reader.mark();
+                    Mark stop = reader.skipUntil("]]>");
+                    if (stop == null) {
+                        err.jspError(start, "jsp.error.unterminated", "CDATA");
+                    }
+                    String text = reader.getText(start, stop);
+                    ttext.write(text, 0, text.length());
+                }
+                else if( (lastCh == '$') && (ch == '{') ) {
                     // Create a template text node
                     new Node.TemplateText( ttext.toString(), start, parent);
 
