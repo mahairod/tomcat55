@@ -280,6 +280,93 @@ public class DefaultServlet
 
 
     /**
+     * Show HTTP header information.
+     */
+    protected void showRequestInfo(HttpServletRequest req) {
+	
+	System.out.println();
+	System.out.println("SlideDAV Request Info");
+	System.out.println();
+	
+	// Show generic info
+	System.out.println("Encoding : " + req.getCharacterEncoding());
+	System.out.println("Length : " + req.getContentLength());
+	System.out.println("Type : " + req.getContentType());
+	
+	System.out.println();
+	System.out.println("Parameters");
+	
+	Enumeration parameters = req.getParameterNames();
+	
+	while (parameters.hasMoreElements()) {
+	    String paramName = (String) parameters.nextElement();
+	    String[] values = req.getParameterValues(paramName);
+	    System.out.print(paramName + " : ");
+	    for (int i = 0; i < values.length; i++) {
+		System.out.print(values[i] + ", ");
+	    }
+	    System.out.println();
+	}
+	
+	System.out.println();
+	
+	System.out.println("Protocol : " + req.getProtocol());
+	System.out.println("Address : " + req.getRemoteAddr());
+	System.out.println("Host : " + req.getRemoteHost());
+	System.out.println("Scheme : " + req.getScheme());
+	System.out.println("Server Name : " + req.getServerName());
+	System.out.println("Server Port : " + req.getServerPort());
+	
+	System.out.println();
+	System.out.println("Attributes");
+	
+	Enumeration attributes = req.getAttributeNames();
+	
+	while (attributes.hasMoreElements()) {
+	    String attributeName = (String) attributes.nextElement();
+	    System.out.print(attributeName + " : ");
+	    System.out.println(req.getAttribute(attributeName).toString());
+	}
+	
+	System.out.println();
+	
+	// Show HTTP info
+	System.out.println();
+	System.out.println("HTTP Header Info");
+	System.out.println();
+	
+	System.out.println("Authentication Type : " + req.getAuthType());
+	System.out.println("HTTP Method : " + req.getMethod());
+	System.out.println("Path Info : " + req.getPathInfo());
+	System.out.println("Path translated : " + req.getPathTranslated());
+	System.out.println("Query string : " + req.getQueryString());
+	System.out.println("Remote user : " + req.getRemoteUser());
+	System.out.println("Requested session id : " 
+                           + req.getRequestedSessionId());
+	System.out.println("Request URI : " + req.getRequestURI());
+	System.out.println("Context path : " + req.getContextPath());
+        System.out.println("Servlet path : " + req.getServletPath());
+        System.out.println("User principal : " + req.getUserPrincipal());
+        
+	
+	System.out.println();
+	System.out.println("Headers : ");
+	
+	Enumeration headers = req.getHeaderNames();
+	
+	while (headers.hasMoreElements()) {
+	    String headerName = (String) headers.nextElement();
+	    System.out.print(headerName + " : ");
+	    System.out.println(req.getHeader(headerName));
+	}
+	
+	System.out.println();
+	System.out.println();
+	
+    }
+
+
+    /**
      * Return the relative path associated with this servlet.
      *
      * @param request The servlet request we are processing
@@ -323,6 +410,9 @@ public class DefaultServlet
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
 	throws IOException, ServletException {
+
+        if (debug > 999)
+            showRequestInfo(request);
 
 	// Serve the requested resource, including the data content
 	serveResource(request, response, true);
@@ -1226,25 +1316,6 @@ public class DefaultServlet
         ServletOutputStream ostream = null;
         PrintWriter writer = null;
         
-        if (content) {
-            
-            // Trying to retrieve the servlet output stream
-            
-            try {
-                ostream = response.getOutputStream();
-            } catch (IllegalStateException e) {
-                // If it fails, we try to get a Writer instead if we're 
-                // trying to serve a text file
-                if ( (contentType != null) 
-                     && (contentType.startsWith("text")) ) {
-                    writer = response.getWriter();
-                } else {
-                    throw e;
-                }
-            }
-            
-        }
-        
         if ( ((ranges == null) || (ranges.isEmpty())) 
              && (request.getHeader("Range") == null) ) {
             
@@ -1263,6 +1334,21 @@ public class DefaultServlet
                 response.setContentLength((int) contentLength);
             }
             
+            // Trying to retrieve the servlet output stream
+            
+            try {
+                ostream = response.getOutputStream();
+            } catch (IllegalStateException e) {
+                // If it fails, we try to get a Writer instead if we're 
+                // trying to serve a text file
+                if ( (contentType != null) 
+                     && (contentType.startsWith("text")) ) {
+                    writer = response.getWriter();
+                } else {
+                    throw e;
+                }
+            }
+
             // Copy the input stream to our output stream (if requested)
             if (content) {
                 response.setBufferSize(output);
@@ -1299,6 +1385,22 @@ public class DefaultServlet
                 
                 if (content) {
                     response.setBufferSize(output);
+
+                    // Trying to retrieve the servlet output stream
+                    
+                    try {
+                        ostream = response.getOutputStream();
+                    } catch (IllegalStateException e) {
+                        // If it fails, we try to get a Writer instead if 
+                        // we're trying to serve a text file
+                        if ( (contentType != null) 
+                             && (contentType.startsWith("text")) ) {
+                            writer = response.getWriter();
+                        } else {
+                            throw e;
+                        }
+                    }
+                    
                     if (ostream != null) {
                         copy(resourceInfo, ostream, range);
                     } else {
@@ -1313,6 +1415,22 @@ public class DefaultServlet
                 
                 if (content) {
                     response.setBufferSize(output);
+                    
+                    // Trying to retrieve the servlet output stream
+                    
+                    try {
+                        ostream = response.getOutputStream();
+                    } catch (IllegalStateException e) {
+                        // If it fails, we try to get a Writer instead if 
+                        // we're trying to serve a text file
+                        if ( (contentType != null) 
+                             && (contentType.startsWith("text")) ) {
+                            writer = response.getWriter();
+                        } else {
+                            throw e;
+                        }
+                    }
+                    
                     if (ostream != null) {
                         copy(resourceInfo, ostream, ranges.elements(), 
                              contentType);

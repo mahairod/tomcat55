@@ -83,6 +83,7 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Locale;
 import java.util.Hashtable;
+import java.util.Calendar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
@@ -194,6 +195,13 @@ public class WebdavServlet
     protected static final String DEFAULT_NAMESPACE = "DAV:";
     
     
+    /**
+     * Simple date format for the creation date ISO representation (partial).
+     */
+    protected static final SimpleDateFormat creationDateFormat = 
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -473,6 +481,7 @@ public class WebdavServlet
 
         // Create multistatus object
         XMLWriter generatedXML = new XMLWriter();
+        generatedXML.writeXMLHeader();
         
         generatedXML.writeElement(null, "multistatus" 
                                   + generateNamespaceDeclarations(), 
@@ -1735,15 +1744,16 @@ public class WebdavServlet
             generatedXML.writeElement(null, "propstat", XMLWriter.OPENING);
             generatedXML.writeElement(null, "prop", XMLWriter.OPENING);
             
-            generatedXML.writeProperty(null, "creationdate", 
-                                       formats[0].format(new Date
-                                           (resourceInfo.creationDate)));
-            generatedXML.writeProperty(null, "displayname", resourceInfo.path);
+            generatedXML.writeProperty
+                (null, "creationdate", 
+                 getISOCreationDate(resourceInfo.creationDate));
+            generatedXML.writeProperty(null, "displayname", 
+                                       resourceInfo.path.replace('/', '_'));
             generatedXML.writeProperty(null, "getcontentlanguage", 
                                        Locale.getDefault().toString());
-            generatedXML.writeProperty(null, "getlastmodified", 
-                                       resourceInfo.httpDate);
             if (!resourceInfo.collection) {
+                generatedXML.writeProperty
+                    (null, "getlastmodified", resourceInfo.httpDate);
                 generatedXML.writeProperty
                     (null, "getcontentlength", 
                      String.valueOf(resourceInfo.length));
@@ -1832,11 +1842,12 @@ public class WebdavServlet
                 
                 if (property.equals("creationdate")) {
                     generatedXML.writeProperty
-                        (null, "creationdate", formats[0].format
-                         (new Date(resourceInfo.creationDate)));
+                        (null, "creationdate", 
+                         getISOCreationDate(resourceInfo.creationDate));
                 } else if (property.equals("displayname")) {
-                    generatedXML.writeProperty(null, "displayname", 
-                                               resourceInfo.path);
+                    generatedXML.writeProperty
+                        (null, "displayname", 
+                         resourceInfo.path.replace('/', '_'));
                 } else if (property.equals("getcontentlanguage")) {
                     if (resourceInfo.collection) {
                         propertiesNotFound.addElement(property);
@@ -1874,9 +1885,8 @@ public class WebdavServlet
                     if (resourceInfo.collection) {
                         propertiesNotFound.addElement(property);
                     } else {
-                        generatedXML.writeProperty(null, 
-                                                   "getlastmodified", 
-                                                   resourceInfo.httpDate);
+                        generatedXML.writeProperty
+                            (null, "getlastmodified", resourceInfo.httpDate);
                     }
                 } else if (property.equals("resourcetype")) {
                     if (resourceInfo.collection) {
@@ -1903,7 +1913,8 @@ public class WebdavServlet
                     generatedXML.writeProperty(null, "supportedlock",
                                                supportedLocks);
                 } else if (property.equals("lockdiscovery")) {
-                    generateLockDiscovery(path, generatedXML);
+                    if (!generateLockDiscovery(path, generatedXML))
+                        propertiesNotFound.addElement(property);
                 } else {
                     propertiesNotFound.addElement(property);
                 }
@@ -1998,9 +2009,11 @@ public class WebdavServlet
             generatedXML.writeElement(null, "propstat", XMLWriter.OPENING);
             generatedXML.writeElement(null, "prop", XMLWriter.OPENING);
             
-            generatedXML.writeProperty(null, "creationdate", 
-                                       formats[0].format(lock.creationDate));
-            generatedXML.writeProperty(null, "displayname", path);
+            generatedXML.writeProperty
+                (null, "creationdate", 
+                 getISOCreationDate(lock.creationDate.getTime()));
+            generatedXML.writeProperty(null, "displayname", 
+                                       path.replace('/', '_'));
             generatedXML.writeProperty(null, "getcontentlanguage", 
                                        Locale.getDefault().toString());
             generatedXML.writeProperty(null, "getlastmodified", 
@@ -2085,9 +2098,10 @@ public class WebdavServlet
                 if (property.equals("creationdate")) {
                     generatedXML.writeProperty
                         (null, "creationdate", 
-                         formats[0].format(lock.creationDate));
+                         getISOCreationDate(lock.creationDate.getTime()));
                 } else if (property.equals("displayname")) {
-                    generatedXML.writeProperty(null, "displayname", path);
+                    generatedXML.writeProperty(null, "displayname", 
+                                               path.replace('/', '_'));
                 } else if (property.equals("getcontentlanguage")) {
                     generatedXML.writeProperty
                         (null, "getcontentlanguage", 
@@ -2124,7 +2138,8 @@ public class WebdavServlet
                     generatedXML.writeProperty(null, "supportedlock",
                                                supportedLocks);
                 } else if (property.equals("lockdiscovery")) {
-                    generateLockDiscovery(path, generatedXML);
+                    if (!generateLockDiscovery(path, generatedXML))
+                        propertiesNotFound.addElement(property);
                 } else {
                     propertiesNotFound.addElement(property);
                 }
@@ -2172,28 +2187,71 @@ public class WebdavServlet
      * 
      * @param path Path
      * @param generatedXML XML data to which the locks info will be appended
+     * @return true if at least one lock was displayed
      */
-    private void generateLockDiscovery(String path, XMLWriter generatedXML) {
-        
-        generatedXML.writeElement(null, "lockdiscovery", 
-                                  XMLWriter.OPENING);
-        
+    private boolean generateLockDiscovery
+        (String path, XMLWriter generatedXML) {
+
         LockInfo resourceLock = (LockInfo) resourceLocks.get(path);
+        Enumeration collectionLocksList = collectionLocks.elements();
+
+        boolean wroteStart = false;
+
         if (resourceLock != null) {
+            wroteStart = true;
+            generatedXML.writeElement(null, "lockdiscovery", 
+                                      XMLWriter.OPENING);
             resourceLock.toXML(generatedXML);
         }
         
-        Enumeration collectionLocksList = collectionLocks.elements();
         while (collectionLocksList.hasMoreElements()) {
-            LockInfo currentLock = (LockInfo) collectionLocksList.nextElement();
+            LockInfo currentLock = 
+                (LockInfo) collectionLocksList.nextElement();
             if (path.startsWith(currentLock.path)) {
+                if (!wroteStart) {
+                    wroteStart = true;
+                    generatedXML.writeElement(null, "lockdiscovery", 
+                                              XMLWriter.OPENING);
+                }
                 currentLock.toXML(generatedXML);
             }
         }
         
-        generatedXML.writeElement(null, "lockdiscovery", 
-                                  XMLWriter.CLOSING);
-        
+        if (wroteStart) {
+            generatedXML.writeElement(null, "lockdiscovery", 
+                                      XMLWriter.CLOSING);
+        } else {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    
+    /**
+     * Get creation date in ISO format.
+     */
+    private String getISOCreationDate(long creationDate) {
+        StringBuffer creationDateValue = new StringBuffer
+            (creationDateFormat.format
+             (new Date(creationDate)));
+        int offset = Calendar.getInstance().getTimeZone().getRawOffset()
+            / 3600000; // FIXME ?
+        if (offset < 0) {
+            creationDateValue.append("-");
+            offset = -offset;
+        } else if (offset > 0) {
+            creationDateValue.append("+");
+        }
+        if (offset != 0) {
+            if (offset < 10)
+                creationDateValue.append("0");
+            creationDateValue.append(offset + ":00");
+        } else {
+            creationDateValue.append("Z");
+        }
+        return creationDateValue.toString();
     }
 
 
@@ -2206,7 +2264,7 @@ public class WebdavServlet
     private class LockInfo {
 
 
-        // --------------------------------------------------------- Constructor
+        // -------------------------------------------------------- Constructor
 
 
         /**
@@ -2219,7 +2277,7 @@ public class WebdavServlet
         }
 
 
-        // -------------------------------------------------- Instance Variables
+        // ------------------------------------------------- Instance Variables
 
 
         String path = "/";
@@ -2232,7 +2290,7 @@ public class WebdavServlet
         Date creationDate = new Date();
         
         
-        // ------------------------------------------------------ Public Methods
+        // ----------------------------------------------------- Public Methods
 
 
         /**
