@@ -199,24 +199,26 @@ public class Compiler {
 	JspConfig jspConfig = options.getJspConfig();
 	JspConfig.JspProperty jspProperty =
 			jspConfig.findJspProperty(ctxt.getJspFile());
-	if (jspProperty != null) {
-	    // If the current uri is matched by a pattern specified in
-	    // a jsp-property-group in web.xml, initialize pageInfo with
-	    // those properties.
-	    if (jspProperty.isXml() != null) {
-		pageInfo.setIsXmlSpecified(true);
-	    }
-	    if (jspProperty.isELIgnored() != null) {
-		pageInfo.setELIgnoredSpecified(true);
-	    }
-	    pageInfo.setIsXml(JspUtil.booleanValue(jspProperty.isXml()));
-	    pageInfo.setPageEncoding(jspProperty.getPageEncoding());
-	    pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
-	    pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));
+
+	// If the current uri is matched by a pattern specified in
+	// a jsp-property-group in web.xml, initialize pageInfo with
+	// those properties.
+	if (jspProperty.isXml() != null) {
+	    pageInfo.setIsXmlSpecified(true);
+	}
+	if (jspProperty.isELIgnored() != null) {
+	    pageInfo.setELIgnoredSpecified(true);
+	}
+	pageInfo.setIsXml(JspUtil.booleanValue(jspProperty.isXml()));
+	pageInfo.setPageEncoding(jspProperty.getPageEncoding());
+	pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
+	pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));
+	if (jspProperty.getIncludePrelude() != null) {
 	    pageInfo.setIncludePrelude(jspProperty.getIncludePrelude());
+	}
+	if (jspProperty.getIncludeCoda() != null) {
 	    pageInfo.setIncludeCoda(jspProperty.getIncludeCoda());
 	}
-
         String javaFileName = ctxt.getServletJavaFileName();
 
         // Setup the ServletWriter
