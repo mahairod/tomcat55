@@ -2,41 +2,45 @@
 
 <project name="Ant" default="main" basedir=".">
 
-  <property name="dist.dir" value="${user.home}/opt" />
-  <property name="package.dir" value="/home/ftp/pub/tomcat" />
-
-  <property name="ant.dir" value="${dist.dir}/ant" />
+  <property name="src.dir" value="src/main"/>
+  <property name="build.dir" value="build"/>
+  <property name="dist.dir" value="build"/>
+  
+  <property name="classpath" value="lib/projectx-tr2.jar"/>
+  <property name="manifest" value="src/etc/manifest"/>
+  
   <property name="build.compiler" value="classic"/>
 
   <target name="main">
-    <mkdir dir="build"/>
-    <javac srcdir="src/main" 
-           destdir="build" 
-           classpath="lib/projectx-tr2.jar"
-           debug="on" 
-           deprecation="on"/>
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dir}" classpath="${classpath}"
+           debug="on" deprecation="on"/>
   </target>
 
-  <target name="dist" depends="main">
-     <mkdir dir="${ant.dir}"/>
-     <mkdir dir="${ant.dir}/lib"/>
-     <mkdir dir="${ant.dir}/bin"/>
-     <mkdir dir="${ant.dir}/docs"/>
-     <jar jarfile="${ant.dir}/lib/ant.jar" basedir="build" items="org"  manifest="src/etc/manifest"/>
-     <copyfile src="../projectx-tr2.jar" dest="${ant.dir}/lib/xml.jar"/>
-     <copyfile src="build.xml" dest="${ant.dir}/lib/build.xml"/>
-     <copydir src="src/bin" dest="${ant.dir}/bin" />
-     <copydir src="docs" dest="${ant.dir}/docs" />
-     <jar jarfile="${ant.dir}/src.zip" basedir="src" items="bin,etc,main" />
-     <chmod perm="+x" src="${ant.dir}/bin/ant" />
+  <target name="jar" depends="main">
+     <jar jarfile="../ant.jar" basedir="${build.dir}" items="org" manifest="${manifest}"/>
   </target>
 
-  <target name="package" depends="dist" >
-     <jar jarfile="${package.dir}/ant.zip" basedir="${ant.dir}" items="bin,lib,docs,src.zip"/>
- </target>
+  <target name="dist" depends="jar">
+     <mkdir dir="${dist.dir}"/>
+     <mkdir dir="${dist.dir}/lib"/>
+     <mkdir dir="${dist.dir}/bin"/>
+     <mkdir dir="${dist.dir}/docs"/>
+     <copyfile src="../projectx-tr2.jar" dest="${dist.dir}/lib/xml.jar"/>
+     <copyfile src="build.xml" dest="${dist.dir}/lib/build.xml"/>
+     <copydir src="src/bin" dest="${dist.dir}/bin"/>
+     <copydir src="docs" dest="${dist.dir}/docs"/>
+     <jar jarfile="${dist.dir}/src.zip" basedir="src" items="bin,etc,main"/>
+     <chmod perm="+x" src="${dist.dir}/bin/ant"/>
+  </target>
+
+  <target name="package" depends="dist">
+     <jar jarfile="ant.zip" basedir="${dist.dir}" items="bin,lib,docs,src.zip"/>
+  </target>
 
   <target name="clean">
-    <deltree dir="build"/>
+    <deltree dir="${build.dir}"/>
+    <deltree dir="${dist.dir}"/>
   </target>
   
 </project>
