@@ -64,6 +64,9 @@ Bug No.  Description
          untrusted web applications couldn't run the JspServlet because
          jasper.jar and tools.jar weren't accessible.
 
+4955	 Fixed bug in the parsing of the query string to 
+	 RequestDispatcher.include/forward wasn't handling the case where only
+	 the parameter name was specified.
 
 Configuration:
 
