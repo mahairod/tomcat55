@@ -122,16 +122,16 @@ package javax.servlet.jsp.tagext;
  * <IMG src="doc-files/VariableInfo-1.gif"/>
  *
  *<p>
- * The defined values for scope are:
+ * The JSP 1.2 specification defines the interpretation of 3 values:
  * 
  * <ul>
  * <li> NESTED, if the scripting variable is available between
  * the start tag and the end tag of the action that defines it.
  * <li>
  * AT_BEGIN, if the scripting variable is available from the start tag
- * of the action that defines it until the end of the page.
+ * of the action that defines it until the end of the scope.
  * <li> AT_END, if the scripting variable is available after the end tag
- * of the action that defines it until the end of the page.
+ * of the action that defines it until the end of the scope.
  * </ul>
  *
  * The scope value for a variable implies what methods may affect its
