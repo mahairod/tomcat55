@@ -127,6 +127,7 @@
      classpath="${tyrex.jar}" />
 
     <!-- JAR files availability flags -->
+    <available property="ajp.jar.present" file="${ajp.jar}" />
     <condition property="javamail.jar.present">
       <and>
         <available file="${activation.jar}" />
@@ -143,6 +144,7 @@
     <available property="ldap.jar.present" file="${ldap.jar}" />
     <available property="regexp.jar.present" file="${regexp.jar}" />
     <available property="servlet.jar.present" file="${servlet.jar}" />
+    <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
     <available property="tyrex.jar.present" file="${tyrex.jar}" />
 
     <!-- Conditional compilation flags (determined from the flags above) -->
@@ -200,6 +202,12 @@
 
 
     <!-- Conditional copy flags (determined from the flags above) -->
+    <condition property="copy.ajp.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${ajp.jar.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.jdbc20ext.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -264,6 +272,12 @@
         </and>
       </or>
     </condition>
+    <condition property="copy.tomcat-util.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${tomcat-util.jar.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.tyrex.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -313,8 +327,10 @@
     <echo message="jndi.jar.present(except JDK 1.3+)=${jndi.jar.present}" />
     <echo message="regexp.jar.present=${regexp.jar.present}" />
     <echo message="servlet.jar.present=${servlet.jar.present}" />
+    <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
 
     <echo message="--- Optional JARs ---" />
+    <echo message="ajp.jar.present=${ajp.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
     <echo message="jta.jar.present=${jta.jar.present}" />
@@ -333,11 +349,13 @@
     <echo message="compile.tyrex=${compile.tyrex}" />
 
     <echo message="--- Distribution flags ---" />
+    <echo message="copy.ajp.jar=${copy.ajp.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
     <echo message="copy.jndi.jar=${copy.jndi.jar}" />
     <echo message="copy.javamail.jar=${copy.javamail.jar}" />
     <echo message="copy.jta.jar=${copy.jta.jar}" />
     <echo message="copy.ldap.jar=${copy.ldap.jar}" />
+    <echo message="copy.tomcat-util.jar=${copy.tomcat-util.jar}" />
     <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
 
   </target>
@@ -361,6 +379,9 @@
 
 
   <!-- ======================== BUILD: Copy JARs ========================== -->
+  <target name="copy-ajp.jar" if="copy.ajp.jar">
+    <copy todir="${catalina.build}/server/lib" file="${ajp.jar}"/>
+  </target>
   <target name="copy-activation.jar" if="copy.javamail.jar">
     <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
@@ -386,6 +407,9 @@
     <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
     -->
   </target>
+  <target name="copy-tomcat-util.jar" if="copy.tomcat-util.jar">
+    <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
+  </target>
   <target name="copy-tyrex.jar" if="copy.tyrex.jar">
     <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
@@ -393,7 +417,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tyrex.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-ajp.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
