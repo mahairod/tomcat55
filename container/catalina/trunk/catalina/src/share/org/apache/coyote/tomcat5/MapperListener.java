@@ -296,15 +296,15 @@ public class MapperListener
     }
 
     /**
-     * Register host (FIXME).
+     * Register host.
      */
     private void registerHost(ObjectName objectName)
-        throws Exception
-    {
+        throws Exception {
         String name=objectName.getKeyProperty("host");
-        log.debug("Register host " + name);
         if( name != null ) {        
-            mapper.addHost(name, objectName);
+            String[] aliases = (String[])
+                mBeanServer.invoke(objectName, "findAliases", null, null);
+            mapper.addHost(name, aliases, objectName);
         }
     }
 
@@ -315,7 +315,9 @@ public class MapperListener
     private void unregisterHost(ObjectName objectName)
         throws Exception {
         String name=objectName.getKeyProperty("host");
-        mapper.removeHost(name);
+        String[] aliases = (String[])
+            mBeanServer.invoke(objectName, "findAliases", null, null);
+        mapper.removeHost(name, aliases);
     }
 
 
