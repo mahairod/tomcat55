@@ -259,6 +259,18 @@ public interface Connector {
      * @exception LifecycleException If this server was already initialized.
      */
     public void initialize()
-    throws LifecycleException;
+        throws LifecycleException;
+
+    /**
+     * Pause the connector.
+     */
+    public void pause()
+        throws LifecycleException;
+
+    /**
+     * Pause the connector.
+     */
+    public void resume()
+        throws LifecycleException;
 
 }
