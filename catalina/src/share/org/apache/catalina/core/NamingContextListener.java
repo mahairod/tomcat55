@@ -859,7 +859,7 @@ public class NamingContextListener
 
         // Create a reference to the resource env.
         Reference ref = new ResourceEnvRef(resourceEnvRef.getType());
-        // FIXME: Adding the additional parameters, if any
+        // Adding the additional parameters, if any
         Iterator params = resourceEnvRef.listProperties();
         while (params.hasNext()) {
             String paramName = (String) params.next();
@@ -869,9 +869,9 @@ public class NamingContextListener
         }
         try {
             if (logger.isDebugEnabled())
-                log.debug("  Adding resource env ref " + name);
-            createSubcontexts(envCtx, name);
-            envCtx.bind(name, ref);
+                log.debug("  Adding resource env ref " + resourceEnvRef.getName());
+            createSubcontexts(envCtx, resourceEnvRef.getName());
+            envCtx.bind(resourceEnvRef.getName(), ref);
         } catch (NamingException e) {
             logger.error(sm.getString("naming.bindFailed", e));
         }
