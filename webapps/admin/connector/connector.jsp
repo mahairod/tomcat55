@@ -48,7 +48,7 @@
             <logic:notEqual name="connectorForm" property="portText"
                             value='<%= Integer.toString(request.getServerPort()) %>'>
             <controls:action url='<%= "/DeleteConnector.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
             <bean:message key="actions.connectors.delete"/>
             </controls:action>
             </logic:notEqual>

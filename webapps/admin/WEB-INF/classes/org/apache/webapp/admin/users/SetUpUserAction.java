@@ -44,7 +44,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * <p>Implementation of <strong>Action</strong> that sets up and stashes
@@ -87,7 +87,7 @@ public final class SetUpUserAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -103,7 +103,7 @@ public final class SetUpUserAction extends Action {
 
         // Set up beans containing all possible groups and roles
         String databaseName =
-            URLDecoder.decode(request.getParameter("databaseName"));
+            URLDecoder.decode(request.getParameter("databaseName"),TomcatTreeBuilder.URL_ENCODING);
         try {
             request.setAttribute("groupsForm",
                                  UserUtils.getGroupsForm(mserver,

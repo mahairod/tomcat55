@@ -115,7 +115,7 @@ public final class SaveContextAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -430,7 +430,7 @@ public final class SaveContextAction extends Action {
                 String nodeLabel = 
                     resources.getMessage(locale, "server.service.treeBuilder.context") + 
                     " (" + path + ")";
-                String encodedName = URLEncoder.encode(oname.toString());
+                String encodedName = URLEncoder.encode(oname.toString(),TomcatTreeBuilder.URL_ENCODING);
                 TreeControlNode childNode = 
                     new TreeControlNode(oname.toString(),
                                         "Context.gif",
@@ -455,10 +455,10 @@ public final class SaveContextAction extends Action {
                     "Datasource.gif",
                     resources.getMessage(locale, "resources.treeBuilder.datasources"),
                     "resources/listDataSources.do?resourcetype=" + 
-                    URLEncoder.encode(type) + "&path=" +
-                    URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&forward=" +
-                    URLEncoder.encode("DataSources List Setup"),
+                    URLEncoder.encode(type,TomcatTreeBuilder.URL_ENCODING) + "&path=" +
+                    URLEncoder.encode(path,TomcatTreeBuilder.URL_ENCODING) + "&host=" + 
+                    URLEncoder.encode(host,TomcatTreeBuilder.URL_ENCODING) + "&forward=" +
+                    URLEncoder.encode("DataSources List Setup",TomcatTreeBuilder.URL_ENCODING),
                     "content",
                     false, domain);
                 TreeControlNode mailsessions = new TreeControlNode
@@ -466,10 +466,10 @@ public final class SaveContextAction extends Action {
                     "Mailsession.gif",
                     resources.getMessage(locale, "resources.treeBuilder.mailsessions"),
                     "resources/listMailSessions.do?resourcetype=" + 
-                    URLEncoder.encode(type) + "&path=" +
-                    URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&forward=" +
-                    URLEncoder.encode("MailSessions List Setup"),
+                    URLEncoder.encode(type,TomcatTreeBuilder.URL_ENCODING) + "&path=" +
+                    URLEncoder.encode(path,TomcatTreeBuilder.URL_ENCODING) + "&host=" + 
+                    URLEncoder.encode(host,TomcatTreeBuilder.URL_ENCODING) + "&forward=" +
+                    URLEncoder.encode("MailSessions List Setup",TomcatTreeBuilder.URL_ENCODING),
                     "content",
                     false, domain);
                 TreeControlNode resourcelinks = new TreeControlNode
@@ -477,10 +477,10 @@ public final class SaveContextAction extends Action {
                     "ResourceLink.gif",
                     resources.getMessage(locale, "resources.treeBuilder.resourcelinks"),
                     "resources/listResourceLinks.do?resourcetype=" + 
-                    URLEncoder.encode(type) + "&path=" +
-                    URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&forward=" +
-                    URLEncoder.encode("ResourceLinks List Setup"),
+                    URLEncoder.encode(type,TomcatTreeBuilder.URL_ENCODING) + "&path=" +
+                    URLEncoder.encode(path,TomcatTreeBuilder.URL_ENCODING) + "&host=" + 
+                    URLEncoder.encode(host,TomcatTreeBuilder.URL_ENCODING) + "&forward=" +
+                    URLEncoder.encode("ResourceLinks List Setup",TomcatTreeBuilder.URL_ENCODING),
                     "content",
                     false, domain);
                 TreeControlNode envs = new TreeControlNode
@@ -488,10 +488,10 @@ public final class SaveContextAction extends Action {
                     "EnvironmentEntries.gif",
                     resources.getMessage(locale ,"resources.env.entries"),
                     "resources/listEnvEntries.do?resourcetype=" + 
-                    URLEncoder.encode(type) + "&path=" +
-                    URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&forward=" +
-                    URLEncoder.encode("EnvEntries List Setup"),
+                    URLEncoder.encode(type,TomcatTreeBuilder.URL_ENCODING) + "&path=" +
+                    URLEncoder.encode(path,TomcatTreeBuilder.URL_ENCODING) + "&host=" + 
+                    URLEncoder.encode(host,TomcatTreeBuilder.URL_ENCODING) + "&forward=" +
+                    URLEncoder.encode("EnvEntries List Setup",TomcatTreeBuilder.URL_ENCODING),
                     "content",
                     false, domain);
                 subtree.addChild(datasources);

@@ -45,7 +45,7 @@
             <logic:notEqual name="userDatabaseRealmForm" property="adminAction" value="Create">
                 <logic:notEqual name="userDatabaseRealmForm" property="allowDeletion" value="false">
                 <controls:action url='<%= "/DeleteRealm.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.realms.delete"/>
             </controls:action>
            </logic:notEqual>

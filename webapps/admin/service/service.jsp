@@ -54,36 +54,25 @@
             </controls:action>
             <logic:notEqual name="serviceForm" property="adminAction" value="Create">
               <controls:action url='<%= "/AddConnector.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.connectors.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteConnector.do?select=" +
-                                        URLEncoder.encode(thisObjectName)%>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8")%>'>
                 <bean:message key="actions.connectors.deletes"/>
               </controls:action>
               <controls:action>
                 -------------------------------------
               </controls:action>
-              <!-- FIXME add/remove defaultcontext-->
-<%--
-              <!--controls:action url='<%= "/AddDefaultContext.do?serviceName=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.defaultcontexts.create"/>
-              </controls:action-->
-              <!--controls:action url='<%= "/DeleteDefaultContext.do?serviceName=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.defaultcontexts.deletes"/>
-              </controls:action-->
---%>
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddHost.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.hosts.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteHost.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.hosts.deletes"/>
               </controls:action>
               <controls:action disabled="true">
@@ -96,11 +85,11 @@
               </controls:action>
               <%--
               <controls:action url='<%= "/AddRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.realms.create"/>
              </controls:action>
              <controls:action url='<%= "/DeleteRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.realms.deletes"/>
               </controls:action>
               --%>
@@ -109,11 +98,11 @@
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.valves.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.valves.deletes"/>
                </controls:action>
                <%-- cannot delete the service the admin app runs on --%>
@@ -122,7 +111,7 @@
                 -------------------------------------
                 </controls:action>
                  <controls:action url='<%= "/DeleteService.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.services.delete"/>
               </controls:action>
               </logic:notEqual>

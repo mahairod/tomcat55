@@ -157,14 +157,14 @@ public final class ValveUtil {
                     String nodeLabel =
                     "Valve for " + parentNode.getLabel();
                     String encodedName =
-                    URLEncoder.encode(vObjectName);
+                    URLEncoder.encode(vObjectName,TomcatTreeBuilder.URL_ENCODING);
                     TreeControlNode childNode =
                     new TreeControlNode(vObjectName,
                     "Valve.gif",
                     nodeLabel,
                     "EditValve.do?select=" + encodedName +
-                    "&nodeLabel=" + URLEncoder.encode(nodeLabel) +
-                    "&parent=" + URLEncoder.encode(parentNodeName),
+                    "&nodeLabel=" + URLEncoder.encode(nodeLabel,TomcatTreeBuilder.URL_ENCODING) +
+                    "&parent=" + URLEncoder.encode(parentNodeName,TomcatTreeBuilder.URL_ENCODING),
                     "content",
                     true, domain);
                     parentNode.addChild(childNode);
