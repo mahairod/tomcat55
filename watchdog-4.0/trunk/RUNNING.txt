@@ -73,7 +73,7 @@ required are documented here.
 (3) Download and Install the Watchdog Binary Distribution
 
 NOTE:  As an alternative to downloading a binary distribution, you can create
-your own from the Watchdog source repository, as described in "RUNNING.txt".
+your own from the Watchdog source repository, as described in "BUILDING.txt".
 If you do this, the value to use for "${watchdog.home}" will be the "dist"
 subdirectory of your source distribution.
 
