@@ -38,7 +38,6 @@ Section "Tomcat 4.0 (required)"
   SetOutPath $INSTDIR
   File tomcat.ico
   File LICENSE
-  File README.txt
   File /r bin
   File /r common
   File /r jasper
@@ -93,12 +92,12 @@ Section "Tomcat 4.0 Start Menu Group"
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-cp "$INSTDIR\bin\bootstrap.jar;$2\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap start' \
+                 '-jar -cp "$2\lib\tools.jar" -Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-cp "$INSTDIR\bin\bootstrap.jar;$2\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap stop' \
+                 '-Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
   SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration"
@@ -210,11 +209,7 @@ FunctionEnd
 
 Function .onInstSuccess
 
-  MessageBox MB_YESNO|MB_ICONQUESTION \
-             "Setup has completed. View readme file now?" \
-             IDNO NoReadme
-    ExecShell open '$INSTDIR\README.txt'
-  NoReadme:
+  ExecShell open '$SMPROGRAMS\Jakarta Tomcat 4.0'
 
 FunctionEnd
 
@@ -242,7 +237,6 @@ Section Uninstall
   RMDir /r "$SMPROGRAMS\Jakarta Tomcat 4.0"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
-  Delete "$INSTDIR\README.txt"
   RMDir /r "$INSTDIR\bin"
   RMDir /r "$INSTDIR\common"
   Delete "$INSTDIR\conf\*.dtd"

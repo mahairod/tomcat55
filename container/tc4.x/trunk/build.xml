@@ -170,7 +170,6 @@
       <fileset dir="resources" />
     </copy>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" />
-    <copy file="README.txt" tofile="${tomcat.dist}/README.txt" />
     <exec dir="${tomcat.dist}" executable="makensis.exe">
       <arg value="tomcat.nsi" />
     </exec>
