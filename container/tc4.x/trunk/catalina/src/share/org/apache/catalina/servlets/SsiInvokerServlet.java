@@ -69,6 +69,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Locale;
@@ -90,8 +92,6 @@ import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ssi.SsiCommand;
 import org.apache.catalina.util.ssi.SsiMediator;
 import org.apache.catalina.util.ssi.ServletOutputStreamWrapper;
-import org.apache.naming.resources.Resource;
-import org.apache.naming.resources.ResourceAttributes;
 
 /**
  * Servlet to process SSI requests within a webpage.
@@ -113,17 +113,6 @@ public final class SsiInvokerServlet extends HttpServlet {
     /** The Mediator object for the SsiCommands. */
     private static SsiMediator ssiMediator = null;
 
-    /** JNDI resources name. */
-    protected static final String RESOURCES_JNDI_NAME = "java:/comp/Resources";
-
-    /** The set of SimpleDateFormat formats to use in getDateHeader(). */
-    protected static final SimpleDateFormat[] formats = {
-	new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
-	new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
-	new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
-    };
-    protected final static TimeZone gmtZone = TimeZone.getTimeZone("GMT");
-
     /** The start pattern */
     private final static byte[] bStart = {
 	(byte)'<',(byte)'!',(byte)'-',(byte)'-',(byte)'#'
@@ -134,11 +123,6 @@ public final class SsiInvokerServlet extends HttpServlet {
 	(byte)'-',(byte)'-',(byte)'>'
     };
 
-    static {
-        formats[0].setTimeZone(gmtZone);
-        formats[1].setTimeZone(gmtZone);
-        formats[2].setTimeZone(gmtZone);
-    }
     //----------------- Public methods.
 
     /**
@@ -154,7 +138,6 @@ public final class SsiInvokerServlet extends HttpServlet {
             ;
         }
         try {
-            // adapted from JSSI
             value = getServletConfig().getInitParameter("expires");
             expires = Long.valueOf(value);
         } catch (NumberFormatException e) {
@@ -219,10 +202,9 @@ public final class SsiInvokerServlet extends HttpServlet {
 				HttpServletResponse res)
 	throws IOException, ServletException {
 
-        DirContext resources = getResources();
         ServletContext servletContext = getServletContext();
         String path = getRelativePath(req);
-        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
+	URL resource = servletContext.getResource(path);
 
         if (debug > 0)
             log("SsiInvokerServlet.requestHandler()\n" +
@@ -239,7 +221,7 @@ public final class SsiInvokerServlet extends HttpServlet {
             return;
         }
 
-	if (!resourceInfo.exists) {
+	if (resource==null) {
 	    res.sendError(res.SC_NOT_FOUND, path);
 	    return;
 	}
@@ -250,12 +232,12 @@ public final class SsiInvokerServlet extends HttpServlet {
         }
 
         OutputStream out = null;
-        InputStream resourceInputStream =
-	    servletContext.getResourceAsStream(path);
+	URLConnection resourceInfo = resource.openConnection();
+        InputStream resourceInputStream = resourceInfo.getInputStream();
 
         InputStream in = new BufferedInputStream(resourceInputStream, 4096);
         ByteArrayOutputStream soonOut =
-	    new ByteArrayOutputStream((int)resourceInfo.length);
+	    new ByteArrayOutputStream(resourceInfo.getContentLength());
 
         StringBuffer command = new StringBuffer();
         byte buf[] = new byte[4096];
@@ -547,141 +529,5 @@ public final class SsiInvokerServlet extends HttpServlet {
         }
         // Return the normalized path that we have completed
         return (normalized);
-    }
-
-    /**
-     * Get resources. This method will try to retrieve the resources through
-     * JNDI first, then in the servlet context if JNDI has failed
-     * (it could be disabled). It will return null.
-     * @return A JNDI DirContext, or null.
-     */
-    private DirContext getResources() {
-        // First : try JNDI
-        try {
-            return (DirContext)new InitialContext().lookup(RESOURCES_JNDI_NAME);
-        } catch (NamingException e) {
-            // Failed
-        } catch (ClassCastException e) {
-            // Failed : Not the right type
-        }
-        // If it has failed, try the servlet context
-        try {
-            return (DirContext)getServletContext().getAttribute(Globals.RESOURCES_ATTR);
-        } catch (ClassCastException e) {
-            // Failed : Not the right type
-        }
-        return null;
-    }
-
-    // ----------------------------------------------  ResourceInfo Inner Class
-    protected class ResourceInfo {
-        /**
-         * Constructor.
-         * @param pathname Path name of the file
-         */
-        public ResourceInfo(String path, DirContext resources) {
-            set(path, resources);
-        }
-
-        public Object object;
-        public DirContext directory;
-        public Resource file;
-        public Attributes attributes;
-        public String path;
-        public long creationDate;
-        public String httpDate;
-        public long date;
-        public long length;
-        public boolean collection;
-        public boolean exists;
-        public DirContext resources;
-        protected InputStream is;
-
-        public void recycle() {
-            object = null;
-            directory = null;
-            file = null;
-            attributes = null;
-            path = null;
-            creationDate = 0;
-            httpDate = null;
-            date = 0;
-            length = -1;
-            collection = true;
-            exists = false;
-            resources = null;
-            is = null;
-        }
-
-        public void set(String path, DirContext resources) {
-            recycle();
-            this.path = path;
-            this.resources = resources;
-            exists = true;
-            try {
-                object = resources.lookup(path);
-                if (object instanceof Resource) {
-                    file = (Resource)object;
-                    collection = false;
-                } else if (object instanceof DirContext) {
-                    directory = (DirContext)object;
-                    collection = true;
-                } else {
-                    // Don't know how to serve another object type
-                    exists = false;
-                }
-            } catch (NamingException e) {
-                exists = false;
-            }
-            if (exists) {
-                try {
-                    attributes = resources.getAttributes(path);
-                    if (attributes instanceof ResourceAttributes) {
-                        ResourceAttributes tempAttrs = (ResourceAttributes)attributes;
-                        Date tempDate = tempAttrs.getCreationDate();
-                        if (tempDate != null)
-                            creationDate = tempDate.getTime();
-                        tempDate = tempAttrs.getLastModified();
-                        if (tempDate != null) {
-                            date = tempDate.getTime();
-                            httpDate = formats[0].format(tempDate);
-                        } else {
-                            httpDate = formats[0].format(
-                                new Date());
-                        }
-                        length = tempAttrs.getContentLength();
-                    }
-                } catch (NamingException e) {
-                    // Shouldn't happen, the implementation of the DirContext
-                    // is probably broken
-                    exists = false;
-                }
-            }
-        }
-
-        /** Test if the associated resource exists. */
-        public boolean exists() {
-            return exists;
-        }
-
-        /** String representation. */
-        public String toString() {
-            return path;
-        }
-
-        /** Set IS. */
-        public void setStream(InputStream is) {
-            this.is = is;
-        }
-
-        /** Get IS from resource. */
-        public InputStream getStream() throws IOException {
-            if (is != null)
-                return is;
-            if (file != null)
-                return (file.streamContent());
-            else
-                return null;
-        }
     }
 }
