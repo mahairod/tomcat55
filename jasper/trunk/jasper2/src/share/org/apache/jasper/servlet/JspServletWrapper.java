@@ -114,6 +114,7 @@ public class JspServletWrapper {
     private ServletConfig config;
     private Options options;
     private boolean isTagFile;
+    private int tripCount;
 
     /*
      * JspServletWrapper for JSP pages.
@@ -145,6 +146,7 @@ public class JspServletWrapper {
         this.config = null;	// not used
         this.options = options;
 	this.jspUri = tagFilePath;
+	this.tripCount = 0;
         ctxt = new JspCompilationContext(jspUri, tagInfo, tagData, options,
 					 servletContext, this, rctxt,
 					 tagFileJars);
@@ -246,6 +248,14 @@ public class JspServletWrapper {
 
     public boolean isTagFile() {
 	return this.isTagFile;
+    }
+
+    public int incTripCount() {
+	return tripCount++;
+    }
+
+    public int decTripCount() {
+	return tripCount--;
     }
 
     public void service(HttpServletRequest request, 

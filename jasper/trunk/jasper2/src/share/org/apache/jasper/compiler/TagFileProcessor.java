@@ -332,11 +332,12 @@ public class TagFileProcessor {
     /**
      * Compiles and loads a tagfile.
      */
-    private static Class loadTagFile(JspCompilationContext ctxt,
+    private static Class loadTagFile(Compiler compiler,
 				    String tagFilePath, TagInfo tagInfo,
 				    TagData tagData)
 	throws JasperException {
 
+	JspCompilationContext ctxt = compiler.getCompilationContext();
 	JspRuntimeContext rctxt = ctxt.getRuntimeContext();
         JspServletWrapper wrapper =
 		(JspServletWrapper) rctxt.getWrapper(tagFilePath);
@@ -353,7 +354,17 @@ public class TagFileProcessor {
 					    ctxt.getTagFileJars());
 	    rctxt.addWrapper(tagFilePath,wrapper);
 	}
-	return wrapper.loadTagFile();
+
+	// Check to see if we have been here before but not finished
+	// compiling/loading.
+	if (wrapper.incTripCount() > 0) {
+	    // Circular tag file dependencies
+	    compiler.getErrorDispatcher().jspError("jsp.error.circular.tagfile",
+			tagFilePath);
+	}
+	Class tagClass = wrapper.loadTagFile();
+	wrapper.decTripCount();
+	return tagClass;
     }
 
     /*
@@ -363,12 +374,12 @@ public class TagFileProcessor {
 
     static class TagFileLoaderVisitor extends Node.Visitor {
 
-	private JspCompilationContext ctxt;
+	private Compiler compiler;
 	private PageInfo pageInfo;
 
-	TagFileLoaderVisitor(JspCompilationContext ctxt, PageInfo pageInfo) {
-	    this.ctxt = ctxt;
-	    this.pageInfo = pageInfo;
+	TagFileLoaderVisitor(Compiler compiler) {
+	    this.compiler = compiler;
+	    this.pageInfo = compiler.getPageInfo();
 	}
 
         public void visit(Node.CustomTag n) throws JasperException {
@@ -376,7 +387,7 @@ public class TagFileProcessor {
 	    if (tagFileInfo != null) {
 		String tagFilePath = tagFileInfo.getPath();
 		pageInfo.addDependant(tagFilePath);
-		Class c = loadTagFile(ctxt, tagFilePath, n.getTagInfo(),
+		Class c = loadTagFile(compiler, tagFilePath, n.getTagInfo(),
 				      n.getTagData());
 		n.setTagHandlerClass(c);
 	    }
@@ -393,9 +404,7 @@ public class TagFileProcessor {
     public static void loadTagFiles(Compiler compiler, Node.Nodes page)
 		throws JasperException {
 
-	JspCompilationContext ctxt = compiler.getCompilationContext();
-	PageInfo pageInfo = compiler.getPageInfo();
-	page.visit(new TagFileLoaderVisitor(ctxt, pageInfo));
+	page.visit(new TagFileLoaderVisitor(compiler));
     }
 	
 }
