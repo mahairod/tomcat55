@@ -412,9 +412,10 @@ public class StandardEngine
             try {
                 realmName=new ObjectName( domain + ":type=Realm");
                 if( mserver.isRegistered(realmName ) ) {
-                    Realm nrealm = (Realm)mserver.getAttribute(realmName,
-                                                       "managedResource");
-                    setRealm(nrealm);
+                    mserver.invoke(realmName, "init", 
+                            new Object[] {},
+                            new String[] {}
+                    );            
                 }
             } catch( Throwable t ) {
                 log.debug("No realm for this engine " + realmName);
