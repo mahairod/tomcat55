@@ -288,6 +288,19 @@ final class WrappedRequest
 
 
     /**
+     * Add a parameter name and corresponding set of values to this Request.
+     * (This is used when restoring the original request on a form based
+     * login).
+     *
+     * @param name Name of this request parameter
+     * @param values Corresponding values for this request parameter
+     */
+    public void addParameter(String name, String values[]) {
+        request.addParameter(name, values);
+    }
+
+
+    /**
      * Clear the collection of Cookies associated with this Request.
      */
     public void clearCookies() {
@@ -308,6 +321,14 @@ final class WrappedRequest
      */
     public void clearLocales() {
 	request.clearLocales();
+    }
+
+
+    /**
+     * Clear the collection of parameters associated with this Request.
+     */
+    public void clearParameters() {
+        request.clearParameters();
     }
 
 

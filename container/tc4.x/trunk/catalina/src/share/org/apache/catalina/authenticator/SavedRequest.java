@@ -65,10 +65,10 @@
 package org.apache.catalina.authenticator;
 
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.servlet.http.Cookie;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Session;
@@ -79,9 +79,14 @@ import org.apache.catalina.Session;
  * form-based authentication can reproduce it once the user has been
  * authenticated.
  * <p>
+ * <b>IMPLEMENTATION NOTE</b> - It is assumed that this object is accessed
+ * only from the context of a single thread, so no synchronization around
+ * internal collection classes is performed.
+ * <p>
  * <b>FIXME</b> - Currently, this object has no mechanism to save or
- * restore the data content of the request, so it will not support a
- * POST request triggering the authentication.
+ * restore the data content of the request, although it does save
+ * request parameters so that a POST transaction can be faithfully
+ * duplicated.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -93,68 +98,58 @@ public final class SavedRequest {
     /**
      * The set of Cookies associated with this Request.
      */
-    private Vector cookies = new Vector();
+    private ArrayList cookies = new ArrayList();
 
     public void addCookie(Cookie cookie) {
-	cookies.addElement(cookie);
+	cookies.add(cookie);
     }
 
-    public Cookie[] getCookies() {
-	Cookie results[] = new Cookie[cookies.size()];
-	cookies.copyInto(results);
-	return (results);
+    public Iterator getCookies() {
+        return (cookies.iterator());
     }
 
 
     /**
      * The set of Headers associated with this Request.  Each key is a header
-     * name, while the value is a Vector containing one or more actual
-     * values for this header.
+     * name, while the value is a ArrayList containing one or more actual
+     * values for this header.  The values are returned as an Iterator when
+     * you ask for them.
      */
-    private Hashtable headers = new Hashtable();
+    private HashMap headers = new HashMap();
 
     public void addHeader(String name, String value) {
-	Vector values = (Vector) headers.get(name);
+	ArrayList values = (ArrayList) headers.get(name);
 	if (values == null) {
-	    values = new Vector();
+	    values = new ArrayList();
 	    headers.put(name, values);
 	}
-	values.addElement(value);
+	values.add(value);
     }
 
-    public String[] getHeaderNames() {
-	Vector keys = new Vector();
-	Enumeration enum = headers.keys();
-	while (enum.hasMoreElements())
-	    keys.addElement(enum.nextElement());
-	String results[] = new String[keys.size()];
-	keys.copyInto(results);
-	return (results);
+    public Iterator getHeaderNames() {
+        return (headers.keySet().iterator());
     }
 
-    public String[] getHeaderValues(String name) {
-	Vector values = (Vector) headers.get(name);
+    public Iterator getHeaderValues(String name) {
+	ArrayList values = (ArrayList) headers.get(name);
 	if (values == null)
-	    return (new String[0]);
-	String results[] = new String[values.size()];
-	values.copyInto(results);
-	return (results);
+	    return ((new ArrayList()).iterator());
+	else
+	    return (values.iterator());
     }
 
 
     /**
      * The set of Locales associated with this Request.
      */
-    private Vector locales = new Vector();
+    private ArrayList locales = new ArrayList();
 
     public void addLocale(Locale locale) {
-	locales.addElement(locale);
+	locales.add(locale);
     }
 
-    public Locale[] getLocales() {
-	Locale results[] = new Locale[locales.size()];
-	locales.copyInto(results);
-	return (results);
+    public Iterator getLocales() {
+        return (locales.iterator());
     }
 
 
@@ -169,6 +164,27 @@ public final class SavedRequest {
 
     public void setMethod(String method) {
 	this.method = method;
+    }
+
+
+
+    /**
+     * The set of request parameters associated with this Request.  Each
+     * entry is keyed by the parameter name, pointing at a String array of
+     * the corresponding values.
+     */
+    private HashMap parameters = new HashMap();
+
+    public void addParameter(String name, String values[]) {
+        parameters.put(name, values);
+    }
+
+    public Iterator getParameterNames() {
+        return (parameters.keySet().iterator());
+    }
+
+    public String[] getParameterValues(String name) {
+        return ((String[]) parameters.get(name));
     }
 
 

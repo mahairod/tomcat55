@@ -68,7 +68,9 @@ package org.apache.catalina.authenticator;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -236,20 +238,32 @@ public final class FormAuthenticator
 
 	// Modify our current request to reflect the original one
 	request.clearCookies();
-	Cookie cookies[] = saved.getCookies();
-	for (int i = 0; i < cookies.length; i++)
-	    request.addCookie(cookies[i]);
+	Iterator cookies = saved.getCookies();
+	while (cookies.hasNext()) {
+	    request.addCookie((Cookie) cookies.next());
+	}
 	request.clearHeaders();
-	String names[] = saved.getHeaderNames();
-	for (int i = 0; i < names.length; i++) {
-	    String values[] = saved.getHeaderValues(names[i]);
-	    for (int j = 0; j < values.length; j++)
-		request.addHeader(names[i], values[j]);
+	Iterator names = saved.getHeaderNames();
+	while (names.hasNext()) {
+	    String name = (String) names.next();
+	    Iterator values = saved.getHeaderValues(name);
+	    while (values.hasNext()) {
+	        request.addHeader(name, (String) values.next());
+	    }
 	}
 	request.clearLocales();
-	Locale locales[] = saved.getLocales();
-	for (int i = 0; i < locales.length; i++)
-	    request.addLocale(locales[i]);
+	Iterator locales = saved.getLocales();
+	while (locales.hasNext()) {
+	    request.addLocale((Locale) locales.next());
+	}
+	request.clearParameters();
+	Iterator paramNames = saved.getParameterNames();
+	while (paramNames.hasNext()) {
+	    String paramName = (String) paramNames.next();
+	    String paramValues[] =
+	      (String[]) saved.getParameterValues(paramName);
+	    request.addParameter(paramName, paramValues);
+	}
 	request.setMethod(saved.getMethod());
 	request.setQueryString(saved.getQueryString());
 	request.setRequestURI(saved.getRequestURI());
@@ -287,6 +301,13 @@ public final class FormAuthenticator
 	while (locales.hasMoreElements()) {
 	    Locale locale = (Locale) locales.nextElement();
 	    saved.addLocale(locale);
+	}
+	Map parameters = hreq.getParameterMap();
+	Iterator paramNames = parameters.keySet().iterator();
+	while (paramNames.hasNext()) {
+	    String paramName = (String) paramNames.next();
+	    String paramValues[] = (String[]) parameters.get(paramName);
+	    saved.addParameter(paramName, paramValues);
 	}
 	saved.setMethod(hreq.getMethod());
 	saved.setQueryString(hreq.getQueryString());
