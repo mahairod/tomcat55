@@ -2537,7 +2537,7 @@ END EXCLUDE SendError_StringTest -->
         <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestURLTest HTTP/1.0"
             testName="HttpServletRequestWrapperGetRequestURLTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            requestHeaders="Cookie:prefix=http|Cookie:server=${host}|Cookie:port=${port}|Cookie:servletpath=_servlet-tests_hsreqw_HttpServletRequestWrapperGetRequestURLTest"
+            requestHeaders="prefix:http|server:${host}|port:${port}|servletpath:_servlet-tests_hsreqw_HttpServletRequestWrapperGetRequestURLTest"
             goldenFile="${wgdir}/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRequestURLTest.html"
             assertion="Test for default behavior of this method to return getRequestURL() on the wrapped request object, specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet the tests the returned value and returns the result of the test plus the contents of the static log file."
@@ -6066,9 +6066,9 @@ END EXCLUDE SendError_StringTest -->
 
     <target name="HttpServletRequestWrapperGetRequestURLTest">
         <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestURLTest HTTP/1.0"
-            testName="HttpServletRequestWrapperGetRequestURLTest" debug="0"
+            testName="HttpServletRequestWrapperGetRequestURLTest" debug="1"
             host="${host}" port="${port}" exactMatch="true"
-            requestHeaders="Cookie:prefix=http|Cookie:server=${host}|Cookie:port=${port}|Cookie:servletpath=_servlet-tests_hsreqw_HttpServletRequestWrapperGetRequestURLTest"
+            requestHeaders="prefix:http|server:${host}|port:${port}|servletpath:_servlet-tests_hsreqw_HttpServletRequestWrapperGetRequestURLTest"
             goldenFile="${wgdir}/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRequestURLTest.html"
             assertion="Test for default behavior of this method to return  getRequestURL() on the wrapped request object, specified in  the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet the tests the returned value and returns the result of the test plus the contents of the static log file."
