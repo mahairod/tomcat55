@@ -1547,23 +1547,9 @@ public class DefaultServlet
 
         StringBuffer result = new StringBuffer(rewriteUrl(redirectPath));
 
-        Enumeration enum = request.getParameterNames();
-        if (enum.hasMoreElements())
-            result.append("?");
-
-        while (enum.hasMoreElements()) {
-            String name = (String) enum.nextElement();
-            String[] values = request.getParameterValues(name);
-            for (int i = 0; i < values.length; i++) {
-                result.append(rewriteUrl(name));
-                result.append("=");
-                result.append(rewriteUrl(values[i]));
-                if (i < (values.length - 1))
-                    result.append("&");
-            }
-            if (enum.hasMoreElements())
-                result.append("&");
-        }
+        String query = request.getQueryString ();
+        if (query != null)
+            result.append ("?").append (query);
 
         return result.toString();
 
