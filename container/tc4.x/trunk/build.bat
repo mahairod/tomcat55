@@ -1,5 +1,5 @@
 @echo off
-rem ---------------------------------------------------------------------------
+rem --------------------------------------------------------------------------
 rem build.bat - Build Script for Tomcat
 rem
 rem Environment Variable Prerequisites:
@@ -8,14 +8,14 @@ rem   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
 rem
 rem   JAXP_HOME        Points at a JAXP compliant XML parser 
 rem                    installation directory [NONE]
-rem   JAXP_PARSER_JAR  The jar filename of the JAXP compliant 
+rem   JAXP_PARSER_JAR  The jar filename of the JAXP compliant
 rem                    'XML parser' [crimson.jar]
 rem
 rem   ANT_HOME         Must point at your Ant installation [../jakarta-ant]
 rem
 rem   ANT_OPTS         Command line options to the Java runtime
 rem                    that executes Ant [NONE]
-rem   ANT_XML_CLASSPATH  
+rem   ANT_XML_CLASSPATH
 rem                    Jar files added to the classpath for the XML parsing
 rem                    requirements of ant
 rem                    [%JAXP_HOME%\%JAXP_PARSER_JAR%;%JAXP_HOME%\jaxp.jar]
@@ -28,19 +28,19 @@ rem   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 rem
 rem   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
 rem                    [REQUIRED]
-rem 
-rem   CATALINA_JAXP_HOME        
-rem                    JAXP 1.0 compliant XML parser installation directory 
+rem
+rem   CATALINA_JAXP_HOME
+rem                    JAXP 1.0 compliant XML parser installation directory
 rem                    used for catalina [JAXP_HOME]
-rem   CATALINA_JAXP_PARSER_JAR  
-rem                    The jar filename of the JAXP compliant XML parser 
+rem   CATALINA_JAXP_PARSER_JAR
+rem                    The jar filename of the JAXP compliant XML parser
 rem                    used for catalina [JAXP_PARSER_JAR]
 rem
-rem   JASPER_JAXP_HOME        
-rem                    JAXP 1.1 compliant XML parser installation directory 
+rem   JASPER_JAXP_HOME
+rem                    JAXP 1.1 compliant XML parser installation directory
 rem                    used for jasper [JAXP_HOME]
-rem   JASPER_JAXP_PARSER_JAR  
-rem                    The jar filename of the JAXP compliant XML parser 
+rem   JASPER_JAXP_PARSER_JAR
+rem                    The jar filename of the JAXP compliant XML parser
 rem                    used for jasper [JAXP_PARSER_JAR]
 rem
 rem $Id$
@@ -98,10 +98,10 @@ goto gotJaxpHome
 :jaxpHome
 echo You must set JAXP_HOME to point at your XML Parser install directory.
 echo By default, ant, catalina, and jasper will use jaxp.jar and crimson.jar from
-echo that directory. 
+echo that directory.
 echo - A different parser jar file can be specified globally for all
 echo   components via environment variable JAXP_PARSER_JAR (e.g. xerces.jar).
-echo - XML requirements for each component can also be set individually via 
+echo - XML requirements for each component can also be set individually via
 echo   the following environment variables:
 echo      ANT_XML_CLASSPATH
 echo      CATALINA_JAXP_HOME CATALINA_JAXP_PARSER_JAR
