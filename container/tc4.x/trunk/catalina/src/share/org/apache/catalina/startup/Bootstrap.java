@@ -151,6 +151,8 @@ public final class Bootstrap {
                      "core.ApplicationDispatcher$PrivilegedInclude");
                 catalinaLoader.loadClass
                     (basePackage + "session.StandardSession");
+                catalinaLoader.loadClass
+                    (basePackage + "util.CookieTools");
                 catalinaLoader.loadClass(basePackage + "util.Enumerator");
                 catalinaLoader.loadClass("javax.servlet.http.Cookie");
             }
