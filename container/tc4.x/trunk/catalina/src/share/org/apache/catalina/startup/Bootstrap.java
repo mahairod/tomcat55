@@ -237,7 +237,7 @@ public final class Bootstrap {
         ArrayList list = new ArrayList();
 
         // Add the "common/classes" directory if it exists
-        File classes = new File(System.getProperty("catalina.home"),
+        File classes = new File(getCatalinaHome(),
                                 "common" + File.separator + "classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
@@ -256,8 +256,7 @@ public final class Bootstrap {
         }
 
         // Add all JAR files in the "common/lib" directory if it exists
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "common/lib");
+        File directory = new File(getCatalinaHome(), "common/lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -313,7 +312,7 @@ public final class Bootstrap {
         ArrayList list = new ArrayList();
 
         // Add the "server/classes" directory if it exists
-        File classes = new File(System.getProperty("catalina.home"),
+        File classes = new File(getCatalinaHome(),
                                 "server" + File.separator + "classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
@@ -332,8 +331,7 @@ public final class Bootstrap {
         }
 
         // Add all JAR files in the "server/lib" directory if it exists
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "server/lib");
+        File directory = new File(getCatalinaHome(), "server/lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -387,8 +385,7 @@ public final class Bootstrap {
         ArrayList list = new ArrayList();
 
         // Add the "classes" directory if it exists
-        File classes = new File(System.getProperty("catalina.home"),
-                                "classes");
+        File classes = new File(getCatalinaHome(), "classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
@@ -406,8 +403,7 @@ public final class Bootstrap {
         }
 
         // Add all JAR files in the "lib" directory if it exists
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "lib");
+        File directory = new File(getCatalinaHome(), "lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -453,6 +449,15 @@ public final class Bootstrap {
 
         return (loader);
 
+    }
+
+
+    /**
+     * Get the value of the catalina.home environment variable.
+     */
+    private static String getCatalinaHome() {
+        return System.getProperty("catalina.home",
+                                  System.getProperty("user.dir"));
     }
 
 
