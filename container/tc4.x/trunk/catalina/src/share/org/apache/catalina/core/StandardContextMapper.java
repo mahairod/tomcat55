@@ -65,7 +65,6 @@
 package org.apache.catalina.core;
 
 
-import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -73,6 +72,7 @@ import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Mapper;
 import org.apache.catalina.Request;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 
 
@@ -203,7 +203,7 @@ public final class StandardContextMapper
         // Decode the relative URI, because we will ultimately return both
         // servletPath and pathInfo as decoded strings
         try {
-            relativeURI = URLDecoder.decode(relativeURI);
+            relativeURI = RequestUtil.URLDecode(relativeURI);
             if (debug >= 1)
                 context.log("Decoded relativeURI='" + relativeURI + "'");
         } catch (Exception e) {
