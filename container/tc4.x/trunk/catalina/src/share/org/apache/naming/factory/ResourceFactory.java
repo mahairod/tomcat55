@@ -152,7 +152,7 @@ public class ResourceFactory
                 if (ref.getClassName().equals("javax.sql.DataSource")) {
                     String javaxSqlDataSourceFactoryClassName =
                         System.getProperty("javax.sql.DataSource.Factory",
-                                           Constants.TYREX_DATASOURCE_FACTORY);
+                                           Constants.DBCP_DATASOURCE_FACTORY);
                     try {
                         factory = (ObjectFactory) 
                             Class.forName(javaxSqlDataSourceFactoryClassName)

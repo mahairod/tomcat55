@@ -88,6 +88,9 @@ public final class Constants {
     public static final String DEFAULT_EJB_FACTORY = 
         Package + ".EjbFactory";
 
+    public static final String DBCP_DATASOURCE_FACTORY = 
+        Package + ".DbcpDataSourceFactory";
+
     public static final String TYREX_DATASOURCE_FACTORY = 
         Package + ".TyrexDataSourceFactory";
 
