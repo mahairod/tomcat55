@@ -248,6 +248,12 @@ public class HttpRequestBase
 
 
     /**
+     * The decoded request URI associated with this request.
+     */
+    protected String decodedRequestURI = null;
+
+
+    /**
      * Was this request received on a secure channel?
      */
     protected boolean secure = false;
@@ -988,6 +994,31 @@ public class HttpRequestBase
     public String getRequestURI() {
 
         return (requestURI);
+
+    }
+
+
+    /**
+     * Set the decoded request URI.
+     * 
+     * @param uri The decoded request URI
+     */
+    public void setDecodedRequestURI(String uri) {
+
+        this.decodedRequestURI = uri;
+
+    }
+
+
+    /**
+     * Return the URL decoded request URI.
+     */
+    public String getDecodedRequestURI() {
+
+        if (decodedRequestURI == null)
+            decodedRequestURI = RequestUtil.URLDecode(getRequestURI());
+
+        return decodedRequestURI;
 
     }
 

@@ -232,6 +232,22 @@ public interface HttpRequest extends Request {
 
 
     /**
+     * Set the decoded request URI.
+     * 
+     * @param uri The decoded request URI
+     */
+    public void setDecodedRequestURI(String uri);
+
+
+    /**
+     * Get the decoded request URI.
+     * 
+     * @return the URL decoded request URI
+     */
+    public String getDecodedRequestURI();
+
+
+    /**
      * Set the servlet path for this Request.  This will normally be called
      * when the associated Context is mapping the Request to a particular
      * Wrapper.
