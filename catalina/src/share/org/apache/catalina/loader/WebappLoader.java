@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *
@@ -82,6 +79,7 @@ import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 import java.security.Permission;
 import java.util.jar.JarFile;
+import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.naming.NamingException;
 import javax.naming.Binding;
@@ -103,6 +101,8 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -125,7 +125,6 @@ import org.apache.catalina.util.StringManager;
 
 public class WebappLoader
     implements Lifecycle, Loader, PropertyChangeListener, Runnable {
-
 
     // ----------------------------------------------------------- Constructors
 
@@ -271,6 +270,11 @@ public class WebappLoader
     private String threadName = "WebappLoader";
 
 
+    // Classpath set in the loader
+    private String classpath=null;
+
+    // repositories that are set in the loader, for jmx
+    private ArrayList loaderRepositories;
     // ------------------------------------------------------------- Properties
 
 
@@ -347,6 +351,7 @@ public class WebappLoader
 
     /**
      * Return the DefaultContext with which this Loader is associated.
+     * XXX What is that ???
      */
     public DefaultContext getDefaultContext() {
 
@@ -527,6 +532,7 @@ public class WebappLoader
 
         if (started && (classLoader != null)) {
             classLoader.addRepository(repository);
+            if( loaderRepositories != null ) loaderRepositories.add(repository);
             setClassPath();
         }
 
@@ -549,6 +555,8 @@ public class WebappLoader
         return ((String[])repositories.clone());
     }
 
+    /** Extra repositories for this loader
+     */
     public String getRepositoriesString() {
         StringBuffer sb=new StringBuffer();
         for( int i=0; i<repositories.length ; i++ ) {
@@ -557,6 +565,30 @@ public class WebappLoader
         return sb.toString();
     }
 
+    public String[] getLoaderRepositories() {
+        if( loaderRepositories==null ) return  null;
+        String res[]=new String[ loaderRepositories.size()];
+        loaderRepositories.toArray(res);
+        return res;
+    }
+
+    public String getLoaderRepositoriesString() {
+        String repositories[]=getLoaderRepositories();
+        StringBuffer sb=new StringBuffer();
+        for( int i=0; i<repositories.length ; i++ ) {
+            sb.append( repositories[i]).append(":");
+        }
+        return sb.toString();
+    }
+
+    /** Classpath, as set in org.apache.catalina.jsp_classpath context
+     * property
+     *
+     * @return
+     */
+    public String getClasspath() {
+        return classpath;
+    }
 
     /**
      * Has the internal repository associated with this Loader been modified,
@@ -639,7 +671,6 @@ public class WebappLoader
      * @exception LifecycleException if a lifecycle error occurs
      */
     public void start() throws LifecycleException {
-
         // Validate and update our current component state
         if (started)
             throw new LifecycleException
@@ -649,9 +680,10 @@ public class WebappLoader
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
-        if (container.getResources() == null)
+        if (container.getResources() == null) {
+            log.info("No resources for " + container);
             return;
-
+        }
         // Register a stream handler factory for the JNDI protocol
         URLStreamHandlerFactory streamHandlerFactory =
             new DirContextURLStreamHandlerFactory();
@@ -964,11 +996,13 @@ public class WebappLoader
         if (servletContext == null)
             return;
 
+        loaderRepositories=new ArrayList();
         // Loading the work directory
         File workDir =
             (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-        if (workDir == null)
-            return;
+        if (workDir == null) {
+            log.info("No work dir for " + servletContext);
+        }
 
         if( log.isDebugEnabled()) 
             log.debug(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
@@ -1016,6 +1050,7 @@ public class WebappLoader
 
             // Adding the repository to the class loader
             classLoader.addRepository(classesPath + "/", classRepository);
+            loaderRepositories.add(classesPath + "/" );
 
         }
 
@@ -1079,6 +1114,7 @@ public class WebappLoader
 
                     JarFile jarFile = new JarFile(destFile);
                     classLoader.addJar(filename, jarFile, destFile);
+                    loaderRepositories.add( filename );
 
                 }
             } catch (NamingException e) {
@@ -1151,6 +1187,8 @@ public class WebappLoader
             loader = loader.getParent();
             layers++;
         }
+
+        this.classpath=classpath.toString();
 
         // Store the assembled class path as a servlet context attribute
         servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
