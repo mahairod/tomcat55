@@ -987,24 +987,25 @@ public abstract class RealmBase
     }
 
 
-//    /**
-//     * Digest password using the algorithm especificied and
-//     * convert the result to a corresponding hex string.
-//     * If exception, the plain credentials string is returned
-//     */
-//    public static void main(String args[]) {
-//
-//        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
-//            for(int i=2; i < args.length ; i++){
-//                System.out.print(args[i]+":");
-//                System.out.println(Digest(args[i], args[1]));
-//            }
-//        } else {
-//            System.out.println
-//                ("Usage: RealmBase -a <algorithm> <credentials>");
-//        }
-//
-//    }
+    /**
+     * Digest password using the algorithm especificied and
+     * convert the result to a corresponding hex string.
+     * If exception, the plain credentials string is returned
+     */
+    public static void main(String args[]) {
+
+        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
+            for(int i=2; i < args.length ; i++){
+                System.out.print(args[i]+":");
+                System.out.println(Digest(args[i], args[1]));
+            }
+        } else {
+            System.out.println
+                ("Usage: RealmBase -a <algorithm> <credentials>");
+        }
+
+    }
+
 
     // -------------------- JMX and Registration  --------------------
     protected String type;
