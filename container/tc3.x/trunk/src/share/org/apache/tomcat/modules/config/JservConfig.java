@@ -131,7 +131,7 @@ public class JservConfig  extends BaseInterceptor {
     /** default mod_jserv log file location */
     public static final String JSERV_LOG_LOCATION = "logs/mod_jserv.log";
     /** default location of mod_jserv Apache plug-in. */
-    public static final String MOD_JSERV;
+    public static  String MOD_JSERV;
     public static final String AJPV12="ajpv12";
     
     //set up some defaults based on OS type

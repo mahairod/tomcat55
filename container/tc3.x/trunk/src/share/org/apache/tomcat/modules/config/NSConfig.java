@@ -141,7 +141,7 @@ public class NSConfig  extends BaseJkConfig {
     public static final String NS_CONFIG = "/conf/auto/obj.conf";
     public static final String NSAPI_LOG_LOCATION = "/logs/nsapi_redirect.log";
     /** default location of nsapi plug-in. */
-    public static final String NSAPI_REDIRECTOR;
+    public static String NSAPI_REDIRECTOR;
     
     //set up some defaults based on OS type
     static{
