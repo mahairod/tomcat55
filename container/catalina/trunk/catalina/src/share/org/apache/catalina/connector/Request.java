@@ -2072,7 +2072,12 @@ public class Request
      * if necessary.
      */
     public HttpSession getSession() {
-        return doGetSession(true);
+        Session session = doGetSession(true);
+        if (session != null) {
+            return session.getSession();
+        } else {
+            return null;
+        }
     }
 
 
@@ -2083,7 +2088,12 @@ public class Request
      * @param create Create a new session if one does not exist
      */
     public HttpSession getSession(boolean create) {
-        return doGetSession(create);
+        Session session = doGetSession(create);
+        if (session != null) {
+            return session.getSession();
+        } else {
+            return null;
+        }
     }
 
 
@@ -2195,10 +2205,30 @@ public class Request
     }
 
 
+    /**
+     * Return the session associated with this Request, creating one
+     * if necessary.
+     */
+    public Session getSessionInternal() {
+        return doGetSession(true);
+    }
+
+
+    /**
+     * Return the session associated with this Request, creating one
+     * if necessary and requested.
+     *
+     * @param create Create a new session if one does not exist
+     */
+    public Session getSessionInternal(boolean create) {
+        return doGetSession(create);
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 
-    protected HttpSession doGetSession(boolean create) {
+    protected Session doGetSession(boolean create) {
 
         // There cannot be a session if no context has been assigned yet
         if (context == null)
@@ -2208,7 +2238,7 @@ public class Request
         if ((session != null) && !session.isValid())
             session = null;
         if (session != null)
-            return (session.getSession());
+            return (session);
 
         // Return the requested session if it exists and is valid
         Manager manager = null;
@@ -2226,7 +2256,7 @@ public class Request
                 session = null;
             if (session != null) {
                 session.access();
-                return (session.getSession());
+                return (session);
             }
         }
 
@@ -2253,7 +2283,7 @@ public class Request
 
         if (session != null) {
             session.access();
-            return (session.getSession());
+            return (session);
         } else {
             return (null);
         }
