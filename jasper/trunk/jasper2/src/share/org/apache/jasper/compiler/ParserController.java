@@ -192,22 +192,14 @@ class ParserController implements TagConstants {
 	// Dispatch to the appropriate parser
 	if (isXml) {
 	    // JSP document (XML syntax)
-	    InputStream inStream = null;
-	    try {
-		parsedPage = JspDocumentParser.parse(this, absFileName,
-						     jarFile, parent,
-						     isTagFile, directiveOnly,
-						     sourceEnc,
-						     jspConfigPageEnc,
-						     isEncodingSpecifiedInProlog);
-	    } finally {
-		if (inStream != null) {
-		    try {
-			inStream.close();
-		    } catch (Exception any) {
-		    }
-		}
-	    }
+            // InputStream for jspx page is created and properly closed in
+            // JspDocumentParser.
+            parsedPage = JspDocumentParser.parse(this, absFileName,
+                                                 jarFile, parent,
+                                                 isTagFile, directiveOnly,
+                                                 sourceEnc,
+                                                 jspConfigPageEnc,
+                                                 isEncodingSpecifiedInProlog);
 	} else {
 	    // Standard syntax
 	    InputStreamReader inStreamReader = null;

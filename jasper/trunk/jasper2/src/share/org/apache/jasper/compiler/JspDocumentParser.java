@@ -18,6 +18,8 @@ package org.apache.jasper.compiler;
 import java.io.CharArrayWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -166,24 +168,32 @@ class JspDocumentParser
 
             // Parse the input
             SAXParser saxParser = getSAXParser(false, jspDocParser);
+            InputStream inStream = null;
             try {
-                saxParser.parse(
-                    jspDocParser.getInputSource(
-                        path,
-                        jarFile,
-                        jspDocParser.ctxt,
-                        jspDocParser.err),
-                    jspDocParser);
+                inStream = JspUtil.getInputStream(path, jarFile,
+                                                  jspDocParser.ctxt,
+                                                  jspDocParser.err);
+                saxParser.parse(new InputSource(inStream), jspDocParser);
             } catch (EnableDTDValidationException e) {
                 saxParser = getSAXParser(true, jspDocParser);
                 jspDocParser.isValidating = true;
-                saxParser.parse(
-                    jspDocParser.getInputSource(
-                        path,
-                        jarFile,
-                        jspDocParser.ctxt,
-                        jspDocParser.err),
-                    jspDocParser);
+                if (inStream != null) {
+                    try {
+                        inStream.close();
+                    } catch (Exception any) {
+                    }
+                }
+                inStream = JspUtil.getInputStream(path, jarFile,
+                                                  jspDocParser.ctxt,
+                                                  jspDocParser.err);
+                saxParser.parse(new InputSource(inStream), jspDocParser);
+            } finally {
+                if (inStream != null) {
+                    try {
+                        inStream.close();
+                    } catch (Exception any) {
+                    }
+                }
             }
 
             if (parent == null) {
@@ -1369,29 +1379,6 @@ class JspDocumentParser
         xmlReader.setErrorHandler(jspDocParser);
 
         return saxParser;
-    }
-
-    /*
-     * Gets an InputSource to the JSP document or tag file to be parsed.
-     *
-     * @param path The path to the JSP document or tag file to be parsed
-     * @param jarFile The JAR file from which to read the JSP document or tag
-     * file, or null if the JSP document or tag file is to be read from the
-     * filesystem
-     * @param ctxt The JSP compilation context
-     * @param err The error dispatcher
-     *
-     * @return An InputSource to the requested JSP document or tag file
-     */
-    private InputSource getInputSource(
-        String path,
-        JarFile jarFile,
-        JspCompilationContext ctxt,
-        ErrorDispatcher err)
-        throws Exception {
-
-        return new InputSource(
-            JspUtil.getInputStream(path, jarFile, ctxt, err));
     }
 
     /*
