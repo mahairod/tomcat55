@@ -436,7 +436,11 @@ public class PageContextImpl extends PageContext {
 	request.setAttribute("javax.servlet.jsp.jspException", e);
 
 	if (errorPageURL != null && !errorPageURL.equals("")) {
-	    forward(errorPageURL);
+            try {
+                forward(errorPageURL);
+            } catch (IllegalStateException ise) {
+                include(errorPageURL);
+            }
 	} // Otherwise throw the exception wrapped inside a ServletException.
 	else {
 	    // Set the exception as the root cause in the ServletException
