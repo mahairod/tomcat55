@@ -195,7 +195,7 @@ public final class ServicePermission extends Permission {
      * target name.
      */
     protected static final String WILDCARD = "*";
-    
+
     /* ==================================================================== */
     /* Instance variables */
 
@@ -203,6 +203,8 @@ public final class ServicePermission extends Permission {
     private transient int type = 0;
     /** The permission mask associated with this permission object. */
     private transient int mask = 0;
+    /** The String representation of this permission object. */
+    private transient String desc = null;
 
     /* ==================================================================== */
     /* Constructors */
@@ -220,16 +222,20 @@ public final class ServicePermission extends Permission {
      */
     public ServicePermission (String target)
     throws IllegalArgumentException {
+        // Setup the target name of this permission object.
         super(target);
 
+        // Check if the permission target name was specified
         if (target==null)
             throw new IllegalArgumentException("Null permission name");
 
+        // Check if this is a "control" permission and set up accordingly.
         if (CONTROL.equalsIgnoreCase(target)) {
             type=TYPE_CONTROL;
             return;
         }
-        
+
+        // If we got here, we have an invalid permission name.
         throw new IllegalArgumentException("Invalid permission name \""+
                                            target+"\" specified");
     }
@@ -239,7 +245,7 @@ public final class ServicePermission extends Permission {
      * permission name and a specified list of actions.
      * <p>
      * </p>
-     * 
+     *
      * @param target The target name of this permission.
      * @param actions The list of actions permitted by this permission.
      * @exception IllegalArgumentException If the specified target name is not
@@ -248,50 +254,96 @@ public final class ServicePermission extends Permission {
      */
     public ServicePermission(String target, String actions)
     throws IllegalArgumentException {
+        // Setup this instance's target name.
         this(target);
 
+        // Create the appropriate mask if this is a control permission.
         if (this.type==TYPE_CONTROL) {
             this.mask=this.createControlMask(actions);
+            return();
         }
     }
 
     /* ==================================================================== */
     /* Public methods */
 
+    /**
+     * Return the list of actions permitted by this instance of
+     * <code>ServicePermission</code> in its canonical form.
+     *
+     * @return The canonicalized list of actions.
+     */
     public String getActions() {
-        if (this.type==TYPE_CONTROL)
+        if (this.type==TYPE_CONTROL) {
             return(this.createControlActions(this.mask));
-
+        }
         return("");
     }
 
+    /**
+     * Return the hash code for this <code>ServicePermission</code> instance.
+     *
+     * @return An hash code value.
+     */
     public int hashCode() {
-        return(this.toString().hashCode());
+        this.setupDescription();
+        return(this.dest.hashCode());
     }
 
+    /**
+     * Check if a specified object equals <code>ServicePermission</code>.
+     *
+     * @return <b>true</b> or <b>false</b> wether the specified object equals
+     *         this <code>ServicePermission</code> instance or not.
+     */
     public boolean equals(Object object) {
         if (object == this) return(true);
 
         if (!(object instanceof ServicePermission)) return false;
 
         ServicePermission that = (ServicePermission)object;
-        
+
         if (this.type!=that.type) return(false);
         return(this.mask==that.mask);
     }
 
+    /**
+     * Check if this <code>ServicePermission</code> implies another
+     * <code>Permission</code>.
+     *
+     * @return <b>true</b> or <b>false</b> wether the specified permission
+     *         is implied by this <code>ServicePermission</code> instance or
+     *         not.
+     */
     public boolean implies(Permission permission) {
         if (permission == this) return(true);
 
         if (!(permission instanceof ServicePermission)) return false;
 
         ServicePermission that = (ServicePermission)permission;
-        
+
         if (this.type!=that.type) return(false);
         return((this.mask&that.mask)==that.mask);
     }
 
+    /**
+     * Return a <code>String</code> representation of this instance.
+     *
+     * @return A <code>String</code> representing this
+     *         <code>ServicePermission</code> instance.
+     */
     public String toString() {
+        this.setupDescription();
+        return(new String(this.desc));
+    }
+
+    /* ==================================================================== */
+    /* Private methods */
+
+    /** Create a String description for this permission instance. */
+    private void setupDescription() {
+        if (this.desc!=null) return;
+
         StringBuffer buf=new StringBuffer();
         buf.append(this.getClass().getName());
         buf.append('[');
@@ -308,11 +360,9 @@ public final class ServicePermission extends Permission {
         buf.append(':');
         buf.append(this.getActions());
         buf.append(']');
-        return(buf.toString());
-    }
 
-    /* ==================================================================== */
-    /* Private methods */
+        this.desc=buf.toString();
+    }
 
     /** Create a permission mask for a given control actions string. */
     private int createControlMask(String actions)
@@ -342,7 +392,7 @@ public final class ServicePermission extends Permission {
         }
         return(mask);
     }
-    
+
     /** Create a actions list for a given control permission mask. */
     private String createControlActions(int mask) {
         StringBuffer buf=new StringBuffer();
