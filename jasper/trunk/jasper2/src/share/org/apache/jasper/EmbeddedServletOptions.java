@@ -167,7 +167,7 @@ public final class EmbeddedServletOptions implements Options {
     /**
      * Modification test interval.
      */
-    public int modificationTestInterval = 4000;
+    private int modificationTestInterval = 0;
     
     /**
      * Is generation of X-Powered-By response header enabled/disabled?

@@ -83,7 +83,7 @@ public abstract class Compiler {
      *         null otherwise
      */
     protected String[] generateJava() throws Exception {
-        
+
         String[] smapStr = null;
 
         long t1=System.currentTimeMillis();
@@ -321,9 +321,11 @@ public abstract class Compiler {
         boolean outDated = false;
         String jsp = ctxt.getJspFile();
 
-        if ((jsw != null) && ((jsw.getLastModificationTest() 
-                + ctxt.getOptions().getModificationTestInterval()) 
-            > System.currentTimeMillis())) {
+        if ((jsw != null)
+            && (ctxt.getOptions().getModificationTestInterval() > 0)
+            && ((jsw.getLastModificationTest()
+                    + ctxt.getOptions().getModificationTestInterval()) 
+                    > System.currentTimeMillis())) {
             return false;
         }
         
