@@ -343,7 +343,6 @@
           status="200"
       outContent="ErrorPage10 PASSED"/>
 
-
   </target>
 
 
@@ -867,6 +866,11 @@
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include01" debug="${debug}"
+      outContent="Include01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include01" debug="${debug}"
+       inHeaders="If-modified-since: Mon, 20 Dec 2010 12:12:54 GMT"
       outContent="Include01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
