@@ -141,9 +141,9 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		return;
 	    //	    System.out.print("1");
 	    socket=connection.getSocket();
-        socket.setSoTimeout(timeout);
 	    if (socket == null)
 		return;
+        socket.setSoTimeout(timeout);
 	    //	    System.out.print("2");
 	    InputStream in=socket.getInputStream();
 	    OutputStream out=socket.getOutputStream();
