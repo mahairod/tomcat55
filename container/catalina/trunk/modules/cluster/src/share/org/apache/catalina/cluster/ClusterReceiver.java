@@ -18,26 +18,61 @@ package org.apache.catalina.cluster;
 
 
 /**
- * 
+ * Cluster Receiver Interface
  * @author Filip Hanik
  * @author Peter Rossbach
- * @version 1.1
- *
+ * @version $Revision$, $Date$
  */
 public interface ClusterReceiver
 {
 
+    /**
+     * Start message listing
+     * @throws java.io.IOException
+     */
     public void start() throws java.io.IOException;
 
+    /**
+     * Stop message listing 
+     */
     public void stop();
 
+    /**
+     * set callback
+     * @see org.apache.catalina.cluster.tcp.SimpleTcpCluster#messageDataReceived(byte[])
+     * @param cluster
+     */
     public void setCatalinaCluster(CatalinaCluster cluster);
     
-    public boolean isWaitForAck();
-    public void setWaitForAck(boolean isWaitForAck);
+    /**
+     * get Callback
+     * @return
+     */
+    public CatalinaCluster getCatalinaCluster();
     
+    /**
+     * Send Ack to sender or not
+     * @return
+     */
+    public boolean isSendAck();
+    
+    /**
+     * set ack mode
+     * @param isSendAck
+     */
+    public void setSendAck(boolean isSendAck);
+    
+    /**
+     * get the listing ip interface
+     * @return
+     */
     public String getHost();
     
+    
+    /**
+     * get the listing ip port
+     * @return
+     */
     public int getPort();
 
 }
