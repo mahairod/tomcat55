@@ -249,33 +249,6 @@ public class ProxyDirContext implements DirContext {
         CacheEntry entry = cacheLookup(name);
         if (entry != null) {
             if (entry.resource != null) {
-                if ((entry.resource.getContent() == null) 
-                    && (entry.attributes.getContentLength() 
-                        < cacheObjectMaxSize)) {
-                    int length = (int) entry.attributes.getContentLength();
-                    InputStream is = null;
-                    try {
-                        is = entry.resource.streamContent();
-                        int pos = 0;
-                        byte[] b = new byte[length];
-                        while (pos < length) {
-                            int n = is.read(b, pos, length - pos);
-                            if (n < 0)
-                                break;
-                            pos = pos + n;
-                        }
-                        entry.resource.setContent(b);
-                    } catch (IOException e) {
-                        ; // Ignore
-                    } finally {
-                        try {
-                            if (is != null)
-                                is.close();
-                        } catch (IOException e) {
-                            ; // Ignore
-                        }
-                    }
-                }
                 return entry.resource;
             } else {
                 return entry.context;
@@ -1428,10 +1401,14 @@ public class ProxyDirContext implements DirContext {
      * Load entry into cache.
      */
     protected boolean cacheLoad(CacheEntry entry) {
+
         if (cache == null)
             return false;
+
         String name = entry.name;
+
         // Retrieve missing info
+
         // Retrieving attributes
         if (entry.attributes == null) {
             try {
@@ -1446,6 +1423,7 @@ public class ProxyDirContext implements DirContext {
                 return false;
             }
         }
+
         // Retriving object
         if ((entry.resource == null) && (entry.context == null)) {
             try {
@@ -1464,14 +1442,44 @@ public class ProxyDirContext implements DirContext {
                 return false;
             }
         }
-        // Load content
-        // TODO
+
+        // Load object content
+        if ((entry.resource != null) && (entry.resource.getContent() == null) 
+            && (entry.attributes.getContentLength() >= 0)
+            && (entry.attributes.getContentLength() < cacheObjectMaxSize)) {
+            int length = (int) entry.attributes.getContentLength();
+            InputStream is = null;
+            try {
+                is = entry.resource.streamContent();
+                int pos = 0;
+                byte[] b = new byte[length];
+                while (pos < length) {
+                    int n = is.read(b, pos, length - pos);
+                    if (n < 0)
+                        break;
+                    pos = pos + n;
+                }
+                entry.resource.setContent(b);
+            } catch (IOException e) {
+                ; // Ignore
+            } finally {
+                try {
+                    if (is != null)
+                        is.close();
+                } catch (IOException e) {
+                    ; // Ignore
+                }
+            }
+        }
         
         // Set timestamp
         entry.timestamp = System.currentTimeMillis() + cacheTTL;
+
         // Add new entry to cache
         cache.put(name, entry);
+
         return true;
+
     }
 
 
