@@ -705,22 +705,23 @@ public class Generator {
 	private String parent;
 	private String simpleTagHandlerVar;
 	private boolean isSimpleTagHandler;
-
 	private ServletWriter out;
 	private MethodsBuffer methodsBuffer;
 	private FragmentHelperClass fragmentHelperClass;
 	private int methodNesting;
+	private TagInfo tagInfo;
 
 	/**
 	 * Constructor.
 	 */
 	public GenerateVisitor(ServletWriter out, 
-            MethodsBuffer methodsBuffer, 
-            FragmentHelperClass fragmentHelperClass ) 
-        {
+			       MethodsBuffer methodsBuffer, 
+			       FragmentHelperClass fragmentHelperClass,
+			       TagInfo tagInfo) {
 	    this.out = out;
 	    this.methodsBuffer = methodsBuffer;
 	    this.fragmentHelperClass = fragmentHelperClass;
+	    this.tagInfo = tagInfo;
 	    methodNesting = 0;
 	    handlerInfos = new Hashtable();
 	    tagVarNumbers = new Hashtable();
@@ -1722,13 +1723,11 @@ public class Generator {
 	    String varReader = n.getAttributeValue("varReader");
 	    if (varReader != null) {
 		out.printil("sout = new java.io.StringWriter();");
-		out.printin("get");
-		out.print(toUpperCaseFirstChar(n.getAttributeValue("fragment")));
-		out.println("().invoke(sout, params);");
+		out.print(toGetterMethod(n.getAttributeValue("fragment")));
+		out.println(".invoke(sout, params);");
 	    } else {
-		out.printin("get");
-		out.print(toUpperCaseFirstChar(n.getAttributeValue("fragment")));
-		out.println("().invoke(null, params);");
+		out.print(toGetterMethod(n.getAttributeValue("fragment")));
+		out.println(".invoke(null, params);");
 	    }
 
 	    // Store varReader in appropriate scope
@@ -1769,7 +1768,31 @@ public class Generator {
 		n.getBody().visit(new ParamVisitor());
 	    }
 
-	    // XXX Add scripting variables to parameter map
+	    // Add AT_BEGIN and NESTED scripting variables to parameter map
+	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	    if (tagVars != null) {
+		for (int i=0; i<tagVars.length; i++) {
+		    int scope = tagVars[i].getScope();
+		    if (scope != VariableInfo.AT_BEGIN
+			    && scope != VariableInfo.NESTED) {
+			continue;
+		    }
+		    out.printin("params.put(");
+		    String name = tagVars[i].getNameGiven();
+		    if (name != null) {
+			out.print(name);
+			out.print(", jspContext.getAttribute(");
+			out.print(name);
+			out.println(");");
+		    } else {
+			String getter = toGetterMethod(tagVars[i].getNameFromAttribute());
+			out.print(getter);
+			out.print(", jspContext.getAttribute(");
+			out.print(getter);
+			out.println(");");
+		    }
+		}
+	    }
 
 	    // Invoke body with parameter map
 	    String varReader = n.getAttributeValue("varReader");
@@ -2675,7 +2698,7 @@ public class Generator {
 	gen.generatePreamble(page);
 	gen.fragmentHelperClass.generatePreamble();
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, 
-					   gen.fragmentHelperClass));
+					   gen.fragmentHelperClass, null));
 	gen.generatePostamble(page);
     }
 
@@ -2689,7 +2712,8 @@ public class Generator {
 	                throws JasperException {
 	Generator gen = new Generator(out, compiler);
 	gen.generateTagHandlerPreamble(tagInfo);
-	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null));
+	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null,
+					   tagInfo));
 	gen.generateTagHandlerPostamble();
     }
 
@@ -2783,30 +2807,28 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		// getter method
-		String attrName = attrInfos[i].getName();
-		String attrUpperCase = toUpperCaseFirstChar(attrName);
-		out.printin("public String get");
-		out.print(attrUpperCase);
-		out.println("() {");
+		out.printin("public String ");
+		out.print(toGetterMethod(attrInfos[i].getName()));
+		out.println(" {");
 		out.pushIndent();
 		out.printin("return this.");
-		out.print(attrName);
+		out.print(attrInfos[i].getName());
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
 		out.println();
 
 		// setter method
-		out.printin("public void set");
-		out.print(attrUpperCase);
-		out.printin("String ");
-		out.print(attrName);
+		out.printin("public void ");
+		out.print(toSetterMethodName(attrInfos[i].getName()));
+		out.printin("(String ");
+		out.print(attrInfos[i].getName());
 		out.println(") {");
 		out.pushIndent();
 		out.printin("this.");
-		out.print(attrName);
+		out.print(attrInfos[i].getName());
 		out.print(" = ");
-		out.print(attrName);
+		out.print(attrInfos[i].getName());
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
@@ -2817,30 +2839,28 @@ public class Generator {
 	if (fragAttrInfos != null) {
 	    for (int i=0; i<fragAttrInfos.length; i++) {
 		// getter method
-		String attrName = fragAttrInfos[i].getName();
-		String attrUpperCase = toUpperCaseFirstChar(attrName);
-		out.printin("public javax.servlet.jsp.tagext.JspFragment get");
-		out.print(attrUpperCase);
-		out.println("() {");
+		out.printin("public javax.servlet.jsp.tagext.JspFragment ");
+		out.print(toGetterMethod(fragAttrInfos[i].getName()));
+		out.println(" {");
 		out.pushIndent();
 		out.printin("return this.");
-		out.print(attrName);
+		out.print(fragAttrInfos[i].getName());
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
 		out.println();
 
 		// setter method
-		out.printin("public void set");
-		out.print(attrUpperCase);
-		out.printin("javax.servlet.jsp.tagext.JspFragment ");
-		out.print(attrName);
+		out.printin("public void ");
+		out.print(toSetterMethodName(fragAttrInfos[i].getName()));
+		out.printin("(javax.servlet.jsp.tagext.JspFragment ");
+		out.print(fragAttrInfos[i].getName());
 		out.println(") {");
 		out.pushIndent();
 		out.printin("this.");
-		out.print(attrName);
+		out.print(fragAttrInfos[i].getName());
 		out.print(" = ");
-		out.print(attrName);
+		out.print(fragAttrInfos[i].getName());
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
@@ -2876,9 +2896,9 @@ public class Generator {
 		String attrName = attrInfos[i].getName();
 		out.printin("this.jspContext.setAttribute(\"");
 		out.print(attrName);
-		out.print("\", get");
-		out.print(toUpperCaseFirstChar(attrName));
-		out.println("());");
+		out.print("\", ");
+		out.print(toGetterMethod(attrName));
+		out.println(");");
 	    }
 	}
 
@@ -2890,9 +2910,9 @@ public class Generator {
 		String attrName = fragAttrInfos[i].getName();
 		out.printin("this.jspContext.setAttribute(\"");
 		out.print(attrName);
-		out.print("\", get");
-		out.print(toUpperCaseFirstChar(attrName));
-		out.println("());");
+		out.print("\", ");
+		out.print(toGetterMethod(attrName));
+		out.println(");");
 	    }
 	}
 
@@ -2907,10 +2927,22 @@ public class Generator {
 	}
     }
 
-    private String toUpperCaseFirstChar(String attrName) {
+    /*
+     * Generates the getter method for the given attribute name.
+     */
+    private String toGetterMethod(String attrName) {
 	char[] attrChars = attrName.toCharArray();
 	attrChars[0] = Character.toUpperCase(attrChars[0]);
-	return new String(attrChars);
+	return "get" + new String(attrChars) + "()";
+    }
+
+    /*
+     * Generates the setter method name for the given attribute name.
+     */
+    private String toSetterMethodName(String attrName) {
+	char[] attrChars = attrName.toCharArray();
+	attrChars[0] = Character.toUpperCase(attrChars[0]);
+	return "set" + new String(attrChars);
     }
 
     /**
