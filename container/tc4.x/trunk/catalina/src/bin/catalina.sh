@@ -50,13 +50,13 @@ if [ "$1" = "debug" ] ; then
   pushd $CATALINA_HOME
   if [ "$1" = "-security" ] ; then
     shift
-    jdb \
+    $JAVA_HOME/bin/jdb \
        $CATALINA_OPTS \
        -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
        -classpath $CP -Dcatalina.home=$CATALINA_HOME \
        org.apache.catalina.startup.Bootstrap "$@" start
   else
-    jdb \
+    $JAVA_HOME/bin/jdb \
        $CATALINA_OPTS \
        -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
        -classpath $CP -Dcatalina.home=$CATALINA_HOME \
