@@ -295,6 +295,7 @@ to HTTPS.  Requests on any other port are assumed to be non-secure and
 will indicate a URL scheme of HTTP.  The AJP13 protocol does not suffer
 from this problem.
 
+
 ===============================================================================
 7.  FIXES AND ENHANCEMENTS IN UPDATES
 
@@ -332,8 +333,10 @@ Servlet
   -  HttpServletRequest.encodeURL() now properly encodes URLs that contain
      an anchor but no query string.  (#1182)
   -  Error pages now work in virtual hosts.
-  -  ServletRequest.getRemoteHost() now returns the remote IP address
-     if the remote host name isn't known.  (#208)
+  -  ServletRequest.getRemoteHost() now does a DNS lookup (if necessary) to 
+     determine the name of the remote host.  As required by the spec, if this
+     look up fails the method returns the remote host's IP address.  (#208)
+
 
 Jasper
   -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
