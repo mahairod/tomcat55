@@ -104,6 +104,35 @@ public final class StandardLoader
     implements Lifecycle, Loader, PropertyChangeListener, Runnable {
 
 
+    // ----------------------------------------------------------- Constructors
+
+
+    /**
+     * Construct a new StandardLoader with no defined parent class loader
+     * (so that the actual parent will be the system class loader).
+     */
+    public StandardLoader() {
+
+        this(null);
+
+    }
+
+
+    /**
+     * Construct a new StandardLoader with the specified class loader
+     * to be defined as the parent of the ClassLoader we ultimately create.
+     *
+     * @param parent The parent class loader
+     */
+    public StandardLoader(ClassLoader parent) {
+
+
+        super();
+	this.parentClassLoader = parent;
+
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -152,6 +181,12 @@ public final class StandardLoader
      */
     private String loaderClass =
 	"org.apache.catalina.loader.FileClassLoader";
+
+
+    /**
+     * The parent class loader of the class loader we will create.
+     */
+    private ClassLoader parentClassLoader = null;
 
 
     /**
@@ -534,8 +569,14 @@ public final class StandardLoader
 
 	// Construct a class loader based on our current repositories list
 	try {
+            /*
 	    Class clazz = Class.forName(loaderClass);
 	    classLoader = (Reloader) clazz.newInstance();
+	    */
+	    if (parentClassLoader == null)
+	        classLoader = new FileClassLoader();
+	    else
+	        classLoader = new FileClassLoader(parentClassLoader);
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
 	    classLoader.addRestricted("org.apache.catalina.");

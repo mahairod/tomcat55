@@ -254,6 +254,12 @@ public final class StandardContext
 
 
     /**
+     * The parent class loader to be configured when we install a Loader.
+     */
+    private ClassLoader parentClassLoader = null;
+
+
+    /**
      * The request processing pause flag (while reloading occurs)
      */
     private boolean paused = false;
@@ -498,6 +504,34 @@ public final class StandardContext
 	this.loginConfig = config;
 	support.firePropertyChange("loginConfig",
 				   oldLoginConfig, this.loginConfig);
+
+    }
+
+
+    /**
+     * Return the parent class loader (if any) for this web application.
+     * This call is meaningful only <strong>after</strong> a Loader has
+     * been configured.
+     */
+    public ClassLoader getParentClassLoader() {
+
+        return (this.parentClassLoader);
+
+    }
+
+
+    /**
+     * Set the parent class loader (if any) for this web application.
+     * This call is meaningful only <strong>before</strong> a Loader has
+     * been configured, and the specified value (if non-null) should be
+     * passed as an argument to the class loader constructor.
+     *
+     *
+     * @param parent The new parent class loader
+     */
+    public void setParentClassLoader(ClassLoader parent) {
+
+        this.parentClassLoader = parent;
 
     }
 

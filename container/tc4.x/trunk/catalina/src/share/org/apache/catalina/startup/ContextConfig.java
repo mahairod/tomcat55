@@ -825,7 +825,8 @@ public final class ContextConfig
 	if (context.getLoader() == null) {
 	    if (debug > 0)
 		log(sm.getString("contextConfig.defaultLoader"));
-	    context.setLoader(new StandardLoader());
+	    context.setLoader
+	      (new StandardLoader(context.getParentClassLoader()));
 	}
 
 	// Add missing Manager component if necessary
