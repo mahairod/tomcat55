@@ -114,18 +114,6 @@ public final class ApplicationContextFacade
      */
     public ApplicationContextFacade(ApplicationContext context) {
 	super();
-	this.context = (ServletContext) context;
-    }
-
-
-    /**
-     * Construct a new instance of this class, associated with the specified
-     * Context instance.
-     *
-     * @param context The associated Context instance
-     */
-    public ApplicationContextFacade(ServletContext context) {
-	super();
 	this.context = context;
     }
 
@@ -136,15 +124,18 @@ public final class ApplicationContextFacade
     /**
      * Wrapped application context.
      */
-    private ServletContext context = null;
+    private ApplicationContext context = null;
 
 
     // ------------------------------------------------- ServletContext Methods
 
 
     public ServletContext getContext(String uripath) {
-        // FIXME : Create a facade for the returned object ?
-        return context.getContext(uripath);
+        ServletContext theContext = context.getContext(uripath);
+        if ((theContext != null) &&
+            (theContext instanceof ApplicationContext))
+            theContext = ((ApplicationContext) theContext).getFacade();
+        return (theContext);
     }
 
 

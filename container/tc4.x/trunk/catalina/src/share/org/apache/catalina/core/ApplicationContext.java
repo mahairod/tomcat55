@@ -294,6 +294,12 @@ public class ApplicationContext
 
 
     /**
+     * The facade around this object.
+     */
+    private ServletContext facade = new ApplicationContextFacade(this);
+
+
+    /**
      * The merged context initialization parameters for this Context.
      */
     private HashMap parameters = null;
@@ -933,6 +939,20 @@ public class ApplicationContext
 	}
 
     }
+
+
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Return the facade associated with this ApplicationContext.
+     */
+    ServletContext getFacade() {
+
+        return (this.facade);
+
+    }
+
 
 
     // -------------------------------------------------------- Private Methods

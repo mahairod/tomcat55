@@ -122,7 +122,11 @@ public final class StandardWrapperFacade
 
 
     public ServletContext getServletContext() {
-        return new ApplicationContextFacade(config.getServletContext());
+        ServletContext theContext = config.getServletContext();
+        if ((theContext != null) &&
+            (theContext instanceof ApplicationContext))
+            theContext = ((ApplicationContext) theContext).getFacade();
+        return (theContext);
     }
 
 
