@@ -101,6 +101,7 @@
                     <html:text property="resource" size="25" maxlength="25" styleId="resource"/>
                 </logic:equal>
                 <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Edit">
+                    <html:hidden property="resource"/>
                     <bean:write name="userDatabaseRealmForm" property="resource" scope="session"/>
                 </logic:equal>
             </controls:data>
