@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -76,13 +72,16 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.naming.directory.DirContext;
+import javax.management.ObjectName;
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
@@ -160,8 +159,10 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ContainerBase
-    implements Container, Lifecycle, Pipeline {
+    implements Container, Lifecycle, Pipeline, MBeanRegistration {
 
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ContainerBase.class );
 
     /**
      * Perform addChild with the permissions of this class.
@@ -1460,7 +1461,48 @@ public abstract class ContainerBase
 
     }
 
-    private static org.apache.commons.logging.Log log=
-        org.apache.commons.logging.LogFactory.getLog( ContainerBase.class );
+    // -------------------- JMX and Registration  --------------------
+    protected String domain;
+    protected String suffix;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
+
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getJSR77Suffix() {
+        return suffix;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+        String j2eeApp=name.getKeyProperty("J2EEApplication");
+        String j2eeServer=name.getKeyProperty("J2EEServer");
+        if( j2eeApp==null ) {
+            j2eeApp="none";
+        }
+        if( j2eeServer==null ) {
+            j2eeServer="none";
+        }
+        suffix=",J2EEApplication=" + j2eeApp + ",J2EEServer=" + j2eeServer;
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
 }
 
