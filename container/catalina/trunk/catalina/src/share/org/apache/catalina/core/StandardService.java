@@ -256,7 +256,7 @@ public class StandardService
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

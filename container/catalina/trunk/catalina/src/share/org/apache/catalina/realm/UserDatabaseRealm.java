@@ -251,7 +251,7 @@ public class UserDatabaseRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (name);
 
     }
 

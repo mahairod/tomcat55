@@ -383,7 +383,7 @@ public final class AccessLogValve
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

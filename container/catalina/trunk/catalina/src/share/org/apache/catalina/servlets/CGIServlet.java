@@ -1864,7 +1864,7 @@ public final class CGIServlet extends HttpServlet {
 
                 } catch (IllegalThreadStateException e) {
                     try {
-                        Thread.currentThread().sleep(500);
+                        Thread.sleep(500);
                     } catch (InterruptedException ignored) {
                     }
                 }

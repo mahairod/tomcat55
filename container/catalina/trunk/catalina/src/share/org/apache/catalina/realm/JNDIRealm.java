@@ -1477,7 +1477,7 @@ public class JNDIRealm extends RealmBase {
      */
     protected String getName() {
 
-        return (this.name);
+        return (name);
 
     }
 

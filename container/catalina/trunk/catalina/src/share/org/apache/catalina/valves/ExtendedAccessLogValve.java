@@ -393,7 +393,7 @@ public final class ExtendedAccessLogValve
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

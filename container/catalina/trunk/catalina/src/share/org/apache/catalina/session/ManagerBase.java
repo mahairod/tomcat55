@@ -454,7 +454,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

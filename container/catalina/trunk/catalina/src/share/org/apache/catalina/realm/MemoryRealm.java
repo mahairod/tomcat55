@@ -272,7 +272,6 @@ public class MemoryRealm  extends RealmBase {
 
         if (digester == null) {
             digester = new Digester();
-            digester.setDebug(this.debug);
             digester.setValidating(false);
             digester.addRuleSet(new MemoryRuleSet());
         }
@@ -286,7 +285,7 @@ public class MemoryRealm  extends RealmBase {
      */
     protected String getName() {
 
-        return (this.name);
+        return (name);
 
     }
 

@@ -103,7 +103,7 @@ public final class NonLoginAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

@@ -742,7 +742,7 @@ public class Embedded  extends StandardService implements Lifecycle {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

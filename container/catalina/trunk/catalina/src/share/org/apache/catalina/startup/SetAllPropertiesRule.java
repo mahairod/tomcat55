@@ -91,7 +91,8 @@ public class SetAllPropertiesRule extends Rule {
      *
      * @exception Exception if a processing error occurs
      */
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String nameX, Attributes attributes)
+        throws Exception {
 
         for (int i = 0; i < attributes.getLength(); i++) {
             String name = attributes.getLocalName(i);

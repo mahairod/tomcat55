@@ -383,7 +383,7 @@ public class JAASRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (name);
 
     }
 

@@ -513,7 +513,6 @@ public class StandardHostDeployer implements Deployer {
         try {
             stream = config.openStream();
             Digester digester = createDigester();
-            digester.setDebug(host.getDebug());
             digester.setClassLoader(this.getClass().getClassLoader());
             digester.clear();
             digester.push(this);
@@ -863,8 +862,6 @@ public class StandardHostDeployer implements Deployer {
     protected Digester createDigester() {
         if (digester == null) {
             digester = new CatalinaDigester();
-            if (host.getDebug() > 0)
-                digester.setDebug(3);
             digester.setValidating(false);
             contextRuleSet = new ContextRuleSet("");
             digester.addRuleSet(contextRuleSet);

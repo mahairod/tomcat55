@@ -387,7 +387,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

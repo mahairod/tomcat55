@@ -442,7 +442,7 @@ public class StandardSession
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

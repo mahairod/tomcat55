@@ -485,7 +485,7 @@ public class DataSourceRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (name);
 
     }
 

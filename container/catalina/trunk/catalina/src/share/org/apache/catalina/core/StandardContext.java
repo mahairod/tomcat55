@@ -4129,9 +4129,8 @@ public class StandardContext
         // Validate required extensions
         boolean dependencyCheck = true;
         try {
-            ExtensionValidator validator = ExtensionValidator.getInstance();
-            dependencyCheck = validator.validateApplication(getResources(),
-                                                            this);
+            dependencyCheck = ExtensionValidator.validateApplication
+                (getResources(), this);
         } catch (IOException ioe) {
             log.error("Error in dependencyCheck", ioe);
             dependencyCheck = false;

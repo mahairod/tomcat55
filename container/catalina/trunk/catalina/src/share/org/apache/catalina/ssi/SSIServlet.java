@@ -183,7 +183,7 @@ public class SSIServlet extends HttpServlet {
      * @param res a value of type 'HttpServletResponse'
      */
     protected void requestHandler(HttpServletRequest req,
-                                HttpServletResponse res)
+                                  HttpServletResponse res)
         throws IOException, ServletException {
 
         ServletContext servletContext = getServletContext();
@@ -200,14 +200,14 @@ public class SSIServlet extends HttpServlet {
              path.toUpperCase().startsWith("/WEB-INF") ||
              path.toUpperCase().startsWith("/META-INF") ) {
 
-            res.sendError(res.SC_NOT_FOUND  , path);
+            res.sendError(HttpServletResponse.SC_NOT_FOUND  , path);
             log( "Can't serve file: " + path );
             return;
         }
     
         URL resource = servletContext.getResource(path);
         if (resource==null) {
-            res.sendError(res.SC_NOT_FOUND, path);
+            res.sendError(HttpServletResponse.SC_NOT_FOUND, path);
             log( "Can't find file: " + path );
             return;
         }

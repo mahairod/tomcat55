@@ -589,7 +589,7 @@ public class JDBCRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (name);
 
     }
 

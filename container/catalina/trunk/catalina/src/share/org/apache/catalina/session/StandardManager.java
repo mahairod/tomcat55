@@ -237,7 +237,7 @@ public class StandardManager
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
