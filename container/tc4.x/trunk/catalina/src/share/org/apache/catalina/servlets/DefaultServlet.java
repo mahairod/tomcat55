@@ -1316,6 +1316,25 @@ public class DefaultServlet
         ServletOutputStream ostream = null;
         PrintWriter writer = null;
         
+        if (content) {
+
+            // Trying to retrieve the servlet output stream
+            
+            try {
+                ostream = response.getOutputStream();
+            } catch (IllegalStateException e) {
+                // If it fails, we try to get a Writer instead if we're 
+                // trying to serve a text file
+                if ( (contentType != null) 
+                     && (contentType.startsWith("text")) ) {
+                    writer = response.getWriter();
+                } else {
+                    throw e;
+                }
+            }
+
+        }
+        
         if ( ((ranges == null) || (ranges.isEmpty())) 
              && (request.getHeader("Range") == null) ) {
             
@@ -1334,21 +1353,6 @@ public class DefaultServlet
                 response.setContentLength((int) contentLength);
             }
             
-            // Trying to retrieve the servlet output stream
-            
-            try {
-                ostream = response.getOutputStream();
-            } catch (IllegalStateException e) {
-                // If it fails, we try to get a Writer instead if we're 
-                // trying to serve a text file
-                if ( (contentType != null) 
-                     && (contentType.startsWith("text")) ) {
-                    writer = response.getWriter();
-                } else {
-                    throw e;
-                }
-            }
-
             // Copy the input stream to our output stream (if requested)
             if (content) {
                 response.setBufferSize(output);
@@ -1385,22 +1389,6 @@ public class DefaultServlet
                 
                 if (content) {
                     response.setBufferSize(output);
-
-                    // Trying to retrieve the servlet output stream
-                    
-                    try {
-                        ostream = response.getOutputStream();
-                    } catch (IllegalStateException e) {
-                        // If it fails, we try to get a Writer instead if 
-                        // we're trying to serve a text file
-                        if ( (contentType != null) 
-                             && (contentType.startsWith("text")) ) {
-                            writer = response.getWriter();
-                        } else {
-                            throw e;
-                        }
-                    }
-                    
                     if (ostream != null) {
                         copy(resourceInfo, ostream, range);
                     } else {
@@ -1415,22 +1403,6 @@ public class DefaultServlet
                 
                 if (content) {
                     response.setBufferSize(output);
-                    
-                    // Trying to retrieve the servlet output stream
-                    
-                    try {
-                        ostream = response.getOutputStream();
-                    } catch (IllegalStateException e) {
-                        // If it fails, we try to get a Writer instead if 
-                        // we're trying to serve a text file
-                        if ( (contentType != null) 
-                             && (contentType.startsWith("text")) ) {
-                            writer = response.getWriter();
-                        } else {
-                            throw e;
-                        }
-                    }
-                    
                     if (ostream != null) {
                         copy(resourceInfo, ostream, ranges.elements(), 
                              contentType);
