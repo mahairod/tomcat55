@@ -74,23 +74,39 @@ import java.util.Map;
  * assume that only one object of each ExpressionEvaluator type will be
  * instantiated; global caching should therefore be static.</p>
  *
+ * <p>For JSP EL expressions, an expression string without '${' and '}' 
+ * tokens is considered to be a static string.  One or more occurrences 
+ * of '${' and '}' can be used in the expression string to delimit 
+ * dynamic expressions.  Examples:
+ * <ul>
+ *   <li><code>${lastName}</code></li>
+ *   <li><code>${8 * 8}</code></li>
+ *   <li><code>Version ${major}.${minor}</code></li>
+ *   <li><code>${my:reverse('hello')}</code></li>
+ * </ul>
+ * </p>
+ *
  * @since JSP2.0
  */
 public interface ExpressionEvaluator {
 
     /**
      * Prepare an expression for later evaluation.  This method should perform
-     * syntactic validation of the expression; if in doing so it detects errors, it
-     * should raise an ELParseException.
+     * syntactic validation of the expression; if in doing so it detects 
+     * errors, it should raise an ELParseException.
      *
-     * @param expression The expression to be evaluated
+     * @param expression The expression to be evaluated.
      * @param expectedType The expected type of the result of the evaluation
-     * @param fMapper A FuntionMapper to resolve functions found in the expression.
-     *   It can be null, in which case no functions are supported for this invocation.
+     * @param fMapper A FunctionMapper to resolve functions found in 
+     *     the expression.  It can be null, in which case no functions 
+     *     are supported for this invocation.  The FunctionMapper will be
+     *     invoked one or more times between parsing the expression and
+     *     evaluating it, and must return a consistent value each time
+     *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
-     *   encountered with no prefix.
-     * @return The Expression object encapsulating the arguments, or null if errors
-     *   were encountered.
+     *     encountered with no prefix.
+     * @return The Expression object encapsulating the arguments, or null 
+     *     if errors were encountered.
      *
      * @exception ELException Thrown if parsing errors were found.
      */ 
@@ -102,19 +118,25 @@ public interface ExpressionEvaluator {
 
 
     /** 
-     * Evaluates an expression.  This method may perform some syntactic validation
-     * and, if so, it should raise an ELParseException error if it encounters syntactic
-     * errors.  EL evaluation errors should cause an ELException to be raised.
+     * Evaluates an expression.  This method may perform some syntactic 
+     * validation and, if so, it should raise an ELParseException error if 
+     * it encounters syntactic errors.  EL evaluation errors should cause 
+     * an ELException to be raised.
      *
-     * @param expression The expression to be evaluated
+     * @param expression The expression to be evaluated.
      * @param expectedType The expected type of the result of the evaluation
-     * @param vResolver A VariableResolver instance that can be used at runtime to
-     *   resolve the name of implicit objects into Objects.
-     * @param fMapper A FuntionMapper to resolve functions found in the expression.
-     *   It can be null, in which case no functions are supported for this invocation.
+     * @param vResolver A VariableResolver instance that can be used at 
+     *     runtime to resolve the name of implicit objects into Objects.
+     * @param fMapper A FunctionMapper to resolve functions found in 
+     *     the expression.  It can be null, in which case no functions 
+     *     are supported for this invocation.  The FunctionMapper will be
+     *     invoked one or more times between parsing the expression and
+     *     evaluating it, and must return a consistent value each time
+     *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
-     *      encountered with no prefix.
-     * @return The result of the expression evaluation or null if errors were encountered.
+     *     encountered with no prefix.
+     * @return The result of the expression evaluation or null if errors 
+     *     were encountered.
      *
      * @exception ELException Thrown if the expression evaluation failed.
      */ 
