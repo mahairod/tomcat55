@@ -867,6 +867,14 @@ public class StandardDefaultContext
 
     }
 
+    /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+        return (LifecycleListener[]) lifecycle.toArray(new LifecycleListener[lifecycle.size()]);
+    }
+
 
     /**
      * Return the set of application listener class names configured
@@ -1095,6 +1103,16 @@ public class StandardDefaultContext
 
     }
 
+    /**
+     * Remove a lifecycle event listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+        if((lifecycle != null) && (listener != null)) {
+            lifecycle.remove(listener);
+        }
+    }
 
     /**
      * Remove the specified application listener class from the set of

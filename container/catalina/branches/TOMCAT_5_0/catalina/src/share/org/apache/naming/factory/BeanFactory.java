@@ -225,7 +225,7 @@ public class BeanFactory
                 throw ne;
             } catch (java.lang.IllegalAccessException iae) {
                 NamingException ne = new NamingException(iae.getMessage());
-                ne.setRootause(iae);
+                ne.setRootCause(iae);
                 throw ne;
             } catch (java.lang.InstantiationException ie2) {
                 NamingException ne = new NamingException(ie2.getMessage());

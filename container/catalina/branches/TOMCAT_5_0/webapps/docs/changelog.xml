@@ -63,6 +63,9 @@
       <fix>
         <bug>31052</bug>: BeanFactory swallows root cause of exception. (yoavs)
       </fix>
+      <fix>
+        <bug>29914</bug>: Better lifecycle support for DefaultContext. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
