@@ -252,9 +252,12 @@ class TagFileProcessor {
             }
 
             if (nameFromAttribute != null) {
-                // An alias has been specified.  We use nameGiven to
-                // hold the value of alias, and nameFromAttribute to
-                // hold what its alias
+                /*
+		 * An alias has been specified. We use 'nameGiven' to hold the
+		 * value of the alias, and 'nameFromAttribute' to hold the 
+		 * name of the attribute whose value (at invocation-time)
+		 * denotes the name of the variable that is being aliased
+		 */
                 nameGiven = alias;
             }
                 
