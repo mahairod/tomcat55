@@ -90,6 +90,7 @@ import org.apache.catalina.security.SecurityUtil;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.tomcat.util.log.SystemLogHandler;
+import org.apache.commons.modeler.Registry;
 /**
  * Standard implementation of the <b>Wrapper</b> interface that represents
  * an individual servlet definition.  No child Containers are allowed, and
@@ -115,7 +116,8 @@ public final class StandardWrapper
     public StandardWrapper() {
 
         super();
-        pipeline.setBasic(new StandardWrapperValve());
+        swValve=new StandardWrapperValve();
+        pipeline.setBasic(swValve);
 
     }
 
@@ -245,6 +247,10 @@ public final class StandardWrapper
      * Should we swallow System.out
      */
     private boolean swallowOutput = false;
+
+    // To support jmx attributes
+    private StandardWrapperValve swValve;
+    private long loadTime=0;
 
     // ------------------------------------------------------------- Properties
 
@@ -867,11 +873,6 @@ public final class StandardWrapper
             // Special case class loader for a container provided servlet
             if (isContainerProvidedServlet(actualClass)) {
                 classLoader = this.getClass().getClassLoader();
-                long t2=System.currentTimeMillis();
-                if( t2-t1 > 200 )
-                    log.info(sm.getString
-                             ("standardWrapper.containerServlet", getName()) +
-                             " " + (t2 - t1 ));
             }
     
             // Load the specified servlet class from the appropriate class loader
@@ -993,10 +994,8 @@ public final class StandardWrapper
                     instancePool = new Stack();
             }
             fireContainerEvent("load", this);
-            if( System.currentTimeMillis() -t1 > 200 ) {
-                log.info("Loaded servlet  " + actualClass + " " +
-                         (System.currentTimeMillis() - t1 ) );
-            }
+
+            loadTime=System.currentTimeMillis() -t1;
         } finally {
             if (swallowOutput) {
                 String log = SystemLogHandler.stopCapture();
@@ -1009,6 +1008,7 @@ public final class StandardWrapper
                 }
             }
         }
+        registerJMX((ContainerBase)getParent(), this);
         return servlet;
 
     }
@@ -1274,7 +1274,45 @@ public final class StandardWrapper
 
     }
 
+    public long getProcessingTime() {
+        return swValve.getProcessingTime();
+    }
 
+    public void setProcessingTime(long processingTime) {
+        swValve.setProcessingTime(processingTime);
+    }
+
+    public long getMaxTime() {
+        return swValve.getMaxTime();
+    }
+
+    public void setMaxTime(long maxTime) {
+        swValve.setMaxTime(maxTime);
+    }
+
+    public int getRequestCount() {
+        return swValve.getRequestCount();
+    }
+
+    public void setRequestCount(int requestCount) {
+        swValve.setRequestCount(requestCount);
+    }
+
+    public int getErrorCount() {
+        return swValve.getErrorCount();
+    }
+
+    public void setErrorCount(int errorCount) {
+           swValve.setErrorCount(errorCount);
+    }
+
+    public long getLoadTime() {
+        return loadTime;
+    }
+
+    public void setLoadTime(long loadTime) {
+        this.loadTime = loadTime;
+    }
     // -------------------------------------------------------- Package Methods
 
 
@@ -1400,5 +1438,24 @@ public final class StandardWrapper
 
     }
 
+    void registerJMX(ContainerBase ctx, StandardWrapper wrapper) {
+        try {
+            String name=wrapper.getJspFile();
+            if( name==null ) {
+                name=wrapper.getServletName();
+            }
+            // it should be full name
+            String parentName=ctx.getName();
+            String hostName=ctx.getParent().getName();
+            String webMod=((hostName==null)? "DEFAULT" :hostName ) +
+                    (("".equals(parentName) ) ? "/" : parentName );
+            String oname="j2eeType=Servlet,name=" + name + ",WebModule=" +
+                    webMod + ctx.getJSR77Suffix();
 
+            Registry.getRegistry().registerComponent(wrapper,
+                    ctx.getDomain(), "Servlet", oname);
+        } catch( Exception ex ) {
+            log.info("Error registering servlet with jmx " + this);
+        }
+    }
 }
