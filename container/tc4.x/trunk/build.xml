@@ -392,8 +392,30 @@
     <fixcrlf srcdir="${tomcat.dist}/${jtc.final-src.name}" 
      excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico" eol="lf"/>
     <tar longfile="gnu" tarfile="${tomcat.dist}/${jtc.final-src.name}.tar">
+      <tarfileset dir="${tomcat.dist}" mode="755">
+        <include name="${jtc.final-src.name}/jk/native/buildconf.sh" />
+        <include name="${jtc.final-src.name}/jk/native/apache-1.3/build-hpux-cc.sh" />
+        <include name="${jtc.final-src.name}/jk/native/apache-1.3/build-solaris.sh" />
+        <include name="${jtc.final-src.name}/jk/native/apache-1.3/build-unix.sh" />
+        <include name="${jtc.final-src.name}/jk/native/apache-2.0/build-unix.sh" />
+        <include name="${jtc.final-src.name}/jk/native/apache-2.0/install-unix.sh" />
+        <include name="${jtc.final-src.name}/jk/native/domino/mkini.sh" />
+        <include name="${jtc.final-src.name}/webapp/support/buildconf.sh" />
+        <include name="${jtc.final-src.name}/webapp/support/install.sh" />
+        <include name="${jtc.final-src.name}/webapp/support/mkinstalldirs.sh" />
+      </tarfileset>
       <tarfileset dir="${tomcat.dist}">
         <include name="${jtc.final-src.name}/**" />
+        <exclude name="${jtc.final-src.name}/jk/native/buildconf.sh" />
+        <exclude name="${jtc.final-src.name}/jk/native/apache-1.3/build-hpux-cc.sh" />
+        <exclude name="${jtc.final-src.name}/jk/native/apache-1.3/build-solaris.sh" />
+        <exclude name="${jtc.final-src.name}/jk/native/apache-1.3/build-unix.sh" />
+        <exclude name="${jtc.final-src.name}/jk/native/apache-2.0/build-unix.sh" />
+        <exclude name="${jtc.final-src.name}/jk/native/apache-2.0/install-unix.sh" />
+        <exclude name="${jtc.final-src.name}/jk/native/domino/mkini.sh" />
+        <exclude name="${jtc.final-src.name}/webapp/support/buildconf.sh" />
+        <exclude name="${jtc.final-src.name}/webapp/support/install.sh" />
+        <exclude name="${jtc.final-src.name}/webapp/support/mkinstalldirs.sh" />
       </tarfileset>
     </tar>
     <delete dir="${tomcat.dist}/${jtc.final-src.name}" />
