@@ -10,24 +10,24 @@
 	"http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
    -->
 
-  <tlibversion>1.0</tlibversion>
-  <jspversion>1.2</jspversion>
-  <shortname>simple</shortname>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>simple</shor-tname>
   <uri>1.0</uri>
-  <info>
+  <description>
 	A simple tag library for the examples
-  </info>
+  </description>
 
   <!-- Test Tag -->
  
   <tag>
       <name>test</name>
-      <tagclass>tags.TestTag</tagclass>
-      <teiclass>tags.TestTagExtraInfo</teiclass>
-      <bodycontent>tagdependent</bodycontent>
-      <info>
+      <tag-class>tags.TestTag</tag-class>
+      <tei-class>tags.TestTagExtraInfo</tei-class>
+      <body-content>tagdependent</body-content>
+      <description>
   	test message.
-      </info>
+      </description>
       <attribute>
   	<name>toBrowser</name>
   	<required>false</required>
@@ -46,11 +46,11 @@
  <!-- Page Tag -->
   <tag>
     <name>page</name>
-    <tagclass>tags.PageTag</tagclass>
-    <bodycontent>tagdependent</bodycontent>
-    <info>
+    <tag-class>tags.PageTag</tag-class>
+    <body-content>tagdependent</body-content>
+    <description>
 	Test message.
-    </info>
+    </description>
     <attribute>
 	<name>toBrowser</name>
 	<required>false</required>
@@ -65,11 +65,11 @@
  <!-- LifeCycle Tag -->
   <tag>
     <name>lifeCycle</name>
-    <tagclass>tags.LifeCycleTag</tagclass>
-    <bodycontent>tagdependent</bodycontent>
-    <info>
+    <tag-class>tags.LifeCycleTag</tag-class>
+    <body-content>tagdependent</body-content>
+    <description>
 	Test message.
-    </info>
+    </description>
     <attribute>
 	<name>toBrowser</name>
 	<required>false</required>

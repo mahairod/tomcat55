@@ -10,21 +10,21 @@
 	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_2.dtd"
    -->
 
-  <tlibversion>1.0</tlibversion>
-  <jspversion>1.2</jspversion>
-  <shortname>tests</shortname>
-  <info>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>tests</short-name>
+  <description>
 	A simple tab library for JSP tests
-  </info>
+  </description>
 
   <!-- general validator tag -->
   <tag>
     <name>count</name>
-    <tagclass>tags.Count</tagclass>
-    <info>
+    <tag-class>tags.Count</tag-class>
+    <description>
 	A simple nestable tag that validates transitions.
 	It also counts invocations.
-    </info>
+    </description>
 
     <attribute>
       <name>att1</name>
@@ -47,10 +47,10 @@
   <!-- several checks on a count tag -->
   <tag>
     <name>checkCount</name>
-    <tagclass>tags.CheckCount</tagclass>
-    <info>
+    <tag-class>tags.CheckCount</tag-class>
+    <description>
 	Several checks on a count tag
-    </info>
+    </description>
 
     <attribute>
       <name>nested</name>
@@ -70,13 +70,13 @@
   <!-- silly arguments to test isValid -->
   <tag>
     <name>silly</name>
-    <tagclass>tags.SillyArgs</tagclass>
-    <teiclass>tags.SillyArgsExtraInfo</teiclass>
-    <info>
+    <tag-class>tags.SillyArgs</tag-class>
+    <tei-class>tags.SillyArgsExtraInfo</tei-class>
+    <description>
        takes three arguments: a, b, and c, they must satisfy a+b==c
        The optional argument testLibInfo is ignored at runtime but
        forces a check at translation time for tagInfo data.
-    </info>
+    </description>
 
     <attribute>
       <name>a</name>
@@ -100,9 +100,9 @@
   <!-- define an object -->
   <tag>
     <name>define</name>
-    <tagclass>tags.Define</tagclass>
-    <teiclass>tags.DefineExtraInfo</teiclass>
-    <info>
+    <tag-class>tags.Define</tag-class>
+    <tei-class>tags.DefineExtraInfo</tei-class>
+    <description>
       required arguments:
 	the id of the Integer that will be defined.
 	the scope where it will be recorded
@@ -114,7 +114,7 @@
 	value before first BODY evaluation
 	increment value after each BODY evaluation
 	count of how many iterations to do
-    </info>
+    </description>
 
     <!-- mandatory attributes -->
     <attribute>
@@ -161,8 +161,8 @@
   <!-- aTag is a simple Tag that does not extend TagSupport -->
   <tag>
     <name>aTag</name>
-    <tagclass>tags.ATag</tagclass>
-    <info>A simple action handler that does not extend TagSupport</info>
+    <tag-class>tags.ATag</tag-class>
+    <description>A simple action handler that does not extend TagSupport</description>
 
     <attribute>
       <name>att</name>
@@ -173,8 +173,8 @@
   <!-- bTag is a simple BodyTag that does not extend BodyTagSupport -->
   <tag>
     <name>bTag</name>
-    <tagclass>tags.BTag</tagclass>
-    <info>A simple action handler that does not extend BodyTagSupport</info>
+    <tag-class>tags.BTag</tag-class>
+    <description>A simple action handler that does not extend BodyTagSupport</description>
 
     <attribute>
       <name>att</name>
@@ -187,13 +187,13 @@
   <!-- verbatim tag using different mechanisms -->
   <tag>
     <name>verbatim</name>
-    <tagclass>tags.Verbatim</tagclass>
-    <info>
+    <tag-class>tags.Verbatim</tag-class>
+    <description>
        Emits the body verbatim unprocessed (after scripts and the such, of
        course).
        The how attribute indicates what mechanism to use.  The value can be:
        "reader", "string", and "writeOut"
-    </info>
+    </description>
 
     <attribute>
       <name>how</name>
