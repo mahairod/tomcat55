@@ -872,7 +872,6 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         Server server = ServerFactory.getServer();
         server.addService(service);
-        engine.start();
         Vector onames = new Vector();
         // FIXME service & engine.getObjectName
         //ObjectName oname = engine.getObjectName();
@@ -1278,7 +1277,7 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
-        String serviceName = oname.getKeyProperty("name");
+        String serviceName = oname.getKeyProperty("serviceName");
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
 
