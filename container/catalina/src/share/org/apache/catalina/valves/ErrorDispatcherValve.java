@@ -299,6 +299,10 @@ public class ErrorDispatcherValve
                               new Integer(statusCode));
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               message);
+            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
+                                       errorPage.getLocation());
+            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                                                 new Integer(ApplicationFilterFactory.ERROR));
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
                 sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
@@ -447,3 +451,4 @@ public class ErrorDispatcherValve
 
 
 }
+
