@@ -15,6 +15,7 @@
   <property name="jsp-api.build"    value="build"/>
   <property name="jsp-api.dist"     value="dist"/>
   <property name="servlet-api.jar"  value="../jsr154/dist/lib/servlet-api.jar"/>
+  <property name="jsp-api.jar" value="${jsp-api.dist}/lib/jsp-api.jar"/>
 
   <path id="examples.classpath">
     <pathelement location="${jsp-api.build}/classes"/>
@@ -137,13 +138,8 @@
 
 
   <!-- ===================== Distribution Files ========================= -->
-  <target name="dist" depends="compile,examples,javadoc"
-   description="Create binary distribution">
-
-    <!-- Copy Javadocs -->
-    <copy todir="${jsp-api.dist}/docs/api">
-        <fileset dir="${jsp-api.build}/docs/api"/>
-    </copy>
+  <target name="jar" depends="compile"
+          description="Create jar">
 
     <!-- Prepare Manifest -->
     <copy tofile="${jsp-api.build}/manifest"
@@ -155,9 +151,21 @@
     </copy>
 
     <!-- Create JAR file -->
-    <jar jarfile="${jsp-api.dist}/lib/jsp-api.jar"
+    <jar jarfile="${jsp-api.jar}"
          basedir="${jsp-api.build}/classes"
-         manifest="${jsp-api.build}/manifest"/>
+         manifest="${jsp-api.build}/manifest">
+      <include name="javax/servlet/jsp/**" />
+    </jar>
+
+  </target>
+
+  <target name="dist" depends="compile,examples,javadoc,jar"
+   description="Create binary distribution">
+
+    <!-- Copy Javadocs -->
+    <copy todir="${jsp-api.dist}/docs/api">
+        <fileset dir="${jsp-api.build}/docs/api"/>
+    </copy>
 
     <!-- Copy API source files -->
     <copy todir="${jsp-api.dist}/src">

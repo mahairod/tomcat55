@@ -14,7 +14,7 @@
   <property name="implementation.revision" value="public_draft"/>
   <property name="servlet-api.build"    value="build"/>
   <property name="servlet-api.dist"     value="dist"/>
-
+  <property name="servlet-api.jar" value="${servlet-api.dist}/lib/servlet-api.jar"/>
   <path id="examples.classpath">
     <pathelement location="${servlet-api.build}/classes"/>
   </path>
@@ -122,13 +122,8 @@
 
 
   <!-- ===================== Distribution Files ========================= -->
-  <target name="dist" depends="compile,examples,javadoc"
-   description="Create binary distribution">
-
-    <!-- Copy Javadocs -->
-    <copy todir="${servlet-api.dist}/docs/api">
-        <fileset dir="${servlet-api.build}/docs/api"/>
-    </copy>
+  <target name="jar" depends="compile"
+          description="Create the jar">
 
     <!-- Prepare Manifest -->
     <copy tofile="${servlet-api.build}/manifest"
@@ -140,9 +135,22 @@
     </copy>
 
     <!-- Create JAR file -->
-    <jar jarfile="${servlet-api.dist}/lib/servlet-api.jar"
+    <jar jarfile="${servlet-api.jar}"
          basedir="${servlet-api.build}/classes"
-         manifest="${servlet-api.build}/manifest"/>
+         manifest="${servlet-api.build}/manifest">
+      <include name="javax/servlet/**"/>
+      <exclude name="javax/servlet/jsp/**"/>
+    </jar>
+
+  </target>
+
+  <target name="dist" depends="compile,examples,javadoc,jar"
+          description="Create binary distribution">
+
+    <!-- Copy Javadocs -->
+    <copy todir="${servlet-api.dist}/docs/api">
+        <fileset dir="${servlet-api.build}/docs/api"/>
+    </copy>
 
     <!-- Copy API source files -->
     <copy todir="${servlet-api.dist}/src">
