@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -31,8 +29,9 @@ import java.util.TreeMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.Host;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.DiskFileUpload;
@@ -150,7 +149,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
     
         // Parse the request
         String basename = null;
-        File appBaseDir = null;
         String war = null;
         FileItem warUpload = null;
         try {
@@ -191,28 +189,25 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 }
                 // Identify the appBase of the owning Host of this Context
                 // (if any)
-                String appBase = null;
-                appBase = ((Host) context.getParent()).getAppBase();
-                appBaseDir = new File(appBase);
-                if (!appBaseDir.isAbsolute()) {
-                    appBaseDir = new File(System.getProperty("catalina.base"),
-                                          appBase);
-                }
                 basename = war.substring(0, war.indexOf(".war"));
-                File file = new File(appBaseDir, war);
+                File file = new File(getAppBase(), war);
                 if (file.exists()) {
                     message = sm.getString
                         ("htmlManagerServlet.deployUploadWarExists",war);
                     break;
                 }
-                warUpload.write(file);
-                try {
-                    URL url = file.toURL();
-                    war = url.toString();
-                    war = "jar:" + war + "!/";
-                } catch(MalformedURLException e) {
-                    file.delete();
-                    throw e;
+                String path = null;
+                if (basename.equals("ROOT")) {
+                    path = "";
+                } else {
+                    path = "/" + basename;
+                }
+
+                if (!isServiced(path)) {
+                    addServiced(path);
+                    warUpload.write(file);
+                    check(path);
+                    removeServiced(path);
                 }
                 break;
             }
@@ -225,30 +220,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 warUpload.delete();
             }
             warUpload = null;
-        }
-
-        // Extract the nested context deployment file (if any)
-        File localWar = new File(appBaseDir, basename + ".war");
-        File localXml = new File(configBase, basename + ".xml");
-        try {
-            extractXml(localWar, localXml);
-        } catch (IOException e) {
-            log("managerServlet.extract[" + localWar + "]", e);
-            return;
-        }
-        String config = null;
-        try {
-            if (localXml.exists()) {
-                URL url = localXml.toURL();
-                config = url.toString();
-            }
-        } catch (MalformedURLException e) {
-            throw e;
-        }
-
-        // If there were no errors, deploy the WAR
-        if (message.length() == 0) {
-            message = deployInternal(config, null, war);
         }
 
         list(request, response, message);
@@ -287,7 +258,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         if (debug >= 1)
             log("list: Listing contexts for virtual host '" +
-                deployer.getName() + "'");
+                host.getName() + "'");
 
         PrintWriter writer = response.getWriter();
 
@@ -337,7 +308,10 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         // Apps Row Section
         // Create sorted map of deployed applications context paths.
-        String contextPaths[] = deployer.findDeployedApps();
+        Container children[] = host.findChildren();
+        String contextPaths[] = new String[children.length];
+        for (int i = 0; i < children.length; i++)
+            contextPaths[i] = children[i].getName();
 
         TreeMap sortedContextPathsMap = new TreeMap();
 
@@ -356,7 +330,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
             Map.Entry entry = (Map.Entry) iterator.next();
             String displayPath = (String) entry.getKey();
             String contextPath = (String) entry.getKey();
-            Context context = deployer.findDeployedApp(contextPath);
+            Context context = (Context) host.findChild(contextPath);
             if (displayPath.equals("")) {
                 displayPath = "/";
             }
