@@ -117,10 +117,12 @@
       <srcfiles dir="${catalina.home}/webapps/admin" includes="**" />
     </uptodate>
 
+<!--
     <uptodate property="commons-modeler.build.notrequired"
               targetfile="${commons-modeler.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
     </uptodate>
+-->
 
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
@@ -463,6 +465,7 @@
 
   <!-- ====================== Build dependent code =================== -->
 
+<!--
   <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" description="build commons-modeler">
     <echo>========== Building: commons-modeler </echo>
 
@@ -474,7 +477,7 @@
         <property name="build.home" value="${tomcat.build}" />
     </ant>
   </target>
-
+-->
 
   <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
     <echo>========== Building: commons-daemon </echo>
@@ -494,7 +497,7 @@
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
 
-    <antcall target="build-commons-modeler" />
+    <!-- <antcall target="build-commons-modeler" /> -->
     <antcall target="build-commons-daemon" />
 
   </target>
@@ -1531,6 +1534,11 @@
     </antcall>
 
     <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-modeler.loc}"/>
+      <param name="destfile" value="${commons-modeler.jar}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
       <param name="sourcefile" value="${log4j.loc}"/>
       <param name="destfile" value="${log4j.jar}"/>
     </antcall>
@@ -1700,9 +1708,11 @@
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} ${commons-daemon.cvs.loc}"
          dest="${cvs.base}"/>
+<!--
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} ${commons-modeler.cvs.loc}" 
          dest="${cvs.base}"/>
+-->
   </target>
 
 
