@@ -300,13 +300,17 @@ public interface ServletRequest {
     public String[] getParameterValues(String name);
  
     /** Returns a java.util.Map of the parameters of this request.
-    ** Request parameters
+     * Request parameters
      * are extra information sent with the request.  For HTTP servlets,
      * parameters are contained in the query string or posted form data.
      *
-     * @return an immutable java.util.Map containing parameter names as keys and parameter values as
-     * map values.
+     * @return an immutable java.util.Map containing parameter names as 
+     * keys and parameter values as map values. The keys in the parameter
+     * map are of type String. The values in the parameter map are of type
+     * String array.
+     *
      */
+
     public Map getParameterMap();
     
     

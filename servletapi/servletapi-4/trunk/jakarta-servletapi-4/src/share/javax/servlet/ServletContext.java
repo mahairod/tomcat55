@@ -108,17 +108,19 @@ public interface ServletContext {
      * <p>This method allows servlets to gain
      * access to the context for various parts of the server, and as
      * needed obtain {@link RequestDispatcher} objects from the context.
-     * The given path must be absolute (beginning with "/") and is 
-     * interpreted based on the server's document root. 
+     * The given path must be begin with "/", is interpreted relative 
+     * to the server's document root and is matched against the context roots of
+     * other web applications hosted on this container.
      * 
      * <p>In a security conscious environment, the servlet container may
      * return <code>null</code> for a given URL.
      *       
-     * @param uripath 	a <code>String</code> specifying the absolute URL of 
-     *			a resource on the server
-     *
+     * @param uripath 	a <code>String</code> specifying the context path of
+     *			another web application in the container.
      * @return		the <code>ServletContext</code> object that
-     *			corresponds to the named URL
+     *			corresponds to the named URL, or null if either
+			none exists or the container wishes to restrict 
+     * 			this access.
      *
      * @see 		RequestDispatcher
      *
@@ -620,9 +622,13 @@ public interface ServletContext {
      *
      * Binds an object to a given attribute name in this servlet context. If
      * the name specified is already used for an attribute, this
-     * method will remove the old attribute and bind the name
-     * to the new attribute.
-     *
+     * method will replace the attribute with the new to the new attribute.
+     * <p>If listeners are configured on the <code>ServletContext</code> the  
+     * container notifies them accordingly.
+     * <p>
+     * If a null value is passed, the effect is the same as calling 
+     * <code>removeAttribute()</code>.
+     * 
      * <p>Attribute names should follow the same convention as package
      * names. The Java Servlet API specification reserves names
      * matching <code>java.*</code>, <code>javax.*</code>, and
@@ -650,6 +656,10 @@ public interface ServletContext {
      * the servlet context. After removal, subsequent calls to
      * {@link #getAttribute} to retrieve the attribute's value
      * will return <code>null</code>.
+
+     * <p>If listeners are configured on the <code>ServletContext</code> the 
+     * container notifies them accordingly.
+
      *
      *
      * @param name	a <code>String</code> specifying the name 
