@@ -605,6 +605,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         if( oname != null )
             Registry.getRegistry().unregisterComponent(oname);
         initialized=false;
+        oname = null;
     }
     
     public void init() {
