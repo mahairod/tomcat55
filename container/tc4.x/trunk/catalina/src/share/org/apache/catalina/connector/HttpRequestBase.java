@@ -594,8 +594,9 @@ public class HttpRequestBase
         int semicolon = contentType.indexOf(";");
         if (semicolon >= 0)
             contentType = contentType.substring(0, semicolon).trim();
-	if ("POST".equals(getMethod()) && (getContentLength() > 0) &&
-	    "application/x-www-form-urlencoded".equals(contentType)) {
+	if ("POST".equals(getMethod()) && (getContentLength() > 0) 
+            && (this.stream == null)
+	    && "application/x-www-form-urlencoded".equals(contentType)) {
 	    try {
                 int max = getContentLength();
                 int len = 0;
