@@ -429,25 +429,25 @@ public class GTest extends Task {
             boolean result = checkResponse( magnitude );
 
             if ( result ) {
-		passCount++;
+		        passCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>PASS</result>\n".getBytes() );
                 }
-
-                if ( "No description".equals( description ) ) {
-                    System.out.println( " OK " + request );
-                } else
-                    System.out.println( " OK " + description + " (" + request + ")" );
+                if ( testName != null ) {
+                    System.out.println( " PASSED " + testName + " (" + request + ")" );
+                } else {
+                    System.out.println( " PASSED " + request );
+                }
             } else {
-		failureCount++;
+		        failureCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>FAIL</result>\n".getBytes() );
                 }
-
-                if ( "No description".equals( description ) ) {
-                    System.out.println( " FAIL " + request );
-                } else
-                    System.out.println( " FAIL " + description + " (" + request + ")" );
+                if ( testName != null ) {
+                    System.out.println( " FAILED " + testName + " (" + request + ")" );
+                } else {
+                    System.out.println( " FAILED " + request );
+                }
             }
 
             if ( resultOut != null ) {
@@ -872,16 +872,13 @@ public class GTest extends Task {
             byte[] reqbytes = reqbuf.toString().getBytes();
             out.write( reqbytes, 0, reqbytes.length );
             out.flush();
+            reqbuf = null;
         } catch ( Exception ex1 ) {
             System.out.println( " Error writing request " + ex1 );
 	        if ( debug > 0 ) {
 		        System.out.println( "Message: " + ex1.getMessage() );
 		        ex1.printStackTrace();
 	        }
-        } finally {
-            out.close();
-            out = null;
-            reqbuf = null;
         }
 
         try {
@@ -910,9 +907,7 @@ public class GTest extends Task {
 	        if ( debug > 0 ) {
 		        System.out.println( " closing socket" );
 	        }
-            in.close();
 	        socket.close();
-            in = null;
 	        socket = null;
 	    }
     }
