@@ -98,7 +98,10 @@
       to properly remove the config file even if it does not match the 
       context path (remm)
       </fix>
-
+      <fix>
+      Don't set the no-caching headers for protected POSTed pages.  This makes
+      the "back" button in the browser works as expected. (billbarker)
+      </fix>
     </changelog>
 
   </subsection>
@@ -131,8 +134,10 @@
       Add support for enabling subset of supported SSL cipher suites 
       in PureTLS implementation (billbarker)
       </add>
-      
-
+      <fix>
+      Slight re-factoring of the JSSE SSL implementation to allow it to work 
+      with non-Sun vendor's 1.4.x JVMs. (billbarker)
+      </fix>
     </changelog>
 
   </subsection>
