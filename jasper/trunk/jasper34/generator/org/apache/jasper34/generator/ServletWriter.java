@@ -73,17 +73,18 @@ import org.apache.jasper34.jsptree.*;
  * @author Costin Manolache
  */
 public class ServletWriter extends JavaSourceGenerator {
+    ContainerLiaison containerL;
     
     public ServletWriter(PrintWriter writer) {
 	super( writer );
     }
 
-    public void generateServlet(JspCompilationContext ctxt,
-				JspPageInfo pageInfo )
+    public void generateServlet(JspPageInfo pageInfo )
 	throws JasperException
     {
+	containerL=pageInfo.getContainerLiaison();
 	// Do we need that ??
-        ctxt.setContentType(pageInfo.servletContentType);
+	//???        ctxt.setContentType(pageInfo.servletContentType);
 
 	generateHeader(pageInfo);
 
@@ -453,9 +454,10 @@ public class ServletWriter extends JavaSourceGenerator {
 	throws JasperException
     {
 	
-        if (pageInfo.ctxt.getOptions().getLargeFile()) {
+        if (pageInfo.getOptions().getLargeFile()) {
             try {
-		FileOutputStream fos=new FileOutputStream(pageInfo.dataFile);
+		FileOutputStream fos=
+		    new FileOutputStream(pageInfo.getDataFile());
                 ObjectOutputStream o
                     = new ObjectOutputStream(fos);
 		
@@ -470,7 +472,7 @@ public class ServletWriter extends JavaSourceGenerator {
                 o.close();
                 this.close();
             } catch (IOException ex) {
-                throw new JasperException(Constants.getString("jsp.error.data.file.write"), ex);
+                throw new JasperException(containerL.getString("jsp.error.data.file.write"), ex);
             }
 	}
     }

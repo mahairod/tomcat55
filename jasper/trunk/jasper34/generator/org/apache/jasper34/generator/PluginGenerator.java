@@ -88,8 +88,8 @@ public class PluginGenerator extends GeneratorBase
 	this.start = start;
     }
 
-    public void init(JspCompilationContext ctxt) throws JasperException {
-        ieClassId = ctxt.getOptions().getIeClassId();
+    public void init(ContainerLiaison containerL) throws JasperException {
+        ieClassId = containerL.getOptions().getIeClassId();
     }
     
     public void generateServiceMethod(ServletWriter writer) 
@@ -106,10 +106,10 @@ public class PluginGenerator extends GeneratorBase
 	String iepluginurl = getAttribute ("iepluginurl");
 
 	if (type == null)
-	    throw new CompileException (start, Constants.getString (
+	    throw new CompileException (start, containerL.getString (
 	    				"jsp.error.plugin.notype"));
 	if (code == null)
-	    throw new CompileException (start, Constants.getString (
+	    throw new CompileException (start, containerL.getString (
 	    				"jsp.error.plugin.nocode"));
 
 	writer.popIndent ();

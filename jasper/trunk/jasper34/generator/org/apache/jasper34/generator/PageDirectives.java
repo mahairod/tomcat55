@@ -85,7 +85,11 @@ import org.apache.jasper34.jsptree.*;
 /**
  */
 public class PageDirectives  {
-    public PageDirectives() {}
+    ContainerLiaison containerL;
+    
+    public PageDirectives(ContainerLiaison containerL) {
+	this.containerL=containerL;
+    }
     
     public void handlePageDirective( JspParseEventListener listener,
 				     String directive, Mark start,
@@ -108,7 +112,7 @@ public class PageDirectives  {
 
 	// Do some validations...
         if (listener.pageInfo.bufferSize == 0 && listener.pageInfo.autoFlush == false)
-            throw new CompileException(start, Constants.getString(
+            throw new CompileException(start, containerL.getString(
 	    				"jsp.error.page.bad_b_and_a_combo"));
 
 
@@ -169,11 +173,11 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.contentTypeDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.contenttypes"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.contenttypes"));
             listener.pageInfo.contentTypeDir = true;
             if (contentType == null)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.contenttype"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.contenttype"));
             listener.pageInfo.servletContentType = contentType;
         }
     }
@@ -186,11 +190,11 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.sessionDir == true)
                 throw new CompileException (start,
-					    Constants.getString("jsp.error.page.multiple.session"));
+					    listener.getContainerLiaison().getString("jsp.error.page.multiple.session"));
             listener.pageInfo.sessionDir = true;
             if (session == null)
                 throw new CompileException (start,
-					    Constants.getString("jsp.error.page.invalid.session"));
+					    listener.getContainerLiaison().getString("jsp.error.page.invalid.session"));
             if (session.equalsIgnoreCase("true"))
                 listener.pageInfo.genSessionVariable = true;
             else if (session.equalsIgnoreCase("false"))
@@ -208,7 +212,7 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.bufferDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.buffer"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.buffer"));
             listener.pageInfo.bufferDir = true;
             if (buffer != null) {
                 if (buffer.equalsIgnoreCase("none"))
@@ -224,7 +228,7 @@ public class PageDirectives  {
                             num = buffer.substring(0, ind);
                         i = new Integer(num);
                     } catch (NumberFormatException n) {
-                        throw new CompileException(start, Constants.getString(
+                        throw new CompileException(start, listener.getContainerLiaison().getString(
 					"jsp.error.page.invalid.buffer"));
                     }
                     listener.pageInfo.bufferSize = i.intValue()*1024;
@@ -232,7 +236,7 @@ public class PageDirectives  {
             }
             else
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.buffer"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.buffer"));
         }
     }
 
@@ -244,12 +248,12 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.autoFlushDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.autoflush"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.autoflush"));
 
             listener.pageInfo.autoFlushDir = true;
             if (autoflush == null)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.autoflush"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.autoflush"));
 
             if (autoflush.equalsIgnoreCase("true"))
                 listener.pageInfo.autoFlush = true;
@@ -257,7 +261,7 @@ public class PageDirectives  {
                 listener.pageInfo.autoFlush = false;
             else
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.autoflush"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.autoflush"));
         }
     }
 
@@ -269,12 +273,12 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.threadsafeDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.threadsafe"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.threadsafe"));
 
             listener.pageInfo.threadsafeDir = true;
             if (threadsafe == null)
                 throw new CompileException (start,
-					    Constants.getString("jsp.error.page.invalid.threadsafe"));
+					    listener.getContainerLiaison().getString("jsp.error.page.invalid.threadsafe"));
 
             if (threadsafe.equalsIgnoreCase("true"))
                 listener.pageInfo.singleThreaded = false;
@@ -282,7 +286,7 @@ public class PageDirectives  {
                 listener.pageInfo.singleThreaded = true;
             else
                 throw new CompileException (start,
-					    Constants.getString("jsp.error.page.invalid.threadsafe"));
+					    listener.getContainerLiaison().getString("jsp.error.page.invalid.threadsafe"));
         }
     }
 
@@ -294,12 +298,12 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.infoDir == true)
                 throw new CompileException (start,
-					    Constants.getString("jsp.error.page.multiple.info"));
+					    listener.getContainerLiaison().getString("jsp.error.page.multiple.info"));
 
             listener.pageInfo.infoDir = true;
             if (info == null)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.info"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.info"));
 
             GeneratorBase gen = new InfoGenerator(info);
 	    gen.setMark( start, stop );
@@ -316,20 +320,20 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.iserrorpageDir == true)
                 throw new CompileException (start,
-					    Constants.getString("jsp.error.page.multiple.iserrorpage"));
+					    listener.getContainerLiaison().getString("jsp.error.page.multiple.iserrorpage"));
 
             listener.pageInfo.iserrorpageDir = true;
             if (iserrorpage == null)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.iserrorpage"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.iserrorpage"));
 
             if (iserrorpage.equalsIgnoreCase("true"))
-                listener.pageInfo.ctxt.setErrorPage(true);
+                listener.pageInfo.setErrorPage(true);
             else if (iserrorpage.equalsIgnoreCase("false"))
-                listener.pageInfo.ctxt.setErrorPage(false);
+                listener.pageInfo.setErrorPage(false);
             else
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.invalid.iserrorpage"));
+					   listener.getContainerLiaison().getString("jsp.error.page.invalid.iserrorpage"));
         }
     }
 
@@ -341,7 +345,7 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.errorpageDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.errorpage"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.errorpage"));
 
             listener.pageInfo.errorpageDir = true;
             if (errorpage != null)
@@ -357,13 +361,13 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.languageDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.language"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.language"));
 
             listener.pageInfo.languageDir = true;
             if (language != null)
                 if (!language.equalsIgnoreCase("java"))
                     throw new CompileException(start,
-					       Constants.getString("jsp.error.page.nomapping.language")+language);
+					       listener.getContainerLiaison().getString("jsp.error.page.nomapping.language")+language);
         }
     }
 
@@ -389,7 +393,7 @@ public class PageDirectives  {
         {
             if (listener.pageInfo.extendsDir == true)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.page.multiple.extends"));
+					   listener.getContainerLiaison().getString("jsp.error.page.multiple.extends"));
 
             listener.pageInfo.extendsDir = true;
             if (extendsClzz != null) {

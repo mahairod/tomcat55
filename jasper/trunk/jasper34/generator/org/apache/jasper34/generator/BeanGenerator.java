@@ -114,32 +114,32 @@ public class BeanGenerator extends GeneratorBase  {
 	    
 	    // Check for mandatory attributes:
 	    if ( name == null ) {
-                String m = Constants.getString("jsp.error.usebean.missing.attribute");
+                String m = containerL.getString("jsp.error.usebean.missing.attribute");
 		throw new CompileException(start, m);
 	    }
 	    
 	    if (clsname == null && type == null) {
-                String m = Constants.getString("jsp.error.usebean.missing.type",
+                String m = containerL.getString("jsp.error.usebean.missing.type",
 					       new Object[] {name});
 		throw new CompileException (start, m);
 	    }
 
 	    if (beanInfo.checkVariable(name) == true) {
-                String m = Constants.getString("jsp.error.usebean.duplicate",
+                String m = containerL.getString("jsp.error.usebean.duplicate",
 					       new Object[] {name});
                 throw new CompileException (start, m);
 	    }
             
 	    if (scope != null && scope.equalsIgnoreCase ("session")) {
 		if (genSession != true) {
-                    String m = Constants.getString("jsp.error.usebean.prohibited.as.session",
+                    String m = containerL.getString("jsp.error.usebean.prohibited.as.session",
 						   new Object[] {name});
                     throw new CompileException (start, m);
                 }
 	    }
 
 	    if (clsname != null && beanName != null) {
-		String m = Constants.getString("jsp.error.usebean.not.both",
+		String m = containerL.getString("jsp.error.usebean.not.both",
 					       new Object[] {name});
 		throw new CompileException (start, m);
 	    }	     
@@ -154,7 +154,7 @@ public class BeanGenerator extends GeneratorBase  {
 	    } else if (scope.equals("application")) {
 		beanInfo.addApplicationBean(name,clsname);
 	    } else {
-                String m = Constants.getString("jsp.error.usebean.invalid.scope",
+                String m = containerL.getString("jsp.error.usebean.invalid.scope",
 					       new Object[] {name, scope});
 	        throw new CompileException (start, m);
             }

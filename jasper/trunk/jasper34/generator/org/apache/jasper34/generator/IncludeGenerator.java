@@ -84,20 +84,20 @@ public class IncludeGenerator extends GeneratorBase
         page = (String) attrs.get("page");
         if (page == null){
     	    throw new CompileException(start,
-    				       Constants.getString("jsp.error.include.tag"));
+    				       containerL.getString("jsp.error.include.tag"));
         }
         String flush = (String) attrs.get("flush");
         if (flush == null){
             throw new CompileException(start,
-				       Constants.getString("jsp.error.include.noflush"));
+				       containerL.getString("jsp.error.include.noflush"));
         }
         if (!flush.equals("true")){
             throw new CompileException(start,
-				       Constants.getString("jsp.error.include.badflush"));
+				       containerL.getString("jsp.error.include.badflush"));
 	    }
     	if (attrs.size() != 2){
 		    throw new CompileException(start,
-			       Constants.getString("jsp.error.include.tag"));
+			       containerL.getString("jsp.error.include.tag"));
         }
 
 	    this.params = param;

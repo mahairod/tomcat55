@@ -116,17 +116,17 @@ public class TagBeginGenerator extends TagGeneratorBase
 	this.libraries = libraries;
     }
 
-    public void init(JspCompilationContext ctxt) throws JasperException {
+    public void init(ContainerLiaison containerL) throws JasperException {
         validate();
         //tc = libraries.getTagInfoImpl(prefix, shortTagName);
 	if( ti.getTagHandlerClass() == null ) {
-            ClassLoader cl = ctxt.getClassLoader();
+            ClassLoader cl = containerL.getClassLoader();
             Class clz = null;
             try {
                 clz = cl.loadClass(ti.getTagClassName());
             } catch (Exception ex) {
                 throw new CompileException(start,
-			   Constants.getString("jsp.error.unable.loadclass",
+			   containerL.getString("jsp.error.unable.loadclass",
 				       new Object[] { ti.getTagClassName(),
 					  ex.getMessage() }
 					       ));
@@ -145,7 +145,7 @@ public class TagBeginGenerator extends TagGeneratorBase
         for(int i = 0; i < attributes.length; i++)
             if (attributes[i].isRequired() && attribs.get(attributes[i].getName()) == null)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.missing_attribute",
+					   containerL.getString("jsp.error.missing_attribute",
                                                               new Object[] {
                                                                   attributes[i].getName(),
                                                                   shortTagName
@@ -166,7 +166,7 @@ public class TagBeginGenerator extends TagGeneratorBase
 
             if (!found)
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.bad_attribute",
+					   containerL.getString("jsp.error.bad_attribute",
                                                               new Object[] {
                                                                   attr
                                                               }
@@ -176,7 +176,7 @@ public class TagBeginGenerator extends TagGeneratorBase
         tagData = new TagData(attribs);
         if (!ti.isValid(tagData))
             throw new CompileException(start,
-				       Constants.getString("jsp.error.invalid_attributes"));
+				       containerL.getString("jsp.error.invalid_attributes"));
     }
 
     private final void generateSetters(ServletWriter writer, String parent)
@@ -193,7 +193,7 @@ public class TagBeginGenerator extends TagGeneratorBase
 		    Method m = ti.getSetterMethod(attrName);
 		    if (m == null)
 			throw new CompileException
-			    (start, Constants.getString
+			    (start, containerL.getString
 			     ("jsp.error.unable.to_find_method",
 			      new Object[] { attrName }));
                     Class c[] = m.getParameterTypes();
@@ -231,7 +231,7 @@ public class TagBeginGenerator extends TagGeneratorBase
                 // this trick avoids escaping issues
                 return "((char) " + (int) ch + ")";
             } else {
-                throw new NumberFormatException(Constants.getString(
+                throw new NumberFormatException(containerL.getString(
                             "jsp.error.bad_string_char",
                             new Object[0]));
             }
@@ -242,7 +242,7 @@ public class TagBeginGenerator extends TagGeneratorBase
                 // this trick avoids escaping issues
                 return "new Character((char) " + (int) ch + ")";
             } else {
-                throw new NumberFormatException(Constants.getString(
+                throw new NumberFormatException(containerL.getString(
                             "jsp.error.bad_string_Character",
                             new Object[0]));
             }
@@ -264,7 +264,7 @@ public class TagBeginGenerator extends TagGeneratorBase
             return "new Long(" + Long.valueOf(s).toString() + "l)";
         } else {
              throw new CompileException
-                    (start, Constants.getString
+                    (start, containerL.getString
                      ("jsp.error.unable.to_convert_string",
                       new Object[] { c.getName(), attrName }));
         }

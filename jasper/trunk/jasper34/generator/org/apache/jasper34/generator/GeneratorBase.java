@@ -71,7 +71,8 @@ import org.apache.jasper34.jsptree.*;
  * @author Costin Manolache
  */
 public abstract class GeneratorBase {
-    protected JspCompilationContext ctxt;
+    //    protected JspCompilationContext ctxt;
+    protected ContainerLiaison containerL;
     Mark start, stop;
     //    protected CommentGenerator commentGenerator;
     
@@ -209,10 +210,10 @@ public abstract class GeneratorBase {
     }
 
     // void init(JspCompilationContext ctxt) throws JasperException;
-    public void init(JspCompilationContext ctxt)
+    public void init(ContainerLiaison containerL)
 	throws JasperException
     {
-	this.ctxt = ctxt;
+	this.containerL = containerL;
 	// generator.init(ctxt);
 	// will be overriden
     }

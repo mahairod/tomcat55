@@ -90,24 +90,37 @@ import org.apache.jasper34.jsptree.*;
  */
 public class JspParseEventListener implements ParseEventListener {
     
-    JspCompilationContext ctxt;
+    //    JspCompilationContext ctxt;
+    ContainerLiaison containerL;
 
     protected JspReader reader;
     protected ServletWriter writer;
 
     JspPageInfo pageInfo;
-    PageDirectives pageD=new PageDirectives();
+    PageDirectives pageD;
 
 
     /*
      * Package private since I want everyone to come in through
      * org.apache.jasper.compiler.Main.
      */
-    public JspParseEventListener(JspCompilationContext ctxt) {
-	reader=ctxt.getReader();
-	writer=ctxt.getWriter();
-	pageInfo=new JspPageInfo(ctxt);
-        this.ctxt = ctxt;
+    public JspParseEventListener(ContainerLiaison containerL,
+				 JspReader reader, ServletWriter writer,
+				 JspPageInfo pageInfo)
+    {
+	this.containerL=containerL;
+	this.reader=reader;
+	this.writer=writer;
+	this.pageInfo=pageInfo;
+	pageD=new PageDirectives(containerL);
+	//reader=ctxt.getReader();
+	//writer=ctxt.getWriter();
+	//	pageInfo=new JspPageInfo(containerL, ctxt);
+	//        this.ctxt = ctxt;
+    }
+
+    public ContainerLiaison getContainerLiaison() {
+	return containerL;
     }
 
     public void setTemplateInfo(Mark start, Mark stop) {
@@ -121,14 +134,14 @@ public class JspParseEventListener implements ParseEventListener {
     }
 
     public void endPageProcessing() throws JasperException {
-	writer.generateServlet(ctxt, pageInfo);
+	writer.generateServlet(pageInfo);
     }
     
 
     // -------------------- Normal event listeners --------------------
     
     public void handleComment(Mark start, Mark stop) throws JasperException {
-        Constants.message("jsp.message.htmlcomment",
+        containerL.message("jsp.message.htmlcomment",
                           new Object[] { reader.getChars(start, stop) },
                           Log.DEBUG);
     }
@@ -137,7 +150,7 @@ public class JspParseEventListener implements ParseEventListener {
 				Mark stop, Hashtable attrs)
 	throws JasperException
     {
-        Constants.message("jsp.message.handling_directive",
+        containerL.message("jsp.message.handling_directive",
                           new Object[] { directive, attrs },
                           Log.DEBUG);
 
@@ -152,7 +165,7 @@ public class JspParseEventListener implements ParseEventListener {
 		pageInfo.libraries.addTagLibrary( prefix, uri );
             } catch (Exception ex) {
                 Object[] args = new Object[] { uri, ex.getMessage() };
-                throw new CompileException(start, Constants.getString("jsp.error.badtaglib",
+                throw new CompileException(start, containerL.getString("jsp.error.badtaglib",
                                                               args));
             }
 	}
@@ -161,7 +174,7 @@ public class JspParseEventListener implements ParseEventListener {
 	    String file = (String) attrs.get("file");
 	    if (file == null)
 		throw new CompileException(start,
-					   Constants.getString("jsp.error.include.missing.file"));
+					   containerL.getString("jsp.error.include.missing.file"));
 
 	    
             // jsp.error.include.bad.file needs taking care of here??
@@ -173,7 +186,7 @@ public class JspParseEventListener implements ParseEventListener {
 		pageInfo.addGenerator( dg );
             } catch (FileNotFoundException fnfe) {
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.include.bad.file"));
+					   containerL.getString("jsp.error.include.bad.file"));
             }
 	}
     }
@@ -248,7 +261,7 @@ public class JspParseEventListener implements ParseEventListener {
     				Hashtable param, String fallback)
 	throws JasperException
     {
-        Constants.message("jsp.message.handling_plugin",
+        containerL.message("jsp.message.handling_plugin",
                           new Object[] { attrs },
                           Log.DEBUG);
 
@@ -283,9 +296,11 @@ public class JspParseEventListener implements ParseEventListener {
     public void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException {
         GeneratorBase cdg;
 
-        if (ctxt.getOptions().getLargeFile())
-            cdg = new StoredCharDataGenerator(pageInfo.vector, pageInfo.dataFile, pageInfo.stringId++, chars);
-        else if(ctxt.getOptions().getMappedFile())
+        if (pageInfo.getOptions().getLargeFile())
+            cdg = new StoredCharDataGenerator(pageInfo.vector,
+					      pageInfo.getDataFile(),
+					      pageInfo.stringId++, chars);
+        else if(pageInfo.getOptions().getMappedFile())
             cdg = new MappedCharDataGenerator(chars);
 	else
 	    cdg = new CharDataGenerator(chars);

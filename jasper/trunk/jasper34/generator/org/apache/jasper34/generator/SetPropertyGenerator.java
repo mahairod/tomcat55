@@ -95,7 +95,7 @@ public class SetPropertyGenerator extends GeneratorBase
 	    if (property.equals("*")) {
 		
 		if (value != null) {
-		    String m = Constants.getString("jsp.error.setproperty.invalidSyantx");
+		    String m = containerL.getString("jsp.error.setproperty.invalidSyantx");
 		    throw new CompileException(start, m);
 		}
 		
