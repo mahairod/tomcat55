@@ -777,7 +777,7 @@
     </jar>
 
     <copy todir="${tomcat.deployer}/lib" file="${xercesImpl.jar}"/>
-    <copy todir="${tomcat.deployer}/lib" file="${xmlParserAPIs.jar}"/>
+    <copy todir="${tomcat.deployer}/lib" file="${xml-apis.jar}"/>
 
     <copy todir="${tomcat.deployer}">
       <fileset dir="${basedir}/resources/deployer" />
@@ -800,7 +800,7 @@
   <target name="compat" description="Create compatibility binaries for JREs before 1.4" >
 
     <copy todir="${tomcat.compat}/common/endorsed" file="${xercesImpl.jar}"/>
-    <copy todir="${tomcat.compat}/common/endorsed" file="${xmlParserAPIs.jar}"/>
+    <copy todir="${tomcat.compat}/common/endorsed" file="${xml-apis.jar}"/>
 
   </target>
 
@@ -1595,7 +1595,7 @@
     <antcall target="downloadgz">
       <!-- xerces2 brings 2 files, test for one of them -->
       <param name="sourcefile" value="${xerces.loc}"/>
-      <param name="destfile" value="${xmlParserAPIs.jar}"/>
+      <param name="destfile" value="${xml-apis.jar}"/>
     </antcall>
 
     <antcall target="downloadgz">
