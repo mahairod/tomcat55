@@ -490,7 +490,7 @@ with the tables described above, and accessed with the JNDI JDBC DataSource with
 name "java:/comp/env/jdbc/authority".</p>
 <source>
 &lt;Realm className="org.apache.catalina.realm.DataSourceRealm" debug="99"
-   dataSourceName="java:/comp/env/jdbc/authority"
+   dataSourceName="jdbc/authority"
    userTable="users" userNameCol="user_name" userCredCol="user_pass"
    userRoleTable="user_roles" roleNameCol="role_name"/&gt;
 </source>
