@@ -61,7 +61,10 @@ done
 
 # Get standard environment variables
 PRGDIR=`dirname "$PRG"`
-CATALINA_HOME=`cd "$PRGDIR/.." ; pwd`
+
+# Only set CATALINA_HOME if not already set
+[ -z "$CATALINA_HOME" ] && CATALINA_HOME=`cd "$PRGDIR/.." ; pwd`
+
 if [ -r "$CATALINA_HOME"/bin/setenv.sh ]; then
   . "$CATALINA_HOME"/bin/setenv.sh
 fi
