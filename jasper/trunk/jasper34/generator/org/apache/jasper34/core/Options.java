@@ -167,12 +167,16 @@ public class Options {
      * in?
      */
     public File getScratchDir() {
-	return new File( args.getProperty( SCRATCH_DIR, null ));
+	// Special case: args should try to get it from context
+	String sdProp=args.getProperty( SCRATCH_DIR, null );
+	if( sdProp==null ) {
+	    sdProp=System.getProperty("java.io.tmpdir");
+	}
+	if( sdProp==null ) return null;
+	return new File(sdProp);
 
 	/* XXX integrate ( from Embeded )
 	scratchDir = (File) context.getAttribute(Constants.TMP_DIR);
-	if (scratchDir == null) {
-	dir = System.getProperty("java.io.tmpdir");
 	if (dir != null)
 	scratchDir = new File(dir);
 	*/
