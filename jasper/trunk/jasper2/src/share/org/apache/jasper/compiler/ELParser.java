@@ -77,6 +77,11 @@ public class ELParser {
     private String expression;	// The EL expression
     private boolean escapeBS;	// is '\' an escape char in text outside EL?
 
+    private static final String reservedWords[] = {
+        "and", "div", "empty", "eq", "false",
+        "ge", "gt", "instanceof", "le", "lt", "mod",
+        "ne", "not", "null", "or", "true"};
+
     public ELParser(String expression) {
 	index = 0;
 	this.expression = expression;
@@ -145,7 +150,7 @@ public class ELParser {
      * Note: currently we don't parse arguments
      */
     private boolean parseFunction() {
-	if (! (curToken instanceof Id)) {
+	if (! (curToken instanceof Id) || isELReserved(curToken.toString())) {
 	    return false;
 	}
 	String s1 = null;                 // Function prefix
@@ -172,6 +177,27 @@ public class ELParser {
 	}
 	setIndex(mark);
 	return false;
+    }
+
+    /**
+     * Test if an id is a reserved word in EL
+     */
+    private boolean isELReserved(String id) {
+        int i = 0;
+        int j = reservedWords.length;
+        while (i < j) {
+            int k = (i+j)/2;
+            int result = reservedWords[k].compareTo(id);
+            if (result == 0) {
+                return true;
+            }
+            if (result < 0) {
+                i = k+1;
+            } else {
+                j = k;
+            }
+        }
+        return false;
     }
 
     /**
