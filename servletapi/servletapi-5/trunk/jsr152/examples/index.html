@@ -14,7 +14,8 @@
 <b><font face="Arial, Helvetica, sans-serif"><font size=+2>JSP
 Samples</font></font></b>
 <p>This is a collection of samples demonstrating the usage of different
-parts of the Java Server Pages (JSP) specification.
+parts of the Java Server Pages (JSP) specification.  Both JSP 2.0 and
+JSP 1.2 examples are presented below.
 <p>These examples will only work when these pages are being served by a
 servlet engine; of course, we recommend
 <a href="http://jakarta.apache.org/tomcat/">Tomcat</a>.
@@ -36,6 +37,13 @@ help:
 <td>Look at the source code for the example</td>
 </tr>
 
+<!--<tr VALIGN=TOP>
+<td WIDTH="30"><img SRC="images/read.gif" height=24 width=24></td>
+
+<td>Read more about this feature</td>
+-->
+
+</tr>
 <tr VALIGN=TOP>
 <td WIDTH="30"><img SRC="images/return.gif" height=24 width=24></td>
 
@@ -46,6 +54,128 @@ help:
 <p>Tip: For session scoped beans to work, the cookies must be enabled.
 This can be done using browser options.
 <br>&nbsp;
+<br>
+<b><u><font size="+1">JSP 2.0 Examples</font></u></b><br>
+
+<table BORDER=0 CELLSPACING=5 WIDTH="85%" >
+<tr valign=TOP>
+<td><b>Expression Language</b></td>
+</tr>
+
+<tr valign=TOP>
+<td>Basic Arithmetic</td>
+<td valign=TOP width="30%"><a href="jsp2/el/basic-arithmetic.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/el/basic-arithmetic.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/el/basic-arithmetic.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/el/basic-arithmetic.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Basic Comparisons</td>
+<td valign=TOP width="30%"><a href="jsp2/el/basic-comparisons.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/el/basic-comparisons.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/el/basic-comparisons.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/el/basic-comparisons.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Implicit Objects</td>
+<td valign=TOP width="30%"><a href="jsp2/el/implicit-objects.jsp?foo=bar"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/el/implicit-objects.jsp?foo=bar">Execute</a></td>
+
+<td width="30%"><a href="jsp2/el/implicit-objects.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/el/implicit-objects.html">Source</a></td>
+</tr>
+<tr valign=TOP>
+
+<td>Functions</td>
+<td valign=TOP width="30%"><a href="jsp2/el/functions.jsp?foo=JSP+2.0"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/el/functions.jsp?foo=JSP+2.0">Execute</a></td>
+
+<td width="30%"><a href="jsp2/el/functions.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/el/functions.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td><br><b>SimpleTag Handlers and JSP Fragments</b></td>
+</tr>
+
+<tr valign=TOP>
+<td>Hello World Tag</td>
+<td valign=TOP width="30%"><a href="jsp2/simpletag/hello.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/simpletag/hello.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/simpletag/hello.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/simpletag/hello.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Repeat Tag</td>
+<td valign=TOP width="30%"><a href="jsp2/simpletag/repeat.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/simpletag/repeat.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/simpletag/repeat.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/simpletag/repeat.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Book Example</td>
+<td valign=TOP width="30%"><a href="jsp2/simpletag/book.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/simpletag/book.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/simpletag/book.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/simpletag/book.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td><br><b>Tag Files</b></td>
+</tr>
+
+<tr valign=TOP>
+<td>Hello World Tag File</td>
+<td valign=TOP width="30%"><a href="jsp2/tagfiles/hello.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/tagfiles/hello.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/tagfiles/hello.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/tagfiles/hello.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Panel Tag File</td>
+<td valign=TOP width="30%"><a href="jsp2/tagfiles/panel.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/tagfiles/panel.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/tagfiles/panel.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/tagfiles/panel.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Display Products Example</td>
+<td valign=TOP width="30%"><a href="jsp2/tagfiles/products.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/tagfiles/products.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/tagfiles/products.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/tagfiles/products.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td><br><b>Other JSP 2.0 Features</b></td>
+</tr>
+
+<tr valign=TOP>
+<td>&lt;jsp:attribute&gt; and &lt;jsp:body&gt;</td>
+<td valign=TOP width="30%"><a href="jsp2/jspattribute/jspattribute.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/jspattribute/jspattribute.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/jspattribute/jspattribute.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/jspattribute/jspattribute.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Shuffle Example</td>
+<td valign=TOP width="30%"><a href="jsp2/jspattribute/shuffle.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/jspattribute/shuffle.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/jspattribute/shuffle.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/jspattribute/shuffle.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>Attributes With Dynamic Names</td>
+<td valign=TOP width="30%"><a href="jsp2/misc/dynamicattrs.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/misc/dynamicattrs.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/misc/dynamicattrs.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/misc/dynamicattrs.html">Source</a></td>
+</tr>
+
+<tr valign=TOP>
+<td>JSP Configuration</td>
+<td valign=TOP width="30%"><a href="jsp2/misc/config.jsp"><img src="images/execute.gif" hspace=4 border=0  align=top></a><a href="jsp2/misc/config.jsp">Execute</a></td>
+
+<td width="30%"><a href="jsp2/misc/config.html"><img SRC="images/code.gif" HSPACE=4 BORDER=0 height=24 width=24 align=TOP></a><a href="jsp2/misc/config.html">Source</a></td>
+</tr>
+
+</table>
+
+<br>
+<b><u><font size="+1">JSP 1.2 Examples</font></u></b><br>
 <table BORDER=0 CELLSPACING=5 WIDTH="85%" >
 <tr VALIGN=TOP>
 <td>Numberguess&nbsp;</td>
@@ -144,7 +274,7 @@ This can be done using browser options.
 </tr>
 
 <tr VALIGN=TOP>
-<td>Simple custom tag example</td>
+<td>Custom tag example</td>
 
 <td VALIGN=TOP WIDTH="30%"><a href="simpletag/foo.jsp"><img SRC="images/execute.gif" HSPACE=4 BORDER=0  align=TOP></a><a href="simpletag/foo.jsp">Execute</a></td>
 

@@ -28,5 +28,5 @@
 </FONT>
 
 <hr>
-<%@ include file ="/jsp/sessions/carts.html" %>
+<%@ include file ="/sessions/carts.html" %>
 </html>
