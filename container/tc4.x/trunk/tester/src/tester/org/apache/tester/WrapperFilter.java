@@ -103,6 +103,18 @@ public class WrapperFilter implements Filter {
 
 
     /**
+     * Release this Filter instance from service.
+     */
+    public void destroy() {
+
+        config = null;
+        requestWrapper = "none";
+        responseWrapper = "none";
+
+    }
+
+
+    /**
      * Wrap this request and/or response as configured and pass it on.
      */
     public void doFilter(ServletRequest inRequest, ServletResponse inResponse,
@@ -133,35 +145,20 @@ public class WrapperFilter implements Filter {
 
 
     /**
-     * Return the filter configuration object for this filter.
-     */
-    public FilterConfig getFilterConfig() {
-
-        return (this.config);
-
-    }
-
-
-    /**
-     * Set the filter configuration object for this filter.
+     * Place this Filter instance into service.
      *
-     * @param config The new filter configuration object
+     * @param config The filter configuration object
      */
-    public void setFilterConfig(FilterConfig config) {
+    public void init(FilterConfig config) throws ServletException {
 
         this.config = config;
-        if (config == null) {
-            requestWrapper = "none";
-            responseWrapper = "none";
-        } else {
-            String value = null;
-            value = config.getInitParameter("request");
-            if (value != null)
-                requestWrapper = value;
-            value = config.getInitParameter("response");
-            if (value != null)
-                responseWrapper = value;
-        }
+        String value = null;
+        value = config.getInitParameter("request");
+        if (value != null)
+            requestWrapper = value;
+        value = config.getInitParameter("response");
+        if (value != null)
+            responseWrapper = value;
 
     }
 
