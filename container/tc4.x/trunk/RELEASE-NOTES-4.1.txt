@@ -563,6 +563,10 @@ Catalina Bug Fixes:
 [4.1.17] CGIServlet, SSIServlet:
          Fix for SSI "normal" configuration which invokes a CGI script.
 
+[4.1.17] #15239
+         NamingResourcesMBean:
+         Fix resource link creation.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -699,10 +703,6 @@ Coyote Bug Fixes:
 [4.1.17] ThreadPool:
          Reduce synchronization by using an array of threads instead of 
          a Vector.
-
-[4.1.17] #15239
-         NamingResourcesMBean:
-         Fix resource link creation.
 
 [4.1.17] #15258
          JK 2 ChannelSocket:
