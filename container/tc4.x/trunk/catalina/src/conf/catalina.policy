@@ -85,7 +85,7 @@ grant codeBase "file:${catalina.home}/classes/-" {
 grant { 
         // Required for JNDI lookup of named JDBC DataSource's and
         // javamail named MimePart DataSource used to send mail
-        permission java.utim.PropertyPermission "java.home", "read";
+        permission java.util.PropertyPermission "java.home", "read";
         permission java.util.PropertyPermission "java.naming.*", "read";
         permission java.util.PropertyPermission "javax.sql.*", "read";
 
