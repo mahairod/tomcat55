@@ -350,6 +350,33 @@
          request="${context.path}/Resources04?mode=class&amp;path=/org/apache/tester/Unpacked04.txt.bad"
       outContent="Resources04 PASSED"/>
 
+    <!-- ========== Positive Combined getResource/Open Tests ============== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources05?mode=context&amp;path=/WEB-INF/web.xml"
+      outContent="&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources05?mode=context&amp;path=/Forward01.txt"
+      outContent="Forward01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources05?mode=context&amp;path=/Include01.txt"
+      outContent="Include01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources05?mode=class&amp;path=/org/apache/tester/Resources05.txt"
+      outContent="Resources05 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources05?mode=class&amp;path=/org/apache/tester/Unpacked05.txt"
+      outContent="Resources05 PASSED"/>
+
   </target>
 
 

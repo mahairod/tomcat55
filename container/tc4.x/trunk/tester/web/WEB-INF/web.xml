@@ -147,6 +147,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources05</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedSession01</url-pattern>
     </filter-mapping>
 
@@ -306,6 +311,11 @@
     <servlet>
         <servlet-name>Resources04</servlet-name>
         <servlet-class>org.apache.tester.Resources04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources05</servlet-name>
+        <servlet-class>org.apache.tester.Resources05</servlet-class>
     </servlet>
 
     <servlet>
@@ -584,6 +594,16 @@
     <servlet-mapping>
         <servlet-name>Resources04</servlet-name>
         <url-pattern>/WrappedResources04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources05</servlet-name>
+        <url-pattern>/Resources05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources05</servlet-name>
+        <url-pattern>/WrappedResources05</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

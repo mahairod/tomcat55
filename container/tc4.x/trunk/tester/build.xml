@@ -70,6 +70,8 @@
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
     <copy file="src/tester/org/apache/tester/Resources03.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked03.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources05.txt"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked05.txt"/>
 
     <!-- Install Xerces -->
     <copy  todir="${tester.build}/web/WEB-INF/lib">
