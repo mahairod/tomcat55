@@ -173,12 +173,23 @@ public final class FileResources extends ResourcesBase {
     public String getRealPath(String path) {
 
         String normalized = normalize(path);
-	if (normalized == null)
+	if (normalized == null) {
+            //            if (debug >= 1)
+            //                log("getRealPath(" + path + ") --> NULL");
 	    return (null);
-	validate(normalized);
+        }
+        try {
+            validate(normalized);
+        } catch (IllegalArgumentException e) {
+            //            if (debug >= 1)
+            //                log("getRealPath(" + path + ") --> IAE");
+            throw e;
+        }
 
 	// Return a real path to where this file does, or would, exist
 	File file = new File(base, normalized.substring(1));
+        //        if (debug >= 1)
+        //            log("getRealPath(" + path + ") --> " + file.getAbsolutePath());
 	return (file.getAbsolutePath());
 
     }
@@ -203,11 +214,17 @@ public final class FileResources extends ResourcesBase {
 
 	// Acquire an absolute pathname for the requested resource
 	String pathname = getRealPath(path);
-	if (pathname == null)
+	if (pathname == null) {
+            //            if (debug >= 1)
+            //                log("getResource(" + path + ") --> NULL");
 	    return (null);
+        }
 
 	// Construct a URL that refers to this file
-	return (new URL("file", null, 0, pathname));
+        URL url = new URL("file", null, 0, pathname);
+        //        if (debug >= 1)
+        //            log("getResource(" + path + ") --> " + url.toString());
+        return (url);
 
     }
 
@@ -225,22 +242,44 @@ public final class FileResources extends ResourcesBase {
     public InputStream getResourceAsStream(String path) {
 
 	String normalized = normalize(path);
-	if (normalized == null)
+	if (normalized == null) {
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> NULL");
 	    return (null);
-	validate(normalized);
+        }
+        try {
+            validate(normalized);
+        } catch (IllegalArgumentException e) {
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> IAE");
+            throw e;
+        }
 
 	// Look up the cached resource entry (if it exists) for this path
 	ResourceBean resource = null;
 	synchronized (resourcesCache) {
 	    resource = (ResourceBean) resourcesCache.get(normalized);
 	}
-	if (resource != null)
+	if (resource != null) {
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> CACHED");
 	    return (new ByteArrayInputStream(resource.getData()));
+        }
 
 	// Create a File object referencing the requested resource
 	File file = file(normalized);
-	if ((file == null) || !file.exists() || !file.canRead())
+	if ((file == null) || !file.exists() || !file.canRead()) {
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> NO FILE");
 	    return (null);
+        }
+
+        // If the resource path ends in "/", this *must* be a directory
+        if (normalized.endsWith("/") && !file.isDirectory()) {
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> NOT DIR");
+            return (null);
+        }
 
         // Special handling for directories
 	if (file.isDirectory()) {
@@ -266,6 +305,8 @@ public final class FileResources extends ResourcesBase {
                 }
                 directory.addResource(newEntry);
             }
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> DIRECTORY");
 	    return (directory.render(contextPath));
 	}
 
@@ -282,11 +323,15 @@ public final class FileResources extends ResourcesBase {
 		resourcesCache.put(resource.getName(), resource);
 		resourcesCount++;
 	    }
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> CACHE AND SERVE");
 	    return (new ByteArrayInputStream(resource.getData()));
 	}
 
 	// Serve the contents directly from the filesystem
 	try {
+            //            if (debug >= 1)
+            //                log("getResourceAsStream(" + path + ") --> SERVE FILE");
 	    return (new FileInputStream(file));
 	} catch (IOException e) {
 	    log(sm.getString("resoruces.input", resource.getName()), e);
@@ -307,15 +352,30 @@ public final class FileResources extends ResourcesBase {
     public boolean exists(String path) {
         
         String normalized = normalize(path);
-	if (normalized == null)
+	if (normalized == null) {
+            //            if (debug >= 1)
+            //                log("exists(" + path + ") --> NULL");
 	    return (false);
-	validate(normalized);
+        }
+        try {
+            validate(normalized);
+        } catch (IllegalArgumentException e) {
+            //            if (debug >= 1)
+            //                log("exists(" + path + ") --> IAE");
+            throw e;
+        }
         
 	File file = new File(base, normalized.substring(1));
-        if (file != null)
+        if (file != null) {
+            //            if (debug >= 1)
+            //                log("exists(" + path + ") --> " + file.exists() +
+            //                    " isDirectory=" + file.isDirectory());
             return (file.exists());
-        else
+        } else {
+            //            if (debug >= 1)
+            //                log("exists(" + path + ") --> NO FILE");
             return (false);
+        }
         
     }
 

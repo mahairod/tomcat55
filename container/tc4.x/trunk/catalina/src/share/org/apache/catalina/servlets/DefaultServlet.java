@@ -1151,6 +1151,15 @@ public class DefaultServlet
 	    return;
         }
 
+        // If the resource is not a collection, and the resource path
+        // ends with "/" or "\", return NOT FOUND
+        if (!resourceInfo.collection) {
+            if (path.endsWith("/") || (path.endsWith("\\"))) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+                return;
+            }
+        }
+
         // If the resource is a collection (aka a directory), we check 
         // the welcome files list.
         if (resourceInfo.collection) {

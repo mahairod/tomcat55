@@ -136,6 +136,15 @@ the absolute paths used by Catalina and Jasper.  Previously, the webapps were
 not getting built correctly under some combinations of environment variables
 and class path settings.
 
+Catalina:  Parse POST parameters even if a character set is included in the
+content type header (such as the following example header:
+"Content-Type: application/x-www-form-urlencoded;charset=UTF-8").
+
+Catalina:  Fix a nasty security bug that would display the source of a JSP
+page (or the raw HTML of a static resource) if you appended a "/" or "\"
+character after the name of a valid resource.  Now, these requests return
+NOT FOUND (404).
+
 
 ==============================
 KNOWN PROBLEMS IN THIS RELEASE:
