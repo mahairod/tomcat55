@@ -275,7 +275,7 @@
       <and>
         <os family="windows" />
         <available file="${javaservice.home}/bin/JavaService.exe" />
-        <available file="${nsis.home}\makensis-bz2.exe" />
+        <available file="${nsis.home}/makensis-bz2.exe" />
       </and>
     </condition>
   </target>
