@@ -406,24 +406,23 @@ public class DeltaManager
     }
 
 
-    private DeltaRequest loadDeltaRequest(byte[] data) throws
+    private DeltaRequest loadDeltaRequest(DeltaSession session, byte[] data) throws
         ClassNotFoundException, IOException {
         ByteArrayInputStream fis = null;
         ReplicationStream ois = null;
         Loader loader = null;
         ClassLoader classLoader = null;
         fis = new ByteArrayInputStream(data);
-        BufferedInputStream bis = new BufferedInputStream(fis);
         ois = new ReplicationStream(fis,container.getLoader().getClassLoader());
-        DeltaRequest dreq = (DeltaRequest)ois.readObject();
+        session.getDeltaRequest().readExternal(ois);
         ois.close();
-        return dreq;
+        return session.getDeltaRequest();
     }
     
     private byte[] unloadDeltaRequest(DeltaRequest deltaRequest) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(deltaRequest);
+        deltaRequest.writeExternal(oos);
         oos.flush();
         oos.close();
         return bos.toByteArray();
@@ -874,8 +873,8 @@ public class DeltaManager
                    }
                    case SessionMessage.EVT_SESSION_DELTA : {
                        byte[] delta = msg.getSession();
-                       DeltaRequest dreq = loadDeltaRequest(delta);
                        DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
+                       DeltaRequest dreq = loadDeltaRequest(session,delta);
                        dreq.execute(session);
                        session.setPrimarySession(false);
                        

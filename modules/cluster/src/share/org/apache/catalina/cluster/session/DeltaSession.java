@@ -535,12 +535,15 @@ public class DeltaSession
      * @param interval The new maximum interval
      */
     public void setMaxInactiveInterval(int interval) {
+        setMaxInactiveInterval(interval,true);
+    }
+    public void setMaxInactiveInterval(int interval, boolean addDeltaRequest) {
 
         this.maxInactiveInterval = interval;
         if (isValid && interval == 0) {
             expire();
         } else {
-            deltaRequest.setMaxInactiveInterval(interval);
+            if ( addDeltaRequest ) deltaRequest.setMaxInactiveInterval(interval);
         }
 
     }
@@ -552,8 +555,11 @@ public class DeltaSession
      * @param isNew The new value for the <code>isNew</code> flag
      */
     public void setNew(boolean isNew) {
+        setNew(isNew,true);
+    }
+    public void setNew(boolean isNew, boolean addDeltaRequest) {
         this.isNew = isNew;
-        deltaRequest.setNew(isNew);
+        if (addDeltaRequest) deltaRequest.setNew(isNew);
     }
 
 
@@ -580,11 +586,13 @@ public class DeltaSession
      * @param principal The new Principal, or <code>null</code> if none
      */
     public void setPrincipal(Principal principal) {
-
+        setPrincipal(principal,true);
+    }
+    public void setPrincipal(Principal principal,boolean addDeltaRequest) {
         Principal oldPrincipal = this.principal;
         this.principal = principal;
         support.firePropertyChange("principal", oldPrincipal, this.principal);
-        deltaRequest.setPrincipal(principal);
+        if (addDeltaRequest) deltaRequest.setPrincipal(principal);
     }
 
 
@@ -919,6 +927,11 @@ public class DeltaSession
             deltaRequest.setSessionId(getId());
         }
     }
+    
+    public DeltaRequest getDeltaRequest() {
+        if ( deltaRequest == null ) resetDeltaRequest();
+        return deltaRequest;
+    }
 
 
     // ------------------------------------------------- HttpSession Properties
@@ -1162,6 +1175,10 @@ public class DeltaSession
      *  invalidated session
      */
     public void removeAttribute(String name, boolean notify) {
+        removeAttribute(name,notify,true);
+    }
+    
+    public void removeAttribute(String name, boolean notify, boolean addDeltaRequest) {
 
         // Validate our current state
         if (!isValid())
@@ -1181,7 +1198,7 @@ public class DeltaSession
             }
         }
         
-        deltaRequest.removeAttribute(name);
+        if (addDeltaRequest) deltaRequest.removeAttribute(name);
 
         // Do we need to do valueUnbound() and attributeRemoved() notification?
         if (!notify) {
@@ -1271,6 +1288,9 @@ public class DeltaSession
      *  invalidated session
      */
     public void setAttribute(String name, Object value) {
+        setAttribute(name,value,true);
+    }
+    public void setAttribute(String name, Object value, boolean addDeltaRequest) {
 
         // Name cannot be null
         if (name == null)
@@ -1287,7 +1307,7 @@ public class DeltaSession
             throw new IllegalArgumentException("Attribute ["+name+"] is not serializable");
         }
         
-        deltaRequest.setAttribute(name,value);
+        if (addDeltaRequest) deltaRequest.setAttribute(name,value);
 
         // Validate our current state
         if (!isValid())
@@ -1603,12 +1623,6 @@ public class DeltaSession
         }
 
     }
-
-
-    public DeltaRequest getDeltaRequest() {
-        return deltaRequest;
-    }
-
 
 }
 

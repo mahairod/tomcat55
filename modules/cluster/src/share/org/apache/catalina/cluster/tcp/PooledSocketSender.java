@@ -117,6 +117,7 @@ public class PooledSocketSender implements IDataSender
     public void connect() throws java.io.IOException
     {
         //do nothing, happens in the socket sender itself
+        senderQueue.open();
     }
 
     public void disconnect()
@@ -194,6 +195,7 @@ public class PooledSocketSender implements IDataSender
         private LinkedList queue = new LinkedList();
         private LinkedList inuse = new LinkedList();
         private Object mutex = new Object();
+        private boolean isOpen = true;
 
         public SenderQueue(PooledSocketSender parent, int limit) {
             this.limit = limit;
@@ -206,7 +208,7 @@ public class PooledSocketSender implements IDataSender
             long delta = 0;
             do {
                 synchronized (mutex) {
-
+                    if ( !isOpen ) throw new IllegalStateException("Socket pool is closed.");
                     if ( queue.size() > 0 ) {
                         sender = (SocketSender) queue.removeFirst();
                     } else if ( inuse.size() < limit ) {
@@ -223,7 +225,7 @@ public class PooledSocketSender implements IDataSender
                     }
                 }//synchronized
                 delta = System.currentTimeMillis() - start;
-            } while ( (sender == null) && (timeout==0?true:(delta<timeout)) );
+            } while ( (isOpen) && (sender == null) && (timeout==0?true:(delta<timeout)) );
             //to do
             return sender;
         }
@@ -259,6 +261,15 @@ public class PooledSocketSender implements IDataSender
                 }//for
                 queue.clear();
                 inuse.clear();
+                isOpen = false;
+                mutex.notifyAll();
+            }
+        }
+        
+        public void open() {
+            synchronized (mutex) {
+                isOpen = true;
+                mutex.notifyAll();
             }
         }
     }
