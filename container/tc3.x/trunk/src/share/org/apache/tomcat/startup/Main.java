@@ -338,7 +338,7 @@ public class Main{
                 cp = url.getFile();
         }
         if( cp != null)
-            System.setProperty("tc_path_add",cp);
+            System.getProperties().put("tc_path_add",cp);
     }
 
 }
