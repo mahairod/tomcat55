@@ -378,17 +378,8 @@ These notes are untested as yet and we would appreciate feedback.</p>
 </section>
 
 
+<section name="Tyrex Resources">
 
-
-
-<section name="Non DBCP Solutions">
-<p>
-These solutions either utilise a single connection to the database (not recommended for anything other
-than testing!) or some other pooling technology.
-</p>
-</section>
-
-<section name="Tyrex Connection Pool and Castor ORM with mysql">
 <subsection name="Introduction">
 
 <p>
@@ -519,6 +510,16 @@ Tyrex also provides a <code>javax.transaction.UserTransaction</code>,
 
 
 </section>
+
+
+<section name="Non DBCP Solutions">
+<p>
+These solutions either utilise a single connection to the database (not recommended for anything other
+than testing!) or some other pooling technology.
+</p>
+</section>
+
+
 </body>
 </document>
 
