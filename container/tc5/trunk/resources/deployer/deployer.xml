@@ -1,4 +1,4 @@
-<project name="Deployer" default="deploy" basedir=".">
+<project name="Deployer" default="compile" basedir=".">
 
   <!-- Configure the directory into which the web application is built -->
   <property name="build"    value="${basedir}/build"/>
@@ -14,11 +14,11 @@
 
   <property name="webapp.path"     value="${build}/webapp${path}"/>
 
-  <classpath id="deployer.classpath">
+  <path id="deployer.classpath">
     <fileset dir="${basedir}/lib">
       <include name="*.jar"/>
     </fileset>
-  </classpath>
+  </path>
 
   <!-- Configure the custom Ant tasks for the Manager application -->
   <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask">
@@ -69,7 +69,7 @@
 
     <jasper2 validateXml="false" 
              uriroot="${webapp.path}" 
-             webXml="${webapp.path}/WEB-INF/generated_web.xml"
+             webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml"
              addWebXmlMappings="true"
              outputDir="${webapp.path}/WEB-INF/classes" /> 
 
@@ -85,6 +85,9 @@
         <fileset dir="${webapp.path}/WEB-INF/lib">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${basedir}/lib">
+          <include name="*.jar"/>
+        </fileset>
       </classpath>
       <include name="**" />
       <exclude name="tags/**" />
@@ -93,27 +96,30 @@
     <jar destfile="${webapp.path}.war"
          basedir="${webapp.path}" />
 
-    <antcall target="deploy">
-      <param name="war" value="${webapp.path}.war" />
-    </antcall>
-
   </target>
 
   <target name="deploy" description="Compile and deploy web application">
     <deploy url="${url}" username="${username}" password="${password}"
-            path="${path}" war="${war}"/>
+            path="${path}" war="${webapp.path}.war"/>
   </target>
 
-  <target name="reload" description="Reload web application"
-          depends="compile">
-    <reload  url="${url}" username="${username}" password="${password}"
+  <target name="undeploy" description="Undeploy web application">
+    <undeploy url="${url}" username="${username}" password="${password}"
+              path="${path}"/>
+  </target>
+
+  <!-- Webapp lifecycle control -->
+  <target name="start" description="Start web application">
+    <start url="${url}" username="${username}" password="${password}"
+           path="${path}"/>
+  </target>
+  <target name="reload" description="Reload web application">
+    <reload url="${url}" username="${username}" password="${password}"
             path="${path}"/>
   </target>
-
-  <target name="remove" description="Remove web application">
-    <remove url="${url}" username="${username}" password="${password}"
-            path="${path}"/>
+  <target name="stop" description="Stop web application">
+    <stop url="${url}" username="${username}" password="${password}"
+          path="${path}"/>
   </target>
-
 
 </project>
