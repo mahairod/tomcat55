@@ -787,6 +787,7 @@
     <!-- commons-digester needs ../LICENSE -->
     <!-- That is ugly XXX needs a review -->
     <copy file="LICENSE" tofile="../LICENSE"/>
+    <copy file="LICENSE" tofile="${base.path}/LICENSE"/>
 
     <!-- Downdown any sub package or tools needed. -->
     <antcall target="downloadgz">
