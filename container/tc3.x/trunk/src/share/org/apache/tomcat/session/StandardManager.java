@@ -362,6 +362,9 @@ public final class StandardManager implements Runnable, SessionManager {
 	return (session);
     }
 
+    public void handleReload(ClassLoader newLoader) {
+	SessionSerializer.doSerialization(newLoader, this);
+    }
 
     /**
      * Prepare for the beginning of active use of the public methods of this

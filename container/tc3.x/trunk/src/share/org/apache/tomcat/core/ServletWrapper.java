@@ -406,7 +406,10 @@ public class ServletWrapper {
 					loader.reload();
 					
 					// re-serialize the sessions with a new classloader
-					SessionSerializer.doSerialization(loader, context);
+					SessionManager sM=context.getSessionManager();
+					// this is called after the new loader was set.
+
+					sM.handleReload(loader.getClassLoader());
 					
 					servlet=null;
 					servletClass=null;
