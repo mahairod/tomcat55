@@ -238,10 +238,6 @@ public final class SaveResourceLinkAction extends Action {
             
             ObjectName oname = new ObjectName(objectName);
             
-            attribute = "name";
-            mserver.setAttribute
-                (oname,
-                 new Attribute(attribute, resourceLinkForm.getName()));
             attribute = "global";
             mserver.setAttribute
                 (oname,
@@ -250,7 +246,6 @@ public final class SaveResourceLinkAction extends Action {
             mserver.setAttribute
                 (oname,
                  new Attribute(attribute, resourceLinkForm.getType()));
-            
 
         } catch (Exception e) {
 
