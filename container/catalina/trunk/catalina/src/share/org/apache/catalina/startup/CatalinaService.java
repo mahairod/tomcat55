@@ -81,6 +81,7 @@ import org.apache.catalina.Server;
 import org.apache.catalina.Loader;
 import org.apache.commons.digester.Digester;
 
+//import org.apache.tomcat.util.IntrospectionUtils;
 
 /**
  * Startup/Shutdown shell program for Catalina.  The following command line
@@ -160,9 +161,31 @@ public class CatalinaService extends Catalina {
 
     public void setHome( String s ) {
         System.setProperty("catalina.home", s );
+    }
+
+    public void setBase( String s ) {
         System.setProperty("catalina.base", s );
     }
-    
+
+    protected void initHomeAndBase() {
+        //IntrospectionUtils.guessInstall("catalina.home", "catalina.base", "bootstrap.jar",
+        //                                "org.apache.catalina.startup.CatalinaService");
+
+        String h=System.getProperty("catalina.home");
+        String b=System.getProperty("catalina.base");
+        if( h==null && b!=null ) {
+            setHome( b );
+            System.out.println("XXX setHome " + b );
+        } else if( b==null && h!=null ) {
+            setBase( h );
+            System.out.println("XXX setBase" + h );
+        } else if( b!=null && h!=null ) {
+            return;
+        } else { // b==null && h==null
+            // Nothing yet - guessInstall can handle that.
+        }
+    }
+
     public void setUseNaming( boolean b ) {
         useNaming=b;
     }
@@ -196,6 +219,7 @@ public class CatalinaService extends Catalina {
         // make sure the thread loader is set
         log.info("Running tomcat5");
         Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader());
+        initHomeAndBase();
         if (starting) {
             load();
             start();
