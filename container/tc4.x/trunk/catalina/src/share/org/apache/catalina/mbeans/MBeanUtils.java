@@ -66,6 +66,7 @@ package org.apache.catalina.mbeans;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MalformedObjectNameException;
 import javax.management.MBeanException;
@@ -900,9 +901,10 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
+        String encodedResourceName = URLEncoder.encode(resource.getName());
         name = new ObjectName(domain + ":type=Resource,class=" +
-                              resource.getType()+",name=" +
-                              resource.getName());
+                              resource.getType()+",name=" + 
+                              encodedResourceName);
         return (name);
 
     }
