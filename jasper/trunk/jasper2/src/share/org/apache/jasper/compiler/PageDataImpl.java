@@ -120,7 +120,7 @@ class PageDataImpl extends PageData implements TagConstants {
      *
      * @param page the page nodes from which to generate the XML view
      */
-    public PageDataImpl(Node.Nodes page, PageInfo pageInfo)
+    public PageDataImpl(Node.Nodes page, Compiler compiler)
 	        throws JasperException {
 
 	// First pass
@@ -131,7 +131,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	// Second pass
 	buf = new StringBuffer();
 	SecondPassVisitor secondPassVisitor
-	    = new SecondPassVisitor(page.getRoot(), buf, pageInfo);
+	    = new SecondPassVisitor(page.getRoot(), buf, compiler);
 	page.visit(secondPassVisitor);
     }
 
@@ -237,7 +237,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	private Node.Root root;
 	private StringBuffer buf;
-	private PageInfo pageInfo;
+	private Compiler compiler;
 
 	// current jsp:id attribute value
 	private int jspId;
@@ -246,10 +246,10 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * Constructor
 	 */
 	public SecondPassVisitor(Node.Root root, StringBuffer buf,
-				 PageInfo pageInfo) {
+				 Compiler compiler) {
 	    this.root = root;
 	    this.buf = buf;
-	    this.pageInfo = pageInfo;
+	    this.compiler = compiler;
 	}
 
 	/*
@@ -371,7 +371,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.TagDirective n) throws JasperException {
-	    appendTag(JSP_TAG_DIRECTIVE, n.getAttributes(), null, null);
+	    appendTagDirective(n);
 	}
 
 	public void visit(Node.AttributeDirective n) throws JasperException {
@@ -408,7 +408,11 @@ class PageDataImpl extends PageData implements TagConstants {
 	    if (tag.equals(JSP_ROOT) || body != null || text != null) {
 		buf.append(">\n");
 		if (tag.equals(JSP_ROOT)) {
-		    appendPageDirective();
+		    if (compiler.getCompilationContext().isTagFile()) {
+			appendTagDirective();
+		    } else {
+			appendPageDirective();
+		    }
 		}
 		if (body != null) {
 		    body.visit(this);
@@ -430,9 +434,27 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * document, and since XML allows only single-value attributes,
 	 * the values of multiple import attributes must be combined into one,
 	 * separated by comma.
+	 *
+	 * If the given page directive contains just 'contentType' and/or
+	 * 'pageEncoding' attributes, we ignore it, as we've already appended
+	 * a page directive containing just these two attributes.
 	 */
 	private void appendPageDirective(Node.PageDirective pageDir) {
+	    boolean append = false;
 	    Attributes attrs = pageDir.getAttributes();
+	    int len = attrs.getLength();
+	    for (int i=0; i<len; i++) {
+		String attrName = attrs.getQName(i);
+		if (!"pageEncoding".equals(attrName)
+		        && !"contentType".equals(attrName)) {
+		    append = true;
+		    break;
+		}
+	    }
+	    if (!append) {
+		return;
+	    }
+
 	    buf.append("<").append(JSP_PAGE_DIRECTIVE);
 	    buf.append("\n");
 
@@ -441,7 +463,6 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append(jspId++).append("\"\n");
 
 	    // append remaining attributes
-	    int len = attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String attrName = attrs.getQName(i);
 		if ("import".equals(attrName) || "contentType".equals(attrName)
@@ -449,7 +470,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		    /*
 		     * Page directive's 'import' attribute is considered
 		     * further down, and its 'pageEncoding' and 'contentType'
-		     * attributes are ignored, since we've already created 
+		     * attributes are ignored, since we've already appended
 		     * a new page directive containing just these two
 		     * attributes
 		     */
@@ -475,6 +496,71 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append("\"\n");
 	    }
 	    buf.append("/>\n");
+	}
+
+	/*
+	 * Appends a page directive with 'pageEncoding' and 'contentType'
+	 * attributes.
+	 *
+	 * The value of the 'pageEncoding' attribute is hard-coded
+	 * to UTF-8, whereas the value of the 'contentType' attribute, which
+	 * is identical to what the container will pass to
+	 * ServletResponse.setContentType(), is derived from the pageInfo.
+	 */
+	private void appendPageDirective() {
+	    buf.append("<").append(JSP_PAGE_DIRECTIVE);
+	    buf.append("\n");
+
+	    // append jsp:id
+	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append(jspId++).append("\"\n");
+	    buf.append("  ").append("pageEncoding").append("=\"UTF-8\"\n");
+	    buf.append("  ").append("contentType").append("=\"");
+	    buf.append(compiler.getPageInfo().getContentType()).append("\"\n");
+	    buf.append("/>\n");	    
+	}
+
+	/*
+	 * Appends the tag directive with the given attributes to the XML
+	 * view.
+	 *
+	 * If the given tag directive contains just a 'pageEncoding'
+	 * attributes, we ignore it, as we've already appended
+	 * a tag directive containing just this attributes.
+	 */
+	private void appendTagDirective(Node.TagDirective tagDir)
+	        throws JasperException {
+
+	    boolean append = false;
+	    Attributes attrs = tagDir.getAttributes();
+	    int len = attrs.getLength();
+	    for (int i=0; i<len; i++) {
+		String attrName = attrs.getQName(i);
+		if (!"pageEncoding".equals(attrName)) {
+		    append = true;
+		    break;
+		}
+	    }
+	    if (!append) {
+		return;
+	    }
+
+	    appendTag(JSP_TAG_DIRECTIVE, tagDir.getAttributes(), null, null);
+	}
+
+	/*
+	 * Appends a tag directive containing a single 'pageEncoding'
+	 * attribute whose value is hard-coded to UTF-8.
+	 */
+	private void appendTagDirective() {
+	    buf.append("<").append(JSP_TAG_DIRECTIVE);
+	    buf.append("\n");
+
+	    // append jsp:id
+	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append(jspId++).append("\"\n");
+	    buf.append("  ").append("pageEncoding").append("=\"UTF-8\"\n");
+	    buf.append("/>\n");	    
 	}
 
 	private void appendText(char[] text, boolean createJspTextElement) {
@@ -549,23 +635,6 @@ class PageDataImpl extends PageData implements TagConstants {
 	 */
 	private void appendXmlProlog() {
 	    buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-	}
-
-	/*
-	 * Appends a page directive with 'pageEncoding' and 'contentType'
-	 * attributes whose values are derived from pageInfo.
-	 */
-	private void appendPageDirective() {
-	    buf.append("<").append(JSP_PAGE_DIRECTIVE);
-	    buf.append("\n");
-
-	    // append jsp:id
-	    buf.append("  ").append("jsp:id").append("=\"");
-	    buf.append(jspId++).append("\"\n");
-	    buf.append("  ").append("pageEncoding").append("=\"UTF-8\"\n");
-	    buf.append("  ").append("contentType").append("=\"");
-	    buf.append(pageInfo.getContentType()).append("\"\n");
-	    buf.append("/>\n");	    
 	}
     }
 }

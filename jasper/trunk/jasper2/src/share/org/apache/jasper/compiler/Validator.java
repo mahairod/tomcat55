@@ -1060,8 +1060,7 @@ class Validator {
 	 * Invoke TagLibraryValidator classes of all imported tags
 	 * (second validation step for custom tags according to JSP.10.5).
 	 */
-	validateXmlView(new PageDataImpl(page, compiler.getPageInfo()),
-			compiler);
+	validateXmlView(new PageDataImpl(page, compiler), compiler);
 
 	/*
 	 * Invoke TagExtraInfo method isValid() for all imported tags 
