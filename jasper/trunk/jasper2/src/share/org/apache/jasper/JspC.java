@@ -796,28 +796,21 @@ public class JspC implements Options {
         }
         while (!dirs.isEmpty()) {
             String s = dirs.pop().toString();
-            //System.out.println("--" + s);
             File f = new File(s);
             if (f.exists() && f.isDirectory()) {
                 String[] files = f.list();
                 String ext;
-                for (int i = 0; i < files.length; i++) {
+                for (int i = 0; (files != null) && i < files.length; i++) {
                     File f2 = new File(s, files[i]);
-                    //System.out.println(":" + f2.getPath());
                     if (f2.isDirectory()) {
                         dirs.push(f2.getPath());
-                        //System.out.println("++" + f2.getPath());
                     } else {
                         String path = f2.getPath();
                         String uri = path.substring(uriRoot.length());
-                        ext = files[i].substring(files[i].lastIndexOf('.')
-						 + 1);
+                        ext = files[i].substring(files[i].lastIndexOf('.') +1);
                         if (extensions.contains(ext) ||
-                                jspConfig.isJspPage(uri)) {
-                            //System.out.println(s + "?" + files[i]);
+                            jspConfig.isJspPage(uri)) {
                             pages.addElement(path);
-                        } else {
-			    //System.out.println("not done:" + ext);
                         }
                     }
                 }
