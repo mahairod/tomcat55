@@ -1,0 +1,345 @@
+<html>
+<head>
+<title>The 'Host' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>Host</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Standard Implementation Attributes">[Standard Implementation Attributes]</a>
+<a href="#Utility Components">[Utility Components]</a>
+<a href="#Special Features">[Special Features]</a>
+</br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>A <b>Host</b> component represents a "virtual host" that is running in
+an instance of Catalina, possibly in conjunction with many other virtual
+hosts.  Each virtual host can be running one or more web applications, each
+represented by a <a href="context.html">Context</a> component.</p>
+
+<p>In order for a client, such as a web browser, to successfully send a
+request to a web application running in a particular virtual host, the client
+must specify a hostname that is mapped, in the Domain Name Service (DNS) to
+the server that Catalina is running on, and a port number on which you have
+defined a <a href="connector.html">Connector</a> to be listening.</p>
+
+<p>Normally, you will define at least one <b>Host</b> component named
+<code>localhost</code>, to receive requests sent from a client running on
+the same server.  Often, you will also want this <b>Host</b> to receive all
+requests for a host name that does not match one of the other defined Hosts
+for this server.  You indicate this by setting the <code>defaultHost</code>
+attribute of the <a href="engine.html">Engine</a> component to the
+<code>localhost</code> (or whatever other Host name you wish to receive
+requests for unknown hosts).</p>
+
+<br>
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <b>Host</b> component support the following
+attributes, which can be defined in a <code>&lt;Host&gt;</code> element:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>appBase</code></td>
+    <td>The "application base" directory for this virtual host.  This is
+        the pathname of a directory that may contain web applications to
+        be executed in this virtual host.  You may specify an absolute
+        pathname to this directory, or a pathname that is relative to the
+        "Catalina Home" directory.  If not specified, the default value
+        (<code>webapps</code>) will be used.  See the
+        <a href="#Special Features">Special Features</a> section, below,
+        for information about Automatic Application Deployment support
+        provided by the standard Host implementation.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>className</code></td>
+    <td>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.tomcat.Host</code> interface.  If
+        no class name is specified, the standard implementation will be
+        used (<code>org.apache.tomcat.core.StandardHost</code>).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>name</code></td>
+    <td>The host name of this virtual host.  This name must match the
+        name submitted on the <code>Host:</code> header in incoming
+        requests.  This attribute is required, and must be unique among
+        the virtual hosts running in this servlet container.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Standard Implementation Attributes"></a>
+<h2>Standard Implementation Attributes</h2>
+
+<p>The standard implementation of the <b>Host</b> component supports the
+following attributes in addition to those supported by all implementations:
+</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>debug</code></td>
+    <td>
+      The level of debugging detail logged by this Engine to the associated
+      Logger, with higher numbers generating more detailed output.  If not
+      specified, the debugging detail level will be set to zero (0).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>root</code></td>
+    <td>Boolean attribute stating whether calls to
+        <code>ServletContext.getContext()</code> on web applications
+        running in this virtual host should allow one application to gain
+        access to the ServletContext of another.  Set to <code>false</code>
+        to disallow such access.  If not specified, the default value
+        (<code>false</code>) will be used.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Utility Components"></a>
+<h2>Utility Components</h2>
+
+<p>You can attach one or more of the following utility components by nesting
+a corresponding declaration element inside your <b>Host</b> element.  Unless
+overridden by a utility component of the same name being nested in a
+<a href="context.html">Context</a> element, the utility components you
+declare here will be shared among all web applications running in this
+<b>Host</b>:</p>
+
+<ul>
+  <li><a href="logger.html">Logger</a> - Configure a logger that will receive
+      all log messages from this <b>Host</b>, as well as from all web
+      applications running on this <b>Host</b>.
+  </li>
+  <li><a href="realm.html">Realm</a> - Configure a realm that will allow your
+      database of users, and their associated roles, to be shared across all
+      of the web applications running within this <b>Host</b>.
+  </li>
+</ul>
+
+<br>
+
+<a name="Special Features"></a>
+<h2>Special Features</h2>
+
+<h3>Access Logs</h3>
+
+<p>When you run a web server, one of the output files normally generated is
+an <i>access log</i>, which generates one line of information, in a standard
+format, for each HTTP request that was received, and responded to, by the
+web server.  Catalina includes an optional <a href="valve.html">Valve</a>
+implementation that can create access logs in the same standard format
+created by web servers, or in any custom format desired.</p>
+
+<p>You can ask Catalina to create an access log for all requests to any
+web application for this <b>Host</b>, by nesting an element like this inside
+your <b>Host</b> element:</p>
+<pre>
+
+    &lt;Host name="www.mycompany.com" ...&gt;
+      ...
+      &lt;Valve className="org.apache.tomcat.valves.AccessLogValve"
+             prefix="localhost_access_log." suffix=".txt"
+             pattern="common"/&gt;
+      ...
+    &lt;/Host&gt;
+
+</pre>
+
+<p>See <a href="valve.html#FIXME">Access Log Valve</a> for more
+information on the configuration options that are supported.</p>
+
+<h3>Automatic Application Deployment</h3>
+
+<p>If you are using the standard Host implementation, the following actions
+take place automatically when Catalina is first started.  All processing takes
+place in the application base directory configured by the <code>appBase</code>
+attribute.  No special configuration is required to enable these activities.
+</p>
+<ul>
+<li>Any web application archive file (that is, a JAR file whose name ends
+    with ".war"), that does not have a corresponding diretory of the same
+    name without the extension, will be automatically expanded.  The assumption
+    is that this is a web application archive being deployed on this virtual
+    host.  (If you wish to redeploy an updated WAR file, be sure to delete
+    the automatically expanded directory first).
+<li>Any subdirectory within the <code>appBase</code> directory that appears
+    to be an unpacked web application (i.e. it contains a
+    <code>WEB-INF/web.xml</code> file), receives an automatically generated
+    <a href="context.html">Context</a> element, even if this directory is
+    not specifically mentioned in the <code>conf/server.xml</code> file.
+    The context path for this application will be a slash character ("/")
+    followed by the directory name.
+</ul>
+
+<p>The net effect of this feature is that you need not specifically mention
+your web applications in the <code>conf/server.xml</code> file unless you wish
+to define non-default properties for the corresponding
+<a href="context.html">Context</a>.
+
+<h3>Host Name Aliases</h3>
+
+<p>In many server environments, the system administrator has set up more
+than one host name in the Domain Name Service (DNS) entries for a company,
+and you would like all of these names to access the same <b>Host</b>
+component (and therefore execute the same web applications), no matter
+which host name was actually used in the request.</p>
+
+<p>As an example of this, consider that many web sites are set up so that
+hostnames <code>www.mycompany.com</code> and <code>mycompany.com</code>
+go to the same pages.  You can accomplish this with Catalina by setting
+up your server configuration like this:</p>
+<pre>
+    &lt;Host name="www.mycompany.com" ...&gt;
+      ...
+      &lt;Alias name="mycompany.com"/&gt;
+      ...
+    &lt;/Host&gt;
+</pre>
+
+<p>With this setup, both of the following URLs will resolve to the same
+web application (assuming my <a href="connector.html">Connector</a>
+is listening on port 8080):
+<pre>
+	http://mycompany.com:8080
+	http://www.mycompany.com:8080
+</pre>
+
+<h3>Lifecycle Listeners</h3>
+
+<p>If you have implemented a Java object that needs to know when this Host
+is started or stopped, you can declare it by nesting a
+<code>&lt;Listener&gt;</code> element inside the <code>&lt;Host&gt;</code>
+element.  The class you specify in the <code>className</code> attribute
+of this Listener must implement the
+<code>org.apache.tomcat.LifecycleListener</code> interface, and it will be
+notified about the occurrence of the corresponding lifecycle events.</p>
+
+<p>Configuration for such a listener might look like this:</p>
+<pre>
+
+    &lt;Host name="www.mycompany.com" ...&gt;
+      ...
+      &lt;Listener className="com.mycompany.MyHostListener"/&gt;
+      ...
+    &lt;/Host&gt;
+
+</pre>
+
+<p>See <a href="listener.html">Listeners</a> for more information about
+lifecycle listeners.</p>
+
+<h3>Request Filters</h3>
+
+<p>You can ask Catalina to check the IP address, or host name, of an
+incoming request for this particular host
+against a list of "accept" and "deny" filters, which are
+defined using the Regular Expression syntax supported by the jakarta-regexp
+regular expression library system.  Requests that come from remote locations
+that are not accepted will be rejected with an HTTP "Forbidden" error.  An
+example configuration that rejects requests from any domain
+except "mycompany.com" would be:</p>
+<pre>
+
+    &lt;Host name="www.mycompany.com" ...&gt;
+      ...
+      &lt;Valve className="org.apache.tomcat.valves.RemoteHostValve"
+             allow="*.mycompany.com"/&gt;
+      ...
+    &lt;/Host&gt;
+
+</pre>
+
+<p>See <a href="valve.html#FIXME">Request Filter Valve</a> for more
+information on the syntax of the filters, and the logic that is applied
+when they are executed.</p>
+
+<h3>User Web Applications</h3>
+
+<p>Many web servers automtically map a request path starting with a
+tilde character ("~") and a username to a directory (commonly named
+<code>public_html</code>) in that user's home directory on the server.
+You can accomplish this with Catalina by setting up your server
+configuration like this (on a Unix system that uses the
+<code>/etc/passwd</code> file to configure valid users):</p>
+<pre>
+
+    &lt;Host name="www.mycompany.com" ...&gt;
+      ...
+      &lt;Listener className="org.apache.tomcat.startup.UserConfig"
+                directoryName="public_html"
+                userClass="org.apache.tomcat.startup.PasswdUserDatabase"/>
+      ...
+    &lt;/Host&gt;
+
+</pre>
+
+<p>On a server where <code>/etc/passwd</code> is not in use, but one or
+more user home directories can be found in a common base directory (such
+as <code>c:\Homes</code>), you could do this instead:</p>
+<pre>
+
+    &lt;Host name="www.mycompany.com" ...&gt;
+      ...
+      &lt;Listener className="org.apache.tomcat.startup.UserConfig"
+                directoryName="public_html"
+                homeBase="c:\Homes"
+                userClass="org.apache.tomcat.startup.HomesUserDatabase"/>
+      ...
+    &lt;/Host&gt;
+
+</pre>
+<p>It is also acceptable to include more than one instance of this listener,
+if you have more than one home base directory containing user home
+directories.</p>
+
+<p>With either setup, if my username on the server is <code>craigmcc</code>,
+and I have a web application installed in a <code>public_html</code>
+subdirectory under my home directory, my application will receive all
+requests directed to:</p>
+<pre>
+	http://www.mycompany.com:8080/~craigmcc
+</pre>
+<p>assuming my <a href="connector.html">Connector</a> is listening on
+port 8080.</p>
+
+<p><b>IMPORTANT NOTE</b>:  The operating system username under which
+Catalina is executed must have read access to the user's web application,
+and all directories above it, for this feature to operate correctly.</p>
+
+<br>
+
+</body>
+</html>

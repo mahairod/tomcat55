@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>The 'Engine' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>Engine</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Standard Implementation Attributes">[Standard Implementation Attributes]</a>
+<a href="#Utility Components">[Utility Components]</a>
+<a href="#Special Features">[Special Features]</a>
+</br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>An <b>Engine</b> component represents the entire Catalina servlet
+container.  Normally, a single instance of an <b>Engine</b> component
+is configured to receive all requests received by one or more
+<a href="connector.html">Connector</a> components.  This element will
+be nested immediately after the <code>&lt;Connector&gt;</code> elements,
+inside a <code>&lt;Server&gt;</code> element.</p>
+
+<p>Request processing <a href="valve.html">Valves</a> that are specified
+here will be executed for every request received from every connector.</p>
+
+<br>
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <b>Engine</b> component support the following
+attributes, which are configured in an <code>&lt;Engine&gt;</code> element:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>className</code></td>
+    <td>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.tomcat.Engine</code> interface.  If
+        no class name is specified, the standard implementation will be
+        used (<code>org.apache.tomcat.core.StandardEngine</code>).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>name</code></td>
+    <td>The logical name of this engine.  The name selected is arbitrary,
+        but it is required.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Standard Implementation Attributes"></a>
+<h2>Standard Implementation Attributes</h2>
+
+<p>The standard implementation of the <b>Engine</b> component supports the
+following attributes in addition to those supported by all implementations:
+</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>debug</code></td>
+    <td>
+      The level of debugging detail logged by this Engine to the associated
+      Logger, with higher numbers generating more detailed output.  If not
+      specified, the debugging detail level will be set to zero (0).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>defaultHost</code></td>
+    <td>Normally, requests which specify a <code>Host:</code> HTTP
+        header are forwarded to a <a href="host.html">Host</a> with
+        a matching name or alias.  If a request is received with a
+        requested host name that is not recognized, it will be
+        forwarded to the <b>Host</b> named here.  If not specified,
+        such requests will be returned with an HTTP error instead.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Utility Components"></a>
+<h2>Utility Components</h2>
+
+<p>You can attach one or more of the following utility components by nesting
+a corresponding declaration element inside your <b>Host</b> element.  Unless
+overridden by a utility component of the same name being nested in a
+<a href="context.html">Context</a> element, the utility components you
+declare here will be shared among all web applications running in this
+<b>Host</b>:</p>
+
+<ul>
+  <li><a href="logger.html">Logger</a> - Configure a logger that will receive
+      all log messages from this <b>Engine</b>, plus log messages from
+      <a href="connector.html">Connectors</a> attached to this Engine.  In
+      addition, this Logger will log messages from subordinate
+      <a href="host.html">Hosts</a> and <a href="context.html">Contexts</a>,
+      unless overridden by a Logger configuration at a lower level.
+  </li>
+  <li><a href="realm.html">Realm</a> - Configure a realm that will allow your
+      database of users, and their associated roles, to be shared across all
+      of the Hosts, and all web applications running within these Hosts.
+  </li>
+</ul>
+
+<br>
+
+<a name="Special Features"></a>
+<h2>Special Features</h2>
+
+<h3>Access Logs</h3>
+
+<p>When you run a web server, one of the output files normally generated is
+an <i>access log</i>, which generates one line of information, in a standard
+format, for each HTTP request that was received, and responded to, by the
+web server.  Catalina includes an optional <a href="valve.html">Valve</a>
+implementation that can create access logs in the same standard format
+created by web servers, or in any custom format desired.</p>
+
+<p>You can ask Catalina to create an access log for all requests to any
+web application for any <b>Host</b>, by nesting an element like this inside
+your <b>Engine</b> element:</p>
+<pre>
+
+    &lt;Engine name="engine" ...&gt;
+      ...
+      &lt;Valve className="org.apache.tomcat.valves.AccessLogValve"
+             prefix="catalina_access_log." suffix=".txt"
+             pattern="common"/&gt;
+      ...
+    &lt;/Engine&gt;
+
+</pre>
+
+<p>See <a href="valve.html#FIXME">Access Log Valve</a> for more
+information on the configuration options that are supported.</p>
+
+<h3>Lifecycle Listeners</h3>
+
+<p>If you have implemented a Java object that needs to know when this Engine
+is started or stopped, you can declare it by nesting a
+<code>&lt;Listener&gt;</code> element inside the <code>&lt;Engine&gt;</code>
+element.  The class you specify in the <code>className</code> attribute
+of this Listener must implement the
+<code>org.apache.tomcat.LifecycleListener</code> interface, and it will be
+notified about the occurrence of the corresponding lifecycle events.</p>
+
+<p>Configuration for such a listener might look like this:</p>
+<pre>
+
+    &lt;Engine name="engine" ...&gt;
+      ...
+      &lt;Listener className="com.mycompany.MyEngineListener"/&gt;
+      ...
+    &lt;/Engine&gt;
+
+</pre>
+
+<p>See <a href="listener.html">Listeners</a> for more information about
+lifecycle listeners.</p>
+
+<h3>Request Filters</h3>
+
+<p>You can ask Catalina to check the IP address, or host name, of an
+incoming request for the entire servlet container
+against a list of "accept" and "deny" filters, which are
+defined using the Regular Expression syntax supported by the jakarta-regexp
+regular expression library system.  Requests that come from remote locations
+that are not accepted will be rejected with an HTTP "Forbidden" error.  An
+example configuration that rejects requests from any domain except
+"mycompany.com") would be:</p>
+<pre>
+
+    &lt;Engine name="engine" ...&gt;
+      ...
+      &lt;Valve className="org.apache.tomcat.valves.RemoteHostValve"
+             allow="*.mycompany.com"/&gt;
+      ...
+    &lt;/Engine&gt;
+
+</pre>
+
+<p>See <a href="valve.html#FIXME">Request Filter Valve</a> for more
+information on the syntax of the filters, and the logic that is applied
+when they are executed.</p>
+
+<br>
+
+</body>
+</html>
