@@ -110,6 +110,7 @@ import org.apache.catalina.util.StringManager;
  *     an empty string
  * <li><b>%r</b> - First line of the request
  * <li><b>%s</b> - HTTP status code of the response
+ * <li><b>%S</b> - User session ID 
  * <li><b>%t</b> - Date and time, in Common Log Format format
  * <li><b>%u</b> - Remote user that was authenticated
  * <li><b>%U</b> - Requested URL path
@@ -745,6 +746,13 @@ public final class AccessLogValve
                 sb.append(req.getProtocol());
             }
             value = sb.toString();
+        } else if (pattern == 'S') {
+            if (hreq != null)
+                if (hreq.getSession(false) != null)
+                    value = hreq.getSession(false).getId();
+                else value = "-";
+            else
+                value = "-";
         } else if (pattern == 's') {
             if (hres != null)
                 value = "" + ((HttpResponse) response).getStatus();
