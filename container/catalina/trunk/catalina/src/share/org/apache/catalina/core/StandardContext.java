@@ -3867,7 +3867,7 @@ public class StandardContext
 
         // Set config file name
         String appBase = getAppBase();
-        if (getConfigFile() == null && appBase != null) {
+        if ((getConfigFile() == null) && (appBase != null)) {
 
             String name = getName();
             if (name.equals("")) {
@@ -4020,6 +4020,9 @@ public class StandardContext
                 // Initialize associated mapper
                 mapper.setContext(getPath(), welcomeFiles, resources);
 
+                // JMX registration
+                registerJMX();
+
                 // Start our child containers, if any
                 Container children[] = findChildren();
                 for (int i = 0; i < children.length; i++) {
@@ -4128,12 +4131,20 @@ public class StandardContext
             }
             setAvailable(false);
         }
-        registerJMX();
+
+        // Wrappers JMX registration
+        registerWrappersJMX();
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
         startTime=System.currentTimeMillis();
-        
+
+        // Close all JARs right away to avoid always opening a peak number 
+        // of files on startup
+        if (getLoader() instanceof WebappLoader) {
+            ((WebappLoader) getLoader()).closeJARs(true);
+        }
+
         //cacheContext();
     }
     
@@ -4363,9 +4374,12 @@ public class StandardContext
             ((StandardManager) getManager()).processExpires();
         }
 
-        if (reloadable && (getLoader() != null)) {
-            if (getLoader().modified()) {
+        if (getLoader() != null) {
+            if (reloadable && (getLoader().modified())) {
                 reload();
+            }
+            if (getLoader() instanceof WebappLoader) {
+                ((WebappLoader) getLoader()).closeJARs(false);
             }
         }
 
@@ -5007,13 +5021,21 @@ public class StandardContext
                     Registry.getRegistry().registerComponent(this,oname, null);
                 }
             }
+        } catch( Exception ex ) {
+            log.info("Error registering ctx with jmx " + this + " " +
+                    oname + " " + ex.toString(), ex );
+        }
+    }
+
+    private void registerWrappersJMX() {
+        try {
             for( Iterator it=wrappers.iterator(); it.hasNext() ; ) {
                 StandardWrapper wrapper=(StandardWrapper)it.next();
                 // XXX prevent duplicated registration
                 wrapper.registerJMX( this );
             }
         } catch( Exception ex ) {
-            log.info("Error registering ctx with jmx " + this + " " +
+            log.info("Error registering wrapper with jmx " + this + " " +
                     oname + " " + ex.toString(), ex );
         }
     }
