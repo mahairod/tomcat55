@@ -72,6 +72,9 @@
       <update>
         Updated JspC usage messages to include recently added configurable parameters. (yoavs)
       </update>
+      <fix>
+        <bug>32330</bug>: JspC changes context classloader. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
