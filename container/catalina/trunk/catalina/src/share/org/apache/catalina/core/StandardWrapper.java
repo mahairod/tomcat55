@@ -1011,7 +1011,8 @@ public class StandardWrapper
 
             // Special handling for ContainerServlet instances
             if ((servlet instanceof ContainerServlet) &&
-                isContainerProvidedServlet(actualClass)) {
+                  (isContainerProvidedServlet(actualClass) ||
+                    ((Context)getParent()).getPrivileged() )) {
                 ((ContainerServlet) servlet).setWrapper(this);
             }
 
