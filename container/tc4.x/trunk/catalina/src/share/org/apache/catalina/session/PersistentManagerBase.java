@@ -125,7 +125,7 @@ public abstract class PersistentManagerBase
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "MiddleManager/1.0";
+    private static final String info = "PersistentManagerBase/1.0";
 
 
     /**
@@ -167,7 +167,7 @@ public abstract class PersistentManagerBase
     /**
      * Name to register for the background thread.
      */
-    private String threadName = "MiddleManager";
+    private String threadName = "PersistentManagerBase";
 
 
     /**
@@ -408,16 +408,23 @@ public abstract class PersistentManagerBase
      *  found during the reload
      * @exception IOException if an input/output error occurs
      */
-    public void load() throws ClassNotFoundException, IOException {
+    public void load() {
 
         // Initialize our internal data structures
-//        recycled.clear();
-//        sessions.clear();
+        recycled.clear();
+        sessions.clear();
 
         if (store == null)
             return;
 
-        String[] ids = store.keys();
+        String[] ids = null;
+        try {
+            ids = store.keys();
+        } catch (IOException e) {
+            log("Can't load sessions from store, " + e.getMessage(), e);
+            return;
+        }
+        
         int n = ids.length;
         if (n == 0)
             return;
@@ -426,7 +433,11 @@ public abstract class PersistentManagerBase
             log(sm.getString("persistentManager.loading", String.valueOf(n)));
 
         for (int i = 0; i < n; i++)
-            swapIn(ids[i]);
+            try {
+                swapIn(ids[i]);
+            } catch (IOException e) {
+                log("Failed load session from store, " + e.getMessage(), e);
+            }
         
     }
 
@@ -438,6 +449,27 @@ public abstract class PersistentManagerBase
      * but may be empty if it isn't needed.
      */
     public abstract void processPersistenceChecks();
+
+
+    /**
+     * Remove this Session from the active Sessions for this Manager,
+     * and from the Store.
+     *
+     * @param session Session to be removed
+     */
+    public void remove(Session session) {
+
+        super.remove (session);
+        
+        if (store != null)
+            try {
+                store.remove(session.getId());
+            } catch (IOException e) {
+                log("Exception removing session  " + e.getMessage());
+                e.printStackTrace();
+            }
+          
+    }
 
 
     /**
@@ -539,7 +571,8 @@ public abstract class PersistentManagerBase
 
         ((StandardSession)session).passivate();
         writeSession(session);
-        session.expire();
+        super.remove(session);
+        session.recycle();
 
     }
 
@@ -658,14 +691,19 @@ public abstract class PersistentManagerBase
         // Stop the background reaper thread
         threadStop();
 
-        // Expire all active sessions
+        // Swap out all active sessions
         Session sessions[] = findSessions();
         for (int i = 0; i < sessions.length; i++) {
             StandardSession session = (StandardSession) sessions[i];
             if (!session.isValid())
                 continue;
-            session.expire();
-        }
+            try {
+                swapOut(session);
+            } catch (IOException e) {
+                ;   // Logged upstream
+            }
+
+       }
 
         // Require a new random number generator if we are restarted
         this.random = null;
