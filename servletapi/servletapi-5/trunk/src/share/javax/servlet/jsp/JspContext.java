@@ -77,12 +77,6 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
  *     scripting environment
  * </ul>
  *
- * <p><B>Methods Intended for Container Generated Code</B>
- * <p>
- * To facilitate Simple Tag Extensions, the <code>pushPageScope()</code>,
- * <code>popPageScope()</code> and <code>peekPageScope()</code> methods are
- * added.
- *
  * <p><B>Methods Intended for JSP authors</B>
  * <p>
  * The following methods provide <B>convenient access</B> to implicit objects:
@@ -226,46 +220,6 @@ public abstract class JspContext {
 
     abstract public JspWriter getOut();
 
-    /** 
-     * Pops the page scope from the stack. After calling this method, the 
-     * PageScope will appear the same as it was before the last call to 
-     * pushPageScope. 
-     * 
-     * @return A Map representing the state of the page scope just before 
-     *     it was popped.  This object can be passed to pushPageScope to 
-     *     restore this state.  The keys of the returned Map are Strings 
-     *     representing attribute names.  The values are the values of 
-     *     those attributes. 
-     * @throws java.util.EmptyStackException if this is the last page scope on the
-     *     stack.
-     */ 
-    public abstract java.util.Map popPageScope() 
-        throws java.util.EmptyStackException;
-
-    /** 
-     * Pushes a page scope on the stack.  The scopeState cannot be arbitrary.
-     * Only a page scope returned from popPageScope() or peekPageScope() may 
-     * be passed in.
-     *
-     * @param scopeState If null, a new, empty, page scope is pushed. 
-     *     Otherwise, the state of the page scope is restored to the 
-     *     contents of the provided Map. 
-     */ 
-    public abstract void pushPageScope( java.util.Map scopeState );
-    
-    /** 
-     * Peeks at the top element of the page scope stack.  This value is 
-     * the current state of the page scope.  Does not modify the state of 
-     * the stack or copy any objects. 
-     * 
-     * @return A Map representing the state of the page scope currently 
-     *     at the top of the stack.  This object can be passed to 
-     *     pushPageScope to restore this state.  The keys of the returned 
-     *     Map are Strings representing attribute names.  The values are 
-     *     the values of those attributes. 
-     */ 
-    public abstract java.util.Map peekPageScope();
-    
     /**
      * Provides programmatic access to the ExpressionEvaluator.
      * The JSP Container must return a valid instance of an 
