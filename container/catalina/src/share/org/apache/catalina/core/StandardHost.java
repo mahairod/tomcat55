@@ -176,6 +176,11 @@ public class StandardHost
         "org.apache.catalina.valves.ErrorReportValve";
 
     /**
+     * The object name for the errorReportValve.
+     */
+    private ObjectName errorReportValveObjectName = null;
+
+    /**
      * The descriptive information string for this implementation.
      */
     private static final String info =
@@ -798,9 +803,20 @@ public class StandardHost
         if ((errorReportValveClass != null)
             && (!errorReportValveClass.equals(""))) {
             try {
-                Valve valve = (Valve) Class.forName(errorReportValveClass)
-                    .newInstance();
-                addValve(valve);
+                boolean found = false;
+                if(errorReportValveObjectName != null) {
+                    ObjectName[] names = 
+                        ((StandardPipeline)pipeline).getValveObjectNames();
+                    for (int i=0; !found && i<names.length; i++)
+                        if(errorReportValveObjectName.equals(names[i]))
+                            found = true ;
+                    }
+                    if(!found) {          	
+                        Valve valve = (Valve) Class.forName(errorReportValveClass)
+                        .newInstance();
+                        addValve(valve);
+                        errorReportValveObjectName = ((ValveBase)valve).getObjectName() ;
+                    }
             } catch (Throwable t) {
                 log.error(sm.getString
                     ("standardHost.invalidErrorReportValveClass", 
