@@ -157,18 +157,9 @@ implements HttpServletResponse {
     public void sendError(int sc, String msg) throws IOException {
 	setStatus( sc );
 	Request request=response.getRequest();
-	request.setAttribute("javax.servlet.error.status_code",
-			     String.valueOf(sc));
 	request.setAttribute("javax.servlet.error.message", msg);
-
-	// XXX need to customize it
-	Servlet errorP=new org.apache.tomcat.servlets.DefaultErrorPage();
-	try {
-	    errorP.service(request.getFacade(),this);
-	} catch (ServletException ex ) {
-	    // shouldn't happen!
-	    ex.printStackTrace();
-	}
+	ContextManager cm=request.getContextManager();
+	cm.handleError( request, response, null, sc );
     }
 
     public void sendRedirect(String location)

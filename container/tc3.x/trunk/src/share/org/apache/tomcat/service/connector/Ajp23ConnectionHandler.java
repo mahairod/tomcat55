@@ -108,6 +108,7 @@ public class Ajp23ConnectionHandler implements  TcpConnectionHandler {
 	    ConnectorResponse rresponse=new ConnectorResponse(con);
 	    //	    RequestImpl  rrequest=new RequestImpl();
 	    ConnectorRequest  reqA=new ConnectorRequest(con);
+	    reqA.setContextManager( contextM );
 	    //rrequest.setRequestAdapter( reqA ); 
 
 	    boolean moreRequests=true;

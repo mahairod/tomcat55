@@ -108,6 +108,7 @@ public class RequestImpl  implements Request {
     protected Response response;
     protected HttpServletRequestFacade requestFacade;
     protected Context context;
+    protected ContextManager contextM;
     protected Hashtable attributes = new Hashtable();
 
     protected boolean didReadFormData;
@@ -342,6 +343,14 @@ public class RequestImpl  implements Request {
     
     public void setContext(Context context) {
 	this.context = context;
+    }
+
+    public void setContextManager( ContextManager cm ) {
+	contextM=cm;
+    }
+
+    public ContextManager getContextManager() {
+	return contextM;
     }
 
     public Cookie[] getCookies() {

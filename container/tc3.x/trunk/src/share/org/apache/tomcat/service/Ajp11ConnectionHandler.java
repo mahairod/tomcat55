@@ -111,6 +111,7 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
 	    //	    RequestImpl request=new RequestImpl();
 	    
 	    AJPRequestAdapter reqA = new AJPRequestAdapter(socket); // todo: clean ConnectionHandler, make it abstract
+	    reqA.setContextManager( contextM );
 	    //request.setRequestAdapter( reqA );
 	    
 	    Ajp11ResponseAdapter resA=new Ajp11ResponseAdapter();

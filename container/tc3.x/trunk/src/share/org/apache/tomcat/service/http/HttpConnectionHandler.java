@@ -110,6 +110,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    OutputStream out=socket.getOutputStream();
 	    //	    RequestImpl request=new RequestImpl();
 	    HttpRequestAdapter reqA=new HttpRequestAdapter();
+	    reqA.setContextManager( contextM );
 	    //	    ResponseImpl response=new ResponseImpl();
 	    HttpResponseAdapter resA=new HttpResponseAdapter();
 	    
