@@ -166,7 +166,9 @@ frequently consider using an external compiler such as <code>jikes</code>.</li>
 <a href="http://oss.software.ibm.com/developerworks/opensource/jikes/">
 Jikes</a> to compile JSP pages:
 <ul>
-<li>Download and install jikes.</li>
+<li>Download and install jikes. jikes must support the -encoding option.
+Execute <code>jikes -help</code> to verify that it was built with support
+for <code>-encoding</code>.</li>
 <li>Set the init parameter <code>compiler</code> to <code>jikes</code>.</li>
 <li>Define the property <code>-Dbuild.compiler.emacs=true</code> when starting
 Tomcat by adding it to your <code>CATALINA_OPTS</code> environment variable.
