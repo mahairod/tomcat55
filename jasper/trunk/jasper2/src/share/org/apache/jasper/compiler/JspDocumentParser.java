@@ -589,9 +589,12 @@ class JspDocumentParser extends DefaultHandler
 	    node = new Node.DoBodyAction(attrsCopy, start, current);
 	} else if (qName.equals(JSP_ELEMENT)) {
 	    node = new Node.JspElement(attrsCopy, start, current);
+	} else if (qName.equals(JSP_FALLBACK)) {
+	    node = new Node.FallBackAction(start, current);
 	} else {
 	    throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.badStandardAction"),
+		    Localizer.getMessage("jsp.error.xml.badStandardAction",
+					 qName),
 		    locator);
 	}
 
