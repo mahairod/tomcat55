@@ -161,7 +161,7 @@ public final class Mark {
     {
 
 	// store current state in stack
-	includeStack.push(new IncludeState(cursor, line, col, fileid, name, baseDir, 
+	includeStack.push(new IncludeState(cursor, line, col, fileid, fileName, baseDir, 
 					   encoding, stream) );
 
 	// set new variables
