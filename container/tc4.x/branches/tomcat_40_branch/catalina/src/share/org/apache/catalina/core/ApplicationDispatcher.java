@@ -347,7 +347,7 @@ final class ApplicationDispatcher
                 AccessController.doPrivileged(dp);
             } catch( PrivilegedActionException pe) {
                 Exception e = pe.getException();
-                if( e.getClass().getName().equals("javax.servlet.ServletException") )
+                if (e instanceof ServletException)
                     throw (ServletException)e;
                 throw (IOException)e;
             }
@@ -485,7 +485,7 @@ final class ApplicationDispatcher
             } catch( PrivilegedActionException pe) {
                 Exception e = pe.getException();
                 pe.printStackTrace();
-                if( e.getClass().getName().equals("javax.servlet.ServletException") )
+                if (e instanceof ServletException)
                     throw (ServletException)e;
                 throw (IOException)e;
             }
