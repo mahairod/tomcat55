@@ -20,8 +20,7 @@ fi
 
 JAVACMD=$JAVA_HOME/bin/java $ANT_OPTS
 
-cp=../jakarta-ant/lib/ant.jar:../jakarta-tools/moo.jar:../jakarta-ant/lib/xml.jar:../build/tomcat/classes:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dev.jar
+cp=../jakarta-ant/lib/ant.jar:../jakarta-servletapi/lib/servlet.jar:../jakarta-tools/moo.jar:../build/tomcat/classes:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dev.jar
 
 $JAVACMD -classpath $cp:$CLASSPATH org.apache.tools.ant.Main "$@"
-
 
