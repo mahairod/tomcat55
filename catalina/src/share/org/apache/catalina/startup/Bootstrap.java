@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -195,8 +191,9 @@ public final class Bootstrap {
     /**
      * Initialize daemon.
      */
-    private void init()
-        throws Exception {
+    public void init()
+        throws Exception
+    {
 
         // Set Catalina path
         setCatalinaHome();
@@ -290,6 +287,7 @@ public final class Bootstrap {
      */
     public void start()
         throws Exception {
+        if( catalinaDaemon==null ) init();
 
         Method method = catalinaDaemon.getClass().getMethod("start", null);
         method.invoke(catalinaDaemon, null);
@@ -336,6 +334,17 @@ public final class Bootstrap {
             catalinaDaemon.getClass().getMethod("setAwait", paramTypes);
         method.invoke(catalinaDaemon, paramValues);
 
+    }
+
+    public boolean getAwait()
+        throws Exception
+    {
+        Class paramTypes[] = new Class[0];
+        Object paramValues[] = new Object[0];
+        Method method =
+            catalinaDaemon.getClass().getMethod("getAwait", paramTypes);
+        Boolean b=(Boolean)method.invoke(catalinaDaemon, paramValues);
+        return b.booleanValue();
     }
 
 
@@ -388,6 +397,14 @@ public final class Bootstrap {
 
     }
 
+    public void setCatalinaHome(String s) {
+        System.setProperty( "catalina.home", s );
+    }
+
+    public void setCatalinaBase(String s) {
+        System.setProperty( "catalina.base", s );
+    }
+
 
     /**
      * Set the <code>catalina.base</code> System property to the current
@@ -424,7 +441,7 @@ public final class Bootstrap {
     /**
      * Get the value of the catalina.home environment variable.
      */
-    protected static String getCatalinaHome() {
+    public static String getCatalinaHome() {
         return System.getProperty("catalina.home",
                                   System.getProperty("user.dir"));
     }
@@ -433,7 +450,7 @@ public final class Bootstrap {
     /**
      * Get the value of the catalina.base environment variable.
      */
-    protected static String getCatalinaBase() {
+    public static String getCatalinaBase() {
         return System.getProperty("catalina.base", getCatalinaHome());
     }
 
