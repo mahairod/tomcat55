@@ -50,6 +50,7 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
@@ -100,6 +101,12 @@ public final class ContextConfig
      * Track any fatal errors during startup configuration processing.
      */
     private boolean ok = false;
+
+
+    /**
+     * Any parse error which occurred while parsing XML descriptors.
+     */
+    private SAXParseException parseException = null;
 
 
     /**
@@ -252,7 +259,11 @@ public final class ContextConfig
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
                     webDigester.push(context);
+                    webDigester.setErrorHandler(new ContextErrorHandler());
                     webDigester.parse(is);
+                    if (parseException != null) {
+                        ok = false;
+                    }
                 } else {
                     log.info("No web.xml, using defaults " + context );
                 }
@@ -266,6 +277,7 @@ public final class ContextConfig
                 log.error(sm.getString("contextConfig.applicationParse"), e);
                 ok = false;
             } finally {
+                parseException = null;
                 try {
                     if (stream != null) {
                         stream.close();
@@ -499,7 +511,11 @@ public final class ContextConfig
                 //log.info( "Using cl: " + webDigester.getClassLoader());
                 webDigester.setUseContextClassLoader(false);
                 webDigester.push(context);
+                webDigester.setErrorHandler(new ContextErrorHandler());
                 webDigester.parse(source);
+                if (parseException != null) {
+                    ok = false;
+                }
             } catch (SAXParseException e) {
                 log.error(sm.getString("contextConfig.defaultParse"), e);
                 log.error(sm.getString("contextConfig.defaultPosition",
@@ -510,6 +526,7 @@ public final class ContextConfig
                 log.error(sm.getString("contextConfig.defaultParse"), e);
                 ok = false;
             } finally {
+                parseException = null;
                 try {
                     if (stream != null) {
                         stream.close();
@@ -838,5 +855,24 @@ public final class ContextConfig
         }
 
     }
+
+
+    private class ContextErrorHandler
+        implements ErrorHandler {
+
+        public void error(SAXParseException exception) {
+            parseException = exception;
+        }
+
+        public void fatalError(SAXParseException exception) {
+            parseException = exception;
+        }
+
+        public void warning(SAXParseException exception) {
+            parseException = exception;
+        }
+
+    }
+
 
 }
