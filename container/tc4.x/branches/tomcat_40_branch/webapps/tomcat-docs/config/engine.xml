@@ -54,6 +54,15 @@
         nested immediately inside.</p>
       </attribute>
 
+      <attribute name="jvmRoute" required="false">
+        <p>Identifier which must be used in load balancing scenarios to enable
+        session affinity. The indetifier, which must be unique across all
+        Tomcat 4 servers which participate in the cluster, will be appended to
+        the generated session identifier, therefore allowing the front end
+        proxy to always forward a particular session to the same Tomcat 4
+        instance.</p>
+      </attribute>
+
       <attribute name="name" required="true">
         <p>Logical name of this Engine, used in log and error messages.</p>
       </attribute>
