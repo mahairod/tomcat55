@@ -21,7 +21,7 @@
 
   <section name="log4j">
     <p>
-      	Tomcat 5.5 has done away with with localhost_log which you may be familiar with
+      	Tomcat 5.5 has done away with localhost_log which you may be familiar with
 	  	as the runtime exception/stack trace log. These types of error are usually thrown
 	  	by uncaught exceptions, but are still valuable to the developer. They can now be
 	  	found in the stdout log.
