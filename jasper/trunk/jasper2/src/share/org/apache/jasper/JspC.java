@@ -74,6 +74,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import org.apache.tools.ant.AntClassLoader;
+
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.TldLocationsCache;
@@ -940,30 +942,18 @@ public class JspC implements Options {
     private void initClassLoader(JspCompilationContext clctxt)
 	    throws IOException {
 
-        classPath = getClassPath();
+        String classPath = getClassPath();
 
-        ClassLoader parent=this.getClass().getClassLoader();
+        ClassLoader jspcLoader = getClass().getClassLoader();
+        if (jspcLoader instanceof AntClassLoader) {
+            classPath += File.pathSeparator
+                + ((AntClassLoader) jspcLoader).getClasspath();
+        }
 
+        // Turn the classPath into URLs
         ArrayList urls = new ArrayList();
-        File webappBase=new File(uriRoot);
-
-        if( parent instanceof URLClassLoader ) {
-            URLClassLoader uL=(URLClassLoader) parent;
-            URL path[]=uL.getURLs();
-            for( int i=0; i<path.length; i++ ) {
-                urls.add( path[i] );
-                classPath = classPath + File.pathSeparator +
-                    path[i].getFile();
-            }
-        }
-
-        if( parent instanceof org.apache.tools.ant.AntClassLoader ) {
-            classPath= classPath + File.pathSeparator +
-                ((org.apache.tools.ant.AntClassLoader)parent).getClasspath();
-        }
-
-        // Turn the classPath in URLs
-        StringTokenizer tokenizer = new StringTokenizer(classPath, File.pathSeparator);
+        StringTokenizer tokenizer = new StringTokenizer(classPath,
+                                                        File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
             String path = tokenizer.nextToken();
             try {
@@ -977,6 +967,7 @@ public class JspC implements Options {
             }
         }
 
+        File webappBase = new File(uriRoot);
         if (webappBase.exists()) {
             File classes = new File(webappBase, "/WEB-INF/classes");
             try {
