@@ -329,6 +329,10 @@ final class HttpServletResponseFacade  implements HttpServletResponse
      **/
     private boolean isEncodeable(String location) {
 
+        // Is this an intra-document reference?
+        if (location.startsWith("#"))
+            return (false);
+
 	// Are we in a valid session that is not using cookies?
 	Request request = response.getRequest();
 	if (!request.getFacade().isRequestedSessionIdValid() )
