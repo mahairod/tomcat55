@@ -15,6 +15,9 @@
   <property name="servlet-api.build"    value="build"/>
   <property name="servlet-api.dist"     value="dist"/>
 
+  <path id="examples.classpath">
+    <pathelement location="${servlet-api.build}/classes"/>
+  </path>
 
 
   <!-- ===================== Prepare Directories ========================= -->
@@ -25,6 +28,7 @@
     <mkdir dir="${servlet-api.build}/classes"/>
     <mkdir dir="${servlet-api.build}/docs"/>
     <mkdir dir="${servlet-api.build}/docs/api"/>
+    <mkdir dir="${servlet-api.build}/examples"/>
 
     <!-- "Dist" Hierarchy -->
     <mkdir dir="${servlet-api.dist}"/>
@@ -32,6 +36,7 @@
     <mkdir dir="${servlet-api.dist}/docs/api"/>
     <mkdir dir="${servlet-api.dist}/lib"/>
     <mkdir dir="${servlet-api.dist}/src"/>
+    <mkdir dir="${servlet-api.dist}/examples"/>
 
     <uptodate property="docs.uptodate" targetfile="${servlet-api.build}/docs/api/index.html">
       <srcfiles dir="src/share" includes="**/*.java" />
@@ -93,8 +98,31 @@
   </target>
 
 
+  <!-- ======================== Build JavaDoc =========================== -->
+  <target name="examples" depends="prepare">
+
+    <copy todir="${servlet-api.build}/examples">
+      <fileset dir="examples">
+        <exclude name="build.*"/>
+      </fileset>
+    </copy>
+
+    <javac   srcdir="examples/WEB-INF/classes" 
+             destdir="${servlet-api.build}/examples/WEB-INF/classes"
+             debug="${compile.debug}" deprecation="${compile.deprecation}"
+             optimize="${compile.optimize}"
+             excludes="**/CVS/**">
+      <classpath refid="examples.classpath" />
+    </javac>
+
+    <jar   jarfile="${servlet-api.dist}/examples/examples.war"
+           basedir="${servlet-api.build}/examples" includes="**"/>
+
+  </target>
+
+
   <!-- ===================== Distribution Files ========================= -->
-  <target name="dist" depends="compile,javadoc"
+  <target name="dist" depends="compile,examples,javadoc"
    description="Create binary distribution">
 
     <!-- Copy Javadocs -->
