@@ -126,13 +126,13 @@ public class DoorConnectionHandler implements DoorFunction {
     public void call( MsgBuffer buf ) {
 	try {
 	    MsgConnector con=new DoorConnector();
-	    RequestImpl rrequest=new RequestImpl();
+	    //	    RequestImpl rrequest=new RequestImpl();
 	    ConnectorResponse rresponse=new ConnectorResponse(con);
 	    ConnectorRequest  reqA=new ConnectorRequest(con);
-	    rrequest.setRequestAdapter( reqA );
+	    //	    rrequest.setRequestAdapter( reqA );
 
 
-	    contextM.service( rrequest, rresponse );
+	    contextM.service( reqA, rresponse );
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

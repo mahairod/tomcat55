@@ -101,39 +101,39 @@ public class BufferedServletOutputStream extends ServletOutputStream {
     protected int totalCount = 0;
     protected boolean committed = false;
     protected boolean closed = false;
-    Response response;
-    ResponseAdapter resA;
+    //    Response response;
+    Response resA;
     
     protected BufferedServletOutputStream() {
 	//	System.out.println("new BOS " + closed);
     }
 
-    protected BufferedServletOutputStream(ResponseAdapter resA) {
+    protected BufferedServletOutputStream(Response resA) {
 	//	System.out.println("new BOS " + closed);
 	this.resA=resA;
     }
 
-    public void setResponseAdapter( ResponseAdapter resA ) {
-	this.resA=resA;
-    }
+//     public void setResponseAdapter( Response resA ) {
+// 	this.resA=resA;
+//     }
     
     protected void doWrite( byte buffer[], int pos, int count) throws IOException {
 	resA.doWrite( buffer, pos, count);
     }
 
     protected void endResponse() throws IOException {
-	response.getResponseAdapter().endResponse();
+	resA.endResponse();
     }
 
     protected void sendHeaders() throws IOException {
-	if(response!=null)
-	    response.writeHeaders();
+ 	if(resA!=null)
+ 	    resA.writeHeaders();
 	if(resA!=null)
 	    resA.endHeaders();
     }
 
     public void setResponse( Response response ) {
-	this.response=response;
+	this.resA=response;
     }
 
     // Hack for the buffering issue.

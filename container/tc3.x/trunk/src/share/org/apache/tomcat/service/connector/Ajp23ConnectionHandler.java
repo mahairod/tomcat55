@@ -106,9 +106,9 @@ public class Ajp23ConnectionHandler implements  TcpConnectionHandler {
 	    socket=connection.getSocket();
 	    TcpConnector con=new TcpConnector( socket );
 	    ConnectorResponse rresponse=new ConnectorResponse(con);
-	    RequestImpl  rrequest=new RequestImpl();
+	    //	    RequestImpl  rrequest=new RequestImpl();
 	    ConnectorRequest  reqA=new ConnectorRequest(con);
-	    rrequest.setRequestAdapter( reqA ); 
+	    //rrequest.setRequestAdapter( reqA ); 
 
 	    boolean moreRequests=true;
             while( moreRequests ) { // XXX how to exit ? // request.hasMoreRequests()) {
@@ -126,9 +126,9 @@ public class Ajp23ConnectionHandler implements  TcpConnectionHandler {
 		
 		err=reqA.decodeRequest(msg);
 
-		contextM.service( rrequest, rresponse);
+		contextM.service( reqA, rresponse);
 
-		rrequest.recycle();
+		reqA.recycle();
 		rresponse.recycle();
 
 		// XXX

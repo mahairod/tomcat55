@@ -72,7 +72,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class HttpRequestAdapter extends RequestAdapterImpl {
+public class HttpRequestAdapter extends RequestImpl {
     private Socket socket;
     private boolean moreRequests = false;
     InputStream sin;

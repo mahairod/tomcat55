@@ -231,7 +231,7 @@ public class TcpEndpoint  { // implements Endpoint {
 
 	// XXX set socket options
 	// 	s.setSoLinger( true, 100);
-	s.setSoTimeout( 1000 );
+	//	s.setSoTimeout( 1000 );
 	
 	TcpConnection con=new TcpConnection();
 	con.setEndpoint(this);

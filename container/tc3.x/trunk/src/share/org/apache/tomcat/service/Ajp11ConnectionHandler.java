@@ -109,34 +109,37 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
 	    Socket socket=connection.getSocket();
 	    socket.setSoLinger( true, 100);
 	    //XXX recycle
-	    RequestImpl request=new RequestImpl();
+	    //	    RequestImpl request=new RequestImpl();
 	    
 	    AJPRequestAdapter reqA = new AJPRequestAdapter(socket); // todo: clean ConnectionHandler, make it abstract
-	    request.setRequestAdapter( reqA );
+	    //request.setRequestAdapter( reqA );
 	    
 	    Ajp11ResponseAdapter resA=new Ajp11ResponseAdapter();
-	    ResponseImpl response = new ResponseImpl();
+	    //	    ResponseImpl response = new ResponseImpl();
             resA.setOutputStream(socket.getOutputStream());
-	    response.setResponseAdapter(resA );
+	    //	    response.setResponseAdapter(resA );
 	    int count = 1;
 
-	    request.setResponse(response);
-	    response.setRequest(request);
+	    //	    request.setResponse(response);
+	    reqA.setResponse( resA );
+	    //	    request.setResponse(response);
+	    //	    response.setRequest(request);
+	    resA.setRequest(reqA);
 
 	    reqA.readNextRequest();
 
 	    // resolve the server that we are for
 
-	    int contentLength = request.getIntHeader("content-length");
+	    int contentLength = reqA.getIntHeader("content-length");
 	    if (contentLength != -1) {
 		BufferedServletInputStream sis =
-		    (BufferedServletInputStream)request.getInputStream();
+		    (BufferedServletInputStream)reqA.getInputStream();
 		sis.setLimit(contentLength);
 	    }
 
-	    contextM.service( request, response );
+	    contextM.service( reqA, resA );
 
-	    response.finish();
+	    resA.finish();
 	    socket.close();
 	} catch (Exception e) {
             // XXX
@@ -147,7 +150,7 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
     }
 }
 
-class AJPRequestAdapter extends RequestAdapterImpl {
+class AJPRequestAdapter extends RequestImpl {
     StringManager sm = StringManager.getManager("org.apache.tomcat.service");
     Socket socket;
     

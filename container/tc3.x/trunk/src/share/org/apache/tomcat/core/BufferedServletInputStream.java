@@ -87,16 +87,16 @@ public class BufferedServletInputStream extends ServletInputStream {
     
     private int bytesRead = 0;
     private int limit = -1;
-    private RequestAdapter reqA;
+    private Request reqA;
     
     public BufferedServletInputStream() {
     }
 
-    public BufferedServletInputStream( RequestAdapter reqA ) {
+    public BufferedServletInputStream( Request reqA ) {
 	this.reqA=reqA;
     }
     
-    public void setRequestAdapter(RequestAdapter reqA ) {
+    public void setRequest(Request reqA ) {
 	this.reqA=reqA;
     }
     
