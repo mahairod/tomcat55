@@ -114,7 +114,7 @@ public class ConnectorMBean extends ClassNameMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public boolean getClientAuth()
+    public String getClientAuth()
         throws Exception {
             
         Object clientAuthObj = null;
@@ -131,9 +131,9 @@ public class ConnectorMBean extends ClassNameMBean {
             }
            
         }    
-        if (clientAuthObj instanceof Boolean) {
-            return ((Boolean)clientAuthObj).booleanValue();
-        } else return false;
+        if (clientAuthObj instanceof String) {
+            return (String)clientAuthObj;
+        } else return "false";
         
     }
     
@@ -143,7 +143,7 @@ public class ConnectorMBean extends ClassNameMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void setClientAuth(boolean clientAuth)
+    public void setClientAuth(String clientAuth)
         throws Exception {
             
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
@@ -155,10 +155,10 @@ public class ConnectorMBean extends ClassNameMBean {
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // set clientAuth
                 Class partypes2 [] = new Class[1];
-                partypes2[0] = Boolean.TYPE;
+                partypes2[0] = String.class;
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("setClientAuth", partypes2);
                 Object arglist2[] = new Object[1];
-                arglist2[0] = new Boolean(clientAuth);
+                arglist2[0] = clientAuth;
                 meth2.invoke(factory, arglist2);
             } 
         } 

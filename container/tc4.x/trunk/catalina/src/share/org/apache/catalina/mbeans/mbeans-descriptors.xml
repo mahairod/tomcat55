@@ -258,7 +258,7 @@
 
     <attribute   name="clientAuth"
           description="Should we require client authentication?"
-                 type="boolean"/>
+                 type="java.lang.String"/>
 
     <attribute   name="connectionTimeout"
           description="Timeout value on the incoming connection"
