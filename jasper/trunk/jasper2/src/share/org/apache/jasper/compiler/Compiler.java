@@ -365,7 +365,6 @@ public class Compiler {
         }
         HttpJspBase servlet = jsw.getServlet();
         if (servlet == null) {
-            System.out.println("XXX No SERVLET, can't process includes");
             return true;
         }
         List includes = servlet.getIncludes();
