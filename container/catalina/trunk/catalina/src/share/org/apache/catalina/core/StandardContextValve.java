@@ -224,7 +224,7 @@ final class StandardContextValve
         throws IOException, ServletException {
 
         Object instances[] = 
-            ((StandardContext) container).getApplicationListeners();
+            ((Context) container).getApplicationEventListeners();
 
         ServletRequestEvent event = null;
 

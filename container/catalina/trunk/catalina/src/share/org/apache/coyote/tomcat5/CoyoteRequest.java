@@ -1369,7 +1369,7 @@ public class CoyoteRequest
         }
 
         // Notify interested application event listeners
-        Object listeners[] = context.getApplicationListeners();
+        Object listeners[] = context.getApplicationEventListeners();
         if ((listeners == null) || (listeners.length == 0))
             return;
         ServletRequestAttributeEvent event =
@@ -1434,7 +1434,7 @@ public class CoyoteRequest
         }
 
         // Notify interested application event listeners
-        Object listeners[] = context.getApplicationListeners();
+        Object listeners[] = context.getApplicationEventListeners();
         if ((listeners == null) || (listeners.length == 0))
             return;
         ServletRequestAttributeEvent event = null;
