@@ -74,7 +74,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 
-public class HttpResponse extends ResponseImpl  {
+public class HttpResponse extends Response {
     OutputStream os;
 
     public HttpResponse() {

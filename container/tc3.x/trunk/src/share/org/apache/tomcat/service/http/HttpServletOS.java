@@ -75,13 +75,13 @@ import javax.servlet.http.*;
 
 public class HttpServletOS extends BufferedServletOutputStream  { 
     OutputStream out;
-    ResponseImpl response;
+    Response response;
     
     // XXX clean up
     public HttpServletOS() {
     }
 
-    public HttpServletOS(ResponseImpl response, OutputStream out) {
+    public HttpServletOS(Response response, OutputStream out) {
 	setOutputStream( out);
 	setResponse( response) ;
     }
@@ -90,7 +90,7 @@ public class HttpServletOS extends BufferedServletOutputStream  {
 	this.out=out;
     }
 
-    public void setResponse( ResponseImpl response ) {
+    public void setResponse( Response response ) {
 	this.response=response;
     }
 

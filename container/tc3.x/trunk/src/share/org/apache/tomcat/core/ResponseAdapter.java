@@ -62,76 +62,42 @@
  */ 
 
 
-package org.apache.tomcat.service.connector;
+package org.apache.tomcat.core;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
-//import org.apache.tomcat.server.*;
+import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+/**
+ * Low-level representation of a Response in a server adapter.
+ * 
+ * @author costin@eng.sun.com
+ */
+public interface ResponseAdapter {
 
-public class ConnectorResponse extends Response {
-    public static final int SEND_HEADERS=2;
-    public static final int END_RESPONSE=5;
+    public void setStatus( int status, String message);
+    
+    public void addHeader( String name, String value );
 
-    MsgConnector con;
-    ConnectorServletOS rout;
+    // XXX This one or multiple addHeader?
+    // Probably not a big deal - but an adapter may have
+    // an optimized version for this one ( on round-trip only )
+    public void addMimeHeaders(MimeHeaders headers);
 
-    public ConnectorResponse(MsgConnector con) {
-        super();
-	this.con=con;
-	rout=new ConnectorServletOS(con);
-	rout.setResponse( this );
-	this.out=rout;
-    }
+    /** Signal that we're done with a particular request, the
+	server can go on and read more requests or close the socket
+    */
+    public void endResponse();
 
-    public void recycle() {
-	super.recycle();
-	rout.recycle();
-
-	rout=new ConnectorServletOS(con);
-	rout.setResponse( this );
-
-	out=rout;
-    }
-
-    // XXX if more headers that MAX_SIZE, send 2 packets!   
-    public void writeHeaders() throws IOException {
-	//	System.out.println("Writing headers");
-        if (omitHeaders) {
-            return;
-        }
-	fixHeaders();
-	
-	MsgBuffer msg=con.getMsgBuffer();
-	msg.reset();
-	msg.appendInt( SEND_HEADERS );
-	msg.appendInt( headers.size() );
-
-	Enumeration e = headers.names();
-	while (e.hasMoreElements()) {
-	    String headerName = (String)e.nextElement();
-	    String headerValue = headers.getHeader(headerName);
-	    msg.appendString( headerName);
-	    msg.appendString( headerValue);
-	}
-
-	msg.end();
-	con.send( msg );
-     }
-
-
-    public void endResponse() throws IOException {
-	MsgBuffer msg=con.getMsgBuffer();
-	msg.reset();
-	msg.appendInt( END_RESPONSE );
-	msg.end();
-	con.send( msg );
-    }
-
-
+    /** Either implement ServletOutputStream or return BufferedServletOutputStream(this)
+	and implement doWrite();
+     */
+    public ServletOutputStream getServletOutputStream() throws IOException;
+    
+    /** Write a chunk of bytes. Should be called only from ServletOutputStream implementations,
+	No need to implement it if your adapter implements ServletOutputStream.
+     */
+    public void doWrite( byte buffer[], int pos, int count) throws IOException ;
 }

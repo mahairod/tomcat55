@@ -192,6 +192,7 @@ public class RequestUtil {
     public static void processFormData(String data, Hashtable parameters) {
         // XXX
         // there's got to be a faster way of doing this.
+	if( data==null ) return; // no parameters
         StringTokenizer tok = new StringTokenizer(data, "&", false);
         while (tok.hasMoreTokens()) {
             String pair = tok.nextToken();

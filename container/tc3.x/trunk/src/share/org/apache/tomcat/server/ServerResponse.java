@@ -81,7 +81,7 @@ import javax.servlet.http.*;
  * @author Harish Prabandham
  */
 
-public class ServerResponse extends ResponseImpl {
+public class ServerResponse extends Response {
     protected StringManager sm =
         StringManager.getManager(Constants.Package);
     

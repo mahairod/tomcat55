@@ -70,7 +70,7 @@ import java.net.*;
 import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
-//import org.apache.tomcat.server.*;
+import org.apache.tomcat.server.HttpRequestAdapter;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -107,14 +107,18 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    socket=connection.getSocket();
 	    InputStream in=socket.getInputStream();
 	    OutputStream out=socket.getOutputStream();
-	    HttpRequest request=new HttpRequest();
+	    Request request=new Request();
+	    HttpRequestAdapter reqA=new HttpRequestAdapter();
 	    HttpResponse response=new HttpResponse();
 	    response.setRequest(request);
 	    request.setResponse( response );
+	    request.setRequestAdapter( reqA );
+	    
+	    reqA.setSocket( socket );
 	    
 	    response.setOutputStream( out );
 
-	    request.readRequest( in );
+	    reqA.readNextRequest(response );
 
 	    contextM.service( request, response );
 

@@ -77,13 +77,13 @@ import org.apache.tomcat.core.*;
 
 class ServletInputStreamImpl extends BufferedServletInputStream {
 
-    private ServerRequest request;
+    //    private ServerRequest request;
     private InputStream in;
 
     
-    ServletInputStreamImpl(ServerRequest request, InputStream in) {
+    ServletInputStreamImpl(InputStream in) {
 	super();
-	this.request = request;
+	//	this.request = request;
 	this.in = in;
     }
     public int doRead() throws IOException {

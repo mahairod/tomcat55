@@ -93,6 +93,7 @@ public class WelcomeFileTest extends TestableBase {
 	} catch (Exception e) {
   	    testResult.setStatus(false);
   	    testResult.setMessage("Exception: " + e);
+	    e.printStackTrace();
   	    return testResult; 
   	}
     }

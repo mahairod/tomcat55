@@ -404,7 +404,7 @@ public class ContextManager  implements Server {
     /** Common for all connectors, needs to be shared in order to avoid
 	code duplication
     */
-    public void service( Request rrequest, ResponseImpl rresponse ) {
+    public void service( Request rrequest, Response rresponse ) {
 	try {
 	    rrequest.setResponse(rresponse);
 	    rresponse.setRequest(rrequest);

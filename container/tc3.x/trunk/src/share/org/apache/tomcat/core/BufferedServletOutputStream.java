@@ -101,7 +101,7 @@ public abstract class BufferedServletOutputStream extends ServletOutputStream {
     protected int totalCount = 0;
     protected boolean committed = false;
     protected boolean closed = false;
-    ResponseImpl response;
+    Response response;
     
     protected BufferedServletOutputStream() {
 	//	System.out.println("new BOS " + closed);
@@ -117,7 +117,7 @@ public abstract class BufferedServletOutputStream extends ServletOutputStream {
 	response.writeHeaders();
     }
 
-    public void setResponse( ResponseImpl response ) {
+    public void setResponse( Response response ) {
 	this.response=response;
     }
 

@@ -225,7 +225,7 @@ class ServletWrapper {
                 Constants.JSP.Directive.Compile.Name + "=" +
                 Constants.JSP.Directive.Compile.Value;
 
-            request.setURI(getContext().getPath() + requestURI);
+            request.setRequestURI(getContext().getPath() + requestURI);
             request.setContext(getContext());
             request.getSession(true);
 
