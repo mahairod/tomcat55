@@ -259,9 +259,6 @@ public final class CGIServlet extends HttpServlet {
     /** the debugging detail level for this servlet. */
     private int debug = 0;
 
-    /** the time in ms to wait for the client to send us CGI input data */
-    private int iClientInputTimeout = 100;
-
     /**
      *  The CGI search path will start at
      *    webAppRootDir + File.separator + cgiPathPrefix
@@ -273,10 +270,6 @@ public final class CGIServlet extends HttpServlet {
     /** the command to use with the script */
     private String cgiExecutable = "perl";
     
-    /** the encoding to use for parameters */
-    private String parameterEncoding = System.getProperty("file.encoding",
-                                                          "UTF-8");
-
     /** object used to ensure multiple threads don't try to expand same file */
     static Object expandFileLock = new Object();
 
@@ -314,9 +307,6 @@ public final class CGIServlet extends HttpServlet {
             debug = Integer.parseInt(value);
             cgiPathPrefix =
                 getServletConfig().getInitParameter("cgiPathPrefix");
-            value =
-                getServletConfig().getInitParameter("iClientInputTimeout");
-            iClientInputTimeout = Integer.parseInt(value);
         } catch (Throwable t) {
             //NOOP
         }
@@ -728,8 +718,7 @@ public final class CGIServlet extends HttpServlet {
                 if (param != null) {
                     String values[] = req.getParameterValues(param);
                     for (int i=0; i < values.length; i++) {
-                        String value = URLEncoder.encode(values[i],
-                                                         parameterEncoding);
+                        String value = URLEncoder.encode(values[i]);
                         NameValuePair nvp = new NameValuePair(param, value);
                         queryParameters.add(nvp);
                     }

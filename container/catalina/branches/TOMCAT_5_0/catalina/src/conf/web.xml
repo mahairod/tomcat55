@@ -262,19 +262,11 @@
   <!--                       webAppRootDir + File.separator + this prefix.  -->
   <!--                       [WEB-INF/cgi]                                  -->
   <!--                                                                      -->
-  <!--   clientInputTimeout  The time (in milliseconds) to wait for input   -->
-  <!--                       from the browser before assuming that there    -->
-  <!--                       is none.  [100]                                -->
-  <!--                                                                      -->
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
   <!--                                                                      -->
   <!--   executable          Name of the exectuable used to run the script. -->
   <!--                       [perl]                                         -->
-  <!--                                                                      -->
-  <!--   parameterEncoding   Name of parameter encoding to be used with CGI -->
-  <!--                       servlet.                                       -->
-  <!--                       [System.getProperty("file.encoding","UTF-8")]  -->
   <!--                                                                      -->
   <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
   <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->
@@ -284,10 +276,6 @@
     <servlet>
         <servlet-name>cgi</servlet-name>
         <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
-        <init-param>
-          <param-name>clientInputTimeout</param-name>
-          <param-value>100</param-value>
-        </init-param>
         <init-param>
           <param-name>debug</param-name>
           <param-value>6</param-value>
