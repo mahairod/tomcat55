@@ -117,6 +117,11 @@ code for each page instead of deleting it? <code>true</code> or
 print statement per input line, to ease debugging?
 <code>true</code> or <code>false</code>, default <code>true</code>.</li>
 
+<li><strong>modificationTestInterval</strong> - Checks for modification for a given
+JSP file (and all its dependent files) will be performed only once every specified amount
+of milliseconds. Setting this to -1 will cause the JSP to be checked on every access.
+Default is <code>4000</code> milliseconds.</li>
+
 <li><strong>reloading</strong> - Should Jasper check for modified JSPs?
 <code>true</code> or <code>false</code>, default <code>false</code>.</li>
 
@@ -129,9 +134,25 @@ actions or directives be trimmed ?, default <code>false</code>.</li>
 </ul>
 </p>
 
+<p>The Java compiler from Eclipse JDT in included as the default compiler. It is an
+advanced Java compiler which will load all dependencies from the Tomcat class loader, 
+which will help tremendously when compiling on large installations with tens of JARs.
+On fast servers, this will allow sub-second recompilation cycles for even large JSP 
+pages. This new compiler will be updated to support the Java 5 syntax as soon as
+possible.</p>
+
+<p>Apache Ant, which was used in previous Tomcat releases, can be used instead instead of 
+the new compiler by simply removing the <code>common/lib/jasper-compiler-jdt.jar</code> file, 
+and placing the <code>ant.jar</code> file from the latest Ant distribution in the 
+<code>common/lib</code> folder.</p>
+
 </section>
 
 <section name="Production Configuration">
+
+<p>The main JSP optimization which can be done is precompilation of JSPs. However,
+this might not be possible (for example, when using the jsp-property-group feature)
+or practical, in which case the configuration of the Jasper servlet becomes critical.</p>
 
 <p>When using Jasper 2 in a production Tomcat server you should consider
 making the following changes from the default configuration.
@@ -140,6 +161,9 @@ making the following changes from the default configuration.
 pages compilation set this to <code>false</code>.</li>
 <li><strong>genStrAsCharArray</strong> - To generate slightly more efficient 
 char arrays, set this to <code>true</code>.</li>
+<li><strong>modificationTestInterval</strong> - If development has to be set to
+<code>true</code> for any reason (such as dynamic generation of JSPs), setting
+this to a high value will improve performance a lot.</li>
 <li><strong>trimSpaces</strong> - To remove useless bytes from the response,
 set this to <code>true</code>.</li>
 </ul>
@@ -150,7 +174,8 @@ set this to <code>true</code>.</li>
 <section name="Web Application Compilation">
 
 <p>Using Ant is the preferred way to compile web applications using JSPC. 
-Use the script given below to precompile a webapp:
+Use the script given below (a similar script is included in the "deployer" 
+download) to precompile a webapp:
 </p>
 
 <p>
