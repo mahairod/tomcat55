@@ -118,7 +118,7 @@ public final class StandardWrapper
     public StandardWrapper() {
 
 	super();
-	setBasic(new StandardWrapperValve());
+	pipeline.setBasic(new StandardWrapperValve());
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -99,11 +99,12 @@ import org.apache.catalina.util.StringManager;
  * this base class must implement <code>getInfo()</code>, and may implement
  * a replacement for <code>invoke()</code>.
  * <p>
- * If a subclass prefers to use the default version of <code>invoke()</code>
- * with pipeline support, it should instantiate a Valve instance containing
- * the default behavior desired, and assign it with <code>setBasic()</code>
- * in a constructor.  In that way, any and all configured Valves added to the
- * pipeline will preceed the basic Valve.
+ * All subclasses of this abstract base class will include support for a
+ * Pipeline object that defines the processing to be performed for each request
+ * received by the <code>invoke()</code> method of this class, utilizig the
+ * "Chain of Responsibility" design pattern.  A subclass should encapsulate its
+ * own processing functionality as a <code>Valve</code>, and configure this
+ * Valve into the pipeline by calling <code>setBasic()</code>.
  * <p>
  * This implementation fires property change events, per the JavaBeans design
  * pattern, for changes in singleton properties.  In addition, it fires the
@@ -154,16 +155,10 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ContainerBase
-    implements Container, Lifecycle, Pipeline {
+    implements Container, Lifecycle {
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The Valve that implements the basic behavior of this Container, if any.
-     */
-    protected Valve basic = null;
 
 
     /**
@@ -176,12 +171,6 @@ public abstract class ContainerBase
      * The debugging detail level for this component.
      */
     protected int debug = 0;
-
-
-    /**
-     * The first Valve in the pipeline associated with this Container.
-     */
-    protected Valve first = null;
 
 
     /**
@@ -247,7 +236,13 @@ public abstract class ContainerBase
     /**
      * The parent class loader to be configured when we install a Loader.
      */
-    private ClassLoader parentClassLoader = null;
+    protected ClassLoader parentClassLoader = null;
+
+
+    /**
+     * The Pipeline object with which this Container is associated.
+     */
+    protected Pipeline pipeline = new StandardPipeline(this);
 
 
     /**
@@ -285,70 +280,6 @@ public abstract class ContainerBase
 
 
     /**
-     * Return the Valve that provides the basic functionality for this
-     * Container, if any.
-     */
-    public Valve getBasic() {
-
-	return (basic);
-
-    }
-
-
-    /**
-     * Set the Valve that provides the basic functionality for this
-     * Container, if any.
-     *
-     * @param valve The new basic Valve
-     */
-    public synchronized void setBasic(Valve valve) {
-
-	// Change components if necessary
-	Valve oldBasic = this.basic;
-	if (oldBasic == valve)
-	    return;
-	this.basic = valve;
-
-	// Stop the old component if necessary and remove it from the pipeline
-	if (oldBasic != null) {
-	    Valve previous = getLast();
-	    if (previous != null)
-		previous.setNext(null);
-	    oldBasic.setContainer(null);
-	}
-	if (started && (oldBasic != null) && (oldBasic instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) oldBasic).stop();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setBasic: stop: ", e);
-	    }
-	}
-
-	// Start the new component if necessary and link it into the pipeline
-	if (this.basic != null) {
-	    this.basic.setContainer((Container) this);
-	    this.basic.setNext(null);
-	}
-	if (started && (valve != null) && (valve instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) valve).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setBasic: start: ", e);
-	    }
-	}
-	if (this.basic != null) {
-	    Valve previous = getLast();
-	    if (previous != null)
-		previous.setNext(this.basic);
-	}
-
-	// Report this property change to interested listeners
-	support.firePropertyChange("basic", oldBasic, this.basic);
-
-    }
-
-
-    /**
      * Return the debugging detail level for this component.
      */
     public int getDebug() {
@@ -379,23 +310,6 @@ public abstract class ContainerBase
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public abstract String getInfo();
-
-
-    /**
-     * Return the last configured Valve (other than the basic Valve, if any)
-     * configured in the pipeline for this Container, if any; otherwise
-     * return <code>null</code>.
-     */
-    public Valve getLast() {
-
-	if (first == null)
-	    return (null);
-	Valve next = first;
-	while ((next.getNext() != null) && (next.getNext() != basic))
-	    next = next.getNext();
-	return (next);
-
-    }
 
 
     /**
@@ -663,6 +577,17 @@ public abstract class ContainerBase
         this.parentClassLoader = parent;
         support.firePropertyChange("parentClassLoader", oldParentClassLoader,
                                    this.parentClassLoader);
+
+    }
+
+
+    /**
+     * Return the Pipeline object that manages the Valves associated with
+     * this Container.
+     */
+    public Pipeline getPipeline() {
+
+        return (this.pipeline);
 
     }
 
@@ -971,13 +896,7 @@ public abstract class ContainerBase
     public void invoke(Request request, Response response)
 	throws IOException, ServletException {
 
-	if (first != null)
-	    first.invoke(request, response);
-	else if (basic != null)
-	    basic.invoke(request, response);
-	else
-	    throw new IllegalStateException
-		(sm.getString("containerBase.notConfigured"));
+        pipeline.invoke(request, response);
 
     }
 
@@ -1161,12 +1080,8 @@ public abstract class ContainerBase
 	}
 
 	// Start the Valves in our pipeline (including the basic), if any
-	Valve current = first;
-	while (current != null) {
-	    if (current instanceof Lifecycle)
-		((Lifecycle) current).start();
-	    current = current.getNext();
-	}
+        if (pipeline instanceof Lifecycle)
+            ((Lifecycle) pipeline).start();
 
 	// Notify our interested LifecycleListeners
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
@@ -1193,14 +1108,8 @@ public abstract class ContainerBase
 	started = false;
 
 	// Stop the Valves in our pipeline (including the basic), if any
-	Valve current = basic;
-	if (current == null)
-	    current = getLast();
-	while (current != null) {
-	    if (current instanceof Lifecycle)
-		((Lifecycle) current).stop();
-	    current = current.getPrevious();
-	}
+        if (pipeline instanceof Lifecycle)
+            ((Lifecycle) pipeline).stop();
 
 	// Stop our child containers, if any
 	Container children[] = findChildren();
@@ -1254,52 +1163,20 @@ public abstract class ContainerBase
      */
     public synchronized void addValve(Valve valve) {
 
-	// Start the new component if necessary
-	valve.setContainer((Container) this);
-	valve.setNext(basic);
-	if (started && (valve != null) && (valve instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) valve).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.addValve: start: ", e);
-	    }
-	}
-
-	// Link the new component into the pipeline
-	if (basic == null) {
-	    Valve last = getLast();
-	    if (last == null) {
-		valve.setPrevious(null);
-		first = valve;
-	    } else {
-		valve.setPrevious(last);
-		last.setNext(valve);
-	    }
-	} else {
-	    Valve previous = basic.getPrevious();
-	    if (previous == null) {
-		valve.setPrevious(null);
-		first = valve;
-	    } else {
-		valve.setPrevious(previous);
-		previous.setNext(valve);
-	    }
-            basic.setPrevious(valve);
-	}
-
-	// Report this pipeline change to interested listeners
+        pipeline.addValve(valve);
 	fireContainerEvent(ADD_VALVE_EVENT, valve);
 
     }
 
 
     /**
-     * Return the first Valve in the pipeline associated with this Container.
-     * If there are no such Valves, <code>null</code> is returned.
+     * Return the set of Valves in the pipeline associated with this
+     * Container, including the basic Valve (if any).  If there are no
+     * such Valves, a zero-length array is returned.
      */
-    public Valve findValves() {
+    public Valve[] getValves() {
 
-	return (first);
+        return (pipeline.getValves());
 
     }
 
@@ -1312,36 +1189,8 @@ public abstract class ContainerBase
      */
     public synchronized void removeValve(Valve valve) {
 
-	Valve current = first;
-	while (current != null) {
-	    if (current != valve) {
-		current = current.getNext();
-		continue;
-	    }
-	    Valve previous = current.getPrevious();
-	    Valve next = current.getNext();
-	    if (previous == null) {
-		if (next == null) {
-		    first = null;
-		} else {
-		    next.setPrevious(null);
-		    first = next;
-		}
-	    } else {
-		previous.setNext(next);
-		if (next != null)
-		    next.setPrevious(previous);
-	    }
-	    if (started && (valve != null) && (valve instanceof Lifecycle)) {
-		try {
-		    ((Lifecycle) valve).stop();
-		} catch (LifecycleException e) {
-		    log("ContainerBase.removeValve: stop: ", e);
-		}
-	    }
-	    fireContainerEvent(REMOVE_VALVE_EVENT, valve);
-	    break;
-	}
+        pipeline.removeValve(valve);
+        fireContainerEvent(REMOVE_VALVE_EVENT, valve);
 
     }
 

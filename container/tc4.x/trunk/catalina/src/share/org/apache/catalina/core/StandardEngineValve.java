@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,6 +73,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Host;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -131,12 +132,14 @@ final class StandardEngineValve
      * be found, return an appropriate HTTP error.
      *
      * @param request Request to be processed
-     * @param update Update request to reflect this mapping?
+     * @param response Response to be produced
+     * @param valveContext Valve context used to forward to the next Valve
      *
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext valveContext)
 	throws IOException, ServletException {
 
 	// Validate the request and response object types
