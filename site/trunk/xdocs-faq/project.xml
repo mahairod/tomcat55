@@ -24,6 +24,7 @@
         <item name="Deployment"                 href="deployment.html" />
         <item name="How do I"                   href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto"/>
         <item name="Linux / Unix"               href="unix.html"/>
+        <item name="OS/2"                       href="os2.html"/>
         <item name="Memory"                     href="memory.html"/>
         <item name="Meta"                       href="meta.html"/>
         <item name="Miscellaneous"              href="misc.html"/>
