@@ -102,7 +102,6 @@ public class JspC implements Options { //, JspCompilationContext {
     public static final String SWITCH_WEBAPP_XML = "-webxml";
     public static final String SWITCH_MAPPED = "-mapped";
     public static final String SWITCH_DIE = "-die";
-    public static final String SWITCH_SAX2 = "-sax2";
 
     public static final int NO_WEBXML = 0;
     public static final int INC_WEBXML = 10;
@@ -148,8 +147,6 @@ public class JspC implements Options { //, JspCompilationContext {
     boolean dirset;
 
     Vector extensions;
-
-    String sax2DriverClassName = "org.apache.xerces.parsers.SAXParser";
 
     public boolean getKeepGenerated() {
         // isn't this why we are running jspc?
@@ -207,10 +204,6 @@ public class JspC implements Options { //, JspCompilationContext {
         return System.getProperty("java.class.path");
     }
 
-    public String getSax2DriverClassName() {
-	return sax2DriverClassName;
-    }
-    
     int argPos;
     // value set by beutifully obsfucscated java
     boolean fullstop = false;
@@ -315,8 +308,6 @@ public class JspC implements Options { //, JspCompilationContext {
                     dieLevel = DEFAULT_DIE_LEVEL;
                 }
                 die = dieLevel;
-            } else if (tok.startsWith(SWITCH_SAX2)) {
-                sax2DriverClassName = nextArg();
             } else {
                 pushBackArg();
                 // Not a recognized Option?  Start treting them as JSP Pages

@@ -125,10 +125,4 @@ public interface Options {
      * ProtectionDomain for this JSP Context when using a SecurityManager
      */
     public Object getProtectionDomain();
-
-    /**
-     * The SAX 2.0 driver class name.
-     * @@@ Temporary until JAXP supports SAX2.0
-     */
-    public String getSax2DriverClassName();
 }

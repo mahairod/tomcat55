@@ -2,9 +2,7 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
-  <property name="ant.home"        value="${basedir}/../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
-  <property name="servletapi.home" value="${basedir}/../../jakarta-servletapi"/>
   <property name="webapps.build"   value="${basedir}/../../build/webapps"/>
   <property name="webapps.deploy"  value="${basedir}/../../build/tomcat-4.0"/>
   <property name="webapps.dist"    value="${basedir}/../../dist/webapps"/>

@@ -50,10 +50,6 @@
       <param-name>logVerbosityLevel</param-name>
       <param-value>WARNING</param-value>
     </init-param>
-    <init-param>
-      <param-name>sax2DriverClassName</param-name>
-      <param-value>org.apache.xerces.parsers.SAXParser</param-value>
-    </init-param>
 <!--
     <load-on-startup>4</load-on-startup>
 -->

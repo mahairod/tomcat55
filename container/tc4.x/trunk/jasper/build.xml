@@ -2,24 +2,21 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
-  <property name="ant.home"        value="../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
   <property name="jasper.build"    value="../../build/jasper"/>
   <property name="jasper.deploy"   value="../../build/tomcat-4.0"/>
   <property name="jasper.dist"     value="../../dist/jasper"/>
-  <property name="xerces.home"     value="${basedir}/../xerces"/>
-  <property name="servletapi.home" value="../../jakarta-servletapi"/>
-  <property name="java.home"       value="java.home_is_undefined"/>
-
 
   <!-- ================== Derived Property Values ========================= -->
-  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
+  <property name="jaxp.jar"        value="${jasper.jaxp.home}/jaxp.jar"/>
+  <property name="parser.jar"      value="${jasper.jaxp.home}/${jasper.jaxp.parser.jar}"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
   <property name="tools.jar"       value="${java.home}/lib/tools.jar"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+    <available file="${jaxp.jar}" property="jaxp.jar.present" />
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
     <mkdir dir="${jasper.build}/classes"/>
@@ -28,7 +25,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare">
+  <target name="build-static" depends="build-prepare,copy-jaxp-jar">
 
     <!-- Executable Commands -->
     <copydir src="src/bin"  dest="${jasper.build}/bin"/>
@@ -40,18 +37,21 @@
     <!-- Shared Extensions -->
     <!--   Jasper needs the servlet API classes -->
     <copyfile src="${servlet.jar}" dest="${jasper.build}/bin/servlet.jar"/>
-    <!--   Jasper needs Xerces (JAXP1.0/SAX2.0 compliant parser -->
-    <copyfile src="${xerces.jar}"    dest="${jasper.build}/lib/xerces.jar"/>
+    <!--   Jasper needs JAXP1.0/SAX2.0 compliant parser -->
+    <copyfile src="${parser.jar}"  dest="${jasper.build}/lib/${jasper.jaxp.parser.jar}"/>
 
   </target>
 
+  <target name="copy-jaxp-jar" if="jaxp.jar.present" >
+    <copyfile src="${jaxp.jar}"  dest="${jasper.build}/lib/jaxp.jar"/>
+  </target> 
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static">
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${jasper.build}/classes"
-          classpath="${servlet.jar}"
+          classpath="${parser.jar}:${jaxp.jar}:${servlet.jar}"
         deprecation="off" debug="on" optimize="off"
            excludes="**/CVS/**"/>
 
@@ -69,7 +69,7 @@
     <deltree dir="${jasper.build}/javadoc"/>
     <mkdir dir="${jasper.build}/javadoc"/>
     <javadoc packagenames="org.apache.jasper.*"
-             classpath="${tools.jar}:${xerces.jar}:${servlet.jar}:${jasper.build}/classes"
+             classpath="${tools.jar}:${parser.jar}:${jaxp.jar}:${servlet.jar}:${jasper.build}/classes"
                sourcepath="src/share"
                   destdir="${jasper.build}/javadoc"
                    author="true"

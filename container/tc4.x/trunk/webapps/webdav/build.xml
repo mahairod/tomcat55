@@ -2,7 +2,6 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
-  <property name="ant.home"        value="../../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
   <property name="build.dir"       value="../../../build/webapps"/>
   <property name="dist.dir"        value="../../../dist/webapps"/>

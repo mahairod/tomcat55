@@ -130,18 +130,12 @@ public class ParserController {
     static String jspDtd_part2 = null;
     */
 
-    /*
-     * Cached value of the class name of the SAX2 driver. 
-     */
-    String sax2DriverClassName;
-
     //*********************************************************************
     // Constructor
 
     public ParserController(JspCompilationContext ctxt) {
         this.ctxt = ctxt; // @@@ can we assert that ctxt is not null?
         jspHandler = new JspParseEventListener(ctxt, this);
-	sax2DriverClassName = ctxt.getOptions().getSax2DriverClassName();
 	
 	/* @@@ NOT COMPILED
 	// Cache the content of the jsp DTD
@@ -210,7 +204,7 @@ public class ParserController {
 	    } catch (IOException ex) {}
             reader = getReader(file, encoding);
             if (isXml) {
-                (new ParserXJspSax(currentFilePath, reader, jspHandler, sax2DriverClassName)).parse();
+                (new ParserXJspSax(currentFilePath, reader, jspHandler)).parse();
             } else {
                 (new Parser(ctxt, file, encoding, reader, jspHandler)).parse();
             }

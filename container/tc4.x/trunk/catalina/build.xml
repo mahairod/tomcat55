@@ -2,20 +2,14 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
-  <property name="ant.home"        value="../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
   <property name="catalina.build"  value="../../build/catalina"/>
   <property name="catalina.deploy" value="../../build/tomcat-4.0"/>
   <property name="catalina.dist"   value="../../dist/catalina"/>
-  <property name="xerces.home"     value="${basedir}/../xerces"/>
-  <property name="jsse.home"       value="../../jsse"/>
-  <property name="jmx.home"        value="../../jmx"/>
-  <property name="regexp.home"     value="../../jakarta-regexp"/>
-  <property name="servletapi.home" value="../../jakarta-servletapi"/>
-
 
   <!-- ================== Derived Property Values ========================= -->
-  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
+  <property name="jaxp.jar"        value="${catalina.jaxp.home}/jaxp.jar"/>
+  <property name="parser.jar"      value="${catalina.jaxp.home}/${catalina.jaxp.parser.jar}"/>
   <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
@@ -25,6 +19,7 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+    <available file="${jaxp.jar}" property="jaxp.jar.present" />
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
     <mkdir dir="${catalina.build}/classes"/>
@@ -35,7 +30,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare">
+  <target name="build-static" depends="build-prepare,copy-jaxp-jar">
 
     <!-- Executable Commands -->
     <copydir src="src/bin"  dest="${catalina.build}/bin"/>
@@ -53,8 +48,8 @@
     <copyfile src="${servlet.jar}" dest="${catalina.build}/bin/servlet.jar"/>
 
     <!-- Server Components -->
-    <!--   Catalina needs Xerces XML parser -->
-    <copyfile src="${xerces.jar}"  dest="${catalina.build}/server/xerces.jar"/>
+    <!--   Catalina needs JAXP compliant XML parser -->
+    <copyfile src="${parser.jar}"  dest="${catalina.build}/server/${catalina.jaxp.parser.jar}"/>
     <!--   Catalina needs the regular expression library -->
     <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
     <!--   Catalina needs the JSSE packages -->
@@ -65,13 +60,17 @@
 -->
   </target>
 
+  <target name="copy-jaxp-jar" if="jaxp.jar.present" >
+    <copyfile src="${jaxp.jar}"  dest="${catalina.build}/server/jaxp.jar"/>
+  </target>    
+
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static">
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-             classpath="${xerces.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
+             classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**"/>
 
@@ -92,7 +91,7 @@
     <deltree dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*"
-             classpath="${xerces.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${jmxri.jar}:${servlet.jar}:${catalina.build}/classes"
+             classpath="${parser.jar}:${jaxp.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${jmxri.jar}:${servlet.jar}:${catalina.build}/classes"
                sourcepath="src/share"
                   destdir="${catalina.build}/javadoc"
                    author="true"

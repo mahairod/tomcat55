@@ -65,6 +65,8 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Stack;
 
+import javax.xml.parsers.*;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -92,11 +94,6 @@ import org.apache.jasper.logging.Logger;
  * @author Pierre Delisle
  */
 public class ParserXJspSax {
-
-    /*
-     * The SAX 'driver' class to be used for parsing.
-     */
-    private String sax2DriverClassName;
 
     /* 
      * InputSource for XML document
@@ -132,13 +129,11 @@ public class ParserXJspSax {
 
     public ParserXJspSax(String filePath,
 			 InputStreamReader reader, 
-			 ParseEventListener jspHandler,
-			 String sax2DriverClassName) 
+			 ParseEventListener jspHandler)
     {
 	this.filePath = filePath;
 	this.is = new InputSource(reader);
 	this.jspHandler = jspHandler;
-	this.sax2DriverClassName = sax2DriverClassName;
     }
     
     //*********************************************************************
@@ -146,8 +141,9 @@ public class ParserXJspSax {
     
     public void parse() throws JasperException {
         try {
-            XMLReader parser =
-                XMLReaderFactory.createXMLReader(sax2DriverClassName);
+	    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+	    SAXParser saxParser = saxParserFactory.newSAXParser();
+            XMLReader parser = saxParser.getXMLReader();
             ParserXJspSaxHandler handler =
                 new ParserXJspSaxHandler(filePath, jspHandler);
 	    
@@ -184,6 +180,8 @@ public class ParserXJspSax {
 
         } catch (IOException ex) {
 	    throw new JasperException(ex);
+	} catch (ParserConfigurationException ex) {
+	    throw new ParseException(ex.getMessage());
         } catch (SAXParseException ex) {
 	    Mark mark = 
 		new Mark(filePath, ex.getLineNumber(), ex.getColumnNumber());

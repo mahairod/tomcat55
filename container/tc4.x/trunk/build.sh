@@ -4,24 +4,48 @@
 #
 # Environment Variable Prerequisites:
 #
+#   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
+#
+#   JAXP_HOME        Points at a JAXP compliant XML parser 
+#                    installation directory [NONE]
+#
+#   JAXP_PARSER_JAR  The jar filename of the JAXP compliant 
+#                    'XML parser' [crimson.jar]
+#
 #   ANT_HOME         Must point at your Ant installation [../jakarta-ant]
 #
 #   ANT_OPTS         Command line options to the Java runtime
 #                    that executes Ant [NONE]
 #
-#   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
-#
-#   XERCES_HOME      Must point at your XERCES installation [REQUIRED]
-#
+#   ANT_XML_CLASSPATH  
+#                    Jar files added to the classpath for the XML parsing
+#                    requirements of ant
+#                    [$JAXP_HOME/$JAXP_PARSER_JAR:$JAXP_HOME/jaxp.jar]
+# 
 #   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 #
 #   JMX_HOME         Must point at your JMX installation [REQUIRED]
 #
-#   REGEXP_HOME      Must point at your "jakarta-regexp" installation
-#                    [../jakarta-regexp]
+#   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 #
 #   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-#                    [../jakarta-servletapi]
+#                    [REQUIRED]
+# 
+#   CATALINA_JAXP_HOME        
+#                    JAXP 1.0 compliant XML parser installation directory 
+#                    used for catalina [$JAXP_HOME]
+#
+#   CATALINA_JAXP_PARSER_JAR  
+#                    The jar filename of the JAXP compliant XML parser 
+#                    used for catalina [$JAXP_PARSER_JAR]
+#
+#   JASPER_JAXP_HOME        
+#                    JAXP 1.1 compliant XML parser installation directory 
+#                    used for jasper [$JAXP_HOME]
+#
+#   JASPER_JAXP_PARSER_JAR  
+#                    The jar filename of the JAXP compliant XML parser 
+#                    used for jasper [$JAXP_PARSER_JAR]
 #
 # $Id$
 # -----------------------------------------------------------------------------
@@ -29,21 +53,8 @@
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
-if [ "$ANT_HOME" = "" ] ; then
-  ANT_HOME=../jakarta-ant
-fi
-
-if [ "$ANT_OPTS" = "" ] ; then
-  ANT_OPTS=""
-fi
-
 if [ "$JAVA_HOME" = "" ] ; then
   echo You must set JAVA_HOME to point at your Java Development Kit install
-  exit 1
-fi
-
-if [ "$XERCES_HOME" = "" ] ; then
-  echo You must set XERCES_HOME to point at your Xerces install
   exit 1
 fi
 
@@ -67,16 +78,63 @@ if [ "$SERVLETAPI_HOME" = "" ] ; then
   exit 1
 fi
 
+if [ "$JAXP_PARSER_JAR" = "" ] ; then
+  JAXP_PARSER_JAR=crimson.jar
+fi
+
+if [ "$ANT_XML_CLASSPATH" = "" ] ; then
+  ANT_XML_CLASSPATH=$JAXP_HOME/$JAXP_PARSER_JAR:$JAXP_HOME/jaxp.jar
+  ANT_USING_DEFAULT=true
+fi
+
+if [ "$CATALINA_JAXP_HOME" = "" ] ; then
+  CATALINA_JAXP_HOME=$JAXP_HOME
+fi
+
+if [ "$JASPER_JAXP_HOME" = "" ] ; then
+  JASPER_JAXP_HOME=$JAXP_HOME
+fi
+
+if [ "$CATALINA_JAXP_HOME" = "" -o "$JASPER_JAXP_HOME" = "" -o "$ANT_USING_DEFAULT" = "true" -a "$JAXP_HOME" = "" ] ; then
+  echo You must set JAXP_HOME to point at your XML Parser install directory.
+  echo By default, ant, catalina, and jasper will use jaxp.jar and crimson.jar from
+  echo that directory. 
+  echo - A different parser jar file can be specified globally for all
+  echo "  components via environment variable JAXP_PARSER_JAR (e.g. xerces.jar)."
+  echo - XML requirements for each component can also be set individually via 
+  echo   the following environment variables:
+  echo      ANT_XML_CLASSPATH
+  echo      CATALINA_JAXP_HOME CATALINA_JAXP_PARSER_JAR
+  echo      JASPER_JAXP_HOME JASPER_JAXP_PARSER_JAR
+  exit 1
+fi
+
+if [ "$CATALINA_JAXP_PARSER_JAR" = "" ] ; then
+  CATALINA_JAXP_PARSER_JAR=$JAXP_PARSER_JAR
+fi
+
+if [ "$JASPER_JAXP_PARSER_JAR" = "" ] ; then
+  JASPER_JAXP_PARSER_JAR=$JAXP_PARSER_JAR
+fi
+
+if [ "$ANT_HOME" = "" ] ; then
+  ANT_HOME=../jakarta-ant
+fi
+
+if [ "$ANT_OPTS" = "" ] ; then
+  ANT_OPTS=""
+fi
 
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
-CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME/xerces.jar:$JMX_HOME/lib/jmxri.jar
+CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$ANT_XML_CLASSPATH
+echo classpath is $CP
 
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
 fi
 
-
 # ----- Execute The Requested Build -------------------------------------------
 
-java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Djsse.home=$JSSE_HOME -Djmx.home=$JMX_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"
+$JAVA_HOME/bin/java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dcatalina.jaxp.home=$CATALINA_JAXP_HOME -Dcatalina.jaxp.parser.jar=$CATALINA_JAXP_PARSER_JAR -Djasper.jaxp.home=$JASPER_JAXP_HOME -Djasper.jaxp.parser.jar=$JASPER_JAXP_PARSER_JAR -Djsse.home=$JSSE_HOME -Djmx.home=$JMX_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"
+
