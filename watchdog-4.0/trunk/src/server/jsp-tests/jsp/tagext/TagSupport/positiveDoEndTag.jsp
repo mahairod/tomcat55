@@ -10,7 +10,7 @@
 	            
 	Result :   "End of tag Reached" should be printed 
 	**/  
-%>	 
+%>
 
 
 <%@ taglib uri="/TestLib.tld" prefix="test"  %>

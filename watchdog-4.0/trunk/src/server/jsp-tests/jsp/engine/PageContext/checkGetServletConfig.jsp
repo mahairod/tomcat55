@@ -9,6 +9,7 @@
 <!-- checking for getServletConfig method -->
 
 <%= (pageContext.getServletConfig()) instanceof javax.servlet.ServletConfig %>
+<%= ( config == pageContext.getServletConfig() ) %>
 
 </body>
 </html>

@@ -7,10 +7,10 @@
  Expected to flush the buffer to the output stream.
  **/ %>
 <!-- this is to test if flush() method works -->
-<%
+<% 
     int buffer = out.getBufferSize();
     out.println("hello"); 
-    out.flush(); 
+    out.flush();
     if ( buffer == out.getRemaining() ) {
         out.println( "Test status: PASSED" );
     } else {

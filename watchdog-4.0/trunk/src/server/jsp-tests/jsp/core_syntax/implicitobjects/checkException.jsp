@@ -2,10 +2,16 @@
 <title>checkException Test </title>
 <body>
 <% /**	Name:checkExceptionTest
-		Description: checks whether 'exception' is of 
+		Description: Cause a java.lang.ArithmeticException by 
+                     dividing by zero.  The Exception should
+                     be passed to the error page as specified
+                     by the errorPage attribute of the page
+                     directive.  The errorpage will verify the
+                     type of exception.
 			 type java.lang.Throwable
-        Result: Errorpage is calledup, where this check is done.Should return true.					 
-**/ %>		
+        Result: Errorpage is called up, where this check is done.
+                Should return true.					 
+**/ %>
 <!-- errorpage -->
 <%@ page errorPage="Errorpage.jsp" %>
 
@@ -16,5 +22,3 @@
 %>
 </body>
 </html>
-
-

@@ -9,6 +9,7 @@
 <!-- checking for getOut method -->
 
 <%= (pageContext.getOut()) instanceof javax.servlet.jsp.JspWriter %>
+<%= ( out == pageContext.getOut() ) %>
 
 
 

@@ -6,10 +6,10 @@
 	Name : positiveDoInitBody
 	Description : Pass an attribute to the test tag
 	              and print it inside the doInitBody()
-	              method,indiacting that the method is invoked.
+	              method, indicating that the method is invoked.
 	Result :   The attribute passed should be printed.
 	**/  
-%>	 
+%>
 
 
 <%@ taglib uri="http://java.apache.org/tomcat/examples-taglib" prefix="eg" %>

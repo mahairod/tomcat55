@@ -1,6 +1,5 @@
 <%-- Test for doEndTag SKIP_PAGE --%>
 <%@ taglib uri="/TestLib.tld" prefix="x" %>
-
 <x:count skipPage="true">
 once upon a time
 </x:count>

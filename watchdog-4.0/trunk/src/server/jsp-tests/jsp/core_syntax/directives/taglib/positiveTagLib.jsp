@@ -8,12 +8,9 @@
 	               
 	Result :      No error
 	**/  
-%>	 
-
-
+%>
 <%@ taglib uri="http://java.apache.org/tomcat/examples-taglib" prefix="eg" %>
-
-<eg:test toBrowser="true" att1="Working">
+<eg:test toBrowser="true" att1="foo">
 Positive Test taglib directive </eg:test>
 </body>
 </html>

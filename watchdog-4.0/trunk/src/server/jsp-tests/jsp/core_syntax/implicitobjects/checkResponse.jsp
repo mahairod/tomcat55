@@ -4,18 +4,17 @@
 <% /**	Name:checkResponse
 		Description: Checks whether response is an object
 			 of type javax.servlet.ServletResponse.The other part 
-			 checks whether a character encoding is used by the
-			 response object or not
+			 verifes that the expected value is returned from
+			 response.getCharacterEncoding().
 		Result: returns true
-**/ %>					 
+**/ %>
 <!-- checking for response object type -->
-<%= (response instanceof javax.servlet.ServletResponse) %>
-<br>
+<%= (response instanceof javax.servlet.ServletResponse) %><br>
 <% 
-   if(response.getCharacterEncoding()!=null) {
-%> true <% }
+   if(response.getCharacterEncoding().equals( "ISO-8859-1" ) ) {
+%>true<br><% }
    else {
-%> false <% } %>
+%>false<br><% } %>
 
 </body>
 </html>

@@ -3,20 +3,16 @@
 <body>
 <% /**	Name:checkConfig
 		Description: Checks whether configuration information
-			 is being passed to the server page. Also checks whether
-			 it returns the initialization parameters as an Enumeration
-			 of Strings or as an empty enumeration.
-		Result: Returns true twice	
-**/ %>				 
+			 is being passed to the server page. Verify that the
+             implicit config object is an instance of
+             javax.servlet.ServletConfig and then print out the 
+             values of two servlet initialization parameters.
+		Result: Display true and the values of configParam1 and configParam2 
+**/ %>
 <!-- checking for config object state -->
 <%= (config instanceof javax.servlet.ServletConfig) %>
 <br>
-<% 
-   if(config.getInitParameterNames()!=null) {
-%> true <% }
-   else {
-%> false <% } %>
+<%= config.getInitParameter( "configParam1" ) %><br>
+<%= config.getInitParameter( "configParam2" ) %><br>
 </body>
 </html>
-
-

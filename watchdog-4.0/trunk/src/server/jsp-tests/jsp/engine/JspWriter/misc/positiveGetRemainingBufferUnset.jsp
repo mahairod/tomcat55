@@ -15,6 +15,6 @@ the method getRemaining() in the JSP page.
 <!-- using getRemaining() method to get the buffer size -->
 
 <%= out.getRemaining() %>
-<!-- expected to return 1  -->
+<!-- expected to return 0  -->
 </body>
 </html>

@@ -12,7 +12,7 @@
 	Result :     The passed attribute should be printed
 	             
 	**/  
-%>	 
+%>
 
 
 <%@ taglib uri="http://java.apache.org/tomcat/examples-taglib" prefix="eg" %>

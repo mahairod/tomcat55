@@ -4,8 +4,7 @@
 <%
 /*
  Name : positiveIsAutoFlush
- Description : Set the autoflush directive to 'true' and then
-call the isAutoFlush() method .
+ Description : Call isAutoFlush and verify the default is 'true'
 */
 %>
 <!-- this is to test positiveIsAutoFlush -->

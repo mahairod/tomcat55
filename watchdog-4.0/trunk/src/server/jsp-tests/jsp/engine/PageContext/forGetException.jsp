@@ -3,9 +3,9 @@
 <body>
 <%
 /**
- Name : checkGetException
+ Name : forGetException
  Description : An exception is generated and the output is sent to an errorpage
- where the check for the getException() method is done.Here, it is checked for 
+ where the check for the getException() method is done.  Here, it is checked for 
  the return type.
  Result : true
 **/
@@ -15,7 +15,6 @@
 int i=2;
 int j=0;
 int k=i/j;
-
 out.println(k);
 %>
 </body>

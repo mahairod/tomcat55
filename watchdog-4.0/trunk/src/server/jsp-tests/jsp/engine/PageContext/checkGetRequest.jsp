@@ -11,6 +11,7 @@
 
 
 <%= pageContext.getRequest() instanceof javax.servlet.ServletRequest %>
+<%= ( request == pageContext.getRequest() ) %>
 
 
 </body>

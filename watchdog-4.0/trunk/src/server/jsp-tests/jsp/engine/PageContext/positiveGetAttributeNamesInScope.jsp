@@ -5,7 +5,7 @@
 /*
  Name : positiveGetAttributeNamesInScope
   */
-%>  
+%>
 
 
 <!-- declaring a bean in page scope -->
@@ -52,3 +52,4 @@ try{
 
 </body>
 </html>
+

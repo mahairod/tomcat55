@@ -1,11 +1,9 @@
 <html>
-<title>checkException Test </title>
+<title>checkException</title>
 <body>
 <%@ page isErrorPage="true" %>
 <!-- checking for exception object state -->
 
-<%= exception instanceof java.lang.Throwable %>
+<%= exception instanceof java.lang.ArithmeticException %>
 </body>
 </html>
-
-

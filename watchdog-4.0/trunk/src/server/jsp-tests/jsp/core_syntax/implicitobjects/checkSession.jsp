@@ -2,11 +2,11 @@
 <title>checkSession Test </title>
 <body>
 <% /**	Name:checkSession
-		Description: checking 'session' is of type javax.servlet.HttpSession
+		Description: Checking 'session' is of type javax.servlet.HttpSession
 			  and also whether an identifier is assigned to this session
-			  or not
+			  or not.
 		Result: returns true		
-**/ %>			  
+**/ %>
 <!-- checking for Session object state -->
 <%= (session instanceof javax.servlet.http.HttpSession) %>
 <br>
@@ -19,5 +19,3 @@
 <br>
 </body>
 </html>
-
-

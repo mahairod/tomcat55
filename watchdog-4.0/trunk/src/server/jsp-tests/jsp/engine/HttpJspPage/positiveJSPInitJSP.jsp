@@ -6,7 +6,7 @@
        Description: we override the jspInit in the jsp itself
                     and check getServletConfig method works
        Result: we should get the expected string output
-  */ %> 
+  */ %>
 <!-- to test HttpJspPage implementation -->
 <%! String result; %>
 <%! public void jspInit() {
@@ -19,6 +19,5 @@
   }
 %>
 <% out.println(result); %>
-
 </body>
 </html>

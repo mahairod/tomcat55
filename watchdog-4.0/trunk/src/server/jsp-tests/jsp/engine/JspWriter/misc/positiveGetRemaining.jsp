@@ -1,9 +1,9 @@
 <%@ page buffer="5kb" %>
 <% int bufferSize = out.getBufferSize(); 
 out.flush();
-out.print("hello: ");
+out.print("hello:");
 int remainingSize =  out.getRemaining();
-if ( remainingSize == (bufferSize-7) ) 
+if ( remainingSize == (bufferSize-6) ) 
 	out.print("getRemaining test Passed");
 else { 
 	out.println("getRemaining Test Failed");

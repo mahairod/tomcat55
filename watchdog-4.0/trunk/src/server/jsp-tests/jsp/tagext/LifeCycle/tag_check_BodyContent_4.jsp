@@ -2,7 +2,6 @@
   Check that BodyContent provides access to the proper information
 --%>
 <%@ taglib uri="/TestLib.tld" prefix="x" %>
-
 <x:verbatim how="writeout">
 one
 <x:verbatim how="writeout">

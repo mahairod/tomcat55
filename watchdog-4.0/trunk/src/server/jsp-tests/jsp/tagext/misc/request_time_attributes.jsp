@@ -3,14 +3,14 @@
 <title>Request time attributes evaluation</title>
 <body>
 <% /**	Name:request_time_attributes
-		Description: This tests the order of evaluation of 
+		Description: This tests the evaluation order of 
                 request time attributes in actions. The order of evaluation
-	        is from left to right.
+	            is from left to right.
 		
 		Result:  Should calculate the expressions from left to right
  			 and return the correct values
 		
-**/ %>			 			 
+**/ %>
 
 <%! int i=10; %>
 <%@ taglib  uri="/TestLib.tld"  prefix="request" %>

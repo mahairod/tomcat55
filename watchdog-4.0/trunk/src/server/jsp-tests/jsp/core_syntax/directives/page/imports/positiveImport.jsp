@@ -2,12 +2,12 @@
 <title>positiveImport</title>
 <body>
 <% /**	Name: positiveImport
-		Description:Use a jsp directive with language ="java" and a
-			  valid import attribute. Use the imported package in the
-			  page. 
+		Description: Use jsp page directive with language="java" and an
+			  import attribute of java.util.Properties.  Validate 
+              that the Properties object can be created.
 		Result:No error
-**/ %>		
-<!-- language =java and we import a java package to check if import works-->
+**/ %>
+<!-- language=java and we import a java package to check if import works -->
 <%@ page language="java" import="java.util.Properties" %>
 
 <%  Properties props=new Properties(); 
@@ -15,6 +15,6 @@
     String name=(String)props.getProperty("name");
     out.println(name);
  %>
- 
+
 </body>
 </html>

@@ -5,7 +5,7 @@
 /*
  Name : positiveGetBufferSizeUnBuffered
  Description : Set the buffer directive to 'none'. 
- Then callthe getBufferSize() method.
+ Then call the getBufferSize() method.
  */
  %>
 <!-- this is to test if getBufferSize method works with no buffer-->

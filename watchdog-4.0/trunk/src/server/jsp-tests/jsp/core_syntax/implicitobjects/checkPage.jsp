@@ -2,11 +2,14 @@
 <title>checkPage</title>
 <body>
 <% /**	Name: checkPage
-	    Description: checking if this page is of the
-	    	  type java.lang.Object
-		Result: writes true to browser
-**/ %>			    	   
+	    Description: Validate that the implicit page
+                     object is of type java.lang.Object.
+                     Also verify that this is the same
+                     reference as page.
+		Result: writes true twice.
+**/ %>
 <!-- checking for page object type -->
-<%= (this instanceof java.lang.Object ) %>
+<%= (page instanceof java.lang.Object ) %><br>
+<%= ( page == this ) %><br>
 </body>
 </html>

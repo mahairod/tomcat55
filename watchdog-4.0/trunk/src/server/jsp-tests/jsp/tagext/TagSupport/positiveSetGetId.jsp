@@ -10,7 +10,7 @@
 	Result :   The setId and getId methods should work fine.The value
 		   passed in the id attribute should be printed 
 	**/  
-%>	 
+%>
 
 
 <%@ taglib uri="/TestLib.tld" prefix="test"  %>

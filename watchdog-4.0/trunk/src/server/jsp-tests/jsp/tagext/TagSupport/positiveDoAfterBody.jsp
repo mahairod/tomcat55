@@ -24,7 +24,7 @@
 		   "JSP is cool"
 		   "End of tag reached"
 	**/  
-%>	 
+%>
 
 
 <%@ taglib uri="/TestLib.tld" prefix="test"  %>

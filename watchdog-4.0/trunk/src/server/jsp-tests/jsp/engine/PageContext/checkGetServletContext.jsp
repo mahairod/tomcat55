@@ -9,6 +9,7 @@
 <!-- checking for getServletContext method -->
 
 <%= (pageContext.getServletContext()) instanceof javax.servlet.ServletContext %>
+<%= ( application == pageContext.getServletContext() ) %>
 
 </body>
 </html>

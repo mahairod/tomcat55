@@ -9,12 +9,11 @@
 	              Check using the getAttributeString() .
 	Result :     Should print the contents that are set.
 	**/  
-%>	
+%>
 <%
 
 	java.util.Hashtable ht = new java.util.Hashtable();
-	javax.servlet.jsp.tagext.TagData td =
-          new javax.servlet.jsp.tagext.TagData(ht);
+	javax.servlet.jsp.tagext.TagData td = new javax.servlet.jsp.tagext.TagData(ht);
 	
 	td.setAttribute("Color1","red");
 	td.setAttribute("Color2","green");
@@ -24,7 +23,7 @@
 	for(int i=1;i<=4;i++) {
 		out.println("Colors are  " + td.getAttributeString("Color"+i));
 
-%> 
+%>
 <br> <% }
 %>
 

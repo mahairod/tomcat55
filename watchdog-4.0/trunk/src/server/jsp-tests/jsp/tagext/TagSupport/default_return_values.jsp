@@ -8,9 +8,9 @@
 		      methods in TagSupport class
 	             
 	            
-	Result :   dfauult return values should be printed
+	Result : default return values should be printed
 	**/  
-%>	 
+%>
 
 
 <%@ taglib uri="/TestLib.tld" prefix="def" %>
