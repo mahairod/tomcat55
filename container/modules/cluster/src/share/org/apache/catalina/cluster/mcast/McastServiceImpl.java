@@ -182,7 +182,9 @@ public class McastServiceImpl
         socket.joinGroup(address);
         doRun = true;
         sender = new SenderThread(sendFrequency);
+        sender.setDaemon(true);
         receiver = new ReceiverThread();
+        receiver.setDaemon(true);
         receiver.start();
         sender.start();
     }
