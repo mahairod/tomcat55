@@ -818,6 +818,7 @@ public class Generator {
 	public void visit(Node.Scriptlet n) throws JasperException {
 	    n.setBeginJavaLine(out.getJavaLine());
 	    out.printMultiLn(new String(n.getText()));
+	    out.println();
 	    n.setEndJavaLine(out.getJavaLine());
 	}
 
