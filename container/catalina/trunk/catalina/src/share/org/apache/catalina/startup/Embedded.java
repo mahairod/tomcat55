@@ -716,7 +716,7 @@ public class Embedded  extends StandardService implements Lifecycle {
                                  String loginMethod) {
         if (!(authenticator instanceof Valve)) {
             throw new IllegalArgumentException(
-                sm.getString("authenticator.notInstanceOfValve"));
+                sm.getString("embedded.authenticatorNotInstanceOfValve"));
         }
         if (authenticators == null) {
             synchronized (this) {
