@@ -32,6 +32,7 @@ echo ** COPYING REQUIRED FILES
 rem Copy all the property/manifest files into the temp directory
 
 %COPYCMD% src\main\org\apache\tools\ant\taskdefs\defaults.properties %TMPDIR%\org\apache\tools\ant\taskdefs
+%COPYCMD% src\main\org\apache\tools\ant\parser.properties %TMPDIR%\org\apache\tools\ant
 
 echo ** BUILDING ANT DISTRIBUTION
 
