@@ -278,7 +278,7 @@ public class StandardSession
     /**
      * The access count for this session.
      */
-    protected transient int accessCount = 1;
+    protected transient int accessCount = 0;
 
 
     // ----------------------------------------------------- Session Properties

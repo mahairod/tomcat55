@@ -507,9 +507,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                     localSession.setMaxInactiveInterval
                         (context.getManager().getMaxInactiveInterval());
                     localSession.setId(other.getId());
-                } else {
-                    localSession.access();
                 }
+                localSession.access();
                 session = localSession;
                 return session.getSession();
             }
