@@ -21,6 +21,10 @@
                         non-plaintext format"
                  type="java.lang.String"/>
 
+    <attribute   name="localDataSource"
+          description="Configures if the DataSource is local to the webapp"
+                 type="boolean"/>
+
     <attribute   name="roleNameCol"
           description="The column in the user role table that names a role"
                  type="java.lang.String"/>
