@@ -12,29 +12,27 @@ distribution, you must do the following:
 
 (1) Download and Install the Ant Binary Distribution
 
-NOTE:  These instructions assume that you are using the Ant 1.3 release.
-Procedures for Ant 1.4 and later versions should be similar, but have not
-been tested.
+NOTE:  These instructions assume that you are using the Ant 1.4 release.
 
-* Download a binary distribution of Ant 1.3 from:
+* Download a binary distribution of Ant 1.4 from:
 
-    http://jakarta.apache.org/builds/jakarta-ant/release/v1.3/bin/
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
 
   On a Windows platform, you will need:
-    jakarta-ant-1.3-bin.zip
-    jakarta-ant-1.3-optional.jar
+    jakarta-ant-1.4-bin.zip
+    jakarta-ant-1.4-optional.jar
 
   On a Unix platform, you will need:
-    jakarta-ant-1.3-bin.tar.gz
-    jakarta-ant-1.3-optional.jar
+    jakarta-ant-1.4-bin.tar.gz
+    jakarta-ant-1.4-optional.jar
 
 * Unpack the binary distribution into a convenient location so that the
   Ant release resides in its own directory (conventionally named
-  "jakarta-ant-1.3").  For the purposes of the remainder of this document,
+  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
 
-* Copy the file "jakarta-ant-1.3-optional.jar", downloaded above, into
+* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
   the directory "${ant.home}/lib".  This makes available several Ant
   extension commands that are commonly required when building Jakarta
   based projects.
@@ -44,30 +42,26 @@ been tested.
   available, which will be used to actually perform the build.
 
 
-(2) Download and Install the JAXP/1.1 Reference Implementation (OPTIONAL)
+(2) Download and Install the Java XML Pack Binary Distribution
 
 NOTE:  Although this step is not required to build this particular subproject,
 it is commonly required to build other Jakarta projects.  Hence, the steps
 required are documented here.
 
-* Download a binary distribution of JAXP 1.1 (Final Version) from:
+* Download a binary distribution of Java XML Pack:
 
-    http://java.sun.com/xml/download.html
+    http://java.sun.com/xml/downloads/javaxmlpack.html
 
 * Unpack the binary distribution into a convenient location so that the
-  JAXP/1.1 release resides in its own directory (conventionally named
-  "jaxp-1.1".  For the purposes of the remainder of this document, the
-  symbolic name "${jaxp.home}" is used to refer to the full pathname of
-  the release directory.
+  Java XML Pack release resides in its own directory (the JAXP libraries
+  reside in the jaxp-1.1.3 subdirectory).  For the purposes of the
+  remainder of this document, the symbolic name "${jaxp.home}" is used
+  to refer to the full pathname to the jaxp-1.1.3 subdirectory of
+  the Java XML Pack release directory.
 
-* Make the JAR files of this distribution ("crimson.jar", "jaxp.jar", and
-  "xalan.jar") available for use by performing ONE of the following options:
-
-  - Remove the existing "jaxp.jar" and "parser.jar" files found in the
-    "${ant.home}/lib" directory, and copy these JAR files into the
-    "${ant.home}/lib" directory (prefered option).
-
-  - Add these files to your CLASSPATH environment variable.
+* Make the "xalan.jar" file of this distribution available to Ant
+  (so that it can be used with the <style> tag) by copying it to
+  "${ant.home}/lib".
 
 
 (3) Download and Install Subproject Source Code
