@@ -187,10 +187,11 @@ public final class MulticastReceiver
      * @return An array with objects
      */
     public Object[] getObjects() {
-        Object[] objs = stack.toArray();
-        stack.removeAllElements();
-
-        return (objs);
+        synchronized (stack) {
+            Object[] objs = stack.toArray();
+            stack.removeAllElements();
+            return (objs);
+        }
     }
 
     /**
