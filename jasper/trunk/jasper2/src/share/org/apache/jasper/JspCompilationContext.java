@@ -447,7 +447,7 @@ public class JspCompilationContext {
 
 	if (isTagFile) {
 	    jspPath = "tags/"
-		+ tagInfo.getTagClassName().replace('.', File.separatorChar)
+		+ tagInfo.getTagClassName().replace('.', '/')
 		+ ".java";
 	} else {
 	    String dirName = getJspFile();

@@ -155,7 +155,7 @@ public class JspServletWrapper {
 					 servletContext, this, rctxt,
 					 tagFileJars);
         ctxt.createOutdir("/tags/"
-			  + tagInfo.getTagClassName().replace('.', File.separatorChar));
+			  + tagInfo.getTagClassName().replace('.', '/'));
     }
 
     public JspCompilationContext getJspEngineContext() {
