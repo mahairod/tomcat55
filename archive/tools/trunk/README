@@ -1,4 +1,8 @@
 $Id$
 
 This is the source code repository for the various tools used by The
-Jakarta Project.
+Jakarta Project. These tools include:
+
+	Ant: 	Java based build system
+	Moo:	Java based client / server test harness
+
