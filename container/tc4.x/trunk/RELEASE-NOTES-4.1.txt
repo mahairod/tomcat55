@@ -903,6 +903,12 @@ Coyote Bug Fixes:
 [4.1.21] Cookies:
          Fix to return values instead of the names.
 
+[4.1.23] CoyoteAdapter:
+         Reject decoded URIs which don't start with '/'.
+
+[4.1.23] Cookies:
+         Add support for bad cookies.
+
 
 ----------------
 Jasper Bug Fixes:
