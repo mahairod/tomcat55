@@ -69,17 +69,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Constructor;
 import java.net.Socket;
 import java.security.Security;
-import java.util.Stack;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
-import org.apache.catalina.Loader;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.apache.tomcat.util.log.SystemLogHandler;
@@ -437,23 +432,6 @@ public class Catalina {
      */
     protected void start() {
 
-        // Create and execute our Digester
-        Digester digester = createStartDigester();
-        File file = configFile();
-        try {
-            InputSource is =
-                new InputSource("file://" + file.getAbsolutePath());
-            FileInputStream fis = new FileInputStream(file);
-            is.setByteStream(fis);
-            digester.push(this);
-            digester.parse(is);
-            fis.close();
-        } catch (Exception e) {
-            System.out.println("Catalina.start: " + e);
-            e.printStackTrace(System.out);
-            System.exit(1);
-        }
-
         // Setting additional variables
         if (!useNaming) {
             System.setProperty("catalina.useNaming", "false");
@@ -473,6 +451,23 @@ public class Catalina {
                     (javax.naming.Context.INITIAL_CONTEXT_FACTORY,
                      "org.apache.naming.java.javaURLContextFactory");
             }
+        }
+
+        // Create and execute our Digester
+        Digester digester = createStartDigester();
+        File file = configFile();
+        try {
+            InputSource is =
+                new InputSource("file://" + file.getAbsolutePath());
+            FileInputStream fis = new FileInputStream(file);
+            is.setByteStream(fis);
+            digester.push(this);
+            digester.parse(is);
+            fis.close();
+        } catch (Exception e) {
+            System.out.println("Catalina.start: " + e);
+            e.printStackTrace(System.out);
+            System.exit(1);
         }
 
         // If a SecurityManager is being used, set properties for
