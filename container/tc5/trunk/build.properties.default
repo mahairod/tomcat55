@@ -221,11 +221,11 @@ puretls.lib=${puretls.home}/build
 puretls.jar=${puretls.lib}/puretls.jar
 
 
-# ----- Struts, version 1.0.2 or later -----
-struts.home=${base.path}/jakarta-struts-1.0.2
+# ----- Struts, version 1.1 Beta 2 or later -----
+struts.home=${base.path}/jakarta-struts-1.1-b2
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
-struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.2/jakarta-struts-1.0.2.tar.gz
+struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.1-b2/jakarta-struts-1.1-b2.tar.gz
 
 
 # ----- Tyrex Data Source, version 1.0 -----
