@@ -39,6 +39,9 @@ set default=%1
 
 :run
 set TOMCAT_HOME=..\tomcat
+SET _ANTHOME=%ANT_HOME%
+if "%ANT_HOME%" == "" SET ANT_HOME=..\jakarta-ant
+
 
 rem THIS PART INCLUDED from jakarta-tomcat/src/shell/tomcatEnv.bat
 rem -------------------------- begin tomcatEnv.bat -----------------------------
@@ -49,6 +52,7 @@ set TOM_CLASSPATH=%TOMCAT_HOME%\lib\jasper.jar;%TOM_CLASSPATH%
 set TOM_CLASSPATH=%TOMCAT_HOME%\lib\xml.jar;%TOM_CLASSPATH%
 set TOM_CLASSPATH=%TOMCAT_HOME%\webpages\WEB-INF\classes\jsp\beans;%TOM_CLASSPATH%
 set TOM_CLASSPATH=%TOMCAT_HOME%\classes;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\lib\ant.jar;%TOM_CLASSPATH%
 
 set TOM_CLASSPATH=%JAVA_HOME%\lib\tools.jar;%TOM_CLASSPATH%
 
@@ -68,13 +72,17 @@ sleep 25
 
 if "%default%"=="servlet" goto servlet
 
-java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfile %jtest%
+rem java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfile %jtest%
+
+rem test jsp using non-moo framework
+%TOMCAT_HOME%/ant -Dwatchdog.home %WATCHDOG_HOME% -f conf/jsp.xml jsp-test
 
 if "%default%"=="all" goto servlet
 goto shutdown
 
 :servlet
-java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfile %stest%
+rem java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfile %stest%
+%TOMCAT_HOME%/ant -Dwatchdog.home $WATCHDOG_HOME -f conf/servlet.xml servlet-test
 
 :shutdown
 rem Only shutdown Tomcat if no host and port parameters have been specified
@@ -96,5 +104,7 @@ set miscJars=
 set appJars=
 set appClassPath=
 set cp=
+SET ANT_HOME=%_ANTHOME%
+SET _ANTHOME=
 
 rem pause
