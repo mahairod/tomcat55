@@ -63,7 +63,6 @@ continue;
 //rename the JSp file and convert to XML view
 
 new File(jsp_file).renameTo( new File(jsp_file +".original") );
-System.out.println("Generating XML View of " + jsp_file);
 jsp2XML jsp_converter = new jsp2XML(jsp_file + ".original" );
 String xml= jsp_converter.ConvertJsp2XML();
 

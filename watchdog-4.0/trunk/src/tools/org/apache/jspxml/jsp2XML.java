@@ -424,19 +424,52 @@ public String parseAttributes(String xml_tag)
 //parse the request time attributes if any
 String parsed_string="";
 int element_index = xml_tag.indexOf("<%=");
+int save_index=element_index;
 int last_index=0;
 
   while (element_index !=-1)  //found a reqquest time attribute
   {
+    //find the previous element skipping spaces
+  char ch=xml_tag.charAt(element_index);
+
+    while(ch!='\'')
+    {
+      element_index--;
+      ch=xml_tag.charAt(element_index);
+       if(ch=='\"')
+       break;
+       if(element_index <=last_index) //might be a syntax error
+       return null;
+    }
+
   parsed_string+=xml_tag.substring(last_index,element_index) ;
-  parsed_string+="%=" ;
-  last_index=element_index+3;
+  parsed_string+="\"%=" ;
+  last_index=save_index+3;
   element_index = xml_tag.indexOf("%>" ,last_index);
   parsed_string+=xml_tag.substring(last_index,element_index);
-  parsed_string+="%" ;
+  parsed_string+="%\"" ;
 
   last_index=element_index+2;
+//skip the blaank spaces
+   while ( true)
+   {
+     ch = xml_tag.charAt(last_index);
+
+     if( ch=='\'' || ch=='\"' )
+      {
+       last_index++;
+       break;
+      }
+     if(ch==' ')
+     last_index++;
+     else //Syntax error
+     return null ;
+
+   }
+
+
   element_index=xml_tag.indexOf("<%=" ,last_index);
+  save_index=element_index;
   }
  parsed_string+=xml_tag.substring(last_index);
  return parsed_string;
