@@ -4007,9 +4007,6 @@ public class StandardContext
                 if ((resources != null) && (resources instanceof Lifecycle))
                     ((Lifecycle) resources).start();
 
-                // Initialize associated mapper
-                mapper.setContext(getPath(), welcomeFiles, resources);
-
                 // Set JMX object name for proper pipeline registration
                 preRegisterJMX();
 
@@ -4026,12 +4023,13 @@ public class StandardContext
                     ((Lifecycle) pipeline).start();
 
                 // Read tldListeners. XXX Option to disable
-                TldConfig tldConfig=new TldConfig();
-                tldConfig.setContext( this );
+                TldConfig tldConfig = new TldConfig();
+                tldConfig.setContext(this);
                 try {
                     tldConfig.execute();
-                } catch( Exception ex ) {
-                    log.error("Error reading tld listeners " + ex.toString(), ex);
+                } catch (Exception ex) {
+                    log.error("Error reading tld listeners " 
+                              + ex.toString(), ex);
                     //ok=false;
                 }
 
@@ -4096,16 +4094,21 @@ public class StandardContext
         // Create request listener lifecycle valve
         if (ok) {
             if (!requestListenerConfig()) {
-                log.error(sm.getString("standardContext.requestListenerStartFailed"));
+                log.error(sm.getString
+                          ("standardContext.requestListenerStartFailed"));
             }
         }
 
         // Load and initialize all "load on startup" servlets
-        if (ok)
+        if (ok) {
             loadOnStartup(findChildren());
+        }
 
         // Unbinding thread
         unbindThread(oldCCL);
+
+        // Initialize associated mapper
+        mapper.setContext(getPath(), welcomeFiles, resources);
 
         // Set available status depending upon startup success
         if (ok) {
