@@ -272,7 +272,8 @@ public class JspServlet extends HttpServlet {
             // First check if the requested JSP page exists, to avoid
             // creating unnecessary directories and files.
             if (context.getResourceAsStream(jspUri) == null) {
-                throw new FileNotFoundException(jspUri);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, jspUri);
+                return;
             }
             boolean isErrorPage = exception != null;
             synchronized(this) {
