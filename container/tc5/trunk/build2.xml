@@ -24,7 +24,7 @@
   <property name="catalina.home"
            value="${basedir}/../jakarta-tomcat-catalina"/>
   <property name="jasper.home"
-           value="${basedir}/../jakarta-tomcat-jasper-5/jasper2"/>
+           value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
 
@@ -35,6 +35,9 @@
 
   <path id="alljars" >
     <pathelement location="${jmx.jar}"/>
+    <pathelement location="${jmx-tools.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+
     <pathelement location="${mail.jar}"/>
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${jsse.jar}"/>
@@ -42,7 +45,8 @@
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${activation.jar}"/>
     <pathelement location="${jta.jar}"/>
-    <pathelement location="${log4j.jar}"/>
+
+    <pathelement location="${optit.jar}"/>
   </path>
   
   <patternset id="static.res">
@@ -94,6 +98,7 @@
       </src>
       <exclude name="org/apache/tomcat/util/net/PureTLS*" />
       <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
+      <exclude name="org/apache/commons/modeler/impl/IntrospectionModeler.java" />
 
       <!-- Fail with GCJ -->
       <exclude name="org/apache/commons/collections/DoubleOrderedMap.java" />
@@ -132,8 +137,10 @@
       </src>
       <exclude name="org/apache/ajp/**" />
       <exclude name="org/apache/jasper/**" />
+      <exclude name="org/apache/coyote/tomcat4/**" />
       <exclude name="org/apache/naming/factory/Tyrex*" />
       <exclude name="org/apache/tomcat/ant/Tomcat3Precompiler.java" />
+      <exclude name="org/apache/catalina/launcher/**" />
       <exclude name="org/apache/catalina/startup/BootstrapService.java" />
     </javac>
 
@@ -150,6 +157,7 @@
       <fileset dir="${jtc.home}/jk/java" >
         <patternset refid="static.res" />
       </fileset>
+      <fileset dir="resources" includes="log4j.properties"/>
     </copy>
 
     <copy toDir="${build.dir}/classes" >
@@ -161,13 +169,16 @@
     <!-- Servlet/JSP resources - work around stupid src layout  -->
     <copy todir="${build.dir}/classes/javax/servlet/resources">
         <fileset dir="${api.home}/src/share/dtd">
-          <include name="web-app*.dtd"/>
+          <include name="web-app**"/>
+          <include name="j2ee*.xsd"/>
+          <include name="xml.xsd"/>
         </fileset>
     </copy>
     <copy todir="${build.dir}/classes/javax/servlet/jsp/resources">
       <fileset dir="${api.home}/src/share/dtd">
-        <include name="web-jsptaglibrary*.dtd"/>
-        <include name="jspxml.*"/>
+        <include name="web-jsptaglibrary**"/>
+        <include name="jspxml**"/>
+        <include name="jsp*.xsd"/>
       </fileset>
     </copy>
   </target>
@@ -237,21 +248,29 @@
 
   <target name="run" >
     <property name="tools.jar" location="${java.home}/../lib/tools.jar" />
-    <echo message="Tools.jar = ${tools.jar}"/>
-    <java classname="org.apache.catalina.startup.Catalina" fork="true">
-      <classpath location="${build.dir}/classes"/>
-      <classpath refid="alljars" />
-      <classpath refid="jasperjars" />
-      <classpath location="${ant.home}/lib/xercesImpl.jar" />
-      <classpath location="${ant.home}/lib/xml-apis.jar" />
-      <classpath location="${ant.home}/lib/ant.jar" />
-      <classpath location="${java.home}/lib/rt.jar" />
-      <classpath location="${tools.jar}" />
+    <path id="tomcatcp" >
+      <path refid="alljars" />
+      <path refid="jasperjars" />
+      <pathelement location="${build.dir}/classes"/>
+      <pathelement location="${ant.home}/lib/xercesImpl.jar" />
+      <pathelement location="${ant.home}/lib/xml-apis.jar" />
+      <pathelement location="${ant.home}/lib/ant.jar" />
+      <pathelement location="${tools.jar}" />
+    </path>
+ 
+    <taskdef name="tomcat5" classname="org.apache.catalina.startup.CatalinaService" 
+             classpathref="tomcatcp" />
+    <tomcat5 do="start" home="${build.dir}" wait="true" compiler="jikes"/>
+    <!--    
+    <java classname="org.apache.catalina.startup.CatalinaService" fork="false">
+      <classpath refid="tomcatcp" />
       <arg value="start" />
       <sysproperty key="catalina.home" value="${build.dir}"/>
       <sysproperty key="build.compiler" value="jikes"/>
       <sysproperty key="java.endorsed.dirs" value="${ant.home}/lib:${java.home}/lib"/>
     </java>
+    -->
+    <echo message="==================== Tomcat5 up and running ==================== "/>
   </target>
 
   <target name="jdepend" description="Document the dependency graph ">
@@ -286,5 +305,26 @@
 
   </target>
 
+  <target name="checkout" 
+          description="Update or checkout required package from CVS">
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-tomcat-catalina" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-tomcat-jasper" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-commons" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-tomcat-connectors" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-taglibs" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-servletapi-5" 
+         dest=".."/>
+  </target>
 
 </project>
