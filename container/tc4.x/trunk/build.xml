@@ -235,6 +235,8 @@
     <copy todir="${tomcat.dist}">
       <fileset dir="resources" />
     </copy>
+    <copy file="${nsis.home}/InstallOptions.dll" 
+     todir="${tomcat.dist}" />
     <copy file="${javaservice.home}/bin/JavaService.exe" 
      tofile="${tomcat.dist}/bin/tomcat.exe" />
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" />

@@ -190,6 +190,8 @@ Section -post
 
   SetOverwrite on
 
+  Call configure
+
   WriteRegStr HKLM "SOFTWARE\Apache\Apache Tomcat 4.1" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
                    "DisplayName" "Apache Tomcat 4.1 (remove only)"
@@ -295,6 +297,112 @@ computer. Please download one from http://java.sun.com."
   Push $2
 
 FunctionEnd
+
+
+; ==================
+; Configure Function
+; ==================
+;
+; Display the configuration dialog boxes, read the values entered by the user,
+; and build the configuration files
+;
+Function configure
+
+  ; Output files needed for the configuration dialog
+  SetOverwrite on
+  GetTempFileName $8
+  GetTempFileName $7
+  File /oname=$8 "InstallOptions.dll"
+  File /oname=$7 "config.ini"
+
+  Push $7
+  CallInstDLL $8 dialog
+  Pop $1
+  StrCmp $1 "0" NoConfig
+
+  ReadINIStr $R0 $7 "Field 2" State
+  ReadINIStr $R1 $7 "Field 5" State
+  ReadINIStr $R2 $7 "Field 7" State
+
+  StrCpy $R4 'port="$R0"'
+  StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
+
+  SetOutPath $TEMP
+  File /r confinstall
+
+  ; Build final server.xml
+  FileOpen $R9 "$INSTDIR\conf\server.xml" w
+
+  Push "$TEMP\confinstall\server_1.xml"
+  Call copyFile
+  FileWrite $R9 $R4
+  Push "$TEMP\confinstall\server_2.xml"
+  Call copyFile
+
+  FileClose $R9
+
+  CopyFiles "$R9" "$INSTDIR\conf" 18
+
+  ; Build final tomcat-users.xml
+  FileOpen $R9 "$INSTDIR\conf\tomcat-users.xml" w
+
+  Push "$TEMP\confinstall\tomcat-users_1.xml"
+  Call copyFile
+  FileWrite $R9 $R5
+  Push "$TEMP\confinstall\tomcat-users_2.xml"
+  Call copyFile
+
+  FileClose $R9
+
+  CopyFiles "$R9" "$INSTDIR\conf" 5
+
+  ; Creating a few shortcuts
+  IfFileExists "$SMPROGRAMS\Apache Tomcat 4.1" 0 NoLinks
+
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\My Tomcat.lnk" \
+                 "http://127.0.0.1:$R0"
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Configuration\Tomcat Administration.lnk" \
+                 "http://127.0.0.1:$R0/admin"
+
+ NoLinks:
+
+ NoConfig:
+
+  Delete $7
+  Delete $8
+  RMDir /r "$TEMP\confinstall"
+
+FunctionEnd
+
+
+; =================
+; CopyFile Function
+; =================
+;
+; Copy specified file contents to $R9
+;
+Function copyFile
+
+  ClearErrors
+
+  Pop $0
+
+  FileOpen $1 $0 r
+
+  NoError:
+  FileRead $1 $2
+  FileWrite $R9 $2
+
+  IfErrors 0 NoError
+
+  FileClose $1
+
+  ClearErrors
+
+FunctionEnd
+
 
 
 UninstallText "This will uninstall Apache Tomcat 4.1 from your system:"
