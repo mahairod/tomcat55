@@ -467,7 +467,7 @@ public class ApplicationContext
         throws MalformedURLException {
 
         if (!path.startsWith("/")) {
-            throw new MalformedURLException(sm.getString("applicationContext.requestDispatcher.iae"));
+            throw new MalformedURLException(sm.getString("applicationContext.requestDispatcher.iae", path));
         }
         
         path = normalize(path);

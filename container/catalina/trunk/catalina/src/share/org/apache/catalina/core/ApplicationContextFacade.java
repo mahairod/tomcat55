@@ -118,7 +118,7 @@ public final class ApplicationContextFacade
     private HashMap objectCache;
     
     
-    private static org.apache.commons.logging.Log log=
+    private static org.apache.commons.logging.Log sysLog=
         org.apache.commons.logging.LogFactory.getLog( ApplicationContextFacade.class );
 
         
@@ -206,7 +206,14 @@ public final class ApplicationContextFacade
 
     public URL getResource(String path)
         throws MalformedURLException {
-        return (URL)doPrivileged("getResource", new Object[]{path});
+        try{    
+            return (URL)invokeMethod(context, "getResource", new Object[]{path});
+        }catch(Throwable t){
+            if (t instanceof MalformedURLException){
+                throw (MalformedURLException)t;
+            }
+            return null;
+        }
     }
 
 
@@ -227,7 +234,14 @@ public final class ApplicationContextFacade
 
     public Servlet getServlet(String name)
         throws ServletException {
-       return (Servlet)doPrivileged("getServlet", new Object[]{name});
+        try{
+            return (Servlet)invokeMethod(context, "getServlet", new Object[]{name});
+        } catch (Throwable t){
+            if (t instanceof ServletException){
+                throw (ServletException) t;
+            }
+            return null;
+        }
     }
 
 
@@ -301,8 +315,39 @@ public final class ApplicationContextFacade
     }
 
        
+    /**
+     * Use reflection to invoke the requested method. Cache the method object 
+     * to speed up the process
+     * @param appContext The AppliationContext object on which the method
+     *                   will be invoked
+     * @param methodName The method to call.
+     * @param params The arguments passed to the called method.
+     */
+    private Object doPrivileged(ApplicationContext appContext,
+                                final String methodName, 
+                                final Object[] params) {
+        try{
+            return invokeMethod(appContext, methodName, params );
+        } catch (Throwable t){
+            throw new RuntimeException(t.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Use reflection to invoke the requested method. Cache the method object 
+     * to speed up the process
+     *                   will be invoked
+     * @param methodName The method to call.
+     * @param params The arguments passed to the called method.
+     */
     private Object doPrivileged(final String methodName, final Object[] params){
-        return doPrivileged(context, methodName,params);
+        try{
+            return invokeMethod(context, methodName, params);
+        }catch(Throwable t){
+            throw new RuntimeException(t.getMessage());
+        }
     }
 
     
@@ -314,9 +359,11 @@ public final class ApplicationContextFacade
      * @param methodName The method to call.
      * @param params The arguments passed to the called method.
      */
-    private Object doPrivileged(ApplicationContext appContext,
+    private Object invokeMethod(ApplicationContext appContext,
                                 final String methodName, 
-                                final Object[] params){
+                                final Object[] params) 
+        throws Throwable{
+
         try{
             Method method = (Method)objectCache.get(methodName);
             if (method == null){
@@ -327,13 +374,8 @@ public final class ApplicationContextFacade
             
             return executeMethod(method,appContext,params);
         } catch (Exception ex){
-            if (ex instanceof InvocationTargetException){
-                return ((InvocationTargetException)ex).getTargetException();
-            } else if (ex instanceof PrivilegedActionException){
-                return ((PrivilegedActionException)ex).getException();
-            } else {
-               return ex;
-            }   
+            handleException(ex, methodName);
+            return null;
         }
     }
     
@@ -348,18 +390,18 @@ public final class ApplicationContextFacade
     private Object doPrivileged(final String methodName, 
                                 final Class[] clazz,
                                 final Object[] params){
+
         try{
             Method method = context.getClass()
                     .getMethod(methodName, (Class[])clazz);
             return executeMethod(method,context,params);
         } catch (Exception ex){
-            if (ex instanceof InvocationTargetException){
-                return ((InvocationTargetException)ex).getTargetException();
-            } else if (ex instanceof PrivilegedActionException){
-                return ((PrivilegedActionException)ex).getException();
-            } else {
-               return ex;
-            }   
+            try{
+                handleException(ex, methodName);
+            }catch (Throwable t){
+                throw new RuntimeException(t.getMessage());
+            }
+            return null;
         }
     }
     
@@ -387,5 +429,26 @@ public final class ApplicationContextFacade
         } else {
             return method.invoke(context, params);
         }        
+    }
+
+    
+    /**
+     * Throw the real exception.
+     * @param ex The current exception
+     */
+    private void handleException(Exception ex, String methodName) throws Throwable{
+        Throwable realException;
+        if (ex instanceof InvocationTargetException){
+            realException = ((InvocationTargetException)ex).getTargetException();
+        } else if (ex instanceof PrivilegedActionException){
+            realException =  ((PrivilegedActionException)ex).getException();
+        } else {
+            realException = ex;
+        }   
+
+        if (sysLog.isDebugEnabled() ){   
+            sysLog.debug("ApplicationContextFacade." + methodName,ex);
+        }
+        throw realException;
     }
 }
