@@ -244,6 +244,21 @@ public class CatalinaService extends Catalina {
 
     }
 
+    /* 
+     * Load using arguments
+     */
+    public void load(String args[]) {
+
+        setCatalinaHome();
+        setCatalinaBase();
+        try {
+            if (arguments(args))
+                load();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+    }
+
 
     /**
      * Start a new server instance.

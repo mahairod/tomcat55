@@ -123,6 +123,18 @@ public final class BootstrapService
     public void init(DaemonContext context)
         throws Exception {
 
+        String arguments[] = null;
+
+        /* Read the arguments from the Daemon context */
+        if (context!=null) {
+            arguments = context.getArguments();
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i].equals("-debug")) {
+                    debug = 1;
+                }
+            }
+        }
+
         log("Create Catalina server");
 
         // Set Catalina path
@@ -198,11 +210,20 @@ public final class BootstrapService
         catalinaService = startupInstance;
         
         // Call the load() method
-        if (debug >= 1)
-            log("Calling startup class load() method");
         methodName = "load";
-        method = catalinaService.getClass().getMethod(methodName, null);
-        method.invoke(catalinaService, null);
+        Object param[];
+        if (arguments==null || arguments.length==0) {
+            paramTypes = null;
+            param = null;
+        } else {
+            paramTypes[0] = arguments.getClass();
+            param = new Object[1];
+            param[0] = arguments;
+        }
+        method = catalinaService.getClass().getMethod(methodName, paramTypes);
+        if (debug >= 1)
+            log("Calling startup class " + method);
+        method.invoke(catalinaService, param);
 
     }
 
