@@ -72,9 +72,9 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.util.xml.SaxContext;
-import org.apache.catalina.util.xml.XmlAction;
-import org.apache.catalina.util.xml.XmlMapper;
+//import org.apache.catalina.util.xml.SaxContext;
+//import org.apache.catalina.util.xml.XmlAction;
+//import org.apache.catalina.util.xml.XmlMapper;
 import org.xml.sax.AttributeList;
 import org.apache.catalina.util.Base64;
 import org.apache.catalina.util.HexUtils;
@@ -225,7 +225,7 @@ public class JDBCRealm
      *
      */
 
-    private String digest="No";
+    private String digest=null;
 
    // ------------------------------------------------------------- Properties
 
@@ -468,7 +468,7 @@ public class JDBCRealm
 	    ResultSet rs1 = preparedAuthenticate.executeQuery();
 	    boolean found = false;
 	    if (rs1.next()) {
-                if (digest.equals("No")){
+                if (digest!= null && digest.equalsIgnoreCase("No")){
                     if (credentials.equals(rs1.getString(1))) {
                         if (debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
@@ -719,9 +719,16 @@ public class JDBCRealm
 	started = true;
 
         try {
-          Class.forName(driverName);
+            Class.forName(driverName);
+            if ((connectionName == null || connectionName.equals("")) &&
+                (connectionPassword == null || connectionPassword.equals(""))){
+                        dbConnection = DriverManager.getConnection(connectionURL);
+            } else {
+                        dbConnection =DriverManager.getConnection(connectionURL,
+                            connectionName,
+                            connectionPassword);
+            }
 
-          dbConnection = DriverManager.getConnection(connectionURL);
         } catch( ClassNotFoundException ex ) {
 	  throw new LifecycleException("JDBCRealm.start.readXml: " + ex, ex);
         }
