@@ -278,7 +278,7 @@ public class StandardManager
      * @exception IllegalStateException if a new session cannot be
      *  instantiated for any reason
      */
-    public Session createSession() {
+    public Session createSession(String sessionId) {
 
         if ((maxActiveSessions >= 0) &&
             (sessions.size() >= maxActiveSessions)) {
@@ -287,7 +287,7 @@ public class StandardManager
                 (sm.getString("standardManager.createSession.ise"));
         }
 
-        return (super.createSession());
+        return (super.createSession(sessionId));
 
     }
 

@@ -730,12 +730,31 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      * id will be assigned by this method, and available via the getId()
      * method of the returned session.  If a new session cannot be created
      * for any reason, return <code>null</code>.
-     *
+     * 
+     * @exception IllegalStateException if a new session cannot be
+     *  instantiated for any reason
+     * @deprecated
+     */
+    public Session createSession() {
+        return createSession(null);
+    }
+    
+    
+    /**
+     * Construct and return a new session object, based on the default
+     * settings specified by this Manager's properties.  The session
+     * id specified will be used as the session id.  
+     * If a new session cannot be created for any reason, return 
+     * <code>null</code>.
+     * 
+     * @param sessionId The session id which should be used to create the
+     *  new session; if <code>null</code>, a new session id will be
+     *  generated
      * @exception IllegalStateException if a new session cannot be
      *  instantiated for any reason
      */
-    public Session createSession() {
-
+    public Session createSession(String sessionId) {
+        
         // Recycle or create a Session instance
         Session session = createEmptySession();
 
@@ -744,15 +763,33 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(this.maxInactiveInterval);
-        String sessionId = generateSessionId();
+        if (sessionId == null) {
+            sessionId = generateSessionId();
+            // FIXME: Code to be used in case route replacement is needed
+            /*
+        } else {
+            String jvmRoute = getJvmRoute();
+            if (getJvmRoute() != null) {
+                String requestJvmRoute = null;
+                int index = sessionId.indexOf(".");
+                if (index > 0) {
+                    requestJvmRoute = sessionId
+                            .substring(index + 1, sessionId.length());
+                }
+                if (requestJvmRoute != null && !requestJvmRoute.equals(jvmRoute)) {
+                    sessionId = sessionId.substring(0, index) + "." + jvmRoute;
+                }
+            }
+            */
+        }
         session.setId(sessionId);
         sessionCounter++;
 
         return (session);
 
     }
-
-
+    
+    
     /**
      * Get a session from the recycled ones or create a new empty one.
      * The PersistentManager manager does not need to create session data
