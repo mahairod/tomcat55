@@ -218,7 +218,7 @@ public class ContextBindings {
      * @param name Name of the context
      */
     public static void unbindThread(Object name) {
-        unbindThread(null);
+        unbindThread(name, null);
     }
 
 
