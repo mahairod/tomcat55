@@ -64,8 +64,6 @@ public class Watchdog {
             XMLOutputter outputter = new XMLOutputter("  ", true);
             String xmlDoc = outputter.outputString(doc);
 
-            System.out.println(xmlDoc);
-
             StringReader reader = new StringReader(xmlDoc);
             Suite suite = new Suite(reader);
             runTests(suite,watchdogProps);
