@@ -160,6 +160,7 @@
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
            basedir="${catalina.build}/classes"
            includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/naming/JndiPermission.class" 
+           manifest="etc/bootstrap.MF"
            />
     <jar   jarfile="${catalina.build}/common/lib/naming.jar"
            basedir="${catalina.build}/classes"
