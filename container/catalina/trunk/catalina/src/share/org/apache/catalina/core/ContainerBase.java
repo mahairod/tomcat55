@@ -1461,7 +1461,9 @@ public abstract class ContainerBase
     }
     
     public String getObjectName() {
-        return oname.toString();
+        if (oname != null) {
+            return oname.toString();
+        } else return null;
     }
 
     public String getDomain() {

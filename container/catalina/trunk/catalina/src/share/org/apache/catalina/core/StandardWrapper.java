@@ -81,6 +81,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.SingleThreadModel;
 import javax.servlet.UnavailableException;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
@@ -123,6 +125,7 @@ public class StandardWrapper
         super();
         swValve=new StandardWrapperValve();
         pipeline.setBasic(swValve);
+        broadcaster = new NotificationBroadcasterSupport();
 
     }
 
@@ -137,8 +140,12 @@ public class StandardWrapper
      * servlet is considered permanent.
      */
     private long available = 0L;
-
-
+    
+    /**
+     * The broadcaster that sends j2ee notifications. 
+     */
+    private NotificationBroadcasterSupport broadcaster = null;
+    
     /**
      * The count of allocations that are currently active (even if they
      * are for the same instance, as will be true on a non-STM servlet).
@@ -217,6 +224,10 @@ public class StandardWrapper
      */
     private String runAs = null;
 
+    /**
+     * The notification sequence number.
+     */
+    private long sequenceNumber = 0;
 
     /**
      * The fully qualified servlet class name for this servlet.
@@ -1515,7 +1526,15 @@ public class StandardWrapper
      * @exception LifecycleException if a fatal error occurs during startup
      */
     public void start() throws LifecycleException {
-
+    
+        // Send j2ee.state.starting notification 
+        if (this.getObjectName() != null) {
+            Notification notification = new Notification("j2ee.state.starting", 
+                                                        this.getObjectName(), 
+                                                        sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
         // Start up this component
         super.start();
 
@@ -1526,6 +1545,14 @@ public class StandardWrapper
         // MOVED TO StandardContext START() METHOD
 
         setAvailable(0L);
+        
+        // Send j2ee.state.running notification 
+        if (this.getObjectName() != null) {
+            Notification notification = 
+                new Notification("j2ee.state.running", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
 
     }
 
@@ -1539,7 +1566,15 @@ public class StandardWrapper
     public void stop() throws LifecycleException {
 
         setAvailable(Long.MAX_VALUE);
-
+        
+        // Send j2ee.state.stoping notification 
+        if (this.getObjectName() != null) {
+            Notification notification = 
+                new Notification("j2ee.state.stoping", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
         // Shut down our servlet instance (if it has been initialized)
         try {
             unload();
@@ -1551,8 +1586,22 @@ public class StandardWrapper
         // Shut down this component
         super.stop();
 
+        // Send j2ee.state.stopped notification 
+        if (this.getObjectName() != null) {
+            Notification notification = 
+                new Notification("j2ee.state.stopped", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
         if( oname != null ) {
             Registry.getRegistry().unregisterComponent(oname);
+            
+            // Send j2ee.object.deleted notification 
+            Notification notification = 
+                new Notification("j2ee.object.deleted", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
         }
     }
 
@@ -1576,6 +1625,15 @@ public class StandardWrapper
             oname=new ObjectName(onameStr);
             controller=oname;
             Registry.getRegistry().registerComponent(this, oname, null );
+            
+            // Send j2ee.object.created notification 
+            if (this.getObjectName() != null) {
+                Notification notification = new Notification(
+                                                "j2ee.object.created", 
+                                                this.getObjectName(), 
+                                                sequenceNumber++);
+                broadcaster.sendNotification(notification);
+            }
         } catch( Exception ex ) {
             log.info("Error registering servlet with jmx " + this);
         }

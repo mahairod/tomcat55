@@ -85,11 +85,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequestListener;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
-import javax.management.ObjectName;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 import javax.management.InstanceNotFoundException;
+import javax.management.MalformedObjectNameException;
 import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
+import javax.management.ObjectName;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.BaseDirContext;
 import org.apache.naming.resources.FileDirContext;
@@ -155,6 +157,7 @@ public class StandardContext
         super();
         pipeline.setBasic(new StandardContextValve());
         namingResources.setContainer(this);
+        broadcaster = new NotificationBroadcasterSupport();
 
     }
 
@@ -199,8 +202,12 @@ public class StandardContext
      * The application available flag for this Context.
      */
     private boolean available = false;
-
-
+    
+    /**
+     * The broadcaster that sends j2ee notifications. 
+     */
+    private NotificationBroadcasterSupport broadcaster = null;
+    
     /**
      * The Locale to character set mapper for this application.
      */
@@ -441,7 +448,11 @@ public class StandardContext
      */
     private int sessionTimeout = 30;
 
-
+    /**
+     * The notification sequence number.
+     */
+    private long sequenceNumber = 0;
+    
     /**
      * The status code error pages for this web application, keyed by
      * HTTP status code (as an Integer).
@@ -640,8 +651,7 @@ public class StandardContext
                                    new Boolean(this.available));
 
     }
-
-
+        
     /**
      * Return the Locale to character set mapper for this Context.
      */
@@ -4118,6 +4128,15 @@ public class StandardContext
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
         startTime=System.currentTimeMillis();
 
+        
+        // Send j2ee.state.running notification 
+        if (this.getObjectName() != null) {
+            Notification notification = 
+                new Notification("j2ee.state.running", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
         // Close all JARs right away to avoid always opening a peak number 
         // of files on startup
         if (getLoader() instanceof WebappLoader) {
@@ -4198,7 +4217,15 @@ public class StandardContext
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
-
+        
+        // Send j2ee.state.stoping notification 
+        if (this.getObjectName() != null) {
+            Notification notification = 
+                new Notification("j2ee.state.stoping", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
         // Mark this application as unavailable while we shut down
         setAvailable(false);
 
@@ -4262,6 +4289,14 @@ public class StandardContext
 
         }
 
+        // Send j2ee.state.stopped notification 
+        if (this.getObjectName() != null) {
+            Notification notification = 
+                new Notification("j2ee.state.stopped", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
         // Reset application context
         context = null;
 
@@ -4305,8 +4340,14 @@ public class StandardContext
         log.debug("resetContext " + oname + " " + mserver);
         if( oname != null ) { 
             Registry.getRegistry().unregisterComponent(oname);
+            
+            // Send j2ee.object.deleted notification 
+            Notification notification = 
+                new Notification("j2ee.object.deleted", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
             oname = null;
-        }
+        } 
         
     }
 
@@ -4975,6 +5016,15 @@ public class StandardContext
             if(! Registry.getRegistry().getMBeanServer().isRegistered(oname)) {
                 controller = oname;
                 Registry.getRegistry().registerComponent(this, oname, null);
+                
+                // Send j2ee.object.created notification 
+                if (this.getObjectName() != null) {
+                    Notification notification = new Notification(
+                                                        "j2ee.object.created", 
+                                                        this.getObjectName(), 
+                                                        sequenceNumber++);
+                    broadcaster.sendNotification(notification);
+                }
             }
             for (Iterator it = wrappers.iterator(); it.hasNext() ; ) {
                 StandardWrapper wrapper=(StandardWrapper)it.next();
@@ -5040,6 +5090,15 @@ public class StandardContext
                     new String[] {"org.apache.catalina.Container"});
         }
         super.init();
+        
+        // Send j2ee.state.starting notification 
+        if (this.getObjectName() != null) {
+            Notification notification = new Notification("j2ee.state.starting", 
+                                                        this.getObjectName(), 
+                                                        sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        }
+        
     }
 
     public ObjectName getParentName() throws MalformedObjectNameException {
