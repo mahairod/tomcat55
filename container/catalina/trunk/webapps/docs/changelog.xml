@@ -34,6 +34,9 @@
   
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        Register JSP monitoring mbean for each servlet that declares a jsp-file in web.xml. (luehe)
+      </fix>
     </changelog>
   </subsection>
 
@@ -206,9 +209,6 @@
       </update>
       <fix>
         Fix handling of the "timeout" attribute of the HTTP protocol handler. (remm)
-      </fix>
-      <fix>
-        Register JSP monitoring mbean for each servlet that declares a jsp-file in web.xml. (luehe)
       </fix>
     </changelog>
   </subsection>
