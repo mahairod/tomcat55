@@ -104,7 +104,13 @@ public class DeltaRequest implements Externalizable {
         }
         //if we have already done something to this attribute, make sure
         //we don't send multiple actions across the wire
-        if ( !recordAllActions) actions.remove(info);
+        if ( !recordAllActions) {
+            try {
+                actions.remove(info);
+            } catch (java.util.NoSuchElementException x) {
+                //do nothing, we wanted to remove it anyway
+            }
+        }
         //add the action
         actions.addLast(info);
     }
@@ -177,7 +183,7 @@ public class DeltaRequest implements Externalizable {
         actionPool.clear();
     }
     
-    public void readExternal(java.io.ObjectInput in) throws java.io.IOException,
+    public synchronized void readExternal(java.io.ObjectInput in) throws java.io.IOException,
         java.lang.ClassNotFoundException {
         //sessionId - String
         //recordAll - boolean
@@ -206,7 +212,7 @@ public class DeltaRequest implements Externalizable {
         
 
 
-    public void writeExternal(java.io.ObjectOutput out ) throws java.io.IOException {
+    public synchronized void writeExternal(java.io.ObjectOutput out ) throws java.io.IOException {
         //sessionId - String
         //recordAll - boolean
         //size - int
@@ -220,7 +226,7 @@ public class DeltaRequest implements Externalizable {
         }
     }
     
-    public static class AttributeInfo implements java.io.Externalizable {
+    private static class AttributeInfo implements java.io.Externalizable {
         private String name = null;
         private Object value = null;
         private int action;
