@@ -90,7 +90,7 @@
     <deltree dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*"
-             classpath="${regexp.jar}:${servlet.jar}:${catalina.build}/classes"
+             classpath="${xerces.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${servlet.jar}:${catalina.build}/classes"
                sourcepath="src/share"
                   destdir="${catalina.build}/javadoc"
                    author="true"

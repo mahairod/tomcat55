@@ -67,7 +67,7 @@
     <deltree dir="${jasper.build}/javadoc"/>
     <mkdir dir="${jasper.build}/javadoc"/>
     <javadoc packagenames="org.apache.jasper.*"
-             classpath="${servlet.jar}:${jasper.build}/classes"
+             classpath="${xerces.jar}:${servlet.jar}:${jasper.build}/classes"
                sourcepath="src/share"
                   destdir="${jasper.build}/javadoc"
                    author="true"
