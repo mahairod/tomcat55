@@ -27,7 +27,7 @@ public class GTest extends Task implements TaskContainer {
 
     private static int failureCount = 0;
     private static int passCount = 0;
-    private static boolean result = false;
+    private static boolean hasFailed = false;
 
     String prefix = "http";
     String host = "localhost";
@@ -447,17 +447,21 @@ public class GTest extends Task implements TaskContainer {
 
             dispatch( request, requestHeaders );
 
-            result = checkResponse( magnitude );
+            boolean result = checkResponse( magnitude );
+
+            if ( !result ) {
+                hasFailed = true;
+            }
 
             if ( !children.isEmpty() ) {
                 Iterator iter = children.iterator();
                 while (iter.hasNext()) {
                     Task task = (Task) iter.next();
-                    task.execute();
+                    task.perform();
                 }
             }
 
-            if ( result && !nested ) {
+            if ( !hasFailed && !nested ) {
 		        passCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>PASS</result>\n".getBytes() );
@@ -467,7 +471,7 @@ public class GTest extends Task implements TaskContainer {
                 } else {
                     System.out.println( " PASSED " + request );
                 }
-            } else if ( !result && !nested ){
+            } else if ( hasFailed && !nested ){
 		        failureCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>FAIL</result>\n".getBytes() );
@@ -487,22 +491,25 @@ public class GTest extends Task implements TaskContainer {
                     resultOut.close();
                 }
             }
-	    if ( lastTask ) {
+	        if ( lastTask ) {
                 System.out.println( "\n\n------- TEST SUMMARY -------\n" );
-		System.out.println( "*** " + passCount + " TEST(S) PASSED! ***" );
-		System.out.println( "*** " + failureCount + " TEST(S) FAILED! ***" );
+		        System.out.println( "*** " + passCount + " TEST(S) PASSED! ***" );
+		        System.out.println( "*** " + failureCount + " TEST(S) FAILED! ***" );
             }
 
         } catch ( Exception ex ) {
-	    failureCount++;
+	        failureCount++;
             if ( "No description".equals( description ) ) {
                 System.out.println( " FAIL " + request );
             } else
                 System.out.println( " FAIL " + description + " (" + request + ")" );
 
             ex.printStackTrace();
+        } finally {
+            if ( !nested ) {
+                hasFailed = false;
+            }
         }
-
     }
 
     /**
