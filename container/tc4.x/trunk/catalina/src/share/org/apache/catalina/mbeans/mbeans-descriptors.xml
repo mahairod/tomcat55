@@ -692,7 +692,7 @@
     <operation   name="createAccessLogger"
           description="Create a new AccessLogger"
                impact="ACTION"
-           returnType="void"/>
+           returnType="void">
     </operation>
 
     <operation   name="createHost"
