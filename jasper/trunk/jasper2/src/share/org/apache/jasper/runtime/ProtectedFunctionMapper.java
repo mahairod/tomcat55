@@ -24,6 +24,8 @@ import java.security.PrivilegedActionException;
 import java.lang.reflect.Method;
 import javax.servlet.jsp.el.FunctionMapper;
 
+import org.apache.jasper.security.SecurityUtil;
+
 /**
  * Maps EL functions to their Java method counterparts.  Keeps the
  * actual Method objects protected so that JSP pages can't indirectly
@@ -60,7 +62,7 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
      */
     public static ProtectedFunctionMapper getInstance() {
         ProtectedFunctionMapper funcMapper;
-	if (System.getSecurityManager() != null) {
+	if (SecurityUtil.isPackageProtectionEnabled()) {
 	    funcMapper = (ProtectedFunctionMapper)AccessController.doPrivileged(
 		new PrivilegedAction() {
 		public Object run() {
@@ -89,7 +91,7 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
 			    final String methodName, final Class[] args ) 
     {
 	java.lang.reflect.Method method;
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 method = (java.lang.reflect.Method)AccessController.doPrivileged(new PrivilegedExceptionAction(){
 
@@ -133,7 +135,7 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
     {
         java.lang.reflect.Method method;
         ProtectedFunctionMapper funcMapper;
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             funcMapper = (ProtectedFunctionMapper)AccessController.doPrivileged(
                 new PrivilegedAction(){
                 public Object run() {

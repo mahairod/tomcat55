@@ -49,6 +49,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.Constants;
 import org.apache.jasper.compiler.Localizer;
+import org.apache.jasper.security.SecurityUtil;
 
 /**
  * Implementation of the PageContext class from the JSP spec.
@@ -216,7 +217,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     return doGetAttribute(name);
@@ -239,7 +240,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     return doGetAttribute(name, scope);
@@ -281,7 +282,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     doSetAttribute(name, attribute);
@@ -308,7 +309,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     doSetAttribute(name, o, scope);
@@ -358,7 +359,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
             throw new NullPointerException(
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     doRemoveAttribute(name, scope);
@@ -404,7 +405,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return ((Integer)AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     return new Integer(doGetAttributeScope(name));
@@ -434,7 +435,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public Object findAttribute(final String name) {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     if (name == null) {
@@ -476,7 +477,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 
     public Enumeration getAttributeNamesInScope(final int scope) {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Enumeration)
                     AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
@@ -518,7 +519,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                     Localizer.getMessage("jsp.error.attribute.null_name"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     doRemoveAttribute(name);
@@ -604,7 +605,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
     public void include(final String relativeUrlPath, final boolean flush)
 	        throws ServletException, IOException {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged(new PrivilegedExceptionAction(){
                     public Object run() throws Exception{
@@ -637,7 +638,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
     public void forward(final String relativeUrlPath)
         throws ServletException, IOException {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged(new PrivilegedExceptionAction(){
                     public Object run() throws Exception{
@@ -758,7 +759,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
         if (t == null)
             throw new NullPointerException("null Throwable");
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged(new PrivilegedExceptionAction(){
                     public Object run() throws Exception{
@@ -895,7 +896,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	throws ELException
     {
 	Object retValue;
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try {
                 retValue = AccessController.doPrivileged(
 			new PrivilegedExceptionAction(){
