@@ -148,11 +148,13 @@ public class ResponseImpl implements Response {
 	return started;
     }
 
+    static final Locale defaultLocale=new Locale(Constants.LOCALE_DEFAULT, "");
+    
     public void recycle() {
 	userCookies.removeAllElements(); // XXX reuse !!!
 	contentType = Constants.DEFAULT_CONTENT_TYPE;
 	contentLanguage = null;
-        locale = new Locale(Constants.LOCALE_DEFAULT, "");
+        locale = defaultLocale;
 	characterEncoding = Constants.DEFAULT_CHAR_ENCODING;
 	contentLength = -1;
 	status = 200;

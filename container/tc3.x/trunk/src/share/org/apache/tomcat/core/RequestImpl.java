@@ -369,6 +369,10 @@ public class RequestImpl  implements Request {
 	    return jvmRoute;
     }
 
+    public void setJvmRoute(String jvmRoute) {
+	    this.jvmRoute=jvmRoute;
+    }
+
     public String getRequestedSessionId() {
         return reqSessionId;
     }
