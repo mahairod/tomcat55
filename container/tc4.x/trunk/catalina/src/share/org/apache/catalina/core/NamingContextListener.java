@@ -773,24 +773,52 @@ public class NamingContextListener
             if (type.equals("java.lang.String")) {
                 value = env.getValue();
             } else if (type.equals("java.lang.Byte")) {
-                value = Byte.decode(env.getValue());
+                if (env.getValue() == null) {
+                    value = new Byte((byte) 0);
+                } else {
+                    value = Byte.decode(env.getValue());
+                }
             } else if (type.equals("java.lang.Short")) {
-                value = Short.decode(env.getValue());
+                if (env.getValue() == null) {
+                    value = new Short((short) 0);
+                } else {
+                    value = Short.decode(env.getValue());
+                }
             } else if (type.equals("java.lang.Integer")) {
-                value = Integer.decode(env.getValue());
+                if (env.getValue() == null) {
+                    value = new Integer(0);
+                } else {
+                    value = Integer.decode(env.getValue());
+                }
             } else if (type.equals("java.lang.Long")) {
-                value = Long.decode(env.getValue());
+                if (env.getValue() == null) {
+                    value = new Long(0);
+                } else {
+                    value = Long.decode(env.getValue());
+                }
             } else if (type.equals("java.lang.Boolean")) {
                 value = Boolean.valueOf(env.getValue());
             } else if (type.equals("java.lang.Double")) {
-                value = Double.valueOf(env.getValue());
-            } else if (type.equals("java.lang.Float")) {
-                value = Float.valueOf(env.getValue());
-            } else if (type.equals("java.lang.Character")) {
-                if (env.getValue().length() == 1) {
-                    value = new Character(env.getValue().charAt(0));
+                if (env.getValue() == null) {
+                    value = new Double(0);
                 } else {
-                    throw new IllegalArgumentException();
+                    value = Double.valueOf(env.getValue());
+                }
+            } else if (type.equals("java.lang.Float")) {
+                if (env.getValue() == null) {
+                    value = new Float(0);
+                } else {
+                    value = Float.valueOf(env.getValue());
+                }
+            } else if (type.equals("java.lang.Character")) {
+                if (env.getValue() == null) {
+                    value = new Character((char) 0);
+                } else {
+                    if (env.getValue().length() == 1) {
+                        value = new Character(env.getValue().charAt(0));
+                    } else {
+                        throw new IllegalArgumentException();
+                    }
                 }
             } else {
                 log(sm.getString("naming.invalidEnvEntryType", env.getName()));
