@@ -1685,6 +1685,14 @@ public class DeltaSession
     protected void setLastTimeReplicated(long lastTimeReplicated) {
         this.lastTimeReplicated = lastTimeReplicated;
     }
+  
+    protected void setAccessCount(int accessCount) {
+      this.accessCount = accessCount;
+    }
+  
+    protected int getAccessCount() {
+      return accessCount;
+    }
 
 }
 
