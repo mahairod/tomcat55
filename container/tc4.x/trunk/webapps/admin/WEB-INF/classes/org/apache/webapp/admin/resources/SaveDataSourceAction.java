@@ -217,7 +217,7 @@ public final class SaveDataSourceAction extends Action {
             mserver.setAttribute
                 (oname,
                  new Attribute(attribute, dataSourceForm.getDriverClass()));
-            attribute = "username";
+            attribute = "user";
             mserver.setAttribute
                 (oname,
                  new Attribute(attribute, dataSourceForm.getUsername()));

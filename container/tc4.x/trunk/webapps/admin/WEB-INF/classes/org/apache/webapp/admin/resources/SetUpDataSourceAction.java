@@ -181,7 +181,7 @@ public final class SetUpDataSourceAction extends Action {
                 attribute = "driverClassName";
                 dataSourceForm.setDriverClass
                     ((String) mserver.getAttribute(oname, attribute));
-                attribute = "username";
+                attribute = "user";
                 dataSourceForm.setUsername
                     ((String) mserver.getAttribute(oname, attribute));
                 attribute = "password";
