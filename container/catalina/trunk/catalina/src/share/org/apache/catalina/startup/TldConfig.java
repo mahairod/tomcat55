@@ -96,6 +96,7 @@ import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
+
 /**
  * Startup event listener for a <b>Context</b> that configures the properties
  * of that Context, and the associated defined servlets.
@@ -106,11 +107,71 @@ import org.xml.sax.SAXNotSupportedException;
  */
 public final class TldConfig  {
 
+    // Set of JARs that are known not to contain any TLDs
+    private static HashSet noTldJars;
+
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( TldConfig.class );
 
     private static final String FILE_URL_PREFIX = "file:";
     private static final int FILE_URL_PREFIX_LEN = FILE_URL_PREFIX.length();
+
+
+    /*
+     * Initializes the set of JARs that are known not to contain any TLDs
+     */
+    static {
+        noTldJars = new HashSet();
+        noTldJars.add("ant.jar");
+        noTldJars.add("catalina.jar");
+        noTldJars.add("catalina-ant.jar");
+        noTldJars.add("catalina-cluster.jar");
+        noTldJars.add("catalina-optional.jar");
+        noTldJars.add("catalina-i18n-fr.jar");
+        noTldJars.add("catalina-i18n-ja.jar");
+        noTldJars.add("catalina-i18n-es.jar");
+        noTldJars.add("commons-dbcp.jar");
+        noTldJars.add("commons-modeler.jar");
+        noTldJars.add("commons-logging-api.jar");
+        noTldJars.add("commons-beanutils.jar");
+        noTldJars.add("commons-fileupload-1.0.jar");
+        noTldJars.add("commons-pool.jar");
+        noTldJars.add("commons-digester.jar");
+        noTldJars.add("commons-logging.jar");
+        noTldJars.add("commons-collections.jar");
+        noTldJars.add("commons-el.jar");
+        noTldJars.add("jakarta-regexp-1.2.jar");
+        noTldJars.add("jasper-compiler.jar");
+        noTldJars.add("jasper-runtime.jar");
+        noTldJars.add("jmx.jar");
+        noTldJars.add("jmx-tools.jar");
+        noTldJars.add("jsp-api.jar");
+        noTldJars.add("jkshm.jar");
+        noTldJars.add("jkconfig.jar");
+        noTldJars.add("naming-common.jar");
+        noTldJars.add("naming-resources.jar");
+        noTldJars.add("naming-factory.jar");
+        noTldJars.add("naming-java.jar");
+        noTldJars.add("servlet-api.jar");
+        noTldJars.add("servlets-default.jar");
+        noTldJars.add("servlets-invoker.jar");
+        noTldJars.add("servlets-common.jar");
+        noTldJars.add("servlets-webdav.jar");
+        noTldJars.add("tomcat-util.jar");
+        noTldJars.add("tomcat-http11.jar");
+        noTldJars.add("tomcat-jni.jar");
+        noTldJars.add("tomcat-jk.jar");
+        noTldJars.add("tomcat-jk2.jar");
+        noTldJars.add("tomcat-coyote.jar");
+        noTldJars.add("xercesImpl.jar");
+        noTldJars.add("xmlParserAPIs.jar");
+        // JARs from J2SE runtime
+        noTldJars.add("sunjce_provider.jar");
+        noTldJars.add("ldapsec.jar");
+        noTldJars.add("localedata.jar");
+        noTldJars.add("dnsns.jar");
+    }
+
 
     // ----------------------------------------------------- Instance Variables
 
@@ -720,7 +781,8 @@ public final class TldConfig  {
 
         HashMap jarPathMap = null;
 
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        ClassLoader webappLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader loader = webappLoader;
         while (loader != null) {
             if (loader instanceof URLClassLoader) {
                 URL[] urls = ((URLClassLoader) loader).getURLs();
@@ -735,15 +797,24 @@ public final class TldConfig  {
                     } catch (IOException e) {
                         // Ignore
                     }
-                    if (file.exists()) {
-                        String path = file.getAbsolutePath();
-                        if (path.endsWith(".jar")) {
-                            if (jarPathMap == null) {
-                                jarPathMap = new HashMap();
-                                jarPathMap.put(path, file);
-                            } else if (!jarPathMap.containsKey(path)) {
-                                jarPathMap.put(path, file);
-                            }
+                    if (!file.exists()) {
+                        continue;
+                    }
+                    String path = file.getAbsolutePath();
+                    if (!path.endsWith(".jar")) {
+                        continue;
+                    }
+                    /*
+                     * Scan all JARs from WEB-INF/lib, plus any shared JARs
+                     * that are not known not to contain any TLDs
+                     */
+                    if (loader == webappLoader
+                            || !noTldJars.contains(file.getName())) {
+                        if (jarPathMap == null) {
+                            jarPathMap = new HashMap();
+                            jarPathMap.put(path, file);
+                        } else if (!jarPathMap.containsKey(path)) {
+                            jarPathMap.put(path, file);
                         }
                     }
                 }
