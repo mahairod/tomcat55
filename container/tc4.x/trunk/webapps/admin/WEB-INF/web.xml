@@ -6,13 +6,6 @@
 
 <web-app>
 
-  <!-- Session Event Listener for Tree Control Test -->
-  <listener>
-    <listener-class>
-      org.apache.webapp.admin.TreeControlTestListener
-    </listener-class>
-  </listener>
-
   <!-- Action Servlet Configuration -->
   <servlet>
     <servlet-name>action</servlet-name>
@@ -48,10 +41,6 @@
     <init-param>
       <param-name>validate</param-name>
       <param-value>true</param-value>
-    </init-param>
-    <init-param>
-      <param-name>treebuilders</param-name>
-      <param-value>org.apache.webapp.admin.TomcatTreeBuilder</param-value>
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>

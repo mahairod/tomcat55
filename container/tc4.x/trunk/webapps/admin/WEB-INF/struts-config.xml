@@ -65,6 +65,14 @@
     <action    path="/dumpServer"
                type="org.apache.webapp.admin.DumpServerAction"/>
 
+    <!-- Set up Tree datastructure -->
+    <action    path="/setUpTree"
+               type="org.apache.webapp.admin.SetUpTreeAction">
+      <forward        name="SetUpTree"
+                      path="/tree-control-test.jsp"
+                  redirect="true"/>
+    </action>
+
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
