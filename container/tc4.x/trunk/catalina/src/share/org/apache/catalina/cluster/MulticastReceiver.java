@@ -214,7 +214,8 @@ public final class MulticastReceiver
         threadStop();
     }
 
-    // --------------------------------------------------------- Private Methods
+
+    // -------------------------------------------------------- Private Methods
 
     /**
      * Check our multicast socket for new data and determine if the
@@ -235,10 +236,10 @@ public final class MulticastReceiver
             if(obj.getSenderId().equals(this.senderId))
                 stack.add(obj);
         } catch (IOException e) {
-            log("An error occured when trying to replicate: "+
+            log("An error occurred when trying to replicate: "+
                 e.toString());
         } catch (ClassNotFoundException e) {
-            log("An error occured when trying to replicate: "+
+            log("An error occurred when trying to replicate: "+
                 e.toString());
         }
     }

@@ -198,7 +198,7 @@ public class KjcJavaCompiler implements JavaCompiler {
 	    return false;
 	} catch (Exception e){
 	    try {
-		out.write(":unknown error occured while compiling jsp with kjc.".getBytes());
+		out.write(":unknown error occurred while compiling jsp with kjc.".getBytes());
 	    } catch (Exception e2) {
 	    }
 	    return false;
