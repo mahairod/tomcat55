@@ -290,6 +290,10 @@ public final class FileStore
         if (file == null) {
             return (null);
         }
+
+        if (! file.exists()) {
+            return (null);
+        }
         if (debug >= 1) {
             log(sm.getString(getStoreName()+".loading",
                              id, file.getAbsolutePath()));
