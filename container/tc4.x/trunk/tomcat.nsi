@@ -61,7 +61,7 @@ SectionEnd
 
 Section "NT Service (NT/2k/XP only)"
 
-  SectionIn 1 2 3
+  SectionIn 3
 
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
