@@ -61,7 +61,10 @@ done
 
 # Get standard environment variables
 PRGDIR=`dirname "$PRG"`
-CATALINA_HOME=`cd "$PRGDIR/.." ; pwd`
+
+# Only set CATALINA_HOME if not already set
+[ -z "$CATALINA_HOME" ] && CATALINA_HOME=`cd "$PRGDIR/.." ; pwd`
+
 if [ -r "$CATALINA_HOME"/bin/setenv.sh ]; then
   . "$CATALINA_HOME"/bin/setenv.sh
 fi
@@ -72,7 +75,7 @@ if $cygwin; then
   [ -n "$CATALINA_HOME" ] && CATALINA_HOME=`cygpath --unix "$CATALINA_HOME"`
   [ -n "$CATALINA_BASE" ] && CATALINA_BASE=`cygpath --unix "$CATALINA_BASE"`
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
-  [ -n "$JSSE_HOME" ] && JSSE_HOME=`cygpath --path --unix "$JSSE_HOME"`
+  [ -n "$JSSE_HOME" ] && JSSE_HOME=`cygpath --absolute --unix "$JSSE_HOME"`
 fi
 
 # For OS400
@@ -114,12 +117,12 @@ fi
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
-  JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
-  CATALINA_HOME=`cygpath --path --windows "$CATALINA_HOME"`
-  CATALINA_BASE=`cygpath --path --windows "$CATALINA_BASE"`
-  CATALINA_TMPDIR=`cygpath --path --windows "$CATALINA_TMPDIR"`
+  JAVA_HOME=`cygpath --absolute --windows "$JAVA_HOME"`
+  CATALINA_HOME=`cygpath --absolute --windows "$CATALINA_HOME"`
+  CATALINA_BASE=`cygpath --absolute --windows "$CATALINA_BASE"`
+  CATALINA_TMPDIR=`cygpath --absolute --windows "$CATALINA_TMPDIR"`
   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
-  JSSE_HOME=`cygpath --path --windows "$JSSE_HOME"`
+  [ -n "$JSSE_HOME" ] && JSSE_HOME=`cygpath --absolute --windows "$JSSE_HOME"`
   JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
 fi
 
@@ -254,6 +257,12 @@ elif [ "$1" = "stop" ] ; then
     fi
   fi
 
+elif [ "$1" = "version" ] ; then
+
+    "$_RUNJAVA"   \
+      -classpath "$CATALINA_HOME/server/lib/catalina.jar" \
+      org.apache.catalina.util.ServerInfo
+
 else
 
   echo "Usage: catalina.sh ( commands ... )"
@@ -272,6 +281,7 @@ else
   echo "  start -security   Start in a separate window with security manager"
   echo "  stop              Stop Catalina"
   echo "  stop -force       Stop Catalina (followed by kill -KILL)"
+  echo "  version           What version of tomcat are you running?"
   exit 1
 
 fi

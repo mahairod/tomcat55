@@ -230,7 +230,8 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
     &lt;/parameter&gt;
 
     &lt;!-- Maximum number of idle dB connections to retain in pool.
-         Set to 0 for no limit.
+         Set to -1 for no limit.  See also the DBCP documentation on this
+         and the minEvictableIdleTimeMillis configuration parameter.
          --&gt;
     &lt;parameter&gt;
       &lt;name&gt;maxIdle&lt;/name&gt;

@@ -51,6 +51,7 @@ import org.apache.tomcat.util.compat.JdkCompat;
  * @author Craig R. McClanahan
  * @author <a href="mailto:nicolaken@supereva.it">Nicola Ken Barozzi</a> Aisa
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
+ * @author Yoav Shapira
  * @version $Revision$ $Date$
  */
 
@@ -308,19 +309,17 @@ public class ErrorReportValve
 
         try {
 
-            Writer writer = response.getReporter();
-
-            if (writer != null) {
-
-                Locale locale = Locale.getDefault();
-
                 try {
                     hres.setContentType("text/html");
-                    hres.setLocale(locale);
+                    hres.setCharacterEncoding("utf-8");
                 } catch (Throwable t) {
                     if (debug >= 1)
                         log("status.setContentType", t);
                 }
+
+            Writer writer = response.getReporter();
+
+            if (writer != null) {
 
                 // If writer is null, it's an indication that the response has
                 // been hard committed already, which should never happen

@@ -17,6 +17,27 @@
 <section name="Tomcat 5.0.28">
   <subsection name="General">
     <changelog>
+      <fix>
+        <bug>30239</bug>: Updated IIS how-to to link to Wiki page with instrutions for IIS 5 and IIS 6 configurations. (yoavs)
+      </fix>
+      <fix>
+        <bug>30238</bug>: Replaced isapi_redirector.dll isapi_redirect.dll in installation script for consistency. (yoavs)
+      </fix>
+      <fix>
+        <bug>29584</bug>: Enhanced and clarified JNDI documentation. (yoavs)
+      </fix>
+      <fix>
+        <bug>30245</bug>: Corrected Connector documentation to list "address" as a common attribute. (yoavs)
+      </fix>
+      <fix>
+        <bug>29826</bug>: Modified setclasspath.bat exit code to 1. (yoavs)
+      </fix>
+      <update>
+        Updated status page, mostly rewritten. (yoavs)
+      </update>
+      <update>
+        Updated Jakarta-Commons dependencies: BeanUtils to 1.7.0, Collections to 3.1. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
@@ -24,6 +45,33 @@
     <changelog>
       <fix>
         <bug>30602</bug>: Subject is not available during the first call to the servlet which use the basic authentication (jfarcand)
+      </fix>
+      <fix>
+        <bug>29831</bug>: Added support for Boolean property to BeanFactory. (yoavs)
+      </fix>
+      <fix>
+        <bug>28875</bug>: Made ErrorReportValve use UTF-8 encoding by default. (yoavs)
+      </fix>
+      <fix>
+        <bug>30325</bug>: Only set CATALINA_HOME if not already set (in bin/catalina.sh). (yoavs)
+      </fix>
+      <fix>
+        <bug>30144</bug>: Made SSIServlet check resource MimeType before using text/html and UTF-8 default. (yoavs)
+      </fix>
+      <fix>
+        <bug>29406</bug>: Made JAASRealm configurable as to whether it should use the context ClassLoader or the default ClassLoader by adding a useContextClassLoader boolean attribute. (yoavs)
+      </fix>
+      <fix>
+        If ServletResponse.getWriter() is called and no char encoding has been specified, set response char encoding to default (ISO-8859-1) so that it is reflected in getContentType() and Content-Type header, as required by the Servlet Spec (Bugtraq 6152759) (luehe)
+      </fix>
+      <fix>
+        <bug>29869</bug>: Better JMX/JSR77 support in StandardContext and StandardWrapper. (remm)
+      </fix>
+      <update> 
+        Fixed broken link to JK documenration from AJP Connector reference page. (yoavs)
+      </update>
+      <fix>
+        <bug>30587</bug>: Typo in ExtendedAccessLogValve. (yoavs)
       </fix>
       <fix>
         <bug>30561</bug>: Broken restart of NamingService. (yoavs)
@@ -66,6 +114,12 @@
 
   <subsection name="Webapps">
     <changelog>
+      <fix>
+        <bug>29779</bug>: Admin/Examples SetCharacterEncodingFilter wrong package. (yoavs)
+      </fix>
+      <fix>
+        <bug>30354</bug>: manager-howto.xml used wrong Ant task. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
@@ -77,7 +131,7 @@
       <update>Updated dependencies on commons-dbcp (to 1.2.1), commons-pool (to 1.2), and commons-logging (to 1.0.4). (yoavs)
       </update>
       <fix>
-        <bug>29368</bug>: Replaced references to xmlParserAPIs.jar with xml-apis.jar, as the former is now deprecated in Xerces.  Users wishing to use old versions of Xerces that don't have xml-apis.jar can still do so without a problem.  Users wishing to build tomcat using xmlParserAPIs.jar instead of xml-apis.jar can also do so with a trivial edit in the build.xml file.
+        <bug>29368</bug>: Replaced references to xmlParserAPIs.jar with xml-apis.jar, as the former is now deprecated in Xerces.  Users wishing to use old versions of Xerces that don't have xml-apis.jar can still do so without a problem.  Users wishing to build tomcat using xmlParserAPIs.jar instead of xml-apis.jar can also do so with a trivial edit in the build.xml file. (yoavs)
       </fix>
     </changelog>
   </subsection>

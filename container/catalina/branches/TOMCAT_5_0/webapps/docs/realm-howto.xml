@@ -328,9 +328,10 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
     roles) are cached within Tomcat for the duration of the user's login.
     (For FORM-based authentication, that means until the session times out or
     is invalidated; for BASIC authentication, that means until the user
-    closes their browser).  Any changes to the database information for an
-    already authenticated user will <strong>not</strong> be reflected until
-    the next time that user logs on again.</li>
+    closes their browser).  The cached user is <strong>not</strong> saved and
+    restored across sessions serialisations. Any changes to the database
+    information for an already authenticated user will <strong>not</strong> be
+    reflected until the next time that user logs on again.</li>
 <li>Administering the information in the <em>users</em> and <em>user roles</em>
     table is the responsibility of your own applications.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
@@ -511,9 +512,10 @@ name "java:/comp/env/jdbc/authority".</p>
     roles) are cached within Tomcat for the duration of the user's login.
     (For FORM-based authentication, that means until the session times out or
     is invalidated; for BASIC authentication, that means until the user
-    closes their browser).  Any changes to the database information for an
-    already authenticated user will <strong>not</strong> be reflected until
-    the next time that user logs on again.</li>
+    closes their browser).  The cached user is <strong>not</strong> saved and
+    restored across sessions serialisations. Any changes to the database
+    information for an already authenticated user will <strong>not</strong> be
+    reflected until the next time that user logs on again.</li>
 <li>Administering the information in the <em>users</em> and <em>user roles</em>
     table is the responsibility of your own applications.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
@@ -1058,9 +1060,10 @@ authentication is usually to be preferred.</p>
     roles) are cached within Tomcat for the duration of the user's login.
     (For FORM-based authentication, that means until the session times out or
     is invalidated; for BASIC authentication, that means until the user
-    closes their browser).  Any changes to the directory information for an
-    already authenticated user will <strong>not</strong> be reflected until
-    the next time that user logs on again.</li>
+    closes their browser).  The cached user is <strong>not</strong> saved and
+    restored across sessions serialisations. Any changes to the directory
+    information for an already authenticated user will <strong>not</strong> be
+    reflected until the next time that user logs on again.</li>
 <li>Administering the information in the directory server
     is the responsibility of your own applications.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
@@ -1168,7 +1171,8 @@ to all virtual hosts and web applications.  The default contents of the
     roles) are cached within Tomcat for the duration of the user's login.
     (For FORM-based authentication, that means until the session times out or
     is invalidated; for BASIC authentication, that means until the user
-    closes their browser).</li>
+    closes their browser).  The cached user is <strong>not</strong> saved and
+    restored across sessions serialisations.</li>
 <li>Administering the information in the users file is the responsibility
     of your application.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>

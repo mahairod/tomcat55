@@ -90,6 +90,7 @@ import org.apache.commons.logging.LogFactory;
  * </ul>
  *
  * @author Craig R. McClanahan
+ * @author Yoav Shapira
  * @version $Revision$ $Date$
  */
 
@@ -139,6 +140,13 @@ public class JAASRealm
      */
     protected ArrayList userClasses = new ArrayList();
 
+    /**
+     * Whether to use context ClassLoader or default ClassLoader.
+     * True means use context ClassLoader, and True is the default
+     * value.
+     */
+     protected boolean useContextClassLoader = true;
+
 
     // ------------------------------------------------------------- Properties
 
@@ -157,6 +165,27 @@ public class JAASRealm
     public String getAppName() {
         return appName;
     }
+
+    /**
+     * Sets whether to use the context or default ClassLoader.
+     * True means use context ClassLoader.
+     *
+     * @param useContext True means use context ClassLoader
+     */
+    public void setUseContextClassLoader(boolean useContext) {
+      useContextClassLoader = useContext;
+      log.info("Setting useContextClassLoader = " + useContext);
+    }
+
+    /**
+     * Returns whether to use the context or default ClassLoader.
+     * True means to use the context ClassLoader.
+     *
+     * @return The value of useContextClassLoader
+     */
+    public boolean isUseContextClassLoader() {
+	return useContextClassLoader;
+    } 
 
     public void setContainer(Container container) {
         super.setContainer(container);
@@ -258,9 +287,13 @@ public class JAASRealm
             log.debug("Authenticating " + appName + " " +  username);
 
         // What if the LoginModule is in the container class loader ?
-        //
-        ClassLoader ocl=Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        ClassLoader ocl = null;
+
+        if (isUseContextClassLoader()) {
+          ocl=Thread.currentThread().getContextClassLoader();
+          Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        }
+
         try {
             loginContext = new LoginContext
                 (appName, new JAASCallbackHandler(this, username,
@@ -269,7 +302,9 @@ public class JAASRealm
             log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
         } finally {
-            Thread.currentThread().setContextClassLoader(ocl);
+            if( isUseContextClassLoader()) {
+              Thread.currentThread().setContextClassLoader(ocl);
+            }
         }
 
         if( log.isDebugEnabled())

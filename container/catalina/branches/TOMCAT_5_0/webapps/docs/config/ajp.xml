@@ -8,6 +8,7 @@
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>The AJP Connector</title>
   </properties>
 
@@ -39,6 +40,13 @@
   support the following attributes:</p>
 
   <attributes>
+
+    <attribute name="address" required="false">
+      <p>For servers with more than one IP address, this attribute
+      specifies which address will be used for listening on the specified
+      port.  By default, this port will be used on all IP addresses
+      associated with the server.</p>
+    </attribute>
 
     <attribute name="allowTrace" required="false">
       <p>A boolean value which can be used to enable or disable the TRACE
@@ -136,15 +144,17 @@
 
 <section name="Nested Components">
 
-  <p></p>
+  <p>None at this time.</p>
 
 </section>
 
 
 <section name="Configuration HOWTOs">
 
-  <p>Please refer to the <a href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/jk2/doc/">JK documentation</a> 
-     for HOWTOs and complete configuration information.</p>
+  <p>Please refer to the 
+<a href="../../connectors-doc/jk2">JK documentation</a> 
+     for HOW-TOs and complete configuration information.
+  </p>
 
 </section>
 

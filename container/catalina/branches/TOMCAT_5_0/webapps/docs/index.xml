@@ -18,7 +18,7 @@
 <section name="Introduction">
 
 <p>This is the top-level entry point of the documentation bundle for the
-<strong>Tomcat 5</strong> Servlet/JSP container.  Tomcat 5 implements the
+<strong>Apache Jakarta Tomcat</strong> Servlet/JSP container.  Tomcat version 5 implements the
 Servlet 2.4 and JavaServer Pages 2.0 specifications from the
 <a href="http://www.jcp.org">Java Community Process</a>, and includes many
 additional features that make it a useful platform for developing and deploying
