@@ -106,6 +106,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
 
         super(request);
         this.pathInfo = request.getPathInfo();
+        this.pathTranslated = request.getPathTranslated();
         this.requestURI = request.getRequestURI();
         this.servletPath = request.getServletPath();
 
@@ -126,6 +127,12 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      * The path information for this request.
      */
     protected String pathInfo = null;
+
+
+    /**
+     * The translated path information for this request.
+     */
+    protected String pathTranslated = null;
 
 
     /**
@@ -156,6 +163,17 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
     public String getPathInfo() {
 
         return (this.pathInfo);
+
+    }
+
+
+    /**
+     * Override the <code>getPathTranslated()</code> method of the
+     * wrapped request.
+     */
+    public String getPathTranslated() {
+
+        return (this.pathTranslated);
 
     }
 
@@ -203,6 +221,18 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
     void setPathInfo(String pathInfo) {
 
         this.pathInfo = pathInfo;
+
+    }
+
+
+    /**
+     * Set the translated path info for this request.
+     *
+     * @param pathTranslated The new translated path info
+     */
+    void setPathTranslated(String pathTranslated) {
+
+        this.pathTranslated = pathTranslated;
 
     }
 

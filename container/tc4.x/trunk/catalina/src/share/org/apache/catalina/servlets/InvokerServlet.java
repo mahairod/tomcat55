@@ -384,10 +384,14 @@ public final class InvokerServlet
         sb.append("/");
         sb.append(servletClass);
         wrequest.setServletPath(sb.toString());
-        if ((pathInfo == null) || (pathInfo.length() < 1))
+        if ((pathInfo == null) || (pathInfo.length() < 1)) {
             wrequest.setPathInfo(null);
-        else
+            wrequest.setPathTranslated(null);
+        } else {
             wrequest.setPathInfo(pathInfo);
+            wrequest.setPathTranslated
+                (getServletContext().getRealPath(pathInfo));
+        }
 
         // Allocate a servlet instance to perform this request
         Servlet instance = null;
