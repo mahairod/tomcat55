@@ -466,7 +466,6 @@ final class ApplicationDispatcher
             if (queryString != null) {
                 wrequest.setAttribute(Globals.FORWARD_QUERY_STRING_ATTR,
                                       queryString);
-                wrequest.mergeParameters(queryString);
             }
             
             if (queryString != null) {
