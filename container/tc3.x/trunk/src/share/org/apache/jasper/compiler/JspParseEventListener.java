@@ -310,17 +310,12 @@ public class JspParseEventListener extends BaseJspListener {
 
     private void generateFooter() throws JasperException {
 	writer.popIndent();
-	writer.println("} catch (Throwable t) {");
+	//writer.println("} catch (Throwable t) {");
+	writer.println("} catch (Exception ex) {");
 	writer.pushIndent();
         writer.println("if (out.getBufferSize() != 0)");
         writer.pushIndent(); writer.println("out.clear();"); writer.popIndent();
-	if (!error.equals("") && !ctxt.isErrorPage())
-	    writer.println("throw new HandleErrorPageException("+"\""+error+"\", t, out);");
-	else {
-            writer.println("throw new JasperException(t);");
-        }
-        
-	/* Do something reasonable for errpages and stuff here... */
+	writer.println("pageContext.handlePageException(ex);");
 	writer.popIndent();
 	writer.println("} finally {");
 	writer.pushIndent();

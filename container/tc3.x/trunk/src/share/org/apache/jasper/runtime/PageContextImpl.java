@@ -354,8 +354,18 @@ public class PageContextImpl extends PageContext {
         return out;
     }
     
-    public void handlePageException(Exception e) {
-        /* FIXME: Not yet Implemented */
+    public void handlePageException(Exception e)
+    throws IOException, ServletException {
+	
+	// set the request attribute with the exception.
+	request.setAttribute("javax.servlet.jsp.jspException", e);
+	
+	if (errorPageURL != null && !errorPageURL.equals("")) {
+	    forward(errorPageURL);
+	} // Otherwise throw the exception wrapped inside a ServletException.
+	else
+	    throw new ServletException(e.getMessage());
+	    
     }
 
     protected JspWriter _createOut(int bufferSize, boolean autoFlush) 

@@ -235,8 +235,6 @@ public class JspServlet extends HttpServlet {
 	    wrapper = new JspServletWrapper(jspUri, isErrorPage);
 	    jsps.put(jspUri, wrapper);
 	}
-	if (exception != null) 
-	    request.setAttribute("javax.servlet.jsp.jspException", exception);
 	
 	wrapper.service(request, response, precompile);
     }
