@@ -1728,7 +1728,7 @@ public class WebdavServlet
         generatedXML.writeElement(null, "href", XMLWriter.OPENING);
         
         String absoluteUri = req.getRequestURI();
-        String relativePath = getRelativePath(req);
+        String relativePath = normalize(getRelativePath(req));
         String toAppend = path.substring(relativePath.length());
         if ((!toAppend.startsWith("/")) && (!absoluteUri.endsWith("/")))
             toAppend = "/" + toAppend;
