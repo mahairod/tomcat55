@@ -142,6 +142,13 @@ public class JspRuntimeLibrary {
 	return new Character(s.charAt(0));
     }
 
+    public static char getChar(String s) throws JasperException {
+	if (s.length() == 0) {
+	    err.jspError("jsp.error.bad_string_Character");
+	}
+	return s.charAt(0);
+    }
+
    // __begin convertMethod
     public static Object convert(String propertyName, String s, Class t,
 				 Class propertyEditorClass) 
