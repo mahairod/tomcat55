@@ -478,8 +478,6 @@ public class ApplicationContext
         if (mappingData == null) {
             mappingData = new MappingData();
             localMappingData.set(mappingData);
-        } else {
-            mappingData.recycle();
         }
 
         // Map the URI
@@ -497,11 +495,16 @@ public class ApplicationContext
             return (null);
         }
 
+        Wrapper wrapper = (Wrapper) mappingData.wrapper;
+        String wrapperPath = mappingData.wrapperPath.toString();
+        String pathInfo = mappingData.pathInfo.toString();
+
+        mappingData.recycle();
+
         // Construct a RequestDispatcher to process this request
         return (RequestDispatcher) new ApplicationDispatcher
-            ((Wrapper) mappingData.wrapper, uriCC.toString(),
-             mappingData.wrapperPath.toString(),
-             mappingData.pathInfo.toString(), queryString, null);
+            (wrapper, uriCC.toString(), wrapperPath, pathInfo, 
+             queryString, null);
 
     }
 
