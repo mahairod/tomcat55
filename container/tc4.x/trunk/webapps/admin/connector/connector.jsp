@@ -255,18 +255,21 @@
             </controls:data>
         </controls:row>
 
+        <%-- input password allowed only while creating connector --%>        
+        <logic:equal name="connectorForm" property="adminAction" value="Create">
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.keystore.password"/>:</controls:label>
             <controls:data>
-             <logic:equal name="connectorForm" property="adminAction" value="Create">
                 <html:password property="keyStorePassword" size="30"/> 
-             </logic:equal>
-             <%-- display password only while creating connector --%>
-             <logic:equal name="connectorForm" property="adminAction" value="Edit">
-                <bean:write name="connectorForm" property="keyStorePassword"/>
-             </logic:equal>
+                <%--
+                <logic:equal name="connectorForm" property="adminAction" value="Edit">
+                   <bean:write name="connectorForm" property="keyStorePassword"/>
+                </logic:equal>
+                --%>
             </controls:data>
         </controls:row>
+        </logic:equal>
+   
     </logic:equal>
    </controls:table>
   
