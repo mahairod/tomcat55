@@ -383,14 +383,20 @@ implements org.apache.catalina.cluster.ClusterManager
             ReplicationStream session_in = new ReplicationStream(session_data,container.getLoader().getClassLoader());
 
             Session session = sessionId!=null?this.findSession(sessionId):null;
+            boolean isNew = (session==null);
             //clear the old values from the existing session
             if ( session!=null ) {
                 ReplicatedSession rs = (ReplicatedSession)session;
-                rs.expire(false);
+                rs.expire(false);  //cleans up the previous values, since we are not doing removes
                 session = null;
             }//end if
 
-            if (session==null) session = createSession(false,false);
+            if (session==null) {
+                session = createSession(false, false);
+                sessions.remove(session.getId());
+            }
+            
+            
             boolean hasPrincipal = session_in.readBoolean();
             SerializablePrincipal p = null;
             if ( hasPrincipal )
@@ -398,6 +404,19 @@ implements org.apache.catalina.cluster.ClusterManager
             ((ReplicatedSession)session).readObjectData(session_in);
             if ( hasPrincipal )
                 session.setPrincipal(p.getPrincipal(getContainer().getRealm()));
+            ((ReplicatedSession)session).setId(sessionId,isNew);
+            ReplicatedSession rsession = (ReplicatedSession)session; 
+            rsession.setAccessCount(1);
+            session.setManager(this);
+            session.setValid(true);
+            rsession.setLastAccessedTime(System.currentTimeMillis());
+            rsession.setThisAccessedTime(System.currentTimeMillis());
+            ((ReplicatedSession)session).setAccessCount(0);
+            session.setNew(false);
+//            System.out.println("Session loaded id="+sessionId +
+//                               " actualId="+session.getId()+ 
+//                               " exists="+this.sessions.containsKey(sessionId)+
+//                               " valid="+rsession.isValid());
             return session;
 
         }
@@ -558,11 +577,10 @@ implements org.apache.catalina.cluster.ClusterManager
                 }
                 case SessionMessage.EVT_SESSION_CREATED: {
                     Session session = this.readSession(msg.getSession(),msg.getSessionID());
-                    session.setManager(this);
-                    add(session);
-                    session.setValid(true);
-                    session.access();
-                    if ( getDebug()  > 5 ) log("Received replicated session="+session);
+                    if ( getDebug()  > 5 ) {
+                        log("Received replicated session=" + session +
+                            " isValid=" + session.isValid());
+                    }
                     break;
                 }
                 case SessionMessage.EVT_SESSION_EXPIRED: {
@@ -577,6 +595,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     Session session = findSession(msg.getSessionID());
                     if ( session != null ) {
                         session.access();
+                        session.endAccess();
                     }
                     break;
                 }
