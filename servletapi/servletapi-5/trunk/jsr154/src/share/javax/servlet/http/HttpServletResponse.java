@@ -246,7 +246,7 @@ public interface HttpServletResponse extends ServletResponse {
      * presence of a header before setting its value.
      * 
      * @param	name	the name of the header to set
-     * @param	value	the assigned date value
+     * @param	date	the assigned date value
      * 
      * @see #containsHeader
      * @see #addDateHeader
@@ -262,7 +262,7 @@ public interface HttpServletResponse extends ServletResponse {
      * to have multiple values.
      * 
      * @param	name	the name of the header to set
-     * @param	value	the additional date value
+     * @param	date	the additional date value
      * 
      * @see #setDateHeader
      */
