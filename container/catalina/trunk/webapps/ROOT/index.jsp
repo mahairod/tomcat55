@@ -118,6 +118,7 @@
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
                         <a href="jsp-examples/">JSP Examples</a><br>
                         <a href="servlets-examples/">Servlet Examples</a><br>
+                        <a href="webdav/">WebDAV capabilities</a><br>
                         &nbsp;
                     </td>
                 </tr>
