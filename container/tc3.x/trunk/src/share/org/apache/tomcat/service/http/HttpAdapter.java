@@ -88,9 +88,7 @@ public class HttpAdapter  implements ServerConnector {
     
     private InetAddress address;
     // default is 8080
-    private int port=8080;
-
-    int vport;
+    int vport=8080;
 
     private ServerSocketFactory socketFactory;
     private ServerSocket serverSocket;
@@ -105,7 +103,7 @@ public class HttpAdapter  implements ServerConnector {
 
     public void start() throws Exception {
 	if( con==null) throw new Exception( "Invalid ConnectionHandler");
-	ep.setPort(port);
+	ep.setPort(vport);
 	if( socketFactory != null) {
 	    ep.setServerSocketFactory( socketFactory );
 	}
@@ -122,9 +120,9 @@ public class HttpAdapter  implements ServerConnector {
     }
     
     public void setProperty( String prop, String value) {
-	if("port".equals(prop) ) {
+	if(HttpServer.VHOST_PORT.equals(prop) ) {
 	    //	    System.out.println("XXX");
-	    port=string2Int(value);
+	    vport=string2Int(value);
 	}
     }
 
