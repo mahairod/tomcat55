@@ -76,6 +76,13 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        <bug>31018</bug>: Race condition in SystemLogHandler. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.0.28 (yoavs)">
