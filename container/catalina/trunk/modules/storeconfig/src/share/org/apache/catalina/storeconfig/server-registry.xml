@@ -78,7 +78,7 @@
         tagClass="org.apache.catalina.connector.Connector"
         childs="true"
         storeFactoryClass="org.apache.catalina.storeconfig.ConnectorSF"
-        storeWriterClass="org.apache.catalina.storeconfig.ConnectorStoreAppender">
+        storeAppenderClass="org.apache.catalina.storeconfig.ConnectorStoreAppender">
 	    <TransientAttribute>maxProcessor</TransientAttribute>
  	    <TransientAttribute>minProcessor</TransientAttribute>
      </Description>
@@ -295,6 +295,14 @@
 	    tag="Sender"
 		standard="false"
 		default="false" 
+		tagClass="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
+        storeFactoryClass="org.apache.catalina.storeconfig.StoreFactoryBase"
+        storeAppenderClass="org.apache.catalina.storeconfig.ReplicationTransmitterStoreAppender">
+     </Description>
+     <Description
+	    tag="Sender"
+		standard="false"
+		default="false" 
 		tagClass="org.apache.catalina.cluster.ClusterSender"
         storeFactoryClass="org.apache.catalina.storeconfig.StoreFactoryBase">
      </Description>
@@ -308,8 +316,8 @@
      <Description
 	    tag="Membership"
 		standard="false"
-		default="false" 
-		tagClass="org.apache.catalina.cluster.ClusterMembership"
+		default="false"
+		tagClass="org.apache.catalina.cluster.MembershipService"
         storeFactoryClass="org.apache.catalina.storeconfig.StoreFactoryBase">
      </Description>
      <Description
