@@ -43,6 +43,9 @@
       <fix>
         <bug>31273</bug>: Add support for derefaliases in JNDIRealm. (markt)
       </fix>
+      <fix>
+        <bug>31623</bug>: Better OS400 support in setclasspath.sh. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
