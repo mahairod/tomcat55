@@ -625,7 +625,7 @@ public abstract class AuthenticatorBase
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param login Login configuration describing how authentication
+     * @param config    Login configuration describing how authentication
      *              should be performed
      *
      * @exception IOException if an input/output error occurs
@@ -643,7 +643,6 @@ public abstract class AuthenticatorBase
     protected synchronized String generateSessionId() {
 
         // Generate a byte array containing a session identifier
-        Random random = getRandom();
         byte bytes[] = new byte[SESSION_ID_BYTES];
         getRandom().nextBytes(bytes);
         bytes = getDigest().digest(bytes);
@@ -801,6 +800,53 @@ public abstract class AuthenticatorBase
 
 
     /**
+     * Attempts reauthentication to the <code>Realm</code> using
+     * the credentials included in argument <code>entry</code>.
+     *
+     * @param ssoId identifier of SingleSignOn session with which the
+     *              caller is associated
+     * @param request   the request that needs to be authenticated
+     */
+    protected boolean reauthenticateFromSSO(String ssoId, HttpRequest request) {
+
+        if (sso == null || ssoId == null)
+            return false;
+
+        boolean reauthenticated = false;
+
+        SingleSignOnEntry entry = sso.lookup(ssoId);
+        if (entry != null && entry.getCanReauthenticate()) {
+            Principal reauthPrincipal = null;
+            Container parent = getContainer();
+            if (parent != null) {
+                Realm realm = getContainer().getRealm();
+                String username = entry.getUsername();
+                if (realm != null && username != null) {
+                    reauthPrincipal =
+                        realm.authenticate(username, entry.getPassword());
+                }
+            }
+
+            if (reauthPrincipal != null) {
+                associate(ssoId, getSession(request, true));
+                request.setAuthType(entry.getAuthType());
+                request.setUserPrincipal(reauthPrincipal);
+
+                reauthenticated = true;
+                if (log.isDebugEnabled()) {
+                    log.debug(" Reauthenticated cached principal '" +
+                              entry.getPrincipal().getName() +
+                              "' with auth type '" +
+                              entry.getAuthType() + "'");
+                }
+            }
+        }
+
+        return reauthenticated;
+    }
+
+
+    /**
      * Register an authenticated Principal and authentication type in our
      * request, in the current session (if there is one), and with our
      * SingleSignOn valve, if there is one.  Set the appropriate cookie
@@ -825,9 +871,9 @@ public abstract class AuthenticatorBase
         request.setAuthType(authType);
         request.setUserPrincipal(principal);
 
+        Session session = getSession(request, false);
         // Cache the authentication information in our session, if any
         if (cache) {
-            Session session = getSession(request, false);
             if (session != null) {
                 session.setAuthType(authType);
                 session.setPrincipal(principal);
@@ -845,19 +891,39 @@ public abstract class AuthenticatorBase
         // Construct a cookie to be returned to the client
         if (sso == null)
             return;
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
-        String value = generateSessionId();
-        Cookie cookie = new Cookie(Constants.SINGLE_SIGN_ON_COOKIE, value);
-        cookie.setMaxAge(-1);
-        cookie.setPath("/");
-        hres.addCookie(cookie);
 
-        // Register this principal with our SSO valve
-        sso.register(value, principal, authType, username, password);
-        request.setNote(Constants.REQ_SSOID_NOTE, value);
+        // Only create a new SSO entry if the SSO did not already set a note
+        // for an existing entry (as it would do with subsequent requests
+        // for DIGEST and SSL authenticated contexts)
+        String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+        if (ssoId == null) {
+            // Construct a cookie to be returned to the client
+            HttpServletResponse hres =
+                (HttpServletResponse) response.getResponse();
+            ssoId = generateSessionId();
+            Cookie cookie = new Cookie(Constants.SINGLE_SIGN_ON_COOKIE, ssoId);
+            cookie.setMaxAge(-1);
+            cookie.setPath("/");
+            hres.addCookie(cookie);
+
+            // Register this principal with our SSO valve
+            sso.register(ssoId, principal, authType, username, password);
+            request.setNote(Constants.REQ_SSOID_NOTE, ssoId);
+
+        } else {
+            // Update the SSO session with the latest authentication data
+            sso.update(ssoId, principal, authType, username, password);
+        }
+
+        // Fix for Bug 10040
+        // Always associate a session with a new SSO reqistration.
+        // SSO entries are only removed from the SSO registry map when
+        // associated sessions are destroyed; if a new SSO entry is created
+        // above for this request and the user never revisits the context, the
+        // SSO entry will never be cleared if we don't associate the session
+        if (session == null)
+            session = getSession(request, true);
+        sso.associate(ssoId, session);
 
     }
 

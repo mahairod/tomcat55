@@ -119,7 +119,7 @@ public final class NonLoginAuthenticator
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param login Login configuration describing how authentication
+     * @param config    Login configuration describing how authentication
      *              should be performed
      *
      * @exception IOException if an input/output error occurs
@@ -129,6 +129,15 @@ public final class NonLoginAuthenticator
                                 LoginConfig config)
         throws IOException {
 
+        /*  Associating this request's session with an SSO would allow
+            coordinated session invalidation, but should the session for
+            a webapp that the user didn't log into be invalidated when
+            another session is logged out?
+        String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+        if (ssoId != null)
+            associate(ssoId, getSession(request, true));
+        */
+        
         if (debug >= 1)
             log("User authentication is not required");
         return (true);

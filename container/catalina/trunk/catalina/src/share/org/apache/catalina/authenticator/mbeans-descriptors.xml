@@ -129,6 +129,10 @@
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
+
+    <attribute name="requireReauthentication"
+               description="Should we attempt to reauthenticate each request against the security Realm?"
+               type="boolean"/>
       
   </mbean>
 
