@@ -579,6 +579,7 @@ public class JspUtil {
         // Note that PageContextImpl implements VariableResolver and
         // the generated Servlet/SimpleTag implements FunctionMapper, so
         // that machinery is already in place (mroth).
+	targetType = toJavaSourceType(targetType);
 	StringBuffer call = new StringBuffer(
              "(" + targetType + ") "
                + "org.apache.jasper.runtime.PageContextImpl.proprietaryEvaluate"
@@ -931,6 +932,44 @@ public class JspUtil {
 	}
 
 	return reader;
+    }
+
+    /**
+     * Class.getName() return arrays in the form "[[[<et>", where et,
+     * the element type can be one of ZBCDFIJS or L<classname>;
+     * It is converted into forms that can be understood by javac.
+     */
+    private static String toJavaSourceType(String type) {
+
+	if (type.charAt(0) != '[') {
+	    return type;
+ 	}
+
+	int dims = 1;
+	String t = null;
+	for (int i = 1; i < type.length(); i++) {
+	    if (type.charAt(i) == '[') {
+		dims++;
+	    } else {
+		switch (type.charAt(i)) {
+		case 'Z': t = "boolean"; break;
+		case 'B': t = "byte"; break;
+		case 'C': t = "char"; break;
+		case 'D': t = "double"; break;
+		case 'F': t = "float"; break;
+		case 'I': t = "int"; break;
+		case 'J': t = "long"; break;
+		case 'S': t = "short"; break;
+		case 'L': t = type.substring(i+1, type.indexOf(';')); break;
+		}
+		break;
+	    }
+	}
+	StringBuffer resultType = new StringBuffer(t);
+	for (; dims > 0; dims--) {
+	    resultType.append("[]");
+	}
+	return resultType.toString();
     }
 }
 
