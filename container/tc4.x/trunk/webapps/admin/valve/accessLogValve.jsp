@@ -75,7 +75,7 @@
         </controls:row>
 
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="valve.class"/>:</controls:label>
+            <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="accessLogValveForm" property="adminAction" value="Create">
                     <html:select property="valveType" onchange="IA_jumpMenu('self',this)">
@@ -110,7 +110,7 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="valve.pattern"/>:</controls:label>
             <controls:data>
-                <html:textarea property="pattern" cols="30" rows="3"/>
+                <html:text property="pattern" size="30"/>
             </controls:data>
         </controls:row>
       
