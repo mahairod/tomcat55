@@ -117,10 +117,12 @@
       <srcfiles dir="${catalina.home}/webapps/admin" includes="**" />
     </uptodate>
 
+    <!--
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons/daemon" includes="**" />
     </uptodate>
+    -->
   </target>
 
 
@@ -476,6 +478,7 @@
   </target>
 -->
 
+<!--
   <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
     <echo>========== Building: commons-daemon </echo>
 
@@ -484,6 +487,7 @@
         <property name="dist.home" value="${commons-daemon.home}" />
     </ant>
   </target>
+-->
 
   <target name="build-all" depends="init,deploy-static,build,build-webapps,embed,compat,deployer" 
           description="build tomcat, webapps, embed, compat, deployer" />
@@ -495,7 +499,7 @@
     <antcall target="build-jspapi"/>
 
     <!-- <antcall target="build-commons-modeler" /> -->
-    <antcall target="build-commons-daemon" />
+    <!-- <antcall target="build-commons-daemon"  /> -->
 
   </target>
 
@@ -1594,11 +1598,17 @@
       <param name="destfile" value="${nsis.exe}"/>
       <param name="destdir" value="${nsis.home}"/>
     </antcall>
+
     <antcall target="downloadgz">
       <param name="sourcefile" value="${struts.loc}"/>
       <param name="destfile" value="${struts.jar}"/>
     </antcall>
     
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-daemon.loc}"/>
+      <param name="destfile" value="${commons-daemon.jar}"/>
+    </antcall>
+
     <!-- Build the dependencies that are not yet released -->
     <antcall target="build-depends"/>
 
@@ -1698,9 +1708,11 @@
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} jakarta-servletapi-5" 
          dest="${cvs.base}"/>
+<!-- Use released daemon instead
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} ${commons-daemon.cvs.loc}"
          dest="${cvs.base}"/>
+-->
 <!--
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} ${commons-modeler.cvs.loc}" 
@@ -1708,14 +1720,6 @@
 -->
   </target>
 
-
-  <target name="jfc">
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-daemon.loc}"/>
-      <param name="subdir" value="${commons-daemon.home}"/>
-      <param name="destfile" value="${commons-daemon.jar}"/>
-    </antcall>
-  </target>
 
   <!-- ==================== Modeler tricks ==================== 
   -->
