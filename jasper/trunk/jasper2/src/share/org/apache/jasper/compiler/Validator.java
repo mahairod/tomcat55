@@ -244,16 +244,6 @@ public class Validator {
 	    // Attributes for imports for this node have been processed by
 	    // the parsers, just add them to pageInfo.
 	    pageInfo.addImports(n.getImports());
-
-	    // Determine the output context type, per errata_a
-	    // http://jcp.org/aboutJava/communityprocess/maintenance/jsr053/errata_1_2_a_20020321.html
-	    if (pageInfo.getContentType() == null) {
-		String defaultType = n.isXmlSyntax()? "text/xml;": "text/html;";
-		String charset = pageInfo.getPageEncoding();
-		if (charset == null)
-		    charset = n.isXmlSyntax()? "UTF-8": "ISO-8859-1";
-		pageInfo.setContentType(defaultType + charset);
-	    }
 	}
     }
 
@@ -613,6 +603,18 @@ public class Validator {
 	 * and are position independent.
 	 */
 	page.visit(new PageDirectiveVisitor(compiler));
+
+	// Determine the default output content type, per errata_a
+	// http://jcp.org/aboutJava/communityprocess/maintenance/jsr053/errata_1_2_a_20020321.html
+	PageInfo pageInfo = compiler.getPageInfo();
+	if (pageInfo.getContentType() == null) {
+	    boolean isXml = page.getRoot().isXmlSyntax();
+	    String defaultType = isXml? "text/xml;": "text/html;";
+	    String charset = pageInfo.getPageEncoding();
+	    if (charset == null)
+		charset = isXml? "UTF-8": "ISO-8859-1";
+	    pageInfo.setContentType(defaultType + charset);
+	}
 
 	/*
 	 * Validate all other nodes.

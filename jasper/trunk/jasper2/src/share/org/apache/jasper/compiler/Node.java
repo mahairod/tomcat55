@@ -793,7 +793,7 @@ public abstract class Node {
     public static class Nodes {
 
 	private List list;
-	private Node.Root root;
+	private Node.Root root;		// null if this is not a page
 
 	public Nodes() {
 	    list = new Vector();
@@ -811,6 +811,7 @@ public abstract class Node {
 	 */
 	public void add(Node n) {
 	    list.add(n);
+	    root = null;
 	}
 
 	/**
