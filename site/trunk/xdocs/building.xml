@@ -57,15 +57,6 @@ Modify the PATH environment variable to include directory
 available, which will be used to actually perform the build.
 </p>
 
-<p>
-Download a binary distribution of Xalan 2 from <a href="http://xml.apache.org/dist/xalan-j/">here</a>.
-</p>
-
-<p>
-Make the "xalan.jar" file of this distribution available to Ant (so that
-it can be used with the "style" tag) by copying it to "${ant.home}/lib".
-</p>
-
 </section>
 
 <section name="Building Tomcat">
@@ -139,9 +130,6 @@ For a quick rebuild of only modified code you can use:
     ant build<br/>
 </code>
 
-In addition, "ant build-depends" will build packages that 
-tomcat depends on ( commons-logging for now ), to ease fixes
-and debuging in those packages.
 </p>
 
 </section>
