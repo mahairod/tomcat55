@@ -1885,6 +1885,10 @@ Jasper Bug Fixes:
          Loader
          Fix issue where security manager was null
 
+[4.1.31] #29570
+         Compilier
+         Fix occasional failure due to temp dir not being set for Ant task.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
