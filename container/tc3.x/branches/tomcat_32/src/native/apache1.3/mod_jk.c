@@ -483,8 +483,11 @@ static const char *jk_set_wroker_file(cmd_parms *cmd,
     server_rec *s = cmd->server;
     jk_server_conf_t *conf =
         (jk_server_conf_t *)ap_get_module_config(s->module_config, &jk_module);
+    struct stat statbuf;
 
     conf->worker_file = worker_file;
+    if (stat(worker_file, &statbuf) == -1)
+        return "Can't find the workers file specified";
 
     return NULL;
 }
@@ -904,14 +907,26 @@ static int jk_translate(request_rec *r)
 
 static void exit_handler (server_rec *s, ap_pool *p)
 {
-   jk_server_conf_t *conf =
-       (jk_server_conf_t *)ap_get_module_config(s->module_config, &jk_module);
+    server_rec *tmp = s;
 
-   wc_close(conf->log);
-   uri_worker_map_free(&(conf->uw_map), conf->log);
-   map_free(&(conf->uri_to_context));
-   if (conf->log)
-      jk_close_file_logger(&(conf->log));
+    /* loop through all available servers to clean up all configuration 
+     * records we've created
+     */  
+    while (NULL != tmp)
+    {
+        jk_server_conf_t *conf =
+            (jk_server_conf_t *)ap_get_module_config(tmp->module_config, &jk_module);
+
+        if (NULL != conf)
+        {
+            wc_close(conf->log);
+            uri_worker_map_free(&(conf->uw_map), conf->log);
+            map_free(&(conf->uri_to_context));
+            if (conf->log)
+                jk_close_file_logger(&(conf->log));
+        }
+        tmp = tmp->next;
+    }
 }
 
 static const handler_rec jk_handlers[] =
