@@ -30,6 +30,7 @@ compile.optimize=on
 #Version number
 version=5.0
 
+# ----- CVS setup
 #Proxy to download subproject
 #proxy.host=proxy.domain
 #proxy.port=8080
@@ -41,18 +42,6 @@ cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
 
 # ----- Default Base Path for Dependent Packages -----
 base.path=/usr/local
-
-
-# ----- Jakarta Tomcat Connectors source path -----
-jtc.home=../../jakarta-tomcat-connectors
-
-
-# ----- Jakarta Tomcat Jasper source path -----
-jasper.home=../jakarta-tomcat-jasper/jasper2
-
-
-# ----- Jakarta Tomcat Catalina source path -----
-catalina.home=../jakarta-tomcat-catalina
 
 
 # --------------------------------------------------
@@ -104,13 +93,6 @@ regexp.home=${base.path}/jakarta-regexp-1.2
 regexp.lib=${regexp.home}
 regexp.jar=${regexp.lib}/jakarta-regexp-1.2.jar
 regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-regexp-1.2.tar.gz
-
-
-# ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
-servlet.home=${base.path}/jakarta-servletapi-4
-servlet.lib=${servlet.home}/lib
-servlet.jar=${servlet.lib}/servlet.jar
-servlet.loc=jakarta-servletapi-4
 
 
 # ----- Xerces XML Parser, version 1.4.4 to 2.0.0 Beta 4 -----

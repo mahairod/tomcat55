@@ -8,6 +8,7 @@
   <property file="download.properties"/>
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
+  <property file="build.properties.default"/>
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
@@ -19,6 +20,16 @@
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jtc.final.name"        value="${jtc.project}-${version}" />
   <property name="jtc.final-src.name"    value="${jtc.project}-${version}-src" />
+
+  <!-- Source dependencies -->
+  <property name="api.home"
+           value="${basedir}/../jakarta-servletapi-5"/>
+  <property name="catalina.home"
+           value="${basedir}/../jakarta-tomcat-catalina"/>
+  <property name="jasper.home"
+           value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
+  <property name="jtc.home"
+           value="${basedir}/../jakarta-tomcat-connectors"/>
 
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${catalina.home}/build"/>
@@ -32,18 +43,15 @@
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
 
 
-  <!-- Source dependencies -->
-  <property name="catalina.home"
-           value="${basedir}/../jakarta-tomcat-catalina"/>
-  <property name="jasper.home"
-           value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
-  <property name="jtc.home"
-           value="${basedir}/../jakarta-tomcat-connectors"/>
-
-
   <!-- =================== DETECT: Display configuration ================== -->
   <target name="detect"
    description="Display configuration and conditional compilation flags">
+
+    <echo message="--- ${name} ${version} Build ---"/>
+    <echo message="api.home=${api.home}"/>
+    <echo message="catalina.home=${catalina.home}"/>
+    <echo message="jasper.home=${jasper.home}"/>
+    <echo message="jtc.home=${jtc.home}"/>
 
     <ant dir="${catalina.home}" target="flags.display"/>
     <ant dir="${basedir}/webapps/admin" target="flags.display"/>
@@ -64,6 +72,8 @@
   <!-- ====================== DEPLOY: Deploy Components =================== -->
   <target name="deploy" depends="deploy-static"
    description="Build and deploy all components">
+    <echo>Target: API - Dist ...</echo>
+    <ant dir="${api.home}" target="dist"/>
     <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="${catalina.home}" target="deploy"/>
     <echo>Target: Jasper - Deploy ...</echo>
@@ -77,6 +87,8 @@
   <target name="clean"
    description="Clean all components">
     <delete dir="${tomcat.build}"/>
+    <echo>Target: API - Clean ...</echo>
+    <ant dir="${api.home}" target="clean"/>
     <echo>Target: Catalina - Clean ...</echo>
     <ant dir="${catalina.home}" target="clean"/>
     <echo>Target: Jasper - Clean ...</echo>
@@ -90,6 +102,8 @@
   <!-- ======================= COMBO: Build All Components ================ -->
   <target name="all"
    description="Clean, build, and deploy all components">
+    <echo>Target: API - Dist ...</echo>
+    <ant dir="${api.home}" target="dist"/>
     <echo>Target: Catalina - All ...</echo>
     <ant dir="${catalina.home}" target="all"/>
     <echo>Target: Jasper - All ...</echo>
