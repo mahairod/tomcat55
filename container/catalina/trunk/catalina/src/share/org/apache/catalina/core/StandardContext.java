@@ -158,10 +158,10 @@ public class StandardContext
 
     /**
      * The alternate deployment descriptor name.
-     */ 
+     */
      private String altDDName = null;
 
-     
+
     /**
      * The set of application listener class names configured for this
      * application, in the order they were encountered in the web.xml file.
@@ -791,15 +791,15 @@ public class StandardContext
 
     }
 
-    
+
     /**
      * Return the alternate Deployment Descriptor name.
      */
     public String getAltDDName(){
         return altDDName;
     }
-    
-    
+
+
     /**
      * Set an alternate Deployment Descriptor name.
      */
@@ -1145,7 +1145,7 @@ public class StandardContext
 
         if (context == null) {
             context = new ApplicationContext(getBasePath(), this);
-            if (altDDName != null) 
+            if (altDDName != null)
                 context.setAttribute(Globals.ALT_DD_ATTR,altDDName);
         }
         return (context.getFacade());
@@ -1261,7 +1261,7 @@ public class StandardContext
         // The proxied resources will be refreshed on start
         this.resources = null;
 
-        support.firePropertyChange("resources", oldResources, 
+        support.firePropertyChange("resources", oldResources,
                                    this.webappResources);
 
     }
@@ -1634,19 +1634,19 @@ public class StandardContext
      * property group, we only care about the URL pattern here.  The
      * JSP container will parse the rest.
      *
-     * @param pattern URL pattern to be mapped 
+     * @param pattern URL pattern to be mapped
      */
     public void addJspMapping(String pattern) {
         String servletName = findServletMapping("*.jsp");
         if (servletName == null) {
             servletName = "jsp";
         }
-        
+
         // Properly handle file that are considered to be a jsp.
         if (pattern.indexOf("*.") > 0){
             pattern = pattern.substring(pattern.lastIndexOf("*"));
             servletName = "jsp";
-        }               
+        }
         addServletMapping(pattern, servletName);
     }
 
@@ -3625,7 +3625,7 @@ public class StandardContext
         env.put(ProxyDirContext.CONTEXT, getName());
 
         try {
-            ProxyDirContext proxyDirContext = 
+            ProxyDirContext proxyDirContext =
                 new ProxyDirContext(env, webappResources);
             if (webappResources instanceof BaseDirContext) {
                 ((BaseDirContext) webappResources).setDocBase(getBasePath());
@@ -3751,7 +3751,7 @@ public class StandardContext
         // Set config file name
         String appBase = getAppBase();
         if (getConfigFile() == null && appBase != null) {
-            
+
             String name = getName();
             if (name.equals("")) {
                 name = "ROOT";
@@ -3798,7 +3798,12 @@ public class StandardContext
             if (log.isDebugEnabled())
                 log.debug("Configuring default Manager");
             if (getCluster() != null) {
-                setManager(getCluster().createManager(getName()));
+                try {
+                    setManager(getCluster().createManager(getName()));
+                } catch ( Exception x ) {
+                    log.warn("Clustering disabled for context:"+getName()+" reason:"+x.getMessage());
+                    setManager(new StandardManager());
+                }
             } else {
                 setManager(new StandardManager());
             }
@@ -4464,7 +4469,7 @@ public class StandardContext
                 Class.forName("org.apache.catalina.valves.RequestListenerValve");
             requestListener = (Valve) clazz.newInstance();
         } catch (Throwable t) {
-            return false;    
+            return false;
         }
 
         // Add this Valve to our Pipeline
