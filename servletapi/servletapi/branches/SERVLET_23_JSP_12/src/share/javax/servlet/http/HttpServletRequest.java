@@ -304,7 +304,8 @@ public interface HttpServletRequest extends ServletRequest {
      * <p>Same as the value of the CGI variable PATH_INFO.
      *
      *
-     * @return		a <code>String</code> specifying 
+     * @return		a <code>String</code>, decoded by the
+     *			web container, specifying 
      *			extra path information that comes
      *			after the servlet path but before
      *			the query string in the request URL;
@@ -327,6 +328,8 @@ public interface HttpServletRequest extends ServletRequest {
      * <p>If the URL does not have any extra path information,
      * this method returns <code>null</code>.
      *
+     * The web container does not decode thins string.
+     *
      *
      * @return		a <code>String</code> specifying the
      *			real path, or <code>null</code> if
@@ -347,7 +350,7 @@ public interface HttpServletRequest extends ServletRequest {
      * of the request.  The context path always comes first in a request
      * URI.  The path starts with a "/" character but does not end with a "/"
      * character.  For servlets in the default (root) context, this method
-     * returns "".
+     * returns "". The container does not decode this string.
      *
      *
      * @return		a <code>String</code> specifying the
@@ -469,6 +472,7 @@ public interface HttpServletRequest extends ServletRequest {
      *
      * Returns the part of this request's URL from the protocol
      * name up to the query string in the first line of the HTTP request.
+     * The web container does not decode this String.
      * For example:
      *
      * <blockquote>
@@ -527,7 +531,8 @@ public interface HttpServletRequest extends ServletRequest {
      *
      * @return		a <code>String</code> containing
      *			the name or path of the servlet being
-     *			called, as specified in the request URL 
+     *			called, as specified in the request URL,
+     *			decoded.
      *
      *
      */
