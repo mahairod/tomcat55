@@ -5,43 +5,28 @@
   ;Compression options
   CRCCheck on
   SetCompress force
-  SetCompressor bzip2
+  SetCompressor lzma
   SetDatablockOptimize on
 
 !include "MUI.nsh"
 
-!define MUI_PRODUCT "Apache Tomcat"
-!define MUI_VERSION "@VERSION@"
+Name "Apache Tomcat"
 
 ;--------------------------------
 ;Configuration
 
-  !define MUI_WELCOMEPAGE
-  !define MUI_FINISHPAGE
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
   !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcatw.exe
   !define MUI_FINISHPAGE_RUN_PARAMETERS //GT//Tomcat5
-
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
-  !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTSPAGE
-  !define MUI_DIRECTORYPAGE
-
   !define MUI_ABORTWARNING
-  !define MUI_CUSTOMPAGECOMMANDS
-
-  !define MUI_UNINSTALLER
-  !define MUI_UNCONFIRMPAGE
 
   !define TEMP1 $R0
   !define TEMP2 $R1
 
   !define MUI_ICON tomcat.ico
   !define MUI_UNICON tomcat.ico
-
-  ;Language
-  !insertmacro MUI_LANGUAGE "English"
 
   ;General
   OutFile tomcat-installer.exe
@@ -55,15 +40,19 @@
   LangString TEXT_CONF_SUBTITLE ${LANG_ENGLISH} "Tomcat basic configuration."
   LangString TEXT_CONF_PAGETITLE ${LANG_ENGLISH} ": Configuration Options"
 
-  ;Page order
-  !insertmacro MUI_PAGECOMMAND_WELCOME
-  !insertmacro MUI_PAGECOMMAND_LICENSE
-  !insertmacro MUI_PAGECOMMAND_COMPONENTS
-  !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  Page custom SetConfiguration "$(TEXT_CONF_PAGETITLE)"
-  Page custom SetChooseJVM "$(TEXT_JVM_PAGETITLE)"
-  !insertmacro MUI_PAGECOMMAND_INSTFILES
-  !insertmacro MUI_PAGECOMMAND_FINISH
+  ;Install Page order
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE INSTALLLICENSE
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  Page custom SetConfiguration Void "$(TEXT_CONF_PAGETITLE)"
+  Page custom SetChooseJVM Void "$(TEXT_JVM_PAGETITLE)"
+  !insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_PAGE_FINISH
+
+  ;Uninstall Page order
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
 
   ;License dialog
   LicenseData INSTALLLICENSE
@@ -78,6 +67,9 @@
     LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
     LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
 
+  ;Language
+  !insertmacro MUI_LANGUAGE English
+
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\Apache Software Foundation\Tomcat 5.0"
 
@@ -89,15 +81,9 @@
   ; Main registry key
   InstallDirRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" ""
 
-  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   ReserveFile "jvm.ini"
   ReserveFile "config.ini"
-
-;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Installer Sections
@@ -116,11 +102,11 @@ Section "Core" SecTomcatCore
   File /r bin
   File /r common
   File /r conf
-  File /r shared
-  File /r logs
+  File /nonfatal /r shared
+  File /nonfatal /r logs
   File /r server
-  File /r work
-  File /r temp
+  File /nonfatal /r work
+  File /nonfatal /r temp
   SetOutPath $INSTDIR\webapps
   File /r webapps\balancer
   File /r webapps\ROOT
@@ -257,10 +243,13 @@ Function SetConfiguration
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "config.ini"
 FunctionEnd
 
+Function Void
+FunctionEnd
+
 ;--------------------------------
 ;Descriptions
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} $(DESC_SecTomcat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
@@ -268,7 +257,7 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatDocs} $(DESC_SecTomcatDocs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} $(DESC_SecMenu)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 
 ; =====================
@@ -511,8 +500,6 @@ Section Uninstall
       MessageBox MB_OK|MB_ICONEXCLAMATION \
                  "Note: $INSTDIR could not be removed."
   Removed:
-
-  !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
 

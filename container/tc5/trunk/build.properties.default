@@ -187,10 +187,10 @@ junit.loc=http://telia.dl.sourceforge.net/sourceforge/junit/junit3.7.zip
 
 
 # ----- NSIS, version 2.0 or later -----
-nsis.home=${base.path}/nsis-2.0-b3
+nsis.home=${base.path}/nsis-2.0-b4
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
-nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis/nsis20b3.exe
+nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis/nsis20b4.exe
 
 
 # ----- Struts, version 1.1 or later -----
