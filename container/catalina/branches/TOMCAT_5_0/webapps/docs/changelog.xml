@@ -20,6 +20,9 @@
       <update>
         Update web.xml files to 2.4 schema (from 2.3 DTD) where applicable. (yoavs)
       </update>
+      <update>
+        Added contrib directory to hold 3rd party scripts: <bug>31499</bug>, <bug>31447</bug>. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
