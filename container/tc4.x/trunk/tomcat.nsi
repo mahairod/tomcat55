@@ -12,6 +12,9 @@ BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000000
 InstProgressFlags smooth colored
 
+!include "StrFunc.nsh"
+${StrRep}
+
 PageEx license
   LicenseText "You must read the following license before installing:"
   LicenseData INSTALLLICENSE
@@ -317,6 +320,14 @@ Function configure
   ReadINIStr $R1 $PLUGINSDIR\config.ini "Field 5" State
   ReadINIStr $R2 $PLUGINSDIR\config.ini "Field 7" State
 
+  Push $R1
+  Call xmlEscape
+  Pop $R1
+  
+  Push $R2
+  Call xmlEscape
+  Pop $R2
+
   StrCpy $R4 'port="$R0"'
   StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
 
@@ -372,6 +383,16 @@ Function configure
   Sleep 500
   BringToFront
 
+FunctionEnd
+
+
+Function xmlEscape
+  Pop $0
+  ${StrRep} $0 $0 "&" "&amp;"
+  ${StrRep} $0 $0 "$\"" "&quot;"
+  ${StrRep} $0 $0 "<" "&lt;"
+  ${StrRep} $0 $0 ">" "&gt;"
+  Push $0
 FunctionEnd
 
 
