@@ -114,6 +114,13 @@
 	  <add>
           StoreConfig: Save new dymanic properties from ReplicationTransmitter  (pero)
       </add>
+      <fix>
+         <bug>33463</bug>: Remove attributes after context destroy. (remm)
+      </fix>
+      <fix>
+         <bug>33572</bug>: context.xml should be a redeploy resource, and add prioritization for
+         redeploy resources. (remm)
+      </fix>
     </changelog>
   </subsection>
   
