@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import javax.security.auth.Subject;
@@ -81,8 +82,18 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.HttpRequest;
+import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 
 
@@ -163,6 +174,11 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
      */
     protected HashMap principals = new HashMap();
 
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
 
     /**
      * The state information that is shared with other configured
@@ -561,6 +577,90 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
         exception.printStackTrace(System.out);
 
     }
+    
+    /**
+     * Perform access control based on the specified authorization constraint.
+     * Return <code>true</code> if this constraint is satisfied and processing
+     * should continue, or <code>false</code> otherwise.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param constraint Security constraint we are enforcing
+     * @param The Context to which client of this class is attached.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public boolean hasResourceAccess(HttpRequest request,
+                                     HttpResponse response,
+                                     SecurityConstraint constraint,
+                                     Context context)
+        throws IOException {
+
+        if (constraint == null)
+            return (true);
+
+        // Specifically allow access to the form login and form error pages
+        // and the "j_security_check" action
+        LoginConfig config = context.getLoginConfig();
+        if ((config != null) &&
+            (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
+            String requestURI = request.getDecodedRequestURI();
+            String loginPage = context.getPath() + config.getLoginPage();
+            if (loginPage.equals(requestURI)) {
+                if (debug)
+                    log(" Allow access to login page " + loginPage);
+                return (true);
+            }
+            String errorPage = context.getPath() + config.getErrorPage();
+            if (errorPage.equals(requestURI)) {
+                if (debug)
+                    log(" Allow access to error page " + errorPage);
+                return (true);
+            }
+            if (requestURI.endsWith(Constants.FORM_ACTION)) {
+                if (debug)
+                    log(" Allow access to username/password submission");
+                return (true);
+            }
+        }
+
+        // Which user principal have we already authenticated?
+        Principal principal =
+            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        if (principal == null) {
+            if (debug)
+                log("  No user authenticated, cannot grant access");
+            ((HttpServletResponse) response.getResponse()).sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 sm.getString("realmBase.notAuthenticated"));
+            return (false);
+        }
+
+        String roles[] = constraint.findAuthRoles();
+        if (roles == null)
+            roles = new String[0];
+
+        if (constraint.getAllRoles())
+            return (true);
+        if ((roles.length == 0) && (constraint.getAuthConstraint())) {
+            ((HttpServletResponse) response.getResponse()).sendError
+                (HttpServletResponse.SC_FORBIDDEN,
+                 sm.getString("realmBase.forbidden"));
+            return (false); // No listed roles means no access at all
+        }
+        for (int i = 0; i < roles.length; i++) {
+            if (hasRole(principal, roles[i]))
+                return (true);
+        }
+
+        // Return a "Forbidden" message denying access to this resource
+        ((HttpServletResponse) response.getResponse()).sendError
+            (HttpServletResponse.SC_FORBIDDEN,
+             sm.getString("realmBase.forbidden"));
+        return (false);
+
+    } 
+    
 
 
 }
