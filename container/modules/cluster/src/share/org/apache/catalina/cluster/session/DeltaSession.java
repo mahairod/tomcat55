@@ -523,6 +523,7 @@ public class DeltaSession
     public void setNew(boolean isNew) {
         setNew(isNew,true);
     }
+    
     public void setNew(boolean isNew, boolean addDeltaRequest) {
         this.isNew = isNew;
         if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.setNew(isNew);
@@ -643,7 +644,6 @@ public class DeltaSession
      */
     public void access() {
 
-        this.isNew = false;
         this.lastAccessedTime = this.thisAccessedTime;
         this.thisAccessedTime = System.currentTimeMillis();
 
