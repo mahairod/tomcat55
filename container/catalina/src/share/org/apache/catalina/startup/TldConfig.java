@@ -75,9 +75,11 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.naming.NameClassPair;
@@ -248,7 +250,7 @@ public final class TldConfig  {
          * files, to be processed
          */
         Set resourcePaths = tldScanResourcePaths();
-        Set globalJarPaths = getGlobalJarPaths();
+        Map globalJarPaths = getGlobalJarPaths();
 
         // Check to see if we can use cached listeners
         if (tldCache != null && tldCache.exists()) {
@@ -269,9 +271,11 @@ public final class TldConfig  {
                 tldScanTld(path);
             }
         }
-        paths = globalJarPaths.iterator();
-        while (paths.hasNext()) {
-            tldScanJar((File) paths.next());
+        if (globalJarPaths != null) {
+            paths = globalJarPaths.values().iterator();
+            while (paths.hasNext()) {
+                tldScanJar((File) paths.next());
+            }
         }
 
         String list[] = getTldListeners();
@@ -311,7 +315,7 @@ public final class TldConfig  {
      *
      * @return Last modification date
      */
-    private long getLastModified(Set resourcePaths, Set globalJarPaths)
+    private long getLastModified(Set resourcePaths, Map globalJarPaths)
             throws Exception {
 
         long lastModified = 0;
@@ -331,14 +335,16 @@ public final class TldConfig  {
             }
         }
 
-        paths = globalJarPaths.iterator();
-        while (paths.hasNext()) {
-            File jarFile = (File) paths.next();
-            long lastM = jarFile.lastModified();
-            if (lastM > lastModified) lastModified = lastM;
-            if (log.isDebugEnabled()) {
-                log.debug("Last modified " + jarFile.getAbsolutePath()
-                          + " " + lastM);
+        if (globalJarPaths != null) {
+            paths = globalJarPaths.values().iterator();
+            while (paths.hasNext()) {
+                File jarFile = (File) paths.next();
+                long lastM = jarFile.lastModified();
+                if (lastM > lastModified) lastModified = lastM;
+                if (log.isDebugEnabled()) {
+                    log.debug("Last modified " + jarFile.getAbsolutePath()
+                              + " " + lastM);
+                }
             }
         }
 
@@ -744,12 +750,12 @@ public final class TldConfig  {
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
      *
-     * @return Set of paths to all JAR files accessible to all parent class
+     * @return Map of paths to all JAR files accessible to all parent class
      *         loaders of the web application class loader
      */
-    private Set getGlobalJarPaths() throws IOException {
+    private Map getGlobalJarPaths() throws IOException {
 
-        Set globalJarPaths = new HashSet();
+        HashMap globalJarPaths = null;
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         while (loader != null) {
@@ -762,9 +768,16 @@ public final class TldConfig  {
                     // buggy overall
                     File file = new File(urls[i].getFile());
                     file = file.getCanonicalFile();
-                    if ((file.exists()) 
-                        && (file.getAbsolutePath().endsWith(".jar"))) {
-                        globalJarPaths.add(file);
+                    if (file.exists()) {
+                        String path = file.getAbsolutePath();
+                        if (path.endsWith(".jar")) {
+                            if (globalJarPaths == null) {
+                                globalJarPaths = new HashMap();
+                                globalJarPaths.put(path, file);
+                            } else if (!globalJarPaths.containsKey(path)) {
+                                globalJarPaths.put(path, file);
+                            }
+                        }
                     }
                 }
             }
