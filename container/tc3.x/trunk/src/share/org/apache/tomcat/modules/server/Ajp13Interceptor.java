@@ -80,6 +80,8 @@ public class Ajp13Interceptor extends PoolTcpConnector
     implements  TcpConnectionHandler
 {
     private boolean tomcatAuthentication=true;
+    private boolean shutDownEnable=false;
+    
     public Ajp13Interceptor()
     {
         super();
@@ -89,6 +91,20 @@ public class Ajp13Interceptor extends PoolTcpConnector
 
     // -------------------- PoolTcpConnector --------------------
 
+    /** Enable shutdown command. By default it is disabled, since
+     *	ajp12 has an improved version with password checking.
+     *
+     *	In future we'll enable shutdown in ajp13/14 and deprecate ajp12,
+     *	and merge various improvements from ajp12.
+     *
+     *  Note that this you can use ajp13 for communication with the server
+     *	and ajp12 only for shutdown - that would allow some extra flexibility,
+     *	especially if you use firewall rules.
+    */
+    public void setShutDownEnable(boolean b ) {
+	shutDownEnable=b;
+    }
+    
     protected void localInit() throws Exception {
 	ep.setConnectionHandler( this );
     }
@@ -198,7 +214,7 @@ public class Ajp13Interceptor extends PoolTcpConnector
         try {
 	    // close the socket connection before handling any signal
 	    // but get the addresses first so they are not corrupted
-            if(Ajp12.isSameAddress(serverAddr, clientAddr)) {
+            if(shutDownEnable && Ajp12.isSameAddress(serverAddr, clientAddr)) {
 		cm.stop();
 		// same behavior as in past, because it seems that
 		// stopping everything doesn't work - need to figure
