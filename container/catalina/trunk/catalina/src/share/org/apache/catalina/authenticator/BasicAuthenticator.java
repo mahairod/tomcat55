@@ -99,7 +99,7 @@ public class BasicAuthenticator
                 log.debug("Already authenticated '" + principal.getName() + "'");
             // Associate the session with any existing SSO session
             if (ssoId != null)
-                associate(ssoId, getSession(request, true));
+                associate(ssoId, request.getSessionInternal(true));
             return (true);
         }
 

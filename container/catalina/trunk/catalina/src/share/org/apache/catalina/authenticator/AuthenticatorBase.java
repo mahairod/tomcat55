@@ -29,7 +29,6 @@ import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Container;
@@ -37,7 +36,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
@@ -369,7 +367,7 @@ public abstract class AuthenticatorBase
         if (cache) {
             Principal principal = request.getUserPrincipal();
             if (principal == null) {
-                Session session = getSession(request);
+                Session session = request.getSessionInternal();
                 if (session != null) {
                     principal = session.getPrincipal();
                     if (principal != null) {
@@ -611,46 +609,6 @@ public abstract class AuthenticatorBase
 
 
     /**
-     * Return the internal Session that is associated with this HttpRequest,
-     * or <code>null</code> if there is no such Session.
-     *
-     * @param request The HttpRequest we are processing
-     */
-    protected Session getSession(Request request) {
-
-        return (getSession(request, false));
-
-    }
-
-
-    /**
-     * Return the internal Session that is associated with this HttpRequest,
-     * possibly creating a new one if necessary, or <code>null</code> if
-     * there is no such session and we did not create one.
-     *
-     * @param request The HttpRequest we are processing
-     * @param create Should we create a session if needed?
-     */
-    protected Session getSession(Request request, boolean create) {
-
-        HttpSession hses = request.getSession(create);
-        if (hses == null)
-            return (null);
-        Manager manager = context.getManager();
-        if (manager == null)
-            return (null);
-        else {
-            try {
-                return (manager.findSession(hses.getId()));
-            } catch (IOException e) {
-                return (null);
-            }
-        }
-
-    }
-
-
-    /**
      * Attempts reauthentication to the <code>Realm</code> using
      * the credentials included in argument <code>entry</code>.
      *
@@ -674,7 +632,7 @@ public abstract class AuthenticatorBase
         }
 
         if (reauthenticated) {
-            associate(ssoId, getSession(request, true));
+            associate(ssoId, request.getSessionInternal(true));
 
             if (log.isDebugEnabled()) {
                 log.debug(" Reauthenticated cached principal '" +
@@ -712,7 +670,7 @@ public abstract class AuthenticatorBase
         request.setAuthType(authType);
         request.setUserPrincipal(principal);
 
-        Session session = getSession(request, false);
+        Session session = request.getSessionInternal(false);
         // Cache the authentication information in our session, if any
         if (cache) {
             if (session != null) {
@@ -761,7 +719,7 @@ public abstract class AuthenticatorBase
         // above for this request and the user never revisits the context, the
         // SSO entry will never be cleared if we don't associate the session
         if (session == null)
-            session = getSession(request, true);
+            session = request.getSessionInternal(true);
         sso.associate(ssoId, session);
 
     }
