@@ -63,6 +63,9 @@
 
   <subsection name="Webapps">
     <changelog>
+      <fix>
+        <bug>31707</bug>: Broken JavaScript confirmation in HTML manager. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
