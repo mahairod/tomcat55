@@ -109,6 +109,7 @@ public class NamingContext implements Context {
     public NamingContext(Hashtable env, String name) 
         throws NamingException {
         this.bindings = new Hashtable();
+        this.env = new Hashtable();
         // FIXME ? Could be put in the environment ?
         this.name = name;
         // Populating the environment hashtable
