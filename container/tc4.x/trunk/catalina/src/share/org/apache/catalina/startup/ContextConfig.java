@@ -218,6 +218,7 @@ public final class ContextConfig
                 webDigester.clear();
                 webDigester.push(context);
                 webDigester.parse(is);
+                webDigester.push(null);
             } catch (SAXParseException e) {
                 log(sm.getString("contextConfig.applicationParse"), e);
                 log(sm.getString("contextConfig.applicationPosition",
@@ -484,6 +485,7 @@ public final class ContextConfig
                 webDigester.clear();
                 webDigester.push(context);
                 webDigester.parse(is);
+                webDigester.push(null);
             } catch (SAXParseException e) {
                 log(sm.getString("contextConfig.defaultParse"), e);
                 log(sm.getString("contextConfig.defaultPosition",
@@ -924,6 +926,8 @@ public final class ContextConfig
             tldDigester.clear();
             tldDigester.push(context);
             tldDigester.parse(resourceStream);
+            tldDigester.push(null);
+
         }
 
     }
