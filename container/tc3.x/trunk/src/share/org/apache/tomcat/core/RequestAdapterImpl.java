@@ -172,8 +172,14 @@ public class RequestAdapterImpl implements  RequestAdapter {
 	return remoteHost;
     }    
 
+    // you need to override this method if you want non-empty InputStream
     public  int doRead( byte b[], int off, int len ) throws IOException {
 	return -1; // not implemented - implement getInputStream 
+    }
+
+    // you need to override this method if you want non-empty InputStream
+    public int doRead() throws IOException {
+	return -1;
     }
     
     // -------------------- "cooked" info --------------------

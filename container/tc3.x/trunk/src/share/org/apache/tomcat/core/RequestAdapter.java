@@ -184,4 +184,12 @@ public interface RequestAdapter {
     public String getContentType();
 
     public  void recycle(); 
+
+
+    // XXX I hate this - but the only way to remove this method from the
+    // inteface is to implement it on top of doRead(b[]).
+    // Don't use this method if you can ( it is bad for performance !!)
+    public int doRead() throws IOException;
+    
+
 }

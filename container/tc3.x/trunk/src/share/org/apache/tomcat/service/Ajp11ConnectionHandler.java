@@ -150,12 +150,12 @@ class AJPRequestAdapter extends RequestAdapterImpl {
     
     public AJPRequestAdapter(Socket so) {
 	this.socket=so;
+	in = new BufferedServletInputStream( this );
     }
     
     protected void readNextRequest() throws IOException {
 	//	System.out.println("In AJPREquest");
 	InputStream sin = socket.getInputStream();
-	in = new HttpServletIS(sin);
 
 	Hashtable env_vars=new Hashtable();
 

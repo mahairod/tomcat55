@@ -91,7 +91,7 @@ public class ServerRequest extends Request {
 	this.reqA=new HttpRequestAdapter();
     }
 
-    void setSocket(Socket socket) {
+    void setSocket(Socket socket) throws IOException {
 	((HttpRequestAdapter)reqA).setSocket(socket);
     }
 

@@ -186,8 +186,8 @@ class ConnectionHandler extends Thread {
 		int contentLength = request.getIntHeader("content-length");
 
 		if (contentLength != -1) {
-		    ServletInputStreamImpl sis =
-			(ServletInputStreamImpl)request.getInputStream();
+		    BufferedServletInputStream sis =
+			(BufferedServletInputStream)request.getInputStream();
 		    sis.setLimit(contentLength+2);
 		}
 
