@@ -1,0 +1,80 @@
+<project name="Webapps" default="dist" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+  <property name="build.compiler"  value="classic"/>
+  <property name="webapps.build"   value="$../../build/webapps"/>
+  <property name="webapps.deploy"  value="$../../build/tomcat-4.0"/>
+  <property name="webapps.dist"    value="$../../dist/webapps"/>
+
+
+  <!-- ================== Derived Property Values ========================= -->
+  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
+
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+    <mkdir dir="${webapps.build}"/>
+    <mkdir dir="${webapps.dist}"/>
+  </target>
+
+
+  <!-- =================== BUILD: Compile Subprojects ===================== -->
+  <!-- Add a new target for each webapp subproject -->
+
+  <target name="ROOT">
+    <ant dir="${basedir}/ROOT" target="dist"/>
+  </target>
+
+  <target name="examples">
+    <ant dir="${basedir}/examples" target="dist"/>
+  </target>
+
+  <target name="manager">
+    <ant dir="${basedir}/manager" target="dist"/>
+  </target>
+
+  <target name="webdav">
+    <ant dir="${basedir}/webdav" target="dist"/>
+  </target>
+
+
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <!-- Update the depends list for each subproject -->
+  <target name="build" depends="build-prepare,ROOT,examples,manager,webdav"/>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${webapps.build}"/>
+  </target>
+
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,dist"/>
+
+
+  <!-- ================= DEPLOY: Deploy Webapps Projects ================== -->
+  <target name="deploy" depends="dist">
+    <mkdir dir="${webapps.deploy}/webapps"/>
+    <copy todir="${webapps.deploy}/webapps">
+      <fileset dir="${webapps.build}" />
+    </copy>
+  </target>
+
+
+  <!-- ================= DIST: Create Distribution Files ================== -->
+  <target name="dist" depends="build"/>
+
+
+  <!-- ======================= DIST: Clean Directory ====================== -->
+  <target name="dist-clean">
+    <delete dir="${webapps.dist}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean,dist-clean"/>
+
+
+</project>

@@ -1,0 +1,137 @@
+			Catalina Servlet Container
+			==========================
+
+
+This subdirectory contains code for Catalina, which will be the servlet
+container portion of Tomcat 4.0.
+
+
+Installing and Building Catalina
+================================
+
+In order to successfully build Catalina, you will need to do the following.  In
+the instructions below, $JAKARTA_HOME is assumed to be the directory into which
+you are installing all of the required distributions.
+
+* Download and install a version 1.2 or later Java Development Kit
+  implementation for your operating system platform.  Set a "JAVA_HOME"
+  environment variable to point at the directory where your JDK is installed,
+  and add "$JAVA_HOME/bin" to your PATH.  Configure the CLASSPATH environment
+  variable as well, if required.
+
+* If you are running a JDK earlier than 1.3, download and install the current
+  version of the Java Naming and Directory Interface (JNDI) package from
+  <http://java.sun.com/products/jndi>, and put the jndi.jar file in the
+  "$JAVA_HOME/bin" directory (or copy this file to $JAVA_HOME/jre/lib/ext in a
+  JDK 1.2 environment). None of the JNDI providers are required, unless you
+  need to use them in your own applications.
+
+* Download and install the Java API for XML Parsing (JAXP) implementation
+  (current version number is 1.0.1) from <http://java.sun.com/xml>.  Set an
+  environment variable "JAXP_HOME" pointing at the directory to which you
+  installed this distribution.  In addition, add the "jaxp.jar" and
+  "parser.jar" files to your classpath.
+
+* Download and install the Java Secure Sockets Extension (JSSE) implementation
+  (current version number is 1.0.1) from <http://java.sun.com/products/jsse>.
+  Set an environment variable "JSSE_HOME" pointing at the directory to which
+  you installed this distribution.
+
+* Download and install the Java Management Extension (JMX) implementation
+  (current version number is 1.0) from 
+  <http://java.sun.com/products/JavaManagement/index.html>.
+  Set an environment variable "JMX_HOME" pointing at the directory to which
+  you installed this distribution.
+
+* Download and install the Ant distribution (subproject "jakarta-ant") into
+  a directory named "$JAKARTA_HOME/jakarta-ant".  If you have downloaded the
+  source distribution, you will need to build the executable version by
+  executing the following commands:
+
+	cd $JAKARTA_HOME/jakarta-ant
+	./bootstrap.sh		<-- Unix
+	bootstrap		<-- Windows
+
+  This should result in the creation of a file "ant.jar" in the "lib"
+  subdirectory, which will be used when building Watchdog.
+  If you download a binary distribution, you must get Ant version 1.2 or later.
+
+* Download and install the Regular Expressions distribution (subproject
+  "jakarta-regexp") into a directory named
+  "$JAKARTA_HOME/jakarta-regexp".  If you have downloaded the source
+  distribution, you will need to build the library by executing the
+  following commands:
+
+	cd $JAKARTA_HOME/jakarta-regexp/build
+	./build-regexp.sh	<-- Unix
+	build-regexp		<-- Windows
+
+* Download and install the Servletapi source repository (module
+  "jakarta-servletapi" via anonymous CVS as described at
+  <http://jakarta.apache.org/getinvolved/cvsindex.html>.  After downloading
+  this module, you will need to switch to the branch for the new spec.
+  versions, and then build the library, as follows:
+
+	cd $JAKARTA_HOME/jakarta-servletapi
+	cvs update -r SERVLET_23_JSP_12
+	./build.sh dist		<-- Unix
+	build dist		<-- Windows
+	build dist		<-- Windows
+
+  This should result in the creation of a file "servlet.jar" in the "lib"
+  subdirectory, which will be used when building Catalina.
+
+* Download and install the Tomcat 4.0 repository (module
+  "jakarta-tomcat-4.0" via anonymous CVS, as described at
+  <http://jakarta.apache.org/getinvolved/cvsindex.html>.  After downloading
+  this module, you can build Catalina as follows:
+
+	cd $JAKARTA_HOME/jakarta-tomcat-4.0/catalina
+	./build.sh		<-- Unix
+	build			<-- Windows
+
+
+Running the Build
+=================
+
+You can start and stop the unpacked version of Catalina as follows:
+
+* To execute the "unpacked" version of Catalina:
+
+	cd $JAKARTA_HOME/build/catalina
+	./bin/catalina.sh start	<-- Unix
+	bin\catalina start	<-- Windows
+
+* To access the default context and examples, access the
+  following URL with your browser:
+
+	http://localhost:8080
+
+* To shut down the "unpacked" version of Catalina:
+
+	cd $JAKARTA_HOME/build/catalina
+	./bin/catalina.sh stop	<-- Unix
+	bin\catalina stop	<-- Windows
+
+
+Reporting Bugs
+==============
+
+If you encounter any bugs in Catalina, or wish to contribute a patch, or
+wish to suggest any functionality improvements, please report them to our
+bug tracking system, at:
+
+	http://jakarta.apache.org/bugs
+
+against product "Tomcat" and component "Catalina".
+
+
+
+Before Committing Changes
+=========================
+
+Before committing any changes to the Tomcat CVS repository, you MUST do a
+"build clean" followed by a "build dist" to ensure that the build process runs
+cleanly, and you must ensure that the tests run correctly.
+
+

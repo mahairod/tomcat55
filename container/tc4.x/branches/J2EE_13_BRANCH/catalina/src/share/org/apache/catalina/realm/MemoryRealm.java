@@ -1,0 +1,482 @@
+/*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
+ * ====================================================================
+ *
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer. 
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if
+ *    any, must include the following acknowlegement:  
+ *       "This product includes software developed by the 
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowlegement may appear in the software itself,
+ *    if and wherever such third-party acknowlegements normally appear.
+ *
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ *    Foundation" must not be used to endorse or promote products derived
+ *    from this software without prior written permission. For written 
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache"
+ *    nor may "Apache" appear in their names without prior written
+ *    permission of the Apache Group.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ * [Additional notices, if required by prior licensing conditions]
+ *
+ */ 
+
+
+package org.apache.catalina.realm;
+
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.security.Principal;
+import java.io.File;
+import java.util.HashMap;
+import org.apache.catalina.Container;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Logger;
+import org.apache.catalina.Realm;
+import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.StringManager;
+import org.apache.catalina.util.xml.SaxContext;
+import org.apache.catalina.util.xml.XmlAction;
+import org.apache.catalina.util.xml.XmlMapper;
+import org.xml.sax.AttributeList;
+
+
+/**
+ * Simple implementation of <b>Realm</b> that reads an XML file to configure
+ * the valid users, passwords, and roles.  The file format (and default file
+ * location) are identical to those currently supported by Tomcat 3.X.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong>: It is assumed that the in-memory
+ * collection representing our defined users (and their roles) is initialized
+ * at application startup and never modified again.  Therefore, no thread
+ * synchronization is performed around accesses to the principals collection.
+ *
+ * @author Craig R. McClanahan
+ * @version $Revision$ $Date$
+ */
+
+public final class MemoryRealm
+    extends RealmBase {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The Container with which this Realm is associated.
+     */
+    private Container container = null;
+
+
+    /**
+     * Descriptive information about this Realm implementation.
+     */
+    protected final String info =
+	"org.apache.catalina.realm.MemoryRealm/1.0";
+
+
+    /**
+     * Descriptive information about this Realm implementation.
+     */
+
+    protected static final String name = "MemoryRealm";
+
+
+    /**
+     * The pathname (absolute or relative to Catalina's current working
+     * directory) of the XML file containing our database information.
+     */
+    private String pathname = "conf/tomcat-users.xml";
+
+
+    /**
+     * The set of valid Principals for this Realm, keyed by user name.
+     */
+    private HashMap principals = new HashMap();
+
+
+    /**
+     * The string manager for this package.
+     */
+    private static StringManager sm =
+	StringManager.getManager(Constants.Package);
+
+
+    /**
+     * Has this component been started?
+     */
+    private boolean started = false;
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return descriptive information about this Realm implementation and
+     * the corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
+
+	return info;
+
+    }
+
+    /**
+     * Return short name of this Realm implementation
+     */
+    public String getName() {
+
+	return name;
+
+    }
+
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return the Principal associated with the specified username and
+     * credentials, if there is one; otherwise return <code>null</code>.
+     *
+     * @param username Username of the Principal to look up
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
+     */
+    public Principal authenticate(String username, String credentials) {
+
+	MemoryRealmPrincipal principal =
+	    (MemoryRealmPrincipal) principals.get(username);
+	if ((principal != null) &&
+	    (credentials.equals(principal.getPassword()))) {
+	    if (debug > 1)
+		log(sm.getString("memoryRealm.authenticateSuccess", username));
+	    return (principal);
+	} else {
+	    if (debug > 1)
+		log(sm.getString("memoryRealm.authenticateFailure", username));
+	    return (null);
+	}
+
+    }
+
+
+    /**
+     * Return <code>true</code> if the specified Principal has the specified
+     * security role, within the context of this Realm; otherwise return
+     * <code>false</code>.
+     *
+     * @param principal Principal for whom the role is to be checked
+     * @param role Security role to be checked
+     */
+    public boolean hasRole(Principal principal, String role) {
+
+	if ((principal == null) || (role == null) ||
+	    !(principal instanceof MemoryRealmPrincipal))
+	    return (false);
+
+	boolean result = ((MemoryRealmPrincipal) principal).hasRole(role);
+	if (debug > 1) {
+	    String name = principal.getName();
+	    if (result)
+		log(sm.getString("memoryRealm.hasRoleSuccess", name, role));
+	    else
+		log(sm.getString("memoryRealm.hasRoleFailure", name, role));
+	}
+	return (result);
+
+    }
+
+
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Add a new user to the in-memory database.
+     *
+     * @param username User's username
+     * @param password User's password (clear text)
+     * @param roles Comma-delimited set of roles associated with this user
+     */
+    void addUser(String username, String password, String roles) {
+
+	MemoryRealmPrincipal principal =
+	    new MemoryRealmPrincipal(username, password);
+	principals.put(username, principal);
+
+	roles += ",";
+	while (true) {
+	    int comma = roles.indexOf(",");
+	    if (comma < 0)
+		break;
+	    String role = roles.substring(0, comma).trim();
+	    principal.addRole(role);
+	    roles = roles.substring(comma + 1);
+	}
+
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Return the password associated with the given principal's user name.
+     */
+    protected String getPassword(String username) {
+	MemoryRealmPrincipal principal =
+	    (MemoryRealmPrincipal) principals.get(username);
+	if (principal != null) {
+	    return (principal.getPassword());
+	} else {
+	    return (null);
+	}
+    }
+
+
+    /**
+     * Return the Principal associated with the given user name.
+     */
+    protected Principal getPrincipal(String username) {
+	return (Principal) principals.get(username);
+    }
+
+
+
+    /**
+     * Prepare for active use of the public methods of this Component.
+     *
+     * @exception IllegalStateException if this component has already been
+     *  started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents it from being started
+     */
+    public synchronized void start() throws LifecycleException {
+
+	// Validate and update our current component state
+	if (started)
+	    throw new LifecycleException
+		(sm.getString("memoryRealm.alreadyStarted"));
+	lifecycle.fireLifecycleEvent(START_EVENT, null);
+	started = true;
+
+	// Validate the existence of our database file
+	File file = new File(pathname);
+	if (!file.isAbsolute())
+	    file = new File(System.getProperty("catalina.home") +
+			    File.separator + pathname);
+	if (!file.exists())
+	    throw new LifecycleException
+		(sm.getString("memoryRealm.loadExist", pathname));
+
+	// Load the contents of the database file
+	if (debug > 0)
+	    log(sm.getString("memoryRealm.loadPath", pathname));
+	XmlMapper mapper = new XmlMapper();
+	mapper.addRule("tomcat-users/user", new MemoryRealmUserAction());
+	try {
+	    mapper.readXml(file, this);
+	} catch (Exception e) {
+	    throw new LifecycleException("MemoryRealm.start.readXml: " + e, e);
+	}
+
+    }
+
+
+    /**
+     * Gracefully shut down active use of the public methods of this Component.
+     *
+     * @exception IllegalStateException if this component has not been started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that needs to be reported
+     */
+    public synchronized void stop() throws LifecycleException {
+
+	// Validate and update our current component state
+	if (!started)
+	    throw new LifecycleException
+		(sm.getString("memoryRealm.notStarted"));
+	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+	started = false;
+
+	// No shutdown activities required
+
+    }
+
+
+}
+
+
+/**
+ * Private class representing an individual user's Principal object.
+ */
+
+final class MemoryRealmPrincipal implements Principal {
+
+
+    /**
+     * The password for this Principal.
+     */
+    private String password = null;
+
+
+    /**
+     * The role names possessed by this Principal.
+     */
+    private String roles[] = new String[0];
+
+
+    /**
+     * The username for this Principal.
+     */
+    private String username = null;
+
+
+    /**
+     * Construct a new MemoryRealmPrincipal instance.
+     *
+     * @param username The username for this Principal
+     * @param password The password for this Principal
+     */
+    public MemoryRealmPrincipal(String username, String password) {
+
+	this.username = username;
+	this.password = password;
+
+    }
+
+
+    /**
+     * Add a new role name to the set possessed by this Principal.
+     *
+     * @param role The role to be added
+     */
+    public void addRole(String role) {
+
+	if (role == null)
+	    return;
+
+	for (int i = 0; i < roles.length; i++) {
+	    if (role.equals(roles[i]))
+		return;
+	}
+
+	String results[] = new String[roles.length + 1];
+	for (int i = 0; i < roles.length; i++)
+	    results[i] = roles[i];
+	results[roles.length] = role;
+
+        roles = results;
+
+    }
+
+
+    /**
+     * Return the name of this Principal.
+     */
+    public String getName() {
+
+	return (username);
+
+    }
+
+
+    /**
+     * Return the password of this Principal.
+     */
+    public String getPassword() {
+
+	return (password);
+
+    }
+
+
+    /**
+     * Does this Principal possess the specified role?
+     *
+     * @param role Role to be checked
+     */
+    public boolean hasRole(String role) {
+
+	if (role == null)
+	    return (false);
+        for (int i = 0; i < roles.length; i++) {
+            if (role.equals(roles[i]))
+		return (true);
+	}
+	return (false);
+
+    }
+
+
+}
+
+
+/**
+ * Private class used when parsing the XML database file.
+ */
+final class MemoryRealmUserAction extends XmlAction {
+
+
+    /**
+     * Process a <code>&lt;user&gt;</code> element from the XML database file.
+     *
+     * @param context The SAX context within which this element was encountered
+     */
+    public void start(SaxContext context) throws Exception {
+
+	int top = context.getTagCount() - 1;
+	AttributeList attributes = context.getAttributeList(top);
+	String username = attributes.getValue("name");
+	String password = attributes.getValue("password");
+	String roles = attributes.getValue("roles");
+
+	MemoryRealm realm = (MemoryRealm) context.getRoot();
+	realm.addUser(username, password, roles);
+
+    }
+}

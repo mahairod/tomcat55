@@ -1,0 +1,177 @@
+<project name="Jasper" default="build-main" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+  <property name="build.compiler"  value="classic"/>
+  <property name="jasper.build"    value="../../build/jasper"/>
+  <property name="jasper.deploy"   value="../../build/tomcat-4.0"/>
+  <property name="jasper.dist"     value="../../dist/jasper"/>
+
+  <!-- ================== Derived Property Values ========================= -->
+  <property name="jaxp.jar"        value="${jasper.jaxp.home}/jaxp.jar"/>
+  <property name="parser.jar"      value="${jasper.jaxp.home}/${jasper.jaxp.parser.jar}"/>
+  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
+  <property name="tools.jar"       value="${java.home}/lib/tools.jar"/>
+
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+    <available file="${jaxp.jar}" property="jaxp.jar.present" />
+    <mkdir dir="${jasper.build}"/>
+    <mkdir dir="${jasper.build}/bin"/>
+    <mkdir dir="${jasper.build}/classes"/>
+    <mkdir dir="${jasper.build}/lib"/>
+  </target>
+
+
+  <!-- =================== BUILD: Copy Static Files ======================= -->
+  <target name="build-static" depends="build-prepare,copy-jaxp-jar">
+
+    <!-- Executable Commands -->
+    <copy todir="${jasper.build}/bin">
+      <fileset dir="src/bin" />
+    </copy>
+    <fixcrlf srcdir="${jasper.build}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${jasper.build}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${jasper.build}/bin/jasper.sh"/>
+    <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
+
+    <!-- Shared Extensions -->
+    <!--   Jasper needs the servlet API classes -->
+    <copy file="${servlet.jar}" tofile="${jasper.build}/bin/servlet.jar"/>
+    <!--   Jasper needs JAXP1.0/SAX2.0 compliant parser -->
+    <copy file="${parser.jar}" 
+     tofile="${jasper.build}/lib/${jasper.jaxp.parser.jar}"/>
+
+  </target>
+
+  <target name="copy-jaxp-jar" if="jaxp.jar.present" >
+    <copy file="${jaxp.jar}" tofile="${jasper.build}/lib/jaxp.jar"/>
+  </target>
+
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <target name="build-main" depends="build-static">
+
+    <!-- Compile internal server components -->
+    <javac srcdir="src/share" destdir="${jasper.build}/classes"
+     classpath="${parser.jar}:${jaxp.jar}:${servlet.jar}"
+     deprecation="off" debug="on" optimize="off"
+     excludes="**/CVS/**"/>
+
+    <!-- Copy static resource files -->
+    <copy todir="${jasper.build}/classes">
+      <fileset dir="src/share">
+        <include name="**/*.properties"/>
+        <include name="**/*.dtd"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+
+  <!-- ================ BUILD: Create Jasper Javadocs ===================== -->
+  <target name="javadoc" depends="build-main">
+    <delete dir="${jasper.build}/javadoc"/>
+    <mkdir dir="${jasper.build}/javadoc"/>
+    <javadoc packagenames="org.apache.jasper.*"
+     classpath="${tools.jar}:${parser.jar}:${jaxp.jar}:${servlet.jar}:${jasper.build}/classes"
+     sourcepath="src/share"
+     destdir="${jasper.build}/javadoc"
+     author="true"
+     version="true"
+     windowtitle="Jasper Internal API Documentation"
+     doctitle="Jasper API"
+     bottom="Copyright &#169; 2000 Apache Software Foundation.  All Rights Reserved."
+    />
+  </target>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${jasper.build}"/>
+  </target>
+
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"/>
+
+
+  <!-- ====================== DEPLOY: Create Directories ================== -->
+  <target name="deploy-prepare">
+    <mkdir dir="${jasper.deploy}"/>
+    <mkdir dir="${jasper.deploy}/bin"/>
+    <mkdir dir="${jasper.deploy}/lib"/>
+  </target>
+
+
+  <!-- ====================== DEPLOY: Copy Static Files =================== -->
+  <target name="deploy-static" depends="build-main,deploy-prepare">
+
+    <!-- Executable Commands -->
+    <copy todir="${jasper.deploy}/bin">
+      <fileset dir="${jasper.build}/bin" />
+    </copy>
+    <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${jasper.deploy}/bin/jasper.sh"/>
+    <chmod perm="+x" file="${jasper.deploy}/bin/jspc.sh"/>
+
+    <!-- Shared Extensions -->
+    <copy todir="${jasper.deploy}/lib">
+      <fileset dir="${jasper.build}/lib" />
+    </copy>
+
+  </target>
+
+
+  <!-- ====================== DEPLOY: Create Jasper JAR =================== -->
+  <target name="deploy-main" depends="deploy-static">
+    <jar  jarfile="${jasper.deploy}/lib/jasper.jar"
+          basedir="${jasper.build}/classes"/>
+  </target>
+
+
+  <!-- ====================== DEPLOY: Deploy Jasper Build ================= -->
+  <target name="deploy" depends="deploy-main"/>
+
+
+  <!-- ====================== DEPLOY: Clean Directories =================== -->
+  <target name="deploy-clean">
+    <delete dir="${jasper.deploy}"/>
+  </target>
+
+
+  <!-- ================ DIST: Create Distribution ========================= -->
+  <target name="dist" depends="build-main">
+
+    <mkdir dir="${jasper.dist}/bin"/>
+    <copy dest="${jasper.dist}/bin">
+      <fileset dir="${jasper.build}/bin" />
+    </copy>
+    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${jasper.dist}/bin/jasper.sh"/>
+    <chmod perm="+x" file="${jasper.dist}/bin/jspc.sh"/>
+
+    <mkdir dir="${jasper.dist}/lib"/>
+    <copy todir="${jasper.dist}/lib">
+      <fileset dir="${jasper.build}/lib" />
+    </copy>
+    <jar  jarfile="${jasper.dist}/lib/jasper.jar"
+          basedir="${jasper.build}/classes"/>
+
+  </target>
+
+
+  <!-- ======================== DIST: Clean Directory ===================== -->
+  <target name="dist-clean">
+    <delete dir="${jasper.dist}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean, dist-clean"/>
+
+
+</project>
+

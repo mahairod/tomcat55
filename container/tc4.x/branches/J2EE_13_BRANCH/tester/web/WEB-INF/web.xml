@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
+
+<!-- Deployment Descriptor for the Tester Web Application -->
+
+<web-app>
+
+    <!-- ========== Filter Definitions ==================================== -->
+
+    <filter>
+        <filter-name>GenericFilter</filter-name>
+        <filter-class>org.apache.tester.WrapperFilter</filter-class>
+        <init-param>
+            <param-name>request</param-name>
+            <param-value>generic</param-value>
+        </init-param>
+        <init-param>
+            <param-name>response</param-name>
+            <param-value>generic</param-value>
+        </init-param>
+    </filter>
+
+
+    <filter>
+        <filter-name>HttpFilter</filter-name>
+        <filter-class>org.apache.tester.WrapperFilter</filter-class>
+        <init-param>
+            <param-name>request</param-name>
+            <param-value>http</param-value>
+        </init-param>
+        <init-param>
+            <param-name>response</param-name>
+            <param-value>http</param-value>
+        </init-param>
+    </filter>
+
+
+    <!-- ========== Filter Mappings ======================================= -->
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetHeaders01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedGetInputStream01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedGetParameter01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedGetParameterMap00</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedReset01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedSetBufferSize01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedSetLocale01</url-pattern>
+    </filter-mapping>
+
+
+    <!-- ========== Servlet Definitions =================================== -->
+
+    <servlet>
+        <servlet-name>Authentication01</servlet-name>
+        <servlet-class>org.apache.tester.Authentication01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Authentication02</servlet-name>
+        <servlet-class>org.apache.tester.Authentication02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward01</servlet-name>
+        <servlet-class>org.apache.tester.Forward01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetHeaders01</servlet-name>
+        <servlet-class>org.apache.tester.GetHeaders01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetInputStream01</servlet-name>
+        <servlet-class>org.apache.tester.GetInputStream01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetParameter01</servlet-name>
+        <servlet-class>org.apache.tester.GetParameter01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetParameterMap00</servlet-name>
+        <servlet-class>org.apache.tester.GetParameterMap00</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetQueryString01</servlet-name>
+        <servlet-class>org.apache.tester.GetQueryString01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include01</servlet-name>
+        <servlet-class>org.apache.tester.Include01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Reset01</servlet-name>
+        <servlet-class>org.apache.tester.Reset01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SetBufferSize01</servlet-name>
+        <servlet-class>org.apache.tester.SetBufferSize01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SetLocale01</servlet-name>
+        <servlet-class>org.apache.tester.SetLocale01</servlet-class>
+    </servlet>
+
+    <!-- ========== Servlet Mappings ====================================== -->
+
+    <servlet-mapping>
+        <servlet-name>Authentication01</servlet-name>
+        <url-pattern>/protected/Authentication01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication02</servlet-name>
+        <url-pattern>/protected/Authentication02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward01</servlet-name>
+        <url-pattern>/Forward01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward01</servlet-name>
+        <url-pattern>/WrappedForward01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetHeaders01</servlet-name>
+        <url-pattern>/GetHeaders01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetHeaders01</servlet-name>
+        <url-pattern>/WrappedGetHeaders01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetInputStream01</servlet-name>
+        <url-pattern>/GetInputStream01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetInputStream01</servlet-name>
+        <url-pattern>/WrappedGetInputStream01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameter01</servlet-name>
+        <url-pattern>/WrappedGetParameter01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameter01</servlet-name>
+        <url-pattern>/GetParameter01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameter01</servlet-name>
+        <url-pattern>/WrappedGetParameter01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameterMap00</servlet-name>
+        <url-pattern>/GetParameterMap00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameterMap00</servlet-name>
+        <url-pattern>/WrappedGetParameterMap00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetQueryString01</servlet-name>
+        <url-pattern>/GetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetQueryString01</servlet-name>
+        <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include01</servlet-name>
+        <url-pattern>/Include01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include01</servlet-name>
+        <url-pattern>/WrappedInclude01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Reset01</servlet-name>
+        <url-pattern>/Reset01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Reset01</servlet-name>
+        <url-pattern>/WrappedReset01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetBufferSize01</servlet-name>
+        <url-pattern>/SetBufferSize01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetBufferSize01</servlet-name>
+        <url-pattern>/WrappedSetBufferSize01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetLocale01</servlet-name>
+        <url-pattern>/SetLocale01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetLocale01</servlet-name>
+        <url-pattern>/WrappedSetLocale01</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- ========== Security Constraints ================================== -->
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Authentication Servlet</web-resource-name>
+            <url-pattern>/protected/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>tomcat</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Authentication Servlet</realm-name>
+    </login-config>
+
+
+</web-app>
