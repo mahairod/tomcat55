@@ -1080,7 +1080,7 @@ public class Validator {
 	// http://jcp.org/aboutJava/communityprocess/maintenance/jsr053/errata_1_2_a_20020321.html
 	PageInfo pageInfo = compiler.getPageInfo();
 	String contentType = pageInfo.getContentType();
-	if (!pageInfo.isTagFile() && 
+	if (!compiler.getCompilationContext().isTagFile() && 
 		(contentType == null || contentType.indexOf("charset=") < 0)) {
 	    boolean isXml = page.getRoot().isXmlSyntax();
 	    String defaultType;

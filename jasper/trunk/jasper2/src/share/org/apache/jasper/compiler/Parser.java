@@ -119,7 +119,6 @@ public class Parser {
 	this.currentFile = reader.mark().getFile();
         this.scriptlessCount = 0;
 	this.isTagFile = isTagFile;
-	pc.getCompiler().getPageInfo().setTagFile(isTagFile);
         start = reader.mark();
     }
 

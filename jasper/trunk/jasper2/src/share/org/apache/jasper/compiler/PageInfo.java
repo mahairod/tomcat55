@@ -92,7 +92,6 @@ class PageInfo {
     private boolean scriptless = false;
     private boolean scriptingEnabled = true;
     private boolean elEnabled = true;
-    private boolean tagFile = false;
     private boolean isXml = false;
     private boolean isXmlSpecified = false;	// true is there is a is-xml
 						// element in jsp-config
@@ -249,14 +248,6 @@ class PageInfo {
 
     public boolean isELEnabled() {
 	return elEnabled;
-    }
-
-    public void setTagFile(boolean s) {
-	tagFile = s;
-    }
-
-    public boolean isTagFile() {
-	return tagFile;
     }
 
     public boolean isXml() {
