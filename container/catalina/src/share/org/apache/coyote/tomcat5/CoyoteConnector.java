@@ -60,6 +60,7 @@
 
 package org.apache.coyote.tomcat5;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -1241,7 +1242,11 @@ public class CoyoteConnector
             try {
                 // we are loaded directly, via API - and no name was given to us
                 StandardEngine cb=(StandardEngine)container;
-                String addSuffix=(getAddress()==null) ?"": ",address=" + getAddress();
+                String encodedAddr = null;
+                if (getAddress() != null) {
+                    encodedAddr = URLEncoder.encode(getAddress());
+                }
+                String addSuffix=(getAddress()==null) ?"": ",address=" + encodedAddr;
                 oname=new ObjectName(cb.getName() + ":type=Connector,port="+
                         getPort() + addSuffix);
                 Registry.getRegistry().registerComponent(this, oname, null);

@@ -491,9 +491,9 @@ public class MBeanFactory extends BaseModelMBean {
             Method getObjectName = cls.getMethod("getObjectName", null);
             
             // Return the corresponding MBean name
-            //ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
-            ObjectName coname = 
-                MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
+            ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            //ObjectName coname = 
+            //    MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
             return (coname.toString());
         } catch (Exception e) {
             throw new MBeanException(e);
