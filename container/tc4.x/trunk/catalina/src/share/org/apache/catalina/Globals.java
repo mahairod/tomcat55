@@ -185,6 +185,15 @@ public final class Globals {
 
 
     /**
+     * The request attribute under which the Invoker servlet will store
+     * the invoking servlet path, if it was used to execute a servlet
+     * indirectly instead of through a servlet mapping.
+     */
+    public static final String MBEAN_SERVER_ATTR =
+        "org.apache.catalina.MBeanServer";
+
+
+    /**
      * The request attribute under which we store the servlet name on a
      * named dispatcher request.
      */
