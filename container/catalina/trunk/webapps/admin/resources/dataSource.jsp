@@ -55,18 +55,18 @@
             </controls:action>
 
         <controls:action url='<%= "/resources/setUpDataSource.do?resourcetype=" +
-                            URLEncoder.encode(resourcetypeInfo) + "&path="+
-                            URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&domain="+
-                            URLEncoder.encode(domainInfo) %>'>
+                            URLEncoder.encode(resourcetypeInfo,"UTF-8") + "&path="+
+                            URLEncoder.encode(pathInfo,"UTF-8") + "&host="+
+                            URLEncoder.encode(hostInfo,"UTF-8") + "&domain="+
+                            URLEncoder.encode(domainInfo,"UTF-8") %>'>
                 <bean:message key="resources.actions.datasrc.create"/>
             </controls:action>
             <controls:action url='<%= "/resources/listDataSources.do?resourcetype=" +
-                            URLEncoder.encode(resourcetypeInfo) + "&path="+
-                            URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&domain="+
-                            URLEncoder.encode(domainInfo) + "&forward=" +
-                            URLEncoder.encode("DataSources Delete List") %>'>
+                            URLEncoder.encode(resourcetypeInfo,"UTF-8") + "&path="+
+                            URLEncoder.encode(pathInfo,"UTF-8") + "&host="+
+                            URLEncoder.encode(hostInfo,"UTF-8") + "&domain="+
+                            URLEncoder.encode(domainInfo,"UTF-8") + "&forward=" +
+                            URLEncoder.encode("DataSources Delete List","UTF-8") %>'>
                 <bean:message key="resources.actions.datasrc.delete"/>
             </controls:action>
          </controls:actions>

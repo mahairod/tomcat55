@@ -18,6 +18,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +28,7 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Implementation of <code>TreeBuilder</code> that adds the nodes required
@@ -82,51 +83,55 @@ public class UsersTreeBuilder implements TreeBuilder {
     protected void addSubtree(TreeControlNode root,
                               MessageResources resources, Locale locale) {
 
-        String databaseName = URLEncoder.encode
-          ("Users:type=UserDatabase,database=UserDatabase");
+        try {
+            String databaseName = URLEncoder.encode
+                ("Users:type=UserDatabase,database=UserDatabase",TomcatTreeBuilder.URL_ENCODING);
 
-        TreeControlNode subtree = new TreeControlNode
-            ("Global User and Group Administration",
-             "folder_16_pad.gif",
-             resources.getMessage(locale, "users.treeBuilder.subtreeNode"),
-             null,
-             "content",
-             true, "Users");
-        TreeControlNode groups = new TreeControlNode
-            ("Global Administer Groups",
-             "Groups.gif",
-             resources.getMessage(locale, "users.treeBuilder.groupsNode"),
-             "users/listGroups.do?databaseName=" +
-             URLEncoder.encode(databaseName) +
-             "&forward=" +
-             URLEncoder.encode("Groups List Setup"),
-             "content",
-             false, "Users");
-        TreeControlNode roles = new TreeControlNode
-            ("Global Administer Roles",
-             "Roles.gif",
-             resources.getMessage(locale, "users.treeBuilder.rolesNode"),
-             "users/listRoles.do?databaseName=" +
-             URLEncoder.encode(databaseName) +
-             "&forward=" +
-             URLEncoder.encode("Roles List Setup"),
-             "content",
-             false, "Users");
-        TreeControlNode users = new TreeControlNode
-            ("Global Administer Users",
-             "Users.gif",
-             resources.getMessage(locale, "users.treeBuilder.usersNode"),
-             "users/listUsers.do?databaseName=" +
-             URLEncoder.encode(databaseName) +
-             "&forward=" +
-             URLEncoder.encode("Users List Setup"),
-             "content",
-             false, "Users");
+            TreeControlNode subtree = new TreeControlNode
+                ("Global User and Group Administration",
+                 "folder_16_pad.gif",
+                 resources.getMessage(locale, "users.treeBuilder.subtreeNode"),
+                 null,
+                 "content",
+                 true, "Users");
+            TreeControlNode groups = new TreeControlNode
+                ("Global Administer Groups",
+                 "Groups.gif",
+                 resources.getMessage(locale, "users.treeBuilder.groupsNode"),
+                 "users/listGroups.do?databaseName=" +
+                 URLEncoder.encode(databaseName,TomcatTreeBuilder.URL_ENCODING) +
+                 "&forward=" +
+                 URLEncoder.encode("Groups List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, "Users");
+            TreeControlNode roles = new TreeControlNode
+                ("Global Administer Roles",
+                 "Roles.gif",
+                 resources.getMessage(locale, "users.treeBuilder.rolesNode"),
+                 "users/listRoles.do?databaseName=" +
+                 URLEncoder.encode(databaseName,TomcatTreeBuilder.URL_ENCODING) +
+                 "&forward=" +
+                 URLEncoder.encode("Roles List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, "Users");
+            TreeControlNode users = new TreeControlNode
+                ("Global Administer Users",
+                 "Users.gif",
+                 resources.getMessage(locale, "users.treeBuilder.usersNode"),
+                 "users/listUsers.do?databaseName=" +
+                 URLEncoder.encode(databaseName,TomcatTreeBuilder.URL_ENCODING) +
+                 "&forward=" +
+                 URLEncoder.encode("Users List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, "Users");
 
-        root.addChild(subtree);
-        subtree.addChild(users);
-        subtree.addChild(groups);
-        subtree.addChild(roles);
+            root.addChild(subtree);
+            subtree.addChild(users);
+            subtree.addChild(groups);
+            subtree.addChild(roles);
+        } catch(UnsupportedEncodingException ueex) {
+            // can't happen
+        }
 
     }
 

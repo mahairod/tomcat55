@@ -44,12 +44,12 @@
             </controls:action>
             
             <controls:action url='<%= "/resources/setUpUserDatabase.do?domain=" +
-                                    URLEncoder.encode(domainInfo) %>'>
+                                    URLEncoder.encode(domainInfo,"UTF-8") %>'>
                 <bean:message key="resources.actions.userdb.create"/>
             </controls:action>
             <controls:action url='<%= "/resources/listUserDatabases.do?domain=" +
-                                    URLEncoder.encode(domainInfo) + "&forward=" +
-                                    URLEncoder.encode("UserDatabases Delete List") %>'>
+                                    URLEncoder.encode(domainInfo,"UTF-8") + "&forward=" +
+                                    URLEncoder.encode("UserDatabases Delete List","UTF-8") %>'>
                 <bean:message key="resources.actions.userdb.delete"/>
             </controls:action>
          </controls:actions>

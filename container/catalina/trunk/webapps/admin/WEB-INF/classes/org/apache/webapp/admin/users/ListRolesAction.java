@@ -33,7 +33,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * <p>Retrieve the set of MBean names for all currently defined roles,
@@ -81,7 +81,7 @@ public class ListRolesAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -99,7 +99,7 @@ public class ListRolesAction extends Action {
 
         // Create a form bean containing the requested MBean Names
         String databaseName =
-            URLDecoder.decode(request.getParameter("databaseName"));
+            URLDecoder.decode(request.getParameter("databaseName"),TomcatTreeBuilder.URL_ENCODING);
         RolesForm rolesForm = null;
         try {
             rolesForm = UserUtils.getRolesForm(mserver, databaseName);
@@ -118,7 +118,7 @@ public class ListRolesAction extends Action {
         request.setAttribute("rolesForm", rolesForm);
         saveToken(request);
         String forward =
-            URLDecoder.decode(request.getParameter("forward"));
+            URLDecoder.decode(request.getParameter("forward"),TomcatTreeBuilder.URL_ENCODING);
         return (mapping.findForward(forward));
 
     }

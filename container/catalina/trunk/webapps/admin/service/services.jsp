@@ -77,7 +77,7 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditService.do?select=" +
-                         java.net.URLEncoder.encode(service.toString()) %>'>
+                         java.net.URLEncoder.encode(service.toString(),"UTF-8") %>'>
                 <controls:attribute name="service" attribute="name"/>
               </html:link>
             </div></td>

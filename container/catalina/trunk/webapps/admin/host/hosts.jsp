@@ -72,7 +72,7 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditHost.do?select=" +
-                         java.net.URLEncoder.encode(host.toString()) %>'>
+                         java.net.URLEncoder.encode(host.toString(),"UTF-8") %>'>
                 <controls:attribute name="host" attribute="name"/>
               </html:link>
             </div></td>

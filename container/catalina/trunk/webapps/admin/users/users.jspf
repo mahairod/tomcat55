@@ -30,9 +30,9 @@
         </logic:present>
         <td scope="row"><div align="left" class="table-normal-text">&nbsp;
           <html:link page='<%= "/users/setUpUser.do?objectName=" + 
-                               URLEncoder.encode(user) +
+                               URLEncoder.encode(user,"UTF-8") +
                                "&databaseName=" +
-                               URLEncoder.encode(request.getParameter("databaseName")) %>'>
+                               URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") %>'>
             <controls:attribute name="user" attribute="username"/>
           </html:link>
         </div></td>

@@ -30,11 +30,11 @@
         </logic:present>
         <td scope="row"><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpResourceLink.do?objectName=" + 
-                               URLEncoder.encode(resourceLink) + "&resourcetype=" +
-                               URLEncoder.encode(resourcetypeInfo) + "&path="+
-                               URLEncoder.encode(pathInfo) + "&host="+
-                               URLEncoder.encode(hostInfo) + "&domain="+
-                               URLEncoder.encode(domainInfo) %>'>
+                               URLEncoder.encode(resourceLink,"UTF-8") + "&resourcetype=" +
+                               URLEncoder.encode(resourcetypeInfo,"UTF-8") + "&path="+
+                               URLEncoder.encode(pathInfo,"UTF-8") + "&host="+
+                               URLEncoder.encode(hostInfo,"UTF-8") + "&domain="+
+                               URLEncoder.encode(domainInfo,"UTF-8") %>'>
             <controls:attribute name="resourceLink" attribute="name"/>
           </html:link>
         </div></td>

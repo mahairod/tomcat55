@@ -11,19 +11,19 @@
   </controls:action>
 
   <controls:action url='<%= "/users/setUpRole.do?databaseName=" +
-       URLEncoder.encode(request.getParameter("databaseName")) %>'>
+       URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") %>'>
     <bean:message key="users.actions.role.create"/>
   </controls:action>
 
   <controls:action url='<%= "/users/listRoles.do?databaseName=" +
-       URLEncoder.encode(request.getParameter("databaseName")) +
-       "&forward=" + URLEncoder.encode("Roles Delete List") %>'>
+       URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") +
+       "&forward=" + URLEncoder.encode("Roles Delete List","UTF-8") %>'>
     <bean:message key="users.actions.role.delete"/>
   </controls:action>
 
   <controls:action url='<%= "/users/listRoles.do?databaseName=" +
-       URLEncoder.encode(request.getParameter("databaseName")) +
-       "&forward=" + URLEncoder.encode("Roles List") %>'>
+       URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") +
+       "&forward=" + URLEncoder.encode("Roles List","UTF-8") %>'>
     <bean:message key="users.actions.role.list"/>
   </controls:action>
 

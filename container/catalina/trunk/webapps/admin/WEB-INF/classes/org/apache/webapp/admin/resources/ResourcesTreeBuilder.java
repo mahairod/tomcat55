@@ -18,6 +18,7 @@ package org.apache.webapp.admin.resources;
 
 import java.net.URLEncoder;
 import java.util.Locale;
+import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.Globals;
@@ -26,7 +27,7 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Implementation of <code>TreeBuilder</code> that adds the nodes required
@@ -39,7 +40,6 @@ import org.apache.webapp.admin.TreeControlNode;
  */
 
 public class ResourcesTreeBuilder implements TreeBuilder {
-
 
     // ----------------------------------------------------- Instance Variables
 
@@ -81,52 +81,59 @@ public class ResourcesTreeBuilder implements TreeBuilder {
      */
     protected void addSubtree(TreeControlNode root, MessageResources resources,
                               Locale locale) {
-
-        String domain = root.getDomain();
-        TreeControlNode subtree = new TreeControlNode
-            ("Global Resource Administration",
-             "folder_16_pad.gif",
-             resources.getMessage(locale, "resources.treeBuilder.subtreeNode"),
-             null,
-             "content",
-             true, domain);        
-        TreeControlNode datasources = new TreeControlNode
-            ("Globally Administer Data Sources",
-             "Datasource.gif",
-             resources.getMessage(locale, "resources.treeBuilder.datasources"),
-             "resources/listDataSources.do?resourcetype=Global&domain=" +
-             domain + "&forward=" + URLEncoder.encode("DataSources List Setup"),
-             "content",
-             false, domain);
-        TreeControlNode mailsessions = new TreeControlNode
-            ("Globally Administer Mail Sessions ",
-             "Mailsession.gif",
-             resources.getMessage(locale, "resources.treeBuilder.mailsessions"),
-             "resources/listMailSessions.do?resourcetype=Global&domain=" +
-             domain + "&forward=" + URLEncoder.encode("MailSessions List Setup"),
-             "content",
-             false, domain);
-        TreeControlNode userdbs = new TreeControlNode
-            ("Globally Administer UserDatabase Entries",
-             "Realm.gif",
-             resources.getMessage(locale, "resources.treeBuilder.databases"),
-             "resources/listUserDatabases.do?domain=" + domain + 
-             "&forward=" + URLEncoder.encode("UserDatabases List Setup"),
-             "content",
-             false, domain);
-        TreeControlNode envs = new TreeControlNode
-            ("Globally Administer Environment Entries",
-             "EnvironmentEntries.gif",
-             resources.getMessage(locale, "resources.env.entries"),
-             "resources/listEnvEntries.do?resourcetype=Global&domain=" +
-             domain+"&forward="+URLEncoder.encode("EnvEntries List Setup"),
-             "content",
-             false, domain);
-        root.addChild(subtree);
-        subtree.addChild(datasources);
-        subtree.addChild(mailsessions);
-        subtree.addChild(envs);
-        subtree.addChild(userdbs);
+        try {
+            String domain = root.getDomain();
+            TreeControlNode subtree = new TreeControlNode
+                ("Global Resource Administration",
+                 "folder_16_pad.gif",
+                 resources.getMessage(locale, "resources.treeBuilder.subtreeNode"),
+                 null,
+                 "content",
+                 true, domain);        
+            TreeControlNode datasources = new TreeControlNode
+                ("Globally Administer Data Sources",
+                 "Datasource.gif",
+                 resources.getMessage(locale, "resources.treeBuilder.datasources"),
+                 "resources/listDataSources.do?resourcetype=Global&domain=" +
+                 domain + "&forward=" + 
+                 URLEncoder.encode("DataSources List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, domain);
+            TreeControlNode mailsessions = new TreeControlNode
+                ("Globally Administer Mail Sessions ",
+                 "Mailsession.gif",
+                 resources.getMessage(locale, "resources.treeBuilder.mailsessions"),
+                 "resources/listMailSessions.do?resourcetype=Global&domain=" +
+                 domain + "&forward=" + 
+                 URLEncoder.encode("MailSessions List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, domain);
+            TreeControlNode userdbs = new TreeControlNode
+                ("Globally Administer UserDatabase Entries",
+                 "Realm.gif",
+                 resources.getMessage(locale, "resources.treeBuilder.databases"),
+                 "resources/listUserDatabases.do?domain=" + domain + 
+                 "&forward=" + 
+                 URLEncoder.encode("UserDatabases List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, domain);
+            TreeControlNode envs = new TreeControlNode
+                ("Globally Administer Environment Entries",
+                 "EnvironmentEntries.gif",
+                 resources.getMessage(locale, "resources.env.entries"),
+                 "resources/listEnvEntries.do?resourcetype=Global&domain=" +
+                 domain+"&forward="+
+                 URLEncoder.encode("EnvEntries List Setup",TomcatTreeBuilder.URL_ENCODING),
+                 "content",
+                 false, domain);
+            root.addChild(subtree);
+            subtree.addChild(datasources);
+            subtree.addChild(mailsessions);
+            subtree.addChild(envs);
+            subtree.addChild(userdbs);
+        } catch(UnsupportedEncodingException ex) {
+            // can't happen
+        }
     }
 
 }

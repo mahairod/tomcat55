@@ -11,19 +11,19 @@
   </controls:action>
 
   <controls:action url='<%= "/users/setUpGroup.do?databaseName=" +
-       URLEncoder.encode(request.getParameter("databaseName")) %>'>
+       URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") %>'>
     <bean:message key="users.actions.group.create"/>
   </controls:action>
 
   <controls:action url='<%= "/users/listGroups.do?databaseName=" +
-       URLEncoder.encode(request.getParameter("databaseName")) +
-       "&forward=" + URLEncoder.encode("Groups Delete List") %>'>
+       URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") +
+       "&forward=" + URLEncoder.encode("Groups Delete List","UTF-8") %>'>
     <bean:message key="users.actions.group.delete"/>
   </controls:action>
 
   <controls:action url='<%= "/users/listGroups.do?databaseName=" +
-       URLEncoder.encode(request.getParameter("databaseName")) +
-       "&forward=" + URLEncoder.encode("Groups List") %>'>
+       URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") +
+       "&forward=" + URLEncoder.encode("Groups List","UTF-8") %>'>
     <bean:message key="users.actions.group.list"/>
   </controls:action>
 

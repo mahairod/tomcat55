@@ -47,21 +47,21 @@
             <logic:notEqual name="contextForm" property="path"
                             value='<%= request.getContextPath() %>'>
             <controls:action url='<%= "/AddRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.realms.create"/>
             </controls:action>
             <controls:action url='<%= "/DeleteRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.realms.deletes"/>
             </controls:action>
             </logic:notEqual>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url='<%= "/AddValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                <bean:message key="actions.valves.create"/>
             </controls:action>
             <controls:action url='<%= "/DeleteValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                <bean:message key="actions.valves.deletes"/>
             </controls:action>
             <%-- cannot delete the context of the admin app  from the tool --%>
@@ -69,7 +69,7 @@
                             value='<%= request.getContextPath() %>'>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url='<%= "/DeleteContext.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName,"UTF-8") %>'>
                 <bean:message key="actions.contexts.delete"/>
             </controls:action>
             </logic:notEqual>

@@ -74,8 +74,8 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditValve.do?select=" +
-                         java.net.URLEncoder.encode(valve.toString()) +
-                         "&parent="+ URLEncoder.encode(thisParentName) %>'>
+                         java.net.URLEncoder.encode(valve.toString(),"UTF-8") +
+                         "&parent="+ URLEncoder.encode(thisParentName,"UTF-8") %>'>
                 <controls:attribute name="valve" attribute="className"/>
               </html:link>
             </div></td>

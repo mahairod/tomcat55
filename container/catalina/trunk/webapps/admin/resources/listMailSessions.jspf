@@ -11,19 +11,19 @@
   </controls:action>
 
   <controls:action url='<%= "/resources/setUpMailSession.do?resourcetype=" +
-                            URLEncoder.encode(resourcetypeInfo) + "&path="+
-                            URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&domain="+
-                            URLEncoder.encode(domainInfo) %>'>
+                            URLEncoder.encode(resourcetypeInfo,"UTF-8") + "&path="+
+                            URLEncoder.encode(pathInfo,"UTF-8") + "&host="+
+                            URLEncoder.encode(hostInfo,"UTF-8") + "&domain="+
+                            URLEncoder.encode(domainInfo,"UTF-8") %>'>
     <bean:message key="resources.actions.mailsession.create"/>
   </controls:action>
 
   <controls:action url='<%= "/resources/listMailSessions.do?resourcetype=" +
-                            URLEncoder.encode(resourcetypeInfo) + "&path="+
-                            URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&domain="+
-                            URLEncoder.encode(domainInfo) + "&forward=" + 
-                            URLEncoder.encode("MailSessions Delete List") %>'>
+                            URLEncoder.encode(resourcetypeInfo,"UTF-8") + "&path="+
+                            URLEncoder.encode(pathInfo,"UTF-8") + "&host="+
+                            URLEncoder.encode(hostInfo,"UTF-8") + "&domain="+
+                            URLEncoder.encode(domainInfo,"UTF-8") + "&forward=" + 
+                            URLEncoder.encode("MailSessions Delete List","UTF-8") %>'>
     <bean:message key="resources.actions.mailsession.delete"/>
   </controls:action>
 

@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.Lists;
 
@@ -62,7 +63,7 @@ public class AddRealmAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -89,12 +90,14 @@ public class AddRealmAction extends Action {
         types = new ArrayList();
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "AddRealm.do?parent=" + URLEncoder.encode(parent)
+                "AddRealm.do?parent=" + 
+                URLEncoder.encode(parent,TomcatTreeBuilder.URL_ENCODING)
                 + "&type=" + type));
         for (int i=0; i< realmTypes.length; i++) {
             if (!type.equalsIgnoreCase(realmTypes[i])) {
                 types.add(new LabelValueBean(realmTypes[i],
-                "AddRealm.do?parent=" + URLEncoder.encode(parent)
+                "AddRealm.do?parent=" + 
+                URLEncoder.encode(parent,TomcatTreeBuilder.URL_ENCODING)
                 + "&type=" + realmTypes[i]));
             }
         }

@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.Lists;
 
@@ -60,7 +61,7 @@ public class AddConnectorAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
     ActionForm form,
     HttpServletRequest request,
     HttpServletResponse response)
@@ -135,12 +136,14 @@ public class AddConnectorAction extends Action {
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "AddConnector.do?select=" + URLEncoder.encode(serviceName) 
+                "AddConnector.do?select=" + 
+                URLEncoder.encode(serviceName,TomcatTreeBuilder.URL_ENCODING) 
                 + "&type=" + type));        
          for (int i=0; i< schemeTypes.length; i++) {
             if (!type.equalsIgnoreCase(schemeTypes[i])) {
                 types.add(new LabelValueBean(schemeTypes[i],
-                "AddConnector.do?select=" + URLEncoder.encode(serviceName)
+                "AddConnector.do?select=" + 
+                URLEncoder.encode(serviceName,TomcatTreeBuilder.URL_ENCODING)
                 + "&type=" + schemeTypes[i]));        
             }
         }

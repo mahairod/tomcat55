@@ -92,7 +92,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -183,7 +183,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
                     if (parentNode != null) {
                         String nodeLabel = rform.getNodeLabel();                        
                         String encodedName =
-                            URLEncoder.encode(rObjectName);
+                            URLEncoder.encode(rObjectName,TomcatTreeBuilder.URL_ENCODING);
                         TreeControlNode childNode =
                             new TreeControlNode(rObjectName,
                                                 "Realm.gif",

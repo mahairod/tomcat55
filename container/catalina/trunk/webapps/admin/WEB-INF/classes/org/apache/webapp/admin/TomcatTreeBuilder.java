@@ -73,7 +73,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String CONNECTOR_TYPE = ":type=Connector";
     public final static String HOST_TYPE = ":type=Host";
     public final static String CONTEXT_TYPE = ":type=Context";
-    public final static String DEFAULTCONTEXT_TYPE = ":type=DefaultContext";
     public final static String LOADER_TYPE = ":type=Loader";
     public final static String MANAGER_TYPE = ":type=Manager";
     public final static String LOGGER_TYPE = ":type=Logger";
@@ -81,6 +80,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String VALVE_TYPE = ":type=Valve";
 
     public final static String WILDCARD = ",*";
+
+    public final static String URL_ENCODING="UTF-8";
     
     private static MBeanServer mBServer = null;
     private MessageResources resources = null;
@@ -134,9 +135,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Server.gif",
                                     nodeLabel,
                                     "EditServer.do?select=" +
-                                    URLEncoder.encode(serverName) +
+                                    URLEncoder.encode(serverName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING),
                                     "content",
                                     true, domain);
             rootNode.addChild(serverNode);
@@ -174,14 +175,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Service.gif",
                                     nodeLabel,
                                     "EditService.do?select=" +
-                                    URLEncoder.encode(serviceName) +
+                                    URLEncoder.encode(serviceName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING),
                                     "content",
                                     false, domain);
             serverNode.addChild(serviceNode);
             getConnectors(serviceNode, serviceName);
-            getDefaultContexts(serviceNode, serviceName);
             getHosts(serviceNode, serviceName);
             getRealms(serviceNode, serviceName);
             getValves(serviceNode, serviceName);
@@ -216,9 +216,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Connector.gif",
                                     nodeLabel,
                                     "EditConnector.do?select=" +
-                                    URLEncoder.encode(connectorName) +
+                                    URLEncoder.encode(connectorName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING),
                                     "content",
                                     false, domain);
             serviceNode.addChild(connectorNode);
@@ -254,14 +254,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Host.gif",
                                     nodeLabel,
                                     "EditHost.do?select=" +
-                                    URLEncoder.encode(hostName) +
+                                    URLEncoder.encode(hostName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING),
                                     "content",
                                     false, domain);
             serviceNode.addChild(hostNode);
             getContexts(hostNode, hostName);            
-            getDefaultContexts(hostNode, hostName);
             getRealms(hostNode, hostName);
             getValves(hostNode, hostName);
         }
@@ -300,9 +299,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Context.gif",
                                     nodeLabel,
                                     "EditContext.do?select=" +
-                                    URLEncoder.encode(contextName) +
+                                    URLEncoder.encode(contextName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING),
                                     "content",
                                     false, domain);
             hostNode.addChild(contextNode);
@@ -311,44 +310,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getValves(contextNode, contextName);
         }
     }
-    
-    
-    /**
-     * Append nodes for all defined default contexts for the specified host.
-     *
-     * @param hostNode Host node for the tree control
-     * @param containerName Object name of the parent container
-     * @param containerType The type of the parent container
-     * @param resources The MessageResources for our localized messages
-     *  messages
-     *
-     * @exception Exception if an exception occurs building the tree
-     */
-    public void getDefaultContexts(TreeControlNode hostNode, String containerName) 
-        throws Exception {
-        
-        String domain = hostNode.getDomain();
-        Iterator defaultContextNames =
-            Lists.getDefaultContexts(mBServer, containerName).iterator();
-        while (defaultContextNames.hasNext()) {
-            String defaultContextName = (String) defaultContextNames.next();
-            ObjectName objectName = new ObjectName(defaultContextName);
-            String nodeLabel = "DefaultContext";
-            TreeControlNode defaultContextNode =
-                new TreeControlNode(defaultContextName,
-                                    "DefaultContext.gif",
-                                    nodeLabel,
-                                    "EditDefaultContext.do?select=" +
-                                    URLEncoder.encode(defaultContextName) +
-                                    "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
-                                    "content",
-                                    false, domain);
-            hostNode.addChild(defaultContextNode);
-            getResources(defaultContextNode, defaultContextName);
-        }
-    }  
-    
     
     /**
      * Append nodes for any defined realms for the specified container.
@@ -379,9 +340,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Realm.gif",
                                     nodeLabel,
                                     "EditRealm.do?select=" +
-                                    URLEncoder.encode(realmName) +
+                                    URLEncoder.encode(realmName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING),
                                     "content",
                                     false, domain);
                 containerNode.addChild(realmNode);
@@ -436,11 +397,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "Datasource.gif",
             resources.getMessage(locale, "resources.treeBuilder.datasources"),
             "resources/listDataSources.do?resourcetype=" + 
-                URLEncoder.encode(type) + "&path=" +
-                URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&domain=" + 
-                URLEncoder.encode(domain) + "&forward=" +
-                URLEncoder.encode("DataSources List Setup"),
+                URLEncoder.encode(type,URL_ENCODING) + "&path=" +
+                URLEncoder.encode(path,URL_ENCODING) + "&host=" + 
+                URLEncoder.encode(host,URL_ENCODING) + "&domain=" + 
+                URLEncoder.encode(domain,URL_ENCODING) + "&forward=" +
+                URLEncoder.encode("DataSources List Setup",URL_ENCODING),
             "content",
             false, domain);
         TreeControlNode mailsessions = new TreeControlNode
@@ -448,11 +409,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "Mailsession.gif",
             resources.getMessage(locale, "resources.treeBuilder.mailsessions"),
             "resources/listMailSessions.do?resourcetype=" + 
-                URLEncoder.encode(type) + "&path=" +
-                URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&domain=" + 
-                URLEncoder.encode(domain) + "&forward=" +
-                URLEncoder.encode("MailSessions List Setup"),
+                URLEncoder.encode(type,URL_ENCODING) + "&path=" +
+                URLEncoder.encode(path,URL_ENCODING) + "&host=" + 
+                URLEncoder.encode(host,URL_ENCODING) + "&domain=" + 
+                URLEncoder.encode(domain,URL_ENCODING) + "&forward=" +
+                URLEncoder.encode("MailSessions List Setup",URL_ENCODING),
             "content",
             false, domain);
         TreeControlNode resourcelinks = new TreeControlNode
@@ -460,11 +421,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "ResourceLink.gif",
             resources.getMessage(locale, "resources.treeBuilder.resourcelinks"),
             "resources/listResourceLinks.do?resourcetype=" + 
-                URLEncoder.encode(type) + "&path=" +
-                URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&domain=" + 
-                URLEncoder.encode(domain) + "&forward=" +
-                URLEncoder.encode("ResourceLinks List Setup"),
+                URLEncoder.encode(type,URL_ENCODING) + "&path=" +
+                URLEncoder.encode(path,URL_ENCODING) + "&host=" + 
+                URLEncoder.encode(host,URL_ENCODING) + "&domain=" + 
+                URLEncoder.encode(domain,URL_ENCODING) + "&forward=" +
+                URLEncoder.encode("ResourceLinks List Setup",URL_ENCODING),
             "content",
             false, domain);
         TreeControlNode envs = new TreeControlNode
@@ -472,11 +433,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "EnvironmentEntries.gif",
             resources.getMessage(locale, "resources.env.entries"),
             "resources/listEnvEntries.do?resourcetype=" + 
-                URLEncoder.encode(type) + "&path=" +
-                URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&domain=" + 
-                URLEncoder.encode(domain) + "&forward=" +
-                URLEncoder.encode("EnvEntries List Setup"),
+                URLEncoder.encode(type,URL_ENCODING) + "&path=" +
+                URLEncoder.encode(path,URL_ENCODING) + "&host=" + 
+                URLEncoder.encode(host,URL_ENCODING) + "&domain=" + 
+                URLEncoder.encode(domain,URL_ENCODING) + "&forward=" +
+                URLEncoder.encode("EnvEntries List Setup",URL_ENCODING),
             "content",
             false, domain);
         subtree.addChild(datasources);
@@ -509,11 +470,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "Valve.gif",
                                     nodeLabel,
                                     "EditValve.do?select=" +
-                                    URLEncoder.encode(valveName) +
+                                    URLEncoder.encode(valveName,URL_ENCODING) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel) +
+                                    URLEncoder.encode(nodeLabel,URL_ENCODING) +
                                     "&parent=" +
-                                    URLEncoder.encode(containerName),
+                                    URLEncoder.encode(containerName,URL_ENCODING),
                                     "content",
                                     false, domain);
             containerNode.addChild(valveNode);
