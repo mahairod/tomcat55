@@ -298,10 +298,6 @@ including a Context configuration XML file in
 <li><code>tag</code>: Specifying a tag name, this allows associating the
     deployed webapp with a version number. The application version can
     be later redeployed when needed using only the tag.</li>
-<li><code>pause</code>: Pause webapps so that incoming connections are not lost
-    during an application update. This option is only used with the update
-    parameter, and its default is false. Note that a large amount of request
-    processors may be used if the amount of incoming requests is large.</li>
 </ul>
 </p>
 
