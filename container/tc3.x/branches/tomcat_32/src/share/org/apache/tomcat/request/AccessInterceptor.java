@@ -64,6 +64,8 @@ import org.apache.tomcat.core.*;
 import org.apache.tomcat.core.Constants;
 import org.apache.tomcat.util.*;
 import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
 import java.util.*;
 
 // XXX maybe it's a good idea to use a different model for adding secuirty
@@ -127,6 +129,11 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	if( debug > 0 ) log( "Init  " + ctx.getHost() + " " +
 			     ctx.getPath() + " " + login_type );
 	
+	if( null==ctx.getErrorPage( "403" )) {
+	    ctx.addServlet( new SSLRequiredHandler());
+	    ctx.addErrorPage( "403", "tomcat.sslRequiredHandler");
+	}
+
 	if( "FORM".equals( login_type )) {
 	    String page=ctx.getFormLoginPage();
 	    String errorPage = ctx.getFormErrorPage();
@@ -203,6 +210,7 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	    // if unknown, leave the normal 404 error handler to deal
 	    // with unauthorized access.
 	}
+
     }
     
     // XXX not implemented - will deal with that after everything else works.
@@ -268,14 +276,24 @@ public class AccessInterceptor extends  BaseInterceptor  {
 			    sb.append( roles[j]).append(" ");
 		    log( sb.toString());
 		}
-		if( transport != null &&
-		    ! "NONE".equals( transport )) {
-		    req.setNote( reqTransportNote, transport );
-		}
-		
 		// roles will be checked by a different interceptor
 		if( roles!= null  && roles.length > 0) 
 		    req.setRequiredRoles( roles );
+
+		if( transport != null &&
+		    ! "NONE".equals( transport )) {
+		    req.setNote( reqTransportNote, transport );
+
+		    // check INTEGRAL or CONFIDENTIAL
+		    if( "INTEGRAL".equalsIgnoreCase( transport ) ||
+			"CONFIDENTIAL".equalsIgnoreCase( transport )) {
+			if( debug>0) log( "Transport " + transport + " " + req.isSecure());
+			if( ! req.isSecure() ) {
+				return 403;
+			}
+		    }
+		}
+		
 	    }
 	}
  	return 0;
@@ -351,6 +369,60 @@ class BasicAuthHandler extends ServletWrapper {
     }
 }
 
+/** 403 - Forbiden.
+    This handler will report that the page can't be accessed without
+    SSL.
+*/
+class SSLRequiredHandler extends ServletWrapper {
+    
+    SSLRequiredHandler() {
+	initialized=true;
+	internal=true;
+	name="tomcat.sslRequiredHandler";
+    }
+
+    public void doService(Request req, Response res)
+	throws Exception
+    {
+	Context ctx=req.getContext();
+	ContextManager cm=ctx.getContextManager();
+	
+	int secureP=cm.getSecurePort();
+	if( secureP <= 0 ) {
+	    // 403 - this page requires SSL and we don't
+	    // know any way to get there
+	    res.setStatus( 403 );
+	    StringBuffer body=new StringBuffer();
+	    body.append("<h1>SSL required to access this page</H1>");
+	    
+	    res.setContentLength(body.length());
+	    if( res.isUsingStream() ) {
+		ServletOutputStream out = res.getOutputStream();
+		out.print(body.toString());
+		out.flush();
+	    } else {
+		PrintWriter out = res.getWriter();
+		out.print(body);
+		out.flush();
+	    }
+	} else {
+	    StringBuffer securePage=new StringBuffer();
+	    securePage.append("https://").append(req.getServerName());
+	    securePage.append( ":" ).append(secureP );
+	    // same context page, etc
+	    securePage.append( req.getRequestURI());
+	    String qS=req.getQueryString();
+	    if( qS!=null) {
+		securePage.append( "?").append( qS );
+	    }
+	    req.setAttribute("javax.servlet.error.message",
+			     securePage.toString() );
+	    contextM.handleStatus( req, res, 302 ); // redirect
+	    return;
+	}
+    }
+}
+
 /** 401 - access denied. Will check if we have an authenticated user
     or not.
     XXX If we have user/pass, but still no permission  - display
@@ -404,6 +476,7 @@ class FormAuthHandler extends ServletWrapper {
 	return; 
     }
 }
+
 
 /** 
     j_security_check handler

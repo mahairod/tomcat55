@@ -122,6 +122,7 @@ public class EmbededTomcat { // extends WebService
 
 	PoolTcpConnector sc=new PoolTcpConnector();
 	sc.setServer( contextM );
+	contextM.setSecurePort( port );
 	sc.setAttribute( "vhost_port" , new Integer( port ) );
 	if( addr != null ) sc.setAttribute( "vhost_address", addr );
 	if( hostname != null ) sc.setAttribute( "vhost_name", hostname );

@@ -88,12 +88,14 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	if("context.manager".equals(name) ) {
 	    contextM=(ContextManager)value;
 	}
+	if("secure".equals(name) )
+	    setSecure(true);
     }
 
     public void setSecure( boolean b ) {
 	secure=b;
     }
-    
+
     public void setServer( Object  contextM ) {
 	this.contextM=(ContextManager)contextM;
     }

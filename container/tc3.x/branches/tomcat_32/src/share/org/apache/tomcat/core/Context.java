@@ -627,7 +627,6 @@ public class Context {
 	wrapper.setContext( this );
 	String name=wrapper.getServletName();
 	//	System.out.println("Adding servlet " + name  + " " + wrapper);
-
         // check for duplicates
         if (servlets.get(name) != null) {
 	    log("Removing duplicate servlet " + name  + " " + wrapper);
@@ -993,6 +992,8 @@ public class Context {
         this.documentBase=s;
     }
 
+    // -------------------- Virtual host support --------------------
+
     /** Make this context visible as part of a virtual host
      */
     public void setHost( String h ) {
@@ -1018,6 +1019,8 @@ public class Context {
 	return vhostAliases.elements();
     }
     // -------------------- Security - trusted code -------------------- 
+
+    
     
     public void setTrusted( boolean t ) {
 	trusted=t;

@@ -165,6 +165,9 @@ public class ContextManager {
      */
     String installDir;
 
+    // port for SSL endpoint - for redirect
+    int securePort=-1;
+    
     /** Default work dir, relative to home
      */
     public static final String DEFAULT_WORK_DIR="work";
@@ -258,6 +261,18 @@ public class ContextManager {
 	installDir=tH;
     }
 
+    public int getSecurePort() {
+	return securePort;
+    }
+
+    /** Secure port is set to the SSL connector that will handle
+     *  INTEGRAL/CONFIDENTIAL transport. This is an initial solution,
+     *  it may change !
+     */
+    public void setSecurePort(int p) {
+	securePort=p;
+    }
+    
     /**
      * WorkDir property - where all working files will be created
      */
@@ -295,8 +310,7 @@ public class ContextManager {
     public void setPermissions(Object permissions) {
 	this.permissions = permissions;
     }
-
-
+    
     // -------------------- Support functions --------------------
 
     /**
