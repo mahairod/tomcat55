@@ -4631,6 +4631,9 @@ public class StandardContext
     private File getConfigBase() {
         File configBase = 
             new File(System.getProperty("catalina.base"), "conf");
+        if (!configBase.exists()) {
+            return null;
+        }
         Container container = this;
         Container host = null;
         Container engine = null;
