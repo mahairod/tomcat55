@@ -111,14 +111,24 @@
       <!-- Define the default virtual host -->
       <Host name="localhost" debug="0" appBase="webapps">
 
-        <!-- Access log processes all requests for this virtual host -->
+        <!-- Access log processes all requests for this virtual host.  By
+             default, log files are created in the "logs" directory relative to
+             $CATALINA_HOME.  If you wish, you can specify a different
+             directory with the "directory" attribute.  Specify either a relative
+             (to $CATALINA_HOME) or absolute path to the desired directory.
+        -->
         <Valve className="org.apache.catalina.valves.AccessLogValve"
-                  prefix="localhost_access_log." suffix=".txt"
+                 directory="logs"  prefix="localhost_access_log." suffix=".txt"
                  pattern="common"/>
 
-        <!-- Logger shared by all Contexts related to this virtual host -->
+        <!-- Logger shared by all Contexts related to this virtual host.  By
+             default (when using FileLogger), log files are created in the "logs"
+             directory relative to $CATALINA_HOME.  If you wish, you can specify
+             a different directory with the "directory" attribute.  Specify either a
+             relative (to $CATALINA_HOME) or absolute path to the desired
+             directory.-->
         <Logger className="org.apache.catalina.logger.FileLogger"
-                   prefix="localhost_log." suffix=".txt"
+                 directory="logs"  prefix="localhost_log." suffix=".txt"
 	        timestamp="true"/>
 
         <!-- Define properties for each web application.  This is only needed
