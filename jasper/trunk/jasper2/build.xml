@@ -5,9 +5,10 @@
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
   <!-- property values you must customize for successful building!!!        -->
-  <property file="build.properties"/>
-  <property file="${catalina.home}/build.properties"/>
   <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
+  <property file="build.properties.sample"/>
+  <property file="${catalina.home}/build.properties"/>
 
   <!-- Build Defaults -->
   <property name="jasper.build"      value="${basedir}/build"/>
@@ -33,6 +34,7 @@
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-daemon-launcher.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
     <pathelement location="${jsp20el.jar}"/>
