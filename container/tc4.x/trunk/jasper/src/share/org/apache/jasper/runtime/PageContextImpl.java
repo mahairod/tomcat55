@@ -396,7 +396,16 @@ public class PageContextImpl extends PageContext {
         throws ServletException, IOException
     {
         String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-        context.getRequestDispatcher(path).forward(request, response);
+        String includeUri 
+            = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
+        if (includeUri != null)
+            request.removeAttribute(Constants.INC_SERVLET_PATH);
+        try {
+            context.getRequestDispatcher(path).forward(request, response);
+        } finally {
+            if (includeUri != null)
+                request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
+        }
     }
 
     Stack writerStack = new Stack();
