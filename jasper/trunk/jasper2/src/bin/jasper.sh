@@ -61,6 +61,9 @@ else
 fi
 
 # Add on extra jar files to CLASSPATH
+for i in "$JASPER_HOME"/common/endorsed/*.jar; do
+  CLASSPATH="$CLASSPATH":"$i"
+done
 for i in "$JASPER_HOME"/common/lib/*.jar; do
   CLASSPATH="$CLASSPATH":"$i"
 done
