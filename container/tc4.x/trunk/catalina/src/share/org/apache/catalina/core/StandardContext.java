@@ -3840,7 +3840,9 @@ public class StandardContext
             Container parentHost = getParent();
             if (parentHost != null) {
                 hostName = parentHost.getName();
-                hostWorkDir = ((StandardHost)parentHost).getWorkDir();
+                if (parentHost instanceof StandardHost) {
+                    hostWorkDir = ((StandardHost)parentHost).getWorkDir();
+                }
                 Container parentEngine = parentHost.getParent();
                 if (parentEngine != null) {
                    engineName = parentEngine.getName();
