@@ -10,7 +10,6 @@
   <property file="../../build.properties"/>
   <property file="${user.home}/build.properties"/>
 
-  <property name="build.compiler"  value="classic"/>
   <property name="webapps.build"   value="../build"/>
   <property name="webapps.dist"    value="../dist"/>
   <property name="webapp.name"     value="webdav"/>

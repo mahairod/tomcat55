@@ -38,6 +38,9 @@
       <update>
         Updated Jakarta-Commons dependencies: BeanUtils to 1.7.0, Collections to 3.1. (yoavs)
       </update>
+      <update>
+        Removed classic compiler directives from Ant build, as we use modern anyways. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
@@ -75,6 +78,9 @@
       </fix>
       <fix>
         <bug>30561</bug>: Broken restart of NamingService. (yoavs)
+      </fix>
+      <fix>
+        <bug>29668</bug>: NPE in HostConfig, directory created for deployed WAR instead of xml file. (yoavs)
       </fix>
     </changelog>
   </subsection>

@@ -439,8 +439,9 @@ public class HostConfig
      */
     protected void deployDescriptors(File configBase, String[] files) {
 
-        if (!deployXML)
+        if (!deployXML || (files == null)) {
            return;
+        }
 
         for (int i = 0; i < files.length; i++) {
 
@@ -496,6 +497,9 @@ public class HostConfig
      * Deploy WAR files.
      */
     protected void deployWARs(File appBase, String[] files) {
+        if (files == null) {
+          return;
+        }
 
         for (int i = 0; i < files.length; i++) {
 
@@ -506,6 +510,7 @@ public class HostConfig
             if (deployed.contains(files[i]))
                 continue;
             File dir = new File(appBase, files[i]);
+
             if (files[i].toLowerCase().endsWith(".war")) {
 
                 deployed.add(files[i]);
@@ -528,16 +533,19 @@ public class HostConfig
                 File xml = new File
                     (configBase, files[i].substring
                      (0, files[i].lastIndexOf(".")) + ".xml");
+
                 if (!xml.exists()) {
+
                     try {
+                        // Added for Bugzilla 29038
+                        if (!configBase.exists()) {
+                          configBase.mkdirs();
+                        }
+
                         jar = new JarFile(dir);
                         entry = jar.getJarEntry("META-INF/context.xml");
                         if (entry != null) {
                             istream = jar.getInputStream(entry);
-                         
-                            // Added for Bugzilla 29038
-                            xml.mkdirs();
-
                             ostream =
                                 new BufferedOutputStream
                                 (new FileOutputStream(xml), 1024);
@@ -646,8 +654,14 @@ public class HostConfig
 
     /**
      * Deploy directories.
+     *
+     * @param appBase The Host appBase
+     * @param files[] The files to deploy
      */
     protected void deployDirectories(File appBase, String[] files) {
+        if (files == null) {
+          return;
+        }
 
         for (int i = 0; i < files.length; i++) {
 
@@ -798,7 +812,8 @@ public class HostConfig
                 return;
             String files[] = appBase.list();
 
-            for (int i = 0; i < files.length; i++) {
+            if (files != null) {
+              for (int i = 0; i < files.length; i++) {
                 if (files[i].endsWith(".war")) {
                     File dir = new File(appBase, files[i]);
                     Long lastModified = (Long) warLastModified.get(files[i]);
@@ -843,8 +858,8 @@ public class HostConfig
                     }
                 }
             }
-        }
-
+         }
+      }
     }
 
 

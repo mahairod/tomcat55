@@ -11,7 +11,6 @@
   <property file="${user.home}/build.properties"/>
 
   <!-- Build Defaults -->
-  <property name="build.compiler"  value="classic"/>
   <property name="webapps.build"   value="${basedir}/../build"/>
   <property name="webapps.dist"    value="${basedir}/../dist"/>
   <property name="webapp.name"     value="admin"/>
