@@ -63,17 +63,11 @@ package org.apache.webapp.admin.defaultcontext;
 
 
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -184,29 +178,33 @@ public final class SaveDefaultContextAction extends Action {
         String lObjectName = cform.getLoaderObjectName();
         String mObjectName = cform.getManagerObjectName();
        
-        // Perform a "Create DefaultContext" transaction (if requested)
-        if ("Create".equals(adminAction)) {
-
-            String operation = null;
-            Object values[] = null;
+        String operation = null;
+        Object values[] = null;
             
-            try {
-                // get the parent name
-                String parentName = cform.getParentObjectName();
-                ObjectName poname = new ObjectName(parentName);
+        try {
+            // get the parent name
+            String parentName = cform.getParentObjectName();
+            ObjectName poname = new ObjectName(parentName);
 
-                String host = poname.getKeyProperty("host");
-                ObjectName oname = null;
-                // Ensure that the requested default context name is unique
-                if (host!=null) {
-                    oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
-                                        ",host=" + host + ",service=" + 
-                                        poname.getKeyProperty("service"));
-                } else {
-                    oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
-                                        ",service=" + poname.getKeyProperty("name"));
-                }
+            String host = poname.getKeyProperty("host");
+            ObjectName oname = null;
                 
+            // Ensure that the requested default context name is unique
+            if (host!=null) {
+                oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                                ",host=" + host + ",service=" + 
+                                poname.getKeyProperty("service"));
+            } else {
+                oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                                ",service=" + poname.getKeyProperty("name"));
+            }
+                
+            // Look up our MBeanFactory MBean
+            ObjectName fname =
+                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+
+            // Perform a "Create DefaultContext" transaction (if requested)
+            if ("Create".equals(adminAction)) {
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("contextName",
@@ -215,10 +213,6 @@ public final class SaveDefaultContextAction extends Action {
                     return (new ActionForward(mapping.getInput()));
                 }
                 
-                // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
                 // Create a new DefaultContext object
                 values = new Object[1];
                 values[0] = parentName;
@@ -227,8 +221,10 @@ public final class SaveDefaultContextAction extends Action {
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createDefaultContextTypes);
+            }
 
-                // Create a new Loader object
+            // Create a new Loader if on does not already exist
+            if (!mBServer.isRegistered(new ObjectName(lObjectName))) {
                 values = new String[1];
                 // parent of loader is the newly created context
                 values[0] = cObjectName.toString();
@@ -240,8 +236,10 @@ public final class SaveDefaultContextAction extends Action {
                                     values, createStandardLoaderTypes);                
                 
                 getServlet().log("loader created "+lObjectName);
+            }
                 
-                // Create a new StandardManager object
+            // Create a new StandardManager if one does not already exist
+            if (!mBServer.isRegistered(new ObjectName(mObjectName))) {
                 values = new String[1];
                 // parent of manager is the newly created Context
                 values[0] = cObjectName.toString();
@@ -253,19 +251,17 @@ public final class SaveDefaultContextAction extends Action {
                 // Add the new Default Context to our tree control node
                 addToTreeControlNode(oname, cObjectName, 
                                     parentName, resources, session);
-
-            } catch (Exception e) {
-                getServlet().log
-                    (resources.getMessage(locale, "users.error.invoke",
-                                          operation), e);
-                response.sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     resources.getMessage(locale, "users.error.invoke",
-                                          operation));
-                return (null);
-
             }
 
+        } catch (Exception e) {
+            getServlet().log
+                (resources.getMessage(locale, "users.error.invoke",
+                                      operation), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.invoke",
+                                      operation));
+            return (null);
         }
 
         // Perform attribute updates as requested
