@@ -168,20 +168,6 @@ public class ContextRuleSet extends RuleSetBase {
                                 "org.apache.catalina.DefaultContext");
         }
 
-        digester.addObjectCreate(prefix + "Context/Ejb",
-                                 "org.apache.catalina.deploy.ContextEjb");
-        digester.addSetProperties(prefix + "Context/Ejb");
-        digester.addSetNext(prefix + "Context/Ejb",
-                            "addEjb",
-                            "org.apache.catalina.deploy.ContextEjb");
-
-        digester.addObjectCreate(prefix + "Context/Environment",
-                                 "org.apache.catalina.deploy.ContextEnvironment");
-        digester.addSetProperties(prefix + "Context/Environment");
-        digester.addSetNext(prefix + "Context/Environment",
-                            "addEnvironment",
-                            "org.apache.catalina.deploy.ContextEnvironment");
-
         digester.addCallMethod(prefix + "Context/InstanceListener",
                                "addInstanceListener", 0);
 
@@ -242,24 +228,12 @@ public class ContextRuleSet extends RuleSetBase {
                             "setRealm",
                             "org.apache.catalina.Realm");
 
-        digester.addObjectCreate(prefix + "Context/Resource",
-                                 "org.apache.catalina.deploy.ContextResource");
-        digester.addSetProperties(prefix + "Context/Resource");
-        digester.addSetNext(prefix + "Context/Resource",
-                            "addResource",
-                            "org.apache.catalina.deploy.ContextResource");
-
-        digester.addObjectCreate(prefix + "Context/ResourceParams",
-                                 "org.apache.catalina.deploy.ResourceParams");
-        digester.addSetProperties(prefix + "Context/ResourceParams");
-        digester.addSetNext(prefix + "Context/ResourceParams",
-                            "addResourceParams",
-                            "org.apache.catalina.deploy.ResourceParams");
-
-        digester.addCallMethod(prefix + "Context/ResourceParams/parameter",
-                               "addParameter", 2);
-        digester.addCallParam(prefix + "Context/ResourceParams/parameter/name", 0);
-        digester.addCallParam(prefix + "Context/ResourceParams/parameter/value", 1);
+        digester.addObjectCreate(prefix + "Context/ResourceLink",
+                                 "org.apache.catalina.deploy.ContextEjb");
+        digester.addSetProperties(prefix + "Context/ResourceLink");
+        digester.addSetNext(prefix + "Context/ResourceLink",
+                            "addResourceLink",
+                            "org.apache.catalina.deploy.ResourceLink");
 
         digester.addObjectCreate(prefix + "Context/Resources",
                                  "org.apache.naming.resources.FileDirContext",

@@ -290,6 +290,13 @@ public class Catalina {
                             "setServer",
                             "org.apache.catalina.Server");
 
+        digester.addObjectCreate("Server/GlobalNamingResources",
+                                 "org.apache.catalina.deploy.NamingResources");
+        digester.addSetProperties("Server/GlobalNamingResources");
+        digester.addSetNext("Server/GlobalNamingResources",
+                            "setGlobalNamingResources",
+                            "org.apache.catalina.deploy.NamingResources");
+
         digester.addObjectCreate("Server/Listener",
                                  null, // MUST be specified in the element
                                  "className");
@@ -339,11 +346,13 @@ public class Catalina {
                             "org.apache.catalina.LifecycleListener");
 
         // Add RuleSets for nested elements
+        digester.addRuleSet(new NamingRuleSet("Server/GlobalResources/"));
         digester.addRuleSet(new EngineRuleSet("Server/Service/"));
         digester.addRuleSet(new HostRuleSet("Server/Service/Engine/"));
         digester.addRuleSet(new ContextRuleSet("Server/Service/Engine/Default"));
         digester.addRuleSet(new ContextRuleSet("Server/Service/Engine/Host/Default"));
         digester.addRuleSet(new ContextRuleSet("Server/Service/Engine/Host/"));
+        digester.addRuleSet(new NamingRuleSet("Server/Service/Engine/Host/Context/"));
 
         digester.addRule("Server/Service/Engine",
                          new SetParentClassLoaderRule(digester,
