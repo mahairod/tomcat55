@@ -520,8 +520,8 @@
           file="${commons-fileupload.jar}"/>
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
-    <copy tofile="${catalina.build}/server/lib/jmx.jar" file="${jmx.jar}"/>
-    <copy todir="${catalina.build}/server/lib" file="../etc/mx4j.license"/>
+    <copy tofile="${catalina.build}/common/lib/jmx.jar" file="${jmx.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="../etc/mx4j.license"/>
   </target>
   <target name="copy-launcher.jars" if="copy.launcher.jars">
     <copy todir="${catalina.build}/common/lib" file="${ant.jar}"/>
@@ -541,8 +541,10 @@
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
   <target name="copy-xerces2.jars">
+<!--
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
     <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
+-->
   </target>
 
 
