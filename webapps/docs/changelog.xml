@@ -110,6 +110,9 @@
         and wait a little if the pool is exhausted; this should make low maxThreads values work a 
         lot better (remm)
       </update>
+      <update>
+        <bug>33857</bug>: Update information on automatic mod_jk configuration in Apache-HowTo. (yoavs)
+      </update>
      </changelog>
    </subsection>
    
