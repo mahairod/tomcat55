@@ -277,7 +277,11 @@ public class RequestUtil {
     }
 
     /**
-     * This method decodes the given urlencoded string.
+     * This method decodes the given urlencoded string.  Note that 'special' characters
+     * /, \, %, . and \0 are *NOT* decoded.  The /, % and . characters are reserved by the
+     * URL specification and may only be used in URLs for their reserved purpose in their
+     * unencoded form.  The \ and \0 characters are prohibited to avoide security problems
+     * some platforms.
      *
      * @param  str the url-encoded string
      * @return the decoded string
