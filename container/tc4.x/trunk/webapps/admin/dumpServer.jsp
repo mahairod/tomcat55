@@ -35,10 +35,10 @@
 
 </table>
 
+</body>
+
 <!-- Standard Footer -->
 
 <%@ include file="footer.jsp" %>
-
-</body>
 
 </html:html>
