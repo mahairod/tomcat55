@@ -2100,6 +2100,14 @@
                  is="true"
                  type="boolean"/>
 
+    <attribute   name="xmlNamespaceAware"
+          description="Attribute value used to turn on/off XML namespace awarenes"
+                 type="boolean"/>
+
+    <attribute   name="xmlValidation"
+          description="Attribute value used to turn on/off XML validation"
+                 type="boolean"/>
+
     <operation   name="addAlias"
           description="Add an alias name that should be mapped to this Host"
                impact="ACTION"
