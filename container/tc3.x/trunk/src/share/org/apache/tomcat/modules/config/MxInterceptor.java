@@ -63,7 +63,6 @@ import org.apache.tomcat.util.io.FileUtil;
 import java.io.*;
 import java.util.*;
 
-import javax.management.*;
 import org.apache.tomcat.util.mx.*;
 
 /**
@@ -71,8 +70,6 @@ import org.apache.tomcat.util.mx.*;
  * @author Costin Manolache
  */
 public class MxInterceptor  extends BaseInterceptor { 
-
-    MBeanServer mserver=DynamicMBeanProxy.getMBeanServer();
 
     // -------------------- Tomcat callbacks --------------------
 
