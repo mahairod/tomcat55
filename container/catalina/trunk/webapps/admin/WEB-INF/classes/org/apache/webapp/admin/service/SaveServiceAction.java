@@ -274,9 +274,9 @@ public final class SaveServiceAction extends Action {
                 values[0] = eObjectName;
                 values[1] = "UserDatabase";
                 operation = "createUserDatabaseRealm";
-                realmOName = (String)
-                    mBServer.invoke(fname, operation,
-                                    values, createUserDatabaseRealmTypes);
+                //realmOName = (String)
+                //    mBServer.invoke(fname, operation,
+                //                    values, createUserDatabaseRealmTypes);
                                     
                 //Enumeration enum = onames.elements();
                 //while (enum.hasMoreElements()) {
@@ -331,25 +331,25 @@ public final class SaveServiceAction extends Action {
                                                 true, engineName);
                         parentNode.addChild(childNode);
                         // update tree to display the newly added realm
-                        Iterator realmNames =
-                            Lists.getRealms(mBServer, sObjectName).iterator();
-                        while (realmNames.hasNext()) {
-                            String realmName = (String) realmNames.next();
-                            ObjectName objectName = new ObjectName(realmName);
-                            nodeLabel = "Realm for service (" + 
-                                                sform.getServiceName() + ")";
-                            TreeControlNode realmNode =
-                                new TreeControlNode(realmName,
-                                                    "Realm.gif",
-                                                    nodeLabel,
-                                                    "EditRealm.do?select=" +
-                                                    URLEncoder.encode(realmName) +
-                                                    "&nodeLabel=" +
-                                                    URLEncoder.encode(nodeLabel),
-                                                    "content",
-                                                    false, engineName);
-                            childNode.addChild(realmNode);               
-                        }         
+                        //Iterator realmNames =
+                        //    Lists.getRealms(mBServer, sObjectName).iterator();
+                        //while (realmNames.hasNext()) {
+                        //    String realmName = (String) realmNames.next();
+                        //    ObjectName objectName = new ObjectName(realmName);
+                        //    nodeLabel = "Realm for service (" + 
+                        //                        sform.getServiceName() + ")";
+                        //    TreeControlNode realmNode =
+                        //        new TreeControlNode(realmName,
+                        //                            "Realm.gif",
+                        //                            nodeLabel,
+                        //                            "EditRealm.do?select=" +
+                        //                            URLEncoder.encode(realmName) +
+                        //                            "&nodeLabel=" +
+                        //                            URLEncoder.encode(nodeLabel),
+                        //                            "content",
+                        //                            false, engineName);
+                        //    childNode.addChild(realmNode);               
+                        //}         
                         // FIXME - force a redisplay
                     } else {
                         getServlet().log

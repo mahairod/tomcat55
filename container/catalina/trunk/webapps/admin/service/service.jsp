@@ -100,6 +100,7 @@
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
+              <%--
               <controls:action url='<%= "/AddRealm.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
@@ -108,6 +109,7 @@
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.deletes"/>
               </controls:action>
+              --%>
               </logic:notEqual>
               <controls:action disabled="true">
                 -------------------------------------
