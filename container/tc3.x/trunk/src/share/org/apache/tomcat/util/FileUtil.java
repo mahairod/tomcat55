@@ -97,7 +97,17 @@ public class FileUtil {
     public static String patch(String path) {
         String patchPath = path.trim();
 
-        if (patchPath.length() >= 2 &&
+
+        // Move drive spec to the front of the path
+        if (patchPath.length() >= 3 &&
+            patchPath.charAt(0) == '/'  &&
+            Character.isLetter(patchPath.charAt(1)) &&
+            patchPath.charAt(2) == ':') {
+            patchPath=patchPath.substring(1,3)+"/"+patchPath.substring(3);
+        }
+
+        // Eliminate consecutive slashes after the drive spec
+	if (patchPath.length() >= 2 &&
             Character.isLetter(patchPath.charAt(0)) &&
             patchPath.charAt(1) == ':') {
             char[] ca = patchPath.replace('/', '\\').toCharArray();
