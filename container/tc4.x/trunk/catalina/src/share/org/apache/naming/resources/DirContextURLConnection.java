@@ -105,7 +105,8 @@ public class DirContextURLConnection
         if (context == null)
             throw new IllegalArgumentException
                 ("Directory context can't be null");
-        this.permission = new FilePermission(url.toString(), "read");
+        if (System.getSecurityManager() != null)
+            this.permission = new FilePermission(url.toString(), "read");
         this.context = context;
     }
     
