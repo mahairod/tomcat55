@@ -97,6 +97,8 @@ class XmlHelperHandler implements DocumentHandler {
     public XmlHelperHandler(Map mapper, Properties props) {
 	tagMapper=mapper;
 	this.props=props;
+        elemStack = new Object[100]; // depth of the xml doc
+	tagStack = new String[100]; 
     }
     
     public void setDocumentLocator (Locator locator)
@@ -107,8 +109,6 @@ class XmlHelperHandler implements DocumentHandler {
 
     public void startDocument () throws SAXException
     {
-        elemStack = new Object[100]; // depth of the xml doc
-	tagStack = new String[100]; 
         sp = 0;
     }
 
@@ -206,7 +206,9 @@ class XmlHelperHandler implements DocumentHandler {
 	throws SAXException
     {
 	String value=new String(buf, offset, len );
-	//	System.out.println("XXXCH: " + value );
+	if( (sp > 0) && elemStack[sp]!=null ) {
+	    InvocationHelper.addAttribute( elemStack[sp], "body", value );
+	}
 	
     }
 

@@ -53,7 +53,7 @@ public class InvocationHelper {
         /** Set a property, using either the setXXX method or a generic setProperty(name, value)
      *  @returns true if success
      */
-    public static void setProperty( Object o, String name, String value ) throws BuildException {
+    public static void setProperty( Object o, String name, String value ) {
 	//	System.out.println("Setting Property " + o.getClass() + " " + name + "=" + value);
 	try {
 	    Method setMethod = (Method)getPropertySetter(o, name);
@@ -69,25 +69,25 @@ public class InvocationHelper {
 		return; 
 	    }
 	    
-	    String msg = "Error setting " + name + " in " + o.getClass();
-	    throw new BuildException(msg);
+	    //	    String msg = "Error setting " + name + " in " + o.getClass();
+	    //throw new BuildException(msg);
 	} catch (IllegalAccessException iae) {
 	    String msg = "Error setting value for attrib: " + name;
 	    System.out.println("WARNING " + msg);
 	    iae.printStackTrace();
-	    throw new BuildException(msg);
+	    //	    throw new BuildException(msg);
 	} catch (InvocationTargetException ie) {
 	    String msg = "Error setting value for attrib: " +
 		name + " in " + o.getClass().getName();
 	    ie.printStackTrace();
 	    ie.getTargetException().printStackTrace();
-	    throw new BuildException(msg);		    
+	    //	    throw new BuildException(msg);		    
 	}
     }
 
     /** Set an object property using setter or setAttribute(name).
      */
-    public static void setAttribute( Object o, String name, Object v ) throws BuildException {
+    public static void setAttribute( Object o, String name, Object v ) {
 	//	System.out.println("Set Attribute " + o.getClass() + " " + name + " " + v );
 	try {
 	    Method setMethod = getPropertySetter(o, name);
@@ -106,26 +106,27 @@ public class InvocationHelper {
 		setMethod.invoke(o, new Object[] {name, v});
 		return; 
 	    }
-	    
-	    String msg = "Error setting " + name + " in " + o.getClass();
-	    throw new BuildException(msg);
+
+	    // Silent 
+	    //	    String msg = "Error setting " + name + " in " + o.getClass();
+	    //	    throw new BuildException(msg);
 	} catch (IllegalAccessException iae) {
 	    String msg = "Error setting value for attrib: " +
 		name;
 	    iae.printStackTrace();
-	    throw new BuildException(msg);
+	    //	    throw new BuildException(msg);
 	} catch (InvocationTargetException ie) {
 	    String msg = "Error setting value for attrib: " +
 		name + " in " + o.getClass().getName();
 	    ie.printStackTrace();
 	    ie.getTargetException().printStackTrace();
-	    throw new BuildException(msg);		    
+	    //	    throw new BuildException(msg);		    
 	}
     }
     
     /** Calls addXXX( v ) then setAttribute( name, v).
      */
-    public static void addAttribute( Object o, String name, Object v ) throws BuildException {
+    public static void addAttribute( Object o, String name, Object v ) {
 	try {
 	    Method setMethod = getMethod(o, "add" + capitalize( name ));
 	    if( setMethod!= null ) {
@@ -144,13 +145,13 @@ public class InvocationHelper {
 	    String msg = "Error setting value for attrib: " +
 		name;
 	    iae.printStackTrace();
-	    throw new BuildException(msg);
+	    //	    throw new BuildException(msg);
 	} catch (InvocationTargetException ie) {
 	    String msg = "Error setting value for attrib: " +
 		name + " in " + o.getClass().getName();
 	    ie.printStackTrace();
 	    ie.getTargetException().printStackTrace();
-	    throw new BuildException(msg);		    
+	    //	    throw new BuildException(msg);		    
 	}
     }
 

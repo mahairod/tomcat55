@@ -102,10 +102,17 @@ public class Project {
     public void setDefaultTarget(String defaultTarget) {
 	this.defaultTarget = defaultTarget;
     }
-    
+
+    // deprecated, use setDefault
     public String getDefaultTarget() {
 	return defaultTarget;
     }
+
+    // match the attribute name
+    public void setDefault(String defaultTarget) {
+	this.defaultTarget = defaultTarget;
+    }
+    
 
     public void setName(String name) {
 	this.name = name;
@@ -115,6 +122,17 @@ public class Project {
 	return name;
     }
 
+    // match basedir attribute in xml
+    public void setBasedir( String baseD ) throws BuildException {
+	try {
+	    setBaseDir(new File( new File(baseD).getCanonicalPath()));
+	} catch (IOException ioe) {
+	    String msg = "Can't set basedir " + baseDir + " due to " +
+		ioe.getMessage();
+	    throw new BuildException(msg);
+	}
+    }
+    
     public void setBaseDir(File baseDir) {
 	this.baseDir = baseDir;
 	String msg = "Project base dir set to: " + baseDir;
@@ -122,6 +140,11 @@ public class Project {
     }
 
     public File getBaseDir() {
+	if(baseDir==null) {
+	    try {
+		setBasedir(".");
+	    } catch(BuildException ex) {ex.printStackTrace();}
+	}
 	return baseDir;
     }
     
@@ -161,6 +184,12 @@ public class Project {
 	taskClassDefinitions.put(taskName, taskClass);
     }
 
+    public void addTarget(Target target) {
+	String msg = " +Target: " + target.getName();
+	log(msg, MSG_VERBOSE);
+	targets.put(target.getName(), target);
+    }
+    
     public void addTarget(String targetName, Target target) {
 	String msg = " +Target: " + targetName;
 	log(msg, MSG_VERBOSE);

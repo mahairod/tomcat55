@@ -17,6 +17,7 @@ import java.util.Vector;
 public abstract class Task {
 
     protected Project project = null;
+    Target target;
 
     /**
      * Sets the project object of this task. This method is used by
@@ -31,6 +32,17 @@ public abstract class Task {
 	this.project = project;
     }
 
+    public void setAttribute( String name, Object v) {
+	if("target".equals( name ) ) {
+	    Target t=(Target)v;
+	    target=t;
+	    project=t.getProject();
+	    return;
+	}
+	// 	System.out.println("Set Att " +name + " = " + v );
+	// 	if( v!=null) System.out.println(v.getClass());
+    }
+    
     /**
      * Called by the project to let the task do it's work.
      *
