@@ -23,6 +23,9 @@ public class GTest extends Task {
     private static final int CARRIAGE_RETURN = 13;
     private static final int LINE_FEED       = 10;
 
+    private static int failureCount = 0;
+    private static int passCount = 0;
+
     String prefix = "http";
     String host = "localhost";
     int port = 8080;
@@ -122,7 +125,7 @@ public class GTest extends Task {
     public void setAssertion ( String assertion ) {
         this.assertion = assertion;
     }
-
+ 
     /**
      * <code>setTestStrategy</code> sets the test strategy
      * for the current test.
@@ -173,7 +176,7 @@ public class GTest extends Task {
      */
     public void setResultFileName( String fileName )
     throws IOException {
-        // if ( firstTask ) {
+        if ( firstTask ) {
             resultFileName = fileName;
             File passedFile = new File( fileName );
             System.out.println( "Full Path of Result File-> " + passedFile.getAbsolutePath() );
@@ -184,20 +187,29 @@ public class GTest extends Task {
             } else {
                 resultOut.write( "<root>\n".getBytes() );
             }
-            // }
+        }
     }
 
-    /*
-     *public void setFirstTask( boolean val ) {
-     *   firstTask = val;
-     *}
+    /**
+     * <code>setFirstTask</code> denotes that current task
+     * being executed is the first task within the list.
      *
-     *public void setLastTask ( boolean val )
-     *throws IOException {
-     *   lastTask = val;
+     * @param a <code>boolean</code> value
+     */    
+    public void setFirstTask( boolean val ) {
+        firstTask = val;
+    }
+   
+
+    /**
+     * <code>setLastTask</code> denotes that the current task
+     * being executed is the last task within the list.
      *
-     *}
-     */
+     * @param a <code>boolean</code> value
+     */ 
+    public void setLastTask ( boolean val ) {
+        lastTask = val;
+    }
 
     /**
      * <code>setPrefix</code> sets the protocol
@@ -413,6 +425,7 @@ public class GTest extends Task {
             boolean result = checkResponse( magnitude );
 
             if ( result ) {
+		passCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>PASS</result>\n".getBytes() );
                 }
@@ -422,6 +435,7 @@ public class GTest extends Task {
                 } else
                     System.out.println( " OK " + description + " (" + request + ")" );
             } else {
+		failureCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>FAIL</result>\n".getBytes() );
                 }
@@ -435,13 +449,19 @@ public class GTest extends Task {
             if ( resultOut != null ) {
                 resultOut.write( "</test>\n".getBytes() );
 
-                if ( lastTask == true ) {
+                if ( lastTask ) {
                     resultOut.write( "</root>\n".getBytes() );
                     resultOut.close();
                 }
             }
+	    if ( lastTask ) {
+                System.out.println( "\n\n------- TEST SUMMARY -------\n" );
+		System.out.println( "*** " + passCount + " TEST(S) PASSED! ***" );
+		System.out.println( "*** " + failureCount + " TEST(S) FAILED! ***" );
+            }
 
         } catch ( Exception ex ) {
+	    failureCount++;
             if ( "No description".equals( description ) ) {
                 System.out.println( " FAIL " + request );
             } else
@@ -468,7 +488,6 @@ public class GTest extends Task {
      */
     private boolean checkResponse( boolean testCondition )
     throws Exception {
-        boolean responseStatus = true;
 	boolean match = false;
 
 	if ( responseLine != null ) {
@@ -486,7 +505,6 @@ public class GTest extends Task {
 		    }
 
 		    if ( match != testCondition ) {
-			responseStatus = false;
 			System.out.println( " Error in: " + request );
 			System.out.println( "    Expected Status-Line with one or all of the following values:" );
 			System.out.println( "    Status-Code: " + returnCode );
@@ -501,6 +519,7 @@ public class GTest extends Task {
 			    resultOut.write( expectedReasonPhrase.getBytes() );
 			    resultOut.write( actualString.getBytes() );
 			}
+			return false;
 		    } else {
 			if ( debug > 0 ) {
 			    System.out.println( " Expected values found in Status-Line" );
@@ -508,15 +527,15 @@ public class GTest extends Task {
 		    }
 		}
 	    } else {
-		responseStatus = false;
 		System.out.println( "  Error:  Received invalid HTTP version in response header from target Server" );
 		System.out.println( "         Target server must support HTTP 1.0 or HTTP 1.1" );
 		System.out.println( "         Response from server: " + responseLine );
+		return false;
 	    }
 	} else {
-	    responseStatus = false;
 	    System.out.println( " Error in: " + request );
 	    System.out.println( "        Expecting response from server, received null" );
+	    return false;
 	}
 
 	/* 
@@ -696,7 +715,7 @@ public class GTest extends Task {
 
         // compare the body
         if ( goldenFile == null )
-            return responseStatus;
+            return true;
 
         // Get the expected result from the "golden" file.
         byte[] expResult = getExpectedResult();
@@ -711,7 +730,6 @@ public class GTest extends Task {
 	}
 
         if ( cmp != testCondition ) {
-            responseStatus = false;
 
             if ( resultOut != null ) {
                 expectedString = "<expectedBody>" + new String( expResult ) + "</expectedBody>\n";
@@ -719,9 +737,10 @@ public class GTest extends Task {
                 resultOut.write( expectedString.getBytes() );
                 resultOut.write( actualString.getBytes() );
             }
+	    return false;
         }
 
-        return responseStatus;
+        return true;
     }
 
     
