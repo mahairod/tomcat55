@@ -87,7 +87,7 @@ import org.apache.jasper.JasperException;
  * @author Mark Roth
  */
 
-class Parser {
+class Parser implements TagConstants {
 
     private ParserController parserController;
     private JspCompilationContext ctxt;
@@ -1228,43 +1228,43 @@ class Parser {
     private void parseStandardAction(Node parent) throws JasperException {
 	Mark start = reader.mark();
 
-	if (reader.matches("include")) {
+	if (reader.matches(INCLUDE_ACTION)) {
 	    parseInclude(parent);
-	} else if (reader.matches("forward")) {
+	} else if (reader.matches(FORWARD_ACTION)) {
 	    parseForward(parent);
-	} else if (reader.matches("invoke")) {
+	} else if (reader.matches(INVOKE_ACTION)) {
 	    if (!isTagFile) {
 		err.jspError(reader.mark(),
 			     "jsp.error.invalid.action.isnottagfile",
 			     "&lt;jsp:invoke");
 	    }
 	    parseInvoke(parent);
-	} else if (reader.matches("doBody")) {
+	} else if (reader.matches(DOBODY_ACTION)) {
 	    if (!isTagFile) {
 		err.jspError(reader.mark(),
 			     "jsp.error.invalid.action.isnottagfile",
 			     "&lt;jsp:doBody");
 	    }
 	    parseDoBody(parent);
-	} else if (reader.matches("getProperty")) {
+	} else if (reader.matches(GET_PROPERTY_ACTION)) {
 	    parseGetProperty(parent);
-	} else if (reader.matches("setProperty")) {
+	} else if (reader.matches(SET_PROPERTY_ACTION)) {
 	    parseSetProperty(parent);
-	} else if (reader.matches("useBean")) {
+	} else if (reader.matches(USE_BEAN_ACTION)) {
 	    parseUseBean(parent);
-	} else if (reader.matches("plugin")) {
+	} else if (reader.matches(PLUGIN_ACTION)) {
 	    parsePlugin(parent);
-	} else if (reader.matches("element")) {
+	} else if (reader.matches(ELEMENT_ACTION)) {
 	    parseElement(parent);
-	} else if (reader.matches("attribute")) {
+	} else if (reader.matches(ATTRIBUTE_ACTION)) {
 	    err.jspError(start, "jsp.error.namedAttribute.invalidUse");
-	} else if (reader.matches("body")) {
+	} else if (reader.matches(BODY_ACTION)) {
 	    err.jspError(start, "jsp.error.jspbody.invalidUse");
-	} else if (reader.matches("fallback")) {
+	} else if (reader.matches(FALLBACK_ACTION)) {
 	    err.jspError(start, "jsp.error.fallback.invalidUse");
-	} else if (reader.matches("params")) {
+	} else if (reader.matches(PARAMS_ACTION)) {
 	    err.jspError(start, "jsp.error.params.invalidUse");
-	} else if (reader.matches("param")) {
+	} else if (reader.matches(PARAM_ACTION)) {
 	    err.jspError(start, "jsp.error.param.invalidUse");
 	} else {
 	    err.jspError(start, "jsp.error.badStandardAction");
@@ -1349,8 +1349,8 @@ class Parser {
 	
         // Parse 'CustomActionEnd' production:
 	if (reader.matches("/>")) {
-	    new Node.CustomTag(attrs, start, tagName, prefix, shortTagName,
-			       tagInfo, tagFileInfo, tagHandlerClass, parent);
+	    new Node.CustomTag(tagName, prefix, shortTagName, attrs, start,
+			       parent, tagInfo, tagFileInfo, tagHandlerClass);
 	    return true;
 	}
 	
@@ -1371,9 +1371,9 @@ class Parser {
 	    bc = TagInfo.BODY_CONTENT_EMPTY;
 	}
 
-	Node tagNode = new Node.CustomTag(attrs, start, tagName, prefix,
-					  shortTagName, tagInfo, tagFileInfo,
-					  tagHandlerClass, parent);
+	Node tagNode = new Node.CustomTag(tagName, prefix, shortTagName,
+					  attrs, start, parent, tagInfo,
+					  tagFileInfo, tagHandlerClass);
 	parseOptionalBody( tagNode, tagName, bc );
 
 	return true;

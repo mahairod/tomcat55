@@ -213,7 +213,7 @@ class JspDocumentParser extends DefaultHandler
 			     String qName,
 			     Attributes attrs) throws SAXException {
 
-	if (directivesOnly && !qName.startsWith(JSP_DIRECTIVE)) {
+	if (directivesOnly && !localName.startsWith(DIRECTIVE_ACTION)) {
 	    return;
 	}
 
@@ -244,15 +244,16 @@ class JspDocumentParser extends DefaultHandler
 	}
 
 	Node node = null;
-	if (qName.startsWith("jsp:")) {
-	    node = parseStandardAction(qName, attrsCopy, xmlnsAttrs, start,
-				       current);
+
+	if ("http://java.sun.com/JSP/Page".equals(uri)) {
+	    node = parseStandardAction(qName, localName, attrsCopy, xmlnsAttrs,
+				       start, current);
 	} else {
 	    node = parseCustomAction(qName, attrsCopy, xmlnsAttrs, start,
 				     current);
 	    if (node == null) {
-		node = new Node.UninterpretedTag(qName, attrsCopy, xmlnsAttrs,
-						 start, current);
+		node = new Node.UninterpretedTag(qName, localName, attrsCopy,
+						 xmlnsAttrs, start, current);
 	    }
 	}
 
@@ -363,7 +364,7 @@ class JspDocumentParser extends DefaultHandler
 			   String localName,
 			   String qName) throws SAXException {
 
-	if (directivesOnly && !qName.startsWith(JSP_DIRECTIVE)) {
+	if (directivesOnly && !localName.startsWith(DIRECTIVE_ACTION)) {
 	    return;
 	}
 
@@ -489,122 +490,135 @@ class JspDocumentParser extends DefaultHandler
     //*********************************************************************
     // Private utility methods
 
-    private Node parseStandardAction(String qName, Attributes attrs,
-				     Attributes xmlnsAttrs, Mark start,
-				     Node parent)
+    private Node parseStandardAction(String qName, String localName,
+				     Attributes attrs, Attributes xmlnsAttrs,
+				     Mark start, Node parent)
 	        throws SAXException {
 
 	Node node = null;
 
-	if (qName.equals(JSP_ROOT)) {
+	if (localName.equals(ROOT_ACTION)) {
             // give the <jsp:root> element the original attributes set
             // (attrs) instead of the copy without the xmlns: elements 
             // (attrsCopy)
-	    node = new Node.JspRoot(attrs, xmlnsAttrs, start, current);
+	    node = new Node.JspRoot(qName, attrs, xmlnsAttrs, start, current);
 	    if (isTop) {
 		pageInfo.setHasJspRoot(true);
 	    }
-	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
+	} else if (localName.equals(PAGE_DIRECTIVE_ACTION)) {
 	    if (isTagFile) {
 		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.istagfile", qName),
+		    Localizer.getMessage("jsp.error.action.istagfile",
+					 localName),
 		    locator);
 	    }
-	    node = new Node.PageDirective(attrs, xmlnsAttrs, start, current);
+	    node = new Node.PageDirective(qName, attrs, xmlnsAttrs, start,
+					  current);
 	    String imports = attrs.getValue("import");
 	    // There can only be one 'import' attribute per page directive
 	    if (imports != null) {
 		((Node.PageDirective) node).addImport(imports);
 	    }
-	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE)) {
-	    node = new Node.IncludeDirective(attrs, xmlnsAttrs, start,
+	} else if (localName.equals(INCLUDE_DIRECTIVE_ACTION)) {
+	    node = new Node.IncludeDirective(qName, attrs, xmlnsAttrs, start,
 					     current);
 	    processIncludeDirective(attrs.getValue("file"), node);
-	} else if (qName.equals(JSP_DECLARATION)) {
-	    node = new Node.Declaration(xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_SCRIPTLET)) {
-	    node = new Node.Scriptlet(xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_EXPRESSION)) {
-	    node = new Node.Expression(xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_USE_BEAN)) {
-	    node = new Node.UseBean(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_SET_PROPERTY)) {
-	    node = new Node.SetProperty(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_GET_PROPERTY)) {
-	    node = new Node.GetProperty(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_INCLUDE)) {
-	    node = new Node.IncludeAction(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_FORWARD)) {
-	    node = new Node.ForwardAction(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_PARAM)) {
-	    node = new Node.ParamAction(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_PARAMS)) {
-	    node = new Node.ParamsAction(xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_PLUGIN)) {
-	    node = new Node.PlugIn(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_TEXT)) {
-	    node = new Node.JspText(xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_BODY)) {
-	    node = new Node.JspBody(xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_ATTRIBUTE)) {
-	    node = new Node.NamedAttribute(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_OUTPUT)) {
-	    node = new Node.JspOutput(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
+	} else if (localName.equals(DECLARATION_ACTION)) {
+	    node = new Node.Declaration(qName, xmlnsAttrs, start, current);
+	} else if (localName.equals(SCRIPTLET_ACTION)) {
+	    node = new Node.Scriptlet(qName, xmlnsAttrs, start, current);
+	} else if (localName.equals(EXPRESSION_ACTION)) {
+	    node = new Node.Expression(qName, xmlnsAttrs, start, current);
+	} else if (localName.equals(USE_BEAN_ACTION)) {
+	    node = new Node.UseBean(qName, attrs, xmlnsAttrs, start, current);
+	} else if (localName.equals(SET_PROPERTY_ACTION)) {
+	    node = new Node.SetProperty(qName, attrs, xmlnsAttrs, start,
+					current);
+	} else if (localName.equals(GET_PROPERTY_ACTION)) {
+	    node = new Node.GetProperty(qName, attrs, xmlnsAttrs, start,
+					current);
+	} else if (localName.equals(INCLUDE_ACTION)) {
+	    node = new Node.IncludeAction(qName, attrs, xmlnsAttrs, start,
+					  current);
+	} else if (localName.equals(FORWARD_ACTION)) {
+	    node = new Node.ForwardAction(qName, attrs, xmlnsAttrs, start,
+					  current);
+	} else if (localName.equals(PARAM_ACTION)) {
+	    node = new Node.ParamAction(qName, attrs, xmlnsAttrs, start,
+					current);
+	} else if (localName.equals(PARAMS_ACTION)) {
+	    node = new Node.ParamsAction(qName, xmlnsAttrs, start, current);
+	} else if (localName.equals(PLUGIN_ACTION)) {
+	    node = new Node.PlugIn(qName, attrs, xmlnsAttrs, start, current);
+	} else if (localName.equals(TEXT_ACTION)) {
+	    node = new Node.JspText(qName, xmlnsAttrs, start, current);
+	} else if (localName.equals(BODY_ACTION)) {
+	    node = new Node.JspBody(qName, xmlnsAttrs, start, current);
+	} else if (localName.equals(ATTRIBUTE_ACTION)) {
+	    node = new Node.NamedAttribute(qName, attrs, xmlnsAttrs, start,
+					   current);
+	} else if (localName.equals(OUTPUT_ACTION)) {
+	    node = new Node.JspOutput(qName, attrs, xmlnsAttrs, start,
+				      current);
+	} else if (localName.equals(TAG_DIRECTIVE_ACTION)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
+					 localName),
 		    locator);
 	    }
-	    node = new Node.TagDirective(attrs, xmlnsAttrs, start, current);
+	    node = new Node.TagDirective(qName, attrs, xmlnsAttrs, start,
+					 current);
 	    String imports = attrs.getValue("import");
 	    // There can only be one 'import' attribute per tag directive
 	    if (imports != null) {
 		((Node.TagDirective) node).addImport(imports);
 	    }
-	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
+	} else if (localName.equals(ATTRIBUTE_DIRECTIVE_ACTION)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
+					 localName),
 		    locator);
 	    }
-	    node = new Node.AttributeDirective(attrs, xmlnsAttrs, start,
+	    node = new Node.AttributeDirective(qName, attrs, xmlnsAttrs, start,
 					       current);
-	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
+	} else if (localName.equals(VARIABLE_DIRECTIVE_ACTION)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
+					 localName),
 		    locator);
 	    }
-	    node = new Node.VariableDirective(attrs, xmlnsAttrs, start,
+	    node = new Node.VariableDirective(qName, attrs, xmlnsAttrs, start,
 					      current);
-	} else if (qName.equals(JSP_INVOKE)) {
+	} else if (localName.equals(INVOKE_ACTION)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
+					 localName),
 		    locator);
 	    }
-	    node = new Node.InvokeAction(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_DO_BODY)) {
+	    node = new Node.InvokeAction(qName, attrs, xmlnsAttrs, start,
+					 current);
+	} else if (localName.equals(DOBODY_ACTION)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
+					 localName),
 		    locator);
 	    }
-	    node = new Node.DoBodyAction(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_ELEMENT)) {
-	    node = new Node.JspElement(attrs, xmlnsAttrs, start, current);
-	} else if (qName.equals(JSP_FALLBACK)) {
-	    node = new Node.FallBackAction(xmlnsAttrs, start, current);
+	    node = new Node.DoBodyAction(qName, attrs, xmlnsAttrs, start,
+					 current);
+	} else if (localName.equals(ELEMENT_ACTION)) {
+	    node = new Node.JspElement(qName, attrs, xmlnsAttrs, start,
+				       current);
+	} else if (localName.equals(FALLBACK_ACTION)) {
+	    node = new Node.FallBackAction(qName, xmlnsAttrs, start, current);
 	} else {
 	    throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.xml.badStandardAction",
-					 qName),
+					 localName),
 		    locator);
 	}
 
@@ -656,9 +670,9 @@ class JspDocumentParser extends DefaultHandler
             tagInfo = tagFileInfo.getTagInfo();
         }
        
-	return new Node.CustomTag(attrs, xmlnsAttrs, start, qName, prefix,
-				  shortName, tagInfo, tagFileInfo,
-				  tagHandlerClass, parent);
+	return new Node.CustomTag(qName, prefix, shortName, attrs, xmlnsAttrs,
+				  start, parent, tagInfo, tagFileInfo,
+				  tagHandlerClass);
     }
 
     /*
@@ -789,11 +803,11 @@ class JspDocumentParser extends DefaultHandler
 	    for (int i=0; i<size; i++) {
 		Node n = body.getNode(i);
 		if (!(n instanceof Node.TemplateText)) {
-		    String elemType = JSP_SCRIPTLET;
+		    String elemType = SCRIPTLET_ACTION;
 		    if (scriptingElem instanceof Node.Declaration)
-			elemType = JSP_DECLARATION;
+			elemType = DECLARATION_ACTION;
 		    if (scriptingElem instanceof Node.Expression)
-			elemType = JSP_EXPRESSION;
+			elemType = EXPRESSION_ACTION;
 		    String msg = Localizer.getMessage(
                         "jsp.error.parse.xml.scripting.invalid.body",
 			elemType);

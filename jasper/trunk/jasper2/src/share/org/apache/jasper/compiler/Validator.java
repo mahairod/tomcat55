@@ -673,7 +673,7 @@ class Validator {
 	public void visit(Node.CustomTag n) throws JasperException {
 	    TagInfo tagInfo = n.getTagInfo();
 	    if (tagInfo == null) {
-		err.jspError(n, "jsp.error.missing.tagInfo", n.getName());
+		err.jspError(n, "jsp.error.missing.tagInfo", n.getQName());
 	    }
 
 	    /*
@@ -684,7 +684,7 @@ class Validator {
 	    if (tagInfo.hasDynamicAttributes()
 		    && !n.implementsDynamicAttributes()) {
 		err.jspError(n, "jsp.error.dynamic.attributes.not.implemented",
-			     n.getName());
+			     n.getQName());
 	    }
 
 	    // Get custom actions's namespace, which is used to validate the
@@ -712,7 +712,7 @@ class Validator {
 		if (tldAttrs[i].isRequired() &&
 			attr == null && jspAttr == null) {
 		    err.jspError(n, "jsp.error.missing_attribute",
-				 tldAttrs[i].getName(), n.getShortName());
+				 tldAttrs[i].getName(), n.getLocalName());
 		}
 		if (attr != null && jspAttr != null) {
 		    err.jspError(n, "jsp.error.duplicate.name.jspattribute",
@@ -818,7 +818,7 @@ class Validator {
 						      true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
-				     attrs.getQName(i), n.getShortName());
+				     attrs.getQName(i), n.getLocalName());
 		    }
 		}
 	    }
@@ -868,7 +868,7 @@ class Validator {
 			    = new Node.JspAttribute(na, true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
-				     na.getName(), n.getShortName());
+				     na.getName(), n.getLocalName());
 		    }
 		}
 	    }
@@ -884,7 +884,7 @@ class Validator {
 		    && tei.getVariableInfo(tagData).length > 0
 		    && tagInfo.getTagVariableInfos().length > 0) {
 		err.jspError("jsp.error.non_null_tei_and_var_subelems",
-			     n.getName());
+			     n.getQName());
 	    }
 
 	    n.setTagData(tagData);
@@ -1139,7 +1139,7 @@ class Validator {
 	public void visit(Node.CustomTag n) throws JasperException {
 	    TagInfo tagInfo = n.getTagInfo();
 	    if (tagInfo == null) {
-		err.jspError(n, "jsp.error.missing.tagInfo", n.getName());
+		err.jspError(n, "jsp.error.missing.tagInfo", n.getQName());
 	    }
 
 	    ValidationMessage[] errors = tagInfo.validate(n.getTagData());
@@ -1147,7 +1147,7 @@ class Validator {
 		StringBuffer errMsg = new StringBuffer();
                 errMsg.append("<h3>");
                 errMsg.append(Localizer.getMessage("jsp.error.tei.invalid.attributes",
-						   n.getName()));
+						   n.getQName()));
                 errMsg.append("</h3>");
                 for (int i=0; i<errors.length; i++) {
                     errMsg.append("<p>");

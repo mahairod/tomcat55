@@ -214,7 +214,7 @@ class Generator {
 
 		if (!n.implementsSimpleTag()) {
 		    String name = createTagHandlerPoolName(n.getPrefix(),
-							   n.getShortName(),
+							   n.getLocalName(),
 							   n.getAttributes());
 		    n.setTagHandlerPoolName(name);
 		    if (!names.contains(name)) {
@@ -1529,8 +1529,8 @@ class Generator {
 	    TagHandlerInfo handlerInfo = getTagHandlerInfo(n);
 
 	    // Create variable names
-	    String baseVar = createTagVarName(n.getName(), n.getPrefix(),
-					      n.getShortName());
+	    String baseVar = createTagVarName(n.getQName(), n.getPrefix(),
+					      n.getLocalName());
 	    String tagEvalVar = "_jspx_eval_" + baseVar;
 	    String tagHandlerVar = "_jspx_th_" + baseVar;
 	    String tagPushBodyCountVar = "_jspx_push_body_count_" + baseVar;
@@ -1662,7 +1662,7 @@ class Generator {
 	     * Write begin tag
 	     */
 	    out.printin("out.write(\"<");
-	    out.print(n.getName());
+	    out.print(n.getQName());
 	    Attributes attrs = n.getAttributes();
 	    if (attrs != null) {
 		int attrsLength = attrs.getLength();
@@ -1691,7 +1691,7 @@ class Generator {
 		 * Write end tag
 		 */
 		out.printin("out.write(\"</");
-		out.print(n.getName());
+		out.print(n.getQName());
 		out.println(">\");");
 	    } else {
 		out.println("/>\");");
@@ -1933,7 +1933,7 @@ class Generator {
 	    Node.CustomTag tag = n.getTag();
             Node.JspAttribute[] attrs = tag.getJspAttributes();
             for (int i=0; i<attrs.length; i++) {
-		if (attrs[i].getName().equals(n.getName())) {
+		if (attrs[i].getName().equals(n.getQName())) {
 	            out.print(evaluateAttribute(getTagHandlerInfo(tag),
 						attrs[i], tag, null));
 		    break;
@@ -1950,12 +1950,12 @@ class Generator {
                 handlerInfos.put(n.getPrefix(), handlerInfosByShortName);
             }
             TagHandlerInfo handlerInfo = (TagHandlerInfo)
-                handlerInfosByShortName.get(n.getShortName());
+                handlerInfosByShortName.get(n.getLocalName());
             if (handlerInfo == null) {
                 handlerInfo = new TagHandlerInfo(n,
                                                  n.getTagHandlerClass(),
                                                  err);
-                handlerInfosByShortName.put(n.getShortName(), handlerInfo);
+                handlerInfosByShortName.put(n.getLocalName(), handlerInfo);
             }
 	    return handlerInfo;
 	}
@@ -1982,7 +1982,7 @@ class Generator {
 
 	    n.setBeginJavaLine(out.getJavaLine());
 	    out.printin("/* ----  ");
-	    out.print(n.getName());
+	    out.print(n.getQName());
 	    out.println(" ---- */");
 
 	    // Declare AT_BEGIN scripting variables
@@ -2188,7 +2188,7 @@ class Generator {
 
 	    n.setBeginJavaLine(out.getJavaLine());
 	    out.printin("/* ----  ");
-	    out.print(n.getName());
+	    out.print(n.getQName());
 	    out.println(" ---- */");
             
             // Declare AT_BEGIN scripting variables

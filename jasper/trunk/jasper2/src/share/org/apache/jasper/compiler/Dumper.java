@@ -209,13 +209,13 @@ class Dumper {
         }
 
         public void visit(Node.CustomTag n) throws JasperException {
-	    printAttributes("<" + n.getName(), n.getAttributes(), ">");
+	    printAttributes("<" + n.getQName(), n.getAttributes(), ">");
 	    dumpBody(n);
-	    printString("</" + n.getName() + ">");
+	    printString("</" + n.getQName() + ">");
         }
 
 	public void visit(Node.UninterpretedTag n) throws JasperException {
-	    String tag = n.getName();
+	    String tag = n.getQName();
 	    printAttributes("<"+tag, n.getAttributes(), ">");
 	    dumpBody(n);
 	    printString("</" + tag + ">");

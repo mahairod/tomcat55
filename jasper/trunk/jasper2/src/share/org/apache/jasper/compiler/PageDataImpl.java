@@ -254,7 +254,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    if (n == this.root) {
 		// top-level page
 		appendXmlProlog();
-		appendTag(JSP_ROOT, n);
+		appendTag(n);
 	    } else {
 		visitBody(n);
 	    }
@@ -270,7 +270,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    if (n == this.root) {
 		// top-level jsp:root element
 		appendXmlProlog();
-		appendTag(JSP_ROOT, n);
+		appendTag(n);
 	    } else {
 		visitBody(n);
 	    }
@@ -290,24 +290,24 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.Declaration n) throws JasperException {
-	    appendTag(JSP_DECLARATION, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.Expression n) throws JasperException {
-	    appendTag(JSP_EXPRESSION, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.Scriptlet n) throws JasperException {
-	    appendTag(JSP_SCRIPTLET, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.JspElement n) throws JasperException {
-	    appendTag(JSP_ELEMENT, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {
 	    if (!n.isXmlSyntax()) {
-		buf.append("<").append(JSP_TEXT);
+		buf.append("<").append(JSP_TEXT_ACTION);
 		buf.append(" jsp:id=\"");
 		buf.append(jspId++).append("\">");
 	    }
@@ -315,73 +315,73 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append(n.getText());
 	    buf.append("}");
 	    if (!n.isXmlSyntax()) {
-		buf.append(JSP_TEXT_END);
+		buf.append(JSP_TEXT_ACTION_END);
 	    }
 	    buf.append("\n");
 	}
 
 	public void visit(Node.IncludeAction n) throws JasperException {
-	    appendTag(JSP_INCLUDE, n);
+	    appendTag(n);
 	}
     
 	public void visit(Node.ForwardAction n) throws JasperException {
-	    appendTag(JSP_FORWARD, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.GetProperty n) throws JasperException {
-	    appendTag(JSP_GET_PROPERTY, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.SetProperty n) throws JasperException {
-	    appendTag(JSP_SET_PROPERTY, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.ParamAction n) throws JasperException {
-	    appendTag(JSP_PARAM, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.ParamsAction n) throws JasperException {
-	    appendTag(JSP_PARAMS, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.FallBackAction n) throws JasperException {
-	    appendTag(JSP_FALLBACK, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.UseBean n) throws JasperException {
-	    appendTag(JSP_USE_BEAN, n);
+	    appendTag(n);
 	}
 	
 	public void visit(Node.PlugIn n) throws JasperException {
-	    appendTag(JSP_PLUGIN, n);
+	    appendTag(n);
 	}
 
         public void visit(Node.NamedAttribute n) throws JasperException {
-            appendTag(JSP_ATTRIBUTE, n);
+            appendTag(n);
         }
         
         public void visit(Node.JspBody n) throws JasperException {
-            appendTag(JSP_BODY, n);
+            appendTag(n);
         }
 
 	public void visit(Node.CustomTag n) throws JasperException {
-	    appendTag(n.getName(), n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.UninterpretedTag n) throws JasperException {
-	    appendTag(n.getName(), n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.JspText n) throws JasperException {
-	    appendTag(JSP_TEXT, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.DoBodyAction n) throws JasperException {
-	    appendTag(JSP_DO_BODY, n);
+	    appendTag(n);
 	}
 
         public void visit(Node.InvokeAction n) throws JasperException {
-	    appendTag(JSP_INVOKE, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.TagDirective n) throws JasperException {
@@ -389,11 +389,11 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.AttributeDirective n) throws JasperException {
-	    appendTag(JSP_ATTRIBUTE_DIRECTIVE, n);
+	    appendTag(n);
 	}
 
 	public void visit(Node.VariableDirective n) throws JasperException {
-	    appendTag(JSP_VARIABLE_DIRECTIVE, n);
+	    appendTag(n);
 	}
         
 	public void visit(Node.TemplateText n) throws JasperException {
@@ -407,19 +407,20 @@ class PageDataImpl extends PageData implements TagConstants {
 	/*
 	 * Appends the given tag, including its body, to the XML view.
 	 */
-	private void appendTag(String tag, Node n) throws JasperException {
+	private void appendTag(Node n) throws JasperException {
 
 	    Node.Nodes body = n.getBody();
 	    String text = n.getText();
 
-	    buf.append("<").append(tag);
+	    buf.append("<").append(n.getQName());
 	    buf.append("\n");
 	    buf.append("  ").append("jsp:id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
 	    printAttributes(n);
-	    if (tag.equals(JSP_ROOT) || body != null || text != null) {
+	    if (ROOT_ACTION.equals(n.getLocalName()) || body != null
+		        || text != null) {
 		buf.append(">\n");
-		if (tag.equals(JSP_ROOT)) {
+		if (ROOT_ACTION.equals(n.getLocalName())) {
 		    if (compiler.getCompilationContext().isTagFile()) {
 			appendTagDirective();
 		    } else {
@@ -431,7 +432,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		} else {
 		    appendText(text, false);
 		}
-		buf.append("</" + tag + ">\n");
+		buf.append("</" + n.getQName() + ">\n");
 	    } else {
 		buf.append("/>\n");
 	    }
@@ -451,9 +452,9 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * 'pageEncoding' attributes, we ignore it, as we've already appended
 	 * a page directive containing just these two attributes.
 	 */
-	private void appendPageDirective(Node.PageDirective pageDir) {
+	private void appendPageDirective(Node.PageDirective n) {
 	    boolean append = false;
-	    Attributes attrs = pageDir.getAttributes();
+	    Attributes attrs = n.getAttributes();
 	    int len = attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String attrName = attrs.getQName(i);
@@ -467,7 +468,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		return;
 	    }
 
-	    buf.append("<").append(JSP_PAGE_DIRECTIVE);
+	    buf.append("<").append(n.getQName());
 	    buf.append("\n");
 
 	    // append jsp:id
@@ -492,10 +493,10 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append("  ").append(attrName).append("=\"");
 		buf.append(JspUtil.getExprInXml(value)).append("\"\n");
 	    }
-	    if (pageDir.getImports().size() > 0) {
+	    if (n.getImports().size() > 0) {
 		// Concatenate names of imported classes/packages
 		boolean first = true;
-		ListIterator iter = pageDir.getImports().listIterator();
+		ListIterator iter = n.getImports().listIterator();
 		while (iter.hasNext()) {
 		    if (first) {
 			first = false;
@@ -520,7 +521,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * ServletResponse.setContentType(), is derived from the pageInfo.
 	 */
 	private void appendPageDirective() {
-	    buf.append("<").append(JSP_PAGE_DIRECTIVE);
+	    buf.append("<").append(JSP_PAGE_DIRECTIVE_ACTION);
 	    buf.append("\n");
 
 	    // append jsp:id
@@ -540,11 +541,11 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * attributes, we ignore it, as we've already appended
 	 * a tag directive containing just this attributes.
 	 */
-	private void appendTagDirective(Node.TagDirective tagDir)
+	private void appendTagDirective(Node.TagDirective n)
 	        throws JasperException {
 
 	    boolean append = false;
-	    Attributes attrs = tagDir.getAttributes();
+	    Attributes attrs = n.getAttributes();
 	    int len = attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String attrName = attrs.getQName(i);
@@ -557,7 +558,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		return;
 	    }
 
-	    appendTag(JSP_TAG_DIRECTIVE, tagDir);
+	    appendTag(n);
 	}
 
 	/*
@@ -565,7 +566,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * attribute whose value is hard-coded to UTF-8.
 	 */
 	private void appendTagDirective() {
-	    buf.append("<").append(JSP_TAG_DIRECTIVE);
+	    buf.append("<").append(JSP_TAG_DIRECTIVE_ACTION);
 	    buf.append("\n");
 
 	    // append jsp:id
@@ -577,7 +578,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	private void appendText(String text, boolean createJspTextElement) {
 	    if (createJspTextElement) {
-		buf.append("<").append(JSP_TEXT);
+		buf.append("<").append(JSP_TEXT_ACTION);
 		buf.append("\n");
 
 		// append jsp:id
@@ -586,7 +587,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append(">\n");
 
 		appendCDATA(text);
-		buf.append(JSP_TEXT_END);
+		buf.append(JSP_TEXT_ACTION_END);
 		buf.append("\n");
 	    } else {
 		appendCDATA(text);
