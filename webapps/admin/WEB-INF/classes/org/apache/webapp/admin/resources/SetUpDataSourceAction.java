@@ -21,6 +21,7 @@ import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.management.Attribute;
+import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
@@ -136,26 +137,33 @@ public final class SetUpDataSourceAction extends Action {
             String attribute = null;
             try {
                 ObjectName oname = new ObjectName(objectName);
-                attribute = "name";
-                dataSourceForm.setJndiName
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "url";
-                dataSourceForm.setUrl
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "driverClassName";
-                dataSourceForm.setDriverClass
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "username";
-                dataSourceForm.setUsername
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "password";
-                dataSourceForm.setPassword
-                    ((String) mserver.getAttribute(oname, attribute));
+                try {
+                    attribute = "name";
+                    dataSourceForm.setJndiName
+                        ((String) mserver.getAttribute(oname, attribute));
+                    attribute = "url";
+                    dataSourceForm.setUrl
+                        ((String) mserver.getAttribute(oname, attribute));
+                    attribute = "driverClassName";
+                    dataSourceForm.setDriverClass
+                        ((String) mserver.getAttribute(oname, attribute));
+                    attribute = "username";
+                    dataSourceForm.setUsername
+                        ((String) mserver.getAttribute(oname, attribute));
+                    attribute = "password";
+                    dataSourceForm.setPassword
+                        ((String) mserver.getAttribute(oname, attribute));
+                    attribute = "validationQuery";
+                    dataSourceForm.setQuery
+                        ((String) mserver.getAttribute(oname, attribute));
+                } catch (AttributeNotFoundException ex) {
+                    // disply empty if attribute is not set yet
+                }
                 try {
                     attribute = "maxActive";
                     dataSourceForm.setActive
                         ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
+                } catch (AttributeNotFoundException e) {
                     // if maxActive not defined, display default value
                     dataSourceForm.setActive("4");
                 }
@@ -163,7 +171,7 @@ public final class SetUpDataSourceAction extends Action {
                     attribute = "maxIdle";
                     dataSourceForm.setIdle
                         ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
+                } catch (AttributeNotFoundException e) {
                     // if maxIdle not defined, display default value
                     dataSourceForm.setIdle("2");
                 }
@@ -171,16 +179,9 @@ public final class SetUpDataSourceAction extends Action {
                     attribute = "maxWait";
                     dataSourceForm.setWait
                         ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
+                } catch (AttributeNotFoundException e) {
                     // if maxWait not defined, display default value
                     dataSourceForm.setWait("5000");
-                }
-                try {
-                    attribute = "validationQuery";
-                    dataSourceForm.setQuery
-                        ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
-                    // don't display anything
                 }
             } catch (Exception e) {
                 getServlet().log
