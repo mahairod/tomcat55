@@ -125,7 +125,13 @@
         <ContextInterceptor 
             className="org.apache.tomcat.context.WorkDirInterceptor" />
 
-        <!-- Request processing -->
+	<!--  Uncomment if you are using JDK1.2 or higher.  
+              Insures proper thread context class loader is in effect for servlet execution
+	<ContextInterceptor 
+            className="org.apache.tomcat.request.Jdk12Interceptor" />
+	-->
+
+	<!-- Request processing -->
         <!-- Session interceptor will extract the session id from cookies and 
              deal with URL rewriting ( by fixing the URL ).  If you wish to
              suppress the use of cookies for session identifiers, change the
