@@ -244,7 +244,6 @@ import org.apache.catalina.util.IOTools;
 
 public final class CGIServlet extends HttpServlet {
 
-
     /* some vars below copied from Craig R. McClanahan's InvokerServlet */
 
     /** the Context container associated with our web application. */
@@ -261,7 +260,7 @@ public final class CGIServlet extends HttpServlet {
      */
     private String cgiPathPrefix = null;
 
-    /** the command to use with the script */
+    /** the executable to use with the script */
     private String cgiExecutable = "perl";
     
     /** the encoding to use for parameters */
@@ -270,6 +269,9 @@ public final class CGIServlet extends HttpServlet {
 
     /** object used to ensure multiple threads don't try to expand same file */
     static Object expandFileLock = new Object();
+
+    /** the shell environment variables to be passed to the CGI script */
+    static Hashtable shellEnv = new Hashtable();
 
     /**
      * Sets instance variables.
@@ -298,6 +300,8 @@ public final class CGIServlet extends HttpServlet {
             throw new UnavailableException
                 ("Cannot invoke CGIServlet through the invoker");
 
+        boolean passShellEnvironment = false;
+        
         // Set our properties from the initialization parameters
         String value = null;
         try {
@@ -305,16 +309,27 @@ public final class CGIServlet extends HttpServlet {
             debug = Integer.parseInt(value);
             cgiPathPrefix =
                 getServletConfig().getInitParameter("cgiPathPrefix");
+            value = getServletConfig().getInitParameter("passShellEnvironment");
+            passShellEnvironment = Boolean.valueOf(value).booleanValue();
         } catch (Throwable t) {
             //NOOP
         }
         log("init: loglevel set to " + debug);
 
+        if (passShellEnvironment) {
+            try {
+                shellEnv.putAll(getShellEnvironment());
+            } catch (IOException ioe) {
+                ServletException e = new ServletException(
+                        "Unable to read shell environment variables", ioe);
+            }
+        }
+
         value = getServletConfig().getInitParameter("executable");
         if (value != null) {
             cgiExecutable = value;
         }
-        
+
         // Identify the internal container resources we need
         context = config.getServletContext();
 
@@ -523,6 +538,8 @@ public final class CGIServlet extends HttpServlet {
         out.println("</ul>");
         out.println("<hr>");
 
+
+
     }
 
 
@@ -585,7 +602,7 @@ public final class CGIServlet extends HttpServlet {
         if (!cgiEnv.isValid()) {
             res.setStatus(404);
         }
-
+ 
         if (debug >= 10) {
             try {
                 ServletOutputStream out = res.getOutputStream();
@@ -634,6 +651,51 @@ public final class CGIServlet extends HttpServlet {
     public static void main(String[] args) {
         System.out.println("$Header$");
     }
+
+    /**
+     * Get all shell environment variables. Have to do it this rather ugly way
+     * as the API to obtain is not available in 1.4 and earlier APIs.
+     *
+     * See <a href="http://www.rgagnon.com/javadetails/java-0150.html">Read environment
+     * variables from an application</a> for original source and article.
+     */
+    private Hashtable getShellEnvironment() throws IOException {
+        Hashtable envVars = new Hashtable();
+        Process p = null;
+        Runtime r = Runtime.getRuntime();
+        String OS = System.getProperty("os.name").toLowerCase();
+        boolean ignoreCase;
+
+        if (OS.indexOf("windows 9") > -1) {
+            p = r.exec( "command.com /c set" );
+            ignoreCase = true;
+        } else if ( (OS.indexOf("nt") > -1)
+                || (OS.indexOf("windows 2000") > -1)
+                || (OS.indexOf("windows xp") > -1) ) {
+            // thanks to JuanFran for the xp fix!
+            p = r.exec( "cmd.exe /c set" );
+            ignoreCase = true;
+        } else {
+            // our last hope, we assume Unix (thanks to H. Ware for the fix)
+            p = r.exec( "env" );
+            ignoreCase = false;
+        }
+
+        BufferedReader br = new BufferedReader
+            ( new InputStreamReader( p.getInputStream() ) );
+        String line;
+        while( (line = br.readLine()) != null ) {
+            int idx = line.indexOf( '=' );
+            String key = line.substring( 0, idx );
+            String value = line.substring( idx+1 );
+            if (ignoreCase) {
+                key = key.toUpperCase();
+            }
+            envVars.put(key, value);
+        }
+        return envVars;
+    }
+
 
 
 
@@ -913,6 +975,10 @@ public final class CGIServlet extends HttpServlet {
 
             Hashtable envp = new Hashtable();
 
+            // Add the shell environment variables (if any)
+            envp.putAll(shellEnv);
+
+            // Add the CGI environment variables
             String sPathInfoOrig = null;
             String sPathTranslatedOrig = null;
             String sPathInfoCGI = null;
