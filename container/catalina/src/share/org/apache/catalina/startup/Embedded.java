@@ -21,7 +21,9 @@ package org.apache.catalina.startup;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.HashMap;
 
+import org.apache.catalina.Authenticator;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
@@ -31,6 +33,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Valve;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
@@ -147,6 +150,12 @@ public class Embedded  extends StandardService implements Lifecycle {
      * there will only be one.
      */
     protected Engine engines[] = new Engine[0];
+
+
+    /**
+     * Custom mappings of login methods to authenticators
+     */
+    protected HashMap authenticators;
 
 
     /**
@@ -448,6 +457,7 @@ public class Embedded  extends StandardService implements Lifecycle {
         context.setPath(path);
 
         ContextConfig config = new ContextConfig();
+        config.setCustomAuthenticators(authenticators);
         ((Lifecycle) context).addLifecycleListener(config);
 
         return (context);
@@ -687,6 +697,35 @@ public class Embedded  extends StandardService implements Lifecycle {
             log.debug(" Removing this Host");
         host.getParent().removeChild(host);
 
+    }
+
+
+    /*
+     * Maps the specified login method to the specified authenticator, allowing
+     * the mappings in org/apache/catalina/startup/Authenticators.properties
+     * to be overridden.
+     *
+     * @param authenticator Authenticator to handle authentication for the
+     * specified login method
+     * @param loginMethod Login method that maps to the specified authenticator
+     *
+     * @throws IllegalArgumentException if the specified authenticator does not
+     * implement the org.apache.catalina.Valve interface
+     */
+    public void addAuthenticator(Authenticator authenticator,
+                                 String loginMethod) {
+        if (!(authenticator instanceof Valve)) {
+            throw new IllegalArgumentException(
+                sm.getString("authenticator.notInstanceOfValve"));
+        }
+        if (authenticators == null) {
+            synchronized (this) {
+                if (authenticators == null) {
+                    authenticators = new HashMap();
+                }
+            }
+        }
+        authenticators.put(loginMethod, authenticator);
     }
 
 
