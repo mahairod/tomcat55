@@ -112,6 +112,11 @@ public final class AccessLogValveForm extends ValveForm {
      * The text for the connection URL.
      */
     private String resolveHosts = "false";
+      
+    /**
+     * The text for the rotatable.
+     */
+    private String rotatable = "true";      
        
     /**
      * Set of boolean values.
@@ -263,7 +268,25 @@ public final class AccessLogValveForm extends ValveForm {
         this.resolveHosts = resolveHosts;
         
     }
+  
+    /**
+     * Return the rotatable.
+     */
+    public String getRotatable() {
+        
+        return this.rotatable;
+        
+    }
     
+    /**
+     * Set the rotatable.
+     */
+    public void setRotatable(String rotatable) {
+        
+        this.rotatable = rotatable;
+        
+    }
+        
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -282,6 +305,7 @@ public final class AccessLogValveForm extends ValveForm {
         this.suffix = null;
         this.pattern = null;        
         this.resolveHosts = "false";
+        this.rotatable = "true";
         
     }
     
@@ -304,6 +328,8 @@ public final class AccessLogValveForm extends ValveForm {
         sb.append(pattern);
         sb.append(",resolveHosts=");
         sb.append(resolveHosts);
+        sb.append(",rotatable=");
+        sb.append(rotatable);
         sb.append("',objectName='");
         sb.append(getObjectName());
         sb.append("]");

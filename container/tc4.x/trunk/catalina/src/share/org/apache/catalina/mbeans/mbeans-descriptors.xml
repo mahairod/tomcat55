@@ -44,7 +44,12 @@
           description="Resolve hosts"
                    is="true"
                  type="boolean"/>
-
+                 
+    <attribute   name="rotatable"
+          description="Rotate log"
+                   is="true"
+                 type="boolean"/>
+                 
     <attribute   name="suffix"
           description="The suffix that is added to log file filenames"
                  type="java.lang.String"/>
@@ -149,7 +154,7 @@
 
     <attribute   name="override"
           description="Does this environment entry allow overrides by the
-	  application deployment descriptor"
+      application deployment descriptor"
                  type="boolean"/>
 
     <attribute   name="type"
@@ -279,7 +284,7 @@
 
     <attribute   name="port"
           description="The port number on which we listen for ajp13 requests"
-  		type="int"/>
+        type="int"/>
 
     <attribute   name="protocolHandlerClassName"
           description="Coyote Protocol handler class name"
@@ -342,7 +347,7 @@
 
     <attribute   name="swallowOutput"
           description="Flag to set to cause the system.out and system.err 
-	  to be redirected to the logger when executing a servlet"
+      to be redirected to the logger when executing a servlet"
                  type="boolean"/>
 
     <attribute   name="useNaming"
@@ -1638,26 +1643,26 @@
   <mbean         name="NamingResources"
             className="org.apache.catalina.mbeans.NamingResourcesMBean"
           description="Holds and manages the naming resources defined in the
-	  J2EE Enterprise Naming Context and their associated JNDI context"
+      J2EE Enterprise Naming Context and their associated JNDI context"
                domain="Catalina"
                 group="Resources"
                  type="org.apache.catalina.deploy.NamingResources">
 
     <attribute   name="environments"
           description="MBean Names of the set of defined environment entries
-	  for this web application"
+      for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resources"
           description="MBean Names of all the defined resource references
-	  for this application."
+      for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resourceLinks"
           description="MBean Names of all the defined resource link references
-	  for this application."
+      for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
@@ -1794,7 +1799,7 @@
   <mbean         name="NonLoginAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation that checks
-			only security constraints not involving user authentication"
+            only security constraints not involving user authentication"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.authenticator.NonLoginAuthenticator">
@@ -1953,7 +1958,7 @@
 
     <attribute   name="environments"
           description="MBean Names of the set of defined environment entries
-	  for this web application"
+      for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
 
@@ -1976,13 +1981,13 @@
 
     <attribute   name="resources"
           description="MBean Names of all the defined resource references
-	  for this application."
+      for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="swallowOutput"
           description="Flag to set to cause the system.out and system.err 
-	  to be redirected to the logger when executing a servlet"
+      to be redirected to the logger when executing a servlet"
                  type="boolean"/>
 
     <attribute   name="useNaming"

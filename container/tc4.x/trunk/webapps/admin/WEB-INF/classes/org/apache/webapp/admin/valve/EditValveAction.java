@@ -252,6 +252,9 @@ public class EditValveAction extends Action {
             attribute = "resolveHosts";
             valveFm.setResolveHosts
                 (((Boolean) mBServer.getAttribute(vname, attribute)).toString());
+            attribute = "rotatable";
+            valveFm.setRotatable
+                (((Boolean) mBServer.getAttribute(vname, attribute)).toString());
 
         } catch (Throwable t) {
             getServlet().log
