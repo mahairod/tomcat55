@@ -30,20 +30,23 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
-        <bug>33187</bug>: Remove any logging of the password in the JAAS realm, 
+        <bug>33187</bug>: Remove any logging of the password in the JAAS realm,
         submitted by Andrew Jaquith (remm)
       </fix>
       <fix>
-        <bug>33033</bug>: Don't do anything to the response in the ErrorReportValve 
+        <bug>33033</bug>: Don't do anything to the response in the ErrorReportValve
         if data has already been written (remm)
       </fix>
       <update>
         Add charset support for the URLs used by the tasks, to remove deprecation (remm)
       </update>
       <fix>
-        <bug>26135</bug>: Workaround for memory leak when reloading Struts 
+        <bug>26135</bug>: Workaround for memory leak when reloading Struts
         based web applications by clearing the bean instrospector cache of the JVM on
         classloader stop, submitted by Tobias Löfstrand (remm)
+      </fix>
+      <fix>
+         Ensure that if CLASSPATH is declared on startup - it is not used. (funkman)
       </fix>
     </changelog>
   </subsection>
@@ -51,7 +54,7 @@
   <subsection name="Jasper">
     <changelog>
       <fix>
-        <bug>33223</bug>: pageContext.forward and jsp:include result 
+        <bug>33223</bug>: pageContext.forward and jsp:include result
         in StringIndexOutOfBoundsException (luehe)
       </fix>
     </changelog>
@@ -65,8 +68,8 @@
         Add installer for mod_jk on IIS. (mturk)
       </add>
       <add>
-        New store config module for better server.xml saving support.<br/> 
-		Add &lt;Listener className="org.apache.catalina.storeconfig.StoreConfigLifecycleListener" /&gt; to your server.xml (pero)
+        New store config module for better server.xml saving support.<br/>
+        Add &lt;Listener className="org.apache.catalina.storeconfig.StoreConfigLifecycleListener" /&gt; to your server.xml (pero)
       </add>
       <update>
         <bug>32081</bug>: Remove the JDK requirement from the Unix scripts, submitted
@@ -162,12 +165,12 @@
 
   <subsection name="Cluster">
     <changelog>
-	   <fix>
+       <fix>
           correct JvmRouteSessionIDBinderListener MBean name to &lt;domain&gt;:type=Listener,name=JvmRouteSessionIDBinderListener,host=&lt;host&gt; (pero)
        </fix>
-	   <add>
-	   	  JMX support to SimpleTcpCluster, ReplicationTransmitter and all senders (pero)
-	   </add>
+       <add>
+          JMX support to SimpleTcpCluster, ReplicationTransmitter and all senders (pero)
+       </add>
     </changelog>
   </subsection>
 
@@ -188,7 +191,7 @@
         (remm)
       </fix>
       <fix>
-        <bug>32771</bug>: Cannot undeploy/deploy misconfigured app after tomcat startup, 
+        <bug>32771</bug>: Cannot undeploy/deploy misconfigured app after tomcat startup,
         submitted by Gabriele Garuglieri (remm)
       </fix>
       <fix>
