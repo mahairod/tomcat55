@@ -121,7 +121,8 @@ implements HttpServletResponse {
     public String encodeURL(String url) {
       Request request=response.getRequest();
       // if I have a session
-      //      System.out.println("XXX " + request.isRequestedSessionIdValid() +" " + request.isRequestedSessionIdFromCookie());
+      //      System.out.println("XXX " + request.isRequestedSessionIdValid() +" " + request.isRequestedSessionIdFromCookie() +
+      //		 " " + request.getRequestedSessionId();
       
       if (request.isRequestedSessionIdValid()){
 	  // if first time or cookie not returned
@@ -138,7 +139,7 @@ implements HttpServletResponse {
 	      sb.append(";jsessionid=").append(request.getRequestedSessionId());
 	      if( qry != null ) 
 		  sb.append("?").append( qry);
-	      //      System.out.println("RW " + url + " " + sb.toString());
+	      //	      System.out.println("RW " + url + " " + sb.toString());
 	      return sb.toString();              
 	  }
       }
