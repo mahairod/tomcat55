@@ -1025,8 +1025,26 @@
     </servlet>
 
 
+    <servlet>
+        <servlet-name>invoker</servlet-name>
+        <servlet-class>
+          org.apache.catalina.servlets.InvokerServlet
+        </servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+
     <!-- ========== Servlet Mappings ====================================== -->
 
+
+    <servlet-mapping>
+        <servlet-name>invoker</servlet-name>
+        <url-pattern>/servlet/*</url-pattern>
+    </servlet-mapping>
 
     <!-- Map CGI Gateway Service for this Web App -->
 <!--

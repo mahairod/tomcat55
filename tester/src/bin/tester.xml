@@ -6,7 +6,7 @@
   <property name="host"           value="localhost"/>
   <property name="port"           value="8080"/>
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
-  <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
+  <property name="protocol"       value="HTTP/1.0"/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
   <property name="jsp-examples.path"  value="/jsp-examples"/>
   <property name="servlets-examples.path"  value="/servlets-examples"/>
