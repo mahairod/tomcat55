@@ -490,7 +490,7 @@
 
   <target name="download" depends="proxyflags">
 
-    <!-- commons-logging/dbcp/pool need ../LICENSE -->
+    <!-- commons-digester needs ../LICENSE -->
     <!-- That is ugly XXX needs a review -->
     <copy file="LICENSE" tofile="../LICENSE"/>
 
@@ -504,12 +504,11 @@
       <param name="destfile" value="${commons-collections.jar}"/>
     </antcall>
 
-    <!-- we need the release to happend, in the meantime use cvs...
-    <antcall target="downloadgz">
+    <antcall target="downloadzip">
       <param name="sourcefile" value="${commons-logging.loc}"/>
       <param name="destfile" value="${commons-logging.jar}"/>
+      <param name="destdir" value="${base.path}"/>
     </antcall>
-    -->
 
     <antcall target="downloadgz">
       <param name="sourcefile" value="${log4j.loc}"/>
@@ -520,20 +519,6 @@
       <param name="sourcefile" value="${logkit.loc}"/>
       <param name="destfile" value="${logkit.jar}"/>
     </antcall>
-
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-logging.loc}"/>
-      <param name="subdir" value="${commons-logging.home}"/>
-      <param name="destfile" value="${commons-logging.jar}"/>
-    </antcall>
-    <copy
-      file="${commons-logging.home}/dist/commons-logging.jar"
-      tofile="${commons-logging.jar}"
-    />
-    <copy
-      file="${commons-logging.home}/dist/commons-logging-api.jar"
-      tofile="${commons-logging-api.jar}"
-    />
 
     <antcall target="cvsbuild">
       <param name="location" value="${commons-digester.loc}"/>
@@ -575,30 +560,16 @@
       tofile="${commons-daemon-launcher-bootstrap.class}"
     />
 
-
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${commons-lang.loc}"/>
-      <param name="destfile" value="${commons-lang.jar}"/>
-    </antcall>
-
-    <!-- commons-dbcp/pool need something different. -->
-    <!-- Pool 1.0 -->
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-pool.loc}"/>
       <param name="destfile" value="${commons-pool.jar}"/>
     </antcall>
 
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-dbcp.loc}"/>
-      <param name="subdir" value="${commons-dbcp.home}"/>
+    <antcall target="downloadzip">
+      <param name="sourcefile" value="${commons-dbcp.loc}"/>
       <param name="destfile" value="${commons-dbcp.jar}"/>
-      <param name="name" value="commons-dbcp"/>
+      <param name="destdir" value="${base.path}"/>
     </antcall>
-    <!-- Dbcp does not put commons-dbcp.jar in ${commons-dbcp.home} -->
-    <copy
-      file="${commons-dbcp.home}/dist/commons-dbcp.jar"
-      tofile="${commons-dbcp.jar}"
-    />
 
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-modeler.loc}"/>
