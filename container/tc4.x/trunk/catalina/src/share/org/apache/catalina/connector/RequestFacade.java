@@ -116,6 +116,17 @@ public class RequestFacade implements ServletRequest {
     protected ServletRequest request = null;
 
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Clear facade.
+     */
+    public void clear() {
+        request = null;
+    }
+
+
     // ------------------------------------------------- ServletRequest Methods
 
 

@@ -118,6 +118,15 @@ public class ResponseFacade implements ServletResponse {
     // --------------------------------------------------------- Public Methods
 
 
+    /**
+     * Clear facade.
+     */
+    public void clear() {
+        response = null;
+        resp = null;
+    }
+
+
     public void finish() {
 
         resp.setSuspended(true);
