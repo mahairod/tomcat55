@@ -1205,10 +1205,10 @@ public class DefaultServlet
 
             // Render the directory entries within this directory
             DirContext directory = cacheEntry.context;
-            NamingEnumeration enum = resources.list(cacheEntry.name);
-            while (enum.hasMoreElements()) {
+            NamingEnumeration enumeration = resources.list(cacheEntry.name);
+            while (enumeration.hasMoreElements()) {
 
-                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                NameClassPair ncPair = (NameClassPair) enumeration.nextElement();
                 String resourceName = ncPair.getName();
                 CacheEntry childCacheEntry =
                     resources.lookupCache(cacheEntry.name + resourceName);
@@ -1374,11 +1374,11 @@ public class DefaultServlet
 
             // Render the directory entries within this directory
             DirContext directory = cacheEntry.context;
-            NamingEnumeration enum = resources.list(cacheEntry.name);
+            NamingEnumeration enumeration = resources.list(cacheEntry.name);
             boolean shade = false;
-            while (enum.hasMoreElements()) {
+            while (enumeration.hasMoreElements()) {
 
-                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                NameClassPair ncPair = (NameClassPair) enumeration.nextElement();
                 String resourceName = ncPair.getName();
                 CacheEntry childCacheEntry =
                     resources.lookupCache(cacheEntry.name + resourceName);
