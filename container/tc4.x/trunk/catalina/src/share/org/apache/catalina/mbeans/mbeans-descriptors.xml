@@ -204,6 +204,10 @@
           description="The IP address on which to bind"
                  type="java.lang.String"/>
 
+    <attribute   name="allowChunking"
+          description="Flag which indicates if HTTP/1.1 chunking transfer encoding can be used"
+                 type="boolean"/>
+
     <attribute   name="bufferSize"
           description="The input buffer size we should create on input streams"
                  type="int"/>
