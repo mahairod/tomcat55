@@ -67,6 +67,9 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -116,6 +119,17 @@ import org.apache.tools.ant.Task;
  */
 
 public class TestClient extends Task {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The saved headers we received in our response.  The key is the header
+     * name (converted to lower case), and the value is an ArrayList of the
+     * string value(s) received for that header.
+     */
+    protected HashMap saveHeaders = new HashMap();
 
 
     // ------------------------------------------------------------- Properties
@@ -304,6 +318,7 @@ public class TestClient extends Task {
      */
     public void execute() throws BuildException {
 
+        saveHeaders.clear();
         if ((protocol == null) || (protocol.length() == 0))
             executeHttp();
         else
@@ -400,35 +415,44 @@ public class TestClient extends Task {
             }
 
             // Dump out the response stuff
-            if (debug >= 1) {
+            if (debug >= 1)
                 System.out.println("RESP: " + conn.getResponseCode() + " " +
                                    conn.getResponseMessage());
-                for (int i = 0; i < 1000; i++) {
-                    String name = conn.getHeaderFieldKey(i);
-                    String value = conn.getHeaderField(i);
-                    if ((name == null) || (value == null))
-                        break;
+            for (int i = 1; i < 1000; i++) {
+                String name = conn.getHeaderFieldKey(i);
+                String value = conn.getHeaderField(i);
+                if ((name == null) || (value == null))
+                    break;
+                if (debug >= 1)
                     System.out.println("HEAD: " + name + ": " + value);
-                }
+                save(name, value);
+            }
+            if (debug >= 1) {
                 System.out.println("DATA: " + outData);
                 if (outText.length() > 2)
                     System.out.println("TEXT: " + outText);
             }
 
             // Validate the response against our criteria
-            if (status != conn.getResponseCode()) {
-                success = false;
-                result = "Expected status=" + status + ", got status=" +
-                    conn.getResponseCode();
-            } else if ((message != null) &&
-                       !message.equals(conn.getResponseMessage())) {
-                success = false;
-                result = "Expected message='" + message + "', got message='" +
-                    conn.getResponseMessage() + "'";
-            } else if ((outContent != null) &&
-                       !outData.startsWith(outContent)) {
-                success = false;
-                result = outData;
+            if (success) {
+                result = validateStatus(conn.getResponseCode());
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
+                result = validateMessage(conn.getResponseMessage());
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
+                result = validateData(outData);
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
+                result = validateHeaders();
+                if (result != null)
+                    success = false;
             }
 
         } catch (Throwable t) {
@@ -594,7 +618,7 @@ public class TestClient extends Task {
                     if (debug >= 1)
                         System.out.println("HEAD: " + headerName + ": " +
                                            headerValue);
-                    ; // FIXME - record them?
+                    save(headerName, headerValue);
                 }
             }
 
@@ -623,19 +647,25 @@ public class TestClient extends Task {
             }
 
             // Validate the response against our criteria
-            if (status != outStatus) {
-                success = false;
-                result = "Expected status=" + status + ", got status=" +
-                    outStatus;
-            } else if ((message != null) &&
-                       !message.equals(outMessage)) {
-                success = false;
-                result = "Expected message='" + message + "', got message='" +
-                    outMessage + "'";
-            } else if ((outContent != null) &&
-                       !outData.startsWith(outContent)) {
-                success = false;
-                result = outData;
+            if (success) {
+                result = validateStatus(status);
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
+                result = validateMessage(message);
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
+                result = validateData(outData);
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
+                result = validateHeaders();
+                if (result != null)
+                    success = false;
             }
 
         } catch (Throwable t) {
@@ -714,6 +744,129 @@ public class TestClient extends Task {
                 result.append(c);
         }
         return (result.toString());
+
+    }
+
+
+    /**
+     * Save the specified header name and value in our collection.
+     *
+     * @param name Header name to save
+     * @param value Header value to save
+     */
+    protected void save(String name, String value) {
+
+        String key = name.toLowerCase();
+        ArrayList list = (ArrayList) saveHeaders.get(key);
+        if (list == null) {
+            list = new ArrayList();
+            saveHeaders.put(key, list);
+        }
+        list.add(value);
+
+    }
+
+
+    /**
+     * Validate the output data against what we expected.  Return
+     * <code>null</code> for no problems, or an error message.
+     *
+     * @param data The output data to be tested
+     */
+    protected String validateData(String data) {
+
+        if (outContent == null)
+            return (null);
+        else if (data.startsWith(outContent))
+            return (null);
+        else
+            return ("Expected data '" + outContent + "', got data '" +
+                    data + "'");
+
+    }
+
+
+    /**
+     * Validate the saved headers against the <code>outHeaders</code>
+     * property, and return an error message if there is anything missing.
+     * If all of the expected headers are present, return <code>null</code>.
+     */
+    protected String validateHeaders() {
+
+        // Do we have any headers to check for?
+        if (outHeaders == null)
+            return (null);
+
+        // Check each specified name:value combination
+        String headers = outHeaders;
+        while (headers.length() > 0) {
+            // Parse the next name:value combination
+            int delimiter = headers.indexOf("##");
+            String header = null;
+            if (delimiter < 0) {
+                header = headers;
+                headers = "";
+            } else {
+                header = headers.substring(0, delimiter);
+                headers = headers.substring(delimiter + 2);
+            }
+            int colon = header.indexOf(":");
+            String name = header.substring(0, colon).trim();
+            String value = header.substring(colon + 1).trim();
+            // Check for the occurrence of this header
+            ArrayList list = (ArrayList) saveHeaders.get(name.toLowerCase());
+            if (list == null)
+                return ("Missing header name '" + name + "'");
+            boolean found = false;
+            for (int i = 0; i < list.size(); i++) {
+                if (value.equals((String) list.get(i))) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                return ("Missing header name '" + name + "' with value '" +
+                        value + "'");
+        }
+
+        // Everything was found successfully
+        return (null);
+
+    }
+
+
+    /**
+     * Validate the returned response message against what we expected.
+     * Return <code>null</code> for no problems, or an error message.
+     *
+     * @param message The returned response message
+     */
+    protected String validateMessage(String message) {
+
+        if (this.message == null)
+            return (null);
+        else if (this.message.equals(message))
+            return (null);
+        else
+            return ("Expected message='" + this.message + "', got message='" +
+                    message + "'");
+
+    }
+
+
+    /**
+     * Validate the returned status code against what we expected.  Return
+     * <code>null</code> for no problems, or an error message.
+     *
+     * @param status The returned status code
+     */
+    protected String validateStatus(int status) {
+
+        if (this.status == status)
+            return (null);
+        else
+            return ("Expected status=" + this.status + ", got status=" +
+                    status);
 
     }
 

@@ -61,6 +61,11 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedReset01</url-pattern>
     </filter-mapping>
@@ -71,8 +76,8 @@
     </filter-mapping>
 
     <filter-mapping>
-        <filter-name>HttpFilter</filter-name>
-        <url-pattern>/WrappedGetQueryString01</url-pattern>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedSetLocale01</url-pattern>
     </filter-mapping>
 
 
@@ -121,6 +126,11 @@
     <servlet>
         <servlet-name>SetBufferSize01</servlet-name>
         <servlet-class>org.apache.tester.SetBufferSize01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SetLocale01</servlet-name>
+        <servlet-class>org.apache.tester.SetLocale01</servlet-class>
     </servlet>
 
     <!-- ========== Servlet Mappings ====================================== -->
@@ -208,6 +218,16 @@
     <servlet-mapping>
         <servlet-name>SetBufferSize01</servlet-name>
         <url-pattern>/WrappedSetBufferSize01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetLocale01</servlet-name>
+        <url-pattern>/SetLocale01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetLocale01</servlet-name>
+        <url-pattern>/WrappedSetLocale01</url-pattern>
     </servlet-mapping>
 
 

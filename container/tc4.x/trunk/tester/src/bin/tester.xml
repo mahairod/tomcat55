@@ -188,9 +188,19 @@
          request="${context.path}/SetBufferSize01"
       outContent="SetBufferSize01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}"
+    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
          request="${context.path}/WrappedSetBufferSize01"
       outContent="SetBufferSize01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
+         request="${context.path}/SetLocale01"
+      outContent="SetLocale01 PASSED"
+      outHeaders="Content-Language:en"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
+         request="${context.path}/WrappedSetLocale01"
+      outContent="SetLocale01 PASSED"
+      outHeaders="Content-Language:en"/>
 
 
   </target>
