@@ -1959,64 +1959,23 @@ public class Generator {
 	}
 
 	/*
-	 * Declares any NESTED scripting variables of the given custom tag,
-	 * if the given custom tag is not nested inside itself (i.e, has a
-	 * nesting level of zero). If the custom tag does have a custom nesting
-	 * level greater than 0, this method declares a scripting variable
-	 * derived from the tag's "id" attribute (if present), only if its
-	 * scope is NESTED and it does not match the "id" attribute of any of
-	 * the enclosing tags of the same (custom) type.
-	 *
-	 * Additionally, a NESTED scripting variable is declared only if it
-	 * has not already been declared in the same Java
-	 * scope of the generated code, that is, if this custom tag's parent is
-	 * different from the parent of the custom tag that may already have
-	 * declared this variable.
+	 * Declares any NESTED scripting variables of the given custom tag.
 	 */
 	private void declareNestedScriptingVariables(Node.CustomTag n) {
 
-	    if (n.getCustomNestingLevel() > 0 && !n.hasUnnestedIdAttribute()) {
-		return;
-	    }
-
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
-	    VariableInfo[] varInfos = n.getVariableInfos();
-	    if ((varInfos == null) && (tagVarInfos == null)) {
+	    VariableInfo[] nestedVarInfos = n.getNestedVariableInfos();
+	    if ((nestedVarInfos == null) && (tagVarInfos == null)) {
 		return;
 	    }
 
-	    if (varInfos != null) {
-		if (n.getCustomNestingLevel() == 0) {
-		    // Declare *any* scripting variables with NESTED scope
-		    for (int i=0; i<varInfos.length; i++) {
-			if ((varInfos[i].getScope() == VariableInfo.NESTED)
-			            && varInfos[i].getDeclare()) {
-			    String name = varInfos[i].getVarName();
-			    out.printin(varInfos[i].getClassName());
-			    out.print(" ");
-			    out.print(name);
-			    out.println(" = null;");
-			}
-		    }
-		} else {
-		    /*
-		     * Declare only scripting variable (with NESTED scope)
-		     * derived from unnested "id" attribute
-		     */
-		    String idAttr = n.getAttributeValue("id");
-		    for (int i=0; i<varInfos.length; i++) {
-			if ((varInfos[i].getScope() == VariableInfo.NESTED)
-			            && varInfos[i].getDeclare()) {
-			    String name = varInfos[i].getVarName();
-			    if (idAttr.equals(name)) {
-				out.printin(varInfos[i].getClassName());
-				out.print(" ");
-				out.print(name);
-				out.println(" = null;");
-				break;
-			    }
-			}
-		    }
+	    if (nestedVarInfos != null) {
+		for (int i=0; i<nestedVarInfos.length; i++) {
+		    String name = nestedVarInfos[i].getVarName();
+		    out.printin(nestedVarInfos[i].getClassName());
+		    out.print(" ");
+		    out.print(name);
+		    out.println(" = null;");
 		}
 	    } else {
 		for (int i=0; i<tagVarInfos.length; i++) {
