@@ -76,7 +76,7 @@ public class TagHandlerPool {
      * Constructs a tag handler pool with the default capacity.
      */
     public TagHandlerPool() {
-	this(MAX_POOL_SIZE);
+        this(MAX_POOL_SIZE);
     }
 
     /**
@@ -85,8 +85,8 @@ public class TagHandlerPool {
      * @param capacity Tag handler pool capacity
      */
     public TagHandlerPool(int capacity) {
-	this.handlers = new Tag[capacity];
-	this.current = -1;
+        this.handlers = new Tag[capacity];
+        this.current = -1;
     }
 
     /**
@@ -100,19 +100,19 @@ public class TagHandlerPool {
      * @throws JspException if a tag handler cannot be instantiated
      */
     public synchronized Tag get(Class handlerClass) throws JspException {
-	Tag handler = null;
+        Tag handler = null;
 
-	if (current >= 0) {
-	    handler = handlers[current--];
-	} else {
-	    try {
-		return (Tag) handlerClass.newInstance();
-	    } catch (Exception e) {
-		throw new JspException(e.getMessage(), e);
-	    }
-	}
+        if (current >= 0) {
+            handler = handlers[current--];
+        } else {
+            try {
+                return (Tag) handlerClass.newInstance();
+            } catch (Exception e) {
+                throw new JspException(e.getMessage(), e);
+            }
+        }
 
-	return handler;
+        return handler;
     }
 
     /**
@@ -123,10 +123,10 @@ public class TagHandlerPool {
      * @param handler Tag handler to add to this tag handler pool
      */
     public synchronized void reuse(Tag handler) {
-	if (current < (handlers.length - 1))
-	    handlers[++current] = handler;
-	else
-	    handler.release();
+        if (current < (handlers.length - 1))
+            handlers[++current] = handler;
+        else
+            handler.release();
     }
 
     /**
@@ -134,9 +134,9 @@ public class TagHandlerPool {
      * handler pool.
      */
     public synchronized void release() {
-	for (int i=current; i>=0; i--) {
-	    handlers[i].release();
-	}
+        for (int i=current; i>=0; i--) {
+            handlers[i].release();
+        }
     }
 }
 

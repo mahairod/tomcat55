@@ -92,8 +92,8 @@ public class ErrorDispatcher {
      * Constructor.
      */
     ErrorDispatcher() {
-	// XXX check web.xml for custom error handler
-	errHandler = new DefaultErrorHandler(this);
+        // XXX check web.xml for custom error handler
+        errHandler = new DefaultErrorHandler(this);
     }
 
     //*********************************************************************
@@ -109,7 +109,7 @@ public class ErrorDispatcher {
      * @param errCode Error code
      */
     void jspError(String errCode) throws JasperException {
-	dispatch(null, errCode, null, null);
+        dispatch(null, errCode, null, null);
     }
 
     /*
@@ -123,7 +123,7 @@ public class ErrorDispatcher {
      * @param errCode Error code
      */
     void jspError(Mark where, String errCode) throws JasperException {
-	dispatch(where, errCode, null, null);
+        dispatch(where, errCode, null, null);
     }
 
     /*
@@ -137,7 +137,7 @@ public class ErrorDispatcher {
      * @param errCode Error code
      */
     void jspError(Node n, String errCode) throws JasperException {
-	dispatch(n.getStart(), errCode, null, null);
+        dispatch(n.getStart(), errCode, null, null);
     }
 
     /*
@@ -151,7 +151,7 @@ public class ErrorDispatcher {
      * @param arg Argument for parametric replacement
      */
     void jspError(String errCode, String arg) throws JasperException {
-	dispatch(null, errCode, new Object[] {arg}, null);
+        dispatch(null, errCode, new Object[] {arg}, null);
     }
 
     /*
@@ -166,8 +166,8 @@ public class ErrorDispatcher {
      * @param arg Argument for parametric replacement
      */
     void jspError(Mark where, String errCode, String arg)
-	        throws JasperException {
-	dispatch(where, errCode, new Object[] {arg}, null);
+                throws JasperException {
+        dispatch(where, errCode, new Object[] {arg}, null);
     }
 
     /*
@@ -182,8 +182,8 @@ public class ErrorDispatcher {
      * @param arg Argument for parametric replacement
      */
     void jspError(Node n, String errCode, String arg)
-	        throws JasperException {
-	dispatch(n.getStart(), errCode, new Object[] {arg}, null);
+                throws JasperException {
+        dispatch(n.getStart(), errCode, new Object[] {arg}, null);
     }
 
     /*
@@ -198,8 +198,8 @@ public class ErrorDispatcher {
      * @param arg2 Second argument for parametric replacement
      */
     void jspError(String errCode, String arg1, String arg2)
-	        throws JasperException {
-	dispatch(null, errCode, new Object[] {arg1, arg2}, null);
+                throws JasperException {
+        dispatch(null, errCode, new Object[] {arg1, arg2}, null);
     }
 
     /*
@@ -215,8 +215,8 @@ public class ErrorDispatcher {
      * @param arg2 Second argument for parametric replacement
      */
     void jspError(Mark where, String errCode, String arg1, String arg2)
-	        throws JasperException {
-	dispatch(where, errCode, new Object[] {arg1, arg2}, null);
+                throws JasperException {
+        dispatch(where, errCode, new Object[] {arg1, arg2}, null);
     }
 
     /*
@@ -232,8 +232,8 @@ public class ErrorDispatcher {
      * @param arg2 Second argument for parametric replacement
      */
     void jspError(Node n, String errCode, String arg1, String arg2)
-	        throws JasperException {
-	dispatch(n.getStart(), errCode, new Object[] {arg1, arg2}, null);
+                throws JasperException {
+        dispatch(n.getStart(), errCode, new Object[] {arg1, arg2}, null);
     }
 
     /*
@@ -242,7 +242,7 @@ public class ErrorDispatcher {
      * @param e Parsing exception
      */
     void jspError(Exception e) throws JasperException {
-	dispatch(null, null, null, e);
+        dispatch(null, null, null, e);
     }
 
     /*
@@ -257,8 +257,8 @@ public class ErrorDispatcher {
      * @param e Parsing exception
      */
     void jspError(String errCode, String arg, Exception e)
-	        throws JasperException {
-	dispatch(null, errCode, new Object[] {arg}, e);
+                throws JasperException {
+        dispatch(null, errCode, new Object[] {arg}, e);
     }
 
     /*
@@ -274,8 +274,8 @@ public class ErrorDispatcher {
      * @param e Parsing exception
      */
     void jspError(Node n, String errCode, String arg, Exception e)
-	        throws JasperException {
-	dispatch(n.getStart(), errCode, new Object[] {arg}, e);
+                throws JasperException {
+        dispatch(n.getStart(), errCode, new Object[] {arg}, e);
     }
 
     /*
@@ -288,9 +288,9 @@ public class ErrorDispatcher {
      * file was generated
      */
     void javacError(String errMsg, String fname, Node.Nodes page)
-	        throws JasperException, IOException {
-	JavacErrorDetail[] errDetails = parseJavacMessage(errMsg, fname, page);
-	errHandler.javacError(errDetails);
+                throws JasperException, IOException {
+        JavacErrorDetail[] errDetails = parseJavacMessage(errMsg, fname, page);
+        errHandler.javacError(errDetails);
     }
 
     /*
@@ -305,12 +305,12 @@ public class ErrorDispatcher {
      * @return Localized error message
      */
     String getString(String errCode) {
-	String errMsg = errCode;
-	try {
-	    errMsg = bundle.getString(errCode);
-	} catch (MissingResourceException e) {
-	}
-	return errMsg;
+        String errMsg = errCode;
+        try {
+            errMsg = bundle.getString(errCode);
+        } catch (MissingResourceException e) {
+        }
+        return errMsg;
     }
 
     /* 
@@ -326,7 +326,7 @@ public class ErrorDispatcher {
      * @return Localized error message
      */
     String getString(String errCode, String arg) {
-	return getString(errCode, new Object[] {arg});
+        return getString(errCode, new Object[] {arg});
     }
 
     /* 
@@ -343,7 +343,7 @@ public class ErrorDispatcher {
      * @return Localized error message
      */
     String getString(String errCode, String arg1, String arg2) {
-	return getString(errCode, new Object[] {arg1, arg2});
+        return getString(errCode, new Object[] {arg1, arg2});
     }
 
     /*
@@ -359,17 +359,17 @@ public class ErrorDispatcher {
      * @return Localized error message
      */
     String getString(String errCode, Object[] args) {
-	String errMsg = errCode;
-	try {
-	    errMsg = bundle.getString(errCode);
-	    if (args != null) {
-		MessageFormat formatter = new MessageFormat(errMsg);
-		errMsg = formatter.format(args);
-	    }
-	} catch (MissingResourceException e) {
-	}
-	
-	return errMsg;
+        String errMsg = errCode;
+        try {
+            errMsg = bundle.getString(errCode);
+            if (args != null) {
+                MessageFormat formatter = new MessageFormat(errMsg);
+                errMsg = formatter.format(args);
+            }
+        } catch (MissingResourceException e) {
+        }
+        
+        return errMsg;
     }
 
 
@@ -389,46 +389,46 @@ public class ErrorDispatcher {
      * @param e Parsing exception
      */
     private void dispatch(Mark where, String errCode, Object[] args,
-			  Exception e) throws JasperException {
-	String file = null;
-	String errMsg = null;
-	int line = -1;
-	int column = -1;
-	boolean hasLocation = false;
+                          Exception e) throws JasperException {
+        String file = null;
+        String errMsg = null;
+        int line = -1;
+        int column = -1;
+        boolean hasLocation = false;
 
-	// Localize
-	if (errCode != null) {
-	    errMsg = getString(errCode, args);
-	} else if (e != null) {
-	    // give a hint about what's wrong
-	    errMsg = e.getMessage();
-	}
+        // Localize
+        if (errCode != null) {
+            errMsg = getString(errCode, args);
+        } else if (e != null) {
+            // give a hint about what's wrong
+            errMsg = e.getMessage();
+        }
 
-	// Get error location
-	if (where != null) {
-	    file = where.getFile();
-	    line = where.getLineNumber();
-	    column = where.getColumnNumber();
-	    hasLocation = true;
-	} else if (e instanceof SAXParseException) {
-	    file = ((SAXParseException) e).getSystemId();
-	    line = ((SAXParseException) e).getLineNumber();
-	    column = ((SAXParseException) e).getColumnNumber();
-	    hasLocation = true;
-	}
+        // Get error location
+        if (where != null) {
+            file = where.getFile();
+            line = where.getLineNumber();
+            column = where.getColumnNumber();
+            hasLocation = true;
+        } else if (e instanceof SAXParseException) {
+            file = ((SAXParseException) e).getSystemId();
+            line = ((SAXParseException) e).getLineNumber();
+            column = ((SAXParseException) e).getColumnNumber();
+            hasLocation = true;
+        }
 
-	// Get nested exception
-	Exception nestedEx = e;
-	if ((e instanceof SAXException)
-	        && (((SAXException) e).getException() != null)) {
-	    nestedEx = ((SAXException) e).getException();
-	}
+        // Get nested exception
+        Exception nestedEx = e;
+        if ((e instanceof SAXException)
+                && (((SAXException) e).getException() != null)) {
+            nestedEx = ((SAXException) e).getException();
+        }
 
-	if (hasLocation) {
-	    errHandler.jspError(file, line, column, errMsg, nestedEx);
-	} else {
-	    errHandler.jspError(errMsg, nestedEx);
-	}
+        if (hasLocation) {
+            errHandler.jspError(file, line, column, errMsg, nestedEx);
+        } else {
+            errHandler.jspError(errMsg, nestedEx);
+        }
     }
 
     /*
@@ -448,83 +448,83 @@ public class ErrorDispatcher {
      * compilation errors
      */
     private JavacErrorDetail[] parseJavacMessage(String errMsg, String fname,
-						 Node.Nodes page)
-	        throws IOException, JasperException {
+                                                 Node.Nodes page)
+                throws IOException, JasperException {
 
-	Vector errVec = new Vector();
-	StringBuffer partialErrMsg = new StringBuffer();
-	int lineNum = -1;
-	Node errNode = null;
+        Vector errVec = new Vector();
+        StringBuffer partialErrMsg = new StringBuffer();
+        int lineNum = -1;
+        Node errNode = null;
 
         BufferedReader reader = new BufferedReader(new StringReader(errMsg));
 
         while (true) {
             String line = reader.readLine();
             if (line == null) {
-		break;
-	    }
+                break;
+            }
 
             /*
-	     * Error line number is delimited by set of colons.
-	     * (Ignore colon following drive letter on Windows.)
-	     * XXX Handle deprecation warnings that don't have line info
-	     */
+             * Error line number is delimited by set of colons.
+             * (Ignore colon following drive letter on Windows.)
+             * XXX Handle deprecation warnings that don't have line info
+             */
             int beginColon = line.indexOf(':', 2); 
             int endColon = line.indexOf(':', beginColon + 1);
             if ((beginColon >= 0) && (endColon >= 0)) {
-		if (errNode != null) {
-		    // add previous error to error vector
-		    errVec.add(new JavacErrorDetail(
-		        fname,
-			lineNum,
-			errNode.getStart().getFile(),
-			errNode.getStart().getLineNumber(),
-			partialErrMsg.toString()));
-		    partialErrMsg = new StringBuffer();
-		}
-		String lineNumStr = line.substring(beginColon + 1, endColon);
+                if (errNode != null) {
+                    // add previous error to error vector
+                    errVec.add(new JavacErrorDetail(
+                        fname,
+                        lineNum,
+                        errNode.getStart().getFile(),
+                        errNode.getStart().getLineNumber(),
+                        partialErrMsg.toString()));
+                    partialErrMsg = new StringBuffer();
+                }
+                String lineNumStr = line.substring(beginColon + 1, endColon);
                 try {
                     lineNum = Integer.parseInt(lineNumStr);
                 } catch (NumberFormatException e) {
                     // XXX
                 }
 
-		// Map servlet line number to corresponding node in JSP page
-		ErrorVisitor errVisitor = new ErrorVisitor(lineNum);
-		page.visit(errVisitor);
-		errNode = errVisitor.getJspSourceNode();
+                // Map servlet line number to corresponding node in JSP page
+                ErrorVisitor errVisitor = new ErrorVisitor(lineNum);
+                page.visit(errVisitor);
+                errNode = errVisitor.getJspSourceNode();
                 /* XXX Supress map exception to display the original error
-		if (errNode == null) {
-		    jspError("jsp.error.source.map", lineNumStr);
-		}
+                if (errNode == null) {
+                    jspError("jsp.error.source.map", lineNumStr);
+                }
                 */
             }
-	    partialErrMsg.append(line);
-	    partialErrMsg.append('\n');
+            partialErrMsg.append(line);
+            partialErrMsg.append('\n');
         }
 
         reader.close();
 
-	// add last error to error vector
-	String pageFile = null;
-	int pageLine = -1;
-	if (errNode != null) {
-	    pageFile = errNode.getStart().getFile();
-	    pageLine = errNode.getStart().getLineNumber();
-	}
-	errVec.add(new JavacErrorDetail(fname,
-					lineNum,
-					pageFile,
-					pageLine,
-					partialErrMsg.toString()));
+        // add last error to error vector
+        String pageFile = null;
+        int pageLine = -1;
+        if (errNode != null) {
+            pageFile = errNode.getStart().getFile();
+            pageLine = errNode.getStart().getLineNumber();
+        }
+        errVec.add(new JavacErrorDetail(fname,
+                                        lineNum,
+                                        pageFile,
+                                        pageLine,
+                                        partialErrMsg.toString()));
 
-	JavacErrorDetail[] errDetails = null;
-	if (errVec.size() > 0) {
-	    errDetails = new JavacErrorDetail[errVec.size()];
-	    errVec.copyInto(errDetails);
-	}
+        JavacErrorDetail[] errDetails = null;
+        if (errVec.size() > 0) {
+            errDetails = new JavacErrorDetail[errVec.size()];
+            errVec.copyInto(errDetails);
+        }
 
-	return errDetails;
+        return errDetails;
     }
 
 
@@ -534,40 +534,40 @@ public class ErrorDispatcher {
      */
     static class ErrorVisitor extends Node.Visitor {
 
-	// Java source line number to be mapped
-	private int lineNum;
+        // Java source line number to be mapped
+        private int lineNum;
 
-	/*
-	 * JSP node whose Java source code range in the generated servlet
-	 * contains the Java source line number to be mapped
-	 */
-	Node found;
+        /*
+         * JSP node whose Java source code range in the generated servlet
+         * contains the Java source line number to be mapped
+         */
+        Node found;
 
-	/*
-	 * Constructor.
-	 *
-	 * @param lineNum Source line number in the generated servlet code
-	 */
-	public ErrorVisitor(int lineNum) {
-	    this.lineNum = lineNum;
-	}
-
-	public void doVisit(Node n) throws JasperException {
-	    if ((lineNum >= n.getBeginJavaLine())
-		    && (lineNum < n.getEndJavaLine())) {
-		found = n;
-	    }
+        /*
+         * Constructor.
+         *
+         * @param lineNum Source line number in the generated servlet code
+         */
+        public ErrorVisitor(int lineNum) {
+            this.lineNum = lineNum;
         }
 
-	/*
-	 * Gets the JSP node to which the source line number in the generated
-	 * servlet code was mapped.
-	 *
-	 * @return JSP node to which the source line number in the generated
-	 * servlet code was mapped
-	 */
-	public Node getJspSourceNode() {
-	    return found;
-	}
+        public void doVisit(Node n) throws JasperException {
+            if ((lineNum >= n.getBeginJavaLine())
+                    && (lineNum < n.getEndJavaLine())) {
+                found = n;
+            }
+        }
+
+        /*
+         * Gets the JSP node to which the source line number in the generated
+         * servlet code was mapped.
+         *
+         * @return JSP node to which the source line number in the generated
+         * servlet code was mapped
+         */
+        public Node getJspSourceNode() {
+            return found;
+        }
     }
 }

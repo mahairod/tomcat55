@@ -151,7 +151,7 @@ public class TldLocationsCache {
         try {
             processWebDotXml();
             processJars();
-	    processTldsInFileSystem("/WEB-INF/");
+            processTldsInFileSystem("/WEB-INF/");
             initialized = true;
         } catch (JasperException ex) {
             Constants.message("jsp.error.internal.tldinit",
@@ -246,12 +246,12 @@ public class TldLocationsCache {
                 if (!name.startsWith("META-INF/")) continue;
                 if (!name.endsWith(".tld")) continue;
                 stream = jarFile.getInputStream(entry);
-		String uri = getUriFromTld(resourcePath, stream);
-		// Add implicit map entry only if its uri is not already
-		// present in the map
-		if (uri != null && mappings.get(uri) == null) {
-		    mappings.put(uri, new String[]{ resourcePath, name });
-		}
+                String uri = getUriFromTld(resourcePath, stream);
+                // Add implicit map entry only if its uri is not already
+                // present in the map
+                if (uri != null && mappings.get(uri) == null) {
+                    mappings.put(uri, new String[]{ resourcePath, name });
+                }
             }
 
         } catch (Exception ex) {
@@ -265,8 +265,8 @@ public class TldLocationsCache {
                     jarFile.close();
                 } catch (Throwable t) {}
             }
-	    throw new JasperException(ex);
-	}
+            throw new JasperException(ex);
+        }
     }
 
     /*
@@ -275,21 +275,21 @@ public class TldLocationsCache {
      * element.
      */
     private void processTldsInFileSystem(String startPath)
-	    throws JasperException {
+            throws JasperException {
 
-	Set dirList = ctxt.getResourcePaths(startPath);
-	if (dirList != null) {
-	    Iterator it = dirList.iterator();
-	    while (it.hasNext()) {
-		String path = (String) it.next();
+        Set dirList = ctxt.getResourcePaths(startPath);
+        if (dirList != null) {
+            Iterator it = dirList.iterator();
+            while (it.hasNext()) {
+                String path = (String) it.next();
                 if (path.endsWith("/")) {
                     processTldsInFileSystem(path);
                 }
                 if (!path.endsWith(".tld")) {
-		    continue;
-		}
-		InputStream stream = ctxt.getResourceAsStream(path);
-		String uri = null;
+                    continue;
+                }
+                InputStream stream = ctxt.getResourceAsStream(path);
+                String uri = null;
                 try {
                     uri = getUriFromTld(path, stream);
                 } finally {
@@ -297,17 +297,17 @@ public class TldLocationsCache {
                         try {
                             stream.close();
                         } catch (Throwable t) {
-			    // do nothing
-			}
+                            // do nothing
+                        }
                     }
                 }
-		// Add implicit map entry only if its uri is not already
-		// present in the map
-		if (uri != null && mappings.get(uri) == null) {
-		    mappings.put(uri, new String[] { path, null });
-		}
-	    }
-	}
+                // Add implicit map entry only if its uri is not already
+                // present in the map
+                if (uri != null && mappings.get(uri) == null) {
+                    mappings.put(uri, new String[] { path, null });
+                }
+            }
+        }
     }
 
     /*

@@ -96,7 +96,7 @@ public class JspReader {
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
     
     public String getFile(int fileid) {
-	return (String) sourceFiles.elementAt(fileid);
+        return (String) sourceFiles.elementAt(fileid);
     }
 
     /**
@@ -108,9 +108,9 @@ public class JspReader {
     protected int registerSourceFile(String file) {
         if (sourceFiles.contains(file))
             return -1;
-	sourceFiles.addElement(file);
-	this.size++;
-	return sourceFiles.size() - 1;
+        sourceFiles.addElement(file);
+        this.size++;
+        return sourceFiles.size() - 1;
     }
     
 
@@ -124,112 +124,112 @@ public class JspReader {
     protected int unregisterSourceFile(String file) {
         if (!sourceFiles.contains(file))
             return -1;
-	sourceFiles.removeElement(file);
-	this.size--;
-	return sourceFiles.size() - 1;
+        sourceFiles.removeElement(file);
+        this.size--;
+        return sourceFiles.size() - 1;
     }
 
     private void pushFile2(String file, String encoding, 
-			   InputStreamReader reader) 
-	        throws JasperException, FileNotFoundException {
+                           InputStreamReader reader) 
+                throws JasperException, FileNotFoundException {
 
-	// Register the file
-	String longName = file;
+        // Register the file
+        String longName = file;
 
-	int fileid = registerSourceFile(longName);
+        int fileid = registerSourceFile(longName);
 
         if (fileid == -1) {
             err.jspError("jsp.error.file.already.registered", file);
-	}
+        }
 
-	currFileId = fileid;
+        currFileId = fileid;
 
-	try {
-	    CharArrayWriter caw = new CharArrayWriter();
-	    char buf[] = new char[1024];
-	    for (int i = 0 ; (i = reader.read(buf)) != -1 ;)
-		caw.write(buf, 0, i);
-	    caw.close();
-	    if (current == null) {
-		current = new Mark(this, caw.toCharArray(), fileid, 
-				   getFile(fileid), master, encoding);
-	    } else {
-		current.pushStream(caw.toCharArray(), fileid, getFile(fileid),
-				   longName, encoding);
-	    }
-	} catch (Throwable ex) {
-	    loghelper.log("Exception parsing file ", ex);
-	    // Pop state being constructed:
-	    popFile();
-	    err.jspError("jsp.error.file.cannot.read", "ze file");
-	} finally {
-	    if (reader != null) {
-		try { reader.close(); } catch (Exception any) {}
-	    }
-	}
+        try {
+            CharArrayWriter caw = new CharArrayWriter();
+            char buf[] = new char[1024];
+            for (int i = 0 ; (i = reader.read(buf)) != -1 ;)
+                caw.write(buf, 0, i);
+            caw.close();
+            if (current == null) {
+                current = new Mark(this, caw.toCharArray(), fileid, 
+                                   getFile(fileid), master, encoding);
+            } else {
+                current.pushStream(caw.toCharArray(), fileid, getFile(fileid),
+                                   longName, encoding);
+            }
+        } catch (Throwable ex) {
+            loghelper.log("Exception parsing file ", ex);
+            // Pop state being constructed:
+            popFile();
+            err.jspError("jsp.error.file.cannot.read", "ze file");
+        } finally {
+            if (reader != null) {
+                try { reader.close(); } catch (Exception any) {}
+            }
+        }
     }
 
     public boolean popFile() throws JasperException {
-	// Is stack created ? (will happen if the Jsp file we'r looking at is
-	// missing.
-	if (current == null) 
-		return false;
+        // Is stack created ? (will happen if the Jsp file we'r looking at is
+        // missing.
+        if (current == null) 
+                return false;
 
-	// Restore parser state:
-	//size--;
-	if (currFileId < 0) {
-	    err.jspError("jsp.error.no.more.content");
-	}
-	
-	String fName = getFile(currFileId);
-	currFileId = unregisterSourceFile(fName);
-	if (currFileId < -1) {
-	    err.jspError("jsp.error.file.not.registered", fName);
-	}
+        // Restore parser state:
+        //size--;
+        if (currFileId < 0) {
+            err.jspError("jsp.error.no.more.content");
+        }
+        
+        String fName = getFile(currFileId);
+        currFileId = unregisterSourceFile(fName);
+        if (currFileId < -1) {
+            err.jspError("jsp.error.file.not.registered", fName);
+        }
 
-	boolean result = current.popStream();
-	if (result)
-	    master = current.baseDir;
-	return (result);
+        boolean result = current.popStream();
+        if (result)
+            master = current.baseDir;
+        return (result);
     }
-	
+        
     protected JspReader(JspCompilationContext ctx,
-			String file,
-			String encoding,
-			InputStreamReader reader,
-			ErrorDispatcher err) 
-	        throws JasperException, FileNotFoundException {
+                        String file,
+                        String encoding,
+                        InputStreamReader reader,
+                        ErrorDispatcher err) 
+                throws JasperException, FileNotFoundException {
         this.context = ctx;
-	this.err = err;
-	pushFile2(file, encoding, reader);
+        this.err = err;
+        pushFile2(file, encoding, reader);
     }
 
     public boolean hasMoreInput() throws JasperException {
-	if (current.cursor >= current.stream.length) {
+        if (current.cursor >= current.stream.length) {
             if (singleFile) return false; 
-	    while (popFile()) {
-		if (current.cursor < current.stream.length) return true;
-	    }
-	    return false;
-	}
-	return true;
+            while (popFile()) {
+                if (current.cursor < current.stream.length) return true;
+            }
+            return false;
+        }
+        return true;
     }
     
     public int nextChar() throws JasperException {
-	if (!hasMoreInput())
-	    return -1;
-	
-	int ch = current.stream[current.cursor];
+        if (!hasMoreInput())
+            return -1;
+        
+        int ch = current.stream[current.cursor];
 
-	current.cursor++;
-	
-	if (ch == '\n') {
-	    current.line++;
-	    current.col = 0;
-	} else {
-	    current.col++;
-	}
-	return ch;
+        current.cursor++;
+        
+        if (ch == '\n') {
+            current.line++;
+            current.col = 0;
+        } else {
+            current.col++;
+        }
+        return ch;
     }
 
     /**
@@ -238,70 +238,70 @@ public class JspReader {
      */
     char[] nextContent() {
         int cur_cursor = current.cursor;
-	int len = current.stream.length;
- 	char ch;
+        int len = current.stream.length;
+         char ch;
 
-	if (peekChar() == '\n') {
-	    current.line++;
-	    current.col = 0;
-	}
-	else current.col++;
-	
-	// pure obsfuscated genius!
+        if (peekChar() == '\n') {
+            current.line++;
+            current.col = 0;
+        }
+        else current.col++;
+        
+        // pure obsfuscated genius!
         while ((++current.cursor < len) && 
-	    ((ch = current.stream[current.cursor]) != '<')) {
+            ((ch = current.stream[current.cursor]) != '<')) {
 
-	    if (ch == '\n') {
-		current.line++;
-		current.col = 0;
-	    } else {
-  		current.col++;
-	    }
-	}
+            if (ch == '\n') {
+                current.line++;
+                current.col = 0;
+            } else {
+                  current.col++;
+            }
+        }
 
-	len = current.cursor - cur_cursor;
-	char[] content = new char[len];
-	System.arraycopy(current.stream, cur_cursor, content, 0, len);
-	
-	return content;
+        len = current.cursor - cur_cursor;
+        char[] content = new char[len];
+        System.arraycopy(current.stream, cur_cursor, content, 0, len);
+        
+        return content;
     }
 
     char[] getText(Mark start, Mark stop) throws JasperException {
-	Mark oldstart = mark();
-	reset(start);
-	CharArrayWriter caw = new CharArrayWriter();
-	while (!stop.equals(mark()))
-	    caw.write(nextChar());
-	caw.close();
-	reset(oldstart);
-	return caw.toCharArray();
+        Mark oldstart = mark();
+        reset(start);
+        CharArrayWriter caw = new CharArrayWriter();
+        while (!stop.equals(mark()))
+            caw.write(nextChar());
+        caw.close();
+        reset(oldstart);
+        return caw.toCharArray();
     }
 
     public int peekChar() {
-	return current.stream[current.cursor];
+        return current.stream[current.cursor];
     }
 
     public Mark mark() {
-	return new Mark(current);
+        return new Mark(current);
     }
 
     public void reset(Mark mark) {
-	current = new Mark(mark);
+        current = new Mark(mark);
     }
 
     public boolean matchesIgnoreCase(String string) throws JasperException {
-	Mark mark = mark();
-	int ch = 0;
-	int i = 0;
-	do {
-	    ch = nextChar();
-	    if (Character.toLowerCase((char) ch) != string.charAt(i++)) {
-		reset(mark);
-		return false;
-	    }
-	} while (i < string.length());
-	reset(mark);
-	return true;
+        Mark mark = mark();
+        int ch = 0;
+        int i = 0;
+        do {
+            ch = nextChar();
+            if (Character.toLowerCase((char) ch) != string.charAt(i++)) {
+                reset(mark);
+                return false;
+            }
+        } while (i < string.length());
+        reset(mark);
+        return true;
     }
 
     /**
@@ -309,47 +309,47 @@ public class JspReader {
      * @param string The string to match
      * @return <stront>true</strong> is one is found, the current position
      *         in stream is positioned after the search string, <strong>
-     *	       false</strong> otherwise, position in stream unchanged.
+     *               false</strong> otherwise, position in stream unchanged.
      */
     public boolean matches(String string) throws JasperException {
-	Mark mark = mark();
-	int ch = 0;
-	int i = 0;
-	do {
-	    ch = nextChar();
-	    if (((char) ch) != string.charAt(i++)) {
-		reset(mark);
-		return false;
-	    }
-	} while (i < string.length());
-	return true;
+        Mark mark = mark();
+        int ch = 0;
+        int i = 0;
+        do {
+            ch = nextChar();
+            if (((char) ch) != string.charAt(i++)) {
+                reset(mark);
+                return false;
+            }
+        } while (i < string.length());
+        return true;
     }
 
     public boolean matchesETag(String tagName) throws JasperException {
-	Mark mark = mark();
+        Mark mark = mark();
 
-	if (!matches("</" + tagName))
-	    return false;
-	skipSpaces();
-	if (nextChar() == '>')
-	    return true;
+        if (!matches("</" + tagName))
+            return false;
+        skipSpaces();
+        if (nextChar() == '>')
+            return true;
 
-	reset(mark);
-	return false;
+        reset(mark);
+        return false;
     }
     
     public void advance(int n) throws JasperException {
-	while (--n >= 0)
-	    nextChar();
+        while (--n >= 0)
+            nextChar();
     }
 
     public int skipSpaces() throws JasperException {
-	int i = 0;
-	while (isSpace()) {
-	    i++;
-	    nextChar();
-	}
-	return i;
+        int i = 0;
+        while (isSpace()) {
+            i++;
+            nextChar();
+        }
+        return i;
     }
 
     /**
@@ -361,27 +361,27 @@ public class JspReader {
      *         otherwise.
      */
     public Mark skipUntil(String limit) throws JasperException {
-	Mark ret = null;
-	int limlen = limit.length();
-	int ch;
-	
+        Mark ret = null;
+        int limlen = limit.length();
+        int ch;
+        
     skip:
-	for (ret = mark(), ch = nextChar() ; ch != -1 ;
-	         ret = mark(), ch = nextChar()) {	    
-	    if (ch == limit.charAt(0)) {
+        for (ret = mark(), ch = nextChar() ; ch != -1 ;
+                 ret = mark(), ch = nextChar()) {            
+            if (ch == limit.charAt(0)) {
                 Mark restart = mark();
-		for (int i = 1 ; i < limlen ; i++) {
-		    if (peekChar() == limit.charAt(i))
-			nextChar();
-		    else {
+                for (int i = 1 ; i < limlen ; i++) {
+                    if (peekChar() == limit.charAt(i))
+                        nextChar();
+                    else {
                         reset(restart);
-			continue skip;
+                        continue skip;
                     }
-		}
-		return ret;
-	    }
-	}
-	return null;
+                }
+                return ret;
+            }
+        }
+        return null;
     }
     
     /**
@@ -420,20 +420,20 @@ public class JspReader {
      * When returned, the context is positioned past the end of the tag.
      * @param tag The name of the tag whose ETag (</tag>) to match.
      * @return A non-null <code>Mark</code> instance (positioned immediately
-     *	       before the ETag) if found, <strong>null</strong> otherwise.
+     *               before the ETag) if found, <strong>null</strong> otherwise.
      */
     public Mark skipUntilETag(String tag) throws JasperException {
-	Mark ret = skipUntil("</" + tag);
-	if (ret != null) {
-	    skipSpaces();
-	    if (nextChar() != '>')
-		ret = null;
-	}
-	return ret;
+        Mark ret = skipUntil("</" + tag);
+        if (ret != null) {
+            skipSpaces();
+            if (nextChar() != '>')
+                ret = null;
+        }
+        return ret;
     }
 
     final boolean isSpace() {
-	return peekChar() <= ' ';
+        return peekChar() <= ' ';
     }
 
     /**
@@ -443,48 +443,48 @@ public class JspReader {
      * @param quoted If <strong>true</strong> accept quoted strings.
      */
     public String parseToken(boolean quoted) throws JasperException {
-	StringBuffer stringBuffer = new StringBuffer();
-	skipSpaces();
-	stringBuffer.setLength(0);
-	
-	int ch = peekChar();
-	
-	if (quoted) {
-	    if (ch == '"' || ch == '\'') {
+        StringBuffer stringBuffer = new StringBuffer();
+        skipSpaces();
+        stringBuffer.setLength(0);
+        
+        int ch = peekChar();
+        
+        if (quoted) {
+            if (ch == '"' || ch == '\'') {
 
-		char endQuote = ch == '"' ? '"' : '\'';
-		// Consume the open quote: 
-		ch = nextChar();
-		for (ch = nextChar(); ch != -1 && ch != endQuote;
-		         ch = nextChar()) {
-		    if (ch == '\\') 
-			ch = nextChar();
-		    stringBuffer.append((char) ch);
-		}
-		// Check end of quote, skip closing quote:
-		if (ch == -1) {
-		    err.jspError(mark(), "jsp.error.quotes.unterminated");
-		}
-	    } else {
-		err.jspError(mark(), "jsp.error.attr.quoted");
-	    }
-	} else {
-	    if (!isDelimiter()) {
-		// Read value until delimiter is found:
-		do {
-		    ch = nextChar();
-		    // Take care of the quoting here.
-		    if (ch == '\\') {
-			if (peekChar() == '"' || peekChar() == '\'' ||
-			       peekChar() == '>' || peekChar() == '%')
-			    ch = nextChar();
-		    }
-		    stringBuffer.append((char) ch);
-		} while (!isDelimiter());
-	    }
-	}
+                char endQuote = ch == '"' ? '"' : '\'';
+                // Consume the open quote: 
+                ch = nextChar();
+                for (ch = nextChar(); ch != -1 && ch != endQuote;
+                         ch = nextChar()) {
+                    if (ch == '\\') 
+                        ch = nextChar();
+                    stringBuffer.append((char) ch);
+                }
+                // Check end of quote, skip closing quote:
+                if (ch == -1) {
+                    err.jspError(mark(), "jsp.error.quotes.unterminated");
+                }
+            } else {
+                err.jspError(mark(), "jsp.error.attr.quoted");
+            }
+        } else {
+            if (!isDelimiter()) {
+                // Read value until delimiter is found:
+                do {
+                    ch = nextChar();
+                    // Take care of the quoting here.
+                    if (ch == '\\') {
+                        if (peekChar() == '"' || peekChar() == '\'' ||
+                               peekChar() == '>' || peekChar() == '%')
+                            ch = nextChar();
+                    }
+                    stringBuffer.append((char) ch);
+                } while (!isDelimiter());
+            }
+        }
 
-	return stringBuffer.toString();
+        return stringBuffer.toString();
     }
 
     /**
@@ -494,29 +494,29 @@ public class JspReader {
      * @return A boolean.
      */
     private boolean isDelimiter() throws JasperException {
-	if (! isSpace()) {
-	    int ch = peekChar();
-	    // Look for a single-char work delimiter:
-	    if (ch == '=' || ch == '>' || ch == '"' || ch == '\''
-		    || ch == '/') {
-		return true;
-	    }
-	    // Look for an end-of-comment or end-of-tag:		
-	    if (ch == '-') {
-		Mark mark = mark();
-		if (((ch = nextChar()) == '>')
-		        || ((ch == '-') && (nextChar() == '>'))) {
-		    reset(mark);
-		    return true;
-		} else {
-		    reset(mark);
-		    return false;
-		}
-	    }
-	    return false;
-	} else {
-	    return true;
-	}
+        if (! isSpace()) {
+            int ch = peekChar();
+            // Look for a single-char work delimiter:
+            if (ch == '=' || ch == '>' || ch == '"' || ch == '\''
+                    || ch == '/') {
+                return true;
+            }
+            // Look for an end-of-comment or end-of-tag:                
+            if (ch == '-') {
+                Mark mark = mark();
+                if (((ch = nextChar()) == '>')
+                        || ((ch == '-') && (nextChar() == '>'))) {
+                    reset(mark);
+                    return true;
+                } else {
+                    reset(mark);
+                    return false;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void setSingleFile(boolean val) {

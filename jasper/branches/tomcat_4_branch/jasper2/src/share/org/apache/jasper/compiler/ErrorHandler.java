@@ -85,7 +85,7 @@ public interface ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String fname, int line, int column, String msg,
-			 Exception exception) throws JasperException;
+                         Exception exception) throws JasperException;
 
     /**
      * Processes the given JSP parse error.
@@ -94,7 +94,7 @@ public interface ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String msg, Exception exception)
-	throws JasperException;
+        throws JasperException;
 
     /**
      * Processes the given javac compilation errors.
@@ -103,5 +103,5 @@ public interface ErrorHandler {
      * compilation errors
      */
     public void javacError(JavacErrorDetail[] details)
-	throws JasperException;
+        throws JasperException;
 }

@@ -166,7 +166,7 @@ public class JspServletWrapper {
     public void service(HttpServletRequest request, 
                         HttpServletResponse response,
                         boolean precompile)
-	    throws ServletException, IOException, FileNotFoundException {
+            throws ServletException, IOException, FileNotFoundException {
         try {
 
             if (ctxt.isRemoved()) {
@@ -240,7 +240,7 @@ public class JspServletWrapper {
                 } catch (IllegalStateException ise) {
                     Constants.jasperLog.log(
                         Constants.getString("jsp.error.file.not.found",
-			                    new Object[] { ex.getMessage() }),
+                                            new Object[] { ex.getMessage() }),
                         ex, Logger.ERROR);
                 }
             }

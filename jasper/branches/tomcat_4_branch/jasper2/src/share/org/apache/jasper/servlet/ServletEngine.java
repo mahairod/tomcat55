@@ -66,9 +66,9 @@ import javax.servlet.ServletContext;
  * Simple class to factor out servlet runner dependencies from the JSP
  * engine. There's a few motivations here: 
  *
- *	(a) ability for the JSP engine to be able to run on multiple
+ *        (a) ability for the JSP engine to be able to run on multiple
  *          servlet engines - 2.1 and 2.2
- *	(b) ability for the JSP engine to take advantage of specific
+ *        (b) ability for the JSP engine to take advantage of specific
  *          servlet engines; this is crucial from a J2EE point of
  *          view. 
  *

@@ -77,7 +77,7 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param err Error dispatcher for localization support
      */
     DefaultErrorHandler(ErrorDispatcher err) {
-	this.err = err;
+        this.err = err;
     }
 
     /*
@@ -90,9 +90,9 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String fname, int line, int column, String errMsg,
-			 Exception ex) throws JasperException {
-	throw new JasperException(fname + "(" + line + "," + column + ")"
-				  + " " + errMsg, ex);
+                         Exception ex) throws JasperException {
+        throw new JasperException(fname + "(" + line + "," + column + ")"
+                                  + " " + errMsg, ex);
     }
 
     /*
@@ -102,7 +102,7 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String errMsg, Exception ex) throws JasperException {
-	throw new JasperException(errMsg, ex);
+        throw new JasperException(errMsg, ex);
     }
 
     /*
@@ -113,21 +113,21 @@ class DefaultErrorHandler implements ErrorHandler {
      */
     public void javacError(JavacErrorDetail[] details) throws JasperException {
 
-	Object[] args = null;
+        Object[] args = null;
         StringBuffer buf = new StringBuffer();
-	
-	for (int i=0; i<details.length; i++) {
-	    args = new Object[] {
-		new Integer(details[i].getJspBeginLineNumber()), 
-		details[i].getJspFileName()
-	    };
-	    buf.append(err.getString("jsp.error.single.line.number", args));
-	    buf.append(err.getString("jsp.error.corresponding.servlet"));
-	    buf.append(details[i].getErrorMessage());
-	    buf.append('\n');
-	}
+        
+        for (int i=0; i<details.length; i++) {
+            args = new Object[] {
+                new Integer(details[i].getJspBeginLineNumber()), 
+                details[i].getJspFileName()
+            };
+            buf.append(err.getString("jsp.error.single.line.number", args));
+            buf.append(err.getString("jsp.error.corresponding.servlet"));
+            buf.append(details[i].getErrorMessage());
+            buf.append('\n');
+        }
 
-	throw new JasperException(err.getString("jsp.error.unable.compile")
-				  + buf);
+        throw new JasperException(err.getString("jsp.error.unable.compile")
+                                  + buf);
     }
 }

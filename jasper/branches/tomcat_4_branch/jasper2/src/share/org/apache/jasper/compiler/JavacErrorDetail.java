@@ -87,15 +87,15 @@ public class JavacErrorDetail {
      * @param errMsg The compilation error message
      */
     public JavacErrorDetail(String javaFileName,
-			    int javaLineNum,
-			    String jspFileName,
-			    int jspBeginLineNum,
-			    String errMsg) {
-	this.javaFileName = javaFileName;
-	this.javaLineNum = javaLineNum;
-	this.jspFileName = jspFileName;
-	this.jspBeginLineNum = jspBeginLineNum;
-	this.errMsg = errMsg;
+                            int javaLineNum,
+                            String jspFileName,
+                            int jspBeginLineNum,
+                            String errMsg) {
+        this.javaFileName = javaFileName;
+        this.javaLineNum = javaLineNum;
+        this.jspFileName = jspFileName;
+        this.jspBeginLineNum = jspBeginLineNum;
+        this.errMsg = errMsg;
     }
 
     /**
@@ -105,7 +105,7 @@ public class JavacErrorDetail {
      * @return Java source file name
      */
     public String getJavaFileName() {
-	return this.javaFileName;
+        return this.javaFileName;
     }
 
     /**
@@ -114,7 +114,7 @@ public class JavacErrorDetail {
      * @return Compilation error line number
      */
     public int getJavaLineNumber() {
-	return this.javaLineNum;
+        return this.javaLineNum;
     }
 
     /**
@@ -124,7 +124,7 @@ public class JavacErrorDetail {
      * @return JSP file from which the Java source file was generated.
      */
     public String getJspFileName() {
-	return this.jspFileName;
+        return this.jspFileName;
     }
 
     /**
@@ -135,7 +135,7 @@ public class JavacErrorDetail {
      * compilation error
      */
     public int getJspBeginLineNumber() {
-	return this.jspBeginLineNum;
+        return this.jspBeginLineNum;
     }
 
     /**
@@ -144,6 +144,6 @@ public class JavacErrorDetail {
      * @return Compilation error message
      */
     public String getErrorMessage() {
-	return this.errMsg;
+        return this.errMsg;
     }
 }

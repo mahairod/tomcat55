@@ -210,12 +210,12 @@ public class JspC implements Options {
      * Are we supporting HTML mapped servlets?
      */
     public boolean getMappedFile() {
-		return mappedFile;
+                return mappedFile;
     }
 
     // Off-line compiler, no need for security manager
     public Object getProtectionDomain() {
-	return null;
+        return null;
     }
     
     public boolean getSendErrorToClient() {
@@ -288,11 +288,11 @@ public class JspC implements Options {
 
 
     public TldLocationsCache getTldLocationsCache() {
-	return tldLocationsCache;
+        return tldLocationsCache;
     }
 
     public String getJavaEncoding() {
-	return "UTF-8";
+        return "UTF-8";
     }
 
     public boolean getFork() {
@@ -580,8 +580,8 @@ public class JspC implements Options {
             Constants.message("jspc.error.generalException", 
                     new Object[] {file, e}, Logger.ERROR);
             if ( listErrors ) {
-	        log.println( "Error in File: " + file );
-		return true;
+                log.println( "Error in File: " + file );
+                return true;
             } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
             }
@@ -940,7 +940,7 @@ public class JspC implements Options {
      * @param log
      */
     public static void setLog( PrintStream log ) {
-	    JspC.log = log;
+            JspC.log = log;
     }
 
 
@@ -988,23 +988,23 @@ public class JspC implements Options {
     private String toPackageName(String jspUri) {
         StringBuffer modifiedPackageName = new StringBuffer();
         int iSep = jspUri.lastIndexOf('/');
-	// Start after the first slash
+        // Start after the first slash
         int nameStart = 1;
-	for (int i = 1; i < iSep; i++) {
-	    char ch = jspUri.charAt(i);
-	    if (Character.isJavaIdentifierPart(ch)) {
-		modifiedPackageName.append(ch);
-	    }
-	    else if (ch == '/') {
+        for (int i = 1; i < iSep; i++) {
+            char ch = jspUri.charAt(i);
+            if (Character.isJavaIdentifierPart(ch)) {
+                modifiedPackageName.append(ch);
+            }
+            else if (ch == '/') {
                 if (isJavaKeyword(jspUri.substring(nameStart, i))) {
                     modifiedPackageName.append('_');
                 }
                 nameStart = i+1;
-		modifiedPackageName.append('.');
-	    } else {
-		modifiedPackageName.append(mangleChar(ch));
-	    }
-	}
+                modifiedPackageName.append('.');
+            } else {
+                modifiedPackageName.append(mangleChar(ch));
+            }
+        }
         if (nameStart < iSep && isJavaKeyword(jspUri.substring(nameStart, iSep))) {
             modifiedPackageName.append('_');
         }
@@ -1020,17 +1020,17 @@ public class JspC implements Options {
      */
     private String mangleChar(char ch) {
 
-	String s = Integer.toHexString(ch);
-	int nzeros = 5 - s.length();
-	char[] result = new char[6];
-	result[0] = '_';
-	for (int i = 1; i <= nzeros; i++) {
-	    result[i] = '0';
+        String s = Integer.toHexString(ch);
+        int nzeros = 5 - s.length();
+        char[] result = new char[6];
+        result[0] = '_';
+        for (int i = 1; i <= nzeros; i++) {
+            result[i] = '0';
         }
-	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
-	    result[i] = s.charAt(j);
+        for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
+            result[i] = s.charAt(j);
         }
-	return new String(result);
+        return new String(result);
     }
 
 

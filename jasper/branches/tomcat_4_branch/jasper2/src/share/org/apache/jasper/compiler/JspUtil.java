@@ -102,17 +102,17 @@ public class JspUtil {
     private static EntityResolver entityResolver = new MyEntityResolver();
 
     public static char[] removeQuotes(char []chars) {
-	CharArrayWriter caw = new CharArrayWriter();
-	for (int i = 0; i < chars.length; i++) {
-	    if (chars[i] == '%' && chars[i+1] == '\\' &&
-		chars[i+2] == '\\' && chars[i+3] == '>') {
-		caw.write('%');
-		caw.write('>');
-		i = i + 3;
-	    }
-	    else caw.write(chars[i]);
-	}
-	return caw.toCharArray();
+        CharArrayWriter caw = new CharArrayWriter();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '%' && chars[i+1] == '\\' &&
+                chars[i+2] == '\\' && chars[i+3] == '>') {
+                caw.write('%');
+                caw.write('>');
+                i = i + 3;
+            }
+            else caw.write(chars[i]);
+        }
+        return caw.toCharArray();
     }
 
     public static char[] escapeQuotes (char []chars) {
@@ -155,20 +155,20 @@ public class JspUtil {
      * return whether the token is a runtime expression or not.
      */
     public static boolean isExpression(String token, boolean isXml) {
-	String openExpr;
-	String closeExpr;
-	if (isXml) {
-	    openExpr = OPEN_EXPR_XML;
-	    closeExpr = CLOSE_EXPR_XML;
-	} else {
-	    openExpr = OPEN_EXPR;
-	    closeExpr = CLOSE_EXPR;
-	}
-	if (token.startsWith(openExpr) && token.endsWith(closeExpr)) {
-	    return true;
-	} else {
-	    return false;
-	}
+        String openExpr;
+        String closeExpr;
+        if (isXml) {
+            openExpr = OPEN_EXPR_XML;
+            closeExpr = CLOSE_EXPR_XML;
+        } else {
+            openExpr = OPEN_EXPR;
+            closeExpr = CLOSE_EXPR;
+        }
+        if (token.startsWith(openExpr) && token.endsWith(closeExpr)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -176,25 +176,25 @@ public class JspUtil {
      * taking the delimiters out.
      */
     public static String getExpr (String expression, boolean isXml) {
-	String returnString;
-	String openExpr;
-	String closeExpr;
-	if (isXml) {
-	    openExpr = OPEN_EXPR_XML;
-	    closeExpr = CLOSE_EXPR_XML;
-	} else {
-	    openExpr = OPEN_EXPR;
-	    closeExpr = CLOSE_EXPR;
-	}
-	int length = expression.length();
-	if (expression.startsWith(openExpr) && 
+        String returnString;
+        String openExpr;
+        String closeExpr;
+        if (isXml) {
+            openExpr = OPEN_EXPR_XML;
+            closeExpr = CLOSE_EXPR_XML;
+        } else {
+            openExpr = OPEN_EXPR;
+            closeExpr = CLOSE_EXPR;
+        }
+        int length = expression.length();
+        if (expression.startsWith(openExpr) && 
                 expression.endsWith(closeExpr)) {
-	    returnString = expression.substring(
+            returnString = expression.substring(
                                openExpr.length(), length - closeExpr.length());
-	} else {
-	    returnString = "";
-	}
-	return returnString;
+        } else {
+            returnString = "";
+        }
+        return returnString;
     }
 
     /**
@@ -220,9 +220,9 @@ public class JspUtil {
      * @deprecated Use ParserUtils.parseXMLDocument() instead
      */
     public static Document parseXMLDoc(String uri, InputStream in) 
-	throws JasperException 
+        throws JasperException 
     {
-	return parseXMLDocJaxp(uri, in);
+        return parseXMLDocJaxp(uri, in);
     }
 
     /**
@@ -233,123 +233,123 @@ public class JspUtil {
      * @deprecated Use ParserUtils.parseXMLDocument() instead
      */
     public static Document parseXMLDocJaxp(String uri, InputStream in)
-	throws JasperException
+        throws JasperException
     {
-	try {
-	    Document doc;
-	    DocumentBuilderFactory docFactory = 
-		DocumentBuilderFactory.newInstance();
-	    docFactory.setValidating(true);
-	    docFactory.setNamespaceAware(true);
-	    DocumentBuilder builder = docFactory.newDocumentBuilder();
-	    builder.setEntityResolver(entityResolver);
-	    builder.setErrorHandler(errorHandler);
-	    doc = builder.parse(in);
-	    return doc;
-	} catch (ParserConfigurationException ex) {
-            throw new JasperException(
-	        Constants.getString("jsp.error.parse.xml",
-				    new Object[]{uri, ex.getMessage()}));
-	} catch (SAXParseException ex) {
-            throw new JasperException(
-	        Constants.getString("jsp.error.parse.xml.line",
-				    new Object[]{uri,
-						 new Integer(ex.getLineNumber()),
-						 new Integer(ex.getColumnNumber()),
-						 ex.getMessage()}));
-	} catch (SAXException sx) {
+        try {
+            Document doc;
+            DocumentBuilderFactory docFactory = 
+                DocumentBuilderFactory.newInstance();
+            docFactory.setValidating(true);
+            docFactory.setNamespaceAware(true);
+            DocumentBuilder builder = docFactory.newDocumentBuilder();
+            builder.setEntityResolver(entityResolver);
+            builder.setErrorHandler(errorHandler);
+            doc = builder.parse(in);
+            return doc;
+        } catch (ParserConfigurationException ex) {
             throw new JasperException(
                 Constants.getString("jsp.error.parse.xml",
-				    new Object[]{uri, sx.getMessage()}));
+                                    new Object[]{uri, ex.getMessage()}));
+        } catch (SAXParseException ex) {
+            throw new JasperException(
+                Constants.getString("jsp.error.parse.xml.line",
+                                    new Object[]{uri,
+                                                 new Integer(ex.getLineNumber()),
+                                                 new Integer(ex.getColumnNumber()),
+                                                 ex.getMessage()}));
+        } catch (SAXException sx) {
+            throw new JasperException(
+                Constants.getString("jsp.error.parse.xml",
+                                    new Object[]{uri, sx.getMessage()}));
         } catch (IOException io) {
             throw new JasperException(
                 Constants.getString("jsp.error.parse.xml",
-				    new Object[]{uri, io.toString()}));
-	}
+                                    new Object[]{uri, io.toString()}));
+        }
     }
 
     public static void checkAttributes(String typeOfTag,
-				       Attributes attrs,
-				       ValidAttribute[] validAttributes,
-				       Mark start,
-				       ErrorDispatcher err)
-	                        throws JasperException {
-	boolean valid = true;
+                                       Attributes attrs,
+                                       ValidAttribute[] validAttributes,
+                                       Mark start,
+                                       ErrorDispatcher err)
+                                throws JasperException {
+        boolean valid = true;
         // AttributesImpl.removeAttribute is broken, so we do this...
         int tempLength = attrs.getLength();
-	Vector temp = new Vector(tempLength, 1);
+        Vector temp = new Vector(tempLength, 1);
         for (int i = 0; i < tempLength; i++) {
             String qName = attrs.getQName(i);
             if ((!qName.equals("xmlns")) && (!qName.startsWith("xmlns:")))
                 temp.addElement(qName);
         }
 
-	/*
-	 * First check to see if all the mandatory attributes are present.
-	 * If so only then proceed to see if the other attributes are valid
-	 * for the particular tag.
-	 */
-	String missingAttribute = null;
+        /*
+         * First check to see if all the mandatory attributes are present.
+         * If so only then proceed to see if the other attributes are valid
+         * for the particular tag.
+         */
+        String missingAttribute = null;
 
-	for (int i = 0; i < validAttributes.length; i++) {
-	    int attrPos;    
-	    if (validAttributes[i].mandatory) {
+        for (int i = 0; i < validAttributes.length; i++) {
+            int attrPos;    
+            if (validAttributes[i].mandatory) {
                 attrPos = temp.indexOf(validAttributes[i].name);
-	        if (attrPos != -1) {
-	            temp.remove(attrPos);
-		    valid = true;
-		} else {
-		    valid = false;
-		    missingAttribute = validAttributes[i].name;
-		    break;
-		}
-	    }
-	}
+                if (attrPos != -1) {
+                    temp.remove(attrPos);
+                    valid = true;
+                } else {
+                    valid = false;
+                    missingAttribute = validAttributes[i].name;
+                    break;
+                }
+            }
+        }
 
-	// If mandatory attribute is missing then the exception is thrown
-	if (!valid)
-	    err.jspError(start, "jsp.error.mandatory.attribute", typeOfTag,
-			 missingAttribute);
+        // If mandatory attribute is missing then the exception is thrown
+        if (!valid)
+            err.jspError(start, "jsp.error.mandatory.attribute", typeOfTag,
+                         missingAttribute);
 
-	// Check to see if there are any more attributes for the specified tag.
+        // Check to see if there are any more attributes for the specified tag.
         int attrLeftLength = temp.size();
-	if (attrLeftLength == 0)
-	    return;
+        if (attrLeftLength == 0)
+            return;
 
-	// Now check to see if the rest of the attributes are valid too.
-	String attribute = null;
+        // Now check to see if the rest of the attributes are valid too.
+        String attribute = null;
 
-	for (int j = 0; j < attrLeftLength; j++) {
-	    valid = false;
-	    attribute = (String) temp.elementAt(j);
-	    for (int i = 0; i < validAttributes.length; i++) {
-	        if (attribute.equals(validAttributes[i].name)) {
-		    valid = true;
-		    break;
-		}
-	    }
-	    if (!valid)
-	        err.jspError(start, "jsp.error.invalid.attribute", typeOfTag,
-			     attribute);
-	}
+        for (int j = 0; j < attrLeftLength; j++) {
+            valid = false;
+            attribute = (String) temp.elementAt(j);
+            for (int i = 0; i < validAttributes.length; i++) {
+                if (attribute.equals(validAttributes[i].name)) {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid)
+                err.jspError(start, "jsp.error.invalid.attribute", typeOfTag,
+                             attribute);
+        }
     }
     
     public static String escapeQueryString(String unescString) {
-	if ( unescString == null )
-	    return null;
-	
-	String escString    = "";
-	String shellSpChars = "\\\"";
-	
-	for(int index=0; index<unescString.length(); index++) {
-	    char nextChar = unescString.charAt(index);
-	    
-	    if( shellSpChars.indexOf(nextChar) != -1 )
-		escString += "\\";
-	    
-	    escString += nextChar;
-	}
-	return escString;
+        if ( unescString == null )
+            return null;
+        
+        String escString    = "";
+        String shellSpChars = "\\\"";
+        
+        for(int index=0; index<unescString.length(); index++) {
+            char nextChar = unescString.charAt(index);
+            
+            if( shellSpChars.indexOf(nextChar) != -1 )
+                escString += "\\";
+            
+            escString += nextChar;
+        }
+        return escString;
     }
  
     /**
@@ -382,39 +382,39 @@ public class JspUtil {
      * given string.
      */
     public static String replace(String name, char replace, String with) {
-	StringBuffer buf = new StringBuffer();
-	int begin = 0;
-	int end;
-	int last = name.length();
+        StringBuffer buf = new StringBuffer();
+        int begin = 0;
+        int end;
+        int last = name.length();
 
-	while (true) {
-	    end = name.indexOf(replace, begin);
-	    if (end < 0) {
-		end = last;
-	    }
-	    buf.append(name.substring(begin, end));
-	    if (end == last) {
-		break;
-	    }
-	    buf.append(with);
-	    begin = end + 1;
-	}
-	
-	return buf.toString();
+        while (true) {
+            end = name.indexOf(replace, begin);
+            if (end < 0) {
+                end = last;
+            }
+            buf.append(name.substring(begin, end));
+            if (end == last) {
+                break;
+            }
+            buf.append(with);
+            begin = end + 1;
+        }
+        
+        return buf.toString();
     }
 
     public static class ValidAttribute {
-   	String name;
-	boolean mandatory;
+           String name;
+        boolean mandatory;
 
-	public ValidAttribute (String name, boolean mandatory) {
-	    this.name = name;
-	    this.mandatory = mandatory;
-	}
+        public ValidAttribute (String name, boolean mandatory) {
+            this.name = name;
+            this.mandatory = mandatory;
+        }
 
-	public ValidAttribute (String name) {
-	    this (name, false);
-	}
+        public ValidAttribute (String name) {
+            this (name, false);
+        }
     }
     
     public static Hashtable attrsToHashtable(Attributes attrs) {
@@ -436,15 +436,15 @@ public class JspUtil {
      *  element.
      */
     public static String getElementChildTextData(Element e) {
-	String s = null;
-	Text t = (Text)e.getFirstChild();
-	if (t != null) {
-	    s = t.getData();
-	    if (s != null) {
-		s = s.trim();
-	    }
-	}
-	return s;
+        String s = null;
+        Text t = (Text)e.getFirstChild();
+        if (t != null) {
+            s = t.getData();
+            if (s != null) {
+                s = s.trim();
+            }
+        }
+        return s;
     }
 
     /**
@@ -458,61 +458,61 @@ public class JspUtil {
      * @return the boolean value associated with the string s
      */
     public static boolean booleanValue(String s) {
-	boolean b = false;
-	if (s != null) {
-	    if (s.equalsIgnoreCase("yes")) {
-		b = true;
-	    } else {
-		b = Boolean.valueOf(s).booleanValue();
-	    }
-	}
-	return b;
+        boolean b = false;
+        if (s != null) {
+            if (s.equalsIgnoreCase("yes")) {
+                b = true;
+            } else {
+                b = Boolean.valueOf(s).booleanValue();
+            }
+        }
+        return b;
     }
 }
 
 class MyEntityResolver implements EntityResolver {
     public InputSource resolveEntity(String publicId, String systemId)
-	throws SAXException
+        throws SAXException
     {
-	for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
-	    String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
-	    if (cachedDtdPublicId.equals(publicId)) {
-		String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
-		InputStream input =
-		    this.getClass().getResourceAsStream(resourcePath);
-		if (input == null) {
-		    throw new SAXException(
+        for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
+            String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
+            if (cachedDtdPublicId.equals(publicId)) {
+                String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
+                InputStream input =
+                    this.getClass().getResourceAsStream(resourcePath);
+                if (input == null) {
+                    throw new SAXException(
                         Constants.getString("jsp.error.internal.filenotfound", 
-					    new Object[]{resourcePath}));
-		}
-		InputSource isrc =
-		    new InputSource(input);
-		return isrc;
-	    }
-	}
-	Constants.message("jsp.error.parse.xml.invalidPublicId",
-				new Object[]{publicId}, Logger.ERROR);
+                                            new Object[]{resourcePath}));
+                }
+                InputSource isrc =
+                    new InputSource(input);
+                return isrc;
+            }
+        }
+        Constants.message("jsp.error.parse.xml.invalidPublicId",
+                                new Object[]{publicId}, Logger.ERROR);
         return null;
     }
 }
 
 class MyErrorHandler implements ErrorHandler {
     public void warning(SAXParseException ex)
-	throws SAXException
+        throws SAXException
     {
-	// We ignore warnings
+        // We ignore warnings
     }
 
     public void error(SAXParseException ex)
-	throws SAXException
+        throws SAXException
     {
-	throw ex;
+        throw ex;
     }
 
     public void fatalError(SAXParseException ex)
-	throws SAXException
+        throws SAXException
     {
-	throw ex;
+        throw ex;
     }
 }
 

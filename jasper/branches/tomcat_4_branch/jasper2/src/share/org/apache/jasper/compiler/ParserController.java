@@ -124,16 +124,16 @@ public class ParserController {
 
     public ParserController(JspCompilationContext ctxt, Compiler compiler) {
         this.ctxt = ctxt; // @@@ can we assert that ctxt is not null?
-	this.compiler = compiler;
+        this.compiler = compiler;
     }
    
 
     public JspCompilationContext getJspCompilationContext () {
-	return ctxt;
+        return ctxt;
     }
 
     public Compiler getCompiler () {
-	return compiler;
+        return compiler;
     }
 
     //*********************************************************************
@@ -146,8 +146,8 @@ public class ParserController {
      * @param inFileName The name of the JSP file to be parsed.
      */
     public Node.Nodes parse(String inFileName)
-	        throws FileNotFoundException, JasperException {
-	return parse(inFileName, null);
+                throws FileNotFoundException, JasperException {
+        return parse(inFileName, null);
     }
 
     /**
@@ -158,116 +158,116 @@ public class ParserController {
      * @param parent The node for the 'include' directive.
      */
     public Node.Nodes parse(String inFileName, Node parent)
-	        throws FileNotFoundException, JasperException {
+                throws FileNotFoundException, JasperException {
 
-	Node.Nodes parsedPage = null;
+        Node.Nodes parsedPage = null;
         String absFileName = resolveFileName(inFileName);
-	String encoding = topFileEncoding;
+        String encoding = topFileEncoding;
         InputStreamReader reader = null;
         try {
             // Figure out what type of JSP document we are dealing with
             reader = getReader(absFileName, encoding);
             figureOutJspDocument(absFileName, encoding, reader);
-	    if (newEncoding != null)
-		encoding = newEncoding;
-	    if (isTopFile) {
-		// Set the "top level" file encoding that will be used
-		// for all included files where encoding is not defined.
-		topFileEncoding = encoding;
-		isTopFile = false;
-	    } else {
+            if (newEncoding != null)
+                encoding = newEncoding;
+            if (isTopFile) {
+                // Set the "top level" file encoding that will be used
+                // for all included files where encoding is not defined.
+                topFileEncoding = encoding;
+                isTopFile = false;
+            } else {
                 compiler.getPageInfo().addInclude(absFileName);
             }
-	    try {
-		reader.close();
-	    } catch (IOException ex) {
-	    }
+            try {
+                reader.close();
+            } catch (IOException ex) {
+            }
 
             // dispatch to the proper parser
-	    
+            
             reader = getReader(absFileName, encoding);
             if (isXml) {
                 parsedPage = JspDocumentParser.parse(this, absFileName,
-						     reader, parent);
+                                                     reader, parent);
             } else {
-		JspReader r = new JspReader(ctxt, absFileName, encoding,
-					    reader,
-					    compiler.getErrorDispatcher());
+                JspReader r = new JspReader(ctxt, absFileName, encoding,
+                                            reader,
+                                            compiler.getErrorDispatcher());
                 parsedPage = Parser.parse(this, r, parent);
             }
-	    baseDirStack.pop();
+            baseDirStack.pop();
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
-		} catch (Exception any) {
-		}
-	    }
+                } catch (Exception any) {
+                }
+            }
         }
 
-	return parsedPage;
+        return parsedPage;
     }
 
     //*********************************************************************
     // Figure out input Document
 
     private void figureOutJspDocument(String file, 
-				      String encoding,
-				      InputStreamReader reader)
-	 throws JasperException
+                                      String encoding,
+                                      InputStreamReader reader)
+         throws JasperException
     {
-	JspReader jspReader;
-	try {
-	    jspReader = new JspReader(ctxt, file, encoding, reader,
-				      compiler.getErrorDispatcher());
-	} catch (FileNotFoundException ex) {
-	    throw new JasperException(ex);
-	}
+        JspReader jspReader;
+        try {
+            jspReader = new JspReader(ctxt, file, encoding, reader,
+                                      compiler.getErrorDispatcher());
+        } catch (FileNotFoundException ex) {
+            throw new JasperException(ex);
+        }
         jspReader.setSingleFile(true);
         Mark startMark = jspReader.mark();
 
-	// Check for the jsp:root tag
-	// No check for xml prolog, since nothing prevents a page
-	// to output XML and still use JSP syntax.
-	jspReader.reset(startMark);
-	Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
-	if (mark != null) {
-	    isXml = true;
-	} else {
-	    isXml = false;
-	}
+        // Check for the jsp:root tag
+        // No check for xml prolog, since nothing prevents a page
+        // to output XML and still use JSP syntax.
+        jspReader.reset(startMark);
+        Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
+        if (mark != null) {
+            isXml = true;
+        } else {
+            isXml = false;
+        }
 
-	newEncoding = null;
+        newEncoding = null;
 
-	// Figure out the encoding of the page
-	// FIXME: We assume xml parser will take care of
+        // Figure out the encoding of the page
+        // FIXME: We assume xml parser will take care of
         // encoding for page in XML syntax. Correct?
-	if (!isXml) {
-	    jspReader.reset(startMark);
-	    while (jspReader.skipUntil("<%@") != null) {
-		jspReader.skipSpaces();
-		if (jspReader.matches("page")) {
-		    jspReader.skipSpaces();
-		    Attributes attrs = Parser.parseAttributes(this, jspReader);
-		    String attribute = "pageEncoding";
-		    newEncoding = attrs.getValue("pageEncoding");
-		    if (newEncoding == null) {
-			String contentType = attrs.getValue("contentType");
-			if (contentType != null) {
-			    int loc = contentType.indexOf("charset=");
-			    if (loc != -1) {
-				newEncoding = contentType.substring(loc+8);
-				return;
-			    }
-			}
-			if (newEncoding == null)
-			    newEncoding = "ISO-8859-1";
-		    } else {
-			return;
-		    }
-		}
-	    }
-	}
+        if (!isXml) {
+            jspReader.reset(startMark);
+            while (jspReader.skipUntil("<%@") != null) {
+                jspReader.skipSpaces();
+                if (jspReader.matches("page")) {
+                    jspReader.skipSpaces();
+                    Attributes attrs = Parser.parseAttributes(this, jspReader);
+                    String attribute = "pageEncoding";
+                    newEncoding = attrs.getValue("pageEncoding");
+                    if (newEncoding == null) {
+                        String contentType = attrs.getValue("contentType");
+                        if (contentType != null) {
+                            int loc = contentType.indexOf("charset=");
+                            if (loc != -1) {
+                                newEncoding = contentType.substring(loc+8);
+                                return;
+                            }
+                        }
+                        if (newEncoding == null)
+                            newEncoding = "ISO-8859-1";
+                    } else {
+                        return;
+                    }
+                }
+            }
+        }
     }
     
     //*********************************************************************
@@ -284,31 +284,31 @@ public class ParserController {
     private String resolveFileName(String inFileName) {
         String fileName = inFileName.replace('\\', '/');
         boolean isAbsolute = fileName.startsWith("/");
-	fileName = isAbsolute ? fileName 
+        fileName = isAbsolute ? fileName 
             : (String) baseDirStack.peek() + fileName;
-	String baseDir = 
-	    fileName.substring(0, fileName.lastIndexOf("/") + 1);
-	baseDirStack.push(baseDir);
-	return fileName;
+        String baseDir = 
+            fileName.substring(0, fileName.lastIndexOf("/") + 1);
+        baseDirStack.push(baseDir);
+        return fileName;
     }
 
     private InputStreamReader getReader(String file, String encoding)
-	throws FileNotFoundException, JasperException
+        throws FileNotFoundException, JasperException
     {
         InputStream in;
         InputStreamReader reader;
 
-	try {
+        try {
             in = ctxt.getResourceAsStream(file);
             if (in == null) {
                 throw new FileNotFoundException(file);
             }
             return new InputStreamReader(in, encoding);
-	} catch (UnsupportedEncodingException ex) {
-	    throw new JasperException(
+        } catch (UnsupportedEncodingException ex) {
+            throw new JasperException(
                 Constants.getString("jsp.error.unsupported.encoding",
-				    new Object[]{encoding}));
-	}
+                                    new Object[]{encoding}));
+        }
     }
 
     private void p(String s) {

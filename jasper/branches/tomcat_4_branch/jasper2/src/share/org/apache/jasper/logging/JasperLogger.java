@@ -74,65 +74,65 @@ public class JasperLogger extends Logger {
      * Logger.log(...) call.
      */
     class LogEntry {
-	String logName;
-	long date;
-	String message;
-	Throwable t;
-	
-	LogEntry(String message, Throwable t) {
-	    // avoid expensive system call
-	    if (JasperLogger.this.timestamp)
-		this.date = System.currentTimeMillis();
-	    this.message = message;
-	    this.t = t;
-	}
+        String logName;
+        long date;
+        String message;
+        Throwable t;
+        
+        LogEntry(String message, Throwable t) {
+            // avoid expensive system call
+            if (JasperLogger.this.timestamp)
+                this.date = System.currentTimeMillis();
+            this.message = message;
+            this.t = t;
+        }
 
-	/**
-	 * Get the writer into which this log entry needs to be
-	 * written into. 
-	 */
-	Writer getWriter() {
-	    return JasperLogger.this.sink;
-	}
+        /**
+         * Get the writer into which this log entry needs to be
+         * written into. 
+         */
+        Writer getWriter() {
+            return JasperLogger.this.sink;
+        }
 
-	/**
-	 * Format the log message nicely into a string.
-	 */
-	public String toString() {
-	    
-	    StringBuffer val = new StringBuffer();
+        /**
+         * Format the log message nicely into a string.
+         */
+        public String toString() {
+            
+            StringBuffer val = new StringBuffer();
 
-	    // custom output, now with timestamp
-	    // does anyone actually use non-custom logs?
+            // custom output, now with timestamp
+            // does anyone actually use non-custom logs?
 
-	    if( !JasperLogger.this.custom ) {
-		val.append("<");
-		val.append(JasperLogger.this.getName());
-		val.append("> ");
-	    }
+            if( !JasperLogger.this.custom ) {
+                val.append("<");
+                val.append(JasperLogger.this.getName());
+                val.append("> ");
+            }
 
-	    if (JasperLogger.this.timestamp) {
-		formatTimestamp( date, val );
-		val.append(" - ");
-	    }
+            if (JasperLogger.this.timestamp) {
+                formatTimestamp( date, val );
+                val.append(" - ");
+            }
 
-	    if (message != null) {
-		val.append(message);
-	    }
-	    
-	    if (t != null) {
-		val.append(" - ");
-		val.append(throwableToString( t ));
-	    }
+            if (message != null) {
+                val.append(message);
+            }
+            
+            if (t != null) {
+                val.append(" - ");
+                val.append(throwableToString( t ));
+            }
 
-	    if( !JasperLogger.this.custom ) {
-		val.append("</");
-		val.append(JasperLogger.this.getName());
-		val.append("> ");
-	    }
+            if( !JasperLogger.this.custom ) {
+                val.append("</");
+                val.append(JasperLogger.this.getName());
+                val.append("> ");
+            }
 
-	    return val.toString();	    
-	}
+            return val.toString();            
+        }
     }
 
 
@@ -145,20 +145,20 @@ public class JasperLogger extends Logger {
     ServletContext servletContext = null;
 
     public JasperLogger(ServletContext servletContext) {
-	this.servletContext = servletContext;
-	init();
+        this.servletContext = servletContext;
+        init();
     }
 
     public JasperLogger() {
-	init();
+        init();
     }
 
     private void init() {
-	if (logDaemon == null || logQueue == null) {
-	    logQueue = new Queue();
+        if (logDaemon == null || logQueue == null) {
+            logQueue = new Queue();
             LogDaemon logDaemon = new LogDaemon(logQueue, servletContext);
             logDaemon.start();               
-	}
+        }
     }
     
     /**
@@ -166,10 +166,10 @@ public class JasperLogger extends Logger {
      * logger daemon thread will pick it up later and actually print
      * it out.
      * 
-     * @param	message		the message to log.
+     * @param        message                the message to log.
      */
     protected void realLog(String message) {
-	logQueue.put(new LogEntry(message, null));
+        logQueue.put(new LogEntry(message, null));
     }
     
     /**
@@ -177,22 +177,22 @@ public class JasperLogger extends Logger {
      * immediately. The logger daemon thread will pick it up later and
      * actually print it out. 
      *
-     * @param	message		the message to log. 
-     * @param	t		the exception that was thrown.
+     * @param        message                the message to log. 
+     * @param        t                the exception that was thrown.
      */
     protected void realLog(String message, Throwable t) {
-	logQueue.put(new LogEntry(message, t));
+        logQueue.put(new LogEntry(message, t));
     }
     
     /**
      * Flush the log. 
      */
     public void flush() {
-	logDaemon.flush();
+        logDaemon.flush();
     }
 
     public String toString() {
-	return "JasperLogger(" + getName() + ", " + getPath() + ")";
+        return "JasperLogger(" + getName() + ", " + getPath() + ")";
     }
     
 }
@@ -203,49 +203,49 @@ public class JasperLogger extends Logger {
  */
 class LogDaemon extends Thread {
     LogDaemon(Queue logQueue, ServletContext servletContext) {
-	this.logQueue = logQueue;
-	this.servletContext = servletContext;
-	setDaemon(true);
+        this.logQueue = logQueue;
+        this.servletContext = servletContext;
+        setDaemon(true);
     }
 
     static char[] newline;
     static String separator;
     static {
-	separator = System.getProperty("line.separator", "\n");
-	newline = separator.toCharArray();
+        separator = System.getProperty("line.separator", "\n");
+        newline = separator.toCharArray();
     }
     
     Runnable flusher = new Runnable() {
-	public void run() {
-	    do {
-		JasperLogger.LogEntry logEntry =
-		    (JasperLogger.LogEntry) LogDaemon.this.logQueue.pull();
-		if (servletContext != null) {
-		    servletContext.log(logEntry.toString());
-		    servletContext.log(separator);
-		} else {
-		    Writer writer = logEntry.getWriter();
-		    if (writer != null) {
-			try {
-			    writer.write(logEntry.toString());
-			    writer.write(newline);
-			    writer.flush();
-			} catch (Exception ex) { // IOException
-			    ex.printStackTrace(); // nowhere else to write it
-			}
-		    }
-		}
-	    } while (!LogDaemon.this.logQueue.isEmpty());
-	}};
+        public void run() {
+            do {
+                JasperLogger.LogEntry logEntry =
+                    (JasperLogger.LogEntry) LogDaemon.this.logQueue.pull();
+                if (servletContext != null) {
+                    servletContext.log(logEntry.toString());
+                    servletContext.log(separator);
+                } else {
+                    Writer writer = logEntry.getWriter();
+                    if (writer != null) {
+                        try {
+                            writer.write(logEntry.toString());
+                            writer.write(newline);
+                            writer.flush();
+                        } catch (Exception ex) { // IOException
+                            ex.printStackTrace(); // nowhere else to write it
+                        }
+                    }
+                }
+            } while (!LogDaemon.this.logQueue.isEmpty());
+        }};
 
     public void run() {
-	while (true)
-	    flusher.run();
+        while (true)
+            flusher.run();
     }
 
     public void flush() {
-	Thread workerThread = new Thread(flusher);
-	workerThread.start();
+        Thread workerThread = new Thread(flusher);
+        workerThread.start();
     }
 
     private Queue logQueue;

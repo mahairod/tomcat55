@@ -88,24 +88,24 @@ public class ServletResponseWrapperInclude
     PrintWriter printWriter;
 
     public ServletResponseWrapperInclude(ServletResponse response, 
-					 JspWriter jspWriter) 
+                                         JspWriter jspWriter) 
     {
-	super((HttpServletResponse)response);
-	this.printWriter = new PrintWriter(jspWriter);
+        super((HttpServletResponse)response);
+        this.printWriter = new PrintWriter(jspWriter);
     }
 
     /**
      * Returns a wrapper around the JspWriter of the including page.
      */
     public java.io.PrintWriter getWriter()
-	throws java.io.IOException 
+        throws java.io.IOException 
     {
-	return printWriter;
+        return printWriter;
     }
 
     public ServletOutputStream getOutputStream()
-	throws java.io.IOException
+        throws java.io.IOException
     {
-	throw new IllegalStateException();
+        throw new IllegalStateException();
     }
 }

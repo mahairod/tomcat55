@@ -82,7 +82,7 @@ class PageInfo {
     private String xtends = Constants.JSP_SERVLET_BASE;
     private String contentType = null;
     private boolean session = true;
-    private int buffer = 8*1024;	// XXX confirm
+    private int buffer = 8*1024;        // XXX confirm
     private boolean autoFlush = true;
     private boolean threadSafe = true;
     private boolean isErrorPage = false;
@@ -92,22 +92,22 @@ class PageInfo {
     private boolean scriptless = false;
 
     PageInfo(BeanRepository beanRepository) {
-	this.beanRepository = beanRepository;
-	this.tagLibraries = new Hashtable();
-	this.imports = new Vector();
+        this.beanRepository = beanRepository;
+        this.tagLibraries = new Hashtable();
+        this.imports = new Vector();
         this.includes = new Vector();
 
-	// Enter standard imports
-	for(int i = 0; i < Constants.STANDARD_IMPORTS.length; i++)
-	    imports.add(Constants.STANDARD_IMPORTS[i]);
+        // Enter standard imports
+        for(int i = 0; i < Constants.STANDARD_IMPORTS.length; i++)
+            imports.add(Constants.STANDARD_IMPORTS[i]);
     }
 
     public void addImports(List imports) {
-	this.imports.addAll(imports);
+        this.imports.addAll(imports);
     }
 
     public List getImports() {
-	return imports;
+        return imports;
     }
 
     public void addInclude(String include) {
@@ -119,91 +119,91 @@ class PageInfo {
     }
 
     public BeanRepository getBeanRepository() {
-	return beanRepository;
+        return beanRepository;
     }
 
     public Hashtable getTagLibraries() {
-	return tagLibraries;
+        return tagLibraries;
     }
 
     public String getLanguage() {
-	return language;
+        return language;
     }
 
     public void setLanguage(String language) {
-	this.language = language;
+        this.language = language;
     }
 
     public String getExtends() {
-	return xtends;
+        return xtends;
     }
 
     public void setExtends(String xtends) {
-	this.xtends = xtends;
+        this.xtends = xtends;
     }
 
     public String getContentType() {
-	return contentType;
+        return contentType;
     }
 
     public void setContentType(String contentType) {
-	this.contentType = contentType;
+        this.contentType = contentType;
     }
 
     public String getErrorPage() {
-	return errorPage;
+        return errorPage;
     }
 
     public void setErrorPage(String errorPage) {
-	this.errorPage = errorPage;
+        this.errorPage = errorPage;
     }
 
     public int getBuffer() {
-	return buffer;
+        return buffer;
     }
 
     public void setBuffer(int buffer) {
-	this.buffer = buffer;
+        this.buffer = buffer;
     }
 
     public boolean isSession() {
-	return session;
+        return session;
     }
 
     public void setSession(boolean session) {
-	this.session = session;
+        this.session = session;
     }
 
     public boolean isAutoFlush() {
-	return autoFlush;
+        return autoFlush;
     }
 
     public void setAutoFlush(boolean autoFlush) {
-	this.autoFlush = autoFlush;
+        this.autoFlush = autoFlush;
     }
 
     public boolean isThreadSafe() {
-	return threadSafe;
+        return threadSafe;
     }
 
     public void setThreadSafe(boolean threadSafe) {
-	this.threadSafe = threadSafe;
+        this.threadSafe = threadSafe;
     }
 
     public boolean isIsErrorPage() {
-	return isErrorPage;
+        return isErrorPage;
     }
 
     public void setIsErrorPage(boolean isErrorPage) {
-	this.isErrorPage = isErrorPage;
+        this.isErrorPage = isErrorPage;
     }
 
     public void setPageEncoding(String pageEncoding) {
-	this.pageEncoding = pageEncoding;
+        this.pageEncoding = pageEncoding;
     }
 
     public String getPageEncoding() {
-	return pageEncoding;
+        return pageEncoding;
     }
 
     public int getMaxTagNesting() {
@@ -215,11 +215,11 @@ class PageInfo {
     }
 
     public void setScriptless(boolean s) {
-	scriptless = s;
+        scriptless = s;
     }
 
     public boolean isScriptless() {
-	return scriptless;
+        return scriptless;
     }
 
 }

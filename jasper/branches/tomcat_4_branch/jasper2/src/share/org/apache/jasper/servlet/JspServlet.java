@@ -105,17 +105,17 @@ public class JspServlet extends HttpServlet {
     private JspRuntimeContext rctxt;
 
     public void init(ServletConfig config)
-	throws ServletException {
+        throws ServletException {
 
-	super.init(config);
-	this.config = config;
-	this.context = config.getServletContext();
+        super.init(config);
+        this.config = config;
+        this.context = config.getServletContext();
         
-	// Setup logging 
+        // Setup logging 
         Constants.jasperLog = new DefaultLogger(this.context);
-	Constants.jasperLog.setName("JASPER_LOG");
-	Constants.jasperLog.setTimestamp("false");
-	Constants.jasperLog.setVerbosityLevel(
+        Constants.jasperLog.setName("JASPER_LOG");
+        Constants.jasperLog.setTimestamp("false");
+        Constants.jasperLog.setVerbosityLevel(
             config.getInitParameter("logVerbosityLevel"));
         loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
 
@@ -124,7 +124,7 @@ public class JspServlet extends HttpServlet {
         // Initialize the JSP Runtime Context
         rctxt = new JspRuntimeContext(context,options);
 
-	Constants.message("jsp.message.scratch.dir.is", 
+        Constants.message("jsp.message.scratch.dir.is", 
             new Object[] { options.getScratchDir().toString() },
             Logger.INFORMATION );
         Constants.message("jsp.message.dont.modify.servlets",
@@ -186,17 +186,17 @@ public class JspServlet extends HttpServlet {
     
 
     public void service (HttpServletRequest request, 
-    			 HttpServletResponse response)
-	throws ServletException, IOException {
+                             HttpServletResponse response)
+        throws ServletException, IOException {
 
-	try {
+        try {
             String includeUri 
                 = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
 
             String jspUri;
 
             if (includeUri == null) {
-		jspUri = request.getServletPath();
+                jspUri = request.getServletPath();
             } else {
                 jspUri = includeUri;
             }
@@ -207,47 +207,47 @@ public class JspServlet extends HttpServlet {
 
             boolean precompile = preCompile(request);
 
-	    Logger jasperLog = Constants.jasperLog;
-	    
+            Logger jasperLog = Constants.jasperLog;
+            
             if (jasperLog != null
-		    && jasperLog.matchVerbosityLevel(Logger.INFORMATION))
-		{
-		    jasperLog.log("JspEngine --> "+jspUri);
-		    jasperLog.log("\t     ServletPath: " +
+                    && jasperLog.matchVerbosityLevel(Logger.INFORMATION))
+                {
+                    jasperLog.log("JspEngine --> "+jspUri);
+                    jasperLog.log("\t     ServletPath: " +
                                   request.getServletPath());
-		    jasperLog.log("\t        PathInfo: " +
+                    jasperLog.log("\t        PathInfo: " +
                                   request.getPathInfo());
-		    jasperLog.log("\t        RealPath: " +
+                    jasperLog.log("\t        RealPath: " +
                                   context.getRealPath(jspUri));
-		    jasperLog.log("\t      RequestURI: " +
+                    jasperLog.log("\t      RequestURI: " +
                                   request.getRequestURI());
-		    jasperLog.log("\t     QueryString: " +
+                    jasperLog.log("\t     QueryString: " +
                                   request.getQueryString());
-		    jasperLog.log("\t  Request Params: ");
-		    Enumeration e = request.getParameterNames();
-		    while (e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			jasperLog.log("\t\t " + name + " = " +
+                    jasperLog.log("\t  Request Params: ");
+                    Enumeration e = request.getParameterNames();
+                    while (e.hasMoreElements()) {
+                        String name = (String) e.nextElement();
+                        jasperLog.log("\t\t " + name + " = " +
                                       request.getParameter(name));
-		    }
-		}
+                    }
+                }
             serviceJspFile(request, response, jspUri, null, precompile);
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (ServletException e) {
-	    throw e;
-	} catch (IOException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    throw new ServletException(e);
-	}
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (ServletException e) {
+            throw e;
+        } catch (IOException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ServletException(e);
+        }
 
     }
 
     public void destroy() {
 
-	if (Constants.jasperLog != null)
-	    Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
+        if (Constants.jasperLog != null)
+            Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
 
         rctxt.destroy();
     }

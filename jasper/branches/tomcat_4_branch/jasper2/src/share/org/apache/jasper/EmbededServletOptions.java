@@ -182,7 +182,7 @@ public final class EmbededServletOptions implements Options {
     }
     
     public boolean isPoolingEnabled() {
-	return poolingEnabled;
+        return poolingEnabled;
     }
     
     /**
@@ -260,7 +260,7 @@ public final class EmbededServletOptions implements Options {
 
 
     public TldLocationsCache getTldLocationsCache() {
-	return tldLocationsCache;
+        return tldLocationsCache;
     }
 
     public void setTldLocationsCache( TldLocationsCache tldC ) {
@@ -268,7 +268,7 @@ public final class EmbededServletOptions implements Options {
     }
 
     public String getJavaEncoding() {
-	return javaEncoding;
+        return javaEncoding;
     }
 
     public boolean getFork() {
@@ -280,7 +280,7 @@ public final class EmbededServletOptions implements Options {
      * ServletConfig and ServletContext. 
      */
     public EmbededServletOptions(ServletConfig config,
-				 ServletContext context) {
+                                 ServletContext context) {
 
         Enumeration enum=config.getInitParameterNames();
         while( enum.hasMoreElements() ) {
@@ -312,17 +312,17 @@ public final class EmbededServletOptions implements Options {
             else Constants.message ("jsp.warning.mappedFile", Logger.WARNING);
         }
 
-	poolingEnabled = true;
+        poolingEnabled = true;
         String poolingEnabledParam
-	    = config.getInitParameter("enablePooling"); 
+            = config.getInitParameter("enablePooling"); 
         if (poolingEnabledParam != null
-  	        && !poolingEnabledParam.equalsIgnoreCase("true")) {
+                  && !poolingEnabledParam.equalsIgnoreCase("true")) {
             if (poolingEnabledParam.equalsIgnoreCase("false"))
                 this.poolingEnabled = false;
             else Constants.message("jsp.warning.enablePooling",
-				   Logger.WARNING);
+                                   Logger.WARNING);
         }
-	
+        
         String senderr = config.getInitParameter("sendErrToClient");
         if (senderr != null) {
             if (senderr.equalsIgnoreCase("true"))
@@ -425,9 +425,9 @@ public final class EmbededServletOptions implements Options {
             else Constants.message ("jsp.warning.fork", Logger.WARNING);
         }
 
-	// Setup the global Tag Libraries location cache for this
-	// web-application.
-	tldLocationsCache = new TldLocationsCache(context);
+        // Setup the global Tag Libraries location cache for this
+        // web-application.
+        tldLocationsCache = new TldLocationsCache(context);
 
     }
 

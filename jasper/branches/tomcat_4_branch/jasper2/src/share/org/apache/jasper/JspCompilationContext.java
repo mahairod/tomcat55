@@ -173,7 +173,7 @@ public class JspCompilationContext {
     }
 
     public void setClassLoader(URLClassLoader loader) {
-	this.loader = loader;
+        this.loader = loader;
     }
 
     /** ---------- Input/Output  ---------- */
@@ -258,11 +258,11 @@ public class JspCompilationContext {
         int iEnd = jspUri.length();
         StringBuffer modifiedClassName = 
             new StringBuffer(jspUri.length() - iSep);
-	if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
-	    // If the first char is not a legal Java letter or digit,
-	    // prepend a '_'.
-	    modifiedClassName.append('_');
-	}
+        if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
+            // If the first char is not a legal Java letter or digit,
+            // prepend a '_'.
+            modifiedClassName.append('_');
+        }
         for (int i = iSep; i < iEnd; i++) {
             char ch = jspUri.charAt(i);
             if (Character.isJavaIdentifierPart(ch)) {
@@ -327,14 +327,14 @@ public class JspCompilationContext {
 
         String outputDir = getOutputDir();
         servletJavaFileName = getServletClassName() + ".java";
- 	if (outputDir != null && !outputDir.equals("")) {
+         if (outputDir != null && !outputDir.equals("")) {
             if( outputDir.endsWith("/" ) ) {
                 servletJavaFileName = outputDir + servletJavaFileName;
             } else {
                 servletJavaFileName = outputDir + "/" + servletJavaFileName;
             }
         }
-	return servletJavaFileName;
+        return servletJavaFileName;
     }
 
     public void setServletJavaFileName(String servletJavaFileName) {
@@ -376,10 +376,10 @@ public class JspCompilationContext {
 
         String outputDir = getOutputDir();
         classFileName = getServletClassName() + ".class";
-	if (outputDir != null && !outputDir.equals("")) {
-	    classFileName = outputDir + File.separatorChar + classFileName;
+        if (outputDir != null && !outputDir.equals("")) {
+            classFileName = outputDir + File.separatorChar + classFileName;
         }
-	return classFileName;
+        return classFileName;
     }
 
     /**
@@ -432,9 +432,9 @@ public class JspCompilationContext {
      * of a taglib deployed in a jar file (WEB-INF/lib).
      */
     public String[] getTldLocation(String uri) throws JasperException {
-	String[] location = 
-	    getOptions().getTldLocationsCache().getLocation(uri);
-	return location;
+        String[] location = 
+            getOptions().getTldLocationsCache().getLocation(uri);
+        return location;
     }
 
     /**
@@ -540,17 +540,17 @@ public class JspCompilationContext {
      */
     private static final String mangleChar(char ch) {
 
-	String s = Integer.toHexString(ch);
-	int nzeros = 5 - s.length();
-	char[] result = new char[6];
-	result[0] = '_';
-	for (int i = 1; i <= nzeros; i++) {
-	    result[i] = '0';
+        String s = Integer.toHexString(ch);
+        int nzeros = 5 - s.length();
+        char[] result = new char[6];
+        result[0] = '_';
+        for (int i = 1; i <= nzeros; i++) {
+            result[i] = '0';
         }
-	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
-	    result[i] = s.charAt(j);
+        for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
+            result[i] = s.charAt(j);
         }
-	return new String(result);
+        return new String(result);
     }
 
     private static final boolean isPathSeparator(char c) {

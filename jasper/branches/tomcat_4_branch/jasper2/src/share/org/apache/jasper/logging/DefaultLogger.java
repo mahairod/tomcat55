@@ -70,8 +70,8 @@ public class DefaultLogger extends Logger {
 
     static private char[] newline;
     static {
-	String separator = System.getProperty("line.separator", "\n");
-	newline = separator.toCharArray();
+        String separator = System.getProperty("line.separator", "\n");
+        newline = separator.toCharArray();
     }
     
 
@@ -106,62 +106,62 @@ public class DefaultLogger extends Logger {
     /**
      * Prints log message to default sink
      * 
-     * @param	message		the message to log.
+     * @param        message                the message to log.
      */
     protected void realLog(String message) {
         if (servletContext != null) {
             servletContext.log(message);
             return;
         }
-	try {
-	    defaultSink.write(message);
-	    defaultSink.write(newline);
-	    flush();
-	}
-	catch (IOException e) {
-	    bad(e, message, null);
-	}
+        try {
+            defaultSink.write(message);
+            defaultSink.write(newline);
+            flush();
+        }
+        catch (IOException e) {
+            bad(e, message, null);
+        }
     }
     
     /**
      * Prints log message to default sink
      * 
-     * @param	message		the message to log.
-     * @param	t		the exception that was thrown.
+     * @param        message                the message to log.
+     * @param        t                the exception that was thrown.
      */
     protected void realLog(String message, Throwable t) {
         if (servletContext != null) {
             servletContext.log(message, t);
             return;
         }
-	try {
-	    defaultSink.write(message);
-	    defaultSink.write(newline);
-	    defaultSink.write(throwableToString(t));
-	    defaultSink.write(newline);
-	    flush();
-	}
-	catch (IOException e) {
-	    bad(e, message, t);
-	}
+        try {
+            defaultSink.write(message);
+            defaultSink.write(newline);
+            defaultSink.write(throwableToString(t));
+            defaultSink.write(newline);
+            flush();
+        }
+        catch (IOException e) {
+            bad(e, message, t);
+        }
     }
 
     private void bad(Throwable t1, String message, Throwable t2)
     {
-	System.err.println("Default sink is unwritable! Reason:");
-	if (t1 != null) t1.printStackTrace();
-	if (message != null) System.err.println(message);
-	if (t2 != null) t2.printStackTrace();
-    }	
+        System.err.println("Default sink is unwritable! Reason:");
+        if (t1 != null) t1.printStackTrace();
+        if (message != null) System.err.println(message);
+        if (t2 != null) t2.printStackTrace();
+    }        
     
     /**
      * Flush the log. 
      */
     public void flush() {
-	try {
-	    defaultSink.flush();
-	}
-	catch (IOException e) {
-	}
+        try {
+            defaultSink.flush();
+        }
+        catch (IOException e) {
+        }
     }    
 }

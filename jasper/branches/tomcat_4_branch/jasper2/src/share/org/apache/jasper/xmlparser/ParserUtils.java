@@ -171,11 +171,11 @@ public class ParserUtils {
         } catch (NoSuchMethodException ex) {
             throw new JasperException("NSME: " + ex); // FIXME
             */
-	} catch (ParserConfigurationException ex) {
+        } catch (ParserConfigurationException ex) {
             throw new JasperException
                 (Constants.getString("jsp.error.parse.xml",
                                      new Object[]{uri, ex.getMessage()}));
-	} catch (SAXParseException ex) {
+        } catch (SAXParseException ex) {
             throw new JasperException
                 (Constants.getString
                  ("jsp.error.parse.xml.line",
@@ -183,7 +183,7 @@ public class ParserUtils {
                                new Integer(ex.getLineNumber()),
                                new Integer(ex.getColumnNumber()),
                                ex.getMessage()}));
-	} catch (SAXException sx) {
+        } catch (SAXException sx) {
             throw new JasperException
                 (Constants.getString("jsp.error.parse.xml",
                                      new Object[]{uri, sx.getMessage()}));
@@ -191,7 +191,7 @@ public class ParserUtils {
             throw new JasperException
                 (Constants.getString("jsp.error.parse.xml",
                                      new Object[]{uri, io.toString()}));
-	}
+        }
 
         // Convert the resulting document to a graph of TreeNodes
         return (convert(null, document.getDocumentElement()));
@@ -367,49 +367,49 @@ public class ParserUtils {
 
 class MyEntityResolver implements EntityResolver {
     public InputSource resolveEntity(String publicId, String systemId)
-	throws SAXException
+        throws SAXException
     {
-	for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
-	    String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
-	    if (cachedDtdPublicId.equals(publicId)) {
-		String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
-		InputStream input =
-		    this.getClass().getResourceAsStream(resourcePath);
-		if (input == null) {
-		    throw new SAXException(
+        for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
+            String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
+            if (cachedDtdPublicId.equals(publicId)) {
+                String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
+                InputStream input =
+                    this.getClass().getResourceAsStream(resourcePath);
+                if (input == null) {
+                    throw new SAXException(
                         Constants.getString("jsp.error.internal.filenotfound", 
-					    new Object[]{resourcePath}));
-		}
-		InputSource isrc =
-		    new InputSource(input);
+                                            new Object[]{resourcePath}));
+                }
+                InputSource isrc =
+                    new InputSource(input);
                 //System.out.println("Resolve entity "  + publicId + " " + systemId + " " + resourcePath);
-		return isrc;
-	    }
-	}
+                return isrc;
+            }
+        }
         System.out.println("Resolve entity failed"  + publicId + " " + systemId );
-	Constants.message("jsp.error.parse.xml.invalidPublicId",
-				new Object[]{publicId}, Logger.ERROR);
+        Constants.message("jsp.error.parse.xml.invalidPublicId",
+                                new Object[]{publicId}, Logger.ERROR);
         return null;
     }
 }
 
 class MyErrorHandler implements ErrorHandler {
     public void warning(SAXParseException ex)
-	throws SAXException
+        throws SAXException
     {
         System.out.println("ParserUtils: warning " + ex );
-	// We ignore warnings
+        // We ignore warnings
     }
 
     public void error(SAXParseException ex)
-	throws SAXException
+        throws SAXException
     {
-	throw ex;
+        throw ex;
     }
 
     public void fatalError(SAXParseException ex)
-	throws SAXException
+        throws SAXException
     {
-	throw ex;
+        throw ex;
     }
 }

@@ -107,28 +107,28 @@ public abstract class HttpJspBase
     }
 
     public final void init(ServletConfig config) 
-	throws ServletException 
+        throws ServletException 
     {
         super.init(config);
-	jspInit();
+        jspInit();
     }
     
     public String getServletInfo() {
-	return Constants.getString ("jsp.engine.info");
+        return Constants.getString ("jsp.engine.info");
     }
 
     public final void destroy() {
-	jspDestroy();
-	_jspDestroy();
+        jspDestroy();
+        _jspDestroy();
     }
 
     /**
      * Entry point into service.
      */
     public final void service(HttpServletRequest request, HttpServletResponse response) 
-	throws ServletException, IOException 
+        throws ServletException, IOException 
     {
-	_jspService(request, response);
+        _jspService(request, response);
     }
     
     public void jspInit() {
@@ -151,6 +151,6 @@ public abstract class HttpJspBase
     public abstract List getIncludes();
 
     public abstract void _jspService(HttpServletRequest request, 
-				     HttpServletResponse response) 
-	throws ServletException, IOException;
+                                     HttpServletResponse response) 
+        throws ServletException, IOException;
 }

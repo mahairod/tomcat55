@@ -85,11 +85,11 @@ public class ServletWriter {
 
 
     public ServletWriter(PrintWriter writer) {
-	this.writer = writer;
+        this.writer = writer;
     }
 
     public void close() throws IOException {
-	writer.close();
+        writer.close();
     }
 
     
@@ -103,15 +103,15 @@ public class ServletWriter {
     // -------------------- Formatting --------------------
 
     public void pushIndent() {
-	virtual_indent += TAB_WIDTH;
-	if (virtual_indent >= 0 && virtual_indent <= SPACES.length())
-	    indent = virtual_indent;
+        virtual_indent += TAB_WIDTH;
+        if (virtual_indent >= 0 && virtual_indent <= SPACES.length())
+            indent = virtual_indent;
     }
 
     public void popIndent() {
-	virtual_indent -= TAB_WIDTH;
-	if (virtual_indent >= 0 && virtual_indent <= SPACES.length())
-	    indent = virtual_indent;
+        virtual_indent -= TAB_WIDTH;
+        if (virtual_indent >= 0 && virtual_indent <= SPACES.length())
+            indent = virtual_indent;
     }
 
     /**
@@ -139,7 +139,7 @@ public class ServletWriter {
      */
     public void println(String s) {
         javaLine++;
-	writer.println(s);
+        writer.println(s);
     }
 
     /**
@@ -147,22 +147,22 @@ public class ServletWriter {
      */
     public void println() {
         javaLine++;
-	writer.println("");
+        writer.println("");
     }
 
     /**
      * Prints the current indention
      */
     public void printin() {
-	writer.print(SPACES.substring(0, indent));
+        writer.print(SPACES.substring(0, indent));
     }
 
     /**
      * Prints the current indention, followed by the given string
      */
     public void printin(String s) {
-	writer.print(SPACES.substring(0, indent));
-	writer.print(s);
+        writer.print(SPACES.substring(0, indent));
+        writer.print(s);
     }
 
     /**
@@ -170,8 +170,8 @@ public class ServletWriter {
      */
     public void printil(String s) {
         javaLine++;
-	writer.print(SPACES.substring(0, indent));
-	writer.println(s);
+        writer.print(SPACES.substring(0, indent));
+        writer.println(s);
     }
 
     /**
@@ -180,7 +180,7 @@ public class ServletWriter {
      * Use println() to print a '\n'.
      */
     public void print(char c) {
-	writer.print(c);
+        writer.print(c);
     }
 
     /**
@@ -190,7 +190,7 @@ public class ServletWriter {
      * off.
      */
     public void print(String s) {
-	writer.print(s);
+        writer.print(s);
     }
 
     /**
@@ -208,6 +208,6 @@ public class ServletWriter {
             index++;
         }
 
-	writer.print(s);
+        writer.print(s);
     }
 }

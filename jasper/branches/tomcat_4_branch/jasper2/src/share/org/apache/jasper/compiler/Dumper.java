@@ -67,154 +67,154 @@ import org.apache.jasper.JasperException;
 public class Dumper {
 
     static class DumpVisitor extends Node.Visitor {
-	private int indent = 0;
+        private int indent = 0;
 
-	private String getAttributes(Attributes attrs) {
-	    if (attrs == null)
-		return "";
+        private String getAttributes(Attributes attrs) {
+            if (attrs == null)
+                return "";
 
-	    StringBuffer buf = new StringBuffer();
-	    for (int i=0; i < attrs.getLength(); i++) {
-		buf.append(" " + attrs.getQName(i) + "=\""
-			   + attrs.getValue(i) + "\"");
-	    }
-	    return buf.toString();
-	}
+            StringBuffer buf = new StringBuffer();
+            for (int i=0; i < attrs.getLength(); i++) {
+                buf.append(" " + attrs.getQName(i) + "=\""
+                           + attrs.getValue(i) + "\"");
+            }
+            return buf.toString();
+        }
 
-	private void printString(String str) {
-	    printIndent();
-	    System.out.print(str);
-	}
+        private void printString(String str) {
+            printIndent();
+            System.out.print(str);
+        }
 
-	private void printString(String prefix, char[] chars, String suffix) {
-	    String str = null;
-	    if (chars != null) {
-		str = new String(chars);
-	    }
-	    printString(prefix, str, suffix);
-	}
-	     
-	private void printString(String prefix, String str, String suffix) {
-	    printIndent();
-	    if (str != null) {
-		System.out.print(prefix + str + suffix);
-	    } else {
-		System.out.print(prefix + suffix);
-	    }
-	}
+        private void printString(String prefix, char[] chars, String suffix) {
+            String str = null;
+            if (chars != null) {
+                str = new String(chars);
+            }
+            printString(prefix, str, suffix);
+        }
+             
+        private void printString(String prefix, String str, String suffix) {
+            printIndent();
+            if (str != null) {
+                System.out.print(prefix + str + suffix);
+            } else {
+                System.out.print(prefix + suffix);
+            }
+        }
 
-	private void printAttributes(String prefix, Attributes attrs,
-				     String suffix) {
-	    printString(prefix, getAttributes(attrs), suffix);
-	}
+        private void printAttributes(String prefix, Attributes attrs,
+                                     String suffix) {
+            printString(prefix, getAttributes(attrs), suffix);
+        }
 
-	private void dumpBody(Node n) throws JasperException {
-	    Node.Nodes page = n.getBody();
-	    if (page != null) {
-//		indent++;
-		page.visit(this);
-//		indent--;
-	    }
+        private void dumpBody(Node n) throws JasperException {
+            Node.Nodes page = n.getBody();
+            if (page != null) {
+//                indent++;
+                page.visit(this);
+//                indent--;
+            }
         }
 
         public void visit(Node.PageDirective n) throws JasperException {
-	    printAttributes("<%@ page", n.getAttributes(), "%>");
+            printAttributes("<%@ page", n.getAttributes(), "%>");
         }
 
         public void visit(Node.TaglibDirective n) throws JasperException {
-	    printAttributes("<%@ taglib", n.getAttributes(), "%>");
+            printAttributes("<%@ taglib", n.getAttributes(), "%>");
         }
 
         public void visit(Node.IncludeDirective n) throws JasperException {
-	    printAttributes("<%@ include", n.getAttributes(), "%>");
-	    dumpBody(n);
+            printAttributes("<%@ include", n.getAttributes(), "%>");
+            dumpBody(n);
         }
 
         public void visit(Node.Comment n) throws JasperException {
-	    printString("<%--", n.getText(), "--%>");
+            printString("<%--", n.getText(), "--%>");
         }
 
         public void visit(Node.Declaration n) throws JasperException {
-	    printString("<%!", n.getText(), "%>");
+            printString("<%!", n.getText(), "%>");
         }
 
         public void visit(Node.Expression n) throws JasperException {
-	    printString("<%=", n.getText(), "%>");
+            printString("<%=", n.getText(), "%>");
         }
 
         public void visit(Node.Scriptlet n) throws JasperException {
-	    printString("<%", n.getText(), "%>");
+            printString("<%", n.getText(), "%>");
         }
 
         public void visit(Node.IncludeAction n) throws JasperException {
-	    printAttributes("<jsp:include", n.getAttributes(), "/>");
-	    dumpBody(n);
+            printAttributes("<jsp:include", n.getAttributes(), "/>");
+            dumpBody(n);
         }
 
         public void visit(Node.ForwardAction n) throws JasperException {
-	    printAttributes("<jsp:forward", n.getAttributes(), ">");
-	    dumpBody(n);
-	    printString("</jsp:forward>");
+            printAttributes("<jsp:forward", n.getAttributes(), ">");
+            dumpBody(n);
+            printString("</jsp:forward>");
         }
 
         public void visit(Node.GetProperty n) throws JasperException {
-	    printAttributes("<jsp:getProperty", n.getAttributes(), "/>");
+            printAttributes("<jsp:getProperty", n.getAttributes(), "/>");
         }
 
         public void visit(Node.SetProperty n) throws JasperException {
-	    printAttributes("<jsp:setProperty", n.getAttributes(), "/>");
+            printAttributes("<jsp:setProperty", n.getAttributes(), "/>");
         }
 
         public void visit(Node.UseBean n) throws JasperException {
-	    printAttributes("<jsp:usebean", n.getAttributes(), ">");
-	    dumpBody(n);
-	    printString("</jsp:usebean>");
+            printAttributes("<jsp:usebean", n.getAttributes(), ">");
+            dumpBody(n);
+            printString("</jsp:usebean>");
         }
-	
+        
         public void visit(Node.PlugIn n) throws JasperException {
-	    printAttributes("<jsp:plugin", n.getAttributes(), ">");
-	    dumpBody(n);
-	    printString("</jsp:plugin>");
-	}
+            printAttributes("<jsp:plugin", n.getAttributes(), ">");
+            dumpBody(n);
+            printString("</jsp:plugin>");
+        }
 
         public void visit(Node.CustomTag n) throws JasperException {
-	    printAttributes("<" + n.getName(), n.getAttributes(), ">");
-	    dumpBody(n);
-	    printString("</" + n.getName() + ">");
+            printAttributes("<" + n.getName(), n.getAttributes(), ">");
+            dumpBody(n);
+            printString("</" + n.getName() + ">");
         }
 
-	public void visit(Node.UninterpretedTag n) throws JasperException {
-	    String tag = n.getName();
-	    printAttributes("<"+tag, n.getAttributes(), ">");
-	    dumpBody(n);
-	    printString("</" + tag + ">");
+        public void visit(Node.UninterpretedTag n) throws JasperException {
+            String tag = n.getName();
+            printAttributes("<"+tag, n.getAttributes(), ">");
+            dumpBody(n);
+            printString("</" + tag + ">");
         }
 
-	public void visit(Node.TemplateText n) throws JasperException {
-	    printString(new String(n.getText()));
-	}
+        public void visit(Node.TemplateText n) throws JasperException {
+            printString(new String(n.getText()));
+        }
 
-	private void printIndent() {
-	    for (int i=0; i < indent; i++) {
-		System.out.print("  ");
-	    }
-	}
+        private void printIndent() {
+            for (int i=0; i < indent; i++) {
+                System.out.print("  ");
+            }
+        }
     }
 
     public static void dump(Node n) {
-	try {
-	    n.accept(new DumpVisitor());	
-	} catch (JasperException e) {
-	    e.printStackTrace();
-	}
+        try {
+            n.accept(new DumpVisitor());        
+        } catch (JasperException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void dump(Node.Nodes page) {
-	try {
-	    page.visit(new DumpVisitor());
-	} catch (JasperException e) {
-	    e.printStackTrace();
-	}
+        try {
+            page.visit(new DumpVisitor());
+        } catch (JasperException e) {
+            e.printStackTrace();
+        }
     }
 }
 

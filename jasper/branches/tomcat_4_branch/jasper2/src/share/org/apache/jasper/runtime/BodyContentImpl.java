@@ -85,13 +85,13 @@ public class BodyContentImpl extends BodyContent {
 
     public BodyContentImpl (JspWriter writer) {
         super(writer);
-	cb = new char[bufferSize];
-	nextChar = 0;
+        cb = new char[bufferSize];
+        nextChar = 0;
     }
 
     private void ensureOpen() throws IOException {
-	if (closed)
-	    throw new IOException("Stream closed");
+        if (closed)
+            throw new IOException("Stream closed");
     }
 
     /**
@@ -99,7 +99,7 @@ public class BodyContentImpl extends BodyContent {
      *
      */
     public void write(int c) throws IOException {
-	ensureOpen();
+        ensureOpen();
         if (nextChar >= bufferSize) {
             reAllocBuff (0);
         }
@@ -108,22 +108,22 @@ public class BodyContentImpl extends BodyContent {
 
     private void reAllocBuff (int len) {
         //Need to re-allocate the buffer since it is to be
-	//unbounded according to the updated spec..
+        //unbounded according to the updated spec..
 
-	char[] tmp = null;
+        char[] tmp = null;
 
-	//XXX Should it be multiple of DEFAULT_TAG_BUFFER_SIZE??
+        //XXX Should it be multiple of DEFAULT_TAG_BUFFER_SIZE??
 
-	if (len <= Constants.DEFAULT_TAG_BUFFER_SIZE) {
-	    tmp = new char [bufferSize + Constants.DEFAULT_TAG_BUFFER_SIZE];
-	    bufferSize += Constants.DEFAULT_TAG_BUFFER_SIZE;
-	} else {
-	    tmp = new char [bufferSize + len];
-	    bufferSize += len;
-	}
-	System.arraycopy(cb, 0, tmp, 0, cb.length);
-	cb = tmp;
-	tmp = null;
+        if (len <= Constants.DEFAULT_TAG_BUFFER_SIZE) {
+            tmp = new char [bufferSize + Constants.DEFAULT_TAG_BUFFER_SIZE];
+            bufferSize += Constants.DEFAULT_TAG_BUFFER_SIZE;
+        } else {
+            tmp = new char [bufferSize + len];
+            bufferSize += len;
+        }
+        System.arraycopy(cb, 0, tmp, 0, cb.length);
+        cb = tmp;
+        tmp = null;
     }
 
     /**
@@ -144,7 +144,7 @@ public class BodyContentImpl extends BodyContent {
     public void write(char cbuf[], int off, int len) 
         throws IOException 
     {
-	ensureOpen();
+        ensureOpen();
 
         if ((off < 0) || (off > cbuf.length) || (len < 0) ||
             ((off + len) > cbuf.length) || ((off + len) < 0)) {
@@ -166,7 +166,7 @@ public class BodyContentImpl extends BodyContent {
      * Writer class because it must suppress I/O exceptions.
      */
     public void write(char buf[]) throws IOException {
-	write(buf, 0, buf.length);
+        write(buf, 0, buf.length);
     }
 
     /**
@@ -178,7 +178,7 @@ public class BodyContentImpl extends BodyContent {
      *
      */
     public void write(String s, int off, int len) throws IOException {
-	ensureOpen();
+        ensureOpen();
         if (len >= bufferSize - nextChar)
             reAllocBuff(len);
 
@@ -191,7 +191,7 @@ public class BodyContentImpl extends BodyContent {
      * because it must suppress I/O exceptions.
      */
     public void write(String s) throws IOException {
-	write(s, 0, s.length());
+        write(s, 0, s.length());
     }
 
 
@@ -204,7 +204,7 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void newLine() throws IOException {
-	write(lineSeparator);
+        write(lineSeparator);
     }
 
     /**
@@ -215,11 +215,11 @@ public class BodyContentImpl extends BodyContent {
      * #write(int)}</code> method.
      *
      * @param      b   The <code>boolean</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(boolean b) throws IOException {
-	write(b ? "true" : "false");
+        write(b ? "true" : "false");
     }
 
     /**
@@ -229,11 +229,11 @@ public class BodyContentImpl extends BodyContent {
      * #write(int)}</code> method.
      *
      * @param      c   The <code>char</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(char c) throws IOException {
-	write(String.valueOf(c));
+        write(String.valueOf(c));
     }
 
     /**
@@ -244,11 +244,11 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      i   The <code>int</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(int i) throws IOException {
-	write(String.valueOf(i));
+        write(String.valueOf(i));
     }
 
     /**
@@ -259,11 +259,11 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      l   The <code>long</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(long l) throws IOException {
-	write(String.valueOf(l));
+        write(String.valueOf(l));
     }
 
     /**
@@ -274,11 +274,11 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      f   The <code>float</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(float f) throws IOException {
-	write(String.valueOf(f));
+        write(String.valueOf(f));
     }
 
     /**
@@ -289,11 +289,11 @@ public class BodyContentImpl extends BodyContent {
      * #write(int)}</code> method.
      *
      * @param      d   The <code>double</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(double d) throws IOException {
-	write(String.valueOf(d));
+        write(String.valueOf(d));
     }
 
     /**
@@ -305,11 +305,11 @@ public class BodyContentImpl extends BodyContent {
      * @param      s   The array of chars to be printed
      *
      * @throws  NullPointerException  If <code>s</code> is <code>null</code>
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(char s[]) throws IOException {
-	write(s);
+        write(s);
     }
 
     /**
@@ -320,14 +320,14 @@ public class BodyContentImpl extends BodyContent {
      * <code>{@link #write(int)}</code> method.
      *
      * @param      s   The <code>String</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(String s) throws IOException {
-	if (s == null) {
-	    s = "null";
-	}
-	write(s);
+        if (s == null) {
+            s = "null";
+        }
+        write(s);
     }
 
     /**
@@ -338,11 +338,11 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      obj   The <code>Object</code> to be printed
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void print(Object obj) throws IOException {
-	write(String.valueOf(obj));
+        write(String.valueOf(obj));
     }
 
     /**
@@ -350,18 +350,18 @@ public class BodyContentImpl extends BodyContent {
      * line separator string is defined by the system property
      * <code>line.separator</code>, and is not necessarily a single newline
      * character (<code>'\n'</code>).
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println() throws IOException {
-	newLine();
+        newLine();
     }
 
     /**
      * Print a boolean value and then terminate the line.  This method behaves
      * as though it invokes <code>{@link #print(boolean)}</code> and then
      * <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(boolean x) throws IOException {
@@ -373,7 +373,7 @@ public class BodyContentImpl extends BodyContent {
      * Print a character and then terminate the line.  This method behaves as
      * though it invokes <code>{@link #print(char)}</code> and then <code>{@link
      * #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(char x) throws IOException {
@@ -385,7 +385,7 @@ public class BodyContentImpl extends BodyContent {
      * Print an integer and then terminate the line.  This method behaves as
      * though it invokes <code>{@link #print(int)}</code> and then <code>{@link
      * #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(int x) throws IOException {
@@ -397,7 +397,7 @@ public class BodyContentImpl extends BodyContent {
      * Print a long integer and then terminate the line.  This method behaves
      * as though it invokes <code>{@link #print(long)}</code> and then
      * <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(long x) throws IOException {
@@ -409,7 +409,7 @@ public class BodyContentImpl extends BodyContent {
      * Print a floating-point number and then terminate the line.  This method
      * behaves as though it invokes <code>{@link #print(float)}</code> and then
      * <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(float x) throws IOException {
@@ -421,7 +421,7 @@ public class BodyContentImpl extends BodyContent {
      * Print a double-precision floating-point number and then terminate the
      * line.  This method behaves as though it invokes <code>{@link
      * #print(double)}</code> and then <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(double x) throws IOException{
@@ -433,7 +433,7 @@ public class BodyContentImpl extends BodyContent {
      * Print an array of characters and then terminate the line.  This method
      * behaves as though it invokes <code>{@link #print(char[])}</code> and then
      * <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(char x[]) throws IOException {
@@ -445,7 +445,7 @@ public class BodyContentImpl extends BodyContent {
      * Print a String and then terminate the line.  This method behaves as
      * though it invokes <code>{@link #print(String)}</code> and then
      * <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(String x) throws IOException {
@@ -457,7 +457,7 @@ public class BodyContentImpl extends BodyContent {
      * Print an Object and then terminate the line.  This method behaves as
      * though it invokes <code>{@link #print(Object)}</code> and then
      * <code>{@link #println()}</code>.
-     * @throws	   java.io.IOException
+     * @throws           java.io.IOException
      */
 
     public void println(Object x) throws IOException {
@@ -471,7 +471,7 @@ public class BodyContentImpl extends BodyContent {
      * to signal the fact that some data has already been irrevocably 
      * written to the client response stream.
      *
-     * @throws IOException		If an I/O error occurs
+     * @throws IOException                If an I/O error occurs
      */
 
     public void clear() throws IOException {
@@ -484,7 +484,7 @@ public class BodyContentImpl extends BodyContent {
      * flushed. It merely clears the current content of the buffer and
      * returns.
      *
-     * @throws IOException		If an I/O error occurs
+     * @throws IOException                If an I/O error occurs
      */
 
     public void clearBuffer() throws IOException {
@@ -500,8 +500,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void close() throws IOException {
-	cb = null;	
-	closed = true;
+        cb = null;        
+        closed = true;
     }
 
     /**
@@ -533,7 +533,7 @@ public class BodyContentImpl extends BodyContent {
     public String getString() {
         return new String(cb, 0, nextChar);
     }
-	
+        
     /**
      * Write the contents of this BodyJspWriter into a Writer.
      * Subclasses are likely to do interesting things with the
@@ -544,17 +544,17 @@ public class BodyContentImpl extends BodyContent {
      */
     public void writeOut(Writer out) throws IOException {
         out.write(cb, 0, nextChar);
-	// Flush not called as the writer passed could be a BodyContent and
-	// it doesn't allow to flush.
+        // Flush not called as the writer passed could be a BodyContent and
+        // it doesn't allow to flush.
     }
 
 
     public static void main (String[] args) throws Exception {
-	char[] buff = {'f','o','o','b','a','r','b','a','z','y'};
-   	BodyContentImpl bodyContent = new BodyContentImpl(new JspWriterImpl(
-							null, 100, false));
-	bodyContent.println (buff);
-	System.out.println (bodyContent.getString ());
-	bodyContent.writeOut (new PrintWriter (System.out));
+        char[] buff = {'f','o','o','b','a','r','b','a','z','y'};
+           BodyContentImpl bodyContent = new BodyContentImpl(new JspWriterImpl(
+                                                        null, 100, false));
+        bodyContent.println (buff);
+        System.out.println (bodyContent.getString ());
+        bodyContent.writeOut (new PrintWriter (System.out));
     }
 }
