@@ -2686,11 +2686,14 @@ public final class StandardContext
                 continue;
 	    if (!(instances[i] instanceof ServletContextListener))
 	        continue;
+            ServletContextListener listener =
+                (ServletContextListener) instances[i];
 	    try {
-	        ServletContextListener listener =
-		  (ServletContextListener) instances[i];
+                fireContainerEvent("beforeContextInitialized", listener);
 		listener.contextInitialized(event);
+                fireContainerEvent("afterContextInitialized", listener);
 	    } catch (Throwable t) {
+                fireContainerEvent("afterContextInitialized", listener);
 	        log(sm.getString("standardContext.listenerStart",
                                  instances[i].getClass().getName()), t);
                 ok = false;
@@ -2723,11 +2726,14 @@ public final class StandardContext
                 continue;
 	    if (!(listeners[j] instanceof ServletContextListener))
 	        continue;
+            ServletContextListener listener =
+                (ServletContextListener) listeners[j];
 	    try {
-	        ServletContextListener listener =
-		  (ServletContextListener) listeners[j];
+                fireContainerEvent("beforeContextDestroyed", listener);
 		listener.contextDestroyed(event);
+                fireContainerEvent("beforeContextDestroyed", listener);
 	    } catch (Throwable t) {
+                fireContainerEvent("beforeContextDestroyed", listener);
 	        log(sm.getString("standardContext.listenerStop",
                                  listeners[j].getClass().getName()), t);
                 ok = false;

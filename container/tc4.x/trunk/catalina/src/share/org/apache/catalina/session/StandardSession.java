@@ -86,6 +86,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
 
@@ -311,7 +312,7 @@ final class StandardSession
 	    ((ManagerBase) manager).add(this);
 
 	// Notify interested application event listeners
-	Context context = (Context) manager.getContainer();
+	StandardContext context = (StandardContext) manager.getContainer();
 	Object listeners[] = context.getApplicationListeners();
 	if (listeners != null) {
 	    HttpSessionEvent event =
@@ -319,11 +320,17 @@ final class StandardSession
 	    for (int i = 0; i < listeners.length; i++) {
 		if (!(listeners[i] instanceof HttpSessionListener))
 		    continue;
+                HttpSessionListener listener =
+                    (HttpSessionListener) listeners[i];
 		try {
-		    HttpSessionListener listener =
-		      (HttpSessionListener) listeners[i];
+                    context.fireContainerEvent("beforeSessionCreated",
+                                               listener);
 		    listener.sessionCreated(event);
+                    context.fireContainerEvent("afterSessionCreated",
+                                               listener);
 		} catch (Throwable t) {
+                    context.fireContainerEvent("afterSessionCreated",
+                                               listener);
 		  // FIXME - should we do anything besides log these?
 		  log(sm.getString("standardSession.sessionEvent"), t);
 		}
@@ -494,7 +501,7 @@ final class StandardSession
 
 	// Notify interested application event listeners
 	// FIXME - Assumes we call listeners in reverse order
-	Context context = (Context) manager.getContainer();
+	StandardContext context = (StandardContext) manager.getContainer();
 	Object listeners[] = context.getApplicationListeners();
 	if (listeners != null) {
 	    HttpSessionEvent event =
@@ -503,11 +510,17 @@ final class StandardSession
 	        int j = (listeners.length - 1) - i;
 		if (!(listeners[j] instanceof HttpSessionListener))
 		    continue;
+                HttpSessionListener listener =
+                    (HttpSessionListener) listeners[j];
 		try {
-		    HttpSessionListener listener =
-		      (HttpSessionListener) listeners[j];
+                    context.fireContainerEvent("beforeSessionDestroyed",
+                                               listener);
 		    listener.sessionDestroyed(event);
+                    context.fireContainerEvent("afterSessionDestroyed",
+                                               listener);
 		} catch (Throwable t) {
+                    context.fireContainerEvent("afterSessionDestroyed",
+                                               listener);
 		  // FIXME - should we do anything besides log these?
 		  log(sm.getString("standardSession.sessionEvent"), t);
 		}
@@ -854,18 +867,24 @@ final class StandardSession
 
 	// Notify interested application event listeners
 	// FIXME - Assumes we notify even if the attribute was not there?
-	Context context = (Context) manager.getContainer();
+	StandardContext context = (StandardContext) manager.getContainer();
 	Object listeners[] = context.getApplicationListeners();
 	if (listeners == null)
 	    return;
 	for (int i = 0; i < listeners.length; i++) {
 	    if (!(listeners[i] instanceof HttpSessionAttributesListener))
 	        continue;
+            HttpSessionAttributesListener listener =
+                (HttpSessionAttributesListener) listeners[i];
 	    try {
-	        HttpSessionAttributesListener listener =
-		  (HttpSessionAttributesListener) listeners[i];
+                context.fireContainerEvent("beforeSessionAttributeRemoved",
+                                           listener);
 		listener.attributeRemoved(event);
+                context.fireContainerEvent("afterSessionAttributeRemoved",
+                                           listener);
 	    } catch (Throwable t) {
+                context.fireContainerEvent("afterSessionAttributeRemoved",
+                                           listener);
 	        // FIXME - should we do anything besides log these?
 	        log(sm.getString("standardSession.attributeEvent"), t);
 	    }
@@ -947,21 +966,36 @@ final class StandardSession
 	    ((HttpSessionBindingListener) value).valueBound(event);
 
 	// Notify interested application event listeners
-	Context context = (Context) manager.getContainer();
+	StandardContext context = (StandardContext) manager.getContainer();
 	Object listeners[] = context.getApplicationListeners();
 	if (listeners == null)
 	    return;
 	for (int i = 0; i < listeners.length; i++) {
 	    if (!(listeners[i] instanceof HttpSessionAttributesListener))
 	        continue;
+            HttpSessionAttributesListener listener =
+                (HttpSessionAttributesListener) listeners[i];
 	    try {
-	        HttpSessionAttributesListener listener =
-		  (HttpSessionAttributesListener) listeners[i];
-		if (unbound != null)
+		if (unbound != null) {
+                    context.fireContainerEvent("beforeSessionAttributeReplaced",
+                                               listener);
 		    listener.attributeReplaced(event);
-		else
+                    context.fireContainerEvent("afterSessionAttributeReplaced",
+                                               listener);
+		} else {
+                    context.fireContainerEvent("beforeSessionAttributeAdded",
+                                               listener);
 		    listener.attributeAdded(event);
+                    context.fireContainerEvent("afterSessionAttributeAdded",
+                                               listener);
+                }
 	    } catch (Throwable t) {
+                if (unbound != null)
+                    context.fireContainerEvent("afterSessionAttributeReplaced",
+                                               listener);
+                else
+                    context.fireContainerEvent("afterSessionAttributeAdded",
+                                               listener);
 	        // FIXME - should we do anything besides log these?
 	        log(sm.getString("standardSession.attributeEvent"), t);
 	    }

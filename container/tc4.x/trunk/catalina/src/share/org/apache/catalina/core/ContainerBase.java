@@ -1385,8 +1385,10 @@ public abstract class ContainerBase
      * @param type Event type
      * @param data Event data
      */
-    protected void fireContainerEvent(String type, Object data) {
+    public void fireContainerEvent(String type, Object data) {
 
+        if (listeners.size() < 1)
+            return;
 	ContainerEvent event = new ContainerEvent(this, type, data);
 	ContainerListener list[] = new ContainerListener[0];
 	synchronized (listeners) {
