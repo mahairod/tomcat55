@@ -119,7 +119,7 @@ public final class EmbeddedServletOptions implements Options {
      * servlet that has a print statement per line of the JSP file.
      * This seems like a really nice feature to have for debugging.
      */
-    private boolean mappedFile = false;
+    private boolean mappedFile = true;
     
     /**
      * Do you want stack traces and such displayed in the client's
