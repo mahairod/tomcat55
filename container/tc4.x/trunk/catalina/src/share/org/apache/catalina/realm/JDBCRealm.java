@@ -53,7 +53,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.realm;
@@ -76,7 +76,10 @@ import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
 import org.xml.sax.AttributeList;
+import org.apache.catalina.util.Base64;
+import org.apache.catalina.util.HexUtils;
 
+import java.security.*;
 import java.sql.*;
 
 
@@ -204,8 +207,27 @@ public final class JDBCRealm
      */
     private String userTable = null;
 
+    /**
+     * The connection URL to use when trying to connect to the databse
+     */
+    private String connectionName = null;
 
-    // ------------------------------------------------------------- Properties
+    /**
+     * The connection URL to use when trying to connect to the databse
+     */
+    private String connectionPassword = null;
+
+     /**
+     *
+     * Digest algorithm used in passwords thit is same values
+     * accepted by MessageDigest  for algorithm
+     * plus "No" ( no encode ) that is the default
+     *
+     */
+
+    private String digest="No";
+
+   // ------------------------------------------------------------- Properties
 
 
     /**
@@ -325,6 +347,48 @@ public final class JDBCRealm
       this.userTable = userTable;
     }
 
+    /**
+     * Set the name to use to connect to the database.
+     *
+     * @param connectionName User name
+     */
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
+    }
+
+    /**
+     * Set the password to use to connect to the database.
+     *
+     * @param connectionPassword User password
+     */
+    public void setConnectionPassword(String connectionPassword) {
+        this.connectionPassword = connectionPassword;
+    }
+
+
+    /**
+     * Gets the digest algorithm  used for credentials in the database
+     * could be the same that MessageDigest accepts vor algorithm
+     * and "No" that is the Default
+     *
+     */
+
+    public String getDigest() {
+        return digest;
+    }
+
+    /**
+     * Gets the digest algorithm  used for credentials in the database
+     * could be the same that MessageDigest accepts vor algorithm
+     * and "No" that is the Default
+     *
+     * @param algorithm the Encode type
+     */
+
+    public void setDigest(String algorithm) {
+        digest = algorithm;
+    }
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -365,12 +429,20 @@ public final class JDBCRealm
 	    // Establish the database connection if necessary
 	    if ((dbConnection == null) || dbConnection.isClosed()) {
 		log(sm.getString("jdbcRealm.authDBClosed"));
-		dbConnection = DriverManager.getConnection(connectionURL);
+                if ((connectionName == null || connectionName.equals("")) &&
+                    (connectionPassword == null || connectionPassword.equals(""))) {
+                    dbConnection = DriverManager.getConnection(connectionURL);
+                } else {
+                    dbConnection = DriverManager.getConnection(connectionURL,
+                                                               connectionName,
+                                                               connectionPassword);
+                }
 		if( (dbConnection == null) || dbConnection.isClosed() ) {
 		    log(sm.getString("jdbcRealm.authDBReOpenFail"));
 		    return null;
 		}
-		dbConnection.setReadOnly(true);
+// XXX Commented it gives problems on Oracle 8i Drivers                
+//		dbConnection.setReadOnly(true);
 	    }
 
 	    // Create the authentication search prepared statement if necessary
@@ -396,12 +468,20 @@ public final class JDBCRealm
 	    ResultSet rs1 = preparedAuthenticate.executeQuery();
 	    boolean found = false;
 	    if (rs1.next()) {
-		if (credentials.equals(rs1.getString(1))) {
-		    if (debug >= 2)
-			log(sm.getString("jdbcRealm.authenticateSuccess",
-					 username));
-		    found = true;
-		}
+                if (digest.equals("No")){
+                    if (credentials.equals(rs1.getString(1))) {
+                        if (debug >= 2)
+                            log(sm.getString("jdbcRealm.authenticateSuccess",
+                                             username));
+                        found = true;
+                    }else if (credentials.equals(
+                                Digest(rs1.getString(1),digest))) {
+                        if (debug >= 2)
+                            log(sm.getString("jdbcRealm.authenticateSuccess",
+                                     username));
+                        found = true;
+                    }
+                }
 	    }
 	    rs1.close();
 	    if (!found) {
@@ -679,6 +759,48 @@ public final class JDBCRealm
 	    throw new LifecycleException (sm.getString("jdbcRealm.notStarted"));
           }
         }
+    }
+
+    /**
+     * Digest password using the algorithm especificied and
+     * convert the result to a corresponding hex string.
+     * If exception, the plain credentials string is returned
+     *
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
+     *
+     * @param algorithm Algorithm used to do th digest
+     *
+     */
+    final public static String Digest(String credentials,String algorithm) {
+        try {
+            // Obtain a new message digest with "digest" encryption
+            MessageDigest md = (MessageDigest)MessageDigest.getInstance(algorithm).clone();
+            // encode the credentials
+            md.update( credentials.getBytes() );
+            // obtain the byte array from the digest
+            byte[] dig = md.digest();
+            // convert the byte array to hex string
+            Base64 enc=new Base64();
+            return new String(enc.encode(HexUtils.convert(dig).getBytes()));
+//            return HexUtils.convert(dig);
+
+        } catch( Exception ex ) {
+                ex.printStackTrace();
+                return credentials;
+        }
+    }
+
+    public static void main(String args[] ) {
+        if (args.length >= 2) {
+            if( args[0].equalsIgnoreCase("-a")){
+                for( int i=2; i < args.length ; i++){
+                    System.out.print(args[i]+":");
+                    System.out.println(Digest(args[i],args[1]));
+                }
+            }
+        }
+
     }
 }
 
