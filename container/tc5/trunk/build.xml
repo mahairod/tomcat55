@@ -450,7 +450,6 @@
           description="Builds all components">
     <copy file="${commons-digester.jar}" todir="${tomcat.build}/server/lib"/>
     <copy file="${commons-collections.jar}" todir="${tomcat.build}/common/lib"/>
-    <copy file="${commons-beanutils.jar}" todir="${tomcat.build}/common/lib"/>
 
     <antcall target="build-tomcatutil"/>
     <antcall target="build-tomcatcoyote"/>
@@ -728,7 +727,6 @@
 
   <target name="deployer" description="Create the Tomcat deployer binary" > 
 
-    <copy todir="${tomcat.deployer}/lib" file="${commons-logging.jar}"/>
     <copy todir="${tomcat.deployer}/lib" file="${tomcat.build}/common/lib/ant.jar"/>
 
     <!-- JSP and Servlet runtime -->
@@ -742,13 +740,43 @@
       </fileset>
     </copy>
 
+    <!-- Digester and dependencies -->
+    <copy todir="${tomcat.deployer}/lib">
+      <fileset dir="${tomcat.build}/server/lib">
+        <include name="commons-digester.jar"/>
+        <include name="commons-beanutils.jar"/>
+        <include name="commons-logging.jar"/>
+      </fileset>
+    </copy>
+    <copy todir="${tomcat.deployer}/lib">
+      <fileset dir="${tomcat.build}/common/lib">
+        <include name="commons-collections.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${tomcat.deployer}/lib" 
            file="${tomcat.build}/server/lib/catalina-ant.jar"/>
 
-<!--
-    <copy todir="${tomcat.deployer}/lib" 
-           file="${tomcat.build}/server/lib/catalina-deployer.jar"/>
--->
+    <jar jarfile="${tomcat.deployer}/lib/catalina-deployer.jar"
+         index="true">
+       <fileset dir="${tomcat.build}/classes">
+          <include name="org/apache/catalina/LifecycleListener.class" />
+          <include name="org/apache/catalina/Pipeline.class" />
+          <include name="org/apache/catalina/startup/Constants.class" />
+          <include name="org/apache/catalina/startup/ContextConfig.class" />
+          <include name="org/apache/catalina/startup/SetPublicIdRule.class" />
+          <include name="org/apache/catalina/startup/SetDistributableRule.class" />
+          <include name="org/apache/catalina/startup/SetJspConfig.class" />
+          <include name="org/apache/catalina/startup/SetLoginConfig.class" />
+          <include name="org/apache/catalina/startup/SetAuthConstraintRule.class" />
+          <include name="org/apache/catalina/startup/WrapperCreateRule.class" />
+          <include name="org/apache/catalina/startup/SetSessionConfig.class" />
+          <include name="org/apache/catalina/startup/WebRuleSet.class" />
+          <include name="org/apache/catalina/startup/*.properties" />
+          <include name="org/apache/catalina/util/SchemaResolver.class" />
+          <include name="org/apache/catalina/util/StringManager.class" />
+       </fileset>
+    </jar>
 
     <copy todir="${tomcat.deployer}/lib" file="${xercesImpl.jar}"/>
     <copy todir="${tomcat.deployer}/lib" file="${xmlParserAPIs.jar}"/>
