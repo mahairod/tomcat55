@@ -1076,9 +1076,6 @@ static JNIEnv *attach_to_jvm(jni_worker_t *p)
 {
     JNIEnv *rc = NULL;
 
-    /* It's needed only once per thread, but there is no
-       generic/good way to keep per/thread data. 
-    
 #ifdef LINUX
     linux_signal_hack();
 #endif    
