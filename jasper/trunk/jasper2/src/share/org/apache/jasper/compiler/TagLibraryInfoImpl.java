@@ -390,27 +390,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             try {
                 Class teiClass = ctxt.getClassLoader().loadClass(teiclass);
                 tei = (TagExtraInfo) teiClass.newInstance();
-	    } catch (ClassNotFoundException cex) {
-                Constants.message("jsp.warning.teiclass.is.null",
-                                  new Object[] {
-                                      teiclass, cex.getMessage()
-                                  },
-                                  Logger.WARNING
-                                  );
-            } catch (IllegalAccessException iae) {
-                Constants.message("jsp.warning.teiclass.is.null",
-                                  new Object[] {
-                                      teiclass, iae.getMessage()
-                                  },
-                                  Logger.WARNING
-                                  );
-            } catch (InstantiationException ie) {
-                Constants.message("jsp.warning.teiclass.is.null",
-                                  new Object[] {
-                                      teiclass, ie.getMessage()
-                                  },
-                                  Logger.WARNING
-                                  );
+	    } catch (Exception e) {
+                err.jspError("jsp.error.teiclass.instantiation", teiclass, e);
             }
 	}
 
@@ -561,7 +542,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 				   className, declare, scope);
     }
 
-    private TagLibraryValidator createValidator(TreeNode elem) {
+    private TagLibraryValidator createValidator(TreeNode elem)
+            throws JasperException {
+
         String validatorClass = null;
 	Map initParams = new Hashtable();
 
@@ -589,13 +572,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                 Class tlvClass = 
 		    ctxt.getClassLoader().loadClass(validatorClass);
                 tlv = (TagLibraryValidator)tlvClass.newInstance();
-            } catch (Exception ex) {
-                Constants.message("jsp.warning.tlvclass.is.null",
-				  new Object[] {
-				      validatorClass, 
-				      "EXCEPTION: " + ex.getMessage()
-				  },
-				  Logger.ERROR);
+            } catch (Exception e) {
+                err.jspError("jsp.error.tlvclass.instantiation",
+			     validatorClass, e);
             }
         }
 	if (tlv != null) {
