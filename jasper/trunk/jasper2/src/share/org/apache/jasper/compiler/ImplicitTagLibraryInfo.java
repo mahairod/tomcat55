@@ -1,4 +1,10 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
+ * ====================================================================
+ * 
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -64,6 +70,8 @@ import org.apache.jasper.JasperException;
  * Class responsible for generating an implicit tag library containing tag
  * handlers corresponding to the tag files in "/WEB-INF/tags/" or a 
  * subdirectory of it.
+ *
+ * @author Jan Luehe
  */
 public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
