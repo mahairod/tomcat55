@@ -574,6 +574,34 @@ public final class ApplicationContext
 
 
     /**
+     * Return a Set containing the resource paths of resources member of the
+     * specified collection. Each path will be a String starting with
+     * a "/" character. The returned set is immutable.
+     * 
+     * @param path Collection path
+     */
+    public Set getResourcePaths(String path) {
+
+        ResourceSet set = new ResourceSet();
+        DirContext resources = context.getResources();
+        if (resources == null) {
+            set.setLocked(true);
+            return (set);
+        }
+        
+        try {
+            listCollectionPaths(set, resources, path);
+        } catch (NamingException e) {
+            // Ignore
+        }
+        
+        set.setLocked(true);
+        return (set);
+
+    }
+
+
+    /**
      * Return the name and version of the servlet container.
      */
     public String getServerInfo() {
@@ -828,6 +856,29 @@ public final class ApplicationContext
             if (object instanceof DirContext) {
                 listPaths(set, resources, childPath);
             }
+        }
+
+    }
+
+
+    /**
+     * List resource paths (recursively), and store all of them in the given 
+     * Set.
+     */
+    private static void listCollectionPaths
+        (Set set, DirContext resources, String path) 
+        throws NamingException {
+
+        Enumeration childPaths = resources.listBindings(path);
+        while (childPaths.hasMoreElements()) {
+            Binding binding = (Binding) childPaths.nextElement();
+            String name = binding.getName();
+            String childPath = path + "/" + name;
+            Object object = binding.getObject();
+            if (object instanceof DirContext) {
+                childPath = childPath + "/";
+            }
+            set.add(childPath);
         }
 
     }
