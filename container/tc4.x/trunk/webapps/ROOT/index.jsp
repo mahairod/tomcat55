@@ -43,8 +43,7 @@
         <td align="left" width="130"><a href="http://jakarta.apache.org/tomcat/index.html"><img src="tomcat.gif" height="92" width="130" border="0" alt="The Mighty Tomcat - MEOW!"></td>
         <td align="left" valign="top">
             <table>
-                <tr><td align="left" valign="top"><b>Tomcat</b></td></tr>
-                <tr><td align="left" valign="top"><b>Version 4.1-dev</b></td></tr>
+                <tr><td align="left" valign="top"><b><%= application.getServerInfo() %></b></td></tr>
             </table>
         </td>
         <td align="right"><a href="http://jakarta.apache.org/"><img src="jakarta-banner.gif" height="100" width="350" border="0" alt="The Jakarta Project"></a></td>

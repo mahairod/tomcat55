@@ -73,12 +73,12 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Service;
+import org.apache.catalina.util.ServerInfo;
 
 /**
  * Standard implementation of the <b>Engine</b> interface.  Each
@@ -301,7 +301,7 @@ public class StandardEngine
     public void start() throws LifecycleException {
 
         // Log our server identification information
-        System.out.println(Globals.SERVER_INFO);
+        System.out.println(ServerInfo.getServerInfo());
 
         // Standard container startup
         super.start();

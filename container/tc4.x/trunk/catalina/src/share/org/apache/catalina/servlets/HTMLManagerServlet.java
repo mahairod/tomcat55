@@ -70,7 +70,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
-import org.apache.catalina.Globals;
+import org.apache.catalina.util.ServerInfo;
 
 /**
  * Servlet that enables remote management of the web applications installed
@@ -251,7 +251,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         writer.print("&nbsp;<input type=\"submit\" value=\"install\"></td></tr>\n");
         writer.print("<tr><td colspan=\"5\" bgcolor=\"#CCCCCC\"><font size=\"-1\" ");
         writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print(Globals.SERVER_INFO+"</font></td>\n</tr>\n");
+        writer.print(ServerInfo.getServerInfo()+"</font></td>\n</tr>\n");
         writer.print("</table>\n</form>\n</body>\n</html>");
     }
 

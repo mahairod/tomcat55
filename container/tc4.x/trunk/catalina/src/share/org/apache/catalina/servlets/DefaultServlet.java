@@ -115,6 +115,7 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.util.FastHttpDateFormat;
 import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 
 
@@ -1742,7 +1743,7 @@ public class DefaultServlet
         sb.append("</table>\r\n");
 
         sb.append("<HR size=\"1\" noshade>");
-        sb.append("<h3>").append(Globals.SERVER_INFO).append("</h3>");
+        sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
         sb.append("</body>\r\n");
         sb.append("</html>\r\n");
 

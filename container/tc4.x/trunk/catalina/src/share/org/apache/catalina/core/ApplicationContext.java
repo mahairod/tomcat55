@@ -103,6 +103,7 @@ import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ResourceSet;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 
 
@@ -726,7 +727,7 @@ public class ApplicationContext
      */
     public String getServerInfo() {
 
-        return (Globals.SERVER_INFO);
+        return (ServerInfo.getServerInfo());
 
     }
 

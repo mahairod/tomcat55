@@ -233,12 +233,6 @@ public final class Globals {
 
 
     /**
-     * The descriptive information about this server and version.
-     */
-    public static final String SERVER_INFO = "Apache Tomcat/4.1-dev";
-
-
-    /**
      * The request attribute under which we forward a servlet name to
      * an error page.
      */

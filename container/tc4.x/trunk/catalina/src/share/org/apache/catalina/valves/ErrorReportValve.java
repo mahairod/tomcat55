@@ -89,6 +89,7 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.connector.HttpResponseWrapper;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 
 
@@ -300,7 +301,7 @@ public class ErrorReportValve
         StringBuffer sb = new StringBuffer();
 
         sb.append("<html><head><title>");
-        sb.append(Globals.SERVER_INFO).append(" - ");
+        sb.append(ServerInfo.getServerInfo()).append(" - ");
         sb.append(sm.getString("errorReportValve.errorReport"));
         sb.append("</title>");
         sb.append("<STYLE><!--");
@@ -352,7 +353,7 @@ public class ErrorReportValve
         }
 
         sb.append("<HR size=\"1\" noshade>");
-        sb.append("<h3>").append(Globals.SERVER_INFO).append("</h3>");
+        sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
         sb.append("</body></html>");
 
         try {

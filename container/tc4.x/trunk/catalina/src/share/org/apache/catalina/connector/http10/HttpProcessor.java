@@ -93,6 +93,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 
 
@@ -109,6 +110,16 @@ import org.apache.catalina.util.StringManager;
 
 final class HttpProcessor
     implements Lifecycle, Runnable {
+
+
+    // ----------------------------------------------------- Manifest Constants
+
+
+    /**
+     * Server information string for this server.
+     */
+    private static final String SERVER_INFO =
+        ServerInfo.getServerInfo() + " (HTTP/1.0 Connector)";
 
 
     // ----------------------------------------------------------- Constructors
@@ -638,7 +649,7 @@ final class HttpProcessor
             response.setStream(output);
             response.setRequest(request);
             ((HttpServletResponse) response.getResponse()).setHeader
-                ("Server", Constants.ServerInfo);
+                ("Server", SERVER_INFO);
         } catch (Exception e) {
             log("process.create", e);
             ok = false;

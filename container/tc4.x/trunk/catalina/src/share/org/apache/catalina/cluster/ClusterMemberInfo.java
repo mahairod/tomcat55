@@ -64,7 +64,7 @@
 package org.apache.catalina.cluster;
 
 import java.io.Serializable;
-import org.apache.catalina.Globals;
+import org.apache.catalina.util.ServerInfo;
 
 /**
  * Class that represents a member in a Cluster, keeps information
@@ -103,7 +103,7 @@ public final class ClusterMemberInfo implements Serializable {
     }
 
     public String getServerVersion() {
-        return(Globals.SERVER_INFO);
+        return(ServerInfo.getServerInfo());
     }
 
     public void setClusterInfo(String clusterInfo) {

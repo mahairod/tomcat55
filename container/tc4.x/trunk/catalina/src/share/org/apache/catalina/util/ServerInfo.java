@@ -62,17 +62,61 @@
  */
 
 
-package org.apache.catalina.connector.http10;
+package org.apache.catalina.util;
+
+
+import java.io.InputStream;
+import java.util.Properties;
 
 
 /**
- * Static constants for this package.
+ * Simple utility module to make it easy to plug in the server identifier
+ * when integrating Tomcat.
+ *
+ * @author Craig R. McClanahan
+ * @version $Revision$ $Date$
  */
 
-public final class Constants {
+public class ServerInfo {
 
-    public static final String Package =
-        "org.apache.catalina.connector.http10";
-    public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
+
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * The server information String with which we identify ourselves.
+     */
+    private static String serverInfo = null;
+
+    static {
+
+        try {
+            InputStream is = ServerInfo.class.getResourceAsStream
+                ("/org/apache/catalina/util/ServerInfo.properties");
+            Properties props = new Properties();
+            props.load(is);
+            is.close();
+            serverInfo = props.getProperty("server.info");
+        } catch (Throwable t) {
+            ;
+        }
+        if (serverInfo == null)
+            serverInfo = "Apache Tomcat";
+
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return the server identification for this version of Tomcat.
+     */
+    public static String getServerInfo() {
+
+        return (serverInfo);
+
+    }
+
 
 }
