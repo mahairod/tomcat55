@@ -992,7 +992,7 @@ public final class StandardLoader
             String libName = "/WEB-INF/lib";
             
             File destDir = new File(workDir, libName);
-            if (servletContext.getRealPath(libName) != null)
+            if (servletContext.getRealPath(libName) == null)
                 destDir.mkdirs();
             
             DirContext libDir = null;
