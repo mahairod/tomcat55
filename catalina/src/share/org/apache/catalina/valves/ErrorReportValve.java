@@ -314,7 +314,7 @@ public class ErrorReportValve
             sb.append("<p><b>");
             sb.append(sm.getString("errorReportValve.exception"));
             sb.append("</b> <pre>");
-            sb.append(stackTrace);
+            sb.append(RequestUtil.filter(stackTrace));
             sb.append("</pre></p>");
 
             while (rootCause != null) {
@@ -323,7 +323,7 @@ public class ErrorReportValve
                 sb.append("<p><b>");
                 sb.append(sm.getString("errorReportValve.rootCause"));
                 sb.append("</b> <pre>");
-                sb.append(stackTrace);
+                sb.append(RequestUtil.filter(stackTrace));
                 sb.append("</pre></p>");
                 // In case root cause is somehow heavily nested
                 try {
