@@ -3,16 +3,6 @@
 -->
 
 <!-- 
-     Documents that are intended to be DTD-valid should begin their
-     DOCTYPE declaration as follows:
-     
-        <!DOCTYPE jsp:root PUBLIC
-            "http://java.sun.com/dtd/jsp_1_2"
-            "http://java.sun.com/dtd/jsp_1_2.dtd"
-
-     Documents that are intended to be schema-valid may omit the PUBLIC
-     identifiers.
-     
      This DTD is not conditional on any parameter entities in the internal
      subset and does not export any general entities.
 -->
@@ -60,7 +50,7 @@
 
 <!--=================== Element Groups ====================================-->
 
-<!ENTITY % Directives "jsp:directive.page|jsp:directive.include|jsp:directive.taglib">
+<!ENTITY % Directives "jsp:directive.page|jsp:directive.include">
 
 <!ENTITY % Scripts "jsp:scriptlet|jsp:declaration|jsp:expression">
 
@@ -100,15 +90,13 @@
     isErrorPage     %Bool;          "false"
 >
 
+<!-- the jsp:directive.include only appears in JSP documents and does
+     not appear in the XML views of JSP pages.
+-->
+
 <!ELEMENT jsp:directive.include EMPTY>
 <!ATTLIST jsp:directive.include
     file            %URI;           #REQUIRED
->
-
-<!ELEMENT jsp:directive.taglib EMPTY>
-<!ATTLIST jsp:directive.taglib
-    uri             %URI;           #REQUIRED
-    tagPrefix       %Prefix;        #REQUIRED
 >
 
 <!ELEMENT jsp:scriptlet (#PCDATA)>
@@ -180,5 +168,3 @@
 >
 
 <!ELEMENT jsp:cdata #PCDATA>
-
-<!-- jsp:attribute is missing - EPLL -->
