@@ -189,6 +189,7 @@
     <copy tofile="${webapps.build}/${webapp.name}/WEB-INF/lib/commons-collections.jar" 
     	file="${commons-collections.jar}"/>
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${commons-digester.jar}"/>
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${regexp.jar}"/>
     <copy todir="${webapps.build}/${webapp.name}">
       <fileset dir=".">
         <exclude name="build.*"/>
