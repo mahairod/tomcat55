@@ -110,7 +110,7 @@ public class CookieTools {
 
         buf.append(URLEncoder.encode(cookie.getName()));
         buf.append("=");
-        maybeQuote(version, buf, cookie.getValue());
+        maybeQuote(version, buf, URLEncoder.encode(cookie.getValue()));
 
         // add version 1 specific information
         if (version == 1) {
@@ -120,7 +120,8 @@ public class CookieTools {
             // Comment=comment
             if (cookie.getComment() != null) {
                 buf.append (";Comment=");
-                maybeQuote (version, buf, cookie.getComment());
+                maybeQuote (version, buf,
+                            URLEncoder.encode(cookie.getComment()));
             }
         }
 
@@ -166,10 +167,10 @@ public class CookieTools {
                                     String value)
     {
         if (version == 0 || isToken (value))
-          buf.append (URLEncoder.encode(value));
+            buf.append (value);
         else {
             buf.append ('"');
-            buf.append (URLEncoder.encode(value));
+            buf.append (value);
             buf.append ('"');
         }
     }
