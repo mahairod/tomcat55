@@ -77,19 +77,32 @@ public class GetPathTranslatedTestServlet extends HttpServlet {
 	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
-		//checking for a not null value
+		//checking for a value that matches expected value
+                String realTranslated =
+                    getServletContext().getRealPath(request.getPathInfo());
 		String pathTranslated = request.getPathTranslated();
-		if( ( pathTranslated !=null) && ( pathTranslated.trim().indexOf("/servlet-tests/javax_servlet") > -1 ) )
-		{
-			out.println("GetPathTranslatedTest test PASSED");
-		}
-		else
-		{
-			out.println("GetPathTranslatedTest test FAILED");
-			out.println("getPathTranslated returned incorrect value");
-			out.println("Actual Returned value -> " + pathTranslated );
-			out.println("Expected Returned value -> should contain /servlet-tests/jaavx_servlet "  );
-		}
+                if (realTranslated == null) {
+                    if (pathTranslated == null) {
+                        out.println("GetPathTranslatedTest test PASSED");
+                    } else {
+                        out.println("GetPathTranslatedTest test FAILED");
+                        out.println("Expected --> " + realTranslated);
+                        out.println("Received --> " + pathTranslated);
+                    }
+                } else {
+                    if (pathTranslated == null) {
+                        out.println("GetPathTranslatedTest test FAILED");
+                        out.println("Expected --> " + realTranslated);
+                        out.println("Received --> " + pathTranslated);
+                    } else if (!realTranslated.equals(pathTranslated)) {
+                        out.println("GetPathTranslatedTest test FAILED");
+                        out.println("Expected --> " + realTranslated);
+                        out.println("Received --> " + pathTranslated);
+                    } else {
+                        out.println("GetPathTranslatedTest test PASSED");
+                    }
+                }
 
-	}
+        }
+
 }
