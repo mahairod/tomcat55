@@ -569,7 +569,6 @@ public class PageContextImpl
 	    // part of forwarding the request to the error page, from
 	    // throwing it if the response has not been committed (the response
 	    // will have been committed if the error page is a JSP page).
-            Object origException=request.getAttribute("javax.servlet.error.exception");
 
 	    request.setAttribute("javax.servlet.jsp.jspException", t);
 	    request.setAttribute("javax.servlet.error.status_code",
@@ -588,8 +587,8 @@ public class PageContextImpl
 
             Object newException=request.getAttribute("javax.servlet.error.exception");
 
-            if ((origException == null) || 
-                ((newException != null) && (newException == origException))) {
+            // t==null means the attribute was not set.
+            if( (newException!= null) && (newException==t) ) {
                 request.removeAttribute("javax.servlet.error.exception");
             }
 
