@@ -699,8 +699,10 @@ public class SimpleTcpCluster
                         ClusterManager mgr = (ClusterManager) managers.get(key);
                         if (mgr != null)
                             mgr.messageDataReceived(msg);
-                        else
-                            log.warn("Context manager doesn't exist:" + key);
+                        else {
+                            //this happens a lot before the system has started up
+                            log.debug("Context manager doesn't exist:" + key);
+                        }
                     }//while
                 } else {
                     ClusterManager mgr = (ClusterManager) managers.get(name);

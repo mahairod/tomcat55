@@ -101,7 +101,7 @@ public class ReplicationTransmitter
         String key = addr.getHostAddress()+":"+port;
         IDataSender sender = (IDataSender)map.get(key);
         if ( sender == null ) return;
-        if ( sender.isConnected() ) sender.disconnect();
+        sender.disconnect();
         map.remove(key);
     }
 
