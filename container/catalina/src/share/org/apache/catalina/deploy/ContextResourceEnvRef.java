@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public class ContextResourceEnvRef extends ContextBase implements Serializable {
+public class ContextResourceEnvRef extends ResourceBase implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
