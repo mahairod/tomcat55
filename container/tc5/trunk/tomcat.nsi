@@ -105,6 +105,7 @@ Section "Core" SecTomcatCore
 
   SectionIn 1 2 3
 
+  IfSilent +2 0
   Call checkJvm
 
   SetOutPath $INSTDIR
@@ -122,7 +123,13 @@ Section "Core" SecTomcatCore
   File /r webapps\balancer
   File /r webapps\ROOT
 
+  IfSilent 0 +3
+  Call findJavaPath
+  Pop $2
+
+  IfSilent +2 0
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
+
   CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
   ClearErrors
 
@@ -136,7 +143,13 @@ Section "Service" SecTomcatService
 
   SectionIn 3
 
+  IfSilent 0 +3
+  Call findJavaPath
+  Pop $2
+
+  IfSilent +2 0
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
+
   Push $2
   Call findJVMPath
   Pop $2
@@ -392,7 +405,16 @@ Function configure
   !insertmacro MUI_INSTALLOPTIONS_READ $R1 "config.ini" "Field 5" "State"
   !insertmacro MUI_INSTALLOPTIONS_READ $R2 "config.ini" "Field 7" "State"
 
+  IfSilent 0 +2
+  StrCpy $R4 'port="8080"'
+
+  IfSilent +2 0
   StrCpy $R4 'port="$R0"'
+
+  IfSilent 0 +2
+  StrCpy $R5 ''
+
+  IfSilent +2 0
   StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
 
   DetailPrint 'HTTP/1.1 Connector configured on port "$R0"'
