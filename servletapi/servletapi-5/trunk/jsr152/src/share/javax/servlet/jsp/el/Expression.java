@@ -81,7 +81,7 @@ public interface Expression {
      *
      * @param vResolver A VariableResolver instance that can be used at runtime to
      *   resolve the name of implicit objects into Objects.
-     * @return The result of the expression evaluation or null if errors were encountered.
+     * @return The result of the expression evaluation.
      *
      * @exception ELException Thrown if the expression evaluation failed.
      */ 
