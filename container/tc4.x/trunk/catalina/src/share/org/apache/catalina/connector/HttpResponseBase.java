@@ -168,6 +168,39 @@ public class HttpResponseBase
      */
     public void finishResponse() throws IOException {
 
+        // If an HTTP error >= 400 has been created with no content,
+        // attempt to create a simple error message
+        if (!isCommitted() &&
+            (stream == null) && (writer == null) &&
+            (status >= HttpServletResponse.SC_BAD_REQUEST) &&
+            (contentType == null) &&
+            (contentCount == 0)) {
+            System.out.println("finishResponse: " + status + " " + message);
+            try {
+                setContentType("text/html");
+                PrintWriter writer = getWriter();
+                writer.println("<html>");
+                writer.println("<head>");
+                writer.println("<title>Tomcat Error Report</title>");
+                writer.println("<br><br>");
+                writer.println("<h1>HTTP Status ");
+                writer.print(status);
+                writer.print(" - ");
+                if (message != null)
+                    writer.print(message);
+                else
+                    writer.print(getStatusMessage(status));
+                writer.println("</h1>");
+                writer.println("</body>");
+                writer.println("</html>");
+            } catch (IOException e) {
+                throw e;
+            } catch (Throwable e) {
+                ;       // Just eat it
+            }
+        }
+
+        // Flush the headers and finish this response
         sendHeaders();
         super.finishResponse();
 

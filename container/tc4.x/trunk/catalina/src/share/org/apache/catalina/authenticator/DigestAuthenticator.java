@@ -244,7 +244,7 @@ public final class DigestAuthenticator
         
 	setAuthenticateHeader(hreq, hres, config, nOnce);
 	hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	hres.flushBuffer();
+        //	hres.flushBuffer();
 	return (false);
 
     }

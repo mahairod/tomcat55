@@ -174,7 +174,7 @@ public final class BasicAuthenticator
                        "Basic realm=\"" + realmName + "\"");
         hres.setContentLength(0);
 	hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	hres.flushBuffer();
+        //	hres.flushBuffer();
 	return (false);
 
     }

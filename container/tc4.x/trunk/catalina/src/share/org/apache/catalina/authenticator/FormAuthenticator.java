@@ -194,7 +194,7 @@ public final class FormAuthenticator
 	    return (true);		// Perform the original request
 	else {
 	    hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
-	    hres.flushBuffer();
+            //	    hres.flushBuffer();
 	    return (false);
 	}
 
