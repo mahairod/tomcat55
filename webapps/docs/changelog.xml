@@ -35,6 +35,9 @@
       <update>
         <bug>31912</bug>: Add PNG and CSS file types to replication filter default. (yoavs)
       </update>
+      <update>
+        <bug>32235</bug>: Sync conf/web.xml MIME types with Apache httpd. (yoavs)
+      </update>
     </changelog>
   </subsection>
   
