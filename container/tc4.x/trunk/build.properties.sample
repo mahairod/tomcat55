@@ -117,9 +117,9 @@ servlet.loc=jakarta-servletapi-4
 
 # ----- Xerces XML Parser, version 2.0.0 or later -----
 # Note: Optional with JDK 1.4+, or if Xerces 1.x is present
-xerces.home=${base.path}/xerces-2_2_0
+xerces.home=${base.path}/xerces-2_2_1
 xerces.lib=${xerces.home}
-xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.2.0.tar.gz
+xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.2.1.tar.gz
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
