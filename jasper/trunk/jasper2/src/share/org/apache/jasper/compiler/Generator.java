@@ -2910,7 +2910,14 @@ public class Generator {
     public void generateSetDynamicAttribute() {
         out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws AttributeNotSupportedException {");
 	out.pushIndent();
+	out.printil("if (uri != null)");
+	out.pushIndent();
+	out.printil("dynamicAttrs.put(uri + \"_\" + localName, value);");
+	out.popIndent();
+	out.printil("else");
+	out.pushIndent();
 	out.printil("dynamicAttrs.put(localName, value);");
+	out.popIndent();
 	out.popIndent();
 	out.printil("}");
     }
