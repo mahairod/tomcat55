@@ -48,6 +48,14 @@
       </fix>
     </changelog>
   </subsection>
+
+  <subsection name="Webapps">
+    <changelog>
+      <update>
+        <bug>32019</bug>: Remove maxlength=64 restriction on env entry values in admin webapp. (yoavs)
+      </update>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.4 (yoavs)">
