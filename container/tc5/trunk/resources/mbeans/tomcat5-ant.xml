@@ -9,7 +9,6 @@
 
   <path id="tomcatCP-extra" /> 
 
-
   <target name="init" unless="init.done">
 
     <path id="tomcatCP" >
@@ -248,6 +247,13 @@
          <attribute name="privileged" value="true" />
          <attribute name="engineName" value="${domain}" />
        </mbean>
+
+       <mbean name="${jsr77Domain}:j2eeType=WebModule,name=//localhost/tomcat-docs,J2EEApplication=none,J2EEServer=none" 
+              code="org.apache.catalina.core.StandardContext"  modeler="true">
+         <attribute name="docBase" value="${tomcat.webapps}/tomcat-docs" />
+         <attribute name="privileged" value="true" />
+         <attribute name="engineName" value="${domain}" />
+       </mbean>
 -->
 
        <mbean name="${jsr77Domain}:j2eeType=WebModule,name=//localhost/manager,J2EEApplication=none,J2EEServer=none" 
@@ -268,7 +274,7 @@
 <!--
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/admin,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/../server/webapps/admin" />
+         <attribute name="docBase" value="${tomcat.webapps}/admin" />
          <attribute name="privileged" value="true" />
        </mbean>
 -->
@@ -276,137 +282,6 @@
     </jmx-service>
   </target>
 
-  <target name="run2" depends="init,jmx-console"
-        description="Start 2 engines">
-
-    <modelerRegistry resource="org/apache/catalina/mbeans/mbeans-descriptors.xml" />
-
-    <mkdir dir="${tomcat.home}/work/${domain}/" />
-
-    <jmx-service>
-<!--
-      Should be optional - but the name is used in several places.
-      The whole name should disapear - use domain instead
--->
-       <mbean name="${domain}:type=Service" 
-              code="org.apache.catalina.core.StandardService"
-              modeler="true">
-         <attribute name="name" value="Tomcat-Standalone"/>
-       </mbean>
-
-
-       <mbean name="${domain}:type=Engine" 
-              code="org.apache.catalina.core.StandardEngine"
-              modeler="true">
-         <attribute name="name" value="Tomcat-Standalone"/>
-         <attribute name="baseDir" value="${tomcat.home}"/>
-         <attribute name="defaultHost" value="localhost"/>
-       </mbean>
-
-<!--
-       <mbean name="${domain}:type=Realm" 
-              code="org.apache.catalina.realm.JAASRealm" modeler="true">
-       </mbean>
--->
-       <mbean name="${domain}:type=Realm" 
-              code="org.apache.catalina.realm.MemoryRealm" modeler="true">
-         <attribute name="pathname"
-                    value="${tomcat.home}/conf/tomcat-users.xml" />
-       </mbean>
-
-<!--
-       <mbean name="${domain}:type=Connector,port=9009" 
-              code="org.apache.coyote.tomcat5.CoyoteConnector"
-              modeler="true">
-         <attribute name="protocolHandlerClassName"
-                    value="org.apache.jk.server.JkCoyoteHandler" />
-       </mbean>
--->
-
-       <mbean name="${domain}:type=Channel,name=ChannelUn" 
-              code="org.apache.jk.common.ChannelUn"
-              modeler="true">
-          <attribute name="file" value="${tomcat.home}/work/${domain}/jk2.channel" />
-       </mbean>
-
-
-       <mbean name="${domain}:type=Connector,port=9080" 
-              code="org.apache.coyote.tomcat5.CoyoteConnector"
-              modeler="true">
-          <attribute name="port" value="9080" />
-       </mbean>
-
-
-<!--
-       <mbean name="${domain}:type=DefaultContext,host=localhost,service=Tomcat-Standalone" 
-              code="org.apache.catalina.core.StandardDefaultContext"
-              modeler="true">
-       </mbean>
--->
-
-
-<!-- Optional: when the context is created it'll create a host if none is found.
--->
-       <mbean name="${domain}:type=Host,host=localhost" 
-              code="org.apache.catalina.core.StandardHost" modeler="true">
-         <attribute name="name" value="localhost"/>
-       </mbean>
-
-
-       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/,J2EEApplication=none,J2EEServer=none" 
-              code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/ROOT" />
-         <!-- Required for now -->
-         <attribute name="privileged" value="true" />
-       </mbean>
-
-<!-- 
-       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/servlets-examples,J2EEApplication=none,J2EEServer=none" 
-              code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/servlets-examples" />
-         <attribute name="privileged" value="true" />
-       </mbean>
-
-       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/jsp-examples,J2EEApplication=none,J2EEServer=none" 
-              code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/jsp-examples" />
-         <attribute name="privileged" value="true" />
-       </mbean>
--->
-
-       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/manager,J2EEApplication=none,J2EEServer=none" 
-              code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/../server/webapps/manager" />
-         <attribute name="privileged" value="true" />
-       </mbean>
-
-       <!-- The realm must be declared after the web module. ( for now ) -->
-       <mbean name="${domain}:type=Realm,host=localhost,path=manager" 
-              code="org.apache.catalina.realm.MemoryRealm" modeler="true">
-         <attribute name="pathname"
-                    value="${tomcat.home}/conf/tomcat-users.xml" />
-       </mbean>
-
-
-<!--
-       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/admin,J2EEApplication=none,J2EEServer=none" 
-              code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/../server/webapps/admin" />
-         <attribute name="privileged" value="true" />
-       </mbean>
--->
-
-    </jmx-service>
-
-
-
-    <echo message="Tomcat5 running"/>
-
-    <!-- XXX hack - I need to make the threads non-daemon -->
-
-    <sleep hours="1"/>
-
-  </target>
 
   <!-- ==================== Await ==================== 
        Call this target if you want the build file to hang in "await". Tomcat stop or ^C will stop the ant execution.
