@@ -22,7 +22,7 @@
         <bug>28335</bug>: Fixed JavaDocs.
       </fix>
       <update>
-        Changed build dependency on JUnit from 3.7 to 3.8.1.
+        Changed build dependency on JUnit from 3.7 to 3.8.1. (yoavs)
       </update>
     </changelog>
   </subsection>
@@ -30,7 +30,7 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
-        <bug>29133</bug>: Fixed stop -force option processing in bin/catalina.sh.
+        <bug>29133</bug>: Fixed stop -force option processing in bin/catalina.sh. (yoavs)
       </fix>
     </changelog>
   </subsection>
@@ -38,7 +38,10 @@
   <subsection name="Coyote">
     <changelog>
       <fix>
-        <bug>29162</bug>: Added quote escape for mod_jk module location.
+        <bug>29162</bug>: Added quote escape for mod_jk module location. (yoavs)
+      </fix>
+      <fix>
+        <bug>28837</bug>: Added Solaris includes to JK native build script. (yoavs)
       </fix>
     </changelog>
   </subsection>
