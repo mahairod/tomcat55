@@ -142,12 +142,12 @@ public class AddValveAction extends Action {
         types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "/admin/AddValve.do?parent=" + URLEncoder.encode(parent) 
+                "AddValve.do?parent=" + URLEncoder.encode(parent) 
                 + "&type=" + type));        
         for (int i=0; i< valveTypes.length; i++) {
             if (!type.equalsIgnoreCase(valveTypes[i])) {
                 types.add(new LabelValueBean(valveTypes[i],
-                "/admin/AddValve.do?parent=" + URLEncoder.encode(parent) 
+                "AddValve.do?parent=" + URLEncoder.encode(parent) 
                 + "&type=" + valveTypes[i]));        
             }
         }

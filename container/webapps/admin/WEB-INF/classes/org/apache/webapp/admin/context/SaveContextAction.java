@@ -202,10 +202,10 @@ public final class SaveContextAction extends Action {
                 
                 // Ensure that the requested context name is unique
                 ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.CONTEXT_TYPE +
+                    new ObjectName(honame.getDomain() +
+                                   TomcatTreeBuilder.CONTEXT_TYPE +
                                    ",path=" + cform.getPath() +
-                                   ",host=" + honame.getKeyProperty("host") +
-                                   ",service=" + honame.getKeyProperty("service"));
+                                   ",host=" + honame.getKeyProperty("host"));
                 
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
@@ -216,8 +216,8 @@ public final class SaveContextAction extends Action {
                 }
                 
                 // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+                ObjectName fname = 
+                    TomcatTreeBuilder.getMBeanFactory(oname.getDomain());
 
                 // Create a new StandardContext object
                 values = new Object[3];
@@ -459,6 +459,7 @@ public final class SaveContextAction extends Action {
                                     HttpSession session) 
         throws Exception {
                               
+        String domain = oname.getDomain();
         TreeControl control = (TreeControl) session.getAttribute("treeControlTest");
         if (control != null) {
             TreeControlNode parentNode = control.findNode(parentName);
@@ -473,7 +474,7 @@ public final class SaveContextAction extends Action {
                                         "EditContext.do?select=" +
                                         encodedName,
                                         "content",
-                                        true);
+                                        true, domain);
                 parentNode.addChild(childNode);
                 // FIXME - force a redisplay
                 String type = oname.getKeyProperty("type");
@@ -487,14 +488,13 @@ public final class SaveContextAction extends Action {
                 if (host == null) {
                     host = "";
                 }        
-                String service = oname.getKeyProperty("service");
                 TreeControlNode subtree = new TreeControlNode
                     ("Context Resource Administration " + containerName,
                     "folder_16_pad.gif",
                     resources.getMessage("resources.treeBuilder.subtreeNode"),
                     null,
                     "content",
-                    true);        
+                    true, domain);        
                 childNode.addChild(subtree);
                 TreeControlNode datasources = new TreeControlNode
                     ("Context Data Sources " + containerName,
@@ -503,11 +503,10 @@ public final class SaveContextAction extends Action {
                     "resources/listDataSources.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("DataSources List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 TreeControlNode mailsessions = new TreeControlNode
                     ("Context Mail Sessions " + containerName,
                     "Mailsession.gif",
@@ -515,11 +514,10 @@ public final class SaveContextAction extends Action {
                     "resources/listMailSessions.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("MailSessions List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 TreeControlNode resourcelinks = new TreeControlNode
                     ("Resource Links " + containerName,
                     "ResourceLink.gif",
@@ -527,11 +525,10 @@ public final class SaveContextAction extends Action {
                     "resources/listResourceLinks.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("ResourceLinks List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 TreeControlNode envs = new TreeControlNode
                     ("Context Environment Entries "+ containerName,
                     "EnvironmentEntries.gif",
@@ -539,11 +536,10 @@ public final class SaveContextAction extends Action {
                     "resources/listEnvEntries.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("EnvEntries List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 subtree.addChild(datasources);
                 subtree.addChild(mailsessions);
                 subtree.addChild(resourcelinks);

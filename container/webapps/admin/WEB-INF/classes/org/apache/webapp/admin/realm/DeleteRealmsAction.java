@@ -165,10 +165,6 @@ public class DeleteRealmsAction extends Action {
         String operation = "removeRealm";
         try {
 
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
                 session.getAttribute("treeControlTest");
@@ -176,11 +172,14 @@ public class DeleteRealmsAction extends Action {
             // Remove the specified realms
             for (int i = 0; i < realms.length; i++) {
                 values[0] = realms[i];
-                mBServer.invoke(fname, operation,
-                                values, removeRealmTypes);
                 if (control != null) {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(realms[i]);
+                    String domain = node.getDomain();
+                    ObjectName fname = 
+                        TomcatTreeBuilder.getMBeanFactory(domain);
+                    mBServer.invoke(fname, operation,
+                                values, removeRealmTypes);
                     if (node != null) {
                         node.remove();
                     } else {

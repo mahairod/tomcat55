@@ -165,9 +165,6 @@ public class DeleteHostsAction extends Action {
         String operation = "removeHost";
 
         try {
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
@@ -176,11 +173,13 @@ public class DeleteHostsAction extends Action {
             // Remove the specified hosts
             for (int i = 0; i < hosts.length; i++) {
                 values[0] = hosts[i];
-                mBServer.invoke(fname, operation,
-                                values, removeHostTypes);
                 if (control != null) {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(hosts[i]);
+                    String domain = node.getDomain();
+                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    mBServer.invoke(fname, operation,
+                                values, removeHostTypes);
                     if (node != null) {
                         node.remove();
                     } else {

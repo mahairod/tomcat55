@@ -78,6 +78,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import javax.management.MalformedObjectNameException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
@@ -94,6 +95,7 @@ import javax.management.MBeanInfo;
  *
  * @author Jazmin Jonson
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -103,19 +105,19 @@ public class TomcatTreeBuilder implements TreeBuilder{
     // This SERVER_LABEL needs to be localized
     private final static String SERVER_LABEL = "Tomcat Server";
     
-    public final static String SERVER_TYPE = "Catalina:type=Server";
-    public final static String FACTORY_TYPE = "Catalina:type=MBeanFactory";
-    public final static String SERVICE_TYPE = "Catalina:type=Service";
-    public final static String ENGINE_TYPE = "Catalina:type=Engine";
-    public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
-    public final static String HOST_TYPE = "Catalina:type=Host";
-    public final static String CONTEXT_TYPE = "Catalina:type=Context";
-    public final static String DEFAULTCONTEXT_TYPE = "Catalina:type=DefaultContext";
-    public final static String LOADER_TYPE = "Catalina:type=Loader";
-    public final static String MANAGER_TYPE = "Catalina:type=Manager";
-    public final static String LOGGER_TYPE = "Catalina:type=Logger";
-    public final static String REALM_TYPE = "Catalina:type=Realm";
-    public final static String VALVE_TYPE = "Catalina:type=Valve";
+    public final static String SERVER_TYPE = ":type=Server";
+    public final static String FACTORY_TYPE = ":type=MBeanFactory";
+    public final static String SERVICE_TYPE = ":type=Service";
+    public final static String ENGINE_TYPE = ":type=Engine";
+    public final static String CONNECTOR_TYPE = ":type=Connector";
+    public final static String HOST_TYPE = ":type=Host";
+    public final static String CONTEXT_TYPE = ":type=Context";
+    public final static String DEFAULTCONTEXT_TYPE = ":type=DefaultContext";
+    public final static String LOADER_TYPE = ":type=Loader";
+    public final static String MANAGER_TYPE = ":type=Manager";
+    public final static String LOGGER_TYPE = ":type=Logger";
+    public final static String REALM_TYPE = ":type=Realm";
+    public final static String VALVE_TYPE = ":type=Valve";
 
     public final static String WILDCARD = ",*";
     
@@ -137,14 +139,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
 
     }
     
-    public static ObjectInstance getMBeanFactory()
-    throws JMException, ServletException {
+    public static ObjectName getMBeanFactory(String domain) 
+            throws MalformedObjectNameException {
         
-        Iterator factoryItr =
-        mBServer.queryMBeans(new ObjectName(FACTORY_TYPE + WILDCARD), null).iterator();
-        ObjectInstance mBeanFactory = (ObjectInstance)factoryItr.next();
-        
-        return mBeanFactory;
+        return new ObjectName(domain+FACTORY_TYPE + WILDCARD);
     }
     
 
@@ -160,8 +158,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getServers(TreeControlNode rootNode, MessageResources resources)
                         throws Exception {
         
+        String domain = rootNode.getDomain();
         Iterator serverNames =
-            Lists.getServers(mBServer).iterator();
+            Lists.getServers(mBServer,domain).iterator();
         while (serverNames.hasNext()) {
             String serverName = (String) serverNames.next();
             ObjectName objectName = new ObjectName(serverName);
@@ -175,7 +174,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    true);
+                                    true, domain);
             rootNode.addChild(serverNode);
             getServices(serverNode, serverName, resources);
         }
@@ -196,6 +195,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getServices(TreeControlNode serverNode, String serverName, 
                         MessageResources resources) throws Exception {
 
+        String domain = serverNode.getDomain();
         Iterator serviceNames =
             Lists.getServices(mBServer, serverName).iterator();
         while (serviceNames.hasNext()) {
@@ -212,7 +212,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             serverNode.addChild(serviceNode);
             getConnectors(serviceNode, serviceName);
             getDefaultContexts(serviceNode, serviceName, resources);
@@ -236,6 +236,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getConnectors(TreeControlNode serviceNode, String serviceName)
                         throws Exception{
         
+        String domain = serviceNode.getDomain();
         Iterator connectorNames =
             Lists.getConnectors(mBServer, serviceName).iterator();
         while (connectorNames.hasNext()) {
@@ -252,7 +253,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             serviceNode.addChild(connectorNode);
         }
     }
@@ -271,6 +272,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getHosts(TreeControlNode serviceNode, String serviceName, 
         MessageResources resources) throws Exception {
         
+        String domain = serviceNode.getDomain();
         Iterator hostNames =
             Lists.getHosts(mBServer, serviceName).iterator();
         while (hostNames.hasNext()) {
@@ -287,7 +289,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             serviceNode.addChild(hostNode);
             getContexts(hostNode, hostName, resources);            
             getDefaultContexts(hostNode, hostName, resources);
@@ -312,6 +314,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getContexts(TreeControlNode hostNode, String hostName,
                         MessageResources resources) throws Exception {
         
+        String domain = hostNode.getDomain();
         Iterator contextNames =
             Lists.getContexts(mBServer, hostName).iterator();
         while (contextNames.hasNext()) {
@@ -328,7 +331,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             hostNode.addChild(contextNode);
             getResources(contextNode, contextName, resources);
             getLoggers(contextNode, contextName);
@@ -352,6 +355,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getDefaultContexts(TreeControlNode hostNode, String containerName, 
                                     MessageResources resources) throws Exception {
         
+        String domain = hostNode.getDomain();
         Iterator defaultContextNames =
             Lists.getDefaultContexts(mBServer, containerName).iterator();
         while (defaultContextNames.hasNext()) {
@@ -367,7 +371,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             hostNode.addChild(defaultContextNode);
             getResources(defaultContextNode, defaultContextName, resources);
         }
@@ -385,6 +389,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getLoggers(TreeControlNode containerNode,
                            String containerName) throws Exception {
 
+        String domain = containerNode.getDomain();
         Iterator loggerNames =
             Lists.getLoggers(mBServer, containerName).iterator();
         while (loggerNames.hasNext()) {
@@ -400,7 +405,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             containerNode.addChild(loggerNode);
         }
 
@@ -418,6 +423,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getRealms(TreeControlNode containerNode,
                           String containerName) throws Exception {
 
+        String domain = containerNode.getDomain();
         Iterator realmNames =
             Lists.getRealms(mBServer, containerName).iterator();
         while (realmNames.hasNext()) {
@@ -433,7 +439,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    false);
+                                    false, domain);
             containerNode.addChild(realmNode);
         }
         
@@ -451,6 +457,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getResources(TreeControlNode containerNode, String containerName,
                               MessageResources resources) throws Exception {
 
+        String domain = containerNode.getDomain();
         ObjectName oname = new ObjectName(containerName);
         String type = oname.getKeyProperty("type");
         if (type == null) {
@@ -464,14 +471,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
         if (host == null) {
             host = "";
         }                
-        String service = oname.getKeyProperty("service");
         TreeControlNode subtree = new TreeControlNode
             ("Context Resource Administration " + containerName,
              "folder_16_pad.gif",
              resources.getMessage("resources.treeBuilder.subtreeNode"),
              null,
              "content",
-             true);        
+             true, domain);        
         containerNode.addChild(subtree);
         TreeControlNode datasources = new TreeControlNode
             ("Context Data Sources " + containerName,
@@ -480,11 +486,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "resources/listDataSources.do?resourcetype=" + 
                 URLEncoder.encode(type) + "&path=" +
                 URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&service=" +
-                URLEncoder.encode(service) + "&forward=" +
+                URLEncoder.encode(host) + "&domain=" + 
+                URLEncoder.encode(domain) + "&forward=" +
                 URLEncoder.encode("DataSources List Setup"),
             "content",
-            false);
+            false, domain);
         TreeControlNode mailsessions = new TreeControlNode
             ("Context Mail Sessions " + containerName,
             "Mailsession.gif",
@@ -492,11 +498,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "resources/listMailSessions.do?resourcetype=" + 
                 URLEncoder.encode(type) + "&path=" +
                 URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&service=" +
-                URLEncoder.encode(service) + "&forward=" +
+                URLEncoder.encode(host) + "&domain=" + 
+                URLEncoder.encode(domain) + "&forward=" +
                 URLEncoder.encode("MailSessions List Setup"),
             "content",
-            false);
+            false, domain);
         TreeControlNode resourcelinks = new TreeControlNode
             ("Resource Links " + containerName,
             "ResourceLink.gif",
@@ -504,11 +510,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "resources/listResourceLinks.do?resourcetype=" + 
                 URLEncoder.encode(type) + "&path=" +
                 URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&service=" +
-                URLEncoder.encode(service) + "&forward=" +
+                URLEncoder.encode(host) + "&domain=" + 
+                URLEncoder.encode(domain) + "&forward=" +
                 URLEncoder.encode("ResourceLinks List Setup"),
             "content",
-            false);
+            false, domain);
         TreeControlNode envs = new TreeControlNode
             ("Context Environment Entries "+ containerName,
             "EnvironmentEntries.gif",
@@ -516,11 +522,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "resources/listEnvEntries.do?resourcetype=" + 
                 URLEncoder.encode(type) + "&path=" +
                 URLEncoder.encode(path) + "&host=" + 
-                URLEncoder.encode(host) + "&service=" +
-                URLEncoder.encode(service) + "&forward=" +
+                URLEncoder.encode(host) + "&domain=" + 
+                URLEncoder.encode(domain) + "&forward=" +
                 URLEncoder.encode("EnvEntries List Setup"),
             "content",
-            false);
+            false, domain);
         subtree.addChild(datasources);
         subtree.addChild(mailsessions);
         subtree.addChild(resourcelinks);
@@ -539,6 +545,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public void getValves(TreeControlNode containerNode,
                           String containerName) throws Exception {
 
+        String domain = containerNode.getDomain();
         Iterator valveNames =
                 Lists.getValves(mBServer, containerName).iterator();        
         while (valveNames.hasNext()) {
@@ -556,7 +563,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&parent=" +
                                     URLEncoder.encode(containerName),
                                     "content",
-                                    false);
+                                    false, domain);
             containerNode.addChild(valveNode);
         }
     }

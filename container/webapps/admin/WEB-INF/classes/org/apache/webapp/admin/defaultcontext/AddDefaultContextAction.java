@@ -129,22 +129,24 @@ public class AddDefaultContextAction extends Action {
         String service = request.getParameter("serviceName");
         String parent = request.getParameter("parent");
         String defaultContext = null;
+        int index = parent.indexOf(":");
+        String domain = parent.substring(0,index);
         if (service != null) {
-            defaultContext = TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
-                            ",service=" + service;
-            parent = TomcatTreeBuilder.SERVICE_TYPE + ",name=" + service;
+            defaultContext = domain + TomcatTreeBuilder.DEFAULTCONTEXT_TYPE;
+            parent = domain + TomcatTreeBuilder.SERVICE_TYPE + 
+                ",name=" + service;
             defaultContextFm.setParentObjectName(parent);
         } else if (parent != null) {
             defaultContextFm.setParentObjectName(parent);
             int position = parent.indexOf(",");
-            defaultContext = TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+            defaultContext = domain + TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
                             parent.substring(position, parent.length());
         }
         defaultContextFm.setObjectName(defaultContext);                        
         int position = defaultContext.indexOf(",");
-        String loader = TomcatTreeBuilder.LOADER_TYPE + 
+        String loader = domain + TomcatTreeBuilder.LOADER_TYPE + 
                 defaultContext.substring(position, defaultContext.length());
-        String manager = TomcatTreeBuilder.MANAGER_TYPE + 
+        String manager = domain + TomcatTreeBuilder.MANAGER_TYPE + 
                 defaultContext.substring(position, defaultContext.length());
         defaultContextFm.setLoaderObjectName(loader);
         defaultContextFm.setManagerObjectName(manager); 

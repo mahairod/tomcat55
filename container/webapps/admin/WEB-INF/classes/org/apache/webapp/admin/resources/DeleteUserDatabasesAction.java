@@ -175,16 +175,16 @@ public final class DeleteUserDatabasesAction extends Action {
         // Perform "Delete User Database" transactions as required
         try {
 
-            // Construct the MBean Name for the naming source
-            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE + 
-                                                    ResourceUtils.GLOBAL_TYPE);
-
             String signature[] = new String[1];
             signature[0] = "java.lang.String";
             Object params[] = new String[1];
 
             for (int i = 0; i < userDatabases.length; i++) {
                 ObjectName oname = new ObjectName(userDatabases[i]);
+                // Construct the MBean Name for the naming source
+                ObjectName dname = new ObjectName(oname.getDomain() +
+                                    ResourceUtils.NAMINGRESOURCES_TYPE + 
+                                    ResourceUtils.GLOBAL_TYPE);
                 params[0] = oname.getKeyProperty("name");
                 mserver.invoke(dname, "removeResource",
                                params, signature);

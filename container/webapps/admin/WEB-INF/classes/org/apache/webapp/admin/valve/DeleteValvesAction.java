@@ -165,10 +165,6 @@ public class DeleteValvesAction extends Action {
         String operation = "removeValve";
         try {
 
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
                 session.getAttribute("treeControlTest");
@@ -176,6 +172,8 @@ public class DeleteValvesAction extends Action {
             // Remove the specified valves
             for (int i = 0; i < valves.length; i++) {
                 values[0] = valves[i];
+                String domain = (new ObjectName(valves[i])).getDomain();
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
                 mBServer.invoke(fname, operation,
                                 values, removeValveTypes);
                 if (control != null) {

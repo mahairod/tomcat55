@@ -175,14 +175,14 @@ public class DeleteHostAction extends Action {
         // objects to be deleted
         HostsForm hostsForm = new HostsForm();
         String select = request.getParameter("select");
+        String domain = null;
         if (select != null) {
             String hosts[] = new String[1];
             hosts[0] = select;
             hostsForm.setHosts(hosts);
                         
-            // get the service Name this selected host belongs to
             try {
-                serviceName = (new ObjectName(select)).getKeyProperty("service");
+                domain = (new ObjectName(select)).getDomain();
             } catch (Exception e) {
                 throw new ServletException
                 ("Error extracting service name from the host to be deleted", e);
@@ -193,11 +193,8 @@ public class DeleteHostAction extends Action {
         // Accumulate a list of all available hosts
         ArrayList list = new ArrayList();
         try {
-            String pattern = TomcatTreeBuilder.HOST_TYPE +
-                TomcatTreeBuilder.WILDCARD; 
-            // get all available hosts only for this service
-            if (serviceName!= null) 
-                pattern = pattern.concat(",service=" + serviceName);            
+            String pattern = domain + TomcatTreeBuilder.HOST_TYPE +
+                TomcatTreeBuilder.WILDCARD;         
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();
             while (items.hasNext()) {
