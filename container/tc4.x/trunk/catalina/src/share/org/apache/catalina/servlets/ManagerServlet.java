@@ -331,8 +331,8 @@ public class ManagerServlet
 
         // Prepare our output writer to generate the response message
         response.setContentType("text/plain");
-	Locale locale = Locale.getDefault();
-	response.setLocale(locale);
+        Locale locale = Locale.getDefault();
+        response.setLocale(locale);
         PrintWriter writer = response.getWriter();
 
         // Process the requested command (note - "/deploy" is not listed here)
@@ -396,8 +396,8 @@ public class ManagerServlet
 
         // Prepare our output writer to generate the response message
         response.setContentType("text/plain");
-	Locale locale = Locale.getDefault();
-	response.setLocale(locale);
+        Locale locale = Locale.getDefault();
+        response.setLocale(locale);
         PrintWriter writer = response.getWriter();
 
         // Process the requested command
