@@ -134,6 +134,31 @@ simultaneous requests this connector is allowed to process.</p>
     </td>
   </tr>
 
+  <tr>
+    <td><code>proxyName</code></td>
+    <td>
+      If specified, this value will be used as the value returned by
+      <code>request.getServerName()</code>, instead of the value included
+      on the <code>Host</code> header.  This is useful when running Tomcat
+      behind a proxy server (or a web server acting as a proxy server)
+      on a different host.  See
+      <a href="#Proxy Support">Proxy Support</a>, below, for more
+      information on running behind a proxy server.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>proxyPort</code></td>
+    <td>
+      If specified, this value will be used as the value returned by
+      <code>request.getServerPort()</code>, instead of the value specified
+      by the <code>port</code> attribute.  This is useful when running
+      Tomcat behind a proxy server (or a web server acting as a proxy server).
+      See <a href="#Proxy Support">Proxy Support</a>, below, for more
+      information about running behind a proxy server.
+    </td>
+  </tr>
+
 </table>
 
 <br>
@@ -237,6 +262,77 @@ as follows:</p>
 <p>Successful use of SSL support requires that you have installed the JAR
 files from the Java Secure Sockets Extension (JSSE) package into your
 <code>conf/server</code> directory.</p>
+
+<a name="Proxy Support"></a>
+<h3>Proxy Support</h3>
+
+<p>The <code>proxyName</code> and <code>proxyPort</code> attributes can be used
+when Tomcat is run behind a proxy server.  These attributes modify the values
+returned to web applications by the <code>request.getServerName()</code> and
+<code>request.getServerPort()</code> methods, which are often used to construct
+absolute URLs for redirects.  Using the modified values will cause redirected
+requests to be flowed through the proxy server as well, instead of directly to
+the port on which Tomcat is listening.</p>
+
+<p>Proxy support can take many forms.  The following outline assumes that you
+are running Tomcat behind an Apache web server (listening to port 80) on the
+same server that Tomcat is running on, and you wish to have all requests flow
+through Apache, but forward requests for a particular web application to
+Tomcat for processing.</p>
+<ul>
+<li>Configure your copy of Apache so that it includes the
+    <code>mod_proxy</code> module.  If you are building from source, the
+    easiest way to do this is to include the <code>--enable-module=proxy</code>
+    directive on the <code>./configure</code> command line.</li>
+<li>Include two directives in your <code>httpd.conf</code> file for each
+    web application that you wish to forward to Tomcat.  For example:
+    <pre>
+        ProxyPass         /myapp  http://localhost:8081/myapp
+        ProxyPassReverse  /myapp  http://localhost:8081/myapp
+    </pre>
+    tells Apache to forward all requests sent to URLs like
+    <code>http://localhost/myapp/*</code> to be forwarded the Tomcat
+    connector listening on port 8081.</li>
+<li>Configure your copy of Tomcat to have a special Connector listening
+    on port 8081, with appropriate proxy settings as shown below:
+    <pre>
+        &lt;Connector className="org.apache.catalina.connector.http.HttpConnector"
+         port="8081" ... proxyPort="80" proxyName="www.mycompany.com"/&gt;
+    </pre>
+    which will cause servlets in this web app to think that the request
+    was directed to <code>www.mycompany.com</code> on port <code>80</code>.
+    </li>
+<li>It is legal to omit the <code>proxyName</code> attribute from the
+    <code>&lt;Connector&gt;</code> element.  If you do so, the value
+    reported by the <code>request.getServerName()</code> method will be
+    the hostname to which Apache forwards (in the configuration described
+    above, it would be "localhost").</li>
+<li>If you also have a Tomcat connector listening on port 8080 (within the
+    same <code>&lt;Service&gt;</code>, the requests to either port will be
+    processed by exactly the same set of web applications.  You might want
+    to use the IP filtering features of your operating system to restrict
+    connections for port 8081 to come from <em>only</em> the local host
+    (which is presumably the Apache web server).</li>
+<li>Alternatively, you can set up a series of web applications that are
+    <em>only</em> available via proxying as follows:
+    <ul>
+    <li>Configure another <code>&lt;Service&gt;</code> that contains a
+        <code>&lt;Connector&gt;</code> configured for proxying, as above.</li>
+    <li>Configure appropriate <code>&lt;Engine&gt;</code>,
+        <code>&lt;Host&gt;</code>, and <code>&lt;Context&gt;</code>
+        entries for the web applications accessible via proxying.</li>
+    <li>Optionally, protect port 8081 with IP filters as described earlier.
+        </li>
+    </ul>
+<li>When requests are proxied from Apache, the web server will be recording
+    these requests in its access log.  Therefore, you will generally want to
+    disable any access logging done by Tomcat (by removing or commenting out
+    the <code>&lt;Valve&gt;</code> line).</li>
+</ul>
+
+<p><strong>NOTE</strong> - Unlike the usual situation when Tomcat is used
+behind a web connector, Tomcat will serve <em>all</em> requests (including
+static files) for the specified web application.</p>
 
 <br>
 

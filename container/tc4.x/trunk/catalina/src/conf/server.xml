@@ -59,10 +59,19 @@
     </Connector>
     -->
 
-    <!-- Define a non-SSL HTTP/1.0 Test Connector on port 8081 -->
+    <!-- Define a Proxied HTTP/1.1 Connector on port 8081 -->
+    <!-- See proxy documentation for more information about using this. -->
+    <!--
+    <Connector className="org.apache.catalina.connector.http.HttpConnector"
+               port="8081" minProcessors="5" maxProcessors="75"
+               acceptCount="10" debug="0" connectionTimeout="60000"
+               proxyPort="80"/>
+    -->
+
+    <!-- Define a non-SSL HTTP/1.0 Test Connector on port 8082 -->
     <!--
     <Connector className="org.apache.catalina.connector.http10.HttpConnector"
-               port="8081" minProcessors="5" maxProcessors="75"
+               port="8082" minProcessors="5" maxProcessors="75"
                acceptCount="10" debug="0"/>
     -->
 

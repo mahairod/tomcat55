@@ -201,6 +201,24 @@ public final class HttpConnector
 
 
     /**
+     * The server name to which we should pretend requests to this Connector
+     * were directed.  This is useful when operating Tomcat behind a proxy
+     * server, so that redirects get constructed accurately.  If not specified,
+     * the server name included in the <code>Host</code> header is used.
+     */
+    private String proxyName = null;
+
+
+    /**
+     * The server port to which we should pretent requests to this Connector
+     * were directed.  This is useful when operating Tomcat behind a proxy
+     * server, so that redirects get constructed accurately.  If not specified,
+     * the port number specified by the <code>port</code> property is used.
+     */
+    private int proxyPort = 0;
+
+
+    /**
      * The request scheme that will be set on all requests received
      * through this connector.
      */
@@ -541,6 +559,50 @@ public final class HttpConnector
     public void setPort(int port) {
 
 	this.port = port;
+
+    }
+
+
+    /**
+     * Return the proxy server name for this Connector.
+     */
+    public String getProxyName() {
+
+        return (this.proxyName);
+
+    }
+
+
+    /**
+     * Set the proxy server name for this Connector.
+     *
+     * @param proxyName The new proxy server name
+     */
+    public void setProxyName(String proxyName) {
+
+        this.proxyName = proxyName;
+
+    }
+
+
+    /**
+     * Return the proxy server port for this Connector.
+     */
+    public int getProxyPort() {
+
+        return (this.proxyPort);
+
+    }
+
+
+    /**
+     * Set the proxy server port for this Connector.
+     *
+     * @param proxyPort The new proxy server port
+     */
+    public void setProxyPort(int proxyPort) {
+
+        this.proxyPort = proxyPort;
 
     }
 

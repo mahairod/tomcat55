@@ -126,8 +126,11 @@ final class HttpProcessor
 	this.connector = connector;
 	this.debug = connector.getDebug();
 	this.id = id;
+        this.proxyName = connector.getProxyName();
+        this.proxyPort = connector.getProxyPort();
 	this.request = (HttpRequest) connector.createRequest();
 	this.response = (HttpResponse) connector.createResponse();
+        this.serverPort = connector.getPort();
 	this.threadName =
 	  "HttpProcessor[" + connector.getPort() + "][" + id + "]";
 
@@ -175,6 +178,18 @@ final class HttpProcessor
 
 
     /**
+     * The proxy server name for our Connector.
+     */
+    private String proxyName = null;
+
+
+    /**
+     * The proxy server port for our Connector.
+     */
+    private int proxyPort = 0;
+
+
+    /**
      * The HTTP request object we will pass to our associated container.
      */
     private HttpRequest request = null;
@@ -184,6 +199,12 @@ final class HttpProcessor
      * The HTTP response object we will pass to our associated container.
      */
     private HttpResponse response = null;
+
+
+    /**
+     * The actual server port for our Connector.
+     */
+    private int serverPort = 0;
 
 
     /**
@@ -338,7 +359,10 @@ final class HttpProcessor
 	    log("  parseConnection: address=" + socket.getInetAddress() +
 		", port=" + connector.getPort());
 	((HttpRequestImpl) request).setInet(socket.getInetAddress());
-	request.setServerPort(connector.getPort());
+        if (proxyPort != 0)
+            request.setServerPort(proxyPort);
+        else
+            request.setServerPort(serverPort);
         request.setSocket(socket);
 
     }

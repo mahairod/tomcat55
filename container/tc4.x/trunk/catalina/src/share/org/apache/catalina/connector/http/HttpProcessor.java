@@ -129,8 +129,11 @@ final class HttpProcessor
 	this.connector = connector;
 	this.debug = connector.getDebug();
 	this.id = id;
+        this.proxyName = connector.getProxyName();
+        this.proxyPort = connector.getProxyPort();
 	this.request = (HttpRequestImpl) connector.createRequest();
 	this.response = (HttpResponseImpl) connector.createResponse();
+        this.serverPort = connector.getPort();
 	this.threadName =
 	  "HttpProcessor[" + connector.getPort() + "][" + id + "]";
 
@@ -190,6 +193,18 @@ final class HttpProcessor
 
 
     /**
+     * The proxy server name for our Connector.
+     */
+    private String proxyName = null;
+
+
+    /**
+     * The proxy server port for our Connector.
+     */
+    private int proxyPort = 0;
+
+
+    /**
      * The HTTP request object we will pass to our associated container.
      */
     private HttpRequestImpl request = null;
@@ -199,6 +214,12 @@ final class HttpProcessor
      * The HTTP response object we will pass to our associated container.
      */
     private HttpResponseImpl response = null;
+
+
+    /**
+     * The actual server port for our Connector.
+     */
+    private int serverPort = 0;
 
 
     /**
@@ -514,7 +535,10 @@ final class HttpProcessor
 	    log("  parseConnection: address=" + socket.getInetAddress() +
 		", port=" + connector.getPort());
 	((HttpRequestImpl) request).setInet(socket.getInetAddress());
-	request.setServerPort(connector.getPort());
+        if (proxyPort != 0)
+            request.setServerPort(proxyPort);
+        else
+            request.setServerPort(serverPort);
         request.setSocket(socket);
 
     }
@@ -594,19 +618,30 @@ final class HttpProcessor
 		request.setContentType(value);
 	    } else if (header.equals(DefaultHeaders.HOST_NAME)) {
 		int n = value.indexOf(":");
-		if (n < 0)
-		    request.setServerName(value);
-		else {
-		    request.setServerName(value.substring(0, n).trim());
-		    int port = 80;
-		    try {
-			port = Integer.parseInt(value.substring(n+1).trim());
-		    } catch (Exception e) {
-			throw new ServletException
-			    (sm.getString
-                             ("httpProcessor.parseHeaders.portNumber"));
-		    }
-		    request.setServerPort(port);
+		if (n < 0) {
+                    if (proxyName != null)
+                        request.setServerName(proxyName);
+                    else
+                        request.setServerName(value);
+		} else {
+                    if (proxyName != null)
+                        request.setServerName(proxyName);
+                    else
+                        request.setServerName(value.substring(0, n).trim());
+                    if (proxyPort != 0)
+                        request.setServerPort(proxyPort);
+                    else {
+                        int port = 80;
+                        try {
+                            port =
+                                Integer.parseInt(value.substring(n+1).trim());
+                        } catch (Exception e) {
+                            throw new ServletException
+                                (sm.getString
+                                 ("httpProcessor.parseHeaders.portNumber"));
+                        }
+                        request.setServerPort(port);
+                    }
 		}
 	    } else if (header.equals(DefaultHeaders.CONNECTION_NAME)) {
                 if (header.valueEquals
