@@ -78,6 +78,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
+import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.util.StringManager;
 
 
@@ -153,6 +154,11 @@ public final class EngineConfig
 	// Identify the engine we are associated with
 	try {
 	    engine = (Engine) event.getLifecycle();
+            if (engine instanceof StandardEngine) {
+                int engineDebug = ((StandardEngine) engine).getDebug();
+                if (engineDebug > this.debug)
+                    this.debug = engineDebug;
+            }
 	} catch (ClassCastException e) {
 	    log(sm.getString("engineConfig.cce", event.getLifecycle()), e);
 	    return;

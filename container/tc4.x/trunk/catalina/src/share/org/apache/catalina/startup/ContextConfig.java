@@ -102,6 +102,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.DefaultContext;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.LoginConfig;
@@ -201,6 +202,11 @@ public final class ContextConfig
 	// Identify the context we are associated with
 	try {
 	    context = (Context) event.getLifecycle();
+            if (context instanceof StandardContext) {
+                int contextDebug = ((StandardContext) context).getDebug();
+                if (contextDebug > this.debug)
+                    this.debug = contextDebug;
+            }
 	} catch (ClassCastException e) {
 	    log(sm.getString("contextConfig.cce", event.getLifecycle()), e);
 	    return;
@@ -825,11 +831,16 @@ public final class ContextConfig
             authenticatorConfig();
 
         // Dump the contents of this pipeline if requested
-        if (debug >= 1) {
+        if ((debug >= 1) && (context instanceof ContainerBase)) {
             log("Pipline Configuration:");
-            Valve valves[] = ((Pipeline) context).getValves();
-            for (int i = 0; i < valves.length; i++) {
-                log("  " + valves[i].getInfo());
+            Pipeline pipeline = ((ContainerBase) context).getPipeline();
+            Valve valves[] = null;
+            if (pipeline != null)
+                valves = pipeline.getValves();
+            if (valves != null) {
+                for (int i = 0; i < valves.length; i++) {
+                    log("  " + valves[i].getInfo());
+                }
             }
             log("======================");
         }

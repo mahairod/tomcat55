@@ -85,6 +85,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 
 
@@ -216,6 +217,11 @@ public final class HostConfig
 	// Identify the host we are associated with
 	try {
 	    host = (Host) event.getLifecycle();
+            if (host instanceof StandardHost) {
+                int hostDebug = ((StandardHost) host).getDebug();
+                if (hostDebug > this.debug)
+                    this.debug = hostDebug;
+            }
 	} catch (ClassCastException e) {
 	    log(sm.getString("hostConfig.cce", event.getLifecycle()), e);
 	    return;

@@ -454,7 +454,9 @@ public class Catalina {
 			    "configClass"));
 	mapper.addRule(prefix + "", mapper.addChild
 		       ("addChild", "org.apache.catalina.Container"));
+
 	createContextCommon(prefix, mapper);
+
     }
 
 
@@ -474,28 +476,9 @@ public class Catalina {
         mapper.addRule(prefix + "", mapper.setProperties());
 	mapper.addRule(prefix + "", mapper.addChild
                        ("addDefaultContext", "org.apache.catalina.core.DefaultContext"));
-        mapper.addRule(prefix + "/Logger", mapper.objectCreate
-                       (null, "className"));
-        mapper.addRule(prefix + "/Logger",
-                       mapper.setProperties());
-        mapper.addRule(prefix + "/Logger", mapper.addChild
-                       ("setLogger", "org.apache.catalina.Logger"));
-
-        mapper.addRule(prefix + "/Realm", mapper.objectCreate
-                       (null, "className"));
-        mapper.addRule(prefix + "/Realm",
-                       mapper.setProperties());
-        mapper.addRule(prefix + "/Realm", mapper.addChild
-                       ("setRealm", "org.apache.catalina.Realm"));
-
-        mapper.addRule(prefix + "/Valve", mapper.objectCreate
-                       (null, "className"));
-        mapper.addRule(prefix + "/Valve",
-                       mapper.setProperties());
-        mapper.addRule(prefix + "/Valve", mapper.addChild
-                       ("addValve", "org.apache.catalina.Valve"));
 
         createContextCommon(prefix, mapper);
+
     }
 
 
@@ -507,19 +490,6 @@ public class Catalina {
      * @param mapper The mapper we are updating
      */
     protected void createContextCommon(String prefix, XmlMapper mapper) {
-        mapper.addRule(prefix + "/ResourceParams", mapper.objectCreate
-                       ("org.apache.catalina.deploy.ResourceParams"));
-        mapper.addRule(prefix + "/ResourceParams",
-                       mapper.setProperties());
-        mapper.addRule(prefix + "/ResourceParams", mapper.addChild
-                       ("addResourceParams",
-                        "org.apache.catalina.deploy.ResourceParams"));
-	mapper.addRule(prefix + "/ResourceParams/parameter",
-		       mapper.methodSetter("addParameter", 2));
-	mapper.addRule(prefix + "/ResourceParams/parameter/name",
-		       mapper.methodParam(0));
-	mapper.addRule(prefix + "/ResourceParams/parameter/value",
-		       mapper.methodParam(1));
 
         mapper.addRule(prefix + "/Ejb", mapper.objectCreate
                        ("org.apache.catalina.deploy.ContextEjb"));
@@ -557,6 +527,13 @@ public class Catalina {
 	mapper.addRule(prefix + "/Loader", mapper.addChild
 		       ("setLoader", "org.apache.catalina.Loader"));
 
+        mapper.addRule(prefix + "/Logger", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Logger",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Logger", mapper.addChild
+                       ("setLogger", "org.apache.catalina.Logger"));
+
 	mapper.addRule(prefix + "/Manager",
 		       mapper.objectCreate
 		       ("org.apache.catalina.session.StandardManager",
@@ -574,6 +551,13 @@ public class Catalina {
                        ("addApplicationParameter",
                         "org.apache.catalina.deploy.ApplicationParameter"));
 
+        mapper.addRule(prefix + "/Realm", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Realm",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Realm", mapper.addChild
+                       ("setRealm", "org.apache.catalina.Realm"));
+
         mapper.addRule(prefix + "/Resource",
                        mapper.objectCreate
                        ("org.apache.catalina.deploy.ContextResource"));
@@ -584,6 +568,21 @@ public class Catalina {
                        ("addResource",
                         "org.apache.catalina.deploy.ContextResource"));
 
+        mapper.addRule(prefix + "/ResourceParams", mapper.objectCreate
+                       ("org.apache.catalina.deploy.ResourceParams"));
+        mapper.addRule(prefix + "/ResourceParams",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/ResourceParams", mapper.addChild
+                       ("addResourceParams",
+                        "org.apache.catalina.deploy.ResourceParams"));
+
+	mapper.addRule(prefix + "/ResourceParams/parameter",
+		       mapper.methodSetter("addParameter", 2));
+	mapper.addRule(prefix + "/ResourceParams/parameter/name",
+		       mapper.methodParam(0));
+	mapper.addRule(prefix + "/ResourceParams/parameter/value",
+		       mapper.methodParam(1));
+
 	mapper.addRule(prefix + "/Resources",
 		       mapper.objectCreate
 		       ("org.apache.naming.resources.FileDirContext",
@@ -592,6 +591,13 @@ public class Catalina {
 		       mapper.setProperties());
 	mapper.addRule(prefix + "/Resources", mapper.addChild
 		       ("setResources", "javax.naming.directory.DirContext"));
+
+        mapper.addRule(prefix + "/Valve", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Valve",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Valve", mapper.addChild
+                       ("addValve", "org.apache.catalina.Valve"));
 
 	mapper.addRule(prefix + "/WrapperLifecycle",
 		       mapper.methodSetter("addWrapperLifecycle", 0));
