@@ -361,7 +361,8 @@ class ServletLoader extends ClassLoader {
 
 	    if (f.exists() &&
 	        f.isDirectory()) {
-		String[] jars = getJarFiles(f);
+                JarFinder jarFinder = new JarFinder();
+		String[] jars = jarFinder.getJars(f);
 
 		for (int i = 0; i < jars.length; i++) {
 		    String s = f.toString() + File.separator + jars[i];
@@ -407,7 +408,8 @@ class ServletLoader extends ClassLoader {
 
                 if (f.exists() &&
                     f.isDirectory()) {
-                    String[] jars = getJarFiles(f);
+                    JarFinder jarFinder = new JarFinder();
+		    String[] jars = jarFinder.getJars(f);
 
                     for (int i = 0; i < jars.length; i++) {
                         String s = f.toString() + File.separator +
@@ -485,12 +487,6 @@ class ServletLoader extends ClassLoader {
 	return baos.toByteArray();
     }
 
-    private String[] getJarFiles(File f) {
-        FilenameFilter filter = new JarFilter("jar");
-
-        return f.list(filter);
-    }
-
     private String classPathFormat(Enumeration e) {
         String cp = "";
 
@@ -510,15 +506,51 @@ class ServletLoader extends ClassLoader {
     }
 }
 
-class JarFilter implements FilenameFilter {
-    String extension = "";
+class JarFinder {
+    private Vector jars = null;
 
-    JarFilter(String extension) {
-        this.extension = extension;
+    String[] getJars(String dir) {
+        File f = new File(dir);
+
+        return getJars(f, null);
     }
 
-    public boolean accept(File dir, String name) {
-        return (name != null &&
-	    name.endsWith("." + this.extension));
+    String[] getJars(String dir, String path) {
+        File f = new File(dir);
+
+        return getJars(f, path);
+    }
+
+    String[] getJars(File dir) {
+        return getJars(dir, null);
+    }
+
+    private String[] getJars(File dir, String path) {
+        File[] files = dir.listFiles();
+
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            String p = (path != null) ? path + File.separator : "";
+
+            if (file.canRead()) {
+                if (file.isFile() &&
+                    file.getName().toLowerCase().endsWith(
+                        "." + "jar")) {
+                    if (this.jars == null) {
+                        this.jars = new Vector();
+                    }
+
+                    this.jars.addElement(p + file.getName());
+                } else if (file.isDirectory()) {
+                    getJars(file, p + file.getName());
+                }
+            }
+        }
+
+        String[] jars = new String[this.jars.size()];
+
+        this.jars.copyInto((Object[])jars);
+
+        return jars;
     }
 }
