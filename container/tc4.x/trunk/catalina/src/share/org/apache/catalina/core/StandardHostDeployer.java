@@ -79,6 +79,7 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.ExpandWar;
 import org.apache.catalina.startup.NamingRuleSet;
@@ -251,6 +252,9 @@ public class StandardHostDeployer implements Deployer {
         // Determine if directory/war to install is in the host appBase
         boolean isAppBase = false;
         File appBase = new File(host.getAppBase());
+        if (!appBase.isAbsolute())
+            appBase = new File(System.getProperty("catalina.base"),
+                            host.getAppBase());
         File contextFile = new File(docBase);
         File baseDir = contextFile.getParentFile();
         if (appBase.getCanonicalPath().equals(baseDir.getCanonicalPath())) {
@@ -522,6 +526,9 @@ public class StandardHostDeployer implements Deployer {
                 // Determine if directory/war to remove is in the host appBase
                 boolean isAppBase = false;
                 File appBase = new File(host.getAppBase());
+                if (!appBase.isAbsolute())
+                    appBase = new File(System.getProperty("catalina.base"),
+                                       host.getAppBase());
                 File contextFile = new File(context.getDocBase());
                 File baseDir = contextFile.getParentFile();
                 if (appBase.getCanonicalPath().equals(baseDir.getCanonicalPath())) {
@@ -532,7 +539,6 @@ public class StandardHostDeployer implements Deployer {
                 if (contextFile.getName().toLowerCase().endsWith(".war")) {
                     isWAR = true;
                 }
-    
                 // Only remove directory and/or war if they are located in the
                 // Host's appBase and autoDeploy or liveDeploy are true
                 if (isAppBase && (host.getAutoDeploy() || host.getLiveDeploy())) {
@@ -563,6 +569,21 @@ public class StandardHostDeployer implements Deployer {
                 }
     
                 // Remove the work directory for the Context
+                if (workDir == null &&
+                    context instanceof StandardContext &&
+                    ((StandardContext)context).getWorkDir() != null) {
+                    workDir = new File(((StandardContext)context).getWorkDir());
+                    if (!workDir.isAbsolute()) {
+                        File catalinaHome = new File(System.getProperty("catalina.base"));
+                        String catalinaHomePath = null;
+                        try {
+                            catalinaHomePath = catalinaHome.getCanonicalPath();
+                            workDir = new File(catalinaHomePath,
+                                               ((StandardContext)context).getWorkDir());
+                        } catch (IOException e) {
+                        }
+                    }
+                }
                 if (workDir != null && workDir.exists()) {
                     deleteDir(workDir);
                 }
