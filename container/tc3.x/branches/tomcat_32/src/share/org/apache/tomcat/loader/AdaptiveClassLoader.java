@@ -661,8 +661,17 @@ public class AdaptiveClassLoader extends ClassLoader {
     public InputStream getResourceAsStream(String name) {
         // Try to load it from the system class
         if( debug > 0 ) log( "getResourceAsStream() " + name );
-	InputStream s = getSystemResourceAsStream(name);
+        // First ask the parent class loader to fetch it, if possible
+        InputStream s = null;
+        if (parent != null) {
+            s = parent.getResourceAsStream(name);
+            if (s != null)
+                return (s);
+        }
+        // Second ask the system class loader to fetch it from the classpath
+	s = getSystemResourceAsStream(name);
 
+        // Third, check our own repositories
         if (s == null) {
             // Try to find it from every repository
             Enumeration repEnum = repository.elements();
@@ -755,8 +764,15 @@ public class AdaptiveClassLoader extends ClassLoader {
      */
     public URL getResource(String name) {
         if( debug > 0 ) log( "getResource() " + name );
-        // First ask the primordial class loader to fetch it from the classpath
-        URL u = getSystemResource(name);
+        // First ask the parent class loader to fetch it, if possible
+        URL u = null;
+        if (parent != null) {
+            u = parent.getResource(name);
+            if (u != null)
+                return (u);
+        }
+        // Second ask the system class loader to fetch it from the classpath
+        u = getSystemResource(name);
         if (u != null) {
             return u;
         }
@@ -765,7 +781,7 @@ public class AdaptiveClassLoader extends ClassLoader {
             return null;
         }
 
-        // We got here so we have to look for the resource in our list of repository elements
+        // Third, check our own repositories
         Enumeration repEnum = repository.elements();
         while (repEnum.hasMoreElements()) {
             ClassRepository cp = (ClassRepository) repEnum.nextElement();
