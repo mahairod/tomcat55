@@ -13,8 +13,32 @@
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
   <property name="year"                  value="2004" />
-  <property name="version"               value="5.5-dev" />
-  <property name="dottedver"             value="5.5.0.1" />
+  <property name="version.major"         value="5" />
+  <property name="version.minor"         value="5" />
+  <!-- When releasing set the 'version.build' to even number
+        and 'version.isdev' to zero.
+  -->
+  <property name="version.build"         value="1" />
+  <property name="version.patch"         value="0" />
+  <property name="version.isdev"         value="1" />
+
+  <condition property="isDevVersion"     value="-dev">
+    <not>
+      <equals arg1="${version.isdev}" arg2="0"/>
+    </not>
+  </condition>
+  <condition property="isPatchedVersion" value=".${version.patch}">
+    <not>
+      <equals arg1="${version.patch}" arg2="0"/>
+    </not>
+  </condition>
+  <!-- Second definition if not already conditionaly set -->
+  <property name="isDevVersion"          value="" />
+  <property name="isPatchedVersion"      value="" />
+  
+  <property name="version"               value="${version.major}.${version.minor}.${version.build}${isPatchedVersion}${isDevVersion}" />
+  <property name="version.number"        value="${version.major}.${version.minor}.${version.build}.${version.patch}" />
+
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
@@ -1508,7 +1532,7 @@
     <copy file="${jtc.home}/procrun/bin/tomcat5w.exe" 
         tofile="${tomcat.dist}/bin/tomcat5w.exe" />
     <filter token="VERSION" value="${version}"/>
-    <filter token="DOTTEDVER" value="${dottedver}"/>
+    <filter token="VERSION_NUMBER" value="${version.number}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
     <exec dir="${tomcat.dist}" executable="${nsis.exe}">
