@@ -51,6 +51,9 @@ base.path=/usr/share/java
 #jasper.home=../jakarta-tomcat-jasper/jasper2
 
 
+# ----- Jakarta files base location -----
+base-jakarta.loc=http://archive.apache.org/dist/jakarta/
+
 # --------------------------------------------------
 #                REQUIRED LIBRARIES
 # --------------------------------------------------
@@ -60,28 +63,28 @@ base.path=/usr/share/java
 commons-beanutils.home=${base.path}/commons-beanutils-1.6.1
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
-commons-beanutils.loc=http://www.apache.org/dist/jakarta/commons/beanutils/binaries/commons-beanutils-1.6.1.tar.gz
+commons-beanutils.loc=${base-jakarta.loc}/commons/beanutils/binaries/commons-beanutils-1.6.1.tar.gz
 
 
 # ----- Commons Collections, version 1.0 or later -----
 commons-collections.home=${base.path}/commons-collections-2.1
 commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
-commons-collections.loc=http://www.apache.org/dist/jakarta/commons/collections/binaries/collections-2.1.tar.gz
+commons-collections.loc=${base-jakarta.loc}/commons/collections/binaries/collections-2.1.tar.gz
 
 
 # ----- Commons Digester, version 1.1.1 or later -----
 commons-digester.home=${base.path}/commons-digester-1.5
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.5.tar.gz
+commons-digester.loc=${base-jakarta.loc}/commons/digester/binaries/commons-digester-1.5.tar.gz
 
 
 # ----- Commons FileUpload, nightly build -----
 commons-fileupload.home=${base.path}/commons-fileupload-1.0
 commons-fileupload.lib=${commons-fileupload.home}
 commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0.jar
-commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0.tar.gz
+commons-fileupload.loc=${base-jakarta.loc}/commons/fileupload/binaries/commons-fileupload-1.0.tar.gz
 
 
 # ----- Commons Logging, version 1.0.1 or later -----
@@ -89,7 +92,7 @@ commons-logging.home=${base.path}/commons-logging-1.0.3
 commons-logging.lib=${commons-logging.home}
 commons-logging-api.jar=${commons-logging.lib}/commons-logging-api.jar
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
-commons-logging.loc=http://www.apache.org/dist/jakarta/commons/logging/binaries/commons-logging-1.0.3.tar.gz
+commons-logging.loc=${base-jakarta.loc}/commons/logging/binaries/commons-logging-1.0.3.tar.gz
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
@@ -105,14 +108,14 @@ jaas.jar=${jndi.lib}/jaas.jar
 commons-modeler.home=${base.path}/commons-modeler-1.1
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
-commons-modeler.loc=http://archive.apache.org/dist/jakarta/commons/modeler/binaries/modeler-1.1.tar.gz
+commons-modeler.loc=${base-jakarta.loc}/commons/modeler/binaries/modeler-1.1.tar.gz
 
 
 # ----- Jakarta Regular Expressions Library, version 1.2 -----
 regexp.home=${base.path}/jakarta-regexp-1.3
 regexp.lib=${regexp.home}
 regexp.jar=${regexp.lib}/jakarta-regexp-1.3.jar
-regexp.loc=http://archive.apache.org/dist/jakarta/regexp/binaries/jakarta-regexp-1.3.tar.gz
+regexp.loc=${base-jakarta.loc}/regexp/binaries/jakarta-regexp-1.3.tar.gz
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
@@ -149,25 +152,26 @@ activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
 
 
-# ----- Commons Daemon, version 20020219 or later -----
+# ----- Commons Daemon, version 1.0-Alpha or later -----
 commons-daemon.home=${base.path}/commons-daemon
 commons-daemon.lib=${commons-daemon.home}/dist
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
-commons-daemon.loc=jakarta-commons-sandbox/daemon
+#commons-daemon.loc=${base-jakarta.loc}/commons/daemon/binaries/daemon-1.0-Alpha.tar.gz
+commons-daemon.loc=http://www.apache.org/dist/jakarta/commons/daemon/binaries/commons-daemon-1.0-Alpha.tar.gz
 
 
 # ----- Commons DBCP, version 1.0 or later -----
 commons-dbcp.home=${base.path}/commons-dbcp-1.0
 commons-dbcp.lib=${commons-dbcp.home}/commons-dbcp-1.0
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
-commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-dbcp/v1.0/commons-dbcp-1.0.zip
+commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/dbcp-1.0.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
-commons-pool.home=${base.path}/commons-pool-1.0.1
+commons-pool.home=${base.path}/commons-pool-1.1
 commons-pool.lib=${commons-pool.home}
 commons-pool.jar=${commons-pool.lib}/commons-pool.jar
-commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0.1/commons-pool-1.0.1.tar.gz
+commons-pool.loc=${base-jakarta.loc}/commons/pool/binaries/commons-pool-1.1.tar.gz
 
 
 # ----- JavaService, version 1.2.0 or later -----
@@ -230,7 +234,7 @@ puretls.jar=${puretls.lib}/puretls.jar
 struts.home=${base.path}/jakarta-struts-1.1
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
-struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.1/jakarta-struts-1.0.2.tar.gz
+struts.loc=${base-jakarta.loc}/struts/binaries/jakarta-struts-1.1.tar.gz
 
 
 # ----- Tyrex Data Source, version 1.0 -----
