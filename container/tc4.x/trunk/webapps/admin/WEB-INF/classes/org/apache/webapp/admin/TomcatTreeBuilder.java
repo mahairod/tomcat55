@@ -140,11 +140,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
         // because Tomcat does this automatically
         
         String encodedServerName =  URLEncoder.encode(serverObjName);
+        String encodedNodeLabel =  URLEncoder.encode(SERVER_LABEL);
+        
         TreeControlNode serverNode =
         new TreeControlNode(serverObjName,
         "folder_16_pad.gif", SERVER_LABEL,
         "setUpServer.do?select=" + encodedServerName
-        +"&nodeLabel=" + SERVER_LABEL,
+        +"&nodeLabel=" + encodedNodeLabel,
         "content", true);
         
         return serverNode;
@@ -175,13 +177,14 @@ public class TomcatTreeBuilder implements TreeBuilder{
             encodedServiceName =  URLEncoder.encode(service.getObjectName().toString());
             
             String nodeLabel = "Service (" + serviceName + ")";
-            
+            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
+        
             TreeControlNode serviceNode =
             new TreeControlNode(service.getObjectName().toString(),
             "folder_16_pad.gif",
             nodeLabel,
             "setUpService.do?select=" + encodedServiceName
-            +"&nodeLabel=" + nodeLabel,
+            +"&nodeLabel=" + encodedNodeLabel,
             "content", true);
             
             serverNode.addChild(serviceNode);
@@ -213,17 +216,19 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             encodedConnectorName =  URLEncoder.encode(connectorObj.getObjectName().toString());
             
+            String nodeLabel = "Connector (" + connectorName + ")";
+            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
+            
             // Do not display the connector node if it is a warp connector.
             // This is because warp connector doesn't conform to the
             // standard Engine/Host/Context hierarchy and we don't support it.
             if (!"warp".equalsIgnoreCase(connectorName)) {
-                String nodeLabel = "Connector (" + connectorName + ")";
                 connectorNode =
                 new TreeControlNode(connectorObj.getObjectName().toString(),
                 "folder_16_pad.gif", 
                 nodeLabel,
                 "setUpConnector.do?select=" + encodedConnectorName
-                + "&nodeLabel="+nodeLabel,
+                + "&nodeLabel="+ encodedNodeLabel,
                 "content", true);
                 
                 serviceNode.addChild(connectorNode);
@@ -264,13 +269,14 @@ public class TomcatTreeBuilder implements TreeBuilder{
             encodedHostName =  URLEncoder.encode(hostObj.getObjectName().toString());
             
             String nodeLabel="Host (" + hostName + ")";
-            
+            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
+
             hostNode =
             new TreeControlNode(hostObj.getObjectName().toString(),
             "folder_16_pad.gif",
             nodeLabel,
             "setUpHost.do?select=" + encodedHostName
-            +"&nodeLabel="+nodeLabel,
+            +"&nodeLabel="+ encodedNodeLabel,
             "content", true);
             
             serviceNode.addChild(hostNode);
