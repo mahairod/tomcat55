@@ -1943,6 +1943,10 @@ abstract class Node implements TagConstants {
             text = text.substring(index);
         }
 
+        public void setText(String text) {
+            this.text = text;
+        }
+
         /**
          * Trim all whitespace from the right of the template text
          */

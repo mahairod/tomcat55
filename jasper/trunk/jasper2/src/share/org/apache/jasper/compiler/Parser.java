@@ -101,7 +101,6 @@ class Parser implements TagConstants {
     private boolean directivesOnly;
     private URL jarFileUrl;
     private PageInfo pageInfo;
-    private boolean mappedFile;
 
     // Virtual body content types, to make parsing a little easier.
     // These are not accessible from outside the parser.
@@ -128,7 +127,6 @@ class Parser implements TagConstants {
 	this.directivesOnly = directivesOnly;
 	this.jarFileUrl = jarFileUrl;
         start = reader.mark();
-        mappedFile = ctxt.getOptions().getMappedFile();
     }
 
     /**
@@ -1409,44 +1407,9 @@ class Parser implements TagConstants {
 	return true;
     }
 
-    /**
-     * Determines whether the current text is template text
-     * or not.  Assumes the reader is at the character 
-     * following the "<".
-     */
-    private boolean isTemplateText() throws JasperException {
-
-        Mark m = reader.mark();
-        int ch = reader.peekChar();
-        if (ch == '/') {
-            reader.nextChar();
-        }
-        String tagIdentifier = reader.parseToken(false);
-        reader.reset(m);
-        
-        if (tagIdentifier.startsWith("%")) {
-            return false;
-        }
-        if (tagIdentifier.startsWith("jsp:")) {
-            return false;
-        }
-
-        // Check if this is a user-defined tag.
-        int i = tagIdentifier.indexOf(':');
-        if (i == -1) {
-            return true;
-        }
-        String prefix = tagIdentifier.substring(0, i);
-        String uri = pageInfo.getURI(prefix);
-        if (uri == null) {
-            return true;
-        }
-
-        return false;
-    }
-    
     /*
-     *
+     * Parse for a template text string until '<' or "${" is encountered, 
+     * recognizing escape sequences "\%" and "\$".
      */
     private void parseTemplateText(Node parent) throws JasperException {
 
@@ -1461,11 +1424,9 @@ class Parser implements TagConstants {
 	while (reader.hasMoreInput()) {
 	    ch = reader.nextChar();
 	    if (ch == '<') {
-            if (!mappedFile || !isTemplateText()) {
                 reader.pushChar();
                 break;
             }
-  	    }
 	    else if( ch == '$' ) {
 		if (!reader.hasMoreInput()) {
 		    ttext.write('$');
