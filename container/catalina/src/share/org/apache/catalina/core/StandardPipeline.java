@@ -341,6 +341,7 @@ public class StandardPipeline
     }
 
     private void registerValve(Valve valve) {
+
         if( valve instanceof ValveBase &&
                 ((ValveBase)valve).getObjectName()==null ) {
             try {
@@ -474,7 +475,7 @@ public class StandardPipeline
      *  associated with a different Container
      */
     public void addValve(Valve valve) {
-
+    
         // Validate that we can add this Valve
         if (valve instanceof Contained)
             ((Contained) valve).setContainer(this.container);
@@ -486,9 +487,9 @@ public class StandardPipeline
             } catch (LifecycleException e) {
                 log.error("StandardPipeline.addValve: start: ", e);
             }
-            // Register the newly added valve
-            registerValve(valve);
         }
+        // Register the newly added valve
+        registerValve(valve);
 
         // Add this Valve to the set associated with this Pipeline
         synchronized (valves) {
