@@ -479,6 +479,11 @@ public class HostConfig
 
             try {
                 DirContext resources = context.getResources();
+                if (resources == null) {
+                    // This can happen if there was an error initializing
+                    // the context
+                    continue;
+                }
                 ResourceAttributes webXmlAttributes = 
                     (ResourceAttributes) 
                     resources.getAttributes("/WEB-INF/web.xml");
