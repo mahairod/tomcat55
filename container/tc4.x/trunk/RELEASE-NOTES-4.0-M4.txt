@@ -95,6 +95,8 @@ Catalina:  Enhance SSL client certificate support so that you can have multiple
 web applications configured, some that require client certificates and some
 that do not, communicating through the same SSL sockets.
 
+Jasper:  Support the new TryCatchFinally interface for tag libraries.
+
 
 =========
 BUG FIXES:
@@ -118,6 +120,8 @@ all TLD files under META-INF, not just META-INF/taglib.tld.
 
 Jasper:  Accept the "jsp_precompile=" query parameter in conformance to the
 specification.
+
+Jasper:  Do not complain if there is no web.xml file present.
 
 
 ==============================

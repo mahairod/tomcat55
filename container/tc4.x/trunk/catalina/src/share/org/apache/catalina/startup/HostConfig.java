@@ -273,10 +273,10 @@ public final class HostConfig
             File dir = new File(appBase, files[i]);
             if (dir.isDirectory()) {
 
-                // Make sure there is an application deployment descriptor
-                File webXml = new File(dir, "/WEB-INF/web.xml");
-                if (!webXml.exists() || !webXml.isFile() ||
-                    !webXml.canRead())
+                // Make sure there is an application configuration directory
+                File webInf = new File(dir, "/WEB-INF");
+                if (!webInf.exists() || !webInf.isDirectory() ||
+                    !webInf.canRead())
                     continue;
 
                 // Calculate the context path and make sure it is unique
