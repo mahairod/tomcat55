@@ -267,13 +267,6 @@ public class WebappLoader
     private String threadName = "WebappLoader";
 
 
-    /**
-     * Classpath (which can be used by any webapp which would need to compile
-     * classes, like a JSP engine.
-     */
-    protected StringBuffer classpath = new StringBuffer();
-
-
     // ------------------------------------------------------------- Properties
 
 
@@ -493,6 +486,7 @@ public class WebappLoader
 
         if (debug >= 1)
 	    log(sm.getString("webappLoader.addRepository", repository));
+
         for (int i = 0; i < repositories.length; i++) {
             if (repository.equals(repositories[i]))
                 return;
@@ -502,6 +496,11 @@ public class WebappLoader
 	    results[i] = repositories[i];
 	results[repositories.length] = repository;
 	repositories = results;
+
+	if (started && (classLoader != null)) {
+	    classLoader.addRepository(repository);
+	    setClassPath();
+	}
 
     }
 
@@ -618,9 +617,13 @@ public class WebappLoader
             classLoader.setDebug(this.debug);
             classLoader.setDelegate(this.delegate);
 
+            for (int i = 0; i < repositories.length; i++) {
+                classLoader.addRepository(repositories[i]);
+            }
+
             // Configure our repositories
-            setClassPath();
             setRepositories();
+            setClassPath();
 
 	    if (container instanceof Context) {
 		// Tell the class loader the root of the context
@@ -832,9 +835,6 @@ public class WebappLoader
 
         log(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
 
-        // Reset repositories
-        repositories = new String[0];
-
         DirContext resources = container.getResources();
 
         // Setting up the class repository (/WEB-INF/classes), if it exists
@@ -861,18 +861,12 @@ public class WebappLoader
 
             if (absoluteClassesPath != null) {
 
-                if (classpath.length() != 0)
-                    classpath.append(File.pathSeparator);
-                classpath.append(absoluteClassesPath);
                 classRepository = new File(absoluteClassesPath);
 
             } else {
                 
-                if (classpath.length() != 0)
-                    classpath.append(File.pathSeparator);
                 classRepository = new File(workDir, classesPath);
                 classRepository.mkdirs();
-                classpath.append(classRepository.getAbsolutePath());
                 
                 log(sm.getString("webappLoader.classDeploy", classesPath,
                                  classRepository.getAbsolutePath()));
@@ -883,9 +877,6 @@ public class WebappLoader
 
             // Adding the repository to the class loader
             classLoader.addRepository(classesPath + "/", classRepository);
-
-            // Add to the local repository list
-            addRepository(classesPath + "/");
 
         }
 
@@ -946,29 +937,19 @@ public class WebappLoader
                             continue;
                     }
 
-                    if (classpath.length() != 0)
-                        classpath.append(File.pathSeparator);
-                    classpath.append(destFile.getAbsolutePath());
-
                     JarFile jarFile = new JarFile(destFile);
 
                     classLoader.addJar(filename, jarFile, destFile);
-                    addRepository(filename);
 
                 }
             } catch (NamingException e) {
                 // Silent catch: it's valid that no /WEB-INF/lib directory 
-                //exists
-                e.printStackTrace();
+                // exists
             } catch (IOException e) {
                 e.printStackTrace();
             }
             
         }
-
-        // Store the assembled class path as a servlet context attribute
-        servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
-                                    classpath.toString());
 
     }
 
@@ -987,6 +968,8 @@ public class WebappLoader
 	if (servletContext == null)
 	    return;
 
+        StringBuffer classpath = new StringBuffer();
+
         // Assemble the class path information from our class loader chain
         ClassLoader loader = getClassLoader();
         int layers = 0;
@@ -1000,6 +983,8 @@ public class WebappLoader
                 String repository = repositories[i].toString();
                 if (repository.startsWith("file://"))
                     repository = repository.substring(7);
+                else if (repository.startsWith("file:/"))
+                    repository = repository.substring(6);
                 else if (repository.startsWith("file:"))
                     repository = repository.substring(5);
                 else if (repository.startsWith("jndi:"))
@@ -1007,7 +992,7 @@ public class WebappLoader
                         servletContext.getRealPath(repository.substring(5));
                 else
                     continue;
-                if ((repository == null) || (repository.endsWith("/")))
+                if (repository == null)
                     continue;
                 if (n > 0)
                     classpath.append(File.pathSeparator);
@@ -1017,6 +1002,10 @@ public class WebappLoader
             loader = loader.getParent();
             layers++;
         }
+
+        // Store the assembled class path as a servlet context attribute
+        servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
+                                    classpath.toString());
 
     }
 
