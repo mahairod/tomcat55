@@ -71,7 +71,7 @@ elif [ "$1" = "embedded" ] ; then
     CP=$i:${CP}
   done
   echo Embedded Classpath: $CP
-  java $CATALINA_OPTS -classpath $CP \
+  $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
    org.apache.catalina.startup.Embedded "$@"
 
@@ -86,13 +86,13 @@ elif [ "$1" = "run" ] ; then
   if [ "$1" = "-security" ] ; then
     echo Using Security Manager
     shift
-    java $CATALINA_OPTS -classpath $CP \
+    $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Djava.security.manager \
      -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start
   else
-    java $CATALINA_OPTS -classpath $CP \
+    $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start
   fi
@@ -104,14 +104,14 @@ elif [ "$1" = "start" ] ; then
   if [ "$1" = "-security" ] ; then
     echo Using Security Manager
     shift
-    java $CATALINA_OPTS -classpath $CP \
+    $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Djava.security.manager \
      -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start \
      >> $CATALINA_HOME/logs/catalina.out 2>&1 &
   else
-    java $CATALINA_OPTS -classpath $CP \
+    $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start \
      >> $CATALINA_HOME/logs/catalina.out 2>&1 &
@@ -120,7 +120,7 @@ elif [ "$1" = "start" ] ; then
 elif [ "$1" = "stop" ] ; then
 
   shift
-  java $CATALINA_OPTS -classpath $CP \
+  $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
    org.apache.catalina.startup.Bootstrap "$@" stop
 
