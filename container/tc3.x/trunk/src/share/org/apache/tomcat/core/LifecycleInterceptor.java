@@ -65,13 +65,18 @@
 package org.apache.tomcat.core;
 import javax.servlet.Servlet;
 
+
+/*
+  This interceptor is used for Servlet lifecycle.
+  ContextInterceptor is for Context lifecycle
+*/
+
 /**
  * For intercepting calls before & after the init() destroy()
  * methods are called.
  *
  * @author Harish Prabandham
  */
-
 //
 // WARNING: Some of the APIs in this class are used by J2EE. 
 // Please talk to harishp@eng.sun.com before making any changes.
