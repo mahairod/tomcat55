@@ -46,6 +46,10 @@
                     path="/tree-control-test.jsp"
                 redirect="false"/>
 
+    <forward        name="Save Successful"
+                    path="/saved.jsp"
+                redirect="false"/>
+
   </global-forwards>
 
 

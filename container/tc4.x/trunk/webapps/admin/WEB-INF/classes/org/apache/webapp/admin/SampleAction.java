@@ -108,8 +108,8 @@ public final class SampleAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-        // Forward back to the test page
-        return (mapping.findForward("Tree Control Test"));
+        // Forward to the success page
+        return (mapping.findForward("Save Successful"));
 
     }
 
