@@ -38,7 +38,6 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Group;
 import org.apache.catalina.Host;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Role;
@@ -463,37 +462,6 @@ public class MBeanUtils {
         return (mbean);
 
     }
-
-    /**
-     * Create, register, and return an MBean for this
-     * <code>Logger</code> object.
-     *
-     * @param logger The Logger to be managed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    static ModelMBean createMBean(Logger logger)
-        throws Exception {
-
-        String mname = createManagedName(logger);
-        ManagedBean managed = registry.findManagedBean(mname);
-        if (managed == null) {
-            Exception e = new Exception("ManagedBean is not found with "+mname);
-            throw new MBeanException(e);
-        }
-        String domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ModelMBean mbean = managed.createMBean(logger);
-        ObjectName oname = createObjectName(domain, logger);
-        if( mserver.isRegistered( oname ))  {
-            mserver.unregisterMBean(oname);
-        }
-        mserver.registerMBean(mbean, oname);
-        return (mbean);
-
-    }
-
 
     /**
      * Create, register, and return an MBean for this
@@ -1181,47 +1149,6 @@ public class MBeanUtils {
                             parent.getName());
                 }
             }
-        }
-
-        return (name);
-
-    }
-
-
-    /**
-     * Create an <code>ObjectName</code> for this
-     * <code>Logger</code> object.
-     *
-     * @param domain Domain in which this name is to be created
-     * @param logger The Logger to be named
-     *
-     * @exception MalformedObjectNameException if a name cannot be created
-     */
-    static ObjectName createObjectName(String domain,
-                                              Logger logger)
-        throws MalformedObjectNameException {
-
-        ObjectName name = null;
-        Container container = logger.getContainer();
-
-        if (container instanceof Engine) {
-            Service service = ((Engine)container).getService();
-            name = new ObjectName(domain + ":type=Logger");
-        } else if (container instanceof Host) {
-            Engine engine = (Engine) container.getParent();
-            Service service = engine.getService();
-            name = new ObjectName(domain + ":type=Logger,host=" +
-                              container.getName());
-        } else if (container instanceof Context) {
-            String path = ((Context)container).getPath();
-            if (path.length() < 1) {
-                path = "/";
-            }
-            Host host = (Host) container.getParent();
-            Engine engine = (Engine) host.getParent();
-            Service service = engine.getService();
-            name = new ObjectName(domain + ":type=Logger,path=" + path +
-                              ",host=" + host.getName());
         }
 
         return (name);
@@ -2026,32 +1953,6 @@ public class MBeanUtils {
         if (domain == null)
             domain = mserver.getDefaultDomain();
         ObjectName oname = createObjectName(domain, loader);
-        if( mserver.isRegistered(oname) )
-            mserver.unregisterMBean(oname);
-
-    }
-
-
-    /**
-     * Deregister the MBean for this
-     * <code>Logger</code> object.
-     *
-     * @param logger The Logger to be managed
-     *
-     * @exception Exception if an MBean cannot be deregistered
-     */
-    static void destroyMBean(Logger logger)
-        throws Exception {
-
-        String mname = createManagedName(logger);
-        ManagedBean managed = registry.findManagedBean(mname);
-        if (managed == null) {
-            return;
-        }
-        String domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName oname = createObjectName(domain, logger);
         if( mserver.isRegistered(oname) )
             mserver.unregisterMBean(oname);
 

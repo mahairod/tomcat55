@@ -354,7 +354,7 @@ public class JDBCRealm
             } catch (SQLException e) {
 
                 // Log the problem for posterity
-                log(sm.getString("jdbcRealm.exception"), e);
+                container.getLogger().error(sm.getString("jdbcRealm.exception"), e);
 
                 // Close the connection so that it gets reopened next time
                 if (dbConnection != null)
@@ -424,12 +424,12 @@ public class JDBCRealm
             }
 
             if (validated) {
-                if (debug >= 2)
-                    log(sm.getString("jdbcRealm.authenticateSuccess",
+                if (container.getLogger().isTraceEnabled())
+                    container.getLogger().trace(sm.getString("jdbcRealm.authenticateSuccess",
                                      username));
             } else {
-                if (debug >= 2)
-                    log(sm.getString("jdbcRealm.authenticateFailure",
+                if (container.getLogger().isTraceEnabled())
+                    container.getLogger().trace(sm.getString("jdbcRealm.authenticateFailure",
                                      username));
                 return (null);
             }
@@ -454,7 +454,7 @@ public class JDBCRealm
                 try {
                     rs.close();
                 } catch(SQLException e) {
-                    log(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                    container.getLogger().warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
                 }
             }
             dbConnection.commit();
@@ -495,7 +495,7 @@ public class JDBCRealm
         try {
             dbConnection.close();
         } catch (SQLException e) {
-            log(sm.getString("jdbcRealm.close"), e); // Just log it here
+            container.getLogger().warn(sm.getString("jdbcRealm.close"), e); // Just log it here
         } finally {
            this.dbConnection = null;
         }
@@ -662,7 +662,7 @@ public class JDBCRealm
         try {
             open();
         } catch (SQLException e) {
-            log(sm.getString("jdbcRealm.open"), e);
+            container.getLogger().error(sm.getString("jdbcRealm.open"), e);
         }
 
         // Perform normal superclass initialization

@@ -123,14 +123,6 @@ public class HostRuleSet extends RuleSetBase {
                             "addLifecycleListener",
                             "org.apache.catalina.LifecycleListener");
 
-        digester.addObjectCreate(prefix + "Host/Logger",
-                                 null, // MUST be specified in the element
-                                 "className");
-        digester.addSetProperties(prefix + "Host/Logger");
-        digester.addSetNext(prefix + "Host/Logger",
-                            "setLogger",
-                            "org.apache.catalina.Logger");
-
         digester.addObjectCreate(prefix + "Host/Realm",
                                  null, // MUST be specified in the element
                                  "className");

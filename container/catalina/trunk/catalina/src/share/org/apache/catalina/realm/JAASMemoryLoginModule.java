@@ -96,12 +96,6 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
 
 
     /**
-     * Should we log debugging messages?
-     */
-    protected boolean debug = false;
-
-
-    /**
      * The configuration information for this <code>LoginModule</code>.
      */
     protected Map options = null;
@@ -221,8 +215,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         // Are there any defined security constraints?
         SecurityConstraint constraints[] = context.findConstraints();
         if ((constraints == null) || (constraints.length == 0)) {
-            if (debug)
-                log("  No applicable constraints defined");
+            if (context.getLogger().isDebugEnabled())
+                context.getLogger().debug("  No applicable constraints defined");
             return (null);
         }
 
@@ -234,8 +228,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         uri = RequestUtil.URLDecode(uri); // Before checking constraints
         String method = request.getMethod();
         for (int i = 0; i < constraints.length; i++) {
-            if (debug)
-                log("  Checking constraint '" + constraints[i] +
+            if (context.getLogger().isDebugEnabled())
+                context.getLogger().debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
             if (constraints[i].included(uri, method)) {
@@ -247,8 +241,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         }
 
         // No applicable security constraint was found
-        if (debug)
-            log("  No applicable constraint located");
+        if (context.getLogger().isDebugEnabled())
+            context.getLogger().debug("  No applicable constraint located");
         if(results == null)
             return null;
         SecurityConstraint [] array = new SecurityConstraint[results.size()];
@@ -280,7 +274,6 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         this.options = options;
 
         // Perform instance-specific initialization
-        this.debug = "true".equalsIgnoreCase((String) options.get("debug"));
         if (options.get("pathname") != null)
             this.pathname = (String) options.get("pathname");
 
@@ -370,7 +363,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         if (!file.isAbsolute())
             file = new File(System.getProperty("catalina.base"), pathname);
         if (!file.exists() || !file.canRead()) {
-            log("Cannot load configuration file " + file.getAbsolutePath());
+            log.warn("Cannot load configuration file " + file.getAbsolutePath());
             return;
         }
 
@@ -382,7 +375,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
             digester.push(this);
             digester.parse(file);
         } catch (Exception e) {
-            log("Error processing configuration file " +
+            log.warn("Error processing configuration file " +
                 file.getAbsolutePath(), e);
             return;
         }

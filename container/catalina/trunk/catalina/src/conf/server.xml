@@ -159,11 +159,6 @@
       <Valve className="org.apache.catalina.valves.RequestDumperValve"/>
       -->
 
-      <!-- Global logger unless overridden at lower levels -->
-      <Logger className="org.apache.catalina.logger.FileLogger"
-              prefix="catalina_log." suffix=".txt"
-              timestamp="true"/>
-
       <!-- Because this Realm is here, an instance will be shared globally -->
 
       <!-- This Realm uses the UserDatabase configured in the global JNDI
@@ -363,16 +358,6 @@
                  directory="logs"  prefix="localhost_access_log." suffix=".txt"
                  pattern="common" resolveHosts="false"/>
         -->
-
-        <!-- Logger shared by all Contexts related to this virtual host.  By
-             default (when using FileLogger), log files are created in the "logs"
-             directory relative to $CATALINA_HOME.  If you wish, you can specify
-             a different directory with the "directory" attribute.  Specify either a
-             relative (to $CATALINA_HOME) or absolute path to the desired
-             directory.-->
-        <Logger className="org.apache.catalina.logger.FileLogger"
-                 directory="logs"  prefix="localhost_log." suffix=".txt"
-            timestamp="true"/>
 
       </Host>
 

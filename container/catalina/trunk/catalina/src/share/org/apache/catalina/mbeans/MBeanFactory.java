@@ -35,7 +35,6 @@ import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
 import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardDefaultContext;
@@ -43,9 +42,6 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.logger.FileLogger;
-import org.apache.catalina.logger.SystemErrLogger;
-import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.catalina.realm.JDBCRealm;
 import org.apache.catalina.realm.JNDIRealm;
@@ -407,31 +403,6 @@ public class MBeanFactory extends BaseModelMBean {
         ManagedBean managed = registry.findManagedBean("DefaultContext");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), context);
-        return (oname.toString());
-
-    }
-
-
-    /**
-     * Create a new FileLogger.
-     *
-     * @param parent MBean Name of the associated parent component
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public String createFileLogger(String parent)
-        throws Exception {
-
-        // Create a new FileLogger instance
-        FileLogger fileLogger = new FileLogger();
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        ContainerBase containerBase = getParentContainerFromParent(pname);
-        // Add the new instance to its parent component
-        containerBase.setLogger(fileLogger);
-        // Return the corresponding MBean name
-        ObjectName oname = fileLogger.getObjectName();
         return (oname.toString());
 
     }
@@ -1012,52 +983,6 @@ public class MBeanFactory extends BaseModelMBean {
 
 
     /**
-     * Create a new System Error Logger.
-     *
-     * @param parent MBean Name of the associated parent component
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public String createSystemErrLogger(String parent)
-        throws Exception {
-
-        // Create a new SystemErrLogger instance
-        SystemErrLogger logger = new SystemErrLogger();
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        ContainerBase containerBase = getParentContainerFromParent(pname);
-        containerBase.setLogger(logger);
-        ObjectName oname = logger.getObjectName();
-        return (oname.toString());
-
-    }
-
-
-    /**
-     * Create a new System Output Logger.
-     *
-     * @param parent MBean Name of the associated parent component
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public String createSystemOutLogger(String parent)
-        throws Exception {
-
-        // Create a new SystemOutLogger instance
-        SystemOutLogger logger = new SystemOutLogger();
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        ContainerBase containerBase = getParentContainerFromParent(pname);
-        containerBase.setLogger(logger);
-        ObjectName oname = logger.getObjectName();
-        return (oname.toString());
-        
-    }
-
-
-    /**
      * Create a new  UserDatabaseRealm.
      *
      * @param parent MBean Name of the associated parent component
@@ -1225,23 +1150,6 @@ public class MBeanFactory extends BaseModelMBean {
     }
 
 
-    /**
-     * Remove an existing Logger.
-     *
-     * @param name MBean Name of the comonent to remove
-     *
-     * @exception Exception if a component cannot be removed
-     */
-    public void removeLogger(String name) throws Exception {
-
-        ObjectName oname = new ObjectName(name);
-        // Acquire a reference to the component to be removed
-        ContainerBase container = getParentContainerFromChild(oname);      
-        container.setLogger(null);
-    
-    }
-
-    
     /**
      * Remove an existing Loader.
      *

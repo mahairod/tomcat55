@@ -61,7 +61,6 @@ import org.apache.coyote.ActionCode;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
@@ -1391,7 +1390,7 @@ public class Request
             try {
                 listener.attributeRemoved(event);
             } catch (Throwable t) {
-                log(sm.getString("coyoteRequest.attributeEvent"), t);
+                context.getLogger().error(sm.getString("coyoteRequest.attributeEvent"), t);
                 // Error valve will pick this execption up and display it to user
                 attributes.put( Globals.EXCEPTION_ATTR, t );
             }
@@ -1467,7 +1466,7 @@ public class Request
                     listener.attributeAdded(event);
                 }
             } catch (Throwable t) {
-                log(sm.getString("coyoteRequest.attributeEvent"), t);
+                context.getLogger().error(sm.getString("coyoteRequest.attributeEvent"), t);
                 // Error valve will pick this execption up and display it to user
                 attributes.put( Globals.EXCEPTION_ATTR, t );
             }
@@ -2374,7 +2373,7 @@ public class Request
         if (len > 0) {
             int maxPostSize = connector.getMaxPostSize();
             if ((maxPostSize > 0) && (len > maxPostSize)) {
-                log(sm.getString("coyoteRequest.postTooLarge"));
+                log.info(sm.getString("coyoteRequest.postTooLarge"));
                 throw new IllegalStateException("Post too large");
             }
             try {
@@ -2540,41 +2539,5 @@ public class Request
 
     }
 
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = connector.getContainer().getLogger();
-        String localName = "CoyoteRequest";
-        if (logger != null)
-            logger.log(localName + " " + message);
-        else
-            System.out.println(localName + " " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = connector.getContainer().getLogger();
-        String localName = "CoyoteRequest";
-        if (logger != null)
-            logger.log(localName + " " + message, throwable);
-        else {
-            System.out.println(localName + " " + message);
-            throwable.printStackTrace(System.out);
-        }
-
-    }
 
 }

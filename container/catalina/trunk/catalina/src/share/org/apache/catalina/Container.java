@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.naming.directory.DirContext;
 
+import org.apache.commons.logging.Log;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 
@@ -159,15 +160,7 @@ public interface Container {
      * no associated Logger, return the Logger associated with our parent
      * Container (if any); otherwise return <code>null</code>.
      */
-    public Logger getLogger();
-
-
-    /**
-     * Set the Logger with which this Container is associated.
-     *
-     * @param logger The newly associated Logger
-     */
-    public void setLogger(Logger logger);
+    public Log getLogger();
 
 
     /**

@@ -17,54 +17,33 @@
 package org.apache.catalina.cluster.tcp;
 
 import java.beans.PropertyChangeSupport;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.UnknownHostException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
-
-import org.apache.catalina.ServerFactory;
-import org.apache.catalina.core.StandardServer;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
-import org.apache.catalina.util.LifecycleSupport;
-import org.apache.catalina.util.StringManager;
 import org.apache.catalina.Valve;
-import org.apache.catalina.Host;
-
-import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.MessageListener;
+import org.apache.catalina.cluster.ClusterManager;
+import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.Constants;
+import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
-import org.apache.commons.beanutils.MethodUtils;
-import org.apache.catalina.cluster.tcp.ReplicationListener;
-import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
-import org.apache.catalina.cluster.tcp.SocketSender;
-import org.apache.catalina.cluster.io.ListenCallback;
-
+import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.cluster.SessionMessage;
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.session.ReplicationStream;
-import org.apache.catalina.cluster.ClusterManager;
-import org.apache.catalina.cluster.Constants;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.ClusterSender;
-import org.apache.catalina.cluster.ClusterDeployer;
-
-
-
+import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.StringManager;
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.logging.Log;
-
-import java.io.IOException;
-import java.net.URL;
 /**
  * A <b>Cluster</b> implementation using simple multicast.
  * Responsible for setting

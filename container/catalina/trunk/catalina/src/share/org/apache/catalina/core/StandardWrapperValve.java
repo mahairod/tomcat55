@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.Logger;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -109,22 +108,18 @@ final class StandardWrapperValve
 
         // Check for the servlet being marked unavailable
         if (!unavailable && wrapper.isUnavailable()) {
-            log(sm.getString("standardWrapper.isUnavailable",
-                             wrapper.getName()));
-            if (response == null) {
-                ;       // NOTE - Not much we can do generically
-            } else {
-                long available = wrapper.getAvailable();
-                if ((available > 0L) && (available < Long.MAX_VALUE)) {
-                	response.setDateHeader("Retry-After", available);
-                	response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-                               sm.getString("standardWrapper.isUnavailable",
-                                            wrapper.getName()));
-                } else if (available == Long.MAX_VALUE) {
-                	response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                               sm.getString("standardWrapper.notFound",
-                                            wrapper.getName()));
-                }
+            container.getLogger().info(sm.getString("standardWrapper.isUnavailable",
+                    wrapper.getName()));
+            long available = wrapper.getAvailable();
+            if ((available > 0L) && (available < Long.MAX_VALUE)) {
+                response.setDateHeader("Retry-After", available);
+                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                        sm.getString("standardWrapper.isUnavailable",
+                                wrapper.getName()));
+            } else if (available == Long.MAX_VALUE) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                        sm.getString("standardWrapper.notFound",
+                                wrapper.getName()));
             }
             unavailable = true;
         }
@@ -147,13 +142,13 @@ final class StandardWrapperValve
                                         wrapper.getName()));
             }
         } catch (ServletException e) {
-            log(sm.getString("standardWrapper.allocateException",
+            container.getLogger().error(sm.getString("standardWrapper.allocateException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
             servlet = null;
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.allocateException",
+            container.getLogger().error(sm.getString("standardWrapper.allocateException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
@@ -165,12 +160,12 @@ final class StandardWrapperValve
             response.sendAcknowledgement();
         } catch (IOException e) {
         	request.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.acknowledgeException",
+            container.getLogger().warn(sm.getString("standardWrapper.acknowledgeException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.acknowledgeException",
+            container.getLogger().error(sm.getString("standardWrapper.acknowledgeException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
@@ -211,13 +206,13 @@ final class StandardWrapperValve
             exception(request, response, e);
         } catch (IOException e) {
         	request.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            container.getLogger().warn(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
         } catch (UnavailableException e) {
         	request.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            container.getLogger().warn(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             //            throwable = e;
             //            exception(request, response, e);
@@ -260,14 +255,14 @@ final class StandardWrapperValve
             } while (rootCauseCheck != null);
 
             if (!(rootCause instanceof ClientAbortException)) {
-                log(sm.getString("standardWrapper.serviceException",
+                container.getLogger().error(sm.getString("standardWrapper.serviceException",
                                  wrapper.getName()), rootCause);
             }
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            container.getLogger().error(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
@@ -278,7 +273,7 @@ final class StandardWrapperValve
             if (filterChain != null)
                 filterChain.release();
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.releaseFilters",
+            container.getLogger().error(sm.getString("standardWrapper.releaseFilters",
                              wrapper.getName()), e);
             if (throwable == null) {
                 throwable = e;
@@ -292,7 +287,7 @@ final class StandardWrapperValve
                 wrapper.deallocate(servlet);
             }
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.deallocateException",
+            container.getLogger().error(sm.getString("standardWrapper.deallocateException",
                              wrapper.getName()), e);
             if (throwable == null) {
                 throwable = e;
@@ -308,7 +303,7 @@ final class StandardWrapperValve
                 wrapper.unload();
             }
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.unloadException",
+            container.getLogger().error(sm.getString("standardWrapper.unloadException",
                              wrapper.getName()), e);
             if (throwable == null) {
                 throwable = e;
@@ -326,57 +321,6 @@ final class StandardWrapperValve
 
 
     // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardWrapperValve[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardWrapperValve[" + container.getName() + "]: "
-                       + message, throwable);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
-        }
-
-    }
 
 
     /**

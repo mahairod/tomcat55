@@ -90,8 +90,8 @@ public class SSLAuthenticator
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
         //String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
-            if (debug >= 1)
-                log("Already authenticated '" + principal.getName() + "'");
+            if (container.getLogger().isDebugEnabled())
+                container.getLogger().debug("Already authenticated '" + principal.getName() + "'");
             // Associate the session with any existing SSO session in order
             // to get coordinated session invalidation at logout
             String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
@@ -126,8 +126,8 @@ public class SSLAuthenticator
         */
 
         // Retrieve the certificate chain for this client
-        if (debug >= 1)
-            log(" Looking up certificates");
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug(" Looking up certificates");
 
         X509Certificate certs[] = (X509Certificate[])
             request.getRequest().getAttribute(Globals.CERTIFICATES_ATTR);
@@ -136,8 +136,8 @@ public class SSLAuthenticator
                 request.getRequest().getAttribute(Globals.SSL_CERTIFICATE_ATTR);
         }
         if ((certs == null) || (certs.length < 1)) {
-            if (debug >= 1)
-                log("  No certificates included with this request");
+            if (container.getLogger().isDebugEnabled())
+                container.getLogger().debug("  No certificates included with this request");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,
                                sm.getString("authenticator.certificates"));
             return (false);
@@ -146,8 +146,8 @@ public class SSLAuthenticator
         // Authenticate the specified certificate chain
         principal = context.getRealm().authenticate(certs);
         if (principal == null) {
-            if (debug >= 1)
-                log("  Realm.authenticate() returned false");
+            if (container.getLogger().isDebugEnabled())
+                container.getLogger().debug("  Realm.authenticate() returned false");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                                sm.getString("authenticator.unauthorized"));
             return (false);

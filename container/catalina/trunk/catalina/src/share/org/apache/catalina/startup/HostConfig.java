@@ -42,7 +42,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
@@ -915,44 +914,6 @@ public class HostConfig
         throws IOException {
 
         ExpandWar.expand(input,docBase,name);
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Host (if any)
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        Logger logger = null;
-        if (host != null)
-            logger = host.getLogger();
-        if (logger != null)
-            logger.log("HostConfig[" + host.getName() + "]: " + message);
-        else
-            log.info(message);
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Host (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (host != null)
-            logger = host.getLogger();
-        if (logger != null)
-            logger.log("HostConfig[" + host.getName() + "] "
-                       + message, throwable);
-        else {
-            log.error( message, throwable );
-        }
-
     }
 
 

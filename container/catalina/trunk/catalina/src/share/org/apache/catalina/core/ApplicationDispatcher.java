@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.InstanceEvent;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.catalina.connector.Request;
@@ -630,34 +629,25 @@ final class ApplicationDispatcher
         }
 
         // Initialize local variables we may need
-        HttpServletRequest hrequest = null;
-        if (request instanceof HttpServletRequest)
-            hrequest = (HttpServletRequest) request;
-        HttpServletResponse hresponse = null;
-        if (response instanceof HttpServletResponse)
-            hresponse = (HttpServletResponse) response;
+        HttpServletRequest hrequest = (HttpServletRequest) request;
+        HttpServletResponse hresponse = (HttpServletResponse) response;
         Servlet servlet = null;
         IOException ioException = null;
         ServletException servletException = null;
         RuntimeException runtimeException = null;
         boolean unavailable = false;
-              
 
         // Check for the servlet being marked unavailable
         if (wrapper.isUnavailable()) {
-            log(sm.getString("applicationDispatcher.isUnavailable",
-                             wrapper.getName()));
-            if (hresponse == null) {
-                ;       // NOTE - Not much we can do generically
-            } else {
-                long available = wrapper.getAvailable();
-                if ((available > 0L) && (available < Long.MAX_VALUE))
-                    hresponse.setDateHeader("Retry-After", available);
-                hresponse.sendError
-                    (HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-                     sm.getString("applicationDispatcher.isUnavailable",
-                                  wrapper.getName()));
-            }
+            wrapper.getLogger().warn(
+                    sm.getString("applicationDispatcher.isUnavailable", 
+                    wrapper.getName()));
+            long available = wrapper.getAvailable();
+            if ((available > 0L) && (available < Long.MAX_VALUE))
+                hresponse.setDateHeader("Retry-After", available);
+            hresponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, sm
+                    .getString("applicationDispatcher.isUnavailable", wrapper
+                            .getName()));
             unavailable = true;
         }
 
@@ -671,12 +661,12 @@ final class ApplicationDispatcher
                 //                    log("    No servlet instance returned!");
             }
         } catch (ServletException e) {
-            log(sm.getString("applicationDispatcher.allocateException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.allocateException",
                              wrapper.getName()), e);
             servletException = e;
             servlet = null;
         } catch (Throwable e) {
-            log(sm.getString("applicationDispatcher.allocateException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.allocateException",
                              wrapper.getName()), e);
             servletException = new ServletException
                 (sm.getString("applicationDispatcher.allocateException",
@@ -714,14 +704,14 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             ioException = e;
         } catch (UnavailableException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             servletException = e;
             wrapper.unavailable(e);
@@ -751,14 +741,14 @@ final class ApplicationDispatcher
                 }
             } while (rootCauseCheck != null);
             
-            log(sm.getString("applicationDispatcher.serviceException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), rootCause);
             servletException = e;
         } catch (RuntimeException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             runtimeException = e;
         }
@@ -779,11 +769,11 @@ final class ApplicationDispatcher
                 wrapper.deallocate(servlet);
             }
         } catch (ServletException e) {
-            log(sm.getString("applicationDispatcher.deallocateException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.deallocateException",
                              wrapper.getName()), e);
             servletException = e;
         } catch (Throwable e) {
-            log(sm.getString("applicationDispatcher.deallocateException",
+            wrapper.getLogger().error(sm.getString("applicationDispatcher.deallocateException",
                              wrapper.getName()), e);
             servletException = new ServletException
                 (sm.getString("applicationDispatcher.deallocateException",
@@ -801,43 +791,6 @@ final class ApplicationDispatcher
             throw servletException;
         if (runtimeException != null)
             throw runtimeException;
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Context (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log("ApplicationDispatcher[" + context.getPath() +
-                       "]: " + message);
-        else
-            System.out.println("ApplicationDispatcher[" +
-                               context.getPath() + "]: " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log("ApplicationDispatcher[" + context.getPath() +
-                       "] " + message, throwable);
-        else {
-            System.out.println("ApplicationDispatcher[" +
-                               context.getPath() + "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
 
     }
 

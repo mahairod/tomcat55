@@ -101,12 +101,12 @@ public class JAASCallbackHandler implements CallbackHandler {
         for (int i = 0; i < callbacks.length; i++) {
 
             if (callbacks[i] instanceof NameCallback) {
-                if (realm.getDebug() >= 3)
-                    realm.log("Returning username " + username);
+                if (realm.getContainer().getLogger().isTraceEnabled())
+                    realm.getContainer().getLogger().trace("Returning username " + username);
                 ((NameCallback) callbacks[i]).setName(username);
             } else if (callbacks[i] instanceof PasswordCallback) {
-                if (realm.getDebug() >= 3)
-                    realm.log("Returning password " + password);
+                if (realm.getContainer().getLogger().isTraceEnabled())
+                    realm.getContainer().getLogger().trace("Returning password " + password);
                 final char[] passwordcontents;
                 if (password != null) {
                     passwordcontents = password.toCharArray();

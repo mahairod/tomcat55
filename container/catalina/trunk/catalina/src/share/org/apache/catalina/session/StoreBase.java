@@ -20,11 +20,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 
-import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Store;
 import org.apache.catalina.util.LifecycleSupport;
@@ -52,11 +50,6 @@ public abstract class StoreBase
      * Name to register for this Store, used for logging.
      */
     protected static String storeName = "StoreBase";
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
 
     /**
      * Has this component been started yet?
@@ -98,23 +91,6 @@ public abstract class StoreBase
      */
     public String getStoreName() {
         return(storeName);
-    }
-
-
-    /**
-     * Set the debugging detail level for this Store.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
-    /**
-     * Return the debugging detail level for this Store.
-     */
-    public int getDebug() {
-        return(this.debug);
     }
 
 
@@ -206,8 +182,7 @@ public abstract class StoreBase
         try {
             keys = keys();
         } catch (IOException e) {
-            log (e.toString());
-            e.printStackTrace();
+            manager.getContainer().getLogger().error("Error getting keys", e);
             return;
         }
 
@@ -229,42 +204,16 @@ public abstract class StoreBase
                 }
                 remove(session.getId());
             } catch (Exception e) {
-                log ("Session: "+keys[i]+"; "+e.toString());
+                manager.getContainer().getLogger().error("Session: "+keys[i]+"; ", e);
                 try {
                     remove(keys[i]);
                 } catch (IOException e2) {
-                    log (e2.toString());
-                    e2.printStackTrace();
+                    manager.getContainer().getLogger().error("Error removing key", e2);
                 }
             }
         }
     }
 
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-        Logger logger = null;
-        Container container = manager.getContainer();
-
-        if (container != null) {
-            logger = container.getLogger();
-        }
-
-        if (logger != null) {
-            logger.log(getStoreName()+"[" + container.getName() + "]: "
-                       + message);
-        } else {
-            String containerName = null;
-            if (container != null) {
-                containerName = container.getName();
-            }
-            System.out.println(getStoreName()+"[" + containerName
-                               + "]: " + message);
-        }
-    }
 
     // --------------------------------------------------------- Thread Methods
 

@@ -51,7 +51,6 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
@@ -211,7 +210,6 @@ public final class StandardServer
         if (isUseNaming()) {
             if (namingContextListener == null) {
                 namingContextListener = new NamingContextListener();
-                namingContextListener.setDebug(getDebug());
                 addLifecycleListener(namingContextListener);
             }
         }
@@ -1218,18 +1216,6 @@ public final class StandardServer
             storeLoader(writer, indent + 2, loader);
         }
 
-        // Store nested <Logger> element
-        Logger logger = context.getLogger();
-        if (logger != null) {
-            Logger parentLogger = null;
-            if (context.getParent() != null) {
-                parentLogger = context.getParent().getLogger();
-            }
-            if (logger != parentLogger) {
-                storeLogger(writer, indent + 2, logger);
-            }
-        }
-
         // Store nested <Manager> element
         Manager manager = context.getManager();
         if (manager != null) {
@@ -1527,18 +1513,6 @@ public final class StandardServer
             }
         }
 
-        // Store nested <Logger> element
-        Logger logger = engine.getLogger();
-        if (logger != null) {
-            Logger parentLogger = null;
-            if (engine.getParent() != null) {
-                parentLogger = engine.getParent().getLogger();
-            }
-            if (logger != parentLogger) {
-                storeLogger(writer, indent + 2, logger);
-            }
-        }
-
         // Store nested <Realm> element
         Realm realm = engine.getRealm();
         if (realm != null) {
@@ -1644,18 +1618,6 @@ public final class StandardServer
             }
         }
 
-        // Store nested <Logger> element
-        Logger logger = host.getLogger();
-        if (logger != null) {
-            Logger parentLogger = null;
-            if (host.getParent() != null) {
-                parentLogger = host.getParent().getLogger();
-            }
-            if (logger != parentLogger) {
-                storeLogger(writer, indent + 2, logger);
-            }
-        }
-
         // Store nested <Realm> element
         Realm realm = host.getRealm();
         if (realm != null) {
@@ -1731,28 +1693,6 @@ public final class StandardServer
         }
         writer.print("<Loader");
         storeAttributes(writer, loader);
-        writer.println("/>");
-
-    }
-
-
-    /**
-     * Store the specified Logger properties.
-     *
-     * @param writer PrintWriter to which we are storing
-     * @param indent Number of spaces to indent this element
-     * @param logger Object whose properties are being stored
-     *
-     * @exception Exception if an exception occurs while storing
-     */
-    private void storeLogger(PrintWriter writer, int indent,
-                             Logger logger) throws Exception {
-
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }
-        writer.print("<Logger");
-        storeAttributes(writer, logger);
         writer.println("/>");
 
     }

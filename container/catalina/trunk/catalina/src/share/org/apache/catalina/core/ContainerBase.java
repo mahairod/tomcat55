@@ -44,16 +44,16 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
-import org.apache.catalina.logger.LoggerBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
 import org.apache.naming.resources.ProxyDirContext;
 
@@ -189,7 +189,7 @@ public abstract class ContainerBase
     /**
      * The Logger implementation with which this Container is associated.
      */
-    protected Logger logger = null;
+    protected Log logger = null;
 
 
     /**
@@ -398,55 +398,19 @@ public abstract class ContainerBase
      * no associated Logger, return the Logger associated with our parent
      * Container (if any); otherwise return <code>null</code>.
      */
-    public Logger getLogger() {
+    public Log getLogger() {
 
         if (logger != null)
             return (logger);
-        if (parent != null)
-            return (parent.getLogger());
-        return (null);
-
-    }
-
-
-    /**
-     * Set the Logger with which this Container is associated.
-     *
-     * @param logger The newly associated Logger
-     */
-    public synchronized void setLogger(Logger logger) {
-
-        // Change components if necessary
-        Logger oldLogger = this.logger;
-        if (oldLogger == logger)
-            return;
-        this.logger = logger;
-
-        // Stop the old component if necessary
-        if (started && (oldLogger != null) &&
-            (oldLogger instanceof Lifecycle)) {
-            try {
-                ((Lifecycle) oldLogger).stop();
-            } catch (LifecycleException e) {
-                log.error("ContainerBase.setLogger: stop: ", e);
-            }
+        String loggerName = null;
+        Container current = this;
+        while (current != null) {
+            loggerName = "[" + current.getName() + "]" 
+                + ((loggerName != null) ? ("." + loggerName) : "");
+            current = current.getParent();
         }
-
-        
-        // Start the new component if necessary
-        if (logger != null)
-            logger.setContainer(this);
-        if (started && (logger != null) &&
-            (logger instanceof Lifecycle)) {
-            try {
-                ((Lifecycle) logger).start();
-            } catch (LifecycleException e) {
-                log.error("ContainerBase.setLogger: start: ", e);
-            }
-        }
-
-        // Report this property change to interested listeners
-        support.firePropertyChange("logger", oldLogger, this.logger);
+        logger = LogFactory.getLog("Tomcat." + loggerName);
+        return (logger);
 
     }
 
@@ -1044,19 +1008,6 @@ public abstract class ContainerBase
             return;
         }
         
-        if( logger instanceof LoggerBase ) {
-            LoggerBase lb=(LoggerBase)logger;
-            if( lb.getObjectName()==null ) {
-                ObjectName lname=lb.createObjectName();
-                try {
-                    Registry.getRegistry(null, null)
-                        .registerComponent(lb, lname, null);
-                } catch( Exception ex ) {
-                    log.error( "Can't register logger " + lname, ex);
-                }
-            }
-        }
-        
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 
@@ -1065,6 +1016,7 @@ public abstract class ContainerBase
         // Start our subordinate components, if any
         if ((loader != null) && (loader instanceof Lifecycle))
             ((Lifecycle) loader).start();
+        getLogger();
         if ((logger != null) && (logger instanceof Lifecycle))
             ((Lifecycle) logger).start();
         if ((manager != null) && (manager instanceof Lifecycle))
@@ -1158,18 +1110,6 @@ public abstract class ContainerBase
         }
         if ((loader != null) && (loader instanceof Lifecycle)) {
             ((Lifecycle) loader).stop();
-        }
-
-        if( logger instanceof LoggerBase ) {
-            LoggerBase lb=(LoggerBase)logger;
-            if( lb.getObjectName()!=null ) {
-                try {
-                    Registry.getRegistry(null, null)
-                        .unregisterComponent(lb.getObjectName());
-                } catch( Exception ex ) {
-                    log.error( "Can't unregister logger " + lb.getObjectName(), ex);
-                }
-            }
         }
 
         // Notify our interested LifecycleListeners
@@ -1361,40 +1301,6 @@ public abstract class ContainerBase
 
 
     /**
-     * Log the specified message to our current Logger (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-//         Logger logger = getLogger();
-//         if (logger != null)
-//             logger.log(logName() + ": " + message);
-//         else
-            log.info(message);
-    }
-
-
-    /**
-     * Log the specified message and exception to our current Logger
-     * (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Related exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = getLogger();
-        if (logger != null)
-            logger.log(logName() + ": " + message, throwable);
-        else {
-            log.error( message, throwable );
-        }
-
-    }
-
-
-    /**
      * Return the abbreviated name of this container for logging messsages
      */
     protected String logName() {
@@ -1407,6 +1313,7 @@ public abstract class ContainerBase
 
     }
 
+    
     // -------------------- JMX and Registration  --------------------
     protected String type;
     protected String domain;

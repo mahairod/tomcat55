@@ -489,7 +489,7 @@ public class StandardHostDeployer implements Deployer {
             stream.close();
             stream = null;
         } catch (Exception e) {
-            host.log
+            host.getLogger().error
                 (sm.getString("standardHost.installError", docBase), e);
             throw new IOException(e.toString());
         } finally {
@@ -586,7 +586,7 @@ public class StandardHostDeployer implements Deployer {
             stream.close();
             stream = null;
         } catch (Exception e) {
-            host.log(sm.getString("standardHost.installError", docBase), e);
+            host.getLogger().error(sm.getString("standardHost.installError", docBase), e);
             throw new IOException(e.toString());
         } finally {
             if (stream != null) {
@@ -713,7 +713,7 @@ public class StandardHostDeployer implements Deployer {
                 (sm.getString("standardHost.pathMissing", contextPath));
 
         // Remove this web application
-        host.log(sm.getString("standardHost.removing", contextPath));
+        host.getLogger().info(sm.getString("standardHost.removing", contextPath));
         try {
             // Get the work directory for the Context
             File workDir = 
@@ -792,7 +792,7 @@ public class StandardHostDeployer implements Deployer {
 
             host.fireContainerEvent(REMOVE_EVENT, context);
         } catch (Exception e) {
-            host.log(sm.getString("standardHost.removeError", contextPath), e);
+            host.getLogger().error(sm.getString("standardHost.removeError", contextPath), e);
             throw new IOException(e.toString());
         }
 

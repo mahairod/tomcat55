@@ -28,7 +28,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Globals;
-import org.apache.catalina.Logger;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.RequestUtil;
@@ -57,12 +56,6 @@ public class ErrorReportValve
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
 
 
     /**
@@ -309,8 +302,8 @@ public class ErrorReportValve
                 	response.setContentType("text/html");
                 	response.setLocale(locale);
                 } catch (Throwable t) {
-                    if (debug >= 1)
-                        log("status.setContentType", t);
+                    if (container.getLogger().isDebugEnabled())
+                        container.getLogger().debug("status.setContentType", t);
                 }
 
                 // If writer is null, it's an indication that the response has
@@ -323,41 +316,6 @@ public class ErrorReportValve
             ;
         } catch (IllegalStateException e) {
             ;
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        Logger logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message);
-        else
-            System.out.println(this.toString() + ": " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message, throwable);
-        else {
-            System.out.println(this.toString() + ": " + message);
-            throwable.printStackTrace(System.out);
         }
 
     }

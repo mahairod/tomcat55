@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.catalina.connector.Request;
@@ -213,7 +212,7 @@ final class StandardHostValve
                 try {
                     response.flushBuffer();
                 } catch (IOException e) {
-                    log("Exception Processing " + errorPage, e);
+                    container.getLogger().warn("Exception Processing " + errorPage, e);
                 }
             }
         } else {
@@ -276,7 +275,7 @@ final class StandardHostValve
                 try {
                     response.flushBuffer();
                 } catch (IOException e) {
-                    log("Exception Processing " + errorPage, e);
+                    container.getLogger().warn("Exception Processing " + errorPage, e);
                 }
             }
         }
@@ -329,8 +328,8 @@ final class StandardHostValve
     protected boolean custom(Request request, Response response,
                              ErrorPage errorPage) {
 
-        if (debug >= 1)
-            log("Processing " + errorPage);
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug("Processing " + errorPage);
 
         request.setPathInfo(errorPage.getLocation());
 
@@ -362,44 +361,9 @@ final class StandardHostValve
         } catch (Throwable t) {
 
             // Report our failure to process this custom page
-            log("Exception Processing " + errorPage, t);
+            container.getLogger().error("Exception Processing " + errorPage, t);
             return (false);
 
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        Logger logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message);
-        else
-            System.out.println(this.toString() + ": " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message, throwable);
-        else {
-            System.out.println(this.toString() + ": " + message);
-            throwable.printStackTrace(System.out);
         }
 
     }
