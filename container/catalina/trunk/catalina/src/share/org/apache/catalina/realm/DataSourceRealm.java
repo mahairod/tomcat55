@@ -313,6 +313,10 @@ public class DataSourceRealm
 
             // Ensure that we have an open database connection
             dbConnection = open();
+            if (dbConnection == null) {
+                // If the db connection open fails, return "not authenticated"
+                return null;
+            }
 
             // Acquire a Principal object for this user
             Principal principal = authenticate(dbConnection,
@@ -573,31 +577,6 @@ public class DataSourceRealm
         preparedCredentials.append(" WHERE ");
         preparedCredentials.append(userNameCol);
         preparedCredentials.append(" = ?");
-
-        // Validate that we can open our connection
-        Connection conn = null;
-        PreparedStatement roles = null;
-        PreparedStatement credentials = null;
-        try {
-            conn = open();
-            if (conn != null) {
-                roles = roles(conn,"");
-                credentials = credentials(conn,"");
-                if( !conn.getAutoCommit() ) {
-                    conn.commit();             
-                }
-            }
-        } catch (SQLException e) {
-            throw new LifecycleException(sm.getString("dataSourceRealm.open"), e);
-        } finally {
-            try {
-                if (conn != null) {
-                   conn.close(); 
-                }
-            } catch (SQLException e) {
-                throw new LifecycleException(sm.getString("dataSourceRealm.open"), e);
-            }
-        }
 
         // Perform normal superclass initialization
         super.start();
