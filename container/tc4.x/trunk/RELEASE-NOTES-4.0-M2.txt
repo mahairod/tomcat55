@@ -179,20 +179,6 @@ connector for Apache will be integrated shortly, followed by integration
 with the other servers currently supported by Tomcat 3.x.
 
 
-Including A Static File
------------------------
-If you use a <jsp:include> element to include a static resource (such as
-an HTML file containing static text) that is served by the default servlet,
-you will receive the following message:
-
-    IllegalStateException: getWriter() has already been called for
-    this response
-
-This occurs because the default file-serving servlet currently always uses
-the servlet output stream to write its response, and the JSP page has already
-grabbed the associated writer.  This will be fixed in a future release.
-
-
 URL Decoding Incomplete
 -----------------------
 Currently, Catalina does not decode the values returned by getServletPath()
