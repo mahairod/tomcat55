@@ -109,6 +109,22 @@ public class HttpRequestBase
     implements HttpRequest, HttpServletRequest {
 
 
+    protected class PrivilegedGetSession
+        implements PrivilegedAction {   
+                                        
+        private boolean create;      
+                               
+        PrivilegedGetSession(boolean create) {
+            this.create = create;              
+        }                                      
+                                 
+        public Object run() {
+            return doGetSession(create);
+        }                        
+                        
+    }    
+     
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -1038,6 +1054,14 @@ public class HttpRequestBase
      * @param create Create a new session if one does not exist
      */
     public HttpSession getSession(boolean create) {
+        if( System.getSecurityManager() != null ) {
+            PrivilegedGetSession dp = new PrivilegedGetSession(create);
+            return (HttpSession)AccessController.doPrivileged(dp);
+        }
+        return doGetSession(create);
+    }
+
+    private HttpSession doGetSession(boolean create) {
         // There cannot be a session if no context has been assigned yet
         if (context == null)
             return (null);
