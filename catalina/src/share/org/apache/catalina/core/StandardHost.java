@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -74,6 +75,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Valve;
 import org.apache.catalina.valves.ErrorDispatcherValve;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -759,18 +761,8 @@ public class StandardHost
         if( started ) {
             return;
         }
-        if( oname==null ) {
-            // not registered in JMX yet - standalone mode
-            try {
-                StandardEngine engine=(StandardEngine)parent;
-                domain=engine.getName();
-                log.info( "Register " + domain );
-                oname=new ObjectName(domain + ":type=Host,host=" +
-                        this.getName());
-            } catch( Throwable t ) {
-                log.info("Error registering ", t );
-            }
-        }
+        if( ! initialized )
+            init();
         // Set error report valve
         if ((errorReportValveClass != null)
             && (!errorReportValveClass.equals(""))) {
@@ -1031,21 +1023,40 @@ public class StandardHost
         return aliases;
     }
 
-    public void init() throws Exception {
+    private boolean initialized=false;
+    
+    public void init() {
+        if( initialized ) return;
+        initialized=true;
+        
         // already registered.
-        if( getParent() != null ) return;
-
-        // Register with the Engine
-        ObjectName serviceName=new ObjectName(domain + ":type=Engine");
-
-        if( mserver.isRegistered( serviceName )) {
-            log.info("Registering with the Engine");
+        if( getParent() == null ) {
             try {
-                mserver.invoke( serviceName, "addChild",
-                        new Object[] { this },
-                    new String[] { "org.apache.catalina.Container" } );
+                // Register with the Engine
+                ObjectName serviceName=new ObjectName(domain + ":type=Engine");
+                
+                if( mserver.isRegistered( serviceName )) {
+                    log.info("Registering with the Engine");
+                    mserver.invoke( serviceName, "addChild",
+                            new Object[] { this },
+                            new String[] { "org.apache.catalina.Container" } );
+                }
             } catch( Exception ex ) {
                 ex.printStackTrace();
+            }
+        }
+        
+        if( oname==null ) {
+            // not registered in JMX yet - standalone mode
+            try {
+                StandardEngine engine=(StandardEngine)parent;
+                domain=engine.getName();
+                log.info( "Register " + domain );
+                oname=new ObjectName(domain + ":type=Host,host=" +
+                        this.getName());
+                Registry.getRegistry().registerComponent(this, oname, null);
+            } catch( Throwable t ) {
+                log.info("Error registering ", t );
             }
         }
     }
