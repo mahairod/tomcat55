@@ -266,6 +266,14 @@ Generic Bug Fixes:
 [4.1.21] Administration Webapp:
          Remove groups and roles tables on user and group page.
 
+[4.1.23] #17744
+         Administration Webapp:
+         Remove "/admin" part of URLs to make them relative.
+
+[4.1.23] #15982
+         Administration Webapp:
+         Don't set JDBCRealm digest when it's an empty string.
+
 
 ------------------
 Catalina Bug Fixes:
