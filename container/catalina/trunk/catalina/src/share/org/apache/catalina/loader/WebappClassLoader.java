@@ -668,11 +668,12 @@ public class WebappClassLoader
     /**
      * Return a String array of the current repositories for this class
      * loader.  If there are no repositories, a zero-length array is
-     * returned.
+     * returned.For security reason, returns a clone of the Array (since 
+     * String are immutable).
      */
     public String[] findRepositories() {
 
-        return (repositories);
+        return ((String[])repositories.clone());
 
     }
 
