@@ -285,7 +285,10 @@ public final class SsiInvokerServlet extends HttpServlet {
         while ((len = in.read(buf)) != -1)
             soonOut.write(buf, 0, len);
 
-        soonOut.close();
+        try { in.close(); } catch (IOException e) { ; }
+        try { resourceInputStream.close(); } catch (IOException e) { ; }
+        try { soonOut.close(); } catch (IOException e) { ; }
+
         byte[] unparsed = soonOut.toByteArray();
         soonOut = null; buf = null;
         while (bIdx < unparsed.length) {
@@ -335,7 +338,7 @@ public final class SsiInvokerServlet extends HttpServlet {
         if (buffered)
             ((ServletOutputStreamWrapper)out).writeTo(res.getOutputStream());
 
-        out = null;
+        try { out.close(); } catch (IOException e) { ; }
     }
 
     /**
