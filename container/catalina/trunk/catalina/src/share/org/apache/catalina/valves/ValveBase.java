@@ -114,7 +114,7 @@ public abstract class ValveBase
     public void setContainer(Container container) {
 
         this.container = container;
-        this.containerLog = container.getLogger();
+
     }
 
 
@@ -239,6 +239,7 @@ public abstract class ValveBase
         Container container=this.getContainer();
         if( container == null || ! (container instanceof ContainerBase) )
             return null;
+        this.containerLog = container.getLogger();
         ContainerBase containerBase=(ContainerBase)container;
         Pipeline pipe=containerBase.getPipeline();
         Valve valves[]=pipe.getValves();
