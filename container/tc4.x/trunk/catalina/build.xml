@@ -345,10 +345,13 @@
     <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
   </target>
   <target name="copy-ldap.jar" if="copy.ldap.jar">
+    <!-- Licensing issue: don't copy ldap.jar
     <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
+    -->
   </target>
   <target name="copy-tyrex.jar" if="copy.tyrex.jar">
     <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
   </target>
 
 
@@ -410,6 +413,12 @@
       <exclude name="**/util/ProcessHelper.java" unless="jdk.1.3.present"/>
       <exclude name="**/servlets/CGIServlet.java" unless="jdk.1.3.present"/>
       <exclude name="**/Tyrex*.java" unless="compile.tyrex"/>
+      <exclude name="**/net/SSLServerSocketFactory.java" 
+       unless="compile.jsse"/>
+      <exclude name="**/naming/factory/MailSessionFactory.java"
+       unless="compile.javamail"/>
+      <exclude name="**/naming/factory/SendMailFactory.java"
+       unless="compile.javamail"/>
     </javac>
 
     <!-- Copy static resource files -->
