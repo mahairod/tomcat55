@@ -176,6 +176,9 @@
     <copy todir="${catalina.base}/logs">
       <fileset dir="${tomcat.build}/logs"/> 
     </copy>
+    <copy todir="${catalina.base}/temp">
+      <fileset dir="${tomcat.build}/temp"/> 
+    </copy>
     <copy todir="${catalina.base}/webapps">
       <fileset dir="${watchdog.home}/dist/webapps"/>
     </copy>
