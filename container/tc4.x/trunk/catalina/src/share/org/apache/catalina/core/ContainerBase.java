@@ -106,7 +106,7 @@ import org.apache.catalina.util.StringManager;
  * <p>
  * All subclasses of this abstract base class will include support for a
  * Pipeline object that defines the processing to be performed for each request
- * received by the <code>invoke()</code> method of this class, utilizig the
+ * received by the <code>invoke()</code> method of this class, utilizing the
  * "Chain of Responsibility" design pattern.  A subclass should encapsulate its
  * own processing functionality as a <code>Valve</code>, and configure this
  * Valve into the pipeline by calling <code>setBasic()</code>.
