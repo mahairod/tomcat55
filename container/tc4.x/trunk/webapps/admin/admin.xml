@@ -1,0 +1,17 @@
+<!--
+
+    Context configuration file for the Tomcat Administration Web App
+
+    $Id$
+
+-->
+
+
+<Context path="/admin" docBase="../server/webapps/admin"
+        debug="0" privileged="false">
+
+  <Logger className="org.apache.catalina.logger.FileLogger"
+             prefix="localhost_admin_log." suffix=".txt"
+          timestamp="true"/>
+
+</Context>

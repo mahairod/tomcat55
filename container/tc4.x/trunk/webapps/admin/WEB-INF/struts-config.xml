@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.0//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_0.dtd"> 
+
+
+<struts-config>
+
+
+  <!-- ========== Data Source Configuration =============================== -->
+
+
+  <!-- ========== Form Bean Definitions =================================== -->
+
+  <form-beans>
+
+    <!-- Sample form bean -->
+    <form-bean      name="sampleForm"
+                    type="org.apache.webapp.admin.SampleForm"/>
+
+    <!-- Set Locale form bean -->
+    <form-bean      name="setLocaleForm"
+                    type="org.apache.webapp.admin.SetLocaleForm"/>
+
+  </form-beans>
+
+
+  <!-- ========== Global Forward Definitions ============================== -->
+
+  <global-forwards>
+
+    <forward        name="Main Menu"
+                    path="/index.jsp"
+                redirect="false"/>
+
+  </global-forwards>
+
+
+  <!-- ========== Action Mapping Definitions ============================== -->
+
+  <action-mappings>
+
+    <!-- Log out of the application -->
+    <action    path="/logOut"
+               type="org.apache.webapp.admin.LogOutAction">
+      <forward        name="Main Menu"
+                      path="/index.jsp"
+                  redirect="true"/>
+    </action>
+
+    <!-- Process a user sample change -->
+    <action    path="/sample"
+               type="org.apache.webapp.admin.SampleAction"
+               name="sampleForm"
+              scope="request"
+              input="/index.jsp">
+    </action>
+
+    <!-- Process a set-locale action -->
+    <action    path="/setLocale"
+               type="org.apache.webapp.admin.SetLocaleAction"
+               name="setLocaleForm"
+              scope="session">
+    </action>
+
+  </action-mappings>
+
+
+</struts-config>

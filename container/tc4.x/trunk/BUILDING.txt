@@ -179,9 +179,9 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(9) Steps (10)-(18) are optional, but are necessary to build a complete binary
+(9) Steps (10)-(19) are optional, but are necessary to build a complete binary
     distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
-    build.properties file (see step (19)) to build a complete distribution.
+    build.properties file (see step (20)) to build a complete distribution.
     Regular contributors to Tomcat are encouraged to use the complete build 
     option.
 
@@ -262,7 +262,23 @@ of Tomcat 4.0.
   own subdirectory.
 
 
-(17) Download and Install the Tyrex Data Source Package
+(17) Download and Install the Struts Binary Distribution
+
+* Download a binary distribution of Struts 1.0 from:
+
+    http://jakarta.apache.org/builds/jakarta-struts/release/1.0/
+
+  On a Windows platform, you will need:
+    jakarta-struts-1.0.zip
+
+  On a Unix platform, you will need:
+    jakarta-struts-1.0.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
+
+
+(18) Download and Install the Tyrex Data Source Package
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -275,7 +291,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(18) Download and Install the JUnit Testing Package (OPTIONAL)
+(19) Download and Install the JUnit Testing Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build and execute the unit
 tests that are part of the Tomcat 4.0 source base.
@@ -288,7 +304,7 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(19) Customize Build Properties For This Subproject
+(20) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file

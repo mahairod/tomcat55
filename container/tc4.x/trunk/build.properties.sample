@@ -125,6 +125,11 @@ junit.lib=${junit.home}
 junit.jar=${junit.lib}/junit.jar
 
 
+# ----- Struts, version 1.0 or later -----
+struts.home=${base.path}/jakarta-struts-1.0
+struts.lib=${struts.home}/lib
+struts.jar=${struts.lib}/struts.jar
+
 # ----- Tyrex Data Source, version 0.9.7 -----
 tyrex.home=${base.path}/tyrex-0.9.7.0
 tyrex.lib=${tyrex.home}
