@@ -100,6 +100,13 @@ public final class SecurityConstraint {
 
 
     /**
+     * Was the "all roles" wildcard included in the authorization constraints
+     * for this security constraint?
+     */
+    private boolean allRoles = false;
+
+
+    /**
      * Was an authorization constraint included in this security constraint?
      * This is necessary to distinguish the case where an auth-constraint with
      * no roles (signifying no direct access at all) was requested, versus
@@ -123,6 +130,12 @@ public final class SecurityConstraint {
 
 
     /**
+     * The display name of this security constraint.
+     */
+    private String displayName = null;
+
+
+    /**
      * The user data constraint for this security constraint.  Must be NONE,
      * INTEGRAL, or CONFIDENTIAL.
      */
@@ -130,6 +143,17 @@ public final class SecurityConstraint {
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Was the "all roles" wildcard included in this authentication
+     * constraint?
+     */
+    public boolean getAllRoles() {
+
+        return (this.allRoles);
+
+    }
 
 
     /**
@@ -150,6 +174,26 @@ public final class SecurityConstraint {
     public void setAuthConstraint(boolean authConstraint) {
 
         this.authConstraint = authConstraint;
+
+    }
+
+
+    /**
+     * Return the display name of this security constraint.
+     */
+    public String getDisplayName() {
+
+        return (this.displayName);
+
+    }
+
+
+    /**
+     * Set the display name of this security constraint.
+     */
+    public void setDisplayName(String displayName) {
+
+        this.displayName = displayName;
 
     }
 
@@ -196,6 +240,8 @@ public final class SecurityConstraint {
 	results[authRoles.length] = authRole;
 	authRoles = results;
         authConstraint = true;
+        if ("*".equals(authRole))
+            allRoles = true;
 
     }
 

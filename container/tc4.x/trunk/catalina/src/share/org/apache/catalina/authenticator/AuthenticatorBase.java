@@ -617,7 +617,6 @@ public abstract class AuthenticatorBase
     /**
      * Return the SecurityConstraint configured to guard the request URI for
      * this request, or <code>null</code> if there is no such constraint.
-     * <b>FIXME - Need to do length-first matching.</b>
      *
      * @param request Request we are processing
      */

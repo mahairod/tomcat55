@@ -81,8 +81,8 @@ public final class ContextResource {
 
 
     /**
-     * The authorization requirement for this resource (SERVLET or
-     * CONTAINER).
+     * The authorization requirement for this resource
+     * (<code>Application</code> or <code>Container</code>).
      */
     private String auth = null;
 
@@ -124,6 +124,21 @@ public final class ContextResource {
 
 
     /**
+     * The sharing scope of this resource factory (<code>Shareable</code>
+     * or <code>Unshareable</code>).
+     */
+    private String scope = "Shareable";
+
+    public String getScope() {
+        return (this.scope);
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+
+    /**
      * The type of this resource.
      */
     private String type = null;
@@ -160,6 +175,10 @@ public final class ContextResource {
 	    sb.append(", auth=");
 	    sb.append(auth);
 	}
+        if (scope != null) {
+            sb.append(", scope=");
+            sb.append(scope);
+        }
 	sb.append("]");
 	return (sb.toString());
 

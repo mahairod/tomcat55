@@ -462,7 +462,7 @@ public final class ContextConfig
 		       mapper.methodSetter("setRemote", 0));
 	mapper.addRule("web-app/ejb-ref/ejb-link",
 		       mapper.methodSetter("setLink", 0));
-	mapper.addRule("web-app/ejb-ref/runAs",
+	mapper.addRule("web-app/ejb-ref/run-as",
 		       mapper.methodSetter("setRunAs", 0));
 
 	mapper.addRule("web-app/env-entry",
@@ -552,6 +552,13 @@ public final class ContextConfig
 		       mapper.methodParam(1));
 
 
+        mapper.addRule("web-app/resource-env-ref",
+                       mapper.methodSetter("addResourceEnvRef", 2));
+        mapper.addRule("web-app/resource-env-ref/resource-env-ref-name",
+                       mapper.methodParam(0));
+        mapper.addRule("web-app/resource-env-ref/resource-env-ref-type",
+                       mapper.methodParam(1));
+
 	mapper.addRule("web-app/resource-ref",
             mapper.objectCreate("org.apache.catalina.deploy.ContextResource"));
         mapper.addRule("web-app/resource-ref",
@@ -563,6 +570,8 @@ public final class ContextConfig
 		       mapper.methodSetter("setAuth", 0));
 	mapper.addRule("web-app/resource-ref/res-ref-name",
 		       mapper.methodSetter("setName", 0));
+        mapper.addRule("web-app/resource-ref/res-sharing-scope",
+                       mapper.methodSetter("setScope", 0));
 	mapper.addRule("web-app/resource-ref/res-type",
 		       mapper.methodSetter("setType", 0));
 
@@ -575,6 +584,8 @@ public final class ContextConfig
                        new SetAuthConstraint());
 	mapper.addRule("web-app/security-constraint/auth-constraint/role-name",
 		       mapper.methodSetter("addAuthRole", 0));
+        mapper.addRule("web-app/security-constraint/display-name",
+                       mapper.methodSetter("setDisplayName", 0));
 	mapper.addRule("web-app/security-constraint/user-data-constraint/transport-guarantee",
 		       mapper.methodSetter("setUserConstraint", 0));
 	mapper.addRule("web-app/security-constraint/web-resource-collection",

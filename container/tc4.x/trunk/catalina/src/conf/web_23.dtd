@@ -11,8 +11,8 @@ a web application -->
 context-param*, filter*, filter-mapping*, listener*,
 servlet*, servlet-mapping*, session-config?,
 mime-mapping*, welcome-file-list?, error-page*, taglib*,
-resource-ref*, security-constraint*, login-config?, security-role*,
-env-entry*, ejb-ref*)>
+resource-env-ref*, resource-ref*, security-constraint*,
+login-config?, security-role*, env-entry*, ejb-ref*)>
 
 <!-- Declares a filter in the web application deployment descriptor.
 The filter is mapped to either a servlet or a URL pattern in the
@@ -33,7 +33,7 @@ the filter.  -->
 <!ELEMENT filter-class (#PCDATA)>
 
 <!-- Declaration of the filter mappings in this web application.
-The conatiner used the filter-mapping declarations to decide which
+The conatiner uses the filter-mapping declarations to decide which
 filters to apply to a request, and in what order.  The container
 matches the request URI to a Servlet in the normal way.  To determine
 which filters to apply it matches filter-mapping declarations either
@@ -109,7 +109,8 @@ must be registered as a web application listener bean. -->
 servlet. If a jsp-file is specified and the load-on-startup element is
 present, then the JSP should be precompiled and loaded. -->
 
-<!ELEMENT servlet (icon?, servlet-name, display-name?, description?, (servlet-class|jsp-file), init-param*, load-on-startup?, security-role-ref*)>
+<!ELEMENT servlet (icon?, servlet-name, display-name?, description?,
+(servlet-class|jsp-file), init-param*, load-on-startup?, security-role-ref*)>
 
 <!-- The servlet-name element contains the canonical name of the
 servlet. -->
@@ -122,7 +123,7 @@ of the servlet. -->
 <!ELEMENT servlet-class (#PCDATA)>
 
 <!-- The jsp-file element contains the full path to a JSP file within
-the web application. -->
+the web application beginning with a '/'. -->
 
 <!ELEMENT jsp-file (#PCDATA)>
 
@@ -147,7 +148,7 @@ and a url pattern -->
 <!ELEMENT servlet-mapping (servlet-name, url-pattern)>
 
 <!-- The url-pattern element contains the url pattern of the
-mapping. Must follow the rules specified in Section 10 of the Servlet
+mapping. Must follow the rules specified in Section 11.2 of the Servlet
 API Specification. -->
 
 <!ELEMENT url-pattern (#PCDATA)>
@@ -169,12 +170,12 @@ and a mime type. -->
 <!ELEMENT mime-mapping (extension, mime-type)>
 
 <!-- The extension element contains a string describing an
-extension. example: txt -->
+extension. example: "txt" -->
 
 <!ELEMENT extension (#PCDATA)>
 
 <!-- The mime-type element contains a defined mime type. example:
-text/plain -->
+"text/plain" -->
 
 <!ELEMENT mime-type (#PCDATA)>
 
@@ -223,10 +224,37 @@ web application -->
 
 <!ELEMENT location (#PCDATA)>
 
+<!-- The resource-env-ref element contains a declaration of a component's
+reference to an administered object associated with a resource in the
+component's environment.  It consists of an optional description, the
+resource environment reference name, and an indication of the resource
+environment reference type expected by the component's code.  Examples:
+  <resource-env-ref>
+    <resource-env-ref-name>jms/StockQueue</resource-env-ref-name>
+    <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+  </resource-env-ref>
+-->
+
+<!ELEMENT resource-env-ref (description?, resource-env-ref-name,
+resource-env-ref-type)>
+
+<!-- The resource-env-ref-name element specifies the name of a
+resource environment reference; its value is the environment entry
+name used in code. -->
+
+<!ELEMENT resource-env-ref-name (#PCDATA)>
+
+<!-- The resource-env-ref-type element specifies the type of a
+resource environment reference.  Web containers in J2EE are requird
+to support javax.jms.Topic and javax.jms.Queue. -->
+
+<!ELEMENT resource-env-ref-type (#PCDATA)>
+
 <!-- The resource-ref element contains a declaration of a Web
 Application's reference to an external resource. -->
 
-<!ELEMENT resource-ref (description?, res-ref-name, res-type, res-auth)>
+<!ELEMENT resource-ref (description?, res-ref-name, res-type, res-auth,
+res-sharing-scope?)>
 
 <!-- The res-ref-name element specifies the name of the resource
 factory reference name. -->
@@ -241,14 +269,27 @@ source. -->
 <!-- The res-auth element indicates whether the application component
 code performs resource signon programmatically or whether the
 container signs onto the resource based on the principle mapping
-information supplied by the deployer. Must be CONTAINER or SERVLET -->
+information supplied by the deployer. The allowed values are
+  <res-auth>Application</res-auth>
+  <res-auth>Container</res-auth>
+for those respective cases. -->
 
 <!ELEMENT res-auth (#PCDATA)>
+
+<!-- The res-sharing-scope element specifies whether connections
+obtained through the given resource manager connection factory
+reference can be shared.  The value of this element, if specified,
+must be one of the two following:
+  <res-sharing-scope>Shareable</res-sharing-scope>
+  <res-sharing-scope>Unshareable</res-sharing-scope>
+The default value is Shareable. -->
+
+<!ELEMENT res-sharing-scope (#PCDATA)>
 
 <!-- The security-constraint element is used to associate security
 constraints with one or more web resource collections -->
 
-<!ELEMENT security-constraint (web-resource-collection+,
+<!ELEMENT security-constraint (display-name?, web-resource-collection+,
 auth-constraint?, user-data-constraint?)>
 
 <!-- The web-resource-collection element is used to identify a subset
@@ -289,7 +330,10 @@ CONFIDENTIAL flag will indicate that the use of SSL is required. -->
 
 <!-- The auth-constraint element indicates the user roles that should
 be permitted access to this resource collection. The role used here
-must appear in a security-role-ref element. -->
+must either appear in a security-role-ref element, or be the specially
+reserved role-name "*" that is a compact syntax for indicating all
+roles in the web application.  If both "*" and rolenames appear, the
+container interprets this as all roles. -->
 
 <!ELEMENT auth-constraint (description?, role-name*)>
 
@@ -341,8 +385,19 @@ application. -->
 
 <!ELEMENT security-role (description?, role-name)>
 
-<!-- The role-name element contains the name of a role. This element
-must contain a non-empty string. -->
+<!-- The security-role-ref element defines a mapping between the name
+of a role called from a Servlet using isUserInRole(String name) and the
+name of a security role defined for the web application.  For example,
+to map the security role reference "FOO" to the security role with the
+role-name "manager", the syntax would be:
+  <security-role-ref>
+    <role-name>FOO</role-name>
+    <role-link>manager</role-link>
+  </security-role-ref>
+In this case if the servlet called by a user belonging to the "manager"
+security role made the API call isUserInRole("FOO") the result would be true.
+Since the role-name "*" has a special meaning for authorization constraints,
+its value is not permitted here. -->
 
 <!ELEMENT security-role-ref (description?, role-name, role-link)> 
 
@@ -382,7 +437,7 @@ java.lang.Double, java.lang.Float. -->
 enterprise bean.  -->
 
 <!ELEMENT ejb-ref (description?, ejb-ref-name, ejb-ref-type, home,
-remote, ejb-link?, runAs?)>
+remote, ejb-link?, run-as?)>
 
 <!-- The ejb-ref-name element contains the name of an EJB
 reference. This is the JNDI name that the servlet code uses to get a
@@ -416,7 +471,7 @@ application package. -->
 <!-- The runAs element must contain the name of a security role
 defined for this web application. -->
 
-<!ELEMENT runAs (#PCDATA)>
+<!ELEMENT run-as (#PCDATA)>
 
 <!-- The ID mechanism is to allow tools to easily make tool-specific
 references to the elements of the deployment descriptor. This allows
@@ -457,14 +512,21 @@ deployment descriptor. -->
 <!ATTLIST mime-type id ID #IMPLIED>
 <!ATTLIST welcome-file-list id ID #IMPLIED>
 <!ATTLIST welcome-file id ID #IMPLIED>
+<!ATTLIST taglib id ID #IMPLIED>
+<!ATTLIST taglib-uri id ID #IMPLIED>
+<!ATTLIST taglib-location id ID #IMPLIED>
 <!ATTLIST error-page id ID #IMPLIED>
 <!ATTLIST error-code id ID #IMPLIED>
 <!ATTLIST exception-type id ID #IMPLIED>
 <!ATTLIST location id ID #IMPLIED>
+<!ATTLIST resource-env-ref id ID #IMPLIED>
+<!ATTLIST resource-env-ref-name id ID #IMPLIED>
+<!ATTLIST resource-env-ref-type id ID #IMPLIED>
 <!ATTLIST resource-ref id ID #IMPLIED>
 <!ATTLIST res-ref-name id ID #IMPLIED>
 <!ATTLIST res-type id ID #IMPLIED>
 <!ATTLIST res-auth id ID #IMPLIED>
+<!ATTLIST res-sharing-scope id ID #IMPLIED>
 <!ATTLIST security-constraint id ID #IMPLIED>
 <!ATTLIST web-resource-collection id ID #IMPLIED>
 <!ATTLIST web-resource-name id ID #IMPLIED>
@@ -473,14 +535,12 @@ deployment descriptor. -->
 <!ATTLIST transport-guarantee id ID #IMPLIED>
 <!ATTLIST auth-constraint id ID #IMPLIED>
 <!ATTLIST role-name id ID #IMPLIED>
-<!ATTLIST auth-method id ID #IMPLIED>
-<!ATTLIST basic-auth id ID #IMPLIED>
-<!ATTLIST form-auth id ID #IMPLIED>
+<!ATTLIST login-config id ID #IMPLIED>
+<!ATTLIST realm-name id ID #IMPLIED>
+<!ATTLIST form-login-config id ID #IMPLIED>
 <!ATTLIST form-login-page id ID #IMPLIED>
 <!ATTLIST form-error-page id ID #IMPLIED>
-<!ATTLIST form-login-config id ID #IMPLIED>
-<!ATTLIST realm-name id ID #IMPLIED>
-<!ATTLIST login-config id ID #IMPLIED>
+<!ATTLIST auth-method id ID #IMPLIED>
 <!ATTLIST security-role id ID #IMPLIED>
 <!ATTLIST security-role-ref id ID #IMPLIED>
 <!ATTLIST role-link id ID #IMPLIED>
@@ -488,12 +548,11 @@ deployment descriptor. -->
 <!ATTLIST env-entry-name id ID #IMPLIED>
 <!ATTLIST env-entry-value id ID #IMPLIED>
 <!ATTLIST env-entry-type id ID #IMPLIED>
-<!ATTLIST mutual-auth id ID #IMPLIED>
 <!ATTLIST ejb-ref id ID #IMPLIED>
 <!ATTLIST ejb-ref-name id ID #IMPLIED>
 <!ATTLIST ejb-ref-type id ID #IMPLIED>
 <!ATTLIST home id ID #IMPLIED>
 <!ATTLIST remote id ID #IMPLIED>
 <!ATTLIST ejb-link id ID #IMPLIED>
-<!ATTLIST runAs iid ID #IMPLIED>
+<!ATTLIST run-as iid ID #IMPLIED>
 

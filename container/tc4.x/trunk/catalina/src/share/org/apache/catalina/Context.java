@@ -409,6 +409,15 @@ public interface Context extends Container {
 
 
     /**
+     * Add a resource environment reference for this web application.
+     *
+     * @param name The resource environment reference name
+     * @param type The resource environment reference type
+     */
+    public void addResourceEnvRef(String name, String type);
+
+
+    /**
      * Add a security role reference for this web application.
      *
      * @param role Security role used in the application
@@ -626,6 +635,23 @@ public interface Context extends Container {
      * @param name Name of the desired resource reference
      */
     public ContextResource findResource(String name);
+
+
+    /**
+     * Return the resource environment reference type for the specified
+     * name, if any; otherwise return <code>null</code>.
+     *
+     * @param name Name of the desired resource environment reference
+     */
+    public String findResourceEnvRef(String name);
+
+
+    /**
+     * Return the set of resource environment reference names for this
+     * web application.  If none have been specified, a zero-length
+     * array is returned.
+     */
+    public String[] findResourceEnvRefs();
 
 
     /**

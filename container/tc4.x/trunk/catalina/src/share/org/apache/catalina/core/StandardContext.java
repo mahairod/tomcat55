@@ -315,6 +315,13 @@ public final class StandardContext
 
 
     /**
+     * The resource environment references for this web application,
+     * keyed by name.
+     */
+    private HashMap resourceEnvRefs = new HashMap();
+
+
+    /**
      * The resource references for this web application, keyed by name.
      */
     private HashMap resources = new HashMap();
@@ -1118,6 +1125,22 @@ public final class StandardContext
 
 
     /**
+     * Add a resource environment reference for this web application.
+     *
+     * @param name The resource environment reference name
+     * @param type The resource environment reference type
+     */
+    public void addResourceEnvRef(String name, String type) {
+
+        synchronized (resourceEnvRefs) {
+            resourceEnvRefs.put(name, type);
+        }
+        fireContainerEvent("addResourceEnvRef", name);
+
+    }
+
+
+    /**
      * Add a security role reference for this web application.
      *
      * @param role Security role used in the application
@@ -1582,6 +1605,36 @@ public final class StandardContext
 	synchronized (resources) {
 	    return ((ContextResource) resources.get(name));
 	}
+
+    }
+
+
+    /**
+     * Return the resource environment reference type for the specified
+     * name, if any; otherwise return <code>null</code>.
+     *
+     * @param name Name of the desired resource environment reference
+     */
+    public String findResourceEnvRef(String name) {
+
+        synchronized (resourceEnvRefs) {
+            return ((String) resourceEnvRefs.get(name));
+        }
+
+    }
+
+
+    /**
+     * Return the set of resource environment reference names for this
+     * web application.  If none have been specified, a zero-length
+     * array is returned.
+     */
+    public String[] findResourceEnvRefs() {
+
+        synchronized (resourceEnvRefs) {
+            String results[] = new String[resourceEnvRefs.size()];
+            return ((String[]) resourceEnvRefs.keySet().toArray(results));
+        }
 
     }
 
@@ -2247,6 +2300,21 @@ public final class StandardContext
 	    resources.remove(name);
 	}
 	fireContainerEvent("removeResource", name);
+
+    }
+
+
+    /**
+     * Remove any resource environment reference with the specified name.
+     *
+     * @param name Name of the resource environment reference to remove
+     */
+    public void removeResourceEnvRef(String name) {
+
+        synchronized (resourceEnvRefs) {
+            resourceEnvRefs.remove(name);
+        }
+        fireContainerEvent("removeResourceEnvRef", name);
 
     }
 
