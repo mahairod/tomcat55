@@ -82,9 +82,6 @@ import org.apache.jasper.xmlparser.TreeNode;
  */
 class TagLibraryInfoImpl extends TagLibraryInfo {
 
-    private static final String TAGLIB_TLD = "META-INF/taglib.tld";
-    private static final String WEB_XML = "/WEB-INF/web.xml";
-
     private Hashtable jarEntries;
     private JspCompilationContext ctxt;
     private ErrorDispatcher err;
@@ -241,14 +238,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	}
     }
     
-    /*
-     * Returns true if the given URI is relative in this web application,
-     * false if it is an internet URI.
-     */
-    private boolean isRelativeURI(String uri) {
-        return (uri.indexOf(':') == -1);
-    }
-      
     private void parseTLD(JspCompilationContext ctxt,
                           String uri, InputStream in, JarFile jarFile) 
         throws JasperException
