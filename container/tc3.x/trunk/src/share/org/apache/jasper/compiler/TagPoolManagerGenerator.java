@@ -90,7 +90,7 @@ public class TagPoolManagerGenerator extends GeneratorBase
             writer.pushIndent();
             // writer.println("org.apache.jasper.runtime.TagPoolManager.getDefaultPoolManager();");
             writer.println("(" + Constants.JSP_RUNTIME_PACKAGE
-			   + ".TagPoolManager) getServletContext().getAttribute(\"" +
+			   + ".TagPoolManager) getServletConfig().getServletContext().getAttribute(\"" +
                 TagPoolManager.CONTEXT_ATTRIBUTE_NAME + "\");");
             writer.popIndent();
         }
