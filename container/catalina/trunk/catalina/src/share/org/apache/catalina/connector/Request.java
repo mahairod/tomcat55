@@ -82,6 +82,18 @@ public class Request
     implements HttpServletRequest {
 
 
+    // ----------------------------------------------------------- Constructors
+
+
+    public Request() {
+
+        formats[0].setTimeZone(GMT_ZONE);
+        formats[1].setTimeZone(GMT_ZONE);
+        formats[2].setTimeZone(GMT_ZONE);
+
+    }
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -111,24 +123,7 @@ public class Request
     // ----------------------------------------------------- Variables
 
 
-    /**
-     * The set of SimpleDateFormat formats to use in getDateHeader().
-     */
-    protected static final SimpleDateFormat FORMATS[] = {
-        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
-        new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
-        new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
-    };
-
-
     protected static final TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
-
-
-    static {
-        FORMATS[0].setTimeZone(GMT_ZONE);
-        FORMATS[1].setTimeZone(GMT_ZONE);
-        FORMATS[2].setTimeZone(GMT_ZONE);
-    }
 
 
     /**
@@ -142,6 +137,19 @@ public class Request
      * The set of cookies associated with this Request.
      */
     protected Cookie[] cookies = null;
+
+
+    /**
+     * The set of SimpleDateFormat formats to use in getDateHeader().
+     *
+     * Notice that because SimpleDateFormat is not thread-safe, we can't
+     * declare formats[] as a static variable.
+     */
+    protected SimpleDateFormat formats[] = {
+        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
+        new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
+        new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
+    };
 
 
     /**
@@ -1765,7 +1773,7 @@ public class Request
             return (-1L);
 
         // Attempt to convert the date header in a variety of formats
-        long result = FastHttpDateFormat.parseDate(value, FORMATS);
+        long result = FastHttpDateFormat.parseDate(value, formats);
         if (result != (-1L)) {
             return result;
         }
