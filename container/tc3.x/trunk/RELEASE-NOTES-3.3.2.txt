@@ -26,6 +26,11 @@ Bug No.  Description
 	 (Re-) Open the log files with "append", so that log rotation can
 	 be configured to be other than daily.
 
+         Package an Ant compiler adapter that compiles JSPs with the correct
+         naming convention and an Ant task which creates .ver files.  These
+         tasks allow the Tomcat work directory to be pre-populated with 
+         compiled JSPs.
+
 Server:
 
 Bug No.  Description
