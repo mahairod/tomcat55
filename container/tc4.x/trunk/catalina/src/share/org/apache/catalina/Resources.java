@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina;
@@ -234,9 +234,9 @@ public interface Resources {
 
 
     /**
-     * Returns true if a resource exists at the specified path, 
+     * Returns true if a resource exists at the specified path,
      * where <code>path</code> would be suitable for passing as an argument to
-     * <code>getResource()</code> or <code>getResourceAsStream()</code>.  
+     * <code>getResource()</code> or <code>getResourceAsStream()</code>.
      * If there is no resource at the specified location, return false.
      *
      * @param path The path to the desired resource
@@ -257,11 +257,18 @@ public interface Resources {
 
 
     /**
+     * Return the set of context-relative paths of all available resources.
+     * Each path will begin with a "/" character.
+     */
+     public String[] getResourcePaths();
+
+
+    /**
      * Return the creation date/time of the resource at the specified
      * path, where <code>path</code> would be suitable for passing as an
      * argument to <code>getResource()</code> or
      * <code>getResourceAsStream()</code>.  If there is no resource at the
-     * specified location, return -1. If this time is unknown, the 
+     * specified location, return -1. If this time is unknown, the
      * implementation should return getResourceModified(path).
      *
      * @param path The path to the desired resource
@@ -274,7 +281,7 @@ public interface Resources {
      * path, where <code>path</code> would be suitable for passing as an
      * argument to <code>getResource()</code> or
      * <code>getResourceAsStream()</code>.  If the content length
-     * of the resource can't be determinedof if the resource is a collection, 
+     * of the resource can't be determinedof if the resource is a collection,
      * return -1. If no content is available, return 0.
      *
      * @param path The path to the desired resource
@@ -284,7 +291,7 @@ public interface Resources {
 
     /**
      * Return true if the resource at the specified path is a collection. A
-     * collection is a special type of resource which has no content but 
+     * collection is a special type of resource which has no content but
      * contains child resources.
      *
      * @param path The path to the desired resource
@@ -294,9 +301,9 @@ public interface Resources {
 
     /**
      * Return the children of the resource at the specified path, if any. This
-     * will return null if the resource is not a collection, or if it is a 
+     * will return null if the resource is not a collection, or if it is a
      * collection but has no children.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public String[] getCollectionMembers(String path);
@@ -305,11 +312,11 @@ public interface Resources {
     /**
      * Set the content of the resource at the specified path. If the resource
      * already exists, its previous content is overwritten. If the resource
-     * doesn't exist, its immediate parent collection (according to the path 
+     * doesn't exist, its immediate parent collection (according to the path
      * given) exists, then its created, and the given content is associated
      * with it. Return false if either the resource is a collection, or
      * no parent collection exist.
-     * 
+     *
      * @param path The path to the desired resource
      * @param content InputStream to the content to be set
      */
@@ -320,7 +327,7 @@ public interface Resources {
      * Create a collection at the specified path. A parent collection for this
      * collection must exist. Return false if a resource already exist at the
      * path specified, or if the parent collection doesn't exist.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public boolean createCollection(String path);
@@ -329,9 +336,9 @@ public interface Resources {
     /**
      * Delete the specified resource. Non-empty collections cannot be deleted
      * before deleting all their member resources. Return false is deletion
-     * fails because either the resource specified doesn't exist, or the 
+     * fails because either the resource specified doesn't exist, or the
      * resource is a non-empty collection.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public boolean deleteResource(String path);
