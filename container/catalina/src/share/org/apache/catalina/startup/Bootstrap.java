@@ -324,6 +324,30 @@ public final class Bootstrap {
     }
 
 
+   /**
+     * Stop the standlone server.
+     */
+    public void stopServer(String[] arguments)
+        throws Exception {
+
+        Object param[];
+        Class paramTypes[];
+        if (arguments==null || arguments.length==0) {
+            paramTypes = null;
+            param = null;
+        } else {
+            paramTypes = new Class[1];
+            paramTypes[0] = arguments.getClass();
+            param = new Object[1];
+            param[0] = arguments;
+        }
+        Method method = 
+            catalinaDaemon.getClass().getMethod("stopServer", paramTypes);
+        method.invoke(catalinaDaemon, param);
+
+    }
+
+
     /**
      * Set flag.
      */
@@ -397,7 +421,7 @@ public final class Bootstrap {
                 daemon.load(args);
                 daemon.start();
             } else if (command.equals("stop")) {
-                daemon.stopServer();
+                daemon.stopServer(args);
             }
         } catch (Throwable t) {
             t.printStackTrace();
