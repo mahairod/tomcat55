@@ -150,6 +150,22 @@ public interface Request {
 
 
     /**
+     * Return the Host within which this Request is being processed.
+     */
+    public Host getHost();
+
+
+    /**
+     * Set the Host within which this Request is being processed.  This
+     * must be called as soon as the appropriate Host is identified, and
+     * before the Request is passed to a context.
+     *
+     * @param host The newly associated Host
+     */
+    public void setHost(Host host);
+
+
+    /**
      * Return descriptive information about this Request implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
