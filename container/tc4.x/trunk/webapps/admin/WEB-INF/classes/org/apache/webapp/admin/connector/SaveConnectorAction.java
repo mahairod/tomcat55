@@ -339,9 +339,13 @@ public final class SaveConnectorAction extends Action {
       
             // proxy name and port do not exist for AJP connector
             if (!("AJP".equalsIgnoreCase(connectorType))) {
-                attribute = "proxyName";              
-                mBServer.setAttribute(coname,
-                                  new Attribute("proxyName", cform.getProxyName()));            
+                attribute = "proxyName";  
+                String proxyName = cform.getProxyName();
+                if ((proxyName != null) || (proxyName.length()>0)) { 
+                    mBServer.setAttribute(coname,
+                                  new Attribute("proxyName", proxyName));
+                }
+                
                 attribute = "proxyPort";
                 int proxyPort = 0;
                 try {
