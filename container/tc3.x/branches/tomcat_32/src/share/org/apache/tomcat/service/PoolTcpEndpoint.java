@@ -290,9 +290,6 @@ public class PoolTcpEndpoint  { // implements Endpoint {
         		            accepted = null;
         		        }
     		        }
-
-                    if(accepted != null)
-                        accepted.setSoTimeout(timeout);
             if( factory != null && accepted != null)
                 factory.initSocket( accepted );
     	        }

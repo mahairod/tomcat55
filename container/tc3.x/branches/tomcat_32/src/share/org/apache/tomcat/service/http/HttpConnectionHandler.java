@@ -77,6 +77,8 @@ import javax.servlet.http.*;
 
 public class HttpConnectionHandler  implements  TcpConnectionHandler {
 
+    private int timeout = 300000;  // 5 minutes
+
     boolean secure=false;
     ContextManager contextM;
     
@@ -139,6 +141,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		return;
 	    //	    System.out.print("1");
 	    socket=connection.getSocket();
+        socket.setSoTimeout(timeout);
 	    if (socket == null)
 		return;
 	    //	    System.out.print("2");
@@ -230,6 +233,18 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    // SocketExceptions are normal
 	    contextM.doLog( "SocketException reading request, ignored", e, Logger.INFORMATION);
 	}
+    catch (java.io.InterruptedIOException ioe) {
+        // InterruptedIOException are timeout and we must abort process
+        ioe.printStackTrace();
+        contextM.doLog( "Timeout while reading request, aborting", ioe, Logger.ERROR);
+        try{
+            if (socket != null)
+                socket.close ();
+        }
+        catch (IOException e){
+             /* ignore */
+        }
+    }	
 	catch (java.io.IOException e) {
 	    // IOExceptions are normal 
 	    contextM.doLog( "IOException reading request, ignored", e, Logger.INFORMATION);
