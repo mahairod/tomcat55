@@ -420,7 +420,7 @@ public class WebappLoader
      *
      * @param loaderClass The new ClassLoader class name
      */
-    public void setLoaderClass() {
+    public void setLoaderClass(String loaderClass) {
 
         this.loaderClass = loaderClass;
 
