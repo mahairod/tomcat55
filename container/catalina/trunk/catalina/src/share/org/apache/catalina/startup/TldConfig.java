@@ -496,8 +496,8 @@ public final class TldConfig  {
     /**
      * Scans all TLD entries in the given JAR for application listeners.
      *
-     * @param conn URLConnection to the JAR file whose TLD entries are
-     * scanned for application listeners
+     * @param file JAR file whose TLD entries are scanned for application
+     * listeners
      */
     private void tldScanJar(File file) throws Exception {
 
