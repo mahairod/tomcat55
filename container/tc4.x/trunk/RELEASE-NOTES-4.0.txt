@@ -74,6 +74,12 @@ StandardWrapperValve:  Do not set a character encoding on the default page
 created for an HTTP status code.  This was causing problems for Netscape
 Navigator when handling 302 redirects.
 
+StandardContext:  If a problem occurs during application startup (the start()
+method), call stop() so that a web application is not left in a partly started
+state.  Among other things, this allows you to restart the app from the
+Manager web application after correcting the problem that caused the startup
+to fail.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -81,6 +87,9 @@ Jasper Bug Fixes:
 
 Parser:  Fix a bug that was causing null pointer exceptions in
 JakartaCommentGenerator.
+
+Compiler:  Remove a spurious "null" in an error message when no mapping back
+to the original source file can be performed.
 
 
 -----------------

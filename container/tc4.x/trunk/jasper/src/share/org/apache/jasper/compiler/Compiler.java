@@ -323,9 +323,12 @@ public class Compiler {
             //System.out.println("lineNr: " + lineNr);
 
             // Now do the mapping
-            errorMsg.append(findMapping(map, lineNr));
-            errorMsg.append(line);
-            errorMsg.append('\n');
+            String mapping = findMapping(map, lineNr);
+            if (mapping != null) {
+                errorMsg.append(findMapping(map, lineNr));
+                errorMsg.append(line);
+                errorMsg.append('\n');
+            }
         }
         br.close();
         map.clear();
