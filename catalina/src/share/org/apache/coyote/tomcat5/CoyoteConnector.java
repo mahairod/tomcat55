@@ -159,18 +159,6 @@ public final class CoyoteConnector
 
 
     /**
-     * The set of processors that have ever been created.
-     */
-    private Vector created = new Vector();
-
-
-    /**
-     * The current number of processors that have been created.
-     */
-    private int curProcessors = 0;
-
-
-    /**
      * The debugging detail level for this component.
      */
     private int debug = 0;
@@ -648,16 +636,6 @@ public final class CoyoteConnector
     public void setContainer(Container container) {
 
         this.container = container;
-
-    }
-
-
-    /**
-     * Return the current number of processors that have been created.
-     */
-    public int getCurProcessors() {
-
-        return (curProcessors);
 
     }
 
