@@ -1226,6 +1226,7 @@
       	<exclude name="*-using-launcher.*"/>
       	<exclude name="LauncherBootstrap.class"/>
       	<exclude name="launcher.properties"/>
+      	<exclude name="tomcat-juli.jar"/>
       </fileset>
     </copy>
     <copy todir="${tomcat.dist}/common/classes">
