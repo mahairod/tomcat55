@@ -1456,7 +1456,11 @@ public class DefaultServlet
             
             // Copy the input stream to our output stream (if requested)
             if (content) {
-                response.setBufferSize(output);
+                try {
+                    response.setBufferSize(output);
+                } catch (IllegalStateException e) {
+                    // Silent catch
+                }
                 if (ostream != null) {
                     copy(resourceInfo, ostream);
                 } else {
@@ -1489,7 +1493,11 @@ public class DefaultServlet
                 }
                 
                 if (content) {
-                    response.setBufferSize(output);
+                    try {
+                        response.setBufferSize(output);
+                    } catch (IllegalStateException e) {
+                        // Silent catch
+                    }
                     if (ostream != null) {
                         copy(resourceInfo, ostream, range);
                     } else {
@@ -1503,7 +1511,11 @@ public class DefaultServlet
                                         + mimeSeparation);
                 
                 if (content) {
-                    response.setBufferSize(output);
+                    try {
+                        response.setBufferSize(output);
+                    } catch (IllegalStateException e) {
+                        // Silent catch
+                    }
                     if (ostream != null) {
                         copy(resourceInfo, ostream, ranges.elements(), 
                              contentType);
