@@ -67,6 +67,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -271,9 +272,14 @@ public class JspServlet extends HttpServlet {
         if (wrapper == null) {
             // First check if the requested JSP page exists, to avoid
             // creating unnecessary directories and files.
-            if (context.getResourceAsStream(jspUri) == null) {
+            InputStream resourceStream = context.getResourceAsStream(jspUri);
+            if (resourceStream == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, jspUri);
                 return;
+            } else {
+                try {
+                    resourceStream.close();
+                } catch(IOException e) { /* ignore */ }
             }
             boolean isErrorPage = exception != null;
             synchronized(this) {
