@@ -176,8 +176,7 @@ public final class SaveJDBCRealmAction extends Action {
 
             try {
 
-                String parent = rform.getParentObjectName();     
-                String engine = rform.getEngineObjectName();               
+                String parent = rform.getParentObjectName();                
                 String objectName = DeleteLoggerAction.getObjectName(parent,
                                     TomcatTreeBuilder.REALM_TYPE);
                 
@@ -188,9 +187,7 @@ public final class SaveJDBCRealmAction extends Action {
                 // Parent in this case needs to be the container mBean for the service 
                 try {                                                        
                     if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
-                        ObjectName ename = new ObjectName(engine);
-                        String engineName = ename.getKeyProperty("name");
-                        sb.append(":type=Engine,name="+engineName);;
+                        sb.append(":type=Engine");
                         parent = sb.toString();
                     }
                 } catch (Exception e) {

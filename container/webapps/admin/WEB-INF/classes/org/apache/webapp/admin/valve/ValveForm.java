@@ -115,11 +115,6 @@ public class ValveForm extends ActionForm {
     private String parentObjectName = null;
 
     /**
-     * The object name of the parent engine of this valve (if exists).
-     */
-    private String engineObjectName = null;
-    
-    /**
      * Set of valid values for valves.
      */
     private List valveTypeVals = null;
@@ -216,27 +211,7 @@ public class ValveForm extends ActionForm {
         this.parentObjectName = parentObjectName;
 
     }
-
-
-    /**
-     * Return the engine object name of the Valve this bean refers to.
-     */
-    public String getEngineObjectName() {
-
-        return this.engineObjectName;
-
-    }
-
-
-    /**
-     * Set the engine object name of the Valve this bean refers to.
-     */
-    public void setEngineObjectName(String engineObjectName) {
-
-        this.engineObjectName = engineObjectName;
-
-    }
-        
+    
         
    /**
      * Return the valveTypeVals.

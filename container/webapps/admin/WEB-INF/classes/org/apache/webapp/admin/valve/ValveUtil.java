@@ -115,7 +115,7 @@ public final class ValveUtil {
     
     // --------------------------------------------------------- Public Methods
     
-    public static String createValve(String parent, String engine, String valveType,
+    public static String createValve(String parent, String valveType,
     HttpServletResponse response, HttpServletRequest request,
     ActionMapping mapping, ApplicationServlet servlet)
     throws IOException, ServletException {
@@ -150,9 +150,7 @@ public final class ValveUtil {
             // Parent in this case needs to be the container mBean for the service
             try {
                 if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
-                    ObjectName ename = new ObjectName(engine);
-                    String engineName = ename.getKeyProperty("name");
-                    sb.append(":type=Engine,name="+engineName);;
+                    sb.append(":type=Engine");
                     parent = sb.toString();
                 }
             } catch (Exception e) {
