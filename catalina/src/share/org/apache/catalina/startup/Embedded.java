@@ -1140,18 +1140,6 @@ public class Embedded implements Lifecycle {
                                          new MemoryRealm());
         embedded.setDebug(5);
         embedded.setLogger(new SystemOutLogger());
-        /*
-        String home = System.getProperty("catalina.home");
-        if (home == null) {
-            System.err.println("You must set the 'catalina.home' system property");
-            System.exit(1);
-        }
-        String base = System.getProperty("catalina.base");
-        if (base == null) {
-            base = home;
-            System.setProperty("catalina.base", base);
-        }
-        */
 
         // Start up this embedded server (to prove we can dynamically
         // add and remove containers and connectors later)
@@ -1161,6 +1149,9 @@ public class Embedded implements Lifecycle {
             System.err.println("start: " + e.toString());
             e.printStackTrace();
         }
+
+        String home = System.getProperty("catalina.home");
+        String base = System.getProperty("catalina.base");
 
         // Assemble and install a very basic container hierarchy
         // that simulates a portion of the one configured in server.xml
