@@ -174,14 +174,14 @@ public final class ContextConfig
      * The <code>Digester</code> we will use to process tag library
      * descriptor files.
      */
-    private static Digester tldDigester = null;
+    private static Digester tldDigester = createTldDigester();
 
 
     /**
      * The <code>Digester</code> we will use to process web application
      * deployment descriptor files.
      */
-    private static Digester webDigester = null;
+    private static Digester webDigester = createWebDigester();
 
 
     // ------------------------------------------------------------- Properties
@@ -261,29 +261,30 @@ public final class ContextConfig
         }
 
         // Process the application web.xml file
-        try {
-            Digester digester = createWebDigester();
-            digester.setDebug(getDebug());
-            synchronized (digester) {
-                if (context instanceof StandardContext)
-                    ((StandardContext) context).setReplaceWelcomeFiles(true);
-                digester.push(context);
-                digester.parse(stream);
-            }
-        } catch (SAXParseException e) {
-            log(sm.getString("contextConfig.applicationParse"), e);
-            log(sm.getString("contextConfig.applicationPosition",
-                             "" + e.getLineNumber(),
-                             "" + e.getColumnNumber()));
-            ok = false;
-        } catch (Exception e) {
-            log(sm.getString("contextConfig.applicationParse"), e);
-            ok = false;
-        } finally {
+        synchronized (webDigester) {
             try {
-                stream.close();
-            } catch (IOException e) {
-                log(sm.getString("contextConfig.applicationClose"), e);
+                webDigester.setDebug(getDebug());
+                if (context instanceof StandardContext) {
+                    ((StandardContext) context).setReplaceWelcomeFiles(true);
+                }
+                webDigester.clear();
+                webDigester.push(context);
+                webDigester.parse(stream);
+            } catch (SAXParseException e) {
+                log(sm.getString("contextConfig.applicationParse"), e);
+                log(sm.getString("contextConfig.applicationPosition",
+                                 "" + e.getLineNumber(),
+                                 "" + e.getColumnNumber()));
+                ok = false;
+            } catch (Exception e) {
+                log(sm.getString("contextConfig.applicationParse"), e);
+                ok = false;
+            } finally {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    log(sm.getString("contextConfig.applicationClose"), e);
+                }
             }
         }
 
@@ -431,22 +432,18 @@ public final class ContextConfig
      * library descriptor, looking for additional listener classes to be
      * registered.
      */
-    private synchronized Digester createTldDigester() {
+    private static Digester createTldDigester() {
 
         URL url = null;
-        if (tldDigester == null) {
-            tldDigester = new Digester();
-            if (debug > 0)
-                tldDigester.setDebug(3);
-            tldDigester.setValidating(true);
-            url = this.getClass().getResource(Constants.TldDtdResourcePath_11);
-            tldDigester.register(Constants.TldDtdPublicId_11,
-                              url.toString());
-            url = this.getClass().getResource(Constants.TldDtdResourcePath_12);
-            tldDigester.register(Constants.TldDtdPublicId_12,
-                              url.toString());
-            tldDigester.addRuleSet(new TldRuleSet());
-        }
+        Digester tldDigester = new Digester();
+        tldDigester.setValidating(true);
+        url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_11);
+        tldDigester.register(Constants.TldDtdPublicId_11,
+                             url.toString());
+        url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_12);
+        tldDigester.register(Constants.TldDtdPublicId_12,
+                             url.toString());
+        tldDigester.addRuleSet(new TldRuleSet());
         return (tldDigester);
 
     }
@@ -456,22 +453,18 @@ public final class ContextConfig
      * Create (if necessary) and return a Digester configured to process the
      * web application deployment descriptor (web.xml).
      */
-    private synchronized Digester createWebDigester() {
+    private static Digester createWebDigester() {
 
         URL url = null;
-        if (webDigester == null) {
-            webDigester = new Digester();
-            if (debug > 0)
-                webDigester.setDebug(3);
-            webDigester.setValidating(true);
-            url = this.getClass().getResource(Constants.WebDtdResourcePath_22);
-            webDigester.register(Constants.WebDtdPublicId_22,
-                              url.toString());
-            url = this.getClass().getResource(Constants.WebDtdResourcePath_23);
-            webDigester.register(Constants.WebDtdPublicId_23,
-                              url.toString());
-            webDigester.addRuleSet(new WebRuleSet());
-        }
+        Digester webDigester = new Digester();
+        webDigester.setValidating(true);
+        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
+        webDigester.register(Constants.WebDtdPublicId_22,
+                             url.toString());
+        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_23);
+        webDigester.register(Constants.WebDtdPublicId_23,
+                             url.toString());
+        webDigester.addRuleSet(new WebRuleSet());
         return (webDigester);
 
     }
@@ -499,29 +492,29 @@ public final class ContextConfig
         }
 
         // Process the default web.xml file
-        try {
-            Digester digester = createWebDigester();
-            digester.setDebug(getDebug());
-            synchronized (digester) {
+        synchronized (webDigester) {
+            try {
+                webDigester.setDebug(getDebug());
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
-                digester.push(context);
-                digester.parse(stream);
-            }
-        } catch (SAXParseException e) {
-            log(sm.getString("contextConfig.defaultParse"), e);
-            log(sm.getString("contextConfig.defaultPosition",
-                             "" + e.getLineNumber(),
-                             "" + e.getColumnNumber()));
-            ok = false;
-        } catch (Exception e) {
-            log(sm.getString("contextConfig.defaultParse"), e);
-            ok = false;
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                log(sm.getString("contextConfig.defaultClose"), e);
+                webDigester.clear();
+                webDigester.push(context);
+                webDigester.parse(stream);
+            } catch (SAXParseException e) {
+                log(sm.getString("contextConfig.defaultParse"), e);
+                log(sm.getString("contextConfig.defaultPosition",
+                                 "" + e.getLineNumber(),
+                                 "" + e.getColumnNumber()));
+                ok = false;
+            } catch (Exception e) {
+                log(sm.getString("contextConfig.defaultParse"), e);
+                ok = false;
+            } finally {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    log(sm.getString("contextConfig.defaultClose"), e);
+                }
             }
         }
 
@@ -794,71 +787,71 @@ public final class ContextConfig
     private void tldConfig() {
 
         // Acquire a Digester to use for parsing
-        Digester digester = createTldDigester();
+        synchronized (tldDigester) {
 
-        // First, scan tag libraries declared in our deployment descriptor
-        if (debug >= 1)
-            log("Scanning web.xml tag libraries");
-        ArrayList resourcePaths = new ArrayList(); // Already processed TLDs
-        String taglibs[] = context.findTaglibs();
-        for (int i = 0; i < taglibs.length; i++) {
-
-            // Calculate the resource path of the next tag library to check
-            String resourcePath = context.findTaglib(taglibs[i]);
-            if (!resourcePath.startsWith("/"))
-                resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
-            if (debug >= 2)
-                log("  URI='" + taglibs[i] + "', ResourcePath='" +
-                    resourcePath + "'");
-            if (resourcePaths.contains(resourcePath)) {
+            // First, scan tag libraries declared in our deployment descriptor
+            if (debug >= 1)
+                log("Scanning web.xml tag libraries");
+            ArrayList resourcePaths = new ArrayList(); // Already done TLDs
+            String taglibs[] = context.findTaglibs();
+            for (int i = 0; i < taglibs.length; i++) {
+                
+                // Calculate the resource path of the next tag library to check
+                String resourcePath = context.findTaglib(taglibs[i]);
+                if (!resourcePath.startsWith("/"))
+                    resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
                 if (debug >= 2)
-                    log("    Already processed");
-                continue;
-            }
-            resourcePaths.add(resourcePath);
-
-            // Process either a JAR file or a TLD at this location
-            if (!tldConfigJar(resourcePath, digester))
-                tldConfigTld(resourcePath, digester);
-
-        }
-
-        DirContext resources = context.getResources();
-
-        // Second, scan tag libraries defined in tld files in /WEB-INF
-        if (debug >= 1)
-            log("Scanning TLD files in /WEB-INF");
-        String webinfName = "/WEB-INF";
-        // Looking up directory /WEB-INF in the context
-        try {
-            NamingEnumeration enum = resources.list(webinfName);
-            while (enum.hasMoreElements()) {
-                NameClassPair ncPair = (NameClassPair) enum.nextElement();
-                String filename = webinfName + "/" + ncPair.getName();
-                if (!filename.endsWith(".tld"))
+                    log("  URI='" + taglibs[i] + "', ResourcePath='" +
+                        resourcePath + "'");
+                if (resourcePaths.contains(resourcePath)) {
+                    if (debug >= 2)
+                        log("    Already processed");
                     continue;
-                tldConfigTld(filename, digester);
-            }
-        } catch (NamingException e) {
-            // Silent catch: it's valid that no /WEB-INF directory exists
-        }
+                }
+                resourcePaths.add(resourcePath);
 
-        // Third, scan tag libraries defined in JAR files
-        if (debug >= 1)
-            log("Scanning library JAR files");
-        String libName = "/WEB-INF/lib";
-        // Looking up directory /WEB-INF/lib in the context
-        try {
-            NamingEnumeration enum = resources.list(libName);
-            while (enum.hasMoreElements()) {
-                NameClassPair ncPair = (NameClassPair) enum.nextElement();
-                String filename = libName + "/" + ncPair.getName();
-                if (!filename.endsWith(".jar"))
-                    continue;
-                tldConfigJar(filename, digester);
+                // Process either a JAR file or a TLD at this location
+                if (!tldConfigJar(resourcePath, tldDigester))
+                    tldConfigTld(resourcePath, tldDigester);
+
             }
-        } catch (NamingException e) {
-            // Silent catch: it's valid that no /WEB-INF/lib directory exists
+
+            // Second, scan tag libraries defined in tld files in /WEB-INF
+            if (debug >= 1)
+                log("Scanning TLD files in /WEB-INF");
+            DirContext resources = context.getResources();
+            String webinfName = "/WEB-INF";
+            // Looking up directory /WEB-INF in the context
+            try {
+                NamingEnumeration enum = resources.list(webinfName);
+                while (enum.hasMoreElements()) {
+                    NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                    String filename = webinfName + "/" + ncPair.getName();
+                    if (!filename.endsWith(".tld"))
+                        continue;
+                    tldConfigTld(filename, tldDigester);
+                }
+            } catch (NamingException e) {
+                // Silent catch: it's valid that no /WEB-INF directory exists
+            }
+
+            // Third, scan tag libraries defined in JAR files
+            if (debug >= 1)
+                log("Scanning library JAR files");
+            String libName = "/WEB-INF/lib";
+            // Looking up directory /WEB-INF/lib in the context
+            try {
+                NamingEnumeration enum = resources.list(libName);
+                while (enum.hasMoreElements()) {
+                    NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                    String filename = libName + "/" + ncPair.getName();
+                    if (!filename.endsWith(".jar"))
+                        continue;
+                    tldConfigJar(filename, tldDigester);
+                }
+            } catch (NamingException e) {
+                // Silent catch: it's ok that no /WEB-INF/lib directory exists
+            }
         }
 
     }
@@ -898,6 +891,7 @@ public final class ContextConfig
                         "): Processing entry '" + name + "'");
                 stream = jarFile.getInputStream(entry);
                 synchronized (digester) {
+                    digester.clear();
                     digester.push(context);
                     digester.parse(stream);
                 }
@@ -946,6 +940,7 @@ public final class ContextConfig
             if (stream == null)
                 return (false);
             synchronized (digester) {
+                digester.clear();
                 digester.push(context);
                 digester.parse(stream);
             }
