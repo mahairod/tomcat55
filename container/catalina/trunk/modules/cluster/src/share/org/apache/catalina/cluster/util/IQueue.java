@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.cluster.tcp;
+package org.apache.catalina.cluster.util;
 
 /**
+ * A queue interface<BR>
+ *
+ * @author Rainer Jung
  * @author Peter Rossbach
- * @version 1.0
- * @since 5.5.7
+ * @version $Revision$ $Date$
  */
 
-public interface IDataSender
-{
-    public java.net.InetAddress getAddress();
-    public int getPort();
-    public void connect() throws java.io.IOException;
-    public void disconnect();
-    public void sendMessage(String sessionId, byte[] data) throws java.io.IOException;
-    public boolean isConnected();
-    public void setSuspect(boolean suspect);
-    public boolean getSuspect();
-    public void setAckTimeout(long timeout);
-    public long getAckTimeout();
-    public boolean isWaitForAck();
-    public void setWaitForAck(boolean isWaitForAck);
+public interface IQueue {
 
+    public LinkObject remove();
+    public boolean add(String key,Object data);
+    public int getMaxQueueLength();
+    public void setMaxQueueLength(int length);
+    public void start();
+    public void stop();
 }

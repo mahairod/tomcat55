@@ -36,7 +36,7 @@ import org.apache.catalina.cluster.util.SmartQueue;
  * 
  * @author Filip Hanik
  * @author Peter Rossbach
- * @version 1.2
+ * @version $Revision$ $Date$
  */
 public class AsyncSocketSender extends DataSender {
     
@@ -89,7 +89,6 @@ public class AsyncSocketSender extends DataSender {
     public AsyncSocketSender(InetAddress host, int port) {
         super(host, port);
         checkThread();
-        long a = Long.MAX_VALUE;
     }
 
     // ------------------------------------------------------------- Properties
@@ -169,7 +168,7 @@ public class AsyncSocketSender extends DataSender {
         queuedNrOfBytes += data.length;
         if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
-                    getAddress(), new Integer(getPort()), messageid, new Long(
+                    getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
                             data.length)));
     }
 
@@ -188,7 +187,7 @@ public class AsyncSocketSender extends DataSender {
      */
     public String toString() {
         StringBuffer buf = new StringBuffer("AsyncSocketSender[");
-        buf.append(getAddress()).append(":").append(getPort()).append("]");
+        buf.append(getAddress().getHostAddress()).append(":").append(getPort()).append("]");
         return buf.toString();
     }
 
