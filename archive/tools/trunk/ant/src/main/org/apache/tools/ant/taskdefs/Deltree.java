@@ -26,24 +26,34 @@ public class Deltree extends Task {
 		    " is not a dir";
 		throw new BuildException(msg);
 	    }
-	    removeDir(dir);
-	}
+            try {
+                removeDir(dir);
+            } catch (IOException ioe) {
+                String msg = "Unable to delete " + dir.getAbsolutePath();
+                throw new BuildException(msg);
+            }
+        }
     }
-
     
-    private void removeDir(File dir) {
-	String[] list = dir.list();
-	for (int i = 0; i < list.length; i++) {
-	    String s = list[i];
-	    File f = new File(dir, s);
-	    if (f.isDirectory()) {
-		removeDir(f);
-	    } else {
-		f.delete();
-	    }
-	}
-	dir.delete();
-    }
+    private void removeDir(File dir) throws IOException {
 
+        // check to make sure that the given dir isn't a symlink
+        // the comparison of absolute path and canonical path
+        // catches this
+        
+        if (dir.getCanonicalPath().equals(dir.getAbsolutePath())) {
+            String[] list = dir.list();
+            for (int i = 0; i < list.length; i++) {
+                String s = list[i];
+                File f = new File(dir, s);
+                if (f.isDirectory()) {
+                    removeDir(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        dir.delete();
+    }
 }
 
