@@ -69,7 +69,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 import javax.naming.NamingException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NameClassPair;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -303,6 +307,44 @@ public class DirContextURLConnection
         }
         
         return (resource.streamContent());
+        
+    }
+    
+    
+    // --------------------------------------------------------- Public Methods
+    
+    
+    /**
+     * List children of this collection. The names given are relative to this
+     * URI's path. The full uri of the children is then : path + "/" + name.
+     */
+    public Enumeration list()
+        throws IOException {
+        
+        if (!connected) {
+            connect();
+        }
+        
+        if ((resource == null) && (collection == null)) {
+            throw new FileNotFoundException();
+        }
+        
+        Vector result = new Vector();
+        
+        if (collection != null) {
+            try {
+                NamingEnumeration enum = context.list(getURL().getFile());
+                while (enum.hasMoreElements()) {
+                    NameClassPair ncp = (NameClassPair) enum.nextElement();
+                    result.addElement(ncp.getName());
+                }
+            } catch (NamingException e) {
+                // Unexpected exception
+                throw new FileNotFoundException();
+            }
+        }
+        
+        return result.elements();
         
     }
     
