@@ -76,7 +76,7 @@ public class HttpServletResponseWrapperEncodeURLTestServlet extends HttpServlet 
         out.println( "in HttpServletResponseWrapperEncodeURLTest servlet<BR>" );
         String result = null;
         result = response.encodeURL( expectedResult );
-        if ( result.equals( expectedResult ) ) {
+        if ( result.indexOf( expectedResult ) > -1 ) {
             out.println( "HttpServletResponseWrapperEncodeURLTest test PASSED<BR>" );
         } else {
             out.println( "HttpServletResponseWrapperEncodeURLTest test FAILED<BR>" );

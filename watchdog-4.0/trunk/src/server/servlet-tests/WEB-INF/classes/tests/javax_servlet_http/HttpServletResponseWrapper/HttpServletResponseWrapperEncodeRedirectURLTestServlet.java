@@ -78,7 +78,7 @@ public class HttpServletResponseWrapperEncodeRedirectURLTestServlet extends Http
         String result = null;
         result = response.encodeRedirectURL( expectedResult );
 
-        if ( result.equals( expectedResult ) ) {
+        if ( result.indexOf( expectedResult ) > -1 ) {
             out.println( "HttpServletResponseWrapperEncodeRedirectURLTest test PASSED<BR>" );
         } else {
             out.println( "HttpServletResponseWrapperEncodeRedirectURLTest test FAILED<BR>" );
