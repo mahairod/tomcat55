@@ -73,6 +73,7 @@ import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.Enumerator;
 
@@ -97,7 +98,7 @@ final class ApplicationFilterConfig implements FilterConfig {
      *
      * @param filterDef Filter definition for which a FilterConfig is to be
      *  constructed
-     * @param context The Context with which we are associated
+     * @param wrapper The Wrapper with which we are associated
      *
      * @exception ClassCastException if the specified class does not implement
      *  the <code>javax.servlet.Filter</code> interface
@@ -107,12 +108,12 @@ final class ApplicationFilterConfig implements FilterConfig {
      * @exception InstantiationException if an exception occurs while
      *  instantiating the filter object
      */
-    public ApplicationFilterConfig(FilterDef filterDef, Context context)
+    public ApplicationFilterConfig(FilterDef filterDef, Wrapper wrapper)
 	throws ClassCastException, ClassNotFoundException,
 	       IllegalAccessException, InstantiationException {
 
 	super();
-	setContext(context);
+	setWrapper(wrapper);
 	setFilterDef(filterDef);
 
     }
@@ -144,6 +145,12 @@ final class ApplicationFilterConfig implements FilterConfig {
      * configured filter stack.
      */
     private ApplicationFilterConfig nextConfig = null;
+
+
+    /**
+     * The Wrapper with which we are associated.
+     */
+    private Wrapper wrapper = null;
 
 
     // --------------------------------------------------- FilterConfig Methods
@@ -239,29 +246,23 @@ final class ApplicationFilterConfig implements FilterConfig {
     }
 
 
+    /**
+     * Return a String representation of this object.
+     */
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer("ApplicationFilterConfig[");
+	sb.append("wrapper=");
+	sb.append(wrapper.getName());
+	sb.append(", filterClass=");
+	sb.append(filterDef.getFilterClass());
+	sb.append("]");
+	return (sb.toString());
+
+    }
+
+
     // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * Return the Context we are configured for.
-     */
-    Context getContext() {
-
-	return (this.context);
-
-    }
-
-
-    /**
-     * Set the Context we are configured for.
-     *
-     * @param context The new Context
-     */
-    void setContext(Context context) {
-
-	this.context = context;
-
-    }
 
 
     /**
@@ -366,6 +367,32 @@ final class ApplicationFilterConfig implements FilterConfig {
 	    this.filter = null;
 	    this.context = null;
 	}
+
+    }
+
+
+    /**
+     * Return the Wrapper we are configured for.
+     */
+    Wrapper getWrapper() {
+
+	return (this.wrapper);
+
+    }
+
+
+    /**
+     * Set the Wrapper we are configured for.
+     *
+     * @param wrapper The new Wrapper
+     */
+    void setWrapper(Wrapper wrapper) {
+
+	this.wrapper = wrapper;
+	if (this.wrapper == null)
+	    this.context = null;
+	else
+	    this.context = (Context) this.wrapper.getParent();
 
     }
 

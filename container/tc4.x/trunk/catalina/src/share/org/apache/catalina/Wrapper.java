@@ -67,6 +67,7 @@ package org.apache.catalina;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 
 
 /**
@@ -295,6 +296,16 @@ public interface Wrapper extends Container {
      * @param name Security role used within this servlet to be removed
      */
     public void removeSecurityReference(String name);
+
+
+    /**
+     * Process an UnavailableException, marking this servlet as unavailable
+     * for the specified amount of time.
+     *
+     * @param unavailable The exception that occurred, or <code>null</code>
+     *  to mark this servlet as permanently unavailable
+     */
+    public void unavailable(UnavailableException unavailable);
 
 
     /**

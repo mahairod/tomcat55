@@ -67,6 +67,7 @@ package org.apache.catalina.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -198,6 +199,68 @@ public final class RequestUtil {
 	Cookie[] cookies = new Cookie[cookieJar.size()];
 	cookieJar.copyInto(cookies);
 	return (cookies);
+
+    }
+
+
+    /**
+     * Append request parameters from the specified String to the specified
+     * Map.  It is presumed that the specified Map is not accessed from any
+     * other thread, so no synchronization is performed.
+     *
+     * @param map Map that accumulates the resulting parameters
+     * @param data Input string containing request parameters
+     *
+     * @exception IllegalArgumentException if the data is malformed
+     */
+    public static void parseParameters(Map map, String data) {
+
+        if ((data == null) || (data.length() < 1))
+	    return;
+
+	// Initialize the variables we will require
+	StringParser parser = new StringParser(data);
+	boolean first = true;
+	int nameStart = 0;
+	int nameEnd = 0;
+	int valueStart = 0;
+	int valueEnd = 0;
+	String name = null;
+	String value = null;
+	String oldValues[] = null;
+	String newValues[] = null;
+
+	// Loop through the "name=value" entries in the input data
+	while (true) {
+
+	    // Extract the name and value components
+	    if (first)
+	        first = false;
+	    else
+	        parser.advance();
+	    nameStart = parser.getIndex();
+	    nameEnd = parser.findChar('=');
+	    parser.advance();
+	    valueStart = parser.getIndex();
+	    valueEnd = parser.findChar('&');
+	    name = parser.extract(nameStart, nameEnd);
+	    value = parser.extract(valueStart, valueEnd);
+
+	    // A zero-length name or value means we are done
+	    if ((name.length() < 1) || (value.length() < 1))
+	        break;
+
+	    // Create or update the array of values for this name
+	    oldValues = (String[]) map.get(name);
+	    if (oldValues == null)
+	        oldValues = new String[0];
+	    newValues = new String[oldValues.length + 1];
+	    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+	    newValues[oldValues.length] = value;
+	    map.put(name, newValues);
+
+	}
+
 
     }
 

@@ -806,6 +806,30 @@ public final class StandardWrapper
 
 
     /**
+     * Process an UnavailableException, marking this servlet as unavailable
+     * for the specified amount of time.
+     *
+     * @param unavailable The exception that occurred, or <code>null</code>
+     *  to mark this servlet as permanently unavailable
+     */
+    public void unavailable(UnavailableException unavailable) {
+	log(sm.getString("standardWrapper.unavailable", getName()));
+	if (unavailable == null)
+	    setAvailable(Long.MAX_VALUE);
+	else if (unavailable.isPermanent())
+	    setAvailable(Long.MAX_VALUE);
+	else {
+	    int unavailableSeconds = unavailable.getUnavailableSeconds();
+	    if (unavailableSeconds <= 0)
+		unavailableSeconds = 60;	// Arbitrary default
+	    setAvailable(System.currentTimeMillis() +
+			 (unavailableSeconds * 1000L));
+	}
+
+    }
+
+
+    /**
      * Unload all initialized instances of this servlet, after calling the
      * <code>destroy()</code> method for each instance.  This can be used,
      * for example, prior to shutting down the entire servlet engine, or
@@ -900,30 +924,6 @@ public final class StandardWrapper
 
 
     // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * Process an UnavailableException, marking this servlet as unavailable
-     * for the specified amount of time.
-     *
-     * @param unavailable The exception that occurred, or <code>null</code>
-     *  to mark this servlet as permanently unavailable
-     */
-    void unavailable(UnavailableException unavailable) {
-	log(sm.getString("standardWrapper.unavailable", getName()));
-	if (unavailable == null)
-	    setAvailable(Long.MAX_VALUE);
-	else if (unavailable.isPermanent())
-	    setAvailable(Long.MAX_VALUE);
-	else {
-	    int unavailableSeconds = unavailable.getUnavailableSeconds();
-	    if (unavailableSeconds <= 0)
-		unavailableSeconds = 60;	// Arbitrary default
-	    setAvailable(System.currentTimeMillis() +
-			 (unavailableSeconds * 1000L));
-	}
-
-    }
 
 
     // -------------------------------------------------------- Private Methods

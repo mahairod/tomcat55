@@ -361,7 +361,7 @@ final class StandardWrapperValve
 	    }
 	    if (debug >= 2)
 		log(" Adding filter '" + filterDef.getFilterName() + "'");
-	    next = new ApplicationFilterConfig(filterDef, context);
+	    next = new ApplicationFilterConfig(filterDef, wrapper);
 	    if (first == null)
 		first = next;
 	    if (last != null)
@@ -382,7 +382,7 @@ final class StandardWrapperValve
 	    }
 	    if (debug >= 2)
 		log(" Adding filter '" + filterDef.getFilterName() + "'");
-	    next = new ApplicationFilterConfig(filterDef, context);
+	    next = new ApplicationFilterConfig(filterDef, wrapper);
 	    if (first == null)
 		first = next;
 	    if (last != null)
@@ -400,7 +400,7 @@ final class StandardWrapperValve
 	    newDef.setFilterName("org.apache.catalina.core.ApplicationFilterWrapper");
 	    this.filterDef = newDef;
 	}
-	next = new ApplicationFilterConfig(this.filterDef, context);
+	next = new ApplicationFilterConfig(this.filterDef, wrapper);
 	ApplicationFilterWrapper filter =
 	    (ApplicationFilterWrapper) next.getFilter();
 	filter.setServlet(servlet);
