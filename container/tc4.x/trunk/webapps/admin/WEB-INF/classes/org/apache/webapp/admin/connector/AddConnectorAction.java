@@ -135,7 +135,6 @@ public class AddConnectorAction extends Action {
         connectorFm.setConnectorName("");
         String type = request.getParameter("type");
         if (type == null)
-            //type = "CoyoteConnector";    // default type is CoyoteConnector
             type = "HTTP";    // default type is HTTP
         connectorFm.setConnectorType(type);
         connectorFm.setDebugLvl("0");
@@ -154,20 +153,12 @@ public class AddConnectorAction extends Action {
         connectorFm.setKeyStoreFileName("");
         connectorFm.setKeyStorePassword("");
                        
-        // should be set only for Coyote, not supported by all connector types      
-        if ("CoyoteConnector".equalsIgnoreCase(type)) {
-            connectorFm.setProxyName("");
-            connectorFm.setProxyPortText("0");        
-        }
+        // supported by both JK2 and Coyote
+        connectorFm.setProxyName("");
+        connectorFm.setProxyPortText("0");        
         
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());
         connectorFm.setBooleanVals(Lists.getBooleanValues());                
-        
-        /*
-        String connectorTypes[] = new String[2];
-        connectorTypes[0] = "CoyoteConnector";
-        connectorTypes[1] = "Ajp13Connector";
-        */
         
         String schemeTypes[]= new String[2];
         schemeTypes[0] = "HTTP";
@@ -184,15 +175,6 @@ public class AddConnectorAction extends Action {
                 "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
                 + "&type=" + schemeTypes[i]));        
             }
-        /*
-         for (int i=0; i< connectorTypes.length; i++) {
-            if (!type.equalsIgnoreCase(connectorTypes[i])) {
-                types.add(new LabelValueBean(schemeTypes[i],
-                "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
-                + "&type=" + connectorTypes[i]));        
-            }
-         */
-        
         }
         connectorFm.setConnectorTypeVals(types);
         

@@ -182,7 +182,12 @@ public class DeleteConnectorAction extends Action {
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();
             while (items.hasNext()) {
-                list.add(items.next().toString());
+                // do not display the connector that the admin tool runs on 
+                // as this should not be allowed to be deleted from the admin tool
+                String adminPort = Integer.toString(request.getServerPort());
+                ObjectName nextObj = (ObjectName) items.next();
+                if (!(nextObj.getKeyProperty("port")).equalsIgnoreCase(adminPort))
+                    list.add(nextObj.toString());
             }
         } catch (Exception e) {
             getServlet().log
