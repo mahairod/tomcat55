@@ -5,22 +5,27 @@
 !define NAME "Apache Tomcat"
 !define VERSION "@VERSION@"
 
-!verbose 3
-  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
-!verbose 4
+!include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
 ;--------------------------------
 ;Configuration
 
+  !define MUI_INSTALLOPTIONS
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTPAGE
   !define MUI_DIRSELECTPAGE
+  !define MUI_INSTALLBUTTONTEXT_NEXT
+  !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
+
+  !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
+  !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
 
   ;Language
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
 
   ;General
   Name "${NAME} ${VERSION}"
@@ -33,7 +38,8 @@
   SetCompressor bzip2
   SetDatablockOptimize on
 
-  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9"
+  !insertmacro MUI_INTERFACE
+  !insertmacro MUI_INSTALLOPTIONS "$7" "$8"
 
   ;License dialog
   LicenseData INSTALLLICENSE
@@ -48,6 +54,9 @@
 
   ; Main registry key
   InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
+
+  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+  ReserveFile "config.ini"
 
 SubSection "Tomcat" SecTomcat
 
@@ -76,6 +85,8 @@ Section "Core" SecTomcatCore
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
   BringToFront
+
+  Call configure
 
 SectionEnd
 
@@ -110,15 +121,6 @@ Section "Documentation" SecTomcatDocs
   SetOutPath $INSTDIR\webapps
   File /r webapps\tomcat-docs
 
-  IfFileExists "$SMPROGRAMS\Apache Tomcat 5.0" 0 NoLinks
-
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Documentation.lnk" \
-                 "$INSTDIR\webapps\tomcat-docs\index.html"
-
- NoLinks:
-
 SectionEnd
 
 SubSectionEnd
@@ -134,6 +136,19 @@ Section "Start Menu Items" SecMenu
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Home Page.lnk" \
                  "http://jakarta.apache.org/tomcat"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Welcome.lnk" \
+                 "http://127.0.0.1:$R0/"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Administration.lnk" \
+                 "http://127.0.0.1:$R0/admin/"
+
+  IfFileExists "$INSTDIR\webapps\webapps\tomcat-docs" 0 NoDocumentaion
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Documentation.lnk" \
+                 "$INSTDIR\webapps\tomcat-docs\index.html"
+
+NoDocumentaion:
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Uninstall Tomcat 5.0.lnk" \
                  "$INSTDIR\Uninstall.exe"
@@ -164,9 +179,14 @@ Section "Examples" SecExamples
 
 SectionEnd
 
-Section -post
+Section ""
 
-  !insertmacro MUI_FINISHHEADER SetPage
+  ;Invisible section to display the Finish header
+  !insertmacro MUI_FINISHHEADER
+
+SectionEnd
+
+Section -post
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -185,6 +205,8 @@ SectionEnd
 
 
 Function .onInit
+
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "config.ini"
 
   ClearErrors
 
@@ -225,13 +247,15 @@ FunctionEnd
 
 Function .onNextPage
 
-  !insertmacro MUI_NEXTPAGE SetPage
+  !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
+  !insertmacro MUI_NEXTPAGE
 
 FunctionEnd
 
 Function .onPrevPage
 
-  !insertmacro MUI_PREVPAGE SetPage
+  !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
+  !insertmacro MUI_PREVPAGE
 
 FunctionEnd
 
@@ -252,12 +276,18 @@ Function SetPage
    !insertmacro MUI_PAGE_STOP 3
 
     !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
+      !insertmacro MUI_HEADER_TEXT "Configuration" "Tomcat basic configuration."
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "Title" "${NAME} ${VERSION} Configuration Options"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 4 "config.ini" "" ""
     !insertmacro MUI_PAGE_STOP 4
 
     !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT "Configuration" "Tomcat basic configuration."
-       Call configure
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 5
 
     !insertmacro MUI_PAGE_START 6
@@ -268,9 +298,7 @@ Function SetPage
 
 FunctionEnd
 
-Function .onMouseOverSection
-
-  !insertmacro MUI_DESCRIPTION_INIT
+!insertmacro MUI_FUNCTION_DESCRIPTION_START
 
     !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} "Install the Tomcat Servlet container."
     !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} "Install the Tomcat Servlet container core."
@@ -280,15 +308,10 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "Create a Start Menu program group for Tomcat."
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} "Installs some examples web applications."
 
- !insertmacro MUI_DESCRIPTION_END
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-FunctionEnd
+!insertmacro MUI_FUNCTION_ABORTWARNING
 
-Function .onUserAbort
-
-  !insertmacro MUI_ABORTWARNING
-
-FunctionEnd
 
 
 ; =====================
@@ -385,21 +408,9 @@ FunctionEnd
 ;
 Function configure
 
-  ; Output files needed for the configuration dialog
-  SetOverwrite on
-  GetTempFileName $8
-  GetTempFileName $7
-  File /oname=$8 "InstallOptions.dll"
-  File /oname=$7 "config.ini"
-
-  Push $7
-  CallInstDLL $8 dialog
-  Pop $1
-  StrCmp $1 "0" NoConfig
-
-  ReadINIStr $R0 $7 "Field 2" State
-  ReadINIStr $R1 $7 "Field 5" State
-  ReadINIStr $R2 $7 "Field 7" State
+  !insertmacro MUI_INSTALLOPTIONS_READ $R0 "config.ini" "Field 2" "State"
+  !insertmacro MUI_INSTALLOPTIONS_READ $R1 "config.ini" "Field 5" "State"
+  !insertmacro MUI_INSTALLOPTIONS_READ $R2 "config.ini" "Field 7" "State"
 
   StrCpy $R4 'port="$R0"'
   StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
@@ -438,20 +449,8 @@ Function configure
 
   DetailPrint "tomcat-users.xml written"
 
-  ; Creating a few shortcuts
-  IfFileExists "$SMPROGRAMS\Apache Tomcat 5.0" 0 NoLinks
-
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Administration.lnk" \
-                 "http://127.0.0.1:$R0/admin"
-
  NoLinks:
 
- NoConfig:
-
-  Delete $7
-  Delete $8
   RMDir /r "$TEMP\confinstall"
 
 FunctionEnd
@@ -498,7 +497,6 @@ Function startService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
   ExecWait 'net start "Apache Tomcat 5.0"'
-  Sleep 3000
   BringToFront
 
  NoService:
@@ -529,6 +527,7 @@ FunctionEnd
 
 Section Uninstall
 
+  Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
 
   ; Stopping NT service (if in use)
@@ -575,37 +574,13 @@ Section Uninstall
                  "Note: $INSTDIR could not be removed."
   Removed:
 
-  !insertmacro MUI_FINISHHEADER un.SetPage
+  !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
 
 ;--------------------------------
 ;Uninstaller Functions
 
-Function un.onNextPage
-
-  !insertmacro MUI_NEXTPAGE un.SetPage
-
-FunctionEnd
-
-Function un.SetPage
-
-  !insertmacro MUI_PAGE_INIT
-    
-    !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-  !insertmacro MUI_PAGE_END
-
-FunctionEnd
+!insertmacro MUI_UNBASICFUNCTIONS
 
 ;eof

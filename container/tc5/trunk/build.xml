@@ -508,8 +508,9 @@
     <!-- jakarta-tomcat-5 source -->
     <copy todir="${tomcat.dist}/src/${tomcat.project}">
       <fileset dir="${basedir}">
-        <exclude name="**/build/**"/>
-        <exclude name="**/dist/**"/>
+        <exclude name="build/**"/>
+        <exclude name="dist/**"/>
+        <exclude name="release/**"/>
         <exclude name="build.properties"/>
       </fileset>
     </copy>
