@@ -10,7 +10,7 @@
 	   http://java.apache.org/tomcat/examples-taglib
         </taglib-uri>
         <taglib-location>
-           /WEB-INF/classes/jsp/example-taglib.tld
+           /WEB-INF/tlds/example-taglib.tld
         </taglib-location>
     </taglib>
 
