@@ -169,6 +169,11 @@ public class NamingRuleSet extends RuleSetBase {
                             "addResource",
                             "org.apache.catalina.deploy.ContextResource");
 
+        digester.addCallMethod(prefix + "ResourceEnvRef",
+                               "addResourceEnvRef", 2);
+        digester.addCallParam(prefix + "ResourceEnvRef/name", 0);
+        digester.addCallParam(prefix + "ResourceEnvRef/type", 1);
+
         digester.addObjectCreate(prefix + "ResourceParams",
                                  "org.apache.catalina.deploy.ResourceParams");
         digester.addSetProperties(prefix + "ResourceParams");

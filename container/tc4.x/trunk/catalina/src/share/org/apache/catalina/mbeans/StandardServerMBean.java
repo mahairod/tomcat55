@@ -1190,6 +1190,31 @@ public class StandardServerMBean extends BaseModelMBean {
             writer.println("/>");
         }
 
+        // Store nested <ResourceEnvRef> elements
+        String[] eresources = resources.findResourceEnvRefs();
+        for (int i = 0; i < eresources.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.println("<ResourceEnvRef>");
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<name>");
+            writer.print(eresources[i]);
+            writer.println("</name>");
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<type>");
+            writer.print(resources.findResourceEnvRef(eresources[i]));
+            writer.println("</type>");
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.println("</ResourceEnvRef>");
+        }
+
         // Store nested <ResourceParams> elements
         ResourceParams[] params = resources.findResourceParams();
         for (int i = 0; i < params.length; i++) {
