@@ -927,6 +927,12 @@ public class Embedded  extends StandardService implements Lifecycle {
             }
             System.setProperty("catalina.base", catalinaBase);
         }
+        
+        String temp = System.getProperty("java.io.tmpdir");
+        if (temp == null || (!(new File(temp)).exists())
+                || (!(new File(temp)).isDirectory())) {
+            log.error(sm.getString("embedded.notmp", temp));
+        }
 
     }
 
