@@ -918,6 +918,9 @@ public class WebappClassLoader
             url = entry.source;
         }
 
+        if (url == null)
+            url = super.findResource(name);
+
         if (debug >= 3) {
             if (url != null)
                 log("    --> Returning '" + url.toString() + "'");
@@ -1114,6 +1117,12 @@ public class WebappClassLoader
             if (debug >= 2)
                 log("  --> Returning stream from local");
             stream = findLoadedResource(name);
+            try {
+                if (stream == null)
+                    stream = url.openStream();
+            } catch (IOException e) {
+                ; // Ignore
+            }
             if (stream != null)
                 return (stream);
         }
@@ -1560,9 +1569,6 @@ public class WebappClassLoader
         if ((name == null) || (path == null))
             return null;
 
-        if (notFoundResources.containsKey(name))
-            return null;
-
         ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
         if (entry != null)
             return entry;
@@ -1627,6 +1633,9 @@ public class WebappClassLoader
             } catch (NamingException e) {
             }
         }
+
+        if ((entry == null) && (notFoundResources.containsKey(name)))
+            return null;
 
         JarEntry jarEntry = null;
 
