@@ -569,8 +569,6 @@ public class StandardContext
      */
     private transient DirContext webappResources = null;
 
-    private ArrayList wrappers=new ArrayList();
-
     private long startupTime;
     private long startTime;
     private long tldScanTime;
@@ -2315,7 +2313,6 @@ public class StandardContext
     public Wrapper createWrapper() {
         //log.info( "Create wrapper" );
         Wrapper wrapper = new StandardWrapper();
-        wrappers.add(wrapper);
 
         synchronized (instanceListeners) {
             for (int i = 0; i < instanceListeners.length; i++) {
@@ -3105,9 +3102,10 @@ public class StandardContext
      */
     public void removeChild(Container child) {
 
-        if (!(child instanceof Wrapper))
+        if (!(child instanceof Wrapper)) {
             throw new IllegalArgumentException
                 (sm.getString("standardContext.notWrapper"));
+        }
 
         super.removeChild(child);
 
@@ -4416,8 +4414,6 @@ public class StandardContext
         
         // Reset application context
         context = null;
-        
-        wrappers = new ArrayList();
     }
 
     /**
@@ -4522,8 +4518,6 @@ public class StandardContext
         
         // Reset application context
         context = null;
-
-        wrappers = new ArrayList();
 
         // This object will no longer be visible or used. 
         try {
@@ -5251,16 +5245,23 @@ public class StandardContext
     }
     
     
-    /** JSR77 servlets attribute
+    /**
+     * JSR77 servlets attribute
      *
      * @return list of all servlets ( we know about )
      */
     public String[] getServlets() {
-        int size=wrappers.size();
-        String result[]=new String[size];
-        for( int i=0; i< size; i++ ) {
-            result[i]=((StandardWrapper)wrappers.get(i)).getObjectName();
+        
+        String[] result = null;
+
+        Container[] children = findChildren();
+        if (children != null) {
+            result = new String[children.length];
+            for( int i=0; i< children.length; i++ ) {
+                result[i] = ((StandardWrapper)children[i]).getObjectName();
+            }
         }
+
         return result;
     }
     
@@ -5325,10 +5326,9 @@ public class StandardContext
                     broadcaster.sendNotification(notification);
                 }
             }
-            for (Iterator it = wrappers.iterator(); it.hasNext() ; ) {
-                StandardWrapper wrapper=(StandardWrapper)it.next();
-                // XXX prevent duplicated registration
-                wrapper.registerJMX( this );
+            Container children[] = findChildren();
+            for (int i=0; children!=null && i<children.length; i++) {
+                ((StandardWrapper)children[i]).registerJMX( this );
             }
         } catch (Exception ex) {
             log.info("Error registering wrapper with jmx " + this + " " +
