@@ -160,6 +160,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	public void visit(Node.JspRoot n) throws JasperException {
 	    addAttributes(n.getTaglibAttributes());
+            addAttributes(n.getNonTaglibXmlnsAttributes());
 	    addAttributes(n.getAttributes());
 
 	    visitBody(n);
