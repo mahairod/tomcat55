@@ -106,6 +106,10 @@ import org.apache.naming.ResourceRef;
  *     JDBC driver.</li>
  * <li><strong>user</strong> - Database username to be passed to our
  *     JDBC driver.</li>
+ * <li><strong>validationQuery</strong> - SQL query that can be used to validate
+ *     connections from this pool.  If specified, this query
+ *     <strong>MUST</strong> be an SQL SELECT that returns at least one row.
+ *     </li>
  * </ul>
  * 
  * @author Craig R. McClanahan
@@ -184,6 +188,11 @@ public class DbcpDataSourceFactory
         if (currentRefAddr != null)
             user = currentRefAddr.getContent().toString();
 
+        String validationQuery = null;
+        currentRefAddr = ref.get("validationQuery");
+        if (currentRefAddr != null)
+            validationQuery = currentRefAddr.getContent().toString();
+
         // Validate our configuration parameters
         if (driverClassName == null)
             throw new NamingException
@@ -252,7 +261,7 @@ public class DbcpDataSourceFactory
             new DriverManagerConnectionFactory(url, user, password);
         PoolableConnectionFactory poolableConnectionFactory =
             new PoolableConnectionFactory(connectionFactory, connectionPool,
-                                          null, null,
+                                          null, validationQuery,
                                           false, true);
         PoolingDataSource dataSource =
             new PoolingDataSource(connectionPool);
