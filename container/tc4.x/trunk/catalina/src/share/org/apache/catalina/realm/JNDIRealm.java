@@ -716,7 +716,8 @@ public class JNDIRealm extends RealmBase {
                                                String credentials)
         throws NamingException {
 
-        if (username == null || credentials == null)
+        if (username == null || username.equals("") 
+            || credentials == null || credentials.equals(""))
             return (null);
 
         // Retrieve user information
