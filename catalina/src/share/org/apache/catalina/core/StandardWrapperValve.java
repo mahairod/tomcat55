@@ -442,7 +442,6 @@ final class StandardWrapperValve
      */
     private void exception(Request request, Response response,
                            Throwable exception) {
-        errorCount++;
         ServletRequest sreq = request.getRequest();
         sreq.setAttribute(Globals.EXCEPTION_ATTR, exception);
 

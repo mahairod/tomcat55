@@ -90,6 +90,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.HttpResponse;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.DateTool;
 import org.apache.catalina.util.StringManager;
@@ -1149,6 +1150,11 @@ public class CoyoteResponse
         // Ignore any call from an included servlet
         if (included)
             return; 
+
+        Wrapper wrapper = getRequest().getWrapper();
+        if (wrapper != null) {
+            wrapper.incrementErrorCount();
+        } 
 
         setError();
 
