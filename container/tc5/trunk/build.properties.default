@@ -87,7 +87,7 @@ commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binarie
 
 # ----- Commons Expression Language (EL) -----
 commons-el.home=${base.path}/commons-el
-commons-el.lib=${commons-el.home}/dist
+commons-el.lib=${commons-el.home}
 commons-el.jar=${commons-el.lib}/commons-el.jar
 commons-el.loc=jakarta-commons/el
 commons-el.cvs.loc=jakarta-commons/el
@@ -268,6 +268,14 @@ servlet23api.home=${base.path}/servletapi-4
 servlet23api.lib=${servlet23api.home}/lib
 servlet23api.jar=${servlet23api.lib}/servlet23api.jar
 servlet23api.loc=jakarta-servletapi-4
+
+servlet-api.home=${base.path}/servlet-api-2.4
+servlet-api.lib=${servlet-api.home}/lib
+servlet-api.jar=${servlet-api.lib}/servlet-api.jar
+
+jsp-api.home=${base.path}/jsp-api-2.0
+jsp-api.lib=${jsp-api.home}/lib
+jsp-api.jar=${jsp-api.lib}/jsp-api.jar
 
 
 # ----- Watchdog, version 20020801 or later -----
