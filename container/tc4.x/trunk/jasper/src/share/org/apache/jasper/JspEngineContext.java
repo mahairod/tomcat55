@@ -145,44 +145,17 @@ public class JspEngineContext implements JspCompilationContext {
 
     /**
      * The classpath that is passed off to the Java compiler. 
-     *
-     * Uses the URLClassLoader getURLs to build the classpath
-     * for the Context ClassLoader and all parent
-     * ClassLoader's except for the system class loader.
      */
     public String getClassPath() {
-        StringBuffer cpath = new StringBuffer();
-	ClassLoader cl = loader;
-	while( cl != null && cl.getParent() != null ) {
-	    if( (cl instanceof URLClassLoader) ) {
-	        cpath.append(getClassLoaderPaths((URLClassLoader)cl));
-	    }
-	    cl = cl.getParent();
-	}
-        return cpath.toString() + classpath;
-    }
-
-    /**
-     * The classpaths for a URLClassLoader
-     */
-    private String getClassLoaderPaths(URLClassLoader loader) {
 	URL [] urls = loader.getURLs();
         StringBuffer cpath = new StringBuffer();
         String sep = System.getProperty("path.separator");
 
         for(int i = 0; i < urls.length; i++) {
-	    String file = null;
-	    String url = urls[i].toString();
-	    if( url.startsWith("jndi:") ) {
-		file = getRealPath(url.substring(5));
-	    } else if( url.startsWith("jar:jndi:") ) {
-		file = getRealPath(url.substring(9,url.length()-2));
-	    } else {
-		file = (String)urls[i].getFile();
-	    }
-            cpath.append(file + sep);
+            cpath.append((String)urls[i].getFile()+sep);
         }
-        return cpath.toString();
+         
+        return cpath.toString() + classpath;
     }
     
     /**

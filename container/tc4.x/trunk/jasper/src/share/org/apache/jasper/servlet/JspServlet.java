@@ -150,10 +150,27 @@ public class JspServlet extends HttpServlet {
 	private void loadIfNecessary(HttpServletRequest req, HttpServletResponse res) 
             throws JasperException, ServletException, FileNotFoundException 
         {
-	    // Get the classpath init parameter
-            String cp = options.getClassPath();
-	    if( cp == null )
-		cp = "";
+            // First try context attribute; if that fails then use the 
+            // classpath init parameter. 
+
+            // Should I try to concatenate them if both are non-null?
+
+            String cp = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
+
+            String accordingto;
+
+            if (cp == null || cp.equals("")) {
+                accordingto = "according to the init parameter";
+                cp = options.getClassPath();
+            } else 
+                accordingto = "according to the Servlet Engine";
+            
+            Constants.message("jsp.message.cp_is", 
+                              new Object[] { 
+                                  accordingto,
+                                  cp == null ? "" : cp
+                              }, 
+                              Logger.INFORMATION);
 
             if (loadJSP(jspUri, cp, isErrorPage, req, res) 
                     || theServlet == null) {
