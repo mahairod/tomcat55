@@ -240,6 +240,10 @@
         <exclude name="build.properties"/>
       </fileset>
     </copy>
+    <mkdir  dir="${tomcat.dist}/src/catalina"/>
+    <copy todir="${tomcat.dist}/src/catalina">
+      <fileset dir="${catalina.home}"/>
+    </copy>
     <mkdir  dir="${tomcat.dist}/src/jasper"/>
     <copy todir="${tomcat.dist}/src/jasper">
       <fileset dir="${jasper.home}"/>
@@ -461,6 +465,11 @@
   </target>
 
   <target name="download" depends="proxyflags">
+
+    <!-- commons-logging/dbcp/pool need ../LICENSE -->
+    <!-- That is ugly XXX needs a review -->
+    <copy file="LICENSE" tofile="../LICENSE"/>
+
     <!-- Downdown any sub package or tools needed. -->
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-beanutils.loc}"/>
@@ -470,10 +479,16 @@
       <param name="sourcefile" value="${commons-collections.loc}"/>
       <param name="destfile" value="${commons-collections.jar}"/>
     </antcall>
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${commons-digester.loc}"/>
+
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-digester.loc}"/>
+      <param name="subdir" value="${commons-digester.home}"/>
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
+    <copy
+      file="${commons-digester.home}/dist/commons-digester.jar"
+      tofile="${commons-digester.jar}"
+    />
 
     <!-- we need the release to happend, in the meantime use cvs...
     <antcall target="downloadgz">
@@ -482,9 +497,6 @@
     </antcall>
     -->
 
-    <!-- commons-logging/dbcp/pool need ../LICENSE -->
-    <!-- That is ugly XXX needs a review -->
-    <copy file="LICENSE" tofile="../LICENSE"/>
     <antcall target="cvsbuild">
       <param name="location" value="${commons-logging.loc}"/>
       <param name="subdir" value="${commons-logging.home}"/>
@@ -515,6 +527,18 @@
       <param name="subdir" value="${commons-daemon.home}"/>
       <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
+    <copy
+      file="${commons-daemon.home}/dist/commons-daemon.jar"
+      tofile="${commons-daemon.jar}"
+    />
+    <copy
+      file="${commons-daemon.home}/dist/bin/commons-launcher.jar"
+      tofile="${commons-daemon-launcher.jar}"
+    />
+    <copy
+      file="${commons-daemon.home}/dist/bin/LauncherBootstrap.class"
+      tofile="${commons-daemon-launcher-bootstrap.class}"
+    />
 
     <!-- commons-dbcp/pool need something different. -->
     <!-- Pool 1.0 -->

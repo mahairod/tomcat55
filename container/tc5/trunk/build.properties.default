@@ -71,11 +71,11 @@ commons-daemon-launcher-bootstrap.class=${commons-daemon.bin}/LauncherBootstrap.
 commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
-# ----- Commons Digester, version 1.2 or later -----
-commons-digester.home=${base.path}/commons-digester-1.2
+# ----- Commons Digester, version 20020731 or later -----
+commons-digester.home=${base.path}/commons-digester
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-digester/v1.2/commons-digester-1.2.tar.gz
+commons-digester.loc=jakarta-commons/digester
 
 
 # ----- Commons Logging, version 20020728 or later -----
@@ -109,13 +109,6 @@ xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.0.2.tar.gz
-
-
-# ----- JSTL 1.0 -----
-jstl.home=${base.path}/jakarta-taglibs/jstl-1.0
-jstl.lib=${jstl.home}/lib
-jstl.jar=${jstl.lib}/jstl.jar
-jstl-impl.jar=${jstl.lib}/standard.jar
 
 
 # --------------------------------------------------
