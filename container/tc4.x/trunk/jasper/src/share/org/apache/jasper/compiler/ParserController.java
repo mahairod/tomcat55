@@ -413,10 +413,10 @@ public class ParserController {
      * baseDirStack.
      */
     private String resolveFileName(String inFileName) {
-        boolean isAbsolute = inFileName.startsWith("/");
-	String fileName = 
-	    isAbsolute ?
-	    inFileName : (String) baseDirStack.peek() + inFileName;
+        String fileName = inFileName.replace('\\', '/');
+        boolean isAbsolute = fileName.startsWith("/");
+	fileName = isAbsolute ? fileName 
+            : (String) baseDirStack.peek() + fileName;
 	String baseDir = 
 	    fileName.substring(0, fileName.lastIndexOf("/") + 1);
 	baseDirStack.push(baseDir);
