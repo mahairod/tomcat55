@@ -171,15 +171,13 @@ public final class SaveEnvEntryAction extends Action {
         // Perform an "Add Entry" transaction
         if (objectName == null) {
 
-            String signature[] = new String[3];
+            String signature[] = new String[2];
             signature[0] = "java.lang.String";
             signature[1] = "java.lang.String";
-            signature[2] = "java.lang.String";
 
-            Object params[] = new Object[3];
+            Object params[] = new Object[2];
             params[0] = envEntryForm.getName();
-            params[1] = envEntryForm.getEntryType();            
-            params[2] = envEntryForm.getValue();
+            params[1] = envEntryForm.getEntryType();     
             
             ObjectName oname = null;
 
@@ -191,7 +189,13 @@ public final class SaveEnvEntryAction extends Action {
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addEnvironment",
                                                      params, signature);
-
+                                                     
+                // FIX ME 
+                // "addEnvironment" should return the name of the new 
+                // mBean just created
+                objectName = ResourceUtils.ENVIRONMENT_TYPE + 
+                             ",name=" + params[0]; 
+                
             } catch (Exception e) {
 
                 getServlet().log
@@ -207,42 +211,36 @@ public final class SaveEnvEntryAction extends Action {
         }
 
         // Perform an "Update Environment Entry" transaction
-        else {
+        String attribute = null;
+        try {
+            
+            // Construct an object name for this object
+            ObjectName oname = new ObjectName(objectName);
 
-            ObjectName oname = null;
-            String attribute = null;
+            // Update the specified env entry
+            attribute = "description";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, envEntryForm.getDescription()));
+            attribute = "type";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, envEntryForm.getEntryType()));
+            attribute = "value";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, envEntryForm.getValue()));
 
-            try {
+        } catch (Exception e) {
 
-                // Construct an object name for this object
-                oname = new ObjectName(objectName);
-
-                // Update the specified env entry
-                attribute = "description";
-                mserver.setAttribute
-                    (oname,
-                     new Attribute(attribute, envEntryForm.getDescription()));
-                attribute = "type";
-                mserver.setAttribute
-                    (oname,
-                     new Attribute(attribute, envEntryForm.getEntryType()));
-                attribute = "value";
-                mserver.setAttribute
-                    (oname,
-                     new Attribute(attribute, envEntryForm.getValue()));
-
-            } catch (Exception e) {
-
-                getServlet().log
-                    (resources.getMessage(locale, "users.error.set.attribute",
-                                          attribute), e);
-                response.sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     resources.getMessage(locale, "users.error.set.attribute",
-                                          attribute));
-                return (null);
-
-            }
+            getServlet().log
+                (resources.getMessage(locale, "users.error.set.attribute",
+                                      attribute), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.set.attribute",
+                                      attribute));
+            return (null);
 
         }
         
