@@ -1064,6 +1064,8 @@ public final class StandardServer
 
         // Render the relevant properties of this bean
         String className = bean.getClass().getName();
+        // Create blank instance
+        Object bean2 = bean.getClass().newInstance();
         for (int i = 0; i < descriptors.length; i++) {
             if (descriptors[i] instanceof IndexedPropertyDescriptor) {
                 continue; // Indexed properties are not persisted
@@ -1076,11 +1078,18 @@ public final class StandardServer
             Object value =
                 PropertyUtils.getSimpleProperty(bean,
                                                 descriptors[i].getName());
+            Object value2 =
+                PropertyUtils.getSimpleProperty(bean2,
+                                                descriptors[i].getName());
             if (value == null) {
                 continue; // Null values are not persisted
             }
             if (isException(className, descriptors[i].getName())) {
                 continue; // Skip the specified exceptions
+            }
+            if (value.equals(value2)) {
+                // The property has its default value
+                continue;
             }
             if (!(value instanceof String)) {
                 value = value.toString();
