@@ -285,6 +285,12 @@ public final class AccessLogValve
     private String space = " ";
 
 
+    /**
+     * Resolve hosts.
+     */
+    private boolean resolveHosts = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -395,6 +401,28 @@ public final class AccessLogValve
     }
 
 
+    /**
+     * Set the resolve hosts flag.
+     * 
+     * @param resolveHosts The new resolve hosts value
+     */
+    public void setResolveHosts(boolean resolveHosts) {
+
+        this.resolveHosts = resolveHosts;
+
+    }
+
+
+    /**
+     * Get the value of the resolve hosts flag.
+     */
+    public boolean isResolveHosts() {
+
+        return resolveHosts;
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -429,7 +457,10 @@ public final class AccessLogValve
             if (req instanceof HttpServletRequest)
                 hreq = (HttpServletRequest) req;
 
-            result.append(req.getRemoteHost());
+            if (isResolveHosts())
+                result.append(req.getRemoteHost());
+            else
+                result.append(req.getRemoteAddr());
 
             result.append(" - ");
             
