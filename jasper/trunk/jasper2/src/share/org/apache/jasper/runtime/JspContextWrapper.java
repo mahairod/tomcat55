@@ -383,7 +383,6 @@ public class JspContextWrapper
      * Synchronize variables at begin of tag file
      */
     public void syncBeginTagFile() {
-	copyPageToTagScope(VariableInfo.AT_BEGIN);
 	saveNestedVariables();
     }
 
@@ -396,56 +395,12 @@ public class JspContextWrapper
     }
 
     /**
-     * Synchronize variables after fragment invokation
-     */
-    public void syncAfterInvoke() {
-	copyPageToTagScope(VariableInfo.NESTED);
-	copyPageToTagScope(VariableInfo.AT_BEGIN);
-    }
-
-    /**
      * Synchronize variables at end of tag file
      */
     public void syncEndTagFile() {
 	copyTagToPageScope(VariableInfo.AT_BEGIN);
 	copyTagToPageScope(VariableInfo.AT_END);
 	restoreNestedVariables();
-    }
-
-
-
-    /**
-     * Copies the variables of the given scope from the page scope of the
-     * invoking JSP context to the virtual page scope of this JSP context
-     * wrapper.
-     *
-     * @param scope variable scope (one of NESTED or AT_BEGIN)
-     */
-    private void copyPageToTagScope(int scope) {
-	Iterator iter = null;
-
-	switch (scope) {
-	case VariableInfo.NESTED:
-	    if (nestedVars != null) {
-		iter = nestedVars.iterator();
-	    }
-	    break;
-	case VariableInfo.AT_BEGIN:
-	    if (atBeginVars != null) {
-		iter = atBeginVars.iterator();
-	    }
-	    break;
-	}
-
-	while ((iter != null) && iter.hasNext()) {
-	    String varName = (String) iter.next();
-	    String aliasName = findAlias(varName);
-
-	    Object obj = invokingJspCtxt.getAttribute(aliasName);
-	    if (obj != null) {
-		setAttribute(varName, obj);
-	    }
-	}
     }
 
     /**

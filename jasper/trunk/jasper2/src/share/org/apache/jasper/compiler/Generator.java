@@ -1822,18 +1822,8 @@ class Generator {
 	    } else {
 		out.printil("_jspx_sout = null;");
 	    }
-	    out.printil("try {");
-	    out.pushIndent();
 	    out.printin(toGetterMethod(n.getTextAttribute("fragment")));
 	    out.println(".invoke(_jspx_sout);");
-	    out.popIndent();
-	    out.printil( "} finally {" );
-	    out.pushIndent();
-	    // Copy page scope of invoking page back to virtual page scope of
-	    // tag file
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncAfterInvoke();");
-	    out.popIndent();
-	    out.printil("}");
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
@@ -1868,20 +1858,10 @@ class Generator {
 	    } else {
 		out.printil("_jspx_sout = null;");
 	    }
-	    out.printil("try {");
-	    out.pushIndent();
 	    out.printil("if (getJspBody() != null)");
 	    out.pushIndent();
 	    out.printil("getJspBody().invoke(_jspx_sout);");
 	    out.popIndent();
-	    out.popIndent();
-	    out.printil( "} finally {" );
-	    out.pushIndent();
-	    // Copy page scope of invoking page back to virtual page scope of
-	    // tag file
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncAfterInvoke();");
-	    out.popIndent();
-	    out.printil("}");
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
