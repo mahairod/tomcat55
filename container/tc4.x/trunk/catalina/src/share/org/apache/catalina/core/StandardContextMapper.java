@@ -224,7 +224,8 @@ public final class StandardContextMapper
         if (wrapper == null) {
             if (debug >= 2)
                 context.log("  Trying exact match");
-            name = context.findServletMapping(relativeURI);
+            if (!(relativeURI.equals("/")))
+                name = context.findServletMapping(relativeURI);
             if (name != null)
                 wrapper = (Wrapper) context.findChild(name);
             if (wrapper != null) {
