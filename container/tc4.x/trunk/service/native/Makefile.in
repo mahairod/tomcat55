@@ -68,7 +68,8 @@ OBJS =  arguments.o \
 	home.o \
 	java.o \
 	location.o \
-	replace.o
+	replace.o \
+	signals.o
 
 all: jsvc libservice.a
 

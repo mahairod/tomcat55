@@ -171,6 +171,11 @@ static bool checkuser(char *user, uid_t *uid, gid_t *gid) {
     return(false);
 }
 
+#ifdef OS_CYGWIN
+static void cygwincontroller() {
+    raise(SIGTERM);
+}
+#endif
 static void controller(int sig) {
     switch (sig) {
         case SIGTERM:
@@ -335,6 +340,9 @@ int main(int argc, char *argv[]) {
         /* We are in the controller, we have to forward all interesting signals
            to the child, and wait for it to die */
         controlled=pid;
+#ifdef OS_CYGWIN
+       SetTerm(cygwincontroller);
+#endif
         signal(SIGHUP,controller);
         signal(SIGTERM,controller);
         signal(SIGINT,controller);
