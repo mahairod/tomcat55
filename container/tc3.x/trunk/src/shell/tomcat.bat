@@ -97,7 +97,7 @@ set _RUNJAVA="%JAVA_HOME%\bin\java"
 
 :setClasspath
 
-set CLASSPATH=%TOMCAT_INSTALL%\lib\tomcat.jar
+set CLASSPATH=%TOMCAT_INSTALL%\lib\tomcat.jar;%TOMCAT_INSTALL%\lib\common\commons-logging.jar
 
 rem ----- Execute The Requested Command -------------------------------------
 

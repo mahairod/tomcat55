@@ -117,7 +117,7 @@ export MAIN
 
 oldCP=$CLASSPATH
 unset CLASSPATH
-CLASSPATH=${TOMCAT_INSTALL}/lib/tomcat.jar
+CLASSPATH=${TOMCAT_INSTALL}/lib/tomcat.jar:${TOMCAT_INSTALL}/lib/common/commons-logging.jar
 
 # Ignore previous CLASSPATH
 
