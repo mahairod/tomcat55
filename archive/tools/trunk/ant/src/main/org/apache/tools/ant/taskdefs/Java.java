@@ -55,94 +55,104 @@
 package org.apache.tools.ant.taskdefs;
 
 import org.apache.tools.ant.*;
-import java.io.*;
-import java.util.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 /**
- * XSLT tranformation.
- * 
- * Input file is converted to output file using a given XSLT tranformation sheet.
- * Do not use input file as output file since it may create runtime exceptions.
+ * This task acts as a loader for java applications but allows to use the same JVM 
+ * for the called application thus resulting in much faster operation.
  *
  * @author Stefano Mazzocchi <a href="mailto:stefano@pache.org">stefano@apache.org</a>
  */
-public class Xslt extends Task {
-    
-    public static String tranformerName = "org.apache.xalan.xslt.Process";
-    
-    private File source = null;
-    private File dest = null;
-    private File sheet = null;
+public class Java extends Task {
+
+    private String classname = null;
+    private String args = null;
     
     /**
      * Do the execution.
      */
     public void execute() throws BuildException {
         
-        project.log("Performing XSLT Transformation");
+        project.log("Calling " + classname);
         
-        if ( source == null || dest == null || sheet == null) {
-            project.log("Source, destination and stylesheet must not be null");
-            return;            
+        if (classname == null) {
+            throw new BuildException("Class name must not be null.");
         }
 
-        /*
-         * This code is rather different from normal java coding 
-         * approaches, in fact it is the un-typed equivalent of
-         * 
-         *   (new Process()).main(arguments());
-         *
-         * but uses complete reflection and does not require you to 
-         * have Xalan in your classpath for complete compilation.
-         */
-         try {
-            Class transformerClass = Class.forName(tranformerName);
+        Vector argList = tokenize(args);
         
-            Method[] methods = transformerClass.getMethods();
-            Method main = null;
+        project.log("Java args: " + argList.toString(), "java", project.MSG_VERBOSE);
         
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals("main")) main = methods[i];
-            }
-        
-            Object[] arguments = { arguments() };
-            
-            if (main != null) {
-                main.invoke(transformerClass.newInstance(), arguments);
-            } else {
-                new BuildException("Could not find main() method.");
-            }
-        } catch (Exception e) {
-            new BuildException(e);
-        }
+        run(classname, argList);
     }
     
     /**
      * Set the source file.
      */
-    public void setSrc(String s) {
-        this.source=project.resolveFile(s);
+    public void setClass(String s) {
+        this.classname = s;
     }
 
     /**
      * Set the destination file.
      */
-    public void setDest(String dest) {
-        this.dest = project.resolveFile(dest);
+    public void setArgs(String s) {
+        this.args = s;
     }
 
     /**
-     * Set the stylesheet file.
+     * Executes the given classname with the given arguments as it
+     * was a command line application.
      */
-    public void setSheet(String sheet) {
-        this.sheet = project.resolveFile(sheet);
+    protected void run(String classname, Vector args) throws BuildException {
+        try {
+            Class[] param = { Class.forName("[Ljava.lang.String;") };
+            Class c = Class.forName(classname);
+            Method main = c.getMethod("main", param);
+            Object[] a = { array(args) };
+            main.invoke(null, a);
+        } catch (NullPointerException e) {
+            throw new BuildException("Could not find main() method in " + classname);
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("Could not find " + classname + ". Make sure you have it in your classpath");
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();
+            if (!(t instanceof SecurityException)) {
+                throw new BuildException(t.toString());
+            }
+            // else ignore because the security exception is thrown
+            // if the invoked application tried to call System.exit()
+        } catch (Exception e) {
+            throw new BuildException(e.toString());
+        }
     }
 
-    String[] arguments() {
-        String[] arguments = { "-in", source.toString(), 
-                                "-out", dest.toString(),
-                                "-xsl", sheet.toString() };
-        return arguments;
+    /**
+     * Transforms an argument string into a vector of strings.
+     */
+    protected Vector tokenize(String args) {
+        Vector v = new Vector();
+        StringTokenizer t = new StringTokenizer(args, " ");
+        
+        while (t.hasMoreTokens()) {
+            v.addElement(t.nextToken());
+        }
+
+        return v;
+    }
+    
+    /**
+     * Transforms a vector of strings into an array.
+     */
+    protected String[] array(Vector v) {
+        String[] s = new String[v.size()];
+        Enumeration e = v.elements();
+        
+        for (int i = 0; e.hasMoreElements(); i++) {
+            s[i] = (String) e.nextElement();
+        }
+        
+        return s;
     }
 }
