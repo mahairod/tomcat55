@@ -202,7 +202,6 @@ public class WebappClassLoader
         "org.xml.sax",                               // SAX 1 & 2
         "org.w3c.dom",                               // DOM 1 & 2
         "org.apache.xerces",                         // Xerces 1 & 2
-        "org.apache.commons.logging",                // Commons logging.
         "org.apache.xalan"                           // Xalan
     };
 
