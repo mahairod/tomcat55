@@ -1512,6 +1512,17 @@ public class StandardContext
 
 
     /**
+     * Add a Locale Encoding Mapping (see Sec 5.4 of Servlet spec 2.4)
+     *
+     * @param locale locale to map an encoding for
+     * @param encoding encoding to be used for a give locale
+     */
+    public void addLocaleEncodingMappingParameter(String locale, String encoding){
+        getCharsetMapper().addCharsetMappingFromDeploymentDescriptor(locale, encoding);
+    }
+
+
+    /**
      * Add a local EJB resource reference for this web application.
      *
      * @param ejb New EJB resource reference
