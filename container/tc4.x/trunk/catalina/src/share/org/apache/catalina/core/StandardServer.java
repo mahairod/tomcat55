@@ -218,6 +218,9 @@ public final class StandardServer
         super();
         ServerFactory.setServer(this);
 
+        globalNamingResources = new NamingResources();
+        globalNamingResources.setContainer(this);
+
         if (isUseNaming()) {
             if (namingContextListener == null) {
                 namingContextListener = new NamingContextListener();
