@@ -28,7 +28,7 @@
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
 
-  <property name="build.dir"   value="${basedir}/build/tomcat5"/>
+  <property name="build.dir"   value="${basedir}/build"/>
 
   <property name="log4j.jar"   value="${base.path}/log4j/log4j.jar"/>
 
@@ -44,6 +44,14 @@
     <pathelement location="${jta.jar}"/>
     <pathelement location="${log4j.jar}"/>
   </path>
+  
+  <patternset id="static.res">
+    <include name="**/*.properties" />
+    <include name="**/*.dtd" />
+    <include name="**/*.tld" />
+    <include name="**/*.xsd" />
+    <include name="**/*.xml" />
+  </patternset>
 
   <path id="jasperjars" >
     <pathelement location="${jaxen.jar}"/>
@@ -86,8 +94,25 @@
       </src>
       <exclude name="org/apache/tomcat/util/net/PureTLS*" />
       <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
-      <exclude name="org/apache/commons/modeler/Modeler.java" />
+
+      <!-- Fail with GCJ -->
+      <exclude name="org/apache/commons/collections/DoubleOrderedMap.java" />
+      <exclude name="org/apache/tomcat/util/log/CommonLogHandler.java" />
     </javac>
+    <copy toDir="${build.dir}/classes" >
+      <fileset dir="${commons.home}/modeler/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/util/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${commons.home}/digester/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${commons.home}/logging/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+    </copy>
   </target>
 
   <target name="tomcat"
@@ -111,6 +136,40 @@
       <exclude name="org/apache/tomcat/ant/Tomcat3Precompiler.java" />
       <exclude name="org/apache/catalina/startup/BootstrapService.java" />
     </javac>
+
+    <copy toDir="${build.dir}/classes" >
+      <fileset dir="${catalina.home}/catalina/src/share" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/coyote/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/http11/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/jk/java" >
+        <patternset refid="static.res" />
+      </fileset>
+    </copy>
+
+    <copy toDir="${build.dir}/classes" >
+        <fileset dir="${api.home}/src/share">
+          <include name="**/*.properties"/>
+        </fileset>
+    </copy>
+
+    <!-- Servlet/JSP resources - work around stupid src layout  -->
+    <copy todir="${build.dir}/classes/javax/servlet/resources">
+        <fileset dir="${api.home}/src/share/dtd">
+          <include name="web-app*.dtd"/>
+        </fileset>
+    </copy>
+    <copy todir="${build.dir}/classes/javax/servlet/jsp/resources">
+      <fileset dir="${api.home}/src/share/dtd">
+        <include name="web-jsptaglibrary*.dtd"/>
+        <include name="jspxml.*"/>
+      </fileset>
+    </copy>
   </target>
 
 
@@ -129,11 +188,69 @@
       <exclude name="org/apache/taglibs/standard/lang/jstl/test/**" />
       <exclude name="org/apache/taglibs/standard/lang/jstl/parser/jsp20/ELParser.java" />
     </javac>
+    <copy toDir="${build.dir}/classes" >
+      <fileset dir="${jasper.home}/src/share" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${taglibs.home}/standard/src" >
+        <patternset refid="static.res" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar"
+          description="Create jars" >
+    <mkdir dir="${build.dir}/lib" />
+    <jar file="${build.dir}/lib/servlet.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="javax/servlet/**"/>
+      </fileset>
+    </jar>
+
+    <jar file="${build.dir}/lib/tomcat-commons.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="org/apache/commons/**"/>
+      </fileset>
+    </jar>
+    <jar file="${build.dir}/lib/tomcat.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="org/apache/tomcat/**"/>
+        <include name="org/apache/jk/**"/>
+        <include name="org/apache/coyote/**"/>
+        <include name="org/apache/naming/**"/>
+        <include name="org/apache/catalina/**"/>
+      </fileset>
+    </jar>
+    <jar file="${build.dir}/lib/jasper.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="org/apache/jasper/**"/>
+        <include name="org/apache/taglibs/standard/**"/>
+      </fileset>
+    </jar>
+
+    <jar file="${build.dir}/tomcat-full.jar" manifest="resources/catalina-main.manifest">
+      <fileset dir="${build.dir}/classes" >
+        <include name="**"/>
+      </fileset>
+    </jar>
   </target>
 
   <target name="run" >
-    <java classname="org.apache.catalina.startup.Bootstrap" >
+    <property name="tools.jar" location="${java.home}/../lib/tools.jar" />
+    <echo message="Tools.jar = ${tools.jar}"/>
+    <java classname="org.apache.catalina.startup.Catalina" fork="true">
       <classpath location="${build.dir}/classes"/>
+      <classpath refid="alljars" />
+      <classpath refid="jasperjars" />
+      <classpath location="${ant.home}/lib/xercesImpl.jar" />
+      <classpath location="${ant.home}/lib/xml-apis.jar" />
+      <classpath location="${ant.home}/lib/ant.jar" />
+      <classpath location="${java.home}/lib/rt.jar" />
+      <classpath location="${tools.jar}" />
+      <arg value="start" />
+      <sysproperty key="catalina.home" value="${build.dir}"/>
+      <sysproperty key="build.compiler" value="jikes"/>
+      <sysproperty key="java.endorsed.dirs" value="${ant.home}/lib:${java.home}/lib"/>
     </java>
   </target>
 
