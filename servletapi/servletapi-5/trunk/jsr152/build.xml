@@ -19,6 +19,7 @@
   <path id="examples.classpath">
     <pathelement location="${jsp-api.build}/classes"/>
     <pathelement location="${servlet-api.jar}"/>
+    <pathelement location="${mail.jar}"/>
   </path>
 
 
