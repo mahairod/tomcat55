@@ -459,6 +459,7 @@ public class SimpleTcpCluster
                                         this.tcpThreadCount,
                                         this.tcpAddress,
                                         this.tcpPort);
+            mReplicationListener.setDaemon(true);
             mReplicationListener.start();
             mReplicationTransmitter = new ReplicationTransmitter(new SocketSender[0]);
             mReplicationTransmitter.start();
