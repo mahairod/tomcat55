@@ -1011,6 +1011,11 @@
           description="The message format used to select roles for a user"
                  type="java.lang.String"/>
 
+     <attribute   name="userRoleName"
+          description="The name of the attribute in the user's entry containing
+                       roles for that user"
+                 type="java.lang.String"/>
+
     <attribute   name="roleName"
           description="The name of the attribute containing roles held elsewhere"
                  type="java.lang.String"/>
