@@ -651,7 +651,7 @@ public abstract class ManagerBase implements Manager {
             if (b2 < 10)
                 result.append((char) ('0' + b2));
             else
-                result.append((char) ('0' + (b2 - 10)));
+                result.append((char) ('A' + (b2 - 10)));
         }
         return (result.toString());
 
