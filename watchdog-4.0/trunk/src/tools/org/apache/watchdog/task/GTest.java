@@ -432,7 +432,7 @@ public class GTest extends Task implements TaskContainer {
      */
     public void setRequest ( String s ) throws Exception {
 
-        this.request = s;
+        this.request = replaceMarkers( s );
         String addressString = request.substring( request.indexOf( "/" ), request.indexOf( "HTTP" ) ).trim();
 
         if ( addressString.indexOf( "?" ) > -1 ) {
@@ -916,17 +916,6 @@ public class GTest extends Task implements TaskContainer {
             }
         }
 
-	// replace any occurances of |host.ip| found in the
-        // query string with the IP of the client host
-	int startIdx = request.indexOf( "|h" );
-        int endIdx = request.indexOf( "p|" );
-	if ( startIdx > -1 && endIdx > -1 ) {
-	    String start = request.substring( 0, startIdx );
-            String stop  = request.substring( endIdx + 2 );
-	    String inetAddr =  InetAddress.getByName( host ).getHostAddress();
-	    request = start + inetAddr + stop;
-        }
-	    
         if ( debug > 0 ) {
             System.out.println( " REQUEST: " + request );
         }
@@ -1014,6 +1003,47 @@ public class GTest extends Task implements TaskContainer {
 	        socket = null;
 	    }
     }
+
+    /**
+     * Replaces any |client.ip| and |client.host| parameter marks
+     * with the host and IP values of the host upon which Watchdog
+     * is running.
+     *
+     * @param request An HTTP request. 
+     */
+     private String replaceMarkers( String request ) {
+        
+        final String CLIENT_IP = "client.ip";
+        final String CLIENT_HOME = "client.host";
+
+        StringTokenizer tok = new StringTokenizer( request, "|" );
+        StringBuffer sb = new StringBuffer( 50 );
+        InetAddress addr = null;
+        String host = null;
+        String ip = null;
+        try {
+            addr = InetAddress.getLocalHost(); 
+            host = addr.getHostName();
+            ip = addr.getHostAddress();
+        } catch ( UnknownHostException nshe ) {
+            System.out.println( " [WARNING] Unable to determine local host and IP address.  Defaulting to localhost" );
+            host = "localhost";
+            ip = "127.0.0.1";
+        }
+        
+        while ( tok.hasMoreElements() ) {
+            String token = tok.nextToken();
+            if ( token.equals( CLIENT_IP ) ) {
+                sb.append( ip );
+            } else if ( token.equals( CLIENT_HOME ) ) {
+                sb.append( host );
+            } else {
+                sb.append( token );
+            }
+        }
+        return sb.toString();
+    }
+            
 
     
     /**
