@@ -156,7 +156,16 @@ public class StringManager {
 	// objects and barf out
 	
 	try {
-	    iString = MessageFormat.format(value, args);
+            // ensure the arguments are not null so pre 1.2 VM's don't barf
+            Object nonNullArgs[] = args;
+            for (int i=0; i<args.length; i++) {
+		if (args[i] == null) {
+		    if (nonNullArgs==args) nonNullArgs=(Object[])args.clone();
+		    nonNullArgs[i] = "null";
+		}
+	    }
+ 
+            iString = MessageFormat.format(value, nonNullArgs);
 	} catch (IllegalArgumentException iae) {
 	    StringBuffer buf = new StringBuffer();
 	    buf.append(value);
