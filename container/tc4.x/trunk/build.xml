@@ -92,8 +92,11 @@
     <copy todir="${tomcat.dist}">
       <fileset dir=".">
         <include name="LICENSE"/>
-        <include name="NEW_SPECS.txt"/>
+        <include name="INSTALLING.txt"/>
+        <include name="BUILDING.txt"/>
+        <include name="README.txt"/>
         <include name="RELEASE*"/>
+        <include name="RUNNING*"/>
       </fileset>
     </copy>
 
