@@ -85,6 +85,9 @@
       <update>
         Register an MBean to monitor and manage the StringCache, and allow invoking the reset operation. (remm)
       </update>
+      <fix>
+        <bug>31677</bug>: Log warning if work dir for context can't be determined. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
