@@ -47,6 +47,9 @@ General New Features:
 [4.1.6] Tyrex resources:
         Upgrade to Tyrex 1.0.
 
+[4.1.10] Commons components:
+         Upgrade to stable releases.
+
 
 ---------------------
 Catalina New Features:
@@ -363,6 +366,32 @@ Catalina Bug Fixes:
 [4.1.9] StandardHostDeployer:
         Fire event when undeploying.
 
+[4.1.10] AuthenticatorBase:
+         Remove double URI decoding.
+
+[4.1.10] StandardHost:
+         Refactor log capture.
+
+[4.1.10] StandardServer:
+         Output server.xml in UTF8.
+
+[4.1.10] WebappClassLoader:
+         Fix problem where external repositories would always be ignored.
+
+[4.1.10] WebappClassLoader:
+         Generate properly encoded URLs.
+
+[4.1.10] #12041
+         Summary: CGIServlet can block on input
+         CGIServlet:
+         Fix possible deadlock when reading CGI script output.
+
+[4.1.10] ErrorDispatcherValve:
+         Unwrap root cause error.
+
+[4.1.10] Documentation:
+         Fixes and small additons to the DBCP documentation.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -491,14 +520,31 @@ Jasper Bug Fixes:
         JspCompilationContext:
         Canonicalize URIs used for getResource and getResourceAsStream.
 
+[4.1.10] #11891
+         Summary: JspC does not work for webapps
+         JspC:
+         Fix -webapp option.
+
+[4.1.10] Compiler, Generator:
+         Added step to determine which scripting variables must be declared.
+
+[4.1.10] #11942
+         Summary: reassignment of variables to pagecontext attributes in body 
+         loop
+
+[4.1.10] #11552
+         Summary: Iteration tags do not resynchronize scripting variables after
+         doAfterBody()
+
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
 ============================
 
-* Tomcat 4.0 and JNI Based Applications
-* Tomcat 4.0 Standard APIs Available
-* Tomcat 4.0 and XML Parsers
+* Tomcat 4.1 and JNI Based Applications
+* Tomcat 4.1 Standard APIs Available
+* Tomcat 4.1 and XML Parsers
 * Web application reloading and static fields in shared libraries
 * JAVAC leaking memory
 * Linux and Sun JDK 1.2.x - 1.3.x
@@ -506,7 +552,7 @@ KNOWN ISSUES IN THIS RELEASE:
 
 
 -------------------------------------
-Tomcat 4.0 and JNI Based Applications:
+Tomcat 4.1 and JNI Based Applications:
 -------------------------------------
 
 Applications that require native libraries must ensure that the libraries have
@@ -528,39 +574,40 @@ during the lifetime of a particular JVM.
 
 
 ----------------------------------
-Tomcat 4.0 Standard APIs Available:
+Tomcat 4.1 Standard APIs Available:
 ----------------------------------
 
 A standard installation of Tomcat 4 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * activation.jar (Java Activation Framework)
+* ant.jar (Apache Ant 1.5)
 * commons-collections.jar (Commons Collections 2.0)
-* commons-dbcp.jar (Commons DBCP)
-* commons-logging.jar (Commons Logging 1.0)
-* commons-pool.jar (Commons Pool)
+* commons-dbcp.jar (Commons DBCP 1.0)
+* commons-logging-api.jar (Commons Logging 1.0.1)
+* commons-pool.jar (Commons Pool 1.0)
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
 * jdbc2_0-stdext.jar (JDBC 2.0 Optional Package, javax.sql.*)
 * jndi.jar (JNDI 1.2 base API classes)
-* jta-spec1_0_1 (Java Transacation API 1.0.1)
+* jta.jar (Java Transacation API 1.0.1a)
 * mail.jar (JavaMail 1.2)
 * naming-common.jar (JNDI Context implementation)
 * naming-factory.jar (JNDI object factories)
 * naming-resources.jar (JNDI DirContext implementations)
 * servlet.jar (Servlet 2.3 and JSP 1.2 APIs)
-* xercesImpl.jar (Xerces 2.0.1; located in "common/endorsed")
-* xmlParserAPIs.jar (DOM 2 and SAX 2 APIs; located in "common/endorsed")
 
 You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
 or by placing them in JAR files in the "lib" directory.
 
+Tomcat 4.1 also makes available Xerces 2 to web applications.
+
 
 --------------------------
-Tomcat 4.0 and XML Parsers:
+Tomcat 4.1 and XML Parsers:
 --------------------------
 
-As described above, Tomcat 4.0 makes an XML parser (and many other standard
+As described above, Tomcat 4.1 makes an XML parser (and many other standard
 APIs) available to web applications.  This parser is also used internally
 to parse web.xml files and the server.xml configuration file.  If you wish,
 you may replace the "xercesImpl.jar" file in "common/endorsed" with another 
@@ -616,7 +663,7 @@ Enabling SSI and CGI Support:
 
 Having CGI and SSI available to web applications created security problems when
 using a security manager (as a malicious web application could use them to 
-sidestep the security manager access control). In Tomcat 4.0, they have been
+sidestep the security manager access control). In Tomcat 4.1, they have been
 disabled by default, as our goal is to provide a fully secure default 
 configuration. However, CGI and SSI remain available.
 
@@ -639,5 +686,4 @@ On Unix:
   line 165 and 213, as well as the associated servlet mappings 
   line 265 and 274. Alternately, these servlet declarations and mappings can
   be added to your web application deployment descriptor.
-
 
