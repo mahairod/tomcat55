@@ -240,8 +240,8 @@ public class JspServlet extends HttpServlet {
 
                 while (e.hasMoreElements()) {
                     String name = (String) e.nextElement();
-                    log.info("\t\t " + name + " = " +
-                             request.getParameter(name));
+                    log.debug("\t\t " + name + " = " 
+                              + request.getParameter(name));
                 }
             }
 
