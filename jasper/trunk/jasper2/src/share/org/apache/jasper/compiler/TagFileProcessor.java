@@ -164,7 +164,7 @@ public class TagFileProcessor {
                     !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY) &&
                     !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT) &&
                     !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
-                err.jspError("jsp.error.tagdirective.badbodycontent",
+                err.jspError(n, "jsp.error.tagdirective.badbodycontent",
                              bodycontent);
             }
             dynamicAttributes= JspUtil.booleanValue(
