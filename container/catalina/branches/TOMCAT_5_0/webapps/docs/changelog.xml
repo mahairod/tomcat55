@@ -43,6 +43,9 @@
       <update>
         <bug>31739</bug>: Minor documentation corrections for realm-howto and AJP docs. (yoavs)
       </update>
+      <fix>
+        <bug>31753</bug>: Minor inconsistencies in JDBC and DataSourceRealm#authenticate. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 

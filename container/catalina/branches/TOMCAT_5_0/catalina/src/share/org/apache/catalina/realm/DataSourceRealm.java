@@ -343,7 +343,7 @@ public class DataSourceRealm
             String dbCredentials = null;
             stmt = credentials(dbConnection, username);
             rs = stmt.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 dbCredentials = rs.getString(1);
             }
             rs.close();
@@ -379,7 +379,10 @@ public class DataSourceRealm
             stmt = roles(dbConnection, username);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                list.add(rs.getString(1).trim());
+                String role = rs.getString(1);
+                if(role != null) {
+                    list.add(role.trim());
+                }
             }
         } finally {
             if (rs != null) {
