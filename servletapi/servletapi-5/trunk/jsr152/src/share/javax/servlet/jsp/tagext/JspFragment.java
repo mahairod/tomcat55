@@ -70,10 +70,7 @@ package javax.servlet.jsp.tagext;
  * capable of executing the defined fragment.
  * <p>
  * A tag handler can invoke the fragment zero or more times, or 
- * pass it along to other tags, before returning.  JSP fragments accept 
- * parameters from the invoker, which are exposed as Expression Language 
- * variables to the JSP code that composes the fragment.  This allows the 
- * tag handler to parameterize the body each time it is invoked.
+ * pass it along to other tags, before returning.
  * <p>
  * Note that tag library developers and page authors should not generate
  * JspFragment implementations manually.
@@ -91,16 +88,10 @@ public interface JspFragment {
     /**
      * Executes the fragment and directs all output to the given Writer,
      * or the JspWriter returned by the getOut() method of the JspContext
-     * associated with the fragment if out is null.  The method accepts a 
-     * parameter map, containing the body-input parameters passed to the 
-     * body by its invoker (e.g. a tag handler).
+     * associated with the fragment if out is null.
      *
      * @param out The Writer to output the fragment to, or null if 
      *     output should be sent to JspContext.getOut().
-     * @param params specifies the set of parameters to pass to the fragment.
-     *     Keys in this map are parameter names, and the 
-     *     values are parameter values.  This allows the invoker to 
-     *     parameterize a fragment invocation.
      * @throws javax.servlet.jsp.JspException Thrown if an error occured
      *     while invoking this fragment.
      * @throws javax.servlet.jsp.SkipPageException Thrown if the page
@@ -111,7 +102,7 @@ public interface JspFragment {
      * @throws java.io.IOException If there was an error writing to the 
      *     stream.
      */
-    public void invoke( java.io.Writer out, java.util.Map params )
+    public void invoke( java.io.Writer out )
         throws javax.servlet.jsp.JspException, java.io.IOException;
 
 }
