@@ -837,8 +837,8 @@
 
 
   <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
-  <target name="deploy-catalina" depends="deploy-static,build-main"
-   description="Build and deploy Catalina component">
+  <target name="catalina-jars" depends="deploy-static,build-catalina"
+          description="Build catalina jars">
 
     <!-- Catalina Bootstrap JAR File -->
     <jar jarfile="${catalina.deploy}/bin/bootstrap.jar" 
@@ -961,6 +961,10 @@
       </fileset>
     </jar>
 
+  </target>
+
+  <target name="deploy-catalina" depends="deploy-static,build-main,catalina-jars"
+   description="Build and deploy Catalina component">
   </target>
 
 
