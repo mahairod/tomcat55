@@ -250,8 +250,7 @@ public final class HttpResponseStream extends ResponseStream {
     protected void checkHead(HttpResponseImpl response) {
         HttpServletRequest servletRequest = 
             (HttpServletRequest) response.getRequest();
-        if ((servletRequest.getMethod() != null) 
-            && (servletRequest.getMethod().equals("HEAD"))) {
+        if ("HEAD".equals(servletRequest.getMethod())) {
             writeContent = false;
         } else {
             writeContent = true;
