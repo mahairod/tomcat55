@@ -213,11 +213,6 @@ public final class ClassLoaderFactory {
                 File file = unpacked[i];
                 if (!file.isDirectory() || !file.exists() || !file.canRead())
                     continue;
-                if (!validateDirectory(file)) {
-                    if (debug >= 1)
-                        log("  Skipping directory " + file.getAbsolutePath());
-                    continue;
-                }
                 if (debug >= 1)
                     log("  Including directory " + file.getAbsolutePath());
                 URL url = new URL("file", null,
@@ -239,12 +234,6 @@ public final class ClassLoaderFactory {
                     if (!filename.endsWith(".jar"))
                         continue;
                     File file = new File(directory, filenames[j]);
-                    if (!validateJarFile(file)) {
-                        if (debug >= 1)
-                            log("  Skipping jar file " +
-                                file.getAbsolutePath());
-                        continue;
-                    }
                     if (debug >= 1)
                         log("  Including jar file " + file.getAbsolutePath());
                     URL url = new URL("file", null,
