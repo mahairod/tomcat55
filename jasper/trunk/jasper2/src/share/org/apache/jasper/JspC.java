@@ -129,6 +129,7 @@ public class JspC implements Options {
     private static Log log = LogFactory.getLog(JspC.class);
 
     private static final String SWITCH_VERBOSE = "-v";
+    private static final String SWITCH_HELP = "-help";
     private static final String SWITCH_QUIET = "-q";
     private static final String SWITCH_OUTPUT_DIR = "-d";
     private static final String SWITCH_IE_CLASS_ID = "-ieplugin";
@@ -164,7 +165,7 @@ public class JspC implements Options {
     private String uriRoot;
     private int dieLevel;
     private boolean dieOnExit = false;
-
+    private boolean helpNeeded = false;
     private boolean compile = false;
     private String compiler = null;
     private boolean classDebugInfo = true;
@@ -207,7 +208,11 @@ public class JspC implements Options {
             try {
                 JspC jspc = new JspC();
                 jspc.setArgs(arg);
-                jspc.execute();
+                if (jspc.helpNeeded) {
+                    System.out.println(Localizer.getMessage("jspc.usage"));
+                } else {
+                    jspc.execute();
+                }
             } catch (JasperException je) {
                 System.err.print("error:");
                 je.printStackTrace();
@@ -219,7 +224,7 @@ public class JspC implements Options {
         }
     }
 
-    public void setArgs(String[] arg) {
+    public void setArgs(String[] arg) throws JasperException {
         args = arg;
         String tok;
 
@@ -270,12 +275,17 @@ public class JspC implements Options {
                     dieLevel = DEFAULT_DIE_LEVEL;
                 }
                 die = dieLevel;
+            } else if (tok.equals(SWITCH_HELP)) {
+                helpNeeded = true;
             } else {
-                //pushBackArg();
+                if (tok.startsWith("-")) {
+                    throw new JasperException("Unrecognized option: " + tok +
+                        ".  Use -help for help.");
+                }
                 if (!fullstop) {
                     argPos--;
                 }
-                // Not a recognized Option?  Start treting them as JSP Pages
+                // Start treating the rest as JSP Pages
                 break;
             }
         }
@@ -709,7 +719,13 @@ public class JspC implements Options {
 		    throw new JasperException("No uriRoot or files");
 		}
 		String firstJsp=(String)pages.elementAt( 0 );
-		locateUriRoot( new File( firstJsp ) );
+                File firstJspF = new File( firstJsp );
+                if (!firstJspF.exists()) {
+                   throw new JasperException(
+                       Localizer.getMessage("jspc.error.fileDoesNotExist",
+                                            firstJsp));
+                }
+                locateUriRoot( firstJspF );
 	    }
 
 	    // No explicit page, we'll process all .jsp in the webapp
@@ -717,6 +733,10 @@ public class JspC implements Options {
 		scanFiles( new File( uriRoot ));
 	    }
 
+            if (uriRoot == null) {
+		throw new JasperException(
+                    Localizer.getMessage("jsp.error.jspc.no_uriroot"));
+	    }
 	    File uriRootF = new File(uriRoot);
 	    if (!uriRootF.exists() || !uriRootF.isDirectory()) {
 		throw new JasperException(
@@ -962,13 +982,6 @@ public class JspC implements Options {
 
                     String fParent = f.getParent();
                     if (fParent == null) {
-                        f = new File(args[argPos]);
-                        fParent = f.getParent();
-                        if (fParent == null) {
-                            fParent = File.separator;
-                        }
-                        uriRoot = new File(fParent).getCanonicalPath();
-                        uriBase = "/";
                         break;
                     } else {
                         f = new File(fParent);
@@ -979,11 +992,9 @@ public class JspC implements Options {
                     // use the current working/user dir.
                 }
 
-                try {
+                if (uriRoot != null) {
                     File froot = new File(uriRoot);
                     uriRoot = froot.getCanonicalPath();
-                } catch (IOException ioe) {
-                    // if we cannot get the base, leave it null
                 }
             }
         } catch (IOException ioe) {
