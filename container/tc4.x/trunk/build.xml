@@ -7,6 +7,14 @@
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
 
+  <!-- Project Properties -->
+  <property name="name"                  value="Apache Tomcat" />
+  <property name="year"                  value="2001" />
+  <property name="version"               value="4.1" />
+  <property name="project"               value="jakarta-tomcat" />
+  <property name="final.name"            value="${project}-${version}" />
+  <property name="final-src.name"        value="${project}-${version}-src" />
+
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
   <property name="jasper.build"     value="${basedir}/jasper/build"/>
@@ -26,7 +34,10 @@
   <!-- =================== DETECT: Display configuration ================== -->
   <target name="detect"
    description="Display configuration flags">
+
+    <echo>Target: Catalina - Detect ...</echo>
     <ant dir="./catalina" target="flags.display"/>
+
   </target>
 
 
@@ -164,17 +175,17 @@
   <!-- ====================== DIST: Create Javadoc ======================== -->
   <target name="dist-javadoc">
     <ant dir="./catalina" target="javadoc"/>
-    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/catalina/docs/api"/>
-    <copy todir="${tomcat.build}/webapps/tomcat-docs/catalina/docs/api">
+    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api"/>
+    <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
       <fileset dir="${catalina.build}/javadoc" />
     </copy>
     <ant dir="./jasper" target="javadoc"/>
-    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/jasper/docs/api"/>
-    <copy todir="${tomcat.build}/webapps/tomcat-docs/jasper/docs/api">
+    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api"/>
+    <copy todir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api">
       <fileset dir="${jasper.build}/javadoc" />
     </copy>
-    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/servletapi"/>
-    <copy todir="${tomcat.build}/webapps/tomcat-docs/servletapi">
+    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
+    <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
       <fileset dir="${servlet.home}/docs/api" />
     </copy>
   </target>
@@ -187,6 +198,7 @@
       <fileset dir=".">
         <exclude name="**/build/**"/>
         <exclude name="**/dist/**"/>
+        <exclude name="build.properties"/>
       </fileset>
     </copy>
   </target>
@@ -200,7 +212,7 @@
 
   <!-- ================= DIST: Create Windows Installer =================== -->
   <target name="installer" depends="dist, dist-source"
-   description="Create Windows installer">
+   description="Create Windows installer" if="execute.installer">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
     <echo message="NSIS must be installed in the default directory"/>
     <copy todir="${tomcat.dist}">
@@ -212,6 +224,123 @@
     <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis.exe">
       <arg value="tomcat.nsi" />
     </exec>
+    <move file="${tomcat.dist}/tomcat4.exe" 
+     tofile="${tomcat.dist}/${final.name}.exe" />
+  </target>
+
+
+  <!-- ==================== RELEASE: Create Release ======================= -->
+  <target name="release" depends="prepare-release,clean,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz"
+   description="Create a Tomcat 4 packaged distribution" />
+
+  <target name="package-zip">
+    <zip zipfile="${tomcat.dist}/${final.name}.zip">
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="bin/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="common/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="conf/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="logs/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="server/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="shared/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="webapps/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="work/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="LICENSE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="README.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="RELEASE-NOTES-*" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="RELEASE-PLAN-*" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="RUNNING.txt" />
+    </zip>
+  </target>
+
+  <target name="prepare-release">
+    <condition property="execute.installer">
+      <and>
+        <equals arg1="${full.dist}" arg2="on" />
+        <os family="windows" />
+        <available file="${javaservice.home}/bin/JavaService.exe" />
+      </and>
+    </condition>
+  </target>
+
+  <target name="package-tgz">
+    <mkdir dir="${tomcat.dist}/${final.name}" />
+    <copy todir="${tomcat.dist}/${final.name}">
+      <fileset dir="${tomcat.dist}">
+        <include name="bin/**" />
+        <include name="common/**" />
+        <include name="conf/**" />
+        <include name="logs/**" />
+        <include name="server/**" />
+        <include name="shared/**" />
+        <include name="webapps/**" />
+        <include name="work/**" />
+        <include name="LICENSE" />
+        <include name="README.txt" />
+        <include name="RELEASE-NOTES-*" />
+        <include name="RELEASE-PLAN-*" />
+        <include name="RUNNING.txt" />
+      </fileset>
+    </copy>
+    <tar tarfile="${tomcat.dist}/${final.name}.tar">
+      <tarfileset dir="${tomcat.dist}" mode="755">
+        <include name="${final.name}/bin/catalina.sh" />
+        <include name="${final.name}/bin/digest.sh" />
+        <include name="${final.name}/bin/jasper.sh" />
+        <include name="${final.name}/bin/jspc.sh" />
+        <include name="${final.name}/bin/startup.sh" />
+        <include name="${final.name}/bin/shutdown.sh" />
+      </tarfileset>
+      <tarfileset dir="${tomcat.dist}">
+        <include name="${final.name}/**" />
+        <exclude name="${final.name}/bin/catalina.sh" />
+        <exclude name="${final.name}/bin/digest.sh" />
+        <exclude name="${final.name}/bin/jasper.sh" />
+        <exclude name="${final.name}/bin/jspc.sh" />
+        <exclude name="${final.name}/bin/startup.sh" />
+        <exclude name="${final.name}/bin/shutdown.sh" />
+      </tarfileset>
+    </tar>
+    <delete dir="${tomcat.dist}/${final.name}" />
+    <gzip zipfile="${tomcat.dist}/${final.name}.tar.gz"
+     src="${tomcat.dist}/${final.name}.tar"/>
+    <delete file="${tomcat.dist}/${final.name}.tar" />
+  </target>
+
+  <target name="package-src-zip">
+    <zip zipfile="${tomcat.dist}/${final-src.name}.zip">
+      <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" 
+       includes="**" />
+    </zip>
+  </target>
+
+  <target name="package-src-tgz">
+    <mkdir dir="${tomcat.dist}/${final-src.name}" />
+    <copy todir="${tomcat.dist}/${final-src.name}">
+      <fileset dir="${tomcat.dist}/src">
+        <include name="**" />
+      </fileset>
+    </copy>
+    <tar tarfile="${tomcat.dist}/${final-src.name}.tar">
+      <tarfileset dir="${tomcat.dist}">
+        <include name="${final-src.name}/**" />
+      </tarfileset>
+    </tar>
+    <delete dir="${tomcat.dist}/${final-src.name}" />
+    <gzip zipfile="${tomcat.dist}/${final-src.name}.tar.gz"
+     src="${tomcat.dist}/${final-src.name}.tar"/>
+    <delete file="${tomcat.dist}/${final-src.name}.tar" />
   </target>
 
 
