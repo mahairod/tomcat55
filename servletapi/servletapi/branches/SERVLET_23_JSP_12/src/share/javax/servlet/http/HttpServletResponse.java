@@ -213,8 +213,11 @@ public interface HttpServletResponse extends ServletResponse {
     /**
      * Sends a temporary redirect response to the client using the
      * specified redirect location URL.  This method can accept relative URLs;
-     * the servlet container will convert the relative URL to an absolute URL
-     * before sending the response to the client.
+     * the servlet container must convert the relative URL to an absolute URL
+     * before sending the response to the client. If the location is relative 
+     * without a leading '/' the container interprets it as relative to
+     * the current request URI. If the location is relative with a leading
+     * '/' the container interprets it as relative to the servlet container root.
      *
      * <p>If the response has already been committed, this method throws 
      * an IllegalStateException.
