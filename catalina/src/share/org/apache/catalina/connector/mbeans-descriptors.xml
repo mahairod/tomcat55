@@ -61,6 +61,10 @@
            description="Should Tomcat ignore setting a timeout for uploads?" 
                   type="boolean"/>
 
+    <attribute   name="emptySessionPath"
+          description="The 'empty session path' flag for this Connector"
+                 type="boolean"/>
+
     <attribute   name="enableLookups"
           description="The 'enable DNS lookups' flag for this Connector"
                  type="boolean"/>
