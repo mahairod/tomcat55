@@ -19,9 +19,9 @@ set CLASSPATH=%appClassPath%;%sysJars%
 
 if "%cp%" == "" goto next
 
-rem else 
-set CLASSPATH=%CLASSPATH%;%cp% 
- 
+rem else
+SET CLASSPATH=%CLASSPATH%;%cp%
+
 :next
 if "%1" == "start" goto startServer
 if "%1" == "stop" goto stopServer
