@@ -1184,7 +1184,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Enabling SSI and CGI Support
 * Security manager URLs
 * Using Jasper 1 with Tomcat 4.1
-* Administrartion web application
+* Administration web application
 * Symlinking static resources
 * Enabling invoker servlet
 
