@@ -983,8 +983,6 @@ public class WebappLoader
                 String repository = repositories[i].toString();
                 if (repository.startsWith("file://"))
                     repository = repository.substring(7);
-                else if (repository.startsWith("file:/"))
-                    repository = repository.substring(6);
                 else if (repository.startsWith("file:"))
                     repository = repository.substring(5);
                 else if (repository.startsWith("jndi:"))
