@@ -12,6 +12,10 @@
 #
 #   JAVA_HOME     Must point at your Java Development Kit installation.
 #
+#   JPDA_OPTS     (Optional) Java runtime options used when the "jpda start"
+#                 command is executed.  Defaults to
+#                 "-classic -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+#
 # $Id$
 # -----------------------------------------------------------------------------
 
@@ -45,6 +49,10 @@ if [ -z "$CATALINA_OPTS" ] ; then
   CATALINA_OPTS=""
 fi
 
+if [ -z "$JPDA_OPTS" ] ; then
+  JPDA_OPTS="-classic -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+fi
+
 if [ -z "$JAVA_HOME" ] ; then
   echo You must set JAVA_HOME to point at your Java Development Kit installation
   exit 1
@@ -69,6 +77,11 @@ echo "Using CATALINA_HOME: $CATALINA_HOME"
 
 
 # ----- Execute The Requested Command -----------------------------------------
+
+if [ "$1" = "jpda" ] ; then
+  CATALINA_OPTS="${CATALINA_OPTS} ${JPDA_OPTS}"
+  shift
+fi
 
 if [ "$1" = "debug" ] ; then
 
@@ -160,6 +173,7 @@ else
   echo "  debug             Start Catalina in a debugger"
   echo "  debug -security   Debug Catalina with a security manager"
   echo "  env               Set up environment variables that would be used"
+  echo "  jpda start        Start Catalina under JPDA debugger"
   echo "  run               Start Catalina in the current window"
   echo "  run -security     Start in the current window with security manager"
   echo "  start             Start Catalina in a separate window"
