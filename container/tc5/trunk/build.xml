@@ -125,6 +125,11 @@
               targetfile="${commons-el.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons/el/src/java" includes="**" />
     </uptodate>
+
+    <uptodate property="commons-daemon.build.notrequired"
+              targetfile="${commons-daemon.jar}">
+      <srcfiles dir="${cvs.base}/jakarta-commons-sandbox/daemon/src" includes="**" />
+    </uptodate>
   </target>
 
 
@@ -490,6 +495,15 @@
     </ant>
   </target>
 
+  <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
+    <echo>========== Building: commons-daemon </echo>
+
+    <ant dir="${cvs.base}/jakarta-commons-sandbox/daemon" target="dist" >
+        <property name="compile.optimize" value="false" />
+        <property name="dist.home" value="${commons-daemon.home}" />
+    </ant>
+  </target>
+
   <target name="build-all" depends="init,deploy-static,build,build-webapps,embed,compat,deployer" 
           description="build tomcat, webapps, embed, compat, deployer" />
 
@@ -501,12 +515,7 @@
 
     <antcall target="build-commons-el" />
     <antcall target="build-commons-modeler" />
-
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-daemon.cvs.loc}"/>
-      <param name="subdir" value="${commons-daemon.home}"/>
-      <param name="destfile" value="${commons-daemon.jar}"/>
-    </antcall>
+    <antcall target="build-commons-daemon" />
 
   </target>
 
@@ -1277,8 +1286,6 @@
     <condition property="execute.installer">
       <and>
         <os family="windows" />
-        <available file="${commons-daemon.procrun.exe}" />
-        <available file="${commons-daemon.procrunw.exe}" />
         <available file="${nsis.exe}" />
         <available file="${nsis.installoptions.dll}" />
       </and>
