@@ -58,6 +58,7 @@
 package org.apache.jasper34.javacompiler;
 
 import java.io.*;
+import java.net.*;
 
 // Temp ( ? )
 import org.apache.jasper34.core.*;
@@ -75,9 +76,14 @@ public abstract class JavaCompiler {
     protected String classpath;
     protected String compilerPath = "jikes";
     protected String outdir;
-    protected OutputStream out;
+    protected ByteArrayOutputStream out;
     protected boolean classDebugInfo=false;
 
+
+    protected JavaCompiler() {
+	reset();
+    }
+    
     /**
      * Specify where the compiler can be found
      */ 
@@ -107,13 +113,19 @@ public abstract class JavaCompiler {
       this.outdir = outdir;
     }
 
-    /**
-     * Set where you want the compiler output (messages) to go 
-     */ 
-    public void setMsgOutput(OutputStream out) {
-      this.out = out;
-    }
+    // Removed - we manage ourself the buffer and return it as string.
+    // It can be added later if someone really need that.
+    //     /**
+    //      * Set where you want the compiler output (messages) to go 
+    //      */ 
+    //     public void setMsgOutput(OutputStream out) {
+    //       this.out = out;
+    //     }
 
+    public String getCompilerMessage() {
+	return out.toString();
+    }
+    
     /**
      * Set if you want debugging information in the class file 
      */ 
@@ -121,12 +133,31 @@ public abstract class JavaCompiler {
 	this.classDebugInfo = classDebugInfo;
     }
 
+    public void recycle() {
+
+    }
+
+    /** Reset all compilation state, but keep the settings.
+     *  The compiler can be used again.
+     */
+    public void reset() {
+	out=new ByteArrayOutputStream( 256 );
+    }
+
     // -------------------- Compile method --------------------
+
+    /** The main method - compile the source, using the previous settings.
+     */
+    public  boolean compile(String source) {
+	return doCompile(source);
+    }
+
+    
     /**
      * Execute the compiler
      * @param source - file name of the source to be compiled
      */ 
-    public abstract boolean compile(String source);
+    public abstract boolean doCompile(String source);
 
     // -------------------- Utils --------------------
 
@@ -143,12 +174,12 @@ public abstract class JavaCompiler {
     {
 	Class c=getCompilerPluginClass( jspCompilerPluginS );
 	if( c==null ) return new SunJavaCompiler();
-	return createJavaCompiler( containerL, c );
+	return createJavaCompilerC( containerL, c );
     }
 	
     /** tool for customizing javac.
      */
-    public static JavaCompiler createJavaCompiler(ContainerLiaison containerL,
+    private static JavaCompiler createJavaCompilerC(ContainerLiaison containerL,
 						  Class jspCompilerPlugin )
 	//	throws JasperException
     {
@@ -175,5 +206,27 @@ public abstract class JavaCompiler {
 	return new SunJavaCompiler();
     }
 
+
+    //-------------------- Class path utils --------------------
+
+    /** Create a classpath string from a URL[] ( used in URLClassLoader )
+     */
+    public static String extractClassPath(URL urls[]){
+	String separator = System.getProperty("path.separator", ":");
+        String cpath="";
+        for(int i=0; i< urls.length; i++ ) {
+            URL cp = urls[i];
+	    if( cp == null ) {
+		continue;
+	    }
+            File f = new File( cp.getFile());
+            if (cpath.length()>0) cpath += separator;
+            cpath += f;
+        }
+        return cpath;
+    }
+
+
+    
 }
 

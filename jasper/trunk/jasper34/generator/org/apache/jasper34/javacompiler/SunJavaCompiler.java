@@ -71,7 +71,7 @@ import sun.tools.javac.Main;
  */
 public class SunJavaCompiler extends JavaCompiler {
 
-    public boolean compile(String source) {
+    public boolean doCompile(String source) {
         Main compiler = new Main(out, "jsp->javac");
         String[] args;
 

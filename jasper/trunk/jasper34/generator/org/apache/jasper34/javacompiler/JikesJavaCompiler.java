@@ -88,7 +88,7 @@ public class JikesJavaCompiler extends JavaCompiler {
      * Execute the compiler
      * @param source - file name of the source to be compiled
      */ 
-    public boolean compile(String source) {
+    public boolean doCompile(String source) {
 	Process p;
 	int exitValue = -1;
 
@@ -130,7 +130,8 @@ public class JikesJavaCompiler extends JavaCompiler {
 	    };
 	}
 
-        ByteArrayOutputStream tmpErr = new ByteArrayOutputStream(OUTPUT_BUFFER_SIZE);
+        ByteArrayOutputStream tmpErr =
+	    new ByteArrayOutputStream(OUTPUT_BUFFER_SIZE);
 	try {
 	    p = Runtime.getRuntime().exec(compilerCmd);
 	    
