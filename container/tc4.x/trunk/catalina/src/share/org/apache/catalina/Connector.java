@@ -143,6 +143,20 @@ public interface Connector {
 
 
     /**
+     * Return the "disable DNS lookups" flag.
+     */
+    public boolean getDisableLookups();
+
+
+    /**
+     * Set the "disable DNS lookups" flag.
+     *
+     * @param disableLookups The new "disable DNS lookups" flag value
+     */
+    public void setDisableLookups(boolean disableLookups);
+
+
+    /**
      * Return the server socket factory used by this Container.
      */
     public ServerSocketFactory getFactory();

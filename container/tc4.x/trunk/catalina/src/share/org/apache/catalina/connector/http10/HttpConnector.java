@@ -149,6 +149,12 @@ public final class HttpConnector
 
 
     /**
+     * The "disable DNS lookups" flag for this Connector.
+     */
+    private boolean disableLookups = false;
+
+
+    /**
      * The server socket factory for this component.
      */
     private ServerSocketFactory factory = null;
@@ -427,6 +433,28 @@ public final class HttpConnector
     public void setDebug(int debug) {
 
         this.debug = debug;
+
+    }
+
+
+    /**
+     * Return the "disable DNS lookups" flag.
+     */
+    public boolean getDisableLookups() {
+
+        return (this.disableLookups);
+
+    }
+
+
+    /**
+     * Set the "disable DNS lookups" flag.
+     *
+     * @param disableLookups The new "disable DNS lookups" flag value
+     */
+    public void setDisableLookups(boolean disableLookups) {
+
+        this.disableLookups = disableLookups;
 
     }
 
