@@ -1061,6 +1061,7 @@ public class StandardWrapper
                 // said so, so do not call unavailable(null).
                 throw f;
             } catch (Throwable f) {
+                log.error("StandardWrapper.Throwable", f );
                 instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
                                                   servlet, f);
                 // If the servlet wanted to be unavailable it would have
