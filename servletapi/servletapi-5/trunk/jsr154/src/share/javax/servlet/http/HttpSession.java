@@ -92,7 +92,7 @@ import javax.servlet.ServletContext;
  * the session has been invalidatd or expired.
  *
  * <p> When container migrates a session between VMs in a distributed container
- * setting, all session atributes implementing the {@link HttpSessionActivationListener}
+ * setting, all session attributes implementing the {@link HttpSessionActivationListener}
  * interface are notified.
  * 
  * <p>A servlet should be able to handle cases in which
@@ -165,7 +165,7 @@ public interface HttpSession {
      *
      * Returns the last time the client sent a request associated with
      * this session, as the number of milliseconds since midnight
-     * January 1, 1970 GMT, and marked by the time the container recieved the request. 
+     * January 1, 1970 GMT, and marked by the time the container received the request. 
      *
      * <p>Actions that your application takes, such as getting or setting
      * a value associated with the session, do not affect the access
