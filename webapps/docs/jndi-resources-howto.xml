@@ -113,9 +113,9 @@ well, overriding corresponding values from <code>conf/server.xml</code>
 <code>override</code> attribute to "true").</p>
 
 <p>Global resources can be defined in the server-wide JNDI context, by adding
-the resource elements described above to the 
-<a href="config/globalresources.html">&lt;GlobalNamingResources&gt;</a> 
-child element of the <a href="config/server.html">&lt;Server&gt;</a> 
+the resource elements described above to the
+<a href="config/globalresources.html">&lt;GlobalNamingResources&gt;</a>
+child element of the <a href="config/server.html">&lt;Server&gt;</a>
 element.</p>
 
 </section>
@@ -503,7 +503,7 @@ conn.close();
             type="javax.sql.DataSource"/&gt;
   &lt;ResourceParams name="jdbc/EmployeeDB"&gt;
     &lt;parameter&gt;
-      &lt;name&gt;user&lt;/name&gt;
+      &lt;name&gt;username&lt;/name&gt;
       &lt;value&gt;dbusername&lt;/value&gt;
     &lt;/parameter&gt;
     &lt;parameter&gt;
