@@ -224,7 +224,6 @@ abstract public class TagLibraryInfo {
         TagInfo tags[] = getTags();
 
         if (tags == null || tags.length == 0) {
-            System.err.println("No tags");
             return null;
         }
 
@@ -248,7 +247,6 @@ abstract public class TagLibraryInfo {
         TagFileInfo tagFiles[] = getTagFiles();
 
         if (tagFiles == null || tagFiles.length == 0) {
-            System.err.println("No tags");
             return null;
         }
 
