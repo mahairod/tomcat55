@@ -31,7 +31,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-          <controls:actions>
+          <controls:actions label="User Actions">
             <controls:action selected="true">
               ----<bean:message key="actions.available.actions"/>----
             </controls:action>
@@ -75,7 +75,7 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="username">
             <controls:label>
               <bean:message key="users.prompt.username"/>
             </controls:label>
@@ -85,28 +85,28 @@
                 <html:hidden property="username"/>
               </logic:present>
               <logic:notPresent name="userForm" property="objectName">
-                <html:text property="username" size="24" maxlength="32"/>
+                <html:text property="username" size="24" maxlength="32" styleId="username"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="password">
             <controls:label>
               <bean:message key="users.prompt.password"/>
             </controls:label>
             <controls:data>
-              <html:password property="password" size="24" maxlength="32"/>
+              <html:password property="password" size="24" maxlength="32" styleId="password"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="fullname">
             <controls:label>
               <bean:message key="users.prompt.fullName"/>
             </controls:label>
             <controls:data>
-              <html:text property="fullName" size="24" maxlength="64"/>
+              <html:text property="fullName" size="24" maxlength="64" styleId="fullname"/>
             </controls:data>
           </controls:row>
 

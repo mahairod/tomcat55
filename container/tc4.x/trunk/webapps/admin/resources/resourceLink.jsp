@@ -47,7 +47,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-          <controls:actions>
+          <controls:actions label="Resource Link Actions">
             <controls:action selected="true">
               ----<bean:message key="actions.available.actions"/>----
             </controls:action>
@@ -97,7 +97,7 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="name">
             <controls:label>
               <bean:message key="resources.resourcelk.name"/>:
             </controls:label>
@@ -107,32 +107,32 @@
                 <html:hidden property="name"/>
               </logic:present>
               <logic:notPresent name="resourceLinkForm" property="objectName">
-                <html:text property="name" size="35" maxlength="56"/>
+                <html:text property="name" size="35" maxlength="56" styleId="name"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="global">
             <controls:label>
               <bean:message key="resources.resourcelk.global"/>:
             </controls:label>
             <controls:data>
-                <html:text property="global" size="35" maxlength="56"/>
+                <html:text property="global" size="35" maxlength="56" styleId="global"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="type">
             <controls:label>
               <bean:message key="resources.resourcelk.type"/>:
             </controls:label>
             <controls:data>
-              <html:text property="type" size="45" maxlength="256"/>
+              <html:text property="type" size="45" maxlength="256" styleId="type"/>
             </controls:data>
           </controls:row>
 
-	</controls:table>
+    </controls:table>
 
       </td>
 

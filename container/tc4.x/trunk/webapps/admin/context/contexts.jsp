@@ -25,9 +25,9 @@
           <bean:message key="actions.contexts.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+            <controls:actions label="Context Actions">
               <controls:action selected="true">
                 ----<bean:message key="actions.available.actions"/>----
               </controls:action>
@@ -69,8 +69,9 @@
                 <font color='red'>*</font>
               </logic:match>
               <logic:notMatch name="context" value='<%= "path="+request.getContextPath()+"," %>'>
+              <label for="contexts"></label>
               <html:multibox property="contexts"
-                                value="<%= context.toString() %>"/>
+                                value="<%= context.toString() %>" styleId="contexts"/>
               </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;

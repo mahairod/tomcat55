@@ -1,4 +1,6 @@
-<controls:actions>
+<td align="right" nowrap>
+<div class="page-title-text">
+<controls:actions label="Environment Entry Actions">
 
   <controls:action selected="true">
     ----<bean:message key="actions.available.actions"/>----
@@ -26,3 +28,5 @@
   </controls:action>
 
 </controls:actions>
+</div>
+</td>

@@ -29,9 +29,9 @@
           <bean:message key="actions.valves.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+            <controls:actions label="Valve Actions">
               <controls:action selected="true">
                 ----<bean:message key="actions.available.actions"/>----
               </controls:action>
@@ -68,8 +68,9 @@
         <logic:iterate name="valvesList" id="valve">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+            <label for="valves"></label>
               <html:multibox property="valves"
-                                value="<%= valve.toString() %>"/>
+                                value="<%= valve.toString() %>" styleId="valves"/>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditValve.do?select=" +

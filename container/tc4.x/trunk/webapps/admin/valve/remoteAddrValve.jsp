@@ -39,9 +39,9 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Valve Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="remoteAddrValveForm" property="adminAction" value="Create">
@@ -76,11 +76,11 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="type">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="remoteAddrValveForm" property="adminAction" value="Create">
-                    <html:select property="valveType" onchange="IA_jumpMenu('self',this)">
+                    <html:select property="valveType" onchange="IA_jumpMenu('self',this)" styleId="type">
                      <bean:define id="valveTypeVals" name="remoteAddrValveForm" property="valveTypeVals"/>
                      <html:options collection="valveTypeVals" property="value" labelProperty="label"/>
                     </html:select>
@@ -91,17 +91,17 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="allowIPs">
             <controls:label><bean:message key="valve.allowIPs"/>:</controls:label>
             <controls:data>
-                <html:textarea property="allow" cols="30" rows="3"/>
+                <html:textarea property="allow" cols="30" rows="3" styleId="allowIPs"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="denyIPs">
             <controls:label><bean:message key="valve.denyIPs"/>:</controls:label>
             <controls:data>
-                <html:textarea property="deny" cols="30" rows="3"/>
+                <html:textarea property="deny" cols="30" rows="3" styleId="denyIPs"/>
             </controls:data>
         </controls:row>
 

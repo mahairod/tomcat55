@@ -138,6 +138,11 @@ public class TableTag extends BodyTagSupport {
      */
     protected ArrayList headers = new ArrayList();
     
+    /**
+     * The set of styleIds for the rows displayed by this control.
+     */
+    protected ArrayList styleIds = new ArrayList();
+        
     
     // ------------------------------------------------------------- Properties
     
@@ -187,18 +192,19 @@ public class TableTag extends BodyTagSupport {
 
 
     public int doStartTag() throws JspException {
-
+ 
         this.headers.clear();
         this.labels.clear();
         this.datas.clear();
         this.labelStyles.clear();
         this.dataStyles.clear();
-
+        this.styleIds.clear();
+        
         return (EVAL_BODY_TAG);
+ 
+     }    
 
-    }
-
-
+    
     /**
      * Render this instant actions control.
      *
@@ -236,6 +242,7 @@ public class TableTag extends BodyTagSupport {
                 String data = (String) datas.get(i);
                 String labelStyle = (String) labelStyles.get(i);
                 String dataStyle = (String) dataStyles.get(i);
+                String styleId = (String) styleIds.get(i);
                 
                 if (header)
                     out.println("<tr class=\"header-row\" >");
@@ -247,7 +254,13 @@ public class TableTag extends BodyTagSupport {
                 if (labelStyle != null)
                     out.print( " class=\"" + labelStyle +"\"");
                 out.print(">");
+                if (styleId != null) {
+                    out.print("<label for=\"" + styleId + "\">");
+                }
                 out.print(label);
+                if (styleId != null) {
+                    out.print("</label>");
+                }
                 out.println("    </div>");
                 out.println("  </td>");
                 
@@ -298,6 +311,7 @@ public class TableTag extends BodyTagSupport {
         this.columns = 2;
         this.tableStyle = null;
         this.lineStyle = null;
+        this.styleIds.clear();
         
     }
     
@@ -314,13 +328,14 @@ public class TableTag extends BodyTagSupport {
      */
     
     void addRow(boolean header, String label, String data,
-    String labelStyle, String dataStyle) {
+    String labelStyle, String dataStyle, String styleId) {
         
         headers.add(new Boolean(header));
         labels.add(label);
         datas.add(data);
         labelStyles.add(labelStyle);
         dataStyles.add(dataStyle);
+        styleIds.add(styleId);
         
     }
     

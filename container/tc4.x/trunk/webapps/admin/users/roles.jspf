@@ -24,15 +24,18 @@
         <logic:present name="checkboxes">
           <td><div align="center" class="table-normal-text">
             <logic:present name="groupForm">
-              <html:multibox property="roles" value="<%= role %>"/>
+              <label for="roles"></label>
+              <html:multibox property="roles" value="<%= role %>" styleId="roles"/>
             </logic:present>
             <logic:present name="userForm">
-              <html:multibox property="roles" value="<%= role %>"/>
+              <label for="roles"></label>
+              <html:multibox property="roles" value="<%= role %>" styleId="roles"/>
             </logic:present>
             <logic:notPresent name="groupForm">
               <logic:notPresent name="userForm">
+                <label for="roles"></label>
                 <input type="checkbox" name="roles"
-                      value="<%= role %>">
+                      value="<%= role %>" styleId="roles">
               </logic:notPresent>
             </logic:notPresent>
           </td>

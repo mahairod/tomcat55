@@ -32,7 +32,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-          <controls:actions>
+          <controls:actions label="User Database Actions">
             <controls:action selected="true">
               ----<bean:message key="actions.available.actions"/>----
             </controls:action>
@@ -74,7 +74,7 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="name">
             <controls:label>
               <bean:message key="service.name"/>:
             </controls:label>
@@ -84,23 +84,23 @@
                 <html:hidden property="name"/>
               </logic:present>
               <logic:notPresent name="userDatabaseForm" property="objectName">
-                <html:text property="name" size="24" maxlength="32"/>
+                <html:text property="name" size="24" maxlength="32" styleId="name"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="location">
             <controls:label>
               <bean:message key="resources.userdb.location"/>:
             </controls:label>
             <controls:data>
-              <html:text property="path" size="32" maxlength="64"/>
+              <html:text property="path" size="32" maxlength="64" styleId="location"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="factory">
             <controls:label>
               <bean:message key="resources.userdb.factory"/>:
             </controls:label>
@@ -110,12 +110,12 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="description">
             <controls:label>
               <bean:message key="users.prompt.description"/>
             </controls:label>
             <controls:data>
-              <html:textarea property="description" cols="32" rows="3"/>
+              <html:textarea property="description" cols="32" rows="3" styleId="description"/>
             </controls:data>
           </controls:row>
 

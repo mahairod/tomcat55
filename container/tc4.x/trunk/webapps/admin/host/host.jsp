@@ -37,9 +37,9 @@
           </logic:equal>
         </div>
       </td>
-      <td width="19%">
-       <div align="right">
-        <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+        <controls:actions label="Host Actions">
             <controls:action selected="true"> -----<bean:message key="actions.available.actions"/>----- </controls:action>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
             <logic:notEqual name="hostForm" property="adminAction" value="Create">
@@ -142,14 +142,14 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="hostName">
             <controls:label>
                 <bean:message key="host.name"/>:
             </controls:label>
             <controls:data>
             <%-- input only allowed on create transaction --%>
              <logic:equal name="hostForm" property="adminAction" value="Create">
-              <html:text property="hostName" size="24" maxlength="255"/>
+              <html:text property="hostName" size="24" maxlength="255" styleId="hostName"/>
              </logic:equal>
              <logic:equal name="hostForm" property="adminAction" value="Edit">
               <bean:write name="hostForm" property="hostName"/>
@@ -158,11 +158,11 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="hostBase">
             <controls:label><bean:message key="host.base"/>:</controls:label>
             <controls:data>
              <logic:equal name="hostForm" property="adminAction" value="Create">
-              <html:text property="appBase" size="24"/>
+              <html:text property="appBase" size="24" styleId="hostBase"/>
              </logic:equal>
              <logic:equal name="hostForm" property="adminAction" value="Edit">
               <bean:write name="hostForm" property="appBase"/>
@@ -171,10 +171,10 @@
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="autoDeploy">
             <controls:label><bean:message key="host.autoDeploy"/>:</controls:label>
             <controls:data>
-               <html:select property="autoDeploy">
+               <html:select property="autoDeploy" styleId="autoDeploy">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -182,10 +182,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-                <html:select property="debugLvl">
+                <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="hostForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                    labelProperty="label"/>
@@ -194,10 +194,10 @@
         </controls:row>
 
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="deployXML">
             <controls:label><bean:message key="host.deployXML"/>:</controls:label>
             <controls:data>
-               <html:select property="deployXML">
+               <html:select property="deployXML" styleId="deployXML">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -205,10 +205,10 @@
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="liveDeploy">
             <controls:label><bean:message key="host.liveDeploy"/>:</controls:label>
             <controls:data>
-               <html:select property="liveDeploy">
+               <html:select property="liveDeploy" styleId="liveDeploy">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -216,10 +216,10 @@
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="hostWars">
             <controls:label><bean:message key="host.wars"/>:</controls:label>
             <controls:data>
-               <html:select property="unpackWARs">
+               <html:select property="unpackWARs" styleId="hostWars">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
