@@ -250,15 +250,199 @@ Transport.send(message);
   </subsection>
 
   <subsection name="JDBC Data Sources">
+
+    <h3>0.  Introduction</h3>
+
+    <p>Many web applications need to access a database via a JDBC driver,
+    to support the functionality required by that application.  The J2EE
+    Platform Specification requires J2EE Application Servers to make
+    available a <em>DataSource</em> implementation (that is, a connection
+    pool for JDBC connections) for this purpose.  Tomcat 4 offers exactly
+    the same support, so that database-based applications you develop on
+    Tomcat using this service will run unchanged on any J2EE server.</p>
+
+    <p>For information about JDBC, you should consult the following:</p>
+    <ul>
+    <li><a href="http://java.sun.com/products/jdbc/">http://java.sun.com/products/jdbc/</a> -
+        Home page for information about Java Database Connectivity.</li>
+    <li><a href="http://java.sun.com/j2se/1.3/docs/guide/jdbc/spec2/jdbc2.1.frame.html">http://java.sun.com/j2se/1.3/docs/guide/jdbc/spec2/jdbc2.1.frame.html</a> -
+        The JDBC 2.1 API Specification.</li>
+    <li><a href="http://java.sun.com/products/jdbc/jdbc20.stdext.pdf">http://java.sun.com/products/jdbc/jdbc20.stdext.pdf</a> -
+        The JDBC 2.0 Standard Extension API (including the
+        <code>javax.sql.DataSource</code> API).  This package is now known
+        as the "JDBC Optional Package".</li>
+    <li><a href="http://java.sun.com/j2ee/download.html">http://java.sun.com/j2ee/download.html</a> -
+        The J2EE Platform Specification (covers the JDBC facilities that
+        all J2EE platforms must provide to applications).</li>
+    </ul>
+
+    <h3>1.  Download And Install Required Packages</h3>
+
+    <p>Use of the data source JNDI resource involves downloading and installing
+    several packages that are not included with Tomcat.
+    Follow these steps:</p>
+    <ul>
+    <li>Download the JDBC Optional Package (version 2.0) from
+        <a href="http://java.sun.com/products/jdbc/download.html">http://java.sun.com/products/jdbc/download.html</a>.</li>
+    <li>Install the <code>jdbc2_0-stdext.jar</code> file from this package
+        into the <code>$CATALINA_HOME/common/lib</code> directory, so that it
+        is available to both Catalina internal classes and to web applications.
+        </li>
+    <li>Download the Java Transaction API (JTA) package (version 1.0.1) from
+        <a href="http://java.sun.com/products/jta/">http://java.sun.com/products/jta/</a>.</li>
+    <li>Install the <code>jta-spec1_0_1.jar</code> file from this package
+        into the <code>$CATALINA_HOME/common/lib</code> directory, so that it
+        is available to both Catalina internal classes and to web applications.
+        </li>
+    <li>Download the Tyrex Data Source Package (version 0.9.7) from
+        <a href="http://tyrex.exolab.org">http://tyrex.exolab.org</a>.</li>
+    <li>Install the <code>tyrex-0.9.7.0.jar</code> file from this release
+        into the <code>$CATALINA_HOME/common/lib</code> directory, so that it
+        is available to both Catalina internal classes and to web applications.
+        </li>
+    <li>Tyrex requires that you provide a JDBC driver to actually connect
+        to the underlying database.  Place the JAR file for your database
+        driver into the <code>$CATALINA_HOME/common/lib</code> directory,
+        so that it is available to both Catalina internal classes and to
+        web applications.</li>
+    </ul>
+
+    <p><strong>NOTE</strong> - The default data source support in Tomcat
+    supports Tyrex.  However, it is possible to use any other connection pool
+    that implements <code>javax.sql.DataSource</code>, by writing your own
+    custom resource factory, as described
+    <a href="#Adding Custom Resource Factories">below</a>.</p>
+
+    <h3>2.  Declare Your Resource Requirements</h3>
+
+    <p>NExt, modify the web application deployment
+    descriptor (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under
+    which you will look up preconfigured data source.  By convention, all such
+    names should resolve to the <code>jdbc</code> subcontext (relative to the
+    standard <code>java:comp/env</code> naming context that is the root of
+    all provided resource factories.  A typical <code>web.xml</code> entry
+    might look like this:</p>
+<source>
+&lt;resource-ref&gt;
+  &lt;description&gt;
+    Resource reference to a factory for java.sql.Connection
+    instances that may be used for talking to a particular
+    database that is configured in the server.xml file.
+  &lt;/description&gt;
+  &lt;resource-ref-name&gt;
+    jdbc/EmployeDB
+  &lt;/resource-ref-name&gt;
+  &lt;res-type&gt;
+    javax.sql.DataSource
+  &lt;/res-type&gt;
+  &lt;res-auth&gt;
+    Container
+  &lt;/res-auth&gt;
+&lt;/resource-ref&gt;
+</source>
+
+    <p><strong>WARNING</strong> - Be sure you respect the element ordering
+    that is required by the DTD for web application deployment descriptors!
+    See the
+    <a href="http://java.sun.com/products/servlet/download.html">Servlet
+    Specification</a> for details.</p>
+
+    <h3>3.  Code Your Application's Use Of This Resource</h3>
+
+    <p>A typical use of this resource reference might look like this:</p>
+<source>
+Context initCtx = new InitialContext();
+Context envCtx = (Context) initCtx.lookup("java:comp/env");
+DataSource ds = (DataSource)
+  envCtx.lookup("jdbc/EmployeeDB");
+
+Connection conn = ds.getConnection();
+... use this connection to access the database ...
+conn.close();
+</source>
+
+    <p>Note that the application uses the same resource reference name
+    that was declared in the web application deployment descriptor.  This
+    is matched up against the resource factory that is configured in
+    <code>$CATALINA_HOME/conf/server.xml</code>, as described below.</p>
+
+    <h3>4.  Configure Tomcat's Resource Factory</h3>
+
+    <p>To configure Tomcat's resource factory, add an elements like this to the
+    <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
+    <code>Context</code> element for this web application (or nested inside
+    a <code>DefaultContext</code> element for the surrounding
+    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+<source>
+&lt;Context ...&gt;
+  ...
+  &lt;Resource name="jdbc/EmployeeDB" auth="Container"
+            type="javax.sql.DataSource"/&gt;
+  &lt;ResourceParams name="jdbc/EmployeeDB"&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;user&lt;/name&gt;
+      &lt;value&gt;dbusername&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;password&lt;/name&gt;
+      &lt;value&gt;dbpassword&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;driverClassName&lt;/name&gt;
+      &lt;value&gt;org.hsql.jdbcDriver&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;driverName&lt;/name&gt;
+      &lt;value&gt;jdbc:HypersonicSQL:database&lt;/value&gt;
+    &lt;/parameter&gt;
+  &lt;/ResourceParams&gt;
+  ...
+&lt;/Context&gt;
+</source>
+
+    <p>Note that the resource name (here, <code>jdbc/EmployeeDB</code>) must
+    match the value specified in the web application deployment descriptor.
+    Customize the value of the <code>mail.smtp.host</code> parameter to
+    point at the server that provides SMTP service for your network.</p>
+
+    <p>This example assumes that you are using the HypersonicSQL database
+    JDBC driver.  Customize the <code>driverClassName</code> and
+    <code>driverName</code> parameters to match your actual database's
+    JDBC driver and connection URL.</p>
+
   </subsection>
 
   <subsection name="User Transactions">
+
+    <p>If you utilize Tyrex for your JDBC resource factory as described
+    <a href="#JDBC Data Sources">above</a>, you will also have support for
+    the <code>java.transaction.UserTransaction</code> resource provided by
+    Tyrex (since it is XA-capable).  To use this feature, code your
+    application as follows:</p>
+<source>
+Context initCtx = new InitialContext();
+Context envCtx = (Context) initCtx.lookup("java:comp/env");
+Transaction tx = (Transaction) envCtx.lookup("UserTransaction");
+
+tx.begin();
+... perform transactional operations on data ...
+tx.commit();
+</source>
+
+    <p>This is useful when you need to do "two-phased commits" across more
+    than one database, where the commit needs to either succeed completely
+    or fail completely across all associated databases.  This feature
+    requires a JDBC driver that also supports XA capabilities.  See the
+    J2EE and JDBC documentation for more information.</p>
+
   </subsection>
 
 </section>
 
 
 <section name="Adding Custom Resource Factories">
+
+  <p><strong>FIXME</strong></p>
 
 </section>
 
