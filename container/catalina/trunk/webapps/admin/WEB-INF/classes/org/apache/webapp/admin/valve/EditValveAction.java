@@ -282,6 +282,23 @@ public class EditValveAction extends Action {
         sb.append(")");
         valveFm.setNodeLabel(sb.toString());
         valveFm.setValveType(valveType);
+        valveFm.setDebugLvlVals(Lists.getDebugLevels());
+        String attribute = null;
+        try {
+            
+            // Copy scalar properties
+            attribute = "debug";
+            valveFm.setDebugLvl
+                (((Integer) mBServer.getAttribute(vname, attribute)).toString());
+        } catch (Throwable t) {
+            getServlet().log
+                (resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute));
+        }     
     }
 
     private void setUpSingleSignOnValve(ObjectName vname,

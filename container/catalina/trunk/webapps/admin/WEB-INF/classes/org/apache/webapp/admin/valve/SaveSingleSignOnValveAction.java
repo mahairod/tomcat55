@@ -155,8 +155,34 @@ public final class SaveSingleSignOnValveAction extends Action {
                
         // Perform a "Create Valve" transaction (if requested)
         if ("Create".equals(adminAction)) {
-  
-        	vObjectName = ValveUtil.createValve(parent, valveType, 
+
+            try {
+                // Ensure that only one single sign on valve exists
+                ObjectName pname = new ObjectName(parent); 
+                ObjectName oname = 
+                        new ObjectName(pname.getDomain() + 
+                                    ":type=Valve,name=SingleSignOn");               
+                
+                if (mBServer.isRegistered(oname)) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add("singleSignOnValve",
+                               new ActionError("error.singleSignOn.exists"));
+                    saveErrors(request, errors);
+                    return (new ActionForward(mapping.getInput()));
+                } 
+            } catch (Exception e) {
+                getServlet().log
+                    (resources.getMessage(locale, "users.error.invoke",
+                                          adminAction), e);
+                response.sendError
+                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                     resources.getMessage(locale, "users.error.invoke",
+                                          adminAction));
+                return (null);
+
+            }
+            
+            vObjectName = ValveUtil.createValve(parent, valveType, 
                                 response, request, mapping, 
                                 (ApplicationServlet) getServlet());
                       

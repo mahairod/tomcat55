@@ -231,6 +231,8 @@ public class AddValveAction extends Action {
         String valveType = "RequestDumperValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
+        valveFm.setDebugLvl("0");
+        valveFm.setDebugLvlVals(Lists.getDebugLevels()); 
         valveFm.setValveTypeVals(types);        
     }
 
