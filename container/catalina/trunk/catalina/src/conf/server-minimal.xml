@@ -1,4 +1,5 @@
 <Server port="8005" shutdown="SHUTDOWN">
+
   <GlobalNamingResources>
     <!-- Used by Manager webapp -->
     <Resource name="UserDatabase" auth="Container"
@@ -17,8 +18,8 @@
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
              resourceName="UserDatabase" />
-
       <Host name="localhost" appBase="webapps" />
     </Engine>
+    
   </Service>
 </Server>

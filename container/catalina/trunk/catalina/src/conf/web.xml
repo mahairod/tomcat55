@@ -146,12 +146,12 @@
   <!--                                                                      -->
   <!--   mappedfile          Should we generate static content with one     -->
   <!--                       print statement per input line, to ease        -->
-  <!--                       debugging?  [true]                            -->
+  <!--                       debugging?  [true]                             -->
   <!--                                                                      -->
   <!--   trimSpaces          Should white spaces in template text between   -->
   <!--                       actions or directives be trimmed?  [false]     -->
   <!--                                                                      -->
-  <!--   reloading           Should Jasper check for modified JSPs?  [true] -->
+  <!--   reloading           Should Jasper check for modified JSPs? [false] -->
   <!--                                                                      -->
   <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
   <!--                       debugging be suppressed?  [false]              -->
