@@ -309,8 +309,12 @@ public class ContextBindings {
             if (context == null)
                 throw new NamingException
                     (sm.getString("contextBindings.unknownContext", name));
-            clBindings.put(classLoader, context);
-            clNameBindings.put(classLoader, name);
+            Object n = clNameBindings.get(classLoader);
+            // Only bind CL if it isn't already bound to the context
+            if (n == null) {
+                clBindings.put(classLoader, context);
+                clNameBindings.put(classLoader, name);
+            }
         }
     }
 
