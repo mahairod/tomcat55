@@ -285,6 +285,7 @@ public class JspServlet extends HttpServlet {
 	    Object pd=context.getAttribute("org.apache.tomcat.protection_domain");
 	    loader.setProtectionDomain( pd );
 	}
+
 	if (firstTime) {
 	    firstTime = false;
 	    Constants.message("jsp.message.scratch.dir.is", 
@@ -321,21 +322,27 @@ public class JspServlet extends HttpServlet {
         String qString = request.getQueryString();
         
         if (precom != null) {
-            if (precom.equals("true")) 
+	    // An equal sign was specified 
+	    // (?jsp_precompile=... or &jsp_precompile=...)
+            if (precom.equals("true") || precom.trim().length()==0) {
                 precompile = true;
-            else if (precom.equals("false")) 
+            } else if (precom.equals("false")) {
                 precompile = false;
-            else {
-		    // This is illegal.
-		    throw new ServletException("Can't have request parameter " +
-					       Constants.PRECOMPILE + " set to " + precom);
-		}
+            } else {
+		// This is illegal.
+		throw new ServletException("Can't have request parameter " +
+					   Constants.PRECOMPILE + " set to " + precom);
 	    }
-        else if (qString != null && (qString.startsWith(Constants.PRECOMPILE) ||
-                                     qString.indexOf("&" + Constants.PRECOMPILE)
-                                     != -1))
-            precompile = true;
-
+        } else {
+	    // Check if precompile is specified (but it does not have
+	    // the '=' following it.)
+	    if (qString != null && 
+		     (qString.startsWith(Constants.PRECOMPILE) ||
+		     qString.indexOf("&" + Constants.PRECOMPILE)
+		     != -1)) {
+		precompile = true;
+	    }
+	}
         return precompile;
     }
     
