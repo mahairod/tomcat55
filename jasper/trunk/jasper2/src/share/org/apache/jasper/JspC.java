@@ -170,9 +170,12 @@ public class JspC implements Options {
                     // the static main catch
 
     boolean compile=false;
+    String compiler=null;
     
     boolean dirset;
-
+    
+    boolean classDebugInfo=true;
+    
     Vector extensions;
 
     Vector pages = new Vector();
@@ -218,10 +221,14 @@ public class JspC implements Options {
         // implied send to System.err
         return true;
     }
- 
+
+    public void setClassDebugInfo( boolean b ) {
+        classDebugInfo=b;
+    }
+    
     public boolean getClassDebugInfo() {
         // compile with debug info
-        return false;
+        return classDebugInfo;
     }
 
     /**
@@ -271,7 +278,11 @@ public class JspC implements Options {
      * Compiler to use.
      */
     public String getCompiler() {
-        return null;
+        return compiler;
+    }
+
+    public void setCompiler(String c) {
+        compiler=c;
     }
 
 
@@ -319,6 +330,10 @@ public class JspC implements Options {
     
     public void setCompile( boolean b ) {
         compile=b;
+    }
+
+    public void setValidateXml( boolean b ) {
+        org.apache.jasper.xmlparser.ParserUtils.validating=b;
     }
     
     public void setOutputDir( String s ) {
@@ -383,8 +398,25 @@ public class JspC implements Options {
     void initClassLoader( JspCompilationContext clctxt ) throws IOException {
         classPath = getClassPath();
 
+        ClassLoader parent=this.getClass().getClassLoader();
+
         ArrayList urls = new ArrayList();
         File webappBase=new File(uriRoot);
+
+        if( parent instanceof URLClassLoader ) {
+            URLClassLoader uL=(URLClassLoader) parent;
+            URL path[]=uL.getURLs();
+            for( int i=0; i<path.length; i++ ) {
+                urls.add( path[i] );
+                classPath = classPath + File.pathSeparator +
+                    path[i].getFile();
+            }
+        }
+
+        if( parent instanceof org.apache.tools.ant.AntClassLoader ) {
+            classPath= classPath + File.pathSeparator +
+                ((org.apache.tools.ant.AntClassLoader)parent).getClasspath();
+        }
         
         // Turn the classPath in URLs
         StringTokenizer tokenizer = new StringTokenizer(classPath, File.pathSeparator);
@@ -479,6 +511,7 @@ public class JspC implements Options {
     }
     
     public boolean processFile(String file)
+        throws JasperException
     {
         try {
             String jspUri=file.replace('\\','/');
@@ -521,27 +554,18 @@ public class JspC implements Options {
             generateWebMapping( file, clctxt );
 
             return true;
-        } catch (JasperException je) {
-            System.out.println("Error compiling " + file );
-            je.printStackTrace();
-            Constants.message("jspc.error.jasperException", 
-                    new Object[] {file, je}, Logger.ERROR);
-            if (dieLevel != NO_DIE_LEVEL) {
-                dieOnExit = true;
-            }
         } catch (FileNotFoundException fne) {
-            fne.printStackTrace();
-                Constants.message("jspc.error.fileDoesNotExist", 
-                        new Object[] {fne.getMessage()}, Logger.WARNING);
+            Constants.message("jspc.error.fileDoesNotExist", 
+                              new Object[] {fne.getMessage()}, Logger.WARNING);
+            throw new JasperException( fne );
         } catch (Exception e) {
             Constants.message("jspc.error.generalException", 
                     new Object[] {file, e}, Logger.ERROR);
-	    e.printStackTrace();
             if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
             }
+            throw new JasperException( e );
         }
-        return false;
     }
 
     /** Find the WEB-INF dir by looking up in the directory tree.
