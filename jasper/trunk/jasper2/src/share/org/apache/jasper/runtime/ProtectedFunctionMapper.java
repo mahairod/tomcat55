@@ -80,9 +80,14 @@ import javax.servlet.jsp.el.FunctionMapper;
 public final class ProtectedFunctionMapper implements FunctionMapper {
 
     /** 
-     * Maps "prefix:name" to java.lang.Method objects.  Lazily created.
+     * Maps "prefix:name" to java.lang.Method objects.
      */
-    private HashMap fnmap = new java.util.HashMap();
+    private HashMap fnmap = null;
+
+    /**
+     * If there is only one function in the map, this is the Method for it.
+     */
+    private Method theMethod = null;
 
     /**
      * Constructor has protected access.
@@ -99,16 +104,19 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
      * @return A new protected function mapper.
      */
     public static ProtectedFunctionMapper getInstance() {
+        ProtectedFunctionMapper funcMapper;
 	if (System.getSecurityManager() != null) {
-	    return (ProtectedFunctionMapper)AccessController.doPrivileged( 
+	    funcMapper = (ProtectedFunctionMapper)AccessController.doPrivileged(
 		new PrivilegedAction() {
 		public Object run() {
 		    return new ProtectedFunctionMapper();
 		}
 	    } );
 	} else {
-	    return new ProtectedFunctionMapper();
+	    funcMapper = new ProtectedFunctionMapper();
 	}
+	funcMapper.fnmap = new java.util.HashMap();
+	return funcMapper;
     }
 
     /**
@@ -153,6 +161,59 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
     }
 
     /**
+     * Creates an instance for this class, and stores the Method for
+     * the given EL function prefix and name. This method is used for
+     * the case when there is only one function in the EL expression.
+     *
+     * @param fnQName The EL function qualified name (including prefix)
+     * @param c The class containing the Java method
+     * @param methodName The name of the Java method
+     * @param args The arguments of the Java method
+     * @throws RuntimeException if no method with the given signature
+     *     could be found.
+     */
+    public static ProtectedFunctionMapper getMapForFunction(
+		String fnQName, final Class c,
+                final String methodName, final Class[] args )
+    {
+        java.lang.reflect.Method method;
+        ProtectedFunctionMapper funcMapper;
+        if (System.getSecurityManager() != null){
+            funcMapper = (ProtectedFunctionMapper)AccessController.doPrivileged(
+                new PrivilegedAction(){
+                public Object run() {
+                    return new ProtectedFunctionMapper();
+                }
+            });
+
+            try{
+                method = (java.lang.reflect.Method)AccessController.doPrivileged
+(new PrivilegedExceptionAction(){
+
+                    public Object run() throws Exception{
+                        return c.getDeclaredMethod(methodName, args);
+                    }
+                });
+            } catch (PrivilegedActionException ex){
+                throw new RuntimeException(
+                    "Invalid function mapping - no such method: "
+                    + ex.getException().getMessage());
+            }
+        } else {
+	    funcMapper = new ProtectedFunctionMapper();
+             try {
+                method = c.getDeclaredMethod(methodName, args);
+            } catch( NoSuchMethodException e ) {
+                throw new RuntimeException(
+                    "Invalid function mapping - no such method: "
+                    + e.getMessage());
+            }
+        }
+        funcMapper.theMethod = method;
+	return funcMapper;
+    }
+
+    /**
      * Resolves the specified local name and prefix into a Java.lang.Method.
      * Returns null if the prefix and local name are not found.
      * 
@@ -161,7 +222,10 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
      * @return the result of the method mapping.  Null means no entry found.
      **/
     public Method resolveFunction(String prefix, String localName) {
-	return (Method) this.fnmap.get(prefix + ":" + localName);
+        if (this.fnmap != null) {
+            return (Method) this.fnmap.get(prefix + ":" + localName);
+        }
+	return theMethod;
     }
 }
 

@@ -200,13 +200,23 @@ public class ELFunctionMapper {
 	    // Generate declaration for the map statically
 	    decName = getMapName();
 	    ss.append("static private org.apache.jasper.runtime.ProtectedFunctionMapper " + decName + ";\n");
-	    ds.append("  " + decName + " = org.apache.jasper.runtime.ProtectedFunctionMapper.getInstance();\n");
+
+	    ds.append("  " + decName + "= ");
+	    ds.append("org.apache.jasper.runtime.ProtectedFunctionMapper");
+	    // Special case if there is only one function in the map
+	    String funcMethod = null;
+	    if (functions.size() == 1) {
+		funcMethod = ".getMapForFunction";
+	    } else {
+		ds.append(".getInstance();\n");
+		funcMethod = "  " + decName + ".mapFunction";
+	    }
 
 	    for (int i = 0; i < functions.size(); i++) {
 		ELNode.Function f = (ELNode.Function)functions.get(i);
 		FunctionInfo funcInfo = f.getFunctionInfo();
 		String key = f.getPrefix()+ ":" + f.getName();
-		ds.append("  " + decName + ".mapFunction(\"" + key + "\", " +
+		ds.append(funcMethod + "(\"" + key + "\", " +
 			funcInfo.getFunctionClass() + ".class, " +
 			'\"' + f.getMethodName() + "\", " +
 			"new Class[] {");
