@@ -766,23 +766,9 @@
            file="${tomcat.build}/server/lib/catalina-ant.jar"/>
     <copy todir="${tomcat.deployer}/lib" file="${commons-logging.jar}"/>
 
-    <jar jarfile="${tomcat.deployer}/lib/catalina-deployer.jar"
-         index="true">
+    <jar jarfile="${tomcat.deployer}/lib/catalina-deployer.jar">
        <fileset dir="${tomcat.build}/classes">
-          <include name="org/apache/catalina/LifecycleListener.class" />
-          <include name="org/apache/catalina/Manager.class" />
-          <include name="org/apache/catalina/Pipeline.class" />
-          <include name="org/apache/catalina/startup/Constants.class" />
-          <include name="org/apache/catalina/startup/ContextConfig.class" />
-          <include name="org/apache/catalina/startup/SetPublicIdRule.class" />
-          <include name="org/apache/catalina/startup/SetDistributableRule.class" />
-          <include name="org/apache/catalina/startup/SetJspConfig.class" />
-          <include name="org/apache/catalina/startup/SetLoginConfig.class" />
-          <include name="org/apache/catalina/startup/SetAuthConstraintRule.class" />
-          <include name="org/apache/catalina/startup/WrapperCreateRule.class" />
-          <include name="org/apache/catalina/startup/SetSessionConfig.class" />
-          <include name="org/apache/catalina/startup/WebRuleSet.class" />
-          <include name="org/apache/catalina/startup/*.properties" />
+          <include name="org/apache/catalina/startup/DigesterFactory.class" />
           <include name="org/apache/catalina/util/SchemaResolver.class" />
           <include name="org/apache/catalina/util/StringManager.class" />
        </fileset>
