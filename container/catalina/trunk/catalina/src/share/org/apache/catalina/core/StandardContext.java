@@ -1814,6 +1814,8 @@ public class StandardContext
         synchronized (servletMappings) {
             servletMappings.put(pattern, name);
         }
+        Wrapper wrapper = (Wrapper) findChild(name);
+        wrapper.addMapping(pattern);
         fireContainerEvent("addServletMapping", pattern);
 
     }
@@ -3233,9 +3235,12 @@ public class StandardContext
      */
     public void removeServletMapping(String pattern) {
 
+        String name = null;
         synchronized (servletMappings) {
-            servletMappings.remove(pattern);
+            name = (String) servletMappings.remove(pattern);
         }
+        Wrapper wrapper = (Wrapper) findChild(name);
+        wrapper.removeMapping(pattern);
         fireContainerEvent("removeServletMapping", pattern);
 
     }
