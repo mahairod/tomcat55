@@ -134,10 +134,13 @@ commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/common
 
 
 # ----- Commons Modeler, version 1.0 or later -----
-commons-modeler.home=${base.path}/commons-modeler-1.0
-commons-modeler.lib=${commons-modeler.home}
+commons-modeler.home=${base.path}/commons-modeler-1.1dev
+#commons-modeler.home=${base.path}/commons-modeler-1.0
+#commons-modeler.lib=${commons-modeler.home}
+commons-modeler.lib=${commons-modeler.home}/dist
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.0/commons-modeler-1.0.tar.gz
+commons-modeler.cvs.loc=jakarta-commons/modeler
 
 
 # ----- Commons Pool, version 1.0.1 or later -----

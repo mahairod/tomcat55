@@ -248,9 +248,20 @@
     </ant>
   </target>
 
+  <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" >
+    <echo>========== Building: commons-modeler </echo>
+
+    <ant dir="${cvs.base}/jakarta-commons/modeler" target="compile-only" >
+        <property name="commons-logging.jar" location="${tomcat.build}/server/lib/commons-logging.jar" />
+        <property name="commons-modeler.jar" location="${tomcat.build}/server/lib/commons-modeler.jar" />
+        <property name="build.home" value="${tomcat.build}" />
+    </ant>
+  </target>
+
   <target name="build-depends" depends="init"
           description="Builds various dependent components">
     <antcall target="build-commons-logging" />
+    <antcall target="build-commons-modeler" />
 
   </target>
 
@@ -836,10 +847,19 @@
       <param name="destdir" value="${base.path}"/>
     </antcall>
 
+<!--
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-modeler.loc}"/>
       <param name="destfile" value="${commons-modeler.jar}"/>
     </antcall>
+--> 
+
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-modeler.cvs.loc}"/>
+      <param name="subdir" value="${commons-modeler.home}"/>
+      <param name="destfile" value="${commons-modeler.jar}"/>
+    </antcall>
+
     <antcall target="downloadzip">
       <param name="sourcefile" value="${javaservice.loc}"/>
       <param name="destfile" value="${javaservice.exe}"/>
