@@ -186,6 +186,10 @@ public class JavaSourceGenerator {
 	popIndent();
 	println( "}" );
     }
+
+    // -------------------- Line mapping --------------------
+    
+
     
 
     // -------------------- Low level generator --------------------

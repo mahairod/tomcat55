@@ -82,10 +82,17 @@ final class DelegatingListener implements ParseEventListener {
     ParseEventListener delegate;
     Parser.Action action;
     Mark tmplStart, tmplStop;
+    ContainerLiaison containerL;
     
-    DelegatingListener(ParseEventListener delegate, Parser.Action action) {
+    DelegatingListener(ContainerLiaison containerL,
+		       ParseEventListener delegate, Parser.Action action) {
         this.delegate = delegate;
         this.action = action;
+	this.containerL=containerL;
+    }
+
+    public ContainerLiaison getContainerLiaison() {
+	return containerL;
     }
 
     void doAction(Mark start, Mark stop) throws JasperException {

@@ -68,7 +68,7 @@ import java.util.Vector;
 import java.util.Stack;
 
 // use: getRealPath, getResourceAsStream
-import org.apache.jasper34.core.JspCompilationContext;
+import org.apache.jasper34.core.ContainerLiaison;
 // getString
 import org.apache.jasper34.core.Constants;
 import org.apache.tomcat.util.log.*;
@@ -92,8 +92,8 @@ public class JspReader {
     int currFileId = 0;
     int size = 0;
     
-    private JspCompilationContext context;
-
+    ContainerLiaison containerL;
+    
     Log loghelper = Log.getLog("JASPER_LOG", "JspReader");
     //    LogHelper loghelper = new LogHelper("JASPER_LOG", "JspReader");
     
@@ -172,9 +172,9 @@ public class JspReader {
 
     public String getCurrentFile() {
 	File file=new File( master );
-	String longName = (context == null)
-	    ? file.getAbsolutePath()
-	    : context.getRealPath(file.toString());
+	String longName = //(context == null)
+	    //	    ? file.getAbsolutePath() :
+	    containerL.getRealPath(file.toString());
 	return longName;
     }
     
@@ -195,9 +195,9 @@ public class JspReader {
         }
 
 	// Register the file, and read its content:
-	String longName = (context == null)
-	    ? file.getAbsolutePath()
-	    : context.getRealPath(file.toString());
+	String longName = //(context == null)
+	    //? file.getAbsolutePath() :
+	    containerL.getRealPath(file.toString());
 
 	if (longName == null)
 	    throw new FileNotFoundException(file.toString());
@@ -205,7 +205,7 @@ public class JspReader {
 	int fileid = registerSourceFile(longName);
 	
         if (fileid == -1)
-            throw new ParseException(Constants.getString("jsp.error.file.already.registered",
+            throw new ParseException(containerL.getString("jsp.error.file.already.registered",
                                                          new Object[] { 
                                                              file 
                                                          }));
@@ -213,12 +213,12 @@ public class JspReader {
                                      
 	InputStreamReader reader = null;
 	try {
-            if (context == null)
-                reader = new InputStreamReader(new FileInputStream(file),
-                                               encoding);
-            else {
-	        String fileName = context.getRealPath(file.toString());
-		InputStream in = context.getResourceAsStream(file.toString());
+//             if (context == null)
+//                 reader = new InputStreamReader(new FileInputStream(file),
+//                                                encoding);
+//             else {
+	        String fileName = containerL.getRealPath(file.toString());
+		InputStream in = containerL.getResourceAsStream(file.toString());
                 if (in == null)
                     throw new FileNotFoundException(fileName);
                 
@@ -227,7 +227,7 @@ public class JspReader {
                 } catch (Throwable ex) {
                     throw new FileNotFoundException(fileName + ": "+ ex.getMessage());
                 }
-            }
+		//            }
             
 	    CharArrayWriter caw   = new CharArrayWriter();
 	    char            buf[] = new char[1024];
@@ -249,7 +249,7 @@ public class JspReader {
 	    loghelper.log("Exception parsing file " + file, ex);
 	    // Pop state being constructed:
 	    popFile();
-	    throw new ParseException(Constants.getString("jsp.error.file.cannot.read",
+	    throw new ParseException(containerL.getString("jsp.error.file.cannot.read",
 							new Object[] { file }));
 	} finally {
 	    if ( reader != null ) {
@@ -268,14 +268,14 @@ public class JspReader {
 	//size--;
 	if (currFileId < 0) {
 	    throw new ParseException(
-		          Constants.getString("jsp.error.no.more.content"));
+		          containerL.getString("jsp.error.no.more.content"));
 	}
 
 	String fName = getFile(currFileId);
 	currFileId = unregisterSourceFile(fName);
 	if (currFileId < -1)
 	    throw new ParseException
-		(Constants.getString("jsp.error.file.not.registered",
+		(containerL.getString("jsp.error.file.not.registered",
 				     new Object[] {fName}));
 
 	boolean r = current.popStream();
@@ -284,21 +284,22 @@ public class JspReader {
 	return r;
     }
 	
-    protected JspReader(String file, JspCompilationContext ctx, String encoding) 
+    protected JspReader(String file, ContainerLiaison containerL,
+			String encoding) 
 	throws ParseException, FileNotFoundException
     {
-        this.context = ctx;
+	this.containerL=containerL;
 	this.encoding = encoding;
 	if (this.encoding == null) this.encoding = "8859_1";
 	pushFile(file, encoding);
     }
 
     public static JspReader createJspReader(String file,
-					    JspCompilationContext ctx,
+					    ContainerLiaison containerL,
 					    String encoding) 
 	throws ParseException, FileNotFoundException
     {
-	return new JspReader(file, ctx, encoding);
+	return new JspReader(file, containerL, encoding);
     }
 
     public boolean hasMoreInput() throws ParseException {
@@ -486,10 +487,10 @@ public class JspReader {
 		// Check end of quote, skip closing quote:
 		if ( ch == -1 ) 
 		    throw new ParseException(mark(), 
-				Constants.getString("jsp.error.quotes.unterminated"));
+				containerL.getString("jsp.error.quotes.unterminated"));
 	    }
 	    else throw new ParseException(mark(),
-				Constants.getString("jsp.error.attr.quoted"));
+				containerL.getString("jsp.error.attr.quoted"));
 	} else {
 	    if (!isDelimiter())
 		// Read value until delimiter is found:
@@ -529,7 +530,7 @@ public class JspReader {
 	// Check for an equal sign:
 	skipSpaces();
 	if ( peekChar() != '=' ) 
-	    throw new ParseException(mark(), Constants.getString("jsp.error.attr.novalue",
+	    throw new ParseException(mark(), containerL.getString("jsp.error.attr.novalue",
 						new Object[] { name }));
 	char ch = (char) nextChar();
 	// Get the attribute value:
@@ -584,7 +585,7 @@ public class JspReader {
 	}
 	// Reached EOF:
 	throw new ParseException(mark(),
-			Constants.getString("jsp.error.tag.attr.unterminated"));
+			containerL.getString("jsp.error.tag.attr.unterminated"));
     }
 
     /**
@@ -649,7 +650,7 @@ public class JspReader {
 	}
 	// Reached EOF:
 	throw new ParseException(mark(),
-			Constants.getString("jsp.error.tag.attr.unterminated"));
+			containerL.getString("jsp.error.tag.attr.unterminated"));
     }
 
     /**
@@ -712,9 +713,9 @@ public class JspReader {
 	String name  = (String) attrs.get("name");
 	String value = (String) attrs.get("value");
 	if ( name == null )
- 	    throw new ParseException(mark(), Constants.getString("jsp.error.param.noname"));
+ 	    throw new ParseException(mark(), containerL.getString("jsp.error.param.noname"));
 	if ( value == null )
- 	    throw new ParseException(mark(), Constants.getString("jsp.error.param.novalue"));
+ 	    throw new ParseException(mark(), containerL.getString("jsp.error.param.novalue"));
 	// Put that new binding into the params hashatble:
 	String oldval[] = (String[]) into.get(name);
 	if ( oldval == null ) {

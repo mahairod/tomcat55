@@ -68,6 +68,7 @@ import java.util.Enumeration;
 
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.core.Constants;
+import org.apache.jasper34.core.ContainerLiaison;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -112,8 +113,9 @@ public class ParseUtil {
     }
 
     public static void checkAttributes (String typeOfTag, Hashtable attrs,
-    					ValidAttribute[] validAttributes, Mark start)
-					throws JasperException
+    					ValidAttribute[] validAttributes,
+					Mark start)
+	throws JasperException
     {
 	boolean valid = true;
 	Hashtable temp = (Hashtable)attrs.clone ();
@@ -143,7 +145,7 @@ public class ParseUtil {
 	 * If mandatory attribute is missing then the exception is thrown.
 	 */
 	if (!valid)
-	    throw new ParseException(start, Constants.getString(
+	    throw new ParseException(start, ContainerLiaison.getString(
 			"jsp.error.mandatory.attribute", 
                                  new Object[] { typeOfTag, missingAttribute}));
 
@@ -170,7 +172,7 @@ public class ParseUtil {
 		}
 	    }
 	    if (!valid)
-	        throw new ParseException(start, Constants.getString(
+	        throw new ParseException(start, ContainerLiaison.getString(
 			"jsp.error.invalid.attribute", 
                                  new Object[] { typeOfTag, attribute }));
 	}

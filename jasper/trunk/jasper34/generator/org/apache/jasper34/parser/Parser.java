@@ -60,6 +60,7 @@ import java.util.Enumeration;
 
 import java.io.CharArrayWriter;
 import org.apache.jasper34.core.Constants;
+import org.apache.jasper34.core.ContainerLiaison;
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.jsptree.TagLibraries;
 
@@ -103,14 +104,18 @@ public class Parser {
      * case of an include.
      */
     String currentFile;
+    ContainerLiaison containerL;
 
     public interface Action {
         void execute(Mark start, Mark stop) throws JasperException;
     }
 
-    public Parser(JspReader reader, final ParseEventListener lnr) {
+    public Parser(ContainerLiaison containerL,
+		  JspReader reader, final ParseEventListener lnr) {
+	this.containerL=containerL;
 	this.reader = reader;
-	this.listener = new DelegatingListener(lnr,
+	this.listener = new DelegatingListener(containerL,
+					       lnr,
                                                new Action() {
                                                        public void execute(Mark start, Mark stop) 
                                                            throws JasperException 
@@ -185,7 +190,7 @@ public class Parser {
 		}
 	    if (match == null)
 		throw new ParseException(reader.mark(),
-					 Constants.getString("jsp.error.invalid.directive"));
+					 listener.getContainerLiaison().getString("jsp.error.invalid.directive"));
 
 	    reader.advance(match.length());
 
@@ -205,7 +210,7 @@ public class Parser {
 	    reader.skipSpaces();
 	    if (!reader.matches(close))
                 throw new ParseException(reader.mark(), 
-                                         Constants.getString("jsp.error.unterminated", 
+                                         listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                              new Object[] { open }));
 	    else
 		reader.advance(close.length());
@@ -255,7 +260,7 @@ public class Parser {
 		    
 		    if (!reader.matches(CLOSE_INCLUDE_BODY))
 			throw new ParseException(reader.mark(), 
-						 Constants.getString
+						 listener.getContainerLiaison().getString
 						 ("jsp.error.unterminated", 
 						  new Object[] { OPEN_INCLUDE }));
 		    reader.advance(CLOSE_INCLUDE_BODY.length());
@@ -267,7 +272,7 @@ public class Parser {
 			reader.skipSpaces();
 			if (!reader.matches (OPEN_INDIVIDUAL_PARAM))
 			    throw new ParseException (reader.mark(),
-						      Constants.getString
+						      listener.getContainerLiaison().getString
 						      ("jsp.error.paramexpected"));
 
 			//Parse zero or more param tags.
@@ -278,7 +283,7 @@ public class Parser {
 			
 			    if (!reader.matches (CLOSE_INDIVIDUAL_PARAM))
 				throw new ParseException (reader.mark(),
-							  Constants.getString
+							  listener.getContainerLiaison().getString
 							  ("jsp.error.unterminated",
 							   new Object[] {OPEN_INDIVIDUAL_PARAM}));
 			    reader.advance (CLOSE_INDIVIDUAL_PARAM.length ());
@@ -288,7 +293,7 @@ public class Parser {
 		    
 		    if (!reader.matches(CLOSE_INCLUDE))
 			throw new ParseException(reader.mark(), 
-						 Constants.getString
+						 listener.getContainerLiaison().getString
 						 ("jsp.error.unterminated", 
 						  new Object[] { OPEN_INCLUDE }));
 		    reader.advance(CLOSE_INCLUDE.length());
@@ -336,7 +341,7 @@ public class Parser {
 		if (!reader.matches(CLOSE_FORWARD_NO_BODY)) {
 		    if (!reader.matches(CLOSE_FORWARD_BODY))
 			throw new ParseException(reader.mark(), 
-						 Constants.getString
+						 listener.getContainerLiaison().getString
 						 ("jsp.error.unterminated", 
 						  new Object[] { OPEN_FORWARD }));
 		    reader.advance(CLOSE_FORWARD_BODY.length());
@@ -348,7 +353,7 @@ public class Parser {
 			reader.skipSpaces();
 			if (!reader.matches (OPEN_INDIVIDUAL_PARAM))
 			    throw new ParseException (reader.mark(),
-						      Constants.getString
+						      listener.getContainerLiaison().getString
 						      ("jsp.error.paramexpected"));
 			// Parse zero or more param tags.
 			while (reader.matches(OPEN_INDIVIDUAL_PARAM)) {
@@ -359,7 +364,7 @@ public class Parser {
 			    
 			    if (!reader.matches (CLOSE_INDIVIDUAL_PARAM))
 				throw new ParseException (reader.mark(),
-							  Constants.getString
+							  listener.getContainerLiaison().getString
 							  ("jsp.error.unterminated",
 							   new Object[] {OPEN_INDIVIDUAL_PARAM}));
 			    reader.advance (CLOSE_INDIVIDUAL_PARAM.length ());
@@ -369,7 +374,7 @@ public class Parser {
 		    
 		    if (!reader.matches(CLOSE_FORWARD))
 			throw new ParseException(reader.mark(), 
-						 Constants.getString
+						 listener.getContainerLiaison().getString
 						 ("jsp.error.unterminated", 
 						  new Object[] { OPEN_FORWARD }));
 		    reader.advance(CLOSE_FORWARD.length());
@@ -410,7 +415,7 @@ public class Parser {
 		Mark start = reader.mark();
 		Mark stop = reader.skipUntil(CLOSE_COMMENT);
 		if (stop == null)
-		    throw new ParseException(Constants.getString("jsp.error.unterminated", 
+		    throw new ParseException(listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                                  new Object[] { OPEN_COMMENT }));
 
 		parser.flushCharData(parser.tmplStart, parser.tmplStop);
@@ -459,7 +464,7 @@ public class Parser {
 		reader.skipSpaces();
 		if (!reader.matches(end_open)) 
 		    throw new ParseException(reader.mark(),
-			Constants.getString("jsp.error.unterminated"));
+			listener.getContainerLiaison().getString("jsp.error.unterminated"));
 	        reader.advance(end_open.length());
 		reader.skipSpaces();
 
@@ -468,7 +473,7 @@ public class Parser {
 
 	    Mark stop = reader.skipUntil(close);
 	    if (stop == null)
-		throw new ParseException(Constants.getString("jsp.error.unterminated", 
+		throw new ParseException(listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                              new Object[] { open }));
 
 	    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);	    
@@ -513,7 +518,7 @@ public class Parser {
 		reader.skipSpaces();
 		if (!reader.matches(end_open)) 
 		    throw new ParseException(reader.mark(),
-			Constants.getString("jsp.error.unterminated"));
+			listener.getContainerLiaison().getString("jsp.error.unterminated"));
 	        reader.advance(end_open.length());
 		reader.skipSpaces();
 
@@ -523,7 +528,7 @@ public class Parser {
 	    Mark stop = reader.skipUntil(close);
 	    if (stop == null)
 		throw new ParseException(reader.mark(), 
-                                         Constants.getString("jsp.error.unterminated", 
+                                         listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                                  new Object[] { open }));
 	    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);	    
 	    listener.handleExpression(start, stop, attrs);
@@ -566,7 +571,7 @@ public class Parser {
 		reader.skipSpaces();
 		if (!reader.matches(end_open)) 
 		    throw new ParseException(reader.mark(),
-			Constants.getString("jsp.error.unterminated"));
+			listener.getContainerLiaison().getString("jsp.error.unterminated"));
 	        reader.advance(end_open.length());
 		reader.skipSpaces();
 
@@ -576,7 +581,7 @@ public class Parser {
 	    Mark stop = reader.skipUntil(close);
 	    if (stop == null)
 		throw new ParseException(reader.mark(), 
-                                         Constants.getString("jsp.error.unterminated", 
+                                         listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                                  new Object[] { open }));
 	    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);	    
 	    listener.handleScriptlet(start, stop, attrs);
@@ -618,7 +623,7 @@ public class Parser {
 		if (!reader.matches(CLOSE_BEAN)) {
 		    if (!reader.matches(CLOSE_BEAN_3))
 			throw new ParseException(reader.mark(),
-                                                 Constants.getString("jsp.error.unterminated", 
+                                                 listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                                  new Object[] { "useBean" }));
 		    reader.advance(CLOSE_BEAN_3.length());
                     Mark stop = reader.mark();
@@ -628,11 +633,11 @@ public class Parser {
 		    parser.parse(CLOSE_BEAN_2);
 		    if (oldSize != reader.size) {
 			throw new ParseException (reader.mark(), 
-                                                  Constants.getString("jsp.error.usebean.notinsamefile"));
+                                                  listener.getContainerLiaison().getString("jsp.error.usebean.notinsamefile"));
 		    }
 		    if (!reader.matches(CLOSE_BEAN_2))
 			throw new ParseException(reader.mark(), 
-                                                 Constants.getString("jsp.error.unterminated"
+                                                 listener.getContainerLiaison().getString("jsp.error.unterminated"
 								     , 
                                                                      new Object[] { OPEN_BEAN })
 						 );
@@ -682,7 +687,7 @@ public class Parser {
 		reader.skipSpaces();
 		if (!reader.matches(CLOSE_GETPROPERTY))
 		    throw new ParseException(reader.mark(), 
-                                             Constants.getString("jsp.error.unterminated", 
+                                             listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                                  new Object[] { OPEN_GETPROPERTY }));
 		else
 		    reader.advance(CLOSE_GETPROPERTY.length());
@@ -725,7 +730,7 @@ public class Parser {
 		reader.skipSpaces();
 		if (!reader.matches(CLOSE_SETPROPERTY))
 		    throw new ParseException(reader.mark(), 
-                                             Constants.getString("jsp.error.unterminated", 
+                                             listener.getContainerLiaison().getString("jsp.error.unterminated", 
                                                                  new Object[] { OPEN_SETPROPERTY }));
 		else
 		    reader.advance(CLOSE_SETPROPERTY.length());
@@ -837,7 +842,7 @@ public class Parser {
                             } catch (ParseException ex) {
                                 throw new ParseException(
                                     start,
-                                    Constants.getString("jsp.error.unterminated.user.tag", 
+                                    listener.getContainerLiaison().getString("jsp.error.unterminated.user.tag", 
                                         new Object[]{ParseUtil.escapeXml(tagEnd)}));
 			    }
 			    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);
@@ -901,7 +906,7 @@ public class Parser {
 
 	    if (!reader.matches(END_OPEN_PLUGIN))
 	        throw new ParseException (reader.mark(),
-	                   Constants.getString("jsp.error.plugin.notclosed"));
+	                   listener.getContainerLiaison().getString("jsp.error.plugin.notclosed"));
 	    
 	    reader.advance (END_OPEN_PLUGIN.length ());
 	    reader.skipSpaces ();
@@ -929,20 +934,20 @@ public class Parser {
 			}
 		        if (!reader.matches (OPEN_INDIVIDUAL_PARAM))
 		    	    throw new ParseException (reader.mark(),
-				Constants.getString("jsp.error.paramexpected"));
+				listener.getContainerLiaison().getString("jsp.error.paramexpected"));
 
 			reader.parsePluginParamTag(param);
 			reader.skipSpaces ();
 
 		        if (!reader.matches (CLOSE_INDIVIDUAL_PARAM))
 		    	    throw new ParseException (reader.mark(),
-				Constants.getString(
+				listener.getContainerLiaison().getString(
 					"jsp.error.closeindividualparam"));
 			reader.advance (CLOSE_INDIVIDUAL_PARAM.length ());
 		    }
 		    if (!paramsClosed)
 		    	    throw new ParseException (reader.mark(),
-				Constants.getString("jsp.error.closeparams"));
+				listener.getContainerLiaison().getString("jsp.error.closeparams"));
 		    reader.skipSpaces ();
 		}
 		
@@ -958,7 +963,7 @@ public class Parser {
 
 		if (!reader.matches(CLOSE_PLUGIN)) 
 		    throw new ParseException(reader.mark(), 
-                                          Constants.getString(
+                                          listener.getContainerLiaison().getString(
 					  "jsp.error.unterminated", 
                                            new Object[] { OPEN_PLUGIN }));
 
@@ -1076,7 +1081,7 @@ public class Parser {
 		CoreElement c = (CoreElement) e.nextElement();
 		Mark m = reader.mark();
 		if (c.accept(listener, reader, this)) {
-                    Constants.message("jsp.message.accepted",
+                    listener.getContainerLiaison().message("jsp.message.accepted",
                                       new Object[] { c.getClass().getName(), m },
                                       Log.DEBUG);
 		    accepted = true;

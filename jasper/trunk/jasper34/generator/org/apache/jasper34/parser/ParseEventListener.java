@@ -64,8 +64,9 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 // XXX 
 import org.apache.jasper34.jsptree.TagLibraries;
 
-//import org.apache.jasper34.core.*;
+import org.apache.jasper34.core.ContainerLiaison;
 import org.apache.jasper34.runtime.JasperException;
+
 /**
  * Interface for the JSP code generation backend. At some point should
  * probably try and make this a SAX (XML) listener. 
@@ -73,6 +74,8 @@ import org.apache.jasper34.runtime.JasperException;
  * @author Anil K. Vijendran
  */
 public interface ParseEventListener {
+    public ContainerLiaison getContainerLiaison();
+    
     void setTemplateInfo(Mark start, Mark stop);
     void beginPageProcessing() throws JasperException;
 
