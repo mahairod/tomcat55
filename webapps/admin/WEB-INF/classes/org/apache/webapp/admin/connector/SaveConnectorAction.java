@@ -182,6 +182,9 @@ public final class SaveConnectorAction extends Action {
                 StringBuffer sb = new StringBuffer(domain);
                 sb.append(TomcatTreeBuilder.CONNECTOR_TYPE);
                 sb.append(",port=" + cform.getPortText());
+                
+                ObjectName search = new ObjectName(sb.toString()+",*");
+                
                 String address = cform.getAddress();
                 if ((address!=null) && (address.length()>0) && 
                         (!address.equalsIgnoreCase(" "))) {
@@ -191,8 +194,9 @@ public final class SaveConnectorAction extends Action {
                 }
                 ObjectName oname = new ObjectName(sb.toString());
                                                 
-                // Ensure that the requested connector name is unique
-                if (mBServer.isRegistered(oname)) {
+                // Ensure that the requested connector name and port is unique
+                if (mBServer.isRegistered(oname) ||
+                    (!mBServer.queryNames(search, null).isEmpty())) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("connectorName",
                                new ActionError("error.connectorName.exists"));
