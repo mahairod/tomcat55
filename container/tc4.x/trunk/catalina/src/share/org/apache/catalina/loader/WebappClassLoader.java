@@ -1326,6 +1326,7 @@ public class WebappClassLoader
         // Don't load classes if class loader is stopped
         if (!started) {
             log("Lifecycle error : CL stopped");
+            Thread.currentThread().dumpStack();
             throw new ClassNotFoundException(name);
         }
 
