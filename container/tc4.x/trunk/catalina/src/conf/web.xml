@@ -805,6 +805,14 @@
         <mime-type>audio/x-wav</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>svg</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svgz</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <!-- Wireless Bitmap -->
         <extension>wbmp</extension>
         <mime-type>image/vnd.wap.wbmp</mime-type>
