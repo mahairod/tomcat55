@@ -348,7 +348,6 @@ public final class StandardServer
     public void addService(Service service) {
 
         service.setServer(this);
-        Service oldServices[] = this.services;
 
         synchronized (services) {
             Service results[] = new Service[services.length + 1];

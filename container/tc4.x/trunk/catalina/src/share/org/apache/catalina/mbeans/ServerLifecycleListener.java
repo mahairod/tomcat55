@@ -613,14 +613,12 @@ public class ServerLifecycleListener
                 MBeanUtils.createMBean((Manager) newValue);
             }
         } else if ("realm".equals(propertyName)) {
-            // removeService() has non-null oldValue
             if (oldValue != null) {
                 if (debug >= 5) {
                     log("Removing MBean for Realm " + oldValue);
                 }
                 MBeanUtils.destroyMBean((Realm) oldValue);
             }
-            // addService() has non-null newValue
             if (newValue != null) {
                 if (debug >= 5) {
                     log("Creating MBean for Realm " + newValue);
@@ -628,12 +626,14 @@ public class ServerLifecycleListener
                 MBeanUtils.createMBean((Realm) newValue);
             }
         } else if ("service".equals(propertyName)) {
+            // removeService() has non-null oldValue
             if (oldValue != null) {
                 if (debug >= 5) {
                     log("Removing MBean for Service " + oldValue);
                 }
                 MBeanUtils.destroyMBean((Service) oldValue);
             }
+            // addService() has non-null newValue
             if (newValue != null) {
                 if (debug >= 5) {
                     log("Creating MBean for Service " + newValue);
