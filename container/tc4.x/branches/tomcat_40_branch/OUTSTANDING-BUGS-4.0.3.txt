@@ -28,10 +28,9 @@ acceptable to delay their resolution.
 5976    catalina   Tomcat 4.0.2B2 + Security Manager + JSSE don't work together
 6036    webapp     Problems with URI mapping
 6068    jk         AJP13 "bad read", IOException
-6331    catalina   Cannot add more than one cookie
+6331    jk         Cannot add more than one cookie
 6376    jasper     Improper import statement is generated when JSP page 
                    extends a custom class without package prefix
-6411    catalina   HttpSession.isNew() always returns false
 6420    jk         Loadbalancer mod_jk from 4.02 not working with TC 3.3
 6432    jasper     Jasper should validate that an XML-view of a JSP page 
                    conforms as much as possible based on the DTD supplied 
