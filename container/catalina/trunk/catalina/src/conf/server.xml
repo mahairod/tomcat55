@@ -60,7 +60,7 @@
    -->
 
   <!-- Define the Tomcat Stand-Alone Service -->
-  <Service name="Tomcat-Standalone">
+  <Service name="Catalina">
 
     <!-- A "Connector" represents an endpoint by which requests are received
          and responses are returned.  Each Connector passes requests on to the
@@ -135,7 +135,7 @@
     --> 
          
     <!-- Define the top level container in our container hierarchy -->
-    <Engine name="Standalone" defaultHost="localhost" debug="0">
+    <Engine name="Catalina" defaultHost="localhost" debug="0">
 
       <!-- The request dumper valve dumps useful debugging information about
            the request headers and cookies that were received, and the response
