@@ -66,9 +66,12 @@ import java.io.IOException;
 	** A filter is an object than perform filtering tasks
 	** on either the request to a servlet, or on the response from 
 	** a servlet, or both.<br><br>
-	** Filters do their filtering in the doFilter method. Every Filter has access to 
+	** Filters perform filtering in the <code>doFilter</code> method. Every Filter has access to 
 	** a FilterConfig object from which it can obtain its initialization parameters, a
-	** reference to the ServletContext and a view into the Filter stack.
+	** reference to the ServletContext which it can use, for example, to load resources
+	** needed for filtering tasks.
+	** <p>
+	** Filters are configured in the deployment descriptor of a web application
 	** <p>
 	** Examples that have been identified for this design are<br>
 	** 1) Authentication Filters <br>
@@ -85,31 +88,36 @@ import java.io.IOException;
 
 public interface Filter {
 
-	/** The container calls this method when the Filter is instantiated and
+	/** 
+	* The container calls this method when the Filter is instantiated and
 	** passes in a FilterConfig object. When the container is done with
 	** the Filter, it calls this method, passing in null.
 	*/
 	public void setFilterConfig(FilterConfig filterConfig);
-	/** Return the FilterConfig for this Filter.
+	
+	/** 
+	* Return the FilterConfig for this Filter.
+	* 
 	*/
 	public FilterConfig getFilterConfig();
 
 	/**
-	* The doFilter method of the Filter is called by the container
-	* each time a request/response pair is passed through the stack due
-	* to a client request for the Servlet in the stack.
+	* The <code>doFilter</code> method of the Filter is called by the container
+	* each time a request/response pair is passed through the chain due
+	* to a client request for the Servlet at the end of the chain. The FilterChain passed in to this
+	* method allows the Filter to pass on the request and response to the next entity in the
+	* chain.<p>
 	* A typical implementation of this method would follow the following pattern:- <br>
 	* 1. Examine the request<br>
 	* 2. Optionally wrap the request object with a custom implementation to
 	* filter content or headers for input filtering <br>
 	* 3. Optionally wrap the response object with a custom implementation to
 	* filter content or headers for output filtering <br>
-	* 4. a) <strong>Either</strong> invoke the next entity in the stack using the getFilterConfig().getNext() call
-	** to obtain the next Filter and calling doFilter(), <br>   
-	** 4. b) <strong>or</strong> not pass on the request/response pair to the next entity in the filter stack<br>
-	** 5. Directly set headers on the response after invokation of the next Filter
+	* 4. a) <strong>Either</strong> invoke the next entity in the chain using the FilterChain object (<code>chain.doFilter()</code>), <br>   
+	** 4. b) <strong>or</strong> not pass on the request/response pair to the next entity in the filter chain to block the request processing<br>
+	** 5. Directly set headers on the response after invokation of the next entity in ther filter chain.
 	**/
-    public void doFilter ( ServletRequest request, ServletResponse response ) throws IOException, ServletException;
+    public void doFilter ( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException;
 
 }
 
