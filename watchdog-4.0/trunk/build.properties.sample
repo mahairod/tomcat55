@@ -12,5 +12,8 @@
 
 # The directory containing your binary distribution of the Servlet 2.3
 # and JSP 1.2 API classes
-servletapi.home=/usr/local/jakarta-servletapi-4/dist
+servlet23api.home=/usr/local/jakarta-servletapi-4
 
+# The directory containing your binary distribution of the Servlet 2.2
+# and JSP 1.1 API classes
+servlet22api.home=/usr/local/jakarta-servletapi
