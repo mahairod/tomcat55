@@ -1098,6 +1098,9 @@ public final class StandardWrapper
             Thread.currentThread().getContextClassLoader();
         ClassLoader classLoader = instance.getClass().getClassLoader();
 
+        PrintStream out = System.out;
+        SystemLogHandler.startCapture();
+
         // Call the servlet destroy() method
         try {
             instanceSupport.fireInstanceEvent
@@ -1120,6 +1123,15 @@ public final class StandardWrapper
         } finally {
             // restore the context ClassLoader
             Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
+            // Write captured output
+            String log = SystemLogHandler.stopCapture();
+            if (log != null && log.length() > 0) {
+                if (getServletContext() != null) {
+                    getServletContext().log(log);
+                } else {
+                    out.println(log);
+                }
+            }
         }
 
         // Deregister the destroyed instance
