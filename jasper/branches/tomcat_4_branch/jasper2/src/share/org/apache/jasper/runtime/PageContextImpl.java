@@ -524,12 +524,12 @@ public class PageContextImpl extends PageContext {
             request.removeAttribute("javax.servlet.error.status_code");
             request.removeAttribute("javax.servlet.jsp.jspException");
 
-	} else {
+	    } else {
             // Otherwise throw the exception wrapped inside a ServletException.
-	    // Set the exception as the root cause in the ServletException
-	    // to get a stack trace for the real problem
-	    if (t instanceof IOException) throw (IOException)t;
-	    if (t instanceof ServletException) throw (ServletException)t;
+	        // Set the exception as the root cause in the ServletException
+	        // to get a stack trace for the real problem
+	        if (t instanceof IOException) throw (IOException)t;
+	        if (t instanceof ServletException) throw (ServletException)t;
             if (t instanceof RuntimeException) throw (RuntimeException)t;
             if (t instanceof JspException) {
                 Throwable rootCause = ((JspException)t).getRootCause();
@@ -539,8 +539,8 @@ public class PageContextImpl extends PageContext {
                     throw new ServletException(t);
                 }
             }
-	    throw new ServletException(t);
-	}
+	        throw new ServletException(t);
+	    }
     }
 
     protected JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
