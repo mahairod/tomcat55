@@ -521,11 +521,6 @@ public abstract class ResponseBase
         if (isError()) {
 
             try {
-                flushBuffer();
-            } catch (IOException e) {
-                ;
-            }
-            try {
                 if (this.stream == null)
                     this.stream = createOutputStream();
             } catch (IOException e) {
