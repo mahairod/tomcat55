@@ -206,7 +206,10 @@
   <target name="deploy-main" depends="deploy-static">
     <jar  jarfile="${catalina.deploy}/server/catalina.jar"
           basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**" />
+          excludes="**/org/apache/naming/**,**/connector/warp/**" />
+    <jar  jarfile="${catalina.deploy}/server/warp.jar"
+          basedir="${catalina.build}/classes" 
+          includes="**/connector/warp/**" />
   </target>
 
 
@@ -248,7 +251,10 @@
     </copy>
     <jar  jarfile="${catalina.dist}/server/catalina.jar"
           basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**" />
+          excludes="**/org/apache/naming/**,**/connector/warp/**" />
+    <jar  jarfile="${catalina.dist}/server/catalina.jar"
+          basedir="${catalina.build}/classes" 
+          includes="**/connector/warp/**" />
 
   </target>
 
