@@ -47,6 +47,8 @@
      "anyone" that declares all named users to be assigned this role.  -->
 
 <!ELEMENT role ((user-member|group-member)+|anyone)>
+<!ATTLIST role
+     name       ID    #REQUIRED>
 
 <!-- The "anyone" element declares all defined users in this security domain
      (realm) to be members of the containing group, or assigned the
