@@ -43,8 +43,8 @@ goto cleanup
 if not "%TOMCAT_HOME%" == "" goto gotTomcatHome
 set TOMCAT_HOME=.
 :gotTomcatHome
-if exist "%TOMCAT_HOME%\lib\webserver.jar" goto okTomcatHome
-echo Unable to locate webserver.jar, check the value of TOMCAT_HOME.
+if exist "%TOMCAT_HOME%\lib\servlet.jar" goto okTomcatHome
+echo Unable to locate servlet.jar, check the value of TOMCAT_HOME.
 goto cleanup
 :okTomcatHome
 
@@ -69,7 +69,7 @@ rem ----- Set Up The Runtime Classpath --------------------------------------
 set CP=%TOMCAT_HOME%\classes
 
 rem Try to determine if TOMCAT_HOME contains spaces
-if exist %TOMCAT_HOME%\lib\webserver.jar goto dynClasspath
+if exist %TOMCAT_HOME%\lib\servlet.jar goto dynClasspath
 echo Your TOMCAT_HOME appears to contain spaces.
 echo Unable to set CLASSPATH dynamically.
 goto staticClasspath
@@ -92,12 +92,12 @@ goto chkClasspath
 
 :staticClasspath
 echo Setting your CLASSPATH statically.
-set CP=%CP%;%TOMCAT_HOME%\lib\ant.jar
-set CP=%CP%;%TOMCAT_HOME%\lib\jasper.jar
-set CP=%CP%;%TOMCAT_HOME%\lib\jaxp.jar
-set CP=%CP%;%TOMCAT_HOME%\lib\parser.jar
-set CP=%CP%;%TOMCAT_HOME%\lib\servlet.jar
-set CP=%CP%;%TOMCAT_HOME%\lib\webserver.jar
+if exist "%TOMCAT_HOME%\lib\ant.jar" set CP=%CP%;%TOMCAT_HOME%\lib\ant.jar
+if exist "%TOMCAT_HOME%\lib\jasper.jar" set CP=%CP%;%TOMCAT_HOME%\lib\jasper.jar
+if exist "%TOMCAT_HOME%\lib\jaxp.jar" set CP=%CP%;%TOMCAT_HOME%\lib\jaxp.jar
+if exist "%TOMCAT_HOME%\lib\parser.jar" set CP=%CP%;%TOMCAT_HOME%\lib\parser.jar
+if exist "%TOMCAT_HOME%\lib\servlet.jar" set CP=%CP%;%TOMCAT_HOME%\lib\servlet.jar
+if exist "%TOMCAT_HOME%\lib\webserver.jar" set CP=%CP%;%TOMCAT_HOME%\lib\webserver.jar
 
 :chkClasspath
 if "%CLASSPATH%" == "" goto noClasspath
