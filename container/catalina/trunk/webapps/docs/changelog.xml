@@ -13,6 +13,93 @@
 
 <body>
 
+<section name="Tomcat 5.0.16 (remm)">
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Catch exception in WebappLoader when there is an empty jar file
+      (amyroh)
+      </fix>
+      <fix>
+      <bug>25033</bug>: Calculating the object name should occur as early 
+      as possible, to fix a stop/start scenario based on different object 
+      instances (remm)
+      </fix>
+      <fix>
+      Fix JMX object name generator when there are valves with 
+      the same classname in the pipeline (remm)
+      </fix>
+      <fix>
+      <bug>25079</bug>: CL.getResource will return JAR based URLs for .class
+      files (remm)
+      </fix>
+      <update>
+      Make a lot of manager and session fields protected instead of private
+      (remm)
+      </update>
+      <update>
+      Add many fields in JMX for StandardContext and StandardDefaultContext
+      (remm)
+      </update>
+      <update>
+      Add managerChecksFrequency field to DefaultContext (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <update>
+      General cleanup of the per thread tag handlers (luehe)
+      </update>
+      <fix>
+      In XML syntax, recognize \$ escape sequence in template text (kinman)
+      </fix>
+      <fix>
+      Make sure that white spaces in template texts around 
+      &lt;![CDATA[...]]&gt; are trimmed (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <docs>
+      Balancer webapp documentation (yoavs)
+      </docs>
+      <docs>
+      Add back in reference to using mod_jk for serving static content (glenn)
+      </docs>
+      <docs>
+      Document new flags for the DefaultContext, Context and Resources elements
+      (remm)
+      </docs>
+      <fix>
+      <bug>25078</bug>: Fix serverinfo Ant task (remm)
+      </fix>
+      <fix>
+      The line numbers for uncommenting cgi and ssi keeps on getting out
+      of sync with web.xml: an attempt at rewording to not have them
+      get out of sync (funkman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.15 (remm)">
 
   <subsection name="General">
