@@ -65,24 +65,24 @@
 package org.apache.catalina.logger;
 
 
-import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-import java.util.Set;
-import javax.servlet.ServletException;
-import javax.management.ObjectName;
-import javax.management.MBeanServer;
+
 import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.servlet.ServletException;
+
 import org.apache.catalina.Container;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Logger;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

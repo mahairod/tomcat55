@@ -66,17 +66,13 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-import org.apache.commons.digester.Digester;
-import org.apache.commons.digester.Rule;
-import org.xml.sax.Attributes;
-
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
-
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
+import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
+import org.xml.sax.Attributes;
 
 /**
  * <p>Rule that modifies the docBase of the host, setting it appropriately,

@@ -68,26 +68,17 @@ package org.apache.catalina.realm;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import org.apache.catalina.Container;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Engine;
+
 import org.apache.catalina.Group;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Realm;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Role;
-import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.digester.Digester;
 
 
 /**

@@ -67,23 +67,18 @@ package org.apache.catalina.startup;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
-import org.apache.naming.resources.ResourceAttributes;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
@@ -91,12 +86,11 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.StringManager;
+import org.apache.naming.resources.ResourceAttributes;
 
 
 /**

@@ -64,28 +64,26 @@
 package org.apache.coyote.tomcat5;
 
 import java.io.IOException;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.coyote.ActionCode;
+import org.apache.coyote.Adapter;
+import org.apache.coyote.Request;
+import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.B2CConverter;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.http.Cookies;
 import org.apache.tomcat.util.http.ServerCookie;
-
-import org.apache.coyote.ActionCode;
-import org.apache.coyote.Adapter;
-import org.apache.coyote.Request;
-import org.apache.coyote.Response;
-
-import org.apache.catalina.Context;
-import org.apache.catalina.Globals;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.util.StringManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**

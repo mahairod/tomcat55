@@ -66,8 +66,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.InetAddress;
 
-import org.apache.tomcat.util.IntrospectionUtils;
-
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -79,7 +77,6 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
-import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
@@ -87,16 +84,12 @@ import org.apache.catalina.core.StandardService;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.net.ServerSocketFactory;
-import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.security.SecurityConfig;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-
-import javax.management.ObjectName;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.IntrospectionUtils;
 
 
 /**

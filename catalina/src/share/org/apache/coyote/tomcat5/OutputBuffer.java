@@ -61,21 +61,17 @@ package org.apache.coyote.tomcat5;
 
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 
+import org.apache.catalina.connector.ClientAbortException;
+import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.C2BConverter;
 import org.apache.tomcat.util.buf.CharChunk;
-
-import org.apache.coyote.Response;
-
-import org.apache.catalina.connector.ClientAbortException;
 
 
 /**

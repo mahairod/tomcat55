@@ -67,9 +67,9 @@ package org.apache.catalina.util;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
+
 import javax.servlet.http.Cookie;
 
 

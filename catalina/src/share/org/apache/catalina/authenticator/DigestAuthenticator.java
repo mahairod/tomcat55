@@ -66,17 +66,18 @@ package org.apache.catalina.authenticator;
 
 
 import java.io.IOException;
-import java.security.Principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.util.MD5Encoder;
 

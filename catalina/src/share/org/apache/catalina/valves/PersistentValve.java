@@ -66,25 +66,23 @@ package org.apache.catalina.valves;
 
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Session;
-import org.apache.catalina.ValveContext;
-import org.apache.catalina.util.StringManager;
-import org.apache.catalina.valves.ValveBase;
-import org.apache.catalina.Logger;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.Store;
+import org.apache.catalina.ValveContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.session.PersistentManager;
-import org.apache.catalina.session.ManagerBase;
+import org.apache.catalina.util.StringManager;
 
 
 /**

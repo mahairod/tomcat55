@@ -65,7 +65,6 @@
 package org.apache.catalina;
 
 
-import java.util.EventObject;
 
 
 /**

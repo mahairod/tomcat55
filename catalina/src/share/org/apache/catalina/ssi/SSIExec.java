@@ -64,24 +64,11 @@
 
 package org.apache.catalina.ssi;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
+
 import org.apache.catalina.util.IOTools;
 
 /**
