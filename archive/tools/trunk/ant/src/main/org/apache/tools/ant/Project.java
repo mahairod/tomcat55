@@ -246,23 +246,62 @@ public class Project {
     }
 
     public void addTaskDefinition(String taskName, Class taskClass) {
-	String msg = " +User task: " + taskName + "     " +
-	    taskClass.getName();
-	log(msg, MSG_VERBOSE);
-	taskClassDefinitions.put(taskName, taskClass);
+        String msg = " +User task: " + taskName + "     " + taskClass.getName();
+        log(msg, MSG_VERBOSE);
+        taskClassDefinitions.put(taskName, taskClass);
     }
 
-    public void addTarget(Target target) {
-	String msg = " +Target: " + target.getName();
-	log(msg, MSG_VERBOSE);
-	targets.put(target.getName(), target);
+    /**
+     * This call expects to add a <em>new</em> Target.
+     * @param target is the Target to be added to the current
+     * Project.
+     * @exception BuildException if the Target already exists
+     * in the project.
+     * @see Project#addOrReplaceTarget to replace existing Targets.
+     */
+    public void addTarget(Target target) throws BuildException {
+        String name = target.getName();
+        if (targets.get(name) != null) {
+            throw new BuildException("Duplicate target: `"+name+"'");
+        }
+        addOrReplaceTarget(name, target);
     }
     
-    public void addTarget(String targetName, Target target) {
-	String msg = " +Target: " + targetName;
-	log(msg, MSG_VERBOSE);
-	targets.put(targetName, target);
+    /**
+     * This call expects to add a <em>new</em> Target.
+     * @param target is the Target to be added to the current
+     * Project.
+     * @param targetName is the name to use for the Target
+     * @exception BuildException if the Target already exists
+     * in the project.
+     * @see Project#addOrReplaceTarget to replace existing Targets.
+     */
+    public void addTarget(String targetName, Target target)
+        throws BuildException {
+        if (targets.get(targetName) != null) {
+            throw new BuildException("Duplicate target: `"+targetName+"'");
+        }
+        addOrReplaceTarget(targetName, target);
     }
+
+    /**
+     * @param target is the Target to be added or replaced in
+     * the current Project.
+     */
+    public void addOrReplaceTarget(Target target) {
+	     addOrReplaceTarget(target.getName(), target);
+    }
+    
+    /**
+     * @param target is the Target to be added/replaced in
+     * the current Project.
+     * @param targetName is the name to use for the Target
+     */
+    public void addOrReplaceTarget(String targetName, Target target) {
+        String msg = " +Target: " + targetName;
+        log(msg, MSG_VERBOSE);
+        targets.put(targetName, target);
+ 	}
 
     public Task createTask(String taskType) throws BuildException {
 	Class c = (Class)taskClassDefinitions.get(taskType);
