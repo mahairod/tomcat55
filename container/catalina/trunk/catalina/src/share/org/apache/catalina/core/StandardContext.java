@@ -3738,8 +3738,9 @@ public class StandardContext
         boolean ok = true;
 
         // Set config file name
-        if (getConfigFile() == null) {
-            String appBase = getAppBase();
+        String appBase = getAppBase();
+        if (getConfigFile() == null && appBase != null) {
+            
             String name = getName();
             if (name.equals("")) {
                 name = "ROOT";
