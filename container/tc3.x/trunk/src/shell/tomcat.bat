@@ -102,9 +102,10 @@ set CP=%CP%;%TOMCAT_HOME%\lib\parser.jar
 set CP=%CP%;%TOMCAT_HOME%\lib\servlet.jar
 set CP=%CP%;%TOMCAT_HOME%\lib\tomcat.jar
 set CP=%CP%;%TOMCAT_HOME%\lib\tomcat_core.jar
-set CP=%CP%;%TOMCAT_HOME%\lib\tomcat_config.jar
 set CP=%CP%;%TOMCAT_HOME%\lib\tomcat_modules.jar
 set CP=%CP%;%TOMCAT_HOME%\lib\tomcat_util.jar
+set CP=%CP%;%TOMCAT_HOME%\lib\tomcat-startup.jar
+set CP=%CP%;%TOMCAT_HOME%\lib\stop-tomcat.jar
 set CP=%CP%;%TOMCAT_HOME%\lib\facade22.jar
 
 :chkClasspath
@@ -151,7 +152,7 @@ goto cleanup
 
 :startSecure
 echo Starting Tomcat with a SecurityManager
-%_SECSTARTJAVA% %TOMCAT_OPTS% -Djava.security.manager -Djava.security.policy=="%TOMCAT_HOME%/conf/tomcat.policy" -Dtomcat.home="%TOMCAT_HOME%" org.apache.tomcat.startup.Tomcat %3 %4 %5 %6 %7 %8 %9
+%_SECSTARTJAVA% %TOMCAT_OPTS% -Djava.security.manager -Djava.security.policy="%TOMCAT_HOME%/conf/tomcat.policy" -Dtomcat.home="%TOMCAT_HOME%" org.apache.tomcat.startup.Tomcat %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :runServer
