@@ -454,6 +454,7 @@ public class DeltaManager
                     //correct timestamp, isValid returns true, cause accessCount=1
                     session.access();
                     //make sure that the session gets ready to expire if needed
+                    session.resetDeltaRequest();
                     session.setAccessCount(0);
                     sessions.put(session.getId(), session);
                 }
