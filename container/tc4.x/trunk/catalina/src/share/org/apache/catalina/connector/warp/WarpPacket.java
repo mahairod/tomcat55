@@ -66,11 +66,11 @@ public class WarpPacket {
     protected int size=0;
 
     /* Pointer to the last byte read in the buffer */
-    private int pointer=0;
+    protected int pointer=0;
     /* Type of this packet */
     private int type=-1;
     /* Maximum value for a 16 bit unsigned value (0x0ffff +1) */
-    private static final int MAX_LENGTH=65536;
+    private static final int MAX_LENGTH=65535;
 
     /**
      * Construct a new WarpPacket instance.
@@ -158,6 +158,7 @@ public class WarpPacket {
      */
     public void writeString(String string) {
         try {
+            if (string==null) string="";
             byte temp[]=string.getBytes("UTF-8");
             if ((this.size+temp.length+2)>MAX_LENGTH)
                 throw new ArrayIndexOutOfBoundsException("Too much data");
