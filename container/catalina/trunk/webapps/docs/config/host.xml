@@ -450,12 +450,6 @@
         utilized for access control decisions across <strong>all</strong>
         of the associated web applications, without challenging the user
         to authenticate themselves to each application individually.</li>
-    <li>As soon as the user logs out of one web application (for example,
-        by invalidating or timing out the corresponding session if form
-        based login is used), the user's sessions in <strong>all</strong>
-        web applications will be invalidated.  Any subsequent attempt to
-        access a protected resource in any application will require the
-        user to authenticate himself or herself again.</li>
     <li>The Single Sign On feature utilizes HTTP cookies to transmit a token
         that associates each request with the saved user identity, so it can
         only be utilized in client environments that support cookies.</li>
