@@ -109,7 +109,7 @@ abstract public class TagLibraryValidator {
      * Set the init data in the TLD for this validator.
      * Parameter names are keys, and parameter values are the values.
      *
-     * @param initMap A Map describing the init parameters
+     * @param map A Map describing the init parameters
      */
     public void setInitParameters(Map map) {
 	initParameters = map;
@@ -135,11 +135,13 @@ abstract public class TagLibraryValidator {
      *
      * @param prefix the value of the prefix argument in the directive
      * @param uri the value of the uri argument in the directive
-     * @param thePage the JspData page object
+     * @param page the JspData page object
      * @return A null object, or zero length array if no errors, an array
      * of ValidationMessages otherwise.
      */
-    public ValidationMessage[] validate(String prefix, String uri, PageData page) {
+    public ValidationMessage[] validate(String prefix, String uri, 
+        PageData page) 
+    {
 	return null;
     }
 

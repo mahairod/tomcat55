@@ -64,6 +64,8 @@ import javax.servlet.jsp.JspContext;
  * class implements the SimpleTag interface and adds additional
  * convenience methods including getter methods for the properties in
  * SimpleTag.
+ *
+ * @since JSP2.0
  */
 public class SimpleTagSupport 
     implements SimpleTag
@@ -80,15 +82,28 @@ public class SimpleTagSupport
     /** 
      * Default processing of the tag does nothing.
      *
+     * @throws JspException Subclasses can throw JspException to indicate
+     *     an error occurred while processing this tag.
+     * @throws javax.servlet.jsp.SkipPageException If the page that
+     *     (either directly or indirectly) invoked this tag is to
+     *     cease evaluation.  A Simple Tag Handler generated from a 
+     *     tag file must throw this exception if an invoked Classic 
+     *     Tag Handler returned SKIP_PAGE or if an invoked Simple
+     *     Tag Handler threw SkipPageException or if an invoked Jsp Fragment
+     *     threw a SkipPageException.
+     * @throws IOException Subclasses can throw IOException if there was
+     *     an error writing to the output stream
      * @see SimpleTag#doTag()
      */ 
     public void doTag() 
-        throws javax.servlet.jsp.JspException 
+        throws javax.servlet.jsp.JspException, java.io.IOException
     {
     }
     
     /**
      * Sets the parent of this tag, for collaboration purposes.
+     *
+     * @param parent the tag that encloses this tag
      */
     public void setParent( JspTag parent ) {
         this.parentTag = parent;
@@ -96,15 +111,18 @@ public class SimpleTagSupport
     
     /**
      * Returns the parent of this tag, for collaboration purposes.
+     *
+     * @return the parent of this tag
      */ 
     public JspTag getParent() {
         return this.parentTag;
     }
     
     /**
-     * Stores the provided page context in the protected 
+     * Stores the provided JSP context in the protected 
      * jspContext field.
      * 
+     * @param pc the page context for this invocation
      * @see SimpleTag#setJspContext
      */
     public void setJspContext( JspContext pc ) {
@@ -114,6 +132,8 @@ public class SimpleTagSupport
     /**
      * Returns the page context passed in by the container via 
      * setJspContext.
+     *
+     * @return the page context for this invocation
      */
     public JspContext getJspContext() {
         return this.jspContext;
@@ -122,6 +142,8 @@ public class SimpleTagSupport
     /** 
      * Stores the provided JspFragment.
      *
+     * @param jspBody The fragment encapsulating the body of this tag, or
+     *     null if this tag as a body content type of empty.
      * @see SimpleTag#setJspBody
      */ 
     public void setJspBody( JspFragment jspBody ) {
@@ -129,7 +151,10 @@ public class SimpleTagSupport
     }
     
     /**
-     * Returns the body pass in by the container via setJspBody
+     * Returns the body passed in by the container via setJspBody
+     *
+     * @return the fragment encapsulating the body of this tag, or
+     *    null if this tag has a body content type of empty.
      */
     public JspFragment getJspBody() {
         return this.jspBody;

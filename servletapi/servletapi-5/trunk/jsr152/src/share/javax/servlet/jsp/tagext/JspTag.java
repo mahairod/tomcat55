@@ -57,6 +57,8 @@ package javax.servlet.jsp.tagext;
 /**
  * Serves as a base class for Tag and SimpleTag.  
  * This is mostly for organizational and type-safety purposes.
+ *
+ * @since JSP2.0
  */
 public interface JspTag {
 }

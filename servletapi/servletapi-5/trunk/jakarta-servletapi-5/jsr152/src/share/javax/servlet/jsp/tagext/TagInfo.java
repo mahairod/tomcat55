@@ -86,8 +86,9 @@ public class TagInfo {
     
     /**
      * static constant for getBodyContent() when it is scriptless
+     * 
+     * @since JSP2.0
      */ 
-    
     public static final String BODY_CONTENT_SCRIPTLESS = "SCRIPTLESS";
 
     /**
@@ -152,7 +153,7 @@ public class TagInfo {
      * @param displayName A short name to be displayed by tools
      * @param smallIcon Path to a small icon to be displayed by tools
      * @param largeIcon Path to a large icon to be displayed by tools
-     * @param tagVariableInfo An array of a TagVariableInfo (or null)
+     * @param tvi An array of a TagVariableInfo (or null)
      */
     public TagInfo(String tagName,
 	    String tagClassName,
@@ -203,9 +204,10 @@ public class TagInfo {
      * @param displayName A short name to be displayed by tools
      * @param smallIcon Path to a small icon to be displayed by tools
      * @param largeIcon Path to a large icon to be displayed by tools
-     * @param tagVariableInfo An array of a TagVariableInfo (or null)
-     * @param tfai An array of TagFragmentAttributeInfo (or null)
+     * @param tvi An array of a TagVariableInfo (or null)
      * @param dynamicAttributes True if supports dynamic attributes
+     *
+     * @since JSP2.0
      */
     public TagInfo(String tagName,
             String tagClassName,
@@ -218,7 +220,6 @@ public class TagInfo {
             String smallIcon,
             String largeIcon,
             TagVariableInfo[] tvi,
-            TagFragmentAttributeInfo[] tfai,
             boolean dynamicAttributes) {
         this.tagName       = tagName;
         this.tagClassName  = tagClassName;
@@ -231,7 +232,6 @@ public class TagInfo {
         this.smallIcon = smallIcon;
         this.largeIcon = largeIcon;
         this.tagVariableInfo = tvi;
-        this.tagFragmentAttributes = tfai;
         this.dynamicAttributes = dynamicAttributes;
 
         if (tagExtraInfo != null)
@@ -302,6 +302,7 @@ public class TagInfo {
      * @param data The translation-time TagData instance.
      * @return A null object, or zero length array if no errors, an
      *     array of ValidationMessages otherwise.
+     * @since JSP2.0
      */
     public ValidationMessage[] validate( TagData data ) {
 	TagExtraInfo tei = getTagExtraInfo();
@@ -441,21 +442,11 @@ public class TagInfo {
     // ============== JSP 2.0 TLD Information ========
 
     /**
-     * Get TagFragmentAttributeInfo objects associated with this TagInfo
-     *
-     * @return A TagFragmentAttributeInfo array associated with this TagInfo
-     */
-
-    public TagFragmentAttributeInfo[] getFragmentAttributes() {
-        return tagFragmentAttributes;
-    }
-
-    /**
      * Get dynamicAttributes associated with this TagInfo
-     s*
+     *
      * @return True if tag handler supports dynamic attributes
+     * @since JSP2.0
      */
-
     public boolean hasDynamicAttributes() {
         return dynamicAttributes;
     }
@@ -483,6 +474,5 @@ public class TagInfo {
     /*
      * Additional private fields for 2.0 info
      */
-    private TagFragmentAttributeInfo[] tagFragmentAttributes;
     private boolean dynamicAttributes;
 }

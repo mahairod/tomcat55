@@ -58,8 +58,10 @@ package javax.servlet.jsp.tagext;
 /**
  * Encapsulates a portion of JSP code in an object that 
  * can be invoked as many times as needed.  JSP Fragments are defined 
- * using JSP syntax as the body of a tag or the body of a 
- * &lt;jsp:attribute&gt; standard action, during a tag invocation.
+ * using JSP syntax as the body of a tag for an invocation to a SimpleTag 
+ * handler, or as the body of a &lt;jsp:attribute&gt; standard action
+ * specifying the value of an attribute that is declared as a fragment,
+ * or to be of type JspFragment in the TLD.
  * <p>
  * The definition of the JSP fragment must only contain template 
  * text and JSP action elements.  It must not contain, for example, 
@@ -81,6 +83,8 @@ package javax.servlet.jsp.tagext;
  * to generate a single helper class for each page that implements 
  * JspFragment. Upon construction, a discriminator can be passed to 
  * select which fragment that instance will execute.
+ *
+ * @since JSP2.0
  */
 public interface JspFragment {
 
@@ -97,15 +101,17 @@ public interface JspFragment {
      *     Keys in this map are parameter names, and the 
      *     values are parameter values.  This allows the invoker to 
      *     parameterize a fragment invocation.
-     * @throws javax.servlet.jsp.JspException
+     * @throws javax.servlet.jsp.JspException Thrown if an error occured
+     *     while invoking this fragment.
      * @throws javax.servlet.jsp.SkipPageException Thrown if the page
      *     that (either directly or indirectly) invoked the tag handler that
      *     invoked this fragment is to cease evaluation.  The container
      *     must throw this exception if a Classic Tag Handler returned
      *     Tag.SKIP_PAGE or if a Simple Tag Handler threw SkipPageException.
+     * @throws java.io.IOException If there was an error writing to the 
+     *     stream.
      */
-    public void invoke( java.io.Writer out, 
-        java.util.Map params )
-        throws javax.servlet.jsp.JspException;
+    public void invoke( java.io.Writer out, java.util.Map params )
+        throws javax.servlet.jsp.JspException, java.io.IOException;
 
 }

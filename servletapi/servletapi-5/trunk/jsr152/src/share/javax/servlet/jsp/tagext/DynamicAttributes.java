@@ -64,8 +64,9 @@ package javax.servlet.jsp.tagext;
  * <code>setDynamicAttribute()</code> method is called, with the name and
  * value of the attribute.  It is the responsibility of the tag to 
  * remember the names and values of the dynamic attributes.
+ *
+ * @since JSP2.0
  */
-
 public interface DynamicAttributes {
     
     /**

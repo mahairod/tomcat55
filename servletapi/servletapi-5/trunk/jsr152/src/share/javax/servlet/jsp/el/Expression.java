@@ -50,47 +50,42 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
- *
  */ 
- 
-package javax.servlet.jsp;
+
+package javax.servlet.jsp.el;
 
 import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.IOException;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+import java.util.Map;
 
 /**
- * The HttpJspPage interface describes the interaction that a JSP Page
- * Implementation Class must satisfy when using the HTTP protocol.
+ * <p>The interface for a prepared expression.</p>
  *
- * <p>
- * The behaviour is identical to that of the JspPage, except for the signature
- * of the _jspService method, which is now expressible in the Java type
- * system and included explicitly in the interface.
- * 
- * @see JspPage
+ * <p>An instance of an Expression can be obtained via from an ExpressionEvaluator
+ * instance.</p>
+ *
+ * <p>An Expression may or not have done a syntactic parse of the expression.  A client
+ * invoking the evaluate() mehod should be ready for the case where ELParseException
+ * exceptions are raised. </p>
+ *
+ * @since JSP2.0
  */
+public interface Expression {
 
-public interface HttpJspPage extends JspPage {
-
-    /** The _jspService()method corresponds to the body of the JSP page. This
-     * method is defined automatically by the JSP container and should never
-     * be defined by the JSP page author.
-     * <p>
-     * If a superclass is specified using the extends attribute, that
-     * superclass may choose to perform some actions in its service() method
-     * before or after calling the _jspService() method.  See using the extends
-     * attribute in the JSP_Engine chapter of the JSP specification.
+    /** 
+     * Evaluates an expression that was previously prepared.  In some implementations
+     * preparing an expression involves full syntactic validation, but others may
+     * not do so.  Evaluating the expression may raise an ELParseException as well
+     * as other ELExceptions due to run-time evaluation.
      *
-     * @param request Provides client request information to the JSP.
-     * @param response Assists the JSP in sending a response to the client.
-     * @throws ServletException Thrown if an error occurred during the 
-     *     processing of the JSP and that the container should take 
-     *     appropriate action to clean up the request.
-     * @throws IOException Thrown if an error occurred while writing the
-     *     response for this page.
-     */
-    public void _jspService(HttpServletRequest request,
-                            HttpServletResponse response)
-       throws ServletException, IOException;
+     * @param vResolver A VariableResolver instance that can be used at runtime to
+     *   resolve the name of implicit objects into Objects.
+     * @return The result of the expression evaluation or null if errors were encountered.
+     *
+     * @exception ELException Thrown if the expression evaluation failed.
+     */ 
+    public Object evaluate( VariableResolver vResolver )
+      throws ELException; 
 }
+

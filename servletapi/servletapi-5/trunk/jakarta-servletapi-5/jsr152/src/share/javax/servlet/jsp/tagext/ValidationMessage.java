@@ -57,7 +57,7 @@ package javax.servlet.jsp.tagext;
 
 
 /**
- * A validation message from a TagLibraryValidator.
+ * A validation message from either TagLibraryValidator or TagExtraInfo.
  * <p>
  * As of JSP 2.0, a JSP container must support a jsp:id attribute
  * to provide higher quality validation errors.

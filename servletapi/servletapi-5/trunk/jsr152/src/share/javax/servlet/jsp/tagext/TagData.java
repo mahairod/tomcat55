@@ -133,6 +133,7 @@ public class TagData implements Cloneable {
      * Returns the distinguished object REQUEST_TIME_VALUE if
      * the value is request time. Returns null if the attribute is not set.
      *
+     * @param attName the name of the attribute
      * @return the attribute's value object
      */
 
@@ -154,6 +155,7 @@ public class TagData implements Cloneable {
     /**
      * Get the value for a given attribute.
      *
+     * @param attName the name of the attribute
      * @return the attribute value string
      * @throws ClassCastException if attribute value is not a String
      */

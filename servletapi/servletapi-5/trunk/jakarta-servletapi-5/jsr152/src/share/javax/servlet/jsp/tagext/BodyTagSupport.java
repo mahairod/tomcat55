@@ -94,7 +94,8 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
     /**
      * Default processing of the start tag returning EVAL_BODY_BUFFERED
      *
-     * @return EVAL_BODY_BUFFERED;
+     * @return EVAL_BODY_BUFFERED
+     * @throws JspException if an error occurred while processing this tag
      * @see BodyTag#doStartTag
      */
  
@@ -107,6 +108,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
      * Default processing of the end tag returning EVAL_PAGE.
      *
      * @return EVAL_PAGE
+     * @throws JspException if an error occurred while processing this tag
      * @see Tag#doEndTag
      */
 
@@ -135,6 +137,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
      * Prepare for evaluation of the body just before the first body evaluation:
      * no action.
      *
+     * @throws JspException if an error occurred while processing this tag
      * @see #setBodyContent
      * @see #doAfterBody
      * @see BodyTag#doInitBody
@@ -149,6 +152,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
      * By default nothing is done with the bodyContent data (if any).
      *
      * @return SKIP_BODY
+     * @throws JspException if an error occurred while processing this tag
      * @see #doInitBody
      * @see BodyTag#doAfterBody
      */
@@ -193,5 +197,8 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
 
     // protected fields
 
+    /**
+     * The current BodyContent for this BodyTag
+     */
     protected BodyContent   bodyContent;
 }

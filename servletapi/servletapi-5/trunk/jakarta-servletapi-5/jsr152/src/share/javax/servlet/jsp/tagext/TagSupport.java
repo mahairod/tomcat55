@@ -155,6 +155,7 @@ public class TagSupport implements IterationTag, Serializable {
      * Default processing of the start tag, returning SKIP_BODY.
      *
      * @return SKIP_BODY
+     * @throws JspException if an error occurs while processing this tag
      *
      * @see Tag#doStartTag()
      */
@@ -167,6 +168,7 @@ public class TagSupport implements IterationTag, Serializable {
      * Default processing of the end tag returning EVAL_PAGE.
      *
      * @return EVAL_PAGE
+     * @throws JspException if an error occurs while processing this tag
      *
      * @see Tag#doEndTag()
      */
@@ -180,6 +182,7 @@ public class TagSupport implements IterationTag, Serializable {
      * Default processing for a body
      *
      * @return SKIP_BODY
+     * @throws JspException if an error occurs while processing this tag
      *
      * @see IterationTag#doAfterBody()
      */
@@ -246,7 +249,7 @@ public class TagSupport implements IterationTag, Serializable {
     /**
      * Set the page context.
      *
-     * @param pageContenxt The PageContext.
+     * @param pageContext The PageContext.
      * @see Tag#setPageContext
      */
 
@@ -312,10 +315,16 @@ public class TagSupport implements IterationTag, Serializable {
 
     private   Tag         parent;
     private   Hashtable   values;
+    /**
+     * The value of the id attribute of this tag; or null.
+     */
     protected String	  id;
 
     // protected fields
 
+    /**
+     * The PageContext
+     */
     protected PageContext pageContext;
 }
 

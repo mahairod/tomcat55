@@ -178,10 +178,10 @@ public class VariableInfo {
      * These objects can be created (at translation time) by the TagExtraInfo
      * instances.
      *
-     * @param id The name of the scripting variable
-     * @param className The name of the scripting variable
+     * @param varName The name of the scripting variable
+     * @param className The type of this variable
      * @param declare If true, it is a new variable (in some languages this will
-     * require a declaration)
+     *     require a declaration)
      * @param scope Indication on the lexical scope of the variable
      */
 
@@ -196,11 +196,47 @@ public class VariableInfo {
     }
 
     // Accessor methods
-    public String getVarName() { return varName; }
-    public String getClassName() { return className; }
-    public boolean getDeclare() { return declare; }
-    public int getScope() { return scope; }
-
+    
+    /**
+     * Returns the name of the scripting variable
+     *
+     * @return the name of the scripting variable
+     */
+    public String getVarName() { 
+        return varName; 
+    }
+    
+    /**
+     * Returns the type of this variable
+     *
+     * @return the type of this variable
+     */
+    public String getClassName() { 
+        return className; 
+    }
+    
+    /**
+     * Returns whether this is a new variable.
+     * If so, in some languages this will require a declaration.
+     *
+     * @return whether this is a new variable.
+     */
+    public boolean getDeclare() { 
+        return declare; 
+    }
+    
+    /**
+     * Returns the lexical scope of the variable.
+     * 
+     * @return the lexical scope of the variable, either AT_BEGIN, AT_END,
+     *    or NESTED.
+     * @see #AT_BEGIN
+     * @see #AT_END
+     * @see #NESTED
+     */
+    public int getScope() { 
+        return scope; 
+    }
 
 
     // == private data

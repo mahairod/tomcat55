@@ -59,8 +59,9 @@ package javax.servlet.jsp.tagext;
  * Tag information for a tag file in a Tag Library;
  * This class is instantiated from the Tag Library Descriptor file (TLD)
  * and is available only at translation time.
+ *
+ * @since JSP2.0
  */
-
 public class TagFileInfo {
 
     /**
@@ -108,6 +109,8 @@ public class TagFileInfo {
     /**
      * Returns information about this tag, parsed from the directives 
      * in the tag file.
+     *
+     * @return a TagInfo object containing information about this tag
      */
     public TagInfo getTagInfo() {
         return tagInfo;

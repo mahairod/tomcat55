@@ -127,6 +127,7 @@ public abstract class TagExtraInfo {
      * @param data The TagData instance.
      * @return A null object, or zero length array if no errors, an 
      *     array of ValidationMessages otherwise.
+     * @since JSP2.0
      */
     public ValidationMessage[] validate( TagData data ) {
 	ValidationMessage[] result = null;
