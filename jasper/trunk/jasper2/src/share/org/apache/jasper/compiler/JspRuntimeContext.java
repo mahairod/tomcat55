@@ -127,6 +127,8 @@ public final class JspRuntimeContext implements Runnable {
                 factory.getClass().getClassLoader().loadClass( basePackage +
                     "runtime.ServletResponseWrapperInclude");
                 factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.TagHandlerPool");
+                factory.getClass().getClassLoader().loadClass( basePackage +
                     "servlet.JspServletWrapper");
             } catch (ClassNotFoundException ex) {
                 System.out.println(
