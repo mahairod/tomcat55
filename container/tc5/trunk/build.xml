@@ -1630,6 +1630,16 @@
       <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
 
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${jaxen.loc}"/>
+      <param name="destfile" value="${jaxen.jar}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${saxpath.loc}"/>
+      <param name="destfile" value="${saxpath.jar}"/>
+    </antcall>
+
     <!-- Build the dependencies that are not yet released -->
     <antcall target="build-depends"/>
 

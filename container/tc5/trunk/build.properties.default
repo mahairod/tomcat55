@@ -220,11 +220,13 @@ activation.jar=${activation.lib}/activation.jar
 # ----- Jaxen ( required by taglibs/standard required by jasper ) -----
 jaxen.home=${base.path}/jaxen-1.0-FCS
 jaxen.jar=${jaxen.home}/jaxen-full.jar
+jaxen.loc=${base-sf.loc}/jaxen/jaxen-1.0-FCS.tar.gz
 
 
 # ----- Saxpath ( required by taglibs/standard required by jasper ) -----
 saxpath.home=${base.path}/saxpath-1.0-FCS
 saxpath.jar=${saxpath.home}/saxpath.jar
+saxpath.loc=${base-sf.loc}/saxpath/saxpath-1.0.tar.gz
 
 
 # ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
