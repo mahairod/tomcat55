@@ -29,9 +29,12 @@
 <section name="Tomcat 5.5.4 (yoavs)">
   <subsection name="General">
     <changelog>
-      <fix>
+      <update>
         <bug>31671</bug>: Update web.xml files to 2.4 schema where applicable. (yoavs)
-      </fix>
+      </update>
+      <update>
+        <bug>31912</bug>: Add PNG and CSS file types to replication filter default. (yoavs)
+      </update>
     </changelog>
   </subsection>
   
