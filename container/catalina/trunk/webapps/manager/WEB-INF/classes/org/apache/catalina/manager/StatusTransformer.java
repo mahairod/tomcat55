@@ -214,7 +214,7 @@ public class StatusTransformer {
             writer.write("<memory");
             writer.write(" free='" + Runtime.getRuntime().freeMemory() + "'");
             writer.write(" total='" + Runtime.getRuntime().totalMemory() + "'");
-            writer.write(" max='" + Runtime.getRuntime().maxMemory() + "'/>");
+            writer.write(" max='" + JdkCompat.getJdkCompat().getMaxMemory() + "'/>");
 
             writer.write("</jvm>");
         }
