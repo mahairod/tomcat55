@@ -79,6 +79,8 @@ import org.apache.jasper.compiler.JspCompiler;
 import org.apache.jasper.compiler.SunJavaCompiler;
 import org.apache.jasper.compiler.JavaCompiler;
 
+import org.apache.tomcat.logging.Logger;
+
 /**
  * A place holder for various things that are used through out the JSP
  * engine. This is a per-request/per-context data structure. Some of
@@ -297,7 +299,7 @@ public class JspEngineContext implements JspCompilationContext {
             } catch (Exception ex) {
 		Constants.message("jsp.warning.compiler.class.cantcreate",
 				  new Object[] { jspCompilerPlugin, ex }, 
-				  Constants.FATAL_ERRORS);
+				  Logger.FATAL);
                 javac = new SunJavaCompiler();
 	    }
 	} else {

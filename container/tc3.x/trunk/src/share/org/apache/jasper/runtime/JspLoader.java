@@ -80,6 +80,8 @@ import org.apache.jasper.JspEngineContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.compiler.Compiler;
 
+import org.apache.tomcat.logging.Logger;
+
 /**
  * This is a class loader that loads JSP files as though they were
  * Java classes. It calls the compiler to compile the JSP file into a
@@ -255,7 +257,7 @@ public class JspLoader extends ClassLoader {
         if (!jars.contains(jarFileName)) {
             Constants.message("jsp.message.adding_jar",
                               new Object[] { jarFileName },
-                              Constants.MED_VERBOSITY);
+                              Logger.INFORMATION);
             
             jars.addElement(jarFileName);
         }

@@ -73,7 +73,6 @@ import javax.servlet.ServletContext;
  * @author Hans Bergsten
  */
 public interface Options {
-
     /**
      * Are we keeping generated code around?
      */
@@ -95,11 +94,6 @@ public interface Options {
     public String getIeClassId();
     
     /**
-     * What is the current verbosity level?
-     */
-    public int getJspVerbosityLevel();
-
-    /**
      * What is my scratch dir?
      */
     public File getScratchDir();
@@ -120,6 +114,5 @@ public interface Options {
      * Path of the compiler to use for compiling JSP pages.
      */
     public String getJspCompilerPath();
-
+    
 }
-
