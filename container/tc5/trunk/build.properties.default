@@ -69,7 +69,7 @@ commons-launcher.loc=http://jakarta.apache.org/builds/jakarta-commons/release/co
 
 # ----- Commons Daemon -----
 commons-daemon.home=${base.path}/commons-daemon
-commons-daemon.lib=${commons-daemon.home}/dist
+commons-daemon.lib=${commons-daemon.home}
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
 commons-daemon.loc=jakarta-commons-sandbox/daemon
 commons-daemon.cvs.loc=jakarta-commons-sandbox/daemon
