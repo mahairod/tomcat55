@@ -38,6 +38,12 @@
 
   <subsection name="Jasper">
     <changelog>
+      <fix>
+        Fixed default compiler target VM setting (to 1.3) so that compilation on J2SE 5.0 works out of the box. (yoavs)
+      </fix>
+      <update>
+        Exposed compilerSourceVM and compilerTargetVM options to JspC. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
