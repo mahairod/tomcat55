@@ -364,14 +364,8 @@ public class CoyoteConnector
      private String URIEncoding = null;
 
 
-    // ------------------------------------------------------------ Constructor
-
-    public CoyoteConnector() {
-        setProperty("tcpNoDelay", String.valueOf(tcpNoDelay));
-    }
-
-
     // ------------------------------------------------------------- Properties
+
 
     /**
      * Return a configured property.
