@@ -95,7 +95,7 @@
                debug="0" connectionTimeout="20000" 
                disableUploadTimeout="true" />
     <!-- Note : To disable connection timeouts, set connectionTimeout value
-     to -1 -->
+     to 0 -->
 	
 	<!-- Note : To use gzip compression you could set the following properties :
 	
