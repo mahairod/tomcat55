@@ -9,7 +9,7 @@
      version="1.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)j2ee_1_4.xsds	1.28 02/09/19
+@(#)j2ee_1_4.xsds	1.31 02/10/01
 </xsd:documentation>
 </xsd:annotation>
 
@@ -74,7 +74,8 @@ Deployment File may indicate one of the following:
 <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
             schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
-<xsd:include schemaLocation="j2ee_web_services_client_1_1.xsd"/>
+<xsd:include schemaLocation=
+"http://www.ibm.com/webservices/xsd/j2ee_web_services_client_1_1.xsd"/>
 
 
 <!-- **************************************************** -->
@@ -207,6 +208,7 @@ to describe versions of documents.
 <xsd:complexType name="display-nameType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The display-name type contains a short name that is intended
 to be displayed by tools. It is used by display-name
@@ -215,10 +217,11 @@ elements.  The display name need not be unique.
 Example:
 
 ...
-   &lt;display-name xml:lang="en">Employee Self Service&lt;/display-name>
+   <display-name xml:lang="en">Employee Self Service</display-name>
 
 The value of the xml:lang attribute is "en" (English) by default.
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -233,6 +236,7 @@ The value of the xml:lang attribute is "en" (English) by default.
 <xsd:complexType name="ejb-linkType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The ejb-linkType is used by ejb-link
 elements in the ejb-ref or ejb-local-ref elements to specify
@@ -252,12 +256,11 @@ uniquely identified.
 
 Examples:
 
-<![CDATA[
     <ejb-link>EmployeeRecord</ejb-link>
 
     <ejb-link>../products/product.jar#ProductEJB</ejb-link>
-]]>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -316,6 +319,7 @@ home. The declaration consists of:
 <xsd:complexType name="ejb-ref-nameType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The ejb-ref-name element contains the name of an EJB
 reference. The EJB reference is an entry in the
@@ -327,8 +331,9 @@ It is recommended that name is prefixed with "ejb/".
 
 Example:
 
-&lt;ejb-ref-name>ejb/Payroll&lt;/ejb-ref-name>
+<ejb-ref-name>ejb/Payroll</ejb-ref-name>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -428,6 +433,7 @@ element when used.
 <xsd:complexType name="env-entry-type-valuesType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 This type contains the fully-qualified Java type of the
 environment entry value that is expected by the
@@ -447,8 +453,9 @@ The following are the legal values of env-entry-type-valuesType:
 
 Example:
 
-&lt;env-entry-type>java.lang.Boolean&lt;/env-entry-type>
+<env-entry-type>java.lang.Boolean</env-entry-type>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -492,6 +499,7 @@ It is used by env-entry elements.
                      type="j2ee:jndi-nameType">
         <xsd:annotation>
         <xsd:documentation>
+        <![CDATA[
 
         The env-entry-name element contains the name of a
         Deployment Component's environment entry.  The name
@@ -503,8 +511,9 @@ It is used by env-entry elements.
 
         Example:
 
-        &lt;env-entry-name>minAmount&lt;/env-entry-name>
+        <env-entry-name>minAmount</env-entry-name>
 
+        ]]>
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
@@ -517,6 +526,7 @@ It is used by env-entry elements.
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
+        <![CDATA[
 
         The env-entry-value designates the value of a
         Deployment Component's environment entry. The value
@@ -527,8 +537,9 @@ It is used by env-entry elements.
 
         Example:
 
-        &lt;env-entry-value>100.00&lt;/env-entry-value>
+        <env-entry-value>100.00</env-entry-value>
 
+        ]]>
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
@@ -597,14 +608,16 @@ not designated by xsd:boolean
 <xsd:complexType name="homeType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The homeType defines the fully-qualified name of
 an enterprise bean's home interface.
 
 Example:
 
-    &lt;home>com.aardvark.payroll.PayrollHome&lt;/home>
+    <home>com.aardvark.payroll.PayrollHome</home>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -635,6 +648,8 @@ by default.
              minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
+        <![CDATA[
+
         The small-icon element contains the name of a file
         containing a small (16 x 16) icon image. The file
         name is a relative path within the Deployment
@@ -645,7 +660,9 @@ by default.
 
         Example:
 
-        &lt;small-icon>employee-service-icon16x16.jpg&lt;/small-icon>
+        <small-icon>employee-service-icon16x16.jpg</small-icon>
+
+        ]]>
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
@@ -653,6 +670,7 @@ by default.
              minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
+        <![CDATA[
 
         The large-icon element contains the name of a file
         containing a large
@@ -665,7 +683,9 @@ by default.
 
         Example:
 
-        &lt;large-icon>employee-service-icon32x32.jpg&lt;/large-icon>
+        <large-icon>employee-service-icon32x32.jpg</large-icon>
+
+        ]]>
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
@@ -784,6 +804,7 @@ destinations with the same name to be uniquely identified.
 <xsd:complexType name="message-destination-refType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The message-destination-ref element contains a declaration
 of Deployment Component's reference to a message destination
@@ -800,7 +821,6 @@ environment. It consists of:
 
 Examples:
 
-<![CDATA[
 <message-destination-ref>
         <message-destination-ref-name>jms/StockQueue
         </message-destination-ref-name>
@@ -811,8 +831,8 @@ Examples:
         <message-destination-link>CorporateStocks
         </message-destination-link>
 </message-destination-ref>
-]]>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:sequence>
@@ -858,6 +878,7 @@ Examples:
 <xsd:complexType name="message-destination-typeType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The message-destination-typeType specifies the type of
 the destination. The type is specified by the Java interface
@@ -865,9 +886,10 @@ expected to be implemented by the destination.
 
 Example:
 
- &lt;message-destination-type>javax.jms.Queue
- &lt;/message-destination-type>
+  <message-destination-type>javax.jms.Queue
+  </message-destination-type>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -910,6 +932,7 @@ one of the following:
 <xsd:complexType name="message-destinationType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The message-destinationType specifies a message
 destination. The logical destination described by this
@@ -926,13 +949,12 @@ The message destination element contains:
 
 Example:
 
-<![CDATA[
 <message-destination>
         <message-destination-name>CorporateStocks
         </message-destination-name>
 </message-destination>
-]]>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:sequence>
@@ -1034,14 +1056,16 @@ names are preferred for consistency with the Servlet API.
 <xsd:complexType name="remoteType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The remote element contains the fully-qualified name
 of the enterprise bean's remote interface.
 
 Example:
 
-    &lt;remote>com.wombat.empl.EmployeeService&lt;/remote>
+    <remote>com.wombat.empl.EmployeeService</remote>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
     <xsd:simpleContent>
@@ -1108,6 +1132,7 @@ The default value is Shareable.
 <xsd:complexType name="resource-env-refType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The resource-env-refType is used to define
 resource-env-type elements.  It contains a declaration of a
@@ -1120,15 +1145,14 @@ Deployment Component code.
 
 Example:
 
-<![CDATA[
 <resource-env-ref>
     <resource-env-ref-name>jms/StockQueue
     </resource-env-ref-name>
     <resource-env-ref-type>javax.jms.Queue
     </resource-env-ref-type>
 </resource-env-ref>
-]]>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
 
@@ -1181,6 +1205,7 @@ Example:
 <xsd:complexType name="resource-refType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The resource-refType contains a declaration of a
 Deployment Component's reference to an external resource. It
@@ -1194,15 +1219,14 @@ the shareability of connections obtained from the resource
 
 Example:
 
-<![CDATA[
 <resource-ref>
     <res-ref-name>jdbc/EmployeeAppDB</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
     <res-sharing-scope>Shareable</res-sharing-scope>
 </resource-ref>
-]]>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
 
@@ -1356,6 +1380,7 @@ appropriate security role.
 <xsd:complexType name="security-roleType">
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 The security-roleType contains the definition of a security
 role. The definition consists of an optional description of the
@@ -1363,7 +1388,6 @@ security role, and the security role name.
 
 Example:
 
-<![CDATA[
     <security-role>
     <description>
         This role includes all employees who are authorized
@@ -1371,8 +1395,8 @@ Example:
     </description>
     <role-name>employee</role-name>
     </security-role>
-]]>
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
 

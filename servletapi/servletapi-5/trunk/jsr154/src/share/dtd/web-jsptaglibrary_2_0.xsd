@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.18 09/19/02
+@(#)web-jsptaglibrary_2_0.xsds	1.19 09/30/02
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -50,6 +50,7 @@ Subject to Standard License Terms and Conditions.
 
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
 This is the XML Schema for the JSP Taglibrary deployment
 descriptor.  All Taglibrary deployment descriptors must
@@ -61,12 +62,12 @@ http://java.sun.com/xml/ns/j2ee
 and by indicating the version of the schema by
 using the version element as shown below:
 
-    &lt;taglib xmlns="http://java.sun.com/xml/ns/j2ee"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="..."
-     version="2.0">
-    ...
-    &lt;/taglib>
+    <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="..."
+      version="2.0">
+      ...
+    </taglib>
 
 The instance documents may indicate the published
 version of the schema using xsi:schemaLocation attribute
@@ -74,6 +75,7 @@ for J2EE namespace with the following location:
 
 http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
 
