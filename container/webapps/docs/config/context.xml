@@ -277,7 +277,7 @@
         of the flag is <code>false</code>.</p>
       </attribute>
 
-      <attribute value="tldNamespaceAware" required="false">
+      <attribute name="tldNamespaceAware" required="false">
         <p>If the value of this flag is <code>true</code>, the TLD files
         XML validation will be namespace-aware.  If you turn this flag on,
         you should probably also turn <code>tldValidation</code> on.  The
@@ -286,7 +286,7 @@
         </p>
       </attribute>
 
-      <attribute value="tldValidation" required="false">
+      <attribute name="tldValidation" required="false">
         <p>If the value of this flag is <code>true</code>, the TLD files
         will be XML validated on context startup.  The default value for
         this flag is <code>false</code>, and setting it to true will incur
