@@ -677,9 +677,6 @@ public class StandardWrapper
      */
     public Servlet allocate() throws ServletException {
 
-        if (log.isDebugEnabled())
-            log.debug("Allocating an instance");
-
         // If we are currently unloading this servlet, throw an exception
         if (unloading)
             throw new ServletException
@@ -693,6 +690,9 @@ public class StandardWrapper
                 synchronized (this) {
                     if (instance == null) {
                         try {
+                            if (log.isDebugEnabled())
+                                log.debug("Allocating non-STM instance");
+
                             instance = loadServlet();
                         } catch (ServletException e) {
                             throw e;
@@ -1564,7 +1564,7 @@ public class StandardWrapper
                     ctx.getJ2EEServer();
             
             oname=new ObjectName(onameStr);
-
+            controller=oname;
             Registry.getRegistry().registerComponent(this, oname, null );
         } catch( Exception ex ) {
             log.info("Error registering servlet with jmx " + this);
