@@ -29,6 +29,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.util.StringManager;
 
 /**
  * Facade class that wraps a Coyote response object. 
@@ -38,8 +39,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
-
-
 public class ResponseFacade 
     implements HttpServletResponse {
 
@@ -98,7 +97,14 @@ public class ResponseFacade
     }
 
 
-    // ----------------------------------------------------- Instance Variables
+    // ----------------------------------------------- Class/Instance Variables
+
+
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -120,15 +126,23 @@ public class ResponseFacade
 
     public void finish() {
 
-        response.setSuspended(true);
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
 
+        response.setSuspended(true);
     }
 
 
     public boolean isFinished() {
 
-        return response.isSuspended();
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
 
+        return response.isSuspended();
     }
 
 
@@ -136,6 +150,12 @@ public class ResponseFacade
 
 
     public String getCharacterEncoding() {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.getCharacterEncoding();
     }
 
@@ -205,6 +225,12 @@ public class ResponseFacade
 
 
     public int getBufferSize() {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.getBufferSize();
     }
 
@@ -255,6 +281,12 @@ public class ResponseFacade
 
 
     public boolean isCommitted() {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return (response.isAppCommitted());
     }
 
@@ -280,6 +312,12 @@ public class ResponseFacade
 
 
     public Locale getLocale() {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.getLocale();
     }
 
@@ -295,26 +333,56 @@ public class ResponseFacade
 
 
     public boolean containsHeader(String name) {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.containsHeader(name);
     }
 
 
     public String encodeURL(String url) {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.encodeURL(url);
     }
 
 
     public String encodeRedirectURL(String url) {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.encodeRedirectURL(url);
     }
 
 
     public String encodeUrl(String url) {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.encodeURL(url);
     }
 
 
     public String encodeRedirectUrl(String url) {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.encodeRedirectURL(url);
     }
 
@@ -451,11 +519,23 @@ public class ResponseFacade
 
 
     public String getContentType() {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         return response.getContentType();
     }
 
 
     public void setCharacterEncoding(String arg0) {
+
+        if (response == null) {
+            throw new IllegalStateException(
+                            sm.getString("responseFacade.nullResponse"));
+        }
+
         response.setCharacterEncoding(arg0);
     }
 
