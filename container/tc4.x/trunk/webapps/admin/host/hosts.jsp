@@ -57,8 +57,13 @@
         <logic:iterate name="hostsList" id="host">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+              <logic:match name="host" value='<%= request.getServerName() %>'>
+                <font color='red'>*</font>           
+              </logic:match>          
+              <logic:notMatch name="host" value='<%= request.getServerName() %>'>
               <html:multibox property="hosts"
                                 value="<%= host.toString() %>"/>
+              </logic:notMatch>                 
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditHost.do?select=" + 
