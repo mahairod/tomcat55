@@ -60,6 +60,8 @@
          tested by invoking a protected URI followed by a non-protected URI
     -->
 
+    <!-- ========== Basic Access to Authenticated Resources =============== -->
+
     <tester host="${host}" port="${port}" protocol="${protocol}"
           debug="${debug}"
          request="${context.path}/protected/Authentication01"
@@ -85,6 +87,20 @@
          request="${context.path}/protected/Authentication04"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication04 PASSED"/>
+
+    <!-- ========== "All Allowed" and "All Disallowed" Access ============= -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+          debug="${debug}"
+         request="${context.path}/allowed/Authentication05"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication05 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+          debug="${debug}"
+         request="${context.path}/disallowed/Authentication05"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+          status="403"/>
 
   </target>
 

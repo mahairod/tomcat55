@@ -336,6 +336,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Authentication05</servlet-name>
+        <servlet-class>org.apache.tester.Authentication05</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>Decoding01</servlet-name>
         <servlet-class>org.apache.tester.Decoding01</servlet-class>
     </servlet>
@@ -653,6 +658,16 @@
     <servlet-mapping>
         <servlet-name>Authentication04</servlet-name>
         <url-pattern>/protected/Authentication04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication05</servlet-name>
+        <url-pattern>/allowed/Authentication05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication05</servlet-name>
+        <url-pattern>/disallowed/Authentication05</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -1173,11 +1188,30 @@
 
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Authentication Servlet</web-resource-name>
+            <web-resource-name>General Protected Area</web-resource-name>
             <url-pattern>/protected/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>tomcat</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>All Users Allowed Area</web-resource-name>
+            <url-pattern>/allowed/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>No Users Allowed Area</web-resource-name>
+            <url-pattern>/disallowed/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
         </auth-constraint>
     </security-constraint>
 
