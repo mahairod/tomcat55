@@ -513,8 +513,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             Enumeration names = request.getAttributeNames();
             while (names.hasMoreElements()) {
                 String name = (String) names.nextElement();
-                Object value = request.getAttribute(name);
-                attributes.put(name, value);
+                if( ! ( Globals.REQUEST_URI_ATTR.equals(name) ||
+                        Globals.SERVLET_PATH_ATTR.equals(name) ) ) {
+                    Object value = request.getAttribute(name);
+                    attributes.put(name, value);
+                }
             }
         }
 

@@ -1163,7 +1163,7 @@ public class DefaultServlet
 
             // Checking If headers
             boolean included =
-                (request.getAttribute(Globals.REQUEST_URI_ATTR) != null);
+                (request.getAttribute(Globals.CONTEXT_PATH_ATTR) != null);
             if (!included 
                 && !checkIfHeaders(request, response, resourceInfo)) {
                 return;
