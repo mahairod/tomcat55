@@ -13,6 +13,98 @@
     Tomcat Administrative Application.
   </description>
 
+  <!-- ========== Instant Actions Tag ===================================== -->
+
+  <tag>
+
+    <name>actions</name>
+    <tag-class>org.apache.webapp.admin.ActionsTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Render an "instant actions" object, which is rendered as an HTML
+      "select" element, where the selection of a particular element from
+      the list immediately causes a JavaScript function to be executed
+      (with the available elements specified by "action" tag instances
+      nested within the body of the "actions" tag).
+
+      NOTE:  The only valid nested content for this tag is
+      "action" tags from this library.  Anything else will cause
+      the rendered HTML to be invalid.
+
+      NOTE:  To be usable, this tag must be nested inside an
+      HTML &lt;form&gt; element.
+    </description>
+
+    <attribute>
+      <name>size</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        (Integer) number of rows that will be visible to the user.  If
+        not specified, only one row will be visible.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS style class to be applied to the entire rendered output
+        of the instant actions control.  If not specified, no overall
+        style class is applied.
+      </description>
+    </attribute>
+
+  </tag>
+
+
+  <tag>
+
+    <name>action</name>
+    <tag-class>org.apache.webapp.admin.ActionTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Define a single "instant action" option for the surrounding "actions"
+      tag.  It is not valid to use this tag *except* when nested inside an
+      "actions" tag.
+
+      NOTE:  The body content of this tag (which should be suitably
+      localized, if required by your application) is used as the
+      user-visible label for this action.
+    </description>
+
+    <attribute>
+      <name>selected</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        (Boolean) variable set to "true" or "yes" if this action should
+        already be selected when the "instant actions" element is
+        initially displayed.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>url</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The URL to which the current frame or window will be transferred
+        if the "onchange" event handler of this "instant actions" element
+        is triggered, and this is the currently selected action.  If no
+        URL is specified, no action will be taken (useful for "(None)"
+        options and dividers).
+
+        NOTE:  This URL will be passed through URL rewriting so that it
+        will maintain session identity even in environments were cookies
+        are not being used.
+      </description>
+    </attribute>
+
+  </tag>
+
+
   <!-- ========== Tree Control Tag ======================================== -->
 
   <tag>
@@ -28,85 +120,85 @@
     </description>
 
     <attribute>
-        <name>action</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          Hyperlink to which expand/contract actions should be sent,
-          with a string "${node}" marking where the node name of the
-          affected node should be included (which will usually be as
-          the value of a request parameter).
-        </description>
+      <name>action</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Hyperlink to which expand/contract actions should be sent,
+        with a string "${node}" marking where the node name of the
+        affected node should be included (which will usually be as
+        the value of a request parameter).
+      </description>
     </attribute>
 
     <attribute>
-        <name>images</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          Name of a directory containing the images for our icons,
-          relative to the page including this tag.  If not specified,
-          defaults to "images".
-        </description>
+      <name>images</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of a directory containing the images for our icons,
+        relative to the page including this tag.  If not specified,
+        defaults to "images".
+      </description>
     </attribute>
 
     <attribute>
-        <name>scope</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          The JSP scope within which the "tree" attribute is to be found
-          (page, request, session, or application).  If not specified, the
-          "tree" attribute will be searched for in any scope.
-        </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The JSP scope within which the "tree" attribute is to be found
+        (page, request, session, or application).  If not specified, the
+        "tree" attribute will be searched for in any scope.
+      </description>
     </attribute>
 
     <attribute>
-        <name>style</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          The CSS style class to be applied to the entire rendered output
-          of the tree control.  If not specified, no overall style class
-          is applied.
-        </description>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS style class to be applied to the entire rendered output
+        of the tree control.  If not specified, no overall style class
+        is applied.
+      </description>
     </attribute>
 
     <attribute>
-        <name>styleSelected</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          The CSS style class to be applied to the text of any node that
-          is currently selected.  If not specified, no style class will be
-          applied to the text of the selected node.
-        </description>
+      <name>styleSelected</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS style class to be applied to the text of any node that
+        is currently selected.  If not specified, no style class will be
+        applied to the text of the selected node.
+      </description>
     </attribute>
 
     <attribute>
-        <name>styleUnselected</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          The CSS style class to be applied to the text of any node that
-          is *not* currently selected.  If not specified, no style class will
-          be applied to the text of non-selected nodes.
-        </description>
+      <name>styleUnselected</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS style class to be applied to the text of any node that
+        is *not* currently selected.  If not specified, no style class will
+         be applied to the text of non-selected nodes.
+      </description>
     </attribute>
 
     <attribute>
-        <name>tree</name>
-        <required>false</required>
-        <rtexprvalue>true</rtexprvalue>
-        <description>
-          Name of the attribute (in the scope specified by the "scope"
-          attribute, if any) under which an object of type
-          org.apache.webapp.admin.TreeControl is stored.  This object
-          represents the entire current state of the tree, including
-          a representation of the hierarchical representation of the
-          nodes, plus the current expanded/ or contracted state of
-          non-leaf nodes.
-        </description>
+      <name>tree</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the attribute (in the scope specified by the "scope"
+        attribute, if any) under which an object of type
+        org.apache.webapp.admin.TreeControl is stored.  This object
+        represents the entire current state of the tree, including
+        a representation of the hierarchical representation of the
+        nodes, plus the current expanded/ or contracted state of
+        non-leaf nodes.
+      </description>
     </attribute>
 
   </tag>
