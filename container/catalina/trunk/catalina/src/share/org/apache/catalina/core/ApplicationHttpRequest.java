@@ -114,6 +114,13 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
       Globals.FORWARD_PATH_INFO_ATTR, Globals.FORWARD_QUERY_STRING_ATTR };
 
 
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -137,13 +144,19 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * The request attributes for this request.  This is initialized from the
      * wrapped request, but updates are allowed.
      */
-    protected HashMap attributes = new HashMap();
+    //protected HashMap attributes = new HashMap();
 
 
     /**
      * The context path for this request.
      */
     protected String contextPath = null;
+
+
+    /**
+     * The current dispatcher type.
+     */
+    protected Object dispatcherType = null;
 
 
     /**
@@ -157,7 +170,13 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * The request parameters for this request.  This is initialized from the
      * wrapped request, but updates are allowed.
      */
-    protected Map parameters = new HashMap();
+    protected Map parameters = null;
+
+
+    /**
+     * Have the parameters for this request already been parsed?
+     */
+    private boolean parsedParams = false;
 
 
     /**
@@ -167,9 +186,21 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
+     * The query parameters for the current request.
+     */
+    private String queryParamString = null;
+
+
+    /**
      * The query string for this request.
      */
     protected String queryString = null;
+
+
+    /**
+     * The current request dispatcher path.
+     */
+    protected Object requestDispatcherPath = null;
 
 
     /**
@@ -185,22 +216,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * The string manager for this package.
+     * Special attributes.
      */
-    protected static StringManager sm =
-        StringManager.getManager(Constants.Package);
-
-
-    /**
-     * The query parameters for the current request.
-     */
-    private String queryParamString = null;
-
-
-    /**
-     * Have the parameters for this request already been parsed?
-     */
-    private boolean parsedParams = false;
+    protected Object[] specialAttributes = new Object[specials.length];
 
 
     // ------------------------------------------------- ServletRequest Methods
@@ -213,11 +231,18 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Object getAttribute(String name) {
 
-        Object value = attributes.get(name);
-        if (value == null && !isSpecial(name)){
-            value = getRequest().getAttribute(name);
+        if (name.equals(Globals.DISPATCHER_TYPE_ATTR)) {
+            return dispatcherType;
+        } else if (name.equals(Globals.DISPATCHER_REQUEST_PATH_ATTR)) {
+            return requestDispatcherPath.toString();
         }
-        return value;
+
+        int pos = getSpecial(name);
+        if (pos == -1) {
+            return getRequest().getAttribute(name);
+        } else {
+            return specialAttributes[pos];
+        }
 
     }
 
@@ -227,7 +252,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * request.
      */
     public Enumeration getAttributeNames() {
-        
+
+        return (new AttributeNamesEnumerator());
+        /*
         HashMap clone = (HashMap)attributes.clone();
         Enumeration enum = getRequest().getAttributeNames();
         Object key;
@@ -238,6 +265,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             }
         }
         return (new Enumerator(clone.keySet()));
+        */
 
     }
 
@@ -250,11 +278,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public void removeAttribute(String name) {
 
-        synchronized (attributes) {
-            attributes.remove(name);
-            if (!isSpecial(name))
-                getRequest().removeAttribute(name);
-        }
+        if (!removeSpecial(name))
+            getRequest().removeAttribute(name);
 
     }
 
@@ -268,10 +293,16 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public void setAttribute(String name, Object value) {
 
-        synchronized (attributes) {
-            attributes.put(name, value);
-            if (!isSpecial(name))
-                getRequest().setAttribute(name, value);
+        if (name.equals(Globals.DISPATCHER_TYPE_ATTR)) {
+            dispatcherType = value;
+            return;
+        } else if (name.equals(Globals.DISPATCHER_REQUEST_PATH_ATTR)) {
+            requestDispatcherPath = value;
+            return;
+        }
+
+        if (!setSpecial(name, value)) {
+            getRequest().setAttribute(name, value);
         }
 
     }
@@ -493,6 +524,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         super.setRequest(request);
 
         // Initialize the attributes for this request
+        /*
         synchronized (attributes) {
             attributes.clear();
             Enumeration names = request.getAttributeNames();
@@ -505,6 +537,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                 }
             }
         }
+        */
 
         // Initialize the path elements for this request
         contextPath = request.getContextPath();
@@ -552,6 +585,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	    return;
 	}
 
+        parameters = new HashMap();
         synchronized (parameters) {
             parameters = copyMap(getRequest().getParameterMap());
 	    mergeParameters();
@@ -588,6 +622,54 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         }
         return (false);
 
+    }
+
+
+    /**
+     * Get a special attribute.
+     *
+     * @return the special attribute pos, or -1 if it is not a special 
+     *         attribute
+     */
+    protected int getSpecial(String name) {
+        for (int i = 0; i < specials.length; i++) {
+            if (specials[i].equals(name)) {
+                return (i);
+            }
+        }
+        return (-1);
+    }
+
+
+    /**
+     * Set a special attribute.
+     * 
+     * @return true if the attribute was a special attribute, false otherwise
+     */
+    protected boolean setSpecial(String name, Object value) {
+        for (int i = 0; i < specials.length; i++) {
+            if (specials[i].equals(name)) {
+                specialAttributes[i] = value;
+                return (true);
+            }
+        }
+        return (false);
+    }
+
+
+    /**
+     * Remove a special attribute.
+     * 
+     * @return true if the attribute was a special attribute, false otherwise
+     */
+    protected boolean removeSpecial(String name) {
+        for (int i = 0; i < specials.length; i++) {
+            if (specials[i].equals(name)) {
+                specialAttributes[i] = null;
+                return (true);
+            }
+        }
+        return (false);
     }
 
 
@@ -669,4 +751,43 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         }
 
     }
+
+
+    // ----------------------------------- AttributeNamesEnumerator Inner Class
+
+
+    protected class AttributeNamesEnumerator implements Enumeration {
+
+        protected int pos = -1;
+        protected int last = -1;
+        protected Enumeration parentEnumeration = null;
+
+        public AttributeNamesEnumerator() {
+            parentEnumeration = getRequest().getAttributeNames();
+            for (int i = 0; i < specialAttributes.length; i++) {
+                if (specialAttributes[i] != null) {
+                    last = i;
+                }
+            }
+        }
+
+        public boolean hasMoreElements() {
+            return ((pos != last) || (parentEnumeration.hasMoreElements()));
+        }
+
+        public Object nextElement() {
+            if (pos != last) {
+                for (int i = pos + 1; i <= last; i++) {
+                    if (specialAttributes[i] != null) {
+                        pos = i;
+                        return (specials[i]);
+                    }
+                }
+            }
+            return parentEnumeration.nextElement();
+        }
+
+    }
+
+
 }
