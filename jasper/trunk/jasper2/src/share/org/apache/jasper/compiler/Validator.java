@@ -124,6 +124,9 @@ class Validator {
 	private boolean infoSeen = false;
 	private boolean pageEncodingSeen = false;
 
+	private Node.Root oldPageDirectiveRoot = null;
+	private Node.Root currentPageDirectiveRoot = null;
+
 	/*
 	 * Constructor
 	 */
@@ -137,6 +140,12 @@ class Validator {
 
             JspUtil.checkAttributes("Page directive", n,
                                     pageDirectiveAttrs, err);
+
+	    oldPageDirectiveRoot = currentPageDirectiveRoot;
+	    currentPageDirectiveRoot = n.getRoot();
+	    if (oldPageDirectiveRoot != currentPageDirectiveRoot) {
+		pageEncodingSeen = false;
+	    }
 
 	    // JSP.2.10.1
 	    Attributes attrs = n.getAttributes();
@@ -249,7 +258,8 @@ class Validator {
 		    infoSeen = true;
 		} else if ("pageEncoding".equals(attr)) {
 		    if (pageEncodingSeen) 
-			err.jspError(n, "jsp.error.page.multiple.pageencoding");
+			err.jspError(n,
+				     "jsp.error.page.multiple.pageencoding");
 		    pageEncodingSeen = true;
 		    /*
 		     * Report any encoding conflict, treating "UTF-16",
