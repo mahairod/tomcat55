@@ -591,6 +591,10 @@ public class ManagerServlet
     protected void install(PrintWriter writer, String config,
                            String path, String war) {
 
+        if (war != null && war.length() == 0) {
+            war = null;
+        }
+
         if (debug >= 1) {
             if (config != null && config.length() > 0) {
                 if (war != null) {
