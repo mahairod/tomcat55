@@ -337,9 +337,8 @@ public class RequestUtil {
     }           
 	
 
-    // XXX This method is duplicated in core/Response.java
+    // Basically return everything after ";charset="
     public static String getCharsetFromContentType(String type) {
-        // Basically return everything after ";charset="
         if (type == null) {
             return null;
         }
@@ -355,6 +354,12 @@ public class RequestUtil {
         String afterCharset = afterSemi.substring(charsetLocation + 8);
         String encoding = afterCharset.trim();
         return encoding;
+    }
+
+    static  StringManager sm = StringManager.getManager(Constants.Package);
+
+    public static String getStatusString(int status ) {
+	return sm.getString("sc."+ status );
     }
 
 }

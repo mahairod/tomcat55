@@ -82,7 +82,7 @@ public class ServletOutputStreamImpl extends BufferedServletOutputStream {
     private StringManager sm =
         StringManager.getManager(Constants.Package);
     private OutputStream out;
-    ServerResponse response;
+    Response response;
 	
     ServletOutputStreamImpl(ServerResponse response, OutputStream out) {
 	this.response=response;
@@ -98,7 +98,7 @@ public class ServletOutputStreamImpl extends BufferedServletOutputStream {
     }
 
     protected void sendHeaders() throws IOException {
-	response.writeHeaders( out );
+	response.writeHeaders();
     }
 				   
 }
