@@ -874,6 +874,7 @@ public abstract class PersistentManagerBase
         ((StandardSession)session).tellNew();
         add(session);
         ((StandardSession)session).activate();
+        session.endAccess();
 
         return (session);
 
