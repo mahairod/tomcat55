@@ -91,7 +91,7 @@ public final class SecurityUtil{
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( SecurityUtil.class );
     
-    private static String PACKAGE = "org.apache.catalina.util";
+    private static String PACKAGE = "org.apache.catalina.security";
     
     /**
      * The string resources for this package.
