@@ -89,20 +89,23 @@ a servlet container to some existing authentication database or mechanism
 that already exists in the production environment.  Therefore, Tomcat 5
 defines a Java interface (<code>org.apache.catalina.Realm</code>) that
 can be implemented by "plug in" components to establish this connection.
-Three standard plug-ins are provided, supporting connection to three different
+Five standard plug-ins are provided, supporting connections to various
 sources of authentication information:</p>
 <ul>
+<li><a href="#JDBCRealm">JDBCRealm</a> - Accesses authentication information
+    stored in a relational database, accessed via a JDBC driver.</li>
 <li><a href="#DataSourceRealm">DataSourceRealm</a> - Accesses authentication
     information stored in a relational database, accessed via a named JNDI
     JDBC DataSource.</li>
-<li><a href="#JDBCRealm">JDBCRealm</a> - Accesses authentication information
-    stored in a relational database, accessed via a JDBC driver.</li>
 <li><a href="#JNDIRealm">JNDIRealm</a> - Accesses authentication information
     stored in an LDAP based directory server, accessed via a JNDI provider.
     </li>
 <li><a href="#MemoryRealm">MemoryRealm</a> - Accesses authentication
     information stored in an in-memory object collection, which is initialized
     from an XML document (<code>conf/tomcat-users.xml</code>).</li>
+<li><a href="#JAASRealm">JAASRealm</a> - Accesses authentication information
+    through the Java Authentication &amp; Authorization Service (JAAS)
+    framework.</li>
 </ul>
 
 <p>It is also possible to write your own <code>Realm</code> implementation,
@@ -1295,7 +1298,7 @@ variable: <code>JAVA_OPTS=-DJAVA_OPTS=-Djava.security.auth.login.config==$CATALI
           <li>Configure your security-constraints in your web.xml for
 the resources you want to protect</li>
           <li>Configure the JAASRealm module in your server.xml </li>
-          <li>Restart Tomcat 4 if it is already running.</li>
+          <li>Restart Tomcat 5 if it is already running.</li>
         </ol>
         <h3>Realm Element Attributes</h3>
         <p>To configure JAASRealm as for step 6 above, you create
@@ -1309,7 +1312,7 @@ are supported by this implementation:</p>
   <attribute name="className" required="true">
     <p>The fully qualified Java class name of this Realm implementation.
     You <strong>MUST</strong> specify the value
-    "<code>org.apache.catalina.realm.MemoryRealm</code>" here.</p>
+    "<code>org.apache.catalina.realm.JAASRealm</code>" here.</p>
   </attribute>
 
   <attribute name="appName" required="true">
@@ -1368,7 +1371,7 @@ and restarting the server, without any code changes to your application.</li>
         <h3>Additional Notes</h3>
         <ul>
           <li>When a user attempts to access a protected resource for
-              the first time, Tomcat 4 will call the <code>authenticate()</code>
+              the first time, Tomcat 5 will call the <code>authenticate()</code>
               method of this <code>Realm</code>.  Thus, any changes you have made in
               the security mechanism directly (new users, changed passwords or
               roles, etc.) will be immediately reflected.</li>
