@@ -120,6 +120,8 @@ import java.security.*;
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
  * @version $Revision$ $Date$
  * @see java.lang.ClassLoader
+ * @deprecated will be replaced by AdaptiveClassLoader1 and Depend, or URL
+ *             class loader in jdk1.2
  */
 public class AdaptiveClassLoader extends ClassLoader {
     private static final int debug=0;
