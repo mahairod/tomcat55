@@ -119,8 +119,6 @@ import org.apache.naming.resources.Resource;
  * <p>
  * <strong>IMPLEMENTATION NOTE</strong> - No check for sealing violations or
  * security is made unless a security manager is present.
- * <p>
- * <strong>FIXME</strong> - Implement findResources.
  *
  * @author Remy Maucherat
  * @author Craig R. McClanahan
@@ -341,6 +339,12 @@ public class WebappClassLoader
     protected boolean started = false;
 
 
+    /**
+     * All permission.
+     */
+    private Permission allPermission = new java.security.AllPermission();
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -360,6 +364,9 @@ public class WebappClassLoader
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         this.debug = debug;
 
@@ -383,6 +390,9 @@ public class WebappClassLoader
      */
     public void setDelegate(boolean delegate) {
 
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
+
         this.delegate = delegate;
 
     }
@@ -395,7 +405,8 @@ public class WebappClassLoader
      * @param path file directory path
      */
     public void setPermissions(String path) {
-        if( securityManager != null ) {
+        if (securityManager != null) {
+            securityManager.checkPermission(allPermission);
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
                 permissionList.add(new JndiPermission(path + "*"));
             } else {
@@ -431,6 +442,9 @@ public class WebappClassLoader
      */
     public void setJarPath(String jarPath) {
 
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
+
         this.jarPath = jarPath;
 
     }
@@ -450,6 +464,9 @@ public class WebappClassLoader
      *  invalid or does not exist
      */
     public void addRepository(String repository) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         // Ignore any of the standard repositories, as they are set up using
         // either addJar or addRepository
@@ -479,6 +496,9 @@ public class WebappClassLoader
      *  invalid or does not exist
      */
     synchronized void addRepository(String repository, File file) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         // Note : There should be only one (of course), but I think we should
         // keep this a bit generic
@@ -512,6 +532,9 @@ public class WebappClassLoader
 
     synchronized void addJar(String jar, JarFile jarFile, File file)
         throws IOException {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         if (jar == null)
             return;
@@ -1413,6 +1436,9 @@ public class WebappClassLoader
      */
     public void start() throws LifecycleException {
 
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
+
         started = true;
 
     }
@@ -1424,6 +1450,9 @@ public class WebappClassLoader
      * @exception LifecycleException if a lifecycle error occurs
      */
     public void stop() throws LifecycleException {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         started = false;
 
