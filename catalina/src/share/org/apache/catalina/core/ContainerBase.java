@@ -1714,7 +1714,7 @@ public abstract class ContainerBase
         if( host!=null ) suffix.append(",host=").append( host.getName() );
         if( context!=null ) {
             String path=((StandardContext)context).getPath();
-            suffix.append(",path=").append((path=="") ? "//" : path);
+            suffix.append(",path=").append((path=="") ? "/" : path);
         } 
         if( servlet != null ) {
             String name=container.getName();
@@ -1726,4 +1726,3 @@ public abstract class ContainerBase
 
     
 }
-

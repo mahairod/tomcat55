@@ -353,11 +353,13 @@ public class MBeanFactory extends BaseModelMBean {
             Class partypes1 [] = new Class[1];
             // Set address
             String str = new String();
-            partypes1[0] = str.getClass();
-            Method meth1 = cls.getMethod("setAddress", partypes1);
-            Object arglist1[] = new Object[1];
-            arglist1[0] = address;
-            meth1.invoke(retobj, arglist1);
+            if ((address!=null) && (address.length()>0)) {
+                partypes1[0] = str.getClass();
+                Method meth1 = cls.getMethod("setAddress", partypes1);
+                Object arglist1[] = new Object[1];
+                arglist1[0] = address;
+                meth1.invoke(retobj, arglist1);
+            }
             // Set port number
             Class partypes2 [] = new Class[1];
             partypes2[0] = Integer.TYPE;
@@ -380,7 +382,9 @@ public class MBeanFactory extends BaseModelMBean {
             Method getObjectName = cls.getMethod("getObjectName", null);
             
             // Return the corresponding MBean name
-            ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            //ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            ObjectName coname = 
+                MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
             return (coname.toString());
         
         } catch (Exception e) {
@@ -482,11 +486,13 @@ public class MBeanFactory extends BaseModelMBean {
             Class partypes1 [] = new Class[1];
             // Set address
             String str = new String();
-            partypes1[0] = str.getClass();
-            Method meth1 = cls.getMethod("setAddress", partypes1);
-            Object arglist1[] = new Object[1];
-            arglist1[0] = address;
-            meth1.invoke(retobj, arglist1);
+            if ((address!=null) && (address.length()>0)) {
+                partypes1[0] = str.getClass();
+                Method meth1 = cls.getMethod("setAddress", partypes1);
+                Object arglist1[] = new Object[1];
+                arglist1[0] = address;
+                meth1.invoke(retobj, arglist1);
+            }
             // Set port number
             Class partypes2 [] = new Class[1];
             partypes2[0] = Integer.TYPE;
@@ -501,7 +507,9 @@ public class MBeanFactory extends BaseModelMBean {
             Method getObjectName = cls.getMethod("getObjectName", null);
             
             // Return the corresponding MBean name
-            ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            //ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            ObjectName coname = 
+                MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
             return (coname.toString());
         } catch (Exception e) {
             throw new MBeanException(e);
@@ -532,11 +540,13 @@ public class MBeanFactory extends BaseModelMBean {
             Class partypes1 [] = new Class[1];
             // Set address
             String str = new String();
-            partypes1[0] = str.getClass();
-            Method meth1 = cls.getMethod("setAddress", partypes1);
-            Object arglist1[] = new Object[1];
-            arglist1[0] = address;
-            meth1.invoke(retobj, arglist1);
+            if ((address!=null) && (address.length()>0)) {
+                partypes1[0] = str.getClass();
+                Method meth1 = cls.getMethod("setAddress", partypes1);
+                Object arglist1[] = new Object[1];
+                arglist1[0] = address;
+                meth1.invoke(retobj, arglist1);
+            }
             // Set port number
             Class partypes2 [] = new Class[1];
             partypes2[0] = Integer.TYPE;
@@ -584,7 +594,9 @@ public class MBeanFactory extends BaseModelMBean {
             Method getObjectName = cls.getMethod("getObjectName", null);
             
             // Return the corresponding MBean name
-            ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            //ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
+            ObjectName coname = 
+                MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
             return (coname.toString());
         } catch (Exception e) {
             // FIXME
@@ -800,7 +812,7 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Create a new StandardContext instance
         StandardContext context = new StandardContext();
-        //path = getPathStr(path);
+        path = getPathStr(path);
         context.setPath(path);
         context.setDocBase(docBase);
         ContextConfig contextConfig = new ContextConfig();
@@ -814,7 +826,9 @@ public class MBeanFactory extends BaseModelMBean {
         host.addChild(context);
 
         // Return the corresponding MBean name
-        return (context.getObjectName().toString());
+        ObjectName oname = 
+            MBeanUtils.createObjectName(pname.getDomain(), context);
+        return (oname.toString());
 
     }
 

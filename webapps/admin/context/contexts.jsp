@@ -44,7 +44,6 @@
   <br>
 
   <%-- Contexts List --%>
-
   <table class="back-table" border="0" cellspacing="0" cellpadding="1"
          width="100%">
     <tr><td>
@@ -60,15 +59,15 @@
             <bean:message key="host.name"/>
           </div></td>
         </tr>
-
+    
         <logic:iterate name="contextsList" id="context">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
               <%-- admin context cannot be deleted from the tool --%>
-              <logic:match name="context" value='<%= "path="+request.getContextPath()+"," %>'>
+              <logic:match name="context" value='<%= request.getContextPath()+"," %>'>
                 <font color='red'>*</font>
               </logic:match>
-              <logic:notMatch name="context" value='<%= "path="+request.getContextPath()+"," %>'>
+              <logic:notMatch name="context" value='<%= request.getContextPath()+"," %>'>
               <label for="contexts"></label>
               <html:multibox property="contexts"
                                 value="<%= context.toString() %>" styleId="contexts"/>
