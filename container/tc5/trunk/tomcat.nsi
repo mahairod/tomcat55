@@ -76,7 +76,7 @@
     LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
 
   ;Folder-select dialog
-  InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
+  InstallDir "$PROGRAMFILES\Apache Software Foundation\Tomcat 5.0"
 
   ;Install types
   InstType Normal
@@ -84,7 +84,7 @@
   InstType Full
 
   ; Main registry key
-  InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
+  InstallDirRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" ""
 
   !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -140,11 +140,7 @@ Section "Service" SecTomcatService
   Call findJVMPath
   Pop $2
 
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat @VERSION@" --Description "Apache Tomcat @VERSION@ Server http://jakarta.apache.org/tomcat"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java auto --JavaOptions -Djava.endorsed.dirs="$INSTDIR\common\endorsed"#-Dcatalina.home="$INSTDIR" --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
-
-  ;ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java auto --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
-
-;--JavaOptions -Djava.endorsed.dirs="$INSTDIR\common\endorsed"#-Dcatalina.home="$INSTDIR"
+  ExecWait '"$INSTDIR\bin\tomcat.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat @VERSION@" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java auto --JavaOptions -Djava.endorsed.dirs="$INSTDIR\common\endorsed"#-Dcatalina.home="$INSTDIR" --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
 
   BringToFront
   ClearErrors
@@ -229,7 +225,8 @@ Section -post
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\5.0" "" $INSTDIR
+  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" "InstallPath" $INSTDIR
+  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" "Version" @VERSION@
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
                    "DisplayName" "Apache Tomcat 5.0 (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
@@ -519,7 +516,7 @@ Section Uninstall
 
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0"
-  DeleteRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0"
+  DeleteRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0"
   RMDir /r "$SMPROGRAMS\Apache Tomcat 5.0"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
