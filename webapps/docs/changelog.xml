@@ -116,6 +116,15 @@
       <fix>
         Realms will now use set attribute to set themselves in their container when using JMX. (remm)
       </fix>
+      <fix>
+        Fix JMX related operations with the Connector. (remm)
+      </fix>
+      <fix>
+        Fix save-to-XML for naming resources. (remm)
+      </fix>
+      <fix>
+        Remove authenticator "debug" attributes from the descriptors. (remm)
+      </fix>
     </changelog>
   </subsection>
 
@@ -140,6 +149,16 @@
         default one, and might fare better on some picky systems, such as Redhat 9. The two threadpools
         will likely be removed once we use the Java 5 API, although more investigation is needed. (remm)
       </add>
+      <fix>
+        Fix issue with getProperty in IntrospectionUtils. (remm)
+      </fix>
+      <update>
+        Remove attribute translation for SSL in the HTTP protocol handler: it will now be done in the
+        Catalina Connector class. (remm)
+      </update>
+      <fix>
+        Fix handling of the "timeout" attribute of the HTTP protocol handler. (remm)
+      </fix>
     </changelog>
   </subsection>
 
@@ -156,6 +175,9 @@
       </docs>
       <fix>
         Copied XML encoding detection logic into JASPER, so we're no longer dependent on Xerces. (luehe)
+      </fix>
+      <fix>
+        Fix cosmetic issue where extra CRLF would be inserted during each precompilation in web.xml. (remm)
       </fix>
     </changelog>
   </subsection>
@@ -191,6 +213,9 @@
       <update>
         Refactor the manager servlet to make calls to the deployer more robust. (remm)
       </update>
+      <fix>
+        Use the more robust String.valueOf in the form edit action of the connector. (remm)
+      </fix>
     </changelog>
   </subsection>
 </section>
