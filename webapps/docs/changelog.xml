@@ -145,6 +145,9 @@
       <fix>
         <bug>31090</bug>: Use a URL encoded path when setting session cookies. (remm)
       </fix>
+	   <add>
+	      Add getAttributeName() to ProtocolHandler to get all attributes at runtime (pero)
+	   </add>
     </changelog>
   </subsection>
 
@@ -158,6 +161,9 @@
 
   <subsection name="Cluster">
     <changelog>
+	   <add>
+	      Add some missing Getters and log.isXXXEnableds (pero)
+	   </add>
     </changelog>
   </subsection>
 
