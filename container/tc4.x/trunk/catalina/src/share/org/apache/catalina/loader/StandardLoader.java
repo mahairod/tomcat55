@@ -539,15 +539,9 @@ public final class StandardLoader
 
 	// Construct a class loader based on our current repositories list
 	try {
-            /*
-	    Class clazz = Class.forName(loaderClass);
-	    classLoader = (Reloader) clazz.newInstance();
-	    */
 	    if (parentClassLoader == null)
-                //	        classLoader = new FileClassLoader();
 	        classLoader = new StandardClassLoader();
 	    else
-                //	        classLoader = new FileClassLoader(parentClassLoader);
 	        classLoader = new StandardClassLoader(parentClassLoader);
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
@@ -574,7 +568,6 @@ public final class StandardLoader
 		throw new LifecycleException(e);
 	    }
 	}
-	    
 
     }
 

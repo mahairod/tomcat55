@@ -93,6 +93,8 @@ import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.loader.Extension;
+import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.StandardLoader;
 import org.apache.catalina.resources.FileResources;
 import org.apache.catalina.session.StandardManager;
@@ -742,17 +744,6 @@ public final class ContextConfig
         } catch (MalformedURLException e) {
 	    ;
 	}
-        /**
-	if ((classesURL != null) && "file".equals(classesURL.getProtocol())) {
-	    File classesFile = new File(classesURL.getFile());
-	    if (classesFile.exists() && classesFile.canRead() &&
-	        classesFile.isDirectory()) {
-		if (debug > 0)
-		    log(" Adding '" + classesFile.getAbsolutePath() + "'");
-		loader.addRepository(classesFile.getAbsolutePath());
-	    }
-	}
-        **/
         if (classesURL != null)
             loader.addRepository(classesURL.toString() + "/");
 
@@ -780,6 +771,36 @@ public final class ContextConfig
 		}
 	    }
 	}
+
+        // Validate the required and available optional packages
+        ClassLoader classLoader = loader.getClassLoader();
+        if (classLoader instanceof StandardClassLoader) {
+
+            Extension available[] =
+                ((StandardClassLoader) classLoader).findAvailable();
+            Extension required[] =
+                ((StandardClassLoader) classLoader).findRequired();
+            if (debug >= 1)
+                log("Optional Packages:  available=" +
+                    available.length + ", required=" +
+                    required.length);
+
+            for (int i = 0; i < required.length; i++) {
+                if (debug >= 1)
+                    log("Checking for required package " + required[i]);
+                boolean found = false;
+                for (int j = 0; j < available.length; j++) {
+                    if (available[j].isCompatibleWith(required[i])) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    throw new IllegalStateException
+                        ("start:  Missing extension " + required[i]);
+            }
+
+        }
 
     }
 
