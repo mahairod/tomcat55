@@ -114,6 +114,14 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
     private String[] fStrings = new String[3];
 
     private ErrorDispatcher err;
+
+    /**
+     * Constructor
+     */
+    public XercesEncodingDetector() {
+        fSymbolTable = new SymbolTable();
+        fCurrentEntity = this;
+    }
     
     /**
      * Autodetects the encoding of the XML document supplied by the given
@@ -145,8 +153,8 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
     }
 
     public Object[] getEncodingMethod(String fname, JarFile jarFile,
-				       JspCompilationContext ctxt,
-				       ErrorDispatcher err)
+				      JspCompilationContext ctxt,
+				      ErrorDispatcher err)
 	throws IOException, JasperException
     {
 	InputStream inStream = JspUtil.getInputStream(fname, jarFile,
@@ -155,16 +163,6 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
 	inStream.close();
 
 	return ret;
-    }
-	
-    /**
-     * Constructor.
-     */
-    public XercesEncodingDetector(InputStream stream, ErrorDispatcher err) {
-        this.stream = stream;
-	this.err = err;
-        fSymbolTable = new SymbolTable();
-        fCurrentEntity = this;
     }
     
     // stub method
