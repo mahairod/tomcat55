@@ -73,6 +73,8 @@ package org.apache.catalina.cluster;
  */
 
 import org.apache.catalina.Manager;
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+
 
 public interface ClusterManager extends Manager {
 
@@ -103,5 +105,19 @@ public interface ClusterManager extends Manager {
     * @return
     */
    public String[] getInvalidatedSessions();
+   
+   /**
+    * Return the name of the manager, typically the context name such as /replicator
+    * @return String
+    */
+   public String getName();
+   
+   public void setName(String name);
+   
+   public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown);
+   
+   public void setUseDirtyFlag(boolean useDirtyFlag);
+   
+   public void setCluster(SimpleTcpCluster cluster);
 
 }

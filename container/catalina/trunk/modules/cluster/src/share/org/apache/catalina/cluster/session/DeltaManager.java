@@ -174,10 +174,12 @@ public class DeltaManager
 
     private SimpleTcpCluster cluster = null;
     private boolean stateTransferred;
+    private boolean useDirtyFlag;
+    private boolean expireSessionsOnShutdown;
+    private boolean printToScreen;
     // ------------------------------------------------------------- Constructor
-    public DeltaManager(SimpleTcpCluster cluster) {
+    public DeltaManager() {
         super();
-        this.cluster = cluster;
     }
 
     // ------------------------------------------------------------- Properties
@@ -350,13 +352,7 @@ public class DeltaManager
         }
 
       // Recycle or create a Session instance
-      Session session = getNewDeltaSession();
-
-      // Initialize the properties of the new session and return it
-      session.setNew(true);
-      session.setValid(true);
-      session.setCreationTime(System.currentTimeMillis());
-      session.setMaxInactiveInterval(this.maxInactiveInterval);
+      DeltaSession session = getNewDeltaSession();
       String sessionId = generateSessionId();
 
       String jvmRoute = getJvmRoute();
@@ -376,7 +372,16 @@ public class DeltaManager
       }
 
       session.setId(sessionId);
+      session.resetDeltaRequest();
+      // Initialize the properties of the new session and return it
+      session.setNew(true);
+      session.setValid(true);
+      session.setCreationTime(System.currentTimeMillis());
+      session.setMaxInactiveInterval(this.maxInactiveInterval);
+
       sessionCounter++;
+      
+      
       if ( distribute ) {
           SessionMessage msg = new SessionMessage(
               getName(),
@@ -384,8 +389,9 @@ public class DeltaManager
               null,
               sessionId);
           cluster.send(msg);
+          session.resetDeltaRequest();
       }
-
+      
       return (session);
 
     }
@@ -400,7 +406,28 @@ public class DeltaManager
     }
 
 
-
+    private DeltaRequest loadDeltaRequest(byte[] data) throws
+        ClassNotFoundException, IOException {
+        ByteArrayInputStream fis = null;
+        ReplicationStream ois = null;
+        Loader loader = null;
+        ClassLoader classLoader = null;
+        fis = new ByteArrayInputStream(data);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        ois = new ReplicationStream(fis,container.getLoader().getClassLoader());
+        DeltaRequest dreq = (DeltaRequest)ois.readObject();
+        ois.close();
+        return dreq;
+    }
+    
+    private byte[] unloadDeltaRequest(DeltaRequest deltaRequest) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(deltaRequest);
+        oos.flush();
+        oos.close();
+        return bos.toByteArray();
+    }
     /**
      * Load any currently active sessions that were previously unloaded
      * to the appropriate persistence mechanism, if any.  If persistence is not
@@ -617,11 +644,7 @@ public class DeltaManager
         started = true;
 
         // Force initialization of the random number generator
-        if (log.isDebugEnabled())
-            log.debug("Force random number initialization starting");
         String dummy = generateSessionId();
-        if (log.isDebugEnabled())
-            log.debug("Force random number initialization completed");
 
         // Load unloaded sessions, if any
         try {
@@ -748,7 +771,7 @@ public class DeltaManager
         * @param msg - the message received.
         */
        public void messageDataReceived(SessionMessage msg) {
-
+           messageReceived(msg, msg.getAddress()!=null?(Member)msg.getAddress():null);
        }
 
        /**
@@ -762,9 +785,32 @@ public class DeltaManager
         * @return a SessionMessage to be sent,
         */
        public SessionMessage requestCompleted(String sessionId) {
-           return null;
+           try {
+               DeltaSession session = (DeltaSession) findSession(sessionId);
+               DeltaRequest deltaRequest = session.getDeltaRequest();
+               SessionMessage msg = null;
+               if (deltaRequest.getSize() > 0) {
+   
+                   byte[] data = unloadDeltaRequest(deltaRequest);
+                   msg = new SessionMessage(name, SessionMessage.EVT_SESSION_DELTA,
+                                            data, sessionId);
+                   session.resetDeltaRequest();
+               } else if ( !session.isPrimarySession() ) {
+                   msg = new SessionMessage(getName(),
+                                         SessionMessage.EVT_SESSION_ACCESSED,
+                                         null,
+                                         sessionId);
+               }
+               session.setPrimarySession(true);
+               return msg;
+           }
+           catch (IOException x) {
+               log.error("Unable to serialize delta request", x);
+               return null;
+           }
+   
        }
-
+   
        /**
         * When the manager expires session not tied to a request.
         * The cluster will periodically ask for a list of sessions
@@ -772,7 +818,7 @@ public class DeltaManager
         * @return
         */
        public String[] getInvalidatedSessions() {
-           return null;
+           return new String[0];
        }
 
 
@@ -790,22 +836,7 @@ public class DeltaManager
                switch (msg.getEventType()) {
                    case SessionMessage.EVT_GET_ALL_SESSIONS: {
                        //get a list of all the session from this manager
-                       Object[] sessions = findSessions();
-                       java.io.ByteArrayOutputStream bout = new java.io.
-                           ByteArrayOutputStream();
-                       java.io.ObjectOutputStream oout = new java.io.
-                           ObjectOutputStream(bout);
-                       oout.writeInt(sessions.length);
-                       for (int i = 0; i < sessions.length; i++) {
-                           ReplicatedSession ses = (ReplicatedSession) sessions[i];
-                           oout.writeUTF(ses.getId());
-                           byte[] data = null;//todo writeSession(ses);
-                           oout.writeObject(data);
-                       } //for
-                       //don't send a message if we don't have to
-                       oout.flush();
-                       oout.close();
-                       byte[] data = bout.toByteArray();
+                       byte[] data = doUnload();
                        SessionMessage newmsg = new SessionMessage(name,
                            SessionMessage.EVT_ALL_SESSION_DATA,
                            data, "");
@@ -813,26 +844,17 @@ public class DeltaManager
                        break;
                    }
                    case SessionMessage.EVT_ALL_SESSION_DATA: {
-                       java.io.ByteArrayInputStream bin =
-                           new java.io.ByteArrayInputStream(msg.getSession());
-                       java.io.ObjectInputStream oin = new java.io.
-                           ObjectInputStream(bin);
-                       int size = oin.readInt();
-                       for (int i = 0; i < size; i++) {
-                           String id = oin.readUTF();
-                           byte[] data = (byte[]) oin.readObject();
-                           Session session = null; //todo readSession(data, id);
-                           session.setManager(this);
-                           add(session);
-                       } //for
+                       byte[] data = msg.getSession();
+                       doLoad(data);
                        stateTransferred = true;
                        break;
                    }
                    case SessionMessage.EVT_SESSION_CREATED: {
-                       Session session = createSession(false);
-                       session.setManager(this);
+                       DeltaSession session = (DeltaSession)createSession(false);
                        session.setId(msg.getSessionID());
                        session.setNew(false);
+                       session.setPrimarySession(false);
+                       session.resetDeltaRequest();
                        break;
                    }
                    case SessionMessage.EVT_SESSION_EXPIRED: {
@@ -844,10 +866,20 @@ public class DeltaManager
                        break;
                    }
                    case SessionMessage.EVT_SESSION_ACCESSED: {
-                       Session session = findSession(msg.getSessionID());
+                       DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
                        if (session != null) {
                            session.access();
+                           session.setPrimarySession(false);
                        }
+                       break;
+                   }
+                   case SessionMessage.EVT_SESSION_DELTA : {
+                       byte[] delta = msg.getSession();
+                       DeltaRequest dreq = loadDeltaRequest(delta);
+                       DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
+                       dreq.execute(session);
+                       session.setPrimarySession(false);
+                       
                        break;
                    }
                    default: {
@@ -911,6 +943,27 @@ public class DeltaManager
 
     public void unload() {
 
+    }
+    public boolean getUseDirtyFlag() {
+        return useDirtyFlag;
+    }
+    public void setUseDirtyFlag(boolean useDirtyFlag) {
+        this.useDirtyFlag = useDirtyFlag;
+    }
+    public boolean getExpireSessionsOnShutdown() {
+        return expireSessionsOnShutdown;
+    }
+    public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown) {
+        this.expireSessionsOnShutdown = expireSessionsOnShutdown;
+    }
+    public boolean getPrintToScreen() {
+        return printToScreen;
+    }
+    public void setPrintToScreen(boolean printToScreen) {
+        this.printToScreen = printToScreen;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
 

@@ -97,7 +97,6 @@ import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.cluster.ClusterManager;
-import org.apache.catalina.cluster.session.SimpleTcpReplicationManager;
 import org.apache.catalina.cluster.Constants;
 
 import org.apache.commons.logging.Log;
@@ -273,6 +272,7 @@ public class SimpleTcpCluster
     private long msgSendTime = 0;
     private long lastChecked = System.currentTimeMillis();
     private boolean isJdk13 = false;
+    private String managerClassName = "org.apache.catalina.cluster.session.SimpleTcpReplicationManager";
 
     // ------------------------------------------------------------- Properties
 
@@ -410,13 +410,18 @@ public class SimpleTcpCluster
 
 
     public synchronized Manager createManager(String name) {
-        SimpleTcpReplicationManager manager = new SimpleTcpReplicationManager(name);
+        ClusterManager manager = null;
+        try {
+            manager = (ClusterManager)getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();
+        } catch ( Exception x ) {
+            log.error("Unable to load class for replication manager",x);
+            manager = new org.apache.catalina.cluster.session.SimpleTcpReplicationManager();
+        }
+        manager.setName(name);
         manager.setCluster(this);
         manager.setDistributable(true);
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
-        manager.setPrintToScreen(printToScreen);
         manager.setUseDirtyFlag(useDirtyFlag);
-        manager.setDebug(debug);
         allmanagers.put(name, manager);
         managers.put(name,manager);
         return manager;
@@ -812,6 +817,12 @@ public class SimpleTcpCluster
     }
     public void setIsJdk13(boolean isJdk13) {
         this.isJdk13 = isJdk13;
+    }
+    public String getManagerClassName() {
+        return managerClassName;
+    }
+    public void setManagerClassName(String managerClassName) {
+        this.managerClassName = managerClassName;
     }
 
 }
