@@ -76,6 +76,7 @@ import java.net.MalformedURLException;
 
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
+import javax.servlet.jsp.tagext.ValidationMessage;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -1117,8 +1118,12 @@ public class JspParseEventListener implements ParseEventListener {
         while (enum.hasMoreElements()) {
             TagLibraryInfo tli = (TagLibraryInfo)enum.nextElement();
 	    //@@@ remove cast when TagLibraryInfo is fixed in spec
-            String msg = ((TagLibraryInfoImpl)tli).validate(xo.getPageData());
-            if (msg != null) {
+
+	    ValidationMessage[] errors =
+	      ((TagLibraryInfoImpl)tli).validate(xo.getPageData());
+            if ((errors != null) && (errors.length != 0)) {
+	        // for now just report the first error!
+	        String msg = errors[0].getMessage();
                 throw new JasperException(
 		    Constants.getString(
                         "jsp.error.taglibraryvalidator.invalidpage",

@@ -89,6 +89,7 @@ import javax.servlet.jsp.tagext.TagLibraryValidator;
 import javax.servlet.jsp.tagext.PageData;
 import javax.servlet.jsp.tagext.VariableInfo;
 import javax.servlet.jsp.tagext.TagVariableInfo;
+import javax.servlet.jsp.tagext.ValidationMessage;
 
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
@@ -605,7 +606,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
      * @param thePage The JSP page object
      * @return A string indicating whether the page is valid or not.
      */
-    public String validate(PageData thePage) {
+    public ValidationMessage[] validate(PageData thePage) {
 	TagLibraryValidator tlv = getTagLibraryValidator();
 	if (tlv == null) return null;
 	return tlv.validate(getPrefixString(), getURI(), thePage);
