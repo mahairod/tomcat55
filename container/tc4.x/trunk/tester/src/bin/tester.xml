@@ -72,12 +72,19 @@
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication02 PASSED"/>
 
-    <!-- Test isUserInRole() on actual role and on an alias -->
+    <!-- Test isUserInRole() on actual role and on an alias (servlet) -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
           debug="${debug}"
          request="${context.path}/protected/Authentication03"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication03 PASSED"/>
+
+    <!-- Test isUserInRole() on actual role and on an alias (JSP page) -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
+         request="${context.path}/protected/Authentication04"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication04 PASSED"/>
 
   </target>
 

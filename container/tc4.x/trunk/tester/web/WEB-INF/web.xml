@@ -312,6 +312,15 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Authentication04</servlet-name>
+        <jsp-file>/Authentication04.jsp</jsp-file>
+        <security-role-ref>
+            <role-name>alias</role-name>
+            <role-link>tomcat</role-link>
+        </security-role-ref>
+    </servlet>
+
+    <servlet>
         <servlet-name>Decoding01</servlet-name>
         <servlet-class>org.apache.tester.Decoding01</servlet-class>
     </servlet>
@@ -609,6 +618,11 @@
     <servlet-mapping>
         <servlet-name>Authentication03</servlet-name>
         <url-pattern>/protected/Authentication03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication04</servlet-name>
+        <url-pattern>/protected/Authentication04</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -1112,12 +1126,10 @@
         <realm-name>Authentication Servlet</realm-name>
     </login-config>
 
-<!--
     <security-role>
         <description>Security role we are testing for</description>
         <role-name>tomcat</role-name>
     </security-role>
--->
 
 
     <!-- ========== Environment Entries =================================== -->
