@@ -233,7 +233,7 @@ public class StatusTransformer {
                                               int mode)
         throws Exception {
 
-        if (mode == 0){
+        if (mode == 0) {
             writer.print("<h1>");
             writer.print(name);
             writer.print("</h1>");
@@ -250,7 +250,7 @@ public class StatusTransformer {
             writer.print(" Current thread busy: ");
             writer.print(mBeanServer.getAttribute(tpName, "currentThreadsBusy"));
             
-            writer.print("<br/>");
+            writer.print("<br>");
 
             ObjectName grpName = null;
 
@@ -546,11 +546,39 @@ public class StatusTransformer {
         if (mode == 0){
             ObjectName queryHosts = new ObjectName("*:j2eeType=WebModule,*");
             Set hostsON = mBeanServer.queryNames(queryHosts, null);
+
+            // Navigation menu
+            writer.print("<h1>");
+            writer.print("Application list");
+            writer.print("</h1>");
+
+            writer.print("<p>");
+            int count = 0;
             Iterator iterator = hostsON.iterator();
             while (iterator.hasNext()) {
                 ObjectName contextON = (ObjectName) iterator.next();
+                String webModuleName = contextON.getKeyProperty("name");
+
+                writer.print("<a href=\"#" + (count++) + ".0\">");
+                writer.print(webModuleName);
+                writer.print("</a>");
+                if (iterator.hasNext()) {
+                    writer.print("<br>");
+                }
+
+            }
+            writer.print("</p>");
+
+            // Webapp list
+            count = 0;
+            iterator = hostsON.iterator();
+            while (iterator.hasNext()) {
+                ObjectName contextON = (ObjectName) iterator.next();
+                writer.print("<a class=\"A.name\" name=\"#" 
+                             + (count++) + ".0\">");
                 writeContext(writer, contextON, mBeanServer, mode);
             }
+
         } else if (mode == 1){
             // for now we don't write out the Detailed state in XML
         }
@@ -585,6 +613,17 @@ public class StatusTransformer {
             } else {
                 return;
             }
+
+            ObjectName queryManager = new ObjectName
+                (objectName.getDomain() + ":type=Manager,path=" + contextName 
+                 + ",host=" + hostName + ",*");
+            Set managersON = mBeanServer.queryNames(queryManager, null);
+            ObjectName managerON = null;
+            Iterator iterator2 = managersON.iterator();
+            while (iterator2.hasNext()) {
+                managerON = (ObjectName) iterator2.next();
+            }
+
             // Special case for the root context
             if (contextName.equals("/")) {
                 contextName = "";
@@ -593,6 +632,7 @@ public class StatusTransformer {
             writer.print("<h1>");
             writer.print(name);
             writer.print("</h1>");
+            writer.print("</a>");
 
             writer.print("<p>");
             writer.print(" Startup time: ");
@@ -601,9 +641,13 @@ public class StatusTransformer {
             writer.print(" TLD scan time: ");
             writer.print(formatTime(mBeanServer.getAttribute
                                     (objectName, "tldScanTime"), false));
+            if (managerON != null) {
+                writeManager(writer, managerON, mBeanServer, mode);
+            }
             writer.print("</p>");
-            
-            String onStr = "*:j2eeType=Servlet,WebModule=" + webModuleName + ",*";
+
+            String onStr = objectName.getDomain() 
+                + ":j2eeType=Servlet,WebModule=" + webModuleName + ",*";
             ObjectName servletObjectName = new ObjectName(onStr);
             Set set = mBeanServer.queryMBeans(servletObjectName, null);
             Iterator iterator = set.iterator();
@@ -611,8 +655,42 @@ public class StatusTransformer {
                 ObjectInstance oi = (ObjectInstance) iterator.next();
                 writeWrapper(writer, oi.getObjectName(), mBeanServer, mode);
             }
+
         } else if (mode == 1){
             // for now we don't write out the context in XML
+        }
+
+    }
+
+
+    /**
+     * Write detailed information about a manager.
+     */
+    public static void writeManager(PrintWriter writer, ObjectName objectName,
+                                    MBeanServer mBeanServer, int mode)
+        throws Exception {
+
+        if (mode == 0) {
+            writer.print("<br>");
+            writer.print(" Active sessions: ");
+            writer.print(mBeanServer.getAttribute
+                         (objectName, "activeSessions"));
+            writer.print(" Session count: ");
+            writer.print(mBeanServer.getAttribute
+                         (objectName, "sessionCounter"));
+            writer.print(" Max active sessions: ");
+            writer.print(mBeanServer.getAttribute(objectName, "maxActive"));
+            writer.print(" Rejected session creations: ");
+            writer.print(mBeanServer.getAttribute
+                         (objectName, "rejectedSessions"));
+            writer.print(" Expired sessions: ");
+            writer.print(mBeanServer.getAttribute
+                         (objectName, "expiredSessions"));
+            writer.print(" Processing time: ");
+            writer.print(formatTime(mBeanServer.getAttribute
+                                    (objectName, "processingTime"), false));
+        } else if (mode == 1) {
+            // for now we don't write out the wrapper details
         }
 
     }
@@ -625,7 +703,7 @@ public class StatusTransformer {
                                     MBeanServer mBeanServer, int mode)
         throws Exception {
 
-        if (mode == 0){
+        if (mode == 0) {
             String servletName = objectName.getKeyProperty("name");
             
             String[] mappings = (String[]) 
