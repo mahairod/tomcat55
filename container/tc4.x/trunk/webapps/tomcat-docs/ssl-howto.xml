@@ -7,7 +7,7 @@
     &project;
 
     <properties>
-        <author email="ccain@mhsoftware.com">Christopher Cain</author>
+        <author email="ccain@apache.org">Christopher Cain</author>
         <title>SSL Configuration HOW-TO</title>
     </properties>
 
@@ -30,9 +30,10 @@
 these simple steps.  For more information, read the rest of this HOW-TO.</p>
 <ol>
 <li>Download JSSE 1.0.2 (or later) from
-    <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>
-    and make it an <em>installed extension</em> by copying the included JAR
-    files into <code>$JAVA_HOME/jre/lib/ext</code>.</li><br/><br/>
+   <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>
+   and either make it an <em>installed extension</em> on the system, or else add it
+   to the classpath being passed to Tomcat in the Catalina startup script.
+</li><br/><br/>
 <li>Create a certificate keystore by executing the following command:
 <source>
 keytool -genkey -alias tomcat -keyalg RSA
@@ -100,7 +101,7 @@ reasonable assurance that its owner is who you think it is, particularly
 before receiving any sensitive information.  While a broader explanation of
 Certificates is beyond the scope of this document, think of a Certificate
 as a "digital driver's license" for an Internet address.  It states what
-company the address is associated with, along with some basic contact
+company the site is associated with, along with some basic contact
 information about the site owner or administrator.</p>
 
 <p>This "driver's license" is cryptographically signed by its owner, and is
@@ -158,7 +159,7 @@ problematic.  This is a design limitation of the SSL protocol itself.  The SSL
 handshake, where the client browser accepts the server certificate, must occur
 before the HTTP request is accessed.  As a result, the request information
 containing the virtual host name cannot be determined prior to authentication,
-ant it is therefore not possible to assign multiple certificates to a single
+and it is therefore not possible to assign multiple certificates to a single
 IP address.  If all virtual hosts on a single IP address need to authenticate
 against the same certificate, the addition of multiple virtual hosts should not
 interfere with normal SSL operations on the server.  Be aware, however, that
@@ -181,16 +182,25 @@ If you built Tomcat from source, you have probably already downloaded this
 package.  If you are running JDK 1.4 (currently in beta), these classes have
 been integrated directly into the JDK, so you can skip this entire step.</p>
 
-<p>After expanding the package, copy all three JAR files
-(<code>jcert.jar</code>, <code>jnet.jar</code>, and <code>jsse.jar</code>)
-into your <code>$JAVA_HOME/jre/lib/ext</code> directory.  This effectively
-makes them "installed extensions," and eliminates the need to put them into
-the <code>CLASSPATH</code>.</p>
+<p>After expanding the package, there are two ways to make it available to Tomcat.
+The easiest approach is to simply make it an <em>installed extension</em> by 
+copying all three JAR files (<code>jcert.jar</code>, <code>jnet.jar</code>, and
+<code>jsse.jar</code>) into your <code>$JAVA_HOME/jre/lib/ext</code> directory.
+In effect, this eliminates the need to have them in any <code>CLASSPATH</code>.</p>
+
+<p>If making the JSSE libraries an installed extension is either not possible or
+not desirable in your particular environment, the alternative approach is to 
+add the JAR files to Tomcat's startup <code>CLASSPATH</code>. Because Tomcat
+ignores the system <code>CLASSPATH</code>, this approach involves modifying the 
+Catalina command script for your particular environment (<code>catalina.sh</code>
+under Unix, or <code>catalina.bat</code> in Windows). Add the JSSE libraries to
+the classpath being passed to the <code>java</code> command.</p>
 
 <p><strong>WARNING</strong> - Do <strong>not</strong> copy any of these JAR
-files into any of the internal Tomcat directories, or manually include them
-on the <code>CLASSPATH</code> environment variable in your startup scripts.
-Doing this will cause Tomcat to fail at startup time.</p>
+files into any of the internal Tomcat directories. Also, do not make them both an
+installed extension <em>and</em> include them in the startup script's 
+<code>CLASSPATH</code>. Either of these two scenerios will cause Tomcat to fail
+on startup.</p>
 
 </subsection>
 
