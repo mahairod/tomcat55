@@ -220,12 +220,6 @@
        xmlValidation="true" xmlNamespaceAware="true">
       -->
 
-        <!-- Uncomment this to cluster this host using JavaGroups. The
-             protocol attribute can be used to configure the JavaGroups
-             network stack (the defaults are used if it's not specified). -->
-        <!--
-        <Cluster className="org.apache.catalina.cluster.JGCluster"/>
-        -->
         <!-- Defines a cluster for this node,
              By defining this element, means that every manager will be changed.
              So when running a cluster, only make sure that you have webapps in there
