@@ -82,6 +82,8 @@ BUG FIXES AND IMPROVEMENTS:
 Generic Bug Fixes:
 ------------------
 
+[B3] Coyote:
+     Update to Coyote 1.0 Beta 5.
 
 
 ------------------
@@ -133,6 +135,12 @@ Catalina Bug Fixes:
 [B3] WebdavServlet:
      Avoid unnecessary operations when doing a PROPFIND.
 
+[B3] Coyote:
+     Fix handling of null strings in response headers.
+
+[B3] Coyote:
+     Implement getRemoteHost and getRemoteAddr.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -164,6 +172,7 @@ Bugzilla Bugs Resolved:
 [B1] 4295  Cookies not following RFC2109
 [B1] 4518  Jsp-file and load-on-startup and init-param does not work
 [B1] 5422  HTTP Headers not being cleared after form authentication
+[B3] 5471  jspc -webapp option is broken due to namespace collisions
 [B1] 5647  AJP13 connector will not pass authentication requests
 [B1] 6090  Listener not instantiated in tld file
 [B1] 6201  ISO-8859-8-i  problem. (hebrew)
@@ -201,6 +210,7 @@ Bugzilla Bugs Resolved:
 [B2] 7171  FileStore directory must exists
 [B2] 7344  Tomcat appears to be case-sensitive with regard to the token "Basic"
            in Authorization request parameter
+[B3] 7488  JspC generates wrong package with -webapp on PC/DOS/NT/Win2k
 [B3] 7534  StackOverflowError in ChunkedOutputFilter.doWrite()
 
 
