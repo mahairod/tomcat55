@@ -557,7 +557,27 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
     public ServletRequest getRequest() { return request; }
     public ServletResponse getResponse() { return response; }
-    public Exception getException() { return (Exception)request.getAttribute(EXCEPTION); }
+
+    /**
+     * Returns the exception associated with this page
+     * context, if any.
+     * <p/>
+     * Added wrapping for Throwables to avoid ClassCaseException:
+     * see Bugzilla 31171 for details.
+     *
+     * @return The Exception associated with this page context, if any.
+     */
+    public Exception getException() {
+        Throwable exc = (Throwable) request.getAttribute(EXCEPTION);
+
+        // Only wrap if needed
+        if((exc != null) && (! (exc instanceof Exception))) {
+            exc = new JspException(exc);
+        }
+
+        return (Exception) exc;
+    }
+
     public Object getPage() { return servlet; }
 
 
