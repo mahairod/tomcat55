@@ -565,17 +565,21 @@ final class ApplicationDispatcher
                 sb.append(pathInfo);
             if (sb.length() > 0)
             */
-
-            wrequest.setAttribute(Globals.INCLUDE_REQUEST_URI_ATTR, requestURI);
-            wrequest.setAttribute(Globals.INCLUDE_CONTEXT_PATH_ATTR,
-                                  contextPath);
-            wrequest.setAttribute(Globals.INCLUDE_SERVLET_PATH_ATTR,
-                                  servletPath);
-            wrequest.setAttribute(Globals.INCLUDE_PATH_INFO_ATTR, pathInfo);
-            wrequest.setAttribute(Globals.INCLUDE_QUERY_STRING_ATTR,
-                                  queryString);
-
+            if (requestURI != null)
+                wrequest.setAttribute(Globals.INCLUDE_REQUEST_URI_ATTR,
+                                      requestURI);
+            if (contextPath != null)
+                wrequest.setAttribute(Globals.INCLUDE_CONTEXT_PATH_ATTR,
+                                      contextPath);
+            if (servletPath != null)
+                wrequest.setAttribute(Globals.INCLUDE_SERVLET_PATH_ATTR,
+                                      servletPath);
+            if (pathInfo != null)
+                wrequest.setAttribute(Globals.INCLUDE_PATH_INFO_ATTR,
+                                      pathInfo);
             if (queryString != null) {
+                wrequest.setAttribute(Globals.INCLUDE_QUERY_STRING_ATTR,
+                                      queryString);
                 wrequest.setQueryParams(queryString);
             }
             
