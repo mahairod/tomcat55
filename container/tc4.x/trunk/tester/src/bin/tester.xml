@@ -115,6 +115,32 @@
          request="${context.path}/WrappedInclude01"
       outContent="Include01 PASSED"/>
 
+    <!-- ========== Included Servlet Throwing Exceptions ================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include02?exception=IOException"
+      outContent="Include02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include02?exception=ServletException"
+      outContent="Include02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include02?exception=NullPointerException"
+      outContent="Include02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude02?exception=IOException"
+      outContent="Include02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude02?exception=ServletException"
+      outContent="Include02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude02?exception=NullPointerException"
+      outContent="Include02 PASSED"/>
+
   </target>
 
 

@@ -86,6 +86,11 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedReset01</url-pattern>
     </filter-mapping>
@@ -191,6 +196,16 @@
     <servlet>
         <servlet-name>Include01</servlet-name>
         <servlet-class>org.apache.tester.Include01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include02</servlet-name>
+        <servlet-class>org.apache.tester.Include02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include02a</servlet-name>
+        <servlet-class>org.apache.tester.Include02a</servlet-class>
     </servlet>
 
     <servlet>
@@ -349,6 +364,26 @@
     <servlet-mapping>
         <servlet-name>Include01</servlet-name>
         <url-pattern>/WrappedInclude01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02</servlet-name>
+        <url-pattern>/Include02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02</servlet-name>
+        <url-pattern>/WrappedInclude02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02a</servlet-name>
+        <url-pattern>/Include02a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02a</servlet-name>
+        <url-pattern>/WrappedInclude02a</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

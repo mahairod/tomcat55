@@ -63,80 +63,105 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Part 3 of Session Tests.  Ensures that there is an existing session, and
- * that the session bean stashed in Part 1 can be retrieved successfully.
- * Then, it removes that attribute and verifies successful removal.
+ * Positive test for handling exceptions thrown by an included servlet.
+ * Request parameter <strong>exception</strong> is used to indicate the type
+ * of exception that should be thrown, which must be one of
+ * <code>IOException</code>, <code>ServletException</code>, or
+ * <code>ServletException</code>.  According to the spec, any exceptions of
+ * these types should be propogated back to the caller unchanged.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class Session03 extends HttpServlet {
+public class Include02 extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
 
-        response.setContentType("text/plain");
-        PrintWriter writer = response.getWriter();
-
-        // Ensure that there is a current session
         boolean ok = true;
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            writer.println("Session03 FAILED - No existing session " +
-                           request.getRequestedSessionId());
-            ok = false;
+        response.setContentType("text/plain");
+	PrintWriter writer = response.getWriter();
+        RequestDispatcher rd =
+            getServletContext().getRequestDispatcher("/Include02a");
+        if (rd == null) {
+            writer.println("Include02 FAILED - No RequestDispatcher returned");
+	    ok = false;
         }
-
-        // Ensure that we can retrieve the attribute successfully
-	SessionBean bean = null;
-        if (ok) {
-            Object object = session.getAttribute("sessionBean");
-            if (object == null) {
-                writer.println("Session03 FAILED - Cannot retrieve attribute");
-                ok = false;
-            } else if (!(object instanceof SessionBean)) {
-                writer.println("Session03 FAILED - Attribute instance of " +
-                               object.getClass().getName());
-                ok = false;
-            } else {
-                bean = (SessionBean) object;
-                String value = bean.getStringProperty();
-                if (!"Session01".equals(value)) {
-                    writer.println("Session03 FAILED - Property = " + value);
-                    ok = false;
-                }
-            }
-        }
-
-        // Remove the attribute and guarantee that this was successful
-        if (ok) {
-            session.removeAttribute("sessionBean");
-            if (session.getAttribute("sessionBean") != null) {
-                writer.println("Session03 FAILED - Removal failed");
-                ok = false;
-            }
-        }
-
-	// Validate the bean lifecycle of this bean
+	String type = request.getParameter("exception");
 	if (ok) {
-	    String lifecycle = bean.getLifecycle();
-	    if (!"/vb/swp/sda/vu".equals(lifecycle)) {
-	        writer.println("Session03 FAILED - Invalid bean lifecycle '" +
-			       lifecycle + "'");
+	    if (type == null) {
+	        writer.println("Include02 FAILED - No exception type specified");
+		ok = false;
+	    } else if (!type.equals("IOException") &&
+		       !type.equals("ServletException") &&
+		       !type.equals("NullPointerException")) {
+	        writer.println("Include02 FAILED - Invalid exception type " +
+			       type + " requested");
 		ok = false;
 	    }
 	}
 
-        // Report success if everything is still ok
-        if (ok)
-            writer.println("Session03 PASSED");
-        while (true) {
-            String message = StaticLogger.read();
-            if (message == null)
-                break;
-            writer.println(message);
-        }
+	IOException ioException = null;
+	ServletException servletException = null;
+	Throwable throwable = null;
+	try {
+            if (ok)
+                rd.include(request, response);
+	} catch (IOException e) {
+	    ioException = e;
+	} catch (ServletException e) {
+	    servletException = e;
+	} catch (Throwable e) {
+	    throwable = e;
+	}
+
+	if (ok) {
+            if (type.equals("IOException")) {
+                if (ioException == null) {
+		    writer.println("Include02 FAILED - No IOException thrown");
+		    ok = false;
+		} else {
+		    String message = ioException.getMessage();
+		    if (!"Include02 IOException".equals(message)) {
+		        writer.println("Include02 FAILED - IOException was " +
+				       message);
+			ok = false;
+		    }
+		}
+	    } else if (type.equals("ServletException")) {
+                if (servletException == null) {
+		    writer.println("Include02 FAILED - No ServletException thrown");
+		    ok = false;
+		} else {
+		    String message = servletException.getMessage();
+		    if (!"Include02 ServletException".equals(message)) {
+		        writer.println("Include02 FAILED - ServletException was " +
+				       message);
+			ok = false;
+		    }
+		}
+	    } else if (type.equals("NullPointerException")) {
+                if (throwable == null) {
+		    writer.println("Include02 FAILED - No NullPointerException thrown");
+		    ok = false;
+		} else if (!(throwable instanceof NullPointerException)) {
+		    writer.println("Include02 FAILED - Thrown Exception was " +
+				   throwable.getClass().getName());
+		    ok = false;
+		} else {
+		    String message = throwable.getMessage();
+		    if (!"Include02 NullPointerException".equals(message)) {
+		        writer.println("Include02 FAILED - NullPointerException was " +
+				       message);
+			ok = false;
+		    }
+		}
+	    }
+	}
+
+	if (ok)
+	    writer.println("Include02 PASSED");
         StaticLogger.reset();
 
     }

@@ -63,81 +63,26 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Part 3 of Session Tests.  Ensures that there is an existing session, and
- * that the session bean stashed in Part 1 can be retrieved successfully.
- * Then, it removes that attribute and verifies successful removal.
+ * Included servlet for the test performed by Include02.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class Session03 extends HttpServlet {
+public class Include02a extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
 
-        response.setContentType("text/plain");
-        PrintWriter writer = response.getWriter();
-
-        // Ensure that there is a current session
-        boolean ok = true;
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            writer.println("Session03 FAILED - No existing session " +
-                           request.getRequestedSessionId());
-            ok = false;
-        }
-
-        // Ensure that we can retrieve the attribute successfully
-	SessionBean bean = null;
-        if (ok) {
-            Object object = session.getAttribute("sessionBean");
-            if (object == null) {
-                writer.println("Session03 FAILED - Cannot retrieve attribute");
-                ok = false;
-            } else if (!(object instanceof SessionBean)) {
-                writer.println("Session03 FAILED - Attribute instance of " +
-                               object.getClass().getName());
-                ok = false;
-            } else {
-                bean = (SessionBean) object;
-                String value = bean.getStringProperty();
-                if (!"Session01".equals(value)) {
-                    writer.println("Session03 FAILED - Property = " + value);
-                    ok = false;
-                }
-            }
-        }
-
-        // Remove the attribute and guarantee that this was successful
-        if (ok) {
-            session.removeAttribute("sessionBean");
-            if (session.getAttribute("sessionBean") != null) {
-                writer.println("Session03 FAILED - Removal failed");
-                ok = false;
-            }
-        }
-
-	// Validate the bean lifecycle of this bean
-	if (ok) {
-	    String lifecycle = bean.getLifecycle();
-	    if (!"/vb/swp/sda/vu".equals(lifecycle)) {
-	        writer.println("Session03 FAILED - Invalid bean lifecycle '" +
-			       lifecycle + "'");
-		ok = false;
-	    }
-	}
-
-        // Report success if everything is still ok
-        if (ok)
-            writer.println("Session03 PASSED");
-        while (true) {
-            String message = StaticLogger.read();
-            if (message == null)
-                break;
-            writer.println(message);
-        }
-        StaticLogger.reset();
+        String type = request.getParameter("exception");
+	if (type == null)
+	    return;
+	else if (type.equals("IOException"))
+	    throw new IOException("Include02 IOException");
+	else if (type.equals("ServletException"))
+	    throw new ServletException("Include02 ServletException");
+	else if (type.equals("NullPointerException"))
+	    throw new NullPointerException("Include02 NullPointerException");
 
     }
 
