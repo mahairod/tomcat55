@@ -2267,7 +2267,7 @@ public class StandardContext
 
         // Create and register the associated naming context, if internal 
         // naming is used
-        boolean ok = false;
+        boolean ok = true;
         if (isUseNaming()) {
             try {
                 createNamingContext();
@@ -2282,12 +2282,16 @@ public class StandardContext
 
         // Restart our application event listeners and filters
         if (ok) {
-            if (!listenerStart())
+            if (!listenerStart()) {
+                log(sm.getString("standardContext.listenerStartFailed"));
                 ok = false;
+            }
         }
         if (ok) {
-            if (!filterStart())
+            if (!filterStart()) {
+                log(sm.getString("standardContext.filterStartFailed"));
                 ok = false;
+            }
         }
 
         // Load sessions from persistent storage, if supported
