@@ -1728,7 +1728,7 @@ public final class CGIServlet extends HttpServlet {
 
             if(contentStream != null) {
                 commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-                proc.getOutputStream().write(contentStream.toByteArray());
+                commandsStdIn.write(contentStream.toByteArray());
                 commandsStdIn.flush();
                 commandsStdIn.close();
             }
