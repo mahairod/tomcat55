@@ -798,7 +798,6 @@ public class CoyoteResponse
         String charset = cm.getCharset( locale );
         if ( charset != null ){
             coyoteResponse.setCharacterEncoding(charset);
-            isCharacterEncodingSet = true;
         }
 
     }
