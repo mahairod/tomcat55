@@ -158,7 +158,7 @@ abstract public class TagLibraryValidator {
      * @param prefix the first prefix with which the tag library is 
      *     associated, in the XML view.  Note that some tags may use 
      *     a different prefix if the namespace is redefined.
-     * @param uri the value of the uri argument in the directive
+     * @param uri the tag library's unique identifier
      * @param page the JspData page object
      * @return A null object, or zero length array if no errors, an array
      * of ValidationMessages otherwise.
