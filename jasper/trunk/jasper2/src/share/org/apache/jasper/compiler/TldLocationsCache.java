@@ -61,8 +61,10 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -123,6 +125,9 @@ public class TldLocationsCache {
     private static final String FILE_PROTOCOL = "file:";
     private static final String JAR_FILE_SUFFIX = ".jar";
 
+    // Names of JARs that are known not to contain any TLDs
+    private static HashSet noTldJars;
+
     /**
      * The mapping of the 'global' tag library URI to the location (resource
      * path) of the TLD associated with that tag library. The location is
@@ -138,6 +143,61 @@ public class TldLocationsCache {
 
     //*********************************************************************
     // Constructor and Initilizations
+
+    /*
+     * Initializes the set of JARs that are known not to contain any TLDs
+     */
+    static {
+        noTldJars = new HashSet();
+        noTldJars.add("ant.jar");
+        noTldJars.add("catalina.jar");
+        noTldJars.add("catalina-ant.jar");
+        noTldJars.add("catalina-cluster.jar");
+        noTldJars.add("catalina-optional.jar");
+        noTldJars.add("catalina-i18n-fr.jar");
+        noTldJars.add("catalina-i18n-ja.jar");
+        noTldJars.add("catalina-i18n-es.jar");
+        noTldJars.add("commons-dbcp.jar");
+        noTldJars.add("commons-modeler.jar");
+        noTldJars.add("commons-logging-api.jar");
+        noTldJars.add("commons-beanutils.jar");
+        noTldJars.add("commons-fileupload-1.0.jar");
+        noTldJars.add("commons-pool.jar");
+        noTldJars.add("commons-digester.jar");
+        noTldJars.add("commons-logging.jar");
+        noTldJars.add("commons-collections.jar");
+        noTldJars.add("commons-el.jar");
+        noTldJars.add("jakarta-regexp-1.2.jar");
+        noTldJars.add("jasper-compiler.jar");
+        noTldJars.add("jasper-runtime.jar");
+        noTldJars.add("jmx.jar");
+        noTldJars.add("jmx-tools.jar");
+        noTldJars.add("jsp-api.jar");
+        noTldJars.add("jkshm.jar");
+        noTldJars.add("jkconfig.jar");
+        noTldJars.add("naming-common.jar");
+        noTldJars.add("naming-resources.jar");
+        noTldJars.add("naming-factory.jar");
+        noTldJars.add("naming-java.jar");
+        noTldJars.add("servlet-api.jar");
+        noTldJars.add("servlets-default.jar");
+        noTldJars.add("servlets-invoker.jar");
+        noTldJars.add("servlets-common.jar");
+        noTldJars.add("servlets-webdav.jar");
+        noTldJars.add("tomcat-util.jar");
+        noTldJars.add("tomcat-http11.jar");
+        noTldJars.add("tomcat-jni.jar");
+        noTldJars.add("tomcat-jk.jar");
+        noTldJars.add("tomcat-jk2.jar");
+        noTldJars.add("tomcat-coyote.jar");
+        noTldJars.add("xercesImpl.jar");
+        noTldJars.add("xmlParserAPIs.jar");
+        // JARs from J2SE runtime
+        noTldJars.add("sunjce_provider.jar");
+        noTldJars.add("ldapsec.jar");
+        noTldJars.add("localedata.jar");
+        noTldJars.add("dnsns.jar");
+    }
     
     public TldLocationsCache(ServletContext ctxt) {
         this(ctxt, true);
@@ -158,6 +218,22 @@ public class TldLocationsCache {
         this.redeployMode = redeployMode;
         mappings = new Hashtable();
         initialized = false;
+    }
+
+    /**
+     * Sets the list of JARs that are known not to contain any TLDs.
+     *
+     * @param jarNames List of comma-separated names of JAR files that are 
+     * known not to contain any TLDs 
+     */
+    public static void setNoTldJars(String jarNames) {
+        if (jarNames != null) {
+            noTldJars.clear();
+            StringTokenizer tokenizer = new StringTokenizer(jarNames, ",");
+            while (tokenizer.hasMoreElements()) {
+                noTldJars.add(tokenizer.nextToken());
+            }
+        }
     }
 
     /**
@@ -277,7 +353,6 @@ public class TldLocationsCache {
 
         JarFile jarFile = null;
         String resourcePath = conn.getJarFileURL().toString();
-
         try {
             if (redeployMode) {
                 conn.setUseCaches(false);
@@ -403,26 +478,38 @@ public class TldLocationsCache {
      * all shared JARs in the classloader delegation chain of the webapp's
      * classloader.
      *
-     * The latter constitutes a Tomcat-specific extension to the TLD search
+     * Considering JARs in the classloader delegation chain constitutes a
+     * Tomcat-specific extension to the TLD search
      * order defined in the JSP spec. It allows tag libraries packaged as JAR
      * files to be shared by web applications by simply dropping them in a 
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
+     *
+     * The set of shared JARs to be scanned for TLDs is narrowed down by
+     * the <tt>noTldJars</tt> class variable, which contains the names of JARs
+     * that are known not to contain any TLDs.
      */
     private void scanJars() throws Exception {
 
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        ClassLoader webappLoader
+            = Thread.currentThread().getContextClassLoader();
+        ClassLoader loader = webappLoader;
+
         while (loader != null) {
             if (loader instanceof URLClassLoader) {
                 URL[] urls = ((URLClassLoader) loader).getURLs();
                 for (int i=0; i<urls.length; i++) {
                     URLConnection conn = urls[i].openConnection();
                     if (conn instanceof JarURLConnection) {
-                        scanJar((JarURLConnection) conn, true);
+                        if (needScanJar(loader, webappLoader,
+                                        ((JarURLConnection) conn).getJarFile().getName())) {
+                            scanJar((JarURLConnection) conn, true);
+                        }
                     } else {
                         String urlStr = urls[i].toString();
                         if (urlStr.startsWith(FILE_PROTOCOL)
-                                    && urlStr.endsWith(JAR_FILE_SUFFIX)) {
+                                && urlStr.endsWith(JAR_FILE_SUFFIX)
+                                && needScanJar(loader, webappLoader, urlStr)) {
                             URL jarURL = new URL("jar:" + urlStr + "!/");
                             scanJar((JarURLConnection) jarURL.openConnection(),
                                     true);
@@ -430,7 +517,35 @@ public class TldLocationsCache {
                     }
                 }
             }
+
             loader = loader.getParent();
+        }
+    }
+
+    /*
+     * Determines if the JAR file with the given <tt>jarPath</tt> needs to be
+     * scanned for TLDs.
+     *
+     * @param loader The current classloader in the parent chain
+     * @param webappLoader The webapp classloader
+     * @param jarPath The JAR file path
+     *
+     * @return TRUE if the JAR file identified by <tt>jarPath</tt> needs to be
+     * scanned for TLDs, FALSE otherwise
+     */
+    private boolean needScanJar(ClassLoader loader, ClassLoader webappLoader,
+                                String jarPath) {
+        if (loader == webappLoader) {
+            // JARs under WEB-INF/lib must be scanned unconditionally according
+            // to the spec.
+            return true;
+        } else {
+            String jarName = jarPath;
+            int slash = jarPath.lastIndexOf('/');
+            if (slash >= 0) {
+                jarName = jarPath.substring(slash + 1);
+            }
+            return (!noTldJars.contains(jarName));
         }
     }
 }
