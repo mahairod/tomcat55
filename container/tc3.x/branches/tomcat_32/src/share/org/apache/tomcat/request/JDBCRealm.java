@@ -406,6 +406,7 @@ public class JDBCRealm extends BaseInterceptor {
 	// Validate and update our current component state
       if (!started && checkConnection() ) {
           started = true;
+          log(sm.getString("jdbcRealm.started"));
       }
     }
 
@@ -506,7 +507,8 @@ public class JDBCRealm extends BaseInterceptor {
         try {
             if( (dbConnection == null) || dbConnection.isClosed() ) {
                 Class.forName(driverName);
-                log(sm.getString("jdbcRealm.checkConnectionDBClosed"));
+                if (started) log(sm.getString("jdbcRealm.checkConnectionDBClosed"));
+                else log(sm.getString("jdbcRealm.starting"));
                 if ((connectionName == null || connectionName.equals("")) ||
                         (connectionPassword == null || connectionPassword.equals(""))) {
                         dbConnection = DriverManager.getConnection(connectionURL);
