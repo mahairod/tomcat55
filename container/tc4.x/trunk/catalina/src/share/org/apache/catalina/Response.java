@@ -230,11 +230,11 @@ public interface Response {
     /**
      * Return a PrintWriter that can be used to render error messages,
      * regardless of whether a stream or writer has already been acquired.
-     * 
+     *
      * @return Writer which can be used for error reports. If the response is
-     * not an error report returned using sendError or triggered by an 
-     * unexpected exception thrown during the servlet processing 
-     * (and only in that case), null will be returned if the response stream 
+     * not an error report returned using sendError or triggered by an
+     * unexpected exception thrown during the servlet processing
+     * (and only in that case), null will be returned if the response stream
      * has already been used.
      */
     public PrintWriter getReporter();
