@@ -91,38 +91,38 @@ public class JspCompilationContext {
     private Hashtable tagFileJars;
     private boolean isPackagedTagFile;
 
-    protected String servletClassName;
-    protected String jspUri;
+    private String servletClassName;
+    private String jspUri;
     private boolean isErrPage;
-    protected String servletPackageName = Constants.JSP_PACKAGE_NAME;
-    protected String servletJavaFileName;
-    protected String jspPath;
-    protected String classFileName;
-    protected String contentType;
-    protected ServletWriter writer;
-    protected Options options;
-    protected JspServletWrapper jsw;
-    protected Compiler jspCompiler;
-    protected String classPath;
+    private String servletPackageName;
+    private String servletJavaFileName;
+    private String jspPath;
+    private String classFileName;
+    private String contentType;
+    private ServletWriter writer;
+    private Options options;
+    private JspServletWrapper jsw;
+    private Compiler jspCompiler;
+    private String classPath;
 
-    protected String baseURI;
-    protected String outputDir;
-    protected ServletContext context;
-    protected URLClassLoader loader;
+    private String baseURI;
+    private String outputDir;
+    private ServletContext context;
+    private URLClassLoader loader;
 
-    protected JspRuntimeContext rctxt;
+    private JspRuntimeContext rctxt;
 
-    protected int removed = 0;
-    protected boolean reload = true;
+    private int removed = 0;
+    private boolean reload = true;
     
-    protected URLClassLoader jspLoader;
-    protected URL[] outUrls = new URL[2];
-    protected Class servletClass;
+    private URLClassLoader jspLoader;
+    private URL[] outUrls;
+    private Class servletClass;
 
-    protected boolean isTagFile;
-    protected boolean protoTypeMode;
-    protected TagInfo tagInfo;
-    protected TagData tagData;
+    private boolean isTagFile;
+    private boolean protoTypeMode;
+    private TagInfo tagInfo;
+    private TagData tagData;
 
     // jspURI _must_ be relative to the context
     public JspCompilationContext(String jspUri,
@@ -134,10 +134,10 @@ public class JspCompilationContext {
 
         this.jspUri = canonicalURI(jspUri);
         this.isErrPage = isErrPage;
-        this.options=options;
-        this.jsw=jsw;
-        this.context=context;
-        
+        this.options = options;
+        this.jsw = jsw;
+        this.context = context;
+
         this.baseURI = jspUri.substring(0, jspUri.lastIndexOf('/') + 1);
         // hack fix for resolveRelativeURI
         if (baseURI == null) {
@@ -150,9 +150,11 @@ public class JspCompilationContext {
         if (baseURI.charAt(baseURI.length() - 1) != '/') {
             baseURI += '/';
         }
-        this.rctxt=rctxt;
 
+        this.rctxt = rctxt;
 	this.tagFileJars = new Hashtable();
+        this.servletPackageName = Constants.JSP_PACKAGE_NAME;
+	this.outUrls = new URL[2];
     }
 
     public JspCompilationContext(String tagfile,

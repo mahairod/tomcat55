@@ -69,7 +69,6 @@ import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.TldLocationsCache;
 
-import org.apache.jasper.servlet.JasperLoader;
 import org.apache.jasper.servlet.JspCServletContext;
 
 import org.apache.jasper.logging.Logger;
