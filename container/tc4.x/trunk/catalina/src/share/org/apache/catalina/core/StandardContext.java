@@ -1145,6 +1145,7 @@ public class StandardContext
 
         // Set up the Jasper class loader
         StandardClassLoader newLoader = new StandardClassLoader(classLoader);
+        newLoader.setDelegate(true);
         File directory = new File(System.getProperty("catalina.home"),
                                   "jasper");
         if (directory.exists() && directory.canRead() &&
