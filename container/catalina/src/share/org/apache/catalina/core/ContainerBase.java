@@ -836,6 +836,21 @@ public abstract class ContainerBase
                 }
             }
             children.put(child.getName(), child);
+            if( child instanceof ContainerBase ) {
+                ContainerBase childCB=(ContainerBase)child;
+                // XXX we should also send JMX notifications
+                if( childCB.getObjectName() == null ) {
+                    // child was not registered yet.
+                    ObjectName oname=childCB.createObjectName(this.getDomain(),
+                            this.getObjectName());
+                    if( oname != null ) {
+                        // XXX Register the child
+
+                    }
+
+                }
+            }
+
             fireContainerEvent(ADD_CHILD_EVENT, child);
         }
 
@@ -1054,6 +1069,14 @@ public abstract class ContainerBase
                 log.error("ContainerBase.removeChild: stop: ", e);
             }
         }
+        if( child instanceof ContainerBase ) {
+            ContainerBase childCB=(ContainerBase)child;
+            // XXX we should also send JMX notifications
+            ObjectName oname=childCB.getObjectName();
+            if( oname != null ) {
+                // XXX UnRegister the child
+            }
+        }
         fireContainerEvent(REMOVE_CHILD_EVENT, child);
         child.setParent(null);
 
@@ -1226,9 +1249,10 @@ public abstract class ContainerBase
     public synchronized void stop() throws LifecycleException {
 
         // Validate and update our current component state
-        if (!started)
-            throw new LifecycleException
-                (sm.getString("containerBase.notStarted", logName()));
+        if (!started) {
+            log.info(sm.getString("containerBase.notStarted", logName()));
+            return;
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
@@ -1523,5 +1547,24 @@ public abstract class ContainerBase
 
     public void postDeregister() {
     }
+
+    public ObjectName[] getChildren() {
+        ObjectName result[]=new ObjectName[children.size()];
+        Iterator it=children.values().iterator();
+        int i=0;
+        while( it.hasNext() ) {
+            Object next=it.next();
+            if( next instanceof ContainerBase ) {
+                result[i++]=((ContainerBase)next).getObjectName();
+            }
+        }
+        return result;
+    }
+
+    public ObjectName createObjectName(String domain, ObjectName parent) {
+        log.info("Create ObjectName " + domain + " " + parent );
+        return null;
+    }
+
 }
 
