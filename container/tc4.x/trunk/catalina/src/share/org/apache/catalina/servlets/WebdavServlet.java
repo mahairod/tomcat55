@@ -402,6 +402,12 @@ public class WebdavServlet
 
         String path = getRelativePath(req);
         
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(WebdavStatus.SC_FORBIDDEN);
+            return;
+        }
+        
         // Properties which are to be displayed.
         Vector properties = null;
         // Propfind depth
@@ -514,6 +520,8 @@ public class WebdavServlet
 
         resp.setStatus(WebdavStatus.SC_MULTI_STATUS);
 
+        resp.setContentType("text/xml; charset=UTF-8");
+        
         // Create multistatus object
         XMLWriter generatedXML = new XMLWriter(resp.getWriter());
         generatedXML.writeXMLHeader();
@@ -621,6 +629,7 @@ public class WebdavServlet
         
         
         
+        
     }
 
 
@@ -641,6 +650,12 @@ public class WebdavServlet
         }
         
         String path = getRelativePath(req);
+        
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(WebdavStatus.SC_FORBIDDEN);
+            return;
+        }
         
         // Retrieve the resources
         DirContext resources = getResources();
@@ -1251,6 +1266,7 @@ public class WebdavServlet
         generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
         
         resp.setStatus(WebdavStatus.SC_OK);
+        resp.setContentType("text/xml; charset=UTF-8");
         Writer writer = resp.getWriter();
         writer.write(generatedXML.toString());
         writer.close();
@@ -1941,6 +1957,11 @@ public class WebdavServlet
         
         generatedXML.writeElement(null, "href", XMLWriter.CLOSING);
         
+        String resourceName = path;
+        int lastSlash = path.lastIndexOf('/');
+        if (lastSlash != -1)
+            resourceName = resourceName.substring(lastSlash + 1);
+        
         switch (type) {
             
         case FIND_ALL_PROP :
@@ -1951,9 +1972,9 @@ public class WebdavServlet
             generatedXML.writeProperty
                 (null, "creationdate", 
                  getISOCreationDate(resourceInfo.creationDate));
-            generatedXML.writeProperty
-                (null, "displayname", 
-                 rewriteUrl(resourceInfo.path.replace('/', '_')));
+            generatedXML.writeElement(null, "displayname", XMLWriter.OPENING);
+            generatedXML.writeData(resourceName);
+            generatedXML.writeElement(null, "displayname", XMLWriter.CLOSING);
             generatedXML.writeProperty(null, "getcontentlanguage", 
                                        Locale.getDefault().toString());
             if (!resourceInfo.collection) {
@@ -2058,9 +2079,11 @@ public class WebdavServlet
                         (null, "creationdate", 
                          getISOCreationDate(resourceInfo.creationDate));
                 } else if (property.equals("displayname")) {
-                    generatedXML.writeProperty
-                        (null, "displayname", 
-                         rewriteUrl(resourceInfo.path.replace('/', '_')));
+                    generatedXML.writeElement
+                        (null, "displayname", XMLWriter.OPENING);
+                    generatedXML.writeData(resourceName);
+                    generatedXML.writeElement
+                        (null, "displayname", XMLWriter.CLOSING);
                 } else if (property.equals("getcontentlanguage")) {
                     if (resourceInfo.collection) {
                         propertiesNotFound.addElement(property);

@@ -258,6 +258,16 @@ public class XMLWriter {
     
     
     /**
+     * Write data.
+     * 
+     * @param data Data to append
+     */
+    public void writeData(String data) {
+        buffer.append("<![CDATA[" + data + "]]>");
+    }
+    
+    
+    /**
      * Write XML Header.
      */
     public void writeXMLHeader() {
