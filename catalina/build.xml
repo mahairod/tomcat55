@@ -528,7 +528,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-dbcp.jar,copy-fileupload.jar,copy-jmx.jar,copy-launcher.jars,copy-modeler.jar,copy-pool.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-fileupload.jar,copy-jmx.jar,copy-launcher.jars,copy-modeler.jar,copy-xerces2.jars">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -545,7 +545,7 @@
     <copy todir="${catalina.build}/common/lib" file="${servlet-api.jar}"/>
 -->
     <copy todir="${catalina.build}/common/lib"
-           file="${commons-collections.jar}"/>
+           file="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">

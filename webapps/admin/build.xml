@@ -186,6 +186,7 @@
   <!-- ================ BUILD: Copy Static Files ========================== -->
   <target name="build-static" depends="flags,flags.display,build-prepare,copy-struts.jar">
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${commons-beanutils.jar}"/>
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${commons-collections.jar}"/>
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${commons-digester.jar}"/>
     <copy todir="${webapps.build}/${webapp.name}">
       <fileset dir=".">
