@@ -89,9 +89,12 @@ public class Jar extends Task {
 	throws IOException
     {
 	// First add directory to zip entry
-	ZipEntry ze = new ZipEntry(vPath);
-	zOut.putNextEntry(ze);
-
+	if( ! "META-INF/".equals(vPath) ) {
+	    // we already added a META-INF
+	    ZipEntry ze = new ZipEntry(vPath);
+	    zOut.putNextEntry(ze);
+	}
+	
 	String[] list = dir.list();
 	for (int i = 0; i < list.length; i++) {
 	    String f = list[i];
