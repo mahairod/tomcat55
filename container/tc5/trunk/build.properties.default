@@ -230,8 +230,8 @@ jdbc20ext.lib=${jdbc20ext.home}
 jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 
-# ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
-jsse.home=${base.path}/jsse-1.0.2
+# ----- Java Secure Sockets Extension (JSSE), version 1.0.3 or later -----
+jsse.home=${base.path}/jsse-1.0.3
 jsse.lib=${jsse.home}/lib
 jcert.jar=${jsse.lib}/jcert.jar
 jnet.jar=${jsse.lib}/jnet.jar
