@@ -52,9 +52,10 @@ which you are installing all of the required Jakarta distributions.
   Set an environment variable "JSSE_HOME" pointing at the directory to which
   you installed this distribution.
 
-* Download and install the Java Management Extension (JMX) implementation
-  (current version number is 1.0) from 
-  <http://java.sun.com/products/JavaManagement/index.html>.
+* Download and install the Java Management Extensions (JMX) "JMX
+  Instrumentation and Agent Reference Implementation" (current version
+  number is 1.0) from
+  <http://java.sun.com/products/JavaManagement/download.html>.
   Set an environment variable "JMX_HOME" pointing at the directory to which
   you installed this distribution.
 
@@ -91,11 +92,15 @@ which you are installing all of the required Jakarta distributions.
   "jakarta-servletapi-4.0".  Set an environment variable named
   SERVLETAPI_HOME that points to where you have placed this directory.
 
-  If you downloaded the source distribution, you will need to build it:
+  If you wish to create this package from the CVS archives, you will need
+  to follow these steps:
 
-        cd $JAKARTA_HOME/jakarta-servletapi-4.0
-	./build.sh dist		<-- Unix
-	build dist		<-- Windows
+        cd $JAKARTA_HOME
+        cvs checkout jakarta-servletapi
+        cd jakarta-servletapi
+        cvs update -r SERVLET_23_JSP_12
+        ./build.sh dist         <-- Unix
+        build dist              <-- Windows
 
   to create the required servlet.jar file.
 
