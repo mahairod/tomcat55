@@ -240,7 +240,10 @@
 
   <!-- Process an attributes list with nested attribute elements -->
   <xsl:template match="attributes">
+<!--
     <table border="1" cellpadding="5" width="100%">
+-->
+    <table border="1" cellpadding="5">
       <tr>
         <th width="15%" bgcolor="{$attributes-color}">
           <font color="#ffffff">Attribute</font>
