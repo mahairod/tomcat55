@@ -84,16 +84,23 @@ x installed (version 1.3.1 recommended), and do the following:
 * This is optional with JDK 1.3 or later.
 
 
-(4) Download and Install the Xerces 2 nightly build July 31, 2002 or Higher
-    Distribution
+(4) Download and Install the Xerces 2 Distribution
 
-* Download the xercesImpl.jar and xmlParserAPIs.jar files from:
+* Download a binary distribution of version 2.0.1 from:
 
-  http://gump.covalent.net/jars/latest/xml-xerces2/
+  http://xml.apache.org/dist/xerces-j/old_xerces2
 
-* Place the downloaded files in a convenient location so that the
+  On a Windows platform, you will need:
+    Xerces-J-bin.2.0.1.zip
+
+  On a Unix platform, you will need:
+    Xerces-J-bin.2.0.1.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
   "xerces-x_y_z").
+
+* This is optional with JDK 1.4 or later.
 
 
 (5) Download and Install Subproject Source Code

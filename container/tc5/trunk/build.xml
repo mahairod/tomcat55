@@ -517,27 +517,10 @@
       <param name="destfile" value="${regexp.jar}"/>
     </antcall>
 
-    <!--
-      Can't download a released version of Xerces since they have a XML
-      Schema bug
-    -->
-    <!--
     <antcall target="downloadgz">
+      <!-- xerces2 brings 2 files, test for one of them -->
       <param name="sourcefile" value="${xerces.loc}"/>
       <param name="destfile" value="${xmlParserAPIs.jar}"/>
-    </antcall>
-    -->
-
-    <!-- latest xerces2 requires download of 2 separate jars -->
-    <antcall target="downloadfile">
-      <param name="sourcefile" value="${xercesImpl.loc}"/>
-      <param name="destfile" value="${xercesImpl.jar}"/>
-      <param name="destdir" value="${xerces.home}"/>
-    </antcall>
-    <antcall target="downloadfile">
-      <param name="sourcefile" value="${xmlParserAPIs.loc}"/>
-      <param name="destfile" value="${xmlParserAPIs.jar}"/>
-      <param name="destdir" value="${xerces.home}"/>
     </antcall>
 
     <antcall target="cvsbuild">
