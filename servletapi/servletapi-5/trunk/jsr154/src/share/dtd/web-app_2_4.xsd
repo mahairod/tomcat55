@@ -8,7 +8,7 @@
      version="2.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-app_2_4.xsds	1.34 02/08/01
+@(#)web-app_2_4.xsds	1.40 02/09/19
 </xsd:documentation>
 </xsd:annotation>
 
@@ -60,12 +60,12 @@ http://java.sun.com/xml/ns/j2ee
 and by indicating the version of the schema by
 using the version element as shown below:
 
-    <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    &lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="..."
      version="2.4">
     ...
-    </web-app>
+    &lt;/web-app>
 
 The instance documents may indicate the published version of
 the schema using the xsi:schemaLocation attribute for J2EE
@@ -262,7 +262,6 @@ deployment descriptor elements unless indicated otherwise.
         <xsd:selector xpath="j2ee:servlet/j2ee:security-role-ref"/>
         <xsd:field    xpath="j2ee:role-link"/>
     </xsd:keyref>
-
 </xsd:element>
 
 
@@ -296,12 +295,12 @@ role names case sensitively when determining access.
                  type="j2ee:role-nameType"
                  minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="auth-methodType">
+<xsd:complexType name="auth-methodType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -317,18 +316,19 @@ Used in: login-config
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:enumeration value="BASIC"/>
-        <xsd:enumeration value="DIGEST"/>
-        <xsd:enumeration value="FORM"/>
-        <xsd:enumeration value="CLIENT-CERT"/>
-    </xsd:restriction>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:enumeration value="BASIC"/>
+            <xsd:enumeration value="DIGEST"/>
+            <xsd:enumeration value="FORM"/>
+            <xsd:enumeration value="CLIENT-CERT"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="dispatcherType">
+<xsd:complexType name="dispatcherType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -346,18 +346,18 @@ filters only under ordinary client calls to the path or servlet.
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:enumeration value="FORWARD"/>
-    <xsd:enumeration value="INCLUDE"/>
-    <xsd:enumeration value="REQUEST"/>
-
-    </xsd:restriction>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:enumeration value="FORWARD"/>
+            <xsd:enumeration value="INCLUDE"/>
+            <xsd:enumeration value="REQUEST"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="error-codeType">
+<xsd:complexType name="error-codeType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -368,9 +368,12 @@ Used in: error-page
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="positiveInteger"/>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:xsdPositiveIntegerType">
+            <xsd:attribute name="id" type="xsd:ID"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -388,7 +391,7 @@ Used in: web-app
 </xsd:annotation>
 
     <xsd:sequence>
-        <choice>
+        <xsd:choice>
         <xsd:element name="error-code"
                      type="j2ee:error-codeType"/>
 
@@ -403,7 +406,7 @@ Used in: web-app
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
-        </choice>
+        </xsd:choice>
 
         <xsd:element name="location"
                      type="j2ee:pathType">
@@ -419,7 +422,7 @@ Used in: web-app
         </xsd:annotation>
         </xsd:element>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -450,22 +453,22 @@ deployment descriptor.
     <xsd:sequence>
         <xsd:element name="filter-name"
                  type="j2ee:filter-nameType"/>
-        <choice>
+        <xsd:choice>
             <xsd:element name="url-pattern"
                      type="j2ee:url-patternType"/>
             <xsd:element name="servlet-name"
                      type="j2ee:servlet-nameType"/>
-        </choice>
+        </xsd:choice>
         <xsd:element name="dispatcher"
                      type="j2ee:dispatcherType"
                      minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="filter-nameType">
+<xsd:complexType name="filter-nameType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -479,9 +482,10 @@ Used in: filter, filter-mapping
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string"/>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string"/>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -502,16 +506,7 @@ Used in: web-app
 </xsd:annotation>
 
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="filter-name"
                      type="j2ee:filter-nameType"/>
         <xsd:element name="filter-class"
@@ -538,7 +533,7 @@ Used in: web-app
         </xsd:annotation>
         </xsd:element>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -588,12 +583,12 @@ Used in: login-config
         </xsd:element>
 
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="http-methodType">
+<xsd:complexType name="http-methodType">
 <xsd:annotation>
 
 <xsd:documentation>
@@ -603,17 +598,18 @@ The http-method contains an HTTP method recognized by the web-app, i.e.
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:enumeration value="GET"/>
-        <xsd:enumeration value="POST"/>
-        <xsd:enumeration value="PUT"/>
-        <xsd:enumeration value="DELETE"/>
-        <xsd:enumeration value="HEAD"/>
-        <xsd:enumeration value="OPTIONS"/>
-        <xsd:enumeration value="TRACE"/>
-    </xsd:restriction>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:enumeration value="GET"/>
+            <xsd:enumeration value="POST"/>
+            <xsd:enumeration value="PUT"/>
+            <xsd:enumeration value="DELETE"/>
+            <xsd:enumeration value="HEAD"/>
+            <xsd:enumeration value="OPTIONS"/>
+            <xsd:enumeration value="TRACE"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -630,18 +626,7 @@ Used in: web-app:listenerType
 </xsd:annotation>
 
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="listener-class"
                      type="j2ee:fully-qualified-classType">
         <xsd:annotation>
@@ -656,7 +641,7 @@ Used in: web-app:listenerType
         </xsd:annotation>
         </xsd:element>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -671,11 +656,12 @@ locale-encoding-mapping(s).
 </xsd:documentation>
 </xsd:annotation>
 
-<xsd:sequence>
-    <xsd:element name="locale-encoding-mapping"
-        type="j2ee:locale-encoding-mappingType"
-        maxOccurs="unbounded"/>
-</xsd:sequence>
+    <xsd:sequence>
+        <xsd:element name="locale-encoding-mapping"
+            type="j2ee:locale-encoding-mappingType"
+            maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -692,12 +678,13 @@ such as "ja_JP".  "Country code" is defined by ISO-3166.
 </xsd:documentation>
 </xsd:annotation>
 
-<xsd:sequence>
-    <xsd:element name="locale"
-        type="j2ee:string"/>
-    <xsd:element name="encoding"
-        type="j2ee:string"/>
-</xsd:sequence>
+    <xsd:sequence>
+        <xsd:element name="locale"
+            type="j2ee:string"/>
+        <xsd:element name="encoding"
+            type="j2ee:string"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -735,7 +722,7 @@ Used in: web-app
                      type="j2ee:form-login-configType"
                      minOccurs="0"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -767,12 +754,12 @@ Used in: web-app
         <xsd:element name="mime-type"
                      type="j2ee:mime-typeType"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="mime-typeType">
+<xsd:complexType name="mime-typeType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -786,11 +773,12 @@ Used in: mime-mapping
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:pattern value="[\p{L}\-\p{Nd}]+/[\p{L}\-\p{Nd}\.]+"/>
-    </xsd:restriction>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:pattern value="[\p{L}\-\p{Nd}]+/[\p{L}\-\p{Nd}\.]+"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -822,7 +810,7 @@ Used in: web-app
                      type="j2ee:user-data-constraintType"
                      minOccurs="0"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -845,12 +833,12 @@ Used in: web-app
         <xsd:element name="url-pattern"
                      type="j2ee:url-patternType"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="servlet-nameType">
+<xsd:complexType name="servlet-nameType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -861,9 +849,10 @@ application.
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string"/>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string"/>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -883,19 +872,10 @@ Used in: web-app
 </xsd:annotation>
 
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="servlet-name"
                      type="j2ee:servlet-nameType"/>
-        <choice>
+        <xsd:choice>
             <xsd:element name="servlet-class"
                          type="j2ee:fully-qualified-classType">
             <xsd:annotation>
@@ -911,13 +891,13 @@ Used in: web-app
             <xsd:element name="jsp-file"
                          type="j2ee:jsp-fileType"/>
 
-        </choice>
+        </xsd:choice>
 
         <xsd:element name="init-param"
                      type="j2ee:param-valueType"
                      minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element name="load-on-startup"
-                     type="xsd:integer"
+                     type="j2ee:xsdIntegerType"
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
@@ -952,6 +932,7 @@ Used in: web-app
                      type="j2ee:deployment-extensionType"
                      minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -970,8 +951,8 @@ Used in: web-app
 
     <xsd:sequence>
         <xsd:element name="session-timeout"
-                 type="xsd:nonNegativeInteger"
-                 minOccurs="0">
+                     type="j2ee:xsdNonNegativeIntegerType"
+                     minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
 
@@ -988,12 +969,12 @@ Used in: web-app
         </xsd:annotation>
         </xsd:element>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="transport-guaranteeType">
+<xsd:complexType name="transport-guaranteeType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -1015,13 +996,14 @@ Used in: user-data-constraint
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:enumeration value="NONE"/>
-        <xsd:enumeration value="INTEGRAL"/>
-        <xsd:enumeration value="CONFIDENTIAL"/>
-    </xsd:restriction>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:enumeration value="NONE"/>
+            <xsd:enumeration value="INTEGRAL"/>
+            <xsd:enumeration value="CONFIDENTIAL"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -1046,7 +1028,7 @@ Used in: security-constraint
         <xsd:element name="transport-guarantee"
                      type="j2ee:transport-guaranteeType"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -1059,20 +1041,11 @@ This type contains the recognized versions of
 web-application supported. It is used to designate the
 version of the web application.
 
-Example:
-
-<web-app>
-    <version>2.4</version>
-...
-</web-app>
-
 </xsd:documentation>
 </xsd:annotation>
-
-    <xsd:restriction base="j2ee:string">
+    <xsd:restriction base="xsd:token">
         <xsd:enumeration value="2.4"/>
     </xsd:restriction>
-
 </xsd:simpleType>
 
 <!-- **************************************************** -->
@@ -1080,18 +1053,7 @@ Example:
 <xsd:complexType name="web-appType">
 
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="distributable"
                      type="j2ee:emptyType"
                      minOccurs="0"/>
@@ -1145,18 +1107,6 @@ Example:
         <xsd:element name="jsp-config"
                      type="j2ee:jsp-configType"
                      minOccurs="0"/>
-        <xsd:element name="resource-env-ref"
-                     type="j2ee:resource-env-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="message-destination-ref"
-                     type="j2ee:message-destination-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="resource-ref"
-                     type="j2ee:resource-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
         <xsd:element name="security-constraint"
                      type="j2ee:security-constraintType"
                      minOccurs="0"
@@ -1180,6 +1130,19 @@ Example:
                      type="j2ee:ejb-local-refType"
                      minOccurs="0"
                      maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:service-refGroup"/>
+        <xsd:element name="resource-ref"
+                     type="j2ee:resource-refType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+        <xsd:element name="resource-env-ref"
+                     type="j2ee:resource-env-refType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+        <xsd:element name="message-destination-ref"
+                     type="j2ee:message-destination-refType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
         <xsd:element name="message-destination"
                      type="j2ee:message-destinationType"
                      minOccurs="0"
@@ -1197,7 +1160,7 @@ Example:
     <xsd:attribute name="version"
                    type="j2ee:web-app-versionType"
                    use="required"/>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -1240,7 +1203,7 @@ Used in: security-constraint
                      type="j2ee:http-methodType"
                      minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -1271,7 +1234,7 @@ Used in: web-app
         </xsd:annotation>
         </xsd:element>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 </xsd:schema>
