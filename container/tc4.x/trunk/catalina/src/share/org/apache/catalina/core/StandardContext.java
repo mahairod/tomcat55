@@ -3317,6 +3317,10 @@ public class StandardContext
 
         if (debug >= 1)
             log("Starting");
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
+
         if (debug >= 1)
             log("Processing start(), current available=" + getAvailable());
         setAvailable(false);
@@ -3499,6 +3503,9 @@ public class StandardContext
             setAvailable(false);
         }
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
+
     }
 
 
@@ -3516,6 +3523,9 @@ public class StandardContext
 
         if (debug >= 1)
             log("Stopping");
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
 
         // Mark this application as unavailable while we shut down
         setAvailable(false);
@@ -3606,6 +3616,9 @@ public class StandardContext
             unbindThread(oldCCL);
 
         }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
         if (debug >= 1)
             log("Stopping complete");

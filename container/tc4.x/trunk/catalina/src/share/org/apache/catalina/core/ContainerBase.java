@@ -1155,6 +1155,10 @@ public abstract class ContainerBase
         if (started)
             throw new LifecycleException
                 (sm.getString("containerBase.alreadyStarted", logName()));
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
+
         addDefaultMapper(this.mapperClass);
         started = true;
 
@@ -1193,6 +1197,9 @@ public abstract class ContainerBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(START_EVENT, null);
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
+
     }
 
 
@@ -1209,6 +1216,9 @@ public abstract class ContainerBase
         if (!started)
             throw new LifecycleException
                 (sm.getString("containerBase.notStarted", logName()));
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
@@ -1252,6 +1262,9 @@ public abstract class ContainerBase
         if ((loader != null) && (loader instanceof Lifecycle)) {
             ((Lifecycle) loader).stop();
         }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
     }
 

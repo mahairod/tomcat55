@@ -270,6 +270,10 @@ public class StandardPipeline
         if (started)
             throw new LifecycleException
                 (sm.getString("standardPipeline.alreadyStarted"));
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
+
         started = true;
 
         // Start the Valves in our pipeline (including the basic), if any
@@ -282,6 +286,9 @@ public class StandardPipeline
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(START_EVENT, null);
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
 
     }
 
@@ -301,6 +308,9 @@ public class StandardPipeline
                 (sm.getString("standardPipeline.notStarted"));
 
         // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
+
+        // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
 
@@ -311,6 +321,9 @@ public class StandardPipeline
             if (valves[i] instanceof Lifecycle)
                 ((Lifecycle) valves[i]).stop();
         }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
     }
 

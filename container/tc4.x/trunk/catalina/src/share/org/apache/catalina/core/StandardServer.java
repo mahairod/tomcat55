@@ -694,6 +694,9 @@ public final class StandardServer
             throw new LifecycleException
                 (sm.getString("standardServer.start.started"));
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
+
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -704,6 +707,9 @@ public final class StandardServer
                     ((Lifecycle) services[i]).start();
             }
         }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
 
     }
 
@@ -724,6 +730,10 @@ public final class StandardServer
         if (!started)
             throw new LifecycleException
                 (sm.getString("standardServer.stop.notStarted"));
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
+
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
 
@@ -732,6 +742,9 @@ public final class StandardServer
             if (services[i] instanceof Lifecycle)
                 ((Lifecycle) services[i]).stop();
         }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
     }
 

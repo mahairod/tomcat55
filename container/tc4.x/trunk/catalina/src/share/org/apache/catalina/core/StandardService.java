@@ -484,6 +484,9 @@ public final class StandardService
                 (sm.getString("standardService.start.started"));
         }
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
+
         System.out.println
             (sm.getString("standardService.start.name", this.name));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
@@ -506,6 +509,9 @@ public final class StandardService
             }
         }
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
+
     }
 
 
@@ -526,6 +532,10 @@ public final class StandardService
             throw new LifecycleException
                 (sm.getString("standardService.stop.notStarted"));
         }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
+
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 
         System.out.println
@@ -549,7 +559,11 @@ public final class StandardService
             }
         }
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
+
     }
+
 
     /**
      * Invoke a pre-startup initialization. This is used to allow connectors
