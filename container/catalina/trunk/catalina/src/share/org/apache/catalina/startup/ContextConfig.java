@@ -737,8 +737,8 @@ public final class ContextConfig
     protected void antiLocking()
         throws IOException {
         // FIXME: Implement anti locking, if it is enabled, by copying the whole
-        // contents of the docBase to a unique folder in temp, and setting the docBase
-        // to point to that
+        // contents of the docBase to a unique folder in temp, and setting the resources
+        // to point to that. Note: Don't mutate the docBase here.
     }
     
 
