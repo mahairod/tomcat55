@@ -105,8 +105,8 @@
 
   <!-- ====================== DIST: Copy Source Code ====================== -->
   <target name="dist-source">
-    <mkdir dir="${tomcat.build}/src"/>
-    <copydir src="." dest="${tomcat.build}/src"/>
+    <mkdir dir="${tomcat.dist}/src"/>
+    <copydir src="." dest="${tomcat.dist}/src"/>
   </target>
 
 
