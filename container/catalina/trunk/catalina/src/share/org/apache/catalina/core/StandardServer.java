@@ -883,11 +883,8 @@ public final class StandardServer
             } else if (c == '"') {
                 filtered.append("&quot;");
             } else if (c == '&') {
-                char s1 = input.charAt(i+3);
-                char s2 = input.charAt(i+4);
-                char s3 = input.charAt(i+5);
-                if (((s1 == ';') || (s2 == ';')) || (s3 == ';')) {
-                    // do not convert if it's already in converted form
+                int j = input.indexOf(";", i);
+                if (j > 0) {
                     filtered.append(c);
                 } else {
                     filtered.append("&amp;");
