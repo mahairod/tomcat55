@@ -24,9 +24,10 @@
                name="serviceForm" property="objectName"/>
   <bean:define id="thisServiceName" type="java.lang.String"
                name="serviceForm" property="serviceName"/>
-  <html:hidden property="adminAction"/>
+  <html:hidden property="adminServiceName"/>
   <html:hidden property="objectName"/>
   <html:hidden property="engineObjectName"/>
+  <html:hidden property="adminAction"/>
   <bean:define id="adminServiceName" type="java.lang.String"
                name="serviceForm" property="adminServiceName"/>
 
