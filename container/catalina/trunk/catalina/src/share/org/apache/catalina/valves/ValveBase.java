@@ -67,6 +67,10 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.management.ObjectName;
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Request;
@@ -88,7 +92,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ValveBase
-    implements Contained, Valve {
+    implements Contained, Valve, MBeanRegistration {
 
 
     //------------------------------------------------------ Instance Variables
@@ -199,5 +203,34 @@ public abstract class ValveBase
                                 ValveContext context)
         throws IOException, ServletException;
 
+    // -------------------- JMX and Registration  --------------------
+    protected String domain;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
+
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
 
 }
