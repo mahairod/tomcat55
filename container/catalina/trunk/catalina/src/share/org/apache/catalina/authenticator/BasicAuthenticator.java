@@ -171,7 +171,7 @@ public class BasicAuthenticator
                     char[] buf = authorizationCC.getBuffer();
                     username = new String(buf, 0, colon);
                     password = new String(buf, colon + 1, 
-                            buf.length - colon - 1);
+                            authorizationCC.getEnd() - colon - 1);
                 }
                 
                 authorizationBC.setOffset(authorizationBC.getOffset() - 6);
