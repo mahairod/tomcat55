@@ -48,6 +48,9 @@
       <fix>
         <bug>33719</bug>: Update reference to Ant download page. (yoavs)
       </fix>
+      <fix>
+        <bug>33883</bug>: Bad options in SSL-HowTo. (yoavs)
+      </fix>
     </changelog>
    </subsection>
 
