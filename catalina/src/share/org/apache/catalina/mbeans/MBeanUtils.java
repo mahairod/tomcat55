@@ -1068,8 +1068,8 @@ public class MBeanUtils {
 
         ObjectName name = null;
         name = new ObjectName(domain + ":type=Group,groupname=" +
-                              group.getGroupname() + ",database=" +
-                              group.getUserDatabase().getId());
+                              ObjectName.quote(group.getGroupname()) +
+                              ",database=" + group.getUserDatabase().getId());
         return (name);
 
     }
@@ -1396,8 +1396,8 @@ public class MBeanUtils {
 
         ObjectName name = null;
         name = new ObjectName(domain + ":type=User,username=" +
-                              user.getUsername() + ",database=" +
-                              user.getUserDatabase().getId());
+                              ObjectName.quote(user.getUsername())
+                              + ",database=" + user.getUserDatabase().getId());
         return (name);
 
     }
