@@ -49,6 +49,9 @@
       <fix>
         <bug>30144</bug>: Made SSIServlet check resource MimeType before using text/html and UTF-8 default. (yoavs)
       </fix>
+      <fix>
+        <bug>29406</bug>: Made JAASRealm configurable as to whether it should use the context ClassLoader or the default ClassLoader by adding a useContextClassLoader boolean attribute. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
