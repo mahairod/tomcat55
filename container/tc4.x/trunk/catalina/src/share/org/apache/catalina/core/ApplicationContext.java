@@ -80,6 +80,7 @@ import javax.servlet.ServletContextAttributesListener;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Resources;
@@ -431,7 +432,7 @@ public final class ApplicationContext
      */
     public String getServerInfo() {
 
-	return (Constants.SERVER_INFO);
+	return (Globals.SERVER_INFO);
 
     }
 

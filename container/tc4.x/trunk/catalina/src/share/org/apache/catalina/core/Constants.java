@@ -70,39 +70,6 @@ public class Constants {
     public static final String Package = "org.apache.catalina.core";
     public static final int MAJOR_VERSION = 2;
     public static final int MINOR_VERSION = 3;
-    public static final String SERVER_INFO = "Apache Tomcat 4.0dev";
 
-
-    /**
-     * The request attribute under which we forward a Java exception type
-     * (as an object of type Class) to an error page.
-     */
-    public static final String EXCEPTION_TYPE =
-	"javax.servlet.error.exception_type";
-
-
-    /**
-     * The request attribute under which we forward an HTTP status message
-     * (as an object of type String) to an error page.
-     */
-    public static final String MESSAGE =
-	"javax.servlet.error.message";
-
-
-    /**
-     * The request attribute under which we forward an HTTP status code
-     * (as an object of type Integer) to an error page.
-     */
-    public static final String STATUS_CODE =
-	"javax.servlet.error.status_code";
-
-
-    /**
-     * The servlet context attribute under which a temporary working directory
-     * is stored (object type is java.io.File).
-     */
-    public static final String WORKDIR_ATTR =
-	"javax.servlet.context.tempdir";
 
 }
-

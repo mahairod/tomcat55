@@ -78,6 +78,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
@@ -2269,7 +2270,7 @@ public final class StandardContext
 	dir.mkdirs();
 
 	// Set the appropriate servlet context attribute
-	getServletContext().setAttribute(Constants.WORKDIR_ATTR, dir);
+	getServletContext().setAttribute(Globals.WORK_DIR_ATTR, dir);
 
     }
 

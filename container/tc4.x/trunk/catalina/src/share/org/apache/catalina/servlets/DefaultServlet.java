@@ -91,6 +91,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Resources;
 import org.apache.catalina.core.ApplicationContext;
 import org.apache.catalina.resources.ResourceBean;
@@ -248,7 +249,7 @@ public class DefaultServlet
 
 	// Initialize the set of welcome files for this application
 	welcomes = (String[]) getServletContext().getAttribute
-	    ("org.apache.catalina.WELCOME_FILES");
+	    (Globals.WELCOME_FILES_ATTR);
 	if (welcomes == null)
 	    welcomes = new String[0];
 
@@ -893,7 +894,7 @@ public class DefaultServlet
 	// Refresh our currently defined set of welcome files
 	synchronized (welcomes) {
 	    welcomes = (String[]) getServletContext().getAttribute
-		("org.apache.catalina.WELCOME_FILES");
+		(Globals.WELCOME_FILES_ATTR);
 	    if (welcomes == null)
 		welcomes = new String[0];
 	}

@@ -82,6 +82,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.InstanceEvent;
@@ -505,7 +506,7 @@ final class StandardWrapperValve
         ErrorPage errorPage =
 	    context.findErrorPage(realError.getClass().getName());
 	if (errorPage != null) {
-	    request.getRequest().setAttribute(Constants.EXCEPTION_TYPE,
+	    request.getRequest().setAttribute(Globals.EXCEPTION_TYPE_ATTR,
 					      realError.getClass());
 	    if (custom(request, response, errorPage))
 		return;
@@ -771,9 +772,9 @@ final class StandardWrapperValve
 	Context context = (Context) container.getParent();
 	ErrorPage errorPage = context.findErrorPage(statusCode);
 	if (errorPage != null) {
-	    request.getRequest().setAttribute(Constants.STATUS_CODE,
+	    request.getRequest().setAttribute(Globals.STATUS_CODE_ATTR,
 					      new Integer(statusCode));
-	    request.getRequest().setAttribute(Constants.MESSAGE,
+	    request.getRequest().setAttribute(Globals.ERROR_MESSAGE_ATTR,
 					      message);
 	    if (custom(request, response, errorPage))
 		return;

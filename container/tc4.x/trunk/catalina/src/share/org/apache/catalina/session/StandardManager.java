@@ -82,6 +82,7 @@ import java.util.Iterator;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -459,7 +460,7 @@ public final class StandardManager
 		ServletContext servletContext =
 		    ((Context) container).getServletContext();
 		File tempdir = (File)
-		    servletContext.getAttribute(Constants.WORKDIR_ATTR);
+		    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
 		if (tempdir != null)
 		    file = new File(tempdir, pathname);
 	    }

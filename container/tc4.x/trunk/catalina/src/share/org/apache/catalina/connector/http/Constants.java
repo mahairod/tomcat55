@@ -65,6 +65,9 @@
 package org.apache.catalina.connector.http;
 
 
+import org.apache.catalina.Globals;
+
+
 /**
  * Static constants for this package.
  */
@@ -73,6 +76,6 @@ public final class Constants {
 
     public static final String Package = "org.apache.catalina.connector.http";
     public static final String ServerInfo =
-	"Catalina 4.0-dev (HTTP/1.1 Connector)";
+	Globals.SERVER_INFO + " (HTTP/1.1 Connector)";
 
 }

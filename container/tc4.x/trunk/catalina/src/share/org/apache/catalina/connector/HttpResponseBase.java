@@ -83,6 +83,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUtils;
 import org.apache.catalina.HttpResponse;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Logger;
 import org.apache.catalina.util.CookieTools;
 import org.apache.catalina.util.RequestUtil;
@@ -476,7 +477,7 @@ public class HttpResponseBase
 
 	if ((session != null) && session.isNew() &&
 	    getContext().getCookies()) {
-	    Cookie cookie = new Cookie(Constants.SessionCookie,
+	    Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
 				       session.getId());
 	    cookie.setMaxAge(-1);
 	    String contextPath = context.getPath();

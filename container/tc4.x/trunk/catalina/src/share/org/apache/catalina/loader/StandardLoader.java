@@ -73,6 +73,7 @@ import java.io.IOException;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -589,8 +590,8 @@ public final class StandardLoader
 	if (container instanceof Context) {
 	    ServletContext servletContext =
 		((Context) container).getServletContext();
-	    servletContext.removeAttribute(Constants.CLASSLOADER_ATTR);
-	    servletContext.removeAttribute(Constants.CLASSPATH_ATTR);
+	    servletContext.removeAttribute(Globals.CLASS_LOADER_ATTR);
+	    servletContext.removeAttribute(Globals.CLASS_PATH_ATTR);
 	}
 
 	// Throw away our current class loader
@@ -707,7 +708,7 @@ public final class StandardLoader
 	    ((Context) container).getServletContext();
 	if (servletContext == null)
 	    return;
-	servletContext.setAttribute(Constants.CLASSLOADER_ATTR,
+	servletContext.setAttribute(Globals.CLASS_LOADER_ATTR,
 				    getClassLoader());
 
     }
@@ -732,7 +733,7 @@ public final class StandardLoader
 		classpath.append(File.pathSeparator);
 	    classpath.append(repositories[i]);
 	}
-	servletContext.setAttribute(Constants.CLASSPATH_ATTR,
+	servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
 				    classpath.toString());
 
     }

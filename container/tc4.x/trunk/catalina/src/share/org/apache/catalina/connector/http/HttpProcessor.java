@@ -83,6 +83,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
@@ -172,7 +173,7 @@ final class HttpProcessor
      * The match string for identifying a session ID parameter.
      */
     private static final String match =
-	";" + org.apache.catalina.connector.Constants.SessionParameter + "=";
+	";" + Globals.SESSION_PARAMETER_NAME + "=";
 
 
     /**
@@ -525,7 +526,8 @@ final class HttpProcessor
 		Cookie cookies[] = RequestUtil.parseCookieHeader(value);
 		for (int i = 0; i < cookies.length; i++) {
 		    if (cookies[i].getName().equals
-			(org.apache.catalina.connector.Constants.SessionCookie)) {
+			(Globals.SESSION_COOKIE_NAME)) {
+
 			// Override anything requested in the URL
 			request.setRequestedSessionId(cookies[i].getValue());
 			request.setRequestedSessionCookie(true);

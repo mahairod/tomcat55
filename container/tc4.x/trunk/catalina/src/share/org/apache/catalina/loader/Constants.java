@@ -69,23 +69,4 @@ public class Constants {
 
     public static final String Package = "org.apache.catalina.loader";
 
-    /**
-     * The servlet context attribute under which the class loader we use for
-     * loading servlets is stored (object type is java.lang.ClassLoader).
-     */
-    public static final String CLASSLOADER_ATTR =
-	"org.apache.catalina.classloader";
-
-
-    /**
-     * The servlet context attribute under which the class path for our class
-     * loader is stored (object type is java.lang.String).  The class path
-     * consists of a list of directories and JAR/ZIP files, delimited by the
-     * appropriate path delimiter for this platform.
-     */
-    public static final String CLASSPATH_ATTR =
-	"org.apache.catalina.jsp_classpath";
-
-
 }
-

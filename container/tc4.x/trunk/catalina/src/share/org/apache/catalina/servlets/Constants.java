@@ -69,9 +69,5 @@ public class Constants {
 
     public static final String Package = "org.apache.catalina.servlets";
 
-    public static final String CATALINA_NAME = "Tomcat Catalina";
-
-    public static final String CATALINA_VERSION = "4.0";
-
 }
 

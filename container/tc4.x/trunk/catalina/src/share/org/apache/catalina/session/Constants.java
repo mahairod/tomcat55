@@ -71,9 +71,4 @@ public class Constants {
 
     public static final String Package = "org.apache.catalina.session";
 
-    public static final String SESSION_COOKIE_NAME = "JSESSIONID";
-    public static final String SESSION_PARAMETER_NAME = "jsessionid";
-    public static final String WORKDIR_ATTR =
-	"javax.servlet.context.tempdir";
-
 }

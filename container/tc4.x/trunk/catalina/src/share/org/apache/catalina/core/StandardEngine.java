@@ -71,7 +71,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 
@@ -197,6 +199,22 @@ public final class StandardEngine
 
 	throw new IllegalArgumentException
 	    (sm.getString("standardEngine.notParent"));
+
+    }
+
+
+    /**
+     * Start this Engine component.
+     *
+     * @exception LifecycleException if a startup error occurs
+     */
+    public void start() throws LifecycleException {
+
+	// Log our server identification information
+	System.out.println(Globals.SERVER_INFO);
+
+	// Standard container startup
+	super.start();
 
     }
 

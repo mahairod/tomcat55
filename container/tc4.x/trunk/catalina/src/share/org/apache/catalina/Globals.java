@@ -62,20 +62,96 @@
  */ 
 
 
-package org.apache.catalina.connector.test;
-
-
-import org.apache.catalina.Globals;
+package org.apache.catalina;
 
 
 /**
- * Static constants for this package.
+ * Global constants that are applicable to multiple packages within Catalina.
+ *
+ * @author Craig R. McClanahan
+ * @version $Revision$ $Date$
  */
 
-public final class Constants {
+public final class Globals {
 
-    public static final String Package = "org.apache.catalina.connector.test";
-    public static final String ServerInfo =
-	Globals.SERVER_INFO + " (Test Connector)";
+
+    /**
+     * The servlet context attribute under which we store the class loader
+     * used for loading servlets (as an object of type java.lang.ClassLoader).
+     */
+    public static final String CLASS_LOADER_ATTR =
+	"org.apache.catalina.classloader";
+
+
+    /**
+     * The servlet context attribute under which we store the class path
+     * for our application class loader (as an object of type String),
+     * delimited with the appropriate path delimiter for this platform.
+     */
+    public static final String CLASS_PATH_ATTR =
+	"org.apache.catalina.jsp.classpath";
+
+
+    /**
+     * The request attribute under which we forward a Java exception type
+     * (as an object of type Class) to an error page.
+     */
+    public static final String EXCEPTION_TYPE_ATTR =
+	"javax.servlet.error.exception_type";
+
+
+    /**
+     * The request attribute under which we forward an HTTP status message
+     * (as an object of type STring) to an error page.
+     */
+    public static final String ERROR_MESSAGE_ATTR =
+	"javax.servlet.error.message";
+
+
+    /**
+     * The descriptive information about this server and version.
+     */
+    public static final String SERVER_INFO = "Apache Tomcat 4.0-dev";
+
+
+
+    /**
+     * The name of the cookie used to pass the session identifier back
+     * and forth with the client.
+     */
+    public static final String SESSION_COOKIE_NAME = "JSESSSIONID";
+
+
+    /**
+     * The name of the path parameter used to pass the session identifier
+     * back and forth with the client.
+     */
+    public static final String SESSION_PARAMETER_NAME = "jsessionid";
+
+
+    /**
+     * The request attribute under which we forward an HTTP status code
+     * (as an object of type Integer) to an error page.
+     */
+    public static final String STATUS_CODE_ATTR =
+	"javax.servlet.error.status_code";
+
+
+    /**
+     * The servlet context attribute under which we record the set of
+     * welcome files (as an object of type String[]) for this application.
+     */
+    public static final String WELCOME_FILES_ATTR =
+	"org.apache.catalina.WELCOME_FILES";
+
+
+    /**
+     * The servlet context attribute under which we store a temporary
+     * working directory (as an object of type File) for use by servlets
+     * within this web application.
+     */
+    public static final String WORK_DIR_ATTR =
+	"javax.servlet.context.tempdir";
+
 
 }
