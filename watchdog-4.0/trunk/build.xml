@@ -122,6 +122,7 @@
     <copy    todir="${watchdog.build}/lib/servlet-golden">
       <fileset dir="src/clients/org/apache/jcheck/servlet/client"/>
     </copy>
+    <fixcrlf srcdir="${watchdog.build}/lib/servlet-golden" eol="lf"/>
 
     <!-- Web application static files -->
     <copy    todir="${watchdog.build}/webapps/jsp-tests">
