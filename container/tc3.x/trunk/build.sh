@@ -14,8 +14,14 @@ JAVA_BINDIR=`dirname $JAVACMD`
 JAVA_HOME=$JAVA_BINDIR/..
 fi
 
-JAVACMD=$JAVA_HOME/bin/java
+if [ "$ANT_OPTS" = "" ] ; then
+  ANT_OPTS=""
+fi
+
+JAVACMD=$JAVA_HOME/bin/java $ANT_OPTS
 
 cp=../jakarta-ant/lib/ant.jar:../jakarta-tools/moo.jar:../jakarta-ant/lib/xml.jar:../build/tomcat/classes:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dev.jar
 
 $JAVACMD -classpath $cp:$CLASSPATH org.apache.tools.ant.Main "$@"
+
+
