@@ -179,6 +179,9 @@ final class StandardHostValve
         // Ask this Context to process this request
         context.invoke(request, response);
 
+        Thread.currentThread().setContextClassLoader
+            (StandardHostValve.class.getClassLoader());
+
     }
 
 }
