@@ -105,31 +105,31 @@ import org.apache.jasper.runtime.el.jstl.JSTLVariableResolver;
  * @author Pierre Delisle
  * @author Mark Roth
  */
-public class PageContextImpl 
-    extends PageContext 
+public class PageContextImpl
+    extends PageContext
     implements VariableResolver
 {
 
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "PageContextImpl");
-    
+
     /**
      * The expression evaluator, for evaluating EL expressions.
      */
     private ExpressionEvaluatorImpl expressionEvaluator = null;
-    
+
     /**
      * The variable resolver, for evaluating EL expressions.
      */
     private static JSTLVariableResolver variableResolver =
         new JSTLVariableResolver();
-    
+
     /**
      * Expression evaluator for proprietary EL evaluation.
      * XXX - This should be going away once the EL evaluator moves from
      * the JSTL implementation to its own project.
      */
     private static org.apache.jasper.runtime.el.jstl.Evaluator
-        proprietaryEvaluator = new 
+        proprietaryEvaluator = new
         org.apache.jasper.runtime.el.jstl.Evaluator();
 
     PageContextImpl(JspFactory factory) {
@@ -197,9 +197,9 @@ public class PageContextImpl
 	setAttribute(CONFIG,      config);
 	setAttribute(PAGECONTEXT, this);
 	setAttribute(APPLICATION,  context);
-	
+
 	isIncluded = request.getAttribute(
-	    "javax.servlet.include.servlet_path") != null;	    
+	    "javax.servlet.include.servlet_path") != null;
     }
 
     public void release() {
@@ -207,18 +207,19 @@ public class PageContextImpl
 	try {
 	    if (isIncluded) {
 		((JspWriterImpl)out).flushBuffer();
-			// push it into the including jspWriter
+                // push it into the including jspWriter
 	    } else {
                 // Old code:
-	        out.flush();
+                //out.flush();
                 // Do not flush the buffer even if we're not included (i.e.
                 // we are the main page. The servlet will flush it and close
                 // the stream.
-                //((JspWriterImpl)out).flushBuffer();
-	    }
+                ((JspWriterImpl)out).flushBuffer();
+            }
 	} catch (IOException ex) {
 	    loghelper.log("Internal error flushing the buffer in release()");
 	}
+
 	servlet      = null;
 	config	     = null;
 	context	     = null;
@@ -231,7 +232,7 @@ public class PageContextImpl
         depth = -1;
 	baseOut.recycle();
 	session      = null;
-         
+
 	attributes.clear();
     }
 
@@ -451,7 +452,7 @@ public class PageContextImpl
 				  true);
     }
 
-    public void include(String relativeUrlPath, boolean flush) 
+    public void include(String relativeUrlPath, boolean flush)
 	    throws ServletException, IOException {
 
         JspRuntimeLibrary.include((HttpServletRequest) request,
@@ -482,7 +483,7 @@ public class PageContextImpl
         }
 
         String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-        String includeUri 
+        String includeUri
             = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
         if (includeUri != null)
             request.removeAttribute(Constants.INC_SERVLET_PATH);
@@ -537,15 +538,15 @@ public class PageContextImpl
     public ExpressionEvaluator getExpressionEvaluator() {
         if( this.expressionEvaluator == null ) {
             this.expressionEvaluator = new ExpressionEvaluatorImpl( this );
-            // no need to synchronize - not a big deal even if we create 
+            // no need to synchronize - not a big deal even if we create
             // two of these.
         }
-        
+
         return this.expressionEvaluator;
     }
 
     public void handlePageException(Exception ex)
-        throws IOException, ServletException 
+        throws IOException, ServletException
     {
 	// Should never be called since handleException() called with a
 	// Throwable in the generated servlet.
@@ -553,7 +554,7 @@ public class PageContextImpl
     }
 
     public void handlePageException(Throwable t)
-        throws IOException, ServletException 
+        throws IOException, ServletException
     {
 	if (t == null) throw new NullPointerException("null Throwable");
 
@@ -563,9 +564,11 @@ public class PageContextImpl
 	    // Do not set the javax.servlet.error.exception attribute here
 	    // (instead, set in the generated servlet code for the error page)
 	    // in order to prevent the ErrorReportValve, which is invoked as
-	    // part of forwarding the request to the error page, from 
+	    // part of forwarding the request to the error page, from
 	    // throwing it if the response has not been committed (the response
 	    // will have been committed if the error page is a JSP page).
+            Object origException=request.getAttribute("javax.servlet.error.exception");
+
 	    request.setAttribute("javax.servlet.jsp.jspException", t);
 	    request.setAttribute("javax.servlet.error.status_code",
 	        new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
@@ -578,6 +581,19 @@ public class PageContextImpl
             } catch (IllegalStateException ise) {
                 include(errorPageURL);
             }
+            // The error page could be inside an include.
+
+            Object newException=request.getAttribute("javax.servlet.error.exception");
+
+            if( (newException!= null) && (newException==origException) ) {
+                request.removeAttribute("javax.servlet.error.exception");
+            }
+
+            // now clear the error code - to prevent double handling.
+            request.removeAttribute("javax.servlet.error.status_code");
+            request.removeAttribute("javax.servlet.error.request_uri");
+            request.removeAttribute("javax.servlet.error.status_code");
+            request.removeAttribute("javax.servlet.jsp.jspException");
 
 	} else {
             // Otherwise throw the exception wrapped inside a ServletException.
@@ -601,19 +617,19 @@ public class PageContextImpl
     /**
      * VariableResolver interface
      */
-    public Object resolveVariable( String pName, Object pContext ) 
+    public Object resolveVariable( String pName, Object pContext )
         throws ELException
     {
         // Note: pContext will be going away.
         try {
-            return PageContextImpl.variableResolver.resolveVariable( 
+            return PageContextImpl.variableResolver.resolveVariable(
                 pName, this );
         }
         catch( org.apache.jasper.runtime.el.jstl.ELException e ) {
             throw new ELException( e );
         }
     }
-    
+
     /**
      * Proprietary method to evaluate EL expressions.
      * XXX - This method should go away once the EL interpreter moves
@@ -627,16 +643,16 @@ public class PageContextImpl
      * @param defaultPrefix Default prefix for this evaluation
      * @return The result of the evaluation
      */
-    public static Object proprietaryEvaluate( String expression, 
+    public static Object proprietaryEvaluate( String expression,
         Class expectedType, PageContext pageContext,
 	ProtectedFunctionMapper functionMap, String defaultPrefix )
         throws ELException
     {
 	java.util.HashMap funcMap =
 		(functionMap == null)? null: functionMap.getFnMap();
-	
+
         try {
-            return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
+            return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>",
                 expression, expectedType, null, pageContext,
 		funcMap, defaultPrefix );
         }
@@ -654,7 +670,7 @@ public class PageContextImpl
             return null;
         }
     }
-    
+
     /*
      * fields
      */
