@@ -68,9 +68,6 @@ KNOWN BUGS AND ISSUES
    the tag library descriptor in the META-INF directory -
    META-INF/taglib.tld. 
 
-5. The server can not serve static files on a Windows platform if
-   you use JDK 1.1.x. Use JDK 1.2.x instead.
-
 
 TROUBLESHOOTING
 ---------------
