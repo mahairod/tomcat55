@@ -102,7 +102,6 @@ shift
 :noJpda
 
 if ""%1"" == ""debug"" goto doDebug
-if ""%1"" == ""embedded"" goto doEmbedded
 if ""%1"" == ""run"" goto doRun
 if ""%1"" == ""start"" goto doStart
 if ""%1"" == ""stop"" goto doStop
@@ -111,7 +110,6 @@ echo Usage:  catalina ( commands ... )
 echo commands:
 echo   debug             Start Catalina in a debugger
 echo   debug -security   Debug Catalina with a security manager
-echo   embedded          Start Catalina in embedded mode
 echo   jpda start        Start Catalina under JPDA debugger
 echo   run               Start Catalina in the current window
 echo   run -security     Start in the current window with security manager
@@ -128,11 +126,6 @@ if not ""%1"" == ""-security"" goto execCmd
 shift
 echo Using Security Manager
 set SECURITY_POLICY_FILE=%CATALINA_BASE%\conf\catalina.policy
-goto execCmd
-
-:doEmbedded
-shift
-set MAINCLASS=org.apache.catalina.startup.Embedded
 goto execCmd
 
 :doRun
