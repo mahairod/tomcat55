@@ -63,10 +63,6 @@
         GUI for the deployer.
       </item>
       <item priority="Low" owner="---">
-        Stack size reduction (removal of valves to improve runtime 
-        performance and ease debugging).
-      </item>
-      <item priority="Low" owner="---">
         Java load balancer / cache (?) for use with Tomcat clustering, or
         with session affinity.
       </item>
