@@ -311,7 +311,7 @@ final class HttpRequestImpl
         // If neither a reader or an is have been opened, do it to consume
         // request bytes, if any
         if ((reader == null) && (stream == null) && (getContentLength() != 0)
-            && (getProtocol().equals("HTTP/1.1")))
+            && (getProtocol() != null) && (getProtocol().equals("HTTP/1.1")))
             getInputStream();
 
         super.finishRequest();
