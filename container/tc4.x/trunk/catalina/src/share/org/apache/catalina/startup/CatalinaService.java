@@ -66,20 +66,11 @@ package org.apache.catalina.startup;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Constructor;
-import java.net.Socket;
 import java.security.Security;
-import java.util.Stack;
-import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Server;
-import org.apache.catalina.Loader;
 import org.apache.commons.digester.Digester;
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 
 /**
@@ -266,6 +257,11 @@ public class CatalinaService extends Catalina {
      * Start a new server instance.
      */
     public void start() {
+
+        // Replace System.out and System.err with a custom PrintStream
+        SystemLogHandler log = new SystemLogHandler(System.out);
+        System.setOut(log);
+        System.setErr(log);
 
         // Start the new server
         if (server instanceof Lifecycle) {
