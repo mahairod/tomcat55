@@ -110,18 +110,18 @@ public class DateTool {
 
     /** DateFormat to be used to format dates
      */
-    public final static SimpleDateFormat rfc1123Format =
+    public final static DateFormat rfc1123Format =
 	new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
     
     /** DateFormat to be used to format old netscape cookies
      */
-    public final static SimpleDateFormat oldCookieFormat =
+    public final static DateFormat oldCookieFormat =
 	new SimpleDateFormat(OLD_COOKIE_PATTERN, LOCALE_US);
     
-    public final static SimpleDateFormat rfc1036Format =
+    public final static DateFormat rfc1036Format =
 	new SimpleDateFormat(rfc1036Pattern, LOCALE_US);
     
-    public final static SimpleDateFormat asctimeFormat =
+    public final static DateFormat asctimeFormat =
 	new SimpleDateFormat(asctimePattern, LOCALE_US);
     
     static {
