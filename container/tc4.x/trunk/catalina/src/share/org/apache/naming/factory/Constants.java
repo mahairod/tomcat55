@@ -76,6 +76,9 @@ public final class Constants {
     public static final String DEFAULT_RESOURCE_FACTORY = 
         Package + ".ResourceFactory";
 
+    public static final String DEFAULT_RESOURCE_LINK_FACTORY = 
+        Package + ".ResourceLinkFactory";
+
     public static final String DEFAULT_TRANSACTION_FACTORY = 
         Package + ".TransactionFactory";
 
