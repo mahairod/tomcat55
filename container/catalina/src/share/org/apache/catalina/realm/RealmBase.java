@@ -487,7 +487,7 @@ public abstract class RealmBase
         if(results == null)
             return null;
         SecurityConstraint [] array = new SecurityConstraint [results.size()];
-        System.arraycopy(results.toArray(), 0, array, 0, array.length);
+        results.toArray(array);
         return array;
 
     }
