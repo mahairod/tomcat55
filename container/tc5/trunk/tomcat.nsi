@@ -27,8 +27,8 @@
 ;Configuration
 
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
-  !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcatw.exe
-  !define MUI_FINISHPAGE_RUN_PARAMETERS //GT//Tomcat5
+  !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcat5w.exe
+  !define MUI_FINISHPAGE_RUN_PARAMETERS //MS//Tomcat5
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
   !define MUI_ABORTWARNING
@@ -134,8 +134,14 @@ Section "Core" SecTomcatCore
   ClearErrors
 
   Call configure
+  Call findJavaPath
+  Call findJVMPath
+  Pop $2
 
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --JavaOptions -Xrs --Startup manual'
+  DetailPrint "Using Jvm: $2"
+
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat5.exe" --Jvm "$2"'
+  ClearErrors
 
 SectionEnd
 
@@ -154,7 +160,7 @@ Section "Service" SecTomcatService
   Call findJVMPath
   Pop $2
 
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --Startup auto'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Startup auto'
 
   ClearErrors
 
@@ -208,15 +214,15 @@ NoDocumentaion:
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
-                 "$INSTDIR\bin\tomcatw.exe" \
-                 '//GT//Tomcat5' \
-                 "$INSTDIR\bin\tomcatw.exe" 1 SW_SHOWNORMAL
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Monitor Tomcat.lnk" \
+                 "$INSTDIR\bin\tomcat5w.exe" \
+                 '//MS//Tomcat5' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Configure Tomcat.lnk" \
-                 "$INSTDIR\bin\tomcatw.exe" \
+                 "$INSTDIR\bin\tomcat5w.exe" \
                  '//ES//Tomcat5' \
-                 "$INSTDIR\bin\tomcatw.exe" 0 SW_SHOWNORMAL
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
 SectionEnd
 
@@ -233,8 +239,8 @@ Section "Examples" SecExamples
 SectionEnd
 
 Section -post
-
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --JavaOptions -Dcatalina.home="\"$INSTDIR\""#-Djava.endorsed.dirs="\"$INSTDIR\common\endorsed\""#-Xrs --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --JvmOptions "-Dcatalina.home=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR" --StdOutput "$INSTDIR\logs\stdout.log" --StdError "$INSTDIR\logs\stderr.log"'
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -496,7 +502,7 @@ Section Uninstall
   Delete "$INSTDIR\Uninstall.exe"
 
   ; Delete Tomcat service
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //DS//Tomcat5'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //DS//Tomcat5'
   ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
