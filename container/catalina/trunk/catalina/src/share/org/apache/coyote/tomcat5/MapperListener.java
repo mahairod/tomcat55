@@ -469,7 +469,10 @@ public class MapperListener
             mBeanServer.invoke(objectName, "findMappingObject", null, null);
 
         for (int i = 0; i < mappings.length; i++) {
-            mapper.addWrapper(hostName, contextName, mappings[i], wrapper);
+            boolean jspWildCard = (wrapperName.equals("jsp")
+                                   && mappings[i].endsWith("/*"));
+            mapper.addWrapper(hostName, contextName, mappings[i], wrapper,
+                              jspWildCard);
         }
 
     }
