@@ -94,7 +94,7 @@ public class AddServiceAction extends Action {
         serviceFm.setServerObjectName(serverName);
         ArrayList hosts = new ArrayList();
         hosts.add(new LabelValueBean
-                  (resources.getMessage("list.none"), ""));
+                  (resources.getMessage(locale, "list.none"), ""));
         serviceFm.setHostNameVals(hosts);
         
         // Forward to the service display page

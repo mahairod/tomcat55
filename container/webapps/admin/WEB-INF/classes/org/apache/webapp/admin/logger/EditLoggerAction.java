@@ -109,7 +109,7 @@ public class EditLoggerAction extends Action {
             lname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.loggerName.bad",
+                resources.getMessage(locale, "error.loggerName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -126,12 +126,14 @@ public class EditLoggerAction extends Action {
         String host = lname.getKeyProperty("host");
         String context = lname.getKeyProperty("path");        
         if (host!=null) {
-            sb.append("Host (" + host + ") > ");
+            sb.append(resources.getMessage(locale, "server.service.treeBuilder.host"));
+            sb.append(" (" + host + ") > ");
         }
         if (context!=null) {
-            sb.append("Context (" + context + ") > ");
+            sb.append(resources.getMessage(locale, "server.service.treeBuilder.context"));
+            sb.append(" (" + context + ") > ");
         }
-        sb.append("Logger");
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.logger", locale));
         loggerFm.setNodeLabel(sb.toString());
         loggerFm.setDebugLvlVals(Lists.getDebugLevels());        
         loggerFm.setVerbosityLvlVals(Lists.getVerbosityLevels());        

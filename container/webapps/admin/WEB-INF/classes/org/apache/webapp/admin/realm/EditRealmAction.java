@@ -114,7 +114,7 @@ public class EditRealmAction extends Action {
             rname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.realmName.bad",
+                resources.getMessage(locale, "error.realmName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -177,7 +177,7 @@ public class EditRealmAction extends Action {
         if (context!=null) {
             sb.append("Context (" + context + ") > ");
         }
-        sb.append("Realm");
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.realm"));
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
@@ -214,7 +214,9 @@ public class EditRealmAction extends Action {
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
         String realmType = "MemoryRealm";
-        StringBuffer sb = new StringBuffer("Realm (");
+        StringBuffer sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.realm"));
+        sb.append(" (");
         sb.append(realmType);
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());
@@ -253,7 +255,9 @@ public class EditRealmAction extends Action {
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
         String realmType = "JDBCRealm";
-        StringBuffer sb = new StringBuffer("Realm (");
+        StringBuffer sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.realm"));
+        sb.append(" (");
         sb.append(realmType);
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());
@@ -319,7 +323,9 @@ public class EditRealmAction extends Action {
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
         String realmType = "JNDIRealm";
-        StringBuffer sb = new StringBuffer("Realm (");
+        StringBuffer sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.realm"));
+        sb.append(" (");
         sb.append(realmType);
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());

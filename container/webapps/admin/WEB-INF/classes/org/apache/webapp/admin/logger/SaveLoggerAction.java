@@ -146,7 +146,7 @@ public final class SaveLoggerAction extends Action {
                     }
                 } catch (Exception e) {
                     String message =
-                        resources.getMessage("error.engineName.bad",
+                        resources.getMessage(locale, "error.engineName.bad",
                                          sb.toString());
                     getServlet().log(message);
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -183,7 +183,9 @@ public final class SaveLoggerAction extends Action {
                     TreeControlNode parentNode = control.findNode(lform.getParentObjectName());
                     if (parentNode != null) {
                         String nodeLabel =
-                           "Logger for " + parentNode.getLabel();
+                            resources.getMessage(locale, 
+                                "server.service.treeBuilder.loggerFor", 
+                                parentNode.getLabel().toString());
                         String encodedName =
                             URLEncoder.encode(lObjectName);
                         TreeControlNode childNode =

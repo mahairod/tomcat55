@@ -113,7 +113,7 @@ public class EditValveAction extends Action {
             vname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.valveName.bad",
+                resources.getMessage(locale, "error.valveName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);

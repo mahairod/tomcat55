@@ -110,7 +110,7 @@ public class EditServiceAction extends Action {
             sname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.serviceName.bad",
+                resources.getMessage(locale, "error.serviceName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -122,7 +122,7 @@ public class EditServiceAction extends Action {
             ename = new ObjectName(sb.toString());
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.engineName.bad",
+                resources.getMessage(locale, "error.engineName.bad",
                                      sb.toString());
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -137,7 +137,7 @@ public class EditServiceAction extends Action {
                                   mBServer, sname.getDomain(),request);
          } catch (Exception e) {
             String message =
-                resources.getMessage("error.serviceName.bad",
+                resources.getMessage(locale, "error.serviceName.bad",
                                  adminService);
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -151,7 +151,9 @@ public class EditServiceAction extends Action {
         serviceFm.setAdminAction("Edit");
         serviceFm.setObjectName(sname.toString());
         serviceFm.setEngineObjectName(ename.toString());
-        sb = new StringBuffer("Service (");
+        sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.subtreeNode"));
+        sb.append(" (");
         sb.append(sname.getKeyProperty("serviceName"));
         sb.append(")");
         serviceFm.setNodeLabel(sb.toString());
@@ -178,7 +180,7 @@ public class EditServiceAction extends Action {
             attribute = "hosts";
             ArrayList hosts = new ArrayList();
             hosts.add(new LabelValueBean
-                      (resources.getMessage("list.none"), ""));
+                      (resources.getMessage(locale, "list.none"), ""));
             Iterator items = Lists.getHosts(mBServer, sname).iterator();
             while (items.hasNext()) {
                 ObjectName hname = new ObjectName((String) items.next());
