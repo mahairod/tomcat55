@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Jakarta Tomcat Site"
+<project name="Apache Tomcat Site"
         href="http://jakarta.apache.org/tomcat">
 
     <title>The Jakarta Site</title>
-    <logo href="/images/tomcat.gif">The Jakarta Tomcat Project</logo>
+    <logo href="/images/tomcat.gif">The Apache Tomcat Project</logo>
     
     <body>
     <menu name="Tomcat">
         <item name="Front Page"           href="/index.html"/> 
 	<item name="News &amp; Status"    href="/news.html"/>
+	<item name="Resources"            href="/resources.html"/>
     </menu>
 
     <menu name="Documentation">
         <item name="Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/> 
         <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/> 
         <item name="Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/> 
+        <item name="Tomcat 4.next"        href="/tomcat-4.1-doc/index.html"/> 
     </menu>
 
     <menu name="Download">

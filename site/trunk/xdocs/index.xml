@@ -3,12 +3,12 @@
 
   <properties>
     <author email="marc.saegesser@apropos.com">Marc A. Saegesser</author>
-    <title>Jakarta Tomcat</title>
+    <title>Apache Tomcat</title>
   </properties>
 
 <body>
 
-<section name="Jakarta Tomcat">
+<section name="Apache Tomcat">
 
 <p>Tomcat is the servlet container that is used in the official
 Reference Implementation for the
@@ -45,7 +45,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.2/1.1</td>
-  <td>3.3</td>
+  <td>3.3.1</td>
 </tr>
 
 </table>
@@ -87,13 +87,12 @@ performance.  Version 4.0 implements the final released versions of the Servlet
 also supports web applications built for the Servlet 2.2 and JSP 1.1
 specifications with no changes.</p>
 
-<p><strong>Tomcat 3.3</strong>. Version 3.3 is the current production quality
-release. It continues the refactoring that was begun in version 3.2 and
+<p><strong>Tomcat 3.3.x</strong>. Version 3.3.1 is the current production 
+quality release. It continues the refactoring that was begun in version 3.2 and
 carries it to its logical conclusion.  Version 3.3 provides a much more modular
 design and allows the servlet container to be customized by adding and removing
 modules that control the processing of servlet requests.  This version also
-contains many performance improvements. The future 3.3.1 release continues on
-the same path with more specific performance and security improvements.</p> 
+contains many performance improvements.</p> 
 
 <p><strong>Tomcat 3.2.x</strong>.  Version 3.2 added few new features 
 since 3.1; the major effort was a refactoring of the internals to improve 
