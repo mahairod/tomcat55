@@ -64,6 +64,8 @@ Generic Bug Fixes:
 Catalina Bug Fixes:
 ------------------
 
+HttpResponseBase: The toEncoded() method has been updated to place the ";jsessionid"
+  in the correct location in the presence of an anchor in the URL.
 
 ----------------
 Jasper Bug Fixes:
