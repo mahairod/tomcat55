@@ -368,6 +368,7 @@ public class HttpRequestAdapter extends RequestImpl {
 	    // we don't have 2 "words", probably only method
 	    // startReq>0 => method is fine, request has at least one char
 	    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	    protocol=null;
 	    return;
 	}
 	
