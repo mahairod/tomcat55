@@ -65,6 +65,9 @@ package org.apache.catalina.startup;
 
 /**
  * Catalina MBean interface.
+ * To be used, the JAR containing this MBean should contain all the classes 
+ * which are present in bootstrap.jar. The setPath(String path) method should 
+ * be used to set the correct path where the Tomcat distribution is.
  * 
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  * @version $Revision$
@@ -123,15 +126,15 @@ public interface CatalinaManagerMBean {
     
     
     /**
-     * Config file path accessor.
+     * Path accessor.
      */
-    public String getConfigFile();
+    public String getPath();
     
     
     /**
-     * Config file path mutator.
+     * Path mutator.
      */
-    public void setConfigFile(String configFile);
+    public void setPath(String Path);
     
     
     /**

@@ -72,6 +72,9 @@ import javax.management.Notification;
 
 /**
  * Implementation of the Catalina JMX MBean as a wrapper of the Catalina class.
+ * To be used, the JAR containing this MBean should contain all the classes 
+ * which are present in bootstrap.jar. The setPath(String path) method should 
+ * be used to set the correct path where the Tomcat distribution is.
  * 
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  * @version $Revision$
@@ -95,12 +98,6 @@ public final class CatalinaManager
      * Notification sequence number.
      */
     private long sequenceNumber = 0;
-    
-    
-    /**
-     * Catalina wrapper.
-     */
-    private CatalinaWrapper catalina = new CatalinaWrapper();
     
     
     // ---------------------------------------------- MBeanRegistration Methods
@@ -156,18 +153,18 @@ public final class CatalinaManager
     
     
     /**
-     * Config file path accessor.
+     * Path accessor.
      */
-    public String getConfigFile() {
-        return catalina.getConfigFile();
+    public String getPath() {
+        return System.getProperty("catalina.home");
     }
     
     
     /**
      * Config file path mutator.
      */
-    public void setConfigFile(String configFile) {
-        catalina.setConfigFile(configFile);
+    public void setPath(String path) {
+        System.setProperty("catalina.home", path);
     }
     
     
@@ -194,7 +191,8 @@ public final class CatalinaManager
         
         try {
             
-            catalina.start();
+            String[] args = { "start" };
+            Bootstrap.main(args);
             
         } catch (Throwable t) {
             state = STOPPED;
@@ -235,7 +233,8 @@ public final class CatalinaManager
         
         try {
             
-            catalina.stop();
+            String[] args = { "stop" };
+            Bootstrap.main(args);
             
         } catch (Throwable t) {
             
@@ -262,35 +261,6 @@ public final class CatalinaManager
         
         if (getState() != STOPPED)
             stop();
-        
-    }
-    
-    
-    // -------------------------------------------- CatalinaWrapper Inner Class
-    
-    
-    private class CatalinaWrapper extends Catalina {
-        
-        
-        public void start() {
-            super.start();
-        }
-        
-        
-        public void stop() {
-            super.stop();
-        }
-        
-        
-        public String getConfigFile() {
-            return configFile;
-        }
-        
-        
-        public void setConfigFile(String configFile) {
-            this.configFile = configFile;
-        }
-        
         
     }
     
