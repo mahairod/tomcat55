@@ -664,7 +664,7 @@ public final class ConnectorForm extends ActionForm {
             numberCheck("acceptCountText", acceptCountText, true, 0, 128);
             numberCheck("connTimeOutText", connTimeOutText, true, -1, 60000);
             numberCheck("bufferSizeText", bufferSizeText, true, 1, 8192);
-            
+  
             /* The IP address can also be null -- which means open the
              server socket on *all* IP addresses for this host */
             if (address.length() > 0) {
@@ -673,6 +673,8 @@ public final class ConnectorForm extends ActionForm {
                 } catch (Exception e) {
                     errors.add("address", new ActionError("error.address.invalid"));
                 }
+            } else {
+                address = " ";
             }
             
             /* ports */

@@ -44,12 +44,12 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <%--
+            <logic:notEqual name="connectorForm" property="adminAction" value="Create">              
             <controls:action url='<%= "/DeleteConnector.do?select=" + 
                                         URLEncoder.encode(thisObjectName) %>'>  
             <bean:message key="actions.connectors.delete"/> 
             </controls:action>
-            --%>
+            </logic:notEqual>
        </controls:actions>   
          </div>
       </td>

@@ -58,6 +58,7 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
+              --%>
               <controls:action url='<%= "/AddConnector.do?serviceName=" +
                                         serviceName %>'>  
                 <bean:message key="actions.connectors.create"/>
@@ -69,7 +70,6 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
-              --%>
               <controls:action url='<%= "/AddHost.do?serviceName=" +
                                         serviceName %>'>  
                 <bean:message key="actions.hosts.create"/>

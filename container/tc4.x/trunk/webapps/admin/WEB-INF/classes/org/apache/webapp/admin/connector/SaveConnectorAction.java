@@ -61,7 +61,6 @@
 
 package org.apache.webapp.admin.connector;
 
-
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Locale;
@@ -201,10 +200,10 @@ public final class SaveConnectorAction extends Action {
                 // Create a new Connector object
                 values = new Object[3];                
                 values[0] = // parent 
-                    TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName;
+                    TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
- 
+                
                 operation = "create" + connectorType;
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
@@ -218,7 +217,7 @@ public final class SaveConnectorAction extends Action {
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
-                           "Connector for " + parentNode.getLabel();
+                           "Connector (" + cform.getPortText() + ")";
                         String encodedName =
                             URLEncoder.encode(cObjectName);
                         TreeControlNode childNode =
@@ -229,6 +228,8 @@ public final class SaveConnectorAction extends Action {
                                                 encodedName,
                                                 "content",
                                                 true);
+                        // FIXME--the node should be next to the rest of 
+                        // the Connector nodes..
                         parentNode.addChild(childNode);
                         // FIXME - force a redisplay
                     } else {
