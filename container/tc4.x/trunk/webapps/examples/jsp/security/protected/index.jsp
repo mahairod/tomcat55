@@ -37,7 +37,7 @@ You are logged in as remote user <b><%= request.getRemoteUser() %></b><br><br>
 
 To check whether your username has been granted a particular role,
 enter it here:
-<form method="GET">
+<form method="GET" action="index.jsp">
 <input type="text" name="role" value="<%= role %>">
 </form>
 
