@@ -2305,8 +2305,8 @@ public class StandardContext
         }
 
         // Clear all application-originated servlet context attributes
-        //        if (context != null)
-        //            context.clearAttributes();
+        if (context != null)
+            context.clearAttributes();
 
         // Shut down filters and application event listeners
         filterStop();
@@ -2320,6 +2320,12 @@ public class StandardContext
 		log(sm.getString("standardContext.stoppingManager"), e);
 	    }
 	}
+
+        // Binding thread
+        unbindThread();
+
+        // Dump the old Jasper loader
+        jasperLoader = null;
 
         // Shut down our application class loader
 	if ((loader != null) && (loader instanceof Lifecycle)) {
@@ -2352,6 +2358,18 @@ public class StandardContext
             }
         }
 
+        // Binding thread
+        bindThread();
+
+        ClassLoader oldCtxClassLoader = 
+            Thread.currentThread().getContextClassLoader();
+	ClassLoader classLoader = loader.getClassLoader();
+
+        // Set the context class loader
+        if (classLoader != null) {
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
+
         // Restart our session manager (AFTER naming context recreated/bound)
         if ((manager != null) && (manager instanceof Lifecycle)) {
             try {
@@ -2373,6 +2391,11 @@ public class StandardContext
                 log(sm.getString("standardContext.filterStartFailed"));
                 ok = false;
             }
+        }
+
+        // Set the context class loader to the old class loader
+        if (classLoader != null) {
+            Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
         }
 
         // Restart our currently defined servlets
@@ -3329,6 +3352,9 @@ public class StandardContext
         // Unbinding thread
         unbindThread();
 
+        // Dump the old Jasper loader
+        jasperLoader = null;
+
         if (debug >= 1)
             log("Stopping complete");
 
@@ -3769,7 +3795,10 @@ public class StandardContext
 
 	// Set the appropriate servlet context attribute
 	getServletContext().setAttribute(Globals.WORK_DIR_ATTR, dir);
-
+        if (getServletContext() instanceof ApplicationContext)
+            ((ApplicationContext) getServletContext()).setAttributeReadOnly
+                (Globals.WORK_DIR_ATTR);
+        
     }
 
 
