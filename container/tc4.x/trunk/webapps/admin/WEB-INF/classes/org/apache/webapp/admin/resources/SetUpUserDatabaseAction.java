@@ -158,7 +158,7 @@ public final class SetUpUserDatabaseAction extends Action {
         userDatabaseForm.setFactory
                             (SaveUserDatabaseAction.USERDB_FACTORY);
         userDatabaseForm.setType
-                            (SaveUserDatabaseAction.USERDB_RESOURCE_TYPE);            
+                            (ResourceUtils.USERDB_CLASS);            
 
         if (objectName == null) {
             userDatabaseForm.setNodeLabel

@@ -116,8 +116,6 @@ public final class SaveUserDatabaseAction extends Action {
      */
     private MBeanServer mserver = null;
 
-    public static String USERDB_RESOURCE_TYPE = "org.apache.catalina.UserDatabase";
-
     /*
      * Only one implementation of factory allowed to start with.
      */
@@ -183,7 +181,7 @@ public final class SaveUserDatabaseAction extends Action {
 
             Object params[] = new Object[2];
             params[0] = userDatabaseForm.getName();
-            params[1] = USERDB_RESOURCE_TYPE;     
+            params[1] = ResourceUtils.USERDB_CLASS;     
            
             ObjectName oname = null;
 

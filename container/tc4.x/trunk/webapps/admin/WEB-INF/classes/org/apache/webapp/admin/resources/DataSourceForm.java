@@ -195,6 +195,19 @@ public final class DataSourceForm extends BaseForm {
     public void setQuery(String query) {
         this.query = query;
     }
+    
+    /**
+     * The type of the resource.
+     */
+    private String type = null;
+
+    public String getType() {
+        return (this.type);
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -211,6 +224,7 @@ public final class DataSourceForm extends BaseForm {
         driverClass = null;
         username = null;
         password = null;
+        type = null;
         
         active = null;
         idle = null;

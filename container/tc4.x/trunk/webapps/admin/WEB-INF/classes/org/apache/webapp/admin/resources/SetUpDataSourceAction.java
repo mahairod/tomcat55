@@ -115,8 +115,7 @@ public final class SetUpDataSourceAction extends Action {
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-
-
+    
     // --------------------------------------------------------- Public Methods
 
 
@@ -155,6 +154,8 @@ public final class SetUpDataSourceAction extends Action {
         String objectName = request.getParameter("objectName");
         
         DataSourceForm dataSourceForm = new DataSourceForm();
+        dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
+
         if (objectName == null) {
             dataSourceForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.datasrc.create"));
@@ -191,7 +192,6 @@ public final class SetUpDataSourceAction extends Action {
                 attribute = "validationQuery";
                 dataSourceForm.setQuery
                     ((String) mserver.getAttribute(oname, attribute));
-
             } catch (Exception e) {
                 getServlet().log
                     (resources.getMessage(locale,
