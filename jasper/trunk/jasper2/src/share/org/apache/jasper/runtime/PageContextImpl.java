@@ -95,7 +95,10 @@ import javax.servlet.jsp.el.VariableResolver;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.compiler.Localizer;
-import org.apache.jasper.runtime.el.jstl.JSTLVariableResolver;
+
+import org.apache.commons.el.VariableResolverImpl;
+import org.apache.commons.el.ExpressionEvaluatorImpl;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -117,22 +120,14 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     /**
      * The expression evaluator, for evaluating EL expressions.
      */
-    private ExpressionEvaluatorImpl expressionEvaluator = null;
+    private static ExpressionEvaluatorImpl expressionEvaluator
+	= new ExpressionEvaluatorImpl();
 
     /**
      * The variable resolver, for evaluating EL expressions.
      */
-    private static JSTLVariableResolver variableResolver =
-        new JSTLVariableResolver();
-
-    /**
-     * Expression evaluator for proprietary EL evaluation.
-     * XXX - This should be going away once the EL evaluator moves from
-     * the JSTL implementation to its own project.
-     */
-    private static org.apache.jasper.runtime.el.jstl.Evaluator
-        proprietaryEvaluator = new
-        org.apache.jasper.runtime.el.jstl.Evaluator();
+    private VariableResolverImpl variableResolver
+	= new VariableResolverImpl(this);
 
     PageContextImpl(JspFactory factory) {
         this.factory = factory;
@@ -558,13 +553,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
      * ExpressionEvaluator that can parse EL expressions.
      */
     public ExpressionEvaluator getExpressionEvaluator() {
-        if( this.expressionEvaluator == null ) {
-            this.expressionEvaluator = new ExpressionEvaluatorImpl( this );
-            // no need to synchronize - not a big deal even if we create
-            // two of these.
-        }
-
-        return this.expressionEvaluator;
+        return expressionEvaluator;
     }
 
     public void handlePageException(Exception ex)
@@ -640,16 +629,8 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     /**
      * VariableResolver interface
      */
-    public Object resolveVariable( String pName )
-        throws ELException
-    {
-        try {
-            return PageContextImpl.variableResolver.resolveVariable( pName, 
-                this );
-        }
-        catch( org.apache.jasper.runtime.el.jstl.ELException e ) {
-            throw new ELException( e );
-        }
+    public Object resolveVariable(String pName) throws ELException {
+	return variableResolver.resolveVariable(pName);
     }
 
     private static String XmlEscape(String s) {
@@ -687,15 +668,14 @@ public class PageContextImpl extends PageContext implements VariableResolver {
      * @param defaultPrefix Default prefix for this evaluation
      * @return The result of the evaluation
      */
-    public static Object proprietaryEvaluate( final String expression, 
-         final Class expectedType,  final PageContext pageContext,
-	 final ProtectedFunctionMapper functionMap, final String defaultPrefix,
-	 final boolean escape )
-       throws ELException
+    public static Object proprietaryEvaluate(final String expression, 
+					     final Class expectedType,
+					     final PageContext pageContext,
+					     final ProtectedFunctionMapper functionMap,
+					     final String defaultPrefix,
+					     final boolean escape)
+	throws ELException
     {
-	final java.util.HashMap funcMap =
-		(functionMap == null)? null: functionMap.getFnMap();
-                
 	Object retValue;
         if (System.getSecurityManager() != null){
             try {
@@ -703,9 +683,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 			new PrivilegedExceptionAction(){
 
                     public Object run() throws Exception{
-                       return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
-                            expression, expectedType, null, pageContext,
-                            funcMap, defaultPrefix );
+                        return expressionEvaluator.evaluate(expression,
+							    expectedType,
+							    pageContext.getVariableResolver(),
+							    functionMap,
+							    defaultPrefix);
                     }
                 });
             } catch( PrivilegedActionException ex ) {
@@ -713,18 +695,16 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                 throw new ELException( e );
             }
         } else {
-            try{
-               retValue = PageContextImpl.proprietaryEvaluator.evaluate(
-		    "<unknown>", 
-                    expression, expectedType, null, pageContext,
-                    funcMap, defaultPrefix );
-            } catch(JspException e){
-                throw new ELException( e );                
-            }  
+	    retValue = expressionEvaluator.evaluate(expression,
+						    expectedType,
+						    pageContext.getVariableResolver(),
+						    functionMap,
+						    defaultPrefix);
         }
 	if (escape) {
 	    retValue = XmlEscape(retValue.toString());
 	}
+
 	return retValue;
     }
 

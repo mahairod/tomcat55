@@ -66,6 +66,8 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
+import java.lang.reflect.Method;
+import javax.servlet.jsp.el.FunctionMapper;
 
 /**
  * Maps EL functions to their Java method counterparts.  Keeps the
@@ -75,7 +77,7 @@ import java.security.PrivilegedActionException;
  * @author Mark Roth
  * @author Kin-man Chung
  */
-public final class ProtectedFunctionMapper {
+public final class ProtectedFunctionMapper implements FunctionMapper {
 
     /** 
      * Maps "prefix:name" to java.lang.Method objects.  Lazily created.
@@ -149,16 +151,16 @@ public final class ProtectedFunctionMapper {
 	this.fnmap.put( prefix + ":" + fnName, method );
     }
 
-
     /**
-     * Only the org.apache.jasper.runtime package can access the actual
-     * function map.
-     *
-     * @return A HashMap, with keys as "name:prefix" and values as
-     *     the corresponding java.lang.Method instances.
-     */
-    HashMap getFnMap() {
-	return this.fnmap;
+     * Resolves the specified local name and prefix into a Java.lang.Method.
+     * Returns null if the prefix and local name are not found.
+     * 
+     * @param prefix the prefix of the function
+     * @param localName the short name of the function
+     * @return the result of the method mapping.  Null means no entry found.
+     **/
+    public Method resolveFunction(String prefix, String localName) {
+	return (Method) this.fnmap.get(prefix + ":" + localName);
     }
 }
 

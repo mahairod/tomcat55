@@ -79,11 +79,10 @@ import org.apache.jasper.JasperException;
 import org.xml.sax.Attributes;
 
 // EL interpreter (subject to change)
-import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ELParseException;
-import org.apache.jasper.runtime.ExpressionEvaluatorImpl;
+import org.apache.commons.el.ExpressionEvaluatorImpl;
 
 /** 
  * This class has all the utility method(s).
@@ -108,8 +107,8 @@ public class JspUtil {
     private static final String CLOSE_EXPR_XML = "%";
 
     private static int tempSequenceNumber = 0;
-    private static ExpressionEvaluatorImpl expressionEvaluator = 
-        new ExpressionEvaluatorImpl( null );
+    private static ExpressionEvaluatorImpl expressionEvaluator
+	= new ExpressionEvaluatorImpl();
 
     public static char[] removeQuotes(char []chars) {
 	CharArrayWriter caw = new CharArrayWriter();
