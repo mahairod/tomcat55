@@ -17,6 +17,13 @@
     </script>
 
     <%@ include file="header.jsp" %>
+    
+    <%-- display warnings if any --%>
+    <logic:present name="warning">    
+            <bean:message key="warning.header"/>
+            <bean:message key='<%= (String) request.getAttribute("warning") %>'/>
+            <br>
+    </logic:present>
 
     <center><h2>
       <bean:message key="save.success"/>
