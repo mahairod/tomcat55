@@ -60,32 +60,56 @@
 
 package javax.servlet;
 
-import java.util.Enumeration;
+import java.io.IOException;
 
+	/** 
+	** A filter is an object than perform filtering tasks
+	** on either the request to a servlet, or on the response from 
+	** a servlet, or both.<br><br>
+	** Filters do their filtering in the DoFilter method. Every Filter has access to 
+	** a FilterConfig object from which it can obtain its initialization parameters, a
+	** reference to the ServletContext and a view into the Filter stack.
+	** <p>
+	** Examples that have been identified for this design are:-<br>
+	** 1) Authentication Filters <br>
+	** 2) Logging and Auditing Filters <br>
+	** 3) Image conversion Filters <br>
+    	** 4) Data compression Filters <br>
+	** 5) Encryption Filters <br>
+	** 6) Tokenizing Filters <br>
+	** 7) Filters that trigger resource access events <br>
+	** 8) XSL/T filters <br>
+	** 9) Mime-type chain Filter <br>
+	 * @since	v 2.3
+	*/
 
+public interface Filter {
 
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
-    
+	/** The container calls this method when the Filter is instantiated and
+	** passes in a FilterConfig object. When the container is done with
+	** the Filter, it calls this method, passing in null.
+	*/
+	public void setFilterConfig(FilterConfig filterConfig);
+	/** Return the FilterConfig for this Filter.
+	*/
+	public FilterConfig getFilterConfig();
 
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
+	/**
+	* The doFilter method of the Filter is called by the container
+	* each time a request/response pair is passed through the stack due
+	* to a client request for the Servlet in the stack.
+	* A typical implementation of this method would follow the following pattern:- <br>
+	* 1. Examine the request<br>
+	* 2. Optionally wrap the request object with a custom implementation to
+	* filter content or headers for input filtering <br>
+	* 3. Optionally wrap the response object with a custom implementation to
+	* filter content or headers for output filtering <br>
+	* 4. a) <strong>Either</strong> invoke the next entity in the stack using the getFilterConfig().getNext() call
+	** to obtain the next Filter and calling doFilter(), <br>   
+	** 4. b) <strong>or</strong> not pass on the request/response pair to the next entity in the filter stack<br>
+	** 5. Directly set headers on the response after invokation of the next Filter
+	**/
+    public void doFilter ( ServletRequest request, ServletResponse response ) throws IOException, ServletException;
 
 }
+

@@ -58,34 +58,19 @@
  * DO NOT add / change / or delete method signatures!
  */
 
-package javax.servlet;
-
-import java.util.Enumeration;
+package javax.servlet.http;
 
 
-
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
-    
-
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
-
+	/** This is the class representing event notifications for
+	* changes to sessions within a web application.
+	 * @since	v 2.3
+	*/
+public class HttpSessionEvent extends java.util.EventObject {
+	/** Construct a session event from the given source.*/
+	 public HttpSessionEvent(HttpSession source) {
+		super(source);
 }
+	/** Return the session that changed.*/
+    public HttpSession getSession () { return null;}
+}
+

@@ -1,6 +1,3 @@
-
-
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -169,6 +166,10 @@ public interface Servlet {
      *
      * <p>This method is only called after the servlet's <code>init()</code>
      * method has completed successfully.
+     * 
+     * <p>  The status code of the response always should be set for a servlet 
+     * that throws or sends an error.
+     *
      * 
      * <p>Servlets typically run inside multithreaded servlet containers
      * that can handle multiple requests concurrently. Developers must 

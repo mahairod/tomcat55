@@ -58,34 +58,30 @@
  * DO NOT add / change / or delete method signatures!
  */
 
-package javax.servlet;
+package javax.servlet.http;
 
-import java.util.Enumeration;
+	/** 
+	* Implementations of this interface may are notified of changes to the 
+	* list of active sessions in a web application.
+	* To recieve notification events, the implementation class
+	* must be configured in the deployment descriptor for the web application.
+	* @see HttpSessionEvent
+	 * @since	v 2.3
+	*/
 
-
-
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
+public interface HttpSessionListener {
     
-
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
-
+	/** 
+	* Notification that a session was created.
+	* @param se the notification event
+	*/
+    public void sessionCreated ( HttpSessionEvent se );
+    
+	/** 
+	* Notification that a session was invalidated.
+	* @param se the notification event
+	*/
+    public void sessionDestroyed ( HttpSessionEvent se );
+    
 }
+

@@ -60,32 +60,31 @@
 
 package javax.servlet;
 
-import java.util.Enumeration;
 
+	/** 
+	* This is the event class for notifications about changes to the servlet context of a web application.
+	* @see ServletContextListener
+	 * @since	v 2.3
+	*/
 
+public class ServletContextEvent extends java.util.EventObject { 
 
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
+	/** Construct a ServletContextEvent from the given context.
+	*
+	* @param source - the ServletContext that is sending the event.
+	 */
+    public ServletContextEvent(ServletContext source) {
+	super(source);
+    }
     
-
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
-
+	/**
+	* Return the ServletContext that changed.
+	*
+	* @return the ServletContext that sent the event.
+	*/
+    public ServletContext getServletContext () { 
+	return (ServletContext) super.getSource();
+    }
+    
 }
+
