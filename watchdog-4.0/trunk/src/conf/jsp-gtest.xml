@@ -38,6 +38,14 @@ lse"
 	   testStrategy="The request should be processed "
  	/>
 
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=%22false%22 HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/misc/precompilation/no_parameter.html"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the request is forwarded properly when jsp_precompile=%22false%22"
+	   testStrategy="The request should be processed "
+ 	/>
+
       <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            returncode="200"
@@ -45,6 +53,15 @@ lse"
 	   assertion="Test that the request is not sent to the JSP"
 	   testStrategy="No HTML page received when jsp_precompile=true "
  	/>
+
+      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=%22true%22 HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           returncode="200"
+ 	   testName="precompile.jsp" 
+	   assertion="Test that the request is not sent to the JSP"
+	   testStrategy="No HTML page received when jsp_precompile=true "
+ 	/>
+
       <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            returncode="500"
@@ -53,6 +70,40 @@ lse"
 	   testStrategy="check for status code 500"
  	/>
 <!--  End Precompilation Tests -->
+
+<!-- Begin TLD Resource Path tests -->
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_ABS_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_ABS_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/absolute_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is an absolutr URI"
+	   testStrategy="Use an absolute URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_REL_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_REL_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/relative_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is a relative URI"
+	   testStrategy="Use a relative URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_NONREL_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_NONREL_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/non-relative_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is a non relative URI"
+	   testStrategy="Use a non relative URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_JAR_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_JAR_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/jar_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive points to a jar file"
+	   testStrategy="Use a jar file in  URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+
+<!--  End TLD Resource path  Tests -->
+
+
       <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            goldenFile="${wgdir}/HelloWorld.html"
