@@ -90,6 +90,7 @@ public class CharDataGenerator
 	    int to = Math.min(current + MAXSIZE, limit);
 	    generateChunk(writer, from, to);
 	    current = to;
+	    writer.println();
 	}
     }
 
