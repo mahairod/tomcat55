@@ -251,6 +251,8 @@ public final class ContextConfig
 
         // Process the application web.xml file
         try {
+            if (context instanceof StandardContext)
+                ((StandardContext) context).setReplaceWelcomeFiles(true);
             mapper.readXml(stream, context);
         } catch (InvocationTargetException e) {
             log(sm.getString("contextConfig.applicationConfig"),
@@ -724,6 +726,8 @@ public final class ContextConfig
 
         // Process the default web.xml file
         try {
+            if (context instanceof StandardContext)
+                ((StandardContext) context).setReplaceWelcomeFiles(true);
             mapper.readXml(stream, context);
         } catch (InvocationTargetException e) {
             log(sm.getString("contextConfig.defaultConfig"),

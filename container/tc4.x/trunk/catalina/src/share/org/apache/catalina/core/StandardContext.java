@@ -378,6 +378,16 @@ public class StandardContext
 
 
     /**
+     * Should the next call to <code>addWelcomeFile()</code> cause replacement
+     * of any existing welcome files?  This will be set before processing the
+     * web application's deployment descriptor, so that application specified
+     * choices <strong>replace</strong>, rather than append to, those defined in
+     * the global descriptor.
+     */
+    private boolean replaceWelcomeFiles = false;
+
+
+    /**
      * The resource environment references for this web application,
      * keyed by name.
      */
@@ -968,6 +978,32 @@ public class StandardContext
         support.firePropertyChange("override",
                                    new Boolean(oldOverride),
                                    new Boolean(this.override));
+
+    }
+
+
+    /**
+     * Return the "replace welcome files" property.
+     */
+    public boolean isReplaceWelcomeFiles() {
+
+        return (this.replaceWelcomeFiles);
+
+    }
+
+
+    /**
+     * Set the "replace welcome files" property.
+     *
+     * @param replaceWelcomeFiles The new property value
+     */
+    public void setReplaceWelcomeFiles(boolean replaceWelcomeFiles) {
+
+        boolean oldReplaceWelcomeFiles = this.replaceWelcomeFiles;
+        this.replaceWelcomeFiles = replaceWelcomeFiles;
+        support.firePropertyChange("replaceWelcomeFiles",
+                                   new Boolean(oldReplaceWelcomeFiles),
+                                   new Boolean(this.replaceWelcomeFiles));
 
     }
 
@@ -1638,6 +1674,12 @@ public class StandardContext
     public void addWelcomeFile(String name) {
 
         synchronized (welcomeFiles) {
+            // Welcome files from the application deployment descriptor
+            // completely replace those from the default conf/web.xml file
+            if (replaceWelcomeFiles) {
+                welcomeFiles = new String[0];
+                setReplaceWelcomeFiles(false);
+            }
             String results[] =new String[welcomeFiles.length + 1];
             for (int i = 0; i < welcomeFiles.length; i++)
                 results[i] = welcomeFiles[i];
