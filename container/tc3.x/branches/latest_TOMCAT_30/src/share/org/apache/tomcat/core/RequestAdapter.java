@@ -185,6 +185,8 @@ public interface RequestAdapter {
 
     public  void recycle(); 
 
+    public void setScheme(String scheme);
+
 
     // XXX I hate this - but the only way to remove this method from the
     // inteface is to implement it on top of doRead(b[]).

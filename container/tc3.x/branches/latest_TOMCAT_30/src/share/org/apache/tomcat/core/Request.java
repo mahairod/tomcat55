@@ -126,6 +126,10 @@ public class Request  {
     public void setRequestAdapter( RequestAdapter reqA) {
 	this.reqA=reqA;
     }
+
+    public RequestAdapter getRequestAdapter() {
+	return this.reqA;
+    }
     
     // Begin Adapter
     public String getScheme() {
