@@ -345,22 +345,26 @@ implements Testable {
     }
 
 
-    private void setCookieHeader(HttpURLConnection connection) {
+    protected void setCookieHeader(HttpURLConnection connection) {
         String savedCookies =
-          mapManager.getCookieJar().applyRelevantCookies(this.url);
+          mapManager.getCookieManager().getCookieHeaderForURL(this.url);
         if (savedCookies != null) {
             connection.setRequestProperty("Cookie", savedCookies);
         }
     }
 
-    private void saveCookies(HttpURLConnection connection) {
-        String recvCookies = connection.getHeaderField("Set-Cookie");
-        if (recvCookies != null) {
-            Vector receivedCookies = new Vector();
-            receivedCookies.addElement(recvCookies);
-            mapManager.getCookieJar().recordAnyCookies(receivedCookies, this.url);
+    protected void saveCookies(HttpURLConnection connection) {
+        for (int i = 1; ; i++) {
+            try {
+                if (connection.getHeaderFieldKey(i).equals("Set-Cookie")) {
+                    mapManager.getCookieManager().addCookieFromHeader(connection.getHeaderField(i), this.url);
+                }
+            } catch (NullPointerException e) {
+                break;
+            }
         }
     }
+
 
     /**
      * adds the headers from the headers Hashtable 
