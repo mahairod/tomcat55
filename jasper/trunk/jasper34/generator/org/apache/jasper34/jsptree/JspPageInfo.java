@@ -179,10 +179,6 @@ public class JspPageInfo {
     
     boolean errorPage;
     String jspFile;
-    //    String servletClassName;
-    //    String servletPackageName;
-    // String servletJavaFileName;
-    String fullClassName;
     String javaEncoding;
     
     /**
@@ -209,52 +205,6 @@ public class JspPageInfo {
 	this.jspFile=s;
     }
     
-    // cache
-    private String servletClassName;
-    /**
-     * Just the class name (does not include package name) of the
-     * generated class. 
-     */
-    public String getServletClassName() {
-	if ( servletClassName==null )
-	    servletClassName=mangler.getClassName(); // servletClassName;
-	return servletClassName;
-    }
-    
-//     public void setServletClassName(String servletClassName) {
-// 	this.servletClassName=servletClassName;
-//     }
-    
-    /**
-     * The package name into which the servlet class is generated. 
-     */
-    public String getServletPackageName() {
-	return mangler.getPackageName(); //servletPackageName;
-    }
-
-    //     public void setServletPackageName(String servletPackageName) {
-    // 	this.servletPackageName=servletPackageName;
-    //     }
-    
-    /**
-     * Utility method to get the full class name from the package and
-     * class name. 
-     */
-    public String getFullClassName() {
-	return fullClassName;
-    }
-
-    /**
-     * Full path name of the Java file into which the servlet is being
-     * generated. 
-     */
-    public String getServletJavaFileName() {
-	return mangler.getJavaFileName(); // servletJavaFileName;
-    }
-
-    //     public void setServletJavaFileName(String servletJavaFileName) {
-    // 	this.servletJavaFileName=servletJavaFileName;
-    //     }
     
     public String  getDataFile() {
         // FIXME: Is this good enough? (I'm just taking the easy way out - akv)
@@ -262,8 +212,8 @@ public class JspPageInfo {
 	    return null;
 	if( dataFile==null ) {
             dataFile = containerL.getOutputDir() + File.separatorChar +
-                getServletPackageName() + "_" +
-                getServletClassName() + ".dat";
+                getMangler().getPackageName() + "_" +
+                getMangler().getClassName() + ".dat";
 	}
 	return dataFile;
     }
