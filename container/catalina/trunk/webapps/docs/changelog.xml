@@ -127,6 +127,12 @@
       <update>
         Greatly reduce the amount of recycle method calls on the buffers (remm)
       </update>
+      <fix>Add null OName check for Request unregistration in Jk, to remove
+           exception under JDK 1.5. (billbarker)
+      </fix>
+      <fix><bug>32292</bug>: Don't send keep-alive header when the protocol
+           can't be parsed. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   
@@ -171,6 +177,10 @@
       <update>
         Add log4j docs submitted by Allistair Crossley. (remm)
       </update>
+      <fix><bug>32381</bug>: Fix problem where EL expression is used as a 
+        place holder in the admin webapp. 
+        Submitted by Allistair Crossley. (billbarker)
+      </fix>
     </changelog>
   </subsection>
 </section>
