@@ -113,7 +113,7 @@ public abstract class JspFactory {
      *
      * <p>
      * This method is typically called early in the processing of the 
-     * _jspService() mehtod of a JSP implementation class in order to 
+     * _jspService() method of a JSP implementation class in order to 
      * obtain a PageContext object for the request being processed.
      * </p>
      * <p>
@@ -151,9 +151,9 @@ public abstract class JspFactory {
 
     /**
      * <p>
-     * called to release a previously allocated PageContext object. results
-     * in PageContext.release() being invoked. This method should be invoked
-     * prior to returning from the _jspService() method of a JSP implementation
+     * called to release a previously allocated PageContext object.
+     * Results in PageContext.release() being invoked.
+     * This method should be invoked prior to returning from the _jspService() method of a JSP implementation
      * class.
      * </p>
      *
