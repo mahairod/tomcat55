@@ -1,5 +1,6 @@
 /*
- * $Header$
+ * $Header: /home/cvs/jakarta-tomcat-jasper/jasper2/src/share/org/apache/jasper/
+JspCompilationContext.java,v 1.42 2003/07/30 17:33:14 kinman Exp $
  * $Revision$
  * $Date$
  *
@@ -423,10 +424,8 @@ public class JspCompilationContext {
             servletJavaFileName =
 		getOutputDir() + getServletClassName() + ".java";
         } else {
-            File outDirFile = new File(outputDir);
-            if (!outDirFile.exists()) {
-                outDirFile.mkdirs();
-            }
+            // Make sure output dir exists
+            makeOutputDir();
         }
         return servletJavaFileName;
     }
@@ -474,10 +473,8 @@ public class JspCompilationContext {
         if (classFileName == null) {
             classFileName = getOutputDir() + getServletClassName() + ".class";
         } else {
-            File outDirFile = new File(outputDir);
-            if (!outDirFile.exists()) {
-                outDirFile.mkdirs();
-            }
+            // Make sure output dir exists
+            makeOutputDir();
         }
         return classFileName;
     }
@@ -594,8 +591,18 @@ public class JspCompilationContext {
         return servletClass;
     }
 
-    private void createOutputDir() {
+    // ==================== Private methods ==================== 
 
+    static Object outputDirLock = new Object();
+
+    private void makeOutputDir() {
+        synchronized(outputDirLock) {
+            File outDirFile = new File(outputDir);
+            outDirFile.mkdirs();
+        }
+    }
+
+    private void createOutputDir() {
         String path = null;
         if (isTagFile()) {
 	    String tagName = tagInfo.getTagClassName();
@@ -610,19 +617,14 @@ public class JspCompilationContext {
             baseUrl = options.getScratchDir().toURL();
             String outUrlString = baseUrl.toString() + '/' + path;
             URL outUrl = new URL(outUrlString);
-            File outDirFile = new File(outUrl.getFile());
-            if (!outDirFile.exists()) {
-                outDirFile.mkdirs();
-            }
-            outputDir = outDirFile.toString() + File.separator;
+            outputDir = outUrl.getFile() + File.separator;
+            makeOutputDir();
         } catch (Exception e) {
             throw new IllegalStateException("No output directory: " +
                                             e.getMessage());
         }
     }
     
-    // ==================== Private methods ==================== 
-
     private static final boolean isPathSeparator(char c) {
        return (c == '/' || c == '\\');
     }
