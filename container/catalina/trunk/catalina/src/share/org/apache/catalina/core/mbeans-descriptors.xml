@@ -677,7 +677,37 @@
                description="Performance statistics support for this managed object"
                is="true"
                type="boolean"/>
-                              
+
+    <attribute name="processingTime"
+               description="Cumulative processing time"
+               type="long"
+               writeable="false" />
+
+    <attribute name="maxTime"
+               description="Maximum processing time of a request"
+               type="long"
+               writeable="false" />
+
+    <attribute name="requestCount"
+               description="Number of requests processed by this wrapper"
+               type="int"
+               writeable="false" />
+
+    <attribute name="errorCount"
+               description="Error count"
+               type="int"
+               writeable="false" />
+
+    <attribute name="loadTime"
+               description="Load time"
+               type="long"
+               writeable="false" />
+
+    <attribute name="classLoadTime"
+               description="Class loading time"
+               type="int"
+               writeable="false" />
+
     <operation name="findMappings"
                description="Return the mappings associated with this wrapper"
                impact="INFO"
