@@ -574,8 +574,12 @@ public class HttpResponseBase
         }
 
         // Prepare a suitable output writer
-        OutputStreamWriter osr =
-            new OutputStreamWriter(getStream(), getCharacterEncoding());
+        OutputStreamWriter osr = null;
+        try {
+            osr = new OutputStreamWriter(getStream(), getCharacterEncoding());
+        } catch (UnsupportedEncodingException e) {
+            osr = new OutputStreamWriter(getStream());
+        }
         final PrintWriter outputWriter = new PrintWriter(osr);
 
         // Send the "Status:" header
