@@ -1173,7 +1173,7 @@ public class MBeanUtils {
 
         ObjectName name = null;
         name = new ObjectName(domain + ":type=Group,groupname=" +
-                              group.getGroupname() + ",database=" +
+                              encodeStr(group.getGroupname()) + ",database=" +
                               group.getUserDatabase().getId());
         return (name);
 
@@ -1559,7 +1559,7 @@ public class MBeanUtils {
 
         ObjectName name = null;
         name = new ObjectName(domain + ":type=User,username=" +
-                              user.getUsername() + ",database=" +
+                              encodeStr(user.getUsername()) + ",database=" +
                               user.getUserDatabase().getId());
         return (name);
 

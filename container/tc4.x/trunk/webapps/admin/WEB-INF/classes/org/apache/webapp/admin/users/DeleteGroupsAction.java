@@ -19,6 +19,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -126,7 +127,8 @@ public final class DeleteGroupsAction extends Action {
 
             for (int i = 0; i < groups.length; i++) {
                 ObjectName oname = new ObjectName(groups[i]);
-                params[0] = oname.getKeyProperty("groupname");
+                params[0] =
+                    URLDecoder.decode(oname.getKeyProperty("groupname"));
                 mserver.invoke(dname, "removeGroup",
                                params, signature);
             }
