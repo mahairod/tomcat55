@@ -270,6 +270,22 @@ public class FileUtil {
             patchPath = sb.toString();
         }
 
+	// fix path on NetWare - all '/' become '\\' and remove duplicate '\\'
+	if (System.getProperty("os.name").startsWith("NetWare") &&
+	    path.length() >=3 &&
+	    path.indexOf(':') > 0) {
+	    char[] ca = patchPath.replace('/', '\\').toCharArray();
+	    StringBuffer sb = new StringBuffer();
+
+	    for (int i = 0; i < ca.length; i++) {
+		if ((ca[i] != '\\') ||
+		    (ca[i] == '\\' && i > 0 && ca[i - 1] != '\\')) {
+		    sb.append(ca[i]);
+		}
+	    }
+	    patchPath = sb.toString();
+	}
+
         return patchPath;
     }
 
@@ -284,6 +300,13 @@ public class FileUtil {
             Character.isLetter(path.charAt(0)) &&
             path.charAt(1) == ':')
 	    return true;
+
+	// NetWare volume:
+	if (System.getProperty("os.name").startsWith("NetWare") &&
+	    path.length() >=3 &&
+	    path.indexOf(':') > 0)
+	    return true;
+
 	return false;
     }
     
