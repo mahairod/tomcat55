@@ -71,6 +71,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -391,7 +392,25 @@ public class StandardEngine
         }
 
         if( service==null ) {
-            // for consistency...
+            try {
+                ObjectName serviceName=getParentName();        
+                if( mserver.isRegistered( serviceName )) {
+                    log.info("Registering with the service ");
+                    try {
+                        mserver.invoke( serviceName, "setContainer",
+                                new Object[] { this },
+                                new String[] { "org.apache.catalina.Container" } );
+                    } catch( Exception ex ) {
+                        ex.printStackTrace();
+                    }
+                }
+            } catch( Exception ex ) {
+                log.error("Error registering with service ");
+            }
+        }
+        
+        if( service==null ) {
+            // for consistency...: we are probably in embeded mode
             try {
                 service=new StandardService();
                 service.initialize();
@@ -466,24 +485,17 @@ public class StandardEngine
     {
         super.preRegister(server,name);
 
-        // Register with the Service. XXX Do we really need a Service ??
-        // BTW - the connector can go directly here.
-        ObjectName serviceName=new ObjectName(domain +
-                ":type=Service,name=Tomcat-Standalone");
-        if( server.isRegistered( serviceName )) {
-            log.info("Registering with the service ");
-            try {
-                server.invoke( serviceName, "setContainer",
-                        new Object[] { this },
-                    new String[] { "org.apache.catalina.Container" } );
-            } catch( Exception ex ) {
-                ex.printStackTrace();
-            }
-        }
+        this.setName( name.getDomain());
 
         return name;
     }
 
+    public ObjectName getParentName() throws MalformedObjectNameException {
+        ObjectName serviceName=new ObjectName(domain +
+                        ":type=Service");
+        return serviceName;                
+    }
+    
     public ObjectName createObjectName(String domain, ObjectName parent)
         throws Exception
     {
