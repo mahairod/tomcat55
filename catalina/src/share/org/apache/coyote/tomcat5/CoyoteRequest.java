@@ -930,10 +930,35 @@ public class CoyoteRequest
             attr = getAttribute(Globals.CERTIFICATES_ATTR);
             if(attr != null)
                 attributes.put(name, attr);
+        } else if( isSSLAttribute(name) ) {
+            coyoteRequest.action(ActionCode.ACTION_REQ_SSL_ATTRIBUTE, 
+                                 coyoteRequest);
+            attr = coyoteRequest.getAttribute(Globals.CERTIFICATES_ATTR);
+            if( attr != null) {
+                attributes.put(Globals.CERTIFICATES_ATTR, attr);
+            }
+            attr = coyoteRequest.getAttribute(Globals.CIPHER_SUITE_ATTR);
+            if(attr != null) {
+                attributes.put(Globals.CIPHER_SUITE_ATTR, attr);
+            }
+            attr = coyoteRequest.getAttribute(Globals.KEY_SIZE_ATTR);
+            if(attr != null) {
+                attributes.put(Globals.KEY_SIZE_ATTR, attr);
+            }
+            attr = attributes.get(name);
         }
         return attr;
     }
 
+
+    /**
+     * Test if a given name is one of the special Servlet-spec SSL attributes.
+     */
+    static boolean isSSLAttribute(String name) {
+        return Globals.CERTIFICATES_ATTR.equals(name) ||
+            Globals.CIPHER_SUITE_ATTR.equals(name) ||
+            Globals.KEY_SIZE_ATTR.equals(name);
+    }
 
     /**
      * Return the names of all request attributes for this Request, or an
