@@ -861,6 +861,7 @@
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/naming/*" />
         <include name="org/apache/naming/factory/Constants.class" />
+        <include name="org/apache/naming/factory/ResourceLinkFactory.class" />
         <include name="org/apache/naming/java/*" />
         <exclude name="org/apache/naming/JndiPermission.class" />
       </fileset>
@@ -871,6 +872,7 @@
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/naming/factory/**" />
         <exclude name="org/apache/naming/factory/Constants.class" />
+        <exclude name="org/apache/naming/factory/ResourceLinkFactory.class" />
       </fileset>
     </jar>
 
