@@ -726,7 +726,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
     public ValidationMessage[] validate(PageData thePage) {
 	TagLibraryValidator tlv = getTagLibraryValidator();
 	if (tlv == null) return null;
-	return tlv.validate(getPrefixString(), getURI(), thePage);
+	return tlv.validate(getPrefixString(),
+                            (getReliableURN() != null) ? getReliableURN() : getURI(),
+                            thePage);
     }
 
     protected TagLibraryValidator tagLibraryValidator; 
