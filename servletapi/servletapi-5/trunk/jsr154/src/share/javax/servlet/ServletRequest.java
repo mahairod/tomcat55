@@ -585,5 +585,31 @@ public interface ServletRequest {
     public String getRealPath(String path);
     
     
+    /**
+     * Returns the Internet Protocol (IP) source port of the client
+     * or last proxy that sent the request.
+     */    
+    public int getRemotePort();
+
+
+    /**
+     * Returns the host name of the Internet Protocol (IP) interface on
+     * which the request was received.
+     */
+    public String getLocalName();
+
+    /**
+     * Returns the Internet Protocol (IP) address of the interface on
+     * which the request  was received.
+     */       
+    public String getLocalAddr();
+
+
+    /**
+     * Returns the Internet Protocol (IP) port number of the interface
+     * on which the request was received.
+     */
+    public int getLocalPort();
+
 }
 
