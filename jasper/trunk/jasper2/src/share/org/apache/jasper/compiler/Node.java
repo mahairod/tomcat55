@@ -829,6 +829,18 @@ abstract class Node implements TagConstants {
 	    }
 	    return ret;
 	}
+
+        /**
+         * For the same reason as above, the source line information in the
+         * contained TemplateText node should be used.
+         */
+        public Mark getStart() {
+            if (text == null && body != null && body.size() > 0) {
+                return body.getNode(0).getStart();
+            } else {
+                return super.getStart();
+            }
+        }
     }
 
     /**
