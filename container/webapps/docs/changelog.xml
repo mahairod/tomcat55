@@ -81,6 +81,9 @@
       <update> 
         Major documentation update with current Tomcat 5.5 changes. (remm)
       </update>
+      <update>
+        Added JavaScript confirmation dialog to "dangerous" Manager servler links. (yoavs)
+      </update>
     </changelog>
   </subsection>
 </section>
