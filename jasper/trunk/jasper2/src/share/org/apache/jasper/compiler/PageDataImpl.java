@@ -97,23 +97,8 @@ class PageDataImpl extends PageData implements TagConstants {
     private static final String CDATA_START_SECTION = "<![CDATA[\n";
     private static final String CDATA_END_SECTION = "]]>\n";
 
-    // default "xmlns:jsp" and "version" attributes of jsp:root element
-    private static AttributesImpl defaultJspRootAttrs;
-
     // string buffer used to build XML view
     private StringBuffer buf;
-
-    /*
-     * Static initializer which sets the "xmlns:jsp" and "version" 
-     * attributes of the jsp:root element to their default values.
-     */
-    static {
-	defaultJspRootAttrs = new AttributesImpl();
-	defaultJspRootAttrs.addAttribute("", "", "xmlns:jsp", "CDATA",
-					 JSP_NAMESPACE);
-	defaultJspRootAttrs.addAttribute("", "", "version", "CDATA",
-					 JSP_VERSION);
-    }
 
     /**
      * Constructor.
@@ -124,15 +109,16 @@ class PageDataImpl extends PageData implements TagConstants {
 	        throws JasperException {
 
 	// First pass
-	FirstPassVisitor firstPassVisitor
-	    = new FirstPassVisitor(page.getRoot());
-	page.visit(firstPassVisitor);
+	boolean isXml = compiler.getPageInfo().isXml();
+	FirstPassVisitor firstPass = new FirstPassVisitor(page.getRoot(),
+							  isXml);
+	page.visit(firstPass);
 
 	// Second pass
 	buf = new StringBuffer();
-	SecondPassVisitor secondPassVisitor
-	    = new SecondPassVisitor(page.getRoot(), buf, compiler);
-	page.visit(secondPassVisitor);
+	SecondPassVisitor secondPass = new SecondPassVisitor(page.getRoot(),
+							     buf, compiler);
+	page.visit(secondPass);
     }
 
     /**
@@ -169,9 +155,15 @@ class PageDataImpl extends PageData implements TagConstants {
 	/*
 	 * Constructor
 	 */
-	public FirstPassVisitor(Node.Root root) {
+	public FirstPassVisitor(Node.Root root, boolean isXml) {
 	    this.root = root;
-	    this.rootAttrs = new AttributesImpl(defaultJspRootAttrs);
+	    this.rootAttrs = new AttributesImpl();
+	    this.rootAttrs.addAttribute("", "", "version", "CDATA",
+					JSP_VERSION);
+	    if (!isXml) {
+		this.rootAttrs.addAttribute("", "", "xmlns:jsp", "CDATA",
+					    JSP_NAMESPACE);
+	    } 
 	}
 
 	public void visit(Node.Root n) throws JasperException {
@@ -183,24 +175,11 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
-	    Attributes attrs = n.getAttributes();
-	    if (attrs == null) {
-		throw new JasperException("Missing attributes in jsp:root");
-	    }
-	    int len = attrs.getLength();
-	    for (int i=0; i<len; i++) {
-		String qName = attrs.getQName(i);
-		if ((qName.startsWith("xmlns:jsp")
-		     || qName.equals("version"))) {
-		    continue;
-		}
-		rootAttrs.addAttribute(attrs.getURI(i),
-				       attrs.getLocalName(i),
-				       attrs.getQName(i),
-				       attrs.getType(i),
-				       attrs.getValue(i));
-	    }
+	    addAttributes(n.getXmlnsAttributes());
+	    addAttributes(n.getAttributes());
+
 	    visitBody(n);
+
 	    if (n == this.root) {
 		// top-level jsp:root element
 		this.root.setAttributes(rootAttrs);
@@ -222,6 +201,22 @@ class PageDataImpl extends PageData implements TagConstants {
 		    location = attrs.getValue("tagdir");
 		    rootAttrs.addAttribute("", "", type, "CDATA",
 					   URN_JSPTAGDIR + location);
+		}
+	    }
+	}
+
+	private void addAttributes(Attributes attrs) {
+	    if (attrs != null) {
+		int len = attrs.getLength();
+		for (int i=0; i<len; i++) {
+		    if ("version".equals(attrs.getQName(i))) {
+			continue;
+		    }
+		    rootAttrs.addAttribute(attrs.getURI(i),
+					   attrs.getLocalName(i),
+					   attrs.getQName(i),
+					   attrs.getType(i),
+					   attrs.getValue(i));
 		}
 	    }
 	}
@@ -304,6 +299,10 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	public void visit(Node.Scriptlet n) throws JasperException {
 	    appendTag(JSP_SCRIPTLET, n);
+	}
+
+	public void visit(Node.JspElement n) throws JasperException {
+	    appendTag(JSP_ELEMENT, n);
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {

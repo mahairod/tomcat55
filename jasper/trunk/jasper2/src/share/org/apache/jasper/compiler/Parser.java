@@ -148,7 +148,7 @@ class Parser {
 	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly,
 				   jarFile);
 
-	Node.Root root = new Node.Root(null, reader.mark(), parent);
+	Node.Root root = new Node.Root(reader.mark(), parent);
 
 	if (directivesOnly) {
 	    parser.parseTagFileDirectives(root);

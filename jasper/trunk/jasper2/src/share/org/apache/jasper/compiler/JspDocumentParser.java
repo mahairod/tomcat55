@@ -162,14 +162,12 @@ class JspDocumentParser extends DefaultHandler
 	}
 
 	Node.Nodes pageNodes = null;
-	Node.JspRoot jspRoot = null;
+	Node.Root jspRoot = null;
 
 	try {
 	    if (parent == null) {
 		// create dummy <jsp:root> element
-		AttributesImpl rootAttrs = new AttributesImpl();
-		rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
-		jspRoot = new Node.JspRoot(rootAttrs, null, null, null);
+		jspRoot = new Node.Root();
 		handler.current = jspRoot;
 	    } else {
 		handler.isTop = false;

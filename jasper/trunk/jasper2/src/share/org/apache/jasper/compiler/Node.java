@@ -343,8 +343,16 @@ abstract class Node {
 
 	private Root parentRoot;
 
-	Root(Attributes attrs, Mark start, Node parent) {
-	    super(attrs, start, parent);
+	/*
+	 * Constructor for dummy root.
+	 */
+	Root() {}
+
+	/*
+	 * Constructor.
+	 */
+	Root(Mark start, Node parent) {
+	    super(start, parent);
 
 	    // Figure out and set the parent root
 	    Node r = parent;
@@ -362,7 +370,7 @@ abstract class Node {
 	}
 
 	/**
-	 * @return The enclosing root to this root.  Usually represents the
+	 * @return The enclosing root to this root. Usually represents the
 	 * page that includes this one.
 	 */
 	public Root getParentRoot() {
@@ -377,7 +385,8 @@ abstract class Node {
 
 	public JspRoot(Attributes attrs, Attributes xmlnsAttrs, Mark start,
 		       Node parent) {
-	    super(attrs, start, parent);
+	    super(start, parent);
+	    this.attrs = attrs;
 	    this.xmlnsAttrs = xmlnsAttrs;
 	}
 
