@@ -166,7 +166,7 @@
 <!--
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveSessionScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 200 OK"
+           returnCode="200"
  	   testName="positiveSessionScope.jsp" 
 	   assertion="Create the JSP page with useBean scope set to page. Access the page multiple times., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 "
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
@@ -1606,40 +1606,40 @@
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetProps.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/negativeDeclarationSyn.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 500" />
+           returnCode="500" />
 -->
    </target>
 
