@@ -234,14 +234,10 @@ public class StatusManagerServlet
                       HttpServletResponse response)
         throws IOException, ServletException {
 
-        response.setContentType("text/xml");
+        response.setContentType("text/html");
 
         PrintWriter writer = response.getWriter();
 
-        writer.write("<?xml version=\"1.0\"?>");
-        writer.write
-            ("<?xml-stylesheet type=\"text/xsl\" href=\"xform.xsl\" ?>");
-        writer.write("<status>");
         try {
 
             // Display virtual machine statistics
@@ -257,7 +253,6 @@ public class StatusManagerServlet
         } catch (Exception e) {
             e.printStackTrace();
         }
-        writer.write("</status>");
 
     }
 
@@ -268,14 +263,17 @@ public class StatusManagerServlet
     protected void writeVMState(PrintWriter writer)
         throws Exception {
 
-        writer.write("<jvm>");
+        writer.print("<h1>JVM</h1>");
+        writer.print("<br/>");
 
-        writer.write("<memory");
-        writer.write(" free='" + Runtime.getRuntime().freeMemory() + "'");
-        writer.write(" total='" + Runtime.getRuntime().totalMemory() + "'");
-        writer.write(" max='" + Runtime.getRuntime().maxMemory() + "'/>");
+        writer.print(" Free memory: ");
+        writer.print(Runtime.getRuntime().freeMemory());
+        writer.print(" Total memory: ");
+        writer.print(Runtime.getRuntime().totalMemory());
+        writer.print(" Max memory: ");
+        writer.print(Runtime.getRuntime().maxMemory());
 
-        writer.write("</jvm>");
+        writer.print("<br/>");
 
     }
 
@@ -287,15 +285,24 @@ public class StatusManagerServlet
                                        ObjectName tpName, String name)
         throws Exception {
 
-        writer.write("<connector name='" + name + "'>");
+        writer.print("<h1>");
+        writer.print(name);
+        writer.print("</h1>");
 
-        writer.write("<threadInfo ");
-        writer.write(" maxThreads=\"" + mBeanServer.getAttribute(tpName, "maxThreads") + "\"");
-        writer.write(" minSpareThreads=\"" + mBeanServer.getAttribute(tpName, "minSpareThreads") + "\"");
-        writer.write(" maxSpareThreads=\"" + mBeanServer.getAttribute(tpName, "maxSpareThreads") + "\"");
-        writer.write(" currentThreadCount=\"" + mBeanServer.getAttribute(tpName, "currentThreadCount") + "\"");
-        writer.write(" currentThreadsBusy=\"" + mBeanServer.getAttribute(tpName, "currentThreadsBusy") + "\"");
-        writer.write(" />");
+        writer.print("<br/>");
+
+        writer.print(" Max threads: ");
+        writer.print(mBeanServer.getAttribute(tpName, "maxThreads"));
+        writer.print(" Min spare threads: ");
+        writer.print(mBeanServer.getAttribute(tpName, "minSpareThreads"));
+        writer.print(" Max spare threads: ");
+        writer.print(mBeanServer.getAttribute(tpName, "maxSpareThreads"));
+        writer.print(" Current thread count: ");
+        writer.print(mBeanServer.getAttribute(tpName, "currentThreadCount"));
+        writer.print(" Current thread busy: ");
+        writer.print(mBeanServer.getAttribute(tpName, "currentThreadsBusy"));
+
+        writer.print("<br/>");
 
         ObjectName grpName = null;
 
@@ -307,32 +314,38 @@ public class StatusManagerServlet
             }
         }
 
-        if (grpName != null) {
-
-            writer.write("<requestInfo ");
-            writer.write(" maxTime=\"" + mBeanServer.getAttribute(grpName, "maxTime") + "\"");
-            writer.write(" processingTime=\"" + mBeanServer.getAttribute(grpName, "processingTime") + "\"");
-            writer.write(" requestCount=\"" + mBeanServer.getAttribute(grpName, "requestCount") + "\"");
-            writer.write(" errorCount=\"" + mBeanServer.getAttribute(grpName, "errorCount") + "\"");
-            writer.write(" bytesReceived=\"" + mBeanServer.getAttribute(grpName, "bytesReceived") + "\"");
-            writer.write(" bytesSent=\"" + mBeanServer.getAttribute(grpName, "bytesSent") + "\"");
-            writer.write(" />");
-
-
-            writer.write("<workers>");
-            enum = requestProcessors.elements();
-            while (enum.hasMoreElements()) {
-                ObjectName objectName = (ObjectName) enum.nextElement();
-                if (name.equals(objectName.getKeyProperty("worker"))) {
-                    writer.write("<worker>");
-                    writeProcessorState(writer, objectName);
-                    writer.write("</worker>");
-                }
-            }
-            writer.write("</workers>");
+        if (grpName == null) {
+            return;
         }
 
-        writer.write("</connector>");
+        writer.print(" Max processing time: ");
+        writer.print(mBeanServer.getAttribute(grpName, "maxTime"));
+        writer.print(" Processing time:");
+        writer.print(mBeanServer.getAttribute(grpName, "processingTime"));
+        writer.print(" Request count: ");
+        writer.print(mBeanServer.getAttribute(grpName, "requestCount"));
+        writer.print(" Error count: ");
+        writer.print(mBeanServer.getAttribute(grpName, "errorCount"));
+        writer.print(" Bytes received: ");
+        writer.print(mBeanServer.getAttribute(grpName, "bytesReceived"));
+        writer.print(" Bytes sent: ");
+        writer.print(mBeanServer.getAttribute(grpName, "bytesSent"));
+
+        writer.print("<br/>");
+
+        writer.print("<table border=\"0\"><tr><th>Stage</th><th>Time</th><th>B Sent</th><th>B Recv</th><th>Client</th><th>VHost</th><th>Request</th></tr>");
+
+        enum = requestProcessors.elements();
+        while (enum.hasMoreElements()) {
+            ObjectName objectName = (ObjectName) enum.nextElement();
+            if (name.equals(objectName.getKeyProperty("worker"))) {
+                writer.print("<tr>");
+                writeProcessorState(writer, objectName);
+                writer.print("</tr>");
+            }
+        }
+
+        writer.print("</table>");
 
     }
 
@@ -343,13 +356,13 @@ public class StatusManagerServlet
     protected void writeProcessorState(PrintWriter writer, ObjectName pName)
         throws Exception {
 
-        Integer stageValue =
+        Integer stageValue = 
             (Integer) mBeanServer.getAttribute(pName, "stage");
         int stage = stageValue.intValue();
         boolean fullStatus = true;
 
+        writer.write("<td><b>");
 
-        writer.write("<stage>");
         switch (stage) {
 
         case (1/*org.apache.coyote.Constants.STAGE_PARSE*/):
@@ -387,44 +400,42 @@ public class StatusManagerServlet
 
         }
 
-        writer.write("</stage>");
+        writer.write("</b></td>");
 
         if (fullStatus) {
-            writer.write("<requestProcessingTime>");
-            writer.write("" + mBeanServer.getAttribute
+            writer.write("<td>");
+            writer.print(mBeanServer.getAttribute
                          (pName, "requestProcessingTime"));
-            writer.write("</requestProcessingTime>");
-            writer.write("<requestBytesSent>");
-            writer.write("" + mBeanServer.getAttribute
+            writer.write("</td>");
+            writer.write("<td>");
+            writer.print(mBeanServer.getAttribute
                          (pName, "requestBytesSent"));
-            writer.write("</requestBytesSent>");
-            writer.write("<requestBytesReceived>");
-            writer.write("" + mBeanServer.getAttribute
+            writer.write("</td>");
+            writer.write("<td>");
+            writer.print(mBeanServer.getAttribute
                          (pName, "requestBytesReceived"));
-            writer.write("</requestBytesReceived>");
-            writer.write("<remoteAddr>");
-            writer.write("" + mBeanServer.getAttribute(pName, "remoteAddr"));
-            writer.write("</remoteAddr>");
-            writer.write("<virtualHost>");
+            writer.write("</td>");
+            writer.write("<td>");
+            writer.print("" + mBeanServer.getAttribute(pName, "remoteAddr"));
+            writer.write("</td>");
+            writer.write("<td nowrap>");
             writer.write("" + filter(mBeanServer.getAttribute
                                      (pName, "virtualHost").toString()));
-            writer.write("</virtualHost>");
-            writer.write("<method>");
+            writer.write("</td>");
+            writer.write("<td nowrap>");
             writer.write("" + filter(mBeanServer.getAttribute
                                      (pName, "method").toString()));
-            writer.write("</method>");
-            writer.write("<currentUri>");
             writer.write("" + filter(mBeanServer.getAttribute
                                      (pName, "currentUri").toString()));
-            writer.write("</currentUri>");
-            writer.write("<currentQueryString>");
             String queryString = (String) mBeanServer.getAttribute
                 (pName, "currentQueryString");
             if ((queryString != null) && (!queryString.equals(""))) {
                 writer.write("?");
-                writer.write(queryString);
+                writer.print(queryString);
             }
-            writer.write("</currentQueryString>");
+            writer.write("</td>");
+        } else {
+            writer.write("<td>?</td><td>?</td><td>?</td><td>?</td><td>?</td><td>?</td>");
         }
 
     }
