@@ -261,9 +261,11 @@ public class WebdavServlet
     protected DocumentBuilder getDocumentBuilder()
         throws ServletException {
         DocumentBuilder documentBuilder = null;
+        DocumentBuilderFactory documentBuilderFactory = null;
         try {
-            documentBuilder = 
-                DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
         } catch(ParserConfigurationException e) {
             throw new ServletException
                 (sm.getString("webdavservlet.jaxpfailed"));
@@ -1014,6 +1016,7 @@ public class WebdavServlet
                     case Node.ELEMENT_NODE:
                         strWriter = new StringWriter();
                         domWriter = new DOMWriter(strWriter, true);
+                        domWriter.setQualifiedNames(false);
                         domWriter.print(currentNode);
                         lock.owner += strWriter.toString();
                         break;
