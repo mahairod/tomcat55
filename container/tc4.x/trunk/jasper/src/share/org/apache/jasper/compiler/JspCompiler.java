@@ -57,6 +57,7 @@ package org.apache.jasper.compiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
 
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
@@ -166,8 +167,10 @@ public class JspCompiler extends Compiler implements Mangler {
         long jspRealLastModified = 0;
 
         try {
-            jspRealLastModified = ctxt.getResource(jsp.getPath())
-                .openConnection().getLastModified();
+            URL jspUrl = ctxt.getResource(jsp.getPath());
+            if (jspUrl == null)
+                return true;
+            jspRealLastModified = jspUrl.openConnection().getLastModified();
         } catch (Exception e) {
             e.printStackTrace();
             return true;
