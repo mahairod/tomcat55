@@ -2,11 +2,12 @@
 
 ADDL_CLASSPATH=./../ant.jar:./../projectx-tr2.jar:./../javac.jar
 
-if test -n $CLASSPATH ; then
-  export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
+if [ "$CLASSPATH" != "" ] ; then
+  CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
 else
-  export CLASSPATH=$ADDL_CLASSPATH
+ CLASSPATH=$ADDL_CLASSPATH
 fi
+export CLASSPATH
 
 echo Building with classpath $CLASSPATH
 
