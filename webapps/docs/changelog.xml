@@ -70,6 +70,14 @@
       <fix>
         <bug>28914</bug>: Added threadPriority attribute and related code. (yoavs)
       </fix>
+      <fix>
+        <bug>29108</bug>: Fix chunked encoding on EBCDIC machines (remm)
+      </fix>
+      <fix>
+        <bug>29166</bug>: Tweak expectations to work with pipelining (assuming
+        the client will correctly not send the request entity body unless it
+        gets a 100) (remm)
+      </fix>
     </changelog>
   </subsection>
 
