@@ -209,6 +209,11 @@ public class TcpEndpoint  { // implements Endpoint {
 	}
 	running=true;
 	//System.out.println("Starting tcp endpoint on " + port + " with " + handler.getClass().getName());
+
+	String messg = sm.getString("endptmgr.created",
+				    (new Integer(port)).toString());
+	System.out.println(messg);
+	
 	listener=new TcpListenerThread( this );
 	Thread thread = new Thread(listener);
 	thread.start();
