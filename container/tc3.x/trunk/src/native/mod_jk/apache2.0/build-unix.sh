@@ -43,14 +43,16 @@ JAVA_INCLUDE="`find ${JAVA_HOME}/include -type d -printf \"-I %p \"`" ||  echo "
 # platform for "linux"
 # JAVA_INCLUDE="-I ${JAVA_HOME}/include -I ${JAVA_HOME}/include/linux"
 
-INCLUDE="-I ../common $JAVA_INCLUDE"
-SRC="mod_jk.c ../common/*.c"
+INCLUDE="-I ../common -I$APACHE_HOME/include/apr-util $JAVA_INCLUDE"
+# SRC="mod_jk.c ../common/*.c"
+SRC="*.c"
 
 #echo INCLUDE=$INCLUDE
 #echo SRC=$SRC
 
 # Run APXS to compile module
 echo Compiling mod_jk
+cp ../common/*.c .
 $APXS -c -o mod_jk.so $INCLUDE $LIB $SRC
 
 # Copy mod_jk.so into the apache libexec directory
