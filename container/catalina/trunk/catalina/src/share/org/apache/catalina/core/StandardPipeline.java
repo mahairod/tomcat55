@@ -67,6 +67,8 @@ package org.apache.catalina.core;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.management.ObjectName;
+import javax.management.MalformedObjectNameException;
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
@@ -79,8 +81,12 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.modeler.Registry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -97,8 +103,11 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class StandardPipeline
-    implements Pipeline, Contained, Lifecycle {
+    implements Pipeline, Contained, Lifecycle 
+ {
+    private static Log log = LogFactory.getLog(StandardPipeline.class);
 
+   
 
     // ----------------------------------------------------------- Constructors
 
@@ -255,7 +264,6 @@ public class StandardPipeline
 
     }
 
-
     /**
      * Prepare for active use of the public methods of this Component.
      *
@@ -364,7 +372,7 @@ public class StandardPipeline
                 try {
                     ((Lifecycle) oldBasic).stop();
                 } catch (LifecycleException e) {
-                    log("StandardPipeline.setBasic: stop", e);
+                    log.error("StandardPipeline.setBasic: stop", e);
                 }
             }
             if (oldBasic instanceof Contained) {
@@ -386,7 +394,7 @@ public class StandardPipeline
             try {
                 ((Lifecycle) valve).start();
             } catch (LifecycleException e) {
-                log("StandardPipeline.setBasic: start", e);
+                log.error("StandardPipeline.setBasic: start", e);
                 return;
             }
         }
@@ -425,7 +433,7 @@ public class StandardPipeline
             try {
                 ((Lifecycle) valve).start();
             } catch (LifecycleException e) {
-                log("StandardPipeline.addValve: start: ", e);
+                log.error("StandardPipeline.addValve: start: ", e);
             }
         }
 
@@ -458,6 +466,16 @@ public class StandardPipeline
 
     }
 
+    public ObjectName[] getValveNames() {
+        ObjectName oname[]=new ObjectName[valves.length + 1];
+        for( int i=0; i<valves.length; i++ ) {
+            if( valves[i] instanceof ValveBase )
+                oname[i]=((ValveBase)valves[i]).getObjectName();
+        }
+        if( basic instanceof ValveBase )
+            oname[valves.length]=((ValveBase)basic).getObjectName();
+        return oname;
+    }
 
     /**
      * Cause the specified request and response to be processed by the Valves
@@ -538,7 +556,7 @@ public class StandardPipeline
             try {
                 ((Lifecycle) valve).stop();
             } catch (LifecycleException e) {
-                log("StandardPipeline.removeValve: stop: ", e);
+                log.error("StandardPipeline.removeValve: stop: ", e);
             }
         }
 
@@ -589,6 +607,5 @@ public class StandardPipeline
         }
 
     }
-
 
 }
