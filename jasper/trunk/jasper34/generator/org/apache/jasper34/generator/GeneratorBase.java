@@ -100,8 +100,10 @@ public abstract class GeneratorBase {
     public static final int INIT_METHOD_HOOK = 3;
     public static final int SERVICE_METHOD_HOOK = 4;
     public static final int STATIC_INITIALIZER_HOOK = 5;
-    public static final int CHUNKS = 5;
-    public static final int DEPENDS = 5;
+    public static final int CHUNKS = 6;
+    public static final int DEPENDS = 7;
+    public static final int LINEMAP = 8;
+    public static final int FILEMAP = 9;
 
     public static String hookNames[] = {
 	"generateClassDeclaration",
@@ -111,10 +113,12 @@ public abstract class GeneratorBase {
 	"generateServiceMethod",
 	"generateStaticInitializer",
 	"generateChunks",
-	"generateDepends"
+	"generateDepends",
+	"generateLineMap",
+	"generateFileMap"
     };
     
-    static final int HOOK_COUNT=8;
+    static final int HOOK_COUNT=10;
     
     public boolean hasHook( int hookId ) {
 	if( hooks==null ) initHooks();
@@ -127,13 +131,19 @@ public abstract class GeneratorBase {
      *  Chunks will be used instead of out.println( String ), to
      *  enable a number of optimizations and for better support for
      *  large files.
+     *
+     *  The format is: <pre> "chunk" , </pre> 
      */
     public void generateChunks( ServletWriter out )
 	throws JasperException
     {
     }
 
-    /** Generate depend declarations.
+    /** Generate depend declarations. The format is:
+     *  <pre> "string", </pre>
+     *  The generated code will be a null terminated
+     *  String[]:
+     *  <pre> String _depends[]={ "foo", "bar", null } </pre>
      */
     public void generateDepends( ServletWriter out )
 	throws JasperException
@@ -162,6 +172,29 @@ public abstract class GeneratorBase {
     {
     }
     public void generateStaticInitializer( ServletWriter out )
+	throws JasperException
+    {
+    }
+
+    /** Generate line mappings between the java file and
+	the original jsp file ( using the Marks ).
+
+	The format is: XXX ( TBD )
+	{ java_start, java_end,
+	  jsp_file_start_idx, jsp_file_start_line, jsp_file_start_col,
+	  jsp_file_end_idx, jsp_file_end_line, jsp_file_end_col
+	}
+    */
+    public void generateLineMap( ServletWriter out )
+	throws JasperException
+    {
+    }
+
+    /** Generate a String[] with all the source files that are
+	used to generate the page, to be used with the line mapping.
+	XXX could also be used for depends !
+    */
+    public void generateFileMap( ServletWriter out )
 	throws JasperException
     {
     }
