@@ -19,6 +19,17 @@
 
     <changelog>
 
+      <fix>
+      <bug>19808</bug>: Add the sit MIME mapping (funkman)
+      </fix>
+      <fix>
+      <bug>20263</bug>: Fix problems running Tomcat with procrun as a Windows 
+      service, submitted by Mladen Turk (remm)
+      </fix>
+      <update>
+      Package Unix source from commons-daemon in the Tomcat distribution, so
+      that the Unix wrapper can easily be used if needed (remm)
+      </update>
       <update>
       Upgrade to commons-fileupload 1.0 RC 1, submitted by Martin Cooper 
       (billbarker)
@@ -42,6 +53,61 @@
 
     <changelog>
 
+      <fix>
+      Comment out invoker servlet declaration (remm)
+      </fix>
+      <update>
+      Move context descriptors to $CATALINA_BASE/conf/[engine name]/[host name]
+      to make the feature more secure (remm)
+      </update>
+      <update>
+      Update the host properties: liveDeploy becomes autoDeploy (dynamically
+      deploy and update web applications), and autoDeploy becomes 
+      deployOnStartup (deploy webapps from appBase on startup) (remm)
+      </update>
+      <fix>
+      Remove thread local caching in the default servlet, which was causing
+      a memory leak (remm)
+      </fix>
+      <add>
+      Add a mechanism to allow the classloader to release JAR file handles 
+      periodically (remm)
+      </add>
+      <fix>
+      <bug>20758</bug>: Remove a number of leaked references to the context
+      object, so it can be properly garbage collected when the application
+      is removed (remm)
+      </fix>
+      <fix>
+      Do JMX registration of the context before starting the piepline (remm)
+      </fix>
+      <update>
+      Replace Catalina TLD-inside-JAR parsing code with a file based algorithm
+      (remm)
+      </update>
+      <update>
+      ServletContext.getResource for a JAR resource located inside /WEB-INF/lib
+      will return a file based URL (remm)
+      </update>
+      <update>
+      The special directories /WEB-INF/classes and /WEB-INF/lib are now 
+      considered to be non cacheable, in order to conserve cache space (remm)
+      </update>
+      <fix>
+      Clear out constructs used for classloading, after a class has been 
+      successfully loaded (remm)
+      </fix>
+      <update>
+      Generalize WAR unpacking, based on the unpackWARs flag (remm)
+      </update>
+      <update>
+      Track WARs for changes when WARs are unpacked: if the WAR is updated
+      the web application will be redeployed (remm)
+      </update>
+      <scode>
+      Remove CertificatesValve, as it is useless with Coyote, and introduces
+      a hard dependency on JSSE (billbarker)
+      </scode>
       <update>
       Add caching mechanism for invocation of methods using privileged actions
       (jfarcand)
@@ -194,6 +260,17 @@
     <changelog>
 
       <fix>
+      Fix CLIENT-CERT authentication when using PureTLS (billbarker)
+      </fix>
+      <update>
+      Allow setting arbitrary attributes on the HTTP/1.1 protocol handler
+      (billbarker)
+      </update>
+      <update>
+      Improve support for JSSE 1.1.x, and refactor introspection code in the
+      factory (billbarker)
+      </update>
+      <fix>
       RFC 2109 cookies with quoted values are not processed properly (luehe)
       </fix>
       <fix>
@@ -289,6 +366,10 @@
     <changelog>
 
       <fix>
+      Default Jasper to not using caches for opening JAR files, which prevents
+      caching (and subsequent locking on Windows) at the JDK level (remm)
+      </fix>
+      <fix>
       Don't generate a smap for &lt;jsp:attribute&gt; itself, though maps are
       still generated for its body (kinman)
       </fix>
@@ -350,6 +431,10 @@
 
     <changelog>
 
+      <update>
+      Update the manager servlet to support versioning with the deploy method,
+      in addition to other smaller refactorings (remm)
+      </update>
       <add>
       Add changelog, status, and developers list (remm)
       </add>
@@ -402,6 +487,13 @@
 
     <changelog>
 
+      <scode>
+      Deprecate install and remove tasks (remm)
+      </scode>
+      <update>
+      Add new properties to the deploy task to allow for versioning and
+      updating (remm)
+      </update>
       <add>
       Generate minimal catalina-deployer JAR for use with the deployer (remm)
       </add>
