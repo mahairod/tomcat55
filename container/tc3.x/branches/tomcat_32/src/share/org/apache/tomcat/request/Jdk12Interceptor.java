@@ -72,6 +72,7 @@ import java.util.*;
 public final class Jdk12Interceptor extends  BaseInterceptor {
     private ContextManager cm;
     private int debug=0;
+    private boolean useThreadLoader=false;
 
     public Jdk12Interceptor() {
     }
@@ -84,6 +85,21 @@ public final class Jdk12Interceptor extends  BaseInterceptor {
 	debug=i;
     }
 
+    public void setUseThreadLoader( boolean t ) {
+	useThreadLoader=t;
+    }
+    
+    public void engineInit( ContextManager cm ) {
+	if( useThreadLoader ) {
+	    ClassLoader cl= cm.getParentClassLoader();
+	    if( cl==null ) {
+		cl=Thread.currentThread().getContextClassLoader();
+		if( cl!=null )
+		    cm.setParentClassLoader( cl );
+	    }
+	}
+    }
+    
     public void preServletInit( Context ctx, ServletWrapper sw )
 	throws TomcatException
     {

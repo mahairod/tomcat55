@@ -177,6 +177,10 @@ public class ContextManager {
      */
     public static final String DEFAULT_WORK_DIR="work";
 
+    // when tomcat is embeded in a product, this will be
+    // used as parent for all context class loaders.
+    private ClassLoader parentLoader;
+    
     /**
      * Construct a new ContextManager instance with default values.
      */
@@ -344,7 +348,20 @@ public class ContextManager {
     public void setShowDebugInfo(boolean showDebugInfo) {
 	this.showDebugInfo = showDebugInfo;
     }
-	
+
+    /** When tomcat is embeded in other applications you
+	can set this property to the application classloader.
+
+	This will be used as the parent loader for all
+	context class loaders.
+    */
+    public void setParentClassLoader( ClassLoader cl ) {
+	parentLoader=cl;
+    }
+
+    public ClassLoader getParentClassLoader() {
+	return parentLoader;
+    }
 
     // -------------------- Support functions --------------------
 
