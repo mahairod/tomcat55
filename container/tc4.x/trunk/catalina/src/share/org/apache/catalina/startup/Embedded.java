@@ -70,6 +70,9 @@ import java.beans.PropertyChangeSupport;
 import java.net.InetAddress;
 import java.util.Enumeration;
 import java.util.Properties;
+
+import org.apache.tomcat.util.IntrospectionUtils;
+
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -82,7 +85,6 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
-import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
@@ -406,14 +408,7 @@ public class Embedded implements Lifecycle {
     public synchronized void addConnector(Connector connector) {
 
         if (debug >= 1) {
-            if (connector instanceof HttpConnector) {
-                HttpConnector hc = (HttpConnector) connector;
-                logger.log("Adding connector for address '" +
-                          ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
-                           + "' port='" + hc.getPort() + "'");
-            } else {
-                logger.log("Adding connector (" + connector.getInfo() + ")");
-            }
+            logger.log("Adding connector (" + connector.getInfo() + ")");
         }
 
         // Make sure we have a Container to send requests to
@@ -504,26 +499,57 @@ public class Embedded implements Lifecycle {
                        ((address == null) ? "ALL" : address.getHostAddress()) +
                        "' port='" + port + "' secure='" + secure + "'");
 
-        HttpConnector connector = new HttpConnector();
-
-        if (address != null)
-            connector.setAddress(address.getHostAddress());
-        connector.setDebug(debug);
-        connector.setPort(port);
+        String protocol = "http";
         if (secure) {
-            connector.setScheme("https");
-            connector.setSecure(true);
-            try {
-                Class serverSocketFactoryClass = Class.forName
-                    ("org.apache.catalina.net.SSLServerSocketFactory");
-                ServerSocketFactory factory = 
-                    (ServerSocketFactory) 
-                    serverSocketFactoryClass.newInstance();
-                connector.setFactory(factory);
-            } catch (Exception e) {
-                logger.log("Couldn't load SSL server socket factory.");
-            }
+            protocol = "https";
         }
+
+        return createConnector(address, port, protocol);
+
+    }
+
+
+    public Connector createConnector(InetAddress address, int port,
+                                     String protocol) {
+
+        Connector connector = null;
+
+        try {
+
+            Class clazz = 
+                Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+            connector = (Connector) clazz.newInstance();
+
+            if (address != null) {
+                IntrospectionUtils.setProperty(connector, "address", 
+                                               "" + address);
+            }
+            IntrospectionUtils.setProperty(connector, "port", "" + port);
+            IntrospectionUtils.setProperty(connector, "useURIValidationHack", 
+                                           "" + false);
+
+            if (protocol.equals("ajp")) {
+                IntrospectionUtils.setProperty
+                    (connector, "protocolHandlerClassName",
+                     "org.apache.jk.server.JkCoyoteHandler");
+            } else if (protocol.equals("https")) {
+                connector.setScheme("https");
+                connector.setSecure(true);
+                try {
+                    Class serverSocketFactoryClass = Class.forName
+                        ("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
+                    ServerSocketFactory factory = 
+                        (ServerSocketFactory) 
+                        serverSocketFactoryClass.newInstance();
+                    connector.setFactory(factory);
+                } catch (Exception e) {
+                    logger.log("Couldn't load SSL server socket factory.");
+                }
+            }
+
+        } catch (Exception e) {
+            logger.log("Couldn't create connector.");
+        } 
 
         return (connector);
 
@@ -678,14 +704,7 @@ public class Embedded implements Lifecycle {
     public synchronized void removeConnector(Connector connector) {
 
         if (debug >= 1) {
-            if (connector instanceof HttpConnector) {
-                HttpConnector hc = (HttpConnector) connector;
-                logger.log("Removing connector for address '" +
-                          ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
-                           + "' port='" + hc.getPort() + "'");
-            } else {
-                logger.log("Removing connector (" + connector.getInfo() + ")");
-            }
+            logger.log("Removing connector (" + connector.getInfo() + ")");
         }
 
         // Is the specified Connector actually defined?
