@@ -2280,12 +2280,8 @@ public class StandardContext
 	// Stop accepting requests temporarily
 	setPaused(true);
 
-        if (isUseNaming()) {
-            try {
-                ContextBindings.bindThread(this, this);
-            } catch (NamingException e) {
-            }
-        }
+        // Binding thread
+        bindThread();
 
 	// Shut down the current version of all active servlets
 	Container children[] = findChildren();
@@ -2350,8 +2346,6 @@ public class StandardContext
             }
         }
 
-        DirContextURLStreamHandler.bind(getResources());
-
         // Restart our session manager (AFTER naming context recreated/bound)
         if ((manager != null) && (manager instanceof Lifecycle)) {
             try {
@@ -2375,16 +2369,6 @@ public class StandardContext
             }
         }
 
-        if (isUseNaming()) {
-            try {
-                ContextBindings.bindThread(this, this);
-            } catch (NamingException e) {
-                log(sm.getString("standardContext.namingInitFailed",
-                                 getName()));
-                ok = false;
-            }
-        }
-
         // Restart our currently defined servlets
 	for (int i = 0; i < children.length; i++) {
             if (!ok)
@@ -2402,11 +2386,8 @@ public class StandardContext
 	    }
 	}
 
-        if (isUseNaming()) {
-            ContextBindings.unbindThread(this, this);
-        }
-
-        DirContextURLStreamHandler.unbind();
+        // Unbinding thread
+        unbindThread();
 
 	// Start accepting requests again
         if (ok) {
@@ -3177,6 +3158,8 @@ public class StandardContext
             setManager(new StandardManager());
         }
 
+        DirContextURLStreamHandler.bind(getResources());
+
         // Initialize character set mapper
         getCharsetMapper();
 
@@ -3211,7 +3194,8 @@ public class StandardContext
         getServletContext().setAttribute
             (Globals.RESOURCES_ATTR, getResources());
 
-        DirContextURLStreamHandler.bind(getResources());
+        // Binding thread
+        bindThread();
 
         // Configure and call application event listeners and filters
         if (ok) {
@@ -3251,16 +3235,6 @@ public class StandardContext
             list.add(wrapper);
         }
 
-        if (isUseNaming()) {
-            try {
-                ContextBindings.bindThread(this, this);
-            } catch (NamingException e) {
-                log(sm.getString("standardContext.namingInitFailed",
-                                 getName()));
-                ok = false;
-            }
-        }
-
         // Load the collected "load on startup" servlets
         if (debug >= 1)
             log("Loading " + map.size() + " load-on-startup servlets");
@@ -3285,11 +3259,8 @@ public class StandardContext
             }
         }
 
-        if (isUseNaming()) {
-            ContextBindings.unbindThread(this, this);
-        }
-
-        DirContextURLStreamHandler.unbind();
+        // Unbinding thread
+        unbindThread();
 
         if (ok) {
             if (debug >= 1)
@@ -3316,18 +3287,12 @@ public class StandardContext
         // Mark this application as unavailable while we shut down
         setAvailable(false);
 
+        // Binding thread
+        bindThread();
+
         // Stop our filters and application listeners
         filterStop();
         listenerStop();
-
-        if (isUseNaming()) {
-            try {
-                ContextBindings.bindThread(this, this);
-            } catch (NamingException e) {
-                log(sm.getString("standardContext.namingInitFailed",
-                                 getName()));
-            }
-        }
 
         // Finalize our character set mapper
         setCharsetMapper(null);
@@ -3337,9 +3302,8 @@ public class StandardContext
             log("Processing standard container shutdown");
         super.stop();
 
-        if (isUseNaming()) {
-            ContextBindings.unbindThread(this, this);
-        }
+        // Unbinding thread
+        unbindThread();
 
         if (debug >= 1)
             log("Stopping complete");
@@ -3365,7 +3329,7 @@ public class StandardContext
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -3432,6 +3396,41 @@ public class StandardContext
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Bind current thread, both for CL purposes and for JNDI ENC support 
+     * during : startup, shutdown and realoading of the context.
+     */
+    private void bindThread() {
+
+        DirContextURLStreamHandler.bind(getResources());
+
+        if (isUseNaming()) {
+            try {
+                ContextBindings.bindThread(this, this);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.namingInitFailed",
+                                 getName()));
+            }
+        }
+
+    }
+
+
+    /**
+     * Unbind thread.
+     */
+    private void unbindThread() {
+
+        if (isUseNaming()) {
+            ContextBindings.unbindThread(this, this);
+        }
+
+        DirContextURLStreamHandler.unbind();
+
+    }
+
 
 
     /**
