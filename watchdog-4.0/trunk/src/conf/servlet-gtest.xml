@@ -19,6 +19,7 @@
 	   testName="DestroyTest"
            assertion="Called by the servlet container to indicate to a servlet that the servlet is being taken out of service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.Destroy() method "
            testStrategy="Create a GenericServlet and take out of service using destroy method"
+           firstTask="true"
 />
 
       <gtest request="GET /servlet-tests/GetServletConfigTest HTTP/1.0"
@@ -1190,7 +1191,8 @@
 
       <gtest request="GET /servlet-tests/InvalidateTest HTTP/1.0"
            debug="0" host="${host}" port="${port}" 
-           goldenFile="${wgdir}/javax_servlet_http/HttpSession/InvalidateTest.html" />
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/InvalidateTest.html" 
+           lastTask="true" />
 
 
 </target>

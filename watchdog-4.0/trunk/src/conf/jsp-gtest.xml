@@ -21,6 +21,7 @@
  	        testName="precompileNoValueTest" 
 	        assertion="If the jsp_precompile request parameter has no value, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2" 
 	        testStrategy="Validate that no response body is returned when jsp_precompile has no value."
+                firstTask="true"
  	     />
 
         <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
@@ -1600,6 +1601,7 @@
  	   testName="tag_translationtime_verify_1.jsp" 
 	   assertion="Test for translation-time verification, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
 	   testStrategy="testing LifeCycle process"
+           lastTask="true"
  	/>
 
 <!-- All below JSP negative tests have been commented out till they get fixed
