@@ -23,6 +23,9 @@
       <fix>
         <bug>30238</bug>: Replaced isapi_redirector.dll isapi_redirect.dll in installation script for consistency. (yoavs)
       </fix>
+      <fix>
+        <bug>29584</bug>: Enhanced and clarified JNDI documentation. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
