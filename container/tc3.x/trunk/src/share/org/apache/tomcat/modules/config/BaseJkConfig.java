@@ -136,7 +136,7 @@ public class BaseJkConfig  extends BaseInterceptor {
 
     protected String tomcatHome;
     protected boolean regenerate=false;
-    
+
     // -------------------- Tomcat callbacks --------------------
 
     public void addInterceptor( ContextManager cm,
@@ -150,7 +150,7 @@ public class BaseJkConfig  extends BaseInterceptor {
 	    //???	    cm.setNote("nostart", this );
 	}
     }
-	
+
     // Auto-config should be able to react to dynamic config changes,
     // and regenerate the config.
 
@@ -179,14 +179,20 @@ public class BaseJkConfig  extends BaseInterceptor {
             // a context has been added after the server was started.
             // regenerate the config ( XXX send a restart signal to
             // the server )
-            execute( cm );
+            // Generate the config only if "regenerate" property is
+            // set on the module or if an explicit "jkconf" option has
+            // been set on context manager.
+            if( regenerate ||
+                cm.getProperty("jkconf") !=null) {
+                    execute( cm );
+            }
         }
     }
 
     /** Generate configuration files.  Override with method to generate
         web server specific configuration.
      */
-    public void execute(ContextManager cm) throws TomcatException 
+    public void execute(ContextManager cm) throws TomcatException
     {
     }
 
@@ -196,7 +202,7 @@ public class BaseJkConfig  extends BaseInterceptor {
     /** If false, we'll try to generate a config that will
      *  let apache serve static files.
      *  The default is true, forward all requests in a context
-     *  to tomcat. 
+     *  to tomcat.
      */
     public void setForwardAll( boolean b ) {
         forwardAll=b;
@@ -257,7 +263,7 @@ public class BaseJkConfig  extends BaseInterceptor {
     public void setJkLog(String path){
         jkLog= ( path==null?null:new File(path));
     }
-    
+
     /** Set the verbosity level
         ( use debug, error, etc. ) If not set, no log is written.
      */
