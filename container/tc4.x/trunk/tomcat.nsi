@@ -1,41 +1,35 @@
 
 ; Tomcat 4 script for Nullsoft Installer
 
-!ifdef NO_COMPRESSION
-SetCompress off
-SetDatablockOptimize off
-!endif
-
-!ifdef NO_CRC
-CRCCheck off
-!endif
-
-Name "NSIS"
+Name "jakarta-tomcat-4.0"
 Caption "Jakarta Tomcat 4.0"
 OutFile tomcat4.exe
+CRCCheck on
+SetCompress force
+SetDatablockOptimize on
 
-#BGGradient 000000 800000 FFFFFF
-#InstallColors FF8080 000000
+BGGradient 000000 800000 FFFFFF
+InstallColors FF8080 000000
+Icon tomcat.ico
 
 LicenseText "You must read the following license before installing:"
 LicenseData LICENSE
 ComponentText "This will install the Jakarta Tomcat 4.0 servlet container on your computer:"
 InstType Normal
+InstType Minimum
 InstType "Full (w/ Source Code)"
 AutoCloseWindow false
 ShowInstDetails show
 DirText "Please select a location to install Tomcat 4.0 (or use the default):"
 SetOverwrite on
 SetDateSave on
-!ifdef HAVE_UPX
-  !packhdr tmp.dat "upx\upx --best --compress-icons=1 tmp.dat"
-!endif
 
 InstallDir "$PROGRAMFILES\Jakarta Tomcat 4.0"
 InstallDirRegKey HKLM "SOFTWARE\Apache\Jakarta\Tomcat 4.0" ""
 
 Section "Tomcat 4.0 (required)"
-  SectionIn 1 2
+
+  SectionIn 1 2 3
   SetOutPath $INSTDIR
   File tomcat.ico
   File LICENSE
@@ -47,58 +41,95 @@ Section "Tomcat 4.0 (required)"
   File /r lib
   File /r logs
   File /r server
-  File /r webapps
   File /r work
+  SetOutPath $INSTDIR\webapps
+  File /r webapps\manager
+  SetOutPath $INSTDIR\webapps\ROOT
+  File /r webapps\ROOT\WEB-INF
+  File webapps\ROOT\*.*
+
 SectionEnd
 
 Section "JSP Development Shell Extensions"
-  SectionIn 1 2
 
-  ; back up old value of .nsi
+  SectionIn 1 2 3
+  ; back up old value of .jsp
   ReadRegStr $1 HKCR ".jsp" ""
   StrCmp $1 "" Label1
     StrCmp $1 "JSPFile" Label1
     WriteRegStr HKCR ".jsp" "backup_val" $1
+
 Label1:
 
   WriteRegStr HKCR ".jsp" "" "JSPFile"
   WriteRegStr HKCR "JSPFile" "" "Java Server Pages source"
   WriteRegStr HKCR "JSPFile\shell" "" "open"
-  WriteRegStr HKCR "JSPFile\DefaultIcon" "" $INSTDIR\tomcat.ico
+  WriteRegStr HKCR "JSPFile\DefaultIcon" "" "$INSTDIR\tomcat.ico"
   WriteRegStr HKCR "JSPFile\shell\open\command" "" 'notepad.exe "%1"'
-  WriteRegStr HKCR "JSPFile\shell\compile" "" "Compile JSP"
-  WriteRegStr HKCR "JSPFile\shell\compile\command" "" '"$INSTDIR\bin\jspc.bat" "%1"'
+
 SectionEnd
 
 Section "Tomcat 4.0 Start Menu Group"
-  SectionIn 1 2
+
+  SectionIn 1 2 3
+
   SetOutPath "$SMPROGRAMS\Tomcat 4.0"
+
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat Home Page.lnk" \
                  "http://jakarta.apache.org/tomcat"
+
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Uninstall Tomcat 4.0.lnk" \
                  "$INSTDIR\uninst-tomcat4.exe"
+
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat 4.0 Documentation.lnk" \
                  "http://jakarta.apache.org/tomcat/tomcat-4.0-doc/index.html"
+
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat 4.0 Program Directory.lnk" \
                  "$INSTDIR"
+
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Start Tomcat.lnk" \
-                 "$INSTDIR\bin\startup.bat"
+                 "%JAVA_HOME%\bin\java" \
+                 '-cp "$INSTDIR\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap start' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
+
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Stop Tomcat.lnk" \
-                 "$INSTDIR\bin\shutdown.bat"
+                 "%JAVA_HOME%\bin\java" \
+                 '-cp "$INSTDIR\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap stop' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
+
 SectionEnd
 
-!ifndef NO_SOURCE
+SectionDivider
+
+Section "Tomcat 4.0 Documentation"
+
+  SectionIn 1 3
+  SetOutPath $INSTDIR\webapps
+  File /r webapps\ROOT
+
+SectionEnd
+
+Section "Example Web Applications"
+
+  SectionIn 1 3
+  SetOutPath $INSTDIR\webapps
+  File /r webapps\examples
+  File /r webapps\webdav
+
+SectionEnd
+
 SectionDivider
 
 Section "Tomcat 4.0 Source Code"
-  SectionIn 2
-  SetOutPath $INSTDIR\Source
+
+  SectionIn 3
+  SetOutPath $INSTDIR
   File /r src
+
 SectionEnd
 
-!endif
-
 Section -post
+
   SetOutPath $INSTDIR
 
   ; since the installer is now created last (in 1.2+), this makes sure 
@@ -112,26 +143,30 @@ Section -post
                    "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
   ExecShell open '$INSTDIR'
 
-  WriteRegStr HKCU "Environment" "CATALINA_HOME" $INSTDIR
-
   Sleep 500
   BringToFront
+
 SectionEnd
 
 Function .onInstSuccess
+
+    MessageBox MB_OK|MB_ICONEXCLAMATION \
+      "If not done already, you need to set the JAVA_HOME environment\
+ variable and have it point to your JDK installation directory."
   MessageBox MB_YESNO|MB_ICONQUESTION \
              "Setup has completed. View readme file now?" \
              IDNO NoReadme
     ExecShell open '$INSTDIR\README.txt'
   NoReadme:
+
 FunctionEnd
 
-!ifndef NO_UNINST
 UninstallText "This will uninstall Jakarta Tomcat 4.0 from your system:"
 UninstallExeName uninst-tomcat4.exe
 
 Section Uninstall
-  ReadRegStr $1 HKCR ".nsi" ""
+
+  ReadRegStr $1 HKCR ".jsp" ""
   StrCmp $1 "JSPFile" 0 NoOwn ; only do this if we own it
     ReadRegStr $1 HKCR ".jsp" "backup_val"
     StrCmp $1 "" 0 RestoreBackup ; if backup == "" then delete the whole key
@@ -144,23 +179,27 @@ Section Uninstall
 
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tomcat 4.0"
-  DeleteRegKey HKLM $InstallDirRegKey
+  DeleteRegKey HKLM "SOFTWARE\Apache\Jakarta\Tomcat 4.0"
   Delete "$SMPROGRAMS\Tomcat 4.0\*.lnk"
   RMDir "$SMPROGRAMS\Tomcat 4.0"
-  Delete $INSTDIR\tomcat.ico
-  Delete $INSTDIR\LICENSE
-  Delete $INSTDIR\README.txt
-  RMDir /r bin
-  RMDir /r common
-  RMDir /r conf
-  RMDir /r jasper
-  RMDir /r lib
-  RMDir /r logs
-  RMDir /r server
-  RMDir /r webapps
-  RMDir /r work
-  RMDir /r $INSTDIR\Source
-  RMDir $INSTDIR
+  Delete "$INSTDIR\tomcat.ico"
+  Delete "$INSTDIR\LICENSE"
+  Delete "$INSTDIR\README.txt"
+  RMDir /r "$INSTDIR\bin"
+  RMDir /r "$INSTDIR\common"
+  RMDir /r "$INSTDIR\conf"
+  RMDir /r "$INSTDIR\jasper"
+  RMDir /r "$INSTDIR\lib"
+  RMDir "$INSTDIR\logs"
+  RMDir /r "$INSTDIR\server"
+  RMDir /r "$INSTDIR\webapps\manager"
+  RMDir /r "$INSTDIR\webapps\ROOT"
+  RMDir /r "$INSTDIR\webapps\examples"
+  RMDir /r "$INSTDIR\webapps\webdav"
+  RMDir "$INSTDIR\webapps"
+  RMDir /r "$INSTDIR\work"
+  RMDir /r "$INSTDIR\src"
+  RMDir "$INSTDIR"
 
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists $INSTDIR 0 Removed 
@@ -173,6 +212,5 @@ Section Uninstall
       MessageBox MB_OK|MB_ICONEXCLAMATION \
                  "Note: $INSTDIR could not be removed."
   Removed:
-SectionEnd
 
-!endif
+SectionEnd
