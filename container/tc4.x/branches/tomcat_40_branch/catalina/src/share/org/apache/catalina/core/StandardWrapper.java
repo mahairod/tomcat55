@@ -846,18 +846,18 @@ public final class StandardWrapper
                                               servlet);
         } catch (UnavailableException f) {
             instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet);
+                                              servlet, f);
             unavailable(f);
             throw f;
         } catch (ServletException f) {
             instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet);
+                                              servlet, f);
             // If the servlet wanted to be unavailable it would have
             // said so, so do not call unavailable(null).
             throw f;
         } catch (Throwable f) {
             instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet);
+                                              servlet, f);
             // If the servlet wanted to be unavailable it would have
             // said so, so do not call unavailable(null).
             throw new ServletException
@@ -1005,7 +1005,7 @@ public final class StandardWrapper
               (InstanceEvent.AFTER_DESTROY_EVENT, instance);
         } catch (Throwable t) {
             instanceSupport.fireInstanceEvent
-              (InstanceEvent.AFTER_DESTROY_EVENT, instance);
+              (InstanceEvent.AFTER_DESTROY_EVENT, instance, t);
             instance = null;
             fireContainerEvent("unload", this);
             unloading = false;
