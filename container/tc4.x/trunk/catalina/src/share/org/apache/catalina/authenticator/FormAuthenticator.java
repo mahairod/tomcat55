@@ -139,9 +139,6 @@ public final class FormAuthenticator
 				LoginConfig config)
 	throws IOException {
 
-        if (debug < 99)
-            debug = 99;
-
         // References to objects we will need later
         HttpServletRequest hreq =
           (HttpServletRequest) request.getRequest();
