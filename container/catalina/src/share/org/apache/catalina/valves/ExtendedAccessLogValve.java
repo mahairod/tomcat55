@@ -69,7 +69,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -118,11 +120,15 @@ import org.apache.commons.logging.Log;
  * <li><code>sc(XXX)</code>: The value of header XXX from server to client </li>
  * <li><code>sc-status</code>:  The status code</li>
  * <li><code>time</code>:  Time the request was served</li>
- * <li><code>time-taken</code>:  Time to server the request</li>
+ * <li><code>time-taken</code>:  Time (in seconds) taken to serve the request</li>
  * <li><code>x-A(XXX)</code>: Pull XXX attribute from the servlet context </li>
  * <li><code>x-C(XXX)</code>: Pull the first cookie of the name XXX </li>
  * <li><code>x-R(XXX)</code>: Pull XXX attribute from the servlet request </li>
  * <li><code>x-S(XXX)</code>: Pull XXX attribute from the session </li>
+ * <li><code>x-P(...)</code>:  Call request.getParameter(...)
+ *                             and URLencode it. Helpful to capture
+ *                             certain POST parameters.
+ * </li>
  * <li>For any of the x-H(...) the following method will be called from the
  *                HttpServletRequestObject </li>
  * <li><code>x-H(authType)</code>: getAuthType </li>
@@ -165,6 +171,12 @@ import org.apache.commons.logging.Log;
  * <code>condition</code> property.
  * If the value returned from ServletRequest.getAttribute(condition)
  * yields a non-null value. The logging will be skipped.
+ * </p>
+ *
+ * <p>
+ * For extended attributes coming from a getAttribute() call,
+ * it is you responsibility to ensure there are no newline or
+ * control characters.
  * </p>
  *
  *
@@ -253,6 +265,12 @@ public final class ExtendedAccessLogValve
      * "kk:mm:ss" (kk is a 24-hour representation of the hour).
      */
     private SimpleDateFormat timeFormatter = null;
+
+
+    /**
+     * Time taken formatter for 3 decimal places.
+     */
+     private DecimalFormat timeTakenFormatter = null;
 
 
     /**
@@ -595,7 +613,7 @@ public final class ExtendedAccessLogValve
                     if (FieldInfo.SPECIAL_DATE==fieldInfos[i].location)
                         result.append(dateFormatter.format(date));
                     else if (FieldInfo.SPECIAL_TIME_TAKEN==fieldInfos[i].location)
-                        result.append(runTime/1000d);
+                        result.append(timeTakenFormatter.format(runTime/1000d));
                     else if (FieldInfo.SPECIAL_TIME==fieldInfos[i].location)
                         result.append(timeFormatter.format(date));
                     else if (FieldInfo.SPECIAL_BYTES==fieldInfos[i].location)
@@ -628,6 +646,7 @@ public final class ExtendedAccessLogValve
      * @return true if a file was rotated with no error
      */
     public synchronized boolean rotate(String newFileName) {
+
         if (currentLogFile!=null) {
             File holder = currentLogFile;
             close();
@@ -647,6 +666,7 @@ public final class ExtendedAccessLogValve
         } else {
             return false;
         }
+
     }
 
     // -------------------------------------------------------- Private Methods
@@ -684,7 +704,9 @@ public final class ExtendedAccessLogValve
             default:
                 ;
         }
+
         return "-";
+
     }
 
 
@@ -708,7 +730,9 @@ public final class ExtendedAccessLogValve
         }
 
         return "-";
+
     }
+
 
     /**
      * Get app specific data.
@@ -724,6 +748,8 @@ public final class ExtendedAccessLogValve
             hsr = (HttpServletRequest)sr;
 
         switch(fieldInfo.xType) {
+            case FieldInfo.X_PARAMETER:
+                return wrap(urlEncode(sr.getParameter(fieldInfo.value)));
             case FieldInfo.X_REQUEST:
                 return wrap(sr.getAttribute(fieldInfo.value));
             case FieldInfo.X_SESSION:
@@ -778,10 +804,33 @@ public final class ExtendedAccessLogValve
         }
 
         return "-";
+
     }
 
 
+    /**
+     *  urlEncode the given string. If null or empty, return null.
+     */
+    private String urlEncode(String value) {
+        if (null==value || value.length()==0) {
+            return null;
+        }
+        return URLEncoder.encode(value);
+    }
+
+
+    /**
+     *  Wrap the incoming value into quotes and escape any inner
+     *  quotes with double quotes.
+     *
+     *  @param value - The value to wrap quotes around
+     *  @return '-' if empty of null. Otherwise, toString() will
+     *     be called on the object and the value will be wrapped
+     *     in quotes and any quotes will be escaped with 2
+     *     sets of quotes.
+     */
     private String wrap(Object value) {
+
         String svalue;
         // Does the value contain a " ? If so must encode it
         if (value==null || "-".equals(value))
@@ -815,6 +864,7 @@ public final class ExtendedAccessLogValve
 
         buffer.append('"');
         return buffer.toString();
+
     }
 
 
@@ -865,7 +915,6 @@ public final class ExtendedAccessLogValve
                         }
                     }
                 }
-
             }
         }
 
@@ -1025,6 +1074,7 @@ public final class ExtendedAccessLogValve
         currentDate = new Date(System.currentTimeMillis());
         fileDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
         dateStamp = fileDateFormatter.format(currentDate);
+        timeTakenFormatter = new DecimalFormat("0.000");
 
         /* Everybody say ick ... ick */
         try {
@@ -1062,6 +1112,7 @@ public final class ExtendedAccessLogValve
 
     }
 
+
     /**
      * Decode the given pattern. Is public so a pattern may
      * allows to be validated.
@@ -1069,6 +1120,7 @@ public final class ExtendedAccessLogValve
      * @return null on error.  Otherwise array of decoded fields
      */
     public FieldInfo[] decodePattern(String fields) {
+
         if (log.isDebugEnabled())
             log.debug("decodePattern, fields=" + fields);
 
@@ -1234,6 +1286,7 @@ public final class ExtendedAccessLogValve
 
         fieldInfo.type = type;
         return i;
+
     }
 
 
@@ -1251,6 +1304,7 @@ public final class ExtendedAccessLogValve
       * @return -1 on error. Otherwise the new String index.
       */
     private int decodeAppSpecific(String fields, int i, FieldInfo fieldInfo) {
+
         fieldInfo.type = FieldInfo.DATA_APP_SPECIFIC;
         /* Move past 'x-' */
         i+=2;
@@ -1275,6 +1329,9 @@ public final class ExtendedAccessLogValve
                 break;
             case 'H':
                 fieldInfo.xType = FieldInfo.X_SERVLET_REQUEST;
+                break;
+            case 'P':
+                fieldInfo.xType = FieldInfo.X_PARAMETER;
                 break;
             default:
                 return -1;
@@ -1327,8 +1384,8 @@ public final class ExtendedAccessLogValve
         }
 
         return j+1;
-    }
 
+    }
 
 
 }
@@ -1379,6 +1436,7 @@ class FieldInfo {
     static final short X_COOKIE  = 3; /* For x app specific */
     static final short X_APP     = 4; /* For x app specific */
     static final short X_SERVLET_REQUEST = 5; /* For x app specific */
+    static final short X_PARAMETER = 6; /* For x app specific */
 
     static final short X_LOC_AUTHTYPE                       = 1;
     static final short X_LOC_REMOTEUSER                     = 2;
