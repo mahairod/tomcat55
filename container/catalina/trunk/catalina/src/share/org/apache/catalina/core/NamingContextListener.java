@@ -67,24 +67,13 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Hashtable;
-import java.util.Stack;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import javax.naming.NamingException;
-import javax.naming.InitialContext;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-import javax.naming.NamingEnumeration;
-import javax.naming.Binding;
 import javax.naming.StringRefAddr;
-import javax.naming.directory.DirContext;
 import org.apache.naming.NamingContext;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ContextAccessController;
@@ -99,7 +88,6 @@ import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Server;
@@ -111,6 +99,9 @@ import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.util.StringManager;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -124,6 +115,8 @@ import org.apache.catalina.util.StringManager;
 public class NamingContextListener
     implements LifecycleListener, ContainerListener, PropertyChangeListener {
 
+    private static Log log = LogFactory.getLog(NamingContextListener.class);
+
 
     // ----------------------------------------------------------- Constructors
 
@@ -132,6 +125,8 @@ public class NamingContextListener
      * Create a new naming context listener.
      */
     public NamingContextListener() {
+        if( log.isDebugEnabled() )
+            log.debug( "new NamingContextListener");
     }
 
 
@@ -236,7 +231,8 @@ public class NamingContextListener
     public void setName(String name) {
 
         this.name = name;
-
+        if( log.isDebugEnabled() )
+            log.debug( "setName " + name);
     }
 
 
@@ -283,6 +279,9 @@ public class NamingContextListener
             }
             ContextAccessController.setSecurityToken(getName(), container);
             ContextBindings.bindContext(container, namingContext, container);
+            if( log.isDebugEnabled() ) {
+                log.debug("Bound " + container );
+            }
 
             // Setting the context in read/write mode
             ContextAccessController.setWritable(getName(), container);
@@ -699,8 +698,8 @@ public class NamingContextListener
 
         int i;
 
-        if (debug >= 1)
-            log("Creating JNDI naming context");
+        if (log.isDebugEnabled())
+            log.debug("Creating JNDI naming context");
 
         if (namingResources == null) {
             namingResources = new NamingResources();
