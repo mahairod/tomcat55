@@ -150,15 +150,17 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     private InputStream getResourceAsStream(String uri) 
         throws FileNotFoundException 
     {
-        if (uri.indexOf(":") > 0) {
-            // may be fully qualified (Windows) or may be a URL.  Let
-            // getResourceAsStream deal with it.
-            return ctxt.getResourceAsStream(uri);
-        } else {
-            // assume it translates to a real file, and use getRealPath
+        try {
+            // see if file exists on the filesystem first
             String real = ctxt.getRealPath(uri);
             return (real == null) ? null : new FileInputStream(real);
         }
+        catch (FileNotFoundException ex) {
+            // if file not found on filesystem, get the resource through
+            // the context
+            return ctxt.getResourceAsStream(uri);
+        }
+       
     }
 
     public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, 
