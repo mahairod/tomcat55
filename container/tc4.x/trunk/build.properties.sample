@@ -50,8 +50,8 @@ commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
 
 
-# ----- Commons Digester, version 1.1 or later -----
-commons-digester.home=${base.path}/commons-digester-1.1
+# ----- Commons Digester, version 1.1.1 or later -----
+commons-digester.home=${base.path}/commons-digester-1.1.1
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 
@@ -110,6 +110,7 @@ jndi.home=${base.path}/jndi-1.2.1
 jndi.lib=${jndi.home}/lib
 jndi.jar=${jndi.lib}/jndi.jar
 ldap.jar=${jndi.lib}/ldap.jar
+jaas.jar=${jndi.lib}/jaas.jar
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
@@ -147,4 +148,16 @@ tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
 xerces.home=${base.path}/xerces-1_4_3
 xerces.lib=${xerces.home}
 xerces.jar=${xerces.lib}/xerces.jar
+
+
+# ----- Commons DBCP, version 20011030 or later -----
+commons-dbcp.home=${base.path}/commons-dbcp
+commons-dbcp.lib=${commons-dbcp.home}
+commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
+
+
+# ----- Commons Pool, version 20011030 or later -----
+commons-pool.home=${base.path}/commons-pool
+commons-pool.lib=${commons-pool.home}
+commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 

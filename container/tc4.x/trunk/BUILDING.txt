@@ -179,9 +179,9 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(9) Steps (10)-(20) are optional, but are necessary to build a complete binary
+(9) Steps (10)-(22) are optional, but are necessary to build a complete binary
     distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
-    build.properties file (see step (21)) to build a complete distribution.
+    build.properties file (see step (23)) to build a complete distribution.
     Regular contributors to Tomcat are encouraged to use the complete build 
     option.
 
@@ -326,7 +326,45 @@ web application.
   distribution resides in its own directory.
 
 
-(21) Customize Build Properties For This Subproject
+(21) Download and Install the Commons DBCP Binary Distribution
+
+NOTE:  This step is only required if you wish to use the database JDBC data
+source factory.
+
+* Download a binary distribution of version 20011030 or later from:
+
+    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-dbcp
+
+  On a Windows platform, you will need:
+    commons-dbcp-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    commons-dbcp-YYYYMMDD.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
+
+
+(22) Download and Install the Commons Pool Binary Distribution
+
+NOTE:  This step is only required if you wish to use the database JDBC data
+source factory.
+
+* Download a binary distribution of version 20011030 or later from:
+
+    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-pool
+
+  On a Windows platform, you will need:
+    commons-pool-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    commons-pool-YYYYMMDD.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
+
+
+(23) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -350,7 +388,7 @@ repository.  This file is local to your own development environment, and
 each developer will have their own version.
 
 
-(22) Build A Binary Distribution
+(24) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 
