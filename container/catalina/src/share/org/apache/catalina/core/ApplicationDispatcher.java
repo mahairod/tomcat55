@@ -498,28 +498,26 @@ final class ApplicationDispatcher
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    private void processRequest(ServletRequest request, ServletResponse response)
-            throws IOException, ServletException {
+    private void processRequest(ServletRequest request, 
+                                ServletResponse response)
+        throws IOException, ServletException {
                 
-        if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
-            Integer disInt = 
-                (Integer)request.getAttribute(
-                    ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
-
+        Integer disInt = (Integer) request.getAttribute
+            (ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
+        if (disInt != null) {
             if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                outerRequest.setAttribute(
-                    ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
-                    origServletPath);
-
-                outerRequest.setAttribute(
-                    ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
-                        new Integer(ApplicationFilterFactory.FORWARD));
-
+                outerRequest.setAttribute
+                    (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
+                     origServletPath);
+                outerRequest.setAttribute
+                    (ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                     new Integer(ApplicationFilterFactory.FORWARD));
                 invoke(outerRequest, response);
             } else {
-                invoke(request, response);                  
+                invoke(outerRequest, response);
             }
-        }        
+        }
+
     }
     
     
