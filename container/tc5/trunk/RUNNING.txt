@@ -96,12 +96,12 @@ If you do not pass the "-Dcatalina.base=$CATALINA_BASE" argument to the startup 
 The administration and manager web applications, which are defined in the
 $CATALINA_BASE/webapps/admin.xml and $CATALINA_BASE/webapps/manager.xml files, will
 not run in that configuration, unless either:
-- The path specified in the docBase attribute of the Context element is made 
-  absolute, and replaced respectively by $CATALINA_HOME/server/webapps/admin 
+- The path specified in the docBase attribute of the Context element is made
+  absolute, and replaced respectively by $CATALINA_HOME/server/webapps/admin
   and $CATALINA_HOME/server/webapps/manager
 - Both web applications are copied or moved to $CATALINA_BASE, and the path specified in the   docBase attribute of the Context element is modified appropriately.
-- Both web applications are disabled by removing $CATALINA_BASE/webapps/admin.xml
-  and $CATALINA_BASE/webapps/manager.xml
+- Both web applications are disabled by removing $CATALINA_BASE/conf/Catalina/localhost/admin.xml
+  and $CATALINA_BASE/conf/Catalina/localhost/manager.xml
 
 
 (5) Troubleshooting:
@@ -114,11 +114,11 @@ Tomcat 5 install:
    Tomcat attempts to bind to at startup.  To change this, open the file:
 
        $CATALINA_HOME/conf/server.xml
-    
+
    and search for '8080'.  Change it to a port that isn't in use, and is
    greater than 1024, as ports less than or equal to 1024 require superuser
    access to bind under UNIX.
-   
+
    Restart Tomcat and you're in business.  Be sure that you replace the "8080"
    in the URL you're using to access Tomcat.  For example, if you change the
    port to 1977, you would request the URL http://localhost:1977/ in your browser.
@@ -129,13 +129,13 @@ Tomcat 5 install:
    Right-click on the STARTUP.BAT and SHUTDOWN.BAT files.  Click on
    "Properties", then on the "Memory" tab.  For the "Initial environment" field,
    enter in something like 4096.
-   
+
    After you click apply, Windows will create shortcuts which you can use to start and stop the container.
 
 3) The 'localhost' machine isn't found.  This could happen if you're behind a
    proxy.  If that's the case, make sure the proxy configuration for your
    browser knows that you shouldn't be going through the proxy to access the
    "localhost".
-   
+
    In Netscape, this is under Edit/Preferences -> Advanced/Proxies, and in
    Internet Explorer, Tools -> Internet Options -> Connections -> LAN Settings.
