@@ -381,15 +381,6 @@ public class JspC implements Options {
      * Resolve relative path, and create output directories.
      */
     void setupContext(JspCompilationContext clctxt) {
-        // set up a scratch/output dir if none is provided
-        if (scratchDir == null) {
-            String temp = System.getProperty("java.io.tempdir");
-            if (temp == null) {
-                temp = "";
-            }
-            scratchDir = new File(new File(temp).getAbsolutePath());
-        }
-
         String outputDir = scratchDir.getAbsolutePath();
 
         if (dirset) {
@@ -527,6 +518,15 @@ public class JspC implements Options {
         throws JasperException
     {
         try {
+            // set up a scratch/output dir if none is provided
+            if (scratchDir == null) {
+                String temp = System.getProperty("java.io.tmpdir");
+                if (temp == null) {
+                    temp = "";
+                }
+                scratchDir = new File(new File(temp).getAbsolutePath());
+            }
+
             String jspUri=file.replace('\\','/');
             String baseDir = scratchDir.getCanonicalPath();
             this.setOutputDir( baseDir + jspUri.substring( 0, jspUri.lastIndexOf( '/' ) ) );
@@ -539,7 +539,15 @@ public class JspC implements Options {
                 targetClassName = null;
             }
             if (targetPackage != null) {
-                clctxt.setServletPackageName(targetPackage);
+                String jspPackage = toPackageName(jspUri);
+                if (jspPackage.equals("")) {
+                    clctxt.setServletPackageName(targetPackage);
+                } else {
+                    clctxt.setServletPackageName(targetPackage + "." 
+                                                 + jspPackage);
+                }
+            } else {
+                clctxt.setServletPackageName( toPackageName(jspUri));
             }
             
             setupContext(clctxt);
@@ -585,7 +593,7 @@ public class JspC implements Options {
             } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
             }
-            throw new JasperException( e );
+            throw new JasperException( "Error compiling " + file, e );
         }
     }
 
@@ -814,7 +822,7 @@ public class JspC implements Options {
                 jspc.execute();
             } catch (JasperException je) {
                 System.err.print("error:");
-                System.err.println(je.getMessage());
+                je.printStackTrace();
                 if (die != NO_DIE_LEVEL) {
                     System.exit(die);
                 }
@@ -942,5 +950,56 @@ public class JspC implements Options {
 	    JspC.log = log;
     }
     
+
+    /**
+     * Converts the JSP file path into a valid package name with a
+     * structure that mirrors the directory structure. If the JSP file
+     * path doesn't contain a directory structure (top-level file),
+     * an empty package name is returned.
+     *
+     * @param jspUri the context-relative path for the JSP file, starting
+     *  with a slash
+     */
+    private String toPackageName(String jspUri) {
+        StringBuffer modifiedPackageName = new StringBuffer();
+        int iSep = jspUri.lastIndexOf('/');
+	// Start after the first slash
+	for (int i = 1; i < iSep; i++) {
+	    char ch = jspUri.charAt(i);
+	    if (Character.isJavaIdentifierPart(ch)) {
+		modifiedPackageName.append(ch);
+	    }
+	    else if (ch == '/') {
+		modifiedPackageName.append('.');
+	    } else {
+		modifiedPackageName.append(mangleChar(ch));
+	    }
+	}
+        return modifiedPackageName.toString();
+    }
+
+
+    /**
+     * Mangle the specified character to create a legal Java class name.
+     * FIX: This is a copy of the method from JspCompilationContext. It
+     * would be better to make that method public, or put it in a utility
+     * class.
+     */
+    private String mangleChar(char ch) {
+
+	String s = Integer.toHexString(ch);
+	int nzeros = 5 - s.length();
+	char[] result = new char[6];
+	result[0] = '_';
+	for (int i = 1; i <= nzeros; i++) {
+	    result[i] = '0';
+        }
+	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
+	    result[i] = s.charAt(j);
+        }
+	return new String(result);
+    }
+
+
 }
 
