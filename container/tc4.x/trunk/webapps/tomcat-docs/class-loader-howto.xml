@@ -156,9 +156,10 @@ loaders as it is initialized:</p>
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>
     <li><em>tomcat-util.jar</em> - Utility classes required by some
         Tomcat connectors.</li>
-    <li><em>tomcat-webapp.jar</em> - Classes for the Java portion of the
-        <code>Webapp</code> web server connector, which allows Tomcat to
-        run behind web servers such as Apache and iPlanet iAS and iWS.</li>
+    <li><em>tomcat-warp.jar</em> - Classes for the Java portion of the
+        <code>Webapp</code> web server connector, using the WARP protocol
+        which allows Tomcat to run behind the Apache HTTPD web server
+        (1.3 and 2.0).</li>
     </ul></li>
 <li><strong>Shared</strong> - This class loader is the place to put classes
     and resources that you wish to share across <strong>ALL</strong>

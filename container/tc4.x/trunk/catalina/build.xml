@@ -39,8 +39,8 @@
            value="${tomcat-jk.home}/build/lib/tomcat-jni.jar"/>
   <property name="jk2.properties"
            value="${tomcat-jk.home}/build/conf/jk2.properties"/>
-  <property name="tomcat-webapp.jar"
-           value="${tomcat-webapp.home}/build/lib/tomcat-webapp.jar"/>
+  <property name="tomcat-warp.jar"
+           value="${tomcat-webapp.home}/build/lib/tomcat-warp.jar"/>
   <property name="tomcat-http11.jar"
            value="${tomcat-http11.home}/build/lib/tomcat-http11.jar"/>
 
@@ -879,7 +879,7 @@
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
-           file="${tomcat-webapp.jar}"/>
+           file="${tomcat-warp.jar}"/>
 
   </target>
 
