@@ -78,6 +78,8 @@ DefaultServlet: Fix incorrect content length which was returned with a partial
 
 StandardContextMapper: '/' is now handled as a special case.
 
+HttpResponseBase: The toEncoded() method has been updated to place the ";jsessionid"
+  in the correct location in the presence of an anchor in the URL.
 
 ----------------
 Jasper Bug Fixes:
