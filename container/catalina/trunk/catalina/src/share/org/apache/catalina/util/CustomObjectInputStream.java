@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
+import java.lang.reflect.Proxy;
 
 /**
  * Custom subclass of <code>ObjectInputStream</code> that loads from the
@@ -72,5 +73,24 @@ public final class CustomObjectInputStream
         return Class.forName(classDesc.getName(), false, classLoader);
     }
 
+
+    /**
+     * Return a proxy class that implements the interfaces named in a proxy
+     * class descriptor. Do this using the class loader assigned to this
+     * Context.
+     */
+    protected Class resolveProxyClass(String[] interfaces)
+        throws IOException, ClassNotFoundException {
+
+        Class[] cinterfaces = new Class[interfaces.length];
+        for (int i = 0; i < interfaces.length; i++)
+            cinterfaces[i] = classLoader.loadClass(interfaces[i]);
+
+        try {
+            return Proxy.getProxyClass(classLoader, cinterfaces);
+        } catch (IllegalArgumentException e) {
+            throw new ClassNotFoundException(null, e);
+        }
+    }
 
 }
