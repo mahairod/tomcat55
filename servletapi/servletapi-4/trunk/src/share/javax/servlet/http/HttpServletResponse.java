@@ -175,28 +175,9 @@ public interface HttpServletResponse extends ServletResponse {
     public String encodeRedirectUrl(String url);
 
     /**
-     * Sends an error response to the client using the specified status
-     * code and descriptive message.  The server generally creates the 
-     * response to look like a normal server error page.
-     *
-     * <p>If the response has already been committed, this method throws 
-     * an IllegalStateException.
-     * After using this method, the response should be considered
-     * to be committed and should not be written to.
-     *
-     * @param	sc	the error status code
-     * @param	msg	the descriptive message
-     * @exception	IOException	If an input or output exception occurs
-     * @exception	IllegalStateException	If the response was committed
-     *						before this method call
-     */
-
-    public void sendError(int sc, String msg) throws IOException;
-
-    /**
      * Sends an error response to the client using the specified
      * status clearing the buffer.  The server defaults to creating the 
-     * response to look like an HTML-formatted server error page, setting the content type
+     * response to look like an HTML-formatted server error page containing the specified message, setting the content type
      * to "text/html", leaving cookies and other headers unmodified.
      *
      * If an error-page declaration has been made for the web application
@@ -209,8 +190,25 @@ public interface HttpServletResponse extends ServletResponse {
      * to be committed and should not be written to.
      *
      * @param	sc	the error status code
+     * @param	msg	the descriptive message
      * @exception	IOException	If an input or output exception occurs
      * @exception	IllegalStateException	If the response was committed
+     */
+   
+    public void sendError(int sc, String msg) throws IOException;
+
+    /**
+     * Sends an error response to the client using the specified status
+     * code and clearing the buffer. 
+     * <p>If the response has already been committed, this method throws 
+     * an IllegalStateException.
+     * After using this method, the response should be considered
+     * to be committed and should not be written to.
+     *
+     * @param	sc	the error status code
+     * @exception	IOException	If an input or output exception occurs
+     * @exception	IllegalStateException	If the response was committed
+     *						before this method call
      */
 
     public void sendError(int sc) throws IOException;
