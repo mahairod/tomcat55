@@ -14,9 +14,14 @@
 <body>
 
   <section name="Introduction">
-
-
-
+    <p>
+      This document introduces several ways to set up Tomcat for running
+      on different platforms.  Please note that some advanced setup issues
+      are not covered here: the full distribution (ZIP file or tarball) 
+      includes a file called
+      RUNNING.txt which discusses these issues.  We encourage you to refer
+      to it if the information below does not answer some of your questions.
+    </p>
   </section>
 
   <section name="Windows">

@@ -42,6 +42,9 @@
       <add>
         Add ant JkStatusUpdateTask for remote status worker handling ( >=mod_jk 1.2.9) (pero)
       </add>
+      <add>
+        <bug>33739</bug>: Add reference to RUNNING.txt in setup.html. (yoavs)
+      </add>
     </changelog>
    </subsection>
 
@@ -78,15 +81,15 @@
         <bug>34016</bug>: Save and restore docBase when using antiResourceLocking, for compatibility with
         the admin webapp (remm)
       </fix>
-      <update>
+      <add>
         <bug>33636</bug>: Set lastModified attribute when expanding WAR files. (yoavs)
-      </update>
-      <update>
+      </add>
+      <add>
         <bug>32938</bug>: Allow Salted SHA (SSHA) passwords in JNDIRealm. (yoavs)
-      </update>
-      <update>
+      </add>
+      <add>
         <bug>31288</bug>: Allow SMTP authentication for JNDI MailSessionFactory. (yoavs)
-      </update>
+      </add>
     </changelog>
    </subsection>
    
