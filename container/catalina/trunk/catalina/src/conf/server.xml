@@ -293,6 +293,15 @@
 
             filter=".*\.gif;.*\.js;" means that we will not replicate the session after requests with the URI
             ending with .gif and .js are intercepted.
+            
+            The deployer element can be used to deploy apps cluster wide.
+            Currently the deployment only deploys/undeploys to working members in the cluster
+            so no WARs are copied upons startup of a broken node.
+            The deployer watches a directory (watchDir) for WAR files when watchEnabled="true"
+            When a new war file is added the war gets deployed to the local instance,
+            and then deployed to the other instances in the cluster.
+            When a war file is deleted from the watchDir the war is undeployed locally 
+            and cluster wide
         -->
         
         <!--
@@ -321,6 +330,12 @@
 
             <Valve className="org.apache.catalina.cluster.tcp.ReplicationValve"
                    filter=".*\.gif;.*\.js;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"/>
+                   
+            <Deployer className="org.apache.catalina.cluster.deploy.FarmWarDeployer"
+                      tempDir="/tmp/war-temp/"
+                      deployDir="/tmp/war-deploy/"
+                      watchDir="/tmp/war-listen/"
+                      watchEnabled="false"/>
         </Cluster>
         -->        
 
