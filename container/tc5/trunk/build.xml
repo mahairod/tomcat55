@@ -45,6 +45,8 @@
   <property name="servlet.home"     value="../jakarta-servletapi-5/jsr154/dist"/>
   <property name="jsp.home"         value="../jakarta-servletapi-5/jsr152/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
+  <property name="servletapi.jar"   value="${tomcat.build}/common/lib/servlet-api.jar"/>
+  <property name="jspapi.jar"       value="${tomcat.build}/common/lib/jsp-api.jar"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="tomcat.release"   value="${basedir}/release"/>
   <property name="webapps.build"    value="${catalina.home}/webapps/build"/>
@@ -78,11 +80,11 @@
     <mkdir dir="${tomcat.build}/common/lib" />
 
     <uptodate property="servletapi.build.notrequired"
-              targetfile="${tomcat.build}/common/lib/servlet-api.jar">
+              targetfile="${servletapi.jar}">
       <srcfiles dir="${api.home}/jsr154/src" includes="**" />
     </uptodate>
     <uptodate property="jspapi.build.notrequired"
-              targetfile="${tomcat.build}/common/lib/jsp-api.jar">
+              targetfile="${jspapi.jar}">
       <srcfiles dir="${api.home}/jsr152/src" includes="**" />
     </uptodate>
 
@@ -124,7 +126,7 @@
 
     <ant dir="${api.home}/jsr154" target="jar" >
         <property name="servlet-api.build" value="${tomcat.build}" />
-        <property name="servlet-api.jar" value="${tomcat.build}/common/lib/servlet-api.jar"/>
+        <property name="servlet-api.jar" value="${servletapi.jar}"/>
     </ant>
   </target>
 
@@ -132,7 +134,7 @@
     <echo>========== Building: ${jsp-api.jar}</echo>
     <ant dir="${api.home}/jsr152" target="jar">
         <property name="jsp-api.build" value="${tomcat.build}" />
-        <property name="jsp-api.jar" value="${tomcat.build}/common/lib/jsp-api.jar"/>
+        <property name="jsp-api.jar" value="${jspapi.jar}"/>
     </ant>
     <!-- clean up -->
     <delete file="${tomcat.build}/manifest" />
@@ -185,7 +187,7 @@
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
       <property name="tomcat-util.jar"
                 value="${tomcat.build}/server/lib/tomcat-util.jar"/>
-      <property name="servlet.jar"   value="${tomcat.build}/common/lib/servlet-api.jar"/>
+      <property name="servlet.jar"   value="${servletapi.jar}"/>
     </ant>
   </target>
 
@@ -431,9 +433,9 @@
     <echo>========== Building: commons-el </echo>
 
     <ant dir="${cvs.base}/jakarta-commons/el" target="jar-only" >
-        <property name="servlet-api.jar" location="${tomcat.build}/common/lib/servlet-api.jar" />
+        <property name="servlet-api.jar" location="${servlet-api.jar}" />
         <property name="commons-el.jar" location="${tomcat.build}/common/lib/commons-el.jar" />
-        <property name="jsp-api.jar" value="${tomcat.build}/common/lib/jsp-api.jar"/>
+        <property name="jsp-api.jar" value="${jspapi.jar}"/>
         <property name="compile.optimize" value="false" />
         <property name="build.home" value="${tomcat.build}" />
     </ant>
