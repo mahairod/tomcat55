@@ -457,10 +457,27 @@
       <param name="sourcefile" value="${commons-digester.loc}"/>
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
+
+    <!-- we need the release to happend, in the meantime use cvs...
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-logging.loc}"/>
       <param name="destfile" value="${commons-logging.jar}"/>
     </antcall>
+    -->
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-logging.loc}"/>
+      <param name="subdir" value="${commons-logging.home}"/>
+      <param name="destfile" value="${commons-logging.jar}"/>
+    </antcall>
+    <copy
+      file="${commons-logging.home}/dist/commons-logging.jar"
+      tofile="${commons-logging.jar}"
+    />
+    <copy
+      file="${commons-logging.home}/dist/commons-logging-api.jar"
+      tofile="${commons-logging-api.jar}"
+    />
+
     <antcall target="downloadgz">
       <param name="sourcefile" value="${regexp.loc}"/>
       <param name="destfile" value="${regexp.jar}"/>
