@@ -62,12 +62,12 @@ package tests.javax_servlet_http.HttpSessionEvent;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import common.util.StaticLog;
+import common.util.HttpSessionEventLog;
 
 public final class HSEvent
     implements HttpSessionListener {
 
-    StaticLog sl = new StaticLog();
+    HttpSessionEventLog sl = new HttpSessionEventLog();
 
     // Public Methods
     public void sessionCreated( HttpSessionEvent event ) {

@@ -64,7 +64,7 @@ import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import common.util.StaticLog;
+import common.util.HttpSessionEventLog;
 import java.util.Enumeration;
 
 public class HttpSessionEventGetSourceTestServlet extends HttpServlet {
@@ -74,7 +74,7 @@ public class HttpSessionEventGetSourceTestServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println( "In HttpSessionEventGetSourceTest servlet<BR>" );
 
-        StaticLog sl = new StaticLog();
+        HttpSessionEventLog sl = new HttpSessionEventLog();
 
         sl.resetLog();
 

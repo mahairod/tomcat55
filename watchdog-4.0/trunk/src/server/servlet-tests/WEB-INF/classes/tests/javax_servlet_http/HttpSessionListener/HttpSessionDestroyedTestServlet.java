@@ -64,7 +64,7 @@ import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import common.util.StaticLog;
+import common.util.HttpSessionListenerLog;
 import java.util.Enumeration;
 
 public class HttpSessionDestroyedTestServlet extends HttpServlet {
@@ -74,7 +74,7 @@ public class HttpSessionDestroyedTestServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println( "In HttpSessionDestroyedTest servlet<BR>" );
 
-        StaticLog sl = new StaticLog();
+        HttpSessionListenerLog sl = new HttpSessionListenerLog();
 
         HttpSession session = request.getSession( true );
 
