@@ -502,9 +502,8 @@ public class ManagerServlet
             return;
         }
         String displayPath = path;
-        if (displayPath.equals("")) {
-            displayPath = "/";
-        }
+        if( path.equals("/") )
+            path = "";
         String basename = null;
         if (path.equals("")) {
             basename = "_";
