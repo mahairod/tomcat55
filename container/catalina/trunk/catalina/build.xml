@@ -71,7 +71,6 @@
     <pathelement location="${mail.jar}"/>
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
-    <pathelement location="${tyrex.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${classes.dir}"/>
@@ -103,7 +102,6 @@
     <pathelement location="${mail.jar}"/>
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
-    <pathelement location="${tyrex.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${classes.dir}"/>
@@ -218,9 +216,6 @@
     <available property="regexp.present"
      classname="org.apache.regexp.RE"
      classpath="${regexp.jar}" />
-    <available property="tyrex.present"
-     classname="tyrex.resource.Resources"
-     classpath="${tyrex.jar}" />
     <available property="xerces.present"
      classname="org.apache.xerces.parsers.SAXParser"
      classpath="${xercesImpl.jar}" />
@@ -256,7 +251,6 @@
     <available property="regexp.jar.present" file="${regexp.jar}" />
     <available property="servlet-api.jar.present" file="${servlet-api.jar}" />
     <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
-    <available property="tyrex.jar.present" file="${tyrex.jar}" />
     <available property="xercesImpl.jar.present" file="${xercesImpl.jar}"/>
     <available property="xmlParserAPIs.jar.present" file="${xmlParserAPIs.jar}"/>
     <condition property="xerces2.jars.present">
@@ -340,15 +334,6 @@
       </or>
     </condition>
     <property name="compile.ssi" value="true"/>
-    <condition property="compile.tyrex">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <and>
-          <equals arg1="${jta.present}" arg2="true" />
-          <equals arg1="${tyrex.present}" arg2="true" />
-        </and>
-      </or>
-    </condition>
 
 
     <!-- Conditional copy flags (determined from the flags above) -->
@@ -447,7 +432,6 @@
     <echo message="ldap.present=${ldap.present}" />
     <echo message="modeler.present=${modeler.present}"  />
     <echo message="pool.present=${pool.present}" />
-    <echo message="tyrex.present=${tyrex.present}" />
 
     <echo message="--- Required JARs ---" />
     <echo message="jndi.jar.present(except JDK 1.3+)=${jndi.jar.present}" />
@@ -466,7 +450,6 @@
     <echo message="junit.jar.present=${junit.jar.present}" />
     <echo message="modeler.jar.present=${modeler.jar.present}" />
     <echo message="pool.jar.present=${pool.jar.present}" />
-    <echo message="tyrex.jar.present=${tyrex.jar.present}" />
 
     <echo message="--- Conditional compilation flags ---" />
     <echo message="compile.dbcp=${compile.dbcp}" />
@@ -479,7 +462,6 @@
     <echo message="compile.junit=${compile.junit}" />
     <echo message="compile.ldap=${compile.ldap}" />
     <echo message="compile.ssi=${compile.ssi}" />
-    <echo message="compile.tyrex=${compile.tyrex}" />
 
     <echo message="--- Distribution flags ---" />
     <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
@@ -625,7 +607,6 @@
       <exclude name="org/apache/catalina/servlets/CGIServlet.java" />
       <exclude name="org/apache/catalina/servlets/HTMLManagerServlet.java" />
       <exclude name="org/apache/naming/factory/DbcpDataSourceFactory.java" />
-      <exclude name="org/apache/naming/factory/Tyrex*.java" />
       <exclude name="org/apache/catalina/ssi/**"/>
       <exclude name="org/apache/catalina/cluster/**"/>
       <exclude name="org/apache/naming/factory/MailSessionFactory.java"/>
@@ -662,28 +643,6 @@
        unless="compile.javamail"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"
        unless="compile.jsse"/>
-      <exclude name="org/apache/naming/factory/Tyrex*.java" 
-       unless="compile.tyrex"/>
-<!--
-      <exclude name="org/apache/catalina/util/ProcessHelper.java" 
-       unless="jdk.1.3.present"/>
-      <exclude name="org/apache/catalina/servlets/CGIServlet.java" 
-       unless="jdk.1.3.present"/>
-      <exclude name="org/apache/catalina/servlets/HTMLManagerServlet.java" 
-       unless="fileupload.present"/>
-      <exclude name="org/apache/naming/factory/DbcpDataSourceFactory.java" 
-       unless="compile.dbcp"/>
-      <exclude name="org/apache/catalina/ssi/**"
-       unless="compile.ssi"/>
-      <exclude name="org/apache/catalina/startup/EmbeddedManager.java"
-       unless="compile.jmx"/>
-      <exclude name="org/apache/catalina/startup/CatalinaManager.java"
-       unless="compile.jmx"/>
-      <exclude name="org/apache/naming/NamingService.java"
-       unless="compile.jmx"/>
-      <exclude name="org/apache/catalina/launcher/**"
-       unless="compile.launcher"/>
--->
     </javac>
 
     <!-- Copy static resource files -->
@@ -954,8 +913,88 @@
         <exclude name="org/apache/catalina/loader/Extension.class" />
         <exclude name="org/apache/catalina/loader/Reloader.class" />
 -->
-        <exclude name="org/apache/catalina/servlets/**" />
         <exclude name="org/apache/catalina/ssi/**" />
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+
+        <!-- Catalina-optional classes -->
+        <exclude name="org/apache/catalina/realm/DataSourceRealm.class" />
+        <exclude name="org/apache/catalina/realm/JAAS*" />
+        <exclude name="org/apache/catalina/realm/JDBC*" />
+        <exclude name="org/apache/catalina/realm/JNDI*" />
+        <exclude name="org/apache/catalina/realm/Memory*" />
+        <exclude name="org/apache/catalina/session/StoreBase.class" />
+        <exclude name="org/apache/catalina/session/*Store.class" />
+        <exclude name="org/apache/catalina/session/PersistentManager*" />
+        <exclude name="org/apache/catalina/util/CGIProcessEnvironment.class" />
+        <exclude name="org/apache/catalina/util/CookieTools.class" />
+        <exclude name="org/apache/catalina/util/DateTool.class" />
+        <exclude name="org/apache/catalina/util/DOMWriter.class" />
+        <exclude name="org/apache/catalina/util/FastDateFormat.class" />
+        <exclude name="org/apache/catalina/util/IOTools.class" />
+        <exclude name="org/apache/catalina/util/MIME2Java.class" />
+        <exclude name="org/apache/catalina/util/Process*" />
+        <exclude name="org/apache/catalina/util/Queue.class" />
+        <exclude name="org/apache/catalina/util/Strftime.class" />
+        <exclude name="org/apache/catalina/util/XMLWriter.class" />
+        <exclude name="org/apache/catalina/valves/ExtendedAccessLogValve.class" />
+        <exclude name="org/apache/catalina/valves/FieldInfo.class" />
+        <exclude name="org/apache/catalina/valves/JDBCAccessLogValve.class" />
+        <exclude name="org/apache/catalina/valves/PersistentValve.class" />
+        <exclude name="org/apache/catalina/valves/Remote*" />
+        <exclude name="org/apache/catalina/valves/RequestDumperValve.class" />
+        <exclude name="org/apache/catalina/valves/RequestFilterValve.class" />
+
+      </fileset>
+    </jar>
+
+    <jar jarfile="${catalina.deploy}/server/lib/catalina-optional.jar">
+      <fileset dir="${classes.dir}">
+
+        <include name="org/apache/catalina/realm/DataSourceRealm.class" />
+        <include name="org/apache/catalina/realm/JAAS*" />
+        <include name="org/apache/catalina/realm/JDBC*" />
+        <include name="org/apache/catalina/realm/JNDI*" />
+        <include name="org/apache/catalina/realm/Memory*" />
+        <include name="org/apache/catalina/session/StoreBase.class" />
+        <include name="org/apache/catalina/session/*Store.class" />
+        <include name="org/apache/catalina/session/PersistentManager*" />
+        <include name="org/apache/catalina/util/CGIProcessEnvironment.class" />
+        <include name="org/apache/catalina/util/CookieTools.class" />
+        <include name="org/apache/catalina/util/DateTool.class" />
+        <include name="org/apache/catalina/util/DOMWriter.class" />
+        <include name="org/apache/catalina/util/FastDateFormat.class" />
+        <include name="org/apache/catalina/util/IOTools.class" />
+        <include name="org/apache/catalina/util/MIME2Java.class" />
+        <include name="org/apache/catalina/util/Process*" />
+        <include name="org/apache/catalina/util/Queue.class" />
+        <include name="org/apache/catalina/util/Strftime.class" />
+        <include name="org/apache/catalina/util/XMLWriter.class" />
+        <include name="org/apache/catalina/valves/ExtendedAccessLogValve.class" />
+        <include name="org/apache/catalina/valves/FieldInfo.class" />
+        <include name="org/apache/catalina/valves/JDBCAccessLogValve.class" />
+        <include name="org/apache/catalina/valves/PersistentValve.class" />
+        <include name="org/apache/catalina/valves/Remote*" />
+        <include name="org/apache/catalina/valves/RequestDumperValve.class" />
+        <include name="org/apache/catalina/valves/RequestFilterValve.class" />
+
+      </fileset>
+    </jar>
+
+    <!-- i18n JARs -->
+    <jar jarfile="${catalina.deploy}/server/lib/catalina-i18n-es.jar">
+      <fileset dir="${classes.dir}">
+        <include name="**/LocalStrings_es.properties" />
+      </fileset>
+    </jar>
+    <jar jarfile="${catalina.deploy}/server/lib/catalina-i18n-fr.jar">
+      <fileset dir="${classes.dir}">
+        <include name="**/LocalStrings_fr.properties" />
+      </fileset>
+    </jar>
+    <jar jarfile="${catalina.deploy}/server/lib/catalina-i18n-ja.jar">
+      <fileset dir="${classes.dir}">
+        <include name="**/LocalStrings_ja.properties" />
       </fileset>
     </jar>
 
