@@ -108,6 +108,12 @@ public final class HttpConnector
 
 
     /**
+     * The <code>Service</code> we are associated with (if any).
+     */
+    private Service service = null;
+
+
+    /**
      * The accept count for this Connector.
      */
     private int acceptCount = 10;
@@ -252,12 +258,6 @@ public final class HttpConnector
 
 
     /**
-     * The <code>Service</code> we are associated with (if any).
-     */
-    private Service service = null;
-
-
-    /**
      * The string manager for this package.
      */
     private StringManager sm =
@@ -313,6 +313,28 @@ public final class HttpConnector
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the <code>Service</code> with which we are associated (if any).
+     */
+    public Service getService() {
+
+        return (this.service);
+
+    }
+
+
+    /**
+     * Set the <code>Service</code> with which we are associated (if any).
+     *
+     * @param service The service that owns this Engine
+     */
+    public void setService(Service service) {
+
+        this.service = service;
+
+    }
 
 
     /**
@@ -733,28 +755,6 @@ public final class HttpConnector
 
 
     /**
-     * Return the <code>Service</code> with which we are associated (if any).
-     */
-    public Service getService() {
-
-        return (this.service);
-
-    }
-
-
-    /**
-     * Set the <code>Service</code> with which we are associated (if any).
-     *
-     * @param service The service that owns this Engine
-     */
-    public void setService(Service service) {
-
-        this.service = service;
-
-    }
-
-
-    /**
      * Return the TCP no delay flag value.
      */
     public boolean getTcpNoDelay() {
@@ -982,16 +982,18 @@ public final class HttpConnector
             } catch (IOException e) {
                 //                if (debug >= 3)
                 //                    log("run: Accept returned IOException", e);
-                if (started && !stopped)
-                    log("accept: ", e);
                 try {
-                    //                    if (debug >= 3)
-                    //                        log("run: Closing server socket");
-                    serverSocket.close();
-                    if (!stopped) {
-                        //                        if (debug >= 3)
-                        //                            log("run: Reopening server socket");
-                        serverSocket = open();
+                    synchronized (threadSync) {
+                        if (started && !stopped)
+                            log("accept: ", e);
+                        if (!stopped) {
+                            //                    if (debug >= 3)
+                            //                        log("run: Closing server socket");
+                            serverSocket.close();
+                            //                        if (debug >= 3)
+                            //                            log("run: Reopening server socket");
+                            serverSocket = open();
+                        }
                     }
                     //                    if (debug >= 3)
                     //                        log("run: IOException processing completed");
@@ -1054,12 +1056,10 @@ public final class HttpConnector
         log(sm.getString("httpConnector.stopping"));
 
         stopped = true;
-        synchronized (threadSync) {
-            try {
-                threadSync.wait(5000);
-            } catch (InterruptedException e) {
-                ;
-            }
+        try {
+            threadSync.wait(5000);
+        } catch (InterruptedException e) {
+            ;
         }
         thread = null;
 
@@ -1168,17 +1168,18 @@ public final class HttpConnector
             }
         }
 
-        // Close the server socket we were using
-        if (serverSocket != null) {
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                ;
+        synchronized (threadSync) {
+            // Close the server socket we were using
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    ;
+                }
             }
+            // Stop our background thread
+            threadStop();
         }
-
-        // Stop our background thread
-        threadStop();
         serverSocket = null;
 
     }
