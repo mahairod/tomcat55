@@ -300,6 +300,12 @@ public final class AccessLogValve
     private boolean resolveHosts = false;
 
 
+    /**
+     * Instant when the log daily rotation was last checked.
+     */
+    private long rotationLastChecked = 0L;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -594,9 +600,11 @@ public final class AccessLogValve
 
         // Only do a logfile switch check once a second, max.
         long systime = System.currentTimeMillis();
-        if ((systime - currentDate.getTime()) > 1000) {
+        if ((systime - rotationLastChecked) > 1000) {
+
             // We need a new currentDate
             currentDate = new Date(systime);
+            rotationLastChecked = systime;
 
             // Check for a change of date
             String tsDate = dateFormatter.format(currentDate);
