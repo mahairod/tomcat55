@@ -699,12 +699,10 @@ class Generator {
 	 * @param encode true if to be URL encoded
          * @param expectedType the expected type for an EL evaluation
          *        (ignored for attributes that aren't EL expressions)
-         * @param defaultPrefix the default prefix for any EL functions
 	 */
         private String attributeValue(Node.JspAttribute attr,
                                       boolean encode,
-                                      Class expectedType,
-                                      String defaultPrefix ) 
+                                      Class expectedType)
         {
 	    String v = attr.getValue();
 	    if (!attr.isNamedAttribute() && (v == null))
@@ -714,7 +712,7 @@ class Generator {
 		if (attr.isELInterpreterInput()) {
 		    boolean replaceESC = v.indexOf(Constants.ESC) > 0;
 		    v = JspUtil.interpreterCall(this.isTagFile,
-		        v, expectedType, defaultPrefix,
+		        v, expectedType,
 			attr.getEL().getMapName(), false );
 		    // XXX ESC replacement hack
 		    if (replaceESC) {
@@ -758,8 +756,7 @@ class Generator {
 		    out.print(" + \"");
 		    out.print(URLEncoder.encode(n.getTextAttribute("name")));
 		    out.print("=\" + ");
-		    out.print(attributeValue(n.getValue(), true, String.class,
-                        "null" ));
+		    out.print(attributeValue(n.getValue(), true, String.class));
 
 		    // The separator is '&' after the second use
 		    separator = "\"&\"";
@@ -798,7 +795,7 @@ class Generator {
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,
                         "${" + new String(n.getText()) + "}", String.class,
-			null, n.getEL().getMapName(), false )
+			n.getEL().getMapName(), false )
                     + ");");
             } else {
                 out.printil("out.write(" +
@@ -828,7 +825,7 @@ class Generator {
                     page.getNamedAttributeNode() );
             }
             else {
-                pageParam = attributeValue(page, false, String.class, "null");
+                pageParam = attributeValue(page, false, String.class);
             }
             
             // If any of the params have their values specified by
@@ -919,7 +916,7 @@ class Generator {
                     page.getNamedAttributeNode() );
             }
             else {
-                pageParam = attributeValue(page, false, String.class, "null");
+                pageParam = attributeValue(page, false, String.class);
             }
             
             // If any of the params have their values specified by
@@ -999,7 +996,7 @@ class Generator {
 		out.printil("org.apache.jasper.runtime.JspRuntimeLibrary.handleSetProperty(" + 
 			    "pageContext.findAttribute(\""  + name + "\"), \""
 			    + property + "\","); 
-		out.print(attributeValue(value, false, null, "null"));
+		out.print(attributeValue(value, false, null));
 		out.println(");");
             } else if (value.isELInterpreterInput()) {
                 // We've got to resolve the very call to the interpreter
@@ -1039,7 +1036,7 @@ class Generator {
 		out.printin("org.apache.jasper.runtime.JspRuntimeLibrary.introspecthelper(" +
 			    "pageContext.findAttribute(\"" + name + "\"), \""
 			    + property + "\", ");
-		out.print(attributeValue(value, false, null, "null"));
+		out.print(attributeValue(value, false, null));
 		out.println(", null, null, false);");
 	    }
 
@@ -1126,7 +1123,7 @@ class Generator {
                     }
                     else {
                         className = attributeValue(beanName, false,
-                            String.class, "null");
+						   String.class);
                     }
 		}
 		else {
@@ -1226,8 +1223,8 @@ class Generator {
                         //     value=\"" + ... + "\">" );
                         out.printil( "out.write( \"<PARAM name=\\\"" +
                             escape( name ) + "\\\" value=\\\"\" + " +
-                            attributeValue( n.getValue(), false, String.class, 
-                            "null" ) + " + \"\\\">\" );" );
+                            attributeValue( n.getValue(), false, String.class) +
+                            " + \"\\\">\" );" );
                         out.printil("out.write(\"\\n\");");
                     }
                     else {
@@ -1235,8 +1232,8 @@ class Generator {
                         // out.print( " blah=\"" + ... + "\"" );
                         out.printil( "out.write( \" " + escape( name ) +
                             "=\\\"\" + " + 
-                            attributeValue( n.getValue(), false, String.class,
-                            "null" ) + " + \"\\\"\" );" );
+                            attributeValue( n.getValue(), false, String.class)+
+                            " + \"\\\"\" );" );
                     }
                     
 		    n.setEndJavaLine(out.getJavaLine());
@@ -1264,8 +1261,7 @@ class Generator {
                         width.getNamedAttributeNode() );
                 }
                 else {
-                    widthStr = attributeValue( width, false, String.class,
-                        "null" );
+                    widthStr = attributeValue( width, false, String.class);
                 }
             }
             
@@ -1276,8 +1272,7 @@ class Generator {
                         height.getNamedAttributeNode() );
                 }
                 else {
-                    heightStr = attributeValue( height, false, String.class,
-                        "null" );
+                    heightStr = attributeValue( height, false, String.class);
                 }
             }
 
@@ -1623,8 +1618,7 @@ class Generator {
 		    attrStr = generateNamedAttributeValue(
                             attrs[i].getNamedAttributeNode());
 		} else {
-		    attrStr = attributeValue(attrs[i], false, Object.class,
-					     "null");
+		    attrStr = attributeValue(attrs[i], false, Object.class);
 		}
 		String s = " + \" " + attrs[i].getName() + "=\\\"\" + "
 		    + attrStr + " + \"\\\"\"";
@@ -1634,7 +1628,7 @@ class Generator {
 	    // Write begin tag, using XML-style 'name' attribute as the
 	    // element name
 	    String elemName = attributeValue(n.getNameAttribute(), false,
-					     String.class, "null");
+					     String.class);
 	    out.printin("out.write(\"<\"");
 	    out.print(" + " + elemName);
 
@@ -2411,7 +2405,7 @@ class Generator {
                 // run attrValue through the expression interpreter
 		boolean replaceESC = attrValue.indexOf(Constants.ESC) > 0;
                 attrValue = JspUtil.interpreterCall(this.isTagFile,
-                         attrValue, c[0], n.getPrefix(),
+                         attrValue, c[0],
                          attr.getEL().getMapName(), false );
 		// XXX hack: Replace ESC with '$'
 		if (replaceESC) {

@@ -681,7 +681,7 @@ public class JspRuntimeLibrary {
                     method.getParameterTypes()[0],
 		    pageContext,
                     functionMapper,
-                    null, false )
+                    false )
             });
         } catch (Exception ex) {
             throw new JasperException(ex);

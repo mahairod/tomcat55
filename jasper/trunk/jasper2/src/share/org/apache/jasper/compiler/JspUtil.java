@@ -507,7 +507,6 @@ public class JspUtil {
      * Produces a String representing a call to the EL interpreter.
      * @param expression a String containing zero or more "${}" expressions
      * @param expectedType the expected type of the interpreted result
-     * @param defaultPrefix Default prefix, or literal "null"
      * @param fnmapvar Variable pointing to a function map.
      * @param XmlEscape True if the result should do XML escaping
      * @return a String representing a call to the EL interpreter.
@@ -515,7 +514,6 @@ public class JspUtil {
     public static String interpreterCall(boolean isTagFile,
 					 String expression,
                                          Class expectedType,
-                                         String defaultPrefix,
                                          String fnmapvar,
                                          boolean XmlEscape ) 
     {
@@ -587,9 +585,7 @@ public class JspUtil {
                + "(" + Generator.quote(expression) + ", "
                +       targetType + ".class, "
 	       +       "(PageContext)" + jspCtxt 
-               +       ", " + fnmapvar + ", "
-               +       ((defaultPrefix == null) ? 
-                            "null" : Generator.quote( defaultPrefix )) 
+               +       ", " + fnmapvar
 	       + ", " + XmlEscape
                + ")");
  
@@ -614,13 +610,12 @@ public class JspUtil {
                                            String expressions,
                                            Class expectedType,
                                            FunctionMapper functionMapper,
-                                           String defaultPrefix,
                                            ErrorDispatcher err)
             throws JasperException {
 
         try {
             JspUtil.expressionEvaluator.parseExpression( expressions, 
-                expectedType, null, defaultPrefix );
+                expectedType, null );
         }
         catch( ELParseException e ) {
             err.jspError(where, "jsp.error.invalid.expression", expressions,

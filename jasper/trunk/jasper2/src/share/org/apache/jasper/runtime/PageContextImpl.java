@@ -121,7 +121,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
     // The expression evaluator, for evaluating EL expressions.
     private static ExpressionEvaluatorImpl elExprEval
-	= new ExpressionEvaluatorImpl();
+	= new ExpressionEvaluatorImpl(true);
 
     // The variable resolver, for evaluating EL expressions.
     private VariableResolverImpl variableResolver;
@@ -720,14 +720,12 @@ public class PageContextImpl extends PageContext implements VariableResolver {
      * @param expectedType The expected resulting type
      * @param pageContext The page context
      * @param functionMap Maps prefix and name to Method
-     * @param defaultPrefix Default prefix for this evaluation
      * @return The result of the evaluation
      */
     public static Object proprietaryEvaluate(final String expression, 
 					     final Class expectedType,
 					     final PageContext pageContext,
 					     final ProtectedFunctionMapper functionMap,
-					     final String defaultPrefix,
 					     final boolean escape)
 	throws ELException
     {
@@ -741,8 +739,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                         return elExprEval.evaluate(expression,
 						   expectedType,
 						   pageContext.getVariableResolver(),
-						   functionMap,
-						   defaultPrefix);
+						   functionMap);
                     }
                 });
             } catch( PrivilegedActionException ex ) {
@@ -753,8 +750,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	    retValue = elExprEval.evaluate(expression,
 					   expectedType,
 					   pageContext.getVariableResolver(),
-					   functionMap,
-					   defaultPrefix);
+					   functionMap);
         }
 	if (escape) {
 	    retValue = XmlEscape(retValue.toString());

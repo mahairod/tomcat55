@@ -498,7 +498,7 @@ class Validator {
 	    throwErrorIfExpression(n, "name", "jsp:param");
 	    n.setValue(getJspAttribute("value", null, null,
 				       n.getAttributeValue("value"),
-                                       java.lang.String.class, null,
+                                       java.lang.String.class,
 				       n, false));
             visitBody(n);
 	}
@@ -517,7 +517,7 @@ class Validator {
                                     includeActionAttrs, err);
 	    n.setPage(getJspAttribute("page", null, null,
 				      n.getAttributeValue("page"), 
-                                      java.lang.String.class, null, n, false));
+                                      java.lang.String.class, n, false));
 	    visitBody(n);
         };
 
@@ -526,7 +526,7 @@ class Validator {
                                     forwardActionAttrs, err);
 	    n.setPage(getJspAttribute("page", null, null,
 				      n.getAttributeValue("page"), 
-                                      java.lang.String.class, null, n, false));
+                                      java.lang.String.class, n, false));
 	    visitBody(n);
 	}
 
@@ -544,7 +544,7 @@ class Validator {
 	    String value = n.getAttributeValue("value");
 
             n.setValue(getJspAttribute("value", null, null, value, 
-                java.lang.Object.class, null, n, false));
+                java.lang.Object.class, n, false));
 
             boolean valueSpecified = n.getValue() != null;
 
@@ -582,7 +582,7 @@ class Validator {
 	    Node.JspAttribute jattr
 		= getJspAttribute("beanName", null, null,
 				  n.getAttributeValue("beanName"),
-				  java.lang.String.class, null, n, false);
+				  java.lang.String.class, n, false);
 	    n.setBeanName(jattr);
 	    if (className != null && jattr != null)
 		err.jspError(n, "jsp.error.useBean.notBoth");
@@ -621,13 +621,13 @@ class Validator {
 	    Node.JspAttribute width
 		= getJspAttribute("width", null, null,
 				  n.getAttributeValue("width"), 
-                                  java.lang.String.class, null, n, false);
+                                  java.lang.String.class, n, false);
 	    n.setWidth( width );
             
 	    Node.JspAttribute height
 		= getJspAttribute("height", null, null,
 				  n.getAttributeValue("height"), 
-                                  java.lang.String.class, null, n, false);
+                                  java.lang.String.class, n, false);
 	    n.setHeight( height );
 
 	    visitBody(n);
@@ -662,8 +662,6 @@ class Validator {
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {
-	    // Currently parseExpression does not validate functions, so
-	    // a null FunctionMapper is passed.
             if ( !pageInfo.isELIgnored() ) {
 		String expressions = "${" + new String(n.getText()) + "}";
 		ELNode.Nodes el = ELParser.parse(expressions);
@@ -674,7 +672,6 @@ class Validator {
                     java.lang.String.class, // XXX - Should template text 
                                             // always evaluate to String?
                     getFunctionMapper(el),
-                    null,
                     err);
 		n.setEL(el);
             }
@@ -786,7 +783,6 @@ class Validator {
 						       attrs.getLocalName(i),
 						       attrs.getValue(i),
 						       java.lang.String.class,
-						       null,
 						       n,
 						       false));
 		} else {
@@ -797,7 +793,6 @@ class Validator {
 					      attrs.getLocalName(i),
 					      attrs.getValue(i),
 					      java.lang.Object.class,
-					      null,
 					      n,
 					      false);
 		    }
@@ -924,7 +919,6 @@ class Validator {
                                                       attrs.getLocalName(i),
                                                       attrs.getValue(i),
                                                       expectedType,
-                                                      n.getPrefix(),
                                                       n,
                                                       false);
                             } catch (ClassNotFoundException e) {
@@ -968,7 +962,6 @@ class Validator {
 						      attrs.getLocalName(i),
 						      attrs.getValue(i),
 						      java.lang.Object.class,
-                                                      n.getPrefix(),
                                                       n,
 						      true);
 		    } else {
@@ -1054,7 +1047,6 @@ class Validator {
 						  String localName,
 						  String value,
                                                   Class expectedType,
-                                                  String defaultPrefix,
                                                   Node n,
 						  boolean dynamic)
                 throws JasperException {
@@ -1102,7 +1094,6 @@ class Validator {
                             value, 
                             expectedType, 
                             getFunctionMapper(el),
-                            defaultPrefix,
                             this.err);
 
                         
