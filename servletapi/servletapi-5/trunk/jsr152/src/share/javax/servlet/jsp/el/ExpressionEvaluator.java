@@ -105,8 +105,7 @@ public interface ExpressionEvaluator {
      *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
      *     encountered with no prefix.
-     * @return The Expression object encapsulating the arguments, or null 
-     *     if errors were encountered.
+     * @return The Expression object encapsulating the arguments.
      *
      * @exception ELException Thrown if parsing errors were found.
      */ 
@@ -135,8 +134,7 @@ public interface ExpressionEvaluator {
      *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
      *     encountered with no prefix.
-     * @return The result of the expression evaluation or null if errors 
-     *     were encountered.
+     * @return The result of the expression evaluation.
      *
      * @exception ELException Thrown if the expression evaluation failed.
      */ 
