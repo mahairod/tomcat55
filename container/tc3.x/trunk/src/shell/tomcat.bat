@@ -29,11 +29,11 @@ if "%1" == "run" goto runServer
 if "%1" == "env" goto setupEnv
 
 echo Usage:
-echo "tomcat (start|run|env|stop)"
-echo "        start - start tomcat in a separate window"
-echo "        run   - start tomcat in the current window"
-echo "        env   - setup the environment for tomcat"
-echo "        stop  - stop tomcat"
+echo tomcat (start^|run^|env^|stop)
+echo         start - start tomcat in a separate window
+echo         run   - start tomcat in the current window
+echo         env   - setup the environment for tomcat
+echo         stop  - stop tomcat
 goto cleanup
 
 :startServer
