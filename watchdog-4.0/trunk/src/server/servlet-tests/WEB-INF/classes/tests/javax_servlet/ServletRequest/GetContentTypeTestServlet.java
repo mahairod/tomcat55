@@ -83,11 +83,11 @@ public class GetContentTypeTestServlet extends GenericServlet {
 		String contentType=request.getContentType();
 		if(contentType == null) { // spec says that it can be null
 			out.println("GetContentTypeTest test PASSED");
-		}
-		else {
-			if(contentType.equals("text/plain")) {
-				out.println("GetContentTypeTest test PASSED");
-			}
+		} else if (contentType.equals("text/plain")) {
+			out.println("GetContentTypeTest test PASSED");
+                } else {
+                        out.println("GetContentTypeTest test FAILED");
+                        out.println("contentType = " + contentType);
 		}
 	}
 }
