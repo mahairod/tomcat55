@@ -28,7 +28,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.session.SessionMessage;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
@@ -73,8 +72,8 @@ public class ReplicationValve
      * holds file endings to not call for like images and others
      */
     protected java.util.regex.Pattern[] reqFilters = new java.util.regex.Pattern[0];
-
-    protected int debug = 0;
+    protected String filter ;
+    
     // ------------------------------------------------------------- Properties
 
     public ReplicationValve() {
@@ -100,9 +99,11 @@ public class ReplicationValve
         totalRequestTime+=requestTime;
         nrOfRequests++;
         if ( (nrOfRequests % 100) == 0 ) {
-            log.info("Average request time="+(totalRequestTime/nrOfRequests)+" ms for "+
-                     "Cluster overhead time="+(totalSendTime/nrOfRequests)+" ms for "+
-                     nrOfRequests+" requests (Request="+totalRequestTime+"ms Cluster="+totalSendTime+"ms).");
+            if(log.isInfoEnabled()) {
+                 log.info("Average request time="+(totalRequestTime/nrOfRequests)+" ms for "+
+                          "Cluster overhead time="+(totalSendTime/nrOfRequests)+" ms for "+
+                           nrOfRequests+" requests (Request="+totalRequestTime+"ms Cluster="+totalSendTime+"ms).");
+            }
             lastSendTime=System.currentTimeMillis();
         }//end if
     }
@@ -139,7 +140,8 @@ public class ReplicationValve
             ClusterManager manager = (ClusterManager)request.getContext().getManager();
             CatalinaCluster cluster = (CatalinaCluster)getContainer().getCluster();
             if ( cluster == null ) {
-                log.warn("No cluster configured for this request.");
+               	if(log.isWarnEnabled())
+               	    log.warn("No cluster configured for this request.");
                 return;
             }
             //first check for session invalidations
@@ -182,7 +184,8 @@ public class ReplicationValve
             if ( filterfound )
                 return;
 
-            log.debug("Invoking replication request on "+uri);
+            if(log.isDebugEnabled())
+                log.debug("Invoking replication request on "+uri);
 
             
             ClusterMessage msg = manager.requestCompleted(id);
@@ -215,14 +218,17 @@ public class ReplicationValve
 
     public void setFilter(String filter)
     {
-        log.debug("Loading request filters="+filter);
+    	if(log.isDebugEnabled())
+    	     log.debug("Loading request filters="+filter);
+        this.filter = filter ;
         java.util.StringTokenizer t = new java.util.StringTokenizer(filter,";");
         this.reqFilters = new java.util.regex.Pattern[t.countTokens()];
         int i = 0;
         while ( t.hasMoreTokens() )
         {
             String s = t.nextToken();
-            log.debug("Request filter="+s);
+            if(log.isDebugEnabled())
+                 log.debug("Request filter="+s);
             try
             {
                 reqFilters[i++] = java.util.regex.Pattern.compile(s);
@@ -233,13 +239,10 @@ public class ReplicationValve
         }
     }
 
-    public void setDebug(int debug)
-    {
-        this.debug = debug;
+    public String getFilter() {
+       return filter ;
     }
 
     // ------------------------------------------------------ Protected Methods
-
-
 
 }

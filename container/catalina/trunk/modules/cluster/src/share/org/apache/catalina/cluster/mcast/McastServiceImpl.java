@@ -145,16 +145,19 @@ public class McastServiceImpl
             InetSocketAddress(mcastBindAddress, port));
         else socket = new MulticastSocket(port);
         if (mcastBindAddress != null) {
-            log.info("Setting multihome multicast interface to:" +
-                     mcastBindAddress);
+			if(log.isInfoEnabled())
+                log.info("Setting multihome multicast interface to:" +
+                         mcastBindAddress);
             socket.setInterface(mcastBindAddress);
         } //end if
         if ( mcastSoTimeout >= 0 ) {
-            log.info("Setting cluster mcast soTimeout to "+mcastSoTimeout);
+ 			if(log.isInfoEnabled())
+                log.info("Setting cluster mcast soTimeout to "+mcastSoTimeout);
             socket.setSoTimeout(mcastSoTimeout);
         }
         if ( mcastTTL >= 0 ) {
-            log.info("Setting cluster mcast TTL to " + mcastTTL);
+			if(log.isInfoEnabled())
+                log.info("Setting cluster mcast TTL to " + mcastTTL);
             socket.setTimeToLive(mcastTTL);
         }
     }

@@ -111,24 +111,44 @@ public class McastService implements MembershipService,MembershipListener {
         properties.setProperty("mcastAddress", addr);
     }
 
+    public String getMcastAddr() {
+        return properties.getProperty("mcastAddress");
+    }
+
     public void setMcastBindAddress(String bindaddr) {
         properties.setProperty("mcastBindAddress", bindaddr);
+    }
+
+    public String getMcastBindAddress() {
+        return properties.getProperty("mcastBindAddress");
     }
 
     public void setMcastPort(int port) {
         properties.setProperty("mcastPort", String.valueOf(port));
     }
 
+    public int getMcastPort() {
+        String p = properties.getProperty("mcastPort");
+        return new Integer(p).intValue();
+    }
+    
     public void setMcastFrequency(long time) {
         properties.setProperty("msgFrequency", String.valueOf(time));
+    }
+
+    public long getMcastFrequency() {
+        String p = properties.getProperty("msgFrequency");
+        return new Long(p).longValue();
     }
 
     public void setMcastDropTime(long time) {
         properties.setProperty("memberDropTime", String.valueOf(time));
     }
 
-
-
+    public long getMcastDropTime() {
+        String p = properties.getProperty("memberDropTime");
+        return new Long(p).longValue();
+    }
 
     /**
      * Check if a required property is available.
@@ -195,7 +215,8 @@ public class McastService implements MembershipService,MembershipListener {
                                     this);
 
         impl.start(level);
-        log.info("Sleeping for "+(Long.parseLong(properties.getProperty("msgFrequency"))*4)+" secs to establish cluster membership");
+		if(log.isInfoEnabled())
+            log.info("Sleeping for "+(Long.parseLong(properties.getProperty("msgFrequency"))*4)+" secs to establish cluster membership");
         Thread.sleep((Long.parseLong(properties.getProperty("msgFrequency"))*4));
 
     }
@@ -247,26 +268,6 @@ public class McastService implements MembershipService,MembershipListener {
         if ( listener!=null ) listener.memberDisappeared(member);
     }
 
-    /**
-     * Simple test program
-     * @param args Command-line arguments
-     * @throws Exception If an error occurs
-     */
-    public static void main(String args[]) throws Exception {
-        log.info("Usage McastService hostname tcpport");
-        McastService service = new McastService();
-        java.util.Properties p = new java.util.Properties();
-        p.setProperty("mcastPort","5555");
-        p.setProperty("mcastAddress","224.10.10.10");
-        p.setProperty("bindAddress","localhost");
-        p.setProperty("memberDropTime","3000");
-        p.setProperty("msgFrequency","500");
-        p.setProperty("tcpListenPort",args[1]);
-        p.setProperty("tcpListenHost",args[0]);
-        service.setProperties(p);
-        service.start();
-        Thread.sleep(60*1000*60);
-    }
     public int getMcastSoTimeout() {
         return mcastSoTimeout;
     }
@@ -280,5 +281,27 @@ public class McastService implements MembershipService,MembershipListener {
     public void setMcastTTL(int mcastTTL) {
         this.mcastTTL = mcastTTL;
         properties.setProperty("mcastTTL", String.valueOf(mcastTTL));
+    }
+
+    /**
+     * Simple test program
+     * @param args Command-line arguments
+     * @throws Exception If an error occurs
+     */
+    public static void main(String args[]) throws Exception {
+		if(log.isInfoEnabled())
+            log.info("Usage McastService hostname tcpport");
+        McastService service = new McastService();
+        java.util.Properties p = new java.util.Properties();
+        p.setProperty("mcastPort","5555");
+        p.setProperty("mcastAddress","224.10.10.10");
+        p.setProperty("bindAddress","localhost");
+        p.setProperty("memberDropTime","3000");
+        p.setProperty("msgFrequency","500");
+        p.setProperty("tcpListenPort",args[1]);
+        p.setProperty("tcpListenHost",args[0]);
+        service.setProperties(p);
+        service.start();
+        Thread.sleep(60*1000*60);
     }
 }
