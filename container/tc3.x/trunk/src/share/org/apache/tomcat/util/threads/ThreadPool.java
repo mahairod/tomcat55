@@ -145,9 +145,6 @@ public class ThreadPool  {
 	stopThePool=false;
         currentThreadCount  = 0;
         currentThreadsBusy  = 0;
-        maxThreads      = MAX_THREADS;
-        maxSpareThreads = MAX_SPARE_THREADS;
-        minSpareThreads = MIN_SPARE_THREADS;
 
         adjustLimits();
 
