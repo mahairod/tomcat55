@@ -61,10 +61,10 @@
 
 package org.apache.webapp.admin.host;
 
-
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.List;
 import java.io.IOException;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -174,7 +174,17 @@ public final class SaveAliasAction extends Action {
         values[0] = aform.getAliasName();
 
         String hostName = aform.getHostName();
-            
+
+        // validate if this alias already exists.
+        List aliasVals = aform.getAliasVals();
+        if (aliasVals.contains(values[0])) {
+           ActionErrors errors = new ActionErrors();
+            errors.add("aliasName",
+                       new ActionError("error.aliasName.exists"));
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
         try {
             
             ObjectName hname = new ObjectName(hostName);
