@@ -1747,7 +1747,7 @@ class Generator {
                 out.print("=");
                 if (jspAttrs[i].isELInterpreterInput()) {
                     out.print("\\\"\" + ");
-                    out.print(attributeValue(jspAttrs[i], false, Object.class));
+                    out.print(attributeValue(jspAttrs[i], false, String.class));
                     out.print(" + \"\\\"");
                 } else {
                     String quote = DOUBLE_QUOTE;
