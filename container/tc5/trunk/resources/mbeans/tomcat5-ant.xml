@@ -141,24 +141,9 @@
 
   <property name="domain" value="Catalina" />
 
-  <target name="run" depends="init"
-        description="Start tomcat as an mbean using server.xml config and returns">
-
-    <jmx-service>
-       <mbean code="org.apache.catalina.startup.Catalina"
-              name="${domain}:type=server" 
-              modeler="true" >
-         <attribute name="catalinaHome"
-                    value="${tomcat.home}"/>
-       </mbean>
-    </jmx-service>
-
-    <echo message="Tomcat5 running"/>
-  </target>
-
   <!-- ======================= JMX only  ================ -->
 
-  <target name="run2" depends="init,jmx-console"
+  <target name="run" depends="init,jmx-console"
         description="Start tomcat as an mbean, no server.xml">
 
     <modelerRegistry resource="org/apache/catalina/mbeans/mbeans-descriptors.xml" />
@@ -265,7 +250,7 @@
        <mbean name="${domain}:type=Realm,host=localhost,path=manager" 
               code="org.apache.catalina.realm.MemoryRealm" modeler="true">
          <attribute name="pathname"
-                    value="${tomcat.home}/conf/tomcat-users-manager.xml" />
+                    value="${tomcat.home}/conf/tomcat-users.xml" />
        </mbean>
 
 
