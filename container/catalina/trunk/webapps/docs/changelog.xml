@@ -57,6 +57,11 @@
   </subsection>
 
   <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>31171</bug>: Wrap to avoid ClassCastException in PageContextImpl. (yoavs)
+      </fix>
+    </changelog>
   </subsection>
 
   <subsection name="Cluster">
