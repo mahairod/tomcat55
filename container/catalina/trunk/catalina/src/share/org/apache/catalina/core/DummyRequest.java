@@ -91,6 +91,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.naming.Binding;
 import javax.naming.directory.DirContext;
+import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -112,6 +113,7 @@ import org.apache.catalina.Host;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Response;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
@@ -149,6 +151,9 @@ public class DummyRequest
     protected String servletPath = null;
     protected Wrapper wrapper = null;
 
+    protected FilterChain filterChain = null;
+    protected ValveContext valveContext = null;
+
     public String getContextPath() {
         return (contextPath);
     }
@@ -159,6 +164,14 @@ public class DummyRequest
 
     public String getDecodedRequestURI() {
         return decodedURI;
+    }
+
+    public FilterChain getFilterChain() {
+        return (this.filterChain);
+    }
+
+    public void setFilterChain(FilterChain filterChain) {
+        this.filterChain = filterChain;
     }
 
     public String getQueryString() {
@@ -183,6 +196,14 @@ public class DummyRequest
 
     public void setServletPath(String path) {
         servletPath = path;
+    }
+
+    public ValveContext getValveContext() {
+        return (this.valveContext);
+    }
+
+    public void setValveContext(ValveContext valveContext) {
+        this.valveContext = valveContext;
     }
 
     public Wrapper getWrapper() {
