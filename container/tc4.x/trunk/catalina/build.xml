@@ -24,8 +24,10 @@
     <pathelement location="${activation.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
+    <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -49,8 +51,10 @@
     <pathelement location="${activation.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
+    <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -90,6 +94,9 @@
     <available property="collections.present"
      classname="org.apache.commons.collections.FastHashMap"
      classpath="${commons-collections.jar}"/>
+    <available property="dbcp.present"
+     classname="org.apache.commons.dbcp.ConnectionFactory"
+     classpath="${commons-dbcp.jar}"/>
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
      classpath="${commons-digester.jar}"/>
@@ -145,6 +152,9 @@
     <available property="ldap.present"
      classname="com.sun.jndi.ldap.LdapClient"
      classpath="${ldap.jar}" />
+    <available property="pool.present"
+     classname="org.apache.commons.pool.ObjectPool"
+     classpath="${commons-pool.jar}"/>
     <available property="regexp.present"
      classname="org.apache.regexp.RE"
      classpath="${regexp.jar}" />
@@ -160,6 +170,7 @@
 
     <!-- JAR files availability flags -->
     <available property="tomcat-ajp.jar.present" file="${tomcat-ajp.jar}" />
+    <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
     <condition property="javamail.jar.present">
       <and>
         <available file="${activation.jar}" />
@@ -177,6 +188,7 @@
     <available property="junit.jar.present" file="${junit.jar}" />
     <available property="ldap.jar.present" file="${ldap.jar}" />
     <available property="modeler.jar.present" file="${commons-modeler.jar}" />
+    <available property="pool.jar.present" file="${commons-pool.jar}" />
     <available property="regexp.jar.present" file="${regexp.jar}" />
     <available property="servlet.jar.present" file="${servlet.jar}" />
     <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
@@ -184,6 +196,15 @@
     <available property="xerces.jar.present" file="${xerces.jar}" />
 
     <!-- Conditional compilation flags (determined from the flags above) -->
+    <condition property="compile.dbcp">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${dbcp.present}" arg2="true" />
+          <equals arg1="${pool.present}" arg2="true" />
+        </and>
+      </or>
+    </condition>
     <condition property="compile.javamail">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -247,6 +268,12 @@
       <or>
         <equals arg1="${full.dist}" arg2="on" />
         <equals arg1="${tomcat-ajp.jar.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.dbcp.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${dbcp.present}" arg2="true" />
       </or>
     </condition>
     <condition property="copy.jdbc20ext.jar">
@@ -331,6 +358,12 @@
         <equals arg1="${modeler.present}" arg2="true" />
       </or>
     </condition>
+    <condition property="copy.pool.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${pool.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.tyrex.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -381,6 +414,7 @@
     <echo message="servlet.present=${servlet.present}" />
 
     <echo message="--- Optional Libraries ---" />
+    <echo message="dbcp.present=${dbcp.present}" />
     <echo message="javamail.present=${javamail.present}" />
     <echo message="jmx.present=${jmx.present}" />
     <echo message="jmxtools.present=${jmxtools.present}" />
@@ -389,6 +423,7 @@
     <echo message="junit.present=${junit.present}" />
     <echo message="ldap.present=${ldap.present}" />
     <echo message="modeler.present=${modeler.present}" />
+    <echo message="pool.present=${pool.present}" />
     <echo message="tyrex.present=${tyrex.present}" />
 
     <echo message="--- Required JARs ---" />
@@ -399,6 +434,7 @@
 
     <echo message="--- Optional JARs ---" />
     <echo message="tomcat-ajp.jar.present=${tomcat-ajp.jar.present}" />
+    <echo message="dbcp.jar.present=${dbcp.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
     <echo message="jmxri.jar.present=${jmxri.jar.present}" />
@@ -407,10 +443,12 @@
     <echo message="junit.jar.present=${junit.jar.present}" />
     <echo message="ldap.jar.present=${ldap.jar.present}" />
     <echo message="modeler.jar.present=${modeler.jar.present}" />
+    <echo message="pool.jar.present=${pool.jar.present}" />
     <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
     <echo message="tyrex.jar.present=${tyrex.jar.present}" />
 
     <echo message="--- Conditional compilation flags ---" />
+    <echo message="compile.dbcp=${compile.dbcp}" />
     <echo message="compile.javamail=${compile.javamail}" />
     <echo message="compile.jmx=${compile.jmx}" />
     <echo message="compile.jndi=${compile.jndi}" />
@@ -423,6 +461,7 @@
 
     <echo message="--- Distribution flags ---" />
     <echo message="copy.tomcat-ajp.jar=${copy.tomcat-ajp.jar}" />
+    <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
     <echo message="copy.javamail.jar=${copy.javamail.jar}" />
     <echo message="copy.jmxri.jar=${copy.jmxri.jar}" />
@@ -431,6 +470,7 @@
     <echo message="copy.jta.jar=${copy.jta.jar}" />
     <echo message="copy.ldap.jar=${copy.ldap.jar}" />
     <echo message="copy.modeler.jar=${copy.modeler.jar}" />
+    <echo message="copy.pool.jar=${copy.pool.jar}" />
     <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
     <echo message="copy.xerces.jar=${copy.xerces.jar}" />
 
@@ -462,6 +502,9 @@
     <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
   </target>
+  <target name="copy-dbcp.jar" if="copy.dbcp.jar">
+    <copy todir="${catalina.build}/server/lib" file="${commons-dbcp.jar}"/>
+  </target>
   <target name="copy-jdbc20ext.jar" if="copy.jdbc20ext.jar">
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
   </target>
@@ -492,6 +535,9 @@
   <target name="copy-modeler.jar" if="copy.modeler.jar">
     <copy todir="${catalina.build}/server/lib" file="${commons-modeler.jar}"/>
   </target>
+  <target name="copy-pool.jar" if="copy.pool.jar">
+    <copy todir="${catalina.build}/server/lib" file="${commons-pool.jar}"/>
+  </target>
   <target name="copy-tomcat-util.jar">
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
@@ -505,7 +551,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jmxtools.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-dbcp.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jmxtools.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
