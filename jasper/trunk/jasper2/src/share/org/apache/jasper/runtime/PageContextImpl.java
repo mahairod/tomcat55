@@ -534,7 +534,7 @@ public class PageContextImpl extends PageContext {
                 ExpressionEvaluatorManager.EVALUATOR_CLASS );
         }
         catch( JspException e ) {
-            throw new RuntimeException( e );
+            throw new RuntimeException( e.toString() );
         }
     }
 
