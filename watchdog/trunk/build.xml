@@ -31,6 +31,7 @@
 
       <copydir src="src/bin" dest="${watchdog.build}"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
+
       <copydir src="src/props" dest="${watchdog.build}/props"/>
 
       <copyfile src="../jakarta-tools/moo.jar" 
@@ -71,6 +72,7 @@
 
       <copydir src="src/bin" dest="${watchdog.dist}"/>
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
+      <copyfile src="src/conf/dist-test.xml" dest="${watchdog.dist}/conf/server-test.xml" />
       <copydir src="src/props" dest="${watchdog.dist}/props"/>
 
       <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
