@@ -52,6 +52,9 @@
       <fix>
         <bug>32082</bug>: Added protected getPrincipals method to MemoryRealm for easier extension. (yoavs)
       </fix>
+      <fix>
+        <bug>32023</bug>: CGIServlet fails to handle post message with multipart/form data. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
