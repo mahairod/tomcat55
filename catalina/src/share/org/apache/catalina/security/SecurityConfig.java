@@ -72,7 +72,8 @@ public final class SecurityConfig{
     private final static String PACKAGE_ACCESS =  "org.apache.catalina." 
                                                 + ",org.apache.jasper."
                                                 + ",org.apache.coyote."
-                                                + ",org.apache.tomcat.";
+                                                + ",org.apache.tomcat."
+                                                + ".org.apache.jk.";
     private final static String PACKAGE_DEFINITION= "java.,"
                                                 + PACKAGE_ACCESS;
     /**
@@ -115,16 +116,18 @@ public final class SecurityConfig{
      * @param properties the package.* property.
      */
     private final void setSecurityProperty(String properties, String packageList){
-        String definition = Security.getProperty(properties);
-        if( definition != null && definition.length() > 0 )
-            definition += ",";
-        else
-            definition = "sun.,";
-        
-        Security.setProperty(properties,
-            // FIX ME package "javax." was removed to prevent HotSpot
-            // fatal internal errors
-            definition + packageList);        
+        if (System.getSecurityManager() != null){
+            String definition = Security.getProperty(properties);
+            if( definition != null && definition.length() > 0 )
+                definition += ",";
+            else
+                definition = "sun.,";
+
+            Security.setProperty(properties,
+                // FIX ME package "javax." was removed to prevent HotSpot
+                // fatal internal errors
+                definition + packageList);      
+        }
     }
     
     
