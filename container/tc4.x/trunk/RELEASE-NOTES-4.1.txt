@@ -1041,6 +1041,11 @@ Jasper Bug Fixes:
          PageContextImpl:
          pushBody()/popBody() error on tomcat 4.1.X.
 
+[4.1.20] #15845
+         Fixed JSP page compiles so that objects created for performing
+         the JSP page compiles which are not reused are dereferenced so
+         they are eligible for GC. This should reduce the memory footprint
+         and improve GC performance.
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
