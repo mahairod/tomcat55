@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  * 
@@ -98,7 +95,8 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @author Mark Roth
  */
 public class Compiler {
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( Compiler.class );
 
     // ----------------------------------------------------------------- Static
 
@@ -158,10 +156,14 @@ public class Compiler {
         } else {
             bl.setMessageOutputLevel( Project.MSG_INFO );
         }
+        if( log.isTraceEnabled() ) {
+            bl.setMessageOutputLevel( Project.MSG_VERBOSE );
+        }
         project.addBuildListener( bl );
         
         if( options.getCompiler() != null ) {
-            Constants.jasperLog.log("Compiler " + options.getCompiler(), Logger.ERROR );
+            if( log.isDebugEnabled() )
+                log.debug("Compiler " + options.getCompiler() );
             project.setProperty("build.compiler", options.getCompiler() );
         }
         project.init();
@@ -175,12 +177,13 @@ public class Compiler {
     }
 
     static class JasperAntLogger extends DefaultLogger {
+        private static org.apache.commons.logging.Log log=
+            org.apache.commons.logging.LogFactory.getLog( Compiler.class );
         protected void printMessage(final String message,
                                     final PrintStream stream,
                                     final int priority) {
-            Constants.jasperLog.log( message, Logger.INFORMATION );
+            log.info( message );
         }
-
     }
 
     // --------------------------------------------------------- Public Methods
@@ -192,6 +195,7 @@ public class Compiler {
     public void generateJava()
         throws FileNotFoundException, JasperException, Exception
     {
+        long t1=System.currentTimeMillis();
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
 	JspConfig jspConfig = options.getJspConfig();
@@ -255,6 +259,7 @@ public class Compiler {
 	// Validate and process attributes
 	Validator.validate(this, pageNodes);
 
+        long t2=System.currentTimeMillis();
 	// Dump out the page (for debugging)
 	// Dumper.dump(pageNodes);
 
@@ -265,6 +270,8 @@ public class Compiler {
 	// this compilation unit.
 	TagFileProcessor.loadTagFiles(this, pageNodes);
 
+        long t3=System.currentTimeMillis();
+        
 	// Determine which custom tag needs to declare which scripting vars
 	ScriptingVariabler.set(pageNodes);
 
@@ -272,6 +279,12 @@ public class Compiler {
 	Generator.generate(writer, this, pageNodes);
         writer.close();
 
+        long t4=System.currentTimeMillis();
+        if( t4-t1 > 500 ) {
+            log.info("Generated "+ javaFileName + " total=" +
+                     (t4-t1) + " generate=" + ( t4-t3 ) + " validate=" + ( t2-t1 ));
+        }
+        
         //JSR45 Support - note this needs to be checked by a JSR45 guru
 	SmapUtil.generateSmap(ctxt, pageNodes, true);
     }
@@ -282,6 +295,7 @@ public class Compiler {
     public void generateClass()
         throws FileNotFoundException, JasperException, Exception
     {
+        long t1=System.currentTimeMillis();
 	String javaEncoding = "UTF8"; 
         String javaFileName = ctxt.getServletJavaFileName();
         String classpath = ctxt.getClassPath(); 
@@ -303,6 +317,10 @@ public class Compiler {
         path.setPath(System.getProperty("java.class.path") + sep
                      + classpath);
 
+        if( log.isDebugEnabled() )
+            log.debug( "Using classpath: " + System.getProperty("java.class.path") + sep
+                       + classpath);
+        
         // Initializing sourcepath
         Path srcPath = new Path(project);
         srcPath.setPath(options.getScratchDir().getAbsolutePath());
@@ -328,8 +346,7 @@ public class Compiler {
                 javac.execute();
             }
         } catch (BuildException e) {
-            //   System.out.println("Javac execption ");
-            //   e.printStackTrace(System.out);
+            log.error( "Javac execption ", e);
             success = false;
         }
 
@@ -342,12 +359,15 @@ public class Compiler {
         }
 
         if (!success) {
-            Constants.jasperLog.log( "Error compiling file: " + javaFileName + " " + errorReport,
-                                     Logger.ERROR);
+            log.error( "Error compiling file: " + javaFileName + " " + errorReport);
             if(errorReport!=null ) 
                 errDispatcher.javacError(errorReport, javaFileName, pageNodes);
         }
 
+        long t2=System.currentTimeMillis();
+        if( t2-t1 > 500 ) {
+            log.info( "Compiled " + javaFileName + " " + (t2-t1));
+        }
         //JSR45 Support - note this needs to be checked by a JSR45 guru
 	SmapUtil.installSmap(ctxt);
     }
@@ -408,7 +428,8 @@ public class Compiler {
         }
         targetLastModified = targetFile.lastModified();
         if (targetLastModified < jspRealLastModified) {
-            //System.out.println("Compiler: outdated, " + targetFile + " " + targetLastModified );
+            if( log.isDebugEnabled() )
+                log.debug("Compiler: outdated: " + targetFile + " " + targetLastModified );
             return true;
         }
 
@@ -495,6 +516,8 @@ public class Compiler {
             String classFileName = ctxt.getServletClassName();
             if (classFileName != null) {
                 File classFile = new File(classFileName);
+                if( log.isDebugEnabled() )
+                    log.debug( "Deleting " + classFile );
                 classFile.delete();
             }
         } catch (Exception e) {
@@ -504,6 +527,8 @@ public class Compiler {
             String javaFileName = ctxt.getServletJavaFileName();
             if (javaFileName != null) {
                 File javaFile = new File(javaFileName);
+                if( log.isDebugEnabled() )
+                    log.debug( "Deleting " + javaFile );
                 javaFile.delete();
             }
         } catch (Exception e) {
