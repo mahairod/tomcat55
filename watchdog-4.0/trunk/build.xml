@@ -90,6 +90,7 @@
       <fileset dir="." includes="LICENSE"/>
       <fileset dir="." includes="README.txt"/>
       <fileset dir="." includes="RUNNING.txt"/>
+      <fileset dir="." includes="RELEASE*.txt"/>
     </copy>
 
     <!-- Configuration files -->
