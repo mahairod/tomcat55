@@ -9,7 +9,6 @@ Structure of the utilies:
 - executables/vdmonisvc: project files for the sevice wrapper.
 - lib: contains the common include file.
 - moni: contains sources of the vdmoniadm and vdmonisvc.
-- moni_nt: contains sources of the service low level routines.
 - service: contains the sources and the project for the test installer.
 - signals: contains the kill() emulation logic.
 - supcalls_nt: contains the environment emulation logic.

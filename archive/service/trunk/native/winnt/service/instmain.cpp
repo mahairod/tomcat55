@@ -26,8 +26,29 @@ VOID Usage()
 	return;
 }
 
+/* from src/os/win32/service.c (httpd-1.3!) */
 
-BOOL RemoveSvc (VOID)
+BOOL isWindowsNT(void)
+{
+    static BOOL once = FALSE;
+    static BOOL isNT = FALSE;
+ 
+    if (!once)
+    {
+        OSVERSIONINFO osver;
+        osver.dwOSVersionInfoSize = sizeof(osver);
+        if (GetVersionEx(&osver))
+            if (osver.dwPlatformId == VER_PLATFORM_WIN32_NT)
+                isNT = TRUE;
+        once = TRUE;
+    }
+    return isNT;
+}                                                                               
+
+
+/* remove the service (first stop it!) NT version */
+
+BOOL RemoveSvcNT (VOID)
 {
 	BOOL			removed;
 	SC_HANDLE		hManager;
@@ -76,8 +97,43 @@ BOOL RemoveSvc (VOID)
 	return removed;
 } /* RemoveSvc */
 
+/* remove service (non NT) stopping it looks ugly!!! */
+BOOL RemoveSvc (VOID)
+{
+	HKEY hkey;
+	DWORD rv;
 
-BOOL InstallSvc (CHAR *svcExePath)
+	rv = RegOpenKey(HKEY_LOCAL_MACHINE,
+		"Software\\Microsoft\\Windows\\CurrentVersion\\RunServices",
+		&hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not open the RunServices registry key.\r\n";
+		return FALSE;
+	}
+	rv = RegDeleteValue(hkey, SZSERVICENAME);
+	RegCloseKey(hkey);
+	if (rv != ERROR_SUCCESS)
+		cout << "Could not delete the RunServices entry.\r\n";
+
+	rv = RegOpenKey(HKEY_LOCAL_MACHINE,
+		"SYSTEM\\CurrentControlSet\\Services", &hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not open the Services registry key.\r\n";
+		return FALSE;
+	}
+	rv = RegDeleteKey(hkey, SZSERVICENAME);
+	RegCloseKey(hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not delete the Services registry key.\r\n";
+		return FALSE;
+	}
+	return TRUE;
+}
+
+
+/* Install service (NT version) */
+
+BOOL InstallSvcNT (CHAR *svcExePath)
 {
 	BOOL		installed;
 	SC_HANDLE	hManager;
@@ -106,9 +162,69 @@ BOOL InstallSvc (CHAR *svcExePath)
 			CloseServiceHandle(hService);
 			installed = TRUE;
 		}
+	} else {
+		cout << "OpenSCManager failed\r\n";
 	}
 	return installed;
-} /* InstallSvc */
+}
+
+/* Install service */
+
+BOOL InstallSvc (CHAR *svcExePath)
+{
+	HKEY		hkey;
+	DWORD rv;
+	char szPath[MAX_PATH];
+
+	cout << "InstallSvc for non-NT\r\n";
+
+	rv = RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows"
+			  "\\CurrentVersion\\RunServices", &hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not open the RunServices registry key\r\n";
+		return FALSE;
+	}
+        rv = RegSetValueEx(hkey, SZSERVICENAME, 0, REG_SZ,
+			   (unsigned char *) svcExePath,
+			   strlen(svcExePath) + 1);
+	RegCloseKey(hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not add ";
+		cout << SZSERVICENAME;
+		cout << ":";
+		cout << svcExePath;
+		cout << "to RunServices Registry Key\r\n";
+		return FALSE;
+	}
+
+	strcpy(szPath,
+		 "SYSTEM\\CurrentControlSet\\Services\\");
+	strcat(szPath,SZSERVICENAME);
+	rv = RegCreateKey(HKEY_LOCAL_MACHINE, szPath, &hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not create/open the ";
+		cout << szPath;
+		cout << " registry key\r\n";
+		return FALSE;
+	}
+	rv = RegSetValueEx(hkey, "ImagePath", 0, REG_SZ,
+			   (unsigned char *) svcExePath,
+			   strlen(svcExePath) + 1);
+	if (rv != ERROR_SUCCESS) {
+		RegCloseKey(hkey);
+		cout << "Could not add ImagePath to our Registry Key\r\n";
+		return FALSE;
+	}
+	rv = RegSetValueEx(hkey, "DisplayName", 0, REG_SZ,
+			   (unsigned char *) SZSERVICEDISPLAYNAME,
+			   strlen(SZSERVICEDISPLAYNAME) + 1);
+	RegCloseKey(hkey);
+	if (rv != ERROR_SUCCESS) {
+		cout << "Could not add DisplayName to our Registry Key\r\n";
+		return FALSE;
+	}
+	return TRUE;
+}
 
 /*
  * Fill the registry with the environment variables
@@ -126,8 +242,8 @@ BOOL InstallEnv (char *var, char *value)
 			// key is created or opened
 			RegSetValueEx(hKey,var,0,REG_SZ,(BYTE *)value,lstrlen(value)+1);
 			RegCloseKey(hKey);
-			}
 			installed = TRUE;
+			}
 	return installed;
 } /* InstallEnv */
 
@@ -139,11 +255,22 @@ BOOL InstallEnv (char *var, char *value)
 
 INT main (INT argc, CHAR *argv[])
 {
+  BOOL done;
 
-  cout << "\r\n - Copyright (C) 1998 by Siemens Nixdorf Informationssystem AG\r\n\r\n";
+  cout << "\r\n - Copyright (c) 2001 The Apache Software Foundation. \r\n";
+  cout << "\r\n";
+
   if (argc==1) {
 	/* install jsvcservice.exe as a service */
-	InstallSvc(SZDEFMONISVCPATH);
+	if (isWindowsNT())
+		done = InstallSvcNT(SZDEFMONISVCPATH);
+	else
+		done = InstallSvc(SZDEFMONISVCPATH);
+
+	if (done)
+		cout << "InstallSvc done\r\n";
+	else
+		cout << "InstallSvc failed\r\n";
 
 	/* install the environment variable in registry */
 	InstallEnv("JAKARTA_HOME",SZJAKARTA_HOME);
@@ -158,8 +285,12 @@ INT main (INT argc, CHAR *argv[])
 
   if (argc==2 && strcmp(argv[1],"-REMOVE")==0) {
 	// remove the  service. removing the keys not yet done!!!
-	cout << "\r\n - removing Java Service...\r\n\r\n"; 
-	if (RemoveSvc()) {
+	cout << "\r\n - removing Java Service...\r\n\r\n";
+	if (isWindowsNT())
+		done = RemoveSvcNT();
+	else
+		done = RemoveSvc();
+	if (!done) {
 		cout << "\r\n - REMOVE FAILED....\r\n\r\n"; 
 		return(2);
 		}
