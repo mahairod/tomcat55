@@ -376,8 +376,14 @@ public class StandardHostDeployer implements Deployer {
                               contextPath, war.toString()));
         String url = war.toString();
         String docBase = null;
+        boolean isWAR = false;
         if (url.startsWith("jar:")) {
             url = url.substring(4, url.length() - 2);
+            if (!url.toLowerCase().endsWith(".war")) {
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.warURL", url));
+            }
+            isWAR = true;
         }
         if (url.startsWith("file://"))
             docBase = url.substring(7);
@@ -386,6 +392,11 @@ public class StandardHostDeployer implements Deployer {
         else
             throw new IllegalArgumentException
                 (sm.getString("standardHost.warURL", url));
+
+        // Expand war file if host wants wars unpacked
+        if (isWAR && host.isUnpackWARs()) {
+            docBase = ExpandWar.expand(host, war, contextPath);
+        }
 
         // Install the new web application
         try {
@@ -457,12 +468,14 @@ public class StandardHostDeployer implements Deployer {
 
         // Calculate the document base for the new web application (if needed)
         String docBase = null; // Optional override for value in config file
+        boolean isWAR = false;
         if (war != null) {
             String url = war.toString();
             log.info(sm.getString("standardHost.installingWAR", url));
             // Calculate the WAR file absolute pathname
             if (url.startsWith("jar:")) {
                 url = url.substring(4, url.length() - 2);
+                isWAR = true;
             }
             if (url.startsWith("file://"))
                 docBase = url.substring(7);
@@ -472,6 +485,11 @@ public class StandardHostDeployer implements Deployer {
                 throw new IllegalArgumentException
                     (sm.getString("standardHost.warURL", url));
 
+        }
+
+        // Expand war file if host wants wars unpacked
+        if (isWAR && host.isUnpackWARs()) {
+            docBase = ExpandWar.expand(host, war);
         }
 
         // Install the new web application
@@ -653,13 +671,18 @@ public class StandardHostDeployer implements Deployer {
                     if (contextPath.length() == 0 && filename.equals("ROOT") ||
                         filename.equals(contextPath.substring(1))) {
                         if (!isWAR) {
+                            long contextLastModified = 
+                                contextFile.lastModified();
                             if (contextFile.isDirectory()) {
                                 deleteDir(contextFile);
                             }
                             if (host.isUnpackWARs()) {
                                 File contextWAR = new File(context.getDocBase() + ".war");
                                 if (contextWAR.exists()) {
-                                    contextWAR.delete();
+                                    if (contextLastModified 
+                                        > contextWAR.lastModified()) {
+                                        contextWAR.delete();
+                                    }
                                 }
                             }
                         } else {
