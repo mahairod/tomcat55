@@ -63,7 +63,7 @@ fi
 oldCP=$CLASSPATH
  
 CLASSPATH=.
-for i in ${TOMCAT_HOME}/lib/* ; do
+for i in ${TOMCAT_HOME}/lib/container/* ${TOMCAT_HOME}/lib/common/* ; do
   CLASSPATH=${CLASSPATH}:$i
 done
 
