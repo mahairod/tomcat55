@@ -40,12 +40,12 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.4/2.0</td>
-  <td>5.0.1 Alpha</td>
+  <td>5.0.0 Alpha</td>
 </tr>
 
 <tr>
   <td>2.3/1.2</td>
-  <td>4.1.12</td>
+  <td>4.1.17</td>
 </tr>
 
 <tr>
@@ -75,7 +75,7 @@ Catalina) that is based on completely new architecture.  The 4.x releases
 implement the <strong>Servlet 2.3</strong> and <strong>JSP 1.2</strong>
 specifications.</p>
 
-<p><strong>Tomcat 4.1.x</strong>.  Tomcat 4.1.12 Stable is the latest release.
+<p><strong>Tomcat 4.1.x</strong>.  Tomcat 4.1.17 Stable is the latest release.
 Tomcat 4.1 is a refactoring of Tomcat 4.0.x, and contains significant 
 enhancements, including:
 <ul>
@@ -91,7 +91,7 @@ from build.xml scripts</li>
 </ul>
 </p>
 
-<p><strong>Tomcat 4.0.x</strong>.  Tomcat 4.0.5 is the old production
+<p><strong>Tomcat 4.0.x</strong>.  Tomcat 4.0.6 is the old production
 quality release.  Tomcat 4.0 is the next generation of Tomcat.  The 4.0 servlet
 container (Catalina) has been developed from the ground up for flexibility and
 performance.  Version 4.0 implements the final released versions of the Servlet
@@ -148,6 +148,8 @@ There is no active development ongoing for Tomcat 3.1.x.  Users of Tomcat
 3.1 should update to 3.1.1 to close the security holes and they are 
 strongly encouraged to migrate to the current production release, Tomcat 
 3.3.</p> 
+
+<p><strong>Tomcat 3.0.x</strong>. Initial Tomcat release.</p>
 
 </subsection>
 

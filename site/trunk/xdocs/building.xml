@@ -106,14 +106,14 @@ The build can be controlled by creating a ${tomcat.source}/build.properties
   file, and adding the following content to it:
 <code><br/>
     # ----- Proxy setup -----<br/>
-    # Uncomment if using a proxy server<br/>
+    # Uncomment if using a proxy server.<br/>
     #proxy.host=proxy.domain<br/>
     #proxy.port=8080<br/>
     #proxy.use=on<br/>
 <br/>
     # ----- Default Base Path for Dependent Packages -----<br/>
-    # Replace this path with the directory path where dependencies binaries<br/>
-    # should be downloaded<br/>
+    # Replace this path with the directory path where<br/>
+    # dependencies binaries should be downloaded.<br/>
     base.path=/usr/local<br/>
 </code>
 </p>
