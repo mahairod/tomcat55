@@ -640,13 +640,12 @@ public class PageContextImpl
     /**
      * VariableResolver interface
      */
-    public Object resolveVariable( String pName, Object pContext )
+    public Object resolveVariable( String pName )
         throws ELException
     {
-        // Note: pContext will be going away.
         try {
-            return PageContextImpl.variableResolver.resolveVariable(
-                pName, this );
+            return PageContextImpl.variableResolver.resolveVariable( pName, 
+                this );
         }
         catch( org.apache.jasper.runtime.el.jstl.ELException e ) {
             throw new ELException( e );

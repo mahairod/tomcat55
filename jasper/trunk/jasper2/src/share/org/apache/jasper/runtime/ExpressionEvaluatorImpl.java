@@ -74,7 +74,7 @@ import org.apache.jasper.runtime.el.jstl.ELEvaluator;
  */
 
 public class ExpressionEvaluatorImpl 
-    implements ExpressionEvaluator
+    extends ExpressionEvaluator
 {
     private PageContextImpl pageContext;
 
@@ -153,7 +153,7 @@ public class ExpressionEvaluatorImpl
             // pContext parameter is going away in JSP 2.0
             Object result;
             try {
-                result = delegate.resolveVariable( pName, null );
+                result = delegate.resolveVariable( pName );
             }
             catch( ELException e ) {
                 throw new org.apache.jasper.runtime.el.jstl.ELException( 
@@ -255,7 +255,7 @@ public class ExpressionEvaluatorImpl
      * can be moved out of JSTL into its own project.
      */
     private class JSTLExpression 
-        implements Expression
+        extends Expression
     {
         private String expression;
         private Class expectedType;

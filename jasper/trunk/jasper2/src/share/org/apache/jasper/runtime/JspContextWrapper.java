@@ -303,16 +303,14 @@ public class JspContextWrapper
     /**
      * VariableResolver interface
      */
-    public Object resolveVariable( String pName, Object pContext )
+    public Object resolveVariable( String pName )
         throws ELException
     {
 	if (invokingJspCtxt instanceof PageContextImpl) {
-	    return ((PageContextImpl) invokingJspCtxt).resolveVariable(pName,
-								       pContext);
+	    return ((PageContextImpl) invokingJspCtxt).resolveVariable(pName);
 	}
 
-	return ((JspContextWrapper) invokingJspCtxt).resolveVariable(pName,
-								     pContext);
+	return ((JspContextWrapper) invokingJspCtxt).resolveVariable(pName);
     }
 
     /**
