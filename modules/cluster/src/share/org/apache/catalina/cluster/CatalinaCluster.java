@@ -107,5 +107,6 @@ public interface CatalinaCluster
     
     public Manager getManager(String name);
     public void removeManager(String name);
+    public void addManager(String name, ClusterManager manager);
     
 }
