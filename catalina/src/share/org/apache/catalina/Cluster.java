@@ -75,20 +75,6 @@ public interface Cluster {
     public Container getContainer();
 
     /**
-     * The debug detail level for this Cluster
-     *
-     * @param debug The debug level
-     */
-    public void setDebug(int debug);
-
-    /**
-     * Returns the debug level for this Cluster
-     *
-     * @return The debug level
-     */
-    public int getDebug();
-
-    /**
      * Set the protocol parameters.
      *
      * @param protocol The protocol used by the cluster
