@@ -99,14 +99,6 @@ public final class EmbededServletOptions implements Options {
     public boolean keepGenerated = true;
 
     /**
-     * Indicates if "large" files should be supported. What this essentially
-     * means is that we generated code so that the HTML data in a JSP
-     * file is stored separately as opposed to those constant string
-     * data being used literally in the generated servlet. 
-     */
-    public boolean largeFile = false;
-
-    /**
      * Determines whether tag handler pooling is enabled.
      */
     public boolean poolingEnabled = true;
@@ -189,13 +181,6 @@ public final class EmbededServletOptions implements Options {
         return keepGenerated;
     }
     
-    /**
-     * Getter method to determine large file support.
-     */
-    public boolean getLargeFile() {
-        return largeFile;
-    }
-
     public boolean isPoolingEnabled() {
 	return poolingEnabled;
     }
@@ -318,16 +303,6 @@ public final class EmbededServletOptions implements Options {
             else Constants.message ("jsp.warning.keepgen", Logger.WARNING);
         }
             
-
-        String largeFile = config.getInitParameter("largefile"); 
-        if (largeFile != null) {
-            if (largeFile.equalsIgnoreCase("true"))
-                this.largeFile = true;
-            else if (largeFile.equalsIgnoreCase("false"))
-                this.largeFile = false;
-            else Constants.message ("jsp.warning.largeFile", Logger.WARNING);
-        }
-	
         String mapFile = config.getInitParameter("mappedfile"); 
         if (mapFile != null) {
             if (mapFile.equalsIgnoreCase("true"))

@@ -80,12 +80,6 @@ public interface Options {
      */
     public boolean getKeepGenerated();
 
-
-    /**
-     * Are we supporting large files?
-     */
-    public boolean getLargeFile();
-
     /**
      * Returns true if tag handler pooling is enabled, false otherwise.
      */

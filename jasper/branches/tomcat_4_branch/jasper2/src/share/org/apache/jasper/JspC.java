@@ -146,7 +146,6 @@ public class JspC implements Options {
     //public static final String SWITCH_XML_OUTPUT = "-xml";
   
     
-    boolean largeFile = false;
     boolean mappedFile = false;
 
     int jspVerbosityLevel = Logger.INFORMATION;
@@ -203,10 +202,6 @@ public class JspC implements Options {
         return true;
     }
     
-    public boolean getLargeFile() {
-        return largeFile;
-    }
-
     public boolean isPoolingEnabled() {
         return true;
     }
