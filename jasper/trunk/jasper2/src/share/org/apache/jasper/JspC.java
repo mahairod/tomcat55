@@ -683,6 +683,7 @@ public class JspC implements Options {
                     }
                     if (line.indexOf(insertEndMarker) >= 0) {
                         line = reader.readLine();
+                        line = reader.readLine();
                         if (line == null) {
                             return;
                         }
@@ -696,7 +697,7 @@ public class JspC implements Options {
                     break;
             }
             if (pos >= 0) {
-                writer.println(line.substring(0, pos));
+                writer.print(line.substring(0, pos));
                 break;
             } else {
                 writer.println(line);
