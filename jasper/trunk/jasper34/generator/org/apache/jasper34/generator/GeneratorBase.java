@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -62,21 +58,148 @@
 package org.apache.jasper34.generator;
 
 import org.apache.jasper34.core.*;
-import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
+
+import java.lang.reflect.*;
+
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 /**
  * Helpful abstract base class that generators can extend. 
  *
  * @author Anil K. Vijendran
+ * @author Costin Manolache
  */
-abstract class GeneratorBase implements Generator {
+public abstract class GeneratorBase {
     protected JspCompilationContext ctxt;
-
-    public void init(JspCompilationContext ctxt) throws JasperException {
-        this.ctxt = ctxt;
+    Mark start, stop;
+    //    protected CommentGenerator commentGenerator;
+    
+    GeneratorBase() {
     }
     
-    public boolean generateCoordinates(Class phase) {
-        return true;
+    GeneratorBase( Mark start, Mark stop) {
+	this.start = start;
+	this.stop = stop;
     }
+
+    //     public void setCommentGenerator( CommentGenerator commentGenerator ) {
+    // 	this.commentGenerator=commentGenerator;
+    //     }
+
+    public void setMark( Mark start, Mark stop) {
+	this.start = start;
+	this.stop = stop;
+    }
+
+    // -------------------- Generator hooks --------------------
+
+    public static final int CLASS_DECLARATION_HOOK = 0;
+    public static final int DESTROY_METHOD_HOOK = 1;
+    public static final int FILE_DECLARATION_HOOK = 2;
+    public static final int INIT_METHOD_HOOK = 3;
+    public static final int SERVICE_METHOD_HOOK = 4;
+    public static final int STATIC_INITIALIZER_HOOK = 5;
+
+    public static String hookNames[] = {
+	"generateClassDeclaration",
+	"generateDestroyMethod",
+	"generateFileDeclaration",
+	"generateInitMethod",
+	"generateServiceMethod",
+	"generateStaticInitializer"
+    };
+    
+    static final int HOOK_COUNT=6;
+    
+    public boolean hasHook( int hookId ) {
+	if( hooks==null ) initHooks();
+	return hooks[hookId];
+    }
+
+    // -------------------- New interface --------------------
+
+    public void generateClassDeclaration( ServletWriter out )
+	throws JasperException
+    {
+    }
+
+    public void generateDestroyMethod( ServletWriter out )
+	throws JasperException
+    {
+    }
+    public void generateFileDeclaration( ServletWriter out )
+	throws JasperException
+    {
+    }
+    public void generateInitMethod( ServletWriter out )
+	throws JasperException
+    {
+    }
+    public void generateServiceMethod( ServletWriter out )
+	throws JasperException
+    {
+    }
+    public void generateStaticInitializer( ServletWriter out )
+	throws JasperException
+    {
+    }
+
+    // -------------------- Old interface --------------------
+    /*
+     * This is really a no-op.
+     */
+    public boolean generateCoordinates(Class phase) {
+	return true; // generator.generateCoordinates(phase);
+	// will be overriden if someone needs to
+    }
+
+    // void init(JspCompilationContext ctxt) throws JasperException;
+    public void init(JspCompilationContext ctxt)
+	throws JasperException
+    {
+	this.ctxt = ctxt;
+	// generator.init(ctxt);
+	// will be overriden
+    }
+
+    // -------------------- Utils --------------------
+    private boolean hooks[]=null;
+
+    private void initHooks() {
+	hooks=new boolean[ HOOK_COUNT ];
+	for( int i=1; i<HOOK_COUNT; i++ ) {
+	    if( hasHook( this, hookNames[i] ) )
+		hooks[i]=true;
+	    else
+		hooks[i]=false;
+	}
+    }
+
+    private boolean hasHook(  Object obj, String methodN ) {
+	try {
+	    Method myMethods[]=obj.getClass().getMethods();
+	    for( int i=0; i< myMethods.length; i++ ) {
+		if( methodN.equals ( myMethods[i].getName() )) {
+		    // check if it's overriden
+		    Class declaring=myMethods[i].getDeclaringClass();
+		    Class parentOfDeclaring=declaring.getSuperclass();
+		    // this works only if the base class doesn't extend
+		    // another class.
+
+		    // if the method is declared in a top level class
+		    // like BaseInterceptor parent is Object, otherwise
+		    // parent is BaseInterceptor or an intermediate class
+		    if( ! "java.lang.Object".
+			equals(parentOfDeclaring.getName() )) {
+			return true;
+		    }
+		}
+	    }
+	} catch ( Exception ex ) {
+	    ex.printStackTrace();
+	}
+	return false;
+    }
+
 }
