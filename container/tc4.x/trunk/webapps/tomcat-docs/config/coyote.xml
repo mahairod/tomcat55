@@ -8,7 +8,7 @@
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
-    <title>The HTTP/1.1 Connector</title>
+    <title>The Coyote HTTP/1.1 Connector</title>
   </properties>
 
 <body>
@@ -16,10 +16,7 @@
 
 <section name="Introduction">
 
-  <p><b>IMPORTANT NOTE: The HTTP/1.1 connector is now deprecated. Use
-  the Coyote HTTP/1.1 connector instead.</b></p>
-
-  <p>The <strong>HTTP/1.1 Connector</strong> element represents a
+  <p>The <strong>Coyote HTTP/1.1 Connector</strong> element represents a
   <strong>Connector</strong> component that supports the HTTP/1.1 protocol.
   It enables Catalina to function as a stand-alone web server, in addition
   to its ability to execute servlets and JSP pages.  A particular instance
@@ -103,8 +100,9 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>HTTP/1.1 Connector</strong> is
-  <strong>org.apache.catalina.connector.http.HttpConnector</strong>.
+  <p>The standard implementation of the <strong>Coyote HTTP/1.1 
+  Connector</strong> is 
+  <strong>org.apache.coyote.tomcat4.CoyoteConnector</strong>.
   It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
 
@@ -115,12 +113,6 @@
       all possible request processing threads are in use.  Any requests
       received when the queue is full will be refused.  The default
       value is 10.</p>
-    </attribute>
-
-    <attribute name="allowChunking" required="false">
-      <p>If set to <code>true</code>, chunked output is allowed when
-      processing HTTP/1.1 requests.  This is set to <code>true</code>
-      by default.</p>
     </attribute>
 
     <attribute name="address" required="false">
@@ -216,10 +208,12 @@
 
   <p>This <strong>Connector</strong> supports all of the required features
   of the HTTP/1.1 protocol, as described in RFC 2616, including persistent
-  connections and chunked encoding.  If the client (typically a browser)
-  supports only HTTP/1.0, the <strong>Connector</strong> will gracefully
-  fall back to supporting this protocol as well.  No special configuration
-  is required to enable this support.</p>
+  connections, pipelining, expectations and chunked encoding.  If the client 
+  (typically a browser) supports only HTTP/1.0, the 
+  <strong>Connector</strong> will gracefully fall back to supporting this 
+  protocol as well.  No special configuration is required to enable this 
+  support. The <strong>Connector</strong> also supports HTTP/1.0 
+  keep-alive.</p>
 
   <p>RFC 2616 requires that HTTP servers always begin their responses with
   the highest HTTP version that they claim to support.  Therefore, this
