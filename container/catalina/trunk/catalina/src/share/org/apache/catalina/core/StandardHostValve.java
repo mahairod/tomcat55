@@ -182,10 +182,11 @@ final class StandardHostValve
         // Update the session last access time for our session (if any)
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String sessionId = hreq.getRequestedSessionId();
+        Session session = null;
         if (sessionId != null) {
             Manager manager = context.getManager();
             if (manager != null) {
-                Session session = manager.findSession(sessionId);
+                session = manager.findSession(sessionId);
                 if (session != null)
                     session.access();
             }
@@ -205,6 +206,11 @@ final class StandardHostValve
             status(request, response);
         }
 
+        // Release the session
+        if (session != null)
+            session.endAccess();
+
+        // Restore the context classloader
         Thread.currentThread().setContextClassLoader
             (StandardHostValve.class.getClassLoader());
 
