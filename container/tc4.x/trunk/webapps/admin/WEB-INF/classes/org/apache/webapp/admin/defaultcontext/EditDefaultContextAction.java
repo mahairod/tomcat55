@@ -62,28 +62,21 @@
 package org.apache.webapp.admin.defaultcontext;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
 
 import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
@@ -214,6 +207,12 @@ public class EditDefaultContextAction extends Action {
         DefaultContextForm defaultContextFm = new DefaultContextForm();
         session.setAttribute("defaultContextForm", defaultContextFm);
         defaultContextFm.setAdminAction("Edit");
+
+        StringBuffer parent = new StringBuffer(TomcatTreeBuilder.SERVICE_TYPE);
+        parent.append(",name=");
+        parent.append(cname.getKeyProperty("service"));
+        defaultContextFm.setParentObjectName(parent.toString());
+
         defaultContextFm.setObjectName(cname.toString());
         defaultContextFm.setLoaderObjectName(lname.toString());
         defaultContextFm.setManagerObjectName(mname.toString());
@@ -224,7 +223,6 @@ public class EditDefaultContextAction extends Action {
        
         String attribute = null;
         try {
-
             // Copy scalar properties
             attribute = "cookies";
             defaultContextFm.setCookies
@@ -243,30 +241,45 @@ public class EditDefaultContextAction extends Action {
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
             // loader properties
-            attribute = "debug";
-            defaultContextFm.setLdrDebugLvl
-                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
-            attribute = "checkInterval";
-            defaultContextFm.setLdrCheckInterval
-                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
-            attribute = "reloadable";
-            defaultContextFm.setLdrReloadable
-                (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
+            if (mBServer.isRegistered(lname)) {
+                attribute = "debug";
+                defaultContextFm.setLdrDebugLvl
+                    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+                attribute = "checkInterval";
+                defaultContextFm.setLdrCheckInterval
+                    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+                attribute = "reloadable";
+                defaultContextFm.setLdrReloadable
+                    (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
+            } else {
+                // Default loader initialisation
+                defaultContextFm.setLdrCheckInterval("15");
+                defaultContextFm.setLdrDebugLvl("0");
+                defaultContextFm.setLdrReloadable("false");
+            }
 
             // manager properties
-            attribute = "debug";
-            defaultContextFm.setMgrDebugLvl
-                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
-            attribute = "entropy";
-            defaultContextFm.setMgrSessionIDInit
-                ((String) mBServer.getAttribute(mname, attribute));
-            attribute = "maxActiveSessions";
-            defaultContextFm.setMgrMaxSessions
-                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
-            attribute = "checkInterval";
-            defaultContextFm.setMgrCheckInterval
-                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
-
+            if (mBServer.isRegistered(mname)) {
+                attribute = "debug";
+                defaultContextFm.setMgrDebugLvl
+                    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+                attribute = "entropy";
+                defaultContextFm.setMgrSessionIDInit
+                    ((String) mBServer.getAttribute(mname, attribute));
+                attribute = "maxActiveSessions";
+                defaultContextFm.setMgrMaxSessions
+                    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+                attribute = "checkInterval";
+                defaultContextFm.setMgrCheckInterval
+                    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            }
+            else{
+                // Default manager initialization
+                defaultContextFm.setMgrCheckInterval("60");
+                defaultContextFm.setMgrDebugLvl("0");
+                defaultContextFm.setMgrMaxSessions("-1");
+                defaultContextFm.setMgrSessionIDInit("");
+            }
         } catch (Throwable t) {
             getServlet().log
                 (resources.getMessage(locale, "users.error.attribute.get",
