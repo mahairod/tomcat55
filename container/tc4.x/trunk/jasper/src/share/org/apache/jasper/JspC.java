@@ -403,7 +403,7 @@ public class JspC implements Options { //, JspCompilationContext {
                 mappingout.write("\n\t<servlet-mapping>\n\t\t<servlet-name>");
                 mappingout.write(thisServletName);
                 mappingout.write("</servlet-name>\n\t\t<url-pattern>");
-                mappingout.write(file);
+                mappingout.write(file.replace('\\', '/'));
                 mappingout.write("</url-pattern>\n\t</servlet-mapping>\n");
 
             }
