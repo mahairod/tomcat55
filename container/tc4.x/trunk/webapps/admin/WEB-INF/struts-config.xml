@@ -81,6 +81,26 @@
     <form-bean      name="connectorsForm"
                     type="org.apache.webapp.admin.connector.ConnectorsForm"/>
 
+    <!-- ============= Valve Module ============= -->
+
+    <form-bean      name="accessLogValveForm"
+                    type="org.apache.webapp.admin.valve.AccessLogValveForm"/>
+
+    <form-bean      name="remoteAddrValveForm"
+                    type="org.apache.webapp.admin.valve.RemoteAddrValveForm"/>
+
+    <form-bean      name="remoteHostValveForm"
+                    type="org.apache.webapp.admin.valve.RemoteHostValveForm"/>
+
+    <form-bean      name="requestDumperValveForm"
+                    type="org.apache.webapp.admin.valve.RequestDumperValveForm"/>
+
+    <form-bean      name="singleSignOnValveForm"
+                    type="org.apache.webapp.admin.valve.SingleSignOnValveForm"/>
+
+    <form-bean      name="valvesForm"
+                    type="org.apache.webapp.admin.valve.ValvesForm"/>
+
     <!-- ========== User Database Module ========== -->
 
     <form-bean      name="databaseForm"
@@ -229,7 +249,33 @@
     <forward        name="Contexts"
                     path="/context/contexts.jsp"
                 redirect="false"/>
-        
+
+    <!-- ============ Valve Module ============== -->
+
+    <forward        name="AccessLogValve"
+                    path="/valve/accessLogValve.jsp"
+                redirect="false"/>
+                
+    <forward        name="RemoteAddrValve"
+                    path="/valve/remoteAddrValve.jsp"
+                redirect="false"/>
+                
+    <forward        name="RemoteHostValve"
+                    path="/valve/remoteHostValve.jsp"
+                redirect="false"/>
+
+    <forward        name="RequestDumperValve"
+                    path="/valve/requestDumperValve.jsp"
+                redirect="false"/>
+
+    <forward        name="SingleSignOn"
+                    path="/valve/singleSignOnValve.jsp"
+                redirect="false"/>
+
+    <forward        name="Valves"
+                    path="/valve/valves.jsp"
+                redirect="false"/>
+                        
     <!-- ========== User Database Module ========== -->
 
     <forward        name="Group"
@@ -544,6 +590,65 @@
                type="org.apache.webapp.admin.connector.SaveConnectorAction"
                name="connectorForm"
               input="/connector/connector.jsp"
+               scope="session"/>
+               
+   <!-- ============= Valve Module ============== -->
+
+    <!-- Set up Add Valve transaction -->
+    <action    path="/AddValve"
+               type="org.apache.webapp.admin.valve.AddValveAction">
+    </action>
+
+    <!-- Set up Delete Valves transaction -->
+    <action    path="/DeleteValve"
+               type="org.apache.webapp.admin.valve.DeleteValveAction"
+               name="valvesForm"
+               scope="request"/>
+
+    <!-- Perform Delete Valves transaction -->
+    <action    path="/DeleteValves"
+               type="org.apache.webapp.admin.valve.DeleteValvesAction"
+               name="valvesForm"
+               scope="request"/>
+
+    <!-- Set up Edit Valve transaction (generic) -->
+    <action    path="/EditValve"
+               type="org.apache.webapp.admin.valve.EditValveAction">
+    </action>
+    
+    <!-- Perform Save AccessLog Valve transaction -->
+    <action    path="/SaveAccessLogValve"
+               type="org.apache.webapp.admin.valve.SaveAccessLogValveAction"
+               name="accessLogValveForm"
+              input="/valve/accessLogValve.jsp"
+               scope="session"/>
+
+   <!-- Perform Save Remote Addr Valve transaction -->
+    <action    path="/SaveRemoteAddrValve"
+               type="org.apache.webapp.admin.valve.SaveRemoteAddrValveAction"
+               name="remoteAddrValveForm"
+              input="/valve/remoteAddrValve.jsp"
+               scope="session"/>
+
+    <!-- Perform Save Remote Host Valve transaction -->
+    <action    path="/SaveRemoteHostValve"
+               type="org.apache.webapp.admin.valve.SaveRemoteHostValveAction"
+               name="remoteHostValveForm"
+              input="/valve/remoteHostValve.jsp"
+               scope="session"/>
+
+    <!-- Perform Save Request Dumper Valve transaction -->
+    <action    path="/SaveRequestDumperValve"
+               type="org.apache.webapp.admin.valve.SaveRequestDumperValveAction"
+               name="requestDumperValveForm"
+              input="/valve/requestDumperValve.jsp"
+               scope="session"/>
+
+   <!-- Perform Save Single Sign On Valve transaction -->
+    <action    path="/SaveSingleSignOn"
+               type="org.apache.webapp.admin.valve.SaveSingleSignOnValveAction"
+               name="singleSignOnValveForm"
+              input="/valve/singleSignOnValve.jsp"
                scope="session"/>
                
     <!-- ========== User Database Module ========== -->
