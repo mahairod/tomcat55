@@ -925,13 +925,13 @@ public class WebappLoader
 
                 classRepository = new File(workDir, classesPath);
                 classRepository.mkdirs();
-
-                log(sm.getString("webappLoader.classDeploy", classesPath,
-                                 classRepository.getAbsolutePath()));
-
                 copyDir(classes, classRepository);
 
             }
+
+            log(sm.getString("webappLoader.classDeploy", classesPath,
+                             classRepository.getAbsolutePath()));
+
 
             // Adding the repository to the class loader
             classLoader.addRepository(classesPath + "/", classRepository);
