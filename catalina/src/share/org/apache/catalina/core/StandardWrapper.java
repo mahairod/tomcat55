@@ -338,6 +338,10 @@ public class StandardWrapper
         String oldJspFile = this.jspFile;
         this.jspFile = jspFile;
         support.firePropertyChange("jspFile", oldJspFile, this.jspFile);
+
+        // Each jsp-file needs to be represented by its own JspServlet and
+        // corresponding JspMonitoring mbean, because it may be initialized
+        // with its own init params
         isJspServlet = true;
 
     }
