@@ -112,7 +112,7 @@ public final class ValveUtil {
     
     // --------------------------------------------------------- Public Methods
     
-    public static ActionForward createValve(String parent, String valveType,
+    public static String createValve(String parent, String valveType,
     HttpServletResponse response, HttpServletRequest request,
     ActionMapping mapping, ApplicationServlet servlet)
     throws IOException, ServletException {
@@ -132,6 +132,7 @@ public final class ValveUtil {
         
         String operation = null;
         String values[] = null;
+        String vObjectName = null;
         
         try {
             
@@ -157,8 +158,7 @@ public final class ValveUtil {
                 servlet.log(message);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
                 return (null);
-            }
-                        
+            }    
             // Ensure that the requested valve name is unique
             
             // TBD -- do we need this check?
@@ -187,7 +187,8 @@ public final class ValveUtil {
             operation = "create" + valveType;
             if ("AccessLogValve".equalsIgnoreCase(valveType))
                 operation = "createAccessLoggerValve";
-            String vObjectName = (String)
+                
+            vObjectName = (String)
                         mBServer.invoke(fname, operation, values, createStandardValveTypes);
             
             // Add the new Valve to our tree control node
@@ -235,6 +236,6 @@ public final class ValveUtil {
         
         // Forward to the success reporting page
         session.removeAttribute(mapping.getAttribute());
-        return (mapping.findForward("Save Successful"));
+        return vObjectName;
     }
 }
