@@ -374,46 +374,15 @@ public class JspEngineContext implements JspCompilationContext {
         this.isErrPage = isErrPage;
     }
 
-    /**
-     * Create a "Compiler" object based on some init param data. If	
-     * jspCompilerPlugin is not specified or is not available, the 
-     * SunJavaCompiler is used.
-     */
     public Compiler createCompiler() throws JasperException {
 
         if (jspCompiler != null ) {
             return jspCompiler;
         }
 
-        /*
-	String compilerPath = options.getJspCompilerPath();
-	Class jspCompilerPlugin = options.getJspCompilerPlugin();
-        JavaCompiler javac;
-
-	if (jspCompilerPlugin != null) {
-            try {
-                javac = (JavaCompiler) jspCompilerPlugin.newInstance();
-            } catch (Exception ex) {
-		Constants.message("jsp.warning.compiler.class.cantcreate",
-				  new Object[] { jspCompilerPlugin, ex }, 
-				  Logger.FATAL);
-                javac = new SunJavaCompiler();
-	    }
-	} else {
-            javac = new SunJavaCompiler();
-	}
-
-        if (compilerPath != null) {
-            javac.setCompilerPath(compilerPath);
-        }
-
-        jspCompiler = new JspCompiler(this,jsw);
-	jspCompiler.setJavaCompiler(javac);
-        */
-
         jspCompiler = new Compiler(this, jsw);
-
         return jspCompiler;
+
     }
 
     public void compile() throws JasperException, FileNotFoundException {
