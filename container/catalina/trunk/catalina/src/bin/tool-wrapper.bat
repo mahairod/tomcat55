@@ -1,51 +1,31 @@
 @echo off
 if "%OS%" == "Windows_NT" setlocal
-rem ---------------------------------------------------------------------------
-rem Wrapper script for command line tools
-rem
-rem Environment Variable Prequisites
-rem
-rem   CATALINA_HOME May point at your Catalina "build" directory.
-rem
-rem   TOOL_OPTS     (Optional) Java runtime options used when the "start",
-rem                 "stop", or "run" command is executed.
-rem
-rem   JAVA_HOME     Must point at your Java Development Kit installation.
-rem
-rem   JAVA_OPTS     (Optional) Java runtime options used when the "start",
-rem                 "stop", or "run" command is executed.
-rem
-rem $Id$
-rem ---------------------------------------------------------------------------
 
-rem Guess CATALINA_HOME if not defined
-if not "%CATALINA_HOME%" == "" goto gotHome
-set CATALINA_HOME=.
-if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
-set CATALINA_HOME=..
-:gotHome
-if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
-echo The CATALINA_HOME environment variable is not defined correctly
-echo This environment variable is needed to run this program
-goto end
-:okHome
+rem ---------------------------------------------------------------------------
+rem
+rem Script for running the Catalina tool wrapper using the Launcher
+rem
+rem ---------------------------------------------------------------------------
 
 rem Get standard environment variables
-if exist "%CATALINA_HOME%\bin\setenv.bat" call "%CATALINA_HOME%\bin\setenv.bat"
+set PRG=%0
+if exist %PRG%\..\setenv.bat goto gotCmdPath
+rem %0 must have been found by DOS using the %PATH% so we assume that
+rem setenv.bat will also be found in the %PATH%
+call setenv.bat
+goto doneSetenv
+:gotCmdPath
+call %PRG%\..\setenv.bat
+:doneSetenv
 
-rem Get standard Java environment variables
-if exist "%CATALINA_HOME%\bin\setclasspath.bat" goto okSetclasspath
-echo Cannot find %CATALINA_HOME%\bin\setclasspath.bat
-echo This file is needed to run this program
+rem Make sure prerequisite environment variables are set
+if not "%JAVA_HOME%" == "" goto gotJavaHome
+echo The JAVA_HOME environment variable is not defined
+echo This environment variable is needed to run this program
 goto end
-:okSetclasspath
-set BASEDIR=%CATALINA_HOME%
-call "%CATALINA_HOME%\bin\setclasspath.bat"
+:gotJavaHome
 
-rem Add on extra jar files to CLASSPATH
-set CLASSPATH=%CLASSPATH%;%CATALINA_HOME%\bin\bootstrap.jar
-
-rem Get remaining unshifted command line arguments and save them in the
+rem Get command line arguments and save them with the proper quoting
 set CMD_LINE_ARGS=
 :setArgs
 if ""%1""=="""" goto doneSetArgs
@@ -54,6 +34,7 @@ shift
 goto setArgs
 :doneSetArgs
 
-%_RUNJAVA% %JAVA_OPTS% %TOOL_OPTS% -Djava.endorsed.dirs="%JAVA_ENDORSED_DIRS%" -classpath "%CLASSPATH%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Tool %CMD_LINE_ARGS%
+rem Execute the Launcher using the "tool-wrapper" target
+"%JAVA_HOME%\bin\java.exe" -classpath %PRG%\..;"%PATH%" LauncherBootstrap -launchfile catalina.xml -verbose tool-wrapper %CMD_LINE_ARGS%
 
 :end

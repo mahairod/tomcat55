@@ -13,30 +13,32 @@
 <project name="Catalina Launcher" default="catalina" basedir=".">
 
   <!-- Set the application home to the parent directory of this directory -->
-  <property name="app.home" location="${basedir}/.."/>
-  <property name="bootstrap.jar" location="${app.home}/bin/bootstrap.jar"/>
+  <property name="catalina.home" location="${basedir}/.."/>
+  <property name="bootstrap.jar" location="${catalina.home}/bin/bootstrap.jar"/>
 
   <!-- Import the user's custom properties -->
-  <property file="${app.home}/bin/catalina.properties"/>
+  <property file="${catalina.home}/bin/catalina.properties"/>
 
   <!-- Set user configurable properties -->
-  <property name="catalina.base" location="${app.home}"/>
-  <property name="catalina.tmpdir" location="${app.home}/temp"/>
-  <property name="catalina.out" location="${app.home}/logs/catalina.out"/>
-  <property name="catalina.policy" location="${app.home}/conf/catalina.policy"/>
+  <property name="jsse.home" location="${catalina.home}"/>
+  <property name="catalina.base" location="${catalina.home}"/>
+  <property name="catalina.tmpdir" location="${catalina.home}/temp"/>
+  <property name="catalina.out" location="${catalina.home}/logs/catalina.out"/>
+  <property name="catalina.policy" location="${catalina.home}/conf/catalina.policy"/>
   <property name="catalina.jvm.args" value=""/>
-  <property name="catalina.source.path" value="${app.home}/../../jakarta-servletapi-5/src/share:${app.home}/../../jakarta-tomcat-jasper/jasper2/src/share:${app.home}/../../jakarta-tomcat-connectors/coyote/src/java:${app.home}/../../jakarta-tomcat-catalina/catalina/src/share"/>
+  <property name="catalina.source.path" value="${catalina.home}/../../jakarta-servletapi-5/src/share:${catalina.home}/../../jakarta-tomcat-jasper/jasper2/src/share:${catalina.home}/../../jakarta-tomcat-connectors/coyote/src/java:${catalina.home}/../../jakarta-tomcat-catalina/catalina/src/share"/>
 
   <!-- Build the classpath relative to the application home -->
   <path id="base.class.path">
     <pathelement location="${bootstrap.jar}"/>
+    <pathelement path="${jsse.home}/lib/jsse.jar:${jsse.home}/lib/jcert.jar:${jsse.home}/lib/jnet.jar"/>
   </path>
 
   <!-- Build the sysproperties relative to the application home -->
   <syspropertyset id="base.sys.properties">
-    <sysproperty key="java.endorsed.dirs" file="${app.home}/common/endorsed"/>
+    <sysproperty key="java.endorsed.dirs" file="${catalina.home}/common/endorsed"/>
     <sysproperty key="java.io.tmpdir" file="${catalina.tmpdir}"/>
-    <sysproperty key="catalina.home" file="${app.home}"/>
+    <sysproperty key="catalina.home" file="${catalina.home}"/>
     <sysproperty key="catalina.base" file="${catalina.base}"/>
   </syspropertyset>
 
@@ -108,6 +110,23 @@
         <syspropertyset refid="base.sys.properties"/>
         <sysproperty key="java.security.manager" value="" if="security"/>
         <sysproperty key="java.security.policy" value="=${catalina.policy}" if="security"/>
+        <classpath refid="base.class.path"/>
+    </launch>
+
+  </target>
+
+  <!-- Target that executes the Catalina tool wrapper -->
+  <target name="tool-wrapper" description="Execute Catalina tool wrapper"
+    depends="setjdb,setjpda">
+
+    <!-- Launch Catalina tool wrapper -->
+    <launch classname="org.apache.catalina.startup.Tool"
+      debug="${jdb}"
+      print="${print}"
+      usesystemin="false"
+      requiretools="true">
+        <jvmargset refid="base.jvm.args"/>
+        <syspropertyset refid="base.sys.properties"/>
         <classpath refid="base.class.path"/>
     </launch>
 
