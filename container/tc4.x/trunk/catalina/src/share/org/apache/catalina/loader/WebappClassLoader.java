@@ -101,6 +101,11 @@ import javax.naming.NamingException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NameClassPair;
 
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+
 import org.apache.naming.JndiPermission;
 import org.apache.naming.resources.ResourceAttributes;
 import org.apache.naming.resources.Resource;
@@ -123,7 +128,7 @@ import org.apache.naming.resources.Resource;
  */
 public class WebappClassLoader
     extends URLClassLoader
-    implements Reloader {
+    implements Reloader, Lifecycle {
 
 
     // ----------------------------------------------------------- Constructors
@@ -317,6 +322,12 @@ public class WebappClassLoader
      * Access controller.
      */
     private AccessControlContext accessController;
+
+
+    /**
+     * Has this component been started?
+     */
+    protected boolean started = false;
 
 
     // ------------------------------------------------------------- Properties
@@ -662,8 +673,7 @@ public class WebappClassLoader
                     ((ResourceAttributes) resources.getAttributes(paths[i]))
                     .getLastModified().getTime();
                 if (lastModified != lastModifiedDates[i]) {
-                    if (debug > 2)
-                        log("  Resource '" + paths[i] + "' was modified");
+                    log("  Resource '" + paths[i] + "' was modified");
                     return (true);
                 }
             } catch (NamingException e) {
@@ -684,25 +694,22 @@ public class WebappClassLoader
                     NameClassPair ncPair = (NameClassPair) enum.nextElement();
                     if (!ncPair.getName().equals(jarNames[i])) {
                         // Missing JAR
-                        if (debug > 2)
-                            log("    Additional JARs have been added : '"
-                                + ncPair.getName() + "'");
+                        log("    Additional JARs have been added : '"
+                            + ncPair.getName() + "'");
                         return (true);
                     }
                 }
                 if (enum.hasMoreElements()) {
                     // There was more JARs
-                    if (debug > 2)
-                        log("    Additional JARs have been added");
+                    log("    Additional JARs have been added");
                     return (true);
                 } else if (i < jarNames.length) {
                     // There was less JARs
-                    if (debug > 2)
-                        log("    Additional JARs have been added");
+                    log("    Additional JARs have been added");
                     return (true);
                 }
             } catch (NamingException e) {
-                if (debug >= 2)
+                if (debug > 2)
                     log("    Failed tracking modifications of '" 
                         + getJarPath() + "'");
             } catch (ClassCastException e) {
@@ -1078,6 +1085,12 @@ public class WebappClassLoader
             log("loadClass(" + name + ", " + resolve + ")");
         Class clazz = null;
 
+        // Don't load classes if class loader is stopped
+        if (!started) {
+            log("Lifecycle error : CL stopped");
+            throw new ClassNotFoundException(name);
+        }
+
         // (0) Check our previously loaded local class cache
         clazz = findLoadedClass0(name);
         if (clazz != null) {
@@ -1260,6 +1273,76 @@ public class WebappClassLoader
     }
 
 
+    // ------------------------------------------------------ Lifecycle Methods
+
+
+    /**
+     * Add a lifecycle event listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+    }
+
+
+    /**
+     * Remove a lifecycle event listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+    }
+
+
+    /**
+     * Start the class loader.
+     *
+     * @exception LifecycleException if a lifecycle error occurs
+     */
+    public void start() throws LifecycleException {
+
+        started = true;
+
+    }
+
+
+    /**
+     * Stop the class loader.
+     *
+     * @exception LifecycleException if a lifecycle error occurs
+     */
+    public void stop() throws LifecycleException {
+
+        started = false;
+
+        int length = jarFiles.length;
+        for (int i = 0; i < length; i++) {
+            try {
+                jarFiles[i].close();
+                jarFiles[i] = null;
+            } catch (IOException e) {
+                // Ignore
+            }
+        }
+
+        notFoundResources.clear();
+        resourceEntries.clear();
+        repositories = new String[0];
+        files = new File[0];
+        jarFiles = new JarFile[0];
+        jarRealFiles = new File[0];
+        jarPath = null;
+        jarNames = new String[0];
+        lastModifiedDates = new long[0];
+        paths = new String[0];
+
+        required.clear();
+        permissionList.clear();
+        loaderPC.clear();
+
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 
@@ -1360,6 +1443,11 @@ public class WebappClassLoader
      */
     protected ResourceEntry findResourceInternal(String name, String path) {
 
+        if (!started) {
+            log("Lifecycle error : CL stopped");
+            return null;
+        }
+        
         if ((name == null) || (path == null))
             return null;
 
@@ -1380,7 +1468,7 @@ public class WebappClassLoader
 
         Resource resource = null;
 
-        for (i = 0; (entry == null) && (i < repositories.length); i++) {
+        for (i = 0; (entry == null) && (i < repositoriesLength); i++) {
             try {
                 
                 String fullPath = repositories[i] + path;
@@ -1433,11 +1521,12 @@ public class WebappClassLoader
 
         JarEntry jarEntry = null;
 
-        for (i = 0; (entry == null) && (i < jarFiles.length); i++) {
+        for (i = 0; (entry == null) && (i < jarFilesLength); i++) {
 
             jarEntry = jarFiles[i].getJarEntry(path);
 
             if (jarEntry != null) {
+
                 entry = new ResourceEntry();
                 try {
                     String jarFakeUrl = jarRealFiles[i].toURL().toString();
@@ -1479,8 +1568,10 @@ public class WebappClassLoader
             }
             binaryStream.close();
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
 
