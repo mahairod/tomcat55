@@ -778,10 +778,7 @@ public class StandardManager
         Session sessions[] = findSessions();
 
         for (int i = 0; i < sessions.length; i++) {
-            StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid()) {
-                expiredSessions++;
-            }
+            sessions[i].isValid();
         }
         long timeEnd = System.currentTimeMillis();
         processingTime += ( timeEnd - timeNow );

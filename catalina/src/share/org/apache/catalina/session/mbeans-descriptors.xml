@@ -75,6 +75,10 @@
           description="Longest time an expired session had been alive"
                  type="int" />
 
+    <attribute   name="sessionAverageAliveTime"
+          description="Average time an expired session had been alive"
+                 type="int" />
+
     <attribute   name="rejectedSessions"
           description="Number of sessions we rejected due to maxActive beeing reached"
                  type="int" />
