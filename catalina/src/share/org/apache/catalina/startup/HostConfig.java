@@ -715,20 +715,23 @@ public class HostConfig
                         int period = expandedDir.lastIndexOf(".");
                         if (period >= 0)
                             expandedDir = expandedDir.substring(0, period);
+                        File expanded = new File(appBase, expandedDir);
                         String contextPath = "/" + expandedDir;
                         if (contextPath.equals("/ROOT"))
                             contextPath = "";
-                        try {
-                            ((Deployer) host).remove(contextPath, true);
-                            deployed.remove(files[i]);
-                        } catch (Throwable t) {
-                            log.error(sm.getString("hostConfig.undeployJar.error",
-                                                   files[i]), t);
+                        if (dir.lastModified() > expanded.lastModified()) {
+                            try {
+                                ((Deployer) host).remove(contextPath, true);
+                                deployed.remove(files[i]);
+                            } catch (Throwable t) {
+                                log.error(sm.getString("hostConfig.undeployJar.error",
+                                                       files[i]), t);
+                            }
+                            deployApps();
                         }
                         webXmlLastModified.remove(contextPath);
                         warLastModified.put
                             (files[i], new Long(dir.lastModified()));
-                        deployApps();
                     }
                 }
             }
