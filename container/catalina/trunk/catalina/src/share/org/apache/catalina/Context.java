@@ -427,6 +427,29 @@ public interface Context extends Container {
     public void setWrapperClass(String wrapperClass);
 
 
+    /**
+     * Indicates whether the generation of an X-Powered-By response header for
+     * servlet-generated responses is enabled or disabled for this Context.
+     *
+     * <p> Unless explicitly set on this Context, this method returns the
+     * X-Powered-By setting of the Host with which this Context is associated.
+     * 
+     * @return true if generation of X-Powered-By response header is enabled,
+     * false otherwise
+     */
+    public boolean isXpoweredBy();
+
+
+    /**
+     * Enables or disables the generation of an X-Powered-By header (with value
+     * Servlet/2.4) for all servlet-generated responses from this Context.
+     *
+     * @param xpoweredBy true if generation of X-Powered-By response header is
+     * to be enabled, false otherwise
+     */
+    public void setXpoweredBy(boolean xpoweredBy);
+
+
     // --------------------------------------------------------- Public Methods
 
 

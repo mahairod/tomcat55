@@ -85,7 +85,6 @@ import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Valve that implements the default basic behavior for the
  * <code>StandardWrapper</code> container implementation.
@@ -247,6 +246,9 @@ final class StandardWrapperValve
         // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
         try {
+	    if (request.getContext().isXpoweredBy()) {
+		hres.addHeader("X-Powered-By", "Servlet/2.4");
+	    }
             String jspFile = wrapper.getJspFile();
             if (jspFile != null)
                 hreq.setAttribute(Globals.JSP_FILE_ATTR, jspFile);

@@ -276,6 +276,18 @@ public class StandardContext
     private boolean distributable = false;
 
 
+    /*
+     * Enables/disables generation of X-Powered-By response header
+     */
+    private boolean xpoweredBy;
+
+
+    /*
+     * Indicates whether setter for X-Powered-By property was explicitly called
+     */
+    private boolean xpoweredBySetterCalled;
+
+
     /**
      * The document root for this web application.
      */
@@ -1600,7 +1612,6 @@ public class StandardContext
      * @param errorPage The error page definition to be added
      */
     public void addErrorPage(ErrorPage errorPage) {
-
         // Validate the input parameters
         if (errorPage == null)
             throw new IllegalArgumentException
@@ -2176,7 +2187,6 @@ public class StandardContext
      * @param errorCode Error code to look up
      */
     public ErrorPage findErrorPage(int errorCode) {
-
         if (errorCode == 200) {
             return (okErrorPage);
         } else {
@@ -4364,6 +4374,50 @@ public class StandardContext
             }
         }
 
+    }
+
+
+    /**
+     * Indicates whether the generation of an X-Powered-By response header for
+     * servlet-generated responses is enabled or disabled for this Context.
+     *
+     * <p> Unless explicitly set on this Context, this method returns the
+     * X-Powered-By setting of the Host with which this Context is associated.
+     *
+     * @return true if generation of X-Powered-By response header is enabled,
+     * false otherwise
+     */
+    public boolean isXpoweredBy() {
+
+	boolean ret = false; 
+
+	if (xpoweredBySetterCalled) {
+	    ret = this.xpoweredBy;
+	} else {
+	    Host host = (Host) getParent();
+	    if (host != null) {
+		ret = host.isXpoweredBy();
+	    }
+	}
+
+        return ret;
+    }
+
+
+    /**
+     * Enables or disables the generation of an X-Powered-By header (with value
+     * Servlet/2.4) for all servlet-generated responses from this Context.
+     *
+     * @param xpoweredBy true if generation of X-Powered-By response header is
+     * to be enabled, false otherwise
+     */
+    public void setXpoweredBy(boolean xpoweredBy) {
+        boolean oldXpoweredBy = this.xpoweredBy;
+        this.xpoweredBy = xpoweredBy;
+        support.firePropertyChange("xpoweredBy",
+                                   new Boolean(oldXpoweredBy),
+                                   new Boolean(this.xpoweredBy));
+	this.xpoweredBySetterCalled = true;
     }
 
 
