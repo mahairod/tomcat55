@@ -16,20 +16,6 @@
 package org.apache.catalina.cluster;
 
 /**
- * Title:        Tomcat Session Replication for Tomcat 4.0 <BR>
- * Description:  A very simple straight forward implementation of
- *               session replication of servers in a cluster.<BR>
- *               This session replication is implemented "live". By live
- *               I mean, when a session attribute is added into a session on Node A
- *               a message is broadcasted to other messages and setAttribute is called on the replicated
- *               sessions.<BR>
- *               A full description of this implementation can be found under
- *               <href="http://www.filip.net/tomcat/">Filip's Tomcat Page</a><BR>
- *
- * Copyright:    See apache license
- * Company:      www.filip.net
- * @author  <a href="mailto:mail@filip.net">Filip Hanik</a>
- * @version 1.0 for 4.0
  *
  * <B>Class Description:</B><BR>
  * The SessionMessage class is a class that is used when a session has been
@@ -49,10 +35,6 @@ package org.apache.catalina.cluster;
  *   <li><pre>public static final int EVT_REMOVE_SESSION_NOTE</pre><li>
  * </ul>
  *
- * These message are being sent and received from and to the
- * InMemoryReplicationManager
- *
- * @see InMemoryReplicationManager
  */
  import java.security.Principal;
  import org.apache.catalina.cluster.Member;
