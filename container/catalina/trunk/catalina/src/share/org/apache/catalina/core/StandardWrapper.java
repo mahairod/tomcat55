@@ -65,17 +65,31 @@
 package org.apache.catalina.core;
 
 
-import org.apache.catalina.*;
-import org.apache.catalina.security.SecurityUtil;
-import org.apache.catalina.util.Enumerator;
-import org.apache.catalina.util.InstanceSupport;
-import org.apache.tomcat.util.log.SystemLogHandler;
-
-import javax.servlet.*;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.SingleThreadModel;
+import javax.servlet.UnavailableException;
+
+import org.apache.catalina.Container;
+import org.apache.catalina.ContainerServlet;
+import org.apache.catalina.Context;
+import org.apache.catalina.InstanceEvent;
+import org.apache.catalina.InstanceListener;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Loader;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.InstanceSupport;
+import org.apache.tomcat.util.log.SystemLogHandler;
 /**
  * Standard implementation of the <b>Wrapper</b> interface that represents
  * an individual servlet definition.  No child Containers are allowed, and
@@ -899,7 +913,7 @@ public final class StandardWrapper
                 ((ContainerServlet) servlet).setWrapper(this);
             }
     
-            if( System.currentTimeMillis() -t1 > 100 ) {
+            if( System.currentTimeMillis() -t1 > 200 ) {
                 log.info("Created servlet class " + actualClass + " " +
                          (System.currentTimeMillis() - t1 ) );
             }
@@ -968,7 +982,7 @@ public final class StandardWrapper
                     instancePool = new Stack();
             }
             fireContainerEvent("load", this);
-            if( System.currentTimeMillis() -t1 > 100 ) {
+            if( System.currentTimeMillis() -t1 > 200 ) {
                 log.info("Loaded servlet  " + actualClass + " " +
                          (System.currentTimeMillis() - t1 ) );
             }
