@@ -941,11 +941,16 @@ public class GTest extends Task {
     private boolean compareWeak( byte[] fromServer, byte[] fromGoldenFile ) {
         if ( fromServer == null || fromGoldenFile == null ) {
             return false;
-	}
+	    }
 
-        StringTokenizer st1 = new StringTokenizer( new String( fromServer ) );
+        boolean status = true;
 
-        StringTokenizer st2 = new StringTokenizer( new String( fromGoldenFile ) );
+        String server = new String( fromServer );
+        String golden = new String( fromGoldenFile );
+
+        StringTokenizer st1 = new StringTokenizer( server );
+
+        StringTokenizer st2 = new StringTokenizer( golden );
 
         while ( st1.hasMoreTokens() && st2.hasMoreTokens() ) {
             String tok1 = st1.nextToken();
@@ -954,15 +959,27 @@ public class GTest extends Task {
             if ( !tok1.equals( tok2 ) ) {
                 System.out.println( "\t FAIL*** : Rtok1 = " + tok1
                                     + ", Etok2 = " + tok2 );
-                return false;
+                status = false;
             }
         }
 
         if ( st1.hasMoreTokens() || st2.hasMoreTokens() ) {
-            return false;
-        } else {
-            return true;
+             status = false;
         }
+
+        if ( !status ) {
+            StringBuffer sb = new StringBuffer( 255 );
+            sb.append( "ERROR: Server's response and configured goldenfile do not match!\n" );
+            sb.append( "Response received from server:\n" );
+            sb.append( "---------------------------------------------------------\n" );
+            sb.append( server );
+            sb.append( "\nContent of Goldenfile:\n" );
+            sb.append( "---------------------------------------------------------\n" );
+            sb.append( golden );
+            sb.append( "\n" );
+            System.out.println( sb.toString() );
+        }
+        return status;
     }
 
     /**
