@@ -71,7 +71,7 @@ import java.util.Enumeration;
     */
 
 public interface AuthorizationConstraint extends WebDescriptor {
-    public static String BASIC_MEHTHOD = "basic";
+    public static String BASIC_METHOD = "basic";
     public static String FORM_METHOD = "form";
     public static String MUTUAL_METHOD = "mutual";
 
