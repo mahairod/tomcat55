@@ -239,11 +239,41 @@ public class ResponseImpl implements Response {
     }
 
     public void setHeader(String name, String value) {
-	if( notIncluded ) headers.putHeader(name, value);
+	if( ! notIncluded ) return; // we are in included sub-request
+	if( ! checkSpecialHeader(name, value) ) 
+	    headers.putHeader(name, value);
     }
 
     public void addHeader(String name, String value) {
-        if( notIncluded ) headers.addHeader(name, value);
+	if( ! notIncluded ) return; // we are in included sub-request
+	if( ! checkSpecialHeader(name, value) ) 
+	    headers.addHeader(name, value);
+    }
+
+    
+    /** Set internal fields for special header names. Called from set/addHeader.
+	Return true if the header is special, no need to set the header.
+     */
+    private boolean checkSpecialHeader( String name, String value) {
+	// XXX Eliminate redundant fields !!!
+	// ( both header and in special fields )
+	if( name.equalsIgnoreCase( "Content-Type" ) ) {
+	    setContentType( value );
+	    return true;
+	}
+	if( name.equalsIgnoreCase( "Content-Length" ) ) {
+	    try {
+		int cL=Integer.parseInt( value );
+		setContentLength( cL );
+		return true;
+	    } catch( NumberFormatException ex ) {
+		// We shouldn't set the header 
+	    }
+	}
+	if( name.equalsIgnoreCase( "Content-Language" ) ) {
+	    // XXX XXX Need to construct Locale or something else
+	}
+	return false;
     }
 
     public int getBufferSize() {
@@ -352,7 +382,8 @@ public class ResponseImpl implements Response {
         String newType = constructLocalizedContentType(contentType, locale);
         setContentType(newType);
 
-	addHeader("Content-Language", contentLanguage);
+	// only one header !
+	setHeader("Content-Language", contentLanguage);
     }
 
     /** Utility method for parsing the mime type and setting
@@ -385,7 +416,7 @@ public class ResponseImpl implements Response {
         if (encoding != null) {
 	    characterEncoding = encoding;
         }
-	addHeader("Content-Type", contentType);
+	setHeader("Content-Type", contentType);
     }
 
     public String getContentType() {
@@ -395,7 +426,7 @@ public class ResponseImpl implements Response {
     public void setContentLength(int contentLength) {
         if( ! notIncluded ) return;
 	this.contentLength = contentLength;
-	addHeader("Content-Length", (new Integer(contentLength)).toString());
+	setHeader("Content-Length", (new Integer(contentLength)).toString());
     }
 
     public int getContentLength() {
