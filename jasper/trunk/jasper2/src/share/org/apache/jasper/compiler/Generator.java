@@ -1070,21 +1070,12 @@ public class Generator {
                     out.print(tryBitVal.toString());
                     out.println(");");
 
-                    out.printin("int ret = ");
-                    out.print(tagHandlerVar);
-                    out.println(".doEndTag();");
-
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
 		    out.printil("out = pageContext.popBody();");
 		    out.popIndent();
-
-                    out.printil("if (ret == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
-                    out.pushIndent();
-                    out.printil("return;");
-                    out.popIndent();
 
                     finallies.beginPartMethod(tryBitVal.intValue());
                     finallies.print("      if (");
@@ -1102,14 +1093,12 @@ public class Generator {
 		out.printil("}");
 	    }
 
-            if (n.getBody() == null || !implementsBodyTag) {
-	        out.printin("if (");
-	        out.print(tagHandlerVar);
-	        out.println(".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
-	        out.pushIndent();
-	        out.printil("return;");
-	        out.popIndent();
-            }
+	    out.printin("if (");
+	    out.print(tagHandlerVar);
+	    out.println(".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
+	    out.pushIndent();
+	    out.printil("return;");
+	    out.popIndent();
 
 	    // TryCatchFinally
 	    if (implementsTryCatchFinally) {
