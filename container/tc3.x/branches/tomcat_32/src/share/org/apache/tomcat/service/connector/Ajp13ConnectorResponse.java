@@ -97,6 +97,8 @@ public class Ajp13ConnectorResponse extends ResponseImpl
     
     MsgConnector con;
 
+    private boolean finished = false;
+
     public Ajp13ConnectorResponse() 
     {
     }
@@ -148,13 +150,16 @@ public class Ajp13ConnectorResponse extends ResponseImpl
          
     public void finish() throws IOException 
     {
-        super.finish();
-        MsgBuffer msg = con.getMsgBuffer();
-        msg.reset();
-        msg.appendByte(JK_AJP13_END_RESPONSE);
-        msg.appendByte((byte)1);        
-        msg.end();
-        con.send(msg);
+        if (!finished) {
+            super.finish();
+            finished = true;
+            MsgBuffer msg = con.getMsgBuffer();
+            msg.reset();
+            msg.appendByte(JK_AJP13_END_RESPONSE);
+            msg.appendByte((byte)1);        
+            msg.end();
+            con.send(msg);
+        }
     }
     
     protected int headerNameToSc(String name)
@@ -210,6 +215,7 @@ public class Ajp13ConnectorResponse extends ResponseImpl
     public void recycle() 
     {
         super.recycle();
+        finished = false;
     }
     
     public void setConnector(MsgConnector con) 
