@@ -109,6 +109,14 @@ public final class StandardServer
         super();
         ServerFactory.setServer(this);
 
+        if (isUseNaming()) {
+            if (namingContextListener == null) {
+                namingContextListener = new NamingContextListener();
+                namingContextListener.setDebug(getDebug());
+                addLifecycleListener(namingContextListener);
+            }
+        }
+
     }
 
 
@@ -615,15 +623,6 @@ public final class StandardServer
         if (started)
             throw new LifecycleException
                 (sm.getString("standardServer.start.started"));
-
-        if (isUseNaming()) {
-            if ((globalNamingResources != null) 
-                && (namingContextListener == null)) {
-                namingContextListener = new NamingContextListener();
-                namingContextListener.setDebug(getDebug());
-                addLifecycleListener(namingContextListener);
-            }
-        }
 
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;

@@ -259,7 +259,7 @@ public class NamingContextListener
     public void lifecycleEvent(LifecycleEvent event) {
 
         container = event.getLifecycle();
-        
+
         if (container instanceof Context) {
             namingResources = ((Context) container).getNamingResources();
         } else if (container instanceof Server) {
@@ -280,9 +280,7 @@ public class NamingContextListener
                 // Never happens
             }
             ContextAccessController.setSecurityToken(getName(), container);
-            if (container instanceof Context)
-                ContextBindings.bindContext(container, namingContext, 
-                                            container);
+            ContextBindings.bindContext(container, namingContext, container);
             //ContextBindings.bindThread(container, container);
 
             // Setting the context in read/write mode
@@ -300,18 +298,26 @@ public class NamingContextListener
             //ContextBindings.unbindThread(container, container);
 
             // Binding the naming context to the class loader
-            if (container instanceof Context)
+            if (container instanceof Context) {
                 try {
                     ContextBindings.bindClassLoader
                         (container, container, 
                          ((Container) container).getLoader().getClassLoader());
-            } catch (NamingException e) {
-                log(sm.getString("naming.bindFailed", e));
+                } catch (NamingException e) {
+                    log(sm.getString("naming.bindFailed", e));
+                }
             }
 
             if (container instanceof Server) {
                 org.apache.naming.factory.ResourceLinkFactory.setGlobalContext
                     (namingContext);
+                try {
+                    ContextBindings.bindClassLoader
+                        (container, container, 
+                         this.getClass().getClassLoader());
+                } catch (NamingException e) {
+                    log(sm.getString("naming.bindFailed", e));
+                }
                 if (container instanceof StandardServer) {
                     ((StandardServer) container).setGlobalNamingContext
                         (namingContext);
@@ -513,6 +519,9 @@ public class NamingContextListener
 
         if (debug >= 1)
             log("Creating JNDI naming context");
+
+        if (namingResources == null)
+            namingResources = new NamingResources();
 
         // Environment entries
         ContextEnvironment[] contextEnvironments = 
