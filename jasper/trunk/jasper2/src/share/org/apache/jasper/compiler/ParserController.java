@@ -431,15 +431,19 @@ class ParserController implements TagConstants {
     }
     
     /*
-     * Determines page source encoding for page or tag file in JSP syntax
+     * Determines page source encoding for page or tag file in JSP syntax,
+     * by reading (in this order) the value of the 'pageEncoding' page
+     * directive attribute, or the charset value of the 'contentType' page
+     * directive attribute.
      *
      * @return The page encoding, or null if not found
      */
     private String getPageEncodingForJspSyntax(JspReader jspReader,
-						 Mark startMark)
+					       Mark startMark)
 	        throws JasperException {
 
 	String encoding = null;
+        String saveEncoding = null;
 
 	/*
 	 * Determine page encoding from directive of the form <%@ page %> or
@@ -450,12 +454,22 @@ class ParserController implements TagConstants {
 	    jspReader.skipSpaces();
 	    // compare for "tag ", so we don't match "taglib"
 	    if (jspReader.matches("tag ") || jspReader.matches("page")) {
+
 		jspReader.skipSpaces();
-		encoding = getPageEncodingFromDirective(
-                        Parser.parseAttributes(this, jspReader));
-		if (encoding != null) break;
+                Attributes attrs = Parser.parseAttributes(this, jspReader);
+		encoding = getPageEncodingFromDirective(attrs, "pageEncoding");
+                if (encoding != null) {
+                    break;
+                }
+		encoding = getPageEncodingFromDirective(attrs, "contentType");
+                if (encoding != null) {
+                    saveEncoding = encoding;
+                }
 	    }
 	}
+        if (encoding == null) {
+            encoding = saveEncoding;
+        }
 
 	if (encoding == null) {
 	    /*
@@ -465,34 +479,53 @@ class ParserController implements TagConstants {
 	    jspReader.reset(startMark);
 	    while (jspReader.skipUntil("<jsp:directive.page") != null) {
 		jspReader.skipSpaces();
-		encoding = getPageEncodingFromDirective(
-                        Parser.parseAttributes(this, jspReader));
-		if (encoding != null) break;
+                Attributes attrs = Parser.parseAttributes(this, jspReader);
+
+		encoding = getPageEncodingFromDirective(attrs, "pageEncoding");
+                if (encoding != null) {
+                    break;
+                }
+		encoding = getPageEncodingFromDirective(attrs, "contentType");
+                if (encoding != null) {
+                    saveEncoding = encoding;
+                }
 	    }
+            if (encoding == null) {
+                encoding = saveEncoding;
+            }
 	}
 
 	return encoding;
     }
 
     /*
-     * Scans the given attributes for the 'pageEncoding' attribute, if present,
-     * or the 'contentType' attribute, and gets the page encoding from them.
+     * Scans the given attributes for the attribute with the given name,
+     * which is either 'pageEncoding' or 'contentType', and returns the
+     * specified page encoding.
      *
-     * In the case of the 'contentType' attribute, the page encoding is taken
-     * from its 'charset' component.
+     * In the case of 'contentType', the page encoding is taken from the
+     * content type's 'charset' component.
      *
-     * @param attrs The attributes from which to determine the page encoding
-     * @return The page encoding
+     * @param attrs The page directive attributes
+     * @param attrName The name of the attribute to search for (either
+     * 'pageEncoding' or 'contentType')
+     *
+     * @return The page encoding, or null
      */
-    private String getPageEncodingFromDirective(Attributes attrs) {
-	String encoding = attrs.getValue("pageEncoding");
-	if (encoding == null) {
-	    String contentType = attrs.getValue("contentType");
-	    if (contentType != null) {
-		int loc = contentType.indexOf(CHARSET);
-		if (loc != -1) {
-		    encoding = contentType.substring(loc + CHARSET.length());
-		}
+    private String getPageEncodingFromDirective(Attributes attrs,
+                                                String attrName) {
+	String value = attrs.getValue(attrName);
+        if (attrName.equals("pageEncoding")) {
+            return value;
+        }
+
+        // attrName = contentType
+        String contentType = value;
+        String encoding = null;
+        if (contentType != null) {
+	    int loc = contentType.indexOf(CHARSET);
+	    if (loc != -1) {
+		encoding = contentType.substring(loc + CHARSET.length());
 	    }
 	}
 
