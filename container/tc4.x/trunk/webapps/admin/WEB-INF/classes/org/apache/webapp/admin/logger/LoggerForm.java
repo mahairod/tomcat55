@@ -89,13 +89,12 @@ public final class LoggerForm extends ActionForm {
      * The object name of the Logger this bean refers to.
      */
     private String objectName = null;
-    
+   
     /**
-     * The text for the logger name, used to retrieve
-     * the corresponding logger mBean.
+     * The object name of the parent of this Logger.
      */
-    private String loggerName = null;
-    
+    private String parentObjectName = null;
+   
     /**
      * The text for the logger type. 
      * Specifies if it is a FileLogger, or SysErr or SysOut Logger.
@@ -140,7 +139,8 @@ public final class LoggerForm extends ActionForm {
     private List debugLvlVals = null;
     private List verbosityLvlVals = null;
     private List booleanVals = null;
-    
+    private List loggerTypeVals = null;
+
     // ------------------------------------------------------------- Properties
     
        /**
@@ -180,25 +180,27 @@ public final class LoggerForm extends ActionForm {
         this.objectName = objectName;
 
     }
-
-    /**
-     * Return the Logger Name.
-     */
-    public String getLoggerName() {
-        
-        return this.loggerName;
-        
-    }
+    
     
     /**
-     * Set the Logger Name.
+     * Return the parent object name of the Logger this bean refers to.
      */
-    public void setLoggerName(String loggerName) {
-        
-        this.loggerName = loggerName;
-        
+    public String getParentObjectName() {
+
+        return this.parentObjectName;
+
     }
-        
+
+
+    /**
+     * Set the parent object name of the Logger this bean refers to.
+     */
+    public void setParentObjectName(String parentObjectName) {
+
+        this.parentObjectName = parentObjectName;
+
+    }
+    
     /**
      * Return the Logger type.
      */
@@ -397,6 +399,24 @@ public final class LoggerForm extends ActionForm {
         
     }
     
+        /**
+     * Return the loggerTypeVals.
+     */
+    public List getLoggerTypeVals() {
+        
+        return this.loggerTypeVals;
+        
+    }
+    
+    /**
+     * Set the loggerTypeVals.
+     */
+    public void setLoggerTypeVals(List loggerTypeVals) {
+        
+        this.loggerTypeVals = loggerTypeVals;
+        
+    }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -408,8 +428,8 @@ public final class LoggerForm extends ActionForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
         this.objectName = null;
-        this.loggerName = null;
         this.loggerType = null;
+        this.parentObjectName = null;
         this.debugLvl = "0";
         this.verbosityLvl = "0";        
         this.directory = null;
@@ -428,20 +448,20 @@ public final class LoggerForm extends ActionForm {
         sb.append(adminAction);
         sb.append(",debugLvl=");
         sb.append(debugLvl);
-        sb.append("verbosityLvl,=");
+        sb.append(",verbosityLvl=");
         sb.append(verbosityLvl);
         sb.append(",directory=");
         sb.append(directory);
-        sb.append(",prefix='");
+        sb.append(",prefix=");
         sb.append(prefix);
-        sb.append(",suffix='");
+        sb.append(",suffix=");
         sb.append(suffix);
-        sb.append(",loggerType='");
+        sb.append(",loggerType=");
         sb.append(loggerType);
-        sb.append("',objectName='");
+        sb.append(",objectName=");
         sb.append(objectName);
-        sb.append("',loggerName=");
-        sb.append(loggerName);
+        sb.append(",parentObjectName=");
+        sb.append(parentObjectName);
         sb.append("]");
         return (sb.toString());
 
@@ -470,7 +490,7 @@ public final class LoggerForm extends ActionForm {
         // these checks should be done only if it is FileLogger. 
         // No checks needed otherwise        
         if ((submit != null)
-           && (SetUpLoggerAction.FILE_LOGGER).equalsIgnoreCase(type)) {
+           && ("FileLogger").equalsIgnoreCase(type)) {
              
             if ((directory == null) || (directory.length() < 1)) {
                 errors.add("directory",

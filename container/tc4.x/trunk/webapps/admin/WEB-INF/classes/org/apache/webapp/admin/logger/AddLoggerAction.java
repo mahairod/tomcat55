@@ -59,16 +59,11 @@
  *
  */
 
-
 package org.apache.webapp.admin.logger;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.net.URLEncoder;
 import java.util.Locale;
-import java.util.TreeSet;
-import java.util.Set;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -79,41 +74,25 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.JMException;
 import org.apache.struts.util.MessageResources;
-
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TomcatTreeBuilder;
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.Lists;
 
 /**
- * The <code>Action</code> that sets up <em>Delete Loggers</em> transactions.
+ * The <code>Action</code> that sets up <em>Add Logger</em> transactions.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class DeleteLoggerAction extends Action {
-    
-    
-    /**
-     * The MBeanServer we will be interacting with.
-     */
-    private MBeanServer mBServer = null;
-    
-    
+public class AddLoggerAction extends Action {
+        
     /**
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
     
-    
+
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -132,12 +111,11 @@ public class DeleteLoggerAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform(ActionMapping mapping,
-    ActionForm form,
-    HttpServletRequest request,
-    HttpServletResponse response)
-    throws IOException, ServletException {
-        
-        
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws IOException, ServletException {
+
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
@@ -145,93 +123,44 @@ public class DeleteLoggerAction extends Action {
             resources = getServlet().getResources();
         }
         
-        // Acquire a reference to the MBeanServer containing our MBeans
-        try {
-            mBServer = ((ApplicationServlet) getServlet()).getServer();
-        } catch (Throwable t) {
-            throw new ServletException
-            ("Cannot acquire MBeanServer reference", t);
-        }
-        
-        String pattern = null;
-        // Set up a form bean containing the currently selected
-        // objects to be deleted
-        LoggersForm loggersForm = new LoggersForm();
-        String select = request.getParameter("select");
-        if (select != null) {
-            String loggers[] = new String[1];
-            loggers[0] = select;
-            loggersForm.setLoggers(loggers);
-            pattern = select;
-        }
-        request.setAttribute("loggersForm", loggersForm);
-        
-        // Accumulate a list of all available loggers
-        ArrayList list = new ArrayList();
+        // Fill in the form values for display and editing
+        LoggerForm loggerFm = new LoggerForm();
+        session.setAttribute("loggerForm", loggerFm);
+        loggerFm.setAdminAction("Create");
+        loggerFm.setObjectName("");
         String parent = request.getParameter("parent");
+        loggerFm.setParentObjectName(parent);
+        String type = request.getParameter("type");
+        if (type == null)
+            type = "FileLogger";    // default type is FileLogger
+        loggerFm.setLoggerType(type);
+        loggerFm.setDebugLvl("0");
+        loggerFm.setDebugLvlVals(Lists.getDebugLevels());
+        loggerFm.setVerbosityLvlVals(Lists.getVerbosityLevels());        
+        loggerFm.setBooleanVals(Lists.getBooleanValues());        
+      
+        String loggerTypes[] = new String[3];
+        loggerTypes[0] = "FileLogger";
+        loggerTypes[1] = "SystemErrLogger";
+        loggerTypes[2] = "SystemOutLogger";
         
-        if (parent != null) {
-            try {
-                pattern = getObjectName(parent);
-            } catch (Exception e) {
-                getServlet().log
-                (resources.getMessage(locale, "users.error.select"));
-                response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                resources.getMessage(locale, "users.error.select"));
-                return (null);
+        ArrayList types = new ArrayList();    
+        // the first element in the select list should be the type selected
+        types.add(new LabelValueBean(type,
+                "/admin/AddLogger.do?parent=" + URLEncoder.encode(parent) 
+                + "&type=" + type));        
+        for (int i=0; i< loggerTypes.length; i++) {
+            if (!type.equalsIgnoreCase(loggerTypes[i])) {
+                types.add(new LabelValueBean(loggerTypes[i],
+                "/admin/AddLogger.do?parent=" + URLEncoder.encode(parent) 
+                + "&type=" + loggerTypes[i]));        
             }
         }
+        loggerFm.setLoggerTypeVals(types);
         
-        try {
-            Iterator items =
-            mBServer.queryNames(new ObjectName(pattern), null).iterator();
-            while (items.hasNext()) {
-                list.add(items.next().toString());
-            }
-        } catch (Exception e) {
-            getServlet().log
-            (resources.getMessage(locale, "users.error.select"));
-            response.sendError
-            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.select"));
-            return (null);
-        }
-        
-        Collections.sort(list);
-        request.setAttribute("loggersList", list);
-        
-        // Forward to the list display page
-        return (mapping.findForward("Loggers"));
+        // Forward to the logger display page
+        return (mapping.findForward("Logger"));
         
     }
     
-    public static String getObjectName(String parent)
-    throws Exception{
-        
-        // Form the pattern that gets the logger for this particular
-        // service, host or context.
-        StringBuffer sb = new StringBuffer(TomcatTreeBuilder.LOGGER_TYPE);
-        ObjectName poname = new ObjectName(parent);
-        String type = poname.getKeyProperty("type");
-        if ("Context".equalsIgnoreCase(type)) { // container is context
-            sb.append(",path=");
-            sb.append(poname.getKeyProperty("path"));
-            sb.append(",host=");
-            sb.append(poname.getKeyProperty("host"));
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
-        }
-        if ("Host".equalsIgnoreCase(type)) {    // container is host
-            sb.append(",host=");
-            sb.append(poname.getKeyProperty("name"));
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
-        }
-        if ("Service".equalsIgnoreCase(type)) {  // container is service
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("name"));
-        }
-        return sb.toString();  
-    }
 }

@@ -166,16 +166,15 @@ public class EditLoggerAction extends Action {
         session.setAttribute("loggerForm", loggerFm);
         loggerFm.setAdminAction("Edit");
         loggerFm.setObjectName(lname.toString());
+        loggerFm.setParentObjectName("");
         sb = new StringBuffer("Logger (");
-        // FIX ME
         sb.append(lname.getKeyProperty("className"));
         sb.append(")");
         loggerFm.setNodeLabel(sb.toString());
-        // FIX ME
-        loggerFm.setLoggerName("Logger");
         loggerFm.setDebugLvlVals(Lists.getDebugLevels());        
         loggerFm.setVerbosityLvlVals(Lists.getVerbosityLevels());        
-        loggerFm.setBooleanVals(Lists.getBooleanValues());
+        loggerFm.setBooleanVals(Lists.getBooleanValues());        
+      
         String attribute = null;
         try {
 

@@ -109,8 +109,7 @@ public final class SaveLoggerAction extends Action {
      * Signature for the <code>createStandardLogger</code> operation.
      */
     private String createStandardLoggerTypes[] =
-    { "java.lang.String",     // parent
-      "java.lang.String",     // name
+    { "java.lang.String"     // parent
     };
 
 
@@ -161,12 +160,13 @@ public final class SaveLoggerAction extends Action {
         } catch (Throwable t) {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
-        }
+        }    
         
         // Identify the requested action
         LoggerForm lform = (LoggerForm) form;
         String adminAction = lform.getAdminAction();
         String lObjectName = lform.getObjectName();
+        String loggerType = lform.getLoggerType();
 
         // Perform a "Create Logger" transaction (if requested)
         if ("Create".equals(adminAction)) {
@@ -175,11 +175,34 @@ public final class SaveLoggerAction extends Action {
             String values[] = null;
 
             try {
-
+   
+                String parent = lform.getParentObjectName();                
+                String objectName = DeleteLoggerAction.getObjectName(parent);
+                
+                ObjectName pname = new ObjectName(parent);                                
+                StringBuffer sb = new StringBuffer(pname.getDomain());                    
+                
+                // System.out.println("Parent mBean = " + parent);
+                // FIX ME-- should Service be converted to Engine,
+                // as createLogger in MBeanFactory requires Engine ObjectName??              
+                try {                        
+                    if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
+                        sb.append(":type=Engine,service=");
+                        sb.append(pname.getKeyProperty("name"));
+                        objectName = sb.toString();
+                    }
+                } catch (Exception e) {
+                    String message =
+                        resources.getMessage("error.engineName.bad",
+                                         sb.toString());
+                    getServlet().log(message);
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+                    return (null);
+                }
+                
                 // Ensure that the requested logger name is unique
                 ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.LOGGER_TYPE +
-                                   ",className=" + lform.getLoggerName());
+                    new ObjectName(objectName);
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("loggerName",
@@ -193,23 +216,22 @@ public final class SaveLoggerAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardLogger object
-                values = new String[2];
-                values[0] = TomcatTreeBuilder.SERVER_TYPE;
-                values[1] = lform.getLoggerName();
-                operation = "createStandardLogger";
+                values = new String[1];
+                values[0] = parent;
+                operation = "create" + loggerType;
                 lObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardLoggerTypes);
-
+               
                 // Add the new Logger to our tree control node
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = TomcatTreeBuilder.SERVER_TYPE;
-                    TreeControlNode parentNode = control.findNode(parentName);
+                    //String parentName = TomcatTreeBuilder.SERVER_TYPE;
+                    TreeControlNode parentNode = control.findNode(parent);
                     if (parentNode != null) {
                         String nodeLabel =
-                            "Logger (" + lform.getLoggerName() + ")";
+                           "Logger for " + parentNode.getLabel();
                         String encodedName =
                             URLEncoder.encode(lObjectName);
                         TreeControlNode childNode =
@@ -224,7 +246,7 @@ public final class SaveLoggerAction extends Action {
                         // FIXME - force a redisplay
                     } else {
                         getServlet().log
-                            ("Cannot find parent node '" + parentName + "'");
+                            ("Cannot find parent node '" + parent + "'");
                     }
                 } else {
                     getServlet().log
@@ -261,7 +283,7 @@ public final class SaveLoggerAction extends Action {
             }
             mBServer.setAttribute(loname,
                                   new Attribute("debug", new Integer(debug)));
-            attribute = "debug";
+            attribute = "verbosity";
             int verbosity = 0;
             try {
                 verbosity = Integer.parseInt(lform.getVerbosityLvl());
@@ -270,7 +292,6 @@ public final class SaveLoggerAction extends Action {
             }
             mBServer.setAttribute(loname,
                                   new Attribute("verbosity", new Integer(verbosity)));            
-            String loggerType = lform.getLoggerType();
             if("FileLogger".equalsIgnoreCase(loggerType)) {
                 attribute = "directory";              
                 mBServer.setAttribute(loname,
@@ -282,13 +303,6 @@ public final class SaveLoggerAction extends Action {
                 mBServer.setAttribute(loname,
                                   new Attribute("suffix", lform.getSuffix()));            
                 attribute = "timestamp";              
-/*                String timestamp = "false";
-                try {
-                    timestamp = lform.getTimestamp();
-                } catch (Throwable t) {
-                    timestamp = "false";
-                }
- */
                 mBServer.setAttribute(loname,
                        new Attribute("timestamp", new Boolean(lform.getTimestamp())));;                            
             }
@@ -304,7 +318,6 @@ public final class SaveLoggerAction extends Action {
                                       attribute));
             return (null);
         }
-        
         // Forward to the success reporting page
         session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));
