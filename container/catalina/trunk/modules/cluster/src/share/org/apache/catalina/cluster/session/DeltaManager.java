@@ -815,6 +815,20 @@ public class DeltaManager
                                          sessionId);
                }
                session.setPrimarySession(true);
+               //check to see if we need to send out an access message
+               if ( (msg == null) ) {
+                   long replDelta = System.currentTimeMillis() - session.getLastTimeReplicated();
+                   if ( replDelta > (getMaxInactiveInterval()*1000) ) {
+                       msg = new SessionMessage(getName(),
+                                             SessionMessage.EVT_SESSION_ACCESSED,
+                                             null,
+                                             sessionId);
+                   }
+                   
+               }
+               
+               //update last replicated time
+               if ( msg != null ) session.setLastTimeReplicated(System.currentTimeMillis());
                return msg;
            }
            catch (IOException x) {
