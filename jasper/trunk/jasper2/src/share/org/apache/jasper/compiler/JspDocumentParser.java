@@ -710,8 +710,11 @@ class JspDocumentParser extends DefaultHandler
 	boolean isTaglib = false;
 
         if (attrs != null) {
-	    int len = attrs.getLength();
-	    for (int i=0; i<len; i++) {
+	    /*
+	     * Notice that due to a bug in the underlying SAX parser, the
+	     * attributes must be enumerated in descending order. 
+	     */
+	    for (int i=attrs.getLength()-1; i>=0; i--) {
 		isTaglib = false;
 		String qName = attrs.getQName(i);
 		if (!qName.startsWith("xmlns")) {
