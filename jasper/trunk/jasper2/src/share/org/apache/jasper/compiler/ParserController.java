@@ -75,7 +75,7 @@ import org.apache.jasper.xmlparser.XMLEncodingDetector;
  * @author Pierre Delisle
  * @author Jan Luehe
  */
-class ParserController {
+class ParserController implements TagConstants {
 
     private static final String CHARSET = "charset=";
 
@@ -402,8 +402,7 @@ class ParserController {
         Mark startMark = jspReader.mark();
 	if (!isExternal) {
 	    jspReader.reset(startMark);
-	    Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
-	    if (mark != null) {
+	    if (hasJspRoot(jspReader)) {
 	        isXml = true;
 		if (revert) sourceEnc = "UTF-8";
 		return;
@@ -483,4 +482,68 @@ class ParserController {
 	return fileName;
     }
 
+    /*
+     * Checks to see if the given page contains, as its first element, a <root>
+     * element whose prefix is bound to the JSP namespace, as in:
+     *
+     * <wombat:root xmlns:wombat="http://java.sun.com/JSP/Page" version="1.2">
+     *   ...
+     * </wombat:root>
+     *
+     * @param reader The reader for this page
+     *
+     * @return true if this page contains a root element whose prefix is bound
+     * to the JSP namespace, and false otherwise
+     */
+    private boolean hasJspRoot(JspReader reader) throws JasperException {
+
+	// <prefix>:root must be the first element
+	Mark start = null;
+	while ((start = reader.skipUntil("<")) != null) {
+	    int c = reader.nextChar();
+	    if (c != '!' && c != '?') break;
+	}
+	if (start == null) {
+	    return false;
+	}
+	Mark stop = reader.skipUntil(":root");
+	if (stop == null) {
+	    return false;
+	}
+	// call substring to get rid of leading '<'
+	String prefix = reader.getText(start, stop).substring(1);
+
+	start = stop;
+	stop = reader.skipUntil(">");
+	if (stop == null) {
+	    return false;
+	}
+
+	// Determine namespace associated with <root> element's prefix
+	String root = reader.getText(start, stop);
+	String xmlnsDecl = "xmlns:" + prefix;
+	int index = root.indexOf(xmlnsDecl);
+	if (index == -1) {
+	    return false;
+	}
+	index += xmlnsDecl.length();
+	while (index < root.length()
+	           && Character.isSpace(root.charAt(index))) {
+	    index++;
+	}
+	if (index < root.length() && root.charAt(index) == '=') {
+	    index++;
+	    while (index < root.length()
+		       && Character.isSpace(root.charAt(index))) {
+		index++;
+	    }
+	    if (index < root.length() && root.charAt(index++) == '"'
+		    && root.regionMatches(index, JSP_URI, 0,
+					  JSP_URI.length())) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
 }
