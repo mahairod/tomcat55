@@ -111,7 +111,11 @@ public class Handler {
     // who creates the servlet definition
     protected int origin;
     protected boolean internal=false;
-
+    protected String path;
+    protected String servletClassName;
+    protected String servletName;
+    protected int loadOnStartup;
+    
     // Debug
     protected int debug=0;
     protected String debugHead=null;
@@ -132,10 +136,6 @@ public class Handler {
     public void reload() {
     }
 
-    public int getLoadOnStartUp() {
-	return 0;
-    }
-    
     public boolean isInternal() {
 	return internal;
     }
@@ -148,6 +148,47 @@ public class Handler {
         this.name=servletName;
     }
 
+    // -------------------- Common servlet attributes
+    public String getServletName() {
+	if(name!=null) return name;
+	return path;
+    }
+
+    public void setServletName(String servletName) {
+        this.servletName=servletName;
+	name=servletName;
+    }
+
+    public String getServletClass() {
+        return this.servletClassName;
+    }
+
+    public void setServletClass(String servletClassName) {
+	if( name==null ) name=servletClassName;
+	this.servletClassName = servletClassName;
+	initialized=false;
+    }
+
+    public void setLoadOnStartUp( int level ) {
+	loadOnStartup=level;
+    }
+
+    public int getLoadOnStartUp() {
+	return loadOnStartup;
+    }
+
+    // -------------------- Jsp specific code
+    
+    public String getPath() {
+        return this.path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    // -------------------- Init params
+    
     public void addInitParam( String name, String value ) {
 	if( initArgs==null) {
 	    initArgs=new Hashtable();
