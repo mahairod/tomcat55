@@ -45,10 +45,14 @@
     <ant dir="${basedir}/docs" target="dist"/>
   </target>
 
+  <target name="balancer">
+    <ant dir="${basedir}/balancer" target="dist"/>
+  </target>
+
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <!-- Update the depends list for each subproject -->
-  <target name="build" depends="build-prepare,ROOT,admin,manager,docs"/>
+  <target name="build" depends="build-prepare,ROOT,admin,manager,docs,balancer"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
