@@ -100,14 +100,9 @@
                  description="The format for the date date based log rotation."
                  type="java.lang.String"/>
                  
-      <attribute name="directByteBufferSize"
+      <attribute name="byteBufferSize"
                  description="The size of the byte buffer used to store the log."
                  type="java.lang.String"/>
-   
-      <attribute name="writeInterval"
-               description="The interval (in seconds) between writting the log."
-               type="int"/>
-      
     </mbean>
   
   
