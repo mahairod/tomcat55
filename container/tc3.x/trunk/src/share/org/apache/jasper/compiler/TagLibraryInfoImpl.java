@@ -246,9 +246,13 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    // First copy this file into our work directory! 
 	    {
 		File jspFile = new File(ctxt.getJspFile());
-		String jarFileName = ctxt.getOutputDir()+File.separatorChar+
-		    jspFile.getParent().toString();
-		File jspDir = new File(jarFileName);
+                String parent = jspFile.getParent();
+                String jarFileName = ctxt.getOutputDir();
+                if (parent != null) {
+                   jarFileName = jarFileName + File.separatorChar +
+                       parent;
+                }
+                File jspDir = new File(jarFileName);
 		jspDir.mkdirs();
 	    
 		if (relativeURL)

@@ -325,7 +325,7 @@ public class CommandLineContext implements JspCompilationContext {
      * uses current file as the base.
      */
     public String resolveRelativeUri(String uri) {
-        if (uri.charAt(0) == '/') {
+        if (uri.startsWith("/")) {
             return uri;
         } else {
             return uriBase + uri;
@@ -367,8 +367,8 @@ public class CommandLineContext implements JspCompilationContext {
      */
     public String getRealPath(String path) {
         path = resolveRelativeUri(path);
-        if (path.charAt(0) == '/') {
-            path.substring(1);
+        if (path.startsWith("/")) {
+            path = path.substring(1);
         };
         File f = new File(uriRoot, path.replace('/', File.separatorChar));
         return f.getAbsolutePath();

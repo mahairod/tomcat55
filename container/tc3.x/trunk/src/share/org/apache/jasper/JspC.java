@@ -241,7 +241,7 @@ public class JspC implements Options { //, JspCompilationContext {
             } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
                 tok = nextArg();
                 if (tok != null) {
-                    scratchDir = new File(tok);
+                    scratchDir = new File(new File(tok).getAbsolutePath());
                     dirset = true;
                 } else {
                     // either an in-java call with an explicit null
@@ -253,7 +253,7 @@ public class JspC implements Options { //, JspCompilationContext {
             } else if (tok.equals(SWITCH_OUTPUT_SIMPLE_DIR)) {
                 tok = nextArg();
                 if (tok != null) {
-                    scratchDir = new File(tok);
+                    scratchDir = new File(new File(tok).getAbsolutePath());
                 } else {
                     // either an in-java call with an explicit null
                     // or a "-d --" sequence should cause this,
@@ -377,7 +377,7 @@ public class JspC implements Options { //, JspCompilationContext {
             if (temp == null) {
                 temp = "";
             }
-            scratchDir = new File(temp);
+            scratchDir = new File(new File(temp).getAbsolutePath());
         }
 
         File f = new File(args[argPos]);
@@ -385,6 +385,10 @@ public class JspC implements Options { //, JspCompilationContext {
             // do web-app conversion
         } else if (uriRoot == null) {
             // set up the uri root if none is explicitly set
+            String tUriBase = uriBase;
+            if (tUriBase == null) {
+                tUriBase = "/";
+            }
             try {
                 if (f.exists()) {
                     f = new File(f.getCanonicalPath());
@@ -392,12 +396,17 @@ public class JspC implements Options { //, JspCompilationContext {
                         File g = new File(f, "WEB-INF");
                         if (g.exists() && g.isDirectory()) {
                             uriRoot = f.getCanonicalPath();
+                            uriBase = tUriBase;
                             Constants.message("jspc.implicit.uriRoot",
                                               new Object[] { uriRoot },
                                               Logger.INFORMATION);
                             break;
                         }
+                        if (f.exists() && f.isDirectory()) {
+                            tUriBase = "/" + f.getName() + "/" + tUriBase;
+                        };
                         f = new File(f.getParent());
+
                         // If there is no acceptible candidate, uriRoot will
                         // remain null to indicate to the CompilerContext to
                         // use the current working/user dir.
