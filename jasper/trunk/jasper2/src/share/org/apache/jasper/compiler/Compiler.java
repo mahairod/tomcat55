@@ -328,12 +328,16 @@ public abstract class Compiler {
 
         String jsp = ctxt.getJspFile();
 
-        if ((jsw != null)
-            && (ctxt.getOptions().getModificationTestInterval() > 0)
-            && ((jsw.getLastModificationTest()
-                    + (ctxt.getOptions().getModificationTestInterval() * 1000)) 
-                    > System.currentTimeMillis())) {
-            return false;
+        if (jsw != null
+                && (ctxt.getOptions().getModificationTestInterval() > 0)) {
+ 
+            if (jsw.getLastModificationTest()
+                    + (ctxt.getOptions().getModificationTestInterval() * 1000) 
+                    > System.currentTimeMillis()) {
+                return false;
+            } else {
+                jsw.setLastModificationTest(System.currentTimeMillis());
+            }
         }
         
         long jspRealLastModified = 0;
@@ -381,7 +385,6 @@ public abstract class Compiler {
         if( jsw==null ) {
             return false;
         }
-        jsw.setLastModificationTest(System.currentTimeMillis());
         
         List depends = jsw.getDependants();
         if (depends == null) {
