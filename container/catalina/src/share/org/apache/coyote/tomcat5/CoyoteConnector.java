@@ -819,10 +819,9 @@ public final class CoyoteConnector
 
 
     /**
-     * Set the Coyote protocol which will be used
-     * by the connector.
+     * Set the Coyote protocol which will be used by the connector.
      *
-     * @param protocolHandlerClassName The new class name
+     * @param protocol The Coyote protocol name
      */
     public void setProtocol(String protocol) {
 
@@ -1317,9 +1316,11 @@ public final class CoyoteConnector
             IntrospectionUtils.setProperty(protocolHandler, "secure",
                                            "" + false);
         }
+
         /* Set the configured properties.  This only sets the ones that were
-           explicitly configured.  Default values are the responsibility of
-           the protocolHandler. */
+         * explicitly configured.  Default values are the responsibility of
+         * the protocolHandler.
+         */
         Iterator keys = properties.keySet().iterator();
         while( keys.hasNext() ) {
             String name = (String)keys.next();
@@ -1519,6 +1520,31 @@ public final class CoyoteConnector
         ServerSocketFactory factory = getFactory();
         if (factory instanceof CoyoteServerSocketFactory) {
             ((CoyoteServerSocketFactory)factory).setCiphers(ciphers);
+        }
+    }
+
+    /**
+     * Gets the SSL protocol variant to be used.
+     *
+     * @return SSL protocol variant
+     */
+    public String getSslProtocol() {
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            return ((CoyoteServerSocketFactory)factory).getProtocol();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the SSL protocol variant to be used.
+     *
+     * @param sslProtocol SSL protocol variant
+     */
+    public void setSslProtocol(String sslProtocol) {
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setProtocol(sslProtocol);
         }
     }
 
