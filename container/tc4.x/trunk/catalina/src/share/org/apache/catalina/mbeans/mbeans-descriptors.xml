@@ -13,6 +13,7 @@
 
 
   <mbean         name="AccessLogValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that generates a web server access log"
                domain="Catalina"
                 group="Valve"
@@ -73,6 +74,7 @@
 
 
   <mbean         name="FileLogger"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Logger that appends log messages to a file"
                domain="Catalina"
                 group="Logger"
@@ -151,6 +153,7 @@
 
 
   <mbean         name="Http10Connector"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="HTTP/1.0 Connector for Tomcat Standalone"
                domain="Catalina"
                 group="Connector"
@@ -216,6 +219,7 @@
 
 
   <mbean         name="Http11Connector"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="HTTP/1.1 Connector for Tomcat Standalone"
                domain="Catalina"
                 group="Connector"
@@ -285,6 +289,7 @@
 
 
   <mbean         name="JDBCRealm"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Realm that works with any JDBC supported database"
                domain="Catalina"
                 group="Realm"
@@ -338,6 +343,7 @@
 
 
   <mbean         name="JNDIRealm"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Realm that works with a directory server accessed via the Java Naming and Directory Interface (JNDI) APIs"
                domain="Catalina"
                 group="Realm"
@@ -600,6 +606,7 @@
 
 
   <mbean         name="MemoryRealm"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Realm that reads an XML file to configure the valid users, passwords, and roles"
                domain="Catalina"
                 group="Realm"
@@ -714,6 +721,7 @@
 
 
   <mbean         name="RemoteAddrValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's IP address"
                domain="Catalina"
                 group="Valve"
@@ -735,6 +743,7 @@
 
 
   <mbean         name="RemoteHostValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's host name"
                domain="Catalina"
                 group="Valve"
@@ -756,6 +765,7 @@
 
 
   <mbean         name="RequestDumperValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that logs interesting contents from the specified Request and the corresponding Response"
                domain="Catalina"
                 group="Valve"
@@ -769,6 +779,7 @@
 
 
   <mbean         name="SingleSignOn"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="A Valve that supports a 'single signon' user experience"
                domain="Catalina"
                 group="Valve"
@@ -1190,6 +1201,7 @@
 
 
   <mbean         name="SystemErrLogger"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Logger that writes to System.err"
                domain="Catalina"
                 group="Logger"
@@ -1207,6 +1219,7 @@
 
 
   <mbean         name="SystemOutLogger"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Logger that writes to System.out"
                domain="Catalina"
                 group="Logger"
@@ -1291,6 +1304,7 @@
 
 
   <mbean         name="UserDatabaseRealm"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Realm connected to a UserDatabase as a global JNDI resource"
                domain="Catalina"
                 group="Realm"
