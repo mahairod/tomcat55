@@ -10,7 +10,7 @@
 				property
 **/ %>
 								
-<!-- we use scriptlet to access the property of a bean --!>
+<!-- we use scriptlet to access the property of a bean -->
 <jsp:useBean id="counter" scope="request" class="core_syntax.scripting.scriptlet.Counter" />
 
 <!-- setCounter method is used in Bean and send to out stream -->
