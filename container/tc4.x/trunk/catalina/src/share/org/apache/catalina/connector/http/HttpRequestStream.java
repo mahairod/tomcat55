@@ -91,6 +91,7 @@ public class HttpRequestStream extends RequestStream {
 	super(request);
         String transferEncoding = request.getHeader("Transfer-Encoding");
         
+        http11 = request.getProtocol().equals("HTTP/1.1");
         chunk = ((transferEncoding != null) 
                  && (transferEncoding.indexOf("chunked") != -1));
         
@@ -99,8 +100,6 @@ public class HttpRequestStream extends RequestStream {
             response.addHeader("Connection", "close");
         }
 
-        http11 = request.getProtocol().equals("HTTP/1.1");
-        
     }
     
     
@@ -202,12 +201,13 @@ public class HttpRequestStream extends RequestStream {
                 return (-1);
             
             if ((chunkBuffer == null)
-                || (chunkPos == chunkLength)) {
+                || (chunkPos >= chunkLength)) {
                 
                 chunkPos = 0;
                 
                 try {
-                    chunkLength = Integer.parseInt(readLine().trim(), 16);
+                    chunkLength = 
+                        Integer.parseInt(readLineFromStream().trim(), 16);
                 } catch (NumberFormatException e) {
                     // Critical error, unable to parse the chunk length
                     chunkLength = 0;
@@ -219,9 +219,9 @@ public class HttpRequestStream extends RequestStream {
                 if (chunkLength == 0) {
                     
                     // Skipping trailing headers, if any
-                    String trailingLine = readLine();
+                    String trailingLine = readLineFromStream();
                     while (!trailingLine.equals(""))
-                        trailingLine = readLine();
+                        trailingLine = readLineFromStream();
                     endChunk = true;
                     return (-1);
                     // TODO : Should the stream be automatically closed ?
@@ -239,7 +239,7 @@ public class HttpRequestStream extends RequestStream {
                     
                     while (nbRead < chunkLength) {
                         currentRead = 
-                            super.read(chunkBuffer, nbRead, 
+                            stream.read(chunkBuffer, nbRead, 
                                        chunkLength - nbRead);
                         if (currentRead == -1)
                             throw new IOException
@@ -248,8 +248,7 @@ public class HttpRequestStream extends RequestStream {
                     }
                     
                     // Skipping the CRLF
-                    super.read();
-                    super.read();
+                    readLineFromStream();
                     
                 }
                 
@@ -279,7 +278,7 @@ public class HttpRequestStream extends RequestStream {
      *  was encountered
      * @exception IOException	if an input or output exception has occurred
      */
-    private String readLine() 
+    private String readLineFromStream() 
         throws IOException {
         
 	StringBuffer sb = new StringBuffer();
