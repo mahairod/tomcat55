@@ -90,15 +90,18 @@ public class ReplicationListener extends Thread
     private ListenCallback callback;
     private java.net.InetAddress bind;
     private int port;
+    private long timeout = 0;
     public ReplicationListener(ListenCallback callback,
                                int poolSize,
                                java.net.InetAddress bind,
-                               int port)
+                               int port,
+                               long timeout)
     {
         pool = new ThreadPool(poolSize);
         this.callback = callback;
         this.bind = bind;
         this.port = port;
+        this.timeout = timeout;
     }
 
     public void run()
@@ -132,7 +135,7 @@ public class ReplicationListener extends Thread
         while (doListen) {
             // this may block for a long time, upon return the
             // selected set contains keys of the ready channels
-            int n = selector.select();
+            int n = selector.select(timeout);
             if (n == 0) {
                 continue;	// nothing to do
             }
