@@ -98,7 +98,7 @@
       waitforchild="${wait}"
       debug="${jdb}"
       print="${print}"
-      filterclassname="org.apache.catalina.startup.CatalinaLaunchFilter"
+      filterclassname="org.apache.catalina.launcher.CatalinaLaunchFilter"
       filterclasspath="${bootstrap.jar}"
       usesystemin="false"
       requiretools="true"
