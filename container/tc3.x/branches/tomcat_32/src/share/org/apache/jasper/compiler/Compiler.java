@@ -374,6 +374,22 @@ public class Compiler {
 	}
 	return null;
     }
+
+	 /**
+	  * Remove generated files
+	  */
+	 public void removeGeneratedFiles()
+	 {
+		 try{
+			 // XXX Should we delete the generated .java file too?
+			 String classFileName = mangler.getClassFileName();
+			 if(classFileName != null){
+				 File classFile = new File(classFileName);
+				 classFile.delete();
+			 }
+		 }catch(Exception e){
+		 }
+	 }
 }
 
 
