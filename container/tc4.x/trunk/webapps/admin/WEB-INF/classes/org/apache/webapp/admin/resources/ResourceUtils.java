@@ -111,7 +111,7 @@ public class ResourceUtils {
             ename = new ObjectName( ENVIRONMENT_TYPE +
                                         ","+parentType+"=" + parent);
         }
-               
+        
         Iterator iterator = (mserver.queryMBeans(ename, null).iterator());
         
         ArrayList results = new ArrayList();        
@@ -124,9 +124,19 @@ public class ResourceUtils {
         
         EnvEntriesForm envEntriesForm = new EnvEntriesForm();
         envEntriesForm.setEnvEntries((String[]) 
-                        results.toArray(new String[results.size()])); 
-        envEntriesForm.setParentName(parent);
-        envEntriesForm.setParentType(parentType);
+                        results.toArray(new String[results.size()]));
+        
+        if (parent != null) {
+            envEntriesForm.setParentName(parent);
+        } else {
+            envEntriesForm.setParentName("");
+        }
+        
+        if (parentType != null) {
+            envEntriesForm.setParentType(parentType);
+        } else {
+            envEntriesForm.setParentType("");
+        }
         
         return (envEntriesForm);
 
