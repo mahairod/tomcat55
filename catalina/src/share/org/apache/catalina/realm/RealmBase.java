@@ -457,10 +457,7 @@ public abstract class RealmBase
 
         // Check each defined security constraint
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        String uri = request.getDecodedRequestURI();
-        String contextPath = hreq.getContextPath();
-        if (contextPath.length() > 0)
-            uri = uri.substring(contextPath.length());
+        String uri = request.getRequestPathMB().toString();
         
         String method = hreq.getMethod();
         int i;
@@ -486,10 +483,12 @@ public abstract class RealmBase
                     }
                 }
             }
-        }        
+        }
+        /*
         if(found) {
             return resultsToArray(results);
         }
+        */
         int longest = -1;
 
         for (i = 0; i < constraints.length; i++) {
@@ -535,9 +534,11 @@ public abstract class RealmBase
                 }
             }
         }
+        /*
         if(found) {
             return  resultsToArray(results);
         }
+        */
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
             
@@ -546,6 +547,7 @@ public abstract class RealmBase
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
             boolean matched = false;
+            int pos = -1;
             for(int j=0; j < collection.length; j++){
                 String [] patterns = collection[j].findPatterns();
                 for(int k=0; k < patterns.length && !matched; k++) {
@@ -558,6 +560,7 @@ public abstract class RealmBase
                            uri.length()-dot == pattern.length()-1) {
                             if(pattern.regionMatches(1,uri,dot,uri.length()-dot)) {
                                 matched = true;
+                                pos = j;
                             }
                         }
                     }
@@ -565,17 +568,19 @@ public abstract class RealmBase
             }
             if(matched) {
                 found = true;
-                if(collection[i].findMethod(method)) {
+                if(collection[pos].findMethod(method)) {
                     if(results == null) {
                         results = new ArrayList();
-                    }                    
+                    }
                     results.add(constraints[i]);
                 }
             }
         }
+        /*
         if(found) {
             return resultsToArray(results);
         }
+        */
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
             
