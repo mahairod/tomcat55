@@ -34,6 +34,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.AccessControlException;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.Random;
 
 import javax.management.MBeanRegistration;
@@ -172,9 +173,9 @@ public final class StandardServer
      * components, and hence should not be persisted.
      */
     private static String standardImplementations[] = {
+        "org.apache.catalina.connector.Connector",
         "org.apache.catalina.core.StandardServer",
         "org.apache.catalina.core.StandardService",
-        "org.apache.coyote.tomcat5.CoyoteConnector",
         "org.apache.catalina.core.StandardEngine",
         "org.apache.catalina.core.StandardHost",
         "org.apache.catalina.core.StandardContext",
@@ -1128,8 +1129,12 @@ public final class StandardServer
             // Open an output writer for the new configuration file
             writer = null;
             try {
+                File parent = config.getParentFile();
+                if ((parent != null) && (!parent.exists())) {
+                    parent.mkdirs();
+                }
                 writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(config), "UTF8"));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 if (writer != null) {
                     try {
                         writer.close();
@@ -1557,6 +1562,16 @@ public final class StandardServer
                 }
                 writer.print("<Ejb");
                 storeAttributes(writer, false, ejbs[i]);
+                Iterator properties = ejbs[i].listProperties();
+                while (properties.hasNext()) {
+                    String name = (String) properties.next();
+                    writer.print(' ');
+                    writer.print(name);
+                    writer.print("=\"");
+                    String strValue = convertStr((String) ejbs[i].getProperty(name));
+                    writer.print(strValue);
+                    writer.print("\"");
+                }
                 writer.println("/>");
             }
         }
@@ -1583,6 +1598,16 @@ public final class StandardServer
                 }
                 writer.print("<LocalEjb");
                 storeAttributes(writer, false, lejbs[i]);
+                Iterator properties = lejbs[i].listProperties();
+                while (properties.hasNext()) {
+                    String name = (String) properties.next();
+                    writer.print(' ');
+                    writer.print(name);
+                    writer.print("=\"");
+                    String strValue = convertStr((String) lejbs[i].getProperty(name));
+                    writer.print(strValue);
+                    writer.print("\"");
+                }
                 writer.println("/>");
             }
         }
@@ -1595,6 +1620,16 @@ public final class StandardServer
             }
             writer.print("<Resource");
             storeAttributes(writer, false, dresources[i]);
+            Iterator properties = dresources[i].listProperties();
+            while (properties.hasNext()) {
+                String name = (String) properties.next();
+                writer.print(' ');
+                writer.print(name);
+                writer.print("=\"");
+                String strValue = convertStr((String) dresources[i].getProperty(name));
+                writer.print(strValue);
+                writer.print("\"");
+            }
             writer.println("/>");
         }
 
@@ -1606,7 +1641,17 @@ public final class StandardServer
             }
             writer.println("<ResourceEnvRef");
             storeAttributes(writer, false, eresources[i]);
-            writer.println("</ResourceEnvRef>");
+            Iterator properties = eresources[i].listProperties();
+            while (properties.hasNext()) {
+                String name = (String) properties.next();
+                writer.print(' ');
+                writer.print(name);
+                writer.print("=\"");
+                String strValue = convertStr((String) eresources[i].getProperty(name));
+                writer.print(strValue);
+                writer.print("\"");
+            }
+            writer.println("/>");
         }
 
         // Store nested <ResourceLink> elements
