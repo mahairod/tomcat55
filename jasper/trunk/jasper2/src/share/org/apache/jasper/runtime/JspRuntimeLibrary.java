@@ -219,8 +219,8 @@ public class JspRuntimeLibrary {
 					String param, boolean ignoreMethodNF) 
 					throws JasperException
     {
-        java.lang.reflect.Method method = null;
-        Class type   = null;
+        Method method = null;
+        Class type = null;
         Class propertyEditorClass = null;
 	try {
 	    java.beans.BeanInfo info
@@ -273,7 +273,8 @@ public class JspRuntimeLibrary {
             } else {
                 throw new JasperException(Constants.getString(
                         "jsp.error.beans.nomethod.setproperty",
-                        new Object[] {prop, bean.getClass().getName()}));
+                        new Object[] {prop, type.getName(),
+				      bean.getClass().getName()}));
             }
         }
     }
@@ -505,8 +506,7 @@ public class JspRuntimeLibrary {
         }
 	Object value = null;
         try {
-            java.lang.reflect.Method method = 
-                    getReadMethod(o.getClass(), prop);
+            Method method = getReadMethod(o.getClass(), prop);
 	    value = method.invoke(o, null);
         } catch (Exception ex) {
 	    throw new JasperException (ex);
@@ -644,9 +644,9 @@ public class JspRuntimeLibrary {
 	}	
     }
     
-    public static java.lang.reflect.Method getWriteMethod(Class beanClass, String prop)
+    public static Method getWriteMethod(Class beanClass, String prop)
     throws JasperException {
-	java.lang.reflect.Method method = null;	
+	Method method = null;	
         Class type = null;
 	try {
 	    java.beans.BeanInfo info
@@ -678,15 +678,17 @@ public class JspRuntimeLibrary {
             } else {
                 throw new JasperException(Constants.getString(
                         "jsp.error.beans.nomethod.setproperty",
-                        new Object[] {prop, beanClass.getName()}));
+                        new Object[] {prop, type.getName(),
+				      beanClass.getName()}));
             }
         }
         return method;
     }
 
-    public static java.lang.reflect.Method getReadMethod(Class beanClass, String prop)
-    throws JasperException {
-        java.lang.reflect.Method method = null;        
+    public static Method getReadMethod(Class beanClass, String prop)
+	    throws JasperException {
+
+        Method method = null;        
         Class type = null;
         try {
             java.beans.BeanInfo info
