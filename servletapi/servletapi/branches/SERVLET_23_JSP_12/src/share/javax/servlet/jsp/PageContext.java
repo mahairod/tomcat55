@@ -514,7 +514,9 @@ abstract public class PageContext {
      * illegal to generate any output to the client, or to modify any 
      * ServletResponse state after invoking this call.
      *
-     * <p><B>TODO</B> - should handle Throwable
+     * <p>
+     * This method is kept for backwards compatiblity reasons.  Newly
+     * generated code should use PageContext.handlePageException(Throwable).
      *
      * @param e the exception to be handled
      *
@@ -523,9 +525,43 @@ abstract public class PageContext {
      *
      * @throws NullPointerException if the exception is null
      * @throws SecurityException if target resource cannot be accessed by caller
+     *
+     * @see #handlePageException(Throwable)
      */
 
     abstract public void handlePageException(Exception e) throws ServletException, IOException;
+
+    /**
+     * <p>
+     * This method is identical to the handlePageException(Exception),
+     * except that it accepts a Throwable.  This is the prefered method
+     * to use as it allows proper implementation of the errorpage
+     * semantics.
+     *
+     * <p>
+     * This method is intended to process an unhandled "page" level exception
+     * by redirecting the exception to either the specified error page for this
+     * JSP, or if none was specified, to perform some implementation dependent
+     * action.
+     *
+     * <p>
+     * A JSP implementation class shall typically clean up any local state
+     * prior to invoking this and will return immediately thereafter. It is
+     * illegal to generate any output to the client, or to modify any 
+     * ServletResponse state after invoking this call.
+     *
+     * @param t the throwable to be handled
+     *
+     * @throws ServletException
+     * @throws IOException
+     *
+     * @throws NullPointerException if the exception is null
+     * @throws SecurityException if target resource cannot be accessed by caller
+     *
+     * @see #handlePageException(Exception)
+     */
+
+    abstract public void handlePageException(Throwable t) throws ServletException, IOException;
 
     /**
      * Return a new BodyContent object, save the current "out" JspWriter,
