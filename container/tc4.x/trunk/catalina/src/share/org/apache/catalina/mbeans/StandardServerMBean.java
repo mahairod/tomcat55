@@ -66,8 +66,10 @@ package org.apache.catalina.mbeans;
 
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
+import org.apache.catalina.Container;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
+import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardService;
 import org.apache.commons.modeler.BaseModelMBean;
 
@@ -111,15 +113,27 @@ public class StandardServerMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Operations
 
     /**
-     * Create a new child Service.
+     * Create a new child Service and Engine.
+     *
+     * @param name The new Service's name
+     *
+     * @exception Exception if an MBean cannot be created or registered
      */
-    public Service createService(String name) {
+    public void createService(String name)
+        throws Exception {
 
         StandardService service = new StandardService();
+        
         service.setName(name);
-        return service;
+        Server server = (Server) this.resource;
+        server.addService(service);
+        MBeanUtils.createMBean(service);
+
+        StandardEngine engine = new StandardEngine();
+        service.setContainer((Container)engine);
+        MBeanUtils.createMBean(engine);
 
     }
 
-    
+
 }

@@ -125,25 +125,22 @@ public class StandardServiceMBean extends BaseModelMBean {
 
     /**
      * Create a new Connector.
+     *
+     * @param address The IP address on which to bind
+     * @param port TCP port number to listen on
+     *
+     * @exception Exception if an MBean cannot be created or registered
      */
-    public Connector createConnector(String scheme, int acceptCount, String address,
-        int connectionTimeout, int debug, boolean enableLookups, int maxProcessors,
-        int minProcessors, int port, String proxyName) {
+    public void createConnector(String address, int port)
+        throws Exception {
 
         HttpConnector connector = new HttpConnector();
-        
-        connector.setScheme(scheme);
-        connector.setAcceptCount(acceptCount);
-        connector.setAddress(address);
-        connector.setConnectionTimeout(connectionTimeout);
-        connector.setDebug(debug);
-        connector.setEnableLookups(enableLookups);
-        connector.setMaxProcessors(maxProcessors);
-        connector.setMinProcessors(minProcessors);
-        connector.setPort(port);
-        connector.setProxyName(proxyName);
 
-        return connector;
+        connector.setAddress(address);
+        connector.setPort(port);
+        Service service = (Service) this.resource;
+        service.addConnector(connector);
+        MBeanUtils.createMBean(connector);
 
     }
 
