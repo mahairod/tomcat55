@@ -69,6 +69,9 @@ import javax.servlet.ServletContext;
 import org.apache.jasper.logging.Logger;
 
 import org.apache.jasper.compiler.TldLocationsCache;
+import org.apache.jasper.xmlparser.ParserUtils;
+
+import java.util.*;
 
 /**
  * A class to hold all init parameters specific to the JSP engine. 
@@ -78,7 +81,8 @@ import org.apache.jasper.compiler.TldLocationsCache;
  * @author Pierre Delisle
  */
 public final class EmbededServletOptions implements Options {
-
+    private Properties settings=new Properties();
+    
     /**
      * Is Jasper being used in development mode?
      */
@@ -160,6 +164,14 @@ public final class EmbededServletOptions implements Options {
      */
     private String javaEncoding;
 
+    public String getProperty(String name ) {
+        return settings.getProperty( name );
+    }
+
+    public void setProperty(String name, String value ) {
+        settings.setProperty( name, value );
+    }
+    
     /**
      * Are we keeping generated code around?
      */
@@ -250,6 +262,10 @@ public final class EmbededServletOptions implements Options {
 	return tldLocationsCache;
     }
 
+    public void setTldLocationsCache( TldLocationsCache tldC ) {
+        tldLocationsCache=tldC;
+    }
+
     public String getJavaEncoding() {
 	return javaEncoding;
     }
@@ -259,6 +275,18 @@ public final class EmbededServletOptions implements Options {
      * ServletConfig and ServletContext. 
      */
     public EmbededServletOptions(ServletConfig config, ServletContext context) {
+        Enumeration enum=config.getInitParameterNames();
+        while( enum.hasMoreElements() ) {
+            String k=(String)enum.nextElement();
+            String v=config.getInitParameter( k );
+
+            setProperty( k, v);
+        }
+
+        // quick hack
+        String validating=config.getInitParameter( "validating");
+        if( "false".equals( validating )) ParserUtils.validating=false;
+        
         String keepgen = config.getInitParameter("keepgenerated");
         if (keepgen != null) {
             if (keepgen.equalsIgnoreCase("true"))
