@@ -85,13 +85,17 @@
           description="Maximum number of Keep-Alive requests to honor per connection"
                  type="int"/>
 
+    <attribute   name="maxPostSize"
+          description="Maximum size in bytes of a POST which will be handled by the servlet API provided features"
+                 type="int"/>
+
     <attribute   name="maxProcessors"
-          description="The maximum number of processors allowed"
+          description="The maximum number of processors allowed (deprecated)"
                  type="int"/>
 
     <attribute   name="minProcessors"
           description="The minimum number of processors to start at
-                       initialization time"
+                       initialization time (deprecated)"
                  type="int"/>
 
     <attribute   name="maxSpareThreads"
@@ -164,6 +168,10 @@
     <attribute    name="tomcatAuthentication"
            description="Should Tomcat perform all authentications?"
                   type="boolean"/>
+
+    <attribute   name="URIEncoding"
+          description="Character encoding used to decode the URI"
+                 type="java.lang.String"/>
 
     <attribute    name="xpoweredBy"
            description="Is generation of X-Powered-By response header enabled/disabled?"
