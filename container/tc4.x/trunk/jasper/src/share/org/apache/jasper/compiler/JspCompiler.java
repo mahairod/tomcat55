@@ -132,6 +132,11 @@ public class JspCompiler extends Compiler implements Mangler {
         int iSep = jsp.lastIndexOf('/') + 1;
         int iEnd = jsp.length();
         StringBuffer modifiedClassName = new StringBuffer(jsp.length() - iSep);
+	if (!Character.isJavaIdentifierStart(jsp.charAt(iSep))) {
+	    // If the first char is not a legal Java letter or digit,
+	    // prepend a '$'.
+	    modifiedClassName.append('$');
+	}
         for (int i = iSep; i < iEnd; i++) {
             char ch = jsp.charAt(i);
             if (Character.isLetterOrDigit(ch))
