@@ -62,6 +62,7 @@ package org.apache.catalina.security;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedActionException;
@@ -72,6 +73,8 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+
+import org.apache.tomcat.util.buf.MessageBytes;
 
 import org.apache.catalina.util.StringManager;
 
@@ -88,6 +91,21 @@ import org.apache.catalina.util.StringManager;
 
 public final class SecurityUtil{
     
+    private final static int INIT= 0;
+    private final static int SERVICE = 1;
+    private final static int DOFILTER = 1;
+    private final static int DESTROY = 2;
+    
+    private final static String INIT_METHOD = "init";
+    private final static String DOFILTER_METHOD = "doFilter";
+    private final static String SERVICE_METHOD = "service";
+    private final static String DESTROY_METHOD = "destroy";
+   
+    /**
+     * Cache every object for which we are creating method on it.
+     */
+    private static HashMap objectCache = new HashMap();
+        
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( SecurityUtil.class );
     
@@ -137,7 +155,7 @@ public final class SecurityUtil{
      * @param methodName the method to apply the security restriction
      * @param targetObject the <code>Servlet</code> on which the method will be called.
      * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
-     * @param targetObject <code>Object</code> array contains the runtime parameters instance.
+     * @param targetArgumentst <code>Object</code> array contains the runtime parameters instance.
      * @param principal the <code>Principal</code> to which the security privilege apply..
      */    
     public static void doAsPrivilege(final String methodName, 
@@ -145,8 +163,25 @@ public final class SecurityUtil{
                                      final Class[] targetType,
                                      final Object[] targetArguments,
                                      Principal principal) throws java.lang.Exception{
-       final Method method = targetObject.getClass().getMethod(methodName, targetType);   
-       execute(method, targetObject, targetArguments, principal);
+        Method method = null;
+        Method[] methodsCache = null;
+        if(objectCache.containsKey(targetObject)){
+            methodsCache = (Method[])objectCache.get(targetObject);
+            method = findMethod(methodsCache, methodName);
+            if (method == null){
+                method = createMethodAndCacheIt(methodsCache,
+                                                methodName,
+                                                targetObject,
+                                                targetType);
+            }
+        } else {
+            method = createMethodAndCacheIt(methodsCache,
+                                            methodName,
+                                            targetObject,
+                                            targetType);                     
+        }
+
+        execute(method, targetObject, targetArguments, principal);
     }
  
     
@@ -169,13 +204,32 @@ public final class SecurityUtil{
      *
      * @param methodName the method to apply the security restriction
      * @param targetObject the <code>Filter</code> on which the method will be called.
+     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
+     * @param targetArgumentst <code>Object</code> array contains the runtime parameters instance.
      */    
     public static void doAsPrivilege(final String methodName, 
                                      final Filter targetObject, 
                                      final Class[] targetType,
                                      final Object[] targetArguments) throws java.lang.Exception{
-       final Method method = targetObject.getClass().getMethod(methodName, targetType);   
-       execute(method, targetObject, targetArguments, null);
+        Method method = null;
+        Method[] methodsCache = null;
+        if(objectCache.containsKey(targetObject)){
+            methodsCache = (Method[])objectCache.get(targetObject);
+            method = findMethod(methodsCache, methodName);
+            if (method == null){
+                method = createMethodAndCacheIt(methodsCache,
+                                                methodName,
+                                                targetObject,
+                                                targetType);
+            }
+        } else {
+            method = createMethodAndCacheIt(methodsCache,
+                                            methodName,
+                                            targetObject,
+                                            targetType);                     
+        }
+
+        execute(method, targetObject, targetArguments, null);
     }
     
     
@@ -186,7 +240,7 @@ public final class SecurityUtil{
      * @param methodName the method to apply the security restriction
      * @param targetObject the <code>Servlet</code> on which the method will be called.
      * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
-     * @param targetObject <code>Object</code> array contains the runtime parameters instance.
+     * @param targetArgumentst <code>Object</code> array contains the runtime parameters instance.
      * @param principal the <code>Principal</code> to which the security privilege apply..
      */    
     private static void execute(final Method method,
@@ -194,16 +248,15 @@ public final class SecurityUtil{
                                 final Object[] targetArguments,
                                 Principal principal) throws java.lang.Exception{
        try{   
-           Subject subject = null;
-           SecurityManager securityManager = System.getSecurityManager();
-                PrivilegedExceptionAction pea = new PrivilegedExceptionAction()
-                        {
-                            public Object run() throws Exception{
-                               method.invoke(targetObject, targetArguments);
-                               return null;
-                            }
-                        };
-
+            Subject subject = null;
+            PrivilegedExceptionAction pea = new PrivilegedExceptionAction(){
+                    public Object run() throws Exception{
+                       method.invoke(targetObject, targetArguments);
+                       return null;
+                    }
+            };
+            
+            // FIX ME: should use a Subject pool instead or recycle the object
             if (principal != null){
                 subject = new Subject();
                 subject.getPrincipals().add(principal);         
@@ -228,5 +281,73 @@ public final class SecurityUtil{
             else
                 throw new ServletException(e.getMessage(), e);
         }  
+    }
+    
+    
+    /**
+     * Find a method stored within the cache.
+     * @param methodsCache the cache used to store method instance
+     * @param methodName the method to apply the security restriction
+     * @return the method instance, null if not yet created.
+     */
+    private static Method findMethod(Method[] methodsCache,
+                                     String methodName){
+        if (methodName.equalsIgnoreCase(INIT_METHOD) 
+                && methodsCache[INIT] != null){
+            return methodsCache[INIT];
+        } else if (methodName.equalsIgnoreCase(DESTROY_METHOD) 
+                && methodsCache[DESTROY] != null){
+            return methodsCache[DESTROY];            
+        } else if (methodName.equalsIgnoreCase(SERVICE_METHOD) 
+                && methodsCache[SERVICE] != null){
+            return methodsCache[SERVICE];
+        } else if (methodName.equalsIgnoreCase(DOFILTER_METHOD) 
+                && methodsCache[DOFILTER] != null){
+            return methodsCache[DOFILTER];          
+        } 
+        return null;
+    }
+    
+    
+    /**
+     * Create the method and cache it for further re-use.
+     * @param methodsCache the cache used to store method instance
+     * @param methodName the method to apply the security restriction
+     * @param targetObject the <code>Servlet</code> on which the method will be called.
+     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
+     * @return the method instance.
+     */
+    private static Method createMethodAndCacheIt(Method[] methodsCache,
+                                                 String methodName,
+                                                 Object targetObject,
+                                                 Class[] targetType) 
+            throws Exception{
+        
+        if ( methodsCache == null){
+            methodsCache = new Method[3];
+        }               
+                
+        Method method = targetObject.getClass().getMethod(methodName, targetType); 
+        if (methodName.equalsIgnoreCase(INIT_METHOD)){
+            methodsCache[INIT] = method;
+        } else if (methodName.equalsIgnoreCase(DESTROY_METHOD)){
+            methodsCache[DESTROY] = method;
+        } else if (methodName.equalsIgnoreCase(SERVICE_METHOD)){
+            methodsCache[SERVICE] = method;
+        } else if (methodName.equalsIgnoreCase(DOFILTER_METHOD)){
+            methodsCache[DOFILTER] = method;
+        } 
+         
+        objectCache.put(targetObject, methodsCache );
+                                           
+        return method;
+    }
+
+    
+    /**
+     * Remove the object from the cache.
+     */
+    public static void remove(Object cachedObject){
+        objectCache.remove(cachedObject);
     }
 }
