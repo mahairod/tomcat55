@@ -28,11 +28,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.Context;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.Store;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.session.PersistentManager;
 import org.apache.catalina.util.StringManager;
@@ -97,8 +96,7 @@ public class PersistentValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public void invoke(Request request, Response response,
-                       ValveContext valveContext)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Select the Context to be used for this Request
@@ -149,7 +147,7 @@ public class PersistentValve
         log("sessionId: " + sessionId);
 
         // Ask the next valve to process the request.
-        valveContext.invokeNext(request, response);
+        getNext().invoke(request, response);
 
         // Read the sessionid after the response.
         // HttpSession hsess = hreq.getSession(false);

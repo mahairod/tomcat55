@@ -28,11 +28,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
@@ -109,12 +107,11 @@ public class ErrorReportValve
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Perform the request
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
         ServletRequest sreq = (ServletRequest) request;
         Throwable throwable =
@@ -184,13 +181,7 @@ public class ErrorReportValve
         throws IOException {
 
         // Do nothing on non-HTTP responses
-        if (!(response instanceof HttpResponse))
-            return;
-        HttpResponse hresponse = (HttpResponse) response;
-        if (!(response instanceof HttpServletResponse))
-            return;
-        HttpServletResponse hres = (HttpServletResponse) response;
-        int statusCode = hresponse.getStatus();
+        int statusCode = response.getStatus();
 
         // Do nothing on a 1xx, 2xx and 3xx status
         if (statusCode < 400)
@@ -215,7 +206,7 @@ public class ErrorReportValve
 
         }
 
-        String message = RequestUtil.filter(hresponse.getMessage());
+        String message = RequestUtil.filter(response.getMessage());
         if (message == null)
             message = "";
     
@@ -315,8 +306,8 @@ public class ErrorReportValve
                 Locale locale = Locale.getDefault();
 
                 try {
-                    hres.setContentType("text/html");
-                    hres.setLocale(locale);
+                	response.setContentType("text/html");
+                	response.setLocale(locale);
                 } catch (Throwable t) {
                     if (debug >= 1)
                         log("status.setContentType", t);

@@ -24,22 +24,17 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.SessionEvent;
 import org.apache.catalina.SessionListener;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
@@ -371,30 +366,19 @@ public class SingleSignOn
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        // If this is not an HTTP request and response, just pass them on
-        if (!(request instanceof HttpRequest) ||
-            !(response instanceof HttpResponse)) {
-            context.invokeNext(request, response);
-            return;
-        }
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
         request.removeNote(Constants.REQ_SSOID_NOTE);
 
         // Has a valid user already been authenticated?
         if (debug >= 1)
-            log("Process request for '" + hreq.getRequestURI() + "'");
-        if (hreq.getUserPrincipal() != null) {
+            log("Process request for '" + request.getRequestURI() + "'");
+        if (request.getUserPrincipal() != null) {
             if (debug >= 1)
-                log(" Principal '" + hreq.getUserPrincipal().getName() +
+                log(" Principal '" + request.getUserPrincipal().getName() +
                     "' has already been authenticated");
-            context.invokeNext(request, response);
+            getNext().invoke(request, response);
             return;
         }
 
@@ -402,7 +386,7 @@ public class SingleSignOn
         if (debug >= 1)
             log(" Checking for SSO cookie");
         Cookie cookie = null;
-        Cookie cookies[] = hreq.getCookies();
+        Cookie cookies[] = request.getCookies();
         if (cookies == null)
             cookies = new Cookie[0];
         for (int i = 0; i < cookies.length; i++) {
@@ -414,7 +398,7 @@ public class SingleSignOn
         if (cookie == null) {
             if (debug >= 1)
                 log(" SSO cookie is not present");
-            context.invokeNext(request, response);
+            getNext().invoke(request, response);
             return;
         }
 
@@ -430,18 +414,18 @@ public class SingleSignOn
             request.setNote(Constants.REQ_SSOID_NOTE, cookie.getValue());
             // Only set security elements if reauthentication is not required
             if (!getRequireReauthentication()) {
-                ((HttpRequest) request).setAuthType(entry.getAuthType());
-                ((HttpRequest) request).setUserPrincipal(entry.getPrincipal());
+                request.setAuthType(entry.getAuthType());
+                request.setUserPrincipal(entry.getPrincipal());
             }
         } else {
             if (debug >= 1)
                 log(" No cached principal found, erasing SSO cookie");
             cookie.setMaxAge(0);
-            hres.addCookie(cookie);
+            response.addCookie(cookie);
         }
 
         // Invoke the next Valve in our pipeline
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
     }
 
@@ -581,7 +565,7 @@ public class SingleSignOn
      *          <code>false</code> otherwise.
      */
     protected boolean reauthenticate(String ssoId, Realm realm,
-                                  HttpRequest request) {
+                                     Request request) {
 
         if (ssoId == null || realm == null)
             return false;

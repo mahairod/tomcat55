@@ -22,8 +22,9 @@ import java.io.IOException;
 import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
+
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.util.Base64;
 import org.apache.commons.logging.Log;
@@ -85,8 +86,8 @@ public class BasicAuthenticator
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean authenticate(HttpRequest request,
-                                HttpResponse response,
+    public boolean authenticate(Request request,
+                                Response response,
                                 LoginConfig config)
         throws IOException {
 
@@ -119,10 +120,6 @@ public class BasicAuthenticator
         }
 
         // Validate any credentials already included with this request
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
         String authorization = request.getAuthorization();
         String username = parseUsername(authorization);
         String password = parsePassword(authorization);
@@ -136,13 +133,11 @@ public class BasicAuthenticator
         // Send an "unauthorized" response and an appropriate challenge
         String realmName = config.getRealmName();
         if (realmName == null)
-            realmName = hreq.getServerName() + ":" + hreq.getServerPort();
-    //        if (log.isDebugEnabled())
-    //            log.debug("Challenging for realm '" + realmName + "'");
-        hres.setHeader("WWW-Authenticate",
+            realmName = request.getServerName() + ":" + request.getServerPort();
+        response.setHeader("WWW-Authenticate",
                        "Basic realm=\"" + realmName + "\"");
-        hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        //      hres.flushBuffer();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        //response.flushBuffer();
         return (false);
 
     }

@@ -20,8 +20,8 @@ package org.apache.catalina.authenticator;
 
 import java.io.IOException;
 
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 
 
@@ -77,8 +77,8 @@ public final class NonLoginAuthenticator
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean authenticate(HttpRequest request,
-                                HttpResponse response,
+    public boolean authenticate(Request request,
+                                Response response,
                                 LoginConfig config)
         throws IOException {
 

@@ -24,9 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Host;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -91,17 +90,16 @@ final class StandardEngineValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public final void invoke(Request request, Response response,
-                             ValveContext valveContext)
+    public final void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Select the Host to be used for this Request
         Host host = request.getHost();
         if (host == null) {
-            ((HttpServletResponse) response.getResponse()).sendError
+            response.sendError
                 (HttpServletResponse.SC_BAD_REQUEST,
-                 sm.getString("standardEngine.noHost",
-                              request.getRequest().getServerName()));
+                 sm.getString("standardEngine.noHost", 
+                              request.getServerName()));
             return;
         }
 

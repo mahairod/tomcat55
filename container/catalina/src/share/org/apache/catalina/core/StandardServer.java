@@ -42,7 +42,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.directory.DirContext;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -61,6 +60,7 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Store;
 import org.apache.catalina.Valve;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -70,7 +70,6 @@ import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.session.PersistentManager;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.LifecycleSupport;
@@ -80,7 +79,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
 import org.apache.coyote.ProtocolHandler;
-import org.apache.coyote.tomcat5.CoyoteConnector;
 
 
 
@@ -1106,19 +1104,13 @@ public final class StandardServer
         writer.print("<Connector");
         storeAttributes(writer, connector);
     
-        if (connector instanceof CoyoteConnector) {
+        if (connector instanceof Connector) {
             ProtocolHandler protocolHandler = 
-                ((CoyoteConnector)connector).getProtocolHandler();
+                ((Connector)connector).getProtocolHandler();
             storeAttributes(writer, protocolHandler);
         }
         
         writer.println(">");
-
-        // Store nested <Factory> element
-        ServerSocketFactory factory = connector.getFactory();
-        if (factory != null) {
-            storeFactory(writer, indent + 2, factory);
-        }
 
         // Store nested <Listener> elements
         if (connector instanceof Lifecycle) {
@@ -1572,28 +1564,6 @@ public final class StandardServer
             writer.print(' ');
         }
         writer.println("</Engine>");
-
-    }
-
-
-    /**
-     * Store the specified ServerSocketFactory properties.
-     *
-     * @param writer PrintWriter to which we are storing
-     * @param indent Number of spaces to indent this element
-     * @param factory Object whose properties are being stored
-     *
-     * @exception Exception if an exception occurs while storing
-     */
-    private void storeFactory(PrintWriter writer, int indent,
-                              ServerSocketFactory factory) throws Exception {
-
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }
-        writer.print("<Factory");
-        storeAttributes(writer, factory);
-        writer.println("/>");
 
     }
 

@@ -15,7 +15,7 @@
  */
 
 
-package org.apache.coyote.tomcat5;
+package org.apache.catalina.connector;
 
 
 import java.io.InputStream;
@@ -57,20 +57,15 @@ import org.apache.tomcat.util.http.ServerCookie;
 import org.apache.tomcat.util.http.mapper.MappingData;
 
 import org.apache.coyote.ActionCode;
-import org.apache.coyote.Request;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
-
 import org.apache.catalina.core.ApplicationFilterFactory;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ParameterMap;
@@ -87,14 +82,14 @@ import org.apache.commons.logging.Log;
  * @version $Revision$ $Date$
  */
 
-public class CoyoteRequest
-    implements HttpRequest, HttpServletRequest {
+public class Request
+    implements HttpServletRequest {
 
 
     // ----------------------------------------------------------- Constructors
 
 
-    public CoyoteRequest() {
+    public Request() {
 
         formats[0].setTimeZone(TimeZone.getTimeZone("GMT"));
         formats[1].setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -109,14 +104,14 @@ public class CoyoteRequest
     /**
      * Coyote request.
      */
-    protected Request coyoteRequest;
+    protected org.apache.coyote.Request coyoteRequest;
 
     /**
      * Set the Coyote request.
      * 
      * @param coyoteRequest The Coyote request
      */
-    public void setCoyoteRequest(Request coyoteRequest) {
+    public void setCoyoteRequest(org.apache.coyote.Request coyoteRequest) {
         this.coyoteRequest = coyoteRequest;
         inputBuffer.setRequest(coyoteRequest);
     }
@@ -124,7 +119,7 @@ public class CoyoteRequest
     /**
      * Get the Coyote request.
      */
-    public Request getCoyoteRequest() {
+    public org.apache.coyote.Request getCoyoteRequest() {
         return (this.coyoteRequest);
     }
 
@@ -456,7 +451,7 @@ public class CoyoteRequest
     /**
      * Associated Catalina connector.
      */
-    protected CoyoteConnector connector;
+    protected Connector connector;
 
     /**
      * Return the Connector through which this Request was received.
@@ -471,7 +466,7 @@ public class CoyoteRequest
      * @param connector The new connector
      */
     public void setConnector(Connector connector) {
-        this.connector = (CoyoteConnector) connector;
+        this.connector = (Connector) connector;
     }
 
 
@@ -578,7 +573,7 @@ public class CoyoteRequest
     /**
      * The facade associated with this request.
      */
-    protected CoyoteRequestFacade facade = null;
+    protected RequestFacade facade = null;
 
     /**
      * Return the <code>ServletRequest</code> for which this object
@@ -586,7 +581,7 @@ public class CoyoteRequest
      */
     public ServletRequest getRequest() {
         if (facade == null) {
-            facade = new CoyoteRequestFacade(this);
+            facade = new RequestFacade(this);
         } 
         return (facade);
     }
@@ -595,12 +590,12 @@ public class CoyoteRequest
     /**
      * The response with which this request is associated.
      */
-    protected org.apache.catalina.Response response = null;
+    protected org.apache.catalina.connector.Response response = null;
 
     /**
      * Return the Response with which this Request is associated.
      */
-    public org.apache.catalina.Response getResponse() {
+    public org.apache.catalina.connector.Response getResponse() {
         return (this.response);
     }
 
@@ -609,7 +604,7 @@ public class CoyoteRequest
      *
      * @param response The new associated response
      */
-    public void setResponse(org.apache.catalina.Response response) {
+    public void setResponse(org.apache.catalina.connector.Response response) {
         this.response = response;
     }
 
@@ -679,28 +674,6 @@ public class CoyoteRequest
      */
     protected void setURIConverter(B2CConverter URIConverter) {
         this.URIConverter = URIConverter;
-    }
-
-
-    /**
-     * The valve context associated with this request.
-     */
-    protected ValveContext valveContext = null;
-
-    /**
-     * Get valve context.
-     */
-    public ValveContext getValveContext() {
-        return (this.valveContext);
-    }
-
-    /**
-     * Set valve context.
-     * 
-     * @param valveContext New valve context object
-     */
-    public void setValveContext(ValveContext valveContext) {
-        this.valveContext = valveContext;
     }
 
 

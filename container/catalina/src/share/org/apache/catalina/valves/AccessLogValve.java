@@ -36,13 +36,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -525,14 +523,13 @@ public final class AccessLogValve
      * @exception IOException if an input/output error has occurred
      * @exception ServletException if a servlet error has occurred
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Pass this request on to the next valve in our pipeline
         long t1=System.currentTimeMillis();
 
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
         long t2=System.currentTimeMillis();
         long time=t2-t1;
@@ -550,17 +547,14 @@ public final class AccessLogValve
         if (common || combined) {
             String value = null;
 
-            ServletRequest req = request.getRequest();
-            HttpServletRequest hreq = (HttpServletRequest) req;
-
             if (isResolveHosts())
-                result.append(req.getRemoteHost());
+                result.append(request.getRemoteHost());
             else
-                result.append(req.getRemoteAddr());
+                result.append(request.getRemoteAddr());
 
             result.append(" - ");
 
-            value = hreq.getRemoteUser();
+            value = request.getRemoteUser();
             if (value == null)
                 result.append("- ");
             else {
@@ -580,18 +574,18 @@ public final class AccessLogValve
             result.append(timeZone);                            // Time Zone
             result.append("] \"");
 
-            result.append(hreq.getMethod());
+            result.append(request.getMethod());
             result.append(space);
-            result.append(hreq.getRequestURI());
-            if (hreq.getQueryString() != null) {
+            result.append(request.getRequestURI());
+            if (request.getQueryString() != null) {
                 result.append('?');
-                result.append(hreq.getQueryString());
+                result.append(request.getQueryString());
             }
             result.append(space);
-            result.append(hreq.getProtocol());
+            result.append(request.getProtocol());
             result.append("\" ");
 
-            result.append(((HttpResponse) response).getStatus());
+            result.append(response.getStatus());
 
             result.append(space);
 
@@ -606,7 +600,7 @@ public final class AccessLogValve
             if (combined) {
                 result.append(space);
                 result.append("\"");
-                String referer = hreq.getHeader("referer");
+                String referer = request.getHeader("referer");
                 if(referer != null)
                     result.append(referer);
                 else
@@ -615,7 +609,7 @@ public final class AccessLogValve
 
                 result.append(space);
                 result.append("\"");
-                String ua = hreq.getHeader("user-agent");
+                String ua = request.getHeader("user-agent");
                 if(ua != null)
                     result.append(ua);
                 else
@@ -862,7 +856,7 @@ public final class AccessLogValve
                 value = "-";
         } else if (pattern == 's') {
             if (hres != null)
-                value = "" + ((HttpResponse) response).getStatus();
+                value = "" + response.getStatus();
             else
                 value = "-";
         } else if (pattern == 't') {

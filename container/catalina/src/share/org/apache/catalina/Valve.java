@@ -21,6 +21,9 @@ package org.apache.catalina;
 import java.io.IOException;
 import javax.servlet.ServletException;
 
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+
 
 /**
  * <p>A <b>Valve</b> is a request processing component associated with a
@@ -48,6 +51,20 @@ public interface Valve {
      * Return descriptive information about this Valve implementation.
      */
     public String getInfo();
+
+
+    /**
+     * Return the next Valve in the pipeline containing this Valve, if any.
+     */
+    public Valve getNext();
+
+
+    /**
+     * Set the next Valve in the pipeline containing this Valve.
+     *
+     * @param valve The new next valve, or <code>null</code> if none
+     */
+    public void setNext(Valve valve);
 
 
     //---------------------------------------------------------- Public Methods
@@ -102,8 +119,7 @@ public interface Valve {
      * @exception ServletException if a servlet error occurs, or is thrown
      *  by a subsequently invoked Valve, Filter, or Servlet
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException;
 
 

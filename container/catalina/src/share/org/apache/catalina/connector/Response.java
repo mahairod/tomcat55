@@ -15,7 +15,7 @@
  */
 
 
-package org.apache.coyote.tomcat5;
+package org.apache.catalina.connector;
 
 
 import java.io.IOException;
@@ -40,14 +40,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.DateTool;
 import org.apache.catalina.util.StringManager;
-import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.CharChunk;
 import org.apache.tomcat.util.buf.UEncoder;
 import org.apache.tomcat.util.http.FastHttpDateFormat;
@@ -64,14 +61,14 @@ import org.apache.tomcat.util.compat.JdkCompat;
  * @version $Revision$ $Date$
  */
 
-public class CoyoteResponse
-    implements HttpResponse, HttpServletResponse {
+public class Response
+    implements HttpServletResponse {
 
 
     // ----------------------------------------------------------- Constructors
 
 
-    public CoyoteResponse() {
+    public Response() {
         urlEncoder.addSafeCharacter('/');
     }
 
@@ -135,14 +132,14 @@ public class CoyoteResponse
     /**
      * Coyote response.
      */
-    protected Response coyoteResponse;
+    protected org.apache.coyote.Response coyoteResponse;
 
     /**
      * Set the Coyote response.
      * 
      * @param response The Coyote response
      */
-    public void setCoyoteResponse(Response coyoteResponse) {
+    public void setCoyoteResponse(org.apache.coyote.Response coyoteResponse) {
         this.coyoteResponse = coyoteResponse;
         outputBuffer.setResponse(coyoteResponse);
     }
@@ -150,7 +147,7 @@ public class CoyoteResponse
     /**
      * Get the Coyote response.
      */
-    public Response getCoyoteResponse() {
+    public org.apache.coyote.Response getCoyoteResponse() {
         return (coyoteResponse);
     }
 
@@ -356,12 +353,12 @@ public class CoyoteResponse
     /**
      * The request with which this response is associated.
      */
-    protected CoyoteRequest request = null;
+    protected Request request = null;
 
     /**
      * Return the Request with which this Response is associated.
      */
-    public org.apache.catalina.Request getRequest() {
+    public org.apache.catalina.connector.Request getRequest() {
         return (this.request);
     }
 
@@ -370,15 +367,15 @@ public class CoyoteResponse
      *
      * @param request The new associated request
      */
-    public void setRequest(org.apache.catalina.Request request) {
-        this.request = (CoyoteRequest) request;
+    public void setRequest(org.apache.catalina.connector.Request request) {
+        this.request = (Request) request;
     }
 
 
     /**
      * The facade associated with this response.
      */
-    protected CoyoteResponseFacade facade = null;
+    protected ResponseFacade facade = null;
 
     /**
      * Return the <code>ServletResponse</code> for which this object
@@ -386,7 +383,7 @@ public class CoyoteResponse
      */
     public ServletResponse getResponse() {
         if (facade == null) {
-            facade = new CoyoteResponseFacade(this);
+            facade = new ResponseFacade(this);
         }
         return (facade);
     }

@@ -37,8 +37,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -46,11 +44,10 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.Valve;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.DateTool;
@@ -392,23 +389,9 @@ public abstract class AuthenticatorBase
      * @exception IOException if an input/output error occurs
      * @exception ServletException if thrown by a processing element
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        // If this is not an HTTP request, do nothing
-        if (!(request instanceof HttpRequest) ||
-            !(response instanceof HttpResponse)) {
-            context.invokeNext(request, response);
-            return;
-        }
-        if (!(request.getRequest() instanceof HttpServletRequest) ||
-            !(response.getResponse() instanceof HttpServletResponse)) {
-            context.invokeNext(request, response);
-            return;
-        }
-        HttpRequest hrequest = (HttpRequest) request;
-        HttpResponse hresponse = (HttpResponse) response;
         if (log.isDebugEnabled())
             log.debug("Security checking request " +
                 ((HttpServletRequest) request.getRequest()).getMethod() + " " +
@@ -420,7 +403,7 @@ public abstract class AuthenticatorBase
             Principal principal =
                 ((HttpServletRequest) request.getRequest()).getUserPrincipal();
             if (principal == null) {
-                Session session = getSession(hrequest);
+                Session session = getSession(request);
                 if (session != null) {
                     principal = session.getPrincipal();
                     if (principal != null) {
@@ -429,8 +412,8 @@ public abstract class AuthenticatorBase
                                 session.getAuthType() +
                                 " for principal " +
                                 session.getPrincipal());
-                        hrequest.setAuthType(session.getAuthType());
-                        hrequest.setUserPrincipal(principal);
+                        request.setAuthType(session.getAuthType());
+                        request.setUserPrincipal(principal);
                     }
                 }
             }
@@ -440,10 +423,10 @@ public abstract class AuthenticatorBase
         // where the login form (and therefore the "j_security_check" URI
         // to which it submits) might be outside the secured area
         String contextPath = this.context.getPath();
-        String requestURI = hrequest.getDecodedRequestURI();
+        String requestURI = request.getDecodedRequestURI();
         if (requestURI.startsWith(contextPath) &&
             requestURI.endsWith(Constants.FORM_ACTION)) {
-            if (!authenticate(hrequest, hresponse, config)) {
+            if (!authenticate(request, response, config)) {
                 if (log.isDebugEnabled())
                     log.debug(" Failed authenticate() test ??" + requestURI );
                 return;
@@ -453,29 +436,26 @@ public abstract class AuthenticatorBase
         Realm realm = this.context.getRealm();
         // Is this request URI subject to a security constraint?
         SecurityConstraint [] constraints
-            = realm.findSecurityConstraints(hrequest, this.context);
+            = realm.findSecurityConstraints(request, this.context);
        
         if ((constraints == null) /* &&
             (!Constants.FORM_METHOD.equals(config.getAuthMethod())) */ ) {
             if (log.isDebugEnabled())
                 log.debug(" Not subject to any constraint");
-            context.invokeNext(request, response);
+            getNext().invoke(request, response);
             return;
         }
 
         // Make sure that constrained resources are not cached by web proxies
         // or browsers as caching can provide a security hole
-        HttpServletRequest hsrequest = (HttpServletRequest)hrequest.getRequest();
         if (disableProxyCaching && 
             // FIXME: Disabled for Mozilla FORM support over SSL 
             // (improper caching issue)
-            //!hsrequest.isSecure() &&
-            !"POST".equalsIgnoreCase(hsrequest.getMethod())) {
-            HttpServletResponse sresponse = 
-                (HttpServletResponse) response.getResponse();
-            sresponse.setHeader("Pragma", "No-cache");
-            sresponse.setHeader("Cache-Control", "no-cache");
-            sresponse.setHeader("Expires", DATE_ONE);
+            //!request.isSecure() &&
+            !"POST".equalsIgnoreCase(request.getMethod())) {
+            response.setHeader("Pragma", "No-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setHeader("Expires", DATE_ONE);
         }
 
         int i;
@@ -483,7 +463,7 @@ public abstract class AuthenticatorBase
         if (log.isDebugEnabled()) {
             log.debug(" Calling hasUserDataPermission()");
         }
-        if (!realm.hasUserDataPermission(hrequest, hresponse,
+        if (!realm.hasUserDataPermission(request, response,
                                          constraints)) {
             if (log.isDebugEnabled()) {
                 log.debug(" Failed hasUserDataPermission() test");
@@ -501,7 +481,7 @@ public abstract class AuthenticatorBase
                 if (log.isDebugEnabled()) {
                     log.debug(" Calling authenticate()");
                 }
-                if (!authenticate(hrequest, hresponse, config)) {
+                if (!authenticate(request, response, config)) {
                     if (log.isDebugEnabled()) {
                         log.debug(" Failed authenticate() test");
                     }
@@ -519,7 +499,7 @@ public abstract class AuthenticatorBase
         if (log.isDebugEnabled()) {
             log.debug(" Calling accessControl()");
         }
-        if (!realm.hasResourcePermission(hrequest, hresponse,
+        if (!realm.hasResourcePermission(request, response,
                                          constraints,
                                          this.context)) {
             if (log.isDebugEnabled()) {
@@ -537,7 +517,7 @@ public abstract class AuthenticatorBase
         if (log.isDebugEnabled()) {
             log.debug(" Successfully passed all security constraints");
         }
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
     }
 
@@ -576,8 +556,8 @@ public abstract class AuthenticatorBase
      *
      * @exception IOException if an input/output error occurs
      */
-    protected abstract boolean authenticate(HttpRequest request,
-                                            HttpResponse response,
+    protected abstract boolean authenticate(Request request,
+                                            Response response,
                                             LoginConfig config)
         throws IOException;
 
@@ -670,7 +650,7 @@ public abstract class AuthenticatorBase
      *
      * @param request The HttpRequest we are processing
      */
-    protected Session getSession(HttpRequest request) {
+    protected Session getSession(Request request) {
 
         return (getSession(request, false));
 
@@ -685,7 +665,7 @@ public abstract class AuthenticatorBase
      * @param request The HttpRequest we are processing
      * @param create Should we create a session if needed?
      */
-    protected Session getSession(HttpRequest request, boolean create) {
+    protected Session getSession(Request request, boolean create) {
 
         HttpServletRequest hreq =
             (HttpServletRequest) request.getRequest();
@@ -753,8 +733,7 @@ public abstract class AuthenticatorBase
      *              caller is associated
      * @param request   the request that needs to be authenticated
      */
-    protected boolean reauthenticateFromSSO
-        (String ssoId, HttpRequest request) {
+    protected boolean reauthenticateFromSSO(String ssoId, Request request) {
 
         if (sso == null || ssoId == null)
             return false;
@@ -798,7 +777,7 @@ public abstract class AuthenticatorBase
      * @param username Username used to authenticate (if any)
      * @param password Password used to authenticate (if any)
      */
-    protected void register(HttpRequest request, HttpResponse response,
+    protected void register(Request request, Response response,
                             Principal principal, String authType,
                             String username, String password) {
 

@@ -15,11 +15,10 @@
  */
 
 
-package org.apache.coyote.tomcat5;
+package org.apache.catalina.connector;
 
 import java.io.IOException;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Context;
@@ -30,8 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.coyote.ActionCode;
 import org.apache.coyote.Adapter;
-import org.apache.coyote.Request;
-import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.B2CConverter;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
@@ -69,7 +66,7 @@ public class CoyoteAdapter
      * @param connector CoyoteConnector that owns this processor
      * @param id Identifier of this CoyoteProcessor (unique per connector)
      */
-    public CoyoteAdapter(CoyoteConnector connector) {
+    public CoyoteAdapter(Connector connector) {
 
         super();
         this.connector = connector;
@@ -84,7 +81,7 @@ public class CoyoteAdapter
     /**
      * The CoyoteConnector with which this processor is associated.
      */
-    private CoyoteConnector connector = null;
+    private Connector connector = null;
 
 
     /**
@@ -119,18 +116,19 @@ public class CoyoteAdapter
     /**
      * Service method.
      */
-    public void service(Request req, Response res)
+    public void service(org.apache.coyote.Request req, 
+    	                org.apache.coyote.Response res)
         throws Exception {
 
-        CoyoteRequest request = (CoyoteRequest) req.getNote(ADAPTER_NOTES);
-        CoyoteResponse response = (CoyoteResponse) res.getNote(ADAPTER_NOTES);
+        Request request = (Request) req.getNote(ADAPTER_NOTES);
+        Response response = (Response) res.getNote(ADAPTER_NOTES);
 
         if (request == null) {
 
             // Create objects
-            request = (CoyoteRequest) connector.createRequest();
+            request = (Request) connector.createRequest();
             request.setCoyoteRequest(req);
-            response = (CoyoteResponse) connector.createResponse();
+            response = (Response) connector.createResponse();
             response.setCoyoteResponse(res);
 
             // Link objects
@@ -182,8 +180,10 @@ public class CoyoteAdapter
     /**
      * Parse additional request parameters.
      */
-    protected boolean postParseRequest(Request req, CoyoteRequest request,
-                                       Response res, CoyoteResponse response)
+    protected boolean postParseRequest(org.apache.coyote.Request req, 
+    		                           Request request,
+    		                           org.apache.coyote.Response res, 
+									   Response response)
         throws Exception {
         // XXX the processor needs to set a correct scheme and port prior to this point, 
         // in ajp13 protocols dont make sense to get the port from the connector..
@@ -305,7 +305,7 @@ public class CoyoteAdapter
     /**
      * Parse session id in URL.
      */
-    protected void parseSessionId(Request req, CoyoteRequest request) {
+    protected void parseSessionId(org.apache.coyote.Request req, Request request) {
 
         CharChunk uriCC = req.decodedURI().getCharChunk();
         int semicolon = uriCC.indexOf(match, 0, match.length(), 0);
@@ -362,7 +362,7 @@ public class CoyoteAdapter
     /**
      * Parse session id in URL.
      */
-    protected void parseSessionCookiesId(Request req, CoyoteRequest request) {
+    protected void parseSessionCookiesId(org.apache.coyote.Request req, Request request) {
 
         // Parse session id from cookies
         Cookies serverCookies = req.getCookies();
@@ -400,7 +400,7 @@ public class CoyoteAdapter
     /**
      * Character conversion of the URI.
      */
-    protected void convertURI(MessageBytes uri, CoyoteRequest request) 
+    protected void convertURI(MessageBytes uri, Request request) 
         throws Exception {
 
         ByteChunk bc = uri.getByteChunk();

@@ -32,18 +32,14 @@ import java.util.LinkedList;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
@@ -523,8 +519,7 @@ public final class ExtendedAccessLogValve
      * @exception IOException if an input/output error has occurred
      * @exception ServletException if a servlet error has occurred
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Pass this request on to the next valve in our pipeline
@@ -532,7 +527,7 @@ public final class ExtendedAccessLogValve
         long runTime;
         long startTime=System.currentTimeMillis();
 
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
         endTime = System.currentTimeMillis();
         runTime = endTime-startTime;
@@ -656,27 +651,22 @@ public final class ExtendedAccessLogValve
      */
      private String getClientToServer(FieldInfo fieldInfo, Request request) {
 
-        ServletRequest sr = request.getRequest();
-        HttpServletRequest hsr = null;
-        if (sr instanceof HttpServletRequest)
-            hsr = (HttpServletRequest)sr;
-
         switch(fieldInfo.location) {
             case FieldInfo.FIELD_METHOD:
-                return hsr.getMethod();
+                return request.getMethod();
             case FieldInfo.FIELD_URI:
-                if (null==hsr.getQueryString())
-                    return hsr.getRequestURI();
+                if (null==request.getQueryString())
+                    return request.getRequestURI();
                 else
-                    return hsr.getRequestURI() + "?" + hsr.getQueryString();
+                    return request.getRequestURI() + "?" + request.getQueryString();
             case FieldInfo.FIELD_URI_STEM:
-                return hsr.getRequestURI();
+                return request.getRequestURI();
             case FieldInfo.FIELD_URI_QUERY:
-                if (null==hsr.getQueryString())
+                if (null==request.getQueryString())
                     return "-";
-                return hsr.getQueryString();
+                return request.getQueryString();
             case FieldInfo.FIELD_HEADER:
-                return wrap(hsr.getHeader(fieldInfo.value));
+                return wrap(request.getHeader(fieldInfo.value));
             default:
                 ;
         }
@@ -693,14 +683,13 @@ public final class ExtendedAccessLogValve
      *  @return The appropriate value.
      */
     private String getServerToClient(FieldInfo fieldInfo, Response response) {
-        HttpResponse r = (HttpResponse)response;
         switch(fieldInfo.location) {
             case FieldInfo.FIELD_STATUS:
-                return "" + r.getStatus();
+                return "" + response.getStatus();
             case FieldInfo.FIELD_COMMENT:
                 return "?"; /* Not coded yet*/
             case FieldInfo.FIELD_HEADER:
-                return wrap(r.getHeader(fieldInfo.value));
+                return wrap(response.getHeader(fieldInfo.value));
             default:
                 ;
         }
@@ -718,26 +707,21 @@ public final class ExtendedAccessLogValve
      */
     private String getAppSpecific(FieldInfo fieldInfo, Request request) {
 
-        ServletRequest sr = request.getRequest();
-        HttpServletRequest hsr = null;
-        if (sr instanceof HttpServletRequest)
-            hsr = (HttpServletRequest)sr;
-
         switch(fieldInfo.xType) {
             case FieldInfo.X_PARAMETER:
-                return wrap(urlEncode(sr.getParameter(fieldInfo.value)));
+                return wrap(urlEncode(request.getParameter(fieldInfo.value)));
             case FieldInfo.X_REQUEST:
-                return wrap(sr.getAttribute(fieldInfo.value));
+                return wrap(request.getAttribute(fieldInfo.value));
             case FieldInfo.X_SESSION:
                 HttpSession session = null;
-                if (hsr!=null){
-                    session = hsr.getSession(false);
+                if (request!=null){
+                    session = request.getSession(false);
                     if (session!=null)
                         return wrap(session.getAttribute(fieldInfo.value));
                 }
                 break;
             case FieldInfo.X_COOKIE:
-                Cookie[] c = hsr.getCookies();
+                Cookie[] c = request.getCookies();
                 for (int i=0; c != null && i < c.length; i++){
                     if (fieldInfo.value.equals(c[i].getName())){
                         return wrap(c[i].getValue());
@@ -748,31 +732,31 @@ public final class ExtendedAccessLogValve
                                 .getAttribute(fieldInfo.value));
             case FieldInfo.X_SERVLET_REQUEST:
                 if (fieldInfo.location==FieldInfo.X_LOC_AUTHTYPE) {
-                    return wrap(hsr.getAuthType());
+                    return wrap(request.getAuthType());
                 } else if (fieldInfo.location==FieldInfo.X_LOC_REMOTEUSER) {
-                    return wrap(hsr.getRemoteUser());
+                    return wrap(request.getRemoteUser());
                 } else if (fieldInfo.location==
                             FieldInfo.X_LOC_REQUESTEDSESSIONID) {
-                    return wrap(hsr.getRequestedSessionId());
+                    return wrap(request.getRequestedSessionId());
                 } else if (fieldInfo.location==
                             FieldInfo.X_LOC_REQUESTEDSESSIONIDFROMCOOKIE) {
-                    return wrap(""+hsr.isRequestedSessionIdFromCookie());
+                    return wrap(""+request.isRequestedSessionIdFromCookie());
                 } else if (fieldInfo.location==
                             FieldInfo.X_LOC_REQUESTEDSESSIONIDVALID) {
-                    return wrap(""+hsr.isRequestedSessionIdValid());
+                    return wrap(""+request.isRequestedSessionIdValid());
                 } else if (fieldInfo.location==FieldInfo.X_LOC_CONTENTLENGTH) {
-                    return wrap(""+hsr.getContentLength());
+                    return wrap(""+request.getContentLength());
                 } else if (fieldInfo.location==
                             FieldInfo.X_LOC_CHARACTERENCODING) {
-                    return wrap(hsr.getCharacterEncoding());
+                    return wrap(request.getCharacterEncoding());
                 } else if (fieldInfo.location==FieldInfo.X_LOC_LOCALE) {
-                    return wrap(hsr.getLocale());
+                    return wrap(request.getLocale());
                 } else if (fieldInfo.location==FieldInfo.X_LOC_PROTOCOL) {
-                    return wrap(hsr.getProtocol());
+                    return wrap(request.getProtocol());
                 } else if (fieldInfo.location==FieldInfo.X_LOC_SCHEME) {
-                    return wrap(hsr.getScheme());
+                    return wrap(request.getScheme());
                 } else if (fieldInfo.location==FieldInfo.X_LOC_SECURE) {
-                    return wrap(""+hsr.isSecure());
+                    return wrap(""+request.isSecure());
                 }
                 break;
             default:

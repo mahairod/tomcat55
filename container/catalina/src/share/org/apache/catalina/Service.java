@@ -17,6 +17,8 @@
 
 package org.apache.catalina;
 
+import org.apache.catalina.connector.Connector;
+
 
 /**
  * A <strong>Service</strong> is a group of one or more

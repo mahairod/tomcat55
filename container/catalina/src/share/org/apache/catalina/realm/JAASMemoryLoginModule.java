@@ -34,11 +34,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Realm;
+import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
@@ -216,7 +215,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
      * @param request Request we are processing
      * @param context Context the Request is mapped to
      */
-    public SecurityConstraint [] findSecurityConstraints(HttpRequest request,
+    public SecurityConstraint [] findSecurityConstraints(Request request,
                                                      Context context) {
         ArrayList results = null;
         // Are there any defined security constraints?
@@ -228,13 +227,12 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         }
 
         // Check each defined security constraint
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String uri = request.getDecodedRequestURI();
-        String contextPath = hreq.getContextPath();
+        String contextPath = request.getContextPath();
         if (contextPath.length() > 0)
             uri = uri.substring(contextPath.length());
         uri = RequestUtil.URLDecode(uri); // Before checking constraints
-        String method = hreq.getMethod();
+        String method = request.getMethod();
         for (int i = 0; i < constraints.length; i++) {
             if (debug)
                 log("  Checking constraint '" + constraints[i] +
