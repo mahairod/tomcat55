@@ -387,6 +387,7 @@ public class StandardManager
                 log("No persisted data file found");
             return;
         } catch (IOException e) {
+            log(sm.getString("standardManager.loading.ioe", e), e);
             if (ois != null) {
                 try {
                     ois.close();
@@ -413,6 +414,7 @@ public class StandardManager
                     ((StandardSession) session).activate();
                 }
             } catch (ClassNotFoundException e) {
+              log(sm.getString("standardManager.loading.cnfe", e), e);
                 if (ois != null) {
                     try {
                         ois.close();
@@ -423,6 +425,7 @@ public class StandardManager
                 }
                 throw e;
             } catch (IOException e) {
+              log(sm.getString("standardManager.loading.ioe", e), e);
                 if (ois != null) {
                     try {
                         ois.close();
@@ -476,6 +479,7 @@ public class StandardManager
             fos = new FileOutputStream(file.getAbsolutePath());
             oos = new ObjectOutputStream(new BufferedOutputStream(fos));
         } catch (IOException e) {
+            log(sm.getString("standardManager.unloading.ioe", e), e);
             if (oos != null) {
                 try {
                     oos.close();
@@ -503,6 +507,7 @@ public class StandardManager
                     session.writeObjectData(oos);
                 }
             } catch (IOException e) {
+                log(sm.getString("standardManager.unloading.ioe", e), e);
                 if (oos != null) {
                     try {
                         oos.close();
