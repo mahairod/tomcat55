@@ -453,6 +453,7 @@ public class JDBCRealm extends BaseInterceptor {
             if ( authenticate( user, password ) ) {
                 if( debug > 0 ) log( "Auth ok, user=" + user );
                 req.setRemoteUser( user );
+                req.setUserPrincipal(new SimplePrincipal(user));
                 Context ctx = req.getContext();
                 if (ctx != null)
                     req.setAuthType(ctx.getAuthMethod());

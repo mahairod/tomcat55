@@ -357,9 +357,6 @@ public class RequestImpl  implements Request {
      */
     public Principal getUserPrincipal() {
 	if( getRemoteUser() == null ) return null;
-	if( principal == null ) {
-	    principal=new SimplePrincipal( getRemoteUser() );
-	}
 	return principal;
     }
 
@@ -380,15 +377,35 @@ public class RequestImpl  implements Request {
     }
 
     public boolean isUserInRole(String role) {
-	// 	if (userRoles != null) {
-	// 	    if( SecurityTools.haveRole( role, userRoles ))
-	// 		return true;
-	// 	}
-	String checkRoles[]=new String[1];
-	checkRoles[0]=role;
-	int status=contextM.doAuthorize(this, response, checkRoles);
-	return status==0;
+
+        String checkRoles[]=new String[1];
+
+        // get the servletWrapper...
+        if ( handler != null ) {
+            // lookup the alias
+            String mappedRole = handler.getSecurityRole(role);
+            if ( mappedRole != null ) {
+                // use translated role
+                checkRoles[0] = mappedRole;
+            } else {
+              /* XXX
+               * no alias found - technically we should return false however
+               * to maintain backwards compatability with earlier tomcat's
+               * preserver the existing behavior and do a lookup
+               * using the actual rolename passed to us
+               */
+                checkRoles[0] = role;
+            }
+        } else {
+            /* XXX servletWrapper is null -
+             * this shouldn't happen but setup for the lookup anyway
+             */
+            checkRoles[0] = role;
+        }
+        int status=contextM.doAuthorize(this, response, checkRoles);
+        return status==0;
     }
+
 
     public String getServletPath() {
         return servletPath;
