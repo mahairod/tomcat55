@@ -144,7 +144,13 @@ public final class ApplicationFilterFactory {
             Integer dispatcherInt = (Integer)request.getAttribute(DISPATCHER_TYPE_ATTR);
             dispatcher = dispatcherInt.intValue();
         }
-        String requestPath = (String)request.getAttribute(DISPATCHER_REQUEST_PATH_ATTR);
+        String requestPath = null;
+        Object attribute = request.getAttribute(DISPATCHER_REQUEST_PATH_ATTR);
+        
+        if (attribute != null){
+            requestPath = attribute.toString();
+        }
+        
         HttpServletRequest hreq = null;
         if (request instanceof HttpServletRequest) hreq = (HttpServletRequest)request;
         // If there is no servlet to execute, return null
