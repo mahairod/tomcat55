@@ -852,11 +852,11 @@
       <fileset dir="build/common/lib">
         <include name="naming-factory.jar"/>
         <include name="servlet-api.jar"/>
+        <include name="naming-resources.jar"/>
       </fileset>
       <fileset dir="build/server/lib">
         <include name="catalina.jar"/>
         <include name="catalina-optional.jar"/>
-        <include name="naming-resources.jar"/>
         <include name="servlets-default.jar"/>
       </fileset>
     </copy>
