@@ -77,7 +77,7 @@
 	   testName="Include_1Test"
            assertion="Includes the content of a resource (servlet, JSP page, HTML file) in the response, enabling programmatic server-side includes.The included servlet cannot change the response
       status code or set headers; any attempt to make a change is ignored. The request and response parameters must be the same objects as were passed to the calling servlet's service method., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.RequestDispatcher.Include() method "
-           testStrategy="A negative test for RequestDispatcher.include() test. Create a servlet, set its Content-Type to be "text/plain", get its RequestDispatcher and use it to include a servlet. The included servlet tries to change the Content-Type to be text/html. Test at the client side for correct Content-Type."
+           testStrategy="A negative test for RequestDispatcher.include() test. Create a servlet, set its Content-Type to be 'text/plain', get its RequestDispatcher and use it to include a servlet. The included servlet tries to change the Content-Type to be text/html. Test at the client side for correct Content-Type."
 />
 
 
