@@ -53,10 +53,6 @@ public final class CommitChangesAction extends Action {
      */
     private MBeanServer mBServer = null;
 
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
 
     // --------------------------------------------------------- Public Methods
 
@@ -92,10 +88,8 @@ public final class CommitChangesAction extends Action {
 
        // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
        ObjectName sname = null;    
         try {
@@ -122,7 +116,7 @@ public final class CommitChangesAction extends Action {
             return (null);            
         }
  
-        //FIX ME-- just a message for debugging
+
         System.out.println("Debugging -- changes saved to conf/server.xml");
         // Forward control back to the banner
         return (mapping.findForward("Banner"));

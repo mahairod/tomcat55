@@ -41,12 +41,6 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
 
 public class AddContextAction extends Action {
     
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
-    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -72,10 +66,8 @@ public class AddContextAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
         // Fill in the form values for display and editing
         ContextForm contextFm = new ContextForm();

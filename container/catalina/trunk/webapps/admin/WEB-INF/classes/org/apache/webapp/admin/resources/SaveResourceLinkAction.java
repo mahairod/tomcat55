@@ -62,12 +62,6 @@ public final class SaveResourceLinkAction extends Action {
     // ----------------------------------------------------- Instance Variables
 
     /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
-
-    /**
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mserver = null;
@@ -100,11 +94,9 @@ public final class SaveResourceLinkAction extends Action {
         if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
         }
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = getLocale(request);
 
         // Has this transaction been cancelled?
         if (isCancelled(request)) {

@@ -42,11 +42,6 @@ import org.apache.webapp.admin.Lists;
 
 public class AddValveAction extends Action {
         
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
     // the list for types of valves
     private ArrayList types = null;
 
@@ -75,10 +70,8 @@ public class AddValveAction extends Action {
 
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
         // Fill in the form values for display and editing
         

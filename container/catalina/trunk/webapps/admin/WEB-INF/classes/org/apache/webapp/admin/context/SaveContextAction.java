@@ -97,12 +97,6 @@ public final class SaveContextAction extends Action {
     private MBeanServer mBServer = null;
     
 
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
-
     // --------------------------------------------------------- Public Methods
     
     
@@ -129,10 +123,8 @@ public final class SaveContextAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {

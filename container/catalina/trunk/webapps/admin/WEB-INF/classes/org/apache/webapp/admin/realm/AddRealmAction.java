@@ -42,11 +42,6 @@ import org.apache.webapp.admin.Lists;
 
 public class AddRealmAction extends Action {
 
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
     // the list for types of realms
     private ArrayList types = null;
 
@@ -75,11 +70,8 @@ public class AddRealmAction extends Action {
 
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
-
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         // Fill in the form values for display and editing
 
         String realmTypes[] = new String[5];
