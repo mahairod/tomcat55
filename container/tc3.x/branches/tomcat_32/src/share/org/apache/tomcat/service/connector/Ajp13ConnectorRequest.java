@@ -253,7 +253,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
 		return -1;
 	    }
 	}
-        return (char) bodyBuff[pos++];
+        return bodyBuff[pos++] & 0xFF;  // prevent sign extension of byte value
     }
     
     public int doRead(byte[] b, int off, int len) throws IOException 
