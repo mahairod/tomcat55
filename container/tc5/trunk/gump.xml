@@ -96,7 +96,7 @@
       <description dir="jasper/docs/api">Jasper API</description>
     </javadoc>
 
-    <nag to="bobh@apache.org"
+    <nag to="tomcat-dev@jakarta.apache.org"
          from="bobh@apache.org" />
   </project>
 
