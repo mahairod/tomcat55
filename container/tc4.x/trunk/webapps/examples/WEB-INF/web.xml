@@ -115,19 +115,7 @@
       </auth-constraint>
     </security-constraint>
 
-    <!-- Default login configuration uses BASIC authentication -->
-    <!--
-    <login-config>
-      <auth-method>BASIC</auth-method>
-      <realm-name>Example Basic Authentication Area</realm-name>
-    </login-config>
-    -->
-
-    <!-- If you want to experiment with form-based logins, comment
-         out the <login-config> element above and replace it with
-         this one.  Note that we are currently using a nonstandard
-         authentication method, because the code to support form
-         based login is incomplete and only lightly tested.  -->
+    <!-- Default login configuration uses form-based authentication -->
     <login-config>
       <auth-method>FORM</auth-method>
       <realm-name>Example Form-Based Authentication Area</realm-name>
