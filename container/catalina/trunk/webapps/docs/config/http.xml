@@ -2,13 +2,13 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document url="coyote.html">
+<document url="http.html">
 
   &project;
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
-    <title>The Coyote HTTP/1.1 Connector</title>
+    <title>The HTTP Connector</title>
   </properties>
 
 <body>
@@ -16,7 +16,7 @@
 
 <section name="Introduction">
 
-  <p>The <strong>Coyote HTTP/1.1 Connector</strong> element represents a
+  <p>The <strong>HTTP Connector</strong> element represents a
   <strong>Connector</strong> component that supports the HTTP/1.1 protocol.
   It enables Catalina to function as a stand-alone web server, in addition
   to its ability to execute servlets and JSP pages.  A particular instance
@@ -27,17 +27,17 @@
   request processing and create the response.</p>
 
   <p>If you wish to configure the <strong>Connector</strong> that is used
-  for connections to web servers using the WARP protocol (such as the
-  <code>mod_webapp</code> connector for Apache 1.3), see
-  <a href="webapp.html">here</a> instead.</p>
+  for connections to web servers using the AJP protocol (such as the
+  <code>mod_jk</code> connector for Apache 1.3), see
+  <a href="ajp.html">here</a> instead.</p>
 
   <p>At server startup time, this <strong>Connector</strong> will create a
   number of request processing threads (based on the value configured for
-  the <code>minProcessors</code> attribute).  Each incoming request requires
+  the <code>minSpareThreads</code> attribute).  Each incoming request requires
   a thread for the duration of that request.  If more simultaneous requests
   are received than can be handled by the currently available request
   processing threads, additional threads will be created up to the
-  configured maximum (the value of the <code>maxProcessors</code> attribute).
+  configured maximum (the value of the <code>maxThreads</code> attribute).
   If still more simultaneous requests are received, they are stacked up
   inside the server socket created by the <strong>Connector</strong>, up to
   the configured maximum (the value of the <code>acceptCount</code>
@@ -107,7 +107,7 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of the <strong>Coyote HTTP/1.1 
+  <p>The standard implementation of the <strong>HTTP 
   Connector</strong> is 
   <strong>org.apache.coyote.tomcat5.CoyoteConnector</strong>.
   It supports the following additional attributes (in addition to the
