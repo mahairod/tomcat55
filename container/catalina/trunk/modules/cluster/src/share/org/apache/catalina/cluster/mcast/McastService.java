@@ -192,7 +192,15 @@ public class McastService implements MembershipService,MembershipListener {
      * @throws java.lang.Exception if a IO error occurs
      */
     public void start() throws java.lang.Exception {
-        if ( impl != null ) return;
+        start(1);
+        start(2);
+    }
+    
+    public void start(int level) throws java.lang.Exception {
+        if ( impl != null ) {
+            impl.start(level);
+            return;
+        }
         String host = getProperties().getProperty("tcpListenHost");
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
         String name = "tcp://"+host+":"+port;
@@ -215,7 +223,7 @@ public class McastService implements MembershipService,MembershipListener {
                                     java.net.InetAddress.getByName(properties.getProperty("mcastAddress")),
                                     this);
 
-        impl.start();
+        impl.start(level);
         log.info("Sleeping for "+(Long.parseLong(properties.getProperty("msgFrequency"))*4)+" secs to establish cluster membership");
         Thread.currentThread().sleep((Long.parseLong(properties.getProperty("msgFrequency"))*4));
 

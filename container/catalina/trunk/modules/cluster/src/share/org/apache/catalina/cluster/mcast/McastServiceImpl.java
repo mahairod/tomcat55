@@ -181,21 +181,25 @@ public class McastServiceImpl
 
     /**
      * Start the service
+     * @param level 1 starts the receiver, level 2 starts the sender
      * @throws IOException if the service fails to start
      * @throws IllegalStateException if the service is already started
      */
-    public synchronized void start() throws IOException {
+    public synchronized void start(int level) throws IOException {
         if ( doRun ) throw new IllegalStateException("Service already running.");
-        serviceStartTime = System.currentTimeMillis();
-        socket.joinGroup(address);
-        doRun = true;
-        sender = new SenderThread(sendFrequency);
-        sender.setDaemon(true);
-        receiver = new ReceiverThread();
-        receiver.setDaemon(true);
-        receiver.start();
-        sender.start();
-
+        if ( level == 1 ) {
+            socket.joinGroup(address);
+            receiver = new ReceiverThread();
+            receiver.setDaemon(true);
+            receiver.start();
+        }
+        if ( level==2 ) {
+            serviceStartTime = System.currentTimeMillis();
+            sender = new SenderThread(sendFrequency);
+            sender.setDaemon(true);
+            sender.start();
+            doRun = true;
+        }
     }
 
     /**

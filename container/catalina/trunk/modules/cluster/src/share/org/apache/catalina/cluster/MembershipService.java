@@ -88,9 +88,21 @@ public interface MembershipService {
     /**
      * Starts the membership service. If a membership listeners is added
      * the listener will start to receive membership events.
+     * Performs a start level 1 and 2
      * @throws java.lang.Exception if the service fails to start.
      */
     public void start() throws java.lang.Exception;
+
+    /**
+     * Starts the membership service. If a membership listeners is added
+     * the listener will start to receive membership events.
+     * @param level - level 1 starts listening for members, level 2 
+     * starts broad casting the server
+     * @throws java.lang.Exception if the service fails to start.
+     */
+    public void start(int level) throws java.lang.Exception;
+
+
     /**
      * Stops the membership service
      */

@@ -394,6 +394,7 @@ public class DeltaManager
           cluster.send(msg);
           session.resetDeltaRequest();
       }
+      log.debug("Created a DeltaSession with Id["+session.getId()+"] Total count="+sessions.size());
       
       return (session);
 
@@ -878,7 +879,9 @@ public class DeltaManager
                switch (msg.getEventType()) {
                    case SessionMessage.EVT_GET_ALL_SESSIONS: {
                        //get a list of all the session from this manager
+                       log.debug("Manager ("+name+") unloading sessions");
                        byte[] data = doUnload();
+                       log.debug("Manager ("+name+") unloading sessions complete");
                        SessionMessage newmsg = new SessionMessage(name,
                            SessionMessage.EVT_ALL_SESSION_DATA,
                            data, "");
@@ -886,8 +889,10 @@ public class DeltaManager
                        break;
                    }
                    case SessionMessage.EVT_ALL_SESSION_DATA: {
+                       log.debug("Manager ("+name+") received session state data.");
                        byte[] data = msg.getSession();
                        doLoad(data);
+                       log.debug("Manager ("+name+") state deserialized.");
                        stateTransferred = true;
                        break;
                    }

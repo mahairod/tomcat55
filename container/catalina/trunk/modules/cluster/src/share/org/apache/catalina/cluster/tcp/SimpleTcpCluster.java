@@ -570,6 +570,9 @@ public class SimpleTcpCluster
     }
 
     public void lifecycleEvent(LifecycleEvent lifecycleEvent){
+        log.debug("\nlifecycleEvent\n\nType"+lifecycleEvent.getType()+
+                           "\nData"+lifecycleEvent.getData()+
+                           "\n\n\n");
     }
 
     // --------------------------------------------------------- Cluster Wide Deployments
