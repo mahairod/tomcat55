@@ -4147,7 +4147,7 @@ public class StandardContext
 
         // Look for a realm - that may have been configured earlier. 
         // If the realm is added after context - it'll set itself.
-        if( realm == null ) {
+        if( realm == null && mserver != null ) {
             ObjectName realmName=null;
             try {
                 realmName=new ObjectName( getEngineName() + ":type=Host,host=" + 
