@@ -79,6 +79,8 @@ HttpResponseBase: The toEncoded() method has been updated to place the ";jsessio
 Jasper Bug Fixes:
 ----------------
 
+CharDataGenerator: Fixed a bug where '\r' line terminators were not being
+  preserved as required by the spec.
 
 -----------------
 Webapps Bug Fixes:

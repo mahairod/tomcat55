@@ -136,6 +136,10 @@ Jasper Bug Fixes:
      Fix problem with the Windows script for JSPC, which could cause JARs
      to not be included in the classpath.
 
+[B3] CharDataGenerator:
+     Fixed a bug where '\r' line terminators were not being preserved as
+     required by the spec.
+
 
 -----------------
 Webapps Bug Fixes:
