@@ -1848,6 +1848,30 @@
          request="${context.path}/SSIFsize08.shtml" debug="${debug}"
           golden="${golden.path}/SSIFsize02.txt"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIVarSub01.shtml" debug="${debug}"
+          golden="${golden.path}/SSIVarSub01.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIVarSub02.shtml" debug="${debug}"
+          golden="${golden.path}/SSIVarSub02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIVarSub03.shtml" debug="${debug}"
+          golden="${golden.path}/SSIVarSub03.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIVarSub04.shtml" debug="${debug}"
+          golden="${golden.path}/SSIVarSub04.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIVarSub05.shtml" debug="${debug}"
+          golden="${golden.path}/SSIVarSub05.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIVarSub06.shtml" debug="${debug}"
+          golden="${golden.path}/SSIVarSub06.txt"/>
+
   </target>
 -->
 

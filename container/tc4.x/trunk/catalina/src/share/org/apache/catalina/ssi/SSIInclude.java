@@ -92,19 +92,20 @@ public final class SSIInclude implements SSICommand {
 	for ( int i=0; i < paramNames.length; i++ ) {
 	    String paramName = paramNames[i];
 	    String paramValue = paramValues[i];
+	    String substitutedValue = ssiMediator.substituteVariables( paramValue );
 
 	    try {
 		if ( paramName.equalsIgnoreCase("file") ||
 		     paramName.equalsIgnoreCase("virtual") ) {
 		    boolean virtual = paramName.equalsIgnoreCase("virtual");
-		    String text = ssiMediator.getFileText( paramValue, virtual );
+		    String text = ssiMediator.getFileText( substitutedValue, virtual );
 		    writer.write( text );
 		} else {
 		    ssiMediator.log("#include--Invalid attribute: " + paramName );
 		    writer.write( configErrMsg );
 		}
 	    } catch ( IOException e ) {
-		ssiMediator.log("#include--Couldn't include file: " + paramValue, e );
+		ssiMediator.log("#include--Couldn't include file: " + substitutedValue, e );
 		writer.write( configErrMsg );
 	    }
 	}

@@ -228,6 +228,79 @@ public class SSIMediator {
 	return variableValue;
     }
 
+    /**
+     *  Applies variable substitution to the specified String and
+     *  returns the new resolved string.
+     */
+    public String substituteVariables( String val ) {
+
+        // If it has no variable references then no work
+        // need to be done
+        if (val.indexOf( '$' ) < 0)
+            return val;
+
+        StringBuffer sb = new StringBuffer( val );
+        for (int i = 0; i < sb.length();) {
+
+            // Find the next $
+            for (; i < sb.length(); i++) {
+                if (sb.charAt(i) == '$') {
+                    i++;
+                    break;
+                }
+            }
+
+            if (i == sb.length())
+                break;
+
+            // Check to see if the $ is escaped
+            if (i > 1 && sb.charAt(i-2) == '\\') {
+                sb.deleteCharAt(i-2);
+                i--;
+                continue;
+	    }
+
+            int nameStart = i;
+            int start = i - 1;
+            int end = -1;
+            int nameEnd = -1;
+            char endChar = ' ';
+
+            // Check for {} wrapped var
+            if (sb.charAt(i) == '{') {
+                nameStart++;
+                endChar = '}';
+            }
+
+            // Find the end of the var reference
+            for (; i < sb.length(); i++) {
+                if (sb.charAt(i) == endChar)
+                    break;
+            }
+            end = i;
+            nameEnd = end;
+
+            if (endChar == '}')
+                end++;
+
+            // We should now have enough to extract the var name
+            String varName = sb.substring( nameStart, nameEnd );
+
+            String value = getVariableValue( varName );
+            if (value == null)
+                value = "";
+
+            // Replace the var name with its value
+            sb.replace( start, end, value );
+
+            // Start searching for the next $ after the value
+            // that was just substituted.
+            i = start + value.length();
+        }
+
+        return sb.toString();
+    }
+
     protected String formatDate( Date date, TimeZone timeZone ) {
 	String retVal;
 

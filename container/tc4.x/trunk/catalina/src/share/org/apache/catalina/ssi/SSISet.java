@@ -92,7 +92,8 @@ public class SSISet implements SSICommand {
 		variableName = paramValue;
 	    } else if ( paramName.equalsIgnoreCase("value") ) {
 		if ( variableName != null ) {
-		    ssiMediator.setVariableValue( variableName, paramValue );
+		    String substitutedValue = ssiMediator.substituteVariables( paramValue );
+		    ssiMediator.setVariableValue( variableName, substitutedValue );
 		} else {
 		    ssiMediator.log("#set--no variable specified");
 		    writer.write( errorMessage );

@@ -1,3 +1,4 @@
 
 
-value of test\${test2}
+
+value of test|value of test2

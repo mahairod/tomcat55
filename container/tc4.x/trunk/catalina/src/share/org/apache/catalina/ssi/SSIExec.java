@@ -108,14 +108,15 @@ public class SSIExec implements SSICommand {
 	String configErrMsg = ssiMediator.getConfigErrMsg();
 	String paramName = paramNames[0];
 	String paramValue = paramValues[0];
+	String substitutedValue = ssiMediator.substituteVariables( paramValue );
 
         if ( paramName.equalsIgnoreCase("cgi") ) {
-	    ssiInclude.process( ssiMediator, new String[] {"virtual"}, new String[] {paramValue}, writer );
+	    ssiInclude.process( ssiMediator, new String[] {"virtual"}, new String[] {substitutedValue}, writer );
         } else if ( paramName.equalsIgnoreCase("cmd") ) {
 	    boolean foundProgram = false;
 	    try {
 		Runtime rt = Runtime.getRuntime();
-		Process proc = rt.exec( paramValue );
+		Process proc = rt.exec( substitutedValue );
 		foundProgram = true;
 
 		BufferedReader stdOutReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -126,13 +127,13 @@ public class SSIExec implements SSICommand {
 		IOTools.flow( stdOutReader, writer, buf );
 		proc.waitFor();
 	    } catch ( InterruptedException e ) {
-		ssiMediator.log( "Couldn't exec file: " + paramValue, e );
+		ssiMediator.log( "Couldn't exec file: " + substitutedValue, e );
 		writer.write( configErrMsg );
 	    } catch ( IOException e ) {
 		if ( !foundProgram ) {
 		    //apache doesn't output an error message if it can't find a program
 		}
-		ssiMediator.log( "Couldn't exec file: " + paramValue, e );
+		ssiMediator.log( "Couldn't exec file: " + substitutedValue, e );
 	    }
 	} 
     }

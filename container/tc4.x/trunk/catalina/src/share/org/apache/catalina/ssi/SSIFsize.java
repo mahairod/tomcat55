@@ -91,12 +91,13 @@ public final class SSIFsize implements SSICommand {
         for(int i=0;i<paramNames.length;i++) {
 	    String paramName = paramNames[i];
 	    String paramValue = paramValues[i];
+	    String substitutedValue = ssiMediator.substituteVariables( paramValue );
 
 	    try {
 		if ( paramName.equalsIgnoreCase("file") ||
 		     paramName.equalsIgnoreCase("virtual") ) {
 		    boolean virtual = paramName.equalsIgnoreCase("virtual");
-		    long size = ssiMediator.getFileSize( paramValue,  virtual );
+		    long size = ssiMediator.getFileSize( substitutedValue,  virtual );
 		    String configSizeFmt = ssiMediator.getConfigSizeFmt();
 		    writer.write( formatSize(size, configSizeFmt ) );
 		} else {
@@ -104,7 +105,7 @@ public final class SSIFsize implements SSICommand {
 		    writer.write( configErrMsg );
 		}
 	    } catch ( IOException e ) {
-		ssiMediator.log("#fsize--Couldn't get size for file: " + paramValue, e );
+		ssiMediator.log("#fsize--Couldn't get size for file: " + substitutedValue, e );
 		writer.write( configErrMsg );
 	    }
 	}

@@ -87,13 +87,14 @@ public final class SSIConfig implements SSICommand {
         for(int i=0;i<paramNames.length;i++) {
 	    String paramName = paramNames[i];
 	    String paramValue = paramValues[i];
+	    String substitutedValue = ssiMediator.substituteVariables( paramValue );
 
             if ( paramName.equalsIgnoreCase("errmsg") ) {
-		ssiMediator.setConfigErrMsg( paramValue );
+		ssiMediator.setConfigErrMsg( substitutedValue );
             } else if ( paramName.equalsIgnoreCase("sizefmt") ) {
-		ssiMediator.setConfigSizeFmt( paramValue );
+		ssiMediator.setConfigSizeFmt( substitutedValue );
             } else if ( paramName.equalsIgnoreCase("timefmt") ) {
-		ssiMediator.setConfigTimeFmt( paramValue );
+		ssiMediator.setConfigTimeFmt( substitutedValue );
 	    } else {
 		ssiMediator.log("#config--Invalid attribute: " + paramName );
 		//We need to fetch this value each time, since it may change during the loop
