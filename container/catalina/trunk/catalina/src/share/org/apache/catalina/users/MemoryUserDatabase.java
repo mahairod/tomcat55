@@ -506,11 +506,11 @@ public class MemoryUserDatabase implements UserDatabase {
 
             // Configure our PrintWriter
             FileOutputStream fos = new FileOutputStream(fileNew);
-            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF8");
             writer = new PrintWriter(osw);
 
             // Print the file prolog
-            writer.println("<?xml version='1.0'?>");
+            writer.println("<?xml version='1.0' encoding='utf-8'?>");
             writer.println("<tomcat-users>");
 
             // Print entries for each defined role, group, and user
