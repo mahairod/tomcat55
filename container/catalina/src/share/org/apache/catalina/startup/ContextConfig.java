@@ -421,12 +421,14 @@ public final class ContextConfig
                         authenticators = new Properties();
                         authenticators.load(is);
                     } else {
-                        log.error(sm.getString("contextConfig.authenticatorResources"));
+                        log.error(sm.getString(
+                                "contextConfig.authenticatorResources"));
                         ok=false;
                         return;
                     }
                 } catch (IOException e) {
-                    log.error(sm.getString("contextConfig.authenticatorResources"), e);
+                    log.error(sm.getString(
+                                "contextConfig.authenticatorResources"), e);
                     ok = false;
                     return;
                 }
@@ -463,7 +465,7 @@ public final class ContextConfig
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString(
                                     "contextConfig.authenticatorConfigured",
-                                     loginConfig.getAuthMethod()));
+                                    loginConfig.getAuthMethod()));
                 }
             }
         }
