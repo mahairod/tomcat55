@@ -1459,6 +1459,27 @@ public class CoyoteConnector
 
     // -------------------- Management methods --------------------
 
+
+    public String getAlgorithm() {
+        String ret = (String) getProperty("algorithm");
+        if (ret == null) {
+            ServerSocketFactory factory = this.getFactory();
+            if (factory instanceof CoyoteServerSocketFactory) {
+                ret = ((CoyoteServerSocketFactory)factory).getAlgorithm();
+            }
+        }
+
+        return ret;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        setProperty("algorithm", algorithm);
+        ServerSocketFactory factory = this.getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setAlgorithm(algorithm);
+        }
+    }
+    
     public boolean getClientAuth() {
         boolean ret = false;
 
@@ -1530,6 +1551,32 @@ public class CoyoteConnector
         }
     }
 
+    /**
+     * Return keystoreType
+     */
+    public String getKeystoreType() {
+        String ret = (String) getProperty("keytype");
+        if (ret == null) {
+            ServerSocketFactory factory = getFactory();
+            if (factory instanceof CoyoteServerSocketFactory ) {
+                return ((CoyoteServerSocketFactory)factory).getKeystoreType();
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Set keystoreType
+     */
+    public void setKeystoreType(String keystoreType) {
+        setProperty("keytype", keystoreType);
+        ServerSocketFactory factory = getFactory();
+        if( factory instanceof CoyoteServerSocketFactory ) {
+            ((CoyoteServerSocketFactory)factory).setKeystoreType(keystoreType);
+        }
+    }
+    
     /**
      * Gets the list of SSL cipher suites that are to be enabled
      *

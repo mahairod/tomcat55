@@ -15,6 +15,10 @@
           description="The IP address on which to bind"
                  type="java.lang.String"/>
 
+    <attribute   name="algorithm"
+          description="The certificate encoding algorithm to be used"
+                 type="java.lang.String"/>
+
     <attribute   name="bufferSize"
           description="The input buffer size we should create on input streams"
                  type="int"/>
@@ -32,25 +36,29 @@
           description="Comma-separated list of SSL cipher suites to be enabled"
                  type="java.lang.String"/>
 
-    <attribute   name="keyAlias"
-          description="Alias name of this connector's keypair and supporting certificate chain"
+    <attribute   name="compression"
+          description="Compression value"
                  type="java.lang.String"/>
 
-    <attribute   name="sslProtocol"
-          description="SSL protocol variant to be used"
-                 type="java.lang.String"/>
-
-    <attribute   name="sslProtocols"
-          description="Comma-separated list of SSL protocol variants to be enabled"
-                 type="java.lang.String"/>
+    <attribute   name="connectionLinger"
+          description="Linger value on the incoming connection"
+                 type="int"/>
 
     <attribute   name="connectionTimeout"
           description="Timeout value on the incoming connection"
                  type="int"/>
 
+    <attribute   name="connectionUploadTimeout"
+          description="Timeout value on the incoming connection during request processing"
+                 type="int"/>
+
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
+
+    <attribute    name="disableUploadTimeout"
+           description="Should Tomcat ignore setting a timeout for uploads?" 
+                  type="boolean"/>
 
     <attribute   name="enableLookups"
           description="The 'enable DNS lookups' flag for this Connector"
@@ -64,6 +72,18 @@
           description="Password for accessing the key store file"
                  type="java.lang.String"/>
 
+    <attribute   name="keystoreType"
+          description="Type of keystore file to be used for the server certificate"
+                 type="java.lang.String"/>
+
+    <attribute   name="keyAlias"
+          description="Alias name of this connector's keypair and supporting certificate chain"
+                 type="java.lang.String"/>
+
+    <attribute   name="maxKeepAliveRequests"
+          description="Maximum number of Keep-Alive requests to honor per connection"
+                 type="int"/>
+
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
                  type="int"/>
@@ -76,6 +96,10 @@
     <attribute   name="port"
           description="The port number on which we listen for ajp13 requests"
                 type="int"/>
+
+    <attribute   name="protocol"
+          description="Coyote protocol handler in use"
+                 type="java.lang.String"/>
 
     <attribute   name="protocolHandlerClassName"
           description="Coyote Protocol handler class name"
@@ -107,12 +131,25 @@
           description="Is this a secure (SSL) Connector?"
                  type="boolean"/>
 
+    <attribute   name="sslProtocol"
+          description="SSL protocol variant to be used"
+                 type="java.lang.String"/>
+
+    <attribute   name="sslProtocols"
+          description="Comma-separated list of SSL protocol variants to be enabled"
+                 type="java.lang.String"/>
+
+    <attribute   name="tcpNoDelay"
+          description="Should we use TCP no delay?"
+                 type="boolean"/>
+
     <attribute    name="tomcatAuthentication"
            description="Should Tomcat perform all authentications?"
                   type="boolean"/>
 
-    <attribute    name="disableUploadTimeout"
-           description="Should Tomcat ignore setting a timeout for uploads?" 
+    <attribute    name="xpoweredBy"
+           description="Is generation of X-Powered-By response header enabled/disabled?"
+                    is="true"
                   type="boolean"/>
 
     <operation name="start" description="Start" impact="ACTION" returnType="void" />
