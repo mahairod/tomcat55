@@ -70,6 +70,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
@@ -95,8 +97,10 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Store;
 import org.apache.catalina.Valve;
+import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.net.ServerSocketFactory;
@@ -547,8 +551,27 @@ public class StandardServerMBean extends BaseModelMBean {
             storeManager(writer, indent + 2, manager);
         }
 
+        // Store neste <Environment> elements
+        ContextEnvironment[] envs = context.findEnvironments();
+        for (int i = 0; i < envs.length; i++) {
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Environment");
+            storeAttributes(writer, false, envs[i]);
+            writer.println("/>");
+        }
+        
         // Store nested <Parameter> elements
-        ; // FIXME
+        ApplicationParameter[] appParams = context.findApplicationParameters();
+        for (int i = 0; i < appParams.length; i++) {
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Parameter");
+            storeAttributes(writer, false, appParams[i]);
+            writer.println("/>");
+        }
 
         // Store nested <Realm> element
         Realm realm = context.getRealm();
@@ -561,12 +584,75 @@ public class StandardServerMBean extends BaseModelMBean {
                 storeRealm(writer, indent + 2, realm);
             }
         }
-
-        // Store nested <ResourceLink> elements (and resource params?)
-        ; // FIXME
-
+        
         // Store nested <Resources> element
-        ; // FIXME
+        ContextResource[] resources = context.findResources();
+         for (int i = 0; i < resources.length; i++) {
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Resource");
+            storeAttributes(writer, false, resources[i]);
+            writer.println("/>");
+        }           
+        
+        // Store nested <ResourceParams> elements
+        NamingResources namingResources = context.getNamingResources();
+        ResourceParams[] params = namingResources.findResourceParams();            
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }
+        if (params.length > 0) {
+            writer.print("<ResourceParams ");
+        }
+        for (int i = 0; i < params.length; i++) {
+            storeAttributes(writer, false, params[i]);
+        }
+        writer.println(">");
+ 
+        for (int i = 0; i < params.length; i++) {
+            Hashtable resourceParams = params[i].getParameters();
+            Enumeration nameEnum = resourceParams.keys();
+            Enumeration valueEnum = resourceParams.elements();
+            while ((nameEnum.hasMoreElements()) && (valueEnum.hasMoreElements())) {      
+                for (int j = 0; j < indent + 4; j++) {
+                    writer.print(' ');
+                }                
+                writer.println("<parameter>");
+                for (int j = 0; j < indent + 6; j++) {
+                    writer.print(' ');
+                }               
+                writer.print("<name>");
+                writer.print(nameEnum.nextElement());
+                writer.println("</name>"); 
+                for (int j = 0; j < indent + 6; j++) {
+                    writer.print(' ');
+                }               
+                writer.print("<value>"); 
+                writer.print(valueEnum.nextElement());
+                writer.println("</value>");         
+                for (int j = 0; j < indent + 4; j++) {
+                    writer.print(' ');
+                }               
+                writer.println("</parameter>");      
+            }
+        }
+        
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }          
+        writer.println("</ResourceParams>");      
+        
+        // Store nested <ResourceLink> elements
+        ContextResourceLink[] resourceLinks = context.findResourceLinks();
+        for (int i = 0; i < resourceLinks.length; i++) {
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<ResourceLink");
+            storeAttributes(writer, false, resourceLinks[i]);
+            writer.println("/>");
+        }       
 
         // Store nested <Valve> elements
         if (context instanceof Pipeline) {
@@ -752,14 +838,43 @@ public class StandardServerMBean extends BaseModelMBean {
             writer.print(' ');
         }          
         // Store nested <ResourceParams> elements
-        ResourceParams[] resourceParams = globalNamingResources.findResourceParams();
-        if (resourceParams.length > 0) {
+        ResourceParams[] params = globalNamingResources.findResourceParams();
+        if (params.length > 0) {
             writer.print("<ResourceParams ");
         }
-        for (int i = 0; i < resourceParams.length; i++) {
-            storeAttributes(writer, false, resourceParams[i]);
+        for (int i = 0; i < params.length; i++) {
+            storeAttributes(writer, false, params[i]);
         }
         writer.println(">");
+ 
+        for (int i = 0; i < params.length; i++) {
+            Hashtable resourceParams = params[i].getParameters();
+            Enumeration nameEnum = resourceParams.keys();
+            Enumeration valueEnum = resourceParams.elements();
+            while ((nameEnum.hasMoreElements()) && (valueEnum.hasMoreElements())) {      
+                for (int j = 0; j < indent + 4; j++) {
+                    writer.print(' ');
+                }                
+                writer.println("<parameter>");
+                for (int j = 0; j < indent + 6; j++) {
+                    writer.print(' ');
+                }               
+                writer.print("<name>");
+                writer.print(nameEnum.nextElement());
+                writer.println("</name>"); 
+                for (int j = 0; j < indent + 6; j++) {
+                    writer.print(' ');
+                }               
+                writer.print("<value>"); 
+                writer.print(valueEnum.nextElement());
+                writer.println("</value>");         
+                for (int j = 0; j < indent + 4; j++) {
+                    writer.print(' ');
+                }               
+                writer.println("</parameter>");      
+            }
+        }
+        
         for (int i = 0; i < indent + 2; i++) {
             writer.print(' ');
         }          
@@ -1012,12 +1127,6 @@ public class StandardServerMBean extends BaseModelMBean {
         storeAttributes(writer, server);
         writer.println(">");
 
-        // Store nested <GlobalNamingResources> element
-        NamingResources globalNamingResources = server.getGlobalNamingResources();
-        if (globalNamingResources != null) {
-            storeGlobalNamingResources(writer, indent + 2, globalNamingResources);
-        }
-
         // Store nested <Listener> elements
         if (server instanceof Lifecycle) {
             LifecycleListener listeners[] =
@@ -1027,6 +1136,12 @@ public class StandardServerMBean extends BaseModelMBean {
             }
         }
 
+        // Store nested <GlobalNamingResources> element
+        NamingResources globalNamingResources = server.getGlobalNamingResources();
+        if (globalNamingResources != null) {
+            storeGlobalNamingResources(writer, indent + 2, globalNamingResources);
+        }
+        
         // Store nested <Service> elements
         Service services[] = server.findServices();
         for (int i = 0; i < services.length; i++) {

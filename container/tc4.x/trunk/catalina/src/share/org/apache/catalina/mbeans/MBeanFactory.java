@@ -463,16 +463,38 @@ public class MBeanFactory extends BaseModelMBean {
             Object arglist4[] = new Object[1];
             arglist4[0] = new Boolean(true);
             meth4.invoke(retobj, arglist4);
+            // Set factory 
+            Class serverSocketFactoryCls = 
+                Class.forName("org.apache.catalina.net.ServerSocketFactory");
+            Class coyoteServerSocketFactoryCls = 
+                Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
+            Constructor factoryConst = 
+                            coyoteServerSocketFactoryCls.getConstructor(null);
+            Object factoryObj = factoryConst.newInstance(null);
+            Class partypes5 [] = new Class[1];
+            partypes5[0] = serverSocketFactoryCls;
+            Method meth5 = cls.getMethod("setFactory", partypes5);
+            Object arglist5[] = new Object[1];
+            arglist5[0] = factoryObj;
+            meth5.invoke(retobj, arglist5);
         } catch (Exception e) {
             throw new MBeanException(e);
         }
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("name"));
-        service.addConnector((Connector)retobj);
-
+        try {
+            // Add the new instance to its parent component
+            ObjectName pname = new ObjectName(parent);
+            Server server = ServerFactory.getServer();
+            Service service = server.findService(pname.getKeyProperty("name"));
+            service.addConnector((Connector)retobj);
+        } catch (Exception e) {
+            // FIXME
+            // disply error message 
+            // the user needs to use keytool to configure SSL first
+            // addConnector will fail otherwise
+            return null;
+        }
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("CoyoteConnector");
         ObjectName oname =

@@ -79,7 +79,7 @@ import org.apache.commons.modeler.BaseModelMBean;
  * @version $Revision$ $Date$
  */
 
-public class ConnectorMBean extends BaseModelMBean {
+public class ConnectorMBean extends ClassNameMBean {
 
 
     // ----------------------------------------------------------- Constructors
@@ -127,13 +127,14 @@ public class ConnectorMBean extends BaseModelMBean {
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // get clientAuth
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("getClientAuth", null);
-                clientAuthObj = meth2.invoke(this.resource, null);
+                clientAuthObj = meth2.invoke(factory, null);
             }
            
         }    
-        if (clientAuthObj instanceof Boolean)
+        if (clientAuthObj instanceof Boolean) {
             return ((Boolean)clientAuthObj).booleanValue();
-        else return false;
+        } else return false;
+        
     }
     
     
@@ -158,7 +159,7 @@ public class ConnectorMBean extends BaseModelMBean {
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("setClientAuth", partypes2);
                 Object arglist2[] = new Object[1];
                 arglist2[0] = new Boolean(clientAuth);
-                meth2.invoke(this.resource, arglist2);
+                meth2.invoke(factory, arglist2);
             } 
         } 
         
@@ -183,8 +184,8 @@ public class ConnectorMBean extends BaseModelMBean {
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // get keystoreFile
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("getKeystoreFile", null);
-                keystoreFileObj = meth2.invoke(this.resource, null);
-            }
+                keystoreFileObj = meth2.invoke(factory, null);
+            } 
         }    
         
         if (keystoreFileObj == null) {
@@ -221,7 +222,7 @@ public class ConnectorMBean extends BaseModelMBean {
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("setKeystoreFile", partypes2);
                 Object arglist2[] = new Object[1];
                 arglist2[0] = keystoreFile;
-                meth2.invoke(this.resource, arglist2);
+                meth2.invoke(factory, arglist2);
             }
            
         }    
@@ -246,7 +247,7 @@ public class ConnectorMBean extends BaseModelMBean {
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // get keystorePass
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("getKeystorePass", null);
-                keystorePassObj = meth2.invoke(this.resource, null);
+                keystorePassObj = meth2.invoke(factory, null);
             }
            
         }    
@@ -255,7 +256,7 @@ public class ConnectorMBean extends BaseModelMBean {
             return null;
         } else {
             return keystorePassObj.toString();
-        }
+        } 
         
     }
     
@@ -285,7 +286,7 @@ public class ConnectorMBean extends BaseModelMBean {
                 Method meth2 = coyoteServerSocketFactoryCls.getMethod("setKeystorePass", partypes2);
                 Object arglist2[] = new Object[1];
                 arglist2[0] = keystorePass;
-                meth2.invoke(this.resource, arglist2);
+                meth2.invoke(factory, arglist2);
             }
         }    
     }
