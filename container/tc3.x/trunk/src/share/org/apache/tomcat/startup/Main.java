@@ -58,13 +58,12 @@
  */
 package org.apache.tomcat.startup;
 
-import java.beans.*;
-import java.io.*;
-import java.io.IOException;
-import java.lang.reflect.*;
+import java.io.File;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.*;
-import java.net.*;
 
 import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.compat.Jdk11Compat;
