@@ -6,7 +6,7 @@ a web application
 <!ELEMENT web-app (icon?, display-name?, description?, distributable?, context-param*, filter*, filter-mapping*, listener*, servlet*, servlet-mapping*, session-config?,
 mime-mapping*, welcome-file-list?, error-page*, taglib*,
 resource-env-ref*, resource-ref*, security-constraint*, login-config?, security-role*,
-env-entry*, ejb-ref*)>
+env-entry*, ejb-ref*, ejb-local-ref*)>
 
 <!--
 Declares a filter in the web application. The filter is mapped to either a servlet or a URL pattern in the filter-mapping element, using the filter-name value to reference. Filters can access the initialization parameters declared in the deployment descriptor at runtime via the FilterConfig interface.
@@ -574,11 +574,55 @@ application package.
 
 
 <!--
-The run-as element must contain the name of a security role defined for this web application. If the optional run-as element is used for a servlet definition, the security identity of a call to any EJBs from the servlet must be propogated as the security role with the same name.
+The ejb-local-ref element is used for the declaration of a reference to
+an enterprise bean's local home. The declaration consists of:
 
+	- an optional description
+	- the EJB reference name used in the code of the web component
+	  that's referencing the enterprise bean
+	- the expected type of the referenced enterprise bean
+	- the expected local home and local interfaces of the referenced
+	  enterprise bean
+	- optional ejb-link information, used to specify the referenced
+	  enterprise bean
+
+Used by <web-app>
 -->
 
-<!ELEMENT run-as (#PCDATA)>
+<!ELEMENT ejb-local-ref (description?, ejb-ref-name, ejb-ref-type,
+		local-home, local, ejb-link?)>
+
+<!-- 
+
+The local element contains the fully-qualified name of the
+enterprise bean's local interface. 
+
+Used by ejb-local-ref
+
+-->
+<!ELEMENT local (#PCDATA)>
+
+<!-- 
+
+The local-home element contains the fully-qualified name of the
+enterprise bean's local home interface. 
+
+Used by ejb-local-ref
+-->
+<!ELEMENT local-home (#PCDATA)>
+
+
+
+
+<!--
+The run-as element, if defined for a servlet, overrides the security identity used to call an EJB
+by that servlet in this web application. The role-name is one of the security roles already
+defined for this web application.
+
+Used by: <servlet>
+-->
+<!ELEMENT run-as (description?, role-name)>
+
 
 
 <!--
@@ -664,4 +708,7 @@ deployment descriptor.
 <!ATTLIST home id ID #IMPLIED>
 <!ATTLIST remote id ID #IMPLIED>
 <!ATTLIST ejb-link id ID #IMPLIED>
+<!ATTLIST ejb-local-ref id ID #IMPLIED>
+<!ATTLIST local-home id ID #IMPLIED>
+<!ATTLIST local id ID #IMPLIED>
 <!ATTLIST run-as id ID #IMPLIED>

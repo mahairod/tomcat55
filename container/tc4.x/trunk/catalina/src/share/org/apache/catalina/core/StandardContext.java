@@ -118,6 +118,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
+import org.apache.catalina.deploy.ContextLocalEjb;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
@@ -308,6 +309,13 @@ public class StandardContext
      * web applications.
      */
     private ClassLoader jasperLoader = null;
+
+
+    /**
+     * The local  EJB resource references for this web application, keyed by
+     * name.
+     */
+    private HashMap localEjbs = new HashMap();
 
 
     /**
@@ -1362,6 +1370,21 @@ public class StandardContext
 
 
     /**
+     * Add a local EJB resource reference for this web application.
+     *
+     * @param ejb New EJB resource reference
+     */
+    public void addLocalEjb(ContextLocalEjb ejb) {
+
+	synchronized (localEjbs) {
+	    localEjbs.put(ejb.getName(), ejb);
+	}
+	fireContainerEvent("addLocalEjb", ejb.getName());
+
+    }
+
+
+    /**
      * Add a new MIME mapping, replacing any existing mapping for
      * the specified extension.
      *
@@ -1829,6 +1852,35 @@ public class StandardContext
     public String[] findInstanceListeners() {
 
         return (instanceListeners);
+
+    }
+
+
+    /**
+     * Return the local EJB resource reference with the specified name, if any;
+     * otherwise, return <code>null</code>.
+     *
+     * @param name Name of the desired EJB resource reference
+     */
+    public ContextLocalEjb findLocalEjb(String name) {
+
+	synchronized (localEjbs) {
+	    return ((ContextLocalEjb) localEjbs.get(name));
+	}
+
+    }
+
+
+    /**
+     * Return the defined local EJB resource references for this application.
+     * If there are none, a zero-length array is returned.
+     */
+    public ContextLocalEjb[] findLocalEjbs() {
+
+	synchronized (localEjbs) {
+	    ContextLocalEjb results[] = new ContextLocalEjb[localEjbs.size()];
+	    return ((ContextLocalEjb[]) localEjbs.values().toArray(results));
+	}
 
     }
 
@@ -2589,6 +2641,21 @@ public class StandardContext
 
 	// Inform interested listeners
 	fireContainerEvent("removeInstanceListener", listener);
+
+    }
+
+
+    /**
+     * Remove any local EJB resource reference with the specified name.
+     *
+     * @param name Name of the EJB resource reference to remove
+     */
+    public void removeLocalEjb(String name) {
+
+	synchronized (localEjbs) {
+	    localEjbs.remove(name);
+	}
+	fireContainerEvent("removeLocalEjb", name);
 
     }
 

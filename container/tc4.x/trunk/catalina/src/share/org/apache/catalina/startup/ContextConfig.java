@@ -459,6 +459,24 @@ public final class ContextConfig
 	mapper.addRule("web-app/distributable",
                        new SetDistributableAction());
 
+	mapper.addRule("web-app/ejb-local-ref",
+		 mapper.objectCreate("org.apache.catalina.deploy.ContextLocalEjb"));
+	mapper.addRule("web-app/ejb-local-ref",
+		       mapper.addChild("addLocalEjb",
+				     "org.apache.catalina.deploy.ContextLocalEjb"));
+	mapper.addRule("web-app/ejb-local-ref/description",
+		       mapper.methodSetter("setDescription", 0));
+	mapper.addRule("web-app/ejb-local-ref/ejb-ref-name",
+		       mapper.methodSetter("setName", 0));
+	mapper.addRule("web-app/ejb-local-ref/ejb-ref-type",
+		       mapper.methodSetter("setType", 0));
+	mapper.addRule("web-app/ejb-local-ref/local-home",
+		       mapper.methodSetter("setHome", 0));
+	mapper.addRule("web-app/ejb-local-ref/local",
+		       mapper.methodSetter("setLocal", 0));
+	mapper.addRule("web-app/ejb-local-ref/ejb-link",
+		       mapper.methodSetter("setLink", 0));
+
 	mapper.addRule("web-app/ejb-ref",
 		 mapper.objectCreate("org.apache.catalina.deploy.ContextEjb"));
 	mapper.addRule("web-app/ejb-ref",
@@ -632,7 +650,7 @@ public final class ContextConfig
 		       mapper.methodSetter("setJspFile", 0));
 	mapper.addRule("web-app/servlet/load-on-startup",
 		       mapper.methodSetter("setLoadOnStartupString", 0));
-	mapper.addRule("web-app/servlet/run-as",
+	mapper.addRule("web-app/servlet/run-as/role-name",
 		       mapper.methodSetter("setRunAs", 0));
 	mapper.addRule("web-app/servlet/security-role-ref",
 		       mapper.methodSetter("addSecurityReference", 2));

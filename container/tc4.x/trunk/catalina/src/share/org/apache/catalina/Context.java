@@ -69,6 +69,7 @@ import javax.servlet.ServletContext;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
+import org.apache.catalina.deploy.ContextLocalEjb;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
@@ -410,6 +411,14 @@ public interface Context extends Container {
 
 
     /**
+     * Add a local EJB resource reference for this web application.
+     *
+     * @param ejb New local EJB resource reference
+     */
+    public void addLocalEjb(ContextLocalEjb ejb);
+
+
+    /**
      * Add a new MIME mapping, replacing any existing mapping for
      * the specified extension.
      *
@@ -622,6 +631,22 @@ public interface Context extends Container {
      * newly created Wrappers automatically.
      */
     public String[] findInstanceListeners();
+
+
+    /**
+     * Return the local EJB resource reference with the specified name, if any;
+     * otherwise, return <code>null</code>.
+     *
+     * @param name Name of the desired EJB resource reference
+     */
+    public ContextLocalEjb findLocalEjb(String name);
+
+
+    /**
+     * Return the defined local EJB resource references for this application.
+     * If there are none, a zero-length array is returned.
+     */
+    public ContextLocalEjb[] findLocalEjbs();
 
 
     /**
@@ -880,6 +905,14 @@ public interface Context extends Container {
      * @param listener Class name of an InstanceListener class to be removed
      */
     public void removeInstanceListener(String listener);
+
+
+    /**
+     * Remove any local EJB resource reference with the specified name.
+     *
+     * @param name Name of the EJB resource reference to remove
+     */
+    public void removeLocalEjb(String name);
 
 
     /**
