@@ -86,6 +86,10 @@ import javax.naming.Binding;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
+import javax.management.MBeanRegistration;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLStreamHandlerFactory;
@@ -99,10 +103,13 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
+import org.apache.catalina.core.ContainerBase;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -124,7 +131,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class WebappLoader
-    implements Lifecycle, Loader, PropertyChangeListener, Runnable {
+    implements Lifecycle, Loader, PropertyChangeListener, Runnable, MBeanRegistration  {
 
     // ----------------------------------------------------------- Constructors
 
@@ -664,6 +671,41 @@ public class WebappLoader
 
     }
 
+    private boolean initialized=false;
+
+    public void init() {
+        initialized=true;
+
+        if( oname==null ) {
+            // not registered yet - standalone or API
+            if( container instanceof StandardContext) {
+                // Register ourself. The container must be a webapp
+                try {
+                    StandardContext ctx=(StandardContext)container;
+                    oname=new ObjectName(ctx.getDomain() + ":type=Loader,path=" +
+                            ctx.getPath() + ",host=" + ctx.getParent().getName());
+                    Registry.getRegistry().registerComponent(this, oname, null);
+                    controller=oname;
+                } catch (Exception e) {
+                    log.error("Error registering loader", e );
+                }
+            }
+        }
+
+        if( container == null ) {
+            // JMX created the loader
+            // TODO
+
+        }
+    }
+
+    public void destroy() {
+        if( controller==oname ) {
+            // Self-registration, undo it
+            Registry.getRegistry().unregisterComponent(oname);
+        }
+
+    }
 
     /**
      * Start this component, initializing our associated class loader.
@@ -672,6 +714,7 @@ public class WebappLoader
      */
     public void start() throws LifecycleException {
         // Validate and update our current component state
+        if( ! initialized ) init();
         if (started)
             throw new LifecycleException
                 (sm.getString("webappLoader.alreadyStarted"));
@@ -768,6 +811,8 @@ public class WebappLoader
             ((Lifecycle) classLoader).stop();
         DirContextURLStreamHandler.unbind((ClassLoader) classLoader);
         classLoader = null;
+
+        destroy();
 
     }
 
@@ -1419,4 +1464,36 @@ public class WebappLoader
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( WebappLoader.class );
+
+    private ObjectName oname;
+    private MBeanServer mserver;
+    private String domain;
+    private ObjectName controller;
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
+
+    public ObjectName getController() {
+        return controller;
+    }
+
+    public void setController(ObjectName controller) {
+        this.controller = controller;
+    }
+
 }
