@@ -891,10 +891,11 @@
     </copy>
 
     <!-- Shared Extensions -->
+<!--
     <copy todir="${catalina.deploy}/shared/lib">
       <fileset dir="${catalina.build}/shared/lib" />
     </copy>
-
+-->
   </target>
 
 
