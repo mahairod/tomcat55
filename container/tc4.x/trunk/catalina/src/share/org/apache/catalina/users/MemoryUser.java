@@ -269,19 +269,19 @@ public class MemoryUser extends AbstractUser {
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("<user username='");
+        StringBuffer sb = new StringBuffer("<user username=\"");
         sb.append(username);
-        sb.append("' password='");
+        sb.append("\" password=\"");
         sb.append(password);
-        sb.append("'");
+        sb.append("\"");
         if (fullName != null) {
-            sb.append(" fullname='");
+            sb.append(" fullName=\"");
             sb.append(fullName);
-            sb.append("'");
+            sb.append("\"");
         }
         synchronized (groups) {
             if (groups.size() > 0) {
-                sb.append(" groups='");
+                sb.append(" groups=\"");
                 int n = 0;
                 Iterator values = groups.iterator();
                 while (values.hasNext()) {
@@ -291,12 +291,12 @@ public class MemoryUser extends AbstractUser {
                     n++;
                     sb.append(((Group) values.next()).getGroupname());
                 }
-                sb.append("'");
+                sb.append("\"");
             }
         }
         synchronized (roles) {
             if (roles.size() > 0) {
-                sb.append(" roles='");
+                sb.append(" roles=\"");
                 int n = 0;
                 Iterator values = roles.iterator();
                 while (values.hasNext()) {
@@ -306,7 +306,7 @@ public class MemoryUser extends AbstractUser {
                     n++;
                     sb.append(((Role) values.next()).getRolename());
                 }
-                sb.append("'");
+                sb.append("\"");
             }
         }
         sb.append("/>");

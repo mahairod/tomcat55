@@ -726,7 +726,10 @@ class MemoryUserCreationFactory implements ObjectCreationFactory {
             username = attributes.getValue("name");
         }
         String password = attributes.getValue("password");
-        String fullName = attributes.getValue("fullname");
+        String fullName = attributes.getValue("fullName");
+        if (fullName == null) {
+            fullName = attributes.getValue("fullname");
+        }
         String groups = attributes.getValue("groups");
         String roles = attributes.getValue("roles");
         User user = database.createUser(username, password, fullName);

@@ -216,17 +216,17 @@ public class MemoryGroup extends AbstractGroup {
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("<group groupname='");
+        StringBuffer sb = new StringBuffer("<group groupname=\"");
         sb.append(groupname);
-        sb.append("'");
+        sb.append("\"");
         if (description != null) {
-            sb.append(" description='");
+            sb.append(" description=\"");
             sb.append(description);
-            sb.append("'");
+            sb.append("\"");
         }
         synchronized (roles) {
             if (roles.size() > 0) {
-                sb.append(" roles='");
+                sb.append(" roles=\"");
                 int n = 0;
                 Iterator values = roles.iterator();
                 while (values.hasNext()) {
@@ -236,7 +236,7 @@ public class MemoryGroup extends AbstractGroup {
                     n++;
                     sb.append((String) ((Role) values.next()).getRolename());
                 }
-                sb.append("'");
+                sb.append("\"");
             }
         }
         sb.append("/>");

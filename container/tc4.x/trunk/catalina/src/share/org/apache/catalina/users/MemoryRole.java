@@ -136,13 +136,13 @@ public class MemoryRole extends AbstractRole {
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("<role rolename='");
+        StringBuffer sb = new StringBuffer("<role rolename=\"");
         sb.append(rolename);
-        sb.append("'");
+        sb.append("\"");
         if (description != null) {
-            sb.append(" description='");
+            sb.append(" description=\"");
             sb.append(description);
-            sb.append("'");
+            sb.append("\"");
         }
         sb.append("/>");
         return (sb.toString());

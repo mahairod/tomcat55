@@ -700,9 +700,6 @@
       <parameter name="description"
           description="Description of the new group"
                  type="java.lang.String"/>
-      <parameter name="roles"
-          description="Roles list for the new group"
-                 type="java.lang.String[]"/>
     </operation>
 
     <operation   name="createRole"
@@ -722,7 +719,7 @@
                impact="ACTION"
            returnType="java.lang.String">
       <parameter name="username"
-          description="User name of the new group"
+          description="User name of the new user"
                  type="java.lang.String"/>
       <parameter name="password"
           description="Password of the new user"
@@ -730,9 +727,6 @@
       <parameter name="fullName"
           description="Full name of the new user"
                  type="java.lang.String"/>
-      <parameter name="roles"
-          description="Roles list for the new user"
-                 type="java.lang.String[]"/>
     </operation>
 
     <operation   name="findGroup"

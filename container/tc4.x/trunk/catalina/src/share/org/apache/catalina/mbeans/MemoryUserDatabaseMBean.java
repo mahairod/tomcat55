@@ -216,13 +216,12 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
      *
      * @param groupname Group name of the new group
      * @param description Description of the new group
-     * @param roles Roles list for the new group
      */
-    public String createGroup(String groupname, String description,
-                              String roles[]) {
+    public String createGroup(String groupname, String description) {
 
         UserDatabase database = (UserDatabase) this.resource;
         Group group = database.createGroup(groupname, description);
+        /*
         if (roles != null) {
             for (int i = 0; i < roles.length; i++) {
                 Role role = database.findRole(roles[i]);
@@ -233,6 +232,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
                 group.addRole(role);
             }
         }
+        */
         try {
             MBeanUtils.createMBean(group);
         } catch (Exception e) {
@@ -271,13 +271,13 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
      * @param username User name of the new user
      * @param password Password for the new user
      * @param fullName Full name for the new user
-     * @param roles Roles list for the new user
      */
     public String createUser(String username, String password,
-                             String fullName, String roles[]) {
+                             String fullName) {
 
         UserDatabase database = (UserDatabase) this.resource;
         User user = database.createUser(username, password, fullName);
+        /*
         if (roles != null) {
             for (int i = 0; i < roles.length; i++) {
                 Role role = database.findRole(roles[i]);
@@ -288,6 +288,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
                 user.addRole(role);
             }
         }
+        */
         try {
             MBeanUtils.createMBean(user);
         } catch (Exception e) {
