@@ -98,4 +98,9 @@ public interface ClusterDeployer extends MessageListener {
      *  removal
      */
     public void remove(String contextPath, boolean undeploy) throws IOException;
+
+    /**
+     * call from container Background Process
+     */
+    public void backgroundProcess();
 }

@@ -15,24 +15,29 @@
  */
 
 package org.apache.catalina.cluster.deploy;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
+
 /**
- * <p>The <b>WarWatcher</b> watches the deployDir for changes made to
- * the directory (adding new WAR files->deploy or remove WAR files->undeploy)
- * And notifies a listener of the changes made</p>    
+ * <p>
+ * The <b>WarWatcher </b> watches the deployDir for changes made to the
+ * directory (adding new WAR files->deploy or remove WAR files->undeploy) And
+ * notifies a listener of the changes made
+ * </p>
  * 
  * @author Filip Hanik
- * @version 1.0
+ * @author Peter Rossbach
+ * @version 1.1
  */
 
-public class WarWatcher implements Runnable {
+public class WarWatcher {
 
     /*--Static Variables----------------------------------------*/
-    public static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( WarWatcher.class );
+    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
+            .getLog(WarWatcher.class);
 
     /*--Instance Variables--------------------------------------*/
     /**
@@ -44,144 +49,161 @@ public class WarWatcher implements Runnable {
      * Parent to be notified of changes
      */
     protected FileChangeListener listener = null;
-    
-    /**
-     * 
-     * Check interval
-     */
-    protected long interval = 5000; //5 seconds
-    
-    /**
-     * Run status 
-     */
-    protected boolean alive = true;
-    
+
     /**
      * Currently deployed files
      */
     protected Map currentStatus = new HashMap();
-    
+
     /*--Constructor---------------------------------------------*/
 
-    
-    public WarWatcher(FileChangeListener listener,
-                      File deployDir,
-                      long interval) {
+    public WarWatcher() {
+    }
+
+    public WarWatcher(FileChangeListener listener, File deployDir) {
         this.listener = listener;
         this.deployDir = deployDir;
-        this.interval = interval;
     }
 
     /*--Logic---------------------------------------------------*/
-    
-    public void run() {
-        while ( alive ) {
-            try {
-                File[] list = deployDir.listFiles(new WarFilter());
-                if ( list == null ) list = new File[0];
-                //first make sure all the files are listed in our current status
-                for ( int i=0; i<list.length; i++ ) {
-                    addWarInfo(list[i]);
-                }//for
-                
-                //check all the status codes and update the FarmDeployer
-                for ( Iterator i=currentStatus.entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry)i.next();
-                    WarInfo info = (WarInfo)entry.getValue();
-                    int check = info.check(); 
-                    if ( check == 1 ) {
-                        listener.fileModified(info.getWar());
-                    } else if ( check == -1 ) {
-                        listener.fileRemoved(info.getWar());
-                        //no need to keep in memory
-                        currentStatus.remove(info.getWar());
-                    }//end if
-                }//for
 
-                //sleep for the set interval
-                Thread.sleep(interval);
-            } catch ( Exception x ) {
-                log.error("Unable to watch for WAR deployments in cluster.",x);
-            }
-        }//while
-    }//run
-    
-    protected void addWarInfo(File f) { 
-        WarInfo info = (WarInfo)currentStatus.get(f.getAbsolutePath());
-        if ( info == null ) {
-            info = new WarInfo(f);
+    /**
+     * check for modification and send notifcation to listener
+     */
+    public void check() {
+        if (log.isInfoEnabled())
+            log.info("check cluster wars at " + deployDir);
+        File[] list = deployDir.listFiles(new WarFilter());
+        if (list == null)
+            list = new File[0];
+        //first make sure all the files are listed in our current status
+        for (int i = 0; i < list.length; i++) {
+            addWarInfo(list[i]);
+        }//for
+
+        //check all the status codes and update the FarmDeployer
+        for (Iterator i = currentStatus.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            WarInfo info = (WarInfo) entry.getValue();
+            int check = info.check();
+            if (check == 1) {
+                listener.fileModified(info.getWar());
+            } else if (check == -1) {
+                listener.fileRemoved(info.getWar());
+                //no need to keep in memory
+                currentStatus.remove(info.getWar());
+            }//end if
+        }//for
+
+    }
+
+    /**
+     * add cluster war to the watcher state
+     * @param warfile
+     */
+    protected void addWarInfo(File warfile) {
+        WarInfo info = (WarInfo) currentStatus.get(warfile.getAbsolutePath());
+        if (info == null) {
+            info = new WarInfo(warfile);
             info.setLastState(-1); //assume file is non existent
-            currentStatus.put(f.getAbsolutePath(),info);
+            currentStatus.put(warfile.getAbsolutePath(), info);
         }
     }
-    
-    public void stop() {
-        alive = false;
-        currentStatus.clear();
-        listener = null;
-    }
-    
-    
-    
-    /*--Inner classes-------------------------------------------*/
-    
 
-    
-    
+    /**
+     * clear watcher state
+     */
+    public void clear() {
+        currentStatus.clear();
+    }
+
+    /**
+     * @return Returns the deployDir.
+     */
+    public File getDeployDir() {
+        return deployDir;
+    }
+
+    /**
+     * @param deployDir
+     *            The deployDir to set.
+     */
+    public void setDeployDir(File deployDir) {
+        this.deployDir = deployDir;
+    }
+
+    /**
+     * @return Returns the listener.
+     */
+    public FileChangeListener getListener() {
+        return listener;
+    }
+
+    /**
+     * @param listener
+     *            The listener to set.
+     */
+    public void setListener(FileChangeListener listener) {
+        this.listener = listener;
+    }
+
+    /*--Inner classes-------------------------------------------*/
+
     /**
      * File name filter for war files
      */
     protected class WarFilter implements java.io.FilenameFilter {
         public boolean accept(File path, String name) {
-            if ( name == null ) return false;
+            if (name == null)
+                return false;
             return name.endsWith(".war");
         }
     }
-    
-    
+
     /**
      * File information on existing WAR files
      */
     protected class WarInfo {
         protected File war = null;
+
         protected long lastChecked = 0;
+
         protected long lastState = 0;
-        
+
         public WarInfo(File war) {
             this.war = war;
             this.lastChecked = war.lastModified();
-            if ( !war.exists() ) lastState = -1;
+            if (!war.exists())
+                lastState = -1;
         }
-        
+
         public boolean modified() {
-            return war.exists() && 
-                war.lastModified() > lastChecked;
+            return war.exists() && war.lastModified() > lastChecked;
         }
-            
+
         public boolean exists() {
             return war.exists();
         }
-        
+
         /**
-         * Returns 
-         * 1 if the file has been added/modified, 
-         * 0 if the file is unchanged and 
-         * -1 if the file has been removed
+         * Returns 1 if the file has been added/modified, 0 if the file is
+         * unchanged and -1 if the file has been removed
+         * 
          * @return int 1=file added; 0=unchanged; -1=file removed
          */
         public int check() {
             //file unchanged by default
             int result = 0;
-            
-            if ( modified() ) {
+
+            if (modified()) {
                 //file has changed - timestamp
                 result = 1;
                 lastState = result;
-            } else if ( (!exists()) && (!(lastState==-1)) ) {
+            } else if ((!exists()) && (!(lastState == -1))) {
                 //file was removed
                 result = -1;
                 lastState = result;
-            } else if ( (lastState==-1) && exists() ) {
+            } else if ((lastState == -1) && exists()) {
                 //file was added
                 result = 1;
                 lastState = result;
@@ -189,30 +211,28 @@ public class WarWatcher implements Runnable {
             this.lastChecked = System.currentTimeMillis();
             return result;
         }
-        
+
         public File getWar() {
             return war;
         }
-        
+
         public int hashCode() {
             return war.getAbsolutePath().hashCode();
         }
-        
+
         public boolean equals(Object other) {
-            if ( other instanceof WarInfo ) {
-                WarInfo wo = (WarInfo)other;
+            if (other instanceof WarInfo) {
+                WarInfo wo = (WarInfo) other;
                 return wo.getWar().equals(getWar());
             } else {
                 return false;
             }
         }
-        
+
         protected void setLastState(int lastState) {
             this.lastState = lastState;
         }
-        
+
     }
-    
-    
 
 }
