@@ -36,7 +36,7 @@ public interface ClusterManager extends Manager {
     * receiving replication messages.
     * @param msg - the message received.
     */
-   public void messageDataReceived(SessionMessage msg);
+   public void messageDataReceived(ClusterMessage msg);
 
    /**
     * When the request has been completed, the replication valve
@@ -48,7 +48,7 @@ public interface ClusterManager extends Manager {
     * @param sessionId - the sessionId that just completed.
     * @return a SessionMessage to be sent,
     */
-   public SessionMessage requestCompleted(String sessionId);
+   public ClusterMessage requestCompleted(String sessionId);
 
    /**
     * When the manager expires session not tied to a request.

@@ -37,7 +37,7 @@ import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.catalina.cluster.MessageListener;
-import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.cluster.session.SessionMessage;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.util.LifecycleSupport;

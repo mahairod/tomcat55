@@ -20,8 +20,8 @@ import java.io.IOException;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.realm.GenericPrincipal;
 
 /**
@@ -236,7 +236,7 @@ implements org.apache.catalina.cluster.ClusterManager
 
     }
 
-    public SessionMessage requestCompleted(String sessionId)
+    public ClusterMessage requestCompleted(String sessionId)
     {
         if (  !getDistributable() ) {
             log.warn("Received requestCompleted message, although this context["+
@@ -580,9 +580,13 @@ implements org.apache.catalina.cluster.ClusterManager
         }
     }
 
-    public void messageDataReceived(SessionMessage msg) {
+    public void messageDataReceived(ClusterMessage cmsg) {
         try {
-            messageReceived(msg, msg.getAddress()!=null?(Member)msg.getAddress():null);
+            if ( cmsg instanceof SessionMessage ) {
+                SessionMessage msg = (SessionMessage)cmsg;
+                messageReceived(msg,
+                                msg.getAddress() != null ? (Member) msg.getAddress() : null);
+            }
         } catch(Throwable ex){
             log.error("InMemoryReplicationManager.messageDataReceived()", ex);
         }//catch
