@@ -195,7 +195,8 @@ public class Generator {
 		
 		String name = createTagHandlerPoolName(n.getPrefix(),
 						       n.getShortName(),
-						       n.getAttributes());
+						       n.getAttributes(),
+                                                       n.getBody() == null);
 		n.setTagHandlerPoolName(name);
 		if (!names.contains(name)) {
 		    names.add(name);
@@ -212,7 +213,8 @@ public class Generator {
 	     */
 	    private String createTagHandlerPoolName(String prefix,
 						    String shortName,
-						    Attributes attrs) {
+						    Attributes attrs,
+                                                    boolean hasEmptyBody) {
 		String poolName = null;
 
 		if (prefix.indexOf('-') >= 0)
@@ -238,6 +240,9 @@ public class Generator {
 			poolName = poolName + "_" + attrNames[i];
 		    }
 		}
+                if (hasEmptyBody) {
+                    poolName = poolName + "_nobody";
+                }
 		return poolName;
 	    }
 	}
