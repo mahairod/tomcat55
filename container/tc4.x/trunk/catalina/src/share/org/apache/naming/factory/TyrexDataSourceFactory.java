@@ -65,6 +65,8 @@
 package org.apache.naming.factory;
 
 import java.util.Hashtable;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import javax.naming.Name;
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -195,12 +197,19 @@ public class TyrexDataSourceFactory
                         ds.setDriverName(DEFAULT_DRIVER_NAME);
                     }
                     currentRefAddr = ref.get(DRIVER_CLASS_NAME);
+                    String driverClassName = null;
                     if (currentRefAddr != null) {
-                        ds.setDriverClassName
-                            (currentRefAddr.getContent().toString());
+                        driverClassName = 
+                            currentRefAddr.getContent().toString();
                     } else {
-                        ds.setDriverName(DEFAULT_DRIVER_CLASS_NAME);
+                        driverClassName = DEFAULT_DRIVER_CLASS_NAME;
                     }
+                    ds.setDriverClassName(driverClassName);
+                    
+                    // Loading and registering JDBC driver
+                    Class driverClass = Class.forName(driverClassName);
+                    Driver databaseDriver = (Driver) driverClass.newInstance();
+                    DriverManager.registerDriver(databaseDriver);
                     
                     if (ref.getClassName().equals
                         ("tyrex.jdbc.ServerDataSource")) {
@@ -220,9 +229,6 @@ public class TyrexDataSourceFactory
                     return ds;
                     
                 } catch (Throwable t) {
-                    // TEMP
-                    t.printStackTrace();
-                    // END TEMP
                     // Another factory could handle this, so just give up
                     return null;
                 }
