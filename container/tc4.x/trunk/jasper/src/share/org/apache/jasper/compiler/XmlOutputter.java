@@ -160,6 +160,7 @@ public class XmlOutputter {
      * (name, value) to the XML stream.
      */
     void append(String tag, Hashtable table) {
+	if (table == null) return;
 	Enumeration enum = table.keys();
 	while (enum.hasMoreElements()) {
 	    String name = (String)enum.nextElement();
