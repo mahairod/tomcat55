@@ -38,6 +38,10 @@ General New Features:
         Complete development of the initial version of the administration web
         application.
 
+[4.1.2] Administration Webapp:
+        Fix problems with limiting the length of the driverClassName field, as
+        well as set default values.
+
 
 ---------------------
 Catalina New Features:
