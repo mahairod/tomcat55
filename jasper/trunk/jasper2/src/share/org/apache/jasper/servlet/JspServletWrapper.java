@@ -148,10 +148,10 @@ public class JspServletWrapper {
 	// path
 	String standard = null;
 	if (tagFilePath.indexOf('/') != -1) {
-	    standard = "/tagfiles/org/apache/jsp/"
+	    standard = "/tagfiles/org/apache/jsp/tagfile/"
 		+ tagFilePath.substring(tagFilePath.lastIndexOf("/") + 1);
 	} else {
-	    standard = "/tagfiles/org/apache/jsp/" + tagFilePath;
+	    standard = "/tagfiles/org/apache/jsp/tagfile/" + tagFilePath;
 	}
         ctxt.createOutdir(standard);
     }

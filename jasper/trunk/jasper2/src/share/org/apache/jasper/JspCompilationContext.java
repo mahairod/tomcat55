@@ -115,7 +115,7 @@ public class JspCompilationContext {
     protected boolean reload = true;
     
     protected URLClassLoader jspLoader;
-    protected URL[] outUrls = new URL[1];
+    protected URL[] outUrls = new URL[2];
     protected Class servletClass;
 
     protected boolean isTagFile;
@@ -404,7 +404,8 @@ public class JspCompilationContext {
         }
 
 	if (isTagFile) {
-	    jspPath = "tagfiles/org/apache/jsp/" + tagInfo.getTagName() + ".java";
+	    jspPath = "tagfiles/org/apache/jsp/tagfile/"
+		+ tagInfo.getTagName() + ".java";
 	} else {
 	    String dirName = getJspFile();
 	    int pos = dirName.lastIndexOf('/');
@@ -600,6 +601,7 @@ public class JspCompilationContext {
             this.outputDir = outDirF.toString() + File.separator;
             
             outUrls[0] = new URL(outDirF.toURL().toString() + File.separator);
+            outUrls[1] = new URL("file:" + options.getScratchDir() + File.separator + "tagfiles" + File.separator);
         } catch (Exception e) {
             throw new IllegalStateException("No output directory: " +
                                             e.getMessage());

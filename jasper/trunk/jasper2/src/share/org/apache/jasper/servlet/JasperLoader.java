@@ -201,24 +201,29 @@ public class JasperLoader extends URLClassLoader {
 	}
 
 	// Only load classes for this JSP page
-	if( name.startsWith(className) ) {
-	    String classFile = name.substring(Constants.JSP_PACKAGE_NAME.length()+1) +
-		".class";
-	    byte [] cdata = loadClassDataFromFile(classFile);
-	    if( cdata == null )
+	// (including tag handlers generated from tag files)
+	if (name.startsWith(className)) {
+	    String classFile
+		= name.substring(Constants.JSP_PACKAGE_NAME.length() + 1)
+		+ ".class";
+	    byte[] cdata = loadClassDataFromFile(classFile);
+	    if (cdata == null) {
 		throw new ClassNotFoundException(name);
-	    if( System.getSecurityManager() != null ) {
-		ProtectionDomain pd = new ProtectionDomain(
-			codeSource,permissionCollection);
-		clazz = defineClass(name,cdata,0,cdata.length,pd);
-	    } else {
-		clazz = defineClass(name,cdata,0,cdata.length);
 	    }
-	    if( clazz != null ) {
-		if( resolve )                
+	    if (System.getSecurityManager() != null) {
+		ProtectionDomain pd
+		    = new ProtectionDomain(codeSource, permissionCollection);
+		clazz = defineClass(name, cdata, 0, cdata.length, pd);
+	    } else {
+		clazz = defineClass(name, cdata, 0, cdata.length);
+	    }
+	    if (clazz != null) {
+		if (resolve)                
 		    resolveClass(clazz);
 		return clazz;
 	    }
+	} else if (name.startsWith(Constants.TAG_FILE_PACKAGE_NAME)) {
+	    return findClass(name);
 	}
 
 	throw new ClassNotFoundException(name);

@@ -259,7 +259,7 @@ public class TagFileProcessor {
                 bodycontent = TagInfo.BODY_CONTENT_SCRIPTLESS;
             }
 
-            tagclass = Constants.JSP_PACKAGE_NAME + "." + name;
+            tagclass = Constants.TAG_FILE_PACKAGE_NAME + "." + name;
 
             TagVariableInfo[] tagVariableInfos
                     = new TagVariableInfo[variableVector.size()];
