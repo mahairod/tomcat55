@@ -61,6 +61,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.jar.*;
 import java.net.JarURLConnection;
 import java.net.*;
@@ -197,22 +198,15 @@ public class TldLocationsCache {
     private void processJars(ServletContext ctxt)
         throws JasperException
     {
-        URL libURL = null;
-        try {
-            libURL = ctxt.getResource("/WEB-INF/lib");
-        } catch (MalformedURLException e) {}
 
-        if ((libURL != null) && "file".equals(libURL.getProtocol())) {
-            File libFile = new File(libURL.getFile());
-            if (libFile.exists() && libFile.canRead() &&
-                libFile.isDirectory()) {
-                String filenames[] = libFile.list();
-                for (int i=0; i<filenames.length; i++) {
-                    if (!filenames[i].endsWith(".jar")) continue;
-                    tldConfigJar(ctxt, "/WEB-INF/lib/" + filenames[i]);
-                }
-            }
+        Set libSet = ctxt.getResourcePaths("/WEB-INF/lib");
+        Iterator it = libSet.iterator();
+        while (it.hasNext()) {
+            String resourcePath = (String) it.next();
+            if (resourcePath.endsWith(".jar")) 
+                tldConfigJar(ctxt, resourcePath);
         }
+
     }
 
     /**
@@ -279,23 +273,11 @@ public class TldLocationsCache {
         // Parse the tag library descriptor at the specified resource path
         ParserUtils pu = new ParserUtils();
         TreeNode tld = pu.parseXMLDocument(resourcePath, in);
-        Iterator taglibs = tld.findChildren("taglib");
-        int n = 0;
-        while (taglibs.hasNext()) {
-            n++;
-            if (n > 1) {
-                Constants.message("jsp.error.more.than.one.taglib",
-                                  new Object[] {resourcePath},
-                                  Logger.ERROR);
-                return null;
-            }
-            TreeNode taglib = (TreeNode) taglibs.next();
-            TreeNode uri = taglib.findChild("uri");
-            if (uri != null) {
-                String body = uri.getBody();
-                if (body != null)
-                    return body;
-            }
+        TreeNode uri = tld.findChild("uri");
+        if (uri != null) {
+            String body = uri.getBody();
+            if (body != null)
+                return body;
         }
         return null; // No <uri> element is present
 
