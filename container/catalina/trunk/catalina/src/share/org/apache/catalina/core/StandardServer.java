@@ -990,7 +990,7 @@ public final class StandardServer
     private boolean isSkippable(String className) {
 
         for (int i = 0; i < skippables.length; i++) {
-            if (skippables[i] == className) {
+            if (skippables[i].equals(className)) {
                 return (true);
             }
         }
