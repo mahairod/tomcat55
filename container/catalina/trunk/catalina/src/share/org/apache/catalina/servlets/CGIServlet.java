@@ -20,6 +20,7 @@ package org.apache.catalina.servlets;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1633,119 +1634,49 @@ public final class CGIServlet extends HttpServlet {
                 }
             }
 
-            /*String postIn = getPostInput(params);
-            int contentLength = (postIn.length()
-                    + System.getProperty("line.separator").length());
-            if ("POST".equals(env.get("REQUEST_METHOD"))) {
-                env.put("CONTENT_LENGTH", new Integer(contentLength));
-            }*/
-
-        //if (command.endsWith(".pl") || command.endsWith(".cgi")) {
             StringBuffer command = new StringBuffer(cgiExecutable);
             command.append(" ");
             command.append(cmdAndArgs.toString());
             cmdAndArgs = command;
-        //}
+
+            String sContentLength = (String) env.get("CONTENT_LENGTH");
+            ByteArrayOutputStream contentStream = null;
+            if(!"".equals(sContentLength)) {
+                byte[] content = new byte[Integer.parseInt(sContentLength)];
+                int lenRead = stdin.read(content);
+                contentStream = new ByteArrayOutputStream(
+                        Integer.parseInt(sContentLength));
+                if ("POST".equals(env.get("REQUEST_METHOD"))) {
+                    String paramStr = getPostInput(params);
+                    if (paramStr != null) {
+                        byte[] paramBytes = paramStr.getBytes();
+                        contentStream.write(paramBytes);
+
+                        int contentLength = paramBytes.length;
+                        if (lenRead > 0) {
+                            String lineSep = System.getProperty("line.separator");
+                            contentStream.write(lineSep.getBytes());
+                            contentLength = lineSep.length() + lenRead;
+                        }
+                        env.put("CONTENT_LENGTH", new Integer(contentLength));
+                    }
+                }
+
+                if (lenRead > 0) {
+                    contentStream.write(content, 0, lenRead);
+                }
+                contentStream.close();
+            }
 
             rt = Runtime.getRuntime();
             proc = rt.exec(cmdAndArgs.toString(), hashToStringArray(env), wd);
 
-            /*
-             * provide input to cgi
-             * First  -- parameters
-             * Second -- any remaining input
-             */
-            /*commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-            if (debug >= 2 ) {
-                log("runCGI stdin=[" + stdin + "], qs="
-                    + env.get("QUERY_STRING"));
+            if(contentStream != null) {
+                commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
+                proc.getOutputStream().write(contentStream.toByteArray());
+                commandsStdIn.flush();
+                commandsStdIn.close();
             }
-            if ("POST".equals(env.get("REQUEST_METHOD"))) {
-                if (debug >= 2) {
-                    log("runCGI: writing ---------------\n");
-                    log(postIn);
-                    log("runCGI: new content_length=" + contentLength
-                        + "---------------\n");
-                }
-                commandsStdIn.write(postIn.getBytes());
-            }
-            if (stdin != null) {
-                //REMIND: document this
-                /* assume if nothing is available after a time, that nothing is
-                 * coming...
-                 */
-                /*if (stdin.available() <= 0) {
-                    if (debug >= 2 ) {
-                        log("runCGI stdin is NOT available ["
-                            + stdin.available() + "]");
-                    }
-                    try {
-                        Thread.currentThread().sleep(iClientInputTimeout);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-                if (stdin.available() > 0) {
-                    if (debug >= 2 ) {
-                        log("runCGI stdin IS available ["
-                            + stdin.available() + "]");
-                    }
-                    byte[] bBuf = new byte[1024];
-                    bufRead = -1;
-                    try {
-                        while ((bufRead = stdin.read(bBuf)) != -1) {
-                            if (debug >= 2 ) {
-                                log("runCGI: read [" + bufRead
-                                    + "] bytes from stdin");
-                            }
-                            commandsStdIn.write(bBuf, 0, bufRead);
-                        }
-                        if (debug >= 2 ) {
-                            log("runCGI: DONE READING from stdin");
-                        }
-                    } catch (IOException ioe) {
-                        //REMIND: replace with logging
-                        //REMIND: should I throw this exception?
-                        log("runCGI: couldn't write all bytes.");
-                        ioe.printStackTrace();
-                    }
-                }
-            }
-            commandsStdIn.flush();
-            commandsStdIn.close();*/
-      String sContentLength = (String) env.get("CONTENT_LENGTH");
-      if(!"".equals(sContentLength)) {
-          commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-          byte[] content = new byte[Integer.parseInt(sContentLength)];
-
-          int lenRead = stdin.read(content);
-
-          if ("POST".equals(env.get("REQUEST_METHOD"))) {
-              String paramStr = getPostInput(params);
-              if (paramStr != null) {
-                  byte[] paramBytes = paramStr.getBytes();
-                  commandsStdIn.write(paramBytes);
-
-                  int contentLength = paramBytes.length;
-                  if (lenRead > 0) {
-                      String lineSep = System.getProperty("line.separator");
-
-                      commandsStdIn.write(lineSep.getBytes());
-
-                      contentLength = lineSep.length() + lenRead;
-                  }
-
-                  env.put("CONTENT_LENGTH", new Integer(contentLength));
-              }
-          }
-
-          if (lenRead > 0) {
-              commandsStdIn.write(content, 0, lenRead);
-          }
-
-
-          commandsStdIn.flush();
-          commandsStdIn.close();
-      }
 
             /* we want to wait for the process to exit,  Process.waitFor()
              * is useless in our situation; see
@@ -1866,38 +1797,27 @@ public final class CGIServlet extends HttpServlet {
         protected String getPostInput(Hashtable params) {
             String lineSeparator = System.getProperty("line.separator");
             Enumeration paramNames = params.keys();
-            StringBuffer postInput = new StringBuffer("");
             StringBuffer qs = new StringBuffer("");
             if (paramNames != null && paramNames.hasMoreElements()) {
                 while (paramNames.hasMoreElements()) {
                     String k = (String) paramNames.nextElement();
                     String v = params.get(k).toString();
                     if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
-                        postInput.append(k);
                         qs.append(k);
-                        postInput.append("=");
                         qs.append("=");
-                        postInput.append(v);
                         qs.append(v);
-                        postInput.append(lineSeparator);
                         qs.append("&");
                     }
                 }
             }
-
             if (qs.length() > 0) {
-                qs.append(lineSeparator);
-                return qs.append(postInput.toString()).toString();
+                // Remove last "&"
+                qs.setLength(qs.length() - 1);
+                return qs.toString();
             } else {
                 return null;
             }
         }
-
-
-
     } //class CGIRunner
-
-
-
 
 } //class CGIServlet
