@@ -147,4 +147,40 @@ public class URLUtil {
 
         return s;
     }
+
+    public static String removeLast( String s) {
+	int i = s.lastIndexOf("/");
+	
+	if (i > 0) {
+	    s = s.substring(0, i);
+	} else if (i == 0 && ! s.equals("/")) {
+	    s = "/";
+	} else {
+	    s = "";
+	}
+	return s;
+    }
+
+    public static String getFirst( String path ) {
+	if (path.startsWith("/")) 
+	    path = path.substring(1);
+	
+	int i = path.indexOf("/");
+	if (i > -1) {
+	    path = path.substring(0, i);
+	}
+
+	return  "/" + path;
+    }
+    
+    public static String getExtension( String path ) {
+        int i = path.lastIndexOf(".");
+	int j = path.lastIndexOf("/");
+
+	if ((i > 0) && (i > j))
+	    return path.substring(i);
+	else
+	    return null;
+    }
+
 }
