@@ -112,6 +112,7 @@ extern "C" {
 #define JK_CR (13)
 
 #define JK_SESSION_IDENTIFIER "JSESSIONID"
+#define JK_PATH_SESSION_IDENTIFIER ";jsessionid"
 
 #ifdef WIN32
     #define JK_METHOD __stdcall
