@@ -66,30 +66,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.FilePermission;
-import java.lang.RuntimePermission;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
-import java.security.CodeSource;
-import java.security.PermissionCollection;
-import java.security.Policy;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.commons.collections.FastHashMap;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
 import org.apache.jasper.EmbededServletOptions;
-import org.apache.jasper.runtime.*;
+
+import org.apache.jasper.compiler.JspRuntimeContext;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.DefaultLogger;
@@ -116,17 +106,9 @@ public class JspServlet extends HttpServlet {
     private Logger.Helper loghelper;
 
     private ServletContext context;
-    private Map jsps = new FastHashMap();
     private ServletConfig config;
     private Options options;
-    private URLClassLoader parentClassLoader;
-    private ServletEngine engine;
-    private String serverInfo;
-    private PermissionCollection permissionCollection;
-    private CodeSource codeSource;
-    private String classpath;
-
-    static boolean firstTime = true;
+    private JspRuntimeContext rctxt;
 
     public void init(ServletConfig config)
 	throws ServletException {
@@ -134,164 +116,25 @@ public class JspServlet extends HttpServlet {
 	super.init(config);
 	this.config = config;
 	this.context = config.getServletContext();
-        this.serverInfo = context.getServerInfo();
         
 	// Setup logging 
         Constants.jasperLog = new DefaultLogger(this.context);
 	Constants.jasperLog.setName("JASPER_LOG");
 	Constants.jasperLog.setTimestamp("false");
 	Constants.jasperLog.setVerbosityLevel(
-		   config.getInitParameter("logVerbosityLevel"));
-	loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
+            config.getInitParameter("logVerbosityLevel"));
+        loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
 
-	options = new EmbededServletOptions(config, context);
+        options = new EmbededServletOptions(config, context);
 
-        ((FastHashMap)jsps).setFast(true);
+        // Initialize the JSP Runtime Context
+        rctxt = new JspRuntimeContext(context,options);
 
-        // Get the classpath to use for compiling
-        classpath = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
-
-        if (classpath == null || classpath.equals("")) {
-            classpath = options.getClassPath();
-        }
-
-	// Get the parent class loader
-	parentClassLoader =
-	    (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        if (parentClassLoader == null) {
-            parentClassLoader =
-                (URLClassLoader)this.getClass().getClassLoader();
-        }
-        if (parentClassLoader != null) {
-            Constants.message("jsp.message.parent_class_loader_is",
-                              new Object[] {
-                                  parentClassLoader.toString()
-                              }, Logger.DEBUG);
-        } else {
-            Constants.message("jsp.message.parent_class_loader_is",
-                              new Object[] {
-                                  "<none>"  
-                              }, Logger.DEBUG);
-        }
-
-	// Setup the PermissionCollection for this web app context
-	// based on the permissions configured for the root of the
-	// web app context directory, then add a file read permission
-	// for that directory.
-	Policy policy = Policy.getPolicy();
-	if( policy != null ) {
-            try {          
-		// Get the permissions for the web app context
-                String contextDir = context.getRealPath("/");
-                if( contextDir == null ) {
-                    contextDir = options.getScratchDir().toString();
-                }
-		URL url = new URL("file:" + contextDir);
-		codeSource = new CodeSource(url,null);
-		permissionCollection = policy.getPermissions(codeSource);
-		// Create a file read permission for web app context directory
-		if (contextDir.endsWith(File.separator)) {
-		    contextDir = contextDir + "-";
-                } else {
-		    contextDir = contextDir + File.separator + "-";
-                }
-		permissionCollection.add(new FilePermission(contextDir,"read"));
-		// Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
-		permissionCollection.add( new RuntimePermission(
-		    "accessClassInPackage.org.apache.jasper.runtime") );
-                if (parentClassLoader instanceof URLClassLoader) {
-                    URL [] urls = parentClassLoader.getURLs();
-                    String jarUrl = null;
-                    String jndiUrl = null;
-                    for (int i=0; i<urls.length; i++) {
-                        if (jndiUrl == null
-                                && urls[i].toString().startsWith("jndi:") ) {
-                            jndiUrl = urls[i].toString() + "-";
-                        }
-                        if (jarUrl == null
-                                && urls[i].toString().startsWith("jar:jndi:")
-                                ) {
-                            jarUrl = urls[i].toString();
-                            jarUrl = jarUrl.substring(0,jarUrl.length() - 2);
-                            jarUrl = jarUrl.substring(0,
-                                     jarUrl.lastIndexOf('/')) + "/-";
-                        }
-                    }
-                    if (jarUrl != null) {
-                        permissionCollection.add(
-                                new FilePermission(jarUrl,"read"));
-                        permissionCollection.add(
-                                new FilePermission(jarUrl.substring(4),"read"));
-                    }
-                    if (jndiUrl != null)
-                        permissionCollection.add(
-                                new FilePermission(jndiUrl,"read") );
-                }
-	    } catch(MalformedURLException mfe) {
-	    }
-	}
-
-	if (firstTime) {
-	    firstTime = false;
-	    if( System.getSecurityManager() != null ) {
-		// Make sure classes needed at runtime by a JSP servlet
-		// are already loaded by the class loader so that we
-		// don't get a defineClassInPackage security exception.
-		String basePackage = "org.apache.jasper.";
-		try {
-		    parentClassLoader.loadClass( basePackage +
-			"runtime.JspFactoryImpl$PrivilegedGetPageContext");
-		    parentClassLoader.loadClass( basePackage +
-			"runtime.JspFactoryImpl$PrivilegedReleasePageContext");
-		    parentClassLoader.loadClass( basePackage +
-			"runtime.JspRuntimeLibrary");
-                    parentClassLoader.loadClass( basePackage +
-                        "runtime.JspRuntimeLibrary$PrivilegedIntrospectHelper");
-                    parentClassLoader.loadClass( basePackage +
-			"runtime.ServletResponseWrapperInclude");
-		    this.getClass().getClassLoader().loadClass( basePackage +
-                        "servlet.JspServletWrapper");
-		} catch (ClassNotFoundException ex) {
-		    System.out.println(
-			"Jasper JspServlet preload of class failed: " +
-			ex.getMessage());
-		}
-	    }
-	    Constants.message("jsp.message.scratch.dir.is", 
-			      new Object[] { 
-				  options.getScratchDir().toString() 
-			      }, Logger.INFORMATION );
-	    Constants.message("jsp.message.dont.modify.servlets",
-                    Logger.INFORMATION);
-	    JspFactory.setDefaultFactory(new JspFactoryImpl());
-	}
-    }
-
-    private void serviceJspFile(HttpServletRequest request, 
-      				HttpServletResponse response, String jspUri, 
-				Throwable exception, boolean precompile) 
-	throws ServletException, IOException {
-
-	JspServletWrapper wrapper;
-	synchronized (this) {
-	    wrapper = (JspServletWrapper) jsps.get(jspUri);
-	    if (wrapper == null) {
-                // First check if the requested JSP page exists, to avoid
-                // creating unnecessary directories and files.
-                if (context.getResourceAsStream(jspUri) == null) {
-                    throw new FileNotFoundException(jspUri);
-                }
-                boolean isErrorPage = exception != null;
-		wrapper = new JspServletWrapper(config, options, jspUri,
-                                                isErrorPage, classpath,
-                                                parentClassLoader,
-                                                permissionCollection,
-                                                codeSource);
-		jsps.put(jspUri, wrapper);
-	    }
-	}
-	
-	wrapper.service(request, response, precompile);
+	Constants.message("jsp.message.scratch.dir.is", 
+            new Object[] { options.getScratchDir().toString() },
+            Logger.INFORMATION );
+        Constants.message("jsp.message.dont.modify.servlets",
+            Logger.INFORMATION);
     }
 
 
@@ -346,7 +189,6 @@ public class JspServlet extends HttpServlet {
         }
 
     }
-    
     
 
     public void service (HttpServletRequest request, 
@@ -413,10 +255,38 @@ public class JspServlet extends HttpServlet {
 	if (Constants.jasperLog != null)
 	    Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
 
-	Iterator servlets = jsps.values().iterator();
-	while (servlets.hasNext()) {
-	    ((JspServletWrapper) servlets.next()).destroy();
+        rctxt.destroy();
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+    private void serviceJspFile(HttpServletRequest request,
+                                HttpServletResponse response, String jspUri,
+                                Throwable exception, boolean precompile)
+        throws ServletException, IOException {
+
+        JspServletWrapper wrapper =
+            (JspServletWrapper) rctxt.getWrapper(jspUri);
+        if (wrapper == null) {
+            // First check if the requested JSP page exists, to avoid
+            // creating unnecessary directories and files.
+            if (context.getResourceAsStream(jspUri) == null) {
+                throw new FileNotFoundException(jspUri);
+            }
+            boolean isErrorPage = exception != null;
+            synchronized(this) {
+                wrapper = (JspServletWrapper) rctxt.getWrapper(jspUri);
+                if (wrapper == null) {
+                    wrapper = new JspServletWrapper(config, options, jspUri,
+                                                    isErrorPage, rctxt);
+                    rctxt.addWrapper(jspUri,wrapper);
+                }
+            }
         }
+
+        wrapper.service(request, response, precompile);
+
     }
 
 }

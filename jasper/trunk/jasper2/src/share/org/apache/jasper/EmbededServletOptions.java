@@ -78,6 +78,12 @@ import org.apache.jasper.compiler.TldLocationsCache;
  * @author Pierre Delisle
  */
 public final class EmbededServletOptions implements Options {
+
+    /**
+     * Is Jasper being used in development mode?
+     */
+    public boolean development = false;
+
     /**
      * Do you want to keep the generated Java files around?
      */
@@ -109,6 +115,11 @@ public final class EmbededServletOptions implements Options {
      * Do we want to include debugging information in the class file?
      */
     public boolean classDebugInfo = false;
+
+    /**
+     * Background compile thread check interval in seconds.
+     */
+    public int checkInterval = 300;
 
     /**
      * JSP reloading check ?
@@ -187,6 +198,20 @@ public final class EmbededServletOptions implements Options {
      */
     public boolean getClassDebugInfo() {
         return classDebugInfo;
+    }
+
+    /**
+     * Background JSP compile thread check intervall
+     */
+    public int getCheckInterval() {
+        return checkInterval;
+    }
+
+    /**
+     * Is Jasper being used in development mode?
+     */
+    public boolean getDevelopment() {
+        return development;
     }
 
     /**
@@ -290,6 +315,29 @@ public final class EmbededServletOptions implements Options {
             else if (debugInfo.equalsIgnoreCase("false"))
                 this.classDebugInfo  = false;
             else Constants.message ("jsp.warning.classDebugInfo", Logger.WARNING);
+        }
+
+        String checkInterval = config.getInitParameter("checkInterval");
+        if (checkInterval != null) {
+            try {
+                this.checkInterval = new Integer(checkInterval).intValue();
+                if (this.checkInterval == 0) {
+                    this.checkInterval = 300;
+                    Constants.message("jsp.warning.checkInterval",
+                                      Logger.WARNING);
+                }
+            } catch(NumberFormatException ex) {
+                Constants.message ("jsp.warning.checkInterval", Logger.WARNING);
+            }
+        }
+
+        String development = config.getInitParameter("development");
+        if (development != null) {
+            if (development.equalsIgnoreCase("true"))
+                this.development = true;
+            else if (development.equalsIgnoreCase("false"))
+                this.development = false;
+            else Constants.message ("jsp.warning.development", Logger.WARNING);
         }
 
         String reloading = config.getInitParameter("reloading");

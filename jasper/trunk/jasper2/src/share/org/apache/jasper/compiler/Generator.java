@@ -203,8 +203,41 @@ public class Generator {
 
 	// Static initializations (none yet) here
 
+        // Static data for getIncludes()
+        out.printil("private static java.util.Vector _jspx_includes;");
+        out.println();  
+        out.println();
+        List includes = pageInfo.getIncludes();
+        iter = includes.iterator();
+        if( !includes.isEmpty() ) {
+            out.printil("static {");
+            out.pushIndent();
+            out.printin(
+                "_jspx_includes = new java.util.Vector(");
+            out.print(""+includes.size());
+            out.println(");");
+            while (iter.hasNext()) {
+                out.printin("_jspx_includes.add(\"");
+                out.print((String)iter.next());
+                out.println("\");");
+            }
+            out.popIndent();                     
+            out.printil("}");
+            out.println();  
+            out.println();
+        }
+
 	// Constructor (empty so far) here
-	// Other methods here
+
+	// Method used to get compile time include file dependencies
+        out.printil("public java.util.List getIncludes() {");
+        out.pushIndent();
+        out.printil("return _jspx_includes;");
+        out.popIndent();
+        out.printil("}");
+        out.println();
+        out.println();
+
         out.printil("private void addTagToVector(java.util.Vector tags, int index, javax.servlet.jsp.tagext.Tag tag) {");
         out.pushIndent();
         out.printil("if (index + 1 > tags.size())");

@@ -69,23 +69,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
-import java.security.CodeSource;
-import java.security.PermissionCollection;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
-import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JspEngineContext;
-import org.apache.jasper.runtime.*;
-
-import org.apache.jasper.compiler.Compiler;
+import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.runtime.HttpJspBase;
 
 import org.apache.jasper.logging.Logger;
 
@@ -106,50 +101,38 @@ import org.apache.jasper.logging.Logger;
  * @author Glenn Nielsen
  */
 
-class JspServletWrapper {
+public class JspServletWrapper {
 
     private Servlet theServlet;
     private String jspUri;
     private Class servletClass;
-    private URLClassLoader loader;
-    private JspCompilationContext ctxt;
+    private JspEngineContext ctxt;
     private long available = 0L;
     private ServletConfig config;
     private Options options;
-    private Compiler compiler;
-    private PermissionCollection permissionCollection;
-    private CodeSource codeSource;
-    private URLClassLoader parentClassLoader;
 
     JspServletWrapper(ServletConfig config, Options options, String jspUri,
-                      boolean isErrorPage, String classpath,
-                      URLClassLoader parentClassLoader,
-                      PermissionCollection permissionCollection,
-                      CodeSource codeSource) throws JasperException {
+                      boolean isErrorPage, JspRuntimeContext rctxt)
+            throws JasperException {
 
-        this.jspUri = jspUri;
-        this.theServlet = null;
         this.config = config;
         this.options = options;
-        this.parentClassLoader = parentClassLoader;
-        this.permissionCollection = permissionCollection;
-        this.codeSource = codeSource;
+        this.jspUri = jspUri;
         ctxt = new JspEngineContext
-            (parentClassLoader, classpath, config.getServletContext(),
-             jspUri, isErrorPage, options);
-        compiler = ctxt.createCompiler();
+            (rctxt, config.getServletContext(), jspUri,
+             this, isErrorPage, options);
     }
 
-    private void load() throws JasperException, ServletException {
+    public JspEngineContext getJspEngineContext() {
+        return ctxt;
+    }
 
-        try {
-            // This is to maintain the original protocol.
-            destroy();
-            theServlet = (Servlet) servletClass.newInstance();
-        } catch (Exception ex) {
-            throw new JasperException(ex);
-        }
-        theServlet.init(config);
+    public HttpJspBase getServlet() {
+        return (HttpJspBase)theServlet;
+    }
+
+    public ServletContext getServletContext() {
+        return config.getServletContext();
     }
 
     public void service(HttpServletRequest request, 
@@ -158,6 +141,10 @@ class JspServletWrapper {
 	    throws ServletException, IOException, FileNotFoundException {
         try {
 
+            if (ctxt.isRemoved()) {
+                throw new FileNotFoundException(jspUri);
+            }
+
             if ((available > 0L) && (available < Long.MAX_VALUE)) {
                 response.setDateHeader("Retry-After", available);
                 response.sendError
@@ -165,8 +152,19 @@ class JspServletWrapper {
                      Constants.getString("jsp.error.unavailable"));
             }
 
-            if (loadJSP(request, response) || theServlet == null) {
-                load();
+            if (ctxt.isReload()) {
+                synchronized (this) {
+    
+                    // Synchronizing on jsw enables simultaneous loading
+                    // of different pages, but not the same page.
+                    if (ctxt.isReload()) {
+                        servletClass = ctxt.load();
+                        // This is to maintain the original protocol.
+                        destroy();
+                        theServlet = (Servlet) servletClass.newInstance();
+                        theServlet.init(config);
+                    }
+                }    
             }
 
             // If a page is to only to be precompiled return.
@@ -222,6 +220,10 @@ class JspServletWrapper {
                         ex, Logger.ERROR);
                 }
             }
+        } catch (JasperException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new JasperException(ex);
         }
     }
 
@@ -229,130 +231,6 @@ class JspServletWrapper {
         if (theServlet != null) {
             theServlet.destroy();
         }
-    }
-
-
-    /*  Check if we need to reload a JSP page.
-     *
-     *  Side-effect: re-compile the JSP page.
-     *
-     *  @return true if JSP has been recompiled
-     */
-    boolean loadJSP(HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException {
-
-	boolean outDated = false; 
-        
-        if (options.getReloading() || (servletClass == null)) {
-            try {
-                synchronized (this) {
-
-                    // Synchronizing on jsw enables simultaneous 
-                    // compilations of different pages, but not the 
-                    // same page.
-                    outDated = compiler.isOutDated();
-                    if (outDated) {
-                        compiler.compile();
-                    }
-
-                    if ((servletClass == null) || outDated) {
-                        URL [] urls = new URL[1];
-			File outputDir = 
-                            new File(normalize(ctxt.getOutputDir()));
-			urls[0] = outputDir.toURL();
-			loader = new JasperLoader
-                            (urls,ctxt.getServletClassName(),
-                             parentClassLoader, permissionCollection,
-                             codeSource);
-			servletClass = loader.loadClass
-                            (Constants.JSP_PACKAGE_NAME + "." 
-                             + ctxt.getServletClassName());
-                    }
-
-                }
-            } catch (FileNotFoundException ex) {
-                compiler.removeGeneratedFiles();
-                throw ex;
-            } catch (ClassNotFoundException cex) {
-		throw new JasperException(
-		    Constants.getString("jsp.error.unable.load"),cex);
-	    } catch (MalformedURLException mue) {
-                throw new JasperException(
-		    Constants.getString("jsp.error.unable.load"),mue);
-	    } catch (JasperException ex) {
-                throw ex;
-            } catch (Exception ex) {
-                throw new JasperException
-                    (Constants.getString("jsp.error.unable.compile"), ex);
-            }
-        }
-
-	return outDated;
-    }
-
-
-    /**
-     * Return a context-relative path, beginning with a "/", that represents
-     * the canonical version of the specified path after ".." and "." elements
-     * are resolved out.  If the specified path attempts to go outside the
-     * boundaries of the current context (i.e. too many ".." path elements
-     * are present), return <code>null</code> instead.
-     *
-     * @param path Path to be normalized
-     */
-    protected String normalize(String path) {
-
-        if (path == null) {
-            return null;
-        }
-
-        String normalized = path;
-        
-	// Normalize the slashes and add leading slash if necessary
-	if (normalized.indexOf('\\') >= 0) {
-	    normalized = normalized.replace('\\', '/');
-        }
-	if (!normalized.startsWith("/")) {
-	    normalized = "/" + normalized;
-        }
-
-	// Resolve occurrences of "//" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("//");
-	    if (index < 0) {
-		break;
-            }
-	    normalized = normalized.substring(0, index) +
-		normalized.substring(index + 1);
-	}
-
-	// Resolve occurrences of "/./" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/./");
-	    if (index < 0) {
-		break;
-            }
-	    normalized = normalized.substring(0, index) +
-		normalized.substring(index + 2);
-	}
-
-	// Resolve occurrences of "/../" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/../");
-	    if (index < 0) {
-		break;
-            }
-	    if (index == 0) {
-		return (null);	// Trying to go outside our context
-            }
-	    int index2 = normalized.lastIndexOf('/', index - 1);
-	    normalized = normalized.substring(0, index2) +
-		normalized.substring(index + 3);
-	}
-
-	// Return the normalized path that we have completed
-	return (normalized);
-
     }
 
 }

@@ -103,6 +103,16 @@ public interface Options {
     public boolean getClassDebugInfo();
 
     /**
+     * Background compile thread check interval in seconds
+     */
+    public int getCheckInterval();
+
+    /**
+     * Is Jasper being used in development mode?
+     */
+    public boolean getDevelopment();
+
+    /**
      * JSP reloading check ?
      */
     public boolean getReloading();

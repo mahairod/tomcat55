@@ -62,6 +62,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import java.util.List;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
@@ -112,7 +114,17 @@ public abstract class HttpJspBase
     
     public void jspDestroy() {
     }
-    
+
+    /**
+     * Get the list of compile time included files used
+     * by the JSP file.
+     *
+     * Overridden by generated JSP java source files.
+     *
+     * @return List compile time includes
+     */
+    public abstract List getIncludes();
+
     public abstract void _jspService(HttpServletRequest request, 
 				     HttpServletResponse response) 
 	throws ServletException, IOException;

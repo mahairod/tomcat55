@@ -178,7 +178,9 @@ public class ParserController {
 		// for all included files where encoding is not defined.
 		topFileEncoding = encoding;
 		isTopFile = false;
-	    }
+	    } else {
+                compiler.getPageInfo().addInclude(absFileName);
+            }
 	    try {
 		reader.close();
 	    } catch (IOException ex) {

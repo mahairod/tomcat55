@@ -186,6 +186,20 @@ public class JspC implements Options { //, JspCompilationContext {
     }
 
     /**
+     * Background compilation check intervals in seconds
+     */
+    public int getCheckInterval() {
+        return 300;
+    }
+
+    /**
+     * Is Jasper being used in development mode?
+     */
+    public boolean getDevelopment() {
+        return false;
+    }
+
+    /**
      * JSP reloading check ?
      */
     public boolean getReloading() {

@@ -58,11 +58,15 @@ package org.apache.jasper.compiler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.JspEngineContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-
+import org.apache.jasper.runtime.HttpJspBase;
+import org.apache.jasper.servlet.JspServletWrapper;
 import org.apache.jasper.logging.Logger;
 
 /**
@@ -79,18 +83,22 @@ import org.apache.jasper.logging.Logger;
  */
 public class JspCompiler extends Compiler implements Mangler {
     
-    String javaFileName, classFileName;
-    String realClassName;
+    private String javaFileName;
+    private String classFileName;
+    private String realClassName;
+    private String jsp;
+    private String outputDir;
 
-    String jsp;
-    String outputDir;
+    private JspServletWrapper jsw;
 
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspCompiler");
     
-    public JspCompiler(JspCompilationContext ctxt) throws JasperException {
+    public JspCompiler(JspCompilationContext ctxt, JspServletWrapper jsw)
+            throws JasperException {
         super(ctxt);
         
         this.jsp = ctxt.getJspFile();
+        this.jsw = jsw;
         this.outputDir = ctxt.getOutputDir();
         setMangler(this);
     }
@@ -104,19 +112,28 @@ public class JspCompiler extends Compiler implements Mangler {
     }
 
     public final String getJavaFileName() {
-        if( javaFileName!=null ) return javaFileName;
+
+        if( javaFileName!=null ) {
+            return javaFileName;
+        }
+
 	javaFileName = getClassName() + ".java";
- 	if (outputDir != null && !outputDir.equals(""))
+ 	if (outputDir != null && !outputDir.equals("")) {
 	    javaFileName = outputDir + javaFileName;
+        }
 	return javaFileName;
     }
     
     public final String getClassFileName() {
-        if( classFileName!=null) return classFileName;
+
+        if( classFileName!=null) {
+            return classFileName;
+        }
 
         classFileName = getClassName() + ".class";
-	if (outputDir != null && !outputDir.equals(""))
+	if (outputDir != null && !outputDir.equals("")) {
 	    classFileName = outputDir + File.separatorChar + classFileName;
+        }
 	return classFileName;
     }
 
@@ -137,14 +154,15 @@ public class JspCompiler extends Compiler implements Mangler {
 	}
         for (int i = iSep; i < iEnd; i++) {
             char ch = jsp.charAt(i);
-            if (Character.isLetterOrDigit(ch))
+            if (Character.isLetterOrDigit(ch)) {
                 modifiedClassName.append(ch);
-            else if (ch == '.')
+            } else if (ch == '.') {
                 modifiedClassName.append('$');
-            else
+            } else {
                 modifiedClassName.append(mangleChar(ch));
+            }
         }
-        return (modifiedClassName.toString());
+        return modifiedClassName.toString();
 
     }
 
@@ -158,10 +176,12 @@ public class JspCompiler extends Compiler implements Mangler {
 	int nzeros = 5 - s.length();
 	char[] result = new char[6];
 	result[0] = '_';
-	for (int i = 1; i <= nzeros; i++)
+	for (int i = 1; i <= nzeros; i++) {
 	    result[i] = '0';
-	for (int i = nzeros+1, j = 0; i < 6; i++, j++)
+        }
+	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
 	    result[i] = s.charAt(j);
+        }
 	return new String(result);
     }
 
@@ -173,11 +193,12 @@ public class JspCompiler extends Compiler implements Mangler {
     public boolean isOutDated() {
 
         long jspRealLastModified = 0;
-
         try {
             URL jspUrl = ctxt.getResource(jsp);
-            if (jspUrl == null)
-                return true;
+            if (jspUrl == null) {
+                ((JspEngineContext)ctxt).incrementRemoved();
+                return false;
+            }
             jspRealLastModified = jspUrl.openConnection().getLastModified();
         } catch (Exception e) {
             e.printStackTrace();
@@ -185,11 +206,42 @@ public class JspCompiler extends Compiler implements Mangler {
         }
 
         File classFile = new File(getClassFileName());
-        if (classFile.exists())
-            return classFile.lastModified() < jspRealLastModified;
+        if (!classFile.exists()) {
+            return true;
+        }
+        long classLastModified = classFile.lastModified();
+        if (classLastModified < jspRealLastModified) {
+            return true;
+        }
 
-        return true;
+        // Determine if compile time includes have been changed
+        HttpJspBase servlet = jsw.getServlet();
+        if (servlet == null) {
+             return false;
+        }
+        List includes = servlet.getIncludes();
+        if (includes == null) {
+            return false;
+        }
 
+        Iterator it = includes.iterator();
+        while (it.hasNext()) {
+            String include = (String)it.next();
+            try {
+                URL includeUrl = ctxt.getResource(include);
+                if (includeUrl == null) {
+                    return true;
+                }
+                if (includeUrl.openConnection().getLastModified() >
+                    classLastModified) {
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return true;
+            }
+        }
+        return false;
     }
-}
 
+}

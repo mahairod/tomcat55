@@ -105,8 +105,7 @@ public class Compiler {
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
 
-        String javaFileName = mangler.getJavaFileName();
-        ctxt.setServletJavaFileName(javaFileName);
+        String javaFileName = ctxt.getServletJavaFileName();
 
         Constants.message("jsp.message.java_file_name_is",
                           new Object[] { javaFileName },
@@ -242,6 +241,7 @@ public class Compiler {
      */
     public void setMangler(Mangler mangler) {
         this.mangler = mangler;
+        ctxt.setServletJavaFileName(mangler.getJavaFileName());
     }
 
     /**
@@ -304,11 +304,19 @@ public class Compiler {
      */
     public void removeGeneratedFiles() {
         try {
-            // XXX Should we delete the generated .java file too?
             String classFileName = mangler.getClassFileName();
             if (classFileName != null) {
                 File classFile = new File(classFileName);
                 classFile.delete();
+            }
+        } catch (Exception e) {
+            //Remove as much as possible, ignore possible exceptions
+        }
+        try {
+            String javaFileName = mangler.getJavaFileName();
+            if (javaFileName != null) {
+                File javaFile = new File(javaFileName);
+                javaFile.delete();
             }
         } catch (Exception e) {
             //Remove as much as possible, ignore possible exceptions

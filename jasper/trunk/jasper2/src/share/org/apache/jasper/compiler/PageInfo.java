@@ -73,6 +73,7 @@ import org.apache.jasper.Constants;
 class PageInfo {
 
     private Vector imports;
+    private Vector includes;
 
     private BeanRepository beanRepository;
     private Hashtable tagLibraries;
@@ -92,6 +93,7 @@ class PageInfo {
 	this.beanRepository = beanRepository;
 	this.tagLibraries = new Hashtable();
 	this.imports = new Vector();
+        this.includes = new Vector();
 
 	// Enter standard imports
 	for(int i = 0; i < Constants.STANDARD_IMPORTS.length; i++)
@@ -104,6 +106,14 @@ class PageInfo {
 
     public List getImports() {
 	return imports;
+    }
+
+    public void addInclude(String include) {
+        this.includes.add(include);
+    }
+     
+    public List getIncludes() {
+        return includes;
     }
 
     public BeanRepository getBeanRepository() {

@@ -65,29 +65,38 @@
 
 package org.apache.jasper;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.JspReader;
+import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.ServletWriter;
-import org.apache.jasper.servlet.JasperLoader;
-
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.JspCompiler;
 import org.apache.jasper.compiler.SunJavaCompiler;
 import org.apache.jasper.compiler.JavaCompiler;
-
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.servlet.JasperLoader;
+import org.apache.jasper.servlet.JspServletWrapper;
+
 /**
- * A place holder for various things that are used through out the JSP
- * engine. This is a per-request/per-context data structure. Some of
- * the instance variables are set at different points.
+ * The context data and methods required to compile a
+ * specific JSP page.
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
@@ -98,75 +107,70 @@ public class JspEngineContext implements JspCompilationContext {
     private JspReader reader;
     private ServletWriter writer;
     private ServletContext context;
-    private URLClassLoader loader;
+    private URLClassLoader jspLoader;
     private Compiler jspCompiler;
-    private String classpath; // for compiling JSPs.
     private boolean isErrPage;
     private String jspUri;
     private String baseURI;
     private String outDir;
+    private URL [] outUrls = new URL[1];
+    private Class servletClass;
     private String servletClassName;
     private String servletPackageName = Constants.JSP_PACKAGE_NAME;
     private String servletJavaFileName;
     private String contentType;
     private Options options;
+    private JspRuntimeContext rctxt;
+    private boolean reload = true;
+    private int removed = 0;
+    private JspServletWrapper jsw;
 
-    public JspEngineContext(URLClassLoader loader, String classpath, 
-                            ServletContext context, String jspUri,
-                            boolean isErrPage, Options options) {
-        this.loader = loader;
-        this.classpath = classpath;
+    public JspEngineContext(JspRuntimeContext rctxt, ServletContext context,
+                            String jspUri, JspServletWrapper jsw,
+                            boolean isErrPage, Options options)
+            throws JasperException {
+        this.rctxt = rctxt;
         this.context = context;
         this.jspUri = jspUri;
+        this.jsw = jsw;
         baseURI = jspUri.substring(0, jspUri.lastIndexOf('/') + 1);
         this.isErrPage = isErrPage;
         this.options = options;
+
         createOutdir();
+        createCompiler();
     }
 
     private void createOutdir() {
-        File outDir = null;      
+        File outDir = null;
         try {
             URL outURL = options.getScratchDir().toURL();
-            String outURI = outURL.toString();           
+            String outURI = outURL.toString();
             if( outURI.endsWith("/") ) {
-                outURI = outURI +             
+                outURI = outURI +
                          jspUri.substring(1,jspUri.lastIndexOf("/")+1);
             } else {
-                outURI = outURI +                                      
+                outURI = outURI +
                          jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
             }
-            outURL = new URL(outURI);                                   
-            outDir = new File(outURL.getFile());                        
+            outURL = new URL(outURI);
+            outDir = new File(normalize(outURL.getFile()));
             if( !outDir.exists() ) {
                 outDir.mkdirs();
             }
             this.outDir = outDir.toString() + File.separator;
+            outUrls[0] = new URL(outDir.toURL().toString() + File.separator);
         } catch(Exception e) {
             throw new IllegalStateException("No output directory: " +
                                             e.getMessage());
-        }   
+        }
     }
 
     /**
      * The classpath that is passed off to the Java compiler. 
      */
     public String getClassPath() {
-	URL [] urls = loader.getURLs();
-        StringBuffer cpath = new StringBuffer();
-        String sep = System.getProperty("path.separator");
-
-        for(int i = 0; i < urls.length; i++) {
-	    // Tomcat 4 can use URL's other than file URL's,
-	    // a protocol other than file: will generate a
-	    // bad file system path, so only add file:
-	    // protocol URL's to the classpath.
-	    if( urls[i].getProtocol().equals("file") ) {
-                cpath.append((String)urls[i].getFile()+sep);
-	    }
-        }
-         
-        return cpath.toString() + classpath;
+        return rctxt.getClassPath();
     }
     
     /**
@@ -195,7 +199,7 @@ public class JspEngineContext implements JspCompilationContext {
      * this JSP.
      */
     public ClassLoader getClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
+        return rctxt.getParentClassLoader();
     }
 
     /**
@@ -213,7 +217,7 @@ public class JspEngineContext implements JspCompilationContext {
     public String getOutputDir() {
         return outDir;
     }
-    
+
     /**
      * Get the scratch directory to place generated code for javac.
      *
@@ -278,6 +282,7 @@ public class JspEngineContext implements JspCompilationContext {
         return options;
     }
 
+
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
@@ -313,7 +318,7 @@ public class JspEngineContext implements JspCompilationContext {
      */
     public Compiler createCompiler() throws JasperException {
 
-        if (jspCompiler != null) {
+        if (jspCompiler != null ) {
             return jspCompiler;
         }
 
@@ -338,13 +343,75 @@ public class JspEngineContext implements JspCompilationContext {
             javac.setCompilerPath(compilerPath);
         }
 
-        jspCompiler = new JspCompiler(this);
+        jspCompiler = new JspCompiler(this,jsw);
 	jspCompiler.setJavaCompiler(javac);
          
         return jspCompiler;
-
     }
-    
+
+    public void compile() throws JasperException, FileNotFoundException {
+
+        if (jspCompiler.isOutDated()) {
+            try {
+                jspCompiler.compile();
+                reload = true;
+            } catch (Exception ex) {
+                throw new JasperException(
+                    Constants.getString("jsp.error.unable.compile"),ex);
+            }
+        }
+    }
+
+    public Class load() throws JasperException, FileNotFoundException {
+
+        try {
+            if (servletClass == null || options.getDevelopment()) {
+                compile();
+            }
+            jspLoader = new JasperLoader
+                (outUrls,
+                 getServletPackageName() + "." + getServletClassName(),
+                 rctxt.getParentClassLoader(),
+                 rctxt.getPermissionCollection(),
+                 rctxt.getCodeSource());
+            servletClass = jspLoader.loadClass(
+                 getServletPackageName() + "." + getServletClassName());
+        } catch (FileNotFoundException ex) {
+            jspCompiler.removeGeneratedFiles();
+            throw ex;
+        } catch (ClassNotFoundException cex) {
+            throw new JasperException(
+                Constants.getString("jsp.error.unable.load"),cex);
+        } catch (JasperException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new JasperException
+                (Constants.getString("jsp.error.unable.compile"), ex);
+        }
+        removed = 0;
+        reload = false;
+        return servletClass;
+    }
+
+    public boolean isReload() {
+        return reload;
+    }
+
+    public void incrementRemoved() {
+        if (removed > 1) {
+            jspCompiler.removeGeneratedFiles();
+            rctxt.removeWrapper(jspUri);
+        }
+        removed++;
+    }
+
+    public boolean isRemoved() {
+        if (removed > 1 ) {
+            return true;
+        }
+        return false;
+    }
+
     /** 
      * Get the full value of a URI relative to this compilations context
      */
@@ -385,4 +452,69 @@ public class JspEngineContext implements JspCompilationContext {
 	    options.getTldLocationsCache().getLocation(uri);
 	return location;
     }
+
+    /**
+     * Return a context-relative path, beginning with a "/", that represents
+     * the canonical version of the specified path after ".." and "." elements
+     * are resolved out.  If the specified path attempts to go outside the
+     * boundaries of the current context (i.e. too many ".." path elements
+     * are present), return <code>null</code> instead.
+     *
+     * @param path Path to be normalized
+     */
+    protected String normalize(String path) {
+
+        if (path == null) {
+            return null;
+        }
+
+        String normalized = path;
+
+        // Normalize the slashes and add leading slash if necessary
+        if (normalized.indexOf('\\') >= 0) {
+            normalized = normalized.replace('\\', '/');
+        }
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+
+        // Resolve occurrences of "//" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("//");
+            if (index < 0) {
+                break;
+            }
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 1);
+        }
+
+        // Resolve occurrences of "/./" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/./");
+            if (index < 0) {
+                break;
+            }
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 2);
+        }
+
+        // Resolve occurrences of "/../" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/../");
+            if (index < 0) {
+                break;
+            }
+            if (index == 0) {
+                return (null);  // Trying to go outside our context
+            }
+            int index2 = normalized.lastIndexOf('/', index - 1);
+            normalized = normalized.substring(0, index2) +
+                normalized.substring(index + 3);
+        }
+
+        // Return the normalized path that we have completed
+        return (normalized);
+
+    }
+
 }

@@ -106,7 +106,7 @@ public class JasperLoader extends URLClassLoader {
     private SecurityManager securityManager = null;
     private PrivilegedLoadClass privLoadClass = null;
 
-    JasperLoader(URL [] urls, String className, ClassLoader parent,
+    public JasperLoader(URL [] urls, String className, ClassLoader parent,
 		 PermissionCollection permissionCollection,
 		 CodeSource codeSource) {
 	super(urls,parent);
@@ -202,7 +202,7 @@ public class JasperLoader extends URLClassLoader {
 	}
 
 	// Only load classes for this JSP page
-	if( name.startsWith(Constants.JSP_PACKAGE_NAME + "." + className) ) {
+	if( name.startsWith(className) ) {
 	    String classFile = name.substring(Constants.JSP_PACKAGE_NAME.length()+1) +
 		".class";
 	    byte [] cdata = loadClassDataFromFile(classFile);
