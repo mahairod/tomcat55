@@ -8,6 +8,7 @@
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>Installation</title>
   </properties>
 
@@ -41,7 +42,7 @@ are available at
 <a href="http://jakarta.apache.org/binindex.cgi">http://jakarta.apache.org/binindex.cgi</a>.
 This manual assumes you are using the most recent release
 of Tomcat 5.  Detailed instructions for downloading and installing
-Tomcat 5 are available <a href="../RUNNING.txt">here</a>.</p>
+Tomcat 5 are available <a href="../setup.html">here</a>.</p>
 
 <p>In the remainder of this manual, example shell scripts assume that you have
 set an environment variable <code>CATALINA_HOME</code> that contains the
