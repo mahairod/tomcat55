@@ -53,9 +53,20 @@ Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped (bug may be
 
 Catalina    3993    j_security_check gives 403 error.
 
+Catalina    4023    Exceptions that terminate engine should be saved in a log.
+
+Catalina    4037    Host aliasing doesn't work.
+
+Catalina    4043    gotCatalinaHome and gotCatalinaBase labels in catalina.bat
+                    indistinguishable for Windows 98 (unconfirmed bug).
+
+Catalina    4051    SegDump with 4.0.1-b1 and not 4.0 (unconfirmed bug).
+
 
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
+
+Catalina    xxxx    Configuration files are packaged with DOS-style EOLs.
 
 Jasper      3668    Validation error reporting.
 
@@ -65,6 +76,9 @@ Catalina    3953    If context is listed in server.xml then webapp servlets
                     are loaded twice.
 
 Catalina    3990    JNDI/LDAP Realm password authentication process.
+
+Connectors  4042    Webapp component requires Port directive versus Listen 
+                    directive.
 
 
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):
