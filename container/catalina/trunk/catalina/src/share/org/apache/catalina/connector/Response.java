@@ -497,22 +497,6 @@ public class Response
 
 
     /**
-     * Returns the value of the Content-Type response header, based on the
-     * current return value of getContentType().
-     *
-     * Notice that while the charset parameter must be omitted from the
-     * return value of ServletResponse.getContentType() if no character
-     * encoding has been specified, the spec requires that a charset (default:
-     * ISO-8859-1) always be included in the Content-Type response header
-     *
-     * @return Value of Content-Type response header
-     */
-    public String getContentTypeResponseHeader() {
-        return (coyoteResponse.getContentTypeResponseHeader());
-    }
-
-
-    /**
      * Return a PrintWriter that can be used to render error messages,
      * regardless of whether a stream or writer has already been acquired.
      *
