@@ -276,7 +276,7 @@ public class ThreadPool  {
             throw new NullPointerException();
         }
 
-        if(0 == currentThreadCount || stopThePool) {
+        if( stopThePool ) {
             throw new IllegalStateException();
         }
 
@@ -284,39 +284,46 @@ public class ThreadPool  {
 
         // Obtain a free thread from the pool.
         synchronized(this) {
-            if(currentThreadsBusy == currentThreadCount) {
+            while (currentThreadsBusy == currentThreadCount) {
                  // All threads are busy
-                if(currentThreadCount < maxThreads) {
+                if (currentThreadCount < maxThreads) {
                     // Not all threads were open,
                     // Open new threads up to the max number of idel threads
                     int toOpen = currentThreadCount + minSpareThreads;
                     openThreads(toOpen);
                 } else {
-		    logFull(log, currentThreadCount, maxThreads);
+                    logFull(log, currentThreadCount, maxThreads);
                     // Wait for a thread to become idel.
-                    while(currentThreadsBusy == currentThreadCount) {
-                        try {
-                            this.wait();
-                        }
-			// was just catch Throwable -- but no other
-			// exceptions can be thrown by wait, right?
-			// So we catch and ignore this one, since
-			// it'll never actually happen, since nowhere
-			// do we say pool.interrupt().
-			catch(InterruptedException e) {
-			    log.error("Unexpected exception", e);
-                        }
-
-                        // Pool was stopped. Get away of the pool.
-                        if(0 == currentThreadCount || stopThePool) {
-                            throw new IllegalStateException();
-                        }
+                    try {
+                        this.wait();
+                    }
+                    // was just catch Throwable -- but no other
+                    // exceptions can be thrown by wait, right?
+                    // So we catch and ignore this one, since
+                    // it'll never actually happen, since nowhere
+                    // do we say pool.interrupt().
+                    catch(InterruptedException e) {
+                        log.error("Unexpected exception", e);
+                    }
+		    if( log.isDebugEnabled() ) {
+			log.debug("Finished waiting: CTC="+currentThreadCount +
+				  ", CTB=" + currentThreadsBusy);
+                    }
+                    // Pool was stopped. Get away of the pool.
+                    if( stopThePool) {
+                        break;
                     }
                 }
             }
-
+            // Pool was stopped. Get away of the pool.
+            if(0 == currentThreadCount || stopThePool) {
+                throw new IllegalStateException();
+            }
+                    
             // If we are here it means that there is a free thread. Take it.
-            c = pool[currentThreadCount - currentThreadsBusy - 1];
+            int pos = currentThreadCount - currentThreadsBusy - 1;
+            c = pool[pos];
+            pool[pos] = null;
             currentThreadsBusy++;
         }
         c.runIt(r);
@@ -330,7 +337,10 @@ public class ThreadPool  {
                     " status" + currentThreadCount + " " +
                     maxThreads  );
 	    logfull=false;
-	} 
+	}  else if( log.isDebugEnabled() ) {
+            log.debug("All threads are busy " + currentThreadCount + " " +
+                      maxThreads );
+        }
     }
 
     /**
