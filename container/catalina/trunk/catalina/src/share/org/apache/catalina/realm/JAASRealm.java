@@ -19,9 +19,7 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
-import java.security.acl.Group;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
