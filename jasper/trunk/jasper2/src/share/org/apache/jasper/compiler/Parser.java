@@ -447,6 +447,11 @@ class Parser implements TagConstants {
 	String uri = attrs.getValue("uri");
 	String prefix = attrs.getValue("prefix");
 	if (prefix != null) {
+            Mark prevMark = pageInfo.getNonCustomTagPrefix(prefix);
+            if (prevMark != null) {
+                err.jspError(reader.mark(), "jsp.error.prefix.use_before_dcl",
+                    prefix, prevMark.getFile(), "" + prevMark.getLineNumber());
+            }
 	    if (uri != null) {
 		String uriPrev = pageInfo.getURI(prefix);
 		if (uriPrev != null && !uriPrev.equals(uri)) {
@@ -1336,6 +1341,8 @@ class Parser implements TagConstants {
 	String uri = pageInfo.getURI(prefix);
         if (uri == null) {
 	    reader.reset(start);
+            // Remember the prefix for later error checking
+            pageInfo.putNonCustomTagPrefix(prefix, reader.mark());
 	    return false;
 	}
 

@@ -81,6 +81,7 @@ class PageInfo {
     private HashMap taglibsMap;
     private HashMap jspPrefixMapper;
     private HashMap xmlPrefixMapper;
+    private HashMap nonCustomTagPrefixMap;
     private String defaultLanguage = "java";
     private String language;
     private String defaultExtends = Constants.JSP_SERVLET_BASE;
@@ -125,6 +126,7 @@ class PageInfo {
 	this.taglibsMap = new HashMap();
 	this.jspPrefixMapper = new HashMap();
 	this.xmlPrefixMapper = new HashMap();
+        this.nonCustomTagPrefixMap = new HashMap();
 	this.imports = new Vector();
         this.dependants = new Vector();
 	this.includePrelude = new Vector();
@@ -656,5 +658,13 @@ class PageInfo {
 
     public boolean isELIgnored() {
 	return isELIgnored;
+    }
+
+    public void putNonCustomTagPrefix(String prefix, Mark where) {
+        nonCustomTagPrefixMap.put(prefix, where);
+    }
+
+    public Mark getNonCustomTagPrefix(String prefix) {
+        return (Mark) nonCustomTagPrefixMap.get(prefix);
     }
 }
