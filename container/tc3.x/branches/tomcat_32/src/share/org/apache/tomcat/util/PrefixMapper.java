@@ -76,7 +76,7 @@ import java.util.*;
  *  XXX make sure the code is useable as a general path mapper - or at least a bridge
  *  can be created between SimpleMapper and a patern matcher like the one in XPath
  *
- * @author costin@costin.dnt.ro
+ * @author Costin Manolache
  */
 public class PrefixMapper {
     // host -> PrefixMapper for virtual hosts
@@ -123,6 +123,7 @@ public class PrefixMapper {
     public void removeAllMappings( String host, String path ) {
 	PrefixMapper vmap=this;
 	if( host!=null ) {
+	    host=host.toLowerCase();
 	    vmap=(PrefixMapper)vhostMaps.get(host);
 	}
 	
@@ -163,6 +164,7 @@ public class PrefixMapper {
 	if( host == null )
 	    prefixMappedServlets.put( path, target);
 	else {
+	    host=host.toLowerCasse();
 	    PrefixMapper vmap=(PrefixMapper)vhostMaps.get( host );
 	    if( vmap == null ) {
 		vmap=new PrefixMapper();
@@ -179,6 +181,7 @@ public class PrefixMapper {
 	if( host==null )
 	    exactMappedServlets.put( path, target);
 	else {
+	    host=host.toLowerCase();
 	    PrefixMapper vmap=(PrefixMapper)vhostMaps.get( host );
 	    if( vmap == null ) {
 		vmap=new PrefixMapper();
@@ -198,8 +201,12 @@ public class PrefixMapper {
         String s = path;
 
 	PrefixMapper myMap=null;
-	if( host!=null )
+	if( host!=null ) {
 	    myMap=(PrefixMapper)vhostMaps.get( host );
+	    if( myMap==null ) {
+		myMap=(PrefixMapper)vhostMaps.get( host.toLowerCase() );
+	    }
+	}
 	if( myMap==null ) myMap = this; // default server
 
 	
