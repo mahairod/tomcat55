@@ -543,6 +543,7 @@ public class JspUtil {
      */
     public static String interpreterCall(String expression,
                                          Class expectedType,
+					 String prefixMap,
                                          String fnMap,
                                          String defaultPrefix) 
     {
@@ -552,6 +553,7 @@ public class JspUtil {
                + "(" + Generator.quote(expression) + ", "
                +       expectedType.getName() + ".class, "
                +       "pageContext,"
+               +       prefixMap + ", "
                +       fnMap + ", "
                +       Generator.quote( defaultPrefix ) + ")";
     }

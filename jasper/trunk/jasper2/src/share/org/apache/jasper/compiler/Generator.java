@@ -410,6 +410,9 @@ public class Generator {
         // Static data for EL function maps:
         generateELFunctionMap();
 
+        // Static data for EL function maps:
+	generatePrefixMap();
+
  	// Class variable declarations
      	
 	/*
@@ -652,6 +655,34 @@ public class Generator {
     }
 
     /*
+     * Generates prefix map section.
+     * The prefix map is a map with keys containing prefixes and values being
+     * the URI corresponding to that prefix in the taglib machinery.
+     */
+    private void generatePrefixMap() throws JasperException {
+        Hashtable taglibs = pageInfo.getTagLibraries();
+        Iterator iter = taglibs.keySet().iterator();
+        
+        out.printil("private static java.util.HashMap _jspx_prefix_map = null;");
+	iter = taglibs.keySet().iterator();
+	out.println();
+	out.printil("static {");
+	out.pushIndent();
+	out.printil("_jspx_prefix_map = new java.util.HashMap();");
+	while (iter.hasNext()) {
+	    String key = (String) iter.next();
+	    TagLibraryInfo tli = (TagLibraryInfo) taglibs.get(key);
+	    out.printin("_jspx_prefix_map.put(");
+	    out.print(quote(tli.getPrefixString()));
+	    out.print(", ");
+	    out.print(quote(tli.getURI()));
+	    out.println(");");
+        }
+	out.popIndent();
+	out.printil("}");
+    }
+
+    /*
      * Generates the servlet constructor.
      */
     private void generateServletConstructor(String servletClassName) {
@@ -753,7 +784,8 @@ public class Generator {
             if (attr.isExpression() || attr.isELInterpreterInput()) {
 		if (attr.isELInterpreterInput()) {
 		    v = JspUtil.interpreterCall( attr.getValue(), 
-                        expectedType, "_jspx_fnmap", defaultPrefix );
+                        expectedType, "_jspx_prefix_map", "_jspx_fnmap",
+			defaultPrefix );
 		}
 		if (encode) {
 		    return "java.net.URLEncoder.encode(" + v + ")";
@@ -831,7 +863,7 @@ public class Generator {
                     "out.write("
                       + JspUtil.interpreterCall(
                       "${" + new String(n.getText()) + "}", String.class,
-                      "_jspx_fnmap", "null" )
+                      "_jspx_prefix_map", "_jspx_fnmap", "null" )
                     + ");");
             } else {
                 out.printil("out.write(" +
@@ -1042,7 +1074,7 @@ public class Generator {
                     "pageContext.findAttribute(\""  + name + "\"), \""
                     + property + "\", "
                     + quote(value.getValue()) + ", "
-                    + "pageContext, _jspx_fnmap);");
+                    + "pageContext, _jspx_prefix_map, _jspx_fnmap);");
             } else if( value.isNamedAttribute() ) {
                 // If the value for setProperty was specified via
                 // jsp:attribute, first generate code to evaluate
@@ -2361,7 +2393,8 @@ public class Generator {
 		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
                     attrValue = JspUtil.interpreterCall( attrValue,
-                        c[0], "_jspx_fnmap", n.getPrefix() );
+                        c[0], "_jspx_prefix_map", "_jspx_fnmap",
+                        n.getPrefix() );
                 } else {
 		    attrValue = convertString(
                                 c[0], attrValue, attrName,

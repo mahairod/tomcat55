@@ -64,6 +64,7 @@ package org.apache.jasper.runtime;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Map;
 
 import java.lang.reflect.Method;
 
@@ -531,7 +532,8 @@ public class JspRuntimeLibrary {
 						   String prop,
 						   String expression,
 						   PageContext pageContext,
-                                                   java.util.Map fnMap )
+						   Map prefixMap,
+                                                   Map fnMap )
 	throws JasperException
     {
 	try {
@@ -541,6 +543,7 @@ public class JspRuntimeLibrary {
 		    expression,
 		    method.getParameterTypes()[0],
 		    pageContext,
+		    prefixMap,
                     fnMap,
                     "null" )
 	    });

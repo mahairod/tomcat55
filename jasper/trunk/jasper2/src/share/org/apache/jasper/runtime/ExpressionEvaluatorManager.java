@@ -93,6 +93,7 @@ public class ExpressionEvaluatorManager {
     public static Object evaluate( String expression, 
                                    Class expectedType, 
                                    JspContext jspContext,
+				   Map prefixMap,
                                    Map elFunctions,
                                    String defaultPrefix ) 
            throws JspException
@@ -103,7 +104,8 @@ public class ExpressionEvaluatorManager {
 
         // delegate the call
         return (target.evaluate(
-            expression, expectedType, jspContext, elFunctions, defaultPrefix));
+            expression, expectedType, jspContext, prefixMap, elFunctions,
+	    defaultPrefix));
     }
 
     /**

@@ -60,6 +60,7 @@ import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
+import javax.servlet.jsp.el.VariableResolver;
 import org.apache.taglibs.standard.lang.jstl.Evaluator;
 
 /**
@@ -97,13 +98,26 @@ public class ExpressionEvaluatorImpl
     public Object evaluate( String expression, 
                             Class expectedType, 
                             JspContext jspContext,
-                            Map elFunctions,
-                            String defaultPrefix ) 
-       throws JspException
+                            Map prefixMap,
+                            Map functionMap,
+                            String defaultURI ) 
+	throws JspException
     {
         // XXX - Assume PageContext for now, until JSTL APIs are updated.
         // change back to JspContext later.
         return delegate.evaluate( "", expression, expectedType, null,
-            (PageContext)jspContext, elFunctions, defaultPrefix );
+            (PageContext)jspContext, functionMap, defaultURI );
+    }
+
+    public Object evaluate( String expression, 
+                            Class expectedType, 
+                            VariableResolver resolver,
+                            Map prefixMap,
+			    Map functionMap,
+                            String defaultURI )
+	throws JspException
+    {
+	// XXX
+	return null;
     }
 }
