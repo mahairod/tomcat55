@@ -8,7 +8,7 @@
      version="1.4">
   <xsd:annotation>
     <xsd:documentation>
-      %W% %E%
+      @(#)j2ee_1_4.xsds	1.42 03/08/01
     </xsd:documentation>
   </xsd:annotation>
 
@@ -637,6 +637,25 @@ Deployment File may indicate one of the following:
     <xsd:simpleContent>
       <xsd:restriction base="j2ee:string">
 	<xsd:pattern value="($|_|\p{L})(\p{L}|\p{Nd}|_|$)*"/>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+<!-- **************************************************** -->
+
+  <xsd:complexType name="java-typeType">
+    <xsd:annotation>
+      <xsd:documentation>
+
+	This is a generic type that designates a Java primitive
+	type or a fully qualified name of a Java interface/type,
+	or an array of such types.
+
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="j2ee:string">
+	<xsd:pattern value="[^\p{Z}]*"/>
       </xsd:restriction>
     </xsd:simpleContent>
   </xsd:complexType>
