@@ -58,6 +58,7 @@ implements org.apache.catalina.cluster.ClusterSession{
     protected boolean isDirty = false;
     private transient long lastAccessWasDistributed = System.currentTimeMillis();
     private boolean isPrimarySession=true;
+    
 
     public ReplicatedSession(Manager manager) {
         super(manager);
@@ -193,6 +194,21 @@ implements org.apache.catalina.cluster.ClusterSession{
         super.writeObjectData(stream);
 
     }
+    
+    public void setId(String id, boolean tellNew) {
+
+        if ((this.id != null) && (manager != null))
+            manager.remove(this);
+
+        this.id = id;
+
+        if (manager != null)
+            manager.add(this);
+        if (tellNew) tellNew();
+    }
+    
+    
+
 
 
 
@@ -252,6 +268,24 @@ implements org.apache.catalina.cluster.ClusterSession{
         }
         buf.append("\tLastAccess=").append(getLastAccessedTime()).append("\n");
         return buf.toString();
+    }
+    public int getAccessCount() {
+        return accessCount;
+    }
+    public void setAccessCount(int accessCount) {
+        this.accessCount = accessCount;
+    }
+    public long getLastAccessedTime() {
+        return lastAccessedTime;
+    }
+    public void setLastAccessedTime(long lastAccessedTime) {
+        this.lastAccessedTime = lastAccessedTime;
+    }
+    public long getThisAccessedTime() {
+        return thisAccessedTime;
+    }
+    public void setThisAccessedTime(long thisAccessedTime) {
+        this.thisAccessedTime = thisAccessedTime;
     }
 
 }
