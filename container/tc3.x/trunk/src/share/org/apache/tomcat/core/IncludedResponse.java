@@ -85,6 +85,7 @@ extends HttpServletResponseFacade {
     }
 
     public void sendError(int sc) throws IOException {
+	//	/*XXX*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
         sendError(sc, "No detailed message");
     }
     

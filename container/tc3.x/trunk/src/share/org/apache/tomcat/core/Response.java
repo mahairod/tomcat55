@@ -470,10 +470,16 @@ public class Response {
     }
 
     public void sendError(int sc) throws IOException {
+	//	System.out.println("Send error " + sc );
+	/*XXX*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
 	sendError(sc, "No detailed message");
     }
 
     public void sendError(int sc, String msg) throws IOException {
+	// 	System.out.println("Send error " + sc + " " + msg);
+	// 	System.out.println("Original request " + request.getRequestURI());
+	// 	System.out.println(request.getContext().getClassPath());
+	//	/*XXX*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
 	this.status = sc;
 
 	Context context = request.getContext();

@@ -218,15 +218,17 @@ public class HttpRequestAdapter extends RequestAdapterImpl {
 
 	// see if uri is well formed
 
-        if (requestErrorCode == 0 &&
+	String msg="";
+	if (requestErrorCode == 0 &&
 	    (requestString == null || requestString.indexOf(' ') > -1 ||
 	        requestString.indexOf('/') != 0)) {
 	    requestErrorCode = HttpServletResponse.SC_BAD_REQUEST;
+	    msg="Bad request: " + requestString + " " + requestErrorCode;
 	}
 
 	if (requestErrorCode != 0) {
             try {
-	        response.sendError(requestErrorCode);
+	        response.sendError(requestErrorCode, msg);
 	    } catch (IOException ioe) {
             }
 

@@ -105,7 +105,7 @@ class ServletClassLoaderImpl extends NetworkClassLoader implements ServletClassL
             String cpath = (String) e.nextElement();
             try {
                 URL classesURL = new URL(protocol,hostname,port,
-                                         basepath + cpath + "/");
+                                         basepath + "/" + cpath + "/");
                 addURL(classesURL);
             }catch(MalformedURLException mue) {
             }
