@@ -1196,7 +1196,7 @@ class Validator {
 	private String findUri(String prefix, Node n) {
 
 	    for (Node p = n; p != null; p = p.getParent()) {
-		Attributes attrs = p.getXmlnsAttributes();
+		Attributes attrs = p.getTaglibAttributes();
 		if (attrs == null) {
 		    continue;
 		}

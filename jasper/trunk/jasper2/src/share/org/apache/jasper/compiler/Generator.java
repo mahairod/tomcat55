@@ -1572,10 +1572,27 @@ class Generator {
 	     */
 	    out.printin("out.write(\"<");
 	    out.print(n.getQName());
-	    Attributes attrs = n.getAttributes();
+
+	    Attributes attrs = n.getNonTaglibXmlnsAttributes();
+	    int attrsLen = (attrs == null) ? 0 : attrs.getLength();
+	    for (int i=0; i<attrsLen; i++) {
+		out.print(" ");
+		out.print(attrs.getQName(i));
+		out.print("=");
+		String quote = DOUBLE_QUOTE;
+		String value = attrs.getValue(i);
+		if (value.indexOf('"') != -1) {
+		    quote = SINGLE_QUOTE;
+		}
+		out.print(quote);
+		out.print(value);
+		out.print(quote);
+	    }
+
+	    attrs = n.getAttributes();
+	    attrsLen = (attrs == null) ? 0 : attrs.getLength();
 	    Node.JspAttribute[] jspAttrs = n.getJspAttributes();
-	    int attrsLength = (attrs == null) ? 0 : attrs.getLength();
-	    for (int i=0; i<attrsLength; i++) {
+	    for (int i=0; i<attrsLen; i++) {
 		out.print(" ");
 		out.print(attrs.getQName(i));
 		out.print("=");

@@ -204,7 +204,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
-	    addAttributes(n.getXmlnsAttributes());
+	    addAttributes(n.getTaglibAttributes());
 	    addAttributes(n.getAttributes());
 
 	    visitBody(n);
@@ -673,18 +673,34 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * Appends the attributes of the given Node to the XML view.
 	 */
 	private void printAttributes(Node n) {
-	    Attributes attrs = n.getXmlnsAttributes();
-	    if (attrs != null) {
-		int len = attrs.getLength();
-		for (int i=0; i<len; i++) {
-		    String name = attrs.getQName(i);
-		    String value = attrs.getValue(i);
-		    buf.append("  ").append(name).append("=\"").append(value).append("\"\n");
-		}
+
+	    /*
+	     * Append "xmlns" attributes that represent tag libraries
+	     */
+	    Attributes attrs = n.getTaglibAttributes();
+	    int len = (attrs == null) ? 0 : attrs.getLength();
+	    for (int i=0; i<len; i++) {
+		String name = attrs.getQName(i);
+		String value = attrs.getValue(i);
+		buf.append("  ").append(name).append("=\"").append(value).append("\"\n");
 	    }
 
+	    /*
+	     * Append "xmlns" attributes that do not represent tag libraries
+	     */
+	    attrs = n.getNonTaglibXmlnsAttributes();
+	    len = (attrs == null) ? 0 : attrs.getLength();
+	    for (int i=0; i<len; i++) {
+		String name = attrs.getQName(i);
+		String value = attrs.getValue(i);
+		buf.append("  ").append(name).append("=\"").append(value).append("\"\n");
+	    }
+
+	    /*
+	     * Append all other attributes
+	     */
 	    attrs = n.getAttributes();
-	    int len = (attrs == null) ? 0 : attrs.getLength();
+	    len = (attrs == null) ? 0 : attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String name = attrs.getQName(i);
 		String value = attrs.getValue(i);
