@@ -350,6 +350,12 @@ public class StandardContext
     private HashMap mimeMappings = new HashMap();
 
 
+     /**
+      * Special case: error page for status 200.
+      */
+     private ErrorPage okErrorPage = null;
+
+
     /**
      * The context initialization parameters for this web application,
      * keyed by name.
@@ -1505,6 +1511,9 @@ public class StandardContext
             }
         } else {
             synchronized (statusPages) {
+                if (errorPage.getErrorCode() == 200) {
+                    this.okErrorPage = errorPage;
+                }
                 statusPages.put(new Integer(errorPage.getErrorCode()),
                                 errorPage);
             }
@@ -2051,7 +2060,11 @@ public class StandardContext
      */
     public ErrorPage findErrorPage(int errorCode) {
 
-        return ((ErrorPage) statusPages.get(new Integer(errorCode)));
+        if (errorCode == 200) {
+            return (okErrorPage);
+        } else {
+            return ((ErrorPage) statusPages.get(new Integer(errorCode)));
+        }
 
     }
 
@@ -2948,6 +2961,9 @@ public class StandardContext
             }
         } else {
             synchronized (statusPages) {
+                if (errorPage.getErrorCode() == 200) {
+                    this.okErrorPage = null;
+                }
                 statusPages.remove(new Integer(errorPage.getErrorCode()));
             }
         }
