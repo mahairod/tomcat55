@@ -97,7 +97,7 @@ echo Using Security Manager
 goto cleanup
 
 :doStop
-%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
+%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
 goto cleanup
 
 
