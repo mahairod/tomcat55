@@ -10,8 +10,8 @@
 # -----------------------------------------------------------------------------
 
 # ----- Pointer to Catalina -----
-catalina.home=../../jakarta-tomcat-4.0/build
+catalina.home=../../jakarta-tomcat-5/build
 
 # ----- Pointer to JSP Standard Tag Library distribution -----
-standard.home=${base.path}/jakarta-taglibs/standard
-jsp20el.jar=${standard.home}/../dist/jsp20el/jsp20el.jar
+#standard.home=${base.path}/jakarta-taglibs/standard
+#jsp20el.jar=${standard.home}/../dist/jsp20el/jsp20el.jar
