@@ -2245,19 +2245,10 @@ public class CoyoteRequest
 
         // Creating a new session cookie based on that session
         if ((session != null) && (getContext() != null)
-            && getContext().getCookies()) {
+               && getContext().getCookies()) {
             Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
                                        session.getId());
-            cookie.setMaxAge(-1);
-            String contextPath = null;
-            if (context != null)
-                contextPath = context.getPath();
-            if ((contextPath != null) && (contextPath.length() > 0))
-                cookie.setPath(contextPath);
-            else
-                cookie.setPath("/");
-            if (isSecure())
-                cookie.setSecure(true);
+            configureSessionCookie(cookie);
             ((HttpServletResponse) response).addCookie(cookie);
         }
 
@@ -2268,6 +2259,26 @@ public class CoyoteRequest
 
     }
 
+    /**
+     * Configures the given JSESSIONID cookie.
+     *
+     * @param cookie The JSESSIONID cookie to be configured
+     */
+    protected void configureSessionCookie(Cookie cookie) {
+        cookie.setMaxAge(-1);
+        String contextPath = null;
+        if (getContext() != null) {
+            contextPath = getContext().getPath();
+        }
+        if ((contextPath != null) && (contextPath.length() > 0)) {
+            cookie.setPath(contextPath);
+        } else {
+            cookie.setPath("/");
+        }
+        if (isSecure()) {
+            cookie.setSecure(true);
+        }
+    }
 
     /**
      * Parse request parameters.
