@@ -132,6 +132,22 @@ public interface Host extends Container {
 
 
     /**
+     * Return the value of the auto deploy flag.  If true, it indicates that 
+     * this host's child webapps should be discovred and automatically 
+     * deployed.
+     */
+    public boolean getAutoDeploy();
+
+
+    /**
+     * Set the auto deploy flag value for this host.
+     * 
+     * @param autoDeploy The new auto deploy flag
+     */
+    public void setAutoDeploy(boolean autoDeploy);
+
+
+    /**
      * Set the DefaultContext
      * for new web applications.
      *

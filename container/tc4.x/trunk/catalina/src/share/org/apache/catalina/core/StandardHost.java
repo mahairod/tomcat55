@@ -141,6 +141,12 @@ public class StandardHost
 
 
     /**
+     * The auto deploy flag for this Host.
+     */
+    private boolean autoDeploy = true;
+
+
+    /**
      * The Java class name of the default context configuration class
      * for deployed web applications.
      */
@@ -215,6 +221,33 @@ public class StandardHost
         String oldAppBase = this.appBase;
         this.appBase = appBase;
         support.firePropertyChange("appBase", oldAppBase, this.appBase);
+
+    }
+
+
+    /**
+     * Return the value of the auto deploy flag.  If true, it indicates that 
+     * this host's child webapps should be discovred and automatically 
+     * deployed.
+     */
+    public boolean getAutoDeploy() {
+
+        return (this.autoDeploy);
+
+    }
+
+
+    /**
+     * Set the auto deploy flag value for this host.
+     * 
+     * @param autoDeploy The new auto deploy flag
+     */
+    public void setAutoDeploy(boolean autoDeploy) {
+
+        boolean oldAutoDeploy = this.autoDeploy;
+        this.autoDeploy = autoDeploy;
+        support.firePropertyChange("autoDeploy", oldAutoDeploy, 
+                                   this.autoDeploy);
 
     }
 

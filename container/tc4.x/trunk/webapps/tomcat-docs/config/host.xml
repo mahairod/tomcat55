@@ -70,6 +70,12 @@
         deployment of web applications to be deployed automatically.</p>
       </attribute>
 
+      <attribute name="autoDeploy" required="false">
+        <p>This flag value indicates if web applications from this host should
+        be automatically deployed by the host configurator.
+        The flag's value defaults to true.</p>
+      </attribute>
+
       <attribute name="className" required="false">
         <p>Java class name of the implementation to use.  This class must
         implement the <code>org.apache.catalina.Host</code> interface.

@@ -158,7 +158,8 @@
       -->
 
       <!-- Define the default virtual host -->
-      <Host name="localhost" debug="0" appBase="webapps" unpackWARs="true">
+      <Host name="localhost" debug="0" appBase="webapps" 
+       unpackWARs="true" autoDeploy="true">
 
         <!-- Normally, users must authenticate themselves to each web app
              individually.  Uncomment the following entry if you would like
