@@ -111,8 +111,6 @@ public interface Valve {
      *
      * @param request The servlet request to be processed
      * @param response The servlet response to be created
-     * @param context The valve context used to invoke the next valve
-     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs, or is thrown
      *  by a subsequently invoked Valve, Filter, or Servlet

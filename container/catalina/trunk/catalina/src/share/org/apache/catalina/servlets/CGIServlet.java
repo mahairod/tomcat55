@@ -709,7 +709,6 @@ public final class CGIServlet extends HttpServlet {
      * <p>
      * </p>
      *
-     * @author   Martin Dengler [root@martindengler.com]
      * @version  $Revision$, $Date$
      * @since    Tomcat 4.0
      *
@@ -887,7 +886,6 @@ public final class CGIServlet extends HttpServlet {
          *                        cgi script, or null if no cgi was found
          * </ul>
          *
-         * @author Martin Dengler [root@martindengler.com]
          * @since Tomcat 4.0
          */
         protected String[] findCGI(String pathInfo, String webAppRootDir,
@@ -1425,7 +1423,6 @@ public final class CGIServlet extends HttpServlet {
      * and <code>setResponse</code> methods, respectively.
      * </p>
      *
-     * @author    Martin Dengler [root@martindengler.com]
      * @version   $Revision$, $Date$
      */
 

@@ -846,9 +846,9 @@ public class StandardContext
 
 
     /**
-     * Set the application available flag for this Context.
+     * Set the antiJARLocking feature for this Context.
      *
-     * @param available The new application available flag
+     * @param antiJARLocking The new flag value
      */
     public void setAntiJARLocking(boolean antiJARLocking) {
 
@@ -862,9 +862,9 @@ public class StandardContext
 
 
     /**
-     * Set the application available flag for this Context.
+     * Set the antiResourceLocking feature for this Context.
      *
-     * @param available The new application available flag
+     * @param antiResourceLocking The new flag value
      */
     public void setAntiResourceLocking(boolean antiResourceLocking) {
 

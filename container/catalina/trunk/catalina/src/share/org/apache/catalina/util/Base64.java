@@ -205,8 +205,8 @@ public final class  Base64
     /**
      * Decodes Base64 data into octects
      *
-     * @param base64Data Byte array containing Base64 data
-     * @return Array containing decoded data.
+     * @param base64DataBC Byte array containing Base64 data
+     * @param decodedDataCC The decoded data chars
      */
     public static void decode( ByteChunk base64DataBC, CharChunk decodedDataCC)
     {

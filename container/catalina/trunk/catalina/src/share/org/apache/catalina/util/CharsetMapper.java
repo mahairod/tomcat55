@@ -39,7 +39,7 @@ import java.util.Properties;
  * your own version for a particular web application.
  *
  * @author Craig R. McClanahan
- * @revision $Date$ $Version$
+ * @version $Date$ $Version$
  */
 
 public class CharsetMapper {

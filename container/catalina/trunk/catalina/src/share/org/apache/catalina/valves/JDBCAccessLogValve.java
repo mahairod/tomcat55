@@ -428,7 +428,7 @@ public final class JDBCAccessLogValve
      * 
      * @param request The Request object.
      * @param response The Response object.
-     * @param context The ValveContext object.
+     *
      * @exception IOException Should not be thrown.
      * @exception ServletException Database SQLException is wrapped 
      * in a ServletException.

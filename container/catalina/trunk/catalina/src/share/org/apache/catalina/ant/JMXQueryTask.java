@@ -34,7 +34,7 @@ public class JMXQueryTask extends AbstractCatalinaTask {
 
     /**
      * The JMX query string 
-     * @see setQuery()
+     * @see #setQuery(String)
      */
     protected String query      = null;
 

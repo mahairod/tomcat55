@@ -221,11 +221,14 @@ public class Strftime {
     }
 
     /**
-     * try to get the Java Date/Time formating associated with
-     * the C standard provided
+     * Try to get the Java Date/Time formatting associated with
+     * the C standard provided.
      *
-     * @param c The C equivalent to translate
-     * @return The Java formatting rule to use
+     * @param buf The buffer
+     * @param pattern The date/time pattern
+     * @param index The char index
+     * @param oldInside Flag value
+     * @return True if new is inside buffer
      */
     protected boolean translateCommand( StringBuffer buf, String pattern, int index, boolean oldInside ) {
         char firstChar = pattern.charAt( index );

@@ -475,7 +475,7 @@ public class WebappClassLoader
     /**
      * If there is a Java SecurityManager create a Permission.
      *
-     * @param url URL for a file or directory on local system
+     * @param permission The permission
      */
     public void addPermission(Permission permission) {
         if ((securityManager != null) && (permission != null)) {

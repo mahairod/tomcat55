@@ -236,7 +236,6 @@ public class NamingResourcesMBean extends BaseModelMBean {
     /**
      * Add a resource link reference for this web application.
      *
-     * @param global New resource link reference global name
      * @param resourceLinkName New resource link reference name
      * @param type New resource link reference type
      */
@@ -270,7 +269,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
     /**
      * Remove any environment entry with the specified name.
      *
-     * @param name Name of the environment entry to remove
+     * @param envName Name of the environment entry to remove
      */
     public void removeEnvironment(String envName) {
 

@@ -270,7 +270,7 @@ public class WebdavServlet
      *
      * @param request The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param resourceInfo File object
+     * @param resourceAttributes The resource information
      * @return boolean true if the resource meets all the specified conditions,
      * and false if any of the conditions is not satisfied, in which case
      * request processing is stopped
@@ -291,6 +291,11 @@ public class WebdavServlet
 
     /**
      * OPTIONS Method.
+     *
+     * @param req The request
+     * @param resp The response
+     * @throws ServletException If an error occurs
+     * @throws IOException If an IO error occurs
      */
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {

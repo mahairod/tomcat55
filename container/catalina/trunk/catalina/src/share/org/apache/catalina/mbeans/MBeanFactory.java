@@ -722,8 +722,9 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new StandardEngine.
      *
      * @param parent MBean Name of the associated parent component
-     * @param name Unique name of this Engine
+     * @param engineName Unique name of this Engine
      * @param defaultHost Default hostname of this Engine
+     * @param serviceName Unique name of this Service
      *
      * @exception Exception if an MBean cannot be created or registered
      */
@@ -930,9 +931,7 @@ public class MBeanFactory extends BaseModelMBean {
     /**
      * Remove an existing Connector.
      *
-     * @param name MBean Name of the comonent to remove
-     *
-     * @param serviceName Service name of the connector to remove
+     * @param name MBean Name of the component to remove
      *
      * @exception Exception if a component cannot be removed
      */
@@ -972,7 +971,7 @@ public class MBeanFactory extends BaseModelMBean {
     /**
      * Remove an existing Context.
      *
-     * @param name MBean Name of the comonent to remove
+     * @param contextName MBean Name of the comonent to remove
      *
      * @exception Exception if a component cannot be removed
      */

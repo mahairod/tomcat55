@@ -836,7 +836,7 @@ public class MBeanUtils {
      * <code>Service</code> object.
      *
      * @param domain Domain in which this name is to be created
-     * @param context The ContextEnvironment to be named
+     * @param environment The ContextEnvironment to be named
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */

@@ -32,7 +32,7 @@ import org.apache.tomcat.util.digester.Rule;
  * <p>This rule now supports more flexible method matching by default.
  * It is possible that this may break (some) code 
  * written against release 1.1.1 or earlier.
- * See {@link #isExactMatch()} for more details.</p> 
+ * </p> 
  */
 
 public class SetNextNamingRule extends Rule {

@@ -271,8 +271,8 @@ public class ResourceAttributes implements Attributes {
     
     /**
      * Set collection flag.
-     * 
-     * @return value of the collection flag
+     *
+     * @param collection New flag value
      */
     public void setCollection(boolean collection) {
         this.collection = collection;

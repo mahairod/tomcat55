@@ -27,11 +27,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 
-
-// import org.apache.catalina.util.StringManager;
-
-
-
 /**
  * Encapsulates the CGI Process' environment and rules to derive
  * that environment from the servlet container and request information.
@@ -41,9 +36,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 
 public class CGIProcessEnvironment extends ProcessEnvironment {
-
-
-
     /** cgi command's query parameters */
     private Hashtable queryParameters = null;
 
@@ -328,7 +320,6 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
      *                                   the cgi script, or null if no cgi
      *                                   was found
      * </ul>
-     * @author Martin Dengler [root@martindengler.com]
      * @since Tomcat 4.0
      */
     protected String[] findCGI(String pathInfo, String webAppRootDir,

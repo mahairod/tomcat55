@@ -50,7 +50,7 @@ public class CatalinaLaunchFilter implements LaunchFilter {
      * "classname" attribute, may force the application to run
      * in the foreground by forcing the "waitforchild" attribute to "true".
      *
-     * @param launchCommand a configured instance of the {@link LaunchTask}
+     * @param launchCommand a configured instance of the {@link LaunchCommand}
      *  class
      * @throws BuildException if any errors occur
      */

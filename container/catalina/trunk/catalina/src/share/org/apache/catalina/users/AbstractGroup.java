@@ -113,7 +113,8 @@ public abstract class AbstractGroup implements Group {
 
 
     /**
-     * Return the set of {@link User}s that are members of this group.
+     * Return an Iterator over the set of {@link org.apache.catalina.User}s that 
+     * are members of this group.
      */
     public abstract Iterator getUsers();
 

@@ -22,7 +22,7 @@ import org.apache.catalina.UserDatabase;
 
 
 /**
- * <p>Concrete implementation of {@link Role} for the
+ * <p>Concrete implementation of {@link org.apache.catalina.Role} for the
  * {@link MemoryUserDatabase} implementation of {@link UserDatabase}.</p>
  *
  * @author Craig R. McClanahan

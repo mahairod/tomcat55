@@ -34,7 +34,7 @@ import org.apache.catalina.util.StringManager;
 
 
 /**
- * <p>Implementation of {@link Realm} that is based on an implementation of
+ * <p>Implementation of {@link org.apache.catalina.Realm} that is based on an implementation of
  * {@link UserDatabase} made available through the global JNDI resources
  * configured for this instance of Catalina.  Set the <code>resourceName</code>
  * parameter to the global JNDI resources name for the configured instance

@@ -534,8 +534,8 @@ public class DefaultServlet
     /**
      * Process a POST request for the specified resource.
      *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
+     * @param req The servlet request we are processing
+     * @param resp The servlet response we are creating
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet-specified error occurs
@@ -582,7 +582,7 @@ public class DefaultServlet
      *
      * @param request The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param resourceInfo File object
+     * @param resourceAttributes The resource information
      * @return boolean true if the resource meets all the specified conditions,
      * and false if any of the conditions is not satisfied, in which case
      * request processing is stopped
@@ -603,7 +603,7 @@ public class DefaultServlet
     /**
      * Get the ETag associated with a file.
      *
-     * @param resourceInfo File object
+     * @param resourceAttributes The resource information
      */
     protected String getETag(ResourceAttributes resourceAttributes) {
         String result = null;
