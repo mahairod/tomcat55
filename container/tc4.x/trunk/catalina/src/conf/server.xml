@@ -181,6 +181,52 @@
           <Ejb   name="ejb/EmplRecord" type="Entity"
                  home="com.wombat.empl.EmployeeRecordHome"
                remote="com.wombat.empl.EmployeeRecord"/>
+          <!-- PersistentManager: Uncomment the section below to test Persistent 
+		       Sessions.
+                         
+               saveOnRestart: If true, all active sessions will be saved
+                 to the Store when Catalina is shutdown, regardless of
+                 other settings. All Sessions found in the Store will be 
+                 loaded on startup. Sessions past their expiration are
+                 ignored in both cases.
+               maxActiveSessions: If 0 or greater, having too many active 
+                 sessions will result in some being swapped out. minIdleSwap
+                 limits this. -1 means unlimited sessions are allowed.
+                 0 means sessions will almost always be swapped out after
+                 use - this will be noticeably slow for your users.
+               minIdleSwap: Sessions must be idle for at least this long
+                 (in seconds) before they will be swapped out due to 
+               maxActiveSessions. This avoids thrashing when the site is 
+                 highly active. -1 or 0 means there is no minimum - sessions
+                 can be swapped out at any time.
+               maxIdleSwap: Sessions will be swapped out if idle for this
+                 long (in seconds). If minIdleSwap is higher, then it will
+                 override this. This isn't exact: it is checked periodically.
+                 -1 means sessions won't be swapped out for this reason,
+                 although they may be swapped out for maxActiveSessions.
+                 If set to >= 0, guarantees that all sessions found in the
+                 Store will be loaded on startup.
+               maxIdleBackup: Sessions will be backed up (saved to the Store,
+                 but left in active memory) if idle for this long (in seconds), 
+                 and all sessions found in the Store will be loaded on startup.
+                 If set to -1 sessions will not be backed up, 0 means they
+                 should be backed up shortly after being used.
+
+               To clear sessions from the Store, set maxActiveSessions, maxIdleSwap,
+               and minIdleBackup all to -1, saveOnRestart to false, then restart 
+               Catalina.
+          -->
+		  <!--
+          <Manager className="org.apache.catalina.session.PersistentManager"
+              debug="0"
+              saveOnRestart="true"
+              maxActiveSessions="-1"
+              minIdleSwap="-1"
+              maxIdleSwap="-1"
+              maxIdleBackup="-1">
+                <Store className="org.apache.catalina.session.FileStore"/>
+          </Manager>
+		  -->
           <Environment name="maxExemptions" type="java.lang.Integer"
                       value="15"/>
           <Parameter name="context.param.name" value="context.param.value"
