@@ -891,10 +891,19 @@
         <include name="org/apache/naming/*" />
         <include name="org/apache/naming/factory/Constants.class" />
         <include name="org/apache/naming/factory/ResourceLinkFactory.class" />
-        <include name="org/apache/naming/java/*" />
+        <exclude name="org/apache/naming/java/*" />
         <exclude name="org/apache/naming/JndiPermission.class" />
       </fileset>
     </jar>
+
+    <!-- Naming - Java: namespace. It shouldn't be included if tomcat is used inside a different
+         container that provides this ns -->
+    <jar jarfile="${catalina.deploy}/common/lib/naming-java.jar">
+      <fileset dir="${classes.dir}">
+        <include name="org/apache/naming/java/*" />
+      </fileset>
+    </jar>
+
 
     <!-- Naming - Factory JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-factory.jar">
