@@ -496,10 +496,6 @@ public final class ContextConfig
         tldDigester.register(Constants.J2eeSchemaPublicId_14,
                              url.toString());
 
-        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        tldDigester.register(Constants.W3cSchemaPublicId_10,
-                             url.toString());
-
         url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
         tldDigester.register(Constants.JspSchemaPublicId_20,
                              url.toString());
@@ -510,6 +506,10 @@ public final class ContextConfig
 
         url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
         tldDigester.register(Constants.TldSchemaPublicId_20,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
+        tldDigester.register(Constants.WebSchemaPublicId_24,
                              url.toString());
 
         tldDigester.addRuleSet(new TldRuleSet());
@@ -526,6 +526,7 @@ public final class ContextConfig
 
         URL url = null;
         Digester webDigester = new Digester();
+        webDigester.setNamespaceAware(true);
         webDigester.setValidating(true);
         url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
         webDigester.register(Constants.WebDtdPublicId_22,
@@ -555,10 +556,6 @@ public final class ContextConfig
 
         url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
         webDigester.register(Constants.JspSchemaPublicId_20,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        webDigester.register(Constants.W3cSchemaPublicId_10,
                              url.toString());
 
         url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
