@@ -2466,15 +2466,6 @@ public class StandardContext
         // Binding thread
         oldCCL = bindThread();
 
-        // Restart our session manager (AFTER naming context recreated/bound)
-        if ((manager != null) && (manager instanceof Lifecycle)) {
-            try {
-                ((Lifecycle) manager).start();
-            } catch (LifecycleException e) {
-                log(sm.getString("standardContext.startingManager"), e);
-            }
-        }
-
         // Restart our application event listeners and filters
         if (ok) {
             if (!listenerStart()) {
@@ -2512,6 +2503,15 @@ public class StandardContext
 
         // Reinitialize all load on startup servlets
         loadOnStartup(children);
+
+        // Restart our session manager (AFTER naming context recreated/bound)
+        if ((manager != null) && (manager instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) manager).start();
+            } catch (LifecycleException e) {
+                log(sm.getString("standardContext.startingManager"), e);
+            }
+        }
 
         // Unbinding thread
         unbindThread(oldCCL);
