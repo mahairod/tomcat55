@@ -871,14 +871,12 @@ public class StandardContext
 
     }
 
-
     /**
      * Set the distributable flag for this web application.
      *
      * @param distributable The new distributable flag
      */
     public void setDistributable(boolean distributable) {
-
         boolean oldDistributable = this.distributable;
         this.distributable = distributable;
         support.firePropertyChange("distributable",
@@ -1798,7 +1796,6 @@ public class StandardContext
      *  registered
      */
     public void addParameter(String name, String value) {
-
         // Validate the proposed context initialization parameter
         if ((name == null) || (value == null))
             throw new IllegalArgumentException
@@ -3498,7 +3495,6 @@ public class StandardContext
 
         if (log.isDebugEnabled())
             log.debug("Starting filters");
-
         // Instantiate and record a FilterConfig for each defined filter
         boolean ok = true;
         synchronized (filterConfigs) {
@@ -3890,7 +3886,13 @@ public class StandardContext
                 log.debug("Configuring default Manager");
             if (getCluster() != null) {
                 try {
-                    setManager(getCluster().createManager(getName()));
+                    if ( this.getDistributable() ) {
+                        log.info("Creating clustering manager for context="+getName());
+                        setManager(getCluster().createManager(getName()));
+                    } else {
+                        log.info("Ignoring clustering manager for context="+getName()+ " element <distributable> not present in web.xml");
+                        setManager(new StandardManager());    
+                    }
                 } catch ( Exception x ) {
                     log.warn("Clustering disabled for context:"+getName()+" reason:"+x.getMessage());
                     setManager(new StandardManager());
