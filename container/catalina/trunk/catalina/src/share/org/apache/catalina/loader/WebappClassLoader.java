@@ -586,6 +586,7 @@ public class WebappClassLoader
             URL url = new URL(repository);
             super.addURL(url);
             hasExternalRepositories = true;
+            repositoryURLs = null;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.toString());
         }
@@ -848,6 +849,16 @@ public class WebappClassLoader
 
 
     // ---------------------------------------------------- ClassLoader Methods
+
+
+     /**
+      * Add the specified URL to the classloader.
+      */
+     protected void addURL(URL url) {
+         super.addURL(url);
+         hasExternalRepositories = true;
+         repositoryURLs = null;
+     }
 
 
     /**
