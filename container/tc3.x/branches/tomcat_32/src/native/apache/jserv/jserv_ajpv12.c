@@ -393,6 +393,9 @@ static int ajpv12_handle_in(jserv_config *cfg, jserv_request *req, request_rec *
                 char buffer[HUGE_STRING_LEN];
                 int len;
                 len = (int) ap_bread(buffsocket, buffer, HUGE_STRING_LEN);
+                if (len < 0) {
+                  return -1;
+                }
 
 #ifdef HAVE_APFD /* IBM Apache */
                 if(r->connection->client->pfd->sd >= 0) {
