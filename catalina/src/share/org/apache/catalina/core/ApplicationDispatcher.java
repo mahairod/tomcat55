@@ -48,7 +48,6 @@ import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tomcat.util.IntrospectionUtils;
 
 /**
  * Standard implementation of <code>RequestDispatcher</code> that allows a
@@ -643,7 +642,7 @@ final class ApplicationDispatcher
             }
         } catch (ServletException e) {
             wrapper.getLogger().error(sm.getString("applicationDispatcher.allocateException",
-                             wrapper.getName()), e);
+                             wrapper.getName()), StandardWrapper.getRootCause(e));
             servletException = e;
             servlet = null;
         } catch (Throwable e) {
@@ -700,24 +699,11 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            Throwable rootCause = e;
-            Throwable rootCauseCheck = null;
-
-            // Extra aggressive rootCause finding
-            do {
-                try {
-                    rootCauseCheck = (Throwable)IntrospectionUtils.getProperty
-                                                (rootCause, "rootCause");
-                    if (rootCauseCheck!=null)
-                        rootCause = rootCauseCheck;
-
-                } catch (ClassCastException ex) {
-                    rootCauseCheck = null;
-                }
-            } while (rootCauseCheck != null);
-            
-            wrapper.getLogger().error(sm.getString("applicationDispatcher.serviceException",
-                             wrapper.getName()), rootCause);
+            Throwable rootCause = StandardWrapper.getRootCause(e);
+            if (!(rootCause instanceof ClientAbortException)) {
+                wrapper.getLogger().error(sm.getString("applicationDispatcher.serviceException",
+                        wrapper.getName()), rootCause);
+            }
             servletException = e;
         } catch (RuntimeException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);

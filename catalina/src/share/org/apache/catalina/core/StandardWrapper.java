@@ -55,6 +55,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.security.SecurityUtil;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
+import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.log.SystemLogHandler;
 import org.apache.commons.modeler.Registry;
 
@@ -618,6 +619,30 @@ public class StandardWrapper
 
 
     /**
+     * Extract the root cause from a servlet exception.
+     * 
+     * @param e The servlet exception
+     */
+    public static Throwable getRootCause(ServletException e) {
+        Throwable rootCause = e;
+        Throwable rootCauseCheck = null;
+        // Extra aggressive rootCause finding
+        do {
+            try {
+                rootCauseCheck = (Throwable)IntrospectionUtils.getProperty
+                                            (rootCause, "rootCause");
+                if (rootCauseCheck!=null)
+                    rootCause = rootCauseCheck;
+
+            } catch (ClassCastException ex) {
+                rootCauseCheck = null;
+            }
+        } while (rootCauseCheck != null);
+        return rootCause;
+    }
+
+
+    /**
      * Refuse to add a child Container, because Wrappers are the lowest level
      * of the Container hierarchy.
      *
@@ -1006,8 +1031,6 @@ public class StandardWrapper
                 }
             } catch (ClassNotFoundException e) {
                 unavailable(null);
-
-
                 getServletContext().log( "Error loading " + classLoader + " " + actualClass, e );
                 throw new ServletException
                     (sm.getString("standardWrapper.missingClass", actualClass),
