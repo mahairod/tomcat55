@@ -69,8 +69,4 @@
             *.bop
         </url-pattern>
     </servlet-mapping>
-    <taglib>
-        <taglib-uri>myTagLib</taglib-uri>
-        <taglib-location>/myLib/footaglib.tld</taglib-location>
-    </taglib>
 </web-app>
