@@ -504,7 +504,7 @@ public abstract class RealmBase
                 boolean matched = false;
                 int length = -1;
                 for(int k=0; k < patterns.length; k++) {
-                    String pattern = patterns[j];
+                    String pattern = patterns[k];
                     if(pattern.startsWith("/") && pattern.endsWith("/*") && 
                        pattern.length() >= longest) {
                             
@@ -549,7 +549,7 @@ public abstract class RealmBase
             for(int j=0; j < collection.length; j++){
                 String [] patterns = collection[j].findPatterns();
                 for(int k=0; k < patterns.length && !matched; k++) {
-                    String pattern = patterns[j];
+                    String pattern = patterns[k];
                     if(pattern.startsWith("*.")){
                         int slash = uri.lastIndexOf("/");
                         int dot = uri.lastIndexOf(".");
@@ -587,7 +587,7 @@ public abstract class RealmBase
                 String [] patterns = collection[j].findPatterns();
                 boolean matched = false;
                 for(int k=0; k < patterns.length && !matched; k++) {
-                    String pattern = patterns[j];
+                    String pattern = patterns[k];
                     if(pattern.equals("/")){
                         matched = true;
                     }
