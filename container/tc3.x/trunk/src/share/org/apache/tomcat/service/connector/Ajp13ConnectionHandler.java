@@ -160,9 +160,7 @@ public class Ajp13ConnectionHandler implements  TcpConnectionHandler
                         contextM.service(req, res);
 
                         req.recycle();
-                        res.recycle();                    
-                        //System.out.println("Closing connection");
-                        socket.close();                        
+                        res.recycle();                                                                    
                     break;
                     
                     case JK_AJP13_SHUTDOWN:
@@ -174,6 +172,8 @@ public class Ajp13ConnectionHandler implements  TcpConnectionHandler
                     break;
                 }                
             }
+            //System.out.println("Closing connection");
+            socket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
