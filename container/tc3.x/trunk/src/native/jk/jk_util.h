@@ -156,6 +156,9 @@ char **jk_parse_sysprops(jk_pool_t *p,
                          const char *sysprops);
         
 
+void jk_append_libpath(jk_pool_t *p, 
+                       const char *libpath);
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
