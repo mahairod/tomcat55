@@ -1,0 +1,22 @@
+$Id$
+
+PROJECT MOO SOURCE TREE (AKA MICRO TEST HARNESS)
+================================================
+
+This is the source code tree for Project Moo. Project Moo a micro test
+harness designed for lightweight testing duties.
+
+The way moo works is that is reads a list of client classes (which
+are the test classes to run). Then it instantiates each class, one
+by one and calls a 'runTest' method on it. The 'runTest' method
+returns the result in an Object of the type TestResult. The harness
+prints out the message field of this Object.
+
+All the client classes use some utility classes provided in moo.
+For example, some classes help clients connect to a specific 
+server at a specific port. Some classes help forming a query string,
+while others help compare two html files.
+
+Currently jakarta-check framework is using moo harness. Please download
+jakarta-check workspace and build and run appropriate scripts to get
+more insight into how moo works.
