@@ -374,6 +374,8 @@ final class HttpRequestImpl
      * @param name Name of the requested header
      */
     public Enumeration getHeaders(String name) {
+
+        name = name.toLowerCase();
 	ArrayList tempArrayList = new ArrayList();
 	for (int i = 0; i < nextHeader; i++) {
 	    if (headerPool[i].equals(name))
