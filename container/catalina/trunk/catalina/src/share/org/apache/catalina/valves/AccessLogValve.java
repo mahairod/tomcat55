@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -263,11 +264,25 @@ public class AccessLogValve
 
 
     /**
-     * The time zone relative to GMT.
+     * The system timezone.
      */
-    private String timeZone = null;
+    private TimeZone timezone = null;
+
+    
+    /**
+     * The time zone offset relative to GMT in text form when daylight saving
+     * is not in operation.
+     */
+    private String timeZoneNoDST = null;
 
 
+    /**
+     * The time zone offset relative to GMT in text form when daylight saving
+     * is in operation.
+     */
+    private String timeZoneDST = null;
+    
+    
     /**
      * The system time when we last updated the Date that this valve
      * uses for log lines.
@@ -557,15 +572,15 @@ public class AccessLogValve
             }
 
             result.append("[");
-            result.append(dayFormatter.format(date));            // Day
+            result.append(dayFormatter.format(date));           // Day
             result.append('/');
             result.append(lookup(monthFormatter.format(date))); // Month
             result.append('/');
-            result.append(yearFormatter.format(date));            // Year
+            result.append(yearFormatter.format(date));          // Year
             result.append(':');
-            result.append(timeFormatter.format(date));        // Time
+            result.append(timeFormatter.format(date));          // Time
             result.append(space);
-            result.append(timeZone);                            // Time Zone
+            result.append(getTimeZone(date));                   // Time Zone
             result.append("] \"");
 
             result.append(request.getMethod());
@@ -858,7 +873,7 @@ public class AccessLogValve
             temp.append(':');
             temp.append(timeFormatter.format(date));            // Time
             temp.append(' ');
-            temp.append(timeZone);                              // Timezone
+            temp.append(getTimeZone(date));                     // Timezone
             temp.append(']');
             value = temp.toString();
         } else if (pattern == 'T') {
@@ -977,6 +992,15 @@ public class AccessLogValve
     }
 
 
+    private String getTimeZone(Date date) {
+        if (timezone.inDaylightTime(date)) {
+            return timeZoneDST;
+        } else {
+            return timeZoneNoDST;
+        }
+    }
+    
+    
     private String calculateTimeZoneOffset(long offset) {
         StringBuffer tz = new StringBuffer();
         if ((offset<0))  {
@@ -1057,21 +1081,24 @@ public class AccessLogValve
         started = true;
 
         // Initialize the timeZone, Date formatters, and currentDate
-        TimeZone tz = TimeZone.getDefault();
-        timeZone = calculateTimeZoneOffset(tz.getRawOffset());
-
+        timezone = TimeZone.getDefault();
+        timeZoneNoDST = calculateTimeZoneOffset(timezone.getRawOffset());
+        Calendar calendar = Calendar.getInstance(timezone);
+        int offset = calendar.get(Calendar.DST_OFFSET);
+        timeZoneDST = calculateTimeZoneOffset(timezone.getRawOffset()+offset);
+        
         if (fileDateFormat==null || fileDateFormat.length()==0)
             fileDateFormat = "yyyy-MM-dd";
         dateFormatter = new SimpleDateFormat(fileDateFormat);
-        dateFormatter.setTimeZone(tz);
+        dateFormatter.setTimeZone(timezone);
         dayFormatter = new SimpleDateFormat("dd");
-        dayFormatter.setTimeZone(tz);
+        dayFormatter.setTimeZone(timezone);
         monthFormatter = new SimpleDateFormat("MM");
-        monthFormatter.setTimeZone(tz);
+        monthFormatter.setTimeZone(timezone);
         yearFormatter = new SimpleDateFormat("yyyy");
-        yearFormatter.setTimeZone(tz);
+        yearFormatter.setTimeZone(timezone);
         timeFormatter = new SimpleDateFormat("HH:mm:ss");
-        timeFormatter.setTimeZone(tz);
+        timeFormatter.setTimeZone(timezone);
         currentDate = new Date();
         dateStamp = dateFormatter.format(currentDate);
         timeTakenFormatter = new DecimalFormat("0.000");
