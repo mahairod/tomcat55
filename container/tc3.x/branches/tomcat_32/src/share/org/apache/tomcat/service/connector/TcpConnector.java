@@ -103,31 +103,61 @@ class TcpConnector implements MsgConnector
 	return msg;
     }
     
+
+    /**
+     * Read the next message from the input stream, and return the
+     * message length that was actually read (not counting the header).
+     *
+     * @param msg Message buffer into which we should read
+     *
+     * @exception IOException if an input/output error occurs
+     */
     public int receive(MsgBuffer msg) throws IOException {
-	// Read Packet
 
+	// Acquire our byte buffer
 	byte b[]=msg.getBuff();
-	
-	int rd=in.read( b, 0, H_SIZE );
-	if( rd<=0 ) {
-	    //	    System.out.println("Rd header returned: " + rd );
-	    return rd;
-	}
 
-	int len=msg.checkIn();
+        // Read the entire header
+        if (receiveFully(b, 0, H_SIZE) < H_SIZE)
+            return (-1);        // End of file indication
 	
-	// XXX check if enough space - it's assert()-ed !!!
-	// Can we have only one read ( with unblocking, it can read all at once - but maybe more ) ?
-	//???	len-=4; // header
+        // Read the entire message
+	int len = msg.checkIn();
+        int read = receiveFully(b, H_SIZE, len);
+        return (read);
 
-	rd=in.read( b, 4, len );
-	if( rd != len ) {
-	    System.out.println( "Incomplete read, deal with it " + len + " " + rd);
-	}
-	// 	msg.dump( "Incoming");
-	return rd;
-	//    System.out.println( "Incoming Packet len=" + len);
     }
+
+
+    /**
+     * Read the specified number of bytes into the specified buffer,
+     * continuing to read until the required number of bytes has been
+     * encountered or end-of-file is reached.  Return the number of
+     * bytes actually read (which will be less than the specified length
+     * <strong>only</strong> if EOF was reached.
+     *
+     * @param buff Byte array into which reading takes place
+     * @param off Initial offset at which read bytes are placed
+     * @param len Number of bytes to be read
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private int receiveFully(byte buff[], int off, int len)
+        throws IOException {
+
+        int count = 0;
+        while (len > 0) {
+            int read = in.read(buff, off, len);
+            if (read < 0)       // End of file indication
+                break;
+            count += read;
+            off += read;
+            len -= read;
+        }
+        return (count);
+
+    }
+
 
     public void send( MsgBuffer msg ) throws IOException {
 	msg.end();
