@@ -923,7 +923,12 @@ public class StandardWrapper
             ClassLoader classLoader = loader.getClassLoader();
 
             // Special case class loader for a container provided servlet
-            if (isContainerProvidedServlet(actualClass)) {
+            //  
+            if (isContainerProvidedServlet(actualClass) && 
+                    ! ((Context)getParent()).getPrivileged() ) {
+                // If it is a priviledged context - using its own
+                // class loader will work, since it's a child of the container
+                // loader
                 classLoader = this.getClass().getClassLoader();
             }
 
