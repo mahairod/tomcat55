@@ -59,9 +59,11 @@
     <!--   Catalina needs the regular expression library -->
     <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
     <!--   Catalina needs the JSSE packages -->
+<!--
     <copyfile src="${jcert.jar}"  dest="${catalina.build}/server/jcert.jar"/>
     <copyfile src="${jnet.jar}"  dest="${catalina.build}/server/jnet.jar"/>
     <copyfile src="${jsse.jar}"  dest="${catalina.build}/server/jsse.jar"/>
+-->
   </target>
 
 
