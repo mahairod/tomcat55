@@ -270,9 +270,15 @@ public class JspCompilationContext {
      * generated class. 
      */
     public String getServletClassName() {
+
+	if (isTagFile) {
+	    return tagInfo.getTagName();
+	}
+
         if (servletClassName != null) {
             return servletClassName;
         }
+
         int iSep = jspUri.lastIndexOf('/') + 1;
         int iEnd = jspUri.length();
         StringBuffer modifiedClassName = 
