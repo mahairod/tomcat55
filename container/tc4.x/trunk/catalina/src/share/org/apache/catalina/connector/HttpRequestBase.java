@@ -946,7 +946,9 @@ public class HttpRequestBase
 
 	// Return the requested session if it exists and is valid
 	Manager manager = context.getManager();
-	if ((manager != null) && (requestedSessionId != null)) {
+	if (manager == null)
+	    return (null);	// Sessions are not supported
+	if (requestedSessionId != null) {
 	    try {
 		session = manager.findSession(requestedSessionId);
 	    } catch (IOException e) {
