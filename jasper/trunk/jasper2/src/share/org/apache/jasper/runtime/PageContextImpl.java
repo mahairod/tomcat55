@@ -354,6 +354,12 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public void removeAttribute(String name, int scope) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	switch (scope) {
 	case PAGE_SCOPE:
 	    attributes.remove(name);
@@ -381,6 +387,12 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public int getAttributesScope(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	if (attributes.get(name) != null)
 	    return PAGE_SCOPE;
 
@@ -399,6 +411,12 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public Object findAttribute(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
         Object o = attributes.get(name);
         if (o != null)
             return o;
@@ -441,6 +459,12 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public void removeAttribute(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	try {
 	    removeAttribute(name, PAGE_SCOPE);
 	    removeAttribute(name, REQUEST_SCOPE);

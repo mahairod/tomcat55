@@ -211,6 +211,12 @@ public class JspContextWrapper
     }
 
     public Object findAttribute(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
         Object o = pageAttributes.get(name);
         if (o == null) {
 	    o = invokingJspCtxt.getAttribute(name, REQUEST_SCOPE);
@@ -228,6 +234,12 @@ public class JspContextWrapper
     }
 
     public void removeAttribute(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	pageAttributes.remove(name);
 	invokingJspCtxt.removeAttribute(name, REQUEST_SCOPE);
 	if (getSession() != null) {
@@ -237,6 +249,12 @@ public class JspContextWrapper
     }
 
     public void removeAttribute(String name, int scope) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	if (scope == PAGE_SCOPE){
 	    pageAttributes.remove(name);
 	} else {
@@ -245,6 +263,12 @@ public class JspContextWrapper
     }
 
     public int getAttributesScope(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	if (pageAttributes.get(name) != null) {
 	    return PAGE_SCOPE;
 	} else {
