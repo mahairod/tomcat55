@@ -23,7 +23,7 @@
     namespace declarations to make the output of this page a valid XHTML
     Basic document.
     <p/>
-    Just to proove this is live, here's some dynamic content:
+    Just to prove this is live, here's some dynamic content:
     <jsp:useBean id="now" class="java.util.Date" />
     <fmt:formatDate value="${now}" pattern="MMMM d, yyyy, H:mm:ss"/>
   </body>
