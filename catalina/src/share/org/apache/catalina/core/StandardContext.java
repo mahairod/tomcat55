@@ -4236,9 +4236,6 @@ public class StandardContext
         // Mark this application as unavailable while we shut down
         setAvailable(false);
 
-        // Remove our classloader from LogFactory's 'factories' cache
-        LogFactory.release(getLoader().getClassLoader());
-
         // Binding thread
         ClassLoader oldCCL = bindThread();
 
