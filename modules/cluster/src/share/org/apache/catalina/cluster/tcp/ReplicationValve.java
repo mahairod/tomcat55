@@ -263,13 +263,7 @@ public class ReplicationValve
      */
     protected void log(String message,int level) {
         if ( debug < level ) return;
-        Logger logger = null;
-        if ( container != null ) logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message);
-        else
-            System.out.println(this.toString() + ": " + message);
-
+        log.debug(message);
     }
 
 
@@ -281,14 +275,7 @@ public class ReplicationValve
      */
     protected void log(String message, Throwable throwable,int level) {
         if ( debug < level ) return;
-        Logger logger = null;
-        if ( container != null ) logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message, throwable);
-        else {
-            log.warn(message,throwable);
-        }
-
+        log.debug(message,throwable);
     }
 
 
