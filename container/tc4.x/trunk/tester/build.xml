@@ -71,10 +71,8 @@
         <include name="**/*.txt"/>
       </fileset>
     </copy>
-<!--
     <copy file="${tester.build}/classes/org/apache/tester/unshared/UnsharedSessionBean.class"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/unshared/UnsharedSessionBean.class"/>
--->
     <copy file="src/tester/org/apache/tester/Resources01.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
     <copy file="src/tester/org/apache/tester/Resources03.txt"
@@ -92,9 +90,7 @@
     <jar jarfile="${tester.build}/web/WEB-INF/lib/tester.jar">
       <fileset dir="${tester.build}/classes">
         <exclude name="**/shared/*"/>
-<!--
         <exclude name="**/unshared/*"/>
--->
       </fileset>
     </jar>
 
