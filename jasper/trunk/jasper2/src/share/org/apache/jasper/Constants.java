@@ -74,7 +74,7 @@ public class Constants {
     /**
      * The base class of the generated servlets. 
      */
-    public static final String JSP_SERVLET_BASE = "HttpJspBase";
+    public static final String JSP_SERVLET_BASE = "org.apache.jasper.runtime.HttpJspBase";
 
     /**
      * _jspService is the name of the method that is called by 
@@ -95,8 +95,7 @@ public class Constants {
     public static final String[] STANDARD_IMPORTS = { 
 	"javax.servlet.*", 
 	"javax.servlet.http.*", 
-	"javax.servlet.jsp.*", 
-	"org.apache.jasper.runtime.*", 
+	"javax.servlet.jsp.*"
     };
 
     /**

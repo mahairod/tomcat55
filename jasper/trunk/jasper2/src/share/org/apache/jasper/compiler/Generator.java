@@ -870,7 +870,7 @@ public class Generator {
 		prepareParams(n);
 	    }
             
-            out.printin("JspRuntimeLibrary.include(request, response, " +
+            out.printin("org.apache.jasper.runtime.JspRuntimeLibrary.include(request, response, " +
                 pageParam );
 	    printParams(n, pageParam, page.isLiteral());
 	    out.println(", out, " + isFlush + ");");
@@ -990,15 +990,15 @@ public class Generator {
 		java.lang.reflect.Method meth =
 		    JspRuntimeLibrary.getReadMethod(bean, property);
 		String methodName = meth.getName();
-		out.printil("out.write(JspRuntimeLibrary.toString(" +
+		out.printil("out.write(org.apache.jasper.runtime.JspRuntimeLibrary.toString(" +
 			    "(((" + beanName + ")pageContext.findAttribute(" +
 			    "\"" + name + "\"))." + methodName + "())));");
 	    } else {
 		// The object could be a custom action with an associated
 		// VariableInfo entry for this name.
 		// Get the class name and then introspect at runtime.
-		out.printil("out.write(JspRuntimeLibrary.toString" +
-			    "(JspRuntimeLibrary.handleGetProperty" +
+		out.printil("out.write(org.apache.jasper.runtime.JspRuntimeLibrary.toString" +
+			    "(org.apache.jasper.runtime.JspRuntimeLibrary.handleGetProperty" +
 			    "(pageContext.findAttribute(\"" +
 			    name + "\"), \"" + property + "\")));");
             }
@@ -1015,18 +1015,18 @@ public class Generator {
 	    n.setBeginJavaLine(out.getJavaLine());
 
 	    if ("*".equals(property)){
-		out.printil("JspRuntimeLibrary.introspect(" +
+		out.printil("org.apache.jasper.runtime.JspRuntimeLibrary.introspect(" +
 			    "pageContext.findAttribute(" +
 			    "\"" + name + "\"), request);");
 	    } else if (value == null) {
 		if (param == null)
 		    param = property;	// default to same as property
-		out.printil("JspRuntimeLibrary.introspecthelper(" +
+		out.printil("org.apache.jasper.runtime.JspRuntimeLibrary.introspecthelper(" +
 			    "pageContext.findAttribute(\"" + name + "\"), \"" +
 			    property + "\", request.getParameter(\"" + param +
 			    "\"), " + "request, \"" + param + "\", false);");
 	    } else if (value.isExpression()) {
-		out.printil("JspRuntimeLibrary.handleSetProperty(" + 
+		out.printil("org.apache.jasper.runtime.JspRuntimeLibrary.handleSetProperty(" + 
 			    "pageContext.findAttribute(\""  + name + "\"), \""
 			    + property + "\","); 
 		out.print(attributeValue(value, false, null, "null"));
@@ -1045,7 +1045,7 @@ public class Generator {
 		// - 'pageContext' is a VariableResolver.
 		// - 'this' (either the generated Servlet or the generated tag
 		//   handler for Tag files) is a FunctionMapper.
-                out.printil("JspRuntimeLibrary.handleSetPropertyExpression(" +
+                out.printil("org.apache.jasper.runtime.JspRuntimeLibrary.handleSetPropertyExpression(" +
                     "pageContext.findAttribute(\""  + name + "\"), \""
                     + property + "\", "
                     + quote(value.getValue()) + ", "
@@ -1058,13 +1058,13 @@ public class Generator {
                 // that body.
                 String valueVarName = generateNamedAttributeValue(
                     value.getNamedAttributeNode() );
-                out.printil("JspRuntimeLibrary.introspecthelper(" +
+                out.printil("org.apache.jasper.runtime.JspRuntimeLibrary.introspecthelper(" +
                             "pageContext.findAttribute(\""  + name + "\"), \""
                             + property + "\", "
 			    + valueVarName
 			    + ", null, null, false);");
 	    } else {
-		out.printin("JspRuntimeLibrary.introspecthelper(" +
+		out.printin("org.apache.jasper.runtime.JspRuntimeLibrary.introspecthelper(" +
 			    "pageContext.findAttribute(\"" + name + "\"), \""
 			    + property + "\", ");
 		out.print(attributeValue(value, false, null, "null"));
@@ -2612,7 +2612,7 @@ public class Generator {
 
 	    if (propEditorClass != null) {
 		return "(" + c.getName()
-		    + ")JspRuntimeLibrary.getValueFromBeanInfoPropertyEditor("
+		    + ")org.apache.jasper.runtime.JspRuntimeLibrary.getValueFromBeanInfoPropertyEditor("
 		    + c.getName() + ".class, \"" + attrName + "\", "
 		    + quoted + ", "
 		    + propEditorClass.getName() + ".class)";
@@ -2670,7 +2670,7 @@ public class Generator {
 		return "new String(" + quoted + ")";
 	    } else {
 		return "(" + c.getName()
-		    + ")JspRuntimeLibrary.getValueFromPropertyEditorManager("
+		    + ")org.apache.jasper.runtime.JspRuntimeLibrary.getValueFromPropertyEditorManager("
 		    + c.getName() + ".class, \"" + attrName + "\", "
 		    + quoted + ")";
 	    }
@@ -3208,7 +3208,7 @@ public class Generator {
         out.printil( "public void setJspContext( JspContext ctx ) {" );
         out.pushIndent();
         out.printil( "super.setJspContext( ctx );" );
-        out.printil( "this.jspContext = new JspContextWrapper( ctx );" );
+        out.printil( "this.jspContext = new org.apache.jasper.runtime.JspContextWrapper( ctx );" );
         out.popIndent();
         out.printil( "}" );
         out.println();
