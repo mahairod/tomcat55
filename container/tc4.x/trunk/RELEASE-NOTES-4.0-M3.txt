@@ -26,12 +26,115 @@ JSP-related bug reports, respectively.
 NEW FEATURES:
 ============
 
+Jasper:  Support for the new JSP 1.2 feature that you can specify
+<jsp:include page="..." flush="false"/>.  The output of the included servlet
+or JSP page will be written to the current JspWriter, which you can capture
+and process if the <jsp:include> occurs nested inside a custom tag.
+
+All Modules:  It is now possible to specify individually the XML parser to be
+used by Ant (for parsing the "build.xml" file), Catalina (to be copied into
+the "$CATALINA_HOME/server" directory), and Jasper (to be copied into the
+"$CATALINA_HOME/lib" directory and made visible to all web apps).  See the
+comments at the top of "build.bat" or "build.sh" for more information.
+
+All Modules:  The default parser for all modules, unless overridden by the
+individual environment variables mentioned above, is the JAXP 1.1 reference
+implementation early access release.
+
+Catalina:  Per servlet 2.3 requirements, two additional request attributes
+are passed on to an error page:
+- javax.servlet.error.exception - The actual exception that occurred
+- javax.servlet.error.request_uri - The Request URI of the page on which
+  the error occurred
+
+Catalina:  Per servlet 2.3 requirements, the default character encoding for
+reading request bodies is now ISO-8859-1 instead of the JVM platform default.
+This is also consistent with the default character encoding for responses.
+
+Catalina:  Per servlet 2.3 requirements, HttpServletResponse.sendError() no
+longer tries to set the content type to "text/html".
+
+Catalina:  Per servlet 2.3 requirements, enforce the requirement that the
+value specified in a <jsp-file> element must be a context-relative path that
+starts with a "/" character.
+
+Catalina:  Per servlet 2.3 requirements, expose two new request attributes when
+the request was received on an SSL connection:
+- javax.servlet.request.cipher_suite - The name of the cipher suite that was
+  negotiated for this SSL session
+- javax.servlet.request.key_size - The effective key size (in bits) supported
+  by the negotiated cipher suite.
+
+Catalina:  Restore support for saving sessions across context reloads (either
+automatic ones triggered by changes to classes in WEB-INF/classes, or manual
+ones initiated through the Manager web app), or across server restarts.
+
+Catalina:  The "examples" web application is now started in auto-reload
+mode by default.
+
+Jasper:  Per JSP 1.2 requirements, support the new PageContext method:
+  public void handlePageException(Throwable e)
+    throws IOException, ServletException;
+
+Catalina:  Per servlet 2.3 requirements, support the new ServletResponse method
+public void resetBuffer().  As a side effect of this change, the implementation
+of RequestDispatcher.forward() now correct resets the buffer (but not the
+headers or cookies) before performing the forwarding.
 
 
 =========
 BUG FIXES:
 =========
 
+Catalina:  The HttpRequestStream now makes use of the enhanced byte buffer
+reading of the underlying RequestStream.  This should increase performance.
+
+Catalina:  It is now possible to include a static resource in a JSP page
+using <jsp:include>, or in a servlet using RequestDispatcher.include() where
+response.getWriter() has already been called.
+
+Catalina:  The set of roles associated with a Principal retrieved via the
+JDBCRealm was not getting initialized, so access control rules were rejecting
+the Principal incorrectly.
+
+Jasper:  Attributes in custom actions are now evaluated in-order.
+
+Catalina:  Added clarification comments to "$CATALINA_HOME/conf/server.xml"
+that the <Server> and <Service> elements themselves are not Containers, so you
+cannot attach <Logger> elements to them.  Instead, specify a server-wide
+logger underneath the top-level Container element (normally an <Engine>) that
+is associated with a <Service>.
+
+Catalina:  Register the JSSE implementation of a URLStreamHandler for the
+"https:" scheme when it is available.  This avoids problems computing the
+absolute URL for a HttpServletResponse.sendRedirect() method call.
+
+Jasper:  Fix handling of relative paths in include directives (BugRat Bug
+Report #258).
+
+Catalina:  When performing CLIENT-CERT authentication, correctly handle the
+client certificate chain that is exposed.  Previously, the authenticator would
+throw a ClassCastException when accessing this chain.
+
+Catalina:  Rearrange the location of support for application event listeners,
+and make sure they are reinitialized during a Context.reload() operation.
+Otherwise, there would be a potential for ClassCastException errors because of
+objects instantiated by these listeners under a previous class loader.
+
+Catalina:  Update the example "main()" method in the
+org.apache.catalina.startup.Embedded class to reflect refactoring changes.
+
+Catalina:  Update the startup and shutdown scripts on Windows systems so that
+you can double click them, and update the catalina.bat script so that it runs
+even if your current directory is $CATALINA_HOME/bin instead of $CATALINA_HOME.
+
+Webapps:  Correct the contents of the "JSP Forward" example.  Previously, this
+directory contained incorrect files.
+
+Webapps:  Fix the build.xml script to use relative property paths, rather than
+the absolute paths used by Catalina and Jasper.  Previously, the webapps were
+not getting built correctly under some combinations of environment variables
+and class path settings.
 
 
 ==============================
