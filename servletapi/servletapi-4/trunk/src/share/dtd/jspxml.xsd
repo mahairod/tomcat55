@@ -63,7 +63,6 @@
         <choice>
             <element ref = "directive.page"/>
             <element ref = "directive.include"/>
-            <element ref = "directive.taglib"/>
             <element ref = "scriptlet"/>
             <element ref = "declaration"/>
             <element ref = "expression"/>
@@ -209,36 +208,11 @@
         <annotation>
             <documentation>
                 directive.include is the "include directive".
+		This element does not appear on XML views of JSP pages.
             </documentation>
         </annotation>
         <complexType content = "empty">
             <attribute name = "file" use = "required" type = "RelativeURL"/>
-        </complexType>
-    </element>
-    
-    <element name = "directive.taglib">
-        <annotation>
-            <documentation>
-                directive.taglib is the "taglib directive".
-                
-                In a tag library tag, xmlns must be specified as:
-                
-                    &lt;tagPrefix:tagname xmlns:tagPrefix="uri" ...>
-                
-                where tagPrefix and uri are as specified in a taglib directive.
-                This allows both Schema-validating parsers and parsers that are not
-                namespace-aware to operate properly.
-
-                Note: The xmlns attribute must be omitted in a .jsp-format
-                JSP file. The .jsp-to-XML translator will supply it.
-                
-                Constraint: A given tagPrefix must be used with the same uri
-                throughout the document.
-            </documentation>
-        </annotation>
-        <complexType content = "empty">
-            <attribute name = "uri" use = "required" type = "uriReference"/>
-            <attribute name = "tagPrefix" use = "required" type = "NCName"/>
         </complexType>
     </element>
     
