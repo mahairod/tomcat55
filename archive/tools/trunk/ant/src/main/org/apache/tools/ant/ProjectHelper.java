@@ -66,7 +66,10 @@ class ProjectHelper {
 		throw new BuildException(msg);
 	    }
 	} else {
-	    project.setBaseDir(buildFile.getAbsoluteFile().getParentFile());
+            // Using clunky JDK1.1 methods here
+            String absPath = buildFile.getAbsolutePath();
+            String parentPath = new File(absPath).getParent();
+	    project.setBaseDir(new File(parentPath));
 	}
 
 	// set up any properties that may be in the config file
