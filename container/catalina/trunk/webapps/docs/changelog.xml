@@ -88,6 +88,14 @@
       <fix>
         <bug>31677</bug>: Log warning if work dir for context can't be determined. (yoavs)
       </fix>
+      <fix>
+        <bug>31903</bug>: Fix condition which seems to not have been properly updated after adding 
+        entry.binaryContent = null a little below, submitted by Joe Zhou. (remm)
+      </fix>
+      <fix>
+        Prevent silent NPEs during StandardContext.start dealing with JMX registration of realm, submitted
+        by Keith Wannamaker. (remm)
+      </fix>
     </changelog>
   </subsection>
 
