@@ -125,7 +125,7 @@ public class WARDirContext extends BaseDirContext {
 	// Validate that the document base is an existing directory
 	if (!base.exists() || !base.canRead() || base.isDirectory())
 	    throw new IllegalArgumentException
-		(sm.getString("warResources.notWar"));
+		(sm.getString("warResources.invalidWar", docBase));
         try {
             this.base = new ZipFile(base);
         } catch (Exception e) {
