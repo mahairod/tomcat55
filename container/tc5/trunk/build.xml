@@ -540,6 +540,8 @@
 
     <antcall target="fix-webapps" />
 
+    <antcall target="build-webapps-precompile" /> 
+
   </target>
 
   <target name="fix-webapps" depends="init"
