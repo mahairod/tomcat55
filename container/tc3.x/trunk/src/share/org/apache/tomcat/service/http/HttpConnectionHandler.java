@@ -170,10 +170,9 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		    (BufferedServletInputStream)reqA.getInputStream();
 		sis.setLimit(contentLength);
 	    }
-    
-	    //	    System.out.print("3");
+
 	    contextM.service( reqA, resA );
-	    //	    System.out.print("4");
+
 	    try {
                InputStream is = socket.getInputStream();
                int available = is.available ();
