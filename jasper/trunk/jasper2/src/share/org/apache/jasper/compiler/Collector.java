@@ -198,7 +198,7 @@ public class Collector {
 
 	    // Record if the tag element and its body contains any scriptlet.
 	    ci.setScriptless(! scriptingElementSeen);
-	    ci.setHasUsebean(usebeanSeen);
+	    ci.setHasUseBean(usebeanSeen);
 	    ci.setHasIncludeAction(includeActionSeen);
 	    ci.setHasSetProperty(setPropertySeen);
 	    ci.setHasScriptingVars(hasScriptingVars);

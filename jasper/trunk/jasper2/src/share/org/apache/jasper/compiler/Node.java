@@ -908,7 +908,7 @@ public abstract class Node {
     public static class ChildInfo {
 	private boolean scriptless;	// true if the tag and its body
 					// contians no scripting elements.
-	private boolean hasUsebean;
+	private boolean hasUseBean;
 	private boolean hasIncludeAction;
 	private boolean hasSetProperty;
 	private boolean hasScriptingVars;
@@ -921,19 +921,19 @@ public abstract class Node {
 	    return scriptless;
 	}
 
-	public void setHasUsebean(boolean u) {
-	    hasUsebean = u;
+	public void setHasUseBean(boolean u) {
+	    hasUseBean = u;
 	}
 
-	public boolean isHasUsebean() {
-	    return hasUsebean;
+	public boolean hasUseBean() {
+	    return hasUseBean;
 	}
 
 	public void setHasIncludeAction(boolean i) {
 	    hasIncludeAction = i;
 	}
 
-	public boolean isHasIncludeAction() {
+	public boolean hasIncludeAction() {
 	    return hasIncludeAction;
 	}
 
@@ -941,7 +941,7 @@ public abstract class Node {
 	    hasSetProperty = s;
 	}
 
-	public boolean isHasSetProperty() {
+	public boolean hasSetProperty() {
 	    return hasSetProperty;
 	}
         

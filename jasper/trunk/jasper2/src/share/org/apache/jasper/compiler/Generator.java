@@ -2773,14 +2773,14 @@ public class Generator {
             //    "jsp.error.internal.unexpected_node_type" ) );
         }
         
-        if (ci.isHasUsebean()) {
+        if (ci.hasUseBean()) {
             out.printil("HttpSession session = pageContext.getSession();");
             out.printil("ServletContext application = pageContext.getServletContext();");
         }
-        if (ci.isHasUsebean() || ci.isHasIncludeAction() || ci.isHasSetProperty()) {
+        if (ci.hasUseBean() || ci.hasIncludeAction() || ci.hasSetProperty()) {
             out.printil("HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();");
         }
-        if (ci.isHasIncludeAction()) {
+        if (ci.hasIncludeAction()) {
             out.printil("HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();");
         }
     }
