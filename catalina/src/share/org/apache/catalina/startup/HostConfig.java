@@ -84,8 +84,10 @@ import java.util.jar.JarFile;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import org.apache.naming.resources.ResourceAttributes;
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -157,13 +159,6 @@ public class HostConfig
      * Should we deploy XML Context config files?
      */
     private boolean deployXML = false;
-
-
-    /**
-     * Should we monitor the <code>appBase</code> directory for new
-     * applications and automatically deploy them?
-     */
-    private boolean liveDeploy = false;
 
 
     /**
@@ -297,28 +292,6 @@ public class HostConfig
 
 
     /**
-     * Return the live deploy flag for this component.
-     */
-    public boolean isLiveDeploy() {
-
-        return (this.liveDeploy);
-
-    }
-
-
-    /**
-     * Set the live deploy flag for this component.
-     *
-     * @param liveDeploy The new live deploy flag
-     */
-    public void setLiveDeploy(boolean liveDeploy) {
-
-        this.liveDeploy = liveDeploy;
-
-    }
-
-
-    /**
      * Return the unpack WARs flag.
      */
     public boolean isUnpackWARs() {
@@ -400,7 +373,6 @@ public class HostConfig
                     this.debug = hostDebug;
                 }
                 setDeployXML(((StandardHost) host).isDeployXML());
-                setLiveDeploy(((StandardHost) host).getLiveDeploy());
                 setUnpackWARs(((StandardHost) host).isUnpackWARs());
                 setXmlNamespaceAware(((StandardHost) host).getXmlNamespaceAware());
                 setXmlValidation(((StandardHost) host).getXmlValidation());
@@ -438,6 +410,23 @@ public class HostConfig
 
 
     /**
+     * Return a File object representing the "configuration root" directory
+     * for our associated Host.
+     */
+    protected File configBase() {
+
+        File file = new File(System.getProperty("catalina.base"), "conf");
+        Container parent = host.getParent();
+        if ((parent != null) && (parent instanceof Engine)) {
+            file = new File(file, parent.getName());
+        }
+        file = new File(file, host.getName());
+        return (file);
+
+    }
+
+
+    /**
      * Deploy applications for any directories or WAR files that are found
      * in our "application root" directory.
      */
@@ -449,9 +438,13 @@ public class HostConfig
         File appBase = appBase();
         if (!appBase.exists() || !appBase.isDirectory())
             return;
-        String files[] = appBase.list();
+        File configBase = configBase();
+        if (configBase.exists() && configBase.isDirectory()) {
+            String configFiles[] = configBase.list();
+            deployDescriptors(configBase, configFiles);
+        }
 
-        deployDescriptors(appBase, files);
+        String files[] = appBase.list();
         deployWARs(appBase, files);
         deployDirectories(appBase, files);
 
@@ -461,7 +454,7 @@ public class HostConfig
     /**
      * Deploy XML context descriptors.
      */
-    protected void deployDescriptors(File appBase, String[] files) {
+    protected void deployDescriptors(File configBase, String[] files) {
 
         if (!deployXML)
            return;
@@ -474,7 +467,7 @@ public class HostConfig
                 continue;
             if (deployed.contains(files[i]))
                 continue;
-            File dir = new File(appBase, files[i]);
+            File dir = new File(configBase, files[i]);
             if (files[i].toLowerCase().endsWith(".xml")) {
 
                 deployed.add(files[i]);
@@ -858,7 +851,7 @@ public class HostConfig
         if (log.isDebugEnabled())
             log.debug(sm.getString("hostConfig.start"));
 
-        if (host.getAutoDeploy()) {
+        if (host.getDeployOnStartup()) {
             deployApps();
         }
 
