@@ -659,7 +659,9 @@ public class Catalina {
 	    else
 		definition = "sun.,";
 	    Security.setProperty("package.definition",
-		"java.,javax.,org.apache.catalina.,org.apache.jasper.");
+		// FIX ME package "javax." was removed to prevent HotSpot
+		// fatal internal errors
+		definition + "java.,org.apache.catalina.,org.apache.jasper.");
 	}
 
 	// Start the new server

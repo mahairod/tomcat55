@@ -67,6 +67,8 @@ package org.apache.catalina.connector.http;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.servlet.ServletInputStream;
@@ -372,15 +374,13 @@ final class HttpRequestImpl
      * @param name Name of the requested header
      */
     public Enumeration getHeaders(String name) {
-
-        ArrayList tempArrayList = new ArrayList();
-	name = name.toLowerCase();
-        for (int i = 0; i < nextHeader; i++) {
-            if (headerPool[i].equals(name))
-                tempArrayList.add(new String(headerPool[i].value, 0,
+	ArrayList tempArrayList = new ArrayList();
+	for (int i = 0; i < nextHeader; i++) {
+	    if (headerPool[i].equals(name))
+        	tempArrayList.add(new String(headerPool[i].value, 0,
                                              headerPool[i].valueEnd));
         }
-        return new Enumerator(tempArrayList);
+        return (Enumeration) new Enumerator(tempArrayList);
 
     }
 
@@ -389,18 +389,13 @@ final class HttpRequestImpl
      * Return the names of all headers received with this request.
      */
     public Enumeration getHeaderNames() {
-
-        ArrayList tempArrayList = new ArrayList();
-        for (int i = 0; i < nextHeader; i++) {
-            tempArrayList.add(new String(headerPool[i].name, 0,
+	ArrayList tempArrayList = new ArrayList();
+	for (int i = 0; i < nextHeader; i++) {
+	    tempArrayList.add(new String(headerPool[i].name, 0,
                                          headerPool[i].nameEnd));
-        }
-        return new Enumerator(tempArrayList);
+	}
+	return (Enumeration) new Enumerator(tempArrayList);
 
     }
-
-
-
-
 
 }

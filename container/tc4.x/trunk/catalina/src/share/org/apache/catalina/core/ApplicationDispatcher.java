@@ -67,6 +67,7 @@ package org.apache.catalina.core;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
@@ -102,6 +103,38 @@ import org.apache.catalina.util.StringManager;
 final class ApplicationDispatcher
     implements RequestDispatcher {
 
+
+    protected class PrivilegedForward implements PrivilegedExceptionAction {
+        private ServletRequest request;
+        private ServletResponse response;
+
+        PrivilegedForward(ServletRequest request, ServletResponse response)
+        {   
+	    this.request = request;
+	    this.response = response;
+        }   
+            
+        public Object run() throws ServletException, IOException {
+	    doForward(request,response);
+	    return null;
+        }   
+    }
+
+    protected class PrivilegedInclude implements PrivilegedExceptionAction {
+        private ServletRequest request;
+        private ServletResponse response;
+
+        PrivilegedInclude(ServletRequest request, ServletResponse response)
+        {  
+            this.request = request;
+            this.response = response;
+        }
+        
+        public Object run() throws ServletException, IOException {
+            doInclude(request,response);
+            return null;
+        }              
+    }
 
     // ----------------------------------------------------------- Constructors
 
@@ -214,18 +247,9 @@ final class ApplicationDispatcher
         throws ServletException, IOException
     {
         if( System.getSecurityManager() != null ) {
-            final ServletRequest req = request;
-            final ServletResponse res = response;
             try {
-                java.security.AccessController.doPrivileged(
-                    new java.security.PrivilegedExceptionAction()
-                    {
-                        public Object run() throws ServletException, IOException {
-                            doForward(req,res);
-                            return null;
-                        }
-                    }
-                );
+		PrivilegedForward dp = new PrivilegedForward(request,response);
+                AccessController.doPrivileged(dp);
             } catch( PrivilegedActionException pe) {
                 Exception e = pe.getException();
                 if( e.getClass().getName().equals("javax.servlet.ServletException") )
@@ -366,20 +390,12 @@ final class ApplicationDispatcher
         throws ServletException, IOException
     {
         if( System.getSecurityManager() != null ) {
-            final ServletRequest req = request;
-            final ServletResponse res = response;
             try {
-                java.security.AccessController.doPrivileged(
-                    new java.security.PrivilegedExceptionAction()
-                    {
-                        public Object run() throws ServletException, IOException {
-                            doInclude(req,res);
-                            return null;       
-                        }               
-                    }       
-                );      
+                PrivilegedInclude dp = new PrivilegedInclude(request,response);
+                AccessController.doPrivileged(dp);
             } catch( PrivilegedActionException pe) {
                 Exception e = pe.getException();
+		pe.printStackTrace();
                 if( e.getClass().getName().equals("javax.servlet.ServletException") )
                     throw (ServletException)e;
                 throw (IOException)e;

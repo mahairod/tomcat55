@@ -621,10 +621,8 @@ public class StandardClassLoader
             if (i >= 0) {
                 try {
                     securityManager.checkPackageDefinition(name.substring(0,i));
-                } catch (SecurityException se) {
-                    String error = "Security Violation, attempt to define " +
-                        "a Class in a restricted package: " + name;
-                    throw new ClassNotFoundException(error);
+                } catch (Exception se) {
+		    throw new ClassNotFoundException(name);
                 }
             }
         }
@@ -927,6 +925,18 @@ public class StandardClassLoader
             return (clazz);
         }
 
+	// If a system class, use system class loader
+	if( name.startsWith("java.") ) {
+            ClassLoader loader = system;
+            clazz = loader.loadClass(name);
+            if (clazz != null) {         
+                if (resolve)             
+                    resolveClass(clazz);
+                return (clazz);
+            }
+	    throw new ClassNotFoundException(name);
+	}
+
         // (.5) Permission to access this class when using a SecurityManager
         if (securityManager != null) {
             int i = name.lastIndexOf('.');
@@ -937,6 +947,7 @@ public class StandardClassLoader
                     String error = "Security Violation, attempt to use " +
                         "Restricted Class: " + name;
 		    System.out.println(error);
+		    se.printStackTrace();
                     log(error);
                     throw new ClassNotFoundException(error);
                 }

@@ -70,6 +70,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -528,7 +530,7 @@ public class HttpResponseBase
 	// Prepare a suitable output writer
 	OutputStreamWriter osr =
 	    new OutputStreamWriter(getStream(), getCharacterEncoding());
-	PrintWriter outputWriter = new PrintWriter(osr);
+	final PrintWriter outputWriter = new PrintWriter(osr);
 
 	// Send the "Status:" header
 	outputWriter.print(request.getRequest().getProtocol());
@@ -546,28 +548,28 @@ public class HttpResponseBase
 	// Send the content-length and content-type headers (if any)
 	if (getContentType() != null) {
 	    outputWriter.print("Content-Type: " + getContentType() + "\r\n");
-            //            System.out.println(" Content-Type: " + getContentType());
+            // System.out.println(" Content-Type: " + getContentType());
 	}
 	if (getContentLength() >= 0) {
 	    outputWriter.print("Content-Length: " + getContentLength() +
 			       "\r\n");
-            //            System.out.println(" Content-Length: " + getContentLength());
+            // System.out.println(" Content-Length: " + getContentLength());
 	}
 
 	// Send all specified headers (if any)
 	synchronized (headers) {
-	    Iterator names = headers.keySet().iterator();
-	    while (names.hasNext()) {
-		String name = (String) names.next();
-		ArrayList values = (ArrayList) headers.get(name);
-		Iterator items = values.iterator();
-		while (items.hasNext()) {
-		    String value = (String) items.next();
+	Iterator names = headers.keySet().iterator();
+	while (names.hasNext()) {
+	    String name = (String) names.next();
+	    ArrayList values = (ArrayList) headers.get(name);
+	    Iterator items = values.iterator();
+	    while (items.hasNext()) {
+		String value = (String) items.next();
 		    outputWriter.print(name);
 		    outputWriter.print(": ");
 		    outputWriter.print(value);
 		    outputWriter.print("\r\n");
-                    //                    System.out.println(" " + name + ": " + value);
+                    // System.out.println(" " + name + ": " + value);
 		}
 	    }
 	}
@@ -602,10 +604,10 @@ public class HttpResponseBase
 		outputWriter.print(": ");
 		outputWriter.print(CookieTools.getCookieHeaderValue(cookie));
 		outputWriter.print("\r\n");
-                //                System.out.println(" " +
-                //                                   CookieTools.getCookieHeaderName(cookie) +
-                //                                   ": " +
-                //                                   CookieTools.getCookieHeaderValue(cookie));
+                // System.out.println(" " +
+                // CookieTools.getCookieHeaderName(cookie) +
+                //     ": " +
+                //     CookieTools.getCookieHeaderValue(cookie));
 	    }
 	}
 
@@ -925,7 +927,6 @@ public class HttpResponseBase
      * @param url URL to be encoded
      */
     public String encodeURL(String url) {
-
 	if (isEncodeable(toAbsolute(url))) {
 	    HttpServletRequest hreq =
 	      (HttpServletRequest) request.getRequest();

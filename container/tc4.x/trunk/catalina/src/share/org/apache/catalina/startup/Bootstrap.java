@@ -124,6 +124,25 @@ public final class Bootstrap {
 	// Load our startup class and call its process() method
 	try {
 
+	    if( System.getSecurityManager() != null ) {
+		// Pre load some classes required for SecurityManager
+		// so that defineClassInPackage does not throw a
+		// security exception.
+		String basePackage = "org.apache.catalina.";
+		catalinaLoader.loadClass(basePackage +
+		    "core.ApplicationContext$PrivilegedGetRequestDispatcher");
+                catalinaLoader.loadClass(basePackage +
+                    "core.ApplicationDispatcher$PrivilegedForward");
+                catalinaLoader.loadClass(basePackage +
+                    "core.ApplicationDispatcher$PrivilegedInclude");
+                catalinaLoader.loadClass(basePackage +
+                    "session.StandardSession");
+                catalinaLoader.loadClass(basePackage +
+                    "util.Enumerator");
+                catalinaLoader.loadClass(
+		    "javax.servlet.http.Cookie");
+	    }
+
             // Instantiate a startup class instance
             if (debug >= 1)
                 log("Loading startup class");

@@ -66,7 +66,9 @@ package org.apache.catalina.connector;
 
 
 import java.io.IOException;
+import java.security.AccessController;
 import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1014,7 +1016,6 @@ public class HttpRequestBase
      * @param create Create a new session if one does not exist
      */
     public HttpSession getSession(boolean create) {
-
         // There cannot be a session if no context has been assigned yet
         if (context == null)
             return (null);
@@ -1024,6 +1025,7 @@ public class HttpRequestBase
 	    session = null;
 	if (session != null)
 	    return (session.getSession());
+
 
 	// Return the requested session if it exists and is valid
 	Manager manager = null;
