@@ -167,6 +167,12 @@ public class SimpleTagSupport
      * interfaces.  This method is used for coordination among 
      * cooperating tags.
      *
+     * <p> For every instance of TagAdapter
+     * encountered while traversing the ancestors, the tag handler returned by
+     * <tt>TagAdapter.getAdaptee()</tt> - instead of the TagAdpater itself -
+     * is compared to <tt>klass</tt>. If the tag handler matches, it - and
+     * not its TagAdapter - is returned.
+     *
      * <p>
      * The current version of the specification only provides one formal
      * way of indicating the observable type of a tag handler: its
@@ -198,31 +204,34 @@ public class SimpleTagSupport
     {
 	boolean isInterface = false;
 
-	if (from == null ||
-	    klass == null ||
-	    (!JspTag.class.isAssignableFrom(klass) &&
-	     !(isInterface = klass.isInterface()))) {
+	if (from == null || klass == null
+	        || (!JspTag.class.isAssignableFrom(klass)
+		    && !(isInterface = klass.isInterface()))) {
 	    return null;
 	}
 
 	for (;;) {
-	    JspTag tag = null;
+	    JspTag parent = null;
 	    if( from instanceof SimpleTag ) {
-		tag = ((SimpleTag)from).getParent();
+		parent = ((SimpleTag)from).getParent();
 	    }
 	    else if( from instanceof Tag ) {
-		tag = ((Tag)from).getParent();
+		parent = ((Tag)from).getParent();
 	    }
-
-	    if (tag == null) {
+	    if (parent == null) {
 		return null;
 	    }
 
-	    if ((isInterface && klass.isInstance(tag)) ||
-	        klass.isAssignableFrom(tag.getClass()))
-		return tag;
-	    else
-		from = tag;
+	    if (parent instanceof TagAdapter) {
+		parent = ((TagAdapter) parent).getAdaptee();
+	    }
+
+	    if ((isInterface && klass.isInstance(parent))
+		    || klass.isAssignableFrom(parent.getClass())) {
+		return parent;
+	    }
+
+	    from = parent;
 	}
     }    
 }
