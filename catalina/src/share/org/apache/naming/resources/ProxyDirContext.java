@@ -233,6 +233,12 @@ public class ProxyDirContext implements DirContext {
         new ImmutableNameNotFoundException();
 
 
+    /**
+     * Non cacheable resources.
+     */
+    protected String[] nonCacheable = { "/WEB-INF/lib/", "/WEB-INF/classes/" };
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -1427,6 +1433,13 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
         if (cache == null)
             return (null);
+        if (name == null)
+            name = "";
+        for (int i = 0; i < nonCacheable.length; i++) {
+            if (name.startsWith(nonCacheable[i])) {
+                return (null);
+            }
+        }
         CacheEntry cacheEntry = cache.lookup(name);
         if (cacheEntry == null) {
             cacheEntry = new CacheEntry();
