@@ -89,13 +89,6 @@ class PageInfo {
     private String errorPage = null;
     private String pageEncoding = null;
 
-    /*
-     * Auto-detected encoding, or encoding specified in XML prolog
-     * (declaration).
-     * Only meaningful for XML documents.
-     */
-    private String xmlPrologEncoding = null;
-
     private int maxTagNesting = 0;
     private boolean scriptless = false;
     private boolean scriptingInvalid = false;
@@ -233,14 +226,6 @@ class PageInfo {
 	return pageEncoding;
     }
 
-    public void setXmlPrologEncoding(String xmlPrologEncoding) {
-	this.xmlPrologEncoding = xmlPrologEncoding;
-    }
-
-    public String getXmlPrologEncoding() {
-	return xmlPrologEncoding;
-    }
-    
     public int getMaxTagNesting() {
         return maxTagNesting;
     }

@@ -80,7 +80,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
     
     private InputStream stream;
     private String encoding;
-    private boolean isEncodingSetInProlog;
+    private boolean isFallback;
     private Boolean isBigEndian;
     private Reader reader;
     
@@ -134,10 +134,10 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
      * @param err The error dispatcher
      *
      * @return Two-element array, where the first element (of type
-     * java.lang.String) contains the name of the autodetected encoding, and
-     * the second element (of type java.lang.Boolean) specifies whether the 
-     * encoding was specified by the encoding attribute of an XML declaration
-     * (prolog).
+     * java.lang.String) contains the name of the (auto)detected encoding, 
+     * and the second element specifies whether the default encoding
+     * (UTF-8) is being used as a fallback (because no encoding could be
+     * detected).
      */
     public Object[] getEncoding(InputStream in, ErrorDispatcher err)
 	throws IOException, JasperException
@@ -149,7 +149,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
 	detector.scanXMLDecl();
 	
 	return new Object[] { detector.encoding,
-			      new Boolean(detector.isEncodingSetInProlog) };
+			      new Boolean(detector.isFallback) };
     }
 
     public Object[] getEncodingMethod(String fname, JarFile jarFile,
@@ -319,6 +319,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
     private Object[] getEncodingName(byte[] b4, int count) {
 
         if (count < 2) {
+	    isFallback = true;
             return new Object[]{"UTF-8", null};
         }
 
@@ -337,6 +338,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
         // default to UTF-8 if we don't have enough bytes to make a
         // good determination of the encoding
         if (count < 3) {
+	    isFallback = true;
             return new Object [] {"UTF-8", null};
         }
 
@@ -349,6 +351,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
         // default to UTF-8 if we don't have enough bytes to make a
         // good determination of the encoding
         if (count < 4) {
+	    isFallback = true;
             return new Object [] {"UTF-8", null};
         }
 
@@ -390,6 +393,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
         }
 
         // default encoding
+	isFallback = true;
         return new Object [] {"UTF-8", null};
 
     }
@@ -1302,7 +1306,7 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
 
         // set encoding on reader
         if (encodingPseudoAttr != null) {
-            isEncodingSetInProlog = true;
+            isFallback = false;
 	    encoding = encodingPseudoAttr;
         }
     }

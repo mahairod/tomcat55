@@ -67,12 +67,10 @@ import org.apache.jasper.xmlparser.XMLEncodingDetector;
 /**
  * Controller for the parsing of a JSP page.
  * <p>
- * A translation unit (JSP source file and any files included via the
- * include directive) may involve the processing of JSP pages
- * written with different syntaxes (currently the original JSP syntax,
- * as well as the XML syntax (as of JSP 1.2)). This class encapsulates 
- * the behavior related to the selection and invocation of 
- * the proper parser.
+ * The same ParserController instance is used for a JSP page and any JSP
+ * segments included by it (via an include directive), where each segment may
+ * be provided in standard or XML syntax. This class selects and invokes the
+ * appropriate parser for the JSP page and its included segments.
  *
  * @author Pierre Delisle
  * @author Jan Luehe
@@ -109,6 +107,8 @@ class ParserController {
      * in the translation unit.
      */
     private boolean isTopFile = true;
+
+    private String sourceEnc;
 
     /*
      * Constructor
@@ -196,9 +196,27 @@ class ParserController {
 
 	// Figure out what type of JSP document and encoding type we are
 	// dealing with
-	String encoding = figureOutJspDocument(absFileName, jarFile);
+	figureOutJspDocument(absFileName, jarFile);
 
 	if (isTopFile) {
+	    if (isXml) {
+		// Make sure the encoding determined from the XML prolog
+		// matches that in the JSP config element, if present
+		String jspConfigPageEnc = pageInfo.getPageEncoding();
+		if (jspConfigPageEnc != null
+		        && !jspConfigPageEnc.equals(sourceEnc)) {
+		    err.jspError("jsp.error.prolog_config_encoding_mismatch",
+				 sourceEnc, jspConfigPageEnc);
+		}
+		// override the encoding that may have been set from JSP config
+		// info (in Compiler.generateJava()), since that applies to
+		// standard syntax only
+		pageInfo.setPageEncoding(sourceEnc);
+	    } else {
+		if (pageInfo.getPageEncoding() == null) {
+		    pageInfo.setPageEncoding(sourceEnc);
+		}
+	    }
 	    pageInfo.setIsXml(isXml);
 	    isTopFile = false;
 	} else {
@@ -207,8 +225,18 @@ class ParserController {
 
 	// Dispatch to the proper parser
 	if (isXml) {
+	    // JSP document (XML syntax)
 	    InputStream inStream = null;
 	    try {
+		// XXX Files included using the include directive must be read
+		// using the character encoding of the including page. 
+		// However, I am wondering how to implement this if an
+		// included JSP document contains its own XML prolog. Since
+		// we're handing the included JSP document off to the XML
+		// (e.g., SAX) parser, we have no control over how it's parsed:
+		// the parser will determine the encoding from the XML prolog
+		// on its own, and use it. We can't tell the parser to use
+		// a different encoding.
 		inStream = JspUtil.getInputStream(absFileName, jarFile, ctxt,
 						  err);
 		parsedPage = JspDocumentParser.parse(this, absFileName,
@@ -224,12 +252,21 @@ class ParserController {
 		}
 	    }
 	} else {
+	    // Standard syntax
 	    InputStreamReader inStreamReader = null;
 	    try {
-		inStreamReader = JspUtil.getReader(absFileName, encoding,
-						   jarFile, ctxt, err);
-		JspReader jspReader = new JspReader(ctxt, absFileName,
-						    encoding, inStreamReader,
+		// Files included using the include directive must be read
+		// using the character encoding of the including page, which is
+		// the encoding returned by pageInfo.getPageEncoding().
+		inStreamReader = JspUtil.getReader(absFileName,
+						   pageInfo.getPageEncoding(),
+						   jarFile,
+						   ctxt,
+						   err);
+		JspReader jspReader = new JspReader(ctxt,
+						    absFileName,
+						    pageInfo.getPageEncoding(),
+						    inStreamReader,
 						    err);
                 parsedPage = Parser.parse(this, jspReader, parent, isTagFile,
 					  directivesOnly, jarFile);
@@ -261,30 +298,32 @@ class ParserController {
      *
      * If these properties are already specified in the jsp-config element
      * in web.xml, then they are used.
-     *
-     * @return The source encoding 
      */
-    private String figureOutJspDocument(String fname, JarFile jarFile)
+    private void figureOutJspDocument(String fname, JarFile jarFile)
 	        throws JasperException, IOException {
 
-	boolean isXmlFound = false;
+	// 'true' if the syntax of the page (XML or standard) is identified by
+	// external information: either via a JSP configuration element or
+	// the ".jspx" suffix
+	boolean isExternal = false;
 	isXml = false;
 
 	if (pageInfo.isXmlSpecified()) {
 	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
 	    isXml = pageInfo.isXml();
-	    isXmlFound = true;
+	    isExternal = true;
 	} else if (fname.endsWith(".jspx")) {
 	    isXml = true;
-	    isXmlFound = true;
+	    isExternal = true;
 	}
 	
-	String sourceEnc = null;
-	if (isXmlFound && !isXml) {
+	if (isExternal && !isXml) {
 	    // JSP syntax
 	    if (pageInfo.getPageEncoding() != null) {
-		// encoding specified in jsp-config (used only by JSP syntax)
-		return pageInfo.getPageEncoding();
+		// Encoding specified in jsp-config (used by standard syntax
+		// only)
+		sourceEnc = pageInfo.getPageEncoding();
+		return;
 	    } else {
 		// We don't know the encoding
 		sourceEnc = "ISO-8859-1";
@@ -294,45 +333,46 @@ class ParserController {
 	    Object[] ret = XMLEncodingDetector.getEncoding(fname, jarFile,
 							   ctxt, err);
 	    sourceEnc = (String) ret[0];
-	    boolean isEncodingSetInProlog = ((Boolean) ret[1]).booleanValue();
-	    if (isEncodingSetInProlog) {
-		// Prolog present only in XML syntax
-		isXml = true;
-		if (isTopFile) {
-		    String jspConfigPageEnc = pageInfo.getPageEncoding();
-		    if (jspConfigPageEnc != null
-			    && !jspConfigPageEnc.equals(sourceEnc)) {
-			err.jspError(
-			    "jsp.error.page.prolog_config_encoding_conflict",
-			    sourceEnc, jspConfigPageEnc);
-		    }
-		    pageInfo.setXmlPrologEncoding(sourceEnc);
-		}
-	    } else if (sourceEnc.equals("UTF-8")) {
+	    boolean isFallback = ((Boolean) ret[1]).booleanValue();
+	    if (isFallback) {
 		/*
-		 * We don't know if we're dealing with an XML document
-		 * unless isXml is true, but even if isXml is true, we don't
-		 * know if we're dealing with a JSP document that satisfies
-		 * the encoding auto-detection rules (the JSP document may not
-		 * have an XML prolog and start with <jsp:root ...>). 
+		 * Page does not have any XML prolog, or contains an XML
+		 * prolog that is being used as template text (in standard
+		 * syntax). This means that the page's encoding cannot be
+		 * determined from the 'encoding' attribute of an XML prolog,
+		 * or autodetected from an XML prolog.
+		 *
 		 * We need to be careful, because the page may be encoded in
 		 * ISO-8859-1 (or something entirely different), and may
 		 * contain byte sequences that will cause a UTF-8 converter to
 		 * throw exceptions. 
+		 *
 		 * It is safe to use a source encoding of ISO-8859-1 in this
 		 * case, as there are no invalid byte sequences in ISO-8859-1,
-		 * and the byte/character sequences we're looking for are
-		 * identical in either encoding (both UTF-8 and ISO-8859-1 are
-		 * extensions of ASCII).
+		 * and the byte/character sequences we're looking for (i.e.,
+		 * <jsp:root>) are identical in either encoding (both UTF-8
+		 * and ISO-8859-1 are extensions of ASCII).
 		 */
 		sourceEnc = "ISO-8859-1";
 	    }
 	}
 
 	if (isXml) {
-	    return sourceEnc;
+	    // (This implies 'isExternal' is TRUE.)
+	    // We know we're dealing with a JSP document (via JSP config or
+	    // ".jspx" suffix), so we're done.
+	    return;
 	}
 
+	/*
+	 * At this point, 'isExternal' or 'isXml' is FALSE.
+	 * Search for jsp:root action, in order to determine if we're dealing 
+	 * with XML or standard syntax (unless we already know what we're 
+	 * dealing with, i.e., when 'isExternal' is TRUE and 'isXml' is FALSE).
+	 * No check for XML prolog, since nothing prevents a page from
+	 * outputting XML and still using JSP syntax (in this case, the 
+	 * XML prolog is treated as template text).
+	 */
 	JspReader jspReader = null;
 	try {
 	    jspReader = new JspReader(ctxt, fname, sourceEnc, jarFile, err);
@@ -341,27 +381,30 @@ class ParserController {
 	}
         jspReader.setSingleFile(true);
         Mark startMark = jspReader.mark();
-
-	if (!isXmlFound) {
-	    // Check for the jsp:root tag
-	    // No check for xml prolog, since nothing prevents a page
-	    // to output XML and still use JSP syntax.
+	if (!isExternal) {
 	    jspReader.reset(startMark);
 	    Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
 	    if (mark != null) {
 	        isXml = true;
-		return sourceEnc;
+		return;
 	    } else {
 	        isXml = false;
 	    }
 	}
 
-	// At this point we know it's JSP syntax ...
+	/*
+	 * At this point, we know we're dealing with JSP syntax.
+	 * If an XML prolog is provided, it's treated as template text.
+	 * Determine the page encoding from the page directive, unless it's
+	 * specified via JSP config.
+	 */
 	if (pageInfo.getPageEncoding() != null) {
-	    return pageInfo.getPageEncoding();
+	    sourceEnc = pageInfo.getPageEncoding();
 	} else {
-	    return getSourceEncodingForJspSyntax(jspReader, startMark);
+	    sourceEnc = getSourceEncodingForJspSyntax(jspReader, startMark);
 	}
+
+	return;
     }
     
     /*

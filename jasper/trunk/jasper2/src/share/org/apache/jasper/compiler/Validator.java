@@ -94,7 +94,6 @@ class Validator {
 
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
-	JspConfig.JspProperty jspProperty;
 
 	private static final JspUtil.ValidAttribute[] pageDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("language"),
@@ -131,10 +130,6 @@ class Validator {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
 	    JspCompilationContext ctxt = compiler.getCompilationContext();
-	    JspConfig jspConfig = ctxt.getOptions().getJspConfig();
-	    if (jspConfig != null) {
-		this.jspProperty = jspConfig.findJspProperty(ctxt.getJspFile());
-	    }
 	}
 
 	public void visit(Node.PageDirective n) throws JasperException {    
@@ -263,28 +258,22 @@ class Validator {
 		     * a JSP configuration element (whose URL pattern matches
 		     * the page).
 		     * At this point, we've already verified (in 
-		     * ParserController.figureOutJspDocument()) that the page
-		     * character encodings specified in a JSP config element
-		     * and XML prolog match.
+		     * ParserController.parse()) that the page character
+		     * encodings specified in a JSP config element and XML
+		     * prolog match.
 		     */
-		    String compareEnc = null;
-		    if (jspProperty != null) {
-			compareEnc = jspProperty.getPageEncoding();
-			if (compareEnc != null && !compareEnc.equals(value)) {
-			    err.jspError(
-                                n, "jsp.error.page.config_pagedir_encoding_conflict",
-				compareEnc, value);
+		    String compareEnc = pageInfo.getPageEncoding();
+		    if (!value.equals(compareEnc)) {
+			if (pageInfo.isXml()) {
+			    err.jspError(n,
+					 "jsp.error.prolog_pagedir_encoding_mismatch",
+					 compareEnc, value);
+			} else {
+			    err.jspError(n,
+					 "jsp.error.config_pagedir_encoding_mismatch",
+					 compareEnc, value);
 			}
 		    }
-		    if (compareEnc == null) {
-			compareEnc = pageInfo.getXmlPrologEncoding();
-			if (compareEnc != null && !compareEnc.equals(value)) {
-			    err.jspError(
-			        n, "jsp.error.page.prolog_pagedir_encoding_conflict",
-				compareEnc, value);
-			}			
-		    }
-		    pageInfo.setPageEncoding(value);
 		}
 	    }
 

@@ -90,21 +90,21 @@ public class XMLEncodingDetector {
     {
         XMLEncodingDetector detector=null;
         try {
-            Class.forName( "org.apache.xerces.util.SymbolTable");
+            Class.forName("org.apache.xerces.util.SymbolTable");
             Class detectorClass=Class.forName("org.apache.jasper.xmlparser.XercesEncodingDetector");
-            detector=(XMLEncodingDetector)detectorClass.newInstance();
+            detector = (XMLEncodingDetector) detectorClass.newInstance();
         } catch(Exception ex ) {
-            detector=new XMLEncodingDetector();
+            detector = new XMLEncodingDetector();
         }
         return detector.getEncodingMethod(fname, jarFile, ctxt, err);
     }
 
     public Object[] getEncodingMethod(String fname, JarFile jarFile,
-				       JspCompilationContext ctxt,
-				       ErrorDispatcher err)
+				      JspCompilationContext ctxt,
+				      ErrorDispatcher err)
 	throws IOException, JasperException
     {
-        Object result[]=new Object[]{ "UTF8", new Boolean(false) };
+        Object result[] = new Object[] { "UTF8", new Boolean(true) };
         return result;
     }
 }
