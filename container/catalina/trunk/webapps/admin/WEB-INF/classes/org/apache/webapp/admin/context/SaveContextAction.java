@@ -249,7 +249,12 @@ public final class SaveContextAction extends Action {
                 mObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardManagerTypes);
-                                    
+                                                                       
+                if (mObjectName==null) {
+                    request.setAttribute("warning", "error.context.directory");
+                    return (mapping.findForward("Save Unsuccessful"));
+                }
+                
                 // Add the new Context to our tree control node
                 addToTreeControlNode(oname, cObjectName, parentName, 
                                     resources, session);                     
