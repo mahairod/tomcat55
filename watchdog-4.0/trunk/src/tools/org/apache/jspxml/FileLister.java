@@ -25,10 +25,8 @@ this.extension = extension ;
 
 public Object[] listFiles()
 {
-System.out.println("Please wait while FileLister searches all the subdirectries..........");
 
 addFiles(start_dir);
-System.out.println("Search complete");
 return  file_list.toArray();
 }
 

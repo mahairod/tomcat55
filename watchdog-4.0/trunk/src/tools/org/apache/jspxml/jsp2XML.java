@@ -171,7 +171,7 @@ tag_prefix = new Hashtable();
 readJspFileintoString(input_jsp_file) ;
 }
 
-protected String parseDirective(String directive_str )
+public String parseDirective(String directive_str )
 {
 // \t is not same as a space
 
@@ -224,7 +224,7 @@ return out_file;
 }
 
 
-protected String convert(String jsp )
+public String convert(String jsp )
 {
 int element_index=0;
 int last_index=0;
