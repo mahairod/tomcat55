@@ -365,11 +365,6 @@
         <strong>org.apache.catalina.authenticator.SingleSignOn</strong>.</p>
       </attribute>
 
-      <attribute name="debug" required="false">
-        <p>Detail level of debugging messages created by this component.  By
-        default, this is set to zero (0), which means no debug output.</p>
-      </attribute>
-        
       <attribute name="requireReauthentication" required="false">
         <p>Default false. Flag to determine whether each request needs to be 
         reauthenticated to the security <strong>Realm</strong>. If "true", this

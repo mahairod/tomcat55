@@ -111,13 +111,6 @@
         <code>true</code>.  The default is 15 seconds.</p>
       </attribute>
 
-      <attribute name="debug" required="false">
-        <p>The level of debugging detail logged by this <strong>Engine</strong>
-        to the associated <a href="logger.html">Logger</a>.  Higher numbers
-        generate more detailed output.  If not specified, the default
-        debugging detail level is zero (0).</p>
-      </attribute>
-
       <attribute name="loaderClass" required="false">
         <p>Java class name of the <code>java.lang.ClassLoader</code>
         implementation class to use.  If not specified, the default value is
