@@ -19,6 +19,10 @@ The following schedule is proposed:
 
   Monday, October 15, 2001      Tomcat 4.0.1 Release
 
+If for some reason new issues are found which need significant patches to be 
+addressed, additional beta releases will be made, and this release plan will be
+updated.
+
 As usual with a mainenance release, there should be no regressions from 4.0 to
 4.0.1, and no open confirmed P1 or P2 bugs in the Bugzilla database. The 
 Apache bug database can be accessed at:
@@ -73,12 +77,10 @@ Jasper      3779    The value of <jsp:param> should be URL encoded.
 Jasper      3822    Drive letter causes a NumberFormatException when JSP 
                     compiler parses errors.
 
-Jasper      3892    Can't compile 2092.jsp.
-
 Catalina    3936    WebappClassLoader does not implement getResources().
 
-Connectors  3949    Document with content-length of 0 results in resend 
-                    headers.
+Catalina    3973    Session.getAttribute() locks-up in 
+                    HttpSessionListener.sessionDestroyed().
 
 
 Nice To Have Fixes Before Final Release:
@@ -97,3 +99,7 @@ Unconfirmed Bugs (Awaiting Reproducible Failure Case):
 
 Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped.
 
+Catalina    3953    If context is listed in server.xml then webapp servlets 
+                    are loaded twice....
+
+Catalina    3970    Cannot send more that 1 MB using multipart/form-data.
