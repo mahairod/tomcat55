@@ -88,6 +88,15 @@ public interface ErrorHandler {
 			 Exception exception) throws JasperException;
 
     /**
+     * Processes the given JSP parse error.
+     *
+     * @param errMsg Parse error message
+     * @param exception Parse exception
+     */
+    public void jspError(String msg, Exception exception)
+	throws JasperException;
+
+    /**
      * Processes the given javac compilation errors.
      *
      * @param details Array of JavacErrorDetail instances corresponding to the

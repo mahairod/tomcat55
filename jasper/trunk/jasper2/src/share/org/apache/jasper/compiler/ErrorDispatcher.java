@@ -412,6 +412,7 @@ public class ErrorDispatcher {
 	String errMsg = null;
 	int line = -1;
 	int column = -1;
+	boolean hasLocation = false;
 
 	// Localize
 	
@@ -424,10 +425,12 @@ public class ErrorDispatcher {
 	    file = where.getFile();
 	    line = where.getLineNumber();
 	    column = where.getColumnNumber();
+	    hasLocation = true;
 	} else if (e instanceof SAXParseException) {
 	    file = ((SAXParseException) e).getSystemId();
 	    line = ((SAXParseException) e).getLineNumber();
 	    column = ((SAXParseException) e).getColumnNumber();
+	    hasLocation = true;
 	}
 
 	// Get nested exception
@@ -437,7 +440,11 @@ public class ErrorDispatcher {
 	    nestedEx = ((SAXException) e).getException();
 	}
 
-	errHandler.jspError(file, line, column, errMsg, nestedEx);
+	if (hasLocation) {
+	    errHandler.jspError(file, line, column, errMsg, nestedEx);
+	} else {
+	    errHandler.jspError(errMsg, nestedEx);
+	}
     }
 
     /*

@@ -101,6 +101,20 @@ class DefaultErrorHandler implements ErrorHandler {
     }
 
     /*
+     * Processes the given JSP parse error.
+     *
+     * @param errMsg Parse error message
+     * @param exception Parse exception
+     */
+    public void jspError(String errMsg, Exception ex) throws JasperException {
+	if (errMsg != null) {
+	    throw new JasperException(errMsg);
+	} else {
+	    throw new JasperException(ex.getMessage());
+	}
+    }
+
+    /*
      * Processes the given javac compilation errors.
      *
      * @param details Array of JavacErrorDetail instances corresponding to the

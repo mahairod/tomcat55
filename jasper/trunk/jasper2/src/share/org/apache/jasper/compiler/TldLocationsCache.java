@@ -253,16 +253,10 @@ public class TldLocationsCache {
                 String name = entry.getName();
                 if (!name.startsWith("META-INF/")) continue;
                 if (!name.endsWith(".tld")) continue;
-                //p("tldConfigJar(" + resourcePath +
-                //  "): Processing entry '" + name + "'");
                 stream = jarFile.getInputStream(entry);
                 String uri = parseTldForUri(resourcePath, stream);
-                //p("uri in TLD is: " + uri);
                 if (uri != null) {
-                    mappings.put(uri, 
-                                 new String[]{resourcePath, name});
-                    //p("added mapping: " + uri +
-                    //  " -> " + resourcePath + " " + name);
+                    mappings.put(uri, new String[]{ resourcePath, name });
                 }
             }
             // FIXME @@@
@@ -274,13 +268,18 @@ public class TldLocationsCache {
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (Throwable t) {}
+                } catch (Throwable t) {
+		    // ignore
+		}
             }
             if (jarFile != null) {
                 try {
                     jarFile.close();
-                } catch (Throwable t) {}
+                } catch (Throwable t) {
+		    // ignore
+		}
             }
+	    throw new JasperException(ex);
         }
     }
 
