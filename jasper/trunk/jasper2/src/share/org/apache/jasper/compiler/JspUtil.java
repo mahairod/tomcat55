@@ -548,21 +548,73 @@ public class JspUtil {
                                          String fnMap,
                                          String defaultPrefix) 
     {
+        /*
+         * Determine which context object to use.
+         */
 	String jspCtxt = null;
 	if (isTagFile)
 	    jspCtxt = "getJspContext()";
 	else
 	    jspCtxt = "pageContext";
 
-        return "(" + expectedType.getName() + ") "
+ 	/*
+         * Determine whether to use the expected type's textual name
+ 	 * or, if it's a primitive, the name of its correspondent boxed
+ 	 * type.
+         */
+ 	String targetType = expectedType.getName();
+ 	String primitiveConverterMethod = null;
+ 	if (expectedType.isPrimitive()) {
+ 	    if (expectedType.equals(Boolean.TYPE)) {
+ 	        targetType = Boolean.class.getName();
+ 		primitiveConverterMethod = "booleanValue";
+ 	    } else if (expectedType.equals(Byte.TYPE)) {
+ 	        targetType = Byte.class.getName();
+ 		primitiveConverterMethod = "byteValue";
+ 	    } else if (expectedType.equals(Character.TYPE)) {
+ 	        targetType = Character.class.getName();
+ 		primitiveConverterMethod = "charValue";
+ 	    } else if (expectedType.equals(Short.TYPE)) {
+ 	        targetType = Short.class.getName();
+ 		primitiveConverterMethod = "shortValue";
+ 	    } else if (expectedType.equals(Integer.TYPE)) {
+ 	        targetType = Integer.class.getName();
+ 		primitiveConverterMethod = "intValue";
+ 	    } else if (expectedType.equals(Long.TYPE)) {
+ 	        targetType = Long.class.getName();
+ 		primitiveConverterMethod = "longValue";
+ 	    } else if (expectedType.equals(Float.TYPE)) {
+ 	        targetType = Float.class.getName();
+ 		primitiveConverterMethod = "floatValue";
+ 	    } else if (expectedType.equals(Double.TYPE)) { 
+ 	        targetType = Double.class.getName();
+ 		primitiveConverterMethod = "doubleValue";
+ 	    }
+ 	}
+ 
+ 	/*
+         * Build up the base call to the interpreter.
+         */
+ 	StringBuffer call = new StringBuffer(
+             "(" + targetType + ") "
                + Constants.EL_INTERPRETER_CONDUIT_CLASS + "."
                + Constants.EL_INTERPRETER_CONDUIT_METHOD
                + "(" + Generator.quote(expression) + ", "
-               +       expectedType.getName() + ".class, "
+               +       targetType + ".class, "
 	       +       jspCtxt + ", "
                +       prefixMap + ", "
                +       fnMap + ", "
-               +       Generator.quote( defaultPrefix ) + ")";
+               +       Generator.quote( defaultPrefix ) + ")");
+ 
+ 	/*
+         * Add the primitive converter method if we need to.
+         */
+ 	if (primitiveConverterMethod != null) {
+ 	    call.insert(0, "(");
+ 	    call.append(")." + primitiveConverterMethod + "()");
+ 	}
+ 
+ 	return call.toString();
     }
 
     /**
