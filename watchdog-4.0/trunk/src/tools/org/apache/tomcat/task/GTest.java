@@ -330,7 +330,7 @@ public class GTest extends Task implements TaskContainer {
         StringTokenizer tok = new StringTokenizer( s, "|" );
         while ( tok.hasMoreElements() ) {
             String header = (String) tok.nextElement();
-            getHeaderDetails( header, expectHeaders, false );
+            setHeaderDetails( header, expectHeaders, false );
         }
     }
 
@@ -344,7 +344,7 @@ public class GTest extends Task implements TaskContainer {
      */
     public void setUnexpectedHeaders( String s ) {
         this.unexpectedHeaders = new HashMap();
-        getHeaderDetails( s, unexpectedHeaders, false );
+        setHeaderDetails( s, unexpectedHeaders, false );
     }
 
     public void setNested( String s ) {
@@ -416,7 +416,7 @@ public class GTest extends Task implements TaskContainer {
         StringTokenizer tok = new StringTokenizer( s, "|" );
         while ( tok.hasMoreElements() ) {
             String header = (String) tok.nextElement();
-            getHeaderDetails( header, requestHeaders, true );
+            setHeaderDetails( header, requestHeaders, true );
         }
     }
 
@@ -831,82 +831,76 @@ public class GTest extends Task implements TaskContainer {
 
         OutputStream out = new BufferedOutputStream( 
                                socket.getOutputStream() );
-        StringBuffer reqbuf = new StringBuffer( 128 ); 
-        try {
-            if ( debug > 0 ) {
-                System.out.println( " REQUEST: " + request );
-            }
-            reqbuf.append( request );
-            reqbuf.append( CRLF );
+        StringBuffer reqbuf = new StringBuffer( 128 );
 
-            // Now sending any specified request headers
-            if ( !requestHeaders.isEmpty() ) {
-                Iterator iter = requestHeaders.keySet().iterator();
+        // set the Host header
+        setHeaderDetails( "Host:" + host, requestHeaders, true );
+
+        // set the Content-Length header
+        if ( content != null ) {
+            setHeaderDetails( "Content-Length:" + content.length(),
+                              requestHeaders, true );
+        }
+
+        // set the Cookie header
+        if ( testSession != null ) {
+            cookieController = ( CookieController ) sessionHash.get( testSession );
+
+            if ( cookieController != null ) {
+
+                String releventCookieString = cookieController.applyRelevantCookies( requestURL );
+
+                if ( ( releventCookieString != null ) && ( !releventCookieString.trim().equals( "" ) ) ) {
+                    setHeaderDetails( "Cookie:" + releventCookieString, requestHeaders, true );
+                }
+            }
+        }
+
+        if ( debug > 0 ) {
+            System.out.println( " REQUEST: " + request );
+        }
+        reqbuf.append( request ).append( CRLF );;
+
+        // append all rquest headers 
+        if ( !requestHeaders.isEmpty() ) {
+            Iterator iter = requestHeaders.keySet().iterator();
 		
-                while ( iter.hasNext() ) {
-                    String headerKey = ( String ) iter.next();
-		            ArrayList values = (ArrayList) requestHeaders.get( headerKey );
-		            String[] value = (String[]) values.toArray( new String[ values.size() ] );
-		            for ( int i = 0; i < value.length; i++ ) {
-			            reqbuf.append( headerKey );
-			            reqbuf.append( ": " );
-			            reqbuf.append( value[ i ] );
-                        reqbuf.append( CRLF );
-			            if ( debug > 0 ) {
-			                System.out.println( " REQUEST HEADER: " + headerKey + ": " + value[ i ] );
-			            }
-		            }
-                }
+            while ( iter.hasNext() ) {
+                String headerKey = ( String ) iter.next();
+		        ArrayList values = (ArrayList) requestHeaders.get( headerKey );
+		        String[] value = (String[]) values.toArray( new String[ values.size() ] );
+		        for ( int i = 0; i < value.length; i++ ) {
+			        reqbuf.append( headerKey ).append( ": " ).append( value[ i ] ).append( CRLF );
+			        if ( debug > 0 ) {
+			            System.out.println( " REQUEST HEADER: " + headerKey + ": " + value[ i ] );
+			        }
+		        }
             }
+        }
 
-            if ( testSession != null ) {
-                cookieController = ( CookieController ) sessionHash.get( testSession );
+        /*
 
-                if ( cookieController != null ) {
+        if ( ( testSession != null ) && ( sessionHash.get( testSession ) != null ) ) {
+            System.out.println("Sending Session Id : " + (String)sessionHash.get( testSession ) );
+            pw.println("JSESSIONID:" + (String)sessionHash.get( testSession) );
+        }
 
-                    String releventCookieString = cookieController.applyRelevantCookies( requestURL );
+        */
 
-                    if ( ( releventCookieString != null ) && ( !releventCookieString.trim().equals( "" ) ) ) {
-                        reqbuf.append( "Cookie: " );
-                        reqbuf.append( releventCookieString );
-                        reqbuf.append( CRLF );
+        if ( request.indexOf( "HTTP/1." ) > -1 ) {
+            reqbuf.append( "" ).append( CRLF );
+        }
 
-                        if ( debug > 0 ) {
-                            System.out.println( " Sending Cookie Header:: Cookie: " + releventCookieString );
-                        }
-                    }
-                }
-            }
+        // append request content 
+        if ( content != null ) {
+            reqbuf.append( content );
+            // XXX no CRLF at the end -see HTTP specs!
+        }
+        
+        byte[] reqbytes = reqbuf.toString().getBytes();
 
-            /*
-
-            if ( ( testSession != null ) && ( sessionHash.get( testSession ) != null ) ) {
-                System.out.println("Sending Session Id : " + (String)sessionHash.get( testSession ) );
-                pw.println("JSESSIONID:" + (String)sessionHash.get( testSession) );
-            }
-
-            */
-
-            if ( content != null ) {
-                int length = content.length();
-                if ( debug > 0 ) {
-                    System.out.println( " REQUEST HEADER: Content-Length: " + length );
-                }
-                reqbuf.append( "Content-Length: " );
-                reqbuf.append( length );
-                reqbuf.append( CRLF );
-            }
-
-            if ( request.indexOf( "HTTP/1." ) > -1 ) {
-                reqbuf.append( "" );
-                reqbuf.append( CRLF );
-            }
-
-            if ( content != null ) {
-                reqbuf.append( content );
-                // XXX no CRLF at the end -see HTTP specs!
-            }
-            byte[] reqbytes = reqbuf.toString().getBytes();
+        try {
+            // write the request
             out.write( reqbytes, 0, reqbytes.length );
             out.flush();
             reqbuf = null;
@@ -918,6 +912,7 @@ public class GTest extends Task implements TaskContainer {
 	        }
         }
 
+        // read the response
         try {
   
 	        responseLine = read( in );
@@ -1113,7 +1108,7 @@ public class GTest extends Task implements TaskContainer {
     }
 
     /**
-     * <code>getHeaderDetails</code> Wrapper method for parseHeader.
+     * <code>setHeaderDetails</code> Wrapper method for parseHeader.
      * Allows easy addition of headers to the specified
      * HashMap
      *
@@ -1122,7 +1117,7 @@ public class GTest extends Task implements TaskContainer {
      * @param isRequest a <code>boolean</code> indicating if the passed Header 
      *                  HashMap is for request headers
      */
-    private void getHeaderDetails( String line, HashMap headerHash, boolean isRequest ) {
+    private void setHeaderDetails( String line, HashMap headerHash, boolean isRequest ) {
         StringTokenizer stk = new StringTokenizer( line, "##" );
 
         while ( stk.hasMoreElements( ) ) {
