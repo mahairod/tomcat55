@@ -608,7 +608,7 @@ public class StandardService
                 // Hack - Server should be deprecated...
                 Container engine=this.getContainer();
                 domain=engine.getName();
-                oname=new ObjectName(domain + ":type=Service");
+                oname=new ObjectName(domain + ":type=Service,serviceName="+name);
                 Registry.getRegistry().registerComponent(this, oname, null);
             } catch (Exception e) {
                 log.error("Error registering ",e);
