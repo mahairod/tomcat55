@@ -1268,7 +1268,24 @@ public class StandardDefaultContext
             return;
         }
 
-        if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
+        if ((event.getType().equals(Lifecycle.BEFORE_STOP_EVENT))
+            || (event.getType().equals(Context.RELOAD_EVENT))) {
+
+            // Remove context
+            contexts.remove(context);
+
+            // Remove listener from the NamingResource listener list
+            namingResources.removePropertyChangeListener(listener);
+
+            // Remove listener from lifecycle listeners
+            if (!(event.getType().equals(Context.RELOAD_EVENT))) {
+                context.removeLifecycleListener(this);
+            }
+
+        }
+
+        if ((event.getType().equals(Lifecycle.AFTER_START_EVENT))
+            || (event.getType().equals(Context.RELOAD_EVENT))) {
 
             // Add context
             contexts.put(context, context);
@@ -1318,17 +1335,6 @@ public class StandardDefaultContext
 
             // Add listener to the NamingResources listener list
             namingResources.addPropertyChangeListener(listener);
-
-        } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
-
-            // Remove context
-            contexts.remove(context);
-
-            // Remove listener from the NamingResource listener list
-            namingResources.removePropertyChangeListener(listener);
-
-            // Remove listener from lifecycle listeners
-            context.removeLifecycleListener(this);
 
         }
 
