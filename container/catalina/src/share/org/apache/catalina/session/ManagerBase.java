@@ -637,7 +637,6 @@ public abstract class ManagerBase implements Manager {
         // @todo Move appending of jvmRoute generateSessionId()???
         if (jvmRoute != null) {
             sessionId += '.' + jvmRoute;
-            session.setId(sessionId);
         }
         synchronized (sessions) {
             while (sessions.get(sessionId) != null){ // Guarantee uniqueness
@@ -645,7 +644,6 @@ public abstract class ManagerBase implements Manager {
                 // @todo Move appending of jvmRoute generateSessionId()???
                 if (jvmRoute != null) {
                     sessionId += '.' + jvmRoute;
-                    session.setId(sessionId);
                 }
             }
         }
