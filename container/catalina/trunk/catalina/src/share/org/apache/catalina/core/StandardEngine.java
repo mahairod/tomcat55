@@ -104,6 +104,11 @@ public class StandardEngine
 
         super();
         pipeline.setBasic(new StandardEngineValve());
+        /* Set the jmvRoute using the system property jvmRoute */
+        try {
+            setJvmRoute(System.getProperty("jvmRoute"));
+        } catch(Exception ex) {
+        }
 
     }
 
