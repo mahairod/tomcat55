@@ -485,7 +485,7 @@ public class Catalina {
                 access = "sun.,";
             Security.setProperty("package.access",
                 access + 
-                "org.apache.catalina.,org.apache.jasper.,org.apache.coyote.,org.apache.tomcat.");
+                "org.apache.catalina.,org.apache.jasper.");
             String definition = Security.getProperty("package.definition");
             if( definition != null && definition.length() > 0 )
                 definition += ",";
@@ -495,7 +495,7 @@ public class Catalina {
                 // FIX ME package "javax." was removed to prevent HotSpot
                 // fatal internal errors
                 definition + 
-                "java.,org.apache.catalina.,org.apache.jasper.,org.apache.coyote.,org.apache.tomcat.");
+                "java.,org.apache.catalina.,org.apache.jasper.,org.apache.coyote.");
         }
 
         // Replace System.out and System.err with a custom PrintStream
