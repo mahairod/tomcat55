@@ -554,6 +554,10 @@ KNOWN ISSUES IN THIS RELEASE:
 * JAVAC leaking memory
 * Linux and Sun JDK 1.2.x - 1.3.x
 * Enabling SSI and CGI Support
+* Security manager URLs
+* Using Jasper 1 with Tomcat 4.1
+* Administrartion web application
+* Symlinking static resources
 
 
 -------------------------------------
@@ -691,4 +695,53 @@ On Unix:
   line 165 and 213, as well as the associated servlet mappings 
   line 265 and 274. Alternately, these servlet declarations and mappings can
   be added to your web application deployment descriptor.
+
+
+---------------------
+Security manager URLs:
+---------------------
+
+The URLs to be used in the policy file to grant permissions to JARs located
+inside the web application repositories have changed in Tomcat 4.1.
+
+In Tomcat 4.0, codeBase URL were:
+jar:file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar!/-
+
+In Tomcat 4.1, they should be:
+file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar
+
+
+------------------------------
+Using Jasper 1 with Tomcat 4.1:
+------------------------------
+
+It is possible to use Jasper 1 (included in Tomcat 4.0.x) with Tomcat 4.1, as
+it has the same API and supports the same JSP API.
+
+To use Jasper 1 instead of Jasper 2, copy the two following JARs to
+$CATALINA_HOME/common/lib, overwriting the two which are already present:
+* $TOMCAT40_HOME/lib/jasper-runtime.jar
+* $TOMCAT40_HOME/lib/jasper-compiler.jar
+
+
+-------------------------------
+Administrartion web application:
+-------------------------------
+
+The administration web application should currently be considered beta quality
+code, but is supported as an official component of Tomcat 4.1.
+
+A finalized version will be delivered in an upcoming Tomcat 4.1 release.
+
+
+---------------------------
+Symlinking static resources:
+---------------------------
+
+Unix symlinks will not work when used in a web application to link resources 
+located outside the web application root directory.
+
+This behavior will be made optional in an upcoming version of Tomcat 4.1, but
+will be the default one.
+
 
