@@ -1,2 +1,4 @@
 <!ENTITY % jsp-tests.ent SYSTEM "jsp-tests.ent">
+<!ENTITY % servlet-tests.ent SYSTEM "servlet-tests.ent">
 %jsp-tests.ent;
+%servlet-tests.ent;

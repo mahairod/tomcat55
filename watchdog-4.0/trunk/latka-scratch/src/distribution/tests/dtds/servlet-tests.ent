@@ -1,0 +1,75 @@
+<!ENTITY servlet-tests.tests.javax_servlet.Filter SYSTEM "../servlet-tests/tests/javax_servlet/Filter/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.Servlet SYSTEM "../servlet-tests/tests/javax_servlet/Servlet/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.GenericServlet SYSTEM "../servlet-tests/tests/javax_servlet/GenericServlet/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.RequestDispatcher SYSTEM "../servlet-tests/tests/javax_servlet/RequestDispatcher/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletConfig SYSTEM "../servlet-tests/tests/javax_servlet/ServletConfig/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletContext SYSTEM "../servlet-tests/tests/javax_servlet/ServletContext/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletException SYSTEM "../servlet-tests/tests/javax_servlet/ServletException/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletInputStream SYSTEM "../servlet-tests/tests/javax_servlet/ServletInputStream/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletOutputStream SYSTEM "../servlet-tests/tests/javax_servlet/ServletOutputStream/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletRequest SYSTEM "../servlet-tests/tests/javax_servlet/ServletRequest/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.UnavailableException SYSTEM "../servlet-tests/tests/javax_servlet/UnavailableException/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletResponse SYSTEM "../servlet-tests/tests/javax_servlet/ServletResponse/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.FilterConfig SYSTEM "../servlet-tests/tests/javax_servlet/FilterConfig/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.FilterChain SYSTEM "../servlet-tests/tests/javax_servlet/FilterChain/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletContextAttributeListener SYSTEM "../servlet-tests/tests/javax_servlet/ServletContextAttributeListener/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletContextListener SYSTEM "../servlet-tests/tests/javax_servlet/ServletContextListener/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletContextAttributeEvent SYSTEM "../servlet-tests/tests/javax_servlet/ServletContextAttributeEvent/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletContextEvent SYSTEM "../servlet-tests/tests/javax_servlet/ServletContextEvent/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletRequestWrapper SYSTEM "../servlet-tests/tests/javax_servlet/ServletRequestWrapper/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.ServletResponseWrapper SYSTEM "../servlet-tests/tests/javax_servlet/ServletResponseWrapper/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.SingleThreadModel SYSTEM "../servlet-tests/tests/javax_servlet/SingleThreadModel/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet.Error SYSTEM "../servlet-tests/tests/javax_servlet/Error/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpServletRequest SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpServletRequest/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.Cookie SYSTEM "../servlet-tests/tests/javax_servlet_http/Cookie/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpServletResponse SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpServletResponse/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpSession SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpSession/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpServletRequestWrapper SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpServletRequestWrapper/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpSessionListener SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpSessionListener/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpSessionAttributeListener SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpSessionAttributeListener/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpSessionEvent SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpSessionEvent/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpSessionBindingEvent SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpSessionBindingEvent/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpSessionBindingListener SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpSessionBindingListener/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpServletResponseWrapper SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/tests.mod">
+<!ENTITY servlet-tests.tests.javax_servlet_http.HttpServlet SYSTEM "../servlet-tests/tests/javax_servlet_http/HttpServlet/tests.mod">
+<!ENTITY servlet-compat.tests.compat SYSTEM "../servlet-compat/tests/compat/tests.mod">
+<!ENTITY servlet-tests.tests.webapps.dirstruct SYSTEM "../servlet-tests/tests/webapps/dirstruct/tests.mod">
+
+<!ENTITY servlet-tests.testAll "
+&servlet-tests.tests.javax_servlet.Filter;
+&servlet-tests.tests.javax_servlet.Servlet;
+&servlet-tests.tests.javax_servlet.GenericServlet;
+&servlet-tests.tests.javax_servlet.RequestDispatcher;
+&servlet-tests.tests.javax_servlet.ServletConfig;
+&servlet-tests.tests.javax_servlet.ServletContext;
+&servlet-tests.tests.javax_servlet.ServletException;
+&servlet-tests.tests.javax_servlet.ServletInputStream;
+&servlet-tests.tests.javax_servlet.ServletOutputStream;
+&servlet-tests.tests.javax_servlet.ServletRequest;
+&servlet-tests.tests.javax_servlet.UnavailableException;
+&servlet-tests.tests.javax_servlet.ServletResponse;
+&servlet-tests.tests.javax_servlet.FilterConfig;
+&servlet-tests.tests.javax_servlet.FilterChain;
+&servlet-tests.tests.javax_servlet.ServletContextAttributeListener;
+&servlet-tests.tests.javax_servlet.ServletContextListener;
+&servlet-tests.tests.javax_servlet.ServletContextAttributeEvent;
+&servlet-tests.tests.javax_servlet.ServletContextEvent;
+&servlet-tests.tests.javax_servlet.ServletRequestWrapper;
+&servlet-tests.tests.javax_servlet.ServletResponseWrapper;
+&servlet-tests.tests.javax_servlet.SingleThreadModel;
+&servlet-tests.tests.javax_servlet.Error;
+&servlet-tests.tests.javax_servlet_http.HttpServletRequest;
+&servlet-tests.tests.javax_servlet_http.Cookie;
+&servlet-tests.tests.javax_servlet_http.HttpServletResponse;
+&servlet-tests.tests.javax_servlet_http.HttpSession;
+&servlet-tests.tests.javax_servlet_http.HttpServletRequestWrapper;
+&servlet-tests.tests.javax_servlet_http.HttpSessionListener;
+&servlet-tests.tests.javax_servlet_http.HttpSessionAttributeListener;
+&servlet-tests.tests.javax_servlet_http.HttpSessionEvent;
+&servlet-tests.tests.javax_servlet_http.HttpSessionBindingEvent;
+&servlet-tests.tests.javax_servlet_http.HttpSessionBindingListener;
+&servlet-tests.tests.javax_servlet_http.HttpServletResponseWrapper;
+&servlet-tests.tests.javax_servlet_http.HttpServlet;
+&servlet-compat.tests.compat;
+&servlet-tests.tests.webapps.dirstruct;
+">
