@@ -15,10 +15,6 @@
 
   <form-beans>
 
-    <!-- Sample form bean -->
-    <form-bean      name="sampleForm"
-                    type="org.apache.webapp.admin.SampleForm"/>
-
     <!-- Server form bean -->
     <form-bean      name="serverForm"
                     type="org.apache.webapp.admin.ServerForm"/>
@@ -97,14 +93,6 @@
       <forward        name="Main Menu"
                       path="/index.jsp"
                   redirect="true"/>
-    </action>
-
-    <!-- Process a user sample change -->
-    <action    path="/sample"
-               type="org.apache.webapp.admin.SampleAction"
-               name="sampleForm"
-              scope="session"
-              input="/sample.jsp">
     </action>
 
     <!-- Process a user server change -->
