@@ -95,7 +95,7 @@
     <javadoc packagenames="org.apache.catalina.*"
              classpath="${regexp.jar}:${servlet.jar}:${catalina.build}/classes"
                sourcepath="src/share"
-                  destdir="${catalina.build}/webapps/ROOT/javadoc"
+                  destdir="${catalina.build}/webapps/ROOT/catalina-javadoc"
                    author="true"
                   version="true"
               windowtitle="Catalina Internal API Documentation"
