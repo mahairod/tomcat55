@@ -26,6 +26,9 @@
       <fix>
         <bug>29584</bug>: Enhanced and clarified JNDI documentation. (yoavs)
       </fix>
+      <fix>
+        <bug>30245</bug>: Corrected Connector documentation to list "address" as a common attribute. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
