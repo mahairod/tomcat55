@@ -316,7 +316,7 @@ public final class StandardServer
                 try {
                     service.initialize();
                 } catch (LifecycleException e) {
-                    e.printStackTrace(System.err);
+                    log.error(e);
                 }
             }
 
