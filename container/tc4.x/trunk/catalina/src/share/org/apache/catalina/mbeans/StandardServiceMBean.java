@@ -124,7 +124,7 @@ public class StandardServiceMBean extends BaseModelMBean {
 
 
     /**
-     * Create a new Connector.
+     * Create a new <code>Connector</code>.
      *
      * @param address The IP address on which to bind
      * @param port TCP port number to listen on

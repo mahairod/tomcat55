@@ -113,7 +113,7 @@ public class StandardServerMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Operations
 
     /**
-     * Create a new child Service and Engine.
+     * Create a new child <code>Service</code> and <code>Engine</code>.
      *
      * @param name The new Service's name
      *
@@ -130,7 +130,7 @@ public class StandardServerMBean extends BaseModelMBean {
         MBeanUtils.createMBean(service);
 
         StandardEngine engine = new StandardEngine();
-        service.setContainer((Container)engine);
+        service.setContainer(engine);
         MBeanUtils.createMBean(engine);
 
     }

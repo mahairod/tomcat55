@@ -689,6 +689,48 @@
 
     <constructor name="StandardEngine"/>
 
+    <operation   name="createAccessLogger"
+          description="Create a new AccessLogger"
+               impact="ACTION"
+           returnType="void"/>
+    </operation>
+
+    <operation   name="createHost"
+          description="Create a new Host"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="The new Host's name"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="createLogger"
+          description="Create a new Logger"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="type"
+          description="the type of Logger to be created"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="createRealm"
+          description="Create a new Realm"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="type"
+          description="the type of Realm to be created"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="createRequestFilterValve"
+          description="Create a new RequestFilterValve"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="type"
+          description="the type of RequestFilterValve to be created"
+                 type="java.lang.String"/>
+    </operation>
+    
     <operation   name="addChild"
           description="Add a new child Container to those associated with this Container"
                impact="ACTION"
