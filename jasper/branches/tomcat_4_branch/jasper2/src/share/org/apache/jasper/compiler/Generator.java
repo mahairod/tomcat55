@@ -107,8 +107,19 @@ public class Generator {
 	if (s == null)
 	    return "null";
 
+        return '"' + escape( s ) + '"';
+    }
+
+    /**
+     * @param s the input string
+     * @return escaped string, per Java rule
+     */
+    private static String escape(String s) {
+
+        if (s == null)
+            return "";
+
 	StringBuffer b = new StringBuffer();
-	b.append('"');
 	for (int i = 0; i < s.length(); i++) {
 	    char c = s.charAt(i);
 	    if (c == '"') 
@@ -122,7 +133,6 @@ public class Generator {
 	    else 
 		b.append(c);
 	}
-	b.append('"');
 	return b.toString();
     }
 
@@ -889,15 +899,25 @@ public class Generator {
 		    else if (name.equalsIgnoreCase ("type"))
 			name = "java_type";
 
-		    String s0 = makeAttr("name", name) + " value=" +
-			        attributeValue(n.getValue(), false);
-
-		    if (ie) {
-			s0 = "<PARAM" + s0 + '>';
-		    }
-
-		    n.setBeginJavaLine(out.getJavaLine());
-		    out.printil("out.println(" + quote(s0) + ");");
+                    n.setBeginJavaLine(out.getJavaLine());
+                    if( ie ) {
+                        // We want something of the form
+                        // out.println( "<PARAM name=\"blah\"
+                        //     value=\"" + ... + "\">" );
+                        out.printil( "out.write( \"<PARAM name=\\\"" +
+                            escape( name ) + "\\\" value=\\\"\" + " +
+                            attributeValue( n.getValue(), false) +
+                            " + \"\\\">\" );" );
+                        out.printil("out.write(\"\\n\");");
+                    }
+                    else {
+                        // We want something of the form
+                        // out.print( " blah=\"" + ... + "\"" );
+                        out.printil( "out.write( \" " + escape( name ) +
+                            "=\\\"\" + " +
+                            attributeValue( n.getValue(), false) +
+                            " + \"\\\"\" );" );
+                    }
 		    n.setEndJavaLine(out.getJavaLine());
 		}
 	    }
