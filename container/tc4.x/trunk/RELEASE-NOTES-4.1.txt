@@ -177,6 +177,7 @@ Generic Bug Fixes:
 [4.1.11] Administration Webapp:
          Fix adding a context with the administration webapp.
 
+[4.1.12] Fix SSL-cert authentication when using the Coyote Connector.
 
 ------------------
 Catalina Bug Fixes:
