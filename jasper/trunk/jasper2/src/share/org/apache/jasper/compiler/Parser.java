@@ -1568,10 +1568,6 @@ class Parser {
             err.jspError( reader.mark(), "jsp.error.not.in.template",
 		"Expression language" );
         } else if (reader.matches("<jsp:")) {
-            if ((parent instanceof Node.NamedAttribute) &&
-                    reader.matches("attribute")) {
-                err.jspError(reader.mark(), "jsp.error.nested.jspattribute");
-            }
             err.jspError( reader.mark(), "jsp.error.not.in.template",
 		"Standard actions" );
 	} else if (parseCustomTag(parent)) {
@@ -1651,6 +1647,16 @@ class Parser {
                     return;
                 }
                 
+                // Check for nested jsp:body or jsp:attribute
+                if (tag.equals("jsp:body") || tag.equals("jsp:attribute")) {
+                    if (reader.matches("<jsp:attribute")) {
+                        err.jspError(reader.mark(), "jsp.error.nested.jspattribute");
+                    }
+                    else if (reader.matches("<jsp:body")) {
+                        err.jspError(reader.mark(), "jsp.error.nested.jspbody");
+                    }
+                }
+
                 if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_JSP ) ) {
                     parseElements( parent );
                 }
@@ -1696,8 +1702,7 @@ class Parser {
                     reader.skipSpaces();
                 }
                 parseBody(namedAttributeNode, "jsp:attribute", 
-			  getAttributeBodyType(parent,
-					       attrs.getValue("name")));
+			  TagInfo.BODY_CONTENT_JSP);
                 if (namedAttributeNode.isTrim()) {
                     Node.Nodes subElems = namedAttributeNode.getBody();
 		    if (subElems != null) {
