@@ -423,9 +423,6 @@ class Validator {
             new JspUtil.ValidAttribute("name", true),
             new JspUtil.ValidAttribute("trim") };
             
-        private static final JspUtil.ValidAttribute[] bodyAttrs = {
-            new JspUtil.ValidAttribute("value") };
-
         private static final JspUtil.ValidAttribute[] invokeAttrs = {
             new JspUtil.ValidAttribute("fragment", true),
 	    new JspUtil.ValidAttribute("var"),
@@ -596,19 +593,6 @@ class Validator {
 	}
         
 	public void visit(Node.JspBody n) throws JasperException {
-	    String defaultPrefix = null;
-            JspUtil.checkAttributes("Body", n,
-				    bodyAttrs, err);
-            Node parent = n.getParent();
-            if( parent instanceof Node.CustomTag ) {
-                // Default prefix comes from parent custom tag's prefix.
-                Node.CustomTag customTag = (Node.CustomTag)parent;
-                defaultPrefix = customTag.getPrefix();
-            }
-	    n.setValue(getJspAttribute("value", null, null,
-				       n.getAttributeValue("value"), 
-                                       JspFragment.class, defaultPrefix, 
-                                       n, false));
             visitBody(n);
 	}
         

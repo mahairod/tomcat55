@@ -1571,31 +1571,20 @@ class Parser {
         Mark start = reader.mark();
         reader.skipSpaces();
 
-        if( reader.matches( ">" ) ) {
-            Node bodyNode = new Node.JspBody( null, start, parent );
-            if( reader.matches( "</jsp:body>" ) ) {
-                // Body was empty.  This is illegal, according to the grammar.
-                err.jspError(reader.mark(),
-                    "jsp.error.empty.body.not.allowed",
-                    "&lt;jsp:body&gt;" );
-            }
-            else {
-                parseBody( bodyNode, "jsp:body", bodyType );
-            }
-        }
-        else {
-            Attributes attrs = parseAttributes();
-            reader.skipSpaces();
-            new Node.JspBody( attrs, start, parent );
+        if (!reader.matches(">")) {
+	    err.jspError(reader.mark(),
+			 "jsp.error.attributes.not.allowed",
+			 "&lt;jsp:body&gt;" );
+	}
 
-            if( !reader.matches( "/>" ) &&
-                !reader.matches( "></jsp:body>" ) )
-            {
-                err.jspError(reader.mark(), 
-                    "jsp.error.jspbody.body.not.allowed.with.value",
-                    "&lt;jsp:body&gt;" );
-            }
-        }
+	Node bodyNode = new Node.JspBody(start, parent);
+	if( reader.matches( "</jsp:body>" ) ) {
+	    // Body was empty.  This is illegal, according to the grammar.
+	    err.jspError(reader.mark(),"jsp.error.empty.body.not.allowed",
+			 "&lt;jsp:body&gt;" );
+	} else {
+	    parseBody( bodyNode, "jsp:body", bodyType );
+	}
     }
 
     /*

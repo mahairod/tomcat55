@@ -1304,11 +1304,10 @@ abstract class Node {
      */
     public static class JspBody extends Node {
 
-	private JspAttribute value;
         private ChildInfo childInfo;
 
-        public JspBody( Attributes attrs, Mark start, Node parent) {
-            super( attrs, start, parent );
+        public JspBody(Mark start, Node parent) {
+            super(start, parent);
             this.childInfo = new ChildInfo();
         }
 
@@ -1316,14 +1315,6 @@ abstract class Node {
             v.visit(this);
         }
 
-	public void setValue(JspAttribute value) {
-	    this.value = value;
-	}
-
-	public JspAttribute getValue() {
-	    return value;
-	}
-        
         public ChildInfo getChildInfo() {
             return childInfo;
         }

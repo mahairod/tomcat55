@@ -1766,65 +1766,13 @@ class Generator {
 	}
 
 	public void visit(Node.JspBody n) throws JasperException {
-            Node.JspAttribute value = n.getValue();
 	    if (isSimpleTagHandler) {
 		out.printin(simpleTagHandlerVar);
 		out.print(".setJspBody(");
-
-		if (value != null) {
-		    out.print(attributeValue(value, false, JspFragment.class,
-                        "null" ));
-		} else {
-		    generateJspFragment(n, simpleTagHandlerVar);
-		}
+		generateJspFragment(n, simpleTagHandlerVar);
 		out.println(");");
 	    } else {
-                Node parent = n.getParent();
-                if( (parent instanceof Node.CustomTag) && (value != null) ) {
-                    Node.CustomTag customTag = (Node.CustomTag)parent;
-                    
-                    // Classic tag handler invoked with <jsp:body value="...">
-                    // Generate a tag body that evaluates the given
-                    // fragment.
-                    
-                    // First, generate a Map with all the AT_BEGIN and 
-                    // NESTED variables so the body can access them.
-                    VariableInfo[] varInfos = customTag.getVariableInfos();
-                    TagVariableInfo[] tagVarInfos = 
-                        customTag.getTagVariableInfos();
-                    
-                    String var = JspUtil.nextTemporaryVariableName();
-                    out.printil( "java.util.HashMap " + var + 
-                        " = new java.util.HashMap();" );
-                    
-		    for (int i = 0; i < varInfos.length; i++) {
-			if ((varInfos[i].getScope() == VariableInfo.AT_BEGIN)
-			        || (varInfos[i].getScope() == VariableInfo.NESTED)) {
-			    out.printil( var + ".put( \"" + 
-					 varInfos[i].getVarName() + "\", " +
-					 varInfos[i].getVarName() + " );" );
-			}
-		    }
-
-		    for (int i = 0; i < tagVarInfos.length; i++) {
-			if ((tagVarInfos[i].getScope() == VariableInfo.AT_BEGIN)
-			        || (tagVarInfos[i].getScope() == VariableInfo.NESTED)) {
-			    out.printin( var + ".put( \"" );
-			    String name = tagVarInfos[i].getNameGiven();
-			    if( name == null ) {
-				name = customTag.getTagData().getAttributeString(
-                                        tagVarInfos[i].getNameFromAttribute());
-			    }
-			    out.println( name + "\", " + name + " );" );
-			}
-		    }
-                    
-                    out.printil("(" + 
-                        attributeValue(value, false, JspFragment.class,
-                        "null" ) + ").invoke( out, " + var + " );" );
-		} else {
-                    visitBody(n);
-		}
+		visitBody(n);
 	    }
 	}
 
