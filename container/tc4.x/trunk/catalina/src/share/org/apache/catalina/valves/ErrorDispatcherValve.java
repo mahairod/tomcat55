@@ -169,6 +169,8 @@ public class ErrorDispatcherValve
         // Perform the request
         context.invokeNext(request, response);
 
+        response.setSuspended(false);
+
         ServletRequest sreq = request.getRequest();
         Throwable t = (Throwable) sreq.getAttribute(Globals.EXCEPTION_ATTR);
 
@@ -224,7 +226,7 @@ public class ErrorDispatcherValve
         }
 
         if (errorPage != null) {
-            response.recycleFacade();
+            response.setAppCommitted(false);
             ServletRequest sreq = request.getRequest();
             ServletResponse sresp = response.getResponse();
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
@@ -277,7 +279,7 @@ public class ErrorDispatcherValve
         Context context = request.getContext();
         ErrorPage errorPage = context.findErrorPage(statusCode);
         if (errorPage != null) {
-            response.recycleFacade();
+            response.setAppCommitted(false);
             ServletRequest sreq = request.getRequest();
             ServletResponse sresp = response.getResponse();
             sreq.setAttribute(Globals.STATUS_CODE_ATTR,
