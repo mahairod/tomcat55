@@ -143,6 +143,9 @@
       <update>
         Major connector docs update. (remm)
       </update>
+      <fix>
+        <bug>31732</bug>: Fix Japanese localization of Manager's list output. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
