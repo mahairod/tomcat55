@@ -536,7 +536,7 @@ public class NamingContext implements Context {
      */
     public void destroySubcontext(String name)
         throws NamingException {
-        destroySubcontext(name);
+        destroySubcontext(new CompositeName(name));
     }
 
 
