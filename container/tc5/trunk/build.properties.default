@@ -163,7 +163,7 @@ commons-pool.loc=http://www.apache.org/dist/jakarta/commons/pool/binaries/pool-1
 # ----- Commons FileUpload, version 1.0-20030531 or later -----
 commons-fileupload.home=${base.path}/commons-fileupload-1.0-rc1
 commons-fileupload.lib=${commons-fileupload.home}
-commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-beta-1.jar
+commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-dev.jar
 commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/nightly/fileupload/commons-fileupload-20030531.tar.gz
 
 
