@@ -15,7 +15,8 @@
 
 <%@ taglib uri="/TestLib.tld" prefix="def" %>
 
-<def:default />
+<def:default>
+</def:default>
 
 </body>
 </html>

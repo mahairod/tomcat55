@@ -14,7 +14,8 @@
 
 
 <%@ taglib uri="/TestLib.tld" prefix="test"  %>
-<test:iterator iteration="0" setget="true" tagid="TestSetGetId"  />
+<test:iterator iteration="0" setget="true" tagid="TestSetGetId">
+</test:iterator>
 
 </body>
 </html>
