@@ -1208,9 +1208,12 @@ public class StandardContext
     public void addApplicationListener(String listener) {
 
         synchronized (applicationListeners) {
-            String results[] =new String[applicationListeners.length + 1];
-            for (int i = 0; i < applicationListeners.length; i++)
+            String results[] = new String[applicationListeners.length + 1];
+            for (int i = 0; i < applicationListeners.length; i++) {
+                if (listener.equals(applicationListeners[i]))
+                    return;
                 results[i] = applicationListeners[i];
+            }
             results[applicationListeners.length] = listener;
             applicationListeners = results;
         }
