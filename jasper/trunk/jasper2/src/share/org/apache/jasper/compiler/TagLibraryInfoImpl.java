@@ -467,7 +467,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     TagAttributeInfo createAttribute(TreeNode elem) {
-        //        p("createAttribute\n" + elem);
         String name = null;
         boolean required = false, rtexprvalue = false, reqTime = false;
         String type = null;
@@ -500,8 +499,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             }
         }
         
-        // p("name=" + name + ", required=" + required + ", type=" + type +
-        //   ", rtexprvalue=" + rtexprvalue);
         return new TagAttributeInfo(name, required, type, rtexprvalue);
     }
 
@@ -642,7 +639,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Class tlvClass = 
 		    ctxt.getClassLoader().loadClass(validatorClass);
                 tlv = (TagLibraryValidator)tlvClass.newInstance();
-		//p("got validator class: " + tlv);
             } catch (Exception ex) {
                 Constants.message("jsp.warning.tlvclass.is.null",
 				  new Object[] {
@@ -712,18 +708,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         return new FunctionInfo(name, klass, signature);
     }
 
-/*
-    static void copy(InputStream in, String fileName) 
-        throws IOException, FileNotFoundException 
-    {
-        byte[] buf = new byte[1024];
-
-        FileOutputStream out = new FileOutputStream(fileName);
-        int nRead;
-        while ((nRead = in.read(buf, 0, buf.length)) != -1)
-            out.write(buf, 0, nRead);
-    }
-*/
 
     //*********************************************************************
     // Until javax.servlet.jsp.tagext.TagLibraryInfo is fixed
@@ -753,8 +737,4 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     protected TagLibraryValidator tagLibraryValidator; 
-
-    private void p(String s) {
-	System.out.println("[TagLibraryInfoImpl] " + s);
-    }
 }

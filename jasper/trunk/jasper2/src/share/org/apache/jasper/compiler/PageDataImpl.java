@@ -209,10 +209,14 @@ public class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.TaglibDirective n) throws JasperException {
 	    Attributes attrs = n.getAttributes();
 	    if (attrs != null) {
-		String uri = attrs.getValue("uri");
+		String location = attrs.getValue("uri");
+		if (location == null) {
+		    // JSP 2.0 CLARIFICATION NEEDED
+		    location = attrs.getValue("tagdir");
+		}
 		String prefix = attrs.getValue("prefix");
 		rootAttrs.addAttribute("", "", "xmlns:" + prefix, "CDATA",
-				       uri);
+				       location);
 	    }
 	}
     }

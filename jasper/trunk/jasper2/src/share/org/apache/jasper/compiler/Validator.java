@@ -334,7 +334,8 @@ public class Validator {
 	    new JspUtil.ValidAttribute("file", true) };
 
 	private static final JspUtil.ValidAttribute[] taglibDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("uri", true),
+	    new JspUtil.ValidAttribute("uri"),
+	    new JspUtil.ValidAttribute("tagdir"),
 	    new JspUtil.ValidAttribute("prefix", true) };
 
 	private static final JspUtil.ValidAttribute[] includeActionAttrs = {
@@ -410,6 +411,11 @@ public class Validator {
 	public void visit(Node.TaglibDirective n) throws JasperException {
             JspUtil.checkAttributes("Taglib directive", n,
                                     taglibDirectiveAttrs, err);
+	    // Either 'uri' or 'tagdir' attribute must be present
+	    if (n.getAttributeValue("uri") == null
+		    && n.getAttributeValue("tagdir") == null) {
+		err.jspError(n, "jsp.error.taglibDirective.missing.location");
+	    }
 	}
 
 	public void visit(Node.ParamAction n) throws JasperException {
@@ -924,6 +930,8 @@ public class Validator {
         Enumeration enum = compiler.getPageInfo().getTagLibraries().elements();
         while (enum.hasMoreElements()) {
             TagLibraryInfo tli = (TagLibraryInfo) enum.nextElement();
+	    if (!(tli instanceof TagLibraryInfoImpl))
+		continue;
 	    ValidationMessage[] errors
 		= ((TagLibraryInfoImpl) tli).validate(xmlView);
             if ((errors != null) && (errors.length != 0)) {
