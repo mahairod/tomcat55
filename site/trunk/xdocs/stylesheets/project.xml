@@ -8,24 +8,26 @@
     <body>
     <menu name="Tomcat">
         <item name="Home"                 href="/index.html"/>
-    <item name="Bug Database"         href="/bugreport.html"/>
-    <item name="Building"             href="/building.html"/>
-    <item name="Resources"            href="/resources.html"/>
+        <item name="Bug Database"         href="/bugreport.html"/>
+        <item name="Resources"            href="/resources.html"/>
         <item name="IRC"                  href="/irc.html"/>
         <item name="FAQ"                  href="/faq/"/>
     </menu>
 
     <menu name="Documentation">
-        <item name="Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/>
-        <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/>
-        <item name="Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/>
-        <item name="Tomcat 4.1"           href="/tomcat-4.1-doc/index.html"/>
         <item name="Tomcat 5.0"           href="/tomcat-5.0-doc/index.html"/>
+        <item name="Tomcat 4.1"           href="/tomcat-4.1-doc/index.html"/>
+        <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/>
     </menu>
 
     <menu name="Download">
         <item name="Binaries"              href="/site/binindex.cgi"/>
         <item name="Source Code"           href="/site/sourceindex.cgi"/>
+    </menu>
+
+    <menu name="Archives">
+        <item name="Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/>
+        <item name="Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/>
     </menu>
 
     <menu name="Jakarta">
