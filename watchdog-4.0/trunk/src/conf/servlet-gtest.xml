@@ -2997,15 +2997,55 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
             goldenFile="${wgdir}/javax_servlet_http/HttpServlet/HttpServletGetServletInfoTest.html"
             assertion="Returns this servlet's ServletInfo object, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.ServletContext() method"
             testStrategy="Create a servlet and check for its ServletInfo object values"
-            lastTask="true"
         />
 
         <!-- END javax_servlet_http_HttpServlet -->
+
+        <!-- START compat -->
+
+        <gtest request="GET /servlet-compat/WithLeadingSlashTest HTTP/1.0"
+            testName="WithLeadingSlashTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/compat/WithLeadingSlashTest.html"
+            assertion="A 2.2 web application deployment descriptor who's url mapping begins with a '/' can be deployed in a 2.3 environment, specified in the Java Servlet Pages Specification v2.3, Sec 11"
+            testStrategy="The DD url-pattern has a '/' at the beginning of the string. The web app should deploy and be able to be called by a client."
+        />
+
+        <gtest request="GET /servlet-compat/WithoutLeadingSlashTest HTTP/1.0"
+            testName="WithoutLeadingSlashTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/compat/WithoutLeadingSlashTest.html"
+            assertion="A 2.2 web application deployment descriptor who's url mapping does not begin with a '/' can be deployed in a 2.3 environment, specified in the Java Servlet Pages Specification v2.3, Sec 11"
+            testStrategy="The DD url-pattern that does not have a '/' at the beginning of the string. The web app should deploy and be able to be called by a client."
+            lastTask="true"
+        />
+
+        <!-- END compat -->
 
     </target>
 
 
     <!-- Begin individual targets that can invoke specific tests -->
+
+    <target name="WithLeadingSlashTest">
+        <gtest request="GET /servlet-compat/WithLeadingSlashTest HTTP/1.0"
+            testName="WithLeadingSlashTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/compat/WithLeadingSlashTest.html"
+            assertion="A 2.2 web application deployment descriptor who's url mapping begins with a '/' can be deployed in a 2.3 environment, specified in the Java Servlet Pages Specification v2.3, Sec 11"
+            testStrategy="The DD url-pattern has a '/' at the beginning of the string. The web app should deploy and be able to be called by a client."
+        />
+    </target>
+
+    <target name="WithoutLeadingSlashTest">
+        <gtest request="GET /servlet-compat/WithoutLeadingSlashTest HTTP/1.0"
+            testName="WithoutLeadingSlashTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/compat/WithoutLeadingSlashTest.html"
+            assertion="A 2.2 web application deployment descriptor who's url mapping does not begin with a '/' can be deployed in a 2.3 environment, specified in the Java Servlet Pages Specification v2.3, Sec 11"
+            testStrategy="The DD url-pattern that does not have a '/' at the beginning of the string. The web app should deploy and be able to be called by a client."
+        />
+    </target>
 
     <target name="DoFilterTest">
         <gtest request="GET /servlet-tests/DoFilterTest HTTP/1.0"
