@@ -504,10 +504,10 @@ public abstract class AuthenticatorBase
 
         // Make sure that constrained resources are not cached by web proxies
         // or browsers as caching can provide a security hole
-	HttpServletRequest hsrequest = (HttpServletRequest)hrequest.getRequest();
+        HttpServletRequest hsrequest = (HttpServletRequest)hrequest.getRequest();
         if (disableProxyCaching && 
             !hsrequest.isSecure() &&
-	    !"POST".equalsIgnoreCase(hsrequest.getMethod())) {
+            !"POST".equalsIgnoreCase(hsrequest.getMethod())) {
             HttpServletResponse sresponse = 
                 (HttpServletResponse) response.getResponse();
             sresponse.setHeader("Pragma", "No-cache");
