@@ -277,6 +277,9 @@ Connectors:
          encoded '?' in the URI path as the query string delimitor.
 
 
+6579	 Make certain that we don't dump more out put than is available when 
+	 debugging Ajp13.
+
 Documentation:
 
 Bug No.  Description
