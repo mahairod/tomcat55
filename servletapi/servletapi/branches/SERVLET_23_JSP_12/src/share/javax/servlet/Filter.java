@@ -66,11 +66,11 @@ import java.io.IOException;
 	** A filter is an object than perform filtering tasks
 	** on either the request to a servlet, or on the response from 
 	** a servlet, or both.<br><br>
-	** Filters do their filtering in the DoFilter method. Every Filter has access to 
+	** Filters do their filtering in the doFilter method. Every Filter has access to 
 	** a FilterConfig object from which it can obtain its initialization parameters, a
 	** reference to the ServletContext and a view into the Filter stack.
 	** <p>
-	** Examples that have been identified for this design are:-<br>
+	** Examples that have been identified for this design are<br>
 	** 1) Authentication Filters <br>
 	** 2) Logging and Auditing Filters <br>
 	** 3) Image conversion Filters <br>
@@ -80,7 +80,7 @@ import java.io.IOException;
 	** 7) Filters that trigger resource access events <br>
 	** 8) XSL/T filters <br>
 	** 9) Mime-type chain Filter <br>
-	 * @since	v 2.3
+	 * @since	Servlet 2.3
 	*/
 
 public interface Filter {
