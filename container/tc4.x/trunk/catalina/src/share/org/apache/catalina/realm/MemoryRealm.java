@@ -206,13 +206,18 @@ public final class MemoryRealm
             (GenericPrincipal) principals.get(username);
 
         boolean validated = false;
-        if (hasMessageDigest()) {
-            // Hex hashes should be compared care-insensitive
-            validated = (digest(credentials).equalsIgnoreCase(principal.getPassword()));
-        } else
-            validated = (digest(credentials).equals(principal.getPassword()));
+        if (principal != null) {
+            if (hasMessageDigest()) {
+                // Hex hashes should be compared care-insensitive
+                validated = (digest(credentials)
+                             .equalsIgnoreCase(principal.getPassword()));
+            } else {
+                validated = 
+                    (digest(credentials).equals(principal.getPassword()));
+            }
+        }
 
-        if ((principal != null) && validated) {
+        if (validated) {
             if (debug >= 2)
                 log(sm.getString("memoryRealm.authenticateSuccess", username));
             return (principal);
