@@ -79,6 +79,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -114,6 +115,12 @@ public final class StandardServer
 
 
     /**
+     * Global naming resources.
+     */
+    private NamingResources globalNamingResources = null;
+
+
+    /**
      * Descriptive information about this Server implementation.
      */
     private static final String info =
@@ -124,6 +131,12 @@ public final class StandardServer
      * The lifecycle event support for this component.
      */
     private LifecycleSupport lifecycle = new LifecycleSupport(this);
+
+
+    /**
+     * The naming context listener for this web application.
+     */
+    private NamingContextListener namingContextListener = null;
 
 
     /**
@@ -171,6 +184,29 @@ public final class StandardServer
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the global naming resources.
+     */
+    public NamingResources getGlobalNamingResources() {
+
+        return (this.globalNamingResources);
+
+    }
+
+
+    /**
+     * Set the global naming resources.
+     * 
+     * @param namingResources The new global naming resources
+     */
+    public void setGlobalNamingResources
+        (NamingResources globalNamingResources) {
+
+        this.globalNamingResources = globalNamingResources;
+
+    }
 
 
     /**
@@ -450,6 +486,21 @@ public final class StandardServer
     }
 
 
+    /**
+     * Return true if naming should be used.
+     */
+    private boolean isUseNaming() {
+        boolean useNaming = true;
+        // Reading the "catalina.useNaming" environment variable
+        String useNamingProperty = System.getProperty("catalina.useNaming");
+        if ((useNamingProperty != null)
+            && (useNamingProperty.equals("false"))) {
+            useNaming = false;
+        }
+        return useNaming;
+    }
+
+
     // ------------------------------------------------------ Lifecycle Methods
 
 
@@ -494,6 +545,14 @@ public final class StandardServer
         if (started)
             throw new LifecycleException
                 (sm.getString("standardServer.start.started"));
+
+        if (isUseNaming()) {
+            if ((globalNamingResources != null) 
+                && (namingContextListener == null)) {
+                namingContextListener = new NamingContextListener();
+                addLifecycleListener(namingContextListener);
+            }
+        }
 
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
