@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.jar.*;
 import java.net.JarURLConnection;
 import java.net.*;
@@ -69,12 +70,11 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.Tag;
 
-import org.w3c.dom.*;
-import org.xml.sax.*;
-
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.parser.ParserUtils;
+import org.apache.jasper.parser.TreeNode;
 
 /**
  * A container for all tag libraries that are defined "globally"
@@ -144,49 +144,51 @@ public class TldLocationsCache {
     private void processWebDotXml(ServletContext ctxt)
         throws JasperException
     {
-        // Parse web.xml
-        InputStream is = ctxt.getResourceAsStream(WEB_XML);
 
+        // Acquire an input stream to the web application deployment descriptor
+        InputStream is = ctxt.getResourceAsStream(WEB_XML);
         if (is == null) {
-            Constants.message("jsp.error.internal.filenotfound", 
-                              new Object[]{WEB_XML},
+            Constants.message("jsp.error.internal.filenotfound",
+                              new Object[] {WEB_XML},
                               Logger.WARNING);
             return;
         }
-        Document webtld =
-            JspUtil.parseXMLDoc(WEB_XML, is);
-        NodeList nList =  webtld.getElementsByTagName("taglib");
-        if (nList.getLength() != 0) {
-            for(int i=0; i<nList.getLength(); i++) {
-                String tagUri = null;
-                String tagLoc = null;
-                Element e =  (Element)nList.item(i);
 
-                NodeList uriList = e.getElementsByTagName("taglib-uri");
-                Element uriElem = (Element)uriList.item(0);
-                tagUri = JspUtil.getElementChildTextData(uriElem);
-                if (tagUri == null) continue;
+        // Parse the web application deployment descriptor
+        ParserUtils pu = new ParserUtils();
+        TreeNode webtld = pu.parseXMLDocument(WEB_XML, is);
+        Iterator taglibs = webtld.findChildren("taglib");
+        while (taglibs.hasNext()) {
 
-                NodeList locList = 
-                    e.getElementsByTagName("taglib-location");
-                Element locElem = (Element)locList.item(0);
-                tagLoc = JspUtil.getElementChildTextData(locElem);
-                if (tagLoc == null) continue;
-
-                if (uriType(tagLoc) == NOROOT_REL_URI) {
-                    // relative to web.xml location
-                    tagLoc = "/WEB-INF/" + tagLoc;
-                }
-
-                String loc2 = null;
-                if (tagLoc.endsWith(".jar")) {
-                    loc2 = "META-INF/taglib.tld";
-                }
-                mappings.put(tagUri, new String[] {tagLoc, loc2});
-                //p("added web.xml mapping: " + tagUri + " -> " + 
-                //  tagLoc + "  " + loc2);
+            // Parse the next <taglib> element
+            TreeNode taglib = (TreeNode) taglibs.next();
+            String tagUri = null;
+            Iterator uris = taglib.findChildren("taglib-uri");
+            while (uris.hasNext()) {
+                TreeNode uri = (TreeNode) uris.next();
+                if (tagUri == null)
+                    tagUri = uri.getBody();
             }
+            String tagLoc = null;
+            Iterator locs = taglib.findChildren("taglib-location");
+            while (locs.hasNext()) {
+                TreeNode loc = (TreeNode) locs.next();
+                if (tagLoc == null)
+                    tagLoc = loc.getBody();
+            }
+
+            // Save this location if appropriate
+            if (tagLoc == null)
+                continue;
+            if (uriType(tagLoc) == NOROOT_REL_URI)
+                tagLoc = "/WEB-INF/" + tagLoc;
+            String tagLoc2 = null;
+            if (tagLoc.endsWith(".jar"))
+                tagLoc2 = "META-INF/taglib.tld";
+            mappings.put(tagUri, new String[] {tagLoc, tagLoc2});
+
         }
+
     }
 
     /**
@@ -274,29 +276,29 @@ public class TldLocationsCache {
     private String parseTldForUri(String resourcePath, InputStream in) 
         throws JasperException
     {
-        Document tld = JspUtil.parseXMLDoc(resourcePath, in);
-        NodeList list = tld.getElementsByTagName("taglib");
-        if (list.getLength() != 1) {
-            Constants.message("jsp.error.more.than.one.taglib",
-                              new Object[]{resourcePath},
-                              Logger.ERROR);
-            return null;
-        }
 
-        Element elem = (Element)list.item(0);
-        list = elem.getChildNodes();
-
-        for(int i = 0; i < list.getLength(); i++) {
-            Node tmp = list.item(i);
-            if (! (tmp instanceof Element)) continue;
-            Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("uri")) {
-                return JspUtil.getElementChildTextData(e);
+        // Parse the tag library descriptor at the specified resource path
+        ParserUtils pu = new ParserUtils();
+        TreeNode tld = pu.parseXMLDocument(resourcePath, in);
+        Iterator taglibs = tld.findChildren("taglib");
+        int n = 0;
+        while (taglibs.hasNext()) {
+            n++;
+            if (n > 1) {
+                Constants.message("jsp.error.more.than.one.taglib",
+                                  new Object[] {resourcePath},
+                                  Logger.ERROR);
+                return null;
+            }
+            TreeNode taglib = (TreeNode) taglibs.next();
+            Iterator uris = taglib.findChildren("uri");
+            while (uris.hasNext()) {
+                TreeNode uri = (TreeNode) uris.next();
+                return uri.getBody();
             }
         }
-        //p("No URI defined for this tag library: " + resourcePath);
-        return null;
+        return null; // No <uri> element is present
+
     }
 
     //*********************************************************************
