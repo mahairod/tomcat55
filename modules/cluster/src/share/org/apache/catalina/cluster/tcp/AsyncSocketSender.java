@@ -34,6 +34,7 @@ public class AsyncSocketSender implements IDataSender {
     private boolean suspect;
     
     private QueueThread queueThread = null;
+    private long ackTimeout;
     
     public AsyncSocketSender(InetAddress host, int port)  {
         this.address = host;
@@ -122,6 +123,12 @@ public class AsyncSocketSender implements IDataSender {
     
     public void setSuspect(boolean suspect) {
         this.suspect = suspect;
+    }
+    public long getAckTimeout() {
+        return ackTimeout;
+    }
+    public void setAckTimeout(long ackTimeout) {
+        this.ackTimeout = ackTimeout;
     }
     
     private class QueueThread extends Thread {
