@@ -710,12 +710,12 @@ public class StandardHost
                      errorReportValveClass));
             }
         }
-
-        if (xmlValidation)
-            log.info( sm.getString("standardHost.validationEnabled"));
-        else
-            log.info( sm.getString("standardHost.validationDisabled"));
-
+        if(log.isInfoEnabled()) {
+            if (xmlValidation)
+                log.info( sm.getString("standardHost.validationEnabled"));
+            else
+                log.info( sm.getString("standardHost.validationDisabled"));
+        }
         super.start();
 
     }
@@ -762,13 +762,14 @@ public class StandardHost
                 HostConfig deployer = new HostConfig();
                 addLifecycleListener(deployer);                
                 if( mserver.isRegistered( serviceName )) {
-                    log.debug("Registering with the Engine");
+                    if(log.isDebugEnabled())
+                        log.debug("Registering "+ serviceName +" with the Engine");
                     mserver.invoke( serviceName, "addChild",
                             new Object[] { this },
                             new String[] { "org.apache.catalina.Container" } );
                 }
             } catch( Exception ex ) {
-                ex.printStackTrace();
+                log.error("Host registering failed!",ex);
             }
         }
         
@@ -777,13 +778,14 @@ public class StandardHost
             try {
                 StandardEngine engine=(StandardEngine)parent;
                 domain=engine.getName();
-                log.debug( "Register " + domain );
+                if(log.isDebugEnabled())
+                    log.debug( "Register host " + getName() + " with domain "+ domain );
                 oname=new ObjectName(domain + ":type=Host,host=" +
                         this.getName());
                 Registry.getRegistry(null, null)
                     .registerComponent(this, oname, null);
             } catch( Throwable t ) {
-                log.info("Error registering ", t );
+                log.error("Host registering failed!", t );
             }
         }
     }

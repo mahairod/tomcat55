@@ -299,7 +299,8 @@ public class StandardEngine
                 if (domain==null) {
                     domain=getName();
                 }
-                log.debug( "Register " + domain );
+                if(log.isDebugEnabled())
+                    log.debug( "Register " + domain );
                 oname=new ObjectName(domain + ":type=Engine");
                 controller=oname;
                 Registry.getRegistry(null, null)
@@ -424,7 +425,8 @@ public class StandardEngine
             
         // Log our server identification information
         //System.out.println(ServerInfo.getServerInfo());
-        log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
+        if(log.isInfoEnabled())
+            log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
         if( mbeans != null ) {
             try {
                 Registry.getRegistry(null, null)
