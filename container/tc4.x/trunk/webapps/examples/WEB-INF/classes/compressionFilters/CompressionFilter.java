@@ -129,7 +129,7 @@ public class CompressionFilter implements Filter{
             if (str!=null) {
                 compressionThreshold = Integer.parseInt(str);
                 if (compressionThreshold != 0 && compressionThreshold < minThreshold) {
-                    if (debug > 0) {
+			  if (debug > 0) {
                         System.out.println("compressionThreshold should be either 0 - no compression or >= " + minThreshold);
                         System.out.println("compressionThreshold set to " + minThreshold);
                     }
@@ -191,6 +191,17 @@ public class CompressionFilter implements Filter{
             if (debug > 1) {
                 System.out.println("requestURI = " + ((HttpServletRequest)request).getRequestURI());
             }
+
+            // Are we allowed to compress ?
+            String s = (String) ((HttpServletRequest)request).getParameter("gzip");
+            if ("false".equals(s)) {
+                if (debug > 0) {
+                    System.out.println("got parameter gzip=false --> don't compress, just chain filter");
+                }
+                chain.doFilter(request, response);
+                return;
+            }
+
             Enumeration e =
                 ((HttpServletRequest)request).getHeaders("Accept-Encoding");
             while (e.hasMoreElements()) {

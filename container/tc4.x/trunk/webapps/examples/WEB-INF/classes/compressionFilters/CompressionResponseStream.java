@@ -189,8 +189,14 @@ public class CompressionResponseStream
         if (gzipstream != null) {
             flushToGZip();
             gzipstream.close();
+            gzipstream = null;
         } else {
             if (bufferCount > 0) {
+                if (debug > 2) {
+                    System.out.print("output.write(");
+                    System.out.write(buffer, 0, bufferCount);
+                    System.out.println(")");
+                }
                 output.write(buffer, 0, bufferCount);
                 bufferCount = 0;
             }
@@ -291,7 +297,9 @@ public class CompressionResponseStream
             System.out.println("write, bufferCount = " + bufferCount + " len = " + len + " off = " + off);
         }
         if (debug > 2) {
+            System.out.print("write(");
             System.out.write(b, off, len);
+            System.out.println(")");
         }
 
         if (closed)
@@ -324,9 +332,17 @@ public class CompressionResponseStream
     public void writeToGZip(byte b[], int off, int len) throws IOException {
 
         if (debug > 1) {
-            System.out.println("***** writeToGZip, len = " + len);
+            System.out.println("writeToGZip, len = " + len);
+        }
+        if (debug > 2) {
+            System.out.print("writeToGZip(");
+            System.out.write(b, off, len);
+            System.out.println(")");
         }
         if (gzipstream == null) {
+            if (debug > 1) {
+                System.out.println("new GZIPOutputStream");
+            }
             gzipstream = new GZIPOutputStream(output);
             response.addHeader("Content-Encoding", "gzip");
         }
