@@ -4,7 +4,6 @@
   reserved.
 -->
 <body>
-<%@ taglib uri="http://jakarta.apache.org/tomcat/debug-taglib" prefix="d"%>
 <%@ taglib uri="http://jakarta.apache.org/tomcat/examples-taglib" prefix="eg"%>
 
 Radio stations that rock:
