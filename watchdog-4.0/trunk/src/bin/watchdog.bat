@@ -9,6 +9,9 @@ set _PORT=%PORT%
 set _SUITE=%SUITE%
 set _WATCHDOG_HOME=%WATCHDOG_HOME%
 
+rem Estabish the test suite we will execute
+set SUITE=%1
+
 rem Establish host and port of the server under test
 set HOST=localhost
 set PORT=8080
@@ -30,7 +33,6 @@ set CLASSPATH=%CLASSPATH%;%JAVA_HOME%\lib\tools.jar
 set CLASSPATH=%CLASSPATH%;%JAVA_HOME%\lib\classes.zip
 
 echo "using classpath=" %CLASSPATH%
-if "%1"=="servlet" goto servlet
 
 rem Execute the Requested Test Suite
 java org.apache.tools.ant.Main -Dport=%PORT% -Dhost=%HOST% "-Dwatchdog.home=%WATCHDOG_HOME%" -f "%WATCHDOG_HOME%\conf\runtest.xml" %SUITE%
