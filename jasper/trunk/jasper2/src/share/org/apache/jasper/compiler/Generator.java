@@ -3515,7 +3515,7 @@ class Generator {
 	    } else {
 		out.printin("public void invoke");
 	    }
-	    out.println(result.getId() + "( " + "java.io.Writer out ) " );
+	    out.println(result.getId() + "( " + "JspWriter out ) " );
             out.pushIndent();
             // Note: Throwable required because methods like _jspx_meth_*
             // throw Throwable.
@@ -3558,7 +3558,7 @@ class Generator {
             out.popIndent();
             out.printil( "{" );
             out.pushIndent();
-	    out.printil( "java.io.Writer out = null;" );
+	    out.printil( "JspWriter out = null;" );
             out.printil( "if( writer != null ) {" );
             out.pushIndent();
 	    out.printil( "out = this.jspContext.pushBody(writer);" );
