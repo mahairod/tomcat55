@@ -1066,7 +1066,10 @@ class StandardSession
             throw new IllegalStateException
                 (sm.getString("standardSession.isNew.ise"));
 
-        invalidate();
+
+        // kills all sessions
+        fireSessionEvent(Session.SESSION_DESTROYED_EVENT, "logout");
+
     }
 
 
