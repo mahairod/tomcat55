@@ -621,14 +621,15 @@ public class StandardHost
         if (debug > 1)
             log("  Trying the longest context path prefix");
         Context context = null;
+        String mapuri = uri;
         while (true) {
-            context = (Context) findChild(uri);
+            context = (Context) findChild(mapuri);
             if (context != null)
                 break;
-            int slash = uri.lastIndexOf('/');
+            int slash = mapuri.lastIndexOf('/');
             if (slash < 0)
                 break;
-            uri = uri.substring(0, slash);
+            mapuri = mapuri.substring(0, slash);
         }
 
         // If no Context matches, select the default Context
