@@ -861,7 +861,6 @@ public class JspParseEventListener extends BaseJspListener {
                                    start, stop);
 
 	addGenerator(gen);
-
     }
 
     public void handleTagEnd(Mark start, Mark stop, String prefix, 

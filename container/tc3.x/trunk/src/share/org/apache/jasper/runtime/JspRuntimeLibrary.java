@@ -135,9 +135,9 @@ public class JspRuntimeLibrary {
                 return new java.io.File(s);
             }
         } catch (Exception ex) {
-	    throw new JasperException (ex);
+            throw new JasperException (ex);
         }
-        return null;
+        return s;
     }
     // __end convertMethod
 

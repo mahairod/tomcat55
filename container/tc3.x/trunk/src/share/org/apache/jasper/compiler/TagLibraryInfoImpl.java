@@ -372,7 +372,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                     this.info = t.getData();
             } else if (tname.equals("tag"))
                 tagVector.addElement(createTagInfo(e));
-            else 
+            else
                 Constants.message("jsp.warning.unknown.element.in.TLD", 
                                   new Object[] {
                                       e.getTagName()
