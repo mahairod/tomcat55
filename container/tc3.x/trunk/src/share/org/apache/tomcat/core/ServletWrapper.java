@@ -198,7 +198,7 @@ public class ServletWrapper {
 	}
     }
     
-    void loadServlet()
+    public void loadServlet()
     throws ClassNotFoundException, InstantiationException,
         IllegalAccessException, ServletException {
         // Check if this is a JSP, they get special treatment
