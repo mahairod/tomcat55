@@ -961,6 +961,14 @@ public class Embedded implements Lifecycle {
 	customize(examples);	// Special customization for this web-app
 	host.addChild(examples);
 
+        // As an alternative to the three lines above, there is also a very
+        // simple method to deploy a new application that has default values
+        // for all context properties:
+        //   String contextPath = ... context path for this app ...
+        //   URL docRoot = ... URL of WAR file or unpacked directory ...
+        //   ((Deployer) host).deploy(contextPath, docRoot);
+
+        // Install the assembled container hierarchy
 	embedded.addEngine(engine);
 
 	// Assemble and install a non-secure connector for port 8080
@@ -1012,8 +1020,7 @@ public class Embedded implements Lifecycle {
 	    basename = basename.substring(1);
 
 	FileLogger special = new FileLogger();
-	special.setPrefix(context.getParent().getName() + "_" +
-			  basename + "_log.");
+	special.setPrefix(basename + "_log.");
 	special.setSuffix(".txt");
 	special.setTimestamp(true);
 

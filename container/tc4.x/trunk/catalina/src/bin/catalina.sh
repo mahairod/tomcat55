@@ -67,6 +67,10 @@ if [ "$1" = "debug" ] ; then
 elif [ "$1" = "embedded" ] ; then
 
   shift
+  for i in ${CATALINA_HOME}/server/*.jar ; do
+    CP=$i:${CP}
+  done
+  echo Embedded Classpath: $CP
   java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
    org.apache.catalina.startup.Embedded "$@"
