@@ -694,6 +694,7 @@ public class Generator {
 	private String parent;
 	private String simpleTagHandlerVar;
 	private boolean isSimpleTagHandler;
+	private boolean isFragment;
 	private boolean isTagFile;
 	private ServletWriter out;
 	private MethodsBuffer methodsBuffer;
@@ -961,7 +962,7 @@ public class Generator {
 	    out.print( pageParam );
 	    printParams(n, pageParam, page.isLiteral());
 	    out.println(");");
-	    if (isTagFile) {
+	    if (isTagFile || isFragment) {
 		out.printil("throw new javax.servlet.jsp.SkipPageException();");
 	    } else {
 		out.printil((methodNesting > 0)? "return true;": "return;");
@@ -2094,7 +2095,7 @@ public class Generator {
 	    out.print(tagHandlerVar);
 	    out.println(".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
 	    out.pushIndent();
-	    if (isTagFile) {
+	    if (isTagFile || isFragment) {
 		out.printil("throw new javax.servlet.jsp.SkipPageException();");
 	    } else {
 		out.printil((methodNesting > 0)? "return true;": "return;");
@@ -2667,9 +2668,12 @@ public class Generator {
 	    out = fragment.getMethodsBuffer().getOut();
 	    String tmpParent = parent;
 	    parent = tagHandlerVar;
+	    boolean tmpIsFragment = isFragment;
+	    isFragment = true;
             visitBody( n );
             out = outSave;
 	    parent = tmpParent;
+	    isFragment = tmpIsFragment;
 	    fragmentHelperClass.closeFragment(fragment, methodNesting);
             // XXX - Need to change pageContext to jspContext if
             // we're not in a place where pageContext is defined (e.g.
