@@ -193,7 +193,7 @@ public class BasicAuthenticator
 
         if (authorization == null)
             return (null);
-        if (!authorization.startsWith("Basic "))
+        if (!authorization.toLowerCase().startsWith("Basic "))
             return (null);
         authorization = authorization.substring(6).trim();
 
