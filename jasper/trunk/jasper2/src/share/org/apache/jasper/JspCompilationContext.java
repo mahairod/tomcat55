@@ -311,8 +311,9 @@ public class JspCompilationContext {
         int iEnd = jspUri.length();
         StringBuffer modifiedClassName = 
             new StringBuffer(jspUri.length() - iSep);
-	if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
-	    // If the first char is not a legal Java letter or digit,
+	if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep)) ||
+	    jspUri.charAt(iSep) == '_' ) {
+	    // If the first char is not a start of Java identifier or is _
 	    // prepend a '_'.
 	    modifiedClassName.append('_');
 	}
