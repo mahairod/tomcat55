@@ -1938,6 +1938,10 @@ public class StandardContext
         }
         Wrapper wrapper = (Wrapper) findChild(name);
         wrapper.addMapping(pattern);
+
+        // Update context mapper
+        mapper.addWrapper(pattern, wrapper);
+
         fireContainerEvent("addServletMapping", pattern);
 
     }
@@ -3373,6 +3377,7 @@ public class StandardContext
         if( wrapper != null ) {
             wrapper.removeMapping(pattern);
         }
+        mapper.removeWrapper(pattern);
         fireContainerEvent("removeServletMapping", pattern);
 
     }
@@ -4039,16 +4044,6 @@ public class StandardContext
                 // Notify our interested LifecycleListeners
                 lifecycle.fireLifecycleEvent(START_EVENT, null);
 
-                children = findChildren();
-                for (int i = 0; i < children.length; i++) {
-                    // Updating associated mapper
-                    Wrapper wrapper = (Wrapper) children[i];
-                    String[] mappings = wrapper.findMappings();
-                    for (int j = 0; j < mappings.length; j++) {
-                        mapper.addWrapper(mappings[j], wrapper);
-                    }
-                }
-
                 if ((manager != null) && (manager instanceof Lifecycle)) {
                     ((Lifecycle) manager).start();
                 }
@@ -4235,16 +4230,6 @@ public class StandardContext
             ((Lifecycle) manager).stop();
         }
 
-        // Updating associated mapper
-        Container children[] = findChildren();
-        for (int i = 0; i < children.length; i++) {
-            Wrapper wrapper = (Wrapper) children[i];
-            String[] mappings = wrapper.findMappings();
-            for (int j = 0; j < mappings.length; j++) {
-                mapper.removeWrapper(mappings[j]);
-            }
-        }
-
         // Normal container shutdown processing
         if (log.isDebugEnabled())
             log.debug("Processing standard container shutdown");
@@ -4260,7 +4245,7 @@ public class StandardContext
             }
 
             // Stop our child containers, if any
-            children = findChildren();
+            Container[] children = findChildren();
             for (int i = 0; i < children.length; i++) {
                 if (children[i] instanceof Lifecycle)
                     ((Lifecycle) children[i]).stop();
