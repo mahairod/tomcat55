@@ -163,8 +163,8 @@
     <mkdir  dir="${tomcat.dist}/src"/>
     <copy todir="${tomcat.dist}/src">
       <fileset dir=".">
-        <exclude name="build/**"/>
-        <exclude name="dist/**"/>
+        <exclude name="**/build/**"/>
+        <exclude name="**/dist/**"/>
       </fileset>
     </copy>
   </target>
