@@ -76,8 +76,7 @@ public abstract class Parser {
      */
     public static Parser getParser(Project project)
     throws BuildException {
-        ClassLoader loader=project.getClass().getClassLoader();
-        InputStream in=loader.getResourceAsStream(properties);
+        InputStream in=project.getClass().getResourceAsStream("parser.properties");
         if (in==null) throw new BuildException("Cannot find properties file");
 
         String name;
