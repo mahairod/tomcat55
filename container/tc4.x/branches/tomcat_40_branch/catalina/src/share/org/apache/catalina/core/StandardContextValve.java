@@ -74,10 +74,9 @@ import javax.naming.NamingException;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
-import org.apache.catalina.Manager;
+import org.apache.catalina.Context;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
-import org.apache.catalina.Session;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.RequestUtil;
@@ -169,17 +168,7 @@ final class StandardContextValve
             return;
         }
 
-        // Update the session last access time for our session (if any)
-        StandardContext context = (StandardContext) getContainer();
-        String sessionId = hreq.getRequestedSessionId();
-        if (sessionId != null) {
-            Manager manager = context.getManager();
-            if (manager != null) {
-                Session session = manager.findSession(sessionId);
-                if ((session != null) && session.isValid())
-                    session.access();
-            }
-        }
+        Context context = (Context) getContainer();
 
         // Select the Wrapper to be used for this Request
         Wrapper wrapper = null;
