@@ -556,6 +556,8 @@ public class StandardManager
                 session.expire(false);
             } catch (Throwable t) {
                 ;
+            } finally {
+                session.recycle();
             }
         }
 
@@ -670,12 +672,16 @@ public class StandardManager
         Session sessions[] = findSessions();
         for (int i = 0; i < sessions.length; i++) {
             StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid())
-                continue;
             try {
-                session.expire();
+                if (session.isValid()) {
+                    session.expire();
+                }
             } catch (Throwable t) {
                 ;
+            } finally {
+                // Measure against memory leaking if references to the session
+                // object are kept in a shared field somewhere
+                session.recycle();
             }
         }
 

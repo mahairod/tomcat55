@@ -321,13 +321,20 @@ public class StandardSession
      */
     public String getId() {
 
-        // Comment out for now, will revisit for 5.5.10
-        /*
-         if ( !isValid() ) {
-             throw new IllegalStateException
-                 (sm.getString("standardSession.getId.ise"));
-         }
-	 */
+        /*if ( !isValid() ) {
+            throw new IllegalStateException
+            (sm.getString("standardSession.getId.ise"));
+        }*/
+
+        return (this.id);
+
+    }
+
+
+    /**
+     * Return the session identifier for this session.
+     */
+    public String getIdInternal() {
 
         return (this.id);
 
@@ -737,6 +744,9 @@ public class StandardSession
      */
     public void passivate() {
 
+        // Notify interested session event listeners
+        fireSessionEvent(Session.SESSION_PASSIVATED_EVENT, null);
+
         // Notify ActivationListeners
         HttpSessionEvent event = null;
         String keys[] = keys();
@@ -763,6 +773,9 @@ public class StandardSession
      * session.
      */
     public void activate() {
+
+        // Notify interested session event listeners
+        fireSessionEvent(Session.SESSION_ACTIVATED_EVENT, null);
 
         // Notify ActivationListeners
         HttpSessionEvent event = null;
