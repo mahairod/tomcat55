@@ -70,6 +70,7 @@ import javax.servlet.ServletException;
 import javax.management.ObjectName;
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
@@ -77,6 +78,12 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
+import org.apache.catalina.Pipeline;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Service;
+import org.apache.catalina.Host;
+import org.apache.catalina.Context;
+import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.util.StringManager;
 
 
@@ -221,6 +228,8 @@ public abstract class ValveBase
         oname=name;
         mserver=server;
         domain=name.getDomain();
+
+
         return name;
     }
 
@@ -232,5 +241,68 @@ public abstract class ValveBase
 
     public void postDeregister() {
     }
+
+    /** From the name, extract the parent object name
+     *
+     * @param valveName
+     * @return
+     */
+    public ObjectName getParentName( ObjectName valveName ) {
+
+        return null;
+    }
+
+    public ObjectName createObjectName(String domain, ObjectName parent)
+            throws MalformedObjectNameException
+    {
+        Container container=this.getContainer();
+        if( container == null || ! (container instanceof ContainerBase) )
+            return null;
+        ContainerBase containerBase=(ContainerBase)container;
+        Pipeline pipe=containerBase.getPipeline();
+        Valve valves[]=pipe.getValves();
+
+        /* Compute the "parent name" part */
+        String parentName="";
+        if (container instanceof Engine) {
+            Service service = ((Engine)container).getService();
+            parentName=",service=" + service.getName();
+        } else if (container instanceof Host) {
+            Service service = ((Engine)container.getParent()).getService();
+            parentName=",host=" +container.getName() + ",service=" +
+                    service.getName();
+        } else if (container instanceof Context) {
+            String path = ((Context)container).getPath();
+            if (path.length() < 1) {
+                path = "/";
+            }
+            Host host = (Host) container.getParent();
+            Service service = ((Engine) host.getParent()).getService();
+            parentName=",path=" + path + ",host=" +
+                    host.getName() + ",service=" + service.getName();
+        }
+
+        String className=this.getClass().getName();
+        int period = className.lastIndexOf('.');
+        if (period >= 0)
+            className = className.substring(period + 1);
+
+        int seq=0;
+        for( int i=0; i<valves.length; i++ ) {
+            // Find other valves with the same name
+            if( valves[i]!=null &&
+                    valves[i].getClass() == this.getClass() &&
+                    valves[i] != this ) {
+                seq++;
+            }
+        }
+        String ext="";
+        if( seq > 0 ) {
+            ext=",seq=" + seq;
+        }
+
+        return new ObjectName( domain + ":type=Valve,name=" + className + ext);
+    }
+
 
 }
