@@ -246,11 +246,31 @@
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.cluster.tcp.ReplicationValve">
-
     <attribute   name="filter"
           description="resource filter to disable session replication check"
                  type="java.lang.String"/>
-
+    <attribute   name="primaryIndicator"
+          description="set indicator that request processing is at primary session node"
+                 type="boolean"/>
+    <attribute   name="primaryIndicatorName"
+          description="Request attribute name to indicate that request processing is at primary session node"
+                 type="java.lang.String"/>
+	<attribute   name="nrOfRequests"
+          description="number of replicated requests"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="totalRequestTime"
+          description="total replicated request time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="totalSendTime"
+          description="total replicated send time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="lastSendTime"
+          description="last replicated request time"
+                 type="long"
+                 writeable="false"/>
   </mbean>
 
 

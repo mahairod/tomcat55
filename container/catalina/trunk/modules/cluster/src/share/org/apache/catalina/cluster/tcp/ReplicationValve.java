@@ -25,9 +25,12 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.Manager;
+import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ClusterSession;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
@@ -43,7 +46,13 @@ import org.apache.catalina.valves.ValveBase;
  * <p>This Valve may be attached to any Container, depending on the granularity
  * of the logging you wish to perform.</p>
  *
+ * <p>primaryIndicator=true, then the request attribute <i>org.apache.catalina.cluster.tcp.isPrimarySession.</i>
+ * is set true, when request processing is at sessions primary node.
+ * </p>
+ *
  * @author Craig R. McClanahan
+ * @author Filip Hanik
+ * @author Peter Rossbach
  * @version $Revision$ $Date$
  */
 
@@ -59,7 +68,7 @@ public class ReplicationValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-        "org.apache.catalina.cluster.tcp.ReplicationValve/1.0";
+        "org.apache.catalina.cluster.tcp.ReplicationValve/1.1";
 
 
     /**
@@ -73,7 +82,16 @@ public class ReplicationValve
      */
     protected java.util.regex.Pattern[] reqFilters = new java.util.regex.Pattern[0];
     protected String filter ;
-    
+
+    protected long totalRequestTime=0;
+    protected long totalSendTime=0;
+    protected long nrOfRequests =0;
+    protected long lastSendTime =0;
+
+    protected boolean primaryIndicator = false ;
+
+    protected String primaryIndicatorName = "org.apache.catalina.cluster.tcp.isPrimarySession";
+   
     // ------------------------------------------------------------- Properties
 
     public ReplicationValve() {
@@ -87,14 +105,9 @@ public class ReplicationValve
 
     }
 
-
     // --------------------------------------------------------- Public Methods
-    protected static long totalRequestTime=0;
-    protected static long totalSendTime=0;
-    protected static long nrOfRequests =0;
-    protected static long lastSendTime =0;
     
-    protected static synchronized void addClusterSendTime(long requestTime, long clusterTime) {
+    protected synchronized void addClusterSendTime(long requestTime, long clusterTime) {
         totalSendTime+=clusterTime;
         totalRequestTime+=requestTime;
         nrOfRequests++;
@@ -127,6 +140,8 @@ public class ReplicationValve
         long totalstart = System.currentTimeMillis();
         //this happens before the request
         //long _debugstart = System.currentTimeMillis();
+        if (primaryIndicator)
+            createPrimaryIndicator( request) ;
         getNext().invoke(request, response);
         //System.out.println("[DEBUG] Regular invoke took="+(System.currentTimeMillis()-_debugstart)+" ms.");
         //this happens after the request
@@ -202,7 +217,41 @@ public class ReplicationValve
         }
     }
 
-
+    /**
+     * Mark Request that processed at primary node with attribute
+     * primaryIndicatorName
+     * 
+     * @param request
+     * @throws IOException
+     */
+    protected void createPrimaryIndicator(Request request) throws IOException {
+        String id = request.getRequestedSessionId();
+        if ((id != null) && (id.length() > 0)) {
+            Manager manager = request.getContext().getManager();
+            Session session = manager.findSession(id);
+            if (session instanceof ClusterSession) {
+                ClusterSession cses = (ClusterSession) session;
+                if (cses != null) {
+                    Boolean isPrimary = new Boolean(cses.isPrimarySession());
+                    if (log.isDebugEnabled())
+                        log.debug("Primarity of session " + id
+                                + " in request attribute "
+                                + primaryIndicatorName + " is " + isPrimary);
+                    request.setAttribute(primaryIndicatorName, isPrimary);
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    if (session != null) {
+                        log.debug("Found session " + id
+                                + " but it is not a ClusterSession.");
+                    } else {
+                        log.debug("Requested session " + id + " is invalid.");
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Return a String rendering of this object.
      */
@@ -216,6 +265,9 @@ public class ReplicationValve
 
     }
 
+    /**
+     * @param filter The filter to set.
+     */
     public void setFilter(String filter)
     {
     	if(log.isDebugEnabled())
@@ -239,10 +291,35 @@ public class ReplicationValve
         }
     }
 
+    /**
+     * @return Returns the filter
+     */
     public String getFilter() {
        return filter ;
     }
 
-    // ------------------------------------------------------ Protected Methods
-
+    /**
+     * @return Returns the primaryIndicator.
+     */
+    public boolean isPrimaryIndicator() {
+        return primaryIndicator;
+    }
+    /**
+     * @param primaryIndicator The primaryIndicator to set.
+     */
+    public void setPrimaryIndicator(boolean primaryIndicator) {
+        this.primaryIndicator = primaryIndicator;
+    }
+    /**
+     * @return Returns the primaryIndicatorName.
+     */
+    public String getPrimaryIndicatorName() {
+        return primaryIndicatorName;
+    }
+    /**
+     * @param primaryIndicatorName The primaryIndicatorName to set.
+     */
+    public void setPrimaryIndicatorName(String primaryIndicatorName) {
+        this.primaryIndicatorName = primaryIndicatorName;
+    }
 }
