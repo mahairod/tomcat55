@@ -350,6 +350,14 @@
              goldenFile="${gdir}/SimpleForward.txt" 
        />
 
+      <httpClient>
+          <comment>Dispatch to html error page using error-page web.xml element</comment>
+          <httpRequest path="/test/servlet/error402" />
+          <httpStatusMatch match="402" />
+          <headerMatch name="Content-Type" value="text/html" />
+          <goldenMatch file="${gdir}/error402.html.txt"/>
+      </httpClient>
+
       <!-- Removed: the test calls RequestDispatcher.include(), and 
            the included servlet throws an exception. 
            Before Tomcat 3.2(3?) the exception was hidden - now we correctly
