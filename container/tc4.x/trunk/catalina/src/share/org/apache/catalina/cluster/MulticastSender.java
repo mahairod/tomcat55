@@ -164,7 +164,7 @@ public class MulticastSender
 
             send(obs);
         } catch (IOException e) {
-            log("An error occured when trying to replicate.");
+            log(sm.getString("multicastSender.sendException", e.toString()));
         }
     }
     
@@ -191,7 +191,7 @@ public class MulticastSender
                                                   multicastAddress, multicastPort);
             send(p);
         } catch (IOException e) {
-            log("An error occured when trying to replicate.");
+            log(sm.getString("multicastSender.sendException", e.toString()));
         }
     }
 
@@ -204,7 +204,7 @@ public class MulticastSender
         try {
             multicastSocket.send(p);
         } catch (IOException e) {
-            log("An error occured when trying to replicate.");
+            log(sm.getString("multicastSender.sendException", e.toString()));
         }
     }
 }

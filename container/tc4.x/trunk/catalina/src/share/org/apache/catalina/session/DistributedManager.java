@@ -186,8 +186,8 @@ public final class DistributedManager extends PersistentManagerBase {
             cluster = container.getCluster();
 
         if(cluster != null) {
-            this.clusterSender = cluster.getClusterSender(name);
-            this.clusterReceiver = cluster.getClusterReceiver(name);
+            this.clusterSender = cluster.getClusterSender(getName());
+            this.clusterReceiver = cluster.getClusterReceiver(getName());
         }
 
         super.start();
@@ -226,7 +226,7 @@ public final class DistributedManager extends PersistentManagerBase {
                 else
                     ois = new ObjectInputStream(bis);
                 
-                _session = (StandardSession) createSession();
+                _session = (StandardSession) super.createSession();
                 _session.readObjectData(ois);
                 _session.setManager(this);
 

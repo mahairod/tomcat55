@@ -164,7 +164,7 @@ public interface Cluster {
      *
      * @return Collection with all members in the Cluster
      */
-    public Collection getRemoteClusterMembers();
+    public ClusterMemberInfo[] getRemoteClusterMembers();
 
     /**
      * Returns a <code>ClusterSender</code> which is the interface
@@ -192,5 +192,5 @@ public interface Cluster {
      *
      * @return Cluster information
      */
-    public ClusterMemberInfo getLocalClusterInfo();
+    public ClusterMemberInfo getLocalClusterMember();
 }
