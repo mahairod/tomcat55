@@ -306,9 +306,10 @@ public class Javac extends Task {
 	// add our classpath to the mix
 
 	if (compileClasspath != null) {
+        // using ":" here because this comes from the XML file and thus
+        // isn't platform specific
 	    StringTokenizer tok = new StringTokenizer(compileClasspath, 
-            File.pathSeparator,
-						      false);
+            ":", false);
 	    while (tok.hasMoreTokens()) {
 		File f = project.resolveFile(tok.nextToken());
 		classpath.append(f.getAbsolutePath());
