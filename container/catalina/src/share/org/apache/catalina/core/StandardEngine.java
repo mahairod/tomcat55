@@ -81,6 +81,8 @@ import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
+import java.io.File;
+import java.util.List;
 
 /**
  * Standard implementation of the <b>Engine</b> interface.  Each
@@ -151,6 +153,19 @@ public class StandardEngine
      */
     private String baseDir = null;
 
+    /** Optional mbeans config file. This will replace the "hacks" in
+     * jk and ServerListener. The mbeans file will support (transparent) 
+     * persistence - soon. It'll probably replace jk2.properties and could
+     * replace server.xml. Of course - the same beans could be loaded and 
+     * managed by an external entity - like the embedding app - which
+     *  can use a different persistence mechanism.
+     */ 
+    private String mbeansFile = null;
+    
+    /** Mbeans loaded by the engine.  
+     */ 
+    private List mbeans;
+    
     /**
      * DefaultContext config
      */
@@ -172,6 +187,8 @@ public class StandardEngine
      */
     public Realm getRealm() {
         Realm configured=super.getRealm();
+        // If no set realm has been called - default to JAAS
+        // This can be overriden at engine, context and host level  
         if( configured==null ) {
             configured=new JAASRealm();
             this.setRealm( configured );
@@ -294,14 +311,23 @@ public class StandardEngine
      * @param service The service that owns this Engine
      */
     public void setService(Service service) {
-
         this.service = service;
+    }
 
+    public String getMbeansFile() {
+        return mbeansFile;
+    }
+
+    public void setMbeansFile(String mbeansFile) {
+        this.mbeansFile = mbeansFile;
     }
 
     public String getBaseDir() {
         if( baseDir==null ) {
             baseDir=System.getProperty("catalina.base");
+        }
+        if( baseDir==null ) {
+            baseDir=System.getProperty("catalina.home");
         }
         return baseDir;
     }
@@ -386,6 +412,22 @@ public class StandardEngine
             }
         }
 
+        if( mbeansFile == null ) {
+            String defaultMBeansFile=getBaseDir() + "/conf/tomcat5-mbeans.xml";
+            File f=new File( defaultMBeansFile );
+            if( f.exists() ) mbeansFile=f.getAbsolutePath();
+        }
+        if( mbeansFile != null ) {
+            readEngineMbeans();
+        }
+        if( mbeans != null ) {
+            try {
+                Registry.getRegistry().invoke(mbeans, "init", false);
+            } catch (Exception e) {
+                log.error("Error in init() for " + mbeansFile, e);
+            }
+        }
+        
         if( service==null ) {
             try {
                 ObjectName serviceName=getParentName();        
@@ -423,10 +465,31 @@ public class StandardEngine
         
         // if we created it, make sure it's also destroyed
         ((StandardService)service).destroy();
+
+        if( mbeans != null ) {
+            try {
+                Registry.getRegistry().invoke(mbeans, "destroy", false);
+            } catch (Exception e) {
+                log.error("Error in destroy() for " + mbeansFile, e);
+            }
+        }
+        // 
+        if( mbeans != null ) {
+            try {
+                for( int i=0; i<mbeans.size() ; i++ ) {
+                    Registry.getRegistry().unregisterComponent((ObjectName)mbeans.get(i));
+                }
+            } catch (Exception e) {
+                log.error("Error in destroy() for " + mbeansFile, e);
+            }
+        }
+        
         // force all metadata to be reloaded.
         // That doesn't affect existing beans. We should make it per
         // registry - and stop using the static.
-        Registry.getRegistry().resetMetadata();        
+        Registry.getRegistry().resetMetadata();
+        
+                
     }
     
     /**
@@ -444,10 +507,28 @@ public class StandardEngine
         // Log our server identification information
         //System.out.println(ServerInfo.getServerInfo());
         log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
+        if( mbeans != null ) {
+            try {
+                Registry.getRegistry().invoke(mbeans, "start", false);
+            } catch (Exception e) {
+                log.error("Error in start() for " + mbeansFile, e);
+            }
+        }
 
         // Standard container startup
         super.start();
 
+    }
+    
+    public void stop() throws LifecycleException {
+        super.stop();
+        if( mbeans != null ) {
+            try {
+                Registry.getRegistry().invoke(mbeans, "stop", false);
+            } catch (Exception e) {
+                log.error("Error in stop() for " + mbeansFile, e);
+            }
+        }
     }
 
 
@@ -505,5 +586,16 @@ public class StandardEngine
         return new ObjectName( domain + ":type=Engine");
     }
 
+    
+    private void readEngineMbeans() {
+        try {
+            mbeans=Registry.getRegistry().loadMBeans(new File(mbeansFile));
+            Registry.getRegistry().invoke(mbeans, "init", false);
+            
+        } catch( Throwable t ) {
+            log.error( "Error loading " + mbeansFile, t );
+        }
+        
+    }
 }
                                                           
