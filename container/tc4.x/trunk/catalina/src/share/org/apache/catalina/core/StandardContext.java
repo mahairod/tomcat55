@@ -2365,6 +2365,11 @@ public class StandardContext
      */
     public synchronized void reload() {
 
+        // Validate our current component state
+        if (!started)
+            throw new IllegalStateException
+                (sm.getString("containerBase.notStarted", logName()));
+
         // Make sure reloading is enabled
         //      if (!reloadable)
         //          throw new IllegalStateException
