@@ -145,16 +145,6 @@ abstract class Node {
      * from the attribute of the node, or from a jsp:attrbute 
      */
     public String getTextAttribute(String name) {
-	class AttributeVisitor extends Visitor {
-	    String attrValue = null;
-	    public void visit(TemplateText txt) {
-		attrValue = new String(txt.getText());
-	    }
-
-	    public String getAttrValue() {
-		return attrValue;
-	    }
-	}
 
 	String attr = getAttributeValue(name);
 	if (attr != null) {
@@ -166,19 +156,7 @@ abstract class Node {
 	    return null;
 	}
 
-	// Get the attribute value from named attribute (jsp:attribute)
-	// Since this method is only for attributes that are not rtexpr,
-	// we can assume the body of the jsp:attribute is a template text
-	if (namedAttribute.getBody() != null) {
-	    AttributeVisitor attributeVisitor = new AttributeVisitor();
-	    try {
-		namedAttribute.getBody().visit(attributeVisitor);
-	    } catch (JasperException e) {
-	    }
-	    attr = attributeVisitor.getAttrValue();
-	}
-
-	return attr;
+	return namedAttribute.getText();
     }
 
     /**
@@ -922,7 +900,7 @@ abstract class Node {
      */
     public static class ChildInfo {
 	private boolean scriptless;	// true if the tag and its body
-					// contians no scripting elements.
+					// contain no scripting elements.
 	private boolean hasUseBean;
 	private boolean hasIncludeAction;
 	private boolean hasSetProperty;
@@ -1368,6 +1346,36 @@ abstract class Node {
         public String getTemporaryVariableName() {
             return temporaryVariableName;
         }
+
+	public String getText() {
+
+	    class AttributeVisitor extends Visitor {
+		String attrValue = null;
+		public void visit(TemplateText txt) {
+		    attrValue = new String(txt.getText());
+		}
+		
+		public String getAttrValue() {
+		    return attrValue;
+		}
+	    }
+
+	    // Get the attribute value from this named attribute
+	    // (<jsp:attribute>).
+	    // Since this method is only for attributes that are not rtexpr,
+	    // we can assume the body of the jsp:attribute is a template text
+	    String text = null;
+	    if (getBody() != null) {
+		AttributeVisitor attributeVisitor = new AttributeVisitor();
+		try {
+		    getBody().visit(attributeVisitor);
+		} catch (JasperException e) {
+		}
+		text = attributeVisitor.getAttrValue();
+	    }
+	    
+	    return text;
+	}
     }
 
     /**
@@ -1557,14 +1565,14 @@ abstract class Node {
          * @return true if the value represents an expression that should
          * be fed to the expression interpreter
          * @return false for string literals or rtexprvalues that should
-         * not be interpreter or reevaluated
+         * not be interpreted or reevaluated
          */
         public boolean isELInterpreterInput() {
             return el;
         }
 
 	/**
-	 * @return true if the value is a string literal know at translation
+	 * @return true if the value is a string literal known at translation
 	 * time.
 	 */
 	public boolean isLiteral() {
@@ -1654,8 +1662,8 @@ abstract class Node {
     public static class Visitor {
 
 	/**
-	 * The method provides a place to put actions that are common to
-	 * all nodes.  Override this in the child visitor class if need to.
+	 * This method provides a place to put actions that are common to
+	 * all nodes. Override this in the child visitor class if need to.
 	 */
 	protected void doVisit(Node n) throws JasperException {
 	}

@@ -821,8 +821,16 @@ class Validator {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
 			jspAttrs[attrs.getLength() + i]
 			    = new Node.JspAttribute(na, false);
-                        tagDataAttrs.put(na.getName(),
-                                         TagData.REQUEST_TIME_VALUE);
+
+			NamedAttributeVisitor nav = new NamedAttributeVisitor();
+			na.getBody().visit(nav);
+			if (nav.hasDynamicContent()) {
+			    tagDataAttrs.put(na.getName(),
+					     TagData.REQUEST_TIME_VALUE);
+			} else {
+			    tagDataAttrs.put(na.getName(),
+					     na.getText());    
+			}
 			found = true;
 			break;
 		    }
@@ -1048,6 +1056,22 @@ class Validator {
 		err.jspError(n,
 			     "jsp.error.attribute.standard.non_rt_with_expr",
 			     attrName, actionName);
+	    }
+	}
+
+	private static class NamedAttributeVisitor extends Node.Visitor {
+	    private boolean hasDynamicContent;
+
+	    public void doVisit(Node n) throws JasperException {
+		if (!(n instanceof Node.JspText)
+		        && !(n instanceof Node.TemplateText)) {
+		    hasDynamicContent = true;
+		}
+		visitBody(n);
+	    }
+	    
+	    public boolean hasDynamicContent() {
+		return hasDynamicContent;
 	    }
 	}
     }
