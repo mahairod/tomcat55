@@ -122,8 +122,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         print("tlibversion", tlibversion, out);
         print("jspversion", jspversion, out);
         print("shortname", shortname, out);
-        print("uri", uri, out);
+        print("urn", urn, out);
         print("info", info, out);
+        print("uri", uri, out);
 
         for(int i = 0; i < tags.length; i++)
             out.println(tags[i].toString());
