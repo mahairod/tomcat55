@@ -496,15 +496,25 @@ public class HostConfig
                     host.addChild(context);
                     // Add the eventual unpacked WAR and all the resources which will be
                     // watched inside it
-                    if (isWar && unpackWARs && (context.getDocBase() != null)) {
-                        File docBase = new File(context.getDocBase());
+                    if (isWar && unpackWARs) {
+                        String name = null;
+                        String path = context.getPath();
+                        if (path.equals("")) {
+                            name = "ROOT";
+                        } else {
+                            if (path.startsWith("/")) {
+                                name = path.substring(1);
+                            } else {
+                                name = path;
+                            }
+                        }
+                        File docBase = new File(name);
                         if (!docBase.isAbsolute()) {
-                            docBase = new File(new File(host.getAppBase()), 
-                                    context.getDocBase());
+                            docBase = new File(new File(host.getAppBase()), name);
                         }
                         deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                                 new Long(docBase.lastModified()));
-                        addWatchedResources(deployedApp, context);
+                        addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
                     }
                 } catch (Throwable t) {
                     log.error(sm.getString("hostConfig.deployDescriptor.error",
@@ -642,14 +652,24 @@ public class HostConfig
                     // If we're unpacking WARs, the docBase will be mutated after
                     // starting the context
                     if (unpackWARs && (context.getDocBase() != null)) {
-                        File docBase = new File(context.getDocBase());
+                        String name = null;
+                        String path = context.getPath();
+                        if (path.equals("")) {
+                            name = "ROOT";
+                        } else {
+                            if (path.startsWith("/")) {
+                                name = path.substring(1);
+                            } else {
+                                name = path;
+                            }
+                        }
+                        File docBase = new File(name);
                         if (!docBase.isAbsolute()) {
-                            docBase = new File(new File(host.getAppBase()), 
-                                    context.getDocBase());
+                            docBase = new File(new File(host.getAppBase()), name);
                         }
                         deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                                 new Long(docBase.lastModified()));
-                        addWatchedResources(deployedApp, context);
+                        addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
                     }
                 } catch (Throwable t) {
                     log.error(sm.getString("hostConfig.deployJar.error",
@@ -722,7 +742,7 @@ public class HostConfig
                     host.addChild(context);
                     deployedApp.redeployResources.put(dir.getAbsolutePath(),
                             new Long(dir.lastModified()));
-                    addWatchedResources(deployedApp, context);
+                    addWatchedResources(deployedApp, dir.getAbsolutePath(), context);
                 } catch (Throwable t) {
                     log.error(sm.getString("hostConfig.deployDir.error", files[i]),
                         t);
@@ -741,15 +761,16 @@ public class HostConfig
      * Add watched resources to the specified Context.
      * @param app
      */
-    protected void addWatchedResources(DeployedApplication app, Context context) {
-        File docBase = new File(context.getDocBase());
-        if (!docBase.isAbsolute()) {
-            docBase = new File(new File(host.getAppBase()), 
-                    context.getDocBase());
+    protected void addWatchedResources(DeployedApplication app, String docBase, Context context) {
+        // FIXME: Feature idea. Add support for patterns (ex: WEB-INF/*, WEB-INF/*.xml), where
+        //        we would only check if at least one resource is newer than app.timestamp
+        File docBaseFile = new File(docBase);
+        if (!docBaseFile.isAbsolute()) {
+            docBaseFile = new File(new File(host.getAppBase()), docBase);
         }
         String[] watchedResources = context.findWatchedResources();
         for (int i = 0; i < watchedResources.length; i++) {
-            File resource = new File(docBase, watchedResources[i]);
+            File resource = new File(docBaseFile, watchedResources[i]);
             app.reloadResources.put(resource.getAbsolutePath(), 
                     new Long(resource.lastModified()));
         }
