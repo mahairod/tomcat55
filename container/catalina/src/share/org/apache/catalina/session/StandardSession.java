@@ -611,27 +611,11 @@ class StandardSession
      *  this session?
      */
     public void expire(boolean notify) {
-
         // Mark this session as "being expired" if needed
         if (expiring)
             return;
         expiring = true;
-        setValid(false);
-
-        // Remove this session from our manager's active sessions
-        if (manager != null)
-            manager.remove(this);
-
-        // Unbind any objects associated with this session
-        String keys[] = keys();
-        for (int i = 0; i < keys.length; i++)
-            removeAttribute(keys[i], notify);
-
-        // Notify interested session event listeners
-        if (notify) {
-            fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
-        }
-
+        
         // Notify interested application event listeners
         // FIXME - Assumes we call listeners in reverse order
         Context context = (Context) manager.getContainer();
@@ -665,6 +649,21 @@ class StandardSession
                     log(sm.getString("standardSession.sessionEvent"), t);
                 }
             }
+        }
+        setValid(false);
+
+        // Remove this session from our manager's active sessions
+        if (manager != null)
+            manager.remove(this);
+
+        // Unbind any objects associated with this session
+        String keys[] = keys();
+        for (int i = 0; i < keys.length; i++)
+            removeAttribute(keys[i], notify);
+
+        // Notify interested session event listeners
+        if (notify) {
+            fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
         }
 
         // We have completed expire of this session
@@ -1516,7 +1515,6 @@ class StandardSession
      * @param data Event data
      */
     public void fireSessionEvent(String type, Object data) {
-
         if (listeners.size() < 1)
             return;
         SessionEvent event = new SessionEvent(this, type, data);
@@ -1524,8 +1522,10 @@ class StandardSession
         synchronized (listeners) {
             list = (SessionListener[]) listeners.toArray(list);
         }
-        for (int i = 0; i < list.length; i++)
+
+        for (int i = 0; i < list.length; i++){
             ((SessionListener) list[i]).sessionEvent(event);
+        }
 
     }
 
