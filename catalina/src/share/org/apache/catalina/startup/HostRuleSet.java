@@ -157,7 +157,7 @@ public class HostRuleSet extends RuleSetBase {
                                  "className");
         digester.addSetProperties(prefix + "Host/Cluster");
         digester.addSetNext(prefix + "Host/Cluster",
-                            "addCluster",
+                            "setCluster",
                             "org.apache.catalina.Cluster");
 
         digester.addObjectCreate(prefix + "Host/Listener",
