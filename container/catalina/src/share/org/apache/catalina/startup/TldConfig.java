@@ -416,6 +416,8 @@ public final class TldConfig  {
         try{
             digester.setFeature(
                 "http://apache.org/xml/features/allow-java-encodings", true);
+            digester.setFeature(
+                "http://apache.org/xml/features/validation/schema", true);
         } catch(ParserConfigurationException e){
                 // log("contextConfig.registerLocalSchema", e);
         } catch(SAXNotRecognizedException e){
