@@ -264,6 +264,19 @@
           status="200"
       outContent="ErrorPage06 PASSED - HTML"/>
 
+    <!-- ========== Load On Startup Exception Handling ==================== -->
+
+    <!-- NOTE: HttpURLConnection throws FileNotFoundException on 503s -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/ErrorPage07"
+           debug="${debug}"
+          status="503"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedErrorPage07"
+           debug="${debug}"
+          status="503"/>
+
   </target>
 
 
