@@ -540,11 +540,13 @@
       <param name="sourcefile" value="${struts.loc}"/>
       <param name="destfile" value="${struts.jar}"/>
     </antcall>
+<!--
     <antcall target="downloadfile">
       <param name="sourcefile" value="${tyrex.loc}"/>
       <param name="destfile" value="${tyrex.jar}"/>
       <param name="destdir" value="${tyrex.home}"/>
     </antcall>
+-->
   </target>
 
   <target name="proxyflags">
