@@ -86,16 +86,19 @@ import org.apache.catalina.util.StringManager;
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  * @author Glenn L. Nielsen
+ * @author Remy Maucherat
  * @version $Revision$
  */
 
 public class ExpandWar {
+
 
     /**
      * The string resources for this package.
      */
     protected static final StringManager sm =
         StringManager.getManager(Constants.Package);
+
 
     /**
      * Expand the WAR file found at the specified URL into an unpacked
@@ -110,7 +113,8 @@ public class ExpandWar {
      * @exception IOException if an input/output error was encountered
      *  during expansion
      */
-    public static String expand(Host host, URL war) throws IOException {
+    public static String expand(Host host, URL war)
+        throws IOException {
 
         int debug = 0;
         Logger logger = host.getLogger();
@@ -137,8 +141,10 @@ public class ExpandWar {
         if (debug >= 1) {
             logger.log("  Proposed directory name: " + pathname);
         }
-        return expand(host,war,pathname);
+        return expand(host, war, pathname);
+
     }
+
 
     /**
      * Expand the WAR file found at the specified URL into an unpacked
@@ -154,7 +160,8 @@ public class ExpandWar {
      * @exception IOException if an input/output error was encountered
      *  during expansion
      */
-    public static String expand(Host host, URL war, String pathname) throws IOException {
+    public static String expand(Host host, URL war, String pathname)
+        throws IOException {
 
         int debug = 0;
         Logger logger = host.getLogger();
@@ -227,9 +234,11 @@ public class ExpandWar {
                 input.close();
                 input = null;
             }
-            // FIXME - Closing the JAR file messes up the class loader???
-            //            jarFile.close();
-            jarFile = null;
+        } catch (IOException e) {
+            // If something went wrong, delete expanded dir to keep things 
+            // clean
+            deleteDir(docBase);
+            throw e;
         } finally {
             if (input != null) {
                 try {
@@ -253,6 +262,7 @@ public class ExpandWar {
         return (docBase.getAbsolutePath());
 
     }
+
 
     /**
      * Expand the specified input stream into the specified directory, creating
@@ -280,5 +290,31 @@ public class ExpandWar {
         output.close();
 
     }
+
+
+    /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    public static void deleteDir(File dir) {
+
+        String files[] = dir.list();
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(dir, files[i]);
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
+
+    }
+
 
 }
