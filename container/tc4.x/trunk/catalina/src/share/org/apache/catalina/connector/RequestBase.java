@@ -91,6 +91,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 
 /**
@@ -339,6 +340,7 @@ public abstract class RequestBase
 
         this.context = context;
 
+        SystemLogHandler.startCapture();
     }
 
 
@@ -557,6 +559,10 @@ public abstract class RequestBase
      */
     public void recycle() {
 
+        String log = SystemLogHandler.stopCapture();
+        if (log != null) {
+            context.getServletContext().log(log);
+        }
         attributes.clear();
         authorization = null;
         characterEncoding = null;

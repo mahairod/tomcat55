@@ -82,6 +82,7 @@ import org.apache.catalina.Server;
 import org.apache.catalina.Loader;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
+import org.apache.tomcat.util.log.SystemLogHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 
@@ -494,6 +495,11 @@ public class Catalina {
                 // fatal internal errors
                 definition + "java.,org.apache.catalina.,org.apache.jasper.");
         }
+
+        // Replace System.out and System.err with a custom PrintStream
+        SystemLogHandler log = new SystemLogHandler(System.out);
+        System.setOut(log);
+        System.setErr(log);
 
         Thread shutdownHook = new CatalinaShutdownHook();
 
