@@ -856,7 +856,7 @@
     </antcall>
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
-      <param name="destfile" value="${nsis.home}/nsis.exe"/>
+      <param name="destfile" value="${nsis.exe}"/>
       <param name="destdir" value="${nsis.home}"/>
     </antcall>
     <antcall target="downloadgz">
