@@ -289,13 +289,6 @@ public class ErrorReportValve
         if (report == null)
             return;
 
-        try {
-            hres.setContentType("text/html");
-        } catch (Throwable t) {
-            if (debug >= 1)
-                log("status.setContentType", t);
-        }
-
         StringBuffer sb = new StringBuffer();
 
         sb.append("<html><head><title>");
@@ -352,13 +345,24 @@ public class ErrorReportValve
         sb.append("</body></html>");
 
         try {
+
             Writer writer = response.getReporter();
             if (writer != null) {
+
+                try {
+                    hres.setContentType("text/html");
+                } catch (Throwable t) {
+                    if (debug >= 1)
+                        log("status.setContentType", t);
+                }
+
                 // If writer is null, it's an indication that the response has
                 // been hard committed already
                 writer.write(sb.toString());
                 writer.flush();
+
             }
+
         } catch (IOException e) {
             ;
         } catch (IllegalStateException e) {
