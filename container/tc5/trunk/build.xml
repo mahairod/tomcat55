@@ -162,7 +162,7 @@
   </target>
 
   <target name="build-tomcatutil" unless="tomcatutil.build.notrequired" description="Build j-t-c/util">
-    <echo>========== Building: tomcat-util </echo>
+    <echo>========== Building: tomcat-util to ${tomcat.build} </echo>
 
     <ant dir="${jtc.home}/util" target="build-main">
        <property name="jmx.jar" value="${jmx.jar}" />
@@ -347,6 +347,7 @@
       <include name="**" />
     </javac>
 
+    <mkdir dir="${jsp-examples.base}/WEB-INF/src/tags"/>
     <copy todir="${jsp-examples.base}/WEB-INF/classes">
       <fileset dir="${jsp-examples.base}/WEB-INF/src">
         <include name="**/*.class" />
@@ -400,7 +401,7 @@
 
   <target name="build-catalina" depends="init"
           description="Builds catalina">
-    <echo>========== Building: catalina </echo>
+    <echo>========== Building: catalina in ${tomcat.build}</echo>
 
     <ant dir="${catalina.home}/catalina" target="build-static">
         <property name="catalina.build" value="${tomcat.build}" />
@@ -446,8 +447,8 @@
     <copy file="${commons-beanutils.jar}" todir="${tomcat.build}/common/lib"/>
 
     <antcall target="build-tomcatutil"/>
-    <antcall target="build-catalina"/>
     <antcall target="build-tomcatcoyote"/>
+    <antcall target="build-catalina"/>
 
     <antcall target="build-tomcatjk"/>
 
