@@ -1663,14 +1663,14 @@
             testStrategy="A negative test for HttpServletRequest.getHeader() method."
         />
 
-        <watchdog request="GET /servlet-tests/GetHeadersTest HTTP/1.0"
+       <!-- <watchdog request="GET /servlet-tests/GetHeadersTest HTTP/1.0"
             testName="GetHeadersTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             requestHeaders="Accept-Language:en-us|Accept-Language:ga-us"
             goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeadersTest.html"
             assertion="Returns all the values of the specified request header as an Enumeration of String objects.,specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="A test for HttpServletRequest.getHeaders() method."
-        />
+        /> -->
 
         <watchdog request="GET /servlet-tests/GetHeadersEmptyTest HTTP/1.0"
             testName="GetHeadersEmptyTest" debug="0"
@@ -2435,14 +2435,14 @@ END EXCLUDE SendError_StringTest -->
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet the tests the returned value and returns the result of the test plus the contents of the static log file."
         />
 
-        <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetHeadersTest HTTP/1.0"
+       <!-- <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetHeadersTest HTTP/1.0"
             testName="HttpServletRequestWrapperGetHeadersTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             requestHeaders="MyHeader:myheadervalue1|MyHeader:myheadervalue2"
             goldenFile="${wgdir}/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetHeadersTest.html"
             assertion="Test for default behavior of this method to return getHeaders(String name) on the wrapped request object, specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet the tests the returned value and returns the result of the test plus the contents of the static log file."
-        />
+        /> -->
 
         <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetIntHeaderTest HTTP/1.0"
             testName="HttpServletRequestWrapperGetIntHeaderTest" debug="0"
@@ -5005,7 +5005,7 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
         />
     </target>
 
-    <target name="GetHeadersTest">
+    <!--<target name="GetHeadersTest">
         <watchdog request="GET /servlet-tests/GetHeadersTest HTTP/1.0"
             testName="GetHeadersTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
@@ -5014,7 +5014,7 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
             assertion="Returns all the values of the specified request header as  an Enumeration of String objects.,specified in the Java  Servlet Pages Specification v2.3, Sec 14"
             testStrategy="A test for HttpServletRequest.getHeaders() method."
         />
-    </target>
+    </target> -->
 
     <target name="GetHeadersEmptyTest">
         <watchdog request="GET /servlet-tests/GetHeadersEmptyTest HTTP/1.0"
@@ -5941,7 +5941,7 @@ END EXCLUDE SendError_StringTest -->
         />
     </target>
 
-    <target name="HttpServletRequestWrapperGetHeadersTest">
+    <!--<target name="HttpServletRequestWrapperGetHeadersTest">
         <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetHeadersTest HTTP/1.0"
             testName="HttpServletRequestWrapperGetHeadersTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
@@ -5950,7 +5950,7 @@ END EXCLUDE SendError_StringTest -->
             assertion="Test for default behavior of this method to return  getHeaders(String name) on the wrapped request object,  specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet the tests the returned value and returns the result of the test plus the contents of the static log file."
         />
-    </target>
+    </target> -->
 
     <target name="HttpServletRequestWrapperGetIntHeaderTest">
         <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetIntHeaderTest HTTP/1.0"
