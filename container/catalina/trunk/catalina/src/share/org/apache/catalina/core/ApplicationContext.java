@@ -333,32 +333,6 @@ public class ApplicationContext
 
 
     /**
-     * Clear all application-created attributes.
-     */
-    public void clearAttributes() {
-
-        // Create list of attributes to be removed
-        ArrayList list = new ArrayList();
-        synchronized (attributes) {
-            Iterator iter = attributes.keySet().iterator();
-            while (iter.hasNext()) {
-                list.add(iter.next());
-            }
-        }
-
-        // Remove application originated attributes
-        // (read only attributes will be left in place)
-        Iterator keys = list.iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            removeAttribute(key);
-        }
-
-
-    }
-
-
-    /**
      * Return the resources object that is mapped to a specified path.
      * The path must begin with a "/" and is interpreted as relative to the
      * current context root.
@@ -366,19 +340,6 @@ public class ApplicationContext
     public DirContext getResources() {
 
         return context.getResources();
-
-    }
-
-
-    /**
-     * Set an attribute as read only.
-     */
-    public void setAttributeReadOnly(String name) {
-
-        synchronized (attributes) {
-            if (attributes.containsKey(name))
-                readOnlyAttributes.put(name, name);
-        }
 
     }
 
@@ -997,11 +958,49 @@ public class ApplicationContext
 
 
     /**
+     * Clear all application-created attributes.
+     */
+    void clearAttributes() {
+
+        // Create list of attributes to be removed
+        ArrayList list = new ArrayList();
+        synchronized (attributes) {
+            Iterator iter = attributes.keySet().iterator();
+            while (iter.hasNext()) {
+                list.add(iter.next());
+            }
+        }
+
+        // Remove application originated attributes
+        // (read only attributes will be left in place)
+        Iterator keys = list.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            removeAttribute(key);
+        }
+        
+    }
+    
+    
+    /**
      * Return the facade associated with this ApplicationContext.
      */
     ServletContext getFacade() {
 
         return (this.facade);
+
+    }
+
+
+    /**
+     * Set an attribute as read only.
+     */
+    void setAttributeReadOnly(String name) {
+
+        synchronized (attributes) {
+            if (attributes.containsKey(name))
+                readOnlyAttributes.put(name, name);
+        }
 
     }
 
@@ -1020,26 +1019,26 @@ public class ApplicationContext
      */
     private String normalize(String path) {
 
-	String normalized = path;
+    String normalized = path;
 
-	// Normalize the slashes and add leading slash if necessary
-	if (normalized.indexOf('\\') >= 0)
-	    normalized = normalized.replace('\\', '/');
+    // Normalize the slashes and add leading slash if necessary
+    if (normalized.indexOf('\\') >= 0)
+        normalized = normalized.replace('\\', '/');
 
-	// Resolve occurrences of "/../" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/../");
-	    if (index < 0)
-		break;
-	    if (index == 0)
-		return (null);	// Trying to go outside our context
-	    int index2 = normalized.lastIndexOf('/', index - 1);
-	    normalized = normalized.substring(0, index2) +
-		normalized.substring(index + 3);
-	}
+    // Resolve occurrences of "/../" in the normalized path
+    while (true) {
+        int index = normalized.indexOf("/../");
+        if (index < 0)
+        break;
+        if (index == 0)
+        return (null);  // Trying to go outside our context
+        int index2 = normalized.lastIndexOf('/', index - 1);
+        normalized = normalized.substring(0, index2) +
+        normalized.substring(index + 3);
+    }
 
-	// Return the normalized path that we have completed
-	return (normalized);
+    // Return the normalized path that we have completed
+    return (normalized);
 
     }
 
@@ -1124,7 +1123,7 @@ public class ApplicationContext
     /**
      * Get full path, based on the host name and the context path.
      */
-    public static String getJNDIUri(String hostName, String path) {
+    private static String getJNDIUri(String hostName, String path) {
         if (!path.startsWith("/"))
             return "/" + hostName + "/" + path;
         else

@@ -289,7 +289,7 @@ import org.apache.catalina.Wrapper;
  */
 
 
-public class CGIServlet extends HttpServlet {
+public final class CGIServlet extends HttpServlet {
 
 
     /* some vars below copied from Craig R. McClanahan's InvokerServlet */

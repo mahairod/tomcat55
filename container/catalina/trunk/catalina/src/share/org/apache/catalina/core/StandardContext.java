@@ -496,13 +496,13 @@ public class StandardContext
     /**
      * Caching allowed flag.
      */
-    protected boolean cachingAllowed = true;
+    private boolean cachingAllowed = true;
 
 
     /**
      * Non proxied resources.
      */
-    protected DirContext webappResources = null;
+    private DirContext webappResources = null;
 
 
     // ----------------------------------------------------- Context Properties
@@ -4062,25 +4062,25 @@ public class StandardContext
      * Get naming context full name.
      */
     private String getNamingContextName() {
-	if (namingContextName == null) {
-	    Container parent = getParent();
-	    if (parent == null) {
-		namingContextName = getName();
-	    } else {
-		Stack stk = new Stack();
-		StringBuffer buff = new StringBuffer();
-		while (parent != null) {
-		    stk.push(parent.getName());
-		    parent = parent.getParent();
-		}
-		while (!stk.empty()) {
-		    buff.append("/" + stk.pop());
-		}
-		buff.append(getName());
-		namingContextName = buff.toString();
-	    }
-	}
-	return namingContextName;
+    if (namingContextName == null) {
+        Container parent = getParent();
+        if (parent == null) {
+        namingContextName = getName();
+        } else {
+        Stack stk = new Stack();
+        StringBuffer buff = new StringBuffer();
+        while (parent != null) {
+            stk.push(parent.getName());
+            parent = parent.getParent();
+        }
+        while (!stk.empty()) {
+            buff.append("/" + stk.pop());
+        }
+        buff.append(getName());
+        namingContextName = buff.toString();
+        }
+    }
+    return namingContextName;
     }
 
 
