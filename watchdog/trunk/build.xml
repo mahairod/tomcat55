@@ -1,118 +1,59 @@
-<project name="jakarta-check" default="corenew" basedir=".">
+<project name="jakarta-check" default="core" basedir=".">
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
-  <property name="build.compiler" value="classic"/>
 
-  <property name="dest" value="../build/jakarta-check"/>
+   <property name="build.compiler" value="classic"/>
 
-  <target name="corenew">
-     <mkdir dir="${dest}" />
-     <mkdir dir="${dest}/classes" />
-     <mkdir dir="${dest}/conf" />
-     <mkdir dir="${dest}/props" />
+   <property name="dest" value="../build/jakarta-check"/>
 
-     <mkdir dir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
-     <mkdir dir="${dest}/webapps/jsp-tests" />
+   <target name="core">
 
-     <copydir src="src/server/servlet-tests" dest="${dest}/webapps/servlet-tests"/>
-     <copydir src="src/server/jsp-tests" dest="${dest}/webapps/jsp-tests"/>
+      <mkdir dir="${dest}"/>
+      <mkdir dir="${dest}/clients"/>
+      <mkdir dir="${dest}/conf" />
+      <mkdir dir="${dest}/props" />  <!-- what is this for?? - akv -->
 
-     <javac srcdir="src/server/servlet-tests/WEB-INF/classes" destdir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
-     <javac srcdir="src/server/jsp-tests/WEB-INF/classes" destdir="${dest}/webapps/jsp-tests/WEB-INF/classes" />
+      <mkdir dir="${dest}/webapps/servlet-tests/WEB-INF/classes"/>
+      <mkdir dir="${dest}/webapps/jsp-tests"/>
 
-     <copydir src="src/bin" dest="${dest}"/>
-     <copydir src="src/conf" dest="${dest}/conf" />
-     <copydir src="src/props" dest="${dest}/props"/>
+      <copydir src="src/server/servlet-tests" dest="${dest}/webapps/servlet-tests"/>
+      <copydir src="src/server/jsp-tests" dest="${dest}/webapps/jsp-tests"/>
+
+      <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
+             destdir="${dest}/webapps/servlet-tests/WEB-INF/classes"/>
+
+      <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
+             destdir="${dest}/webapps/jsp-tests/WEB-INF/classes"/>
+
+      <copydir src="src/bin" dest="${dest}"/>
+      <copydir src="src/conf" dest="${dest}/conf" />
+      <copydir src="src/props" dest="${dest}/props"/>
      
-     <javac srcdir="src/clients" destdir="${dest}/classes" />    
+      <javac srcdir="src/clients" destdir="${dest}/clients" />    
 
-     <chmod src="${dest}/runClient.sh" perm="+x" />
- 
      <!-- Need to copy moo - the deployment file must be self-contained, with no 
           external dependencies -->
+ 
+     <!-- I find this ugly as I'm sure a lot of other people do but I don't have a
+          better solution. I agree the deployment file should be self-contained. 
+                                                                    - akv
+      -->
      
-     <javac srcdir="../jakarta-tools/moo/src/share" destdir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
-     <javac srcdir="../jakarta-tools/moo/src/share" destdir="${dest}/webapps/jsp-tests/WEB-INF/classes" />
+      <javac srcdir="../jakarta-tools/moo/src/share" 
+             destdir="${dest}/webapps/servlet-tests/WEB-INF/classes" />
+
+      <javac srcdir="../jakarta-tools/moo/src/share" 
+             destdir="${dest}/webapps/jsp-tests/WEB-INF/classes" />
 
      <!-- Build moo in the client directory too, avoid separate moo.jar problems -->
 
-     <javac srcdir="../jakarta-tools/moo/src/share" destdir="${dest}/classes" />
+      <javac srcdir="../jakarta-tools/moo/src/share" 
+             destdir="${dest}/clients" />
+   </target>
 
- </target>
-
-
-  <target name="core">
-
-    <!-- create all the directories -->
-    <mkdir dir="build/classes"/>
-    <mkdir dir="build/jsp-tests"/>
-    <mkdir dir="build/servlet-tests"/>
-    <mkdir dir="build/props"/>
-
-    <!-- copy the jars and web-applications -->
-    <copydir src="src/server/jsp-tests" dest="build/jsp-tests"/>
-    <copydir src="src/server/servlet-tests" dest="build/servlet-tests"/>
-<!--
-    <mkdir dir="build/servlet-tests/WEB-INF/lib"/>
-    <mkdir dir="build/jsp-tests/WEB-INF/lib"/>
--->
-
-    <!-- copy the scripts and properties -->
-    <copyfile src="src/shell/runClient.ksh" dest="build/runClient"/>
-    <copyfile src="src/shell/runClient.bat" dest="build/runClient.bat"/>
-    <copyfile src="src/shell/runTest.ksh" dest="build/runTest"/>
-    <copyfile src="src/shell/runTest.bat" dest="build/runTest.bat"/>
-    <copyfile src="../jakarta-tools/moo.jar" dest="build/jsp-tests/WEB-INF/lib/moo.jar"/>
-    <copyfile src="../jakarta-tools/moo.jar" dest="build/servlet-tests/WEB-INF/lib/moo.jar"/>
-    <copyfile src="src/shell/jsp-testlist.txt" dest="build/jsp-testlist.txt"/>
-    <copyfile src="src/shell/servlet-testlist.txt" dest="build/servlet-testlist.txt"/>
-    <copyfile src="src/server/server.xml" dest="build/server.xml"/>
-    <copyfile src="src/shell/jcheck.properties" dest="build/props/jcheck.properties"/>
-    <copyfile src="src/shell/scheck.properties" dest="build/props/scheck.properties"/>
-    <copyfile src="src/shell/jsp-tests.properties" dest="build/props/jsp-tests.properties"/>
-    <copyfile src="src/shell/servlet-tests.properties" dest="build/props/servlet-tests.properties"/>
-
-    <!-- compile the web-applications and the clients -->
-    <javac srcdir="src/clients" destdir="build/classes" />
-    <javac srcdir="src/server/servlet-tests/WEB-INF/classes" destdir="build/servlet-tests/WEB-INF/classes" />
-    <javac srcdir="src/server/jsp-tests/WEB-INF/classes" destdir="build/jsp-tests/WEB-INF/classes" />
-
-    <!-- create jars for the clients and the web-apps -->
-    <jar jarfile="build/client.jar" basedir="build/classes" items="org"/>
-    <jar jarfile="build/jsp-tests.war" basedir="build/jsp-tests" items="WEB-INF,jsp,golden-files"/>
-    <jar jarfile="build/servlet-tests.war" basedir="build/servlet-tests" items="WEB-INF"/>
-
-    <!-- delete the web-application directories -->
-    <deltree dir="build/classes"/>
-    <deltree dir="build/jsp-tests"/>
-    <deltree dir="build/servlet-tests"/>
-    
-  </target>
-
-  <target name="dist" depends="core">
-
-    <!-- create dist directory -->
-    <mkdir dir="dist"/>
-
-    <!-- copy stuff from build -->
-    <copydir src="build/props" dest="dist/props"/>
-    <copyfile src="build/runTest" dest="dist/runTest"/>
-    <copyfile src="build/runTest.bat" dest="dist/runTest.bat"/>
-    <copyfile src="build/runClient" dest="dist/runClient"/>
-    <copyfile src="build/runClient.bat" dest="dist/runClient.bat"/>
-    <copyfile src="build/jsp-testlist.txt" dest="dist/jsp-testlist.txt"/>
-    <copyfile src="build/servlet-testlist.txt" dest="dist/servlet-testlist.txt"/>
-    <copyfile src="build/server.xml" dest="dist/server.xml"/>
-    <copyfile src="build/client.jar" dest="dist/client.jar"/>
-    <copyfile src="build/jsp-tests.war" dest="dist/jsp-tests.war"/>
-    <copyfile src="build/servlet-tests.war" dest="dist/servlet-tests.war"/>
-    
-  </target>
-
-  <target name="clean">
-    <deltree dir="build"/>
-    <deltree dir="dist"/>
-  </target>
+   <target name="clean">
+      <deltree dir="${dest}"/>
+   </target>
 
 </project>
