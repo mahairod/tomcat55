@@ -61,7 +61,7 @@
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
                 <html:select property="debugLvl">
-                     <bean:define id="debugLvlVals" name="serviceForm" property="debugLvlVals"/>
+                     <bean:define id="debugLvlVals" name="serverForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                    labelProperty="label"/>
                 </html:select>
