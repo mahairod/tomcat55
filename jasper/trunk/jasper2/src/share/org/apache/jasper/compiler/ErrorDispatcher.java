@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.net.MalformedURLException;
 
 import org.apache.jasper.JasperException;
 import org.xml.sax.SAXException;
@@ -46,12 +47,20 @@ public class ErrorDispatcher {
     // Custom error handler
     private ErrorHandler errHandler;
 
+    // Indicates whether the compilation was initiated by JspServlet or JspC
+    private boolean jspcMode = false;
+
+
     /*
      * Constructor.
+     *
+     * @param jspcMode true if compilation has been initiated by JspC, false
+     * otherwise
      */
-    public ErrorDispatcher() {
+    public ErrorDispatcher(boolean jspcMode) {
 	// XXX check web.xml for custom error handler
 	errHandler = new DefaultErrorHandler();
+        this.jspcMode = jspcMode;
     }
 
     /*
@@ -340,7 +349,17 @@ public class ErrorDispatcher {
 
 	// Get error location
 	if (where != null) {
-	    file = where.getFile();
+            if (jspcMode) {
+                // Get the full URL of the resource that caused the error
+                try {
+                    file = where.getURL().toString();
+                } catch (MalformedURLException me) {
+                    file = where.getFile();
+                }
+            } else {
+                // Get the context-relative resource path
+                file = where.getFile();
+            }
 	    line = where.getLineNumber();
 	    column = where.getColumnNumber();
 	    hasLocation = true;

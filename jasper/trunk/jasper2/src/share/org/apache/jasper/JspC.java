@@ -724,7 +724,7 @@ public class JspC implements Options {
             // Otherwise only generate .java, if .jsp file is newer than
             // the .java file
             if( clc.isOutDated(compile) ) {
-                clc.compile(compile);
+                clc.compile(compile, true);
             }
 
             // Generate mapping

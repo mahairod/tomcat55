@@ -16,6 +16,8 @@
 package org.apache.jasper.compiler;
 
 import java.util.Stack;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * Mark represents a point in the JSP input. 
@@ -199,7 +201,18 @@ final class Mark {
     public String getFile() {
         return this.fileName;
     }
-    
+
+    /**
+     * Gets the URL of the resource with which this Mark is associated
+     *
+     * @return URL of the resource with which this Mark is associated
+     *
+     * @exception MalformedURLException if the resource pathname is incorrect
+     */
+    public URL getURL() throws MalformedURLException {
+        return reader.getResource(getFile());
+    }
+
     public String toShortString() {
         return "("+line+","+col+")";
     }

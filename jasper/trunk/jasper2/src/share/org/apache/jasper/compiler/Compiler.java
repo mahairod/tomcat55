@@ -439,8 +439,22 @@ public class Compiler {
     public void compile(boolean compileClass)
         throws FileNotFoundException, JasperException, Exception
     {
+        compile(compileClass, false);
+    }
+
+    /**
+     * Compile the jsp file from the current engine context.  As an side-
+     * effect, tag files that are referenced by this page are also compiled.
+     *
+     * @param compileClass If true, generate both .java and .class file
+     *                     If false, generate only .java file
+     * @param jspcMode true if invoked from JspC, false otherwise
+     */
+    public void compile(boolean compileClass, boolean jspcMode)
+        throws FileNotFoundException, JasperException, Exception
+    {
         if (errDispatcher == null) {
-            this.errDispatcher = new ErrorDispatcher();
+            this.errDispatcher = new ErrorDispatcher(jspcMode);
         }
 
         try {

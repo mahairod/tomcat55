@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
 import java.util.jar.JarFile;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -402,6 +404,22 @@ class JspReader {
     void setSingleFile(boolean val) {
         singleFile = val;
     }
+
+
+    /**
+     * Gets the URL for the given path name.
+     *
+     * @param path Path name
+     *
+     * @return URL for the given path name.
+     *
+     * @exception MalformedURLException if the path name is not given in 
+     * the correct form
+     */
+    URL getResource(String path) throws MalformedURLException {
+        return context.getResource(path);
+    }
+
 
     /**
      * Parse utils - Is current character a token delimiter ?
