@@ -9,19 +9,6 @@
 
 <body>
 
-<section name='Join Us At ApacheCon 13-17 November 2004 in Las Vegas, Nevada, USA'>
-    <p>
-<a href='http://apachecon.com/2004/US/'>ApacheCon</a> is a once-in-a-year opportunity to
-learn about Apache projects and meet old and new friends in the Apache community. 
-    </p>
-    <p>
-Jakarta
-will be well represented together with the wider Apache Java community. The number of ASF 
-projects likely to be of interest to Java developers has never been higher: 
-so if you're never joined us before, there's never been a better time to start the habit!
-    </p>
-</section>
-
 <section name="Apache Jakarta Tomcat">
 
 <p>Tomcat is the servlet container that is used in the official
@@ -54,7 +41,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.4/2.0</td>
-  <td>5.0.28</td>
+  <td>5.5.4</td>
 </tr>
 
 <tr>
@@ -84,15 +71,11 @@ be interested or able to support you.
 
 <subsection name="Tomcat 5.x">
 
-<p><strong>Tomcat 5.x</strong> is the current major release of Tomcat, and
-builds upon the Tomcat 3.3 and Tomcat 4.1 codebases. 
-The 5.x releases implement the <strong>Servlet 2.4</strong> 
-and <strong>JSP 2.0</strong> specifications.</p>
-
-<p><strong>Tomcat 5.5.x</strong>.  Tomcat 5.5 is the next branch in the 
-Tomcat 5.x major release.  While it supports the same Servlet and JSP
+<p><strong>Tomcat 5.5.x</strong>.  Tomcat 5.5 is the current focus of
+development.  While it supports the same Servlet and JSP
 Specification versions as Tomcat 5.0.x, there are significant changes
-in many areas under the hood.  Please refer to the Tomcat 5.5 Changelog
+in many areas under the hood, resulting in improved performance, stability,
+and total cost of ownership.  Please refer to the Tomcat 5.5 Changelog
 for details.
 </p>
 
