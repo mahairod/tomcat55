@@ -114,6 +114,16 @@
           <controls:row labelStyle="table-label-text"
                          dataStyle="table-normal-text">
             <controls:label>
+              <bean:message key="resources.env.override"/>:
+            </controls:label>
+            <controls:data>
+              <html:checkbox property="override" value="override"/>
+            </controls:data>
+          </controls:row>
+
+          <controls:row labelStyle="table-label-text"
+                         dataStyle="table-normal-text">
+            <controls:label>
               <bean:message key="users.prompt.description"/>
             </controls:label>
             <controls:data>
