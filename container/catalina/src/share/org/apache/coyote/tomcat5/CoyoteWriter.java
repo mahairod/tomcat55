@@ -25,7 +25,7 @@ import java.io.PrintWriter;
  * 
  * @author Remy Maucherat
  */
-final class CoyoteWriter
+public class CoyoteWriter
     extends PrintWriter {
 
 
