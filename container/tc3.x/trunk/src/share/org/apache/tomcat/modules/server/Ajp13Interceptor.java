@@ -71,6 +71,11 @@ import org.apache.tomcat.util.net.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.util.log.*;
 
+/* Frozen, bug fixes only: all active development goes in
+     jakarta-tomcat-connectors/jk/org/apache/ajp/Ajp14*
+*/
+
+
 public class Ajp13Interceptor extends PoolTcpConnector
     implements  TcpConnectionHandler
 {
