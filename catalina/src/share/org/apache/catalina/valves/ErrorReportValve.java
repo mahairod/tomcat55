@@ -33,7 +33,7 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
@@ -262,15 +262,9 @@ public class ErrorReportValve
                 sb.append("</pre></p>");
                 // In case root cause is somehow heavily nested
                 try {
-                    rootCause = (Throwable)PropertyUtils.getProperty
+                    rootCause = (Throwable)IntrospectionUtils.getProperty
                                                 (rootCause, "rootCause");
                 } catch (ClassCastException e) {
-                    rootCause = null;
-                } catch (IllegalAccessException e) {
-                    rootCause = null;
-                } catch (NoSuchMethodException e) {
-                    rootCause = null;
-                } catch (java.lang.reflect.InvocationTargetException e) {
                     rootCause = null;
                 }
             }

@@ -559,10 +559,6 @@
           file="src/temp/README.txt"/>
 
     <!-- Catalina Server Libraries -->
-    <copy todir="${catalina.build}/server/lib"
-           file="${commons-beanutils.jar}"/>
-    <copy todir="${catalina.build}/server/lib"
-           file="${commons-digester.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
 
   </target>
