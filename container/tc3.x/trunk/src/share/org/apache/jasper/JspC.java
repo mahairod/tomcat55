@@ -341,7 +341,7 @@ public class JspC implements Options { //, JspCompilationContext {
             targetClassName = null;
             if (mapout != null) {
                 String thisServletName;
-		if  (clc.getPackageName == null) {
+		if  (clc.getPackageName() == null) {
 		    thisServletName = clc.getClassName();
 		 } else {
 		    thisServletName = clc.getPackageName()
