@@ -669,7 +669,7 @@ public class ManagerServlet
                     end -= 2;
                 }
                 if (filename.endsWith(".war")) {
-                    filename = filename.substring(0,filename.length()-2);
+                    filename = filename.substring(0,filename.length()-4);
                     end -= 4;
                 }
                 if (filename.endsWith("/")) {
