@@ -11,7 +11,7 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
-
+    <available property="jdk1.4.present" classname="java.nio.Buffer" />
   </target>
 
 
