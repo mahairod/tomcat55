@@ -121,7 +121,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
     // The expression evaluator, for evaluating EL expressions.
     private static ExpressionEvaluatorImpl elExprEval
-	= new ExpressionEvaluatorImpl(true);
+	= new ExpressionEvaluatorImpl(false);
 
     // The variable resolver, for evaluating EL expressions.
     private VariableResolverImpl variableResolver;
