@@ -63,7 +63,7 @@ public final class ExtensionValidator {
         StringManager.getManager("org.apache.catalina.util");
     
     private static HashMap containerAvailableExtensions = null;
-    private static ArrayList containerManifestResources = null;
+    private static ArrayList containerManifestResources = new ArrayList();
     private static ResourceBundle messages = null;
 
 
@@ -209,16 +209,12 @@ public final class ExtensionValidator {
      * @param jarFile The system JAR whose manifest to add
      */
     public static void addSystemResource(File jarFile) throws IOException {
-
         Manifest manifest = getManifest(new FileInputStream(jarFile));
         if (manifest != null)  {
             ManifestResource mre
                 = new ManifestResource(jarFile.getAbsolutePath(),
                                        manifest,
                                        ManifestResource.SYSTEM);
-            if (containerManifestResources == null) {
-                containerManifestResources = new ArrayList();
-            }
             containerManifestResources.add(mre);
         }
     }
