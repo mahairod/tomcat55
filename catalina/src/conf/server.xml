@@ -111,13 +111,6 @@
                useURIValidationHack="false"
                protocolHandlerClassName="org.apache.jk.server.JkCoyoteHandler"/>
 
-    <!-- Define an AJP 1.3 Connector on port 8009 -->
-    <!--
-    <Connector className="org.apache.ajp.tomcat4.Ajp13Connector"
-               port="8009" minProcessors="5" maxProcessors="75"
-               acceptCount="10" debug="0"/>
-    -->
-
     <!-- Define a Proxied HTTP/1.1 Connector on port 8082 -->
     <!-- See proxy documentation for more information about using this. -->
     <!--
@@ -126,22 +119,6 @@
                enableLookups="true"
                acceptCount="10" debug="0" connectionTimeout="20000"
                proxyPort="80" useURIValidationHack="false" />
-    -->
-
-    <!-- Define a non-SSL legacy HTTP/1.1 Test Connector on port 8083 -->
-    <!--
-    <Connector className="org.apache.catalina.connector.http.HttpConnector"
-               port="8083" minProcessors="5" maxProcessors="75"
-               enableLookups="true" redirectPort="8443"
-               acceptCount="10" debug="0" />
-    -->
-
-    <!-- Define a non-SSL HTTP/1.0 Test Connector on port 8084 -->
-    <!--
-    <Connector className="org.apache.catalina.connector.http10.HttpConnector"
-               port="8084" minProcessors="5" maxProcessors="75"
-               enableLookups="true" redirectPort="8443"
-               acceptCount="10" debug="0" />
     -->
 
     <!-- An Engine represents the entry point (within Catalina) that processes
@@ -276,154 +253,13 @@
 
         <!-- Tomcat Root Context -->
         <!--
-          <Context path="" docBase="ROOT" debug="0"/>
+          <Context path="" docBase="ROOT" debug="0">
         -->
-
-        <!-- Tomcat Examples Context -->
-        <Context path="/examples" docBase="examples" debug="0"
-                 reloadable="true" crossContext="true">
-          <Logger className="org.apache.catalina.logger.FileLogger"
-                     prefix="localhost_examples_log." suffix=".txt"
-        	  timestamp="true"/>
-          <Ejb   name="ejb/EmplRecord" type="Entity"
-                 home="com.wombat.empl.EmployeeRecordHome"
-               remote="com.wombat.empl.EmployeeRecord"/>
-
-          <!-- If you wanted the examples app to be able to edit the
-               user database, you would uncomment the following entry.
-               Of course, you would want to enable security on the
-               application as well, so this is not done by default!
-               The database object could be accessed like this:
-
-               Context initCtx = new InitialContext();
-               Context envCtx = (Context) initCtx.lookup("java:comp/env");
-               UserDatabase database =
-                    (UserDatabase) envCtx.lookup("userDatabase");
-          -->
-<!--
-          <ResourceLink name="userDatabase" global="UserDatabase"
-                        type="org.apache.catalina.UserDatabase"/>
--->
-
-
-          <!-- PersistentManager: Uncomment the section below to test Persistent
-		       Sessions.
-
-               saveOnRestart: If true, all active sessions will be saved
-                 to the Store when Catalina is shutdown, regardless of
-                 other settings. All Sessions found in the Store will be
-                 loaded on startup. Sessions past their expiration are
-                 ignored in both cases.
-               maxActiveSessions: If 0 or greater, having too many active
-                 sessions will result in some being swapped out. minIdleSwap
-                 limits this. -1 means unlimited sessions are allowed.
-                 0 means sessions will almost always be swapped out after
-                 use - this will be noticeably slow for your users.
-               minIdleSwap: Sessions must be idle for at least this long
-                 (in seconds) before they will be swapped out due to
-               maxActiveSessions. This avoids thrashing when the site is
-                 highly active. -1 or 0 means there is no minimum - sessions
-                 can be swapped out at any time.
-               maxIdleSwap: Sessions will be swapped out if idle for this
-                 long (in seconds). If minIdleSwap is higher, then it will
-                 override this. This isn't exact: it is checked periodically.
-                 -1 means sessions won't be swapped out for this reason,
-                 although they may be swapped out for maxActiveSessions.
-                 If set to >= 0, guarantees that all sessions found in the
-                 Store will be loaded on startup.
-               maxIdleBackup: Sessions will be backed up (saved to the Store,
-                 but left in active memory) if idle for this long (in seconds),
-                 and all sessions found in the Store will be loaded on startup.
-                 If set to -1 sessions will not be backed up, 0 means they
-                 should be backed up shortly after being used.
-
-               To clear sessions from the Store, set maxActiveSessions, maxIdleSwap,
-               and minIdleBackup all to -1, saveOnRestart to false, then restart
-               Catalina.
-          -->
-		  <!--
-          <Manager className="org.apache.catalina.session.PersistentManager"
-              debug="0"
-              saveOnRestart="true"
-              maxActiveSessions="-1"
-              minIdleSwap="-1"
-              maxIdleSwap="-1"
-              maxIdleBackup="-1">
-                <Store className="org.apache.catalina.session.FileStore"/>
-          </Manager>
-		  -->
-          <Environment name="maxExemptions" type="java.lang.Integer"
-                      value="15"/>
-          <Parameter name="context.param.name" value="context.param.value"
-                     override="false"/>
-          <Resource name="jdbc/EmployeeAppDb" auth="SERVLET"
-                    type="javax.sql.DataSource"/>
-          <ResourceParams name="jdbc/EmployeeAppDb">
-            <parameter><name>username</name><value>sa</value></parameter>
-            <parameter><name>password</name><value></value></parameter>
-            <parameter><name>driverClassName</name>
-              <value>org.hsql.jdbcDriver</value></parameter>
-            <parameter><name>url</name>
-              <value>jdbc:HypersonicSQL:database</value></parameter>
-          </ResourceParams>
-          <Resource name="mail/Session" auth="Container"
-                    type="javax.mail.Session"/>
-          <ResourceParams name="mail/Session">
-            <parameter>
-              <name>mail.smtp.host</name>
-              <value>localhost</value>
-            </parameter>
-          </ResourceParams>
-          <ResourceLink name="linkToGlobalResource"
-                    global="simpleValue"
-                    type="java.lang.Integer"/>
-        </Context>
 
       </Host>
 
     </Engine>
 
   </Service>
-
-  <!-- The MOD_WEBAPP connector is used to connect Apache 1.3 with Tomcat 5
-       as its servlet container. Please read the README.txt file coming with
-       the WebApp Module distribution on how to build it.
-       (Or check out the "jakarta-tomcat-connectors/webapp" CVS repository)
-
-       To configure the Apache side, you must ensure that you have the
-       "ServerName" and "Port" directives defined in "httpd.conf".  Then,
-       lines like these to the bottom of your "httpd.conf" file:
-
-         LoadModule webapp_module libexec/mod_webapp.so
-         WebAppConnection warpConnection warp localhost:8008
-         WebAppDeploy examples warpConnection /examples/
-
-       The next time you restart Apache (after restarting Tomcat, if needed)
-       the connection will be established, and all applications you make
-       visible via "WebAppDeploy" directives can be accessed through Apache.
-  -->
-
-  <!-- Define an Apache-Connector Service -->
-<!--
-  <Service name="Tomcat-Apache">
-
-    <Connector className="org.apache.catalina.connector.warp.WarpConnector"
-     port="8008" minProcessors="5" maxProcessors="75"
-     enableLookups="true" appBase="webapps"
-     acceptCount="10" debug="0"/>
-
-    <Engine className="org.apache.catalina.connector.warp.WarpEngine"
-     name="Apache" debug="0">
-
-      <Logger className="org.apache.catalina.logger.FileLogger"
-              prefix="apache_log." suffix=".txt"
-              timestamp="true"/>
-
-      <Realm className="org.apache.catalina.realm.MemoryRealm" />
-
-    </Engine>
-
-  </Service>
--->
 
 </Server>
