@@ -31,19 +31,14 @@
           </td>
         </logic:present>
         <td><div align="left" class="table-normal-text">
-          <%-- FIX ME-- add link once the operation is implemented 
           <html:link page='<%= "/resources/setUpEnvEntry.do?objectName=" + 
                                URLEncoder.encode(envEntry) %>'>
             <controls:attribute name="envEntry" attribute="name"/>
           </html:link>
-          --%>
             <controls:attribute name="envEntry" attribute="name"/>
         </div></td>
         <td><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="envEntry" attribute="value"/>
-        </div></td>
-        <td><div align="left" class="table-normal-text">&nbsp;
-          <controls:attribute name="envEntry" attribute="description"/>
         </div></td>
       </tr>
     </logic:iterate>
