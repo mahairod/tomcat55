@@ -264,8 +264,10 @@ public interface Response {
      * unexpected exception thrown during the servlet processing
      * (and only in that case), null will be returned if the response stream
      * has already been used.
+     *
+     * @exception IOException if an input/output error occurs
      */
-    public PrintWriter getReporter();
+    public PrintWriter getReporter() throws IOException;
 
 
     /**
