@@ -679,18 +679,24 @@ public class MBeanUtils {
         ObjectName name = null;
         if (connector instanceof HttpConnector) {
             HttpConnector httpConnector = (HttpConnector) connector;
+            Service service = httpConnector.getService();
+            String serviceName = null;
+            if (service != null)
+                serviceName = service.getName();
             name = new ObjectName(domain + ":type=Connector" +
-                                  ",service=" +
-                                  httpConnector.getService().getName() +
+                                  ",service=" + serviceName +
                                   ",port=" + httpConnector.getPort() +
                                   ",address=" + httpConnector.getAddress());
             return (name);
         } else if (connector instanceof org.apache.catalina.connector.http10.HttpConnector) {
             org.apache.catalina.connector.http10.HttpConnector httpConnector =
                 (org.apache.catalina.connector.http10.HttpConnector) connector;
+            Service service = httpConnector.getService();
+            String serviceName = null;
+            if (service != null)
+                serviceName = service.getName();
             name = new ObjectName(domain + ":type=Connector" +
-                                  ",service=" +
-                                  httpConnector.getService().getName() +
+                                  ",service=" + serviceName+
                                   ",port=" + httpConnector.getPort() +
                                   ",address=" + httpConnector.getAddress());
             return (name);
@@ -701,15 +707,18 @@ public class MBeanUtils {
                     PropertyUtils.getSimpleProperty(connector, "address");
                 Integer port = (Integer)
                     PropertyUtils.getSimpleProperty(connector, "port");
+                Service service = connector.getService();
+                String serviceName = null;
+                if (service != null)
+                    serviceName = service.getName();
                 name = new ObjectName(domain + ":type=Connector" +
-                                      ",service=" +
-                                      connector.getService().getName() +
+                                      ",service=" + serviceName +
                                       ",port=" + port +
                                       ",address=" + address);
                 return (name);
             } catch (Exception e) {
                 throw new MalformedObjectNameException
-                    ("Cannot create object name for " + connector);
+                    ("Cannot create object name for " + connector+e);
             }
         } else if ("org.apache.coyote.tomcat4.CoyoteConnector".equals
                    (connector.getClass().getName())) {
@@ -718,15 +727,18 @@ public class MBeanUtils {
                     PropertyUtils.getSimpleProperty(connector, "address");
                 Integer port = (Integer)
                     PropertyUtils.getSimpleProperty(connector, "port");
+                Service service = connector.getService();
+                String serviceName = null;
+                if (service != null)
+                    serviceName = service.getName();
                 name = new ObjectName(domain + ":type=Connector" +
-                                      ",service=" +
-                                      connector.getService().getName() +
+                                      ",service=" + serviceName +
                                       ",port=" + port +
                                       ",address=" + address);
                 return (name);
             } catch (Exception e) {
                 throw new MalformedObjectNameException
-                    ("Cannot create object name for " + connector);
+                    ("Cannot create object name for " + connector+e);
             }
         } else {
             throw new MalformedObjectNameException

@@ -1107,31 +1107,31 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(serviceName);
         String port = oname.getKeyProperty("port");
         String address = oname.getKeyProperty("address");
-        if (address==null) {
-            address = "";
-        }
-
+        
         Connector conns[] = (Connector[]) service.findConnectors();
 
         for (int i = 0; i < conns.length; i++) {
             Class cls = conns[i].getClass();
             Method getAddrMeth = cls.getMethod("getAddress", null);
             Object addrObj = getAddrMeth.invoke(conns[i], null);
-            String connAddress = new String();
+            String connAddress = null;
             if (addrObj != null) {
                 connAddress = addrObj.toString();
-            }
+            } 
             Method getPortMeth = cls.getMethod("getPort", null);
             Object portObj = getPortMeth.invoke(conns[i], null);
             String connPort = new String();
             if (portObj != null) {
                 connPort = portObj.toString();
             }
-            if (address.equals(connAddress) && port.equals(connPort)) {
+            if (((address.equals("null")) && (connAddress==null)) && port.equals(connPort)) {
+                service.removeConnector(conns[i]);
+                break;
+            } else if (address.equals(connAddress) && port.equals(connPort)) {
                 // Remove this component from its parent component
                 service.removeConnector(conns[i]);
                 break;
-            }
+            } 
         }
 
     }
