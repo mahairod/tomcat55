@@ -61,7 +61,8 @@
     <!-- Compile tester components and tools -->
     <javac srcdir="src/tester" destdir="${tester.build}/classes"
      classpath="${ant.jar}:${servlet-api.jar}:${xercesImpl.jar}"
-     deprecation="off" debug="on" optimize="off"
+     deprecation="${compile.deprecation}"
+     debug="${compile.debug}" optimize="off"
      excludes="**/CVS/**"/>
 
     <!-- Copy static resource files -->
