@@ -206,6 +206,9 @@ final class StandardHostValve
             status(request, response);
         }
 
+        Thread.currentThread().setContextClassLoader
+            (StandardHostValve.class.getClassLoader());
+
     }
 
 
