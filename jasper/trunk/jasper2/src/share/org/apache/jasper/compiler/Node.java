@@ -393,17 +393,21 @@ abstract class Node implements TagConstants {
     public static class Root extends Node {
 
 	private Root parentRoot;
+	private boolean isXmlSyntax;
 
 	/*
 	 * Constructor for dummy root.
 	 */
-	Root() {}
+	Root(boolean isXmlSyntax) {
+	    this.isXmlSyntax = isXmlSyntax;
+	}
 
 	/*
 	 * Constructor.
 	 */
-	Root(Mark start, Node parent) {
+	Root(Mark start, Node parent, boolean isXmlSyntax) {
 	    super(start, parent);
+	    this.isXmlSyntax = isXmlSyntax;
 
 	    // Figure out and set the parent root
 	    Node r = parent;
@@ -417,7 +421,7 @@ abstract class Node implements TagConstants {
 	}
 
 	public boolean isXmlSyntax() {
-	    return false;
+	    return isXmlSyntax;
 	}
 
 	/**
@@ -436,7 +440,7 @@ abstract class Node implements TagConstants {
 
 	public JspRoot(String qName, Attributes attrs, Attributes xmlnsAttrs,
 		       Mark start, Node parent) {
-	    super(start, parent);
+	    super(start, parent, true);
 	    this.qName = qName;
 	    this.localName = ROOT_ACTION;
 	    this.attrs = attrs;
@@ -445,10 +449,6 @@ abstract class Node implements TagConstants {
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
-	}
-
-	public boolean isXmlSyntax() {
-	    return true;
 	}
     }
 

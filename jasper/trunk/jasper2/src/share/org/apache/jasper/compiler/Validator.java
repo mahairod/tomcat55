@@ -913,8 +913,8 @@ class Validator {
 		if ("name".equals(attrs.getLocalName(i))) {
 		    n.setNameAttribute(getJspAttribute(attrs.getQName(i),
 						       attrs.getURI(i),
-						       "name",
-						       n.getAttributeValue("name"), 
+						       attrs.getLocalName(i),
+						       attrs.getValue(i),
 						       java.lang.String.class,
 						       null,
 						       n,

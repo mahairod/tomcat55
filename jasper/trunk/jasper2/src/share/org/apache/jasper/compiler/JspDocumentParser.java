@@ -167,7 +167,7 @@ class JspDocumentParser extends DefaultHandler
 	try {
 	    if (parent == null) {
 		// create dummy <jsp:root> element
-		jspRoot = new Node.Root();
+		jspRoot = new Node.Root(true);
 		handler.current = jspRoot;
 	    } else {
 		handler.isTop = false;

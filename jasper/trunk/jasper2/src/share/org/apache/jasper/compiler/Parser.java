@@ -148,7 +148,7 @@ class Parser implements TagConstants {
 	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly,
 				   jarFile);
 
-	Node.Root root = new Node.Root(reader.mark(), parent);
+	Node.Root root = new Node.Root(reader.mark(), parent, false);
 
 	if (directivesOnly) {
 	    parser.parseTagFileDirectives(root);
