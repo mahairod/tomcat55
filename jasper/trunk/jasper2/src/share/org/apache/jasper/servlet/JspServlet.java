@@ -60,6 +60,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.SingleThreadModel;
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -127,6 +128,7 @@ public class JspServlet extends HttpServlet {
 	URLClassLoader loader = null;
         JspCompilationContext ctxt = null;
         String outDir = null;
+        long available = 0L;
 	
 	JspServletWrapper(String jspUri, boolean isErrorPage) {
 	    this.jspUri = jspUri;
@@ -203,6 +205,14 @@ public class JspServlet extends HttpServlet {
 	    throws ServletException, IOException, FileNotFoundException 
 	{
             try {
+
+                if ((available > 0L) && (available < Long.MAX_VALUE)) {
+                    response.setDateHeader("Retry-After", available);
+                    response.sendError
+                        (HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                         Constants.getString("jsp.error.unavailable"));
+                }
+
                 loadIfNecessary(request, response);
 
 		// If a page is to only to be precompiled return.
@@ -219,6 +229,24 @@ public class JspServlet extends HttpServlet {
 		    theServlet.service(request, response);
 		}
 
+            } catch (UnavailableException ex) {
+                String includeRequestUri = (String)
+                    request.getAttribute("javax.servlet.include.request_uri");
+                if (includeRequestUri != null) {
+                    // This file was included. Throw an exception as
+                    // a response.sendError() will be ignored by the
+                    // servlet engine.
+                    throw ex;
+                } else {
+                    int unavailableSeconds = ex.getUnavailableSeconds();
+                    if (unavailableSeconds <= 0)
+                        unavailableSeconds = 60;        // Arbitrary default
+                    available = System.currentTimeMillis() +
+                        (unavailableSeconds * 1000L);
+                    response.sendError
+                        (HttpServletResponse.SC_SERVICE_UNAVAILABLE, 
+                         ex.getMessage());
+		}
             } catch (FileNotFoundException ex) {
                 String includeRequestUri = (String)
                     request.getAttribute("javax.servlet.include.request_uri");
