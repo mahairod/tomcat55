@@ -8,7 +8,7 @@
      version="2.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-app_2_4.xsds	1.44 02/09/30
+@(#)web-app_2_4.xsds	1.45 02/10/04
 </xsd:documentation>
 </xsd:annotation>
 
@@ -1122,31 +1122,7 @@ version of the web application.
                      type="j2ee:security-roleType"
                      minOccurs="0"
                      maxOccurs="unbounded"/>
-        <xsd:element name="env-entry"
-                     type="j2ee:env-entryType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="ejb-ref"
-                     type="j2ee:ejb-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="ejb-local-ref"
-                     type="j2ee:ejb-local-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:group ref="j2ee:service-refGroup"/>
-        <xsd:element name="resource-ref"
-                     type="j2ee:resource-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="resource-env-ref"
-                     type="j2ee:resource-env-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="message-destination-ref"
-                     type="j2ee:message-destination-refType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:jndiEnvironmentRefsGroup"/>
         <xsd:element name="message-destination"
                      type="j2ee:message-destinationType"
                      minOccurs="0"

@@ -9,7 +9,7 @@
      version="1.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)j2ee_1_4.xsds	1.31 02/10/01
+@(#)j2ee_1_4.xsds	1.32 02/10/04
 </xsd:documentation>
 </xsd:annotation>
 
@@ -136,8 +136,8 @@ by default.
     <xsd:annotation>
     <xsd:documentation>
 
-    This group is used to keep the contained elements in a consistent
-    order across J2EE deployment descriptors.
+    This group keeps the usage of the contained description related
+    elements consistent across J2EE deployment descriptors.
 
     </xsd:documentation>
     </xsd:annotation>
@@ -733,6 +733,40 @@ Deployment Component.
         <xsd:restriction base="j2ee:string"/>
     </xsd:simpleContent>
 </xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:group name="jndiEnvironmentRefsGroup">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    This group keeps the usage of the contained JNDI environment
+    reference elements consistent across J2EE deployment descriptors.
+
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="env-entry"
+                     type="j2ee:env-entryType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="ejb-ref"
+                     type="j2ee:ejb-refType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="ejb-local-ref"
+                     type="j2ee:ejb-local-refType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:service-refGroup"/>
+        <xsd:element name="resource-ref"
+                     type="j2ee:resource-refType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="resource-env-ref"
+                     type="j2ee:resource-env-refType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="message-destination-ref"
+                     type="j2ee:message-destination-refType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+</xsd:group>
 
 <!-- **************************************************** -->
 
