@@ -43,6 +43,9 @@
 
   <subsection name="Jasper">
     <changelog>
+      <fix>
+        <bug>29597</bug>: Added -javaEncoding attribute support to JspC command-line. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
