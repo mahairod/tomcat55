@@ -215,7 +215,7 @@
 
         <!-- Tomcat Examples Context -->
         <Context path="/examples" docBase="examples" debug="0"
-                 reloadable="true">
+                 reloadable="true" crossContext="true">
           <Logger className="org.apache.catalina.logger.FileLogger"
                      prefix="localhost_examples_log." suffix=".txt"
         	  timestamp="true"/>
