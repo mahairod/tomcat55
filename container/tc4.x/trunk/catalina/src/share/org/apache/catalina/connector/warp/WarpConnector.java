@@ -78,6 +78,12 @@ import org.apache.catalina.net.DefaultServerSocketFactory;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
 
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.UnrecoverableKeyException;
+import java.security.KeyManagementException;
+
 public class WarpConnector implements Connector, Lifecycle, Runnable {
 
     /* ==================================================================== */
@@ -478,8 +484,18 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
                 InetAddress addr=InetAddress.getByName(this.getAddress());
                 this.server=fact.createSocket(port,accc,addr);
             }
-        } catch (IOException e) {
-            throw new LifecycleException("Error creating server socket",e);
+        } catch (IOException ioe) {
+            throw new LifecycleException("Error creating server socket",ioe);
+        } catch (KeyStoreException kse) {
+            throw new LifecycleException("Error creating server socket",kse);
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new LifecycleException("Error creating server socket",nsae);
+        } catch (CertificateException ce) {
+            throw new LifecycleException("Error creating server socket",ce);
+        } catch (UnrecoverableKeyException uke) {
+            throw new LifecycleException("Error creating server socket",uke);
+        } catch (KeyManagementException kme) {
+            throw new LifecycleException("Error creating server socket",kme);
         }
     }
 

@@ -66,6 +66,8 @@ import java.net.ServerSocket;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.KeyManagementException;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import javax.net.ServerSocketFactory;
@@ -177,7 +179,11 @@ public class SSLServerSocketFactory
      */
     private KeyStore keyStore = null;
 
-    public KeyStore getKeyStore() throws IOException {
+    public KeyStore getKeyStore()
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException,UnrecoverableKeyException,
+           KeyManagementException
+    {
         if (sslProxy == null)
             initialize();
         return (this.keyStore);
@@ -255,9 +261,22 @@ public class SSLServerSocketFactory
      *
      * @param port Port to listen to
      *
-     * @exception IOException if an input/output or network error occurs
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider
+     * @exception CertificateException       general certificate error
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer
      */
-    public ServerSocket createSocket(int port) throws IOException {
+    public ServerSocket createSocket(int port)
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException
+    {
 
         if (sslProxy == null)
             initialize();
@@ -278,10 +297,22 @@ public class SSLServerSocketFactory
      * @param port Port to listen to
      * @param backlog Maximum number of connections to be queued
      *
-     * @exception IOException if an input/output or network error occurs
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider
+     * @exception CertificateException       general certificate error
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer
      */
     public ServerSocket createSocket(int port, int backlog)
-        throws IOException {
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException
+    {
 
         if (sslProxy == null)
             initialize();
@@ -303,11 +334,23 @@ public class SSLServerSocketFactory
      * @param backlog Maximum number of connections to be queued
      * @param ifAddress Address of the interface to be used
      *
-     * @exception IOException if an input/output or network error occurs
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider
+     * @exception CertificateException       general certificate error
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer
      */
     public ServerSocket createSocket(int port, int backlog,
                                      InetAddress ifAddress)
-        throws IOException {
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException
+    {
 
         if (sslProxy == null)
             initialize();
@@ -325,9 +368,22 @@ public class SSLServerSocketFactory
     /**
      * Initialize objects that will be required to create sockets.
      *
-     * @exception IOException if an input/output error occurs
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider
+     * @exception CertificateException       general certificate error
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer
      */
-    private synchronized void initialize() throws IOException {
+    private synchronized void initialize()
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException
+    {
 
         initHandler();
         initKeyStore();
@@ -354,20 +410,35 @@ public class SSLServerSocketFactory
     /**
      * Initialize the internal representation of the key store file.
      *
-     * @exception IOException if an input/output exception occurs
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider
+     * @exception CertificateException       general certificate error
      */
-    private void initKeyStore() throws IOException {
+    private void initKeyStore()
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException
+    {
+
+        FileInputStream istream = null;
 
         try {
             keyStore = KeyStore.getInstance(keystoreType);
-            FileInputStream istream = new FileInputStream(keystoreFile);
+            istream = new FileInputStream(keystoreFile);
             keyStore.load(istream, keystorePass.toCharArray());
-            istream.close();
-        } catch (Exception e) {
-            // FIXME - send to an appropriate log file?
-            System.out.println("initKeyStore:  " + e);
-            e.printStackTrace(System.out);
-            throw new IOException(e.toString());
+        } catch (IOException ioe) {
+            throw ioe;
+        } catch (KeyStoreException kse) {
+            throw kse;
+        } catch (NoSuchAlgorithmException nsae) {
+            throw nsae;
+        } catch (CertificateException ce) {
+            throw ce;
+        } finally {
+            if ( istream != null )
+                istream.close();
         }
 
     }
@@ -376,47 +447,48 @@ public class SSLServerSocketFactory
     /**
      * Initialize the SSL socket factory.
      *
-     * @exception IOException if an input/output error occurs
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer
      */
-    private void initProxy() throws IOException {
+    private void initProxy()
+    throws KeyStoreException, NoSuchAlgorithmException,
+           UnrecoverableKeyException, KeyManagementException
+    {
 
+        // Register the JSSE security Provider (if it is not already there)
         try {
-
-            // Register the JSSE security Provider (if it is not already there)
-            try {
-                Security.addProvider((java.security.Provider)
-                    Class.forName("com.sun.net.ssl.internal.ssl.Provider").newInstance());
-            } catch (Throwable t) {
-                ;
-            }
-
-            // Create an SSL context used to create an SSL socket factory
-            SSLContext context = SSLContext.getInstance(protocol);
-
-            // Create the key manager factory used to extract the server key
-            KeyManagerFactory keyManagerFactory =
-                KeyManagerFactory.getInstance(algorithm);
-            keyManagerFactory.init(keyStore, keystorePass.toCharArray());
-
-            // Create the trust manager factory used for checking certificates
-            /*
-              trustManagerFactory = TrustManagerFactory.getInstance(algorithm);
-              trustManagerFactory.init(keyStore);
-            */
-
-            // Initialize the context with the key managers
-            context.init(keyManagerFactory.getKeyManagers(), null,
-                         new java.security.SecureRandom());
-
-            // Create the proxy and return
-            sslProxy = context.getServerSocketFactory();
-
-        } catch (Exception e) {
-            // FIXME - send to an appropriate log file?
-            System.out.println("initProxy:  " + e);
-            e.printStackTrace(System.out);
-            throw new IOException(e.toString());
+            Security.addProvider((java.security.Provider)
+                Class.forName("com.sun.net.ssl.internal.ssl.Provider").newInstance());
+        } catch (Throwable t) {
+            ;
         }
+
+        // Create an SSL context used to create an SSL socket factory
+        SSLContext context = SSLContext.getInstance(protocol);
+
+        // Create the key manager factory used to extract the server key
+        KeyManagerFactory keyManagerFactory =
+            KeyManagerFactory.getInstance(algorithm);
+        keyManagerFactory.init(keyStore, keystorePass.toCharArray());
+
+        // Create the trust manager factory used for checking certificates
+        /*
+          trustManagerFactory = TrustManagerFactory.getInstance(algorithm);
+          trustManagerFactory.init(keyStore);
+        */
+
+        // Initialize the context with the key managers
+        context.init(keyManagerFactory.getKeyManagers(), null,
+                     new java.security.SecureRandom());
+
+        // Create the proxy and return
+        sslProxy = context.getServerSocketFactory();
 
     }
 

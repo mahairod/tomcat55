@@ -69,10 +69,16 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.AccessControlException;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.UnrecoverableKeyException;
+import java.security.KeyManagementException;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.HttpRequest;
@@ -933,9 +939,22 @@ public final class HttpConnector
      * address has been specified, the socket will be opened only on that
      * address; otherwise it will be opened on all addresses.
      *
-     * @exception IOException if an input/output error occurs
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file (SSL only)
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider (SSL only)
+     * @exception CertificateException       general certificate error (SSL only)
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate (SSL only)
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer (SSL only)
      */
-    private ServerSocket open() throws IOException {
+    private ServerSocket open()
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException
+    {
 
         // Acquire the server socket factory for this Connector
         ServerSocketFactory factory = getFactory();
@@ -989,6 +1008,7 @@ public final class HttpConnector
                 //                if (debug >= 3)
                 //                    log("run: Accept returned IOException", e);
                 try {
+                    // If reopening fails, exit
                     synchronized (threadSync) {
                         if (started && !stopped)
                             log("accept: ", e);
@@ -1003,11 +1023,26 @@ public final class HttpConnector
                     }
                     //                    if (debug >= 3)
                     //                        log("run: IOException processing completed");
-                } catch (IOException ex) {
-                    // If reopening fails, exit
-                    log("socket reopen: ", ex);
+                } catch (IOException ioe) {
+                    log("socket reopen, io problem: ", ioe);
+                    break;
+                } catch (KeyStoreException kse) {
+                    log("socket reopen, keystore problem: ", kse);
+                    break;
+                } catch (NoSuchAlgorithmException nsae) {
+                    log("socket reopen, keystore algorithm problem: ", nsae);
+                    break;
+                } catch (CertificateException ce) {
+                    log("socket reopen, certificate problem: ", ce);
+                    break;
+                } catch (UnrecoverableKeyException uke) {
+                    log("socket reopen, unrecoverable key: ", uke);
+                    break;
+                } catch (KeyManagementException kme) {
+                    log("socket reopen, key management problem: ", kme);
                     break;
                 }
+
                 continue;
             }
 
@@ -1107,14 +1142,35 @@ public final class HttpConnector
         if (initialized)
             throw new LifecycleException (
                 sm.getString("httpConnector.alreadyInitialized"));
+
         this.initialized=true;
+        Exception eRethrow = null;
 
         // Establish a server socket on the specified port
         try {
             serverSocket = open();
-        } catch (IOException e) {
-            throw new LifecycleException(threadName + ".open", e);
+        } catch (IOException ioe) {
+            log("httpConnector, io problem: ", ioe);
+            eRethrow = ioe;
+        } catch (KeyStoreException kse) {
+            log("httpConnector, keystore problem: ", kse);
+            eRethrow = kse;
+        } catch (NoSuchAlgorithmException nsae) {
+            log("httpConnector, keystore algorithm problem: ", nsae);
+            eRethrow = nsae;
+        } catch (CertificateException ce) {
+            log("httpConnector, certificate problem: ", ce);
+            eRethrow = ce;
+        } catch (UnrecoverableKeyException uke) {
+            log("httpConnector, unrecoverable key: ", uke);
+            eRethrow = uke;
+        } catch (KeyManagementException kme) {
+            log("httpConnector, key management problem: ", kme);
+            eRethrow = kme;
         }
+
+        if ( eRethrow != null )
+            throw new LifecycleException(threadName + ".open", eRethrow);
 
     }
 

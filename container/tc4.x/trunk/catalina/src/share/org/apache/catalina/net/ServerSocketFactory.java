@@ -64,6 +64,11 @@ package org.apache.catalina.net;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.UnrecoverableKeyException;
+import java.security.KeyManagementException;
 
 
 /**
@@ -90,9 +95,21 @@ public interface ServerSocketFactory {
      *
      * @param port the port to listen to
      *
-     * @exception IOException for networking errors
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file (SSL only)
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider (SSL only)
+     * @exception CertificateException       general certificate error (SSL only)
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate (SSL only)
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer (SSL only)
      */
-    public ServerSocket createSocket (int port) throws IOException;
+    public ServerSocket createSocket (int port)
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException;
 
 
     /**
@@ -104,10 +121,21 @@ public interface ServerSocketFactory {
      * @param port the port to listen to
      * @param backlog how many connections are queued
      *
-     * @exception IOException for networking errors
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file (SSL only)
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider (SSL only)
+     * @exception CertificateException       general certificate error (SSL only)
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate (SSL only)
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer (SSL only)
      */
     public ServerSocket createSocket (int port, int backlog)
-        throws IOException;
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException;
 
 
     /**
@@ -120,11 +148,22 @@ public interface ServerSocketFactory {
      * @param backlog how many connections are queued
      * @param ifAddress the network interface address to use
      *
-     * @exception IOException for networking errors
+     * @exception IOException                input/output or network error
+     * @exception KeyStoreException          error instantiating the
+     *                                       KeyStore from file (SSL only)
+     * @exception NoSuchAlgorithmException   KeyStore algorithm unsupported
+     *                                       by current provider (SSL only)
+     * @exception CertificateException       general certificate error (SSL only)
+     * @exception UnrecoverableKeyException  internal KeyStore problem with
+     *                                       the certificate (SSL only)
+     * @exception KeyManagementException     problem in the key management
+     *                                       layer (SSL only)
      */
     public ServerSocket createSocket (int port, int backlog,
                                       InetAddress ifAddress)
-        throws IOException;
+    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+           CertificateException, UnrecoverableKeyException,
+           KeyManagementException;
 
 
 }
