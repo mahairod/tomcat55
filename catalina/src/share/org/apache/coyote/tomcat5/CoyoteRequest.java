@@ -254,7 +254,7 @@ public class CoyoteRequest
     /**
      * The Subject associated with the current AccessControllerContext
      */
-    protected Subject subject = null;
+    protected transient Subject subject = null;
 
 
     /**
