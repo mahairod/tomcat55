@@ -125,6 +125,7 @@ public class Resources06 extends HttpServlet {
 
         // Request the set of resources in the specified path
         StaticLogger.write("Processing path '" + path + "'");
+        String first = null;
         Set set = getServletContext().getResourcePaths(path);
         if (set == null) {
             sb.append(" No resources returned/");
@@ -135,6 +136,8 @@ public class Resources06 extends HttpServlet {
         Iterator resources = set.iterator();
         while (resources.hasNext()) {
             String resource = (String) resources.next();
+            if (first == null)
+                first = resource;
             StaticLogger.write("Found resource '" + resource + "'");
             for (int i = 0; i < paths.length; i++) {
                 if (paths[i].equals(resource)) {
@@ -158,6 +161,33 @@ public class Resources06 extends HttpServlet {
                 sb.append(" times/");
             }
         }
+
+        // Verify that the returned set is immutable
+        try {
+            String newElement = "NEW FOO";
+            set.add(newElement);
+            if (set.contains(newElement))
+              sb.append(" Set allowed add()/");
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            if (first != null) {
+                set.remove(first);
+                if (!set.contains(first))
+                  sb.append(" Set allowed remove()/");
+            }
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            set.clear();
+            if (set.size() == 0)
+                sb.append(" Set allowed clear()/");
+        } catch (Throwable t) {
+            ;
+        }
+
 
         // Report any failures we have encountered
         if (sb.length() > 0) {

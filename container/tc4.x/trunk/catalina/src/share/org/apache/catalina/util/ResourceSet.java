@@ -175,4 +175,58 @@ public final class ResourceSet extends HashSet {
         StringManager.getManager("org.apache.catalina.util");
 
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Add the specified element to this set if it is not already present.
+     * Return <code>true</code> if the element was added.
+     *
+     * @param o The object to be added
+     *
+     * @exception IllegalStateException if this ResourceSet is locked
+     */
+    public boolean add(Object o) {
+
+        if (locked)
+            throw new IllegalStateException
+              (sm.getString("resourceSet.locked"));
+        return (super.add(o));
+
+    }
+
+
+    /**
+     * Remove all of the elements from this set.
+     *
+     * @exception IllegalStateException if this ResourceSet is locked
+     */
+    public void clear() {
+
+        if (locked)
+            throw new IllegalStateException
+              (sm.getString("resourceSet.locked"));
+        super.clear();
+
+    }
+
+
+    /**
+     * Remove the given element from this set if it is present.
+     * Return <code>true</code> if the element was removed.
+     *
+     * @param o The object to be removed
+     *
+     * @exception IllegalStateException if this ResourceSet is locked
+     */
+    public boolean remove(Object o) {
+
+        if (locked)
+            throw new IllegalStateException
+              (sm.getString("resourceSet.locked"));
+        return (super.remove(o));
+
+    }
+
+
 }
