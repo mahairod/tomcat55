@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -308,7 +308,7 @@ public class Catalina extends Embedded {
         digester.addObjectCreate("Server/Service/Connector",
                                  "org.apache.coyote.tomcat5.CoyoteConnector",
                                  "className");
-        digester.addRule("Server/Service/Connector", 
+        digester.addRule("Server/Service/Connector",
                          new SetAllPropertiesRule());
         digester.addSetNext("Server/Service/Connector",
                             "addConnector",
@@ -359,7 +359,7 @@ public class Catalina extends Embedded {
     protected Digester createStopDigester() {
 
         // Initialize the digester
-        Digester digester = new Digester();
+        Digester digester = new CatalinaDigester();
 
         // Configure the rules we need for shutting down
         digester.addObjectCreate("Server",
@@ -516,7 +516,7 @@ public class Catalina extends Embedded {
     }
 
 
-    /* 
+    /*
      * Load using arguments
      */
     public void load(String args[]) {
@@ -589,7 +589,7 @@ public class Catalina extends Embedded {
     public void stop() {
 
         try {
-            // Remove the ShutdownHook first so that server.stop() 
+            // Remove the ShutdownHook first so that server.stop()
             // doesn't get invoked twice
             if (useShutdownHook) {
                 Runtime.getRuntime().removeShutdownHook(shutdownHook);
@@ -647,12 +647,12 @@ public class Catalina extends Embedded {
             if (server != null) {
                 Catalina.this.stop();
             }
-            
+
         }
 
     }
-    
-    
+
+
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( Catalina.class );
 
