@@ -52,15 +52,17 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
     protected HttpServletResponse res;
     protected boolean isVirtualWebappRelative;
     protected int debug;
-
-    public SSIServletExternalResolver( HttpServlet servlet, HttpServletRequest req, HttpServletResponse res, 
-				       boolean isVirtualWebappRelative,
-				       int debug ) {
+    protected String inputEncoding;
+    
+    public SSIServletExternalResolver( HttpServlet servlet,
+            HttpServletRequest req, HttpServletResponse res,
+            boolean isVirtualWebappRelative, int debug, String inputEncoding) {
 	this.servlet = servlet;
 	this.req = req;
 	this.res = res;
 	this.isVirtualWebappRelative = isVirtualWebappRelative;
 	this.debug = debug;
+        this.inputEncoding = inputEncoding;
     }
 
     public void log( String message, Throwable throwable ) {
@@ -343,9 +345,11 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
 	return fileSize;
     }
 
-    //We are making lots of unnecessary copies of the included data here.  If someone ever complains that this
-    //is slow, we should connect the included stream to the print writer that SSICommand uses.
-    public String getFileText( String originalPath, boolean virtual ) throws IOException {
+    //We are making lots of unnecessary copies of the included data here. If
+    // someone ever complains that this is slow, we should connect the included
+    // stream to the print writer that SSICommand uses.
+    public String getFileText( String originalPath, boolean virtual
+            ) throws IOException {
 	try {
 	    ServletContextAndPath csAndP = getServletContextAndPath( originalPath, virtual );
 	    ServletContext context = csAndP.getServletContext();
@@ -365,8 +369,13 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
 	    responseIncludeWrapper.flushOutputStreamOrWriter();
 	    byte[] bytes = basos.toByteArray();
 
-	    //Assume that the default encoding is what was used to encode the bytes. Questionable.
-	    String retVal = new String( bytes );
+	    //Assume platform default encoding unless otherwsie specified
+	    String retVal;
+        if (inputEncoding == null) {
+            retVal = new String( bytes );
+        } else {
+            retVal = new String (bytes, inputEncoding);
+        }
 
 	    //make an assumption that an empty response is a failure.  This is a problem if a truly empty file 
 	    //were included, but not sure how else to tell.
