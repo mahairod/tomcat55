@@ -534,14 +534,14 @@ static int ajpv12_handle_response(ajp12_endpoint_t *p,
 
         jk_log(l, JK_LOG_DEBUG, "ajpv12_handle_response, read %s=%s\n", name, value);
         if(0 == strcmp("Status", name)) {
-            char *numeric = strtok(value, " \t");
+				char *numeric = strtok(value, " \t");
 
             status = atoi(numeric);
             if(status < 100 || status > 999) {
                 jk_log(l, JK_LOG_ERROR, "ajpv12_handle_response, invalid status code\n");
                 return JK_FALSE;
             }
-            reason = strtok(NULL, " \t");
+				reason = jk_pool_strdup(s->pool, strtok(NULL, " \t"));
         } else {
             if(headers_capacity == headers_len) {
                 jk_log(l, JK_LOG_DEBUG, "ajpv12_handle_response, allocating header arrays\n");
