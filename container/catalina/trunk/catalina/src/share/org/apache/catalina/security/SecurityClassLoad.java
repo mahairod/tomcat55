@@ -124,6 +124,9 @@ public final class SecurityClassLoad {
         String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage + "session.StandardSession");
+        loader.loadClass
+            (basePackage +
+             "session.StandardSession$1");
     }
     
     
@@ -188,6 +191,9 @@ public final class SecurityClassLoad {
              "CoyoteResponseFacade$SetContentTypePrivilegedAction");
         loader.loadClass
             (basePackage +
+             "CoyoteRequestFacade$GetSessionPrivilegedAction");
+        loader.loadClass
+            (basePackage +
              "CoyoteResponseFacade$1");
         loader.loadClass
             (basePackage +
@@ -198,16 +204,15 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "CoyoteInputStream$2");
-                loader.loadClass
+        loader.loadClass
             (basePackage +
              "CoyoteInputStream$3");
-                loader.loadClass
+        loader.loadClass
             (basePackage +
              "CoyoteInputStream$4");
-                loader.loadClass
+        loader.loadClass
             (basePackage +
              "CoyoteInputStream$5");
-                
     }
 
 }
