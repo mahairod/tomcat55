@@ -179,6 +179,8 @@ public final class Bootstrap {
                     (basePackage + "session.StandardSession");
                 catalinaLoader.loadClass
                     (basePackage + "util.CookieTools");
+                catalinaLoader.loadClass
+                    (basePackage + "util.URL");
                 catalinaLoader.loadClass(basePackage + "util.Enumerator");
                 catalinaLoader.loadClass("javax.servlet.http.Cookie");
             }
