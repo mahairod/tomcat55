@@ -26,6 +26,19 @@ Explorer (others are listed on the webpages linked below), and point to the
 safety reasons. It can be put in read-write mode by editing the web 
 application descriptor file (WEB-INF/web.xml).
 
+<p>To add remote authoring to your web application, you need to make the following
+changes:
+<ul>
+<li>Add the webDAV servlet to your web application. See the web application
+deployment descriptor for an example. Don't forget to make it read/write.
+<li>Add a servlet mapping for the webDAV servlet with a url pattern of "/webdav/*"
+to your web.xml.
+<li>Add an appropriate security constraint to prevent unauthorised changes to your
+web application.
+<li>You can then edit your web application using a webDAV client using a url
+like <font face="Courier New, Courier,mono">http://host:port/webapp/webdav</font></li>
+</ul>
+
 <p>Working WebDAV clients include :
 <ul>
 <li>Adobe GoLive 5.0 (and other WebDAV-enabled Adobe products, like

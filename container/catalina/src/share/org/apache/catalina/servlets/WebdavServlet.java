@@ -2004,7 +2004,7 @@ public class WebdavServlet
         // Generating href element
         generatedXML.writeElement(null, "href", XMLWriter.OPENING);
 
-        String href = req.getContextPath();
+        String href = req.getContextPath() + req.getServletPath();
         if ((href.endsWith("/")) && (path.startsWith("/")))
             href += path.substring(1);
         else
