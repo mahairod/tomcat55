@@ -140,7 +140,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RequestInfoExample</servlet-name>
-        <url-pattern>/servlet/RequestInfoExample</url-pattern>
+        <url-pattern>/servlet/RequestInfoExample/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RequestHeaderExample</servlet-name>
@@ -230,24 +230,5 @@
       <env-entry-value>10</env-entry-value>
       <env-entry-type>java.lang.Integer</env-entry-type>
     </env-entry>
-
-    <!-- EJB Reference -->
-    <ejb-ref>
-      <description>Example EJB Reference</description>
-      <ejb-ref-name>ejb/Account</ejb-ref-name>
-      <ejb-ref-type>Entity</ejb-ref-type>
-      <home>com.mycompany.mypackage.AccountHome</home>
-      <remote>com.mycompany.mypackage.Account</remote>
-    </ejb-ref>
-
-    <!-- Local EJB Reference -->
-    <ejb-local-ref>
-      <description>Example Local EJB Reference</description>
-      <ejb-ref-name>ejb/ProcessOrder</ejb-ref-name>
-      <ejb-ref-type>Session</ejb-ref-type>
-      <local-home>com.mycompany.mypackage.ProcessOrderHome</local-home>
-      <local>com.mycompany.mypackage.ProcessOrder</local>
-    </ejb-local-ref>
-
 
 </web-app>
