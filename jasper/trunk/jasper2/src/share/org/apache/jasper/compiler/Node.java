@@ -291,7 +291,7 @@ public abstract class Node {
 	}
 
 	/**
-	 * @ return The enclosing root to this root.  Usually represents the
+	 * @return The enclosing root to this root.  Usually represents the
 	 * page that includes this one.
 	 */
 	public Root getParentRoot() {
