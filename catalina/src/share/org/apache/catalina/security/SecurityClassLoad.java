@@ -89,6 +89,7 @@ public final class SecurityClassLoad {
         loadUtilPackage(loader);
         loadJavaxPackage(loader);
         loadCoyotePackage(loader);        
+        loadHttp11Package(loader);        
     }
     
     
@@ -148,6 +149,15 @@ public final class SecurityClassLoad {
     private final static void loadJavaxPackage(ClassLoader loader)
         throws Exception {
         loader.loadClass("javax.servlet.http.Cookie");
+    }
+    
+
+    private final static void loadHttp11Package(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.coyote.http11.";
+        loader.loadClass(basePackage + "Http11Processor$1");
+        loader.loadClass(basePackage + "InternalOutputBuffer$1");
+        loader.loadClass(basePackage + "InternalOutputBuffer$2");
     }
     
     
