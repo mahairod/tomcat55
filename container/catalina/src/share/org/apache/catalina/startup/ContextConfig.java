@@ -618,19 +618,29 @@ public final class ContextConfig
         stream = null;
         source = null;
 
-        file = new File(getConfigBase(), Constants.HostWebXml);
+        String resourceName = getHostConfigPath(Constants.HostWebXml);
+        file = new File(getConfigBase(), resourceName);
         
         try {
-           if (file.exists()) {
+            if ( ! file.exists() ) {
+                // Use getResource and getResourceAsStream
+                stream = getClass().getClassLoader()
+                    .getResourceAsStream(resourceName);
+                if( stream != null ) {
+                    source = new InputSource
+                            (getClass().getClassLoader()
+                            .getResource(resourceName).toString());
+                }
+            } else {
                 source =
                     new InputSource("file://" + file.getAbsolutePath());
                 stream = new FileInputStream(file);
             }
         } catch (Exception e) {
             log.error(sm.getString("contextConfig.defaultMissing") 
-                      + " " + file , e);
+                      + " " + resourceName + " " + file , e);
         }
-        
+
         if (stream != null) {
             processDefaultWebConfig(webDigester, stream, source);
             webRuleSet.recycle();
@@ -644,6 +654,11 @@ public final class ContextConfig
      */
     protected void processDefaultWebConfig(Digester digester, InputStream stream, 
             InputSource source) {
+
+        if (log.isDebugEnabled())
+            log.debug("Processing context [" + context.getName() 
+                    + "] web configuration resource " + source.getSystemId());
+
         // Process the default web.xml file
         synchronized (digester) {
             try {
@@ -696,11 +711,11 @@ public final class ContextConfig
         if( defaultContextXml==null ) getDefaultContextXml();
 
         if (!context.getOverride()) {
-            processContextConfig(new File(getBaseDir(), defaultContextXml));
-            processContextConfig(new File(getConfigBase(), Constants.HostContextXml));
+            processContextConfig(new File(getBaseDir()), defaultContextXml);
+            processContextConfig(getConfigBase(), getHostConfigPath(Constants.HostContextXml));
         }
         if (context.getConfigFile() != null)
-            processContextConfig(new File(context.getConfigFile()));
+            processContextConfig(new File(context.getConfigFile()), null);
         
     }
 
@@ -708,28 +723,45 @@ public final class ContextConfig
     /**
      * Process a context.xml.
      */
-    protected void processContextConfig(File file) {
+    protected void processContextConfig(File baseDir, String resourceName) {
         
         if (log.isDebugEnabled())
-            log.debug("Processing context [" + context.getName() + "] configuration file " + file);
-        
-        // Add as watched resource so that cascade reload occurs if a default
-        // config file is modified/added/removed
-        context.addWatchedResource(file.getAbsolutePath());
+            log.debug("Processing context [" + context.getName() 
+                    + "] configuration file " + baseDir + " " + resourceName);
 
         InputSource source = null;
         InputStream stream = null;
+
+        File file = baseDir;
+        if (resourceName != null) {
+            file = new File(baseDir, resourceName);
+        }
+        
         try {
-            if (file.exists()) {
-                stream = new FileInputStream(file);
+            if ( !file.exists() ) {
+                if (resourceName != null) {
+                    // Use getResource and getResourceAsStream
+                    stream = getClass().getClassLoader()
+                        .getResourceAsStream(resourceName);
+                    if( stream != null ) {
+                        source = new InputSource
+                            (getClass().getClassLoader()
+                            .getResource(resourceName).toString());
+                    }
+                }
+            } else {
                 source =
                     new InputSource("file://" + file.getAbsolutePath());
-            } else if (log.isDebugEnabled()) {
-                log.debug("Context [" + context.getName() + "] configuration file " + file + " not found");
+                stream = new FileInputStream(file);
+                // Add as watched resource so that cascade reload occurs if a default
+                // config file is modified/added/removed
+                context.addWatchedResource(file.getAbsolutePath());
             }
         } catch (Exception e) {
-            log.error(sm.getString("contextConfig.defaultMissing") + file);
+            log.error(sm.getString("contextConfig.defaultMissing") 
+                      + " " + resourceName + " " + file , e);
         }
+        
         if (source == null)
             return;
         if (contextDigester == null){
@@ -747,6 +779,9 @@ public final class ContextConfig
                 if (parseException != null) {
                     ok = false;
                 }
+                if (log.isDebugEnabled())
+                    log.debug("Successfully processed context [" + context.getName() 
+                            + "] configuration file " + baseDir + " " + resourceName);
             } catch (SAXParseException e) {
                 log.error(sm.getString("contextConfig.defaultParse"), e);
                 log.error(sm.getString("contextConfig.defaultPosition",
@@ -1263,7 +1298,14 @@ public final class ContextConfig
             new File(System.getProperty("catalina.base"), "conf");
         if (!configBase.exists()) {
             return null;
+        } else {
+            return configBase;
         }
+    }  
+
+    
+    protected String getHostConfigPath(String resourceName) {
+        StringBuffer result = new StringBuffer();
         Container container = context;
         Container host = null;
         Container engine = null;
@@ -1275,13 +1317,13 @@ public final class ContextConfig
             container = container.getParent();
         }
         if (engine != null) {
-            configBase = new File(configBase, engine.getName());
+            result.append(engine.getName()).append('/');
         }
         if (host != null) {
-            configBase = new File(configBase, host.getName());
+            result.append(host.getName()).append('/');
         }
-        configBase.mkdirs();
-        return configBase;
+        result.append(resourceName);
+        return result.toString();
     }
 
 
