@@ -137,10 +137,9 @@ public class ServletWriter {
 	sb.append('"');
 	for (int i = 0 ; i < len ; i++) {
 	    char ch = s.charAt(i);
-	    if ( ch == '\\' && i+1 < len) {
-		sb.append('\\');
-		sb.append('\\');
-		sb.append(s.charAt(++i));
+	    if ( ch == '\\' ) {
+		// double the \, doesn't matter what follows ( #3176 )
+		sb.append("\\\\"); 
 	    } else if ( ch == '"' ) {
 		sb.append('\\');
 		sb.append('"');
