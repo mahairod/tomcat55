@@ -71,6 +71,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.AccessControlException;
+import java.util.Random;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -114,6 +115,13 @@ public final class StandardServer
      * The port number on which we wait for shutdown commands.
      */
     private int port = 8005;
+
+
+    /**
+     * A random number generator that is <strong>only</strong> used if
+     * the shutdown command string is longer than 1024 characters.
+     */
+    private Random random = null;
 
 
     /**
@@ -278,24 +286,14 @@ public final class StandardServer
                 System.exit(1);
             }
 
-            boolean localAddress = isSameAddress(socket.getLocalAddress(),
-                                                 socket.getInetAddress());
-            if (!localAddress) {
-                System.err.println("Invalid shutdown connection from " +
-                                   socket.getInetAddress() + " ignored");
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    ;
-                }
-                continue;
-            }
-
             // Read a set of characters from the socket
             StringBuffer command = new StringBuffer();
             int expected = 1024; // Cut off to avoid DoS attack
-            while (expected < shutdown.length())
-                expected += 1024;
+            while (expected < shutdown.length()) {
+                if (random == null)
+                    random = new Random(System.currentTimeMillis());
+                expected += (random.nextInt() % 1024);
+            }
             while (expected > 0) {
                 int ch = -1;
                 try {
