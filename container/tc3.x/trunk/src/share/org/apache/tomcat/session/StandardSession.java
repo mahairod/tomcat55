@@ -92,6 +92,7 @@ import org.apache.tomcat.util.StringManager;
  * HttpSession view of this instance back to a Session view.
  *
  * @author Craig R. McClanahan
+ * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
  * @version $Revision$ $Date$
  */
 
@@ -752,10 +753,13 @@ final class StandardSession
 
 	// Deserialize the attribute count and attribute values
 	int n = ((Integer) stream.readObject()).intValue();
+	if (attributes == null)
+		attributes = new Hashtable();
 	for (int i = 0; i < n; i++) {
 	    String name = (String) stream.readObject();
 	    Object value = (Object) stream.readObject();
-	    attributes.put(name, value);
+		if (name != null)
+		    attributes.put(name, value);
 	}
 
     }
