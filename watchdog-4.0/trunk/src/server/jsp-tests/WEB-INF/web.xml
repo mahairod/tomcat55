@@ -22,4 +22,43 @@
            /WEB-INF/tlds/TestLib.tld
         </taglib-location>
     </taglib>
+
+<!-- These are only for testing if the Tld resource path is calculated properly
+-->
+    <taglib>
+        <taglib-uri>
+	  http://java.apache.org/tlds/tld-absolute
+        </taglib-uri>
+        <taglib-location>
+           /WEB-INF/tlds/tld_uri.tld
+        </taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>
+	  /tld_root_relative
+        </taglib-uri>
+        <taglib-location>
+           /WEB-INF/tlds/tld_uri.tld
+        </taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>
+	  tld_nonroot_relative
+        </taglib-uri>
+        <taglib-location>
+           /WEB-INF/tlds/tld_uri.tld
+        </taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>
+	  tld_jar
+        </taglib-uri>
+        <taglib-location>
+           /WEB-INF/lib/tld_resource.jar
+        </taglib-location>
+    </taglib>
+
 </web-app>
