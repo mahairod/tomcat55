@@ -63,14 +63,22 @@
     <!-- Shared Extensions -->
     <!--   Jasper uses the shared servlet.jar provided by Tomcat -->
     <!--   Jasper needs JAXP1.1/SAX2.0 compliant parser -->
+<!-- Continue to copy our patched version of crimson.jar until unsealed
     <copy file="${parser.jar}"
      tofile="${jasper.build}/lib/${jasper.jaxp.parser.jar}"/>
-
+-->
+    <copy file="../lib/crimson.jar"
+        tofile="${jasper.build}/lib/crimson.jar"/>
   </target>
 
   <target name="copy-jaxp-jar" if="jaxp.jar.present" >
+<!-- Continue to copy our patched version of jaxp.jar until unsealed
     <copy file="${jaxp.jar}" tofile="${jasper.build}/lib/jaxp.jar"/>
+-->
+    <copy file="../lib/jaxp.jar"
+        tofile="${jasper.build}/lib/jaxp.jar"/>
   </target>
+
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static">
