@@ -731,6 +731,16 @@ public final class TldConfig  {
 				 * (throws exception in case it doesn't)
 				 */
 				jarConn.getJarFile();
+				/*
+				 * JAR file exists.
+				 * Need to create new JarURLConnection due to
+				 * bug 4756443. If it were not for this bug,
+				 * the sequence of calls in this try block
+				 * would be as follows:
+				 *   jarConn.setUseCaches(false);
+				 *   jarConn.getJarFile();
+				 *   globalJarPaths.add(jarConn);
+				 */
 				jarConn = (JarURLConnection)
 				    jarURL.openConnection();
 				jarConn.setUseCaches(false);
