@@ -84,6 +84,9 @@ import javax.naming.NamingException;
 import javax.naming.InitialContext;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
+import javax.naming.NamingEnumeration;
+import javax.naming.Binding;
+import javax.naming.StringRefAddr;
 import org.apache.naming.NamingContext;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ContextAccessController;
@@ -3017,7 +3020,7 @@ public final class StandardContext
                  ejb.getRunAs());
             Reference ref = new Reference(ejb.getType(), ejbRefAddr);
             // Adding the additional parameters, if any
-            
+            addAdditionalParameters(envCtx, ref, ejb.getName());
             try {
                 createSubcontexts(compCtx, ejb.getName());
                 compCtx.bind(ejb.getName(), ref);
@@ -3038,7 +3041,7 @@ public final class StandardContext
                  resource.getScope(), resource.getAuth());
             Reference ref = new Reference(resource.getType(), resourceRefAddr);
             // Adding the additional parameters, if any
-            
+            addAdditionalParameters(envCtx, ref, resource.getName());
             try {
                 createSubcontexts(compCtx, resource.getName());
                 compCtx.bind(resource.getName(), ref);
@@ -3059,7 +3062,7 @@ public final class StandardContext
             ref.add(new StringRefAddr("name", key));
             ref.add(new StringRefAddr("type", type));
             // Adding the additional parameters, if any
-            
+            addAdditionalParameters(envCtx, ref, key);
             try {
                 createSubcontexts(compCtx, key);
                 compCtx.bind(key, ref);
@@ -3092,11 +3095,30 @@ public final class StandardContext
                 } catch (NamingException e) {
                     // Silent catch. Probably an object is already bound in
                     // the context.
+                    currentContext = 
+                        (javax.naming.Context) currentContext.lookup(token);
                 }
             }
         }
     }
     
+
+    /**
+     * Add additional parameters to the reference.
+     */
+    private void addAdditionalParameters(javax.naming.Context ctx,
+                                         Reference ref, String name) {
+        try {
+            NamingEnumeration enum = ctx.listBindings(name);
+            while (enum.hasMore()) {
+                Binding binding = (Binding) enum.next();
+                StringRefAddr refAddr = new StringRefAddr
+                    (binding.getName(), binding.getObject().toString());
+                ref.add(refAddr);
+            }
+        } catch (NamingException e) {
+        }
+    }
 
 
     /**
