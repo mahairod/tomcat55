@@ -199,7 +199,7 @@ final class ApplicationDispatcher
     /**
      * The debugging detail level for this component.
      */
-    private int debug = 1;
+    private int debug = 0;
 
 
     /**
