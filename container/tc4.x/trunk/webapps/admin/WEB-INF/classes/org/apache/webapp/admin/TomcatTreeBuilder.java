@@ -204,7 +204,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    true);
+                                    false);
             serverNode.addChild(serviceNode);
             getConnectors(serviceNode, serviceName);
             getHosts(serviceNode, serviceName);
@@ -243,7 +243,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    true);
+                                    false);
             serviceNode.addChild(connectorNode);
         }
     }
@@ -276,7 +276,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
-                                    true);
+                                    false);
             serviceNode.addChild(hostNode);
             getContexts(hostNode, hostName);            
             getLoggers(hostNode, hostName);
