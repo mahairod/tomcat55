@@ -391,30 +391,44 @@ public class ErrorDispatcher {
     private void dispatch(Mark where, String errCode, Object[] args,
 			  Exception e) throws JasperException {
 	String file = null;
+	String errMsg = null;
 	int line = -1;
 	int column = -1;
+	boolean hasLocation = false;
 
 	// Localize
-	String errMsg = getString(errCode, args);
+	if (errCode != null) {
+	    errMsg = getString(errCode, args);
+	} else if (e != null) {
+	    // give a hint about what's wrong
+	    errMsg = e.getMessage();
+	}
 
 	// Get error location
 	if (where != null) {
 	    file = where.getFile();
 	    line = where.getLineNumber();
 	    column = where.getColumnNumber();
+	    hasLocation = true;
 	} else if (e instanceof SAXParseException) {
 	    file = ((SAXParseException) e).getSystemId();
 	    line = ((SAXParseException) e).getLineNumber();
 	    column = ((SAXParseException) e).getColumnNumber();
+	    hasLocation = true;
 	}
 
 	// Get nested exception
 	Exception nestedEx = e;
-	if (e instanceof SAXException) {
+	if ((e instanceof SAXException)
+	        && (((SAXException) e).getException() != null)) {
 	    nestedEx = ((SAXException) e).getException();
 	}
 
-	errHandler.jspError(file, line, column, errMsg, nestedEx);
+	if (hasLocation) {
+	    errHandler.jspError(file, line, column, errMsg, nestedEx);
+	} else {
+	    errHandler.jspError(errMsg, nestedEx);
+	}
     }
 
     /*
