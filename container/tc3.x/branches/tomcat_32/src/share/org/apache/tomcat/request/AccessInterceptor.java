@@ -321,7 +321,7 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	
 	switch( ct.getMapType() ) {
 	case Container.PREFIX_MAP:
-	    return path.startsWith( ctPath.substring(0, ctPathL - 2  ));
+	    return path.startsWith( ctPath.substring(0, ctPathL - 1  ));
 	case Container.EXTENSION_MAP:
 	    return ctPath.substring( 1 ).equals( URLUtil.getExtension( path ));
 	case Container.PATH_MAP:
