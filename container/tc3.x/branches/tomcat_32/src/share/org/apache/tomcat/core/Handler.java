@@ -258,16 +258,19 @@ public class Handler {
 		    contextM.handleStatus( req, res, 404);
 		    return;
 		}
-		// handle error, does nothing if already handled
-		contextM.handleError( req, res, ex);
-		// rethrow the exception
 		context.log("Exception in init  " + ex.getMessage(), ex );
-		if (ex instanceof IOException)
-		    throw (IOException) ex;
-		else if (ex instanceof ServletException)
-		    throw (ServletException) ex;
-		else
-		    throw new ServletException("Servlet Init Exception", ex);
+                if (res.isIncluded()) { // Only propogate on includes
+                    if (ex instanceof IOException)
+                        throw (IOException) ex;
+                    else if (ex instanceof ServletException)
+                        throw (ServletException) ex;
+                    else
+                        throw new ServletException
+                            ("Servlet Init Exception", ex);
+                } else {                // Only handle on top level
+                    contextM.handleError( req, res, ex );
+                    return;
+                }
 	    }
 	}
        }
@@ -289,17 +292,20 @@ public class Handler {
 
 	if( t==null ) return;
 
-	// handle error, does nothing if already handled
+        // Rethrow the exception if we are inside an include
+        if (res.isIncluded()) {
+            //            context.log("Rethrowing doService exception: " + t);
+            if (t instanceof IOException)
+                throw (IOException) t;
+            else if (t instanceof ServletException)
+                throw (ServletException) t;
+            else
+                throw new ServletException("Servlet Exception", t);
+        }
+
+	// handle error, does nothing if already handled, at top level
 	contextM.handleError( req, res, t );
 
-	// rethrow the exception
-	context.log("Rethrowing doService exception: " + t);
-	if (t instanceof IOException)
-	    throw (IOException) t;
-	else if (t instanceof ServletException)
-	    throw (ServletException) t;
-	else
-	    throw new ServletException("Servlet Exception", t);
     }
 
 //     protected void handleError( Request req, Response res, Throwable t) {
