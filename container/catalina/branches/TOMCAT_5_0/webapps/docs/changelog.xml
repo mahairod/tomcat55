@@ -14,6 +14,21 @@
 
 <body>
 
+<section name="Tomcat 5.0.31 (yoavs)">
+  <subsection name="General">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>32371</bug>: outdated introduction.xml page. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.0.30 (yoavs)">
   <subsection name="General">
     <changelog>
