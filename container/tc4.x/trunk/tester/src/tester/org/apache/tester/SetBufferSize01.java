@@ -93,10 +93,14 @@ public class SetBufferSize01 extends GenericServlet {
         PrintWriter writer = response.getWriter();
         try {
             writer.print("SetBufferSize01 ");
+            response.flushBuffer();
             response.setBufferSize(100);
             writer.println("FAILED - Did not throw IllegalStateException");
         } catch (IllegalStateException e) {
             writer.println("PASSED");
+        } catch (IOException e) {
+            writer.println("FAILED - flushBuffer() threw IOException");
+            throw e;
         }
         while (true) {
             String message = StaticLogger.read();
