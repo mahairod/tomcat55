@@ -1,9 +1,5 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
- * ====================================================================
+ * $Header$ $Date$ $Revision$
  * 
  * The Apache Software License, Version 1.1
  *
@@ -57,28 +53,28 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
-
+ */
 package javax.servlet.jsp;
 
 /**
- * Error found; stop generating all output and forward to errorpage. 
- * Message should be used...
- * TODO -- details of how to use the message yet to be investigated.
+ * Exception to be used by a Tag Handler to indicate some unrecoverable
+ * error.
+ * This error is to be caught by the top level of the JSP page and will result
+ * in an error page.
  */
 
-public class JspError extends JspException {
+public class JspTagException extends JspException {
     /**
      * Constructor with a message.
      */
-    public JspError(String msg) {
+    public JspTagException(String msg) {
 	super(msg);
     }
 
     /**
      * No message
      */
-    public JspError() {
+    public JspTagException() {
 	super();
     }
 }
