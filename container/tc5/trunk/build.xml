@@ -151,6 +151,8 @@
     <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
 
+    <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" />
+
     <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
   </target>
 
@@ -814,7 +816,6 @@
 
   <target name="deploy.old" depends="deploy-static">
 
-
     <echo>Target: Modeler - Dist ...</echo>
     <ant dir="${commons-modeler.home}" target="dist"/>
 
@@ -848,6 +849,10 @@
     <copy todir="${tomcat.build}/webapps/servlets-examples">
       <fileset dir="${api.home}/jsr154/build/examples"/>
     </copy>
+
+    <!-- Copy Unix JSVC from commons-daemon -->
+    <copy file="${commons-daemon.jsvc.tar.gz}" 
+        tofile="${tomcat.dist}/bin/jsvc.tar.gz" />
 
     <echo>Target: Webapps precompilation ...</echo>
 

@@ -76,6 +76,7 @@ commons-daemon.cvs.loc=jakarta-commons-sandbox/daemon
 commons-daemon.procrun.home=${commons-daemon.lib}/bin
 commons-daemon.procrun.exe=${commons-daemon.procrun.home}/tomcat.exe
 commons-daemon.procrunw.exe=${commons-daemon.procrun.home}/tomcatw.exe
+commons-daemon.jsvc.tar.gz=${commons-daemon.lib}/bin/jsvc.tar.gz
 
 
 # ----- Commons Digester, version 1.4 or later -----
