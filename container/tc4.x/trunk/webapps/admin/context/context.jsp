@@ -51,25 +51,30 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.loggers.deletes"/> 
             </controls:action>
-            <%--
             <controls:action disabled="true"> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.requestfilter.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.requestfilter.delete"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.realms.create"/> </controls:action>
+            <controls:action url='<%= "/AddRealm.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.realms.create"/>
+            </controls:action>              
             <controls:action url='<%= "/DeleteRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.realms.deletes"/> 
             </controls:action>
-            <controls:action disabled="true">  -------------------------------------  </controls:action>
-            <controls:action url="">  <bean:message key="actions.valves.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.valves.deletes"/> </controls:action>
             --%>
-              <controls:action disabled="true">  -------------------------------------  </controls:action>
-              <controls:action url='<%= "/DeleteContext.do?select=" +
+            <controls:action disabled="true">  -------------------------------------  </controls:action>
+            <controls:action url='<%= "/AddValve.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+               <bean:message key="actions.valves.create"/> 
+            </controls:action>
+            <controls:action url='<%= "/DeleteValve.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'> 
+               <bean:message key="actions.valves.deletes"/> 
+            </controls:action>
+            <controls:action disabled="true">  -------------------------------------  </controls:action>
+            <controls:action url='<%= "/DeleteContext.do?select=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.contexts.delete"/>
-              </controls:action>
+            </controls:action>
             </logic:notEqual>
         </controls:actions>   
          </div>

@@ -48,17 +48,6 @@
               -------------------------------------
             </controls:action>
             <logic:notEqual name="serviceForm" property="adminAction" value="Create">
-              <%--
-              <controls:action url="">
-                <bean:message key="actions.accesslogger.create"/>
-              </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.accesslogger.delete"/>
-              </controls:action>
-              <controls:action>
-                -------------------------------------
-              </controls:action>
-              --%>
               <controls:action url='<%= "/AddConnector.do?serviceName=" +
                                         serviceName %>'>  
                 <bean:message key="actions.connectors.create"/>
@@ -92,18 +81,7 @@
               <controls:action disabled="true"> 
                 ------------------------------------- 
               </controls:action>
-              <%--
-              <controls:action url="">
-                <bean:message key="actions.requestfilter.create"/>
-              </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.requestfilter.delete"/>
-              </controls:action>
-              <controls:action>
-                -------------------------------------
-              </controls:action>
-              --%>
-            <controls:action url='<%= "/AddRealm.do?parent=" + 
+              <controls:action url='<%= "/AddRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
              </controls:action>              
@@ -114,18 +92,18 @@
               <controls:action disabled="true"> 
                 ------------------------------------- 
               </controls:action>
-              <%--
-              <controls:action url="">
-                <bean:message key="actions.valves.create"/>
+              <controls:action url='<%= "/AddValve.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.valves.create"/> 
               </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.valves.deletes"/>
-              </controls:action>
-              <controls:action>
-                -------------------------------------
-              </controls:action>
-              --%>
-              <controls:action url='<%= "/DeleteService.do?select=" +
+              <controls:action url='<%= "/DeleteValve.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'> 
+                <bean:message key="actions.valves.deletes"/> 
+               </controls:action>
+               <controls:action disabled="true"> 
+                ------------------------------------- 
+                </controls:action>
+                 <controls:action url='<%= "/DeleteService.do?select=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.services.delete"/>
               </controls:action>

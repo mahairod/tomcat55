@@ -20,6 +20,8 @@
 
   <bean:define id="thisObjectName" type="java.lang.String"
                name="remoteAddrValveForm" property="objectName"/>
+  <bean:define id="thisParentName" type="java.lang.String"
+               name="remoteAddrValveForm" property="parentObjectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="parentObjectName"/>
   <html:hidden property="objectName"/>
@@ -43,12 +45,10 @@
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="remoteAddrValveForm" property="adminAction" value="Create">              
-            <%--
-             <controls:action url='<%= "/DeleteValve.do?select=" + 
-                                        URLEncoder.encode(thisObjectName) %>'>  
+             <controls:action url='<%= "/DeleteValve.do?"  +
+                                 "select=" + URLEncoder.encode(thisObjectName) + 
+                                 "&parent="+ URLEncoder.encode(thisParentName) %>'>  
                 <bean:message key="actions.valves.delete"/> 
-              </controls:action>
-              --%>
              </logic:notEqual>          
        </controls:actions>   
          </div>

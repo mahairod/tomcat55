@@ -411,7 +411,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "EditValve.do?select=" +
                                     URLEncoder.encode(valveName) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel) +
+                                    "&parent=" +
+                                    URLEncoder.encode(containerName),
                                     "content",
                                     false);
             containerNode.addChild(valveNode);

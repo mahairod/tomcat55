@@ -111,6 +111,7 @@ public class EditValveAction extends Action {
     
     private HttpSession session = null;
     private Locale locale = null;
+    private String parent = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -164,6 +165,7 @@ public class EditValveAction extends Action {
             return (null);
         }
         
+       parent = request.getParameter("parent");
        String valveType = null;
        String attribute = null;
         
@@ -212,7 +214,7 @@ public class EditValveAction extends Action {
         session.setAttribute("accessLogValveForm", valveFm);
         valveFm.setAdminAction("Edit");
         valveFm.setObjectName(vname.toString()); 
-        valveFm.setParentObjectName("");
+        valveFm.setParentObjectName(parent);
         String valveType = "AccessLogValve";
         StringBuffer sb = new StringBuffer("Valve (");
         sb.append(valveType);
@@ -263,7 +265,7 @@ public class EditValveAction extends Action {
         session.setAttribute("requestDumperValveForm", valveFm);
         valveFm.setAdminAction("Edit");
         valveFm.setObjectName(vname.toString()); 
-        valveFm.setParentObjectName("");
+        valveFm.setParentObjectName(parent);
         String valveType = "RequestDumperValve";
         StringBuffer sb = new StringBuffer("Valve (");
         sb.append(valveType);
@@ -280,7 +282,7 @@ public class EditValveAction extends Action {
         session.setAttribute("singleSignOnValveForm", valveFm);
         valveFm.setAdminAction("Edit");
         valveFm.setObjectName(vname.toString()); 
-        valveFm.setParentObjectName("");
+        valveFm.setParentObjectName(parent);
         String valveType = "SingleSignOn";
         StringBuffer sb = new StringBuffer("Valve (");
         sb.append(valveType);
@@ -315,7 +317,7 @@ public class EditValveAction extends Action {
         session.setAttribute("remoteAddrValveForm", valveFm);
         valveFm.setAdminAction("Edit");
         valveFm.setObjectName(vname.toString()); 
-        valveFm.setParentObjectName("");
+        valveFm.setParentObjectName(parent);
         String valveType = "RemoteAddrValve";
         StringBuffer sb = new StringBuffer("Valve (");
         sb.append(valveType);
@@ -352,7 +354,7 @@ public class EditValveAction extends Action {
         session.setAttribute("remoteHostValveForm", valveFm);
         valveFm.setAdminAction("Edit");
         valveFm.setObjectName(vname.toString()); 
-        valveFm.setParentObjectName("");
+        valveFm.setParentObjectName(parent);
         String valveType = "RemoteHostValve";
         StringBuffer sb = new StringBuffer("Valve (");
         sb.append(valveType);
