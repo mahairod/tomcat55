@@ -637,9 +637,13 @@ public final class ExtendedAccessLogValve
                         result.append(timeTakenFormatter.format(runTime/1000d));
                     else if (FieldInfo.SPECIAL_TIME==fieldInfos[i].location)
                         result.append(timeFormatter.format(date));
-                    else if (FieldInfo.SPECIAL_BYTES==fieldInfos[i].location)
-                        result.append(dateFormatter.format(date));
-                    else if (FieldInfo.SPECIAL_CACHED==fieldInfos[i].location)
+                    else if (FieldInfo.SPECIAL_BYTES==fieldInfos[i].location) {
+                        int length = response.getContentCount();
+                        if (length > 0)
+                            result.append(length);
+                        else
+                            result.append("-");
+                    } else if (FieldInfo.SPECIAL_CACHED==fieldInfos[i].location)
                         result.append('-'); /* I don't know how to evaluate this! */
                     else
                         result.append("?WTF?"); /* This should never happen! */
