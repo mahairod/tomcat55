@@ -128,7 +128,7 @@ public class CounterClient extends TestableBase {
 
         try {
             in.read(b);
-            count = Integer.parseInt(new String(b).trim());
+            count = Integer.parseInt(new String(b,"UTF8").trim());
         } catch (IOException ioe) {
 	    if (this.Debug) {
                 ioe.printStackTrace();

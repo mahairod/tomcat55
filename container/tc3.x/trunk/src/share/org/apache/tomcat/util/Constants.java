@@ -92,4 +92,8 @@ public class Constants {
     public static class MIME {
         public static final String WAR = "war";
     }
+
+    public static class CharacterEncoding {
+        public static final String Default = "8859_1";
+     }
 }

@@ -111,7 +111,7 @@ public class HttpRequestAdapter extends RequestAdapterImpl {
 	byte[] buf = new byte[Constants.RequestBufferSize];
 	int count = in.readLine(buf, 0, buf.length);
 	if (count >= 0) {
-	    line=new String(buf, 0, count);
+            line=new String(buf, 0, count, Constants.CharacterEncoding.Default);
 	}
 
 	processRequestLine(response,line);

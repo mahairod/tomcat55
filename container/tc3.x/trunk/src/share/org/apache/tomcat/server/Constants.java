@@ -106,4 +106,8 @@ public class Constants {
         public static final String Name = "server.properties";
         public static final String ServerHeader = "server.header";
     }
+
+    public static class CharacterEncoding {
+        public static final String Default = "8859_1";
+     }
 }

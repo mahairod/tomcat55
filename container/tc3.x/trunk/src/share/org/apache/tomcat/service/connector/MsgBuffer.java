@@ -157,7 +157,7 @@ public class MsgBuffer {
 	return res;
     }
 
-    public String getString() {
+    public String getString() throws java.io.UnsupportedEncodingException {
 	int ll= getInt();
 	if( (ll == 0xFFFF) || (ll==-1) ) {
 	    System.out.println("null string " + ll);

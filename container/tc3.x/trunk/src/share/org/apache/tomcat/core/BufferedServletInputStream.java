@@ -164,7 +164,7 @@ public class BufferedServletInputStream extends ServletInputStream {
 	byte[] buf = new byte[1024];
 	int count = readLine(buf, 0, buf.length);
 	if (count >= 0) {
-	    return new String(buf, 0, count);
+	    return new String(buf, 0, count, Constants.CharacterEncoding.Default);
 	} else {
 	    return ""; 
 	}

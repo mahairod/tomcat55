@@ -88,9 +88,7 @@ public class Response {
     protected Vector systemCookies = new Vector();
     protected String contentType = Constants.ContentType.Default;
     protected String contentLanguage = null;
-    protected String characterEncoding =
-        System.getProperty("file.encoding",
-            Constants.CharacterEncoding.Default);
+    protected String characterEncoding = Constants.CharacterEncoding.Default;
     protected int contentLength = -1;
     protected int status = 200;
     private Locale locale = new Locale(Constants.Locale.Default, "");
@@ -163,8 +161,7 @@ public class Response {
 	systemCookies.removeAllElements();
 	contentType = Constants.ContentType.Default;
         locale = new Locale(Constants.Locale.Default, "");
-	characterEncoding = System.getProperty("file.encoding",
-					       Constants.CharacterEncoding.Default);
+	characterEncoding = Constants.CharacterEncoding.Default;
 	contentLength = -1;
 	status = 200;
 	headers.clear();
@@ -222,6 +219,8 @@ public class Response {
 
 	if (writer == null) {
 	    String encoding = getCharacterEncoding();
+
+            // XXX - EBCDIC issue here?
 
 	    if ((encoding == null) || "Default".equals(encoding) )
 	        writer = new PrintWriter(new OutputStreamWriter(out));
@@ -300,8 +299,7 @@ public class Response {
 	userCookies.removeAllElements();  // keep system (session) cookies
 	contentType = Constants.ContentType.Default;
         locale = new Locale(Constants.Locale.Default, "");
-	characterEncoding = System.getProperty("file.encoding",
-            Constants.CharacterEncoding.Default);
+	characterEncoding = Constants.CharacterEncoding.Default;
 	contentLength = -1;
 	status = 200;
 

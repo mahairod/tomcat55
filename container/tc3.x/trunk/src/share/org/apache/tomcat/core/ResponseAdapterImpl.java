@@ -135,7 +135,9 @@ public class ResponseAdapterImpl implements ResponseAdapter {
      *  Headers and status will be written before this method is exceuted.
      */
     public void doWrite( byte buffer[], int pos, int count) throws IOException {
-	body.append(new String(buffer, pos, count) );
+        // XXX fix if charset is other than default.
+        body.append(new String(buffer, pos, count, 
+                    Constants.CharacterEncoding.Default) );
     }
 
     public void recycle() {

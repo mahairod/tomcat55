@@ -171,8 +171,16 @@ public class HttpDate extends Ascii {
     public void parse(byte[] b, int off, int len) {
         // ok -- so this is pretty stoopid, but the old version of this
         // source took this arg set, so we will too for now (backwards compat)
-        String dateString = new String(b, off, len);
-        parse(dateString);
+        try {
+            String dateString = new String(b, off, len, Constants.CharacterEncoding.Default);
+            parse(dateString);
+        } catch (java.io.UnsupportedEncodingException e) {
+            // It seems rather unlikely that the string encoding would ever fail...
+            // As there is really nothing the caller can do with this specific
+            // exception re-throw the exception as something expected.
+            // XXX - perform byte -> character encoding at a higher level.
+            throw new IllegalArgumentException(e.toString());
+        }
     }
 
     public void write(OutputStream out) throws IOException {

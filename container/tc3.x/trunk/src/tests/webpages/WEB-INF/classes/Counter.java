@@ -67,7 +67,7 @@ public class Counter extends HttpServlet {
         res.setContentType(mimeType);
 
         ServletOutputStream out = res.getOutputStream();
-        byte[] b = Integer.toString(count).getBytes();
+        byte[] b = Integer.toString(count).getBytes("UTF");
 
         try {
             out.write(b);

@@ -260,6 +260,7 @@ public class Request  {
 
     public String getCharacterEncoding() {
         if(charEncoding!=null) return charEncoding;
+
 	charEncoding=reqA.getCharacterEncoding();
 	if(charEncoding!=null) return charEncoding;
 
@@ -522,9 +523,6 @@ public class Request  {
     public void setAuthType(String authType) {
         this.authType = authType;
     }
-    public void setCharacterEncoding(String charEncoding) {
-	this.charEncoding = charEncoding;
-    }
 
 
     public void setPathInfo(String pathInfo) {
@@ -679,10 +677,13 @@ public class Request  {
 	RequestUtil.processFormData( data, parameters );
     }
 
-    public void processFormData(InputStream in, int contentLength) {
+    public void processFormData(InputStream in, int contentLength) 
+        throws UnsupportedEncodingException
+    {
         byte[] buf = new byte[contentLength]; // XXX garbage collection!
 	int read = RequestUtil.readData( in, buf, contentLength );
-        String s = new String(buf, 0, read);
+        // XXX if charset is ever anything other than the default, this must be fixed.
+        String s = new String(buf, 0, read, Constants.CharacterEncoding.Default);
         processFormData(s);
     }
 
