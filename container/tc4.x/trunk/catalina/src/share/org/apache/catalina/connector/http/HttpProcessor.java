@@ -855,10 +855,6 @@ final class HttpProcessor
             if ( "close".equals(response.getHeader("Connection")) ) {
                 keepAlive = false;
             }
-            // If the status is an error, the connection is closed
-            if (response.getStatus() >= 400) {
-                keepAlive = false;
-            }
             
             // Recycling the request and the response objects
             request.recycle();
