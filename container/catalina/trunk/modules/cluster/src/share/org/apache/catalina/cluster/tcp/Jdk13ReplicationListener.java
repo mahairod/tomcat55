@@ -19,16 +19,18 @@ package org.apache.catalina.cluster.tcp;
 
 
 
-import java.net.Socket;
-import java.net.ServerSocket;
 import java.net.InetSocketAddress;
-import java.nio.channels.Selector;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.Jdk13ObjectReader;
+import org.apache.catalina.cluster.io.ListenCallback;
 
 /**
  * @author Filip Hanik
+ * @author Peter Rossbach
+ * FIXME ThreadPooling
+ * FIXME Socket timeout
  * @version $Revision$, $Date$
  */
 public class Jdk13ReplicationListener implements Runnable
@@ -81,13 +83,40 @@ public class Jdk13ReplicationListener implements Runnable
     public void setCompress(boolean compress) {
         this.compress = compress;
     }
+    
+    /**
+     * Send ACK to sender 
+     * @return
+     */
     public boolean isSendAck() {
         return sendAck;
     }
+    
+    /**
+     * set ack mode or not!
+     * @param sendAck
+     */
     public void setSendAck(boolean sendAck) {
         this.sendAck = sendAck;
     }
 
+    /**
+     * @return Returns the doListen.
+     */
+    public boolean isDoListen() {
+        return doListen;
+    }
+    /**
+     * @param doListen The doListen to set.
+     */
+    public void setDoListen(boolean doListen) {
+        this.doListen = doListen;
+    }
+    /**
+     *  Listen for senders
+     * @see java.lang.Runnable#run()
+     * @see #listen()
+     */
     public void run()
     {
         try
@@ -100,22 +129,30 @@ public class Jdk13ReplicationListener implements Runnable
         }
     }
 
-    public void listen ()
-        throws Exception
-    {
+    /**
+     * Master/Slave Sender handling / bind Server Socket at addres and port
+     * FIXME Remember Worker threads to stop
+     * FIXME Use Threadpool?
+     * @throws Exception
+     */
+    public void listen() throws Exception {
         doListen = true;
         // Get the associated ServerSocket to bind it with
         serverSocket = new ServerSocket();
-        serverSocket.bind (new InetSocketAddress (bind,port));
+        serverSocket.bind(new InetSocketAddress(bind, port));
         while (doListen) {
             Socket socket = serverSocket.accept();
-            ClusterListenThread t = new ClusterListenThread(socket,new Jdk13ObjectReader(socket,callback,compress),sendAck);
+            ClusterListenThread t = new ClusterListenThread(this, socket,
+                    new Jdk13ObjectReader(socket, callback, compress), sendAck);
             t.setDaemon(true);
             t.start();
-        }//while
+        }
         serverSocket.close();
     }
 
+    /**
+     * Close serverSockets
+     */
     public void stopListening(){
         doListen = false;
         try {
@@ -126,17 +163,31 @@ public class Jdk13ReplicationListener implements Runnable
     }
 
     protected static class ClusterListenThread extends Thread {
+        private Jdk13ReplicationListener master ;
         private Socket socket;
         private Jdk13ObjectReader reader;
         private boolean keepRunning = true;
         private boolean sendAck ;
         private static byte[] ACK_COMMAND = new byte[] {6,2,3};
-        ClusterListenThread(Socket socket, Jdk13ObjectReader reader, boolean sendAck) {
+        
+        /**
+         * Fork Listen Worker Thread!
+         * @param socket
+         * @param reader
+         * @param sendAck
+         */
+        ClusterListenThread(Jdk13ReplicationListener master,Socket socket, Jdk13ObjectReader reader, boolean sendAck) {
+            this.master = master;
             this.socket = socket;
             this.reader = reader;
             this.sendAck = sendAck ;
         }
 
+        /**
+         * read sender messages / is message complete send ack and wait for next message!
+         * @see Jdk13ObjectReader#append(byte[],int,int)
+         * @see java.lang.Runnable#run()
+         */
         public void run() {
             try {
                 byte[] buffer = new byte[1024];
@@ -153,16 +204,28 @@ public class Jdk13ReplicationListener implements Runnable
                             ack--;
                         }
                     }
+                    keepRunning = master.doListen;
                 }
             } catch ( Exception x ) {
                 keepRunning = false;
                 log.error("Unable to read data from client, disconnecting.",x);
-                try { socket.close(); } catch ( Exception ignore ) {}
+            } finally {
+                // finish socket
+                if (socket != null) {
+                    try {
+
+                        socket.close();
+                    } catch (Exception ignore) {
+                    }
+                }
             }
         }
 
+        /**
+         * send a reply-acknowledgement
+         * @throws java.io.IOException
+         */
         private void sendAck() throws java.io.IOException {
-            //send a reply-acknowledgement
             socket.getOutputStream().write(ACK_COMMAND);
         }
 

@@ -13,6 +13,10 @@
     <attribute   name="notifyListenersOnReplication"
           description="notify session attribute listener at backups"
                  type="boolean"/>
+    <attribute   name="notifyLifecycleListenerOnFailure"
+          description="notify lifecycleListener from message transfer failure"
+			     is="true"
+                 type="boolean"/>                 
     <attribute   name="clusterName"
           description="name of cluster"
                  type="java.lang.String"/>
@@ -114,6 +118,11 @@
                impact="ACTION"
                returnType="void">
     </operation>	
+	<operation name="checkIfCloseSocket"
+               description="Check all sender connection for close socket (keepalive)"
+               impact="ACTION"
+               returnType="void">
+    </operation>
   </mbean>
 
   <mbean         name="AsyncSocketSender"
@@ -210,7 +219,11 @@
     <attribute   name="socketOpenCounter"
           description="counts open socket (KeepAlive and connects)"
                  type="long"
-                 writeable="false"/>				 
+                 writeable="false"/>
+    <attribute   name="socketOpenFailureCounter"
+          description="counts open socket failures"
+                 type="long"
+                 writeable="false"/>                 				 
     <attribute   name="socketCloseCounter"
           description="counts closed socket (KeepAlive and disconnects)"
                  type="long"
@@ -370,6 +383,10 @@
           description="counts open socket (KeepAlive and connects)"
                  type="long"
                  writeable="false"/>				 
+    <attribute   name="socketOpenFailureCounter"
+          description="counts open socket failures"
+                 type="long"
+                 writeable="false"/>                 				 
     <attribute   name="socketCloseCounter"
           description="counts closed socket (KeepAlive and disconnects)"
                  type="long"
@@ -579,6 +596,10 @@
           description="counts closed socket (KeepAlive and disconnects)"
                  type="long"
                  writeable="false"/>
+    <attribute   name="socketOpenFailureCounter"
+          description="counts open socket failures"
+                 type="long"
+                 writeable="false"/>                 				 
     <attribute   name="socketOpenCounter"
           description="counts open socket (KeepAlive and connects)"
                  type="long"
@@ -623,6 +644,7 @@
           description="resource filter to disable session replication check"
                  type="java.lang.String"/>
     <attribute   name="primaryIndicator"
+ 			     is="true"
           description="set indicator that request processing is at primary session node"
                  type="boolean"/>
     <attribute   name="primaryIndicatorName"
@@ -630,6 +652,10 @@
                  type="java.lang.String"/>
 	<attribute   name="nrOfRequests"
           description="number of replicated requests"
+                 type="long"
+                 writeable="false"/>
+	<attribute   name="nrOfFilterRequests"
+          description="number of filtered requests"
                  type="long"
                  writeable="false"/>
     <attribute   name="totalRequestTime"
@@ -644,6 +670,12 @@
           description="last replicated request time"
                  type="long"
                  writeable="false"/>
+    <operation name="resetStatistics"
+               description="Reset all statistics"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+                 
   </mbean>
 
 

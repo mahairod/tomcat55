@@ -23,7 +23,7 @@ import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
  * 
  * @author Filip Hanik
  * @author Peter Rossbach
- * @version 1.1
+ * @version 1.2
  *
  */
 public interface ClusterSender
@@ -36,6 +36,8 @@ public interface ClusterSender
     public void start() throws java.io.IOException;
 
     public void stop();
+
+    public void backgroundProcess() ;
 
     public void sendMessage(String messageId, byte[] indata, Member member) throws java.io.IOException;
 
