@@ -239,8 +239,14 @@ public class ResponseFacade implements ServletResponse {
 
         resp.setAppCommitted(true);
 
-        response.flushBuffer();
-
+        try {
+            response.flushBuffer();
+        } catch(IOException ioe) {
+            // An IOException on a write is almost always due to
+            // the remote client aborting the request.  Wrap this
+            // so that it can be handled better by the error dispatcher.
+            throw new ClientAbortException(ioe);
+        }
     }
 
 

@@ -88,6 +88,7 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
@@ -224,7 +225,15 @@ public class ErrorDispatcherValve
                 realError = throwable;
             }
         } 
-            
+
+        // If this is an aborted request from a client just log it and return
+        if (realError instanceof ClientAbortException ) {
+            log(sm.getString(
+                "errorDispatcherValve.clientAbort",
+                ((ClientAbortException)realError).getThrowable().getMessage()));
+            return;
+        }
+
         ErrorPage errorPage = findErrorPage(context, realError);
 
         if (errorPage != null) {
