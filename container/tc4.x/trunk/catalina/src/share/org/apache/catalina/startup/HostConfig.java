@@ -291,7 +291,7 @@ public final class HostConfig
                     log(sm.getString("hostConfig.deployDir", files[i]));
                 try {
                     URL url = new URL("file", null, dir.getCanonicalPath());
-                    ((Deployer) host).deploy(contextPath, url);
+                    ((Deployer) host).install(contextPath, url);
                 } catch (Throwable t) {
                     log(sm.getString("hostConfig.deployDir.error", files[i]),
                         t);
@@ -315,7 +315,7 @@ public final class HostConfig
                 try {
                     URL url = new URL("file", null, dir.getCanonicalPath());
                     url = new URL("jar:" + url.toString() + "!/");
-                    ((Deployer) host).deploy(contextPath, url);
+                    ((Deployer) host).install(contextPath, url);
                 } catch (Throwable t) {
                     log(sm.getString("hostConfig.deployJar.error", files[i]),
                         t);
@@ -406,16 +406,16 @@ public final class HostConfig
         if (!(host instanceof Deployer))
             return;
         if (debug >= 1)
-            log(sm.getString("hostConfig.undeploying"));
+            log(sm.getString("hostConfig.stopping"));
 
         String contextPaths[] = ((Deployer) host).findDeployedApps();
         for (int i = 0; i < contextPaths.length; i++) {
             if (debug >= 1)
-                log(sm.getString("hostConfig.undeploy", contextPaths[i]));
+                log(sm.getString("hostConfig.stop", contextPaths[i]));
             try {
-                ((Deployer) host).undeploy(contextPaths[i]);
+                ((Deployer) host).stop(contextPaths[i]);
             } catch (Throwable t) {
-                log(sm.getString("hostConfig.undeploy.error",
+                log(sm.getString("hostConfig.stop.error",
                                  contextPaths[i]), t);
             }
         }

@@ -83,9 +83,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
@@ -152,15 +154,6 @@ public class StandardHost
 
 
     /**
-     * The set of absolute pathnames to directories that were expanded
-     * from WAR files, keyed by context path.  These entries may be used
-     * to indicate that the expanded directory is to be removed when the
-     * application is undeployed.
-     */
-    private HashMap expanded = new HashMap();
-
-
-    /**
      * The descriptive information string for this implementation.
      */
     private static final String info =
@@ -184,6 +177,7 @@ public class StandardHost
      * DefaultContext config
      */
     private DefaultContext defaultContext;
+
 
     // ------------------------------------------------------------- Properties
 
@@ -528,30 +522,30 @@ public class StandardHost
 
 
     /**
-     * Deploy a new web application, whose web application archive is at the
+     * Install a new web application, whose web application archive is at the
      * specified URL, into this container with the specified context path.
      * A context path of "" (the empty string) should be used for the root
      * application for this container.  Otherwise, the context path must
      * start with a slash.
      * <p>
-     * If this application is successfully deployed, a ContainerEvent of type
-     * <code>DEPLOY_EVENT</code> will be sent to all registered listeners,
+     * If this application is successfully installed, a ContainerEvent of type
+     * <code>INSTALL_EVENT</code> will be sent to all registered listeners,
      * with the newly created <code>Context</code> as an argument.
      *
      * @param contextPath The context path to which this application should
-     *  be deployed (must be unique)
+     *  be installed (must be unique)
      * @param war A URL of type "jar:" that points to a WAR file, or type
      *  "file:" that points to an unpacked directory structure containing
-     *  the web application to be deployed
+     *  the web application to be installed
      *
      * @exception IllegalArgumentException if the specified context path
      *  is malformed (it must be "" or start with a slash)
      * @exception IllegalArgumentException if the specified context path
      *  is already attached to an existing web application
      * @exception IOException if an input/output error was encountered
-     *  during deployment
+     *  during install
      */
-    public void deploy(String contextPath, URL war) throws IOException {
+    public void install(String contextPath, URL war) throws IOException {
 
         // Validate the format and state of our arguments
         if (contextPath == null)
@@ -570,7 +564,7 @@ public class StandardHost
         // Prepare the local variables we will require
         String url = war.toString();
         String docBase = null;
-        log(sm.getString("standardHost.deploying", contextPath, url));
+        log(sm.getString("standardHost.installing", contextPath, url));
 
         // Expand a WAR archive into an unpacked directory if needed
         if (isUnpackWARs()) {
@@ -607,7 +601,7 @@ public class StandardHost
             
         }
 
-        // Deploy this new web application
+        // Install this new web application
         try {
             Class clazz = Class.forName(contextClass);
             Context context = (Context) clazz.newInstance();
@@ -620,16 +614,9 @@ public class StandardHost
                 ((Lifecycle) context).addLifecycleListener(listener);
             }
             addChild(context);
-	    fireContainerEvent(DEPLOY_EVENT, context);
-            if (isUnpackWARs() && (url.startsWith("jar:"))) {
-                synchronized (expanded) {
-                    if (debug >= 1)
-                        log("Recording expanded app at path " + contextPath);
-                    expanded.put(contextPath, docBase);
-                }
-            }
+	    fireContainerEvent(INSTALL_EVENT, context);
         } catch (Exception e) {
-            log(sm.getString("standardHost.deployError", contextPath), e);
+            log(sm.getString("standardHost.installError", contextPath), e);
             throw new IOException(e.toString());
         }
 
@@ -645,7 +632,7 @@ public class StandardHost
      */
     public Context findDeployedApp(String contextPath) {
 
-        if (name == null)
+        if (contextPath == null)
             return (null);
         synchronized (children) {
             return ((Context) children.get(contextPath));
@@ -671,22 +658,22 @@ public class StandardHost
 
 
     /**
-     * Undeploy an existing web application, attached to the specified context
-     * path.  If this application is successfully undeployed, a
-     * ContainerEvent of type <code>UNDEPLOY_EVENT</code> will be sent to all
-     * registered listeners, with the undeployed <code>Context</code> as
+     * Remove an existing web application, attached to the specified context
+     * path.  If this application is successfully removed, a
+     * ContainerEvent of type <code>REMOVE_EVENT</code> will be sent to all
+     * registered listeners, with the removed <code>Context</code> as
      * an argument.
      *
-     * @param contextPath The context path of the application to be undeployed
+     * @param contextPath The context path of the application to be removed
      *
      * @exception IllegalArgumentException if the specified context path
      *  is malformed (it must be "" or start with a slash)
      * @exception IllegalArgumentException if the specified context path does
-     *  not identify a currently deployed web application
+     *  not identify a currently installed web application
      * @exception IOException if an input/output error occurs during
-     *  undeployment
+     *  removal
      */
-    public void undeploy(String contextPath) throws IOException {
+    public void remove(String contextPath) throws IOException {
 
         // Validate the format and state of our arguments
         if (contextPath == null)
@@ -700,24 +687,111 @@ public class StandardHost
             throw new IllegalArgumentException
                 (sm.getString("standardHost.pathMissing", contextPath));
 
-        // Undeploy this web application
-        log(sm.getString("standardHost.undeploying", contextPath));
+        // Remove this web application
+        log(sm.getString("standardHost.removing", contextPath));
         try {
             removeChild(context);
         } catch (Exception e) {
-            log(sm.getString("standardHost.undeployError", contextPath), e);
+            log(sm.getString("standardHost.removeError", contextPath), e);
             throw new IOException(e.toString());
         }
 
-        // Remove the expanded directory if we created one
-        synchronized (expanded) {
-            String docBase = (String) expanded.get(contextPath);
-            if (docBase != null) {
-                if (debug >= 1)
-                    log("Removing expanded directory " + docBase);
-                expanded.remove(contextPath);
-                remove(new File(docBase));
-            }
+        // Remove the context directory
+        String docBase = context.getDocBase();
+        if (docBase != null) {
+            if (debug >= 1)
+                log("Removing expanded directory " + docBase);
+            remove(new File(docBase));
+        }
+        // Remove the war file if it exists
+        File warFile = new File(docBase + ".war");
+        if (warFile.exists()) {
+            if (!warFile.delete())
+                throw new IOException("Cannot delete war file " +
+                    warFile.toString());
+        }
+
+        // Remove the work directory if it exists
+        File dir = (File)context.getServletContext().getAttribute(
+            Globals.WORK_DIR_ATTR);
+        if (debug >= 1)
+            log("Removing work directory" + dir.toString());
+        if (dir.exists())
+            remove(dir);
+    }
+
+
+    /**
+     * Start an existing web application, attached to the specified context
+     * path.  Only starts a web application if it is not running.
+     *
+     * @param contextPath The context path of the application to be started
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalArgumentException if the specified context path does
+     *  not identify a currently installed web application
+     * @exception IOException if an input/output error occurs during
+     *  startup
+     */
+    public void start(String contextPath) throws IOException {
+
+        // Validate the format and state of our arguments
+        if (contextPath == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathRequired"));
+        if (!contextPath.equals("") && !contextPath.startsWith("/"))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathFormat", contextPath));
+        Context context = findDeployedApp(contextPath);
+        if (context == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathMissing", contextPath));
+        log("standardHost.start " + contextPath);
+        try {
+            ((Lifecycle) context).start();
+	    context.setAvailable(true);
+        } catch (LifecycleException e) {
+            log("standardHost.start " + contextPath + ": ", e);
+            throw new IllegalStateException           
+                ("standardHost.start " + contextPath + ": " + e);
+        }
+    }
+
+
+    /**
+     * Stop an existing web application, attached to the specified context
+     * path.  Only stops a web application if it is running.
+     *
+     * @param contextPath The context path of the application to be stopped
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalArgumentException if the specified context path does
+     *  not identify a currently installed web application
+     * @exception IOException if an input/output error occurs while stopping
+     *  the web application
+     */
+    public void stop(String contextPath) throws IOException {
+
+        // Validate the format and state of our arguments
+        if (contextPath == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathRequired"));
+        if (!contextPath.equals("") && !contextPath.startsWith("/"))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathFormat", contextPath));
+        Context context = findDeployedApp(contextPath);
+        if (context == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathMissing", contextPath));
+        log("standardHost.stop " + contextPath);
+        try {
+            ((Lifecycle) context).stop();
+        } catch (LifecycleException e) {
+            log("standardHost.stop " + contextPath + ": ", e);
+            throw new IllegalStateException
+                ("standardHost.stop " + contextPath + ": " + e);
         }
 
     }
@@ -788,8 +862,7 @@ public class StandardHost
                 docBase.getAbsolutePath());
 
         // Expand the WAR into the new document base directory
-        JarFile jarFile =
-            ((JarURLConnection) war.openConnection()).getJarFile();
+        JarFile jarFile = ((JarURLConnection)war.openConnection()).getJarFile();
         if (debug >= 2)
             log("  Have opened JAR file successfully");
         Enumeration jarEntries = jarFile.entries();
