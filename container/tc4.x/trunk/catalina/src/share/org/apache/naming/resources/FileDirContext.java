@@ -154,6 +154,12 @@ public class FileDirContext extends BaseDirContext {
     protected boolean caseSensitive = true;
 
 
+    /**
+     * Allow linking.
+     */
+    protected boolean allowLinking = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -208,6 +214,22 @@ public class FileDirContext extends BaseDirContext {
     }
 
 
+    /**
+     * Set allow linking.
+     */
+    public void setAllowLinking(boolean allowLinking) {
+        this.allowLinking = allowLinking;
+    }
+
+
+    /**
+     * Is linking allowed.
+     */
+    public boolean getAllowLinking() {
+        return allowLinking;
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -217,6 +239,7 @@ public class FileDirContext extends BaseDirContext {
     public void release() {
 
         caseSensitive = true;
+        allowLinking = false;
         absoluteBase = null;
         base = null;
         super.release();
@@ -866,12 +889,13 @@ public class FileDirContext extends BaseDirContext {
             if (canPath == null)
                 return null;
 
-            if (!canPath.startsWith(absoluteBase)) {
+            // Check to see if going outside of the web application root
+            if ((!allowLinking) && (!canPath.startsWith(absoluteBase))) {
                 return null;
             }
 
-            // Windows only check
-            if ((caseSensitive) && (File.separatorChar  == '\\')) {
+            // Case sensitivity check
+            if (caseSensitive) {
                 String fileAbsPath = file.getAbsolutePath();
                 if (fileAbsPath.endsWith("."))
                     fileAbsPath = fileAbsPath + "/";
