@@ -12,3 +12,7 @@ vdenv.o: ../supcalls_nt/vdenv.c
 	gcc $(INCLUDE) -c ../supcalls_nt/vdenv.c
 kills.o: ../signals/kills.c
 	gcc $(INCLUDE) -c ../signals/kills.c
+
+install:
+	cp ../bin/vdmoniadm c:/home/jakarta/bin
+	cp ../bin/vdmonisvc c:/home/jakarta/bin

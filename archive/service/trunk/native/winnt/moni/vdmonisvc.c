@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <process.h>
+#include <time.h>
 #ifdef CYGWIN
 #else
 #include <tchar.h>
@@ -26,7 +27,29 @@ SERVICE_STATUS          ssStatus;
 SERVICE_STATUS_HANDLE   sshStatusHandle;
 DWORD                   dwErr;
 
-/* Event logger routines */
+/*
+ * NT/other detection
+ * from src/os/win32/service.c (httpd-1.3!).
+ */
+ 
+BOOL isWindowsNT(void)
+{
+    static BOOL once = FALSE;
+    static BOOL isNT = FALSE;
+ 
+    if (!once)
+    {
+        OSVERSIONINFO osver;
+        osver.dwOSVersionInfoSize = sizeof(osver);
+        if (GetVersionEx(&osver))
+            if (osver.dwPlatformId == VER_PLATFORM_WIN32_NT)
+                isNT = TRUE;
+        once = TRUE;
+    }
+    return isNT;
+}
+
+/* Event logger routine */
 
 VOID AddToMessageLog(LPTSTR lpszMsg)
 {
@@ -39,7 +62,10 @@ VOID AddToMessageLog(LPTSTR lpszMsg)
 
         // Use event logging to log the error.
         //
-        hEventSource = RegisterEventSource(NULL, TEXT(SZSERVICENAME));
+	if (isWindowsNT())
+            hEventSource = RegisterEventSource(NULL, TEXT(SZSERVICENAME));
+	else
+	    hEventSource = NULL;
 
 #ifdef CYGWIN
 	sprintf(szMsg, TEXT("%s error: %d"), TEXT(SZSERVICENAME), dwErr);
@@ -61,10 +87,89 @@ VOID AddToMessageLog(LPTSTR lpszMsg)
                 NULL);                // no raw data
 
             (VOID) DeregisterEventSource(hEventSource);
-        }
+        } else {
+	    /* Default to a trace file */
+	    FILE *log;
+	    log = fopen("c:/jakarta-service.log","a+");
+	    if (log != NULL) {
+                struct tm *newtime;
+                time_t long_time;
+
+                time( &long_time );
+                newtime = localtime( &long_time );
+
+
+		fprintf(log,"%.24s:%s: %s\n",asctime(newtime),szMsg, lpszMsg);
+		fclose(log);
+	    }
+	}
 }
 
+/*  This group of functions are provided for the service/console app
+ *  to register itself a HandlerRoutine to accept tty or service messages
+ *  adapted from src/os/win32/Win9xConHook.c (httpd-1.3!).
+ */
 
+/*  Exported function that creates a Win9x 'service' via a hidden window,
+ *  that notifies the process via the HandlerRoutine messages.
+ */
+BOOL __declspec(dllexport) WINAPI Windows9xServiceCtrlHandler(
+        PHANDLER_ROUTINE phandler,
+        LPCSTR name)
+{
+    HINSTANCE hkernel;
+    DWORD (WINAPI *register_service_process)(DWORD, DWORD) = NULL;
+
+    /* If we have not yet done so */
+    FreeConsole();
+
+    /* Make sure the process will resist logoff */
+    hkernel = LoadLibrary("KERNEL32.DLL");
+    if (!hkernel) {
+        AddToMessageLog(TEXT("LoadLibrary KERNEL32.DLL failed"));
+        return 0;
+    }
+    register_service_process = (DWORD (WINAPI *)(DWORD, DWORD)) 
+        GetProcAddress(hkernel, "RegisterServiceProcess");
+    if (register_service_process == NULL) {
+        AddToMessageLog(TEXT("dlsym RegisterServiceProcess failed"));
+        return 0;
+    }
+    if (!register_service_process(0,TRUE)) {
+        FreeLibrary(hkernel);
+        AddToMessageLog(TEXT("register_service_process failed"));
+        return 0;
+    }
+    AddToMessageLog(TEXT("jsvc registered as a service"));
+
+    /*
+     * To be handle notice the shutdown, we need a thread and window.
+     */
+/*
+    if (name)
+    {
+        DWORD tid;
+        HANDLE hThread;
+        static tty_info tty; // Must be static, because we are going to return.
+        tty.instance = GetModuleHandle(NULL);
+        tty.phandler = phandler;
+        tty.parent = NULL;
+        tty.name = name;
+        tty.type = 2;
+        RegisterWindows9xService(TRUE);
+        hThread = CreateThread(NULL, 0, ttyConsoleCtrlThread,
+                               (LPVOID)&tty, 0, &tid);
+        if (hThread)
+        {
+            CloseHandle(hThread);
+            return TRUE;
+        }
+    }
+    return FALSE;
+ */
+    return TRUE;
+}
+ 
 //
 //  FUNCTION: ReportStatusToSCMgr()
 //
@@ -114,6 +219,19 @@ BOOL ReportStatusToSCMgr(DWORD dwCurrentState,
     return fResult;
 }
 
+/*
+ * Report event to the Service Manager
+ */
+int ReportManager(int event)
+{
+    if (isWindowsNT())
+        return(ReportStatusToSCMgr(
+            event,                 // service state
+            NO_ERROR,              // exit code
+            3000));                // wait hint
+    return(1);
+} 
+
 // this event is signalled when the
 // service should end
 //
@@ -156,10 +274,7 @@ char *qptr;
     // report the status to the service control manager.
     //
     AddToMessageLog(TEXT("ServiceStart: starting"));
-    if (!ReportStatusToSCMgr(
-        SERVICE_START_PENDING, // service state
-        NO_ERROR,              // exit code
-        3000))                 // wait hint
+    if (!ReportManager(SERVICE_START_PENDING))
         goto cleanup;
 
     // create the event object. The control handler function signals
@@ -176,10 +291,7 @@ char *qptr;
 
     // report the status to the service control manager.
     //
-    if (!ReportStatusToSCMgr(
-        SERVICE_START_PENDING, // service state
-        NO_ERROR,              // exit code
-        3000))                 // wait hint
+    if (!ReportManager(SERVICE_START_PENDING))
         goto cleanup;
 
     // Read the registry and set environment.
@@ -188,56 +300,50 @@ char *qptr;
       goto cleanup;
       }
 
-    if (!ReportStatusToSCMgr(
-        SERVICE_START_PENDING, // service state
-        NO_ERROR,              // exit code
-        3000))                 // wait hint
+    if (!ReportManager(SERVICE_START_PENDING))
         goto cleanup;
 
     // set the start path for jsvc.exe
-	qptr = getenv("JAKARTA_HOME");
-	if (qptr==NULL || strlen(qptr)==0) {
-      AddToMessageLog(TEXT("ServiceStart: read JAKARTA_HOME failed"));
-      goto cleanup;
-      }
-	strcpy(Data,qptr);
+    qptr = getenv("JAKARTA_HOME");
+    if (qptr==NULL || strlen(qptr)==0) {
+        AddToMessageLog(TEXT("ServiceStart: read JAKARTA_HOME failed"));
+        goto cleanup;
+    }
+    strcpy(Data,qptr);
     strcat(Data,"\\bin\\jsvc.exe -nodetach");
-	strcat(Data," -cp ");
-	strcat(Data,qptr);
-	strcat(Data,"/lib/service.jar org.apache.service.support.SimpleService");
+    strcat(Data," -cp ");
+    strcat(Data,qptr);
+    strcat(Data,"/lib/service.jar org.apache.service.support.SimpleService");
 
     // create the jsvc process.
     AddToMessageLog(TEXT("ServiceStart: start jsvc"));
     memset(&StartupInfo,'\0',sizeof(StartupInfo));
     StartupInfo.cb = sizeof(STARTUPINFO);
 
-    if (!CreateProcess(NULL,Data,NULL,NULL,FALSE,NORMAL_PRIORITY_CLASS,   
+    if (!CreateProcess(NULL,Data,NULL,NULL,FALSE,
+         DETACHED_PROCESS|NORMAL_PRIORITY_CLASS,
          NULL,NULL, &StartupInfo, &ProcessInformation))
       goto cleanup;
     AddToMessageLog(TEXT("ServiceStart: jsvc started"));
     CloseHandle(ProcessInformation.hThread);
     ProcessInformation.hThread = NULL;
 
-    if (!ReportStatusToSCMgr(
-        SERVICE_START_PENDING, // service state
-        NO_ERROR,              // exit code
-        3000))                 // wait hint
+    if (!ReportManager(SERVICE_START_PENDING))
         goto cleanup;
 
     // wait until the process is completly created.
-    if (!WaitForInputIdle(ProcessInformation.hProcess , INFINITE)) {
+/* With the DETACHED_PROCESS it does not work...
+    if (WaitForInputIdle(ProcessInformation.hProcess , INFINITE)) {
       AddToMessageLog(TEXT("ServiceStart: jsvc stopped after creation"));
       goto cleanup;
       }
+ */
 
     //
-    // OnServe monitor is now running.
+    // jsvc is now running.
     // report the status to the service control manager.
     //
-    if (!ReportStatusToSCMgr(
-        SERVICE_RUNNING,       // service state
-        NO_ERROR,              // exit code
-        0))                    // wait hint
+    if (!ReportManager(SERVICE_RUNNING))
         goto cleanup;
 
     //
@@ -459,9 +565,14 @@ void _CRTAPI1 main(int argc, char **argv)
     };
 
 	AddToMessageLog(TEXT("StartService starting"));
-        if (!StartServiceCtrlDispatcher(dispatchTable)) {
+	if (isWindowsNT()) {
+            if (!StartServiceCtrlDispatcher(dispatchTable)) {
 		AddToMessageLog(TEXT("StartServiceCtrlDispatcher failed."));
 		return;
-		}
+	    }
+	} else {
+	    Windows9xServiceCtrlHandler(service_ctrl,TEXT(SZSERVICENAME));
+	    ServiceStart(argc,argv);
+	}
 	AddToMessageLog(TEXT("StartService started"));
 }
