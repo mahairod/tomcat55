@@ -66,6 +66,7 @@ package org.apache.catalina.connector;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
@@ -622,7 +623,8 @@ public class HttpRequestBase
         String queryString = getQueryString();
         try {
             RequestUtil.parseParameters(results, queryString, encoding);
-        } catch (Throwable t) {
+        } catch (UnsupportedEncodingException e) {
+            ;
         }
 
         // Parse any parameters specified in the input stream
@@ -638,6 +640,7 @@ public class HttpRequestBase
         if ("POST".equals(getMethod()) && (getContentLength() > 0)
             && (this.stream == null)
             && "application/x-www-form-urlencoded".equals(contentType)) {
+
             try {
                 int max = getContentLength();
                 int len = 0;
@@ -645,13 +648,24 @@ public class HttpRequestBase
                 ServletInputStream is = getInputStream();
                 while (len < max) {
                     int next = is.read(buf, len, max - len);
+                    if (next < 0 ) {
+                        break;
+                    }
                     len += next;
                 }
                 is.close();
+                if (len < max) {
+                    throw new RuntimeException
+                        (sm.getString("httpRequestBase.contentLengthMismatch"));
+                }
                 RequestUtil.parseParameters(results, buf, encoding);
-            } catch (Throwable t) {
-                ;
-            }
+             } catch (UnsupportedEncodingException ue) {
+                  ;
+             } catch (IOException e) {
+                 throw new RuntimeException
+                        (sm.getString("httpRequestBase.contentReadFail") + 
+                         e.getMessage());
+             }
         }
 
         // Store the final results
