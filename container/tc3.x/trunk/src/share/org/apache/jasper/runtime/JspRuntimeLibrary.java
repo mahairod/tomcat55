@@ -196,8 +196,7 @@ public class JspRuntimeLibrary {
 			createTypedArray (bean, method, values, t); 
 		    }
 		} else {
-		    //XXX please check.
-		    if(value == null || value.equals("")) return;
+		    if(value == null) return;
 		    Object oval = convert(value, type);
 		    if ( oval != null )
 			method.invoke(bean, new Object[] { oval });
