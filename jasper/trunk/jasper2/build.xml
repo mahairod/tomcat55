@@ -146,7 +146,7 @@
       <fileset dir="${jasper.build}/shared/classes">
         <include name="org/apache/jasper/Constants.class" />
         <include name="org/apache/jasper/JasperException.class" />
-        <include name="org/apache/jasper/logging/**" />
+        <include name="org/apache/jasper/compiler/Localizer.class" />
         <include name="org/apache/jasper/resources/**" />
         <include name="org/apache/jasper/runtime/**" />
         <include name="org/apache/jasper/util/**" />
