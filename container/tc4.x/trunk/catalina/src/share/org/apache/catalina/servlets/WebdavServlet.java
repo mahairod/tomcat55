@@ -828,8 +828,8 @@ public class WebdavServlet
                     case Node.ELEMENT_NODE:
                         String tempScope = currentNode.getNodeName();
                         if (tempScope.indexOf(':') != -1) {
-                            lock.scope = 
-                                tempScope.substring(tempScope.indexOf(':'));
+                            lock.scope = tempScope.substring
+                                (tempScope.indexOf(':') + 1);
                         } else {
                             lock.scope = tempScope;
                         }
@@ -1732,6 +1732,8 @@ public class WebdavServlet
         String toAppend = path.substring(relativePath.length());
         if ((!toAppend.startsWith("/")) && (!absoluteUri.endsWith("/")))
             toAppend = "/" + toAppend;
+        if (toAppend.equals("/"))
+            toAppend = "";
         
         generatedXML.writeText(absoluteUri + toAppend);
         
