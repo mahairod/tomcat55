@@ -9,12 +9,14 @@
 # $Id$
 # -----------------------------------------------------------------------------
 
+# The path that is base for the rest of the paths in this file.
+base.path=/usr/local
 
 # The directory containing your binary distribution of JAXP and its
 # associated declarations.  You can customize the versions of JAXP used
 # for Catalina and Jasper below.  If you are using JAXP/1.0, replace
 # "crimson.jar" with "parser.jar"
-jaxp.home=/usr/local/jaxp-1.1
+jaxp.home=${base.path}/jaxp-1.1
 jaxp.parser.jar=crimson.jar
 
 # The version of JAXP that is used for Catalina
@@ -27,27 +29,26 @@ jasper.jaxp.parser.jar=${jaxp.parser.jar}
 
 # The directory containing your binary distribution of the Java Management
 # Extensions (JMX) Reference Implementation, version 1.0 or later
-jmx.home=/usr/local/jmx_ri_1.0
+jmx.home=${base.path}/jmx_ri_1.0
 
 # The directory containing your binary distribution of the Java Naming and
 # Directory Interface (JNDI), version 1.2.1 or later.  (You must also add
 # "ldap.jar" into the ${jndi.home}/lib directory if you want to build and
 # use JNDIRealm.)
-jndi.home=/usr/local/jndi_1.2.1
+jndi.home=${base.path}/jndi_1.2.1
 
 # The directory containing your binary distribution of Java Secure Sockets
 # Extension (JSSE), version 1.0.2 or later
-jsse.home=/usr/local/jsse1.0.2
+jsse.home=${base.path}/jsse1.0.2
 
 # The JAR file for the JUnit unit test suite you are using.  This is required
 # only if you wish to execute the unit tests
-#junit.jar=/usr/local/junit3.5/junit.jar
+#junit.jar=${base.path}/junit3.5/junit.jar
 
 # The directory containing your binary distribution of the Jakarta
 # regular expressions package (jakarta-regexp), version 1.2.
-regexp.home=/usr/local/jakarta-regexp-1.2
+regexp.home=${base.path}/jakarta-regexp-1.2
 
 # The directory containing your binary distribution of the Servlet 2.3
 # and JSP 1.2 API classes
-servletapi.home=/usr/local/jakarta-servletapi-4/dist
-
+servletapi.home=${base.path}/jakarta-servletapi-4/dist
