@@ -128,7 +128,7 @@ Bug No.  Description
          the status code set by the "redirect" handler if a status code has
          not already been set.  This primarily affects the status code used
          when the StaticInterceptor module redirects a "directory" URL that
-         doesn't end with a '/'.
+         doesn't end with a '/' and redirects to welcome files.
 
 
 Server:
