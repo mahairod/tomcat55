@@ -67,20 +67,16 @@ package org.apache.catalina;
 import org.apache.catalina.deploy.NamingResources;
 
 /**
- * A <b>Server</b> represents one convenient way to package a set of
- * <code>Connectors</code> associated with a particular <code>Container</code>.
- * You can have several many-to-one relationships (set of Connectors associated
- * with one Container) by adding one or more Connectors first, followed by the
- * corresponding Container, and then repeating this pattern.
- * <p>
- * This interface (and the corresonding implementation) exist to simplify
- * configuring Catalina from a <code>server.xml</code> file.  It has no
- * functional role once the server has been started.
+ * A <code>Server</code> element represents the entire Catalina
+ * servlet container.  Its attributes represent the characteristics of
+ * the servlet container as a whole.  A <code>Server</code> may contain
+ * one or more <code>Services</code>, and the top level set of naming
+ * resources.
  * <p>
  * Normally, an implementation of this interface will also implement
  * <code>Lifecycle</code>, such that when the <code>start()</code> and
- * <code>stop()</code> methods are called, all of the defined Containers
- * and Connectors are also started or stopped.
+ * <code>stop()</code> methods are called, all of the defined
+ * <code>Services</code> are also started or stopped.
  * <p>
  * In between, the implementation must open a server socket on the port number
  * specified by the <code>port</code> property.  When a connection is accepted,
