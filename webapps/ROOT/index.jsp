@@ -100,7 +100,7 @@
                         <a href="http://jakarta.apache.org/tomcat/bugreport.html">Bug Database</a><br>
                         <a href="http://www.mail-archive.com/tomcat-user%40jakarta.apache.org/">Users Mailing List</a><br>
                         <a href="http://www.mail-archive.com/tomcat-dev%40jakarta.apache.org/">Developers Mailing List</a><br>
-                        <a href="irc://irc.us.openprojects.net/tomcat">IRC</a><br>
+                        <a href="irc://irc.freenode.net/#tomcat">IRC</a><br>
                         &nbsp;
                     </td>
                 </tr>
