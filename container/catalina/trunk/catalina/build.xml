@@ -849,7 +849,7 @@
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <include name="org/apache/catalina/loader/Extension.class" />
         <include name="org/apache/catalina/loader/Reloader.class" />
-        <include name="org/apache/catalina/startup/SecurityClassLoad.class" />
+        <include name="org/apache/catalina/security/SecurityClassLoad.class" />
         <include name="org/apache/catalina/launcher/CatalinaLaunchFilter.class" />
         <include name="org/apache/naming/JndiPermission.class" />
       </fileset>
