@@ -536,10 +536,12 @@ public class WebappLoader
     /**
      * Return the set of repositories defined for this class loader.
      * If none are defined, a zero-length array is returned.
+     * For security reason, returns a clone of the Array (since 
+     * String are immutable).
      */
     public String[] findRepositories() {
 
-        return (repositories);
+        return ((String[])repositories.clone());
 
     }
 
