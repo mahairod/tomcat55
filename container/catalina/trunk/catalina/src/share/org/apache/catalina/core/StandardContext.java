@@ -790,6 +790,15 @@ public class StandardContext
 
     }
 
+    
+    /**
+     * Return the alternate Deployment Descriptor name.
+     */
+    public String getAltDDName(){
+        return altDDName;
+    }
+    
+    
     /**
      * Set an alternate Deployment Descriptor name.
      */
@@ -1138,7 +1147,7 @@ public class StandardContext
             if (altDDName != null) 
                 context.setAttribute(Globals.ALT_DD_ATTR,altDDName);
         }
-        return (context);
+        return (context.getFacade());
 
     }
 

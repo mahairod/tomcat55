@@ -215,6 +215,19 @@ public interface Context extends Container {
     public boolean getCrossContext();
 
 
+    
+    /**
+     * Return the alternate Deployment Descriptor name.
+     */
+    public String getAltDDName();
+    
+    
+    /**
+     * Set an alternate Deployment Descriptor name.
+     */
+    public void setAltDDName(String altDDName) ;
+    
+    
     /**
      * Set the "allow crossing servlet contexts" flag.
      *
