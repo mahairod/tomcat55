@@ -68,6 +68,8 @@ import java.net.URLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileNotFoundException;
+import java.io.FilePermission;
+import java.security.Permission;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -103,6 +105,7 @@ public class DirContextURLConnection
         if (context == null)
             throw new IllegalArgumentException
                 ("Directory context can't be null");
+        this.permission = new FilePermission(url.toString(),"read");
         this.context = context;
     }
     
@@ -146,6 +149,12 @@ public class DirContextURLConnection
     protected long date;
     
     
+    /**
+     * Permission
+     */
+    protected Permission permission;
+
+
     // ------------------------------------------------------------- Properties
     
     
@@ -314,6 +323,15 @@ public class DirContextURLConnection
     }
     
     
+    /**
+     * Get the Permission for this URL
+     */
+    public Permission getPermission() {
+
+        return permission;
+    }
+
+
     // --------------------------------------------------------- Public Methods
     
     
