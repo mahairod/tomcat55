@@ -259,6 +259,18 @@ public class ResourceAttributes implements Attributes {
 
 
     /**
+     * Weak ETag.
+     */
+    protected String weakETag = null;
+
+
+    /**
+     * Strong ETag.
+     */
+    protected String strongETag = null;
+
+
+    /**
      * External attributes.
      */
     protected Attributes attributes = null;
@@ -664,7 +676,60 @@ public class ResourceAttributes implements Attributes {
         if (attributes != null)
             attributes.put(TYPE, resourceType);
     }
-    
+
+
+    /**
+     * Get ETag.
+     * 
+     * @return Weak ETag
+     */
+    public String getETag() {
+        return getETag(false);
+    }
+
+
+    /**
+     * Get ETag.
+     * 
+     * @param strong If true, the strong ETag will be returned
+     * @return ETag
+     */
+    public String getETag(boolean strong) {
+        String result = null;
+        if (attributes != null) {
+            Attribute attribute = attributes.get(ETAG);
+            if (attribute != null) {
+                try {
+                    result = attribute.get().toString();
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        if (strong) {
+            // The strong ETag must always be calculated by the resources
+            result = strongETag;
+        } else {
+            // The weakETag is contentLenght + lastModified
+            if (weakETag == null) {
+                weakETag = "W/\"" + getContentLength() + "-" 
+                    + getLastModified() + "\"";
+            }
+            result = weakETag;
+        }
+        return result;
+    }
+
+
+    /**
+     * Set strong ETag.
+     */
+    public void setETag(String eTag) {
+        this.strongETag = eTag;
+        if (attributes != null)
+            attributes.put(ETAG, eTag);
+    }
+
     
     // ----------------------------------------------------- Attributes Methods
 

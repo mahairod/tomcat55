@@ -1388,6 +1388,11 @@ public class WebdavServlet
     // -------------------------------------------------------- Private Methods
 
 
+    protected String getETagValue(ResourceInfo resourceInfo) {
+        return resourceInfo.length + "-" + resourceInfo.date;
+    }
+
+
     /**
      * Generate the namespace declarations.
      */
@@ -2043,7 +2048,7 @@ public class WebdavServlet
                     (null, "getcontenttype",
                      getServletContext().getMimeType(resourceInfo.path));
                 generatedXML.writeProperty(null, "getetag",
-                                           getETagValue(resourceInfo, true));
+                                           getETagValue(resourceInfo));
                 generatedXML.writeElement(null, "resourcetype",
                                           XMLWriter.NO_CONTENT);
             } else {
@@ -2170,8 +2175,7 @@ public class WebdavServlet
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeProperty
-                            (null, "getetag",
-                             getETagValue(resourceInfo, true));
+                            (null, "getetag", getETagValue(resourceInfo));
                     }
                 } else if (property.equals("getlastmodified")) {
                     if (resourceInfo.collection) {

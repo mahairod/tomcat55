@@ -785,7 +785,7 @@ public class DefaultServlet
                                      ResourceInfo resourceInfo)
         throws IOException {
 
-        String eTag = getETag(resourceInfo, true);
+        String eTag = getETag(resourceInfo);
         long fileLength = resourceInfo.length;
         long lastModified = resourceInfo.date;
 
@@ -918,31 +918,21 @@ public class DefaultServlet
 
 
     /**
-     * Get the ETag value associated with a file.
-     *
-     * @param resourceInfo File object
-     * @param strong True if we want a strong ETag, in which case a checksum
-     * of the file has to be calculated
-     */
-    protected String getETagValue(ResourceInfo resourceInfo, boolean strong) {
-        // FIXME : Compute a strong ETag if requested, using an MD5 digest
-        // of the file contents
-        return resourceInfo.length + "-" + resourceInfo.date;
-    }
-
-
-    /**
      * Get the ETag associated with a file.
      *
      * @param resourceInfo File object
      * @param strong True if we want a strong ETag, in which case a checksum
      * of the file has to be calculated
      */
-    protected String getETag(ResourceInfo resourceInfo, boolean strong) {
-        if (strong)
-            return "\"" + getETagValue(resourceInfo, strong) + "\"";
-        else
-            return "W/\"" + getETagValue(resourceInfo, strong) + "\"";
+    protected String getETag(ResourceInfo resourceInfo) {
+        if (resourceInfo.strongETag != null) {
+            return resourceInfo.strongETag;
+        } else if (resourceInfo.weakETag != null) {
+            return resourceInfo.weakETag;
+        } else {
+            return "W/\"" + resourceInfo.length + "-" 
+                + resourceInfo.date + "\"";
+        }
     }
 
 
@@ -1199,7 +1189,7 @@ public class DefaultServlet
             ranges = parseRange(request, response, resourceInfo);
 
             // ETag header
-            response.setHeader("ETag", getETag(resourceInfo, true));
+            response.setHeader("ETag", getETag(resourceInfo));
 
             // Last-Modified header
             if (debug > 0)
@@ -1416,7 +1406,7 @@ public class DefaultServlet
         String headerValue = request.getHeader("If-Range");
         if (headerValue != null) {
 
-            String eTag = getETag(resourceInfo, true);
+            String eTag = getETag(resourceInfo);
             long lastModified = resourceInfo.date;
 
             Date date = null;
@@ -2269,6 +2259,8 @@ public class DefaultServlet
         public long date;
         public long length;
         public boolean collection;
+        public String weakETag;
+        public String strongETag;
         public boolean exists;
         public DirContext resources;
         protected InputStream is;
@@ -2285,6 +2277,8 @@ public class DefaultServlet
             date = 0;
             length = -1;
             collection = true;
+            weakETag = null;
+            strongETag = null;
             exists = false;
             resources = null;
             is = null;
@@ -2329,6 +2323,8 @@ public class DefaultServlet
                         } else {
                             httpDate = FastHttpDateFormat.getCurrentDate();
                         }
+                        weakETag = tempAttrs.getETag();
+                        strongETag = tempAttrs.getETag(true);
                         length = tempAttrs.getContentLength();
                     }
                 } catch (NamingException e) {
