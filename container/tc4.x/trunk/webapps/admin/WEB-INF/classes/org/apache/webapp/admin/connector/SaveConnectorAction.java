@@ -62,17 +62,11 @@
 package org.apache.webapp.admin.connector;
 
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -177,11 +171,16 @@ public final class SaveConnectorAction extends Action {
    
                 String serviceName = cform.getServiceName();
                 
+                String address = cform.getAddress();
+                if (address.compareTo("") == 0) {
+                    address = null;
+                }
+                
                 ObjectName oname =
                     new ObjectName(TomcatTreeBuilder.CONNECTOR_TYPE +
                                    ",service=" + serviceName +
                                    ",port=" + cform.getPortText() +
-                                   ",address=" + cform.getAddress());
+                                   ",address=" + address);
                                                 
                 // Ensure that the requested connector name is unique
                 if (mBServer.isRegistered(oname)) {
@@ -200,7 +199,7 @@ public final class SaveConnectorAction extends Action {
                 values = new Object[3];                
                 values[0] = // parent 
                     TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
-                values[1] = cform.getAddress();
+                values[1] = address;
                 values[2] = new Integer(cform.getPortText());
 
                 if ("HTTP".equalsIgnoreCase(connectorType)) {
