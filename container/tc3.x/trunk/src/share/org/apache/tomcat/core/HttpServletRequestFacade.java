@@ -175,7 +175,6 @@ public class HttpServletRequestFacade implements HttpServletRequest {
     {
 	String value=request.getHeader( name );
 	if( value==null) return -1;
-
 	int valueInt=Integer.parseInt(value);
 	return valueInt;
     }

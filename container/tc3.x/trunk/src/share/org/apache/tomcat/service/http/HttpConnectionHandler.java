@@ -160,7 +160,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	       // do nothing - same
 	   }
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    contextM.log( "Error reading request " + e.getMessage());
 	} finally {
 	    // recycle kernel sockets ASAP
 	    try { socket.close (); }
