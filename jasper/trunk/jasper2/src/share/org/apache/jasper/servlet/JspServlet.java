@@ -620,7 +620,7 @@ public class JspServlet extends HttpServlet {
 	if ((jsw.servletClass == null) || outDated) {
 	    try {
 		synchronized (jsw) {
-		    if (jsw.servletClass == null) {
+		    if (jsw.servletClass == null || outDated) {
 			URL [] urls = new URL[1];
 			File outputDir = new File(normalize(ctxt.getOutputDir()));
 			urls[0] = outputDir.toURL();
