@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -1271,7 +1270,7 @@ public class ManagerServlet
             }
             if (timeout[0] > 0)
                 writer.println(sm.getString("managerServlet.sessiontimeout",
-                                            "<10" + timeout[0]));
+                                            "<10", "" + timeout[0]));
             for (int i = 1; i < timeout.length-1; i++) {
                 if (timeout[i] > 0)
                     writer.println(sm.getString("managerServlet.sessiontimeout",
