@@ -119,8 +119,12 @@ public final class ExtensionValidator {
     private static HashMap containerAvailableExtensions = null;
     private static ArrayList containerManifestResources = null;
     private static ResourceBundle messages = null;
-    
-    /*
+
+
+    // ----------------------------------------------------------- Constructors
+
+
+    /**
      *  Access to this class can only be made through the factory method
      *  getInstance()
      *
@@ -144,7 +148,10 @@ public final class ExtensionValidator {
         while (strTok.hasMoreTokens()) {
             String classpathItem = strTok.nextToken();
             if (classpathItem.toLowerCase().endsWith(".jar")) {
-                addSystemResource(new File(classpathItem));
+                File item = new File(classpathItem);
+                if (item.exists()) {
+                    addSystemResource(item);
+                }
             }
         }
 
@@ -168,8 +175,10 @@ public final class ExtensionValidator {
         }
     }
 
+
     // --------------------------------------------------------- Public Methods
-        
+
+
     /**
      * Runtime validation of a Web Applicaiton.
      *
