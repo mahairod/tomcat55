@@ -222,6 +222,15 @@
       <!-- Define the default virtual host -->
       <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true">
+	
+
+      <!-- Add the following attributes if you want to turn XML validation
+           on.i remember to comment the Host element above. -->
+      <!--
+      <Host name="localhost" debug="0" appBase="webapps"
+       unpackWARs="true" autoDeploy="true"
+       xmlValidation="true" xmlNamespaceAware="true">
+      -->
 
         <!-- Normally, users must authenticate themselves to each web app
              individually.  Uncomment the following entry if you would like
