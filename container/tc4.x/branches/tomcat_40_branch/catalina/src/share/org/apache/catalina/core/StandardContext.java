@@ -2418,6 +2418,10 @@ public class StandardContext
             }
         }
 
+        if (isUseNaming()) {
+            ContextBindings.unbindClassLoader(this, this);
+        }
+
         // Restart our application class loader
         if ((loader != null) && (loader instanceof Lifecycle)) {
             try {
@@ -3444,6 +3448,7 @@ public class StandardContext
         // Create and register the associated naming context, if internal
         // naming is used
         if (isUseNaming()) {
+            ContextBindings.unbindClassLoader(this, this);
             ContextAccessController.unsetSecurityToken
                 (getNamingContextName(), this);
         }
