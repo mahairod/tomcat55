@@ -109,6 +109,16 @@ public class HttpResponseBase
     implements HttpResponse, HttpServletResponse {
 
 
+    // ----------------------------------------------------------- Constructors
+
+
+    public HttpResponseBase() {
+
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -121,11 +131,8 @@ public class HttpResponseBase
     /**
      * The date format we will use for creating date headers.
      */
-    protected static final SimpleDateFormat format =
+    protected final SimpleDateFormat format =
         new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz",Locale.US);
-    static {
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-    };
 
 
     /**
