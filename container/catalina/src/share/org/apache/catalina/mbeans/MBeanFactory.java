@@ -53,7 +53,6 @@ import org.apache.catalina.valves.RemoteHostValve;
 import org.apache.catalina.valves.RequestDumperValve;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.BaseModelMBean;
-import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
 
 
@@ -395,7 +394,7 @@ public class MBeanFactory extends BaseModelMBean {
         throws Exception {
         Connector retobj = new Connector();
         if ((address!=null) && (address.length()>0)) {
-            retobj.setAddress(address);
+            retobj.setProperty("address", address);
         }
         // Set port number
         retobj.setPort(port);
@@ -947,7 +946,7 @@ public class MBeanFactory extends BaseModelMBean {
         Connector conns[] = (Connector[]) service.findConnectors();
 
         for (int i = 0; i < conns.length; i++) {
-            String connAddress = conns[i].getAddress();
+            String connAddress = String.valueOf(conns[i].getProperty("address"));
             String connPort = ""+conns[i].getPort();
 
             // if (((address.equals("null")) &&
