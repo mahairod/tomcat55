@@ -120,7 +120,9 @@ public class ServerRequest extends Request {
             return;
 	}
 
-	headers.read(sis);	
+	// for 0.9, we don't have headers!
+	if(protocol!=null)
+	    headers.read(sis);
 	processCookies();
 
 	contentLength = headers.getIntHeader("content-length");
@@ -151,7 +153,7 @@ public class ServerRequest extends Request {
 	int firstDelim = buffer.indexOf(' ');
 	int lastDelim = buffer.lastIndexOf(' ');
 	// default - set it to HTTP/0.9 or null if we can parse the request
-	protocol = "HTTP/1.0";
+	//protocol = "HTTP/1.0";
 
 	if (firstDelim == -1 && lastDelim == -1) {
 	    if (buffer.trim().length() > 0) {
@@ -175,7 +177,6 @@ public class ServerRequest extends Request {
 	} else if (firstDelim != -1 && lastDelim != -1) {
 	    method = buffer.substring(0, firstDelim).trim();
 	    protocol = null;
-
 	    if (lastDelim < buffer.length()) {
 	        requestURI = buffer.substring(lastDelim + 1).trim();
 	    }

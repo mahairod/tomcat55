@@ -185,6 +185,12 @@ public class Startup {
 	        String msg = sm.getString("startup.server.hse");
 
 	        System.out.println(msg);
+		hse.printStackTrace();
+		// "problem starting server" can't help
+		// the user detect that the port is taken.
+		// ( or another tcp-related problem )
+		// Please, let the stack trace until we have a better
+		// message ( that shows what failed)
 	    } catch (RemoteException re) {
 	        String msg = sm.getString("startup.server.re");
 

@@ -275,7 +275,7 @@ public class Get extends TestableBase {
 	} catch(java.net.SocketException ex ) {
 	    // server closed connection before reading the request.
 	    // Happens on Linux - it is safe to ignore the request.
-	    System.out.println("Connection reset by peer - before full request read ");
+	    //	    System.out.println("Connection reset by peer - before full request read ");
 	}
         if (this.debug)
 	        System.out.println("-------->"); 
