@@ -1,3 +1,4 @@
+#ifdef NETWARE
 /*
  * NATIVE_MAIN
  */
@@ -27,3 +28,4 @@ void main ()
 {
    ExitThread (TSR_THREAD, 0);
 }
+#endif

@@ -82,6 +82,7 @@
     #include <netdb.h>
 
     #include <netinet/in.h>
+    #include <sys/socket.h>
     #ifndef NETWARE
         #include <netinet/tcp.h>
         #include <arpa/inet.h>
@@ -90,7 +91,6 @@
         #include <sys/select.h>
     #endif
         
-    #include <sys/socket.h>
     #include <sys/time.h>
     #include <sys/ioctl.h>
 #endif
