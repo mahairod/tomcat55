@@ -108,7 +108,7 @@ public class JMXSetTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'bean', 'attribute' and 'value' attributes");
         }
-        System.out.println ("INFO: Setting attribute " + attribute +
+        log("Setting attribute " + attribute +
                             " in bean " + bean +
                             " to " + value); 
         execute("/jmxproxy/?set=" + bean 

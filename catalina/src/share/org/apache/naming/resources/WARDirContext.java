@@ -52,7 +52,9 @@ import org.apache.naming.NamingEntry;
 
 public class WARDirContext extends BaseDirContext {
 
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( WARDirContext.class );
+    
     // ----------------------------------------------------------- Constructors
 
 
@@ -152,9 +154,8 @@ public class WARDirContext extends BaseDirContext {
             try {
                 base.close();
             } catch (IOException e) {
-                System.out.println
-                    ("Exception closing WAR File " + base.getName());
-                e.printStackTrace(System.out);
+                log.warn
+                    ("Exception closing WAR File " + base.getName(), e);
             }
         }
         base = null;

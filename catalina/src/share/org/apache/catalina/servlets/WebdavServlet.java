@@ -239,7 +239,7 @@ public class WebdavServlet
 
         if (debug > 0) {
             String path = getRelativePath(req);
-            System.out.println("[" + method + "] " + path);
+            log("[" + method + "] " + path);
         }
 
         if (method.equals(METHOD_PROPFIND)) {
@@ -1483,7 +1483,7 @@ public class WebdavServlet
         }
 
         if (debug > 0)
-            System.out.println("Dest path :" + destinationPath);
+            log("Dest path :" + destinationPath);
 
         if ((destinationPath.toUpperCase().startsWith("/WEB-INF")) ||
             (destinationPath.toUpperCase().startsWith("/META-INF"))) {
@@ -1583,7 +1583,7 @@ public class WebdavServlet
                                  String source, String dest) {
 
         if (debug > 1)
-            System.out.println("Copy: " + source + " To: " + dest);
+            log("Copy: " + source + " To: " + dest);
 
         Object object = null;
         try {
@@ -1758,7 +1758,7 @@ public class WebdavServlet
                                   String path, Hashtable errorList) {
 
         if (debug > 1)
-            System.out.println("Delete:" + path);
+            log("Delete:" + path);
 
         if ((path.toUpperCase().startsWith("/WEB-INF")) ||
             (path.toUpperCase().startsWith("/META-INF"))) {
