@@ -754,27 +754,9 @@
     </a>
   </question>
   <answer>
-    Numerous organizations across various industries all over the world.
-    Examples includes:
-    <ul>
-      <li><a href="http://www.computerworld.com/developmenttopics/websitemgmt/story/0,10801,92583,00.html">The Weather Channel</a>.</li>
-      <li><a href="http://screaming-penguin.com/main.php?storyid=2579">EdSyndicate</a>.</li>
-      <li><a href="http://developers.slashdot.org/developers/02/08/19/2042235.shtml?tid=108">Various (from Slashdot)</a>.</li>
-      <li><a href="http://www.theserverside.com/news/thread.tss?thread_id=15073">TheServerSide.com</a> take on the Slashdot discussion above, with many more references.</li>
-      <li><a href="http://www.cofax.org">Cofax</a>.</li>
-      <li><a href="http://www.friendster.com">Friendster</a>.</li>
-      <li><a href="http://www.webshots.com">WebShots</a>.</li>
-      <li><a href="http://marc.theaimsgroup.com/?l=tomcat-dev&amp;m=109396561900857&amp;w=2">University of Florida</a>.</li>
-      <li><a href="http://archives.real-time.com/pipermail/cocoon-users/2003-October/040770.html">Various Cocoon on tomcat applications</a>.</li>
-      <li><a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108334244910127&amp;w=2">Another mailing list thread with production system references...</a></li>
-    </ul>
-    This list is limited mostly by our free time.  There are numerous other
-    examples and references available by searching online, and undoubtedly
-    many cases where the organization does not want to reveal it's using
-    tomcat for various (e.g. security) reasons.  (This is true for many
-    software products, not just tomcat).  We'll keep adding to the list,
-    but please let us know (by sending a message to tomat-user@jakarta.apache.org)
-    if your site is using tomcat in production.
+    Numerous organizations across various industries all over the world. A full
+    listing can be found at the
+    <a href="http://wiki.apache.org/jakarta-tomcat/PoweredBy">Wiki.</a>
   </answer>
 
   <question>
