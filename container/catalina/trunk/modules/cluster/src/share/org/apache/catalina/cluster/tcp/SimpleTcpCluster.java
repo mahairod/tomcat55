@@ -176,6 +176,19 @@ public class SimpleTcpCluster
      */
     protected String threadName = "SimpleTcpCluster";
 
+    /**
+     * Whether to expire sessions when shutting down
+     */
+    protected boolean expireSessionsOnShutdown = true;
+    /**
+     * Print debug to std.out?
+     */
+    protected boolean printToScreen = false;
+    /**
+     * Replicate only sessions that have been marked dirty
+     * false=replicate sessions after each request
+     */
+    protected boolean useDirtyFlag = false;
 
     /**
      * Name for logging purpose
@@ -375,6 +388,9 @@ public class SimpleTcpCluster
     public synchronized Manager createManager(String name) {
         SimpleTcpReplicationManager manager = new SimpleTcpReplicationManager(name);
         manager.setCluster(this);
+        manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
+        manager.setPrintToScreen(printToScreen);
+        manager.setUseDirtyFlag(useDirtyFlag);
         managers.put(name, manager);
         return manager;
     }
@@ -545,50 +561,52 @@ public class SimpleTcpCluster
 
     }
 
-    public void setServiceclass(String clazz)
-    {
+    public void setServiceclass(String clazz){
         this.serviceclass = clazz;
     }
-    public void setMcastAddr(String addr)
-    {
+    public void setMcastAddr(String addr) {
         svcproperties.setProperty("mcastAddress",addr);
     }
 
-    public void setMcastPort(int port)
-    {
+    public void setMcastPort(int port) {
         svcproperties.setProperty("mcastPort",String.valueOf(port));
     }
 
-    public void setMcastFrequency(long time)
-    {
+    public void setMcastFrequency(long time) {
         svcproperties.setProperty("msgFrequency",String.valueOf(time));
         msgFrequency = time;
     }
 
-    public void setMcastDropTime(long time)
-    {
+    public void setMcastDropTime(long time) {
         svcproperties.setProperty("memberDropTime",String.valueOf(time));
     }
 
-    public void setTcpThreadCount(int count)
-    {
+    public void setTcpThreadCount(int count) {
         this.tcpThreadCount = count;
     }
 
-    public void setTcpListenAddress(String address)
-    {
-        try
-        {
+    public void setTcpListenAddress(String address)  {
+        try {
             tcpAddress = java.net.InetAddress.getByName(address);
             svcproperties.setProperty("tcpListenHost",address);
-        }catch ( Exception x )
-        {
+        }catch ( Exception x ){
             log.error("Unable to set listen address",x);
         }
     }
 
-    public void setTcpListenPort(int port)
-    {
+    public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown){
+        this.expireSessionsOnShutdown = expireSessionsOnShutdown;
+    }
+
+    public void setPrintToScreen(boolean printToScreen) {
+        this.printToScreen = printToScreen;
+    }
+    public void setUseDirtyFlag(boolean useDirtyFlag) {
+        this.useDirtyFlag = useDirtyFlag;
+    }
+
+
+    public void setTcpListenPort(int port) {
         this.tcpPort = port;
         svcproperties.setProperty("tcpListenPort",String.valueOf(port));
     }
