@@ -726,7 +726,6 @@ public class RequestImpl  implements Request {
         pathInfo=null;
         pathTranslatedIsSet=false;
         sessionIdSource = null;
-
         // XXX a request need to override those if it cares
         // about security
         remoteAddr="127.0.0.1";
@@ -741,6 +740,7 @@ public class RequestImpl  implements Request {
         notAuthenticated=true;
 	userRoles=null;
 	reqRoles=null;
+        principal=null;
     }
 
     // -------------------- End utils
