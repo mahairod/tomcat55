@@ -7,14 +7,14 @@ $Id$
 This subproject contains the source code Tomcat 4.0, a server that implements
 the Servlet 2.3 and JSP 1.2 Specifications from Java Software.  In order to
 build a binary distribution version of the container from a source
-distribution, you must have a Java Development Kit (JDK) for version 1.2 (or
+distribution, you must have a Java Development Kit (JDK) for version 1.3 (or
 later) downloaded and installed (version 1.3.1 recommended), and do the
 following:
 
 
 (0) Download and Install a Java Development Kit
 
-* Download a Java Development Kit (JDK) release (version 1.2 or later) from:
+* Download a Java Development Kit (JDK) release (version 1.3 or later) from:
 
     http://java.sun.com/j2se/
 
