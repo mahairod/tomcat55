@@ -52,6 +52,9 @@
       <fix>
         <bug>29406</bug>: Made JAASRealm configurable as to whether it should use the context ClassLoader or the default ClassLoader by adding a useContextClassLoader boolean attribute. (yoavs)
       </fix>
+      <fix>
+        If ServletResponse.getWriter() is called and no char encoding has been specified, set response char encoding to default (ISO-8859-1) so that it is reflected in getContentType() and Content-Type header, as required by the Servlet Spec (Bugtraq 6152759) (luehe)
+      </fix>
     </changelog>
   </subsection>
 
@@ -59,6 +62,26 @@
   </subsection>
   
   <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>29971</bug>: Commented out page directive is parsed. (luehe)
+      </fix>
+      <fix>
+        <bug>30067</bug>: 'Scripting elements are disallowed here' exception behind scriptless tag. (luehe)
+      </fix>
+      <fix>
+        <bug>30073</bug>: NPE when compiling .jspx with broken xml format in jspcmode. (luehe)
+      </fix>
+      <fix>
+        <bug>29866</bug>: ArrayIndexOutOfBoundsException in JspReader. (kinman)
+      </fix>
+      <fix>
+        <bug>30291</bug>: Smap for a tag should not include its body. (kinman)
+      </fix>
+      <fix>
+        <bug>30289</bug>: Incorrect Smap for multiple line java expression. (kinman)
+      </fix>
+    </changelog>
   </subsection>
   
   <subsection name="Cluster">
