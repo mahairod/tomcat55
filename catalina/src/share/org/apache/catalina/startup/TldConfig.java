@@ -232,7 +232,7 @@ public final class TldConfig  {
         }
         paths = globalJarPaths.iterator();
         while (paths.hasNext()) {
-            tldScanJar((JarURLConnection) paths.next());
+            tldScanJar((File) paths.next());
         }
 
         String list[] = getTldListeners();
@@ -294,11 +294,11 @@ public final class TldConfig  {
 
 	paths = globalJarPaths.iterator();
 	while (paths.hasNext()) {
-	    JarURLConnection conn = (JarURLConnection) paths.next();
-	    long lastM = conn.getLastModified();
+	    File jarFile = (File) paths.next();
+	    long lastM = jarFile.lastModified();
 	    if (lastM > lastModified) lastModified = lastM;
 	    if (log.isDebugEnabled()) {
-		log.debug("Last modified " + conn.getJarFileURL().toString()
+		log.debug("Last modified " + jarFile.getAbsolutePath()
 			  + " " + lastM);
 	    }
 	}
@@ -438,33 +438,35 @@ public final class TldConfig  {
         }
 
 	URL url = context.getServletContext().getResource(resourcePath);
-	if (url == null) {
+        if (url == null) {
 	    throw new IllegalArgumentException
 		(sm.getString("contextConfig.tldResourcePath",
 			      resourcePath));
 	}
-	url = new URL("jar:" + url.toString() + "!/");
-	JarURLConnection conn = (JarURLConnection) url.openConnection();
-	conn.setUseCaches(false);
-	tldScanJar(conn);
+
+        File file = new File(url.getFile());
+        file = file.getCanonicalFile();
+        tldScanJar(file);
+
     }
 
-    /*
+
+    /**
      * Scans all TLD entries in the given JAR for application listeners.
      *
      * @param conn URLConnection to the JAR file whose TLD entries are
      * scanned for application listeners
      */
-    private void tldScanJar(JarURLConnection conn) throws Exception {
+    private void tldScanJar(File file) throws Exception {
 
         JarFile jarFile = null;
         String name = null;
         InputStream inputStream = null;
 
-	String jarPath = conn.getJarFileURL().toString();
+	String jarPath = file.getAbsolutePath();
 
 	try {
-	    jarFile = conn.getJarFile();
+	    jarFile = new JarFile(file);
             Enumeration entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = (JarEntry) entries.nextElement();
@@ -511,6 +513,7 @@ public final class TldConfig  {
             }
         }
     }
+
 
     /**
      * Scan the TLD contents in the specified input stream, and register
@@ -692,7 +695,8 @@ public final class TldConfig  {
         }
     }
 
-    /*
+
+    /**
      * Returns the paths to all JAR files accessible to all parent
      * classloaders of the web application class loader.
      *
@@ -703,60 +707,32 @@ public final class TldConfig  {
      * <CATALINA_HOME>/common/lib).
      *
      * @return Set of paths to all JAR files accessible to all parent class
-     * loaders of the web application class loader
+     *         loaders of the web application class loader
      */
     private Set getGlobalJarPaths() throws IOException {
 
         Set globalJarPaths = new HashSet();
 
-	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	while (loader != null) {
-	    if (loader instanceof URLClassLoader) {
-		URL[] urls = ((URLClassLoader) loader).getURLs();
-		for (int i=0; i<urls.length; i++) {
-		    JarURLConnection jarConn = null;
-		    URLConnection conn = urls[i].openConnection();
-		    if (conn instanceof JarURLConnection) {
-			jarConn = (JarURLConnection) conn;
-		    } else {
-			String urlStr = urls[i].toString();
-			if (urlStr.startsWith("file:")
-			        && urlStr.endsWith(".jar")) {
-			    URL jarURL = new URL("jar:" + urlStr + "!/");
-			    jarConn = (JarURLConnection) jarURL.openConnection();
-			    try {
-				/*
-				 * Call getJarFile() to see if JAR file exists
-				 * (throws exception in case it doesn't)
-				 */
-				jarConn.getJarFile();
-				/*
-				 * JAR file exists.
-				 * Need to create new JarURLConnection due to
-				 * bug 4756443. If it were not for this bug,
-				 * the sequence of calls in this try block
-				 * would be as follows:
-				 *   jarConn.setUseCaches(false);
-				 *   jarConn.getJarFile();
-				 *   globalJarPaths.add(jarConn);
-				 */
-				jarConn = (JarURLConnection)
-				    jarURL.openConnection();
-				jarConn.setUseCaches(false);
-				globalJarPaths.add(jarConn);
-			    } catch (Exception e) {
-				/*
-				 * Ignore any JAR files that may have been
-				 * specified on the class path but don't exist
-				 */
-			    }
-			}
-		    }
-		}
-	    }
-	    loader = loader.getParent();
-	}
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        while (loader != null) {
+            if (loader instanceof URLClassLoader) {
+                URL[] urls = ((URLClassLoader) loader).getURLs();
+                for (int i=0; i<urls.length; i++) {
+                    // Expect file URLs
+                    // This is definitely not as clean as using JAR URLs either
+                    // over file or the custom jndi handler, but a lot less
+                    // buggy overall
+                    File file = new File(urls[i].getFile());
+                    file = file.getCanonicalFile();
+                    if ((file.exists()) 
+                        && (file.getAbsolutePath().endsWith(".jar"))) {
+                        globalJarPaths.add(file);
+                    }
+                }
+            }
+            loader = loader.getParent();
+        }
 
-	return globalJarPaths;
+        return globalJarPaths;
     }
 }
