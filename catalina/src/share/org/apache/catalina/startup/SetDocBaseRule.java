@@ -139,6 +139,23 @@ public class SetDocBaseRule extends Rule {
             .getCanonicalFile();
 
         String docBase = child.getDocBase();
+        if (docBase == null) {
+            // Trying to guess the docBase according to the path
+            String path = child.getPath();
+            if (path == null) {
+                return;
+            }
+            if (path.equals("")) {
+                docBase = "ROOT";
+            } else {
+                if (path.startsWith("/")) {
+                    docBase = path.substring(1);
+                } else {
+                    docBase = path;
+                }
+            }
+        }
+
         File file = new File(docBase);
         if (!file.isAbsolute()) {
             // Use the "appBase" property of this container
