@@ -77,6 +77,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -107,7 +108,7 @@ import org.xml.sax.SAXNotSupportedException;
  */
 public final class TldConfig  {
 
-    // Set of JARs that are known not to contain any TLDs
+    // Names of JARs that are known not to contain any TLDs
     private static HashSet noTldJars;
 
     private static org.apache.commons.logging.Log log=
@@ -121,55 +122,14 @@ public final class TldConfig  {
      * Initializes the set of JARs that are known not to contain any TLDs
      */
     static {
-        noTldJars = new HashSet();
-        noTldJars.add("ant.jar");
-        noTldJars.add("catalina.jar");
-        noTldJars.add("catalina-ant.jar");
-        noTldJars.add("catalina-cluster.jar");
-        noTldJars.add("catalina-optional.jar");
-        noTldJars.add("catalina-i18n-fr.jar");
-        noTldJars.add("catalina-i18n-ja.jar");
-        noTldJars.add("catalina-i18n-es.jar");
-        noTldJars.add("commons-dbcp.jar");
-        noTldJars.add("commons-modeler.jar");
-        noTldJars.add("commons-logging-api.jar");
-        noTldJars.add("commons-beanutils.jar");
-        noTldJars.add("commons-fileupload-1.0.jar");
-        noTldJars.add("commons-pool.jar");
-        noTldJars.add("commons-digester.jar");
-        noTldJars.add("commons-logging.jar");
-        noTldJars.add("commons-collections.jar");
-        noTldJars.add("commons-el.jar");
-        noTldJars.add("jakarta-regexp-1.2.jar");
-        noTldJars.add("jasper-compiler.jar");
-        noTldJars.add("jasper-runtime.jar");
-        noTldJars.add("jmx.jar");
-        noTldJars.add("jmx-tools.jar");
-        noTldJars.add("jsp-api.jar");
-        noTldJars.add("jkshm.jar");
-        noTldJars.add("jkconfig.jar");
-        noTldJars.add("naming-common.jar");
-        noTldJars.add("naming-resources.jar");
-        noTldJars.add("naming-factory.jar");
-        noTldJars.add("naming-java.jar");
-        noTldJars.add("servlet-api.jar");
-        noTldJars.add("servlets-default.jar");
-        noTldJars.add("servlets-invoker.jar");
-        noTldJars.add("servlets-common.jar");
-        noTldJars.add("servlets-webdav.jar");
-        noTldJars.add("tomcat-util.jar");
-        noTldJars.add("tomcat-http11.jar");
-        noTldJars.add("tomcat-jni.jar");
-        noTldJars.add("tomcat-jk.jar");
-        noTldJars.add("tomcat-jk2.jar");
-        noTldJars.add("tomcat-coyote.jar");
-        noTldJars.add("xercesImpl.jar");
-        noTldJars.add("xmlParserAPIs.jar");
-        // JARs from J2SE runtime
-        noTldJars.add("sunjce_provider.jar");
-        noTldJars.add("ldapsec.jar");
-        noTldJars.add("localedata.jar");
-        noTldJars.add("dnsns.jar");
+        String value = CatalinaProperties.getProperty("noTldJars");
+        if (value != null) {
+            noTldJars = new HashSet();
+            StringTokenizer tokenizer = new StringTokenizer(value, ",");
+            while (tokenizer.hasMoreElements()) {
+                noTldJars.add(tokenizer.nextToken());
+            }
+        }
     }
 
 
@@ -809,6 +769,7 @@ public final class TldConfig  {
                      * that are not known not to contain any TLDs
                      */
                     if (loader == webappLoader
+                            || noTldJars == null
                             || !noTldJars.contains(file.getName())) {
                         if (jarPathMap == null) {
                             jarPathMap = new HashMap();
