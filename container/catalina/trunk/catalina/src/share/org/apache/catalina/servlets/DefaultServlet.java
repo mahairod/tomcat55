@@ -161,7 +161,7 @@ public class DefaultServlet
 
 
     /**
-     * Should we generate directory listings when no welcome file is present?
+     * Should we generate directory listings?
      */
     protected boolean listings = true;
 
@@ -176,12 +176,6 @@ public class DefaultServlet
      * The output buffer size to use when serving resources.
      */
     protected int output = 2048;
-
-
-    /**
-     * The set of welcome files for this web application
-     */
-    protected String welcomes[] = new String[0];
 
 
     /**
@@ -322,18 +316,9 @@ public class DefaultServlet
         if (output < 256)
             output = 256;
 
-        // Initialize the set of welcome files for this application
-        welcomes = (String[]) getServletContext().getAttribute
-            (Globals.WELCOME_FILES_ATTR);
-        if (welcomes == null)
-            welcomes = new String[0];
-
         if (debug > 0) {
             log("DefaultServlet.init:  input buffer size=" + input +
                 ", output buffer size=" + output);
-            for (int i = 0; i < welcomes.length; i++)
-                log("DefaultServlet.init:  welcome file=" +
-                    welcomes[i]);
         }
 
         // Load the MD5 helper used to calculate signatures.
@@ -956,36 +941,9 @@ public class DefaultServlet
             }
         }
 
-        // If the resource is a collection (aka a directory), we check
-        // the welcome files list.
-        if (resourceInfo.collection) {
-
-            if (!request.getRequestURI().endsWith("/")) {
-                String redirectPath = path;
-                String contextPath = request.getContextPath();
-                if ((contextPath != null) && (!contextPath.equals("/"))) {
-                    redirectPath = contextPath + redirectPath;
-                }
-                if (!(redirectPath.endsWith("/")))
-                    redirectPath = redirectPath + "/";
-                redirectPath = appendParameters(request, redirectPath);
-                response.sendRedirect(redirectPath);
-                return;
-            }
-
-            ResourceInfo welcomeFileInfo = checkWelcomeFiles(path, resources);
-            if (welcomeFileInfo != null) {
-                String redirectPath = welcomeFileInfo.path;
-                String contextPath = request.getContextPath();
-                if ((contextPath != null) && (!contextPath.equals("/"))) {
-                    redirectPath = contextPath + redirectPath;
-                }
-                redirectPath = appendParameters(request, redirectPath);
-                response.sendRedirect(redirectPath);
-                return;
-            }
-
-        } else {
+        // Check if the conditions specified in the optional If headers are
+        // satisfied.
+        if (!resourceInfo.collection) {
 
             // Checking If headers
             boolean included =
@@ -2292,7 +2250,7 @@ public class DefaultServlet
                                   long start, long end) {
 
         if (debug > 10)
-            System.out.println("Serving bytes:" + start + "-" + end);
+            log("Serving bytes:" + start + "-" + end);
 
         try {
             istream.skip(start);
@@ -2375,44 +2333,6 @@ public class DefaultServlet
 
     }
 
-
-    /**
-     * Check to see if a default page exists.
-     *
-     * @param pathname Pathname of the file to be served
-     */
-    private ResourceInfo checkWelcomeFiles(String pathname,
-                                           DirContext resources) {
-
-        String collectionName = pathname;
-        if (!pathname.endsWith("/")) {
-            collectionName += "/";
-        }
-
-        // Refresh our currently defined set of welcome files
-        synchronized (welcomes) {
-            welcomes = (String[]) getServletContext().getAttribute
-                (Globals.WELCOME_FILES_ATTR);
-            if (welcomes == null)
-                welcomes = new String[0];
-        }
-
-        // Serve a welcome resource or file if one exists
-        for (int i = 0; i < welcomes.length; i++) {
-
-            // Does the specified resource exist?
-            String resourceName = collectionName + welcomes[i];
-            ResourceInfo resourceInfo =
-                new ResourceInfo(resourceName, resources);
-            if (resourceInfo.exists()) {
-                return resourceInfo;
-            }
-
-        }
-
-        return null;
-
-    }
 
 
     // ------------------------------------------------------ Range Inner Class
