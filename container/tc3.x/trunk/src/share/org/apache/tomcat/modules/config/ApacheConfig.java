@@ -439,6 +439,7 @@ public class ApacheConfig  extends BaseInterceptor {
         will try first to resolve it absolutely 
         against the return value of getConfigHome().  If that is null, then
         it instead will resolve against the current user.dir.
+        If this file doesn't exist, the relative path is returned.
         <p>
         @return a File object with the path to the mod_jserv.so file.
     */
@@ -453,6 +454,8 @@ public class ApacheConfig  extends BaseInterceptor {
             }else{//resolve against user.dir
                 jservF = new File(jservF.getAbsolutePath());
             }
+	    if( !jservF.exists() )
+		jservF = modJserv;
         }
        return jservF;
     }
@@ -479,6 +482,7 @@ public class ApacheConfig  extends BaseInterceptor {
         will try first to resolve it absolutely 
         against the return value of getConfigHome().  If that is null, then
         it instead will resolve against the current user.dir.
+        If this file doesn't exist, the relative path is returned.
         <p>
         @return a File object with the path to the mod_jk.so file.
     */
@@ -493,6 +497,8 @@ public class ApacheConfig  extends BaseInterceptor {
             }else{//resolve against user.dir
                 jkF = new File(jkF.getAbsolutePath());
             }
+	    if( !jkF.exists() )
+		jkF = modJk;
         }
        return jkF;
     }
