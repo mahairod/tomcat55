@@ -54,6 +54,7 @@ import org.apache.tomcat.util.http.FastHttpDateFormat;
 import org.apache.tomcat.util.http.MimeHeaders;
 import org.apache.tomcat.util.http.ServerCookie;
 import org.apache.tomcat.util.net.URL;
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * Wrapper object for the Coyote response.
@@ -75,12 +76,13 @@ public class CoyoteResponse
     }
 
 
-    // ----------------------------------------------------- Instance Variables
+    // ----------------------------------------------------- Class Variables
+
 
     /**
-     * The date format we will use for creating date headers.
+     * JDK compatibility support
      */
-    protected SimpleDateFormat format = null;
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     /**
@@ -95,6 +97,14 @@ public class CoyoteResponse
      */
     protected static StringManager sm =
         StringManager.getManager(Constants.Package);
+
+
+    // ----------------------------------------------------- Instance Variables
+
+    /**
+     * The date format we will use for creating date headers.
+     */
+    protected SimpleDateFormat format = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -1440,7 +1450,7 @@ public class CoyoteResponse
                         } catch (PrivilegedActionException pae){
                             IllegalArgumentException iae =
                                 new IllegalArgumentException(location);
-                            iae.initCause(pae.getCause());
+                            jdkCompat.chainException(iae, pae.getCause());
                             throw iae;
                         }
                     } else {
@@ -1453,7 +1463,7 @@ public class CoyoteResponse
             } catch (IOException e) {
                 IllegalArgumentException iae =
                     new IllegalArgumentException(location);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
 
