@@ -600,8 +600,9 @@ public class HostConfig
         // Loop until the termination semaphore is set
         while (!threadDone) {
 
-            // Deploy apps
-            deployApps();
+            // Deploy apps if the Host allows auto deploying
+            if (host.getAutoDeploy())
+                deployApps();
 
             // Check for web.xml modification
             checkWebXmlLastModified();
