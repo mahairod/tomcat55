@@ -13,7 +13,7 @@
 <Server port="8005" shutdown="SHUTDOWN" debug="0">
 
 
-  <!-- Uncomment these entries to enable JMX MBeans support -->
+  <!-- Comment out these entries to disable JMX MBeans support -->
   <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener"
             debug="0"/>
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"
@@ -78,7 +78,7 @@
          request.getRemoteHost().  This can have an adverse impact on
          performance, so you can disable it by setting the
          "enableLookups" attribute to "false".  When DNS lookups are disabled,
-         request.getRemoteHost() will return the String version of the
+         request.getRemoteHost() will return a String containing the
          IP address of the remote client.
     -->
 
