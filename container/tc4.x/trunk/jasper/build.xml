@@ -188,6 +188,8 @@
         <include name="org/apache/jasper/*.class" />
       </fileset>
     </jar>
+    <copy file="${jasper.deploy}/shared/lib/jasper-compiler.jar"
+         todir="${jasper.deploy}/server/lib" />
 
     <!-- Jasper Runtime JAR File -->
     <jar  jarfile="${jasper.deploy}/shared/lib/jasper-runtime.jar">
@@ -201,6 +203,8 @@
         <include name="org/apache/jasper/util/**" />
       </fileset>
     </jar>
+    <copy file="${jasper.deploy}/shared/lib/jasper-runtime.jar"
+         todir="${jasper.deploy}/server/lib" />
 
   </target>
 
