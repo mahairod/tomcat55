@@ -88,8 +88,8 @@ public class JspUtil {
 
     private static final String OPEN_EXPR  = "<%=";
     private static final String CLOSE_EXPR = "%>";
-    private static final String OPEN_EXPR_2 = "<jsp:expression>";
-    private static final String CLOSE_EXPR_2 = "</jsp:expression>";
+    private static final String OPEN_EXPR_2 = "%=";
+    private static final String CLOSE_EXPR_2 = "%";
 
     public static char[] removeQuotes(char []chars) {
 	CharArrayWriter caw = new CharArrayWriter();
