@@ -100,6 +100,7 @@ public class PluginGenerator
     public void generate(ServletWriter writer, Class phase) 
     				throws JasperException
     {
+
 	String type = getAttribute ("type");
 	String code = getAttribute ("code");
 	String codebase = getAttribute ("codebase");
@@ -118,6 +119,7 @@ public class PluginGenerator
 
 	writer.popIndent ();
 	writer.println ("/*Code generated for plugin*/");
+	writer.println("{");	// Work around multi-plugin-tag bug
 	writer.indent ();
 	writer.print ("out.println (\"<OBJECT classid=\\\"");
 	writer.print (ieClassId);
@@ -342,6 +344,7 @@ public class PluginGenerator
 	writer.println ("out.println (\"</NOEMBED></EMBED>\");");
 	writer.println ("out.println (\"</OBJECT>\");");
 	writer.pushIndent ();
+	writer.println("}");	// Work around multi-plugin-tag bug
     }
 
     public void generateCommon (ServletWriter writer) {
