@@ -91,6 +91,7 @@ import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.tomcat.util.log.SystemLogHandler;
 import org.apache.commons.modeler.Registry;
+
 /**
  * Standard implementation of the <b>Wrapper</b> interface that represents
  * an individual servlet definition.  No child Containers are allowed, and
@@ -100,8 +101,7 @@ import org.apache.commons.modeler.Registry;
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
-
-public final class StandardWrapper
+public class StandardWrapper
     extends ContainerBase
     implements ServletConfig, Wrapper {
 
@@ -251,6 +251,7 @@ public final class StandardWrapper
     // To support jmx attributes
     private StandardWrapperValve swValve;
     private long loadTime=0;
+    private long classLoadTime=0;
 
     // ------------------------------------------------------------- Properties
 
@@ -423,9 +424,11 @@ public final class StandardWrapper
         } catch (NumberFormatException e) {
             setLoadOnStartup(0);
         }
-
     }
 
+    public String getLoadOnStartupString() {
+        return Integer.toString( getLoadOnStartup());
+    }
 
 
     /**
@@ -928,10 +931,7 @@ public final class StandardWrapper
                 ((ContainerServlet) servlet).setWrapper(this);
             }
     
-            if( System.currentTimeMillis() -t1 > 200 ) {
-                log.info("Created servlet class " + actualClass + " " +
-                         (System.currentTimeMillis() - t1 ) );
-            }
+            classLoadTime=System.currentTimeMillis() -t1;
             // Call the initialization method of this servlet
             try {
                 instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
@@ -1011,7 +1011,8 @@ public final class StandardWrapper
                 }
             }
         }
-        registerJMX((ContainerBase)getParent(), this);
+        if( oname != null )
+            registerJMX((ContainerBase)getParent());
         return servlet;
 
     }
@@ -1441,11 +1442,11 @@ public final class StandardWrapper
 
     }
 
-    void registerJMX(ContainerBase ctx, StandardWrapper wrapper) {
+    protected void registerJMX(ContainerBase ctx) {
         try {
-            String name=wrapper.getJspFile();
+            String name=this.getJspFile();
             if( name==null ) {
-                name=wrapper.getServletName();
+                name=this.getServletName();
             }
             // it should be full name
             String parentName=ctx.getName();
@@ -1455,7 +1456,7 @@ public final class StandardWrapper
             String oname="j2eeType=Servlet,name=" + name + ",WebModule=" +
                     webMod + ctx.getJSR77Suffix();
 
-            Registry.getRegistry().registerComponent(wrapper,
+            Registry.getRegistry().registerComponent(this,
                     ctx.getDomain(), "Servlet", oname);
         } catch( Exception ex ) {
             log.info("Error registering servlet with jmx " + this);
