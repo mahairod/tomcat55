@@ -290,7 +290,7 @@ public class CoyoteRequestFacade
                 new GetParameterValuePrivilegedAction(name));
             if (ret != null) {
                 ret = (String[]) ret.clone();
-	    }
+            }
         } else {
             ret = request.getParameterValues(name);
         }
