@@ -91,5 +91,6 @@ public class Constants {
 
     public static class MIME {
         public static final String WAR = "war";
+        public static final String JAR = "jar";
     }
 }

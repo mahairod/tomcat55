@@ -124,8 +124,10 @@ public class URLUtil {
 
         if (! resolve.getProtocol().equalsIgnoreCase(
                 org.apache.tomcat.core.Constants.Request.WAR) &&
-            resolve.getFile().toLowerCase().endsWith(
-                "." + Constants.MIME.WAR)) {
+            (resolve.getFile().toLowerCase().endsWith(
+                "." + Constants.MIME.WAR) ||
+            (resolve.getFile().toLowerCase().endsWith(
+                "." + Constants.MIME.JAR)))) {
             URL u = new URL(Constants.MIME.WAR + ":" +
                 resolve.toString());
 
