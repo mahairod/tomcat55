@@ -1120,8 +1120,9 @@
     <!-- Copy the top-level documentation files -->
     <copy todir="${tomcat.dist}">
       <fileset dir=".">
-        <include name="LICENSE"/>
         <include name="INSTALLING.txt"/>
+        <include name="LICENSE"/>
+        <include name="NOTICE"/>
         <include name="README.txt"/>
         <include name="RELEASE*"/>
         <include name="RUNNING.txt"/>
@@ -1344,6 +1345,8 @@
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="LICENSE" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="NOTICE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="README.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="RELEASE-NOTES" />
@@ -1361,6 +1364,8 @@
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
        includes="LICENSE" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
+       includes="NOTICE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
        includes="README.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
        includes="RELEASE-NOTES" />
@@ -1373,6 +1378,8 @@
                   includes="**" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" 
        includes="LICENSE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" 
+       includes="NOTICE" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" 
        includes="README.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" 
@@ -1399,7 +1406,7 @@
 
   <target name="package-tgz">
     <fixcrlf srcdir="${tomcat.dist}" 
-     includes="*.txt,LICENSE" eol="lf"/>
+     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
     <fixcrlf srcdir="${tomcat.dist}/conf" eol="lf"/>
     <tar longfile="gnu" compression="gzip"
           tarfile="${tomcat.release}/v${version}/bin/${final.name}.tar.gz">
@@ -1429,6 +1436,7 @@
         <include name="webapps/**" />
         <include name="work/**" />
         <include name="LICENSE" />
+        <include name="NOTICE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES" />
         <include name="RUNNING.txt" />
@@ -1452,12 +1460,13 @@
 
   <target name="package-embed-tgz">
     <fixcrlf srcdir="${tomcat.dist}" 
-     includes="*.txt,LICENSE" eol="lf"/>
+     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
     <fixcrlf srcdir="${tomcat.embed}" includes="*.xml" eol="lf"/>
     <tar longfile="gnu" compression="gzip"
           tarfile="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz">
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}-embed">
         <include name="LICENSE" />
+        <include name="NOTICE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES" />
       </tarfileset>
@@ -1469,12 +1478,13 @@
 
   <target name="package-deployer-tgz">
     <fixcrlf srcdir="${tomcat.dist}" 
-     includes="*.txt,LICENSE" eol="lf"/>
+     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
     <fixcrlf srcdir="${tomcat.deployer}" includes="*.xml" eol="lf"/>
     <tar longfile="gnu" compression="gzip"
           tarfile="${tomcat.release}/v${version}/bin/${final.name}-deployer.tar.gz">
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}-deployer">
         <include name="LICENSE" />
+        <include name="NOTICE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES" />
       </tarfileset>
