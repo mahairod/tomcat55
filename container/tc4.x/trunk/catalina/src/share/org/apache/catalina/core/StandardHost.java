@@ -679,7 +679,7 @@ public final class StandardHost
         // Calculate the directory name of the expanded directory
         if (debug >= 1)
             log("expand(" + war.toString() + ")");
-        String pathname = war.toString();
+        String pathname = war.toString().replace('\\', '/');
         if (pathname.endsWith("!/"))
             pathname = pathname.substring(0, pathname.length() - 2);
         int period = pathname.lastIndexOf(".");
