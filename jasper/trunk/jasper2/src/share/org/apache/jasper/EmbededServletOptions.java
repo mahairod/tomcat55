@@ -145,14 +145,9 @@ public final class EmbededServletOptions implements Options {
     public String classpath = null;
     
     /**
-     * Plugin class to use to compile JSP pages.
+     * Compiler to use.
      */
-    public Class jspCompilerPlugin = null;
-
-    /**
-     * Path of the compiler to use for compiling JSP pages.
-     */
-    public String jspCompilerPath = null;
+    public String compiler = null;
 
     /**
      * Cache for the TLD locations
@@ -244,19 +239,12 @@ public final class EmbededServletOptions implements Options {
     }
 
     /**
-     * What compiler plugin should I use to compile the servlets
-     * generated from JSP files?
+     * Compiler to use.
      */
-    public Class getJspCompilerPlugin() {
-        return jspCompilerPlugin;
+    public String getCompiler() {
+        return compiler;
     }
 
-    /**
-     * Path of the compiler to use for compiling JSP pages.
-     */
-    public String getJspCompilerPath() {
-        return jspCompilerPath;
-    }
 
     public TldLocationsCache getTldLocationsCache() {
 	return tldLocationsCache;
@@ -385,33 +373,15 @@ public final class EmbededServletOptions implements Options {
                                   scratchDir.getAbsolutePath()
                               }, Logger.FATAL);
                                   
-        String jspCompilerPath = config.getInitParameter("jspCompilerPath");
-        if (jspCompilerPath != null) {
-            if (new File(jspCompilerPath).exists()) {
-                this.jspCompilerPath = jspCompilerPath;
-            } else { 
-                Constants.message("jsp.warning.compiler.path.notfound",
-                                  new Object[] { jspCompilerPath }, 
-                                  Logger.FATAL);
-            }
-        }
-
-        String jspCompilerPlugin = config.getInitParameter("jspCompilerPlugin");
-        if (jspCompilerPlugin != null) {
-            try {
-                this.jspCompilerPlugin = Class.forName(jspCompilerPlugin);
-            } catch (ClassNotFoundException cnfe) {
-                Constants.message("jsp.warning.compiler.class.notfound",
-                                  new Object[] { jspCompilerPlugin },
-                                  Logger.FATAL);
-            }
-        }
+        this.compiler = config.getInitParameter("compiler");
 
         this.javaEncoding = config.getInitParameter("javaEncoding");
 
 	// Setup the global Tag Libraries location cache for this
 	// web-application.
 	tldLocationsCache = new TldLocationsCache(context);
+
     }
+
 }
 

@@ -76,56 +76,67 @@ import org.apache.jasper.compiler.TldLocationsCache;
  * @author Pierre Delisle
  */
 public interface Options {
+
+
     /**
      * Are we keeping generated code around?
      */
     public boolean getKeepGenerated();
-    
+
+
     /**
      * Are we supporting large files?
      */
     public boolean getLargeFile();
 
+
     /**
      * Are we supporting HTML mapped servlets?
      */
     public boolean getMappedFile();
-    
-    
+
+
     /**
      * Should errors be sent to client or thrown into stderr?
      */
     public boolean getSendErrorToClient();
  
+
     /**
      * Should we include debug information in compiled class?
      */
     public boolean getClassDebugInfo();
+
 
     /**
      * Background compile thread check interval in seconds
      */
     public int getCheckInterval();
 
+
     /**
      * Is Jasper being used in development mode?
      */
     public boolean getDevelopment();
+
 
     /**
      * JSP reloading check ?
      */
     public boolean getReloading();
 
+
     /**
      * Class ID for use in the plugin tag when the browser is IE. 
      */
     public String getIeClassId();
-    
+
+
     /**
      * What is my scratch dir?
      */
     public File getScratchDir();
+
 
     /**
      * What classpath should I use while compiling the servlets
@@ -133,17 +144,13 @@ public interface Options {
      */
     public String getClassPath();
 
-    /**
-     * What compiler plugin should I use to compile the servlets
-     * generated from JSP files?
-     */
-    public Class getJspCompilerPlugin();
 
     /**
-     * Path of the compiler to use for compiling JSP pages.
+     * Compiler to use.
      */
-    public String getJspCompilerPath();
-    
+    public String getCompiler();
+
+
     /**
      * The cache for the location of the TLD's
      * for the various tag libraries 'exposed'
@@ -157,9 +164,12 @@ public interface Options {
      */
     public TldLocationsCache getTldLocationsCache();
 
+
     /**
      * Java platform encoding to generate the JSP
      * page servlet.
      */
     public String getJavaEncoding();
+
+
 }

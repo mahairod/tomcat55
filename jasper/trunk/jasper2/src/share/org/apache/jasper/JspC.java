@@ -228,6 +228,14 @@ public class JspC implements Options { //, JspCompilationContext {
         return null;
     }
 
+    /**
+     * Compiler to use.
+     */
+    public String getCompiler() {
+        return null;
+    }
+
+
     public TldLocationsCache getTldLocationsCache() {
 	return tldLocationsCache;
     }

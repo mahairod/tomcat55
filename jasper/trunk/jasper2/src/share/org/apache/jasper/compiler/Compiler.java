@@ -222,22 +222,15 @@ public class Compiler {
         javac.setClasspath(path);
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
+        javac.setOptimize(true);
+
+        // Set the Java compiler to use
+        if (options.getCompiler() != null) {
+            javac.setCompiler(options.getCompiler());
+        }
 
         // Build includes path
         javac.setIncludes(((JspEngineContext) ctxt).getJspPath());
-        /*
-        String dirName = ctxt.getJspFile();
-        int pos = dirName.lastIndexOf('/');
-        if (pos > 0) {
-            dirName = dirName.substring(0, pos + 1);
-        } else {
-            dirName = "";
-        }
-        String includePath = dirName + ctxt.getServletClassName() + ".java";
-        if (includePath.startsWith("/")) {
-            includePath = includePath.substring(1);
-        }
-        */
 
         // Start capturing the System.err output for this thread
         SystemLogHandler.setThread();
