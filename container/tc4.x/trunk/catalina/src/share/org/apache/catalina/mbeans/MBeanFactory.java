@@ -261,7 +261,7 @@ public class MBeanFactory extends BaseModelMBean {
             Method meth3 = cls.getMethod("setProtocolHandlerClassName", partypes3);
             Object arglist3[] = new Object[1];
             arglist3[0] = new String("org.apache.jk.server.JkCoyoteHandler");
-            meth3.invoke(retobj, arglist2);
+            meth3.invoke(retobj, arglist3);
 
         } catch (Exception e) {
             throw new MBeanException(e);

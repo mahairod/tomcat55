@@ -108,6 +108,7 @@ public class ConnectorMBean extends BaseModelMBean {
 
     // ------------------------------------------------------------- Operations
 
+    
     /**
      * Return Client authentication info
      *
@@ -120,17 +121,13 @@ public class ConnectorMBean extends BaseModelMBean {
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
         if (coyoteConnectorCls.isInstance(this.resource)) {
             // get factory
-            Class partypes1 [] = new Class[1];
-            Method meth1 = coyoteConnectorCls.getMethod("getFactory", partypes1);
-            Object arglist1[] = new Object[1];
-            Object factory = meth1.invoke(this.resource, arglist1);
+            Method meth1 = coyoteConnectorCls.getMethod("getFactory", null);
+            Object factory = meth1.invoke(this.resource, null);
             Class coyoteServerSocketFactoryCls = Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // get clientAuth
-                Class partypes2 [] = new Class[1];
-                Method meth2 = coyoteServerSocketFactoryCls.getMethod("getClientAuth", partypes2);
-                Object arglist2[] = new Object[1];
-                clientAuthObj = meth2.invoke(this.resource, arglist2);
+                Method meth2 = coyoteServerSocketFactoryCls.getMethod("getClientAuth", null);
+                clientAuthObj = meth2.invoke(this.resource, null);
             }
            
         }    
@@ -138,6 +135,7 @@ public class ConnectorMBean extends BaseModelMBean {
             return ((Boolean)clientAuthObj).booleanValue();
         else return false;
     }
+    
     
     /**
      * Set Client authentication info
@@ -150,10 +148,8 @@ public class ConnectorMBean extends BaseModelMBean {
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
         if (coyoteConnectorCls.isInstance(this.resource)) {
             // get factory
-            Class partypes1 [] = new Class[1];
-            Method meth1 = coyoteConnectorCls.getMethod("getFactory", partypes1);
-            Object arglist1[] = new Object[1];
-            Object factory = meth1.invoke(this.resource, arglist1);
+            Method meth1 = coyoteConnectorCls.getMethod("getFactory", null);
+            Object factory = meth1.invoke(this.resource, null);
             Class coyoteServerSocketFactoryCls = Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // set clientAuth
@@ -163,9 +159,9 @@ public class ConnectorMBean extends BaseModelMBean {
                 Object arglist2[] = new Object[1];
                 arglist2[0] = new Boolean(clientAuth);
                 meth2.invoke(this.resource, arglist2);
-            }
-           
-        }    
+            } 
+        } 
+        
     }
 
     
@@ -181,21 +177,22 @@ public class ConnectorMBean extends BaseModelMBean {
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
         if (coyoteConnectorCls.isInstance(this.resource)) {
             // get keystoreFile
-            Class partypes1 [] = new Class[1];
-            Method meth1 = coyoteConnectorCls.getMethod("getKeystoreFile", partypes1);
-            Object arglist1[] = new Object[1];
-            Object factory = meth1.invoke(this.resource, arglist1);
+            Method meth1 = coyoteConnectorCls.getMethod("getFactory", null);
+            Object factory = meth1.invoke(this.resource, null);
             Class coyoteServerSocketFactoryCls = Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // get keystoreFile
-                Class partypes2 [] = new Class[1];
-                Method meth2 = coyoteServerSocketFactoryCls.getMethod("getKeystoreFile", partypes2);
-                Object arglist2[] = new Object[1];
-                keystoreFileObj = meth2.invoke(this.resource, arglist2);
+                Method meth2 = coyoteServerSocketFactoryCls.getMethod("getKeystoreFile", null);
+                keystoreFileObj = meth2.invoke(this.resource, null);
             }
-           
         }    
-        return keystoreFileObj.toString();
+        
+        if (keystoreFileObj == null) {
+            return null;
+        } else {
+            return keystoreFileObj.toString();
+        }
+        
     }
     
     
@@ -206,14 +203,15 @@ public class ConnectorMBean extends BaseModelMBean {
      */
     public void setKeystoreFile(String keystoreFile)
         throws Exception {
-            
+        
+        if (keystoreFile == null) {
+            keystoreFile = "";
+        }
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
         if (coyoteConnectorCls.isInstance(this.resource)) {
             // get factory
-            Class partypes1 [] = new Class[1];
-            Method meth1 = coyoteConnectorCls.getMethod("getFactory", partypes1);
-            Object arglist1[] = new Object[1];
-            Object factory = meth1.invoke(this.resource, arglist1);
+            Method meth1 = coyoteConnectorCls.getMethod("getFactory", null);
+            Object factory = meth1.invoke(this.resource, null);
             Class coyoteServerSocketFactoryCls = Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // set keystoreFile
@@ -242,21 +240,23 @@ public class ConnectorMBean extends BaseModelMBean {
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
         if (coyoteConnectorCls.isInstance(this.resource)) {
             // get factory
-            Class partypes1 [] = new Class[1];
-            Method meth1 = coyoteConnectorCls.getMethod("getKeystoreFile", partypes1);
-            Object arglist1[] = new Object[1];
-            Object factory = meth1.invoke(this.resource, arglist1);
+            Method meth1 = coyoteConnectorCls.getMethod("getFactory", null);
+            Object factory = meth1.invoke(this.resource, null);
             Class coyoteServerSocketFactoryCls = Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // get keystorePass
-                Class partypes2 [] = new Class[1];
-                Method meth2 = coyoteServerSocketFactoryCls.getMethod("getKeystorePass", partypes2);
-                Object arglist2[] = new Object[1];
-                keystorePassObj = meth2.invoke(this.resource, arglist2);
+                Method meth2 = coyoteServerSocketFactoryCls.getMethod("getKeystorePass", null);
+                keystorePassObj = meth2.invoke(this.resource, null);
             }
            
         }    
-        return keystorePassObj.toString();
+        
+        if (keystorePassObj == null) {
+            return null;
+        } else {
+            return keystorePassObj.toString();
+        }
+        
     }
     
     
@@ -268,13 +268,14 @@ public class ConnectorMBean extends BaseModelMBean {
     public void setKeystorePass(String keystorePass)
         throws Exception {
             
+        if (keystorePass == null) {
+            keystorePass = "";
+        }
         Class coyoteConnectorCls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
         if (coyoteConnectorCls.isInstance(this.resource)) {
             // get factory
-            Class partypes1 [] = new Class[1];
-            Method meth1 = coyoteConnectorCls.getMethod("getFactory", partypes1);
-            Object arglist1[] = new Object[1];
-            Object factory = meth1.invoke(this.resource, arglist1);
+            Method meth1 = coyoteConnectorCls.getMethod("getFactory", null);
+            Object factory = meth1.invoke(this.resource, null);
             Class coyoteServerSocketFactoryCls = Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
             if (coyoteServerSocketFactoryCls.isInstance(factory)) {
                 // set keystorePass
