@@ -1,7 +1,8 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" %>
+<%@ page language="java" import="java.net.URLEncoder" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
 
 <html:html locale="true">
@@ -35,9 +36,12 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <%--
-            <controls:action url="">  <bean:message key="actions.thisrealm.delete"/> </controls:action>
-            --%>
+            <logic:notEqual name="userDatabaseRealmForm" property="adminAction" value="Create">              
+                <controls:action url='<%= "/DeleteRealm.do?select=" + 
+                                        URLEncoder.encode(thisObjectName) %>'>  
+                <bean:message key="actions.realms.delete"/> 
+            </controls:action>           
+           </logic:notEqual>          
        </controls:actions>   
          </div>
       </td>

@@ -179,17 +179,16 @@ public final class SaveLoggerAction extends Action {
                 String parent = lform.getParentObjectName();                
                 String objectName = DeleteLoggerAction.getObjectName(parent);
                 
-                ObjectName pname = new ObjectName(parent);                                
+                ObjectName pname = new ObjectName(parent);
                 StringBuffer sb = new StringBuffer(pname.getDomain());                    
                 
-                // System.out.println("Parent mBean = " + parent);
-                // FIX ME-- should Service be converted to Engine,
-                // as createLogger in MBeanFactory requires Engine ObjectName??              
-                try {                        
+                // For service, create the corresponding Engine mBean  
+                // Parent in this case needs to be the container mBean for the service 
+                try {                                                        
                     if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
                         sb.append(":type=Engine,service=");
                         sb.append(pname.getKeyProperty("name"));
-                        objectName = sb.toString();
+                        parent = sb.toString();
                     }
                 } catch (Exception e) {
                     String message =
@@ -199,7 +198,7 @@ public final class SaveLoggerAction extends Action {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
                     return (null);
                 }
-                
+                                                
                 // Ensure that the requested logger name is unique
                 ObjectName oname =
                     new ObjectName(objectName);
@@ -222,13 +221,11 @@ public final class SaveLoggerAction extends Action {
                 lObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardLoggerTypes);
-               
                 // Add the new Logger to our tree control node
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    //String parentName = TomcatTreeBuilder.SERVER_TYPE;
-                    TreeControlNode parentNode = control.findNode(parent);
+                    TreeControlNode parentNode = control.findNode(lform.getParentObjectName());
                     if (parentNode != null) {
                         String nodeLabel =
                            "Logger for " + parentNode.getLabel();

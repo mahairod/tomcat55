@@ -79,12 +79,10 @@
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
-              <%--
               <controls:action url='<%= "/AddLogger.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.create"/>
               </controls:action>
-              --%>
               <controls:action url='<%= "/DeleteLogger.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.loggers.deletes"/> 
@@ -102,20 +100,24 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
+            <controls:action url='<%= "/AddRealm.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.realms.create"/>
+            </controls:action>              
+              --%>
+              <controls:action url='<%= "/DeleteRealm.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'> 
+                <bean:message key="actions.realms.deletes"/> 
+              </controls:action>
+              <controls:action disabled="true"> 
+                ------------------------------------- 
+              </controls:action>
+              <%--
               <controls:action url="">
-                <bean:message key="actions.userrealm.create"/>
+                <bean:message key="actions.valves.create"/>
               </controls:action>
               <controls:action url="">
-                <bean:message key="actions.userrealm.delete"/>
-              </controls:action>
-              <controls:action>
-                -------------------------------------
-              </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.valve.create"/>
-              </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.valve.delete"/>
+                <bean:message key="actions.valves.deletes"/>
               </controls:action>
               <controls:action>
                 -------------------------------------
