@@ -73,6 +73,9 @@ General New Features:
 [4.1.29] DBCP:
          Upgrade to DBCP 1.1.
 
+[4.1.31] License
+         Upgrade to Apache License 2.0
+
 
 ---------------------
 Catalina New Features:
@@ -146,6 +149,11 @@ Catalina New Features:
 [4.1.29] DefaultContext:
          Added support for nesting a Context Listener and a Webapp Loader 
          within a DefaultContext.
+
+[4.1.31] #18273
+         CGI Servlet
+         Add support for optionally passing the shell environment
+         variables to the CGI script
 
 
 -------------------
@@ -324,6 +332,113 @@ Generic Bug Fixes:
 
 [4.1.31] Docs:
          Correctly document default value for useBodyEncodingForURI
+
+[4.1.31] #14193
+         Startup and Admin webapp
+         Exceptions on startup and errors in admin webapp when default
+         context is
+ defined with loader and/or manager.
+
+[4.1.31] #22268
+         Admin webapp
+         User password was truncated to 32 characters
+
+[4.1.31] Admin webapp
+         Fixed validation for various forms
+
+[4.1.31] #24085
+         Admin webapp
+         The group and role list disappear when using "Create New User" if
+         "save" clicked without filling in form.
+
+[4.1.31] #13805
+         Classloader docs
+         Update docs to show that the shared directory is relative to
+         CATALINA_BASE not CATALINA_HOME.
+
+[4.1.31] #bug 13772
+         Classloader docs
+         Add a link to the security manager how-to.
+
+[4.1.31] #20770
+         Admin webapp
+         workDir attribute now retain in context
+
+[4.1.31] #16507
+         Documentation
+         Update valve docs to provide pointer to the Jakarta Regexp docs
+
+[4.1.31] #20709
+         Windows installer
+         Use same setting for 'Djava.endorsed.dirs' when starting via menu
+         as for service and batch file.
+
+[4.1.31] #20091
+         web.xml
+         Correct grammer and typo in comments
+
+[4.1.31] #18383
+         Admin webapp
+         Set path to "" rather than "/" for a new root context.
+
+[4.1.31] #19521
+         Docs
+         Add warning to RequestDumperValve docs to make users aware of
+         possible side effects.
+
+[4.1.31] Windows installer
+         Update to use NSIS version 2. Only uses new features where
+         required to get installer task to complete. Some minor changes
+         in behaviour but otherwise remains consistent with previous
+         behaviour.
+
+[4.1.31] #14199
+         Examples webapp
+         Correct XMLnamespace declaration
+
+[4.1.31] #20885
+         Docs
+         Align the description of the reload target in application
+         developer guide with the
+ description of reload from the manager
+         documentation.
+
+[4.1.31] #19869
+         BUILDING.txt
+         Update to reflect 4.1 branch, missing libraries, updated
+         libraries and add steps to build installer and release
+         distributions
+
+[4.1.31] #23203
+         RUNNING.txt
+         JDK should be renamed to J2SE SDK. Add note about using SDK
+         rather than JRE.
+
+[4.1.31] #23520
+         RUNNING.txt
+         Add shared to list of directories relative to CATALINA_BASE.
+
+[4.1.31] Build script
+         Modify build scripts so build.properties.sample becomes a
+         default that can be overridden by a build.properties file.
+
+[4.1.31] #23880
+         Docs
+         Correct ant path in Jasper how-to
+
+[4.1.31] #18433
+         Docs
+         Clarify relationship between autodeploy and livedeploy
+
+[4.1.31] #6218
+         Examples webapp
+         Provide support for renaming the examples context without
+         breaking the examples
+
+[4.1.31] #12516
+         Docs
+         Clarify that the cached Principal is not retained across
+         session serialisation
 
 
 ------------------
@@ -902,12 +1017,6 @@ Catalina Bug Fixes:
          CGI Servlet
          Make parameter encoding configurable. Default remains as is.
 
-[4.1.31] #14193
-         Startup and Admin webapp
-         Exceptions on startup and errors in admin webapp when default
-         context is
- defined with loader and/or manager.
-
 [4.1.31] #10469
          WebappClassloader
          Fix inconsistent encoding of URLs
@@ -953,15 +1062,6 @@ Catalina Bug Fixes:
          Use correct escaping (replace single ' with double '') in
          French translations
 
-[4.1.31] #13805
-         Classloader docs
-         Update docs to show that the shared directory is relative to
-         CATALINA_BASE not CATALINA_HOME.
-
-[4.1.31] #bug 13772
-         Classloader docs
-         Add a link to the security manager how-to.
-
 [4.1.31] #17859
          Startup
          Provide cygwin friendly JAVA_ENDORSED_DIRS property
@@ -987,10 +1087,6 @@ Catalina Bug Fixes:
 [4.1.31] #18079
          StandardContext
          Cached attribute of resources now has an effect
-
-[4.1.31] #20770
-         Admin webapp
-         workDir attribute now retain in context
 
 [4.1.31] #18369
          JDBCStore
@@ -1022,21 +1118,128 @@ Catalina Bug Fixes:
 [4.1.31] Tests
          Change 'asset()' to 'assertTrue()' to fix build problem on 1.4 JDK
 
-[4.1.31] #22268
-         Admin webapp
-         User password was truncated to 32 characters
+[4.1.31] #9851
+         Digest authentication
+         Fix failures with Mozilla and other issues re RFC2617
 
-[4.1.31] Admin webapp
-         Fixed validation for various forms
+[4.1.31] ApplicationContext
+         Fix getContext("/") so current context is returned if called
+         whilst in the root context
 
-[4.1.31] #24085
-         Admin webapp
-         The group and role list disappear when using "Create New User" if
-         "save" clicked without filling in form.
+[4.1.31] #19801
+         ApplicationDispatcher
+         Request dispatcher does not set empty javax.servlet.include request
+         attributes on nested includes.
 
-[4.1.31] #16507
-         Documentation
-         Update valve docs to provide pointer to the Jakarta Regexp docs
+[4.1.31] #18141
+         CGI servlet
+         Support parameters with multiple values in CGI servlet.
+
+[4.1.31] #19545
+         CGI servlet
+         CONTENT_LENGTH was recalculated after script had been executed
+           and hence had no effect
+         Parameters were being sent to the script twice
+
+[4.1.31] #20786
+         Manger servlet
+         Session output not formatted correctly for session inactive for
+         <10 minutes.
+
+[4.1.31] JDBCStore
+         Fix requirement for a great deal of unnecessary db queries to
+         manage the persisted data. This could severly impact its ability
+         to scale to large numbers of sessions.
+
+[4.1.31] Sessions
+         Improve session timeout handling
+
+[4.1.31] #13924
+         Error dispatcher
+         The spec states if an error page declaration doesn't match the
+         original exception and the exception is an instance of
+         ServletException then the exception should be unwrapped and a
+         second pass made of the error page declarations.
+
+[4.1.31] #22176
+         Basic authenticator
+         Allow username and/or password to start and/or end in a space.
+         This is required by section 2 of RFC2617.
+
+[4.1.31] #21790
+         Various servlets, valves and docs
+         Modify noshade references to align with XHTML reference guide
+
+[4.1.31] #16877
+         Startup
+         Null pointer exception on startup if context specifies
+         Path=... rather than path=...
+
+[4.1.31] #26174
+         ApplicationContext
+         NoClassDefFoundError when calling getNamedDispatcher with
+         security manager
+
+[4.1.31] #25528
+         WebappClassloader
+         Poor performance with RMI
+
+[4.1.31] #23572
+         JNDI realm
+         The alternateURL should be used in more cases than just a
+         naming excetion (eg network error)
+
+[4.1.31] CGI Servlet
+         Correctly handle binary responses (eg images)
+
+[4.1.31] #22300
+         Startup
+         Ensure digester uses right classloder when digester jar is in
+         common/lib as well.
+
+[4.1.31] #18650
+         Startup
+         Provide a better message in the log if the temp directory is
+         missing.
+
+[4.1.31] #12056
+         Startup
+         Test for execute rather than read permissions in scripts since
+         execute is what we need. Add missing JDK not JRE warning.
+
+[4.1.31] #26375
+         Security
+         Fix package sealing test for partially sealed jars
+
+[4.1.31] #27293
+         Default servlet
+         If-Unmodified-Since now takes account of HTTP header not
+         including milliseconds
+
+[4.1.31] #26021
+         Service
+         When running as a service, swallowOuput had no effect
+
+[4.1.31] #13097
+         Embedded
+         Incorrect form of address used in Embedded
+
+[4.1.31] #27572
+         Valves
+         Fix typo in French translation
+
+[4.1.31] #12089
+         Startup
+         CATALINA_HOME ignored and reset by catalina.sh
+
+[4.1.31] #22563
+         Digest authenticator
+         Remove quotes from nc token in digest header if present
+
+[4.1.31] #29956
+         Single Sign on
+         Incorrect handling of negative timeout in
+         SingleSignOn.sessionEvent()
 
 
 ----------------
@@ -1269,6 +1472,14 @@ Coyote Bug Fixes:
          Fix potential Dos condition when given a mal-formed URI.
 
 [4.1.30] Upgrade to Connectors from Tomcat 5.0.18.
+
+[4.1.31] #21566
+         server-noexamples.xml
+         Use coyote connectors
+
+[4.1.31] #21184
+         http connector
+         Rename LocalString_fr.properties to LocalStrings_fr.properties
 
 
 ----------------
@@ -1622,6 +1833,44 @@ Jasper Bug Fixes:
 [4.1.31] #16113
          Servlet wrapper
          removing then replacing a jsp page continues to give a 404
+
+[4.1.31] #19049
+         Runtime
+         Clarify error message when nesting exceptions
+
+[4.1.31] #19238
+         Servlet wrapper
+         Don't wrap a ServletException in a JasperException. A custom
+         exception in a JSP will be be wrapped in a ServletException.
+         If this is further wrapped in a JasperException Tomcat can't get at
+         the original exception and error page mappings in web.xml are not
+         applied.
+
+[4.1.31] Compiler
+         Ensure spaces in tomcat install path (if any) are decoded before
+         passing to javac. This was causing the admin app to fail when
+         deployed in uncompiled form to a tomcat instance with a space in
+         it's path.
+
+[4.1.31] #20953
+         Compiler
+         Fix NPE when running in standalone mode and no useful error message.
+
+[4.1.31] #18778
+         Compiler
+         popBody not always called as expected resulting in unexpected output
+
+[4.1.31] #27253
+         Build script
+         Copy ant-launcher.jar if necessary for ant 1.6+
+
+[4.1.31] #26025
+         Compiler
+         Fix FD leak
+
+[4.1.31] #30306
+         Loader
+         Fix issue where security manager was null
 
 
 ============================
