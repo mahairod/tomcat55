@@ -626,6 +626,8 @@ Section Uninstall
   RMDir /r "$INSTDIR\src"
   RMDir "$INSTDIR"
 
+  IfSilent Removed 0
+
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
