@@ -514,9 +514,7 @@ conn.close();
 </source>
 
     <p>Note that the resource name (here, <code>jdbc/EmployeeDB</code>) must
-    match the value specified in the web application deployment descriptor.
-    Customize the value of the <code>mail.smtp.host</code> parameter to
-    point at the server that provides SMTP service for your network.</p>
+    match the value specified in the web application deployment descriptor.</p>
 
     <p>This example assumes that you are using the HypersonicSQL database
     JDBC driver.  Customize the <code>driverClassName</code> and
