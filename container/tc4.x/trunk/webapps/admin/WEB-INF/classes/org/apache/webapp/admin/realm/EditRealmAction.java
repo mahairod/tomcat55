@@ -383,16 +383,16 @@ public class EditRealmAction extends Action {
             attribute = "digest";
             realmFm.setDigest
                 ((String) mBServer.getAttribute(rname, attribute));
-            attribute = "roleSearch";
+            attribute = "roleSubtree";
             realmFm.setSearch
-                ((String) mBServer.getAttribute(rname, attribute));
+                    (((Boolean) mBServer.getAttribute(rname, attribute)).toString());
             attribute = "roleName";
             realmFm.setRoleAttribute
                 ((String) mBServer.getAttribute(rname, attribute));
             attribute = "roleBase";
             realmFm.setRoleBase
                 ((String) mBServer.getAttribute(rname, attribute));
-            attribute = "roleSubtree";
+            attribute = "roleSearch";
             realmFm.setRolePattern
                 ((String) mBServer.getAttribute(rname, attribute));
             attribute = "contextFactory";

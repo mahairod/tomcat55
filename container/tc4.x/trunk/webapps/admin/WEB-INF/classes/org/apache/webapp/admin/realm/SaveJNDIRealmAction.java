@@ -288,7 +288,7 @@ public final class SaveJNDIRealmAction extends Action {
 
             attribute = "roleSearch";
             mBServer.setAttribute(roname,
-                                  new Attribute("roleSearch",  rform.getSearch()));
+                                  new Attribute("roleSearch",  rform.getRolePattern()));
 
             attribute = "roleName";
             mBServer.setAttribute(roname,
@@ -300,7 +300,7 @@ public final class SaveJNDIRealmAction extends Action {
 
             attribute = "roleSubtree";
             mBServer.setAttribute(roname,
-                                  new Attribute("roleSubtree",  rform.getRolePattern()));
+                                  new Attribute("roleSubtree",  new Boolean(rform.getSearch())));
 
             attribute = "roleBase";
             mBServer.setAttribute(roname,
