@@ -215,8 +215,10 @@
 
     </ant>
 
+  	<!--
     <copy file="${jtc.home}/jk/conf/jk2.properties" 
         todir="${tomcat.build}/conf" />
+    -->
 
   	<!-- Protocol handlers - AJP -->
 	<jar jarfile="${tomcat.build}/server/lib/tomcat-ajp.jar" index="true">
