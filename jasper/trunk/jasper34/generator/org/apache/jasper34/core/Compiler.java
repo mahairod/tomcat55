@@ -100,12 +100,16 @@ public class Compiler {
         this.ctxt = ctxt;
 	this.liaison=liaison;
     }
+    public Compiler(JspCompilationContext ctxt) {
+        this.ctxt = ctxt;
+	this.liaison=null;
+    }
     
     /** 
      * Compile the jsp file from the current engine context
      *
      * @return true if the class file was outdated the jsp file
-     *         was recompiled. 
+     *         was recomp iled. 
      */
     public boolean compile()
         throws FileNotFoundException, JasperException, Exception 

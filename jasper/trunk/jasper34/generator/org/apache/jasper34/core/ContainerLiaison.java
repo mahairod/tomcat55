@@ -63,6 +63,9 @@ import java.text.MessageFormat;
 import org.apache.tomcat.util.log.Log;
 import org.apache.tomcat.util.res.StringManager;
 
+import org.apache.jasper34.jsptree.*;
+import java.io.IOException;
+import org.apache.jasper34.runtime.JasperException;
 // XXX Not used yet - will replace part of Constants and JspCompilationCtx
 
 
@@ -115,13 +118,13 @@ public abstract class ContainerLiaison {
 	You can use the default implementation ( TagLibReader )
 	or container specific code.
     */
-    public void readWebXml( TagLibraries tli )
+    public abstract void readWebXml( TagLibraries tli )
 	throws IOException, JasperException;
 
     /** Read a tag lib descriptor ( tld ). You can use the default
 	implementation ( TagLibReader ).
     */
-    public void readTLD( TagLibraries libs, TagLibraryInfoImpl tl,
+    public abstract void readTLD( TagLibraries libs, TagLibraryInfoImpl tl,
 			 String prefix, String uri )
 	throws IOException, JasperException;
 
@@ -131,13 +134,13 @@ public abstract class ContainerLiaison {
     /**
      * The classpath that is passed off to the Java compiler. 
      */
-    public String getClassPath();
+    public abstract String getClassPath();
 
     /**
      * What class loader to use for loading classes while compiling
      * this JSP? I don't think this is used right now -- akv. 
      */
-    public ClassLoader getClassLoader();
+    public abstract  ClassLoader getClassLoader();
 
     // -------------------- Locations --------------------
 
@@ -146,7 +149,7 @@ public abstract class ContainerLiaison {
      * FIXME: In some places this is called scratchDir and in some
      * other places it is called outputDir.
      */
-    public String getOutputDir();
+    public abstract String getOutputDir();
 
 
     

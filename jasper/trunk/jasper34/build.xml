@@ -139,6 +139,7 @@
     <jar jarfile="${build.dir}/jasper34_liaison.jar" 
 	 basedir="${build.dir}/classes"> 
       <include name="org/apache/jasper34/servlet/**"/>    
+      <include name="org/apache/jasper34/liaison/**"/>    
       <include name="org/apache/jasper34/tomcat33/**"/>    
     </jar>
 
