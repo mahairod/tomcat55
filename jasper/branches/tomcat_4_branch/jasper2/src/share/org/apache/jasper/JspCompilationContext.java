@@ -494,9 +494,6 @@ public class JspCompilationContext {
         throws JasperException, FileNotFoundException
     {
         try {
-            if (servletClass == null && !options.getDevelopment()) {
-                compile();
-            }
             jspLoader = new JasperLoader
                 (outUrls,
                  getServletPackageName() + "." + getServletClassName(),
@@ -506,14 +503,9 @@ public class JspCompilationContext {
             
             servletClass = jspLoader.loadClass(
                  getServletPackageName() + "." + getServletClassName());
-        } catch (FileNotFoundException ex) {
-            jspCompiler.removeGeneratedFiles();
-            throw ex;
         } catch (ClassNotFoundException cex) {
             throw new JasperException(
                 Constants.getString("jsp.error.unable.load"),cex);
-        } catch (JasperException ex) {
-            throw ex;
         } catch (Exception ex) {
             throw new JasperException
                 (Constants.getString("jsp.error.unable.compile"), ex);
