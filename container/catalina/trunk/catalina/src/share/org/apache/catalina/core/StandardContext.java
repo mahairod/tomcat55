@@ -4397,12 +4397,7 @@ public class StandardContext
             } else if (getManager() instanceof PersistentManagerBase) {
                 PersistentManagerBase pManager = 
                     (PersistentManagerBase) getManager();
-                pManager.processExpires();
-                pManager.processPersistenceChecks();
-                if ((pManager.getStore() != null) 
-                    && (pManager.getStore() instanceof StoreBase)) {
-                    ((StoreBase) pManager.getStore()).processExpires();
-                }
+                pManager.backgroundProcess();
             }
         }
 
