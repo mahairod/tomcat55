@@ -654,7 +654,7 @@ public class DeltaManager
             //the channel is already running
             log.info("Starting clustering manager...:"+getName());
             if ( cluster == null ) {
-                log.info("Starting... no cluster associated with this context:"+getName());
+                log.error("Starting... no cluster associated with this context:"+getName());
                 return;
             }
 
@@ -869,7 +869,7 @@ public class DeltaManager
         */
        protected void messageReceived(SessionMessage msg, Member sender) {
            try {
-               log.info("Manager ("+name+") Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
+               log.debug("Manager ("+name+") Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
                switch (msg.getEventType()) {
                    case SessionMessage.EVT_GET_ALL_SESSIONS: {
                        //get a list of all the session from this manager
