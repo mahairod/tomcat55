@@ -1341,7 +1341,14 @@ public class StandardDefaultContext
                 }
                 listener.addResource(contextEntry);
             }
-            String [] envRefs = findResourceEnvRefs();
+            ContextResourceLink [] resourceLinks = findResourceLinks();
+            for (int i = 0; i < resourceLinks.length; i++) {
+                ContextResourceLink contextEntry = resourceLinks[i];
+                if (contextResources.exists(contextEntry.getName())) {
+                    listener.removeResourceLink(contextEntry.getName());
+                }
+                listener.addResourceLink(contextEntry);
+            }            String [] envRefs = findResourceEnvRefs();
             for (int i = 0; i < envRefs.length; i++) {
                 if (contextResources.exists(envRefs[i])) {
                     listener.removeResourceEnvRef(envRefs[i]);
@@ -1468,6 +1475,10 @@ public class StandardDefaultContext
             ContextResource [] resources = findResources();
             for( int i = 0; i < resources.length; i++ ) {
                 context.addResource(resources[i]);
+            }
+            ContextResourceLink [] resourceLinks = findResourceLinks();
+            for( int i = 0; i < resourceLinks.length; i++ ) {
+                context.addResourceLink(resourceLinks[i]);
             }
             String [] envRefs = findResourceEnvRefs();
             for( int i = 0; i < envRefs.length; i++ ) {
