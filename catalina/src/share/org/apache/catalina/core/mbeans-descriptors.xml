@@ -175,6 +175,11 @@
                description="Time (in milliseconds since January 1, 1970, 00:00:00) when this context was started"
                type="long"/>
                
+    <attribute name="processingTime"
+               description="Cumulative execution times of all servlets in this context"
+               type="long"
+               writeable="false" />
+
     <attribute name="state"
                description="Current state of this component"
                type="int"/>
