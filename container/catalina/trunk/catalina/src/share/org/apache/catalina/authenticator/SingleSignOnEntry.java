@@ -66,6 +66,9 @@ public class SingleSignOnEntry
         updateCredentials(principal, authType, username, password);
     }
 
+    public SingleSignOnEntry() {
+    }
+
     // ------------------------------------------------------- Package Methods
 
     /**
