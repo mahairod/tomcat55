@@ -133,6 +133,7 @@ public class JspUtil {
     {
 	XmlDocument tld;
 	XmlDocumentBuilder builder = new XmlDocumentBuilder();
+	builder.setIgnoringLexicalInfo(true);
 	
         com.sun.xml.parser.ValidatingParser 
             parser = new com.sun.xml.parser.ValidatingParser(true);
