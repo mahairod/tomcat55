@@ -268,11 +268,11 @@ public class StandardWrapper
 
     /**
      * Return the available date/time for this servlet, in milliseconds since
-     * the epoch.  If this date/time is Long.MAX_VALUE, it is considered to mean 
-     * that unavailability is permanent and any request for this servlet will return 
-     * an SC_NOT_FOUND error.  If this date/time is in the future, any request for 
-     * this servlet will return an SC_SERVICE_UNAVAILABLE error.  If it is zero, 
-     * the servlet is currently available. 
+     * the epoch.  If this date/time is Long.MAX_VALUE, it is considered to mean
+     * that unavailability is permanent and any request for this servlet will return
+     * an SC_NOT_FOUND error.  If this date/time is in the future, any request for
+     * this servlet will return an SC_SERVICE_UNAVAILABLE error.  If it is zero,
+     * the servlet is currently available.
      */
     public long getAvailable() {
 
@@ -283,9 +283,9 @@ public class StandardWrapper
 
     /**
      * Set the available date/time for this servlet, in milliseconds since the
-     * epoch.  If this date/time is Long.MAX_VALUE, it is considered to mean 
-     * that unavailability is permanent and any request for this servlet will return 
-     * an SC_NOT_FOUND error. If this date/time is in the future, any request for 
+     * epoch.  If this date/time is Long.MAX_VALUE, it is considered to mean
+     * that unavailability is permanent and any request for this servlet will return
+     * an SC_NOT_FOUND error. If this date/time is in the future, any request for
      * this servlet will return an SC_SERVICE_UNAVAILABLE error.
      *
      * @param available The new available date/time
@@ -462,7 +462,7 @@ public class StandardWrapper
 
         int oldMaxInstances = this.maxInstances;
         this.maxInstances = maxInstances;
-        support.firePropertyChange("maxInstances", oldMaxInstances, 
+        support.firePropertyChange("maxInstances", oldMaxInstances,
                                    this.maxInstances);
 
     }
@@ -631,7 +631,7 @@ public class StandardWrapper
 
     /**
      * Add a mapping associated with the Wrapper.
-     * 
+     *
      * @param pattern The new wrapper mapping
      */
     public void addMapping(String mapping) {
@@ -903,14 +903,14 @@ public class StandardWrapper
                 if (jspWrapper != null)
                     actualClass = jspWrapper.getServletClass();
             }
-    
+
             // Complain if no servlet class has been specified
             if (actualClass == null) {
                 unavailable(null);
                 throw new ServletException
                     (sm.getString("standardWrapper.notClass", getName()));
             }
-    
+
             // Acquire an instance of the class loader to be used
             Loader loader = getLoader();
             if (loader == null) {
@@ -918,14 +918,14 @@ public class StandardWrapper
                 throw new ServletException
                     (sm.getString("standardWrapper.missingLoader", getName()));
             }
-    
+
             ClassLoader classLoader = loader.getClassLoader();
-    
+
             // Special case class loader for a container provided servlet
             if (isContainerProvidedServlet(actualClass)) {
                 classLoader = this.getClass().getClassLoader();
             }
-    
+
             // Load the specified servlet class from the appropriate class loader
             Class classClass = null;
             try {
@@ -934,7 +934,7 @@ public class StandardWrapper
                     final String factualClass = actualClass;
                     try{
                         classClass = (Class)AccessController.doPrivileged(
-                                new PrivilegedExceptionAction(){                                
+                                new PrivilegedExceptionAction(){
                                     public Object run() throws Exception{
                                         if (fclassLoader != null) {
                                             return fclassLoader.loadClass(factualClass);
@@ -942,17 +942,17 @@ public class StandardWrapper
                                             return Class.forName(factualClass);
                                         }
                                     }
-                        });    
+                        });
                     } catch(PrivilegedActionException pax){
                         Exception ex = pax.getException();
                         if (ex instanceof ClassNotFoundException){
                             throw (ClassNotFoundException)ex;
                         } else {
-                            log.error( "Error loading " 
+                            log.error( "Error loading "
                                 + fclassLoader + " " + factualClass, ex );
                         }
                     }
-                } else {                
+                } else {
                     if (classLoader != null) {
                         classClass = classLoader.loadClass(actualClass);
                     } else {
@@ -961,8 +961,8 @@ public class StandardWrapper
                 }
             } catch (ClassNotFoundException e) {
                 unavailable(null);
-                
-                
+
+
                 log.error( "Error loading " + classLoader + " " + actualClass, e );
                 throw new ServletException
                     (sm.getString("standardWrapper.missingClass", actualClass),
@@ -974,7 +974,7 @@ public class StandardWrapper
                 throw new ServletException
                     (sm.getString("standardWrapper.missingClass", actualClass));
             }
-    
+
             // Instantiate and initialize an instance of the servlet class itself
             try {
                 servlet = (Servlet) classClass.newInstance();
@@ -989,38 +989,38 @@ public class StandardWrapper
                 throw new ServletException
                     (sm.getString("standardWrapper.instantiate", actualClass), e);
             }
-    
-            // Check if loading the servlet in this web application should be 
+
+            // Check if loading the servlet in this web application should be
             // allowed
             if (!isServletAllowed(servlet)) {
                 throw new SecurityException
-                    (sm.getString("standardWrapper.privilegedServlet", 
+                    (sm.getString("standardWrapper.privilegedServlet",
                                   actualClass));
             }
-    
+
             // Special handling for ContainerServlet instances
             if ((servlet instanceof ContainerServlet) &&
                 isContainerProvidedServlet(actualClass)) {
                 ((ContainerServlet) servlet).setWrapper(this);
             }
-    
+
             classLoadTime=System.currentTimeMillis() -t1;
             // Call the initialization method of this servlet
             try {
                 instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
                                                   servlet);
-                
+
                 if( System.getSecurityManager() != null) {
                     Class[] classType = new Class[]{ServletConfig.class};
                     Object[] args = new Object[]{((ServletConfig)facade)};
                     SecurityUtil.doAsPrivilege("init",
                                                servlet,
-                                               classType, 
-                                               args); 
+                                               classType,
+                                               args);
                 } else {
-                    servlet.init(facade);                  
+                    servlet.init(facade);
                 }
-                
+
                 // Invoke jspInit on JSP pages
                 if ((loadOnStartup >= 0) && (jspFile != null)) {
                     // Invoking jspInit
@@ -1028,16 +1028,16 @@ public class StandardWrapper
                     req.setServletPath(jspFile);
                     req.setQueryString("jsp_precompile=true");
                     DummyResponse res = new DummyResponse();
-                    
+
                     if( System.getSecurityManager() != null) {
-                        Class[] classType = new Class[]{ServletRequest.class, 
+                        Class[] classType = new Class[]{ServletRequest.class,
                                                         ServletResponse.class};
                         Object[] args = new Object[]{req, res};
                         SecurityUtil.doAsPrivilege("service",
                                                    servlet,
-                                                   classType, 
-                                                   args);  
-                    } else { 
+                                                   classType,
+                                                   args);
+                    } else {
                         servlet.service(req, res);
                     }
                 }
@@ -1062,7 +1062,7 @@ public class StandardWrapper
                 throw new ServletException
                     (sm.getString("standardWrapper.initException", getName()), f);
             }
-    
+
             // Register our newly initialized instance
             singleThreadModel = servlet instanceof SingleThreadModel;
             if (singleThreadModel) {
@@ -1085,7 +1085,7 @@ public class StandardWrapper
             }
         }
         if( oname != null )
-            registerJMX((ContainerBase)getParent());
+            registerJMX((StandardContext)getParent());
         return servlet;
 
     }
@@ -1238,15 +1238,15 @@ public class StandardWrapper
         try {
             instanceSupport.fireInstanceEvent
               (InstanceEvent.BEFORE_DESTROY_EVENT, instance);
-            
+
             Thread.currentThread().setContextClassLoader(classLoader);
             if( System.getSecurityManager() != null) {
                 SecurityUtil.doAsPrivilege("destroy",
-                                           instance);  
-            } else { 
+                                           instance);
+            } else {
                 instance.destroy();
             }
-            
+
             instanceSupport.fireInstanceEvent
               (InstanceEvent.AFTER_DESTROY_EVENT, instance);
         } catch (Throwable t) {
@@ -1285,8 +1285,8 @@ public class StandardWrapper
                 while (!instancePool.isEmpty()) {
                     if( System.getSecurityManager() != null) {
                         SecurityUtil.doAsPrivilege("destroy",
-                                                   ((Servlet) instancePool.pop()));  
-                    } else { 
+                                                   ((Servlet) instancePool.pop()));
+                    } else {
                         ((Servlet) instancePool.pop()).destroy();
                     }
                 }
@@ -1296,7 +1296,7 @@ public class StandardWrapper
                 unloading = false;
                 fireContainerEvent("unload", this);
                 throw new ServletException
-                    (sm.getString("standardWrapper.destroyException", 
+                    (sm.getString("standardWrapper.destroyException",
                                   getName()), t);
             } finally {
                 // restore the context ClassLoader
@@ -1453,7 +1453,7 @@ public class StandardWrapper
     private boolean isServletAllowed(Object servlet) {
 
         if (servlet instanceof ContainerServlet) {
-            if (((Context) getParent()).getPrivileged() 
+            if (((Context) getParent()).getPrivileged()
                 || (servlet.getClass().getName().equals
                     ("org.apache.catalina.servlets.InvokerServlet"))) {
                 return (true);
@@ -1530,7 +1530,7 @@ public class StandardWrapper
 
     }
 
-    protected void registerJMX(ContainerBase ctx) {
+    protected void registerJMX(StandardContext ctx) {
         try {
             String name=this.getJspFile();
             if( name==null ) {
@@ -1542,7 +1542,9 @@ public class StandardWrapper
             String webMod= "//" + ((hostName==null)? "DEFAULT" :hostName ) +
                     (("".equals(parentName) ) ? "/" : parentName );
             String oname="j2eeType=Servlet,name=" + name + ",WebModule=" +
-                    webMod + ctx.getJSR77Suffix();
+                    webMod + ",J2EEApplication=" +
+                    ctx.getJ2EEApplication() + ",J2EEServer=" +
+                    ctx.getJ2EEServer();
 
             Registry.getRegistry().registerComponent(this,
                     ctx.getDomain(), "Servlet", oname);
