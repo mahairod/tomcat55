@@ -3439,13 +3439,13 @@ public class StandardContext
 
         Hashtable contextEnv = new Hashtable();
         javax.naming.Context namingContext = 
-            new NamingContext(contextEnv, getName());
-        ContextAccessController.setSecurityToken(getName(), this);
+            new NamingContext(contextEnv, getNamingContextName());
+        ContextAccessController.setSecurityToken(getNamingContextName(), this);
         ContextBindings.bindContext(this, namingContext, this);
         ContextBindings.bindThread(this, this);
 
         // Setting the context in read/write mode
-        ContextAccessController.setWritable(getName(), this);
+        ContextAccessController.setWritable(getNamingContextName(), this);
 
         // Creating the comp subcontext
         javax.naming.Context compCtx = namingContext.createSubcontext("comp");
@@ -3576,7 +3576,7 @@ public class StandardContext
         }
 
         // Setting the context in read only mode
-        ContextAccessController.setReadOnly(getName());
+        ContextAccessController.setReadOnly(getNamingContextName());
 
         ContextBindings.unbindThread(this, this);
 
@@ -3584,6 +3584,19 @@ public class StandardContext
         ContextBindings.bindClassLoader
             (this, this, getLoader().getClassLoader());
 
+    }
+
+
+    /**
+     * Get naming context full name.
+     */
+    private String getNamingContextName() {
+        Container parent = getParent();
+        if (parent != null) {
+            return  "/" + parent.getName() + getName();
+        } else {
+            return getName();
+        }
     }
 
 
