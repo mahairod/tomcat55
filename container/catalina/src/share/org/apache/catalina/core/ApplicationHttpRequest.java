@@ -544,8 +544,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                 }
                 if (localSession == null) {
                     localSession = context.getManager().createEmptySession();
-                    localSession.setId(other.getId());
+                    localSession.setNew(true);
                     localSession.setValid(true);
+                    localSession.setCreationTime(System.currentTimeMillis());
+                    localSession.setMaxInactiveInterval
+                        (context.getManager().getMaxInactiveInterval());
+                    localSession.setId(other.getId());
                 }
                 session = localSession.getSession();
                 return session;
