@@ -4,7 +4,11 @@
 
 <!-- A "Server" is a singleton element that represents the entire JVM,
      which may contain one or more "Service" instances.  The Server
-     listens for a shutdown command on the indicated port. -->
+     listens for a shutdown command on the indicated port.
+
+     Note:  A "Server" is not itself a "Container", so you may not
+     define subcomponents such as "Valves" or "Loggers" at this level.
+ -->
 
 <Server port="8005" shutdown="SHUTDOWN" debug="0">
 
@@ -12,7 +16,11 @@
   <!-- A "Service" is a collection of one or more "Connectors" that share
        a single "Container" (and therefore the web applications visible
        within that Container).  Normally, that Container is an "Engine",
-       but this is not required. -->
+       but this is not required.
+
+       Note:  A "Service" is not itself a "Container", so you may not
+       define subcomponents such as "Valves" or "Loggers" at this level.
+   -->
 
   <!-- Define the Tomcat Stand-Alone Service -->
   <Service>
