@@ -58,6 +58,7 @@ fi
 CP=$CP:$JASPER_HOME/classes
 for i in $JASPER_HOME/lib/*.jar $JASPER_HOME/jasper/*.jar ; do
   CP=$CP:$i
+CP=$CP:$JASPER_HOME/common/lib/servlet.jar
 done
 
 # convert the existing path to windows
@@ -71,7 +72,7 @@ echo Using CLASSPATH: $CP
 
 # ----- Execute The Requested Command -----------------------------------------
 
-if [ "$1" = "debug" ] ; then
+if [ "$1" = "jspc" ] ; then
 
   shift
   java $JASPER_OPTS -classpath $CP \

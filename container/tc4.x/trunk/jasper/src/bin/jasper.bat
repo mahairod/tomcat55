@@ -42,7 +42,7 @@ rem FIXME below
 set CLASSPATH=%JASPER_HOME%\classes
 for %%i in (%JASPER_HOME%\lib\*.jar) do call %JASPER_HOME%\bin\jpappend.bat %%i
 for %%i in (%JASPER_HOME%\jasper\*.jar) do call %JASPER_HOME%\bin\jpappend.bat %%i
-set CLASSPATH=%CLASSPATH%;%JASPER_HOME%\bin\servlet.jar
+set CLASSPATH=%CLASSPATH%;%JASPER_HOME%\common\lib\servlet.jar
 echo Using CLASSPATH: %CLASSPATH%
 
 rem ----- Execute The Requested Command ---------------------------------------
