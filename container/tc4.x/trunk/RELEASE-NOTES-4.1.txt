@@ -539,6 +539,8 @@ Coyote Bug Fixes:
          JK2 JkMain:
          Initialize https URLs if only JK connector is used.
 
+[4.1.13] Fix broken JSSE/SSL-support and include support for Cert-Auth with
+         JSSE 1.1.x.
 
 ----------------
 Jasper Bug Fixes:
