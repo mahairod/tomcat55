@@ -116,6 +116,7 @@ public class MappedCharDataGenerator extends CharDataGenerator {
 	    }
 	}
 	writer.print(sb.toString());
-	writer.println("\");");
+        writer.print("\");");
+        writer.println();
     }
 }
