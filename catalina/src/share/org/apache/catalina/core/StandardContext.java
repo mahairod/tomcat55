@@ -2251,9 +2251,7 @@ public class StandardContext
      */
     public String findMimeMapping(String extension) {
 
-        synchronized (mimeMappings) {
-            return ((String) mimeMappings.get(extension));
-        }
+        return ((String) mimeMappings.get(extension));
 
     }
 
