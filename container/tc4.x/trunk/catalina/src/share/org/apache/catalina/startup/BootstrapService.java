@@ -97,15 +97,15 @@ public final class BootstrapService
 
 
     /**
-     * Debugging detail level for processing the startup.
+     * Service object used by main.
      */
-    private static int debug = 0;
+    private static Service service = null;
 
 
     /**
-     * Catalina instance.
+     * Debugging detail level for processing the startup.
      */
-    private static Object catalina = null;
+    private static int debug = 0;
 
 
     /**
@@ -123,7 +123,7 @@ public final class BootstrapService
     public void load(ServiceController controller, String arguments[])
         throws Throwable {
 
-        System.out.println("Create Catalina server");
+        log("Create Catalina server");
 
         // Set Catalina path
         setCatalinaHome();
@@ -213,12 +213,11 @@ public final class BootstrapService
     public void start()
         throws Throwable {
 
-        // Call the start() method
-        if (debug >= 1)
-            log("Calling startup class start() method");
+        log("Starting service");
         String methodName = "start";
         Method method = catalinaService.getClass().getMethod(methodName, null);
         method.invoke(catalinaService, null);
+        log("Service started");
 
     }
 
@@ -229,12 +228,11 @@ public final class BootstrapService
     public void stop()
         throws Throwable {
 
-        // Call the stop() method
-        if (debug >= 1)
-            log("Calling startup class stop() method");
+        log("Stopping service");
         String methodName = "stop";
         Method method = catalinaService.getClass().getMethod(methodName, null);
         method.invoke(catalinaService, null);
+        log("Service stopped");
 
     }
 
@@ -243,7 +241,7 @@ public final class BootstrapService
 
 
     /**
-     * The main program for the bootstrap.
+     * Main method, used for testing only.
      *
      * @param args Command line arguments to be processed
      */
@@ -255,103 +253,26 @@ public final class BootstrapService
                 debug = 1;
         }
 
-        try {
-
-            if (catalina == null) {
-
-                System.out.println("Create Catalina server");
-
-                // Construct the class loaders we will need
-                ClassLoader commonLoader = null;
-                ClassLoader catalinaLoader = null;
-                ClassLoader sharedLoader = null;
-                try {
-
-                    File unpacked[] = new File[1];
-                    File packed[] = new File[1];
-                    ClassLoaderFactory.setDebug(debug);
-
-                    unpacked[0] = new File(getCatalinaHome(),
-                                           "common" + File.separator 
-                                           + "classes");
-                    packed[0] = new File(getCatalinaHome(),
-                                         "common" + File.separator + "lib");
-                    commonLoader =
-                        ClassLoaderFactory.createClassLoader
-                        (unpacked, packed, null);
-
-                    unpacked[0] = new File(getCatalinaHome(),
-                                           "server" + File.separator 
-                                           + "classes");
-                    packed[0] = new File(getCatalinaHome(),
-                                         "server" + File.separator + "lib");
-                    catalinaLoader =
-                        ClassLoaderFactory.createClassLoader(unpacked, packed,
-                                                             commonLoader);
-
-                    unpacked[0] = new File(getCatalinaBase(), 
-                                           "shared" + File.separator 
-                                           + "classes");
-                    packed[0] = new File(getCatalinaBase(),
-                                         "shared" + File.separator + "lib");
-                    sharedLoader =
-                        ClassLoaderFactory.createClassLoader(unpacked, packed,
-                                                             commonLoader);
-
-                } catch (Throwable t) {
-
-                    log("Class loader creation threw exception", t);
-                    System.exit(1);
-
-                }
-
-                Thread.currentThread().setContextClassLoader(catalinaLoader);
-
-                SecurityClassLoad.securityClassLoad(catalinaLoader);
-
-                // Load our startup class and call its process() method
-                if (debug >= 1)
-                    log("Loading startup class");
-                Class startupClass =
-                    catalinaLoader.loadClass
-                    ("org.apache.catalina.startup.CatalinaService");
-                Object startupInstance = startupClass.newInstance();
-
-                // Set the shared extensions class loader
-                if (debug >= 1)
-                    log("Setting startup class properties");
-                String methodName = "setParentClassLoader";
-                Class paramTypes[] = new Class[1];
-                paramTypes[0] = Class.forName("java.lang.ClassLoader");
-                Object paramValues[] = new Object[1];
-                paramValues[0] = sharedLoader;
-                Method method = startupInstance.getClass().getMethod
-                    (methodName, paramTypes);
-                method.invoke(startupInstance, paramValues);
-
-                catalina = startupInstance;
-
+        if (service == null) {
+            service = new BootstrapService();
+            try {
+                service.load(null, args);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                return;
             }
-
-            // Call the process() method
-            if (debug >= 1)
-                log("Calling startup class process() method");
-            String methodName = "process";
-            Class paramTypes[] = new Class[1];
-            paramTypes[0] = args.getClass();
-            Object paramValues[] = new Object[1];
-            paramValues[0] = args;
-            Method method =
-                catalina.getClass().getMethod(methodName, paramTypes);
-            method.invoke(catalina, paramValues);
-
-        } catch (Exception e) {
-            System.out.println("Exception during startup processing");
-            e.printStackTrace(System.out);
-            System.exit(2);
         }
 
-        //System.exit(0);
+        try {
+            String command = args[0];
+            if (command.equals("start")) {
+                service.start();
+            } else if (command.equals("stop")) {
+                service.stop();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
 
     }
 

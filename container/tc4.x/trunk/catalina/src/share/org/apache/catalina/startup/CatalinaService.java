@@ -286,8 +286,6 @@ public class CatalinaService extends Catalina {
             }
         }
 
-        System.out.println("Stop server complete");
-
     }
 
 
