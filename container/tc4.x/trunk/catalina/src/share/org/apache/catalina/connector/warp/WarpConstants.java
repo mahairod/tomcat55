@@ -65,8 +65,9 @@ package org.apache.catalina.connector.warp;
  * @version CVS $Id$
  */
 public class WarpConstants {
-    /* The DEBUG flag. (If false debug information will not be compiled in). */
-    public static final boolean DEBUG = true;
+
+    /* The VERSION of this implementation. */
+    public static final String VERSION = "0.5";
 
     /* The RID associated with the connection controller handler (0x00000). */
     public static final int RID_CONNECTION = 0x00000;
