@@ -72,7 +72,7 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
-    <pathelement location="${xmlParserAPIs.jar}"/>
+    <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${classes.dir}"/>
   </path>
 
@@ -103,7 +103,7 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
-    <pathelement location="${xmlParserAPIs.jar}"/>
+    <pathelement location="${xml-apis.jar}"/>
     <pathelement location="${classes.dir}"/>
     <pathelement location="${catalina.build}/tests"/>
   </path>
@@ -167,9 +167,9 @@
     <condition property="jaxp.present">
       <and>
         <available classname="javax.xml.parsers.SAXParser"
-         classpath="${xmlParserAPIs.jar}" />
+         classpath="${xml-apis.jar}" />
         <available classname="org.xml.sax.ContentHandler"
-         classpath="${xmlParserAPIs.jar}" />
+         classpath="${xml-apis.jar}" />
       </and>
     </condition>
     <condition property="javamail.present">
@@ -252,11 +252,11 @@
     <available property="servlet-api.jar.present" file="${servlet-api.jar}" />
     <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
     <available property="xercesImpl.jar.present" file="${xercesImpl.jar}"/>
-    <available property="xmlParserAPIs.jar.present" file="${xmlParserAPIs.jar}"/>
+    <available property="xml-apis.jar.present" file="${xml-apis.jar}"/>
     <condition property="xerces2.jars.present">
       <and>
         <equals arg1="${xercesImpl.jar.present}" arg2="true"/>
-        <equals arg1="${xmlParserAPIs.jar.present}" arg2="true"/>
+        <equals arg1="${xml-apis.jar.present}" arg2="true"/>
       </and>
     </condition>
 
@@ -523,7 +523,7 @@
   </target>
   <target name="copy-xerces2.jars">
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
-    <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
+    <copy todir="${catalina.build}/common/endorsed" file="${xml-apis.jar}"/>
   </target>
 
 

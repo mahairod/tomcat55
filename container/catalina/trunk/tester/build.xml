@@ -92,7 +92,7 @@
 
     <!-- Install Xerces -->
     <copy  todir="${tester.build}/web/WEB-INF/lib" file="${xercesImpl.jar}"/>
-    <copy  todir="${tester.build}/web/WEB-INF/lib" file="${xmlParserAPIs.jar}"/>
+    <copy  todir="${tester.build}/web/WEB-INF/lib" file="${xml-apis.jar}"/>
 
     <!-- Create and install tester library -->
     <mkdir   dir="${tester.build}/web/WEB-INF/lib"/>

@@ -118,6 +118,7 @@ public final class TldConfig  {
         noTldJars.add("tomcat-coyote.jar");
         noTldJars.add("xercesImpl.jar");
         noTldJars.add("xmlParserAPIs.jar");
+        noTldJars.add("xml-apis.jar");
         // JARs from J2SE runtime
         noTldJars.add("sunjce_provider.jar");
         noTldJars.add("ldapsec.jar");
