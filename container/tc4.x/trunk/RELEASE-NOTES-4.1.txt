@@ -392,6 +392,9 @@ Catalina Bug Fixes:
 [4.1.10] Documentation:
          Fixes and small additons to the DBCP documentation.
 
+[4.1.10] StandardContext:
+         Add new "swallowOutput" flag, to allow configuring logger redirection.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -536,6 +539,8 @@ Jasper Bug Fixes:
          Summary: Iteration tags do not resynchronize scripting variables after
          doAfterBody()
 
+[4.1.10] #12128
+         Summary: JSP Comment end symbol not recognized in some cases
 
 
 ============================
