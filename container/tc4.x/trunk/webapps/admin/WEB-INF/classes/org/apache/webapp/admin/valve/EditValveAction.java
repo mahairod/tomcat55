@@ -168,7 +168,7 @@ public class EditValveAction extends Action {
        parent = request.getParameter("parent");
        String valveType = null;
        String attribute = null;
-        
+       
        // Find what type of Valve this is
        try {    
             attribute = "className";

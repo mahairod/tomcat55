@@ -138,6 +138,7 @@ public final class ValveUtil {
             String objectName = DeleteLoggerAction.getObjectName(parent,
             TomcatTreeBuilder.VALVE_TYPE);
                         
+            String parentNodeName = parent;
             ObjectName pname = new ObjectName(parent);
             StringBuffer sb = new StringBuffer(pname.getDomain());
             
@@ -193,7 +194,7 @@ public final class ValveUtil {
             TreeControl control = (TreeControl)
             session.getAttribute("treeControlTest");
             if (control != null) {
-                TreeControlNode parentNode = control.findNode(parent);
+                TreeControlNode parentNode = control.findNode(parentNodeName);
                 if (parentNode != null) {
                     String nodeLabel =
                     "Valve for " + parentNode.getLabel();
@@ -203,15 +204,16 @@ public final class ValveUtil {
                     new TreeControlNode(vObjectName,
                     "folder_16_pad.gif",
                     nodeLabel,
-                    "EditValve.do?select=" +
-                    encodedName,
+                    "EditValve.do?select=" + encodedName +
+                    "&nodeLabel=" + URLEncoder.encode(nodeLabel) +
+                    "&parent=" + URLEncoder.encode(parent),
                     "content",
                     true);
                     parentNode.addChild(childNode);
                     // FIXME - force a redisplay
                 } else {
                     servlet.log
-                    ("Cannot find parent node '" + parent + "'");
+                    ("Cannot find parent node '" + parentNodeName + "'");
                 }
             } else {
                 servlet.log
