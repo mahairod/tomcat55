@@ -74,10 +74,11 @@ import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.RefAddr;
 import javax.naming.spi.ObjectFactory;
+import org.apache.commons.dbcp.AbandonedConfig;
+import org.apache.commons.dbcp.AbandonedObjectPool;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.naming.ResourceRef;
 
 
@@ -111,9 +112,19 @@ import org.apache.naming.ResourceRef;
  *     connections from this pool.  If specified, this query
  *     <strong>MUST</strong> be an SQL SELECT that returns at least one row.
  *     </li>
+ * <li><strong>removeAbandoned</strong> - Remove abandoned connections which were
+ *     never closed by the code which opened them.  A check for abandoned connections
+ *     is performed when the pool is nearly exhausted.  Any connections who's last
+ *     use is older than the removeAbandonedTimeout are closed and recycled.</li>
+ * <li><strong>removeAbandonedTimeout</strong> - Timeout in seconds.  When removal
+ *     of abandoned connections is performed only connections who's last use is
+ *     older than the removeAbandonedTimout are removed and recycled.</li>
+ * <li><strong>logAbandoned</strong> - Log stack traces for any dbcp connections
+ *     which were removed after being abandoned without being closed.</li>
  * </ul>
  * 
  * @author Craig R. McClanahan
+ * @author Glenn L. Nielsen
  * @version $Revision$ $Date$
  */
 
@@ -194,6 +205,47 @@ public class DbcpDataSourceFactory
         if (currentRefAddr != null)
             validationQuery = currentRefAddr.getContent().toString();
 
+        // Create a new abandoned config
+        AbandonedConfig config = null;
+        currentRefAddr = ref.get("removeAbandoned");
+        try {
+            if (currentRefAddr != null) {
+                config = new AbandonedConfig();
+                config.setRemoveAbandoned
+                    (Boolean.valueOf
+                        (currentRefAddr.getContent().toString()).booleanValue());
+            }
+        } catch (Throwable t) {
+            log("Error setting removeAbandoned", t);
+        }
+
+        currentRefAddr = ref.get("removeAbandonedTimeout");
+        try {
+            if (currentRefAddr != null) {
+                if (config == null) {
+                    config = new AbandonedConfig();
+                }
+                config.setRemoveAbandonedTimeout
+                    (Integer.parseInt(currentRefAddr.getContent().toString()));
+            }
+        } catch (Throwable t) {
+            log("Error setting removeAbandonedTimout", t);
+        }
+
+        currentRefAddr = ref.get("logAbandoned");
+        try {
+            if (currentRefAddr != null) {
+                if (config == null) {
+                    config = new AbandonedConfig();
+                }
+                config.setLogAbandoned
+                    (Boolean.valueOf
+                        (currentRefAddr.getContent().toString()).booleanValue());
+            }
+        } catch (Throwable t) {                          
+            log("Error setting logAbandoned", t);   
+        }
+
         // Validate our configuration parameters
         if (driverClassName == null)
             throw new NamingException
@@ -239,7 +291,7 @@ public class DbcpDataSourceFactory
 
         // Create a new data source instance
         // FIXME - Cache this for later reuse???
-        GenericObjectPool connectionPool = new GenericObjectPool(null);
+        AbandonedObjectPool connectionPool = new AbandonedObjectPool(null,config);
         try {
             if (maxActive != null)
                 connectionPool.setMaxActive(Integer.parseInt(maxActive));
@@ -265,7 +317,7 @@ public class DbcpDataSourceFactory
             PoolableConnectionFactory poolableConnectionFactory =
                 new PoolableConnectionFactory(connectionFactory, connectionPool,
                                               null, validationQuery,
-                                              false, true);
+                                              false, true, config);
             dataSource = new PoolingDataSource(connectionPool);
         } catch(Throwable t) {
             log("Cannot create DataSource, Exception",t);
