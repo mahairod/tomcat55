@@ -1,0 +1,104 @@
+<!-- Example Server Configuration File -->
+<!-- Note that component elements are nested corresponding to their
+     parent-child relationships with each other -->
+
+<Server port="8005" shutdown="SHUTDOWN" debug="0">
+
+  <!-- Define all the connectors to associate with the following container -->
+
+  <Connector className="org.apache.tomcat.connector.http.HttpConnector"
+             port="8080" minProcessors="5" maxProcessors="75"
+             acceptCount="10" debug="0"/>
+
+  <!--
+            Uncomment this for SSL support. 
+            You _need_ to set up a server certificate if you want this
+            to work, and you need JSSE.
+            1. Add JSSE jars to CLASSPATH 
+            2. Edit java.home/jre/lib/security/java.security
+               Add:
+               security.provider.2=com.sun.net.ssl.internal.ssl.Provider
+            3. Do: keytool -genkey -alias tomcat -keyalg RSA
+               RSA is essential to work with Netscape and IIS.
+               Use "changeit" as password. ( or add keypass attribute )
+               You don't need to sign the certificate.
+  
+            You can set parameter keystore and keypass if you want 
+            to change the default ( user.home/.keystore with changeit )
+  -->
+  <!--
+  <Connector className="org.apache.tomcat.connector.http.HttpConnector"
+             port="443" minProcessors="5" maxProcessors="75"
+	     acceptCount="10" debug="99" scheme="https" secure="true"
+             socketFactory="org.apache.tomcat.net.SSLSocketFactory" />
+  -->
+
+  <!--
+  <Connector className="org.apache.tomcat.connector.test.HttpConnector"
+             port="8080" minProcessors="5" maxProcessors="75"
+             acceptCount="10" debug="0"/>
+  -->
+
+
+  <!-- Define the top level container in our container hierarchy -->
+
+  <Engine name="engine" defaultHost="localhost" debug="0">
+
+    <!-- Global logger unless overridden at lower levels -->
+    <Logger className="org.apache.tomcat.logger.FileLogger"
+            prefix="tomcat_log." suffix=".txt"
+	    timestamp="true"/>
+
+    <!-- Because this Realm is here, an instance will be shared globally -->
+    <Realm className="org.apache.tomcat.realm.MemoryRealm" />
+
+
+     <!-- UnComment the following and comment out the above to get a JDBC realm -->
+ <!--
+     <Realm className="org.apache.tomcat.realm.JDBCRealm" debug="99"
+      driverName="org.gjt.mm.mysql.Driver"
+      connectionURL="jdbc:mysql://localhost/authority?user=test;password=test"
+      userTable="users" userNameCol="user_name" userCredCol="user_pass"
+      userRoleTable="user_roles" roleNameCol="role_name" />
+
+     <Realm className="org.apache.tomcat.realm.JDBCRealm" debug="99"
+      driverName="oracle.jdbc.driver.OracleDriver"
+      connectionURL="jdbc:oracle:thin:@ntserver:1521:ORCL?user=scott;password=tiger"
+      userTable="users" userNameCol="user_name" userCredCol="user_pass"
+      userRoleTable="user_roles" roleNameCol="role_name" />
+
+     <Realm className="org.apache.tomcat.realm.JDBCRealm" debug="99"
+      driverName="sun.jdbc.odbc.JdbcOdbcDriver"
+      connectionURL="jdbc:odbc:TOMCAT"
+      userTable="users" userNameCol="user_name" userCredCol="user_pass"
+      userRoleTable="user_roles" roleNameCol="role_name" />
+-->
+
+    <Host name="localhost" debug="0" root="true" appBase="webapps">
+
+      <!-- Access log processes all requests for this virtual host -->
+      <Valve className="org.apache.tomcat.valves.AccessLogValve"
+             prefix="localhost_access_log." suffix=".txt"
+             pattern="common"/>
+
+      <!-- Logger shared by all Contexts related to this virtual host -->
+      <Logger className="org.apache.tomcat.logger.FileLogger"
+              prefix="localhost_log." suffix=".txt"
+	      timestamp="true"/>
+
+      <!-- Tomcat Root Context -->
+      <Context path="" docBase="ROOT" debug="0"/>
+
+      <!-- Tomcat Examples Context -->
+      <Context path="/examples" docBase="examples" debug="0"
+               reloadable="true">
+	<Logger className="org.apache.tomcat.logger.FileLogger"
+	        prefix="localhost_examples_log." suffix=".txt"
+		timestamp="true"/>
+      </Context>
+
+    </Host>
+
+  </Engine>
+
+</Server>
