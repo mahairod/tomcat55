@@ -613,6 +613,7 @@ public class DeltaManager
         if (started) {
             return;
         }
+        getCluster().addManager(getName(),this);
         started = true;
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         
@@ -688,12 +689,14 @@ public class DeltaManager
         if (log.isDebugEnabled())
             log.debug("Stopping");
 
+        getCluster().removeManager(getName());
         // Validate and update our current component state
         if (!started)
             throw new LifecycleException
                 (sm.getString("standardManager.notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
+        
 
         // Expire all active sessions
         {
@@ -718,7 +721,7 @@ public class DeltaManager
         if( initialized ) {
             destroy();
         }
-        getCluster().removeManager(getName());
+        
     }
 
 
