@@ -439,6 +439,9 @@ public final class ContextConfig
 	mapper.addRule("web-app/context-param/param-value",
 		       mapper.methodParam(1));
 
+        mapper.addRule("web-app/display-name",
+                       mapper.methodSetter("setDisplayName", 0));
+
 	mapper.addRule("web-app/distributable",
 		       mapper.methodSetter("setDistributable", 0));
 
@@ -1039,7 +1042,7 @@ public final class ContextConfig
                 return (false);
             mapper.readXml(stream, context);
             stream.close();
-            return (true);            
+            return (true);
         } catch (Exception e) {
             if (debug >= 2)
                 log("    tldConfigTld(" + resourcePath + "): " + e);
