@@ -485,6 +485,7 @@ public class JspServlet extends HttpServlet {
 		}
             }
         } catch (FileNotFoundException ex) {
+            compiler.removeGeneratedFiles();
             throw ex;
         } catch (JasperException ex) {
             throw ex;
