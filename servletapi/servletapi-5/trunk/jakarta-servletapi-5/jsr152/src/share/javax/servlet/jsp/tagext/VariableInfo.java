@@ -135,20 +135,93 @@ package javax.servlet.jsp.tagext;
  * </ul>
  *
  * The scope value for a variable implies what methods may affect its
- * value and thus where synchronization is needed:
+ * value and thus where synchronization is needed as illustrated by
+ * the table below.  <b>Note:</b> the synchronization of the variable(s)
+ * will occur <em>after</em> the associated method has been called.
  *
- * <ul>
- * <li>
- * for NESTED, after doInitBody and doAfterBody for a tag handler implementing
- * BodyTag, after doAfterBody for a tag handler implementing IterationTag,
- * and in all cases, after doStartTag.
- * <li>
- * for AT_BEGIN, after doInitBody, doAfterBody for a tag handler implementing
- * BodyTag, after doAfterBody for a tag handler implementing IterationTag, and
- * in all cases after doStartTag and doEndTag.
- * <li>
- * for AT_END, after doEndTag method.
- * </ul>
+ *
+ * <blockquote>
+ * <table cellpadding="2" cellspacing="2" border="0" width="55%"
+ * bgcolor="#999999">
+ * <tbody>
+ *   <tr align="center">
+ *     <td valign="top" colspan="6" bgcolor="#999999"><u><b>Variable Synchronization
+ *     Points</b></u><br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td valign="top" bgcolor="#c0c0c0"><b><br>
+ *     </b></td>
+ *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doStartTag()<br>
+ *     </b></td>
+ *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doInitBody()<br>
+ *     </b></td>
+ *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doAfterBody()<br>
+ *     </b></td>
+ *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doEndTag()<br>
+ *     </b></td>
+ *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doTag()<br>
+ *     </b></td>
+ *   </tr>
+ *   <tr>
+ *     <td valign="top" bgcolor="#c0c0c0"><b>Tag<br>
+ *     </b></td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, AT_END<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td valign="top" bgcolor="#c0c0c0"><b>IterationTag<br>
+ *     </b></td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, AT_END<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td valign="top" bgcolor="#c0c0c0"><b>BodyTag<br>
+ *     </b></td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, AT_NESTED<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, AT_END<br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td valign="top" bgcolor="#c0c0c0"><b>SimpleTag<br>
+ *     </b></td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     </td>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, AT_END<br>
+ *     </td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * </blockquote>
  *
  * <p><B>Variable Information in the TLD</B>
  * <p>
