@@ -70,6 +70,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -114,6 +115,7 @@ class Generator {
     private PageInfo pageInfo;
     private int maxTagNesting;
     private Vector tagHandlerPoolNames;
+    private GenBuffer charArrayBuffer;
 
     /**
      * @param s the input string
@@ -150,6 +152,27 @@ class Generator {
             else
                 b.append(c);
         }
+        return b.toString();
+    }
+
+    /**
+     * Single quote and escape a character
+     */
+    static String quote(char c) {
+
+        StringBuffer b = new StringBuffer();
+        b.append('\'');
+        if (c == '\'')
+            b.append('\\').append('\'');
+        else if (c == '\\')
+            b.append('\\').append('\\');
+        else if (c == '\n')
+            b.append('\\').append('n');
+        else if (c == '\r')
+            b.append('\\').append('r');
+        else
+            b.append(c);
+        b.append('\'');
         return b.toString();
     }
 
@@ -714,6 +737,8 @@ class Generator {
         private int methodNesting;
         private TagInfo tagInfo;
         private ClassLoader loader;
+        private int charArrayCount;
+        private HashMap textMap;
 
         /**
          * Constructor.
@@ -725,6 +750,7 @@ class Generator {
             FragmentHelperClass fragmentHelperClass,
             ClassLoader loader,
             TagInfo tagInfo) {
+
             this.isTagFile = isTagFile;
             this.out = out;
             this.methodsBuffered = methodsBuffered;
@@ -734,20 +760,21 @@ class Generator {
             methodNesting = 0;
             handlerInfos = new Hashtable();
             tagVarNumbers = new Hashtable();
+            textMap = new HashMap();
         }
 
         /**
          * Returns an attribute value, optionally URL encoded.  If
-             * the value is a runtime expression, the result is the expression
-             * itself, as a string.  If the result is an EL expression, we insert
-             * a call to the interpreter.  If the result is a Named Attribute
-             * we insert the generated variable name.  Otherwise the result is a
-             * string literal, quoted and escaped.
-             *
+         * the value is a runtime expression, the result is the expression
+         * itself, as a string.  If the result is an EL expression, we insert
+         * a call to the interpreter.  If the result is a Named Attribute
+         * we insert the generated variable name.  Otherwise the result is a
+         * string literal, quoted and escaped.
+         *
          * @param attr An JspAttribute object
          * @param encode true if to be URL encoded
-             * @param expectedType the expected type for an EL evaluation
-             *        (ignored for attributes that aren't EL expressions)
+         * @param expectedType the expected type for an EL evaluation
+         *        (ignored for attributes that aren't EL expressions)
          */
         private String attributeValue(
             Node.JspAttribute attr,
@@ -1835,6 +1862,53 @@ class Generator {
         public void visit(Node.TemplateText n) throws JasperException {
 
             String text = n.getText();
+
+            int textSize = text.length();
+            if (textSize == 0) {
+                return;
+            }
+
+            if (textSize <= 3) {
+                // Spcial case small text strings
+                n.setBeginJavaLine(out.getJavaLine());
+                out.printil("out.write(" + quote(text.charAt(0)) + ");");
+                if (textSize > 1) {
+                    out.printil("out.write(" + quote(text.charAt(1)) + ");");
+                }
+                if (textSize > 2) {
+                    out.printil("out.write(" + quote(text.charAt(2)) + ");");
+                }
+                n.setEndJavaLine(out.getJavaLine());
+                return;
+            }
+
+            if (ctxt.getOptions().genStringAsCharArray()) {
+                // Generate Strings as char arrays, for performance
+                ServletWriter caOut;
+                if (charArrayBuffer == null) {
+                    charArrayBuffer = new GenBuffer(null);
+                    caOut = charArrayBuffer.getOut();
+                    caOut.pushIndent();
+                    textMap = new HashMap();
+                } else {
+                    caOut = charArrayBuffer.getOut();
+                }
+                String charArrayName = (String) textMap.get(text);
+                if (charArrayName == null) {
+                    charArrayName = "_jspx_char_array_" + charArrayCount++;
+                    textMap.put(text, charArrayName);
+                    caOut.printin("static char[] ");
+                    caOut.print(charArrayName);
+                    caOut.print(" = ");
+                    caOut.print(quote(text));
+                    caOut.println(".toCharArray();");
+                }
+
+                n.setBeginJavaLine(out.getJavaLine());
+                out.printil("out.write(" + charArrayName + ");");
+                n.setEndJavaLine(out.getJavaLine());
+                return;
+            }
 
             n.setBeginJavaLine(out.getJavaLine());
 
@@ -3029,6 +3103,11 @@ class Generator {
             out.printMultiLn(fragmentHelperClass.toString());
         }
 
+        // Append char array declarations
+        if (charArrayBuffer != null) {
+            out.printMultiLn(charArrayBuffer.toString());
+        }
+
         // Close the class definition
         out.popIndent();
         out.printil("}");
@@ -3078,6 +3157,7 @@ class Generator {
     Generator(ServletWriter out, Compiler compiler) {
         this.out = out;
         methodsBuffered = new ArrayList();
+        charArrayBuffer = null;
         err = compiler.getErrorDispatcher();
         ctxt = compiler.getCompilationContext();
         fragmentHelperClass =

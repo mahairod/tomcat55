@@ -157,6 +157,11 @@ public final class EmbeddedServletOptions implements Options {
     private boolean isSmapDumped = false;
 
     /**
+     * Are Text strings to be generated as char arrays?
+     */
+    private boolean genStringAsCharArray = false;
+
+    /**
      * I want to see my generated servlets. Which directory are they
      * in?
      */
@@ -287,6 +292,13 @@ public final class EmbeddedServletOptions implements Options {
      */
     public boolean isSmapDumped() {
         return isSmapDumped;
+    }
+
+    /**
+     * Are Text strings to be generated as char arrays?
+     */
+    public boolean genStringAsCharArray() {
+        return this.genStringAsCharArray;
     }
 
     /**
@@ -513,6 +525,19 @@ public final class EmbeddedServletOptions implements Options {
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage("jsp.warning.dumpSmap"));
+                }
+            }
+        }
+
+        String genCharArray = config.getInitParameter("genStrAsCharArray");
+        if (genCharArray != null) {
+            if (genCharArray.equalsIgnoreCase("true")) {
+                genStringAsCharArray = true;
+            } else if (genCharArray.equalsIgnoreCase("false")) {
+                genStringAsCharArray = false;
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn(Localizer.getMessage("jsp.warning.genchararray"));
                 }
             }
         }

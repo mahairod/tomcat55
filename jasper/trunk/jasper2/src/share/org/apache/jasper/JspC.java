@@ -408,6 +408,13 @@ public class JspC implements Options {
 	return false;
     }
 
+    /**
+     * Are Text strings to be generated as char arrays?
+     */
+    public boolean genStringAsCharArray() {
+        return false;
+    }
+
     public String getIeClassId() {
         return ieClassId;
     }

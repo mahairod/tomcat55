@@ -191,4 +191,9 @@ public interface Options {
      * Obtain a Tag Plugin Manager
      */
     public TagPluginManager getTagPluginManager();
+
+    /**
+     * Are Text strings to be generated as char arrays?
+     */
+    public boolean genStringAsCharArray();
 }
