@@ -67,7 +67,7 @@ goto cleanup
 :runJspc
 rem Run ant
 echo Using classpath: %CLASSPATH%
-java -Dtomcat.home=%TOMCAT_HOME% org.apache.jasper.JspC $@
+java -Dtomcat.home=%TOMCAT_HOME% org.apache.jasper.JspC %2 %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :setupEnv
