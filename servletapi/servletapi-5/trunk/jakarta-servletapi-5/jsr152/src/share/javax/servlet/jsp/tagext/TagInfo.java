@@ -241,8 +241,7 @@ public class TagInfo {
     /**
      * The name of the Tag.
      *
-     * @return The (short) name of the tag, or null
-     *         if not defined.
+     * @return The (short) name of the tag.
      */
 
     public String getTagName() {

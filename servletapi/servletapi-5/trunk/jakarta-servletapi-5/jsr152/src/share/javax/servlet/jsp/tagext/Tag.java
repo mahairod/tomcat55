@@ -102,7 +102,8 @@ import javax.servlet.jsp.*;
  * to exception handling and resource management.
  * </ul></p>
  *
- * <IMG src="doc-files/TagProtocol.gif"/>
+ * <IMG src="doc-files/TagProtocol.gif"
+ *      alt="Lifecycle Details Transition Diagram for Tag"/>
  * 
  * <p>Once all invocations on the tag handler
  * are completed, the release method is invoked on it.  Once a release
