@@ -70,6 +70,7 @@ import java.io.PrintWriter;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.HttpResponseBase;
 
 
@@ -263,9 +264,13 @@ final class HttpResponseImpl
      */
     public void finishResponse() throws IOException {
 
-        if ((!isStreamInitialized()) && (getContentLength() == -1)
-            && (getStatus() != SC_NOT_MODIFIED))
-            setContentLength(0);
+        if (getStatus() < HttpServletResponse.SC_BAD_REQUEST) {
+            if ((!isStreamInitialized()) && (getContentLength() == -1)
+                && (getStatus() != SC_NOT_MODIFIED))
+                setContentLength(0);
+        } else {
+            setHeader("Connection", "close");
+        }
         super.finishResponse();
 
     }
