@@ -200,7 +200,9 @@ final class CoyoteAdapter
         try {
             // Parse and set Catalina and configuration specific 
             // request parameters
-            postParseRequest(req, request, res, response);
+            if( !postParseRequest(req, request, res, response) ) {
+                return;
+            }
             if (!request.getMappingData().redirectPath.isNull()) {
                 response.sendRedirect
                     (request.getMappingData().redirectPath.toString());
@@ -230,7 +232,7 @@ final class CoyoteAdapter
     /**
      * Parse additional request parameters.
      */
-    protected void postParseRequest(Request req, CoyoteRequest request,
+    protected boolean postParseRequest(Request req, CoyoteRequest request,
                                     Response res, CoyoteResponse response)
         throws Exception {
         // XXX the processor needs to set a correct scheme and port prior to this point, 
@@ -277,7 +279,7 @@ final class CoyoteAdapter
         if (!normalize(req.decodedURI())) {
             res.setStatus(400);
             res.setMessage("Invalid URI");
-            throw new IOException("Invalid URI");
+            return false;
         }
 
         // Set the remote principal
@@ -310,7 +312,7 @@ final class CoyoteAdapter
 
         // Parse cookies
         parseCookies(req, request);
-
+        return true;
     }
 
 
