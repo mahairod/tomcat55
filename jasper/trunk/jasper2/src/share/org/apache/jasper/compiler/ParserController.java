@@ -192,8 +192,7 @@ class ParserController implements TagConstants {
 
 	// Figure out what type of JSP document and encoding type we are
 	// dealing with
-	determineSyntaxAndEncoding(absFileName, jarFile, jspConfigPageEnc,
-				   parent);
+	determineSyntaxAndEncoding(absFileName, jarFile, jspConfigPageEnc);
 
 	if (parent != null) {
 	    // Included resource, add to dependent list
@@ -287,16 +286,16 @@ class ParserController implements TagConstants {
      * for the given file, and stores them in the 'isXml' and 'sourceEnc'
      * instance variables, respectively.
      *
-     * The properties may already be specified in a JSP property group: notice
+     * The properties may already be specified in a JSP property group: Notice
      * that while the 'isXml' property applies to an entire translation unit
      * (and therefore needs to be checked only for the top-level file), the
      * 'page-encoding' property must be checked separately for the top-level
-     * and each of its included files, unless they're in XML syntax.
+     * and each of its included files, unless they're in XML syntax (in which
+     * case the page encoding is determined according to the XML spec).
      */
     private void determineSyntaxAndEncoding(String absFileName,
 					    JarFile jarFile,
-					    String jspConfigPageEnc,
-					    Node parent)
+					    String jspConfigPageEnc)
 	        throws JasperException, IOException {
 
 	isXml = false;
@@ -314,24 +313,14 @@ class ParserController implements TagConstants {
 	 */
 	boolean revert = false;
 
-	if (parent == null) {
-	    // top-level file
-	    if (pageInfo.isXmlConfigSpecified()) {
-		// If <is-xml> is specified in a <jsp-property-group>, it is
-		// used.
-		isXml = pageInfo.isXmlConfig();
-		isExternal = true;
-	    } else if (absFileName.endsWith(".jspx")
-		       || absFileName.endsWith(".tagx")) {
-		isXml = true;
-		isExternal = true;
-	    }
-	} else {
-	    /*
-	     * We're an included resource and, therefore, assumed to use the
-	     * same syntax as the including file.
-	     */
-	    isXml = parent.getRoot().isXmlSyntax();
+	if (pageInfo.isXmlConfigSpecified()) {
+	    // If <is-xml> is specified in a <jsp-property-group>, it is
+	    // used.
+	    isXml = pageInfo.isXmlConfig();
+	    isExternal = true;
+	} else if (absFileName.endsWith(".jspx")
+		   || absFileName.endsWith(".tagx")) {
+	    isXml = true;
 	    isExternal = true;
 	}
 	
