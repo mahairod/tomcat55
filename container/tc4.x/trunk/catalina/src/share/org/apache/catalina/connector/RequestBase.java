@@ -485,7 +485,7 @@ public abstract class RequestBase
 
         // If neither a reader or an is have been opened, do it to consume
         // request bytes, if any
-        if ((reader == null) && (stream == null))
+        if ((reader == null) && (stream == null) && (getContentLength() != 0))
             getInputStream();
 
 	// If a Reader has been acquired, close it
