@@ -895,38 +895,45 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if a component cannot be removed
      */
-    public void removeConnector(String name, String serviceName) throws Exception {
+    public void removeConnector(String name) throws Exception {
 
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
         Server server = ServerFactory.getServer();
+        String serviceName = oname.getKeyProperty("service");
         Service service = server.findService(serviceName);
         String port = oname.getKeyProperty("port");
         String address = oname.getKeyProperty("address");
+        if (address==null) {
+            address = "";
+        }
         Connector conns[] = (Connector[]) service.findConnectors();
 
         for (int i = 0; i < conns.length; i++) {
             if (conns[i] instanceof
                     org.apache.catalina.connector.http10.HttpConnector) {
-                String addr =
+                String connAddress =
                     ((org.apache.catalina.connector.http10.HttpConnector)conns[i]).getAddress();
+                if (connAddress == null) {
+                    connAddress = "";
+                }
                 int p = ((org.apache.catalina.connector.http10.HttpConnector)conns[i]).getPort();
-                Integer portInt = new Integer(p);
-                if (address.equals(addr) &&
-                    port.equals(portInt.toString())) {
+                String connPort = "" + p;
+                if (address.equals(connAddress) && port.equals(connPort)) {
                     // Remove this component from its parent component
                     service.removeConnector(conns[i]);
+                    break;
                 }
             } else if (conns[i] instanceof
                     org.apache.catalina.connector.http.HttpConnector) {
-                String addr =
+                String connAddress =
                     ((org.apache.catalina.connector.http.HttpConnector)conns[i]).getAddress();
                 int p = ((org.apache.catalina.connector.http.HttpConnector)conns[i]).getPort();
-                Integer portInt = new Integer(p);
-                if (address.equals(addr) &&
-                    port.equals(portInt.toString())) {
+                String connPort = "" + p;
+                if (address.equals(connAddress) && port.equals(connPort)) {
                     // Remove this component from its parent component
                     service.removeConnector(conns[i]);
+                    break;
                 }
             }
         }
@@ -1034,6 +1041,7 @@ public class MBeanFactory extends BaseModelMBean {
                     if (sname.equals(serviceName) &&
                         sequence.equals(sequenceInt.toString())){
                         engine.removeValve(valves[i]);
+                        break;
                     }
                 }
             }
@@ -1051,6 +1059,7 @@ public class MBeanFactory extends BaseModelMBean {
                     if ((sname.equals(serviceName) && hn.equals(hostName)) &&
                         sequence.equals(sequenceInt.toString())){
                         host.removeValve(valves[i]);
+                        break;
                     }
                 }
             }
@@ -1072,6 +1081,7 @@ public class MBeanFactory extends BaseModelMBean {
                         pathName.equals(path)) &&
                         sequence.equals(sequenceInt.toString())){
                         context.removeValve(valves[i]);
+                        break;
                     }
                 }
             }
