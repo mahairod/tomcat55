@@ -108,7 +108,7 @@ public class HttpRequestAdapter extends RequestAdapterImpl {
 	String line="";
 	// cut&paste from BufferedInputStream.
 	// XXX reuse buff, avoid creating strings 
-	byte[] buf = new byte[1024];
+	byte[] buf = new byte[Constants.RequestBufferSize];
 	int count = in.readLine(buf, 0, buf.length);
 	if (count >= 0) {
 	    line=new String(buf, 0, count);
