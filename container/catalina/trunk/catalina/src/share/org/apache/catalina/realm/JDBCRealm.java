@@ -540,7 +540,7 @@ public class JDBCRealm
         } catch(SQLException e){
             container.getLogger().
                     error(sm.getString("jdbcRealm.getPassword.exception",
-                                       username));
+                                       username), e);
         } finally {
             if (rs!=null) {
                 try {
