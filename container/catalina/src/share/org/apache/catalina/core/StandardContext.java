@@ -4268,9 +4268,6 @@ public class StandardContext
             ((Lifecycle) manager).stop();
         }
 
-        // Stop our application listeners
-        listenerStop();
-
         // Finalize our character set mapper
         setCharsetMapper(null);
 
@@ -4294,6 +4291,9 @@ public class StandardContext
                 if (children[i] instanceof Lifecycle)
                     ((Lifecycle) children[i]).stop();
             }
+
+            // Stop our application listeners
+            listenerStop();
 
             // Stop resources
             resourcesStop();
