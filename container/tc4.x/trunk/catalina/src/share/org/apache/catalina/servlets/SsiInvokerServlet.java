@@ -89,8 +89,8 @@ import javax.naming.NamingException;
 import javax.naming.InitialContext;
 import org.apache.catalina.Globals;
 import org.apache.catalina.util.RequestUtil;
-import org.apache.catalina.util.ssi.SsiCommand;
-import org.apache.catalina.util.ssi.SsiMediator;
+import org.apache.catalina.util.ssi.SsiDispatcher;
+import org.apache.catalina.util.ssi.SsiEnvironment;
 import org.apache.catalina.util.ssi.ServletOutputStreamWrapper;
 
 /**
@@ -111,14 +111,13 @@ public final class SsiInvokerServlet extends HttpServlet {
     /** Expiration time in seconds for the doc. */
     private Long expires = null;
 
-    /** Should we ignore unsupported/misspelled SSI Directives */
-    private boolean ignoreUnsupportedDirective = false;
+    /** The SSI dispatcher for this servlet instance */
+    private SsiDispatcher ssiDispatcher = null;
 
-    /** virtual path can be webapp-relative */
+    /**
+     * virtual path can be webapp-relative
+     */
     private boolean isVirtualWebappRelative = false;
-
-    /** The Mediator object for the SsiCommands. */
-    private static SsiMediator ssiMediator = null;
 
     /** The start pattern */
     private final static byte[] bStart = {
@@ -137,7 +136,9 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @exception ServletException if an error occurs
      */
     public void init() throws ServletException {
+        ssiDispatcher = new SsiDispatcher();
         String value = null;
+
         try {
             value = getServletConfig().getInitParameter("debug");
             debug = Integer.parseInt(value);
@@ -154,7 +155,7 @@ public final class SsiInvokerServlet extends HttpServlet {
 
         try {
             value = getServletConfig().getInitParameter("ignoreUnsupportedDirective");
-            ignoreUnsupportedDirective = Integer.parseInt(value) > 0 ? true : false;
+            ssiDispatcher.setIgnoreUnsupportedDirective((Integer.parseInt(value)>0)?true:false);
         } catch (Throwable t) {
             ;
         }
@@ -226,7 +227,17 @@ public final class SsiInvokerServlet extends HttpServlet {
 
         ServletContext servletContext = getServletContext();
         String path = getRelativePath(req);
-            URL resource = servletContext.getResource(path);
+        URL resource = servletContext.getResource(path);
+        SsiEnvironment ssiEnv = null;
+        StringBuffer command = new StringBuffer();
+        byte buf[] = new byte[4096];
+        int len = 0, bIdx = 0;
+        char ch;
+        boolean inside = false;
+        boolean disableOutput = false;
+        String strCmd;
+        String[] strParamType;
+        String[] strParam;
 
         if (debug > 0)
             log("SsiInvokerServlet.requestHandler()\n" +
@@ -248,6 +259,11 @@ public final class SsiInvokerServlet extends HttpServlet {
             return;
         }
 
+        // Get the SsiEnvironment instance for this request.
+        ssiEnv = SsiEnvironment.createSsiEnvironment(servletContext,
+                                                      req, res, path);
+        ssiEnv.setIsVirtualWebappRelative(isVirtualWebappRelative);
+
         res.setContentType("text/html;charset=UTF-8");
 
         if (expires != null) {
@@ -255,39 +271,20 @@ public final class SsiInvokerServlet extends HttpServlet {
                 new java.util.Date()).getTime() + expires.longValue() * 1000);
         }
 
-        OutputStream out = null;
         URLConnection resourceInfo = resource.openConnection();
         InputStream resourceInputStream = resourceInfo.getInputStream();
-
-        InputStream in = new BufferedInputStream(resourceInputStream, 4096);
         ByteArrayOutputStream soonOut = new ByteArrayOutputStream(resourceInfo.getContentLength());
+        InputStream in = new BufferedInputStream(resourceInputStream, 4096);
+        ServletOutputStream out = null;
+        out = (buffered)?new ServletOutputStreamWrapper():res.getOutputStream();
 
-        StringBuffer command = new StringBuffer();
-        byte buf[] = new byte[4096];
-        int len = 0, bIdx = 0;
-        char ch;
-        boolean inside = false;
-        SsiCommand ssiCommand = null;
-        String strCmd;
-        String[] strParamType;
-        String[] strParam;
-
-        if (buffered)
-            out = (OutputStream)new ServletOutputStreamWrapper();
-        else
-            out = res.getOutputStream();
-
-        if (ssiMediator == null)
-            ssiMediator = new SsiMediator(req, res, out, servletContext, debug, path, isVirtualWebappRelative);
-        else
-            ssiMediator.flush(req, res, out, servletContext, path, isVirtualWebappRelative);
-
-        while ((len = in.read(buf)) != -1)
-            soonOut.write(buf, 0, len);
-
-        try { in.close(); } catch (IOException e) { ; }
-        try { resourceInputStream.close(); } catch (IOException e) { ; }
-        try { soonOut.close(); } catch (IOException e) { ; }
+        try {
+            while ((len = in.read(buf)) != -1)
+                soonOut.write(buf, 0, len);
+        } finally {
+            in.close();
+            soonOut.close();
+        }
 
         byte[] unparsed = soonOut.toByteArray();
         soonOut = null; buf = null;
@@ -299,36 +296,34 @@ public final class SsiInvokerServlet extends HttpServlet {
                     command.delete(0, command.length());
                     continue;
                 }
-                out.write(unparsed[bIdx]);
+                if (!disableOutput)
+                    out.write(unparsed[bIdx]);
+
                 bIdx++;
             } else {
                 if (unparsed[bIdx] == bEnd[0]&& byteCmp(unparsed, bIdx, bEnd)) {
                     inside = false;
                     bIdx += bEnd.length;
+
                     try {
                         strCmd = parseCmd(command);
                     } catch (IndexOutOfBoundsException ex) {
-                        out.write(ssiMediator.getError());
+                        out.print(ssiEnv.getConfiguration("errmsg"));
                         continue;
                     }
-                    strCmd = parseCmd(command);
+
                     strParamType = parseParamType(command, strCmd.length());
                     strParam = parseParam(command, strCmd.length());
 
-                            if(debug > 0)
-                                log("Serving SSI resource: " + strCmd);
+                    if(debug > 0)
+                        log("Serving SSI resource: " + strCmd);
 
-                    ssiCommand = ssiMediator.getCommand(strCmd);
-                    if (ssiCommand != null && strParamType.length==strParam.length&& strParamType.length>0) {
-                        if (ssiCommand.isPrintable()) {
-                            out.write((ssiCommand.getStream(strParamType, strParam)).getBytes());
-                        } else
-                            ssiCommand.process(strParamType, strParam);
-                    } else if(ignoreUnsupportedDirective && ssiCommand==null) {
-                        ;
-                    } else {
-                        out.write(ssiMediator.getError());
-                    }
+                    // Run the command for the SSI directive
+                    ssiDispatcher.runCommand( strCmd, strParamType,
+                                              strParam, ssiEnv, out );
+                    
+                    // Check to see if the output has been disabled
+                    disableOutput = ssiEnv.isOutputDisabled();
                     continue;
                 }
                 command.append((char)unparsed[bIdx]);
