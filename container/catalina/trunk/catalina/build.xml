@@ -631,8 +631,6 @@
        unless="compile.tyrex"/>
       <exclude name="org/apache/catalina/mbeans/**"
        unless="compile.jmx"/>
-      <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
-       unless="compile.jsse"/>
       <exclude name="org/apache/catalina/realm/JAAS**"
        unless="compile.jaas"/>
       <exclude name="org/apache/catalina/ssi/**"
