@@ -229,7 +229,7 @@ final class StandardWrapperValve
 
         // Create the filter chain for this request
         ApplicationFilterChain filterChain =
-          createFilterChain(request, servlet);
+            createFilterChain(request, servlet);
 
         // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
@@ -319,12 +319,6 @@ final class StandardWrapperValve
                 throwable = e;
                 exception(request, response, e);
             }
-        }
-
-
-        // Generate a response for the generated HTTP status and message
-        if (throwable == null) {
-            status(request, response);
         }
 
     }
@@ -442,66 +436,6 @@ final class StandardWrapperValve
 
 
     /**
-     * Handle an HTTP status code or Java exception by forwarding control
-     * to the location included in the specified errorPage object.  It is
-     * assumed that the caller has already recorded any request attributes
-     * that are to be forwarded to this page.  Return <code>true</code> if
-     * we successfully utilized the specified error page location, or
-     * <code>false</code> if the default error report should be rendered.
-     *
-     * @param request The request being processed
-     * @param response The response being generated
-     * @param errorPage The errorPage directive we are obeying
-     */
-    private boolean custom(Request request, Response response,
-                           ErrorPage errorPage) {
-
-        if (debug >= 1)
-            log("Processing " + errorPage);
-
-        // Validate our current environment
-        if (!(request instanceof HttpRequest)) {
-            if (debug >= 1)
-                log(" Not processing an HTTP request --> default handling");
-            return (false);     // NOTE - Nothing we can do generically
-        }
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        if (!(response instanceof HttpResponse)) {
-            if (debug >= 1)
-                log("Not processing an HTTP response --> default handling");
-            return (false);     // NOTE - Nothing we can do generically
-        }
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
-
-        try {
-
-            // Reset the response if possible (else IllegalStateException)
-            hres.reset();
-
-            // Forward control to the specified location
-            ServletContext servletContext =
-                ((Context) container.getParent()).getServletContext();
-            RequestDispatcher rd =
-                servletContext.getRequestDispatcher(errorPage.getLocation());
-            rd.forward(hreq, hres);
-
-            // Indicate that we have successfully processed this custom page
-            return (true);
-
-        } catch (Throwable t) {
-
-            // Report our failure to process this custom page
-            log("Exception Processing " + errorPage, t);
-            return (false);
-
-        }
-
-    }
-
-
-    /**
      * Handle the specified ServletException encountered while processing
      * the specified Request to produce the specified Response.  Any
      * exceptions that occur during generation of the exception report are
@@ -515,155 +449,13 @@ final class StandardWrapperValve
     private void exception(Request request, Response response,
                            Throwable exception) {
 
-        // Handle a custom error page for this status code
-        if (debug >= 1)
-            log("Handling exception: " + exception);
-        Context context = (Context) container.getParent();
-        Throwable realError = exception;
-        ErrorPage errorPage = findErrorPage(context, realError);
-        if ((errorPage == null) && (realError instanceof ServletException)) {
-            realError = ((ServletException) exception).getRootCause();
-            if (realError != null)
-                errorPage = findErrorPage(context, realError);
-            else
-                realError = exception;
-        }
-        if (errorPage != null) {
-            //            if (debug >= 1)
-            //                log(" Sending to custom error page " + errorPage);
-            ServletRequest sreq = request.getRequest();
-            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
-                              exception.getMessage());
-            sreq.setAttribute(Globals.EXCEPTION_ATTR,
-                              exception);
-            Wrapper wrapper = (Wrapper) getContainer();
-            sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
-                              wrapper.getName());
-            if (sreq instanceof HttpServletRequest)
-                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
-                                  ((HttpServletRequest) sreq).getRequestURI());
-            sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
-                              exception.getClass());
-            if (custom(request, response, errorPage))
-                return;
-        }
+        ServletRequest sreq = request.getRequest();
+        sreq.setAttribute(Globals.EXCEPTION_ATTR, exception);
 
-        // The response is an error
-        response.setError();
-
-        // Reset the response (if possible)
-        //        if (debug >= 1)
-        //            log(" Resetting response");
-        try {
-            response.getResponse().reset();
-        } catch (IllegalStateException e) {
-            //            if (debug >= 1)
-            //                log("  IllegalStateException: " + e.toString());
-            ;
-        }
-
-        // Indicate an INTERNAL SERVER ERROR status (if possible)
-        try {
-            //            if (debug >= 1)
-            //                log(" Sending INTERNAL_SERVER_ERROR");
-            ServletResponse sresponse = response.getResponse();
-            if (sresponse instanceof HttpServletResponse)
-                ((HttpServletResponse) sresponse).sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (IllegalStateException e) {
-            //            if (debug >= 1)
-            //                log("  IllegalStateException: " + e.toString());
-            ;
-        } catch (IOException e) {
-            //            if (debug >= 1)
-            //                log("  IOException: " + e.toString());
-            ;
-        }
-
-        // Render a default HTML exception report page
-        Throwable rootCause = null;
-        if (exception instanceof ServletException)
-            rootCause = ((ServletException) exception).getRootCause();
-        try {
-            //            if (debug >= 1)
-            //                log(" Setting content type to text/html");
-            try {
-                response.getResponse().setContentType("text/html");
-            } catch (Throwable t) {
-                //                if (debug >= 1)
-                //                    log("  Throwable: " + t.toString());
-                ;
-            }
-            //            if (debug >= 1)
-            //                log(" Getting reporter writer");
-            PrintWriter writer = response.getReporter();
-            //            if (debug >= 1)
-            //                log(" Writing standard error report page");
-            writer.println("<html>");
-            writer.println("<head>");
-            writer.println("<title>" +
-                           sm.getString("standardWrapper.exception0") +
-                           "</title>");
-            writer.println("</head>");
-            writer.println("<body bgcolor=\"white\">");
-            writer.println("<br><br>");
-            writer.println("<h1>" +
-                           sm.getString("standardWrapper.exception1") +
-                           "</h1>");
-            if (rootCause != null)
-                writer.println("<h3>" +
-                               sm.getString("standardWrapper.exception2") +
-                               "</h3>");
-            writer.println("<pre>");
-            exception.printStackTrace(writer);
-            writer.println("</pre>");
-            if (rootCause != null) {
-                writer.println("<h3>" +
-                               sm.getString("standardWrapper.exception3") +
-                               "</h3>");
-                writer.println("<pre>");
-                rootCause.printStackTrace(writer);
-                writer.println("</pre>");
-            }
-            writer.println("</body>");
-            writer.println("</html>");
-            writer.flush();
-        } catch (IllegalStateException e) {
-            //            if (debug >= 1)
-            //                log("  IllegalStateException:", e);
-            ;
-        }
-        //        if (debug >= 1)
-        //            log(" Finished with exception() report");
-
-    }
-
-
-    /**
-     * Find and return the ErrorPage instance for the specified exception's
-     * class, or an ErrorPage instance for the closest superclass for which
-     * there is such a definition.  If no associated ErrorPage instance is
-     * found, return <code>null</code>.
-     *
-     * @param context The Context in which to search
-     * @param exception The exception for which to find an ErrorPage
-     */
-    private ErrorPage findErrorPage(Context context, Throwable exception) {
-
-        if (exception == null)
-            return (null);
-        Class clazz = exception.getClass();
-        String name = clazz.getName();
-        while (!"java.lang.Object".equals(clazz)) {
-            ErrorPage errorPage = context.findErrorPage(name);
-            if (errorPage != null)
-                return (errorPage);
-            clazz = clazz.getSuperclass();
-            if (clazz == null)
-                break;
-            name = clazz.getName();
-        }
-        return (null);
+        ServletResponse sresponse = response.getResponse();
+        if (sresponse instanceof HttpServletResponse)
+            ((HttpServletResponse) sresponse).setStatus
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
     }
 
@@ -796,117 +588,6 @@ final class StandardWrapperValve
 
         // Case 4 - "Default" Match
         return (false); // NOTE - Not relevant for selecting filters
-
-    }
-
-
-    /**
-     * Handle the HTTP status code (and corresponding message) generated
-     * while processing the specified Request to produce the specified
-     * Response.  Any exceptions that occur during generation of the error
-     * report are logged and swallowed.
-     *
-     * @param request The request being processed
-     * @param response The response being generated
-     */
-    private void status(Request request, Response response) {
-
-        // Do nothing on non-HTTP responses
-        if (!(response instanceof HttpResponse))
-            return;
-        HttpResponse hresponse = (HttpResponse) response;
-        if (!(response.getResponse() instanceof HttpServletResponse))
-            return;
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
-        int statusCode = hresponse.getStatus();
-        String message = RequestUtil.filter(hresponse.getMessage());
-        if (message == null)
-            message = "";
-
-        // Do nothing on a 1xx status
-        if (statusCode < 200)
-            return;
-        // Do nothing on an OK status
-        if (statusCode == HttpServletResponse.SC_OK)
-            return;
-        // Do nothing on a NO MODIFIED status
-        if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
-            return;
-        // Do nothing on a NO CONTENT status
-        if (statusCode == HttpServletResponse.SC_NO_CONTENT)
-            return;
-
-        // Handle a custom error page for this status code
-        Context context = (Context) container.getParent();
-        ErrorPage errorPage = context.findErrorPage(statusCode);
-        if (errorPage != null) {
-            ServletRequest sreq = request.getRequest();
-            sreq.setAttribute(Globals.STATUS_CODE_ATTR,
-                              new Integer(statusCode));
-            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
-                              message);
-            Wrapper wrapper = (Wrapper) getContainer();
-            sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
-                              wrapper.getName());
-            if (sreq instanceof HttpServletRequest)
-                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
-                                  ((HttpServletRequest) sreq).getRequestURI());
-            if (custom(request, response, errorPage))
-                return;
-        }
-
-        // Do nothing if there is no report for the specified status code
-        String report = null;
-        try {
-            report = sm.getString("http." + statusCode, message);
-        } catch (Throwable t) {
-            ;
-        }
-        if (report == null)
-            return;
-
-        // Reset the response data buffer (if possible)
-        try {
-            if (hresponse.isError())
-                hresponse.reset(statusCode, message);
-        } catch (Throwable e) {
-            if (debug >= 1)
-                log("status.reset", e);
-        }
-
-        // Render a default HTML status report page
-        try {
-            try {
-                hres.setContentType("text/html");
-            } catch (Throwable t) {
-                if (debug >= 1)
-                    log("status.setContentType", t);
-            }
-            PrintWriter writer = response.getReporter();
-            if (writer != null) {
-                writer.println("<html>");
-                writer.println("<head>");
-                writer.println("<title>" +
-                               sm.getString("standardWrapper.statusTitle") +
-                               "</title>");
-                writer.println("</head>");
-                writer.println("<body bgcolor=\"white\">");
-                writer.println("<br><br>");
-                writer.println("<h1>" +
-                               sm.getString("standardWrapper.statusHeader",
-                                            "" + statusCode, message) +
-                               "</h1>");
-                writer.println(report);
-                writer.println("</body>");
-                writer.println("</html>");
-                writer.flush();
-            }
-        } catch (IllegalStateException e) {
-            if (debug >= 1)
-                log("status.write", e);
-        }
-
 
     }
 
