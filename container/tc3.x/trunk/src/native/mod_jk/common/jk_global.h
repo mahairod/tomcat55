@@ -149,7 +149,6 @@ extern "C" {
  * JK options
  */
 
-#define JK_OPT_FWDUNPARSED 0x0001
 #define JK_OPT_FWDKEYSIZE  0x0002
 
 #ifdef __cplusplus
