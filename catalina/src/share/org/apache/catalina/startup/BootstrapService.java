@@ -73,7 +73,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
-import org.apache.catalina.loader.Extension;
 import org.apache.catalina.loader.StandardClassLoader;
 
 
