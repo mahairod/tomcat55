@@ -84,37 +84,6 @@
       <fileset dir="WEB-INF"/>
     </copy>
 
-    <!-- Build Tomcat-util documentation -->
-    <mkdir     dir="${webapps.build}/${webapp.name}/coyote/util"/>
-    <ant dir="${jtc.home}/util" target="javadoc"/>
-    <mkdir dir="${jtc.home}/util/build/javadoc"/>
-
-    <copy todir="${webapps.build}/${webapp.name}/coyote/util">
-      <fileset dir="${jtc.home}/util/build/javadoc"/>
-    </copy>
-
-
-    <!-- Build Coyote documentation
-    <mkdir     dir="${webapps.build}/${webapp.name}/coyote"/>
-    <ant dir="${jtc.home}/coyote" target="javadoc"/>
-
-    <copy todir="${webapps.build}/${webapp.name}/coyote">
-      <fileset dir="${jtc.home}/coyote/build/docs"/>
-    </copy>
-    <mkdir     dir="${webapps.build}/${webapp.name}/coyote/http11"/>
-    <ant dir="${jtc.home}/http11" target="javadoc"/>
-
-    <copy todir="${webapps.build}/${webapp.name}/coyote/http11">
-      <fileset dir="${jtc.home}/http11/build/docs"/>
-    </copy>
-
-    <mkdir     dir="${webapps.build}/${webapp.name}/coyote/jk2"/>
-    <ant dir="${jtc.home}/jk" target="docs"/>
-
-    <copy todir="${webapps.build}/${webapp.name}/coyote/jk2">
-      <fileset dir="${jtc.home}/jk/build/docs"/>
-    </copy>
--->
   </target>
 
 
