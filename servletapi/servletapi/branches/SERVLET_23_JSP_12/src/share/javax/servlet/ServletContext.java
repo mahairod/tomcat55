@@ -439,9 +439,10 @@ public interface ServletContext {
     
     /**
      * Returns a <code>String</code> containing the real path 
-     * for a given virtual path. For example, the virtual path "/index.html"
-     * has a real path of whatever file on the server's filesystem would be
-     * served by a request for "/index.html".
+     * for a given virtual path. For example, the path "/index.html"
+     * returns the absolute file path on the server's filesystem would be
+     * served by a request for "http://host/contextPath/index.html",
+     * where contextPath is the context path of this ServletContext..
      *
      * <p>The real path returned will be in a form
      * appropriate to the computer and operating system on
