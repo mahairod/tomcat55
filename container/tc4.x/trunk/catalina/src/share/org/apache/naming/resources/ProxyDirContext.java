@@ -122,6 +122,23 @@ public class ProxyDirContext implements DirContext {
     }
 
 
+    /**
+     * Builds a clone of this proxy dir context, wrapping the given directory
+     * context, and sharing the same cache.
+     */
+    protected ProxyDirContext(ProxyDirContext proxyDirContext, 
+                              DirContext dirContext, String vPath) {
+        this.env = proxyDirContext.env;
+        this.dirContext = dirContext;
+        this.vPath = vPath;
+        this.cache = proxyDirContext.cache;
+        this.cacheTTL = proxyDirContext.cacheTTL;
+        this.cacheObjectMaxSize = proxyDirContext.cacheObjectMaxSize;
+        this.hostName = proxyDirContext.hostName;
+        this.contextName = proxyDirContext.contextName;
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -141,6 +158,12 @@ public class ProxyDirContext implements DirContext {
      * Associated DirContext.
      */
     protected DirContext dirContext;
+
+
+    /**
+     * Virtual path.
+     */
+    protected String vPath = null;
 
 
     /**
@@ -1379,6 +1402,7 @@ public class ProxyDirContext implements DirContext {
         if (entry.attributes == null)
             return false;
         long lastModified = entry.attributes.getLastModified();
+        long contentLength = entry.attributes.getContentLength();
         if (lastModified <= 0)
             return false;
         try {
@@ -1390,7 +1414,9 @@ public class ProxyDirContext implements DirContext {
                 attributes = (ResourceAttributes) tempAttributes;
             }
             long lastModified2 = attributes.getLastModified();
-            return (lastModified == lastModified2);
+            long contentLength2 = attributes.getContentLength();
+            return (lastModified == lastModified2) 
+                && (contentLength == contentLength2);
         } catch (NamingException e) {
             return false;
         }
