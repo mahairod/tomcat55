@@ -26,7 +26,7 @@
       <copydir src="src/server/servlet-tests" dest="${watchdog.build}/webapps/servlet-tests"/>
       <copyfile src="../jakarta-tools/moo.jar" dest="${watchdog.build}/lib/moo.jar"/>
 
-      <copyfile src="../jakarta-tools/projectx-tr2.jar"
+      <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.build}/lib/xml.jar"/>
 
 
@@ -81,7 +81,7 @@
       <copyfile src="../jakarta-tools/moo.jar"
                 dest="${watchdog.dist}/lib/moo.jar"/>
 
-      <copyfile src="../jakarta-tools/projectx-tr2.jar"
+      <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.dist}/lib/xml.jar"/>
 
       <copydir src="src/bin" dest="${watchdog.dist}"/>
