@@ -380,7 +380,10 @@ public final class Bootstrap {
         }
 
         try {
-            String command = args[0];
+            String command = "start";
+            if (args.length > 0) {
+                command = args[0];
+            }
             if (command.equals("startd")) {
                 args[0] = "start";
                 daemon.load(args);
@@ -436,8 +439,23 @@ public final class Bootstrap {
 
         if (System.getProperty("catalina.home") != null)
             return;
-        System.setProperty("catalina.home",
-                           System.getProperty("user.dir"));
+        File bootstrapJar = 
+            new File(System.getProperty("user.dir"), "bootstrap.jar");
+        if (bootstrapJar.exists()) {
+            try {
+                System.setProperty
+                    ("catalina.home", 
+                     (new File(System.getProperty("user.dir"), ".."))
+                     .getCanonicalPath());
+            } catch (Exception e) {
+                // Ignore
+                System.setProperty("catalina.home",
+                                   System.getProperty("user.dir"));
+            }
+        } else {
+            System.setProperty("catalina.home",
+                               System.getProperty("user.dir"));
+        }
 
     }
 
