@@ -895,7 +895,7 @@ public class FileDirContext extends BaseDirContext {
             }
 
             // Case sensitivity check
-            if (caseSensitive) {
+            if (!allowLinking && caseSensitive) {
                 String fileAbsPath = file.getAbsolutePath();
                 if (fileAbsPath.endsWith("."))
                     fileAbsPath = fileAbsPath + "/";
