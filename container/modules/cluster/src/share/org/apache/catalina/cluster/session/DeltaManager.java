@@ -103,17 +103,6 @@ public class DeltaManager
 
 
     /**
-     * Path name of the disk file in which active sessions are saved
-     * when we stop, and from which these sessions are loaded when we start.
-     * A <code>null</code> value indicates that no persistence is desired.
-     * If this pathname is relative, it will be resolved against the
-     * temporary working directory provided by our context, available via
-     * the <code>javax.servlet.context.tempdir</code> context attribute.
-     */
-    private String pathname = "SESSIONS.ser";
-
-
-    /**
      * Has this component been started yet?
      */
     private boolean started = false;
@@ -130,6 +119,7 @@ public class DeltaManager
     private boolean printToScreen;
     
     private boolean notifyListenersOnReplication = false;
+    
     // ------------------------------------------------------------- Constructor
     public DeltaManager() {
         super();
@@ -198,26 +188,6 @@ public class DeltaManager
         this.rejectedSessions = rejectedSessions;
     }
 
-    /** Number of sessions that expired.
-     *
-     * @return The count
-     */
-    public int getExpiredSessions() {
-        return expiredSessions;
-    }
-
-    public void setExpiredSessions(int expiredSessions) {
-        this.expiredSessions = expiredSessions;
-    }
-
-    public long getProcessingTime() {
-        return processingTime;
-    }
-
-    public void setProcessingTime(long processingTime) {
-        this.processingTime = processingTime;
-    }
-
     /**
      * Set the maximum number of actives Sessions allowed, or -1 for
      * no limit.
@@ -244,32 +214,6 @@ public class DeltaManager
 
     }
 
-
-    /**
-     * Return the session persistence pathname, if any.
-     */
-    public String getPathname() {
-
-        return (this.pathname);
-
-    }
-
-
-    /**
-     * Set the session persistence pathname to the specified value.  If no
-     * persistence support is desired, set the pathname to <code>null</code>.
-     *
-     * @param pathname New session persistence pathname
-     */
-    public void setPathname(String pathname) {
-
-        String oldPathname = this.pathname;
-        this.pathname = pathname;
-        support.firePropertyChange("pathname", oldPathname, this.pathname);
-
-    }
-
-
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -295,6 +239,14 @@ public class DeltaManager
         return createSession(true);
     }
 
+    
+    /**
+     * create new session with check maxActiveSessions and send session creation to other
+     * cluster nodes.
+     * 
+     * @param distribute
+     * @return
+     */
     public Session createSession(boolean distribute) {
 
       if ((maxActiveSessions >= 0) &&
@@ -333,10 +285,13 @@ public class DeltaManager
               null,
               sessionId,
               sessionId+System.currentTimeMillis());
+          if(log.isDebugEnabled())
+              log.debug("Manager ("+name+") send new session (" +sessionId+ ")");
           cluster.send(msg);
           session.resetDeltaRequest();
       }
-      log.debug("Created a DeltaSession with Id["+session.getId()+"] Total count="+sessions.size());
+      if(log.isDebugEnabled())
+          log.debug("Created a DeltaSession with Id["+session.getId()+"] Total count="+sessions.size());
       
       return (session);
 
@@ -611,7 +566,8 @@ public class DeltaManager
         // Load unloaded sessions, if any
         try {
             //the channel is already running
-            log.info("Starting clustering manager...:"+getName());
+            if(log.isInfoEnabled())
+                log.info("Starting clustering manager...:"+getName());
             if ( cluster == null ) {
                 log.error("Starting... no cluster associated with this context:"+getName());
                 return;
@@ -636,7 +592,8 @@ public class DeltaManager
                 
                 //request session state
                 cluster.send(msg, mbr);
-                log.warn("Manager["+getName()+"], requesting session state from "+mbr+
+                if(log.isWarnEnabled())
+                    log.warn("Manager["+getName()+"], requesting session state from "+mbr+
                          ". This operation will timeout if no session state has been received within "+
                          "60 seconds");
                 long reqStart = System.currentTimeMillis();
@@ -651,11 +608,13 @@ public class DeltaManager
                 } while ( (!getStateTransferred()) && (!isTimeout));
                 if ( isTimeout || (!getStateTransferred()) ) {
                     log.error("Manager["+getName()+"], No session state received, timing out.");
-                }else {
-                    log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");
+                } else {
+                    if(log.isInfoEnabled())
+                        log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");
                 }
             } else {
-                log.info("Manager["+getName()+"], skipping state transfer. No members active in cluster group.");
+                if(log.isInfoEnabled())
+                    log.info("Manager["+getName()+"], skipping state transfer. No members active in cluster group.");
             }//end if
 
         } catch (Throwable t) {
@@ -675,7 +634,7 @@ public class DeltaManager
     public void stop() throws LifecycleException {
 
         if (log.isDebugEnabled())
-            log.debug("Stopping");
+            log.debug("Manager["+getName()+"] is stopping");
 
         getCluster().removeManager(getName());
 
@@ -686,22 +645,21 @@ public class DeltaManager
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
 
-        // Expire all active sessions
-        {
-            log.info("Expiring sessions upon shutdown");
-            Session sessions[] = findSessions();
-            for (int i = 0; i < sessions.length; i++) {
-                DeltaSession session = (DeltaSession) sessions[i];
-                if (!session.isValid())
-                    continue;
-                try {
-                    session.expire(true, this.getExpireSessionsOnShutdown());
-                }
-                catch (Throwable t) {
-                    ;
-                } //catch
-            } //for
-        }//end if
+        // Expire all active sessions   
+        if(log.isInfoEnabled())
+            log.info("Manager["+getName()+"] Expiring sessions upon shutdown");
+        Session sessions[] = findSessions();
+        for (int i = 0; i < sessions.length; i++) {
+            DeltaSession session = (DeltaSession) sessions[i];
+            if (!session.isValid())
+                continue;
+            try {
+                session.expire(true, this.getExpireSessionsOnShutdown());
+            }
+            catch (Throwable t) {
+                ;
+            } //catch
+        } //for
 
         // Require a new random number generator if we are restarted
         this.random = null;
@@ -778,12 +736,20 @@ public class DeltaManager
                                             data, sessionId,
                                             sessionId+System.currentTimeMillis());
                    session.resetDeltaRequest();
+                   if (log.isDebugEnabled()) {
+                       log.debug("Manager (" + name + ") send session ("
+                        + sessionId + ") delta.");  
+                   }
                } else if ( !session.isPrimarySession() ) {
                    msg = new SessionMessageImpl(getName(),
                                          SessionMessage.EVT_SESSION_ACCESSED,
                                          null,
                                          sessionId,
                                          sessionId+System.currentTimeMillis());
+                   if (log.isDebugEnabled()) {
+                       log.debug("Manager (" + name + ") send session ("
+                        + sessionId + ") access to change primary.");  
+                   }
                }
                session.setPrimarySession(true);
                //check to see if we need to send out an access message
@@ -795,6 +761,10 @@ public class DeltaManager
                                              null,
                                              sessionId,
                                              sessionId+System.currentTimeMillis());
+                       if (log.isDebugEnabled()) {
+                           log.debug("Manager (" + name + ") send session ("
+                            + sessionId + ") access.");  
+                       }
                    }
                    
                }
@@ -810,7 +780,14 @@ public class DeltaManager
    
        }
        
+       /**
+        * send session expired to other cluster nodes
+        * @param id session id
+        */
        protected void sessionExpired(String id) {
+           if (log.isDebugEnabled())
+               log.debug("Manager (" + name + ") send session ("
+                + id + ") expired.");           
            SessionMessage msg = new SessionMessageImpl(getName(), 
                                                    SessionMessage.EVT_SESSION_EXPIRED,
                                                    null,
@@ -840,38 +817,54 @@ public class DeltaManager
         */
        protected void messageReceived(SessionMessage msg, Member sender) {
            try {
-               log.debug("Manager ("+name+") Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
+               if(log.isDebugEnabled())
+                   log.debug("Manager ("+name+") Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
                switch (msg.getEventType()) {
                    case SessionMessage.EVT_GET_ALL_SESSIONS: {
                        //get a list of all the session from this manager
-                       log.debug("Manager ("+name+") unloading sessions");
+                       if(log.isDebugEnabled())
+                           log.debug("Manager ("+name+") unloading sessions");
                        byte[] data = doUnload();
-                       log.debug("Manager ("+name+") unloading sessions complete");
+                       if(log.isDebugEnabled())
+                           log.debug("Manager ("+name+") unloading sessions complete");
                        SessionMessage newmsg = new SessionMessageImpl(name,
                            SessionMessage.EVT_ALL_SESSION_DATA,
                            data, "SESSION-STATE","SESSION-STATE-"+getName());
+                       if(log.isDebugEnabled())
+                           log.debug("Manager ("+name+") send all session data.");
                        cluster.send(newmsg, sender);
                        break;
                    }
                    case SessionMessage.EVT_ALL_SESSION_DATA: {
-                       log.debug("Manager ("+name+") received session state data.");
+                       if(log.isDebugEnabled())
+                           log.debug("Manager ("+name+") received session state data.");
                        byte[] data = msg.getSession();
                        doLoad(data);
-                       log.debug("Manager ("+name+") state deserialized.");
+                       if(log.isDebugEnabled())
+                           log.debug("Manager ("+name+") state deserialized.");
                        stateTransferred = true;
                        break;
                    }
                    case SessionMessage.EVT_SESSION_CREATED: {
+                       if (log.isDebugEnabled())
+                           log.debug("Manager (" + name + ") received session ("
+                            + msg.getSessionID() + ") created.");
                        DeltaSession session = (DeltaSession)createSession(false);
+                       // Q: Why inform all session listener a replicate node?
                        session.setId(msg.getSessionID());
                        session.setNew(false);
                        session.setPrimarySession(false);
+                       // Q: Why generate a delta?
                        session.resetDeltaRequest();
                        break;
                    }
                    case SessionMessage.EVT_SESSION_EXPIRED: {
                        DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
                        if (session != null) {
+                           if (log.isDebugEnabled())
+                               log.debug("Manager (" + name + ") received session ("
+                                + msg.getSessionID() + ") expired.");
+                           // Q: Why not only remove from manager?
                            session.expire(true,false);
                        } //end if
                        break;
@@ -879,6 +872,9 @@ public class DeltaManager
                    case SessionMessage.EVT_SESSION_ACCESSED: {
                        DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
                        if (session != null) {
+                           if (log.isDebugEnabled())
+                               log.debug("Manager (" + name + ") received session ("
+                                + msg.getSessionID() + ") accessed.");
                            session.access();
                            session.setPrimarySession(false);
                            session.endAccess();
@@ -889,6 +885,9 @@ public class DeltaManager
                        byte[] delta = msg.getSession();
                        DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
                        if (session != null) {
+                           if (log.isDebugEnabled())
+                               log.debug("Manager (" + name + ") received session ("
+                                + msg.getSessionID() + ") delta.");
                            DeltaRequest dreq = loadDeltaRequest(session, delta);
                            dreq.execute(session,notifyListenersOnReplication);
                            session.setPrimarySession(false);
@@ -910,31 +909,6 @@ public class DeltaManager
 
 
     // -------------------------------------------------------- Private Methods
-
-    public void backgroundProcess() {
-        processExpires();
-    }
-    /**
-     * Invalidate all sessions that have expired.
-     */
-    public void processExpires() {
-        long timeNow = System.currentTimeMillis();
-        Session sessions[] = findSessions();
-
-        for (int i = 0; i < sessions.length; i++) {
-            DeltaSession session = (DeltaSession) sessions[i];
-            if (!session.isValid()) {
-                try {
-                    expiredSessions++;
-                } catch (Throwable t) {
-                    log.error(sm.getString
-                              ("standardManager.expireException"), t);
-                }
-            }
-        }
-        long timeEnd = System.currentTimeMillis();
-        processingTime += ( timeEnd - timeNow );
-    }
 
     public boolean getStateTransferred() {
         return stateTransferred;
