@@ -3985,6 +3985,9 @@ public class StandardContext
 
         log.debug("Starting " + logName);
 
+        // Set JMX object name for proper pipeline registration
+        preRegisterJMX();
+
         if ((oname != null) && 
             (Registry.getRegistry().getMBeanServer().isRegistered(oname))) {
             // As things depend on the JMX registration, the context
@@ -4178,9 +4181,6 @@ public class StandardContext
                 if ((resources != null) && (resources instanceof Lifecycle))
                     ((Lifecycle) resources).start();
 
-                // Set JMX object name for proper pipeline registration
-                preRegisterJMX();
-                
                 // Start our child containers, if any
                 Container children[] = findChildren();
                 for (int i = 0; i < children.length; i++) {
@@ -5260,6 +5260,9 @@ public class StandardContext
     }
 
     private void registerJMX() {
+        if (oname == null) {
+            return;
+        }
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Checking for " + oname );
