@@ -109,6 +109,9 @@ public class Compiler {
 
     }
 
+    // Some javac are not thread safe; use a lock to serialize compilation, 
+    static Object javacLock = new Object();
+
 
     // ----------------------------------------------------- Instance Variables
 
@@ -301,7 +304,9 @@ public class Compiler {
         javac.setIncludes(ctxt.getJspPath());
 
         try {
-            javac.execute();
+            synchronized(javacLock) {
+                javac.execute();
+            }
         } catch (BuildException e) {
             //   System.out.println("Javac execption ");
             //   e.printStackTrace(System.out);
