@@ -712,7 +712,7 @@
             testStrategy="A negative test for ServletRequest.getReader() method. Get an InputStream object using ServletRequest.getInputStream() then try to get the Reader Object. An IllegalStateException should be thrown"
         />
 
-        <watchdog request="GET /servlet-tests/GetRemoteAddrTest?Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/GetRemoteAddrTest?Address=|client.ip| HTTP/1.0"
             testName="GetRemoteAddrTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequest/GetRemoteAddrTest.html"
@@ -720,7 +720,7 @@
             testStrategy="A test for ServletRequest.getRemoteAddress() method"
         />
 
-        <watchdog request="GET /servlet-tests/GetRemoteHostTest?Address=${host}&amp;Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/GetRemoteHostTest?Address=|client.host|&amp;Address=|client.ip| HTTP/1.0"
             testName="GetRemoteHostTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequest/GetRemoteHostTest.html"
@@ -1292,7 +1292,7 @@
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet then tests that an exception is thrown when an attempt to get a reader after one has altready been gotten and returns the result of the test plus the contents of the static log file."
         />
 
-        <watchdog request="GET /servlet-tests/sreqw/ServletRequestWrapperGetRemoteAddrTest?Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/sreqw/ServletRequestWrapperGetRemoteAddrTest?Address=|client.ip| HTTP/1.0"
             testName="ServletRequestWrapperGetRemoteAddrTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRemoteAddrTest.html"
@@ -1300,7 +1300,7 @@
             testStrategy="Client calls a servlet who's request has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet then tests the returned value and returns the result of the test plus the contents of the static log file."
         />
 
-        <watchdog request="GET /servlet-tests/sreqw/ServletRequestWrapperGetRemoteHostTest?Address=${host}&amp;Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/sreqw/ServletRequestWrapperGetRemoteHostTest?Address=|client.host|&amp;Address=|client.ip| HTTP/1.0"
             testName="ServletRequestWrapperGetRemoteHostTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRemoteHostTest.html"
@@ -3895,7 +3895,7 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="GetRemoteAddrTest">
-        <watchdog request="GET /servlet-tests/GetRemoteAddrTest?Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/GetRemoteAddrTest?Address=|client.ip| HTTP/1.0"
             testName="GetRemoteAddrTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequest/GetRemoteAddrTest.html"
@@ -3905,7 +3905,7 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="GetRemoteHostTest">
-        <watchdog request="GET /servlet-tests/GetRemoteHostTest?Address=localhost&amp;Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/GetRemoteHostTest?Address=|client.host|&amp;Address=|client.ip| HTTP/1.0"
             testName="GetRemoteHostTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequest/GetRemoteHostTest.html"
@@ -4573,7 +4573,7 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="ServletRequestWrapperGetRemoteAddrTest">
-        <watchdog request="GET /servlet-tests/ServletRequestWrapperGetRemoteAddrTest?Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/ServletRequestWrapperGetRemoteAddrTest?Address=|client.ip| HTTP/1.0"
             testName="ServletRequestWrapperGetRemoteAddrTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRemoteAddrTest.html"
@@ -4583,7 +4583,7 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="ServletRequestWrapperGetRemoteHostTest">
-        <watchdog request="GET /servlet-tests/ServletRequestWrapperGetRemoteHostTest?Address=localhost&amp;Address=127.0.0.1 HTTP/1.0"
+        <watchdog request="GET /servlet-tests/ServletRequestWrapperGetRemoteHostTest?Address=|client.host|&amp;Address=|client.ip| HTTP/1.0"
             testName="ServletRequestWrapperGetRemoteHostTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet/ServletRequestWrapper/ServletRequestWrapperGetRemoteHostTest.html"
