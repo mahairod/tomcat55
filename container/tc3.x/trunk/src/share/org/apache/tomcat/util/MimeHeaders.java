@@ -73,6 +73,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.NoSuchElementException;
 
+/* XXX XXX XXX Need a major rewrite  !!!!
+ */
+
 /**
  * This class is used to contain standard internet message headers,
  * used for SMTP (RFC822) and HTTP (RFC2068) messages as well as for
@@ -460,7 +463,12 @@ public class MimeHeaders {
 	    // XXX this does not currently handle headers which
 	    // are folded to take more than one line.
 	    
-	    putHeader().parse(b, start, off - start);
+	    MimeHeaderField mhf=putHeader();
+	    if( ! mhf.parse(b, start, off - start) ) {
+		// error parsing header
+		return;
+	    }
+	    
 	}
     }
 
