@@ -18,6 +18,10 @@
 
 <html:form action="/resources/listUserDatabases">
 
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="userDatabasesForm" property="domain"/>
+  <html:hidden property="domain"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
@@ -33,11 +37,11 @@
     </tr>
   </table>
 
-</html:form>
-
 <br>
 
 <%@ include file="userDatabases.jspf" %>
+
+</html:form>
 
 <br>
 

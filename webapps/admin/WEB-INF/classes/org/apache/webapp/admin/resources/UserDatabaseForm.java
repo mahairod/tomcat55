@@ -89,6 +89,24 @@ public final class UserDatabaseForm extends BaseForm {
 
     // ------------------------------------------------------------- Properties
 
+    /**
+     * The domain of this data source.
+     */
+    private String domain = null;
+    
+    /**
+     * Return the domain of the data source this bean refers to.
+     */
+    public String getDomain() {
+        return this.domain;
+    }
+
+    /**
+     * Set the domain of the data source this bean refers to.
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     /**
      * The name of the associated entry.

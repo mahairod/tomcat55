@@ -19,6 +19,9 @@
 
 <html:form method="POST" action="/resources/saveUserDatabase">
 
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="userDatabaseForm" property="domain"/>
+  <html:hidden property="domain"/>
   <html:hidden property="objectName"/>
   <html:hidden property="type"/>
   <html:hidden property="factory"/>
@@ -39,12 +42,14 @@
             <controls:action>
               ---------------------------------
             </controls:action>
-
-            <controls:action url="/resources/setUpUserDatabase.do">
+            
+            <controls:action url='<%= "/resources/setUpUserDatabase.do?domain=" +
+                                    URLEncoder.encode(domainInfo) %>'>
                 <bean:message key="resources.actions.userdb.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listUserDatabases.do?forward="
-                        + URLEncoder.encode("UserDatabases Delete List") %>'>
+            <controls:action url='<%= "/resources/listUserDatabases.do?domain=" +
+                                    URLEncoder.encode(domainInfo) + "&forward=" +
+                                    URLEncoder.encode("UserDatabases Delete List") %>'>
                 <bean:message key="resources.actions.userdb.delete"/>
             </controls:action>
          </controls:actions>

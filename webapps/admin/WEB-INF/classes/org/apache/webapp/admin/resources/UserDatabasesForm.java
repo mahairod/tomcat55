@@ -99,7 +99,25 @@ public final class UserDatabasesForm extends BaseForm {
         this.userDatabases = userDatabases;
     }
 
+    /**
+     * The domain of this userdatabase.
+     */
+    private String domain = null;
+    
+    /**
+     * Return the domain of the userdatabase this bean refers to.
+     */
+    public String getDomain() {
+        return this.domain;
+    }
 
+    /**
+     * Set the domain of the userdatabase this bean refers to.
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+    
     // --------------------------------------------------------- Public Methods
 
 

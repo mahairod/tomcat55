@@ -426,10 +426,10 @@ public class ResourceUtils {
      *
      * @exception Exception if an error occurs
      */
-    public static UserDatabasesForm getUserDatabasesForm(MBeanServer mserver)
+    public static UserDatabasesForm getUserDatabasesForm(MBeanServer mserver,String domain)
         throws Exception {
             
-        ObjectName rname = new ObjectName( RESOURCE_TYPE + GLOBAL_TYPE +
+        ObjectName rname = new ObjectName( domain + RESOURCE_TYPE + GLOBAL_TYPE +
                             ",class=" + USERDB_CLASS + ",*");
         
         Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
