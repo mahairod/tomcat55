@@ -1157,7 +1157,7 @@ public class Generator {
 //		out.println("javax.servlet.jsp.PageContext pageContext, JspxState _jspxState)");
 		out.print("javax.servlet.jsp.PageContext pageContext");
 		if (pushBodyCountVar != null) {
-		    out.print(", int ");
+		    out.print(", int[] ");
 		    out.print(pushBodyCountVar);
 		}
 		out.println(")");
@@ -1359,9 +1359,9 @@ public class Generator {
 	    generateSetters(n, tagHandlerVar, handlerInfo);
 	    
             if (n.implementsTryCatchFinally()) {
-		out.printin("int ");
+		out.printin("int[] ");
 		out.print(tagPushBodyCountVar);
-		out.println(" = 0;");
+		out.println(" = new int[] { 0 };");
                 out.printil("try {");
                 out.pushIndent();
             }
@@ -1396,10 +1396,10 @@ public class Generator {
 		    out.printil("javax.servlet.jsp.tagext.BodyContent _bc = pageContext.pushBody();");
 		    if (n.implementsTryCatchFinally()) {
 			out.printin(tagPushBodyCountVar);
-			out.println("++;");
+			out.println("[0]++;");
 		    } else if (pushBodyCountVar != null) {
 			out.printin(pushBodyCountVar);
-			out.println("++;");
+			out.println("[0]++;");
 		    }
 		    out.printil("out = _bc;");
 
@@ -1464,10 +1464,10 @@ public class Generator {
                     out.printil("out = pageContext.popBody();");
 		    if (n.implementsTryCatchFinally()) {
 			out.printin(tagPushBodyCountVar);
-			out.println("--;");
+			out.println("[0]--;");
 		    } else if (pushBodyCountVar != null) {
 			out.printin(pushBodyCountVar);
-			out.println("--;");
+			out.println("[0]--;");
 		    }
 		    out.popIndent();
 		}
@@ -1494,7 +1494,7 @@ public class Generator {
 
 		out.printin("while (");
 		out.print(tagPushBodyCountVar);
-		out.println("-- > 0)");
+		out.println("[0]-- > 0)");
 		out.pushIndent();
 		out.printil("out = pageContext.popBody();");
 		out.popIndent();
