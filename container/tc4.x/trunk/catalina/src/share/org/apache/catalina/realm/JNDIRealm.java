@@ -1304,11 +1304,15 @@ public class JNDIRealm extends RealmBase {
             list = addAttributeValues(roleName, attrs, list);
         }
 
-        // Return the augmented list of roles
+
         if (debug >= 2) {
-            log("  Returning " + list.size() + " roles");
-            for (int i=0; i<list.size(); i++)
-                log(  "  Found role " + list.get(i));
+            if (list != null) {
+                log("  Returning " + list.size() + " roles");
+                for (int i=0; i<list.size(); i++)
+                    log(  "  Found role " + list.get(i));
+            } else {
+                log("  getRoles about to return null ");
+            }
         }
 
         return (list);
@@ -1366,12 +1370,12 @@ public class JNDIRealm extends RealmBase {
         if (debug >= 3)
             log("  retrieving values for attribute " + attrId);
         if (attrId == null || attrs == null)
-            return null;
+            return values;
         if (values == null)
             values = new ArrayList();
         Attribute attr = attrs.get(attrId);
         if (attr == null)
-            return (null);
+            return (values);
         NamingEnumeration e = attr.getAll();
         while(e.hasMore()) {
             String value = (String)e.next();
