@@ -781,8 +781,8 @@
 
 
       <gtest request="HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"  
-           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetMethod_HEADTest.html" />
+           debug="0" host="${host}" port="${port}" expectResponseBody="false"  
+	   returnCode="200" returnCodeMsg="GetMethod_HEADTest PASSED" />
 
       <gtest request="POST /servlet-tests/GetMethod_POSTTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
@@ -1184,8 +1184,8 @@
 
      <target name="GetMethod_HEADTest" >
       <gtest request="HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"  
-           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetMethod_HEADTest.html" />
+           debug="0" host="${host}" port="${port}" expectResponseBody="false" 
+	   returnCode="200" returnCodeMsg="GetMethod_HEADTest PASSED" />
      </target>
 
      <target name="GetMethod_POSTTest" >
