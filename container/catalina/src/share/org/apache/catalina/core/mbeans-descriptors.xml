@@ -203,6 +203,10 @@
                description="The managed resource this MBean is associated with"
                type="java.lang.Object"/>
       
+    <attribute name="manager"
+               description="Associated manager."
+               type="org.apache.catalina.Manager" />
+      
     <attribute name="mappingObject"
                description="The object used for mapping"
                type="java.lang.Object"/>
