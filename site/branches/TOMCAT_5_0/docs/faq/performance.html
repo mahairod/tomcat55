@@ -1,0 +1,68 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Performance and Monitoring</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Performance and Monitoring</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/performance.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+                    </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  This is about Tomcat performance.
+  <ul>
+    <li>[thread]
+        <a href="http://marc.theaimsgroup.com/?t=104455383100002&r=1&w=2">
+            Tomcat Performance Concerns
+        </a>
+    </li>
+    <li>[thread]
+        <a href="http://marc.theaimsgroup.com/?t=103598885300001&r=1&w=2">
+            How do I increase performance on Tomcat?
+        </a>
+    </li>
+  </ul>
+
+  Other (non-exhaustive) notes:
+  <ul>
+   <li>
+    Stress test your webapp. You can do this via
+        <a href="http://jakarta.apache.org/jmeter/">JMeter</a>,
+        <a href="http://www.joedog.org/siege/">siege</a>,
+        <a href="http://httpd.apache.org/test/flood/">flood</a>,
+        and other tools. Google is your friend.
+    </li><li>
+      Tweak your UNIX box! Look at <code>ulimit</code> and kernel parameters.
+    </li><li>
+      Bad design will hurt performance.
+    </li><li>
+      Look at <a href="http://java.quest.com/jprobe/jprobe.shtml">JProbe</a>,
+      or <a href="http://www.borland.com/optimizeit/">OptimizeIt</a>, or other
+      profiling tools. Lots of people recommend these tools.
+      This is not an endorsement for them, I just
+      notice other people like them.
+    </li>
+  </ul>
+
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+     <li>
+       <a href="#faster">
+          Is Tomcat faster than serving static HTML pages than apache?
+       </a>
+     </li>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+
+  <b style="font-size: larger">
+    <a name="faster">
+      Is Tomcat faster than serving static HTML pages than apache?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Yes depending on how you tune it. And NO depending on how you tune it.
+    Anything less starts a religious war. We recommend performing your own
+    benchmarks and
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=106036177509367&w=2">
+    see for yourself</a>.
+  </div><br>
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2003, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="deployment.html">
+
+  &project;
+
+  <properties>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Tomcat FAQ: Deployment</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+    This section of the FAQ discusses common questions related
+    to web application deployment.
+</section>
+
+<section name="Questions">
+<p>
+  <ul>
+    <li>
+      <a href="#tc5Conf">
+        Why does tomcat 5 create context configuration files?
+      </a>
+    </li>
+    <li>
+      <a href="deployMemIncrease">
+        Why does the memory usage increase when I redeploy a web application?
+      </a>
+    </li>
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+<p>
+  <question>
+    <a name="tc5Conf">Why does tomcat 5 create context configuration files?</a>
+  </question>
+  <answer>
+    Unlike tomcat 4.x, tomcat 5.x creates context configuration files for you
+    in its conf/[Engine name]/[Host name] directory.  This is part of the change
+    in tomcat's configuration mechanism from version 4.x to make overall configuration
+    more robust, flexible, and enterprise-friendly.  Note, however, that this
+    has changed the recommended deployment practices for web applications.
+
+    These context configuration files are created by tomcat, but not removed
+    by tomcat, because the user may have changed them or other files in the conf
+    directory.  The suggested practice for tomcat 5
+    is to place context configuration files in the META-INF/context.xml directory
+    of your webapp, and use Tomcat's Manager webapp to deploy/undeploy your applications.
+    More details can be found here:
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=107590945807699&amp;w=2">MARC Archive</a>
+  </answer>
+
+  <question>
+    <a name="deployMemIncrease">
+      Why does the memory usage increase when I redeploy a web application?
+    </a>
+  </question>
+
+  <answer>
+    Because the Classloader (and the Class objects it loaded) cannot be
+    recycled.  They are stored in the permanent heap generation by the JVM,
+    and when you redepoy a new class loader is created, which loads another
+    copy of all these classes.  This can cause OufOfMemoryErrors eventually.
+  </answer>
+</p>
+</section>
+
+</body>
+</document>

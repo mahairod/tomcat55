@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="classnotfound.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Class Not Found Issues</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+    This page discusses the various ways you see Class Not Found errors or
+    very similar errors. It is strongly advised you read the following topics:
+    <ul>
+      <li>
+        Classloader HOWTO pages: 
+        <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/class-loader-howto.html">
+          Tomcat 4.1</a>,
+        <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/class-loader-howto.html">
+          Tocmat 5.0</a>.
+      </li>
+      <li>
+         <a href="http://marc.theaimsgroup.com/?t=104317529200004&amp;r=1&amp;w=2">
+            Don't
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=104380440100003&amp;r=1&amp;w=2">
+            use
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=96947656900002&amp;r=1&amp;w=2">
+            packageless
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=104491020100002&amp;r=1&amp;w=2">
+            classes
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=104265576200003&amp;r=1&amp;w=2">
+            and
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=104249748300001&amp;r=1&amp;w=2">
+            declare
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=102996950100003&amp;r=1&amp;w=2">
+            all
+         </a>
+           <span style="padding-left : 7;"/>
+         <a href="http://marc.theaimsgroup.com/?t=102922189400001&amp;r=1&amp;w=2">
+            imported classes
+         </a> !
+      </li>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=103843452413727&amp;w=2">
+          Another answer to a classloader issue
+        </a>
+      </li>
+    </ul>
+    If you get a
+    <code>NoClassDefFoundError</code> exception, the root might be the
+    same reason as a <code>ClassNotFound</code> exception.
+</section>
+
+<section name="Questions">
+<p>
+  <ul>
+    <li>
+      <a href="#usebean">Why is <code>jsp:useBean</code> not working?</a>
+    </li>
+    <li>
+      <a href="#filter">
+        Why do I get <code>java.lang.NoClassDefFoundError:
+        javax/servlet/Filter</code>?
+        </a>
+     </li>
+    <li>
+      <a href="#xml">
+        Why do I get <code>NoClassDefFoundError: org/xml/sax/InputSource</code>?
+        </a>
+     </li>
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+
+    <question>
+        <a name="usebean">Why is <code>jsp:useBean</code> is not working?</a>
+    </question>
+    <answer>
+    Make sure:
+    <ul>
+      <li>
+        Your bean is packaged in a class.
+      </li>
+      <li>
+        You have fully qualified your class name
+        (eg:<code>com.bar.package.MyClass</code>) OR
+      </li>
+      <li>
+        You have imported your class into your jsp
+        (eg: <code>&lt;%@ pageimport="com.bar.package.MyClass"%&gt;</code>)
+      </li>
+    </ul>
+    </answer>
+
+
+    <question>
+     <a name="filter">
+       Why do I get <code>java.lang.NoClassDefFoundError:
+       javax/servlet/Filter</code>?
+     </a>
+    </question>
+    <answer>
+    You probably have servlet.jar floating around somewhere it shouldn't be.
+    This really messes up the classloaders since Tomcat's classloaders
+    don't act quite as normal as one expects (see links above). servlet.jar
+    should only be found only once in $CATALINA_HOME/common/lib.
+    </answer>
+
+
+    <question>
+     <a name="xml">
+       Why do I get <code>java.lang.NoClassDefFoundError:
+       org/xml/sax/InputSource</code>?
+     </a>
+    </question>
+    <answer>
+    You have conflicting XML api jar files in your classpath. Read the
+    README or RELEASE-NOTES for more information.
+    </answer>
+
+
+</section>
+
+</body>
+</document>

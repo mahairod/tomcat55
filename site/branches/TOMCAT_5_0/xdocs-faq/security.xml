@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="security.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Security</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>
+    This FAQ section provides help with some security-related issues.
+</p>
+</section>
+
+
+<section name="Questions">
+  <ul>
+     <li>
+       <a href="#openSSL">
+         How do I use OpenSSL to set up my own Certificate Authority (CA)?
+       </a>
+     </li>
+
+     <li>
+        <a href="#8005">
+         OH NO! PORT 8005 is available for anyone on localhost to
+         shutdown my tomcat!
+        </a>
+     </li>
+
+     <li>
+       <a href="#root">
+         What about Tomcat running as root?
+       </a>
+     </li>
+
+     <li>
+       <a href="#https">
+         How to I force all my pages to run under HTTPS?
+       </a>
+     </li>
+
+     <li>
+       <a href="#login">
+          What is the default login for the manager and admin app?
+       </a>
+     </li>
+
+     <li>
+       <a href="#restrict">
+          How do I restrict access by ip address or remote host?
+       </a>
+     </li>
+
+     <li>
+       <a href="#jsvcExample">
+         How do I use jsvc/procrun to run Tomcat on port 80 securely?
+       </a>
+     </li>
+
+  </ul>
+
+</section>
+
+
+<section name="Answers">
+  <question>
+    <a name="openSSL">
+      How do I use OpenSSL to set up my own Certificate Authority (CA)?
+    </a>
+  </question>
+  <answer>
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106293430225790&amp;w=2">
+      Using OpenSSL to set up your own CA.
+    </a>
+  </answer>
+
+  <question>
+    <a name="8005">
+       OH NO! PORT 8005 is available for anyone on localhost to
+       shutdown my tomcat!
+    </a>
+  </question>
+  <answer>
+    See these 2 discussions.
+    <ul>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104396653200003&amp;r=1&amp;w=2">
+          Possible to switch off tcp/ip server shutdown?</a>
+      </li>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=103126643200005&amp;r=1&amp;w=2">
+          Tomcat shutdown &amp; security
+        </a>
+      </li>
+    </ul>
+  </answer>
+
+
+  <question>
+    <a name="root">
+      What about Tomcat running as root?
+    </a>
+  </question>
+  <answer>
+      See these threads:
+       <ul>
+        <li>
+           <a href="http://marc.theaimsgroup.com/?t=104516038700003&amp;r=1&amp;w=2">
+              Tomcat as root and security issues
+           </a>
+        </li>
+       </ul>
+  </answer>
+
+
+
+  <question>
+    <a name="https">
+      How to I force all my pages to run under HTTPS?
+    </a>
+  </question>
+  <answer>
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104951559722619&amp;w=2">
+        Use security-constraint in web.xml.
+      </a>
+  </answer>
+
+
+
+  <question>
+    <a name="login">
+      What is the default login for the manager and admin app?
+    </a>
+  </question>
+  <answer>
+    The admin and manager application do not provide a default
+    login. Doing so is a security flaw. You need to edit
+    <code>$CATALINA_HOME/conf/tomcat-users.xml</code>
+    if you are using the default install.
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
+        Configuring Manager Application Access</a>
+  </answer>
+
+  <question>
+    <a name="restrict">
+      How do I restrict access by ip address or remote host?
+    </a>
+  </question>
+  <answer>
+    By using the RemoteHostValve or RemoteAddrValve. Warning, these valves rely on
+    accurate incoming ip addresses or hostnames. So they can fall victim to spoofing!
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/valve.html">
+        Valve Reference Link</a>
+  </answer>
+
+  <question>
+    <a name="jsvcExample">
+      How do I use jsvc/procrun to run Tomcat on port 80 securely?
+    </a>
+  </question>
+  <answer>
+   Fairly easily ;)  See the Setup page in the docs for your tomcat release, and read
+   <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108566020231438&amp;w=2">
+     this mailing list post
+   </a> for a complete setup example with permissions etc.
+  </answer>
+
+</section>
+
+
+</body>
+</document>
