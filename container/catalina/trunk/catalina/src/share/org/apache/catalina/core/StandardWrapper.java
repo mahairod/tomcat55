@@ -66,6 +66,7 @@ package org.apache.catalina.core;
 
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
@@ -184,6 +185,12 @@ public class StandardWrapper
      * first call) for this servlet.
      */
     private int loadOnStartup = -1;
+
+
+    /**
+     * Mappings associated with the wrapper.
+     */
+    private ArrayList mappings = new ArrayList();
 
 
     /**
@@ -620,6 +627,21 @@ public class StandardWrapper
 
 
     /**
+     * Add a mapping associated with the Wrapper.
+     * 
+     * @param pattern The new wrapper mapping
+     */
+    public void addMapping(String mapping) {
+
+        synchronized (mappings) {
+            mappings.add(mapping);
+        }
+        fireContainerEvent("addMapping", mapping);
+
+    }
+
+
+    /**
      * Add a new security role reference record to the set of records for
      * this servlet.
      *
@@ -770,6 +792,18 @@ public class StandardWrapper
         synchronized (parameters) {
             String results[] = new String[parameters.size()];
             return ((String[]) parameters.keySet().toArray(results));
+        }
+
+    }
+
+
+    /**
+     * Return the mappings associated with this wrapper.
+     */
+    public String[] findMappings() {
+
+        synchronized (mappings) {
+            return (String[]) mappings.toArray(new String[mappings.size()]);
         }
 
     }
@@ -1041,6 +1075,21 @@ public class StandardWrapper
     public void removeInstanceListener(InstanceListener listener) {
 
         instanceSupport.removeInstanceListener(listener);
+
+    }
+
+
+    /**
+     * Remove a mapping associated with the wrapper.
+     *
+     * @param mapping The pattern to remove
+     */
+    public void removeMapping(String mapping) {
+
+        synchronized (mappings) {
+            mappings.remove(mapping);
+        }
+        fireContainerEvent("removeMapping", mapping);
 
     }
 
