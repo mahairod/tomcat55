@@ -197,8 +197,16 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     /**
      * Override persistence since they don't go hand in hand with replication for now.
      */
-    public void unload() throws IOException {}
-    public void load() throws ClassNotFoundException, IOException {}
+    public void unload() throws IOException {
+        if ( !getDistributable() ) {
+            super.unload();   
+        }
+    }
+    public void load() throws ClassNotFoundException, IOException {
+        if ( !getDistributable() ) {
+            super.load();   
+        }
+    }
     public int getDebug()
     {
         return this.debug;
