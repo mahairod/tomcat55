@@ -444,7 +444,7 @@ public class Request
      * @param connector The new connector
      */
     public void setConnector(Connector connector) {
-        this.connector = (Connector) connector;
+        this.connector = connector;
     }
 
 
@@ -2219,7 +2219,7 @@ public class Request
     protected void configureSessionCookie(Cookie cookie) {
         cookie.setMaxAge(-1);
         String contextPath = null;
-        if (getContext() != null) {
+        if (!connector.getEmptySessionPath() && (getContext() != null)) {
             contextPath = getContext().getPath();
         }
         if ((contextPath != null) && (contextPath.length() > 0)) {

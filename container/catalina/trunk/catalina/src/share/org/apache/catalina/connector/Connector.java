@@ -54,7 +54,7 @@ import org.apache.tomcat.util.http.mapper.Mapper;
 public class Connector
     implements Lifecycle, MBeanRegistration
 {
-    private static Log log = LogFactory.getLog(Connector.class);
+    protected static Log log = LogFactory.getLog(Connector.class);
 
 
     // ------------------------------------------------------------ Constructor
@@ -86,13 +86,13 @@ public class Connector
     /**
      * The <code>Service</code> we are associated with (if any).
      */
-    private Service service = null;
+    protected Service service = null;
 
 
     /**
      * Do we allow TRACE ?
      */
-    private boolean allowTrace = false;
+    protected boolean allowTrace = false;
 
 
     /**
@@ -102,21 +102,27 @@ public class Connector
 
 
     /**
+     * Use "/" as path for session cookies ?
+     */
+    protected boolean emptySessionPath = false;
+
+
+    /**
      * The "enable DNS lookups" flag for this Connector.
      */
-    private boolean enableLookups = false;
+    protected boolean enableLookups = false;
 
 
     /*
      * Is generation of X-Powered-By response header enabled/disabled?
      */
-    private boolean xpoweredBy = false;
+    protected boolean xpoweredBy = false;
 
 
     /**
      * Descriptive information about this Connector implementation.
      */
-    private static final String info =
+    protected static final String info =
         "org.apache.catalina.connector.Connector/2.1";
 
 
@@ -129,7 +135,7 @@ public class Connector
     /**
      * The port number on which we listen for requests.
      */
-    private int port = 0;
+    protected int port = 0;
 
 
     /**
@@ -138,7 +144,7 @@ public class Connector
      * server, so that redirects get constructed accurately.  If not specified,
      * the server name included in the <code>Host</code> header is used.
      */
-    private String proxyName = null;
+    protected String proxyName = null;
 
 
     /**
@@ -147,33 +153,33 @@ public class Connector
      * server, so that redirects get constructed accurately.  If not specified,
      * the port number specified by the <code>port</code> property is used.
      */
-    private int proxyPort = 0;
+    protected int proxyPort = 0;
 
 
     /**
      * The redirect port for non-SSL to SSL redirects.
      */
-    private int redirectPort = 443;
+    protected int redirectPort = 443;
 
 
     /**
      * The request scheme that will be set on all requests received
      * through this connector.
      */
-    private String scheme = "http";
+    protected String scheme = "http";
 
 
     /**
      * The secure connection flag that will be set on all requests received
      * through this connector.
      */
-    private boolean secure = false;
+    protected boolean secure = false;
 
 
     /**
      * The string manager for this package.
      */
-    private StringManager sm =
+    protected StringManager sm =
         StringManager.getManager(Constants.Package);
 
 
@@ -181,75 +187,75 @@ public class Connector
      * Maximum size of a POST which will be automatically parsed by the 
      * container. 2MB by default.
      */
-    private int maxPostSize = 2 * 1024 * 1024;
+    protected int maxPostSize = 2 * 1024 * 1024;
 
 
     /**
      * Has this component been initialized yet?
      */
-    private boolean initialized = false;
+    protected boolean initialized = false;
 
 
     /**
      * Has this component been started yet?
      */
-    private boolean started = false;
+    protected boolean started = false;
 
 
     /**
      * The shutdown signal to our background thread
      */
-    private boolean stopped = false;
+    protected boolean stopped = false;
 
 
     /**
      * The background thread.
      */
-    private Thread thread = null;
+    protected Thread thread = null;
 
 
     /**
      * Coyote Protocol handler class name.
      * Defaults to the Coyote HTTP/1.1 protocolHandler.
      */
-    private String protocolHandlerClassName =
+    protected String protocolHandlerClassName =
         "org.apache.coyote.http11.Http11Protocol";
 
 
     /**
      * Coyote protocol handler.
      */
-    private ProtocolHandler protocolHandler = null;
+    protected ProtocolHandler protocolHandler = null;
 
 
     /**
      * Coyote adapter.
      */
-    private Adapter adapter = null;
+    protected Adapter adapter = null;
 
 
      /**
       * Mapper.
       */
-     private Mapper mapper = new Mapper();
+     protected Mapper mapper = new Mapper();
 
 
      /**
       * Mapper listener.
       */
-     private MapperListener mapperListener = new MapperListener(mapper);
+     protected MapperListener mapperListener = new MapperListener(mapper);
 
 
      /**
       * URI encoding.
       */
-     private String URIEncoding = null;
+     protected String URIEncoding = null;
 
 
      /**
       * URI encoding as body.
       */
-     private boolean useBodyEncodingForURI = false;
+     protected boolean useBodyEncodingForURI = false;
 
 
      protected static HashMap replacements = new HashMap();
@@ -418,6 +424,29 @@ public class Connector
     public void setContainer(Container container) {
 
         this.container = container;
+
+    }
+
+
+    /**
+     * Return the "empty session path" flag.
+     */
+    public boolean getEmptySessionPath() {
+
+        return (this.emptySessionPath);
+
+    }
+
+
+    /**
+     * Set the "enable DNS lookups" flag.
+     *
+     * @param enableLookups The new "enable DNS lookups" flag value
+     */
+    public void setEmptySessionPath(boolean emptySessionPath) {
+
+        this.emptySessionPath = emptySessionPath;
+        setProperty("emptySessionPath", String.valueOf(emptySessionPath));
 
     }
 
@@ -1065,7 +1094,7 @@ public class Connector
         }
     }
     
-    private void findContainer() {
+    protected void findContainer() {
         try {
             // Register to the service
             ObjectName parentName=new ObjectName( domain + ":" +
