@@ -115,6 +115,7 @@ public class CoyoteServerSocketFactory
     private String protocol = "TLS";
     private String sslImplementation = null;
     private String cipherSuites;
+    private String keyAlias;
 
     // ------------------------------------------------------------- Properties
 
@@ -294,6 +295,27 @@ public class CoyoteServerSocketFactory
      */
     public void setSSLImplementation(String sslImplementation) {
         this.sslImplementation = sslImplementation;
+    }
+
+    /**
+     * Gets the alias name of the keypair and supporting certificate chain
+     * used by the server to authenticate itself to SSL clients.
+     *
+     * @return The alias name of the keypair and supporting certificate chain
+     */
+    public String getKeyAlias() {
+        return this.keyAlias;
+    }
+
+    /**
+     * Sets the alias name of the keypair and supporting certificate chain
+     * used by the server to authenticate itself to SSL clients.
+     *
+     * @param alias The alias name of the keypair and supporting certificate
+     * chain
+     */
+    public void setKeyAlias(String alias) {
+        this.keyAlias = alias;
     }
 
     /**

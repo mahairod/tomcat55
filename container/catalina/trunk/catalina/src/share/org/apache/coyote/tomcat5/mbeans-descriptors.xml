@@ -32,6 +32,10 @@
           description="Comma-separated list of SSL cipher suites to be enabled"
                  type="java.lang.String"/>
 
+    <attribute   name="keyAlias"
+          description="Alias name of this connector's keypair and supporting certificate chain"
+                 type="java.lang.String"/>
+
     <attribute   name="sslProtocol"
           description="SSL protocol variant to be used"
                  type="java.lang.String"/>
