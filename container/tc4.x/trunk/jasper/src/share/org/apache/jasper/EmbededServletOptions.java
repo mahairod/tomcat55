@@ -144,6 +144,12 @@ public final class EmbededServletOptions implements Options {
     private TldLocationsCache tldLocationsCache = null;
 
     /**
+     * Java platform encoding to generate the JSP
+     * page servlet.
+     */
+    private String javaEncoding;
+
+    /**
      * Are we keeping generated code around?
      */
     public boolean getKeepGenerated() {
@@ -216,6 +222,10 @@ public final class EmbededServletOptions implements Options {
 
     public TldLocationsCache getTldLocationsCache() {
 	return tldLocationsCache;
+    }
+
+    public String getJavaEncoding() {
+	return javaEncoding;
     }
 
     /**
@@ -320,6 +330,8 @@ public final class EmbededServletOptions implements Options {
                                   Logger.FATAL);
             }
         }
+
+        this.javaEncoding = config.getInitParameter("javaEncoding");
 
 	// Setup the global Tag Libraries location cache for this
 	// web-application.

@@ -141,4 +141,10 @@ public interface Options {
      * for the web-application.
      */
     public TldLocationsCache getTldLocationsCache();
+
+    /**
+     * Java platform encoding to generate the JSP
+     * page servlet.
+     */
+    public String getJavaEncoding();
 }
