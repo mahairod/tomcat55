@@ -1287,6 +1287,9 @@ public class WebappLoader
             // Wait for our check interval
             threadSleep();
 
+            if (!started)
+                break;
+
             try {
                 // Perform our modification check
                 if (!classLoader.modified())
@@ -1297,8 +1300,7 @@ public class WebappLoader
             }
 
             // Handle a need for reloading
-            if (started)
-                notifyContext();
+            notifyContext();
             break;
 
         }
