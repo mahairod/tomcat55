@@ -230,11 +230,14 @@ public class JspServlet extends HttpServlet {
 		log.debug("\t     QueryString: " + request.getQueryString());
 		log.debug("\t  Request Params: ");
 		Enumeration e = request.getParameterNames();
-		while (e.hasMoreElements()) {
-		    String name = (String) e.nextElement();
-		    log.debug("\t\t " + name + " = " +
-                              request.getParameter(name));
-		}
+
+                if (e != null) {
+                    while (e.hasMoreElements()) {
+                        String name = (String) e.nextElement();
+                        log.info("\t\t " + name + " = " +
+                                 request.getParameter(name));
+                    }
+                }
 	    }
             serviceJspFile(request, response, jspUri, null, precompile);
 	} catch (RuntimeException e) {
