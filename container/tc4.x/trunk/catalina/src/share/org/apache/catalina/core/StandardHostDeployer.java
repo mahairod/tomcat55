@@ -654,7 +654,9 @@ public class StandardHostDeployer implements Deployer {
                 docBase.getAbsolutePath());
 
         // Expand the WAR into the new document base directory
-        JarFile jarFile = ((JarURLConnection)war.openConnection()).getJarFile();
+        JarURLConnection juc = (JarURLConnection) war.openConnection();
+        juc.setUseCaches(false);
+        JarFile jarFile = juc.getJarFile();
         if (host.getDebug() >= 2)
             host.log("  Have opened JAR file successfully");
         Enumeration jarEntries = jarFile.entries();
@@ -681,7 +683,7 @@ public class StandardHostDeployer implements Deployer {
             expand(input, docBase, name);
             input.close();
         }
-        jarFile.close();        // FIXME - doesn't remove from cache!!!
+        jarFile.close();
 
         // Return the absolute path to our new document base directory
         return (docBase.getAbsolutePath());
