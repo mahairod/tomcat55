@@ -107,7 +107,7 @@ public abstract class ServletOutputStream extends OutputStream {
      * character at the end.
      *
      *
-     * @param s			the <code>String</code to send to the client
+     * @param s			the <code>String</code> to send to the client
      *
      * @exception IOException 	if an input or output exception occurred
      *

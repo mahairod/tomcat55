@@ -567,7 +567,9 @@ public interface ServletRequest {
      *
      * @return          a <code>RequestDispatcher</code> object
      *                  that acts as a wrapper for the resource
-     *                  at the specified path
+     *                  at the specified path, or <code>null</code>
+     *                  if the servlet container cannot return a
+     *                  <code>RequestDispatcher</code>
      *
      * @see             RequestDispatcher
      * @see             ServletContext#getRequestDispatcher
