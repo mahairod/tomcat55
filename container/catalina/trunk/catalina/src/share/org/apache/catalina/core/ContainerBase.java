@@ -309,6 +309,7 @@ public abstract class ContainerBase
      */
     protected boolean started = false;
 
+    protected boolean initialized=false;
 
     /**
      * The property change support for this component.
@@ -828,6 +829,8 @@ public abstract class ContainerBase
 
     private void addChildInternal(Container child) {
 
+        if( log.isDebugEnabled() )
+            log.debug("Add child " + child + " " + this);
         synchronized(children) {
             if (children.get(child.getName()) != null)
                 throw new IllegalArgumentException("addChild:  Child name '" +
@@ -844,20 +847,6 @@ public abstract class ContainerBase
                 }
             }
             children.put(child.getName(), child);
-            if( child instanceof ContainerBase ) {
-                ContainerBase childCB=(ContainerBase)child;
-                // XXX we should also send JMX notifications
-                if( childCB.getObjectName() == null ) {
-                    // child was not registered yet.
-//                    ObjectName oname=childCB.createObjectName(this.getDomain(),
-//                            this.getObjectName());
-//                    if( oname != null ) {
-//                        // XXX Register the child
-//
-//                    }
-
-                }
-            }
 
             fireContainerEvent(ADD_CHILD_EVENT, child);
         }
@@ -1064,6 +1053,7 @@ public abstract class ContainerBase
                 return;
             children.remove(child.getName());
         }
+        
         if (started && (child instanceof Lifecycle)) {
             try {
                 if( child instanceof ContainerBase ) {
@@ -1077,16 +1067,10 @@ public abstract class ContainerBase
                 log.error("ContainerBase.removeChild: stop: ", e);
             }
         }
-        if( child instanceof ContainerBase ) {
-            ContainerBase childCB=(ContainerBase)child;
-            // XXX we should also send JMX notifications
-            ObjectName oname=childCB.getObjectName();
-            if( oname != null ) {
-                // XXX UnRegister the child
-            }
-        }
+        
         fireContainerEvent(REMOVE_CHILD_EVENT, child);
-        child.setParent(null);
+        
+        // child.setParent(null);
 
     }
 
@@ -1313,6 +1297,11 @@ public abstract class ContainerBase
             if (children[i] instanceof Lifecycle)
                 ((Lifecycle) children[i]).stop();
         }
+        // Remove children - so next start can work
+        children = findChildren();
+        for (int i = 0; i < children.length; i++) {
+            removeChild(children[i]);
+        }
 
         // Stop our Mappers, if any
         Mapper mappers[] = findMappers();
@@ -1390,7 +1379,8 @@ public abstract class ContainerBase
                 mserver.invoke(parentName, "addChild", new Object[] { this },
                         new String[] {"org.apache.catalina.Container"});
             }
-        }            
+        }      
+        initialized=true;
     }
     
     public ObjectName getParentName() throws MalformedObjectNameException {
@@ -1401,6 +1391,7 @@ public abstract class ContainerBase
         if( started ) {
             stop();
         }
+        initialized=false;
         if (parent != null) {
             parent.removeChild(this);
         }
