@@ -37,13 +37,17 @@ General New Features:
      ***** Please note the revised documentation below related to *****
      ***** using XML parsers with Tomcat 4.0 based applications.  *****
 
-mod_jk: Upgrade to mod_jk 1.4.
+jk: Upgrade to JK 1.4.
 
+jk: The JK connector is now enabled by default.
+
+webapp: Upgrade to Webapp 1.0.2
 
 ---------------------
 Catalina New Features:
 ---------------------
 
+ManagerBase: Add JVM route support, which can be used for load balancing.
 
 
 -------------------
@@ -78,8 +82,12 @@ DefaultServlet: Fix incorrect content length which was returned with a partial
 
 StandardContextMapper: '/' is now handled as a special case.
 
-HttpResponseBase: The toEncoded() method has been updated to place the ";jsessionid"
-  in the correct location in the presence of an anchor in the URL.
+HttpResponseBase: The toEncoded() method has been updated to place 
+  the ";jsessionid" in the correct location in the presence of an anchor 
+  in the URL.
+
+StandardManager: Set the context class loader of the thread in charge of 
+  session management.
 
 ----------------
 Jasper Bug Fixes:
@@ -103,6 +111,8 @@ Bugzilla Bugs Resolved:
       other Valves
 5617  416 Requested Range Not Satisfiable used incorrectly
 5618  Content-Range missing for 416 error
+5719  Deadlock in StandardContext reload
+5747  Another deadlock in shutdown code
 
 
 ============================
