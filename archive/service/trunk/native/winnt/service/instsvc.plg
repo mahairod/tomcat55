@@ -1,0 +1,26 @@
+--------------------Configuration: InstSvc - Win32 Release--------------------
+Begining build with project "E:\jakarta-tomcat-service\winnt\winnt\service\INSTSVC.DSP", at root.
+Active configuration is Win32 (x86) Console Application (based on Win32 (x86) Console Application)
+
+Project's tools are:
+			"32-bit C/C++ Compiler for 80x86" with flags "/nologo /ML /W3 /GX /O2 /I "../lib" /D "WIN32" /D "_CONSOLE" /D "NDEBUG" /Fp".\InstSvc.Release/INSTSVC.pch" /YX /Fo".\InstSvc.Release/" /Fd".\InstSvc.Release/" /FD /c "
+			"Win32 Resource Compiler" with flags "/l 0x407 /d "NDEBUG" "
+			"Browser Database Maker" with flags "/nologo /o".\InstSvc.Release/INSTSVC.bsc" "
+			"COFF Linker for 80x86" with flags "kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:".\InstSvc.Release/INSTSVC.pdb" /machine:I386 /out:"../bin/INSTSVC.exe" "
+			"Custom Build" with flags ""
+			"<Component 0xa>" with flags ""
+
+Creating temp file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP15.tmp" with contents </nologo /ML /W3 /GX /O2 /I "../lib" /D "WIN32" /D "_CONSOLE" /D "NDEBUG" /Fp".\InstSvc.Release/INSTSVC.pch" /YX /Fo".\InstSvc.Release/" /Fd".\InstSvc.Release/" /FD /c 
+"E:\jakarta-tomcat-service\winnt\winnt\service\instmain.cpp"
+>
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP15.tmp" 
+Creating temp file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP16.tmp" with contents <kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:".\InstSvc.Release/INSTSVC.pdb" /machine:I386 /out:"../bin/INSTSVC.exe" 
+".\InstSvc.Release\instmain.obj">
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP16.tmp" 
+Compiling...
+instmain.cpp
+Linking...
+
+
+
+INSTSVC.exe - 0 error(s), 0 warning(s)
