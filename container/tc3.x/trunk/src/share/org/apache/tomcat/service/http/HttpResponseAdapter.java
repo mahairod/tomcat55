@@ -200,7 +200,6 @@ public class HttpResponseAdapter extends  Response {
 	    }
 	    buffer[bufferCount] = (byte)c;
 	    bufferCount++;
-	}	
-    }
-					
+	}
+    }    
 }
