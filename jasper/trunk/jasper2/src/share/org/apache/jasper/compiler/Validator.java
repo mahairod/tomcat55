@@ -1026,7 +1026,9 @@ class Validator {
 	private void throwErrorIfExpression(Node n, String attrName,
 					    String actionName)
 	            throws JasperException {
-	    if (isExpression(n, n.getAttributes().getValue(attrName))) {
+	    if (n.getAttributes() != null
+		    && n.getAttributes().getValue(attrName) != null
+		    && isExpression(n, n.getAttributes().getValue(attrName))) {
 		err.jspError(n,
 			     "jsp.error.attribute.standard.non_rt_with_expr",
 			     attrName, actionName);
