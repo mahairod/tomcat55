@@ -97,6 +97,8 @@ import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 
 /**
@@ -186,8 +188,8 @@ final class ApplicationDispatcher
         else
             this.support = new InstanceSupport(wrapper);
 
-        if (debug >= 1)
-            log("servletPath=" + this.servletPath + ", pathInfo=" +
+        if ( log.isDebugEnabled() )
+            log.debug("servletPath=" + this.servletPath + ", pathInfo=" +
                 this.pathInfo + ", queryString=" + queryString +
                 ", name=" + this.name);
 
@@ -195,8 +197,8 @@ final class ApplicationDispatcher
         // the request parameters appropriately
         String jspFile = wrapper.getJspFile();
         if (jspFile != null) {
-            if (debug >= 1)
-                log("-->servletPath=" + jspFile);
+            if ( log.isDebugEnabled() )
+                log.debug("-->servletPath=" + jspFile);
             this.servletPath = jspFile;
         }
 
@@ -205,6 +207,7 @@ final class ApplicationDispatcher
 
     // ----------------------------------------------------- Instance Variables
 
+    private static Log log = LogFactory.getLog(ApplicationDispatcher.class);
 
     /**
      * The request specified by the dispatching application.
@@ -362,16 +365,16 @@ final class ApplicationDispatcher
     {
         // Reset any output that has been buffered, but keep headers/cookies
         if (response.isCommitted()) {
-            if (debug >= 1)
-                log("  Forward on committed response --> ISE");
+            if ( log.isDebugEnabled() )
+                log.debug("  Forward on committed response --> ISE");
             throw new IllegalStateException
                 (sm.getString("applicationDispatcher.forward.ise"));
         }
         try {
             response.resetBuffer();
         } catch (IllegalStateException e) {
-            if (debug >= 1)
-                log("  Forward resetBuffer() returned ISE: " + e);
+            if ( log.isDebugEnabled() )
+                log.debug("  Forward resetBuffer() returned ISE: " + e);
             throw e;
         }
 
@@ -389,8 +392,8 @@ final class ApplicationDispatcher
         // Handle a non-HTTP forward by passing the existing request/response
         if ((hrequest == null) || (hresponse == null)) {
 
-            if (debug >= 1)
-                log(" Non-HTTP Forward");
+            if ( log.isDebugEnabled() )
+                log.debug(" Non-HTTP Forward");
             // only set the Dispatcher Type to Forward if it has not been set. It will have
             // been set by the ErrorDispatcherValue in the case of an ERROR
             // it will be REQUEST coming in from the StandardWrapperValue and 
@@ -408,8 +411,8 @@ final class ApplicationDispatcher
         // Handle an HTTP named dispatcher forward
         else if ((servletPath == null) && (pathInfo == null)) {
 
-            if (debug >= 1)
-                log(" Named Dispatcher Forward");
+            if ( log.isDebugEnabled() )
+                log.debug(" Named Dispatcher Forward");
             // only set the Dispatcher Type to Forward if it has not been set. It will have
             // been set by the ErrorDispatcherValue in the case of an ERROR
             // it will be REQUEST coming in from the StandardWrapperValue and 
@@ -428,8 +431,8 @@ final class ApplicationDispatcher
         // Handle an HTTP path-based forward
         else {
 
-            if (debug >= 1)
-                log(" Path Based Forward");
+            if ( log.isDebugEnabled() )
+                log.debug(" Path Based Forward");
 
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
@@ -466,13 +469,15 @@ final class ApplicationDispatcher
 
         }
 
-        // Commit and close the response before we return
-        if (debug >= 1)
-            log(" Committing and closing response");
+        // This is not a real close in order to support error processing
+        if ( log.isDebugEnabled() )
+            log.debug(" Disabling the response for futher output");
 
-        if (response instanceof ResponseFacade) {
+        if  (response instanceof ResponseFacade) {
             ((ResponseFacade) response).finish();
         } else {
+            log.error( "Shouldn't happen - old code", new Throwable());
+
             // Close anyway
             try {
                 response.flushBuffer();
@@ -546,8 +551,8 @@ final class ApplicationDispatcher
         if (!(request instanceof HttpServletRequest) ||
             !(response instanceof HttpServletResponse)) {
 
-            if (debug >= 1)
-                log(" Non-HTTP Include");
+            if ( log.isDebugEnabled() )
+                log.debug(" Non-HTTP Include");
              request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                                              new Integer(ApplicationFilterFactory.INCLUDE));
              request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
@@ -559,8 +564,8 @@ final class ApplicationDispatcher
         // Handle an HTTP named dispatcher include
         else if (name != null) {
 
-            if (debug >= 1)
-                log(" Named Dispatcher Include");
+            if ( log.isDebugEnabled() )
+                log.debug(" Named Dispatcher Include");
 
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
@@ -579,8 +584,8 @@ final class ApplicationDispatcher
         // Handle an HTTP path based include
         else {
 
-            if (debug >= 1)
-                log(" Path Based Include");
+            if ( log.isDebugEnabled() )
+                log.debug(" Path Based Include");
 
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
@@ -670,7 +675,7 @@ final class ApplicationDispatcher
 
         // Check for the servlet being marked unavailable
         if (wrapper.isUnavailable()) {
-            log(sm.getString("applicationDispatcher.isUnavailable",
+            log.error(sm.getString("applicationDispatcher.isUnavailable",
                              wrapper.getName()));
             if (hresponse == null) {
                 ;       // NOTE - Not much we can do generically
@@ -696,12 +701,12 @@ final class ApplicationDispatcher
                 //                    log("    No servlet instance returned!");
             }
         } catch (ServletException e) {
-            log(sm.getString("applicationDispatcher.allocateException",
+            log.error(sm.getString("applicationDispatcher.allocateException",
                              wrapper.getName()), e);
             servletException = e;
             servlet = null;
         } catch (Throwable e) {
-            log(sm.getString("applicationDispatcher.allocateException",
+            log.error(sm.getString("applicationDispatcher.allocateException",
                              wrapper.getName()), e);
             servletException = new ServletException
                 (sm.getString("applicationDispatcher.allocateException",
@@ -734,14 +739,14 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            log.error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             ioException = e;
         } catch (UnavailableException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            log.error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             servletException = e;
             wrapper.unavailable(e);
@@ -749,14 +754,14 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            log.error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             servletException = e;
         } catch (RuntimeException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
-            log(sm.getString("applicationDispatcher.serviceException",
+            log.error(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             runtimeException = e;
         }
@@ -766,7 +771,7 @@ final class ApplicationDispatcher
             if (filterChain != null)
                 filterChain.release();
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.releaseFilters",
+            log.error(sm.getString("standardWrapper.releaseFilters",
                              wrapper.getName()), e);
           //FIXME Exception handling needs to be simpiler to what is in the StandardWrapperValue
         }
@@ -777,11 +782,11 @@ final class ApplicationDispatcher
                 wrapper.deallocate(servlet);
             }
         } catch (ServletException e) {
-            log(sm.getString("applicationDispatcher.deallocateException",
+            log.error(sm.getString("applicationDispatcher.deallocateException",
                              wrapper.getName()), e);
             servletException = e;
         } catch (Throwable e) {
-            log(sm.getString("applicationDispatcher.deallocateException",
+            log.error(sm.getString("applicationDispatcher.deallocateException",
                              wrapper.getName()), e);
             servletException = new ServletException
                 (sm.getString("applicationDispatcher.deallocateException",
@@ -809,14 +814,16 @@ final class ApplicationDispatcher
      * @param message Message to be logged
      */
     private void log(String message) {
+        // XXX remove it.
+        log.info( message);
 
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log("ApplicationDispatcher[" + context.getPath() +
-                       "]: " + message);
-        else
-            System.out.println("ApplicationDispatcher[" +
-                               context.getPath() + "]: " + message);
+//        Logger logger = context.getLogger();
+//        if (logger != null)
+//            logger.log("ApplicationDispatcher[" + context.getPath() +
+//                       "]: " + message);
+//        else
+//            System.out.println("ApplicationDispatcher[" +
+//                               context.getPath() + "]: " + message);
 
     }
 
@@ -828,16 +835,16 @@ final class ApplicationDispatcher
      * @param throwable Associated exception
      */
     private void log(String message, Throwable throwable) {
-
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log("ApplicationDispatcher[" + context.getPath() +
-                       "] " + message, throwable);
-        else {
-            System.out.println("ApplicationDispatcher[" +
-                               context.getPath() + "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
+        log.info( message, throwable);
+//        Logger logger = context.getLogger();
+//        if (logger != null)
+//            logger.log("ApplicationDispatcher[" + context.getPath() +
+//                       "] " + message, throwable);
+//        else {
+//            System.out.println("ApplicationDispatcher[" +
+//                               context.getPath() + "]: " + message);
+//            throwable.printStackTrace(System.out);
+//        }
 
     }
 
