@@ -29,9 +29,11 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Host;
+import org.apache.catalina.Realm;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Valve;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.catalina.startup.HostConfig;
 import org.apache.commons.modeler.Registry;
 
 
@@ -736,12 +738,11 @@ public class StandardHost
         if( realm == null ) {
             ObjectName realmName=null;
             try {
-                realmName=new ObjectName( domain + ":type=Host,host=" + getName());
+                realmName=new ObjectName( domain + ":type=Realm,host=" + getName());
                 if( mserver.isRegistered(realmName ) ) {
-                    mserver.invoke(realmName, "setContext", 
-                            new Object[] {this},
-                            new String[] { "org.apache.catalina.Container" }
-                    );            
+                    Realm nrealm = (Realm)mserver.getAttribute(realmName,
+                                                       "managedResource");
+                    setRealm(nrealm);
                 }
             } catch( Throwable t ) {
                 log.debug("No realm for this host " + realmName);
@@ -830,7 +831,9 @@ public class StandardHost
                 // Register with the Engine
                 ObjectName serviceName=new ObjectName(domain + 
                                         ":type=Engine");
-                
+
+                HostConfig deployer = new HostConfig();
+                addLifecycleListener(deployer);                
                 if( mserver.isRegistered( serviceName )) {
                     log.debug("Registering with the Engine");
                     mserver.invoke( serviceName, "addChild",
