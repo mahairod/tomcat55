@@ -18,7 +18,6 @@ org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropPa
 org.apache.jcheck.jsp.client.engine.PageContext.positivePopBody
 org.apache.jcheck.jsp.client.engine.PageContext.positivePushBody
 org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveNewLine
-org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveClose
 org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveClear
 org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveFlush
 org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetRemainingBufferUnset
