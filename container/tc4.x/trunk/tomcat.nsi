@@ -69,7 +69,7 @@ Section "NT Service (NT/2k/XP only)"
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
   
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Jakarta Tomcat" $2\jre\bin\hotspot\jvm.dll -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Jakarta Tomcat" $2\jre\bin\hotspot\jvm.dll -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Duser.dir="$INSTDIR" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
   ClearErrors
 
@@ -114,12 +114,12 @@ Section "Tomcat 4.0 Start Menu Group"
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-jar -Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
+                 '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-jar -Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
+                 '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
   SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration"
