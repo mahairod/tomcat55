@@ -258,9 +258,7 @@ public class PoolTcpEndpoint { // implements Endpoint {
     }
 
     public void stopEndpoint() {
-	log("Stopping endpoint");
 	if (running) {
-	    log("Stack trace that called stopEndpoint():", new Throwable("trace"), Logger.DEBUG);
 	    tp.shutdown();
 	    running = false;
 	    try {
