@@ -811,8 +811,18 @@ public final class ContextConfig
         } catch (MalformedURLException e) {
 	    ;
 	}
-        if (classesURL != null)
-            loader.addRepository(classesURL.toString() + "/");
+        if (classesURL != null) {
+            // Work around JDK 1.3 problem on Windows
+            String classesURLString = classesURL.toString();
+            while (true) {
+                int index = classesURLString.indexOf("\\.\\");
+                if (index < 0)
+                    break;
+                classesURLString = classesURLString.substring(0, index) +
+                    '\\' + classesURLString.substring(index + 3);
+            }
+            loader.addRepository(classesURLString + "/");
+        }
 
 	// Add the WEB-INF/lib/*.jar files
 	URL libURL = null;
