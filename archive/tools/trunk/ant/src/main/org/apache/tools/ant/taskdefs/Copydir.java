@@ -48,6 +48,11 @@ public class Copydir extends Task {
 
     private void scanDir(File from, File to) {
 	String[] list = from.list(new DesirableFilter());
+	if (list == null) {
+	    project.log("Source directory " + srcDir.getAbsolutePath()
+			+ " does not exist.", "copydir", Project.MSG_WARN);
+	    return;
+	}
 	for (int i = 0; i < list.length; i++) {
 	    String filename = list[i];
 	    File srcFile = new File(from, filename);

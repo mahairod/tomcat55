@@ -11,7 +11,8 @@ import java.net.*;
 public class Get extends Task {
     String source; // required
     String dest; // required
-
+    String verbose;
+    
     public void execute() throws BuildException {
 	try {
 	    URL url=new URL( source );
@@ -25,9 +26,9 @@ public class Get extends Task {
 	    
 	    while ((length = is.read(buffer)) >= 0) {
 		fos.write(buffer, 0, length);
-		System.out.print(".");
+		if( "true".equals(verbose)) System.out.print(".");
 	    }
-	    System.out.println();
+	    if( "true".equals(verbose)) System.out.println();
 	    System.out.println("</log:get>");
 	    fos.close();
 	    is.close();
@@ -42,5 +43,9 @@ public class Get extends Task {
 
     public void setDest(String dest) {
 	this.dest = dest;
+    }
+
+    public void setVerbose(String v) {
+	verbose=v;
     }
 }

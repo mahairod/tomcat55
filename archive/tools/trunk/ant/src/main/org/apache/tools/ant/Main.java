@@ -21,7 +21,8 @@ public class Main {
     
     private static int msgOutputLevel = Project.MSG_INFO;
     private static File buildFile = new File("build.xml");
-    private static String target = null;
+    static String targets[] = new String[20];
+    static int targetCount=0;
     private static Properties definedProps = new Properties();
 
     /**
@@ -78,7 +79,8 @@ public class Main {
 		return;
 	    } else {
 		// if it's no other arg, it may be the target
-		target = arg;
+		targets[targetCount]=arg;
+		targetCount++;
 	    }
 	}
         
@@ -142,14 +144,16 @@ public class Main {
 
         // make sure that we have a target to execute
         
-	if (target == null) {
-	    target = project.getDefaultTarget();
+	if (targetCount == 0) {
+	    String target = project.getDefaultTarget();
+	    targets[0]=target;
+	    targetCount=1;
 	}
 
         // actually do some work
-        
 	try {
-	    project.executeTarget(target);
+	    for(int i=0; i< targetCount; i++) 
+		project.executeTarget(targets[i]);
 	} catch (BuildException be) {
 	    String msg = "BUILD FATAL ERROR: ";
 	    System.out.println(msg + be.getMessage());

@@ -11,7 +11,8 @@ import java.util.zip.*;
 public class Expand extends Task {
     String dest; // req
     String source; // req
-
+    String verbose;
+    
     // XXX move it to util or tools
     public void execute() throws BuildException {
 	try {
@@ -26,7 +27,7 @@ public class Expand extends Task {
 	    while ((ze = zis.getNextEntry()) != null) {
 		try {
 		    File f = new File(dir, ze.getName());
-		    System.out.println("<log:expand-file name=\"" + ze.getName() + "\" />");
+		     if(  "true".equals(verbose)) System.out.println("<log:expand-file name=\"" + ze.getName() + "\" />");
 		    if (ze.isDirectory()) {
 			f.mkdirs(); 
 		    } else {
@@ -57,4 +58,9 @@ public class Expand extends Task {
     public void setSrc(String s) {
 	this.source = s;
     }
+
+    public void setVerbose(String v) {
+	verbose=v;
+    }
+
 }

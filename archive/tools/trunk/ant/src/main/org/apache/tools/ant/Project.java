@@ -85,6 +85,12 @@ public class Project {
 	}
     }
 
+    public void log(String msg, String tag, int msgLevel) {
+	if (msgLevel <= msgOutputLevel) {
+	    out.println(msg);
+	}
+    }
+
     public void setProperty(String name, String value) {
         log("Setting project property: " + name + " to " +
             value, MSG_VERBOSE);
@@ -263,6 +269,9 @@ public class Project {
     }
 
     public File resolveFile(String fileName) {
+	// deal with absolute files
+	if(fileName.startsWith("/") ) return new File( fileName );
+	
 	File file = new File(baseDir.getAbsolutePath());
 	StringTokenizer tok = new StringTokenizer(fileName, "/", false);
 	while (tok.hasMoreTokens()) {
