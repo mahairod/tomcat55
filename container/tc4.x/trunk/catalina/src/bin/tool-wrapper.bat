@@ -24,11 +24,6 @@ set _CLASSPATH=%CLASSPATH%
 
 rem ----- Verify and Set Required Environment Variables -----------------------
 
-if not "%JAVA_HOME%" == "" goto gotJava
-echo You must set JAVA_HOME to point at your Java Development Kit installation
-goto cleanup
-:gotJava
-
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
 if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
@@ -39,6 +34,17 @@ echo Cannot find tool-wrapper.bat in %CATALINA_HOME%\bin
 echo Please check your CATALINA_HOME setting
 goto cleanup
 :okHome
+
+rem ----- Get user customizable environment variables -------------------------
+
+if not exist "%CATALINA_HOME%\bin\setenv.bat" goto noSetenv
+call "%CATALINA_HOME%\bin\setenv.bat"
+:noSetenv
+
+if not "%JAVA_HOME%" == "" goto gotJava
+echo You must set JAVA_HOME to point at your Java Development Kit installation
+goto cleanup
+:gotJava
 
 
 rem ----- Prepare Appropriate Java Execution Commands -------------------------
