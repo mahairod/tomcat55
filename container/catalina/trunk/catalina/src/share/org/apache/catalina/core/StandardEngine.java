@@ -221,6 +221,12 @@ public class StandardEngine
                                    this.defaultHost);
 
     }
+    
+    public void setName(String name ) {
+        // The engine name is used as domain
+        domain=name; // XXX should we set it in init() ? It shouldn't matter
+        super.setName( name );
+    }
 
 
     /**
