@@ -1532,7 +1532,7 @@ public class DefaultServlet
                                    resourceInfo.path);
                 return;
             }
-            contentType = "text/html";
+            contentType = "text/html;charset=UTF-8";
         }
 
 
@@ -1837,7 +1837,14 @@ public class DefaultServlet
 
 	// Prepare a writer to a buffered area
 	ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	PrintWriter writer = new PrintWriter(stream);
+        OutputStreamWriter osWriter = null;
+        try {
+            osWriter = new OutputStreamWriter(stream, "UTF8");
+        } catch (Exception e) {
+            // Should never happen
+            osWriter = new OutputStreamWriter(stream);
+        }
+        PrintWriter writer = new PrintWriter(osWriter);
 
 	// FIXME - Currently pays no attention to the user's Locale
 
