@@ -88,6 +88,7 @@ class PageInfo {
     private boolean isErrorPage = false;
     private String errorPage = null;
     private String pageEncoding = null;
+    private int maxTagNesting = 0;
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
@@ -202,5 +203,13 @@ class PageInfo {
 
     public String getPageEncoding() {
 	return pageEncoding;
+    }
+
+    public int getMaxTagNesting() {
+        return maxTagNesting;
+    }
+
+    public void setMaxTagNesting(int maxTagNesting) {
+        this.maxTagNesting = maxTagNesting;
     }
 }
