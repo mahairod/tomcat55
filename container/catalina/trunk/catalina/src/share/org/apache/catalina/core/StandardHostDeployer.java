@@ -128,6 +128,7 @@ public class StandardHostDeployer implements Deployer {
      */
     private ContextRuleSet contextRuleSet = null;
 
+
      /**
      * The <code>Digester</code> instance to use for deploying web applications
      * to this <code>Host</code>.  <strong>WARNING</strong> - Usage of this
@@ -135,6 +136,7 @@ public class StandardHostDeployer implements Deployer {
      * access by multiple threads.
      */
     private Digester digester = null;
+
 
     /**
      * The <code>StandardHost</code> instance we are associated with.
@@ -411,7 +413,7 @@ public class StandardHostDeployer implements Deployer {
             // save context info into configFile
             Engine engine = (Engine)host.getParent();
             StandardServer server = (StandardServer) engine.getService().getServer();
-            server.storeContext(context);
+            //server.storeContext(context);
         } catch (Exception e) {
             log.error(sm.getString("standardHost.installError", contextPath),
                       e);
@@ -629,8 +631,10 @@ public class StandardHostDeployer implements Deployer {
         host.log(sm.getString("standardHost.removing", contextPath));
         try {
             // Get the work directory for the Context
-            File workDir = (File)
-                context.getServletContext().getAttribute(Globals.WORK_DIR_ATTR);
+            File workDir = 
+                (File) context.getServletContext().getAttribute
+                (Globals.WORK_DIR_ATTR);
+            String configFile = context.getConfigFile();
             host.removeChild(context);
 
             if (undeploy) {
@@ -645,7 +649,8 @@ public class StandardHostDeployer implements Deployer {
                                        host.getAppBase());
                 File contextFile = new File(context.getDocBase());
                 File baseDir = contextFile.getParentFile();
-                if (appBase.getCanonicalPath().equals(baseDir.getCanonicalPath())) {
+                if (appBase.getCanonicalPath().equals
+                    (baseDir.getCanonicalPath())) {
                     isAppBase = true;
                 }
 
@@ -655,7 +660,8 @@ public class StandardHostDeployer implements Deployer {
                 }
                 // Only remove directory and/or war if they are located in the
                 // Host's appBase and autoDeploy or liveDeploy are true
-                if (isAppBase && (host.getAutoDeploy() || host.getLiveDeploy())) {
+                if (isAppBase && 
+                    (host.getAutoDeploy() || host.getLiveDeploy())) {
                     String filename = contextFile.getName();
                     if (isWAR) {
                         filename = filename.substring(0,filename.length()-4);
@@ -669,7 +675,8 @@ public class StandardHostDeployer implements Deployer {
                                 deleteDir(contextFile);
                             }
                             if (host.isUnpackWARs()) {
-                                File contextWAR = new File(context.getDocBase() + ".war");
+                                File contextWAR = 
+                                    new File(context.getDocBase() + ".war");
                                 if (contextWAR.exists()) {
                                     if (contextLastModified 
                                         > contextWAR.lastModified()) {
@@ -681,8 +688,8 @@ public class StandardHostDeployer implements Deployer {
                             contextFile.delete();
                         }
                     }
-                    if (host.isDeployXML()) {
-                        File docBaseXml = new File(appBase,filename + ".xml");
+                    if (host.isDeployXML() && (configFile != null)) {
+                        File docBaseXml = new File(configFile);
                         docBaseXml.delete();
                     }
                 }
