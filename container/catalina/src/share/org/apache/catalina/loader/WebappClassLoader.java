@@ -160,6 +160,13 @@ public class WebappClassLoader
     protected static final StringManager sm =
         StringManager.getManager(Constants.Package);
 
+    
+    /**
+     * Use anti JAR locking code, which does URL rerouting when accessing
+     * resources.
+     */
+    boolean antiJARLocking = false; 
+    
 
     // ----------------------------------------------------------- Constructors
 
@@ -404,6 +411,22 @@ public class WebappClassLoader
     }
 
 
+    /**
+     * @return Returns the antiJARLocking.
+     */
+    public boolean getAntiJARLocking() {
+        return antiJARLocking;
+    }
+    
+    
+    /**
+     * @param antiJARLocking The antiJARLocking to set.
+     */
+    public void setAntiJARLocking(boolean antiJARLocking) {
+        this.antiJARLocking = antiJARLocking;
+    }
+
+    
     /**
      * If there is a Java SecurityManager create a read FilePermission
      * or JndiPermission for the file directory path.
@@ -1027,17 +1050,19 @@ public class WebappClassLoader
         if (url != null) {
             // Locating the repository for special handling in the case 
             // of a JAR
-            ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
-            try {
-                String repository = entry.codeBase.toString();
-                if ((repository.endsWith(".jar")) 
-                    && (!(name.endsWith(".class")))) {
-                    // Copy binary content to the work directory if not present
-                    File resourceFile = new File(loaderDir, name);
-                    url = resourceFile.toURL();
+            if (antiJARLocking) {
+                ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
+                try {
+                    String repository = entry.codeBase.toString();
+                    if ((repository.endsWith(".jar")) 
+                            && (!(name.endsWith(".class")))) {
+                        // Copy binary content to the work directory if not present
+                        File resourceFile = new File(loaderDir, name);
+                        url = resourceFile.toURL();
+                    }
+                } catch (Exception e) {
+                    // Ignore
                 }
-            } catch (Exception e) {
-                // Ignore
             }
             if (log.isDebugEnabled())
                 log.debug("  --> Returning '" + url.toString() + "'");
@@ -1766,7 +1791,7 @@ public class WebappClassLoader
                     }
 
                     // Extract resources contained in JAR to the workdir
-                    if (!(path.endsWith(".class"))) {
+                    if (antiJARLocking && !(path.endsWith(".class"))) {
                         byte[] buf = new byte[1024];
                         File resourceFile = new File
                             (loaderDir, jarEntry.getName());
