@@ -538,7 +538,7 @@ public class Catalina {
 			"org.apache.catalina.LifecycleListener"));
 
         mapper.addRule(prefix + "/Loader", new CreateLoaderAction
-            ("org.apache.catalina.WebappLoader", "className"));
+            ("org.apache.catalina.loader.WebappLoader", "className"));
 	mapper.addRule(prefix + "/Loader",
 		       mapper.setProperties());
 	mapper.addRule(prefix + "/Loader", mapper.addChild
