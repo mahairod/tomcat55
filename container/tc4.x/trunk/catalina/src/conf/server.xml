@@ -132,7 +132,6 @@
         -->
 
         <!-- Tomcat Examples Context -->
-        <!--
         <Context path="/examples" docBase="examples" debug="0"
                  reloadable="true">
           <Logger className="org.apache.catalina.logger.FileLogger"
@@ -148,7 +147,6 @@
           <Resource name="jdbc/EmployeeAppDb" auth="SERVLET"
                     type="javax.sql.DataSource"/>
         </Context>
-        -->
 
       </Host>
 
