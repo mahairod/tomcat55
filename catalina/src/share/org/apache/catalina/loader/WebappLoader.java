@@ -103,6 +103,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Engine;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.LifecycleSupport;
@@ -682,7 +683,8 @@ public class WebappLoader
                 // Register ourself. The container must be a webapp
                 try {
                     StandardContext ctx=(StandardContext)container;
-                    oname=new ObjectName(ctx.getDomain() + ":type=Loader,path=" +
+                    Engine eng=(Engine)ctx.getParent().getParent();
+                    oname=new ObjectName(eng.getName() + ":type=Loader,path=" +
                             ctx.getPath() + ",host=" + ctx.getParent().getName());
                     Registry.getRegistry().registerComponent(this, oname, null);
                     controller=oname;
