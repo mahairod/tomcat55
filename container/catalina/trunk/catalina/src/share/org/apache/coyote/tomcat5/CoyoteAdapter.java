@@ -263,9 +263,6 @@ final class CoyoteAdapter
             throw new IOException("Invalid URI");
         }
 
-        // Parse cookies
-        parseCookies(req, request);
-
         // Set the SSL properties
 	if( request.isSecure() ) {
 	    res.action(ActionCode.ACTION_REQ_SSL_ATTRIBUTE,
@@ -303,6 +300,9 @@ final class CoyoteAdapter
                                   request.getMappingData());
         request.setContext((Context) request.getMappingData().context);
         request.setWrapper((Wrapper) request.getMappingData().wrapper);
+
+        // Parse cookies
+        parseCookies(req, request);
 
     }
 
