@@ -471,8 +471,7 @@ public class SmapUtil {
             int numChildNodes = nodes.size();
             for( int i = 0; i < numChildNodes; i++ ) {
                 Node n = nodes.getNode( i );
-		if (!(n instanceof Node.JspRoot)
-		        || !((Node.JspRoot) n).isDummy()) {
+		if (!n.isDummy()) {
 		    Mark mark = n.getStart();
 
 		    if (verbose) {

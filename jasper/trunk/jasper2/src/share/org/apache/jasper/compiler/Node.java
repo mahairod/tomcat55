@@ -87,6 +87,8 @@ abstract class Node {
     protected Node parent;
     protected Nodes namedAttributeNodes; // cached for performance
 
+    private boolean isDummy;
+
     /**
      * Constructor.
      * @param start The location of the jsp page
@@ -94,6 +96,7 @@ abstract class Node {
      */
     public Node(Mark start, Node parent) {
 	this.startMark = start;
+	this.isDummy = (start == null);
 	addToParent(parent);
     }
 
@@ -106,6 +109,7 @@ abstract class Node {
     public Node(Attributes attrs, Mark start, Node parent) {
 	this.attrs = attrs;
 	this.startMark = start;
+	this.isDummy = (start == null);
 	addToParent(parent);
     }
 
@@ -118,6 +122,7 @@ abstract class Node {
     public Node(char[] text, Mark start, Node parent) {
 	this.text = text;
 	this.startMark = start;
+	this.isDummy = (start == null);
 	addToParent(parent);
     }
 
@@ -268,6 +273,10 @@ abstract class Node {
 	endJavaLine = end;
     }
 
+    public boolean isDummy() {
+	return isDummy;
+    }
+
     /**
      * @return true if the current page is in xml syntax, false otherwise.
      */
@@ -352,12 +361,8 @@ abstract class Node {
      */
     public static class JspRoot extends Root {
 
-	private boolean isDummy;
-
-	public JspRoot(Attributes attrs, Mark start, Node parent,
-		       boolean isDummy) {
+	public JspRoot(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
-	    this.isDummy = isDummy;
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -366,10 +371,6 @@ abstract class Node {
 
 	public boolean isXmlSyntax() {
 	    return true;
-	}
-
-	public boolean isDummy() {
-	    return isDummy;
 	}
     }
 

@@ -61,7 +61,7 @@
 package org.apache.jasper.compiler;
 
 import java.io.*;
-import java.util.Hashtable;
+import java.util.*;
 import javax.servlet.jsp.tagext.*;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -92,19 +92,26 @@ class JspDocumentParser extends DefaultHandler
 
     private ParserController parserController;
     private JspCompilationContext ctxt;    
+    private PageInfo pageInfo;
+
     // XML document source
     private InputSource inputSource;
+
     private String path;
+
     // Node representing the XML element currently being parsed
     private Node current;
+
     // Document locator
     private Locator locator;
+
     private Hashtable taglibs;
+
     // Flag indicating whether we are inside DTD declarations
     private boolean inDTD;
+
     private ErrorDispatcher err;
     private boolean isTagFile;
-    private boolean rootSeen;
 
     /*
      * Constructor
@@ -115,7 +122,8 @@ class JspDocumentParser extends DefaultHandler
 			     boolean isTagFile) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
-	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
+	this.pageInfo = pc.getCompiler().getPageInfo();
+	this.taglibs = this.pageInfo.getTagLibraries();
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.path = path;
 	this.inputSource = new InputSource(reader);
@@ -125,19 +133,32 @@ class JspDocumentParser extends DefaultHandler
     /*
      * Parses a JSP document by responding to SAX events.
      *
-     * @throws JasperException XXX
+     * @throws JasperException
      */
     public static Node.Nodes parse(ParserController pc,
 				   String path,
 				   InputStreamReader reader,
 				   Node parent,
 				   boolean isTagFile) throws JasperException {
+
 	JspDocumentParser handler = new JspDocumentParser(pc, path, reader,
 							  isTagFile);
-	handler.current = parent;
 	Node.Nodes pageNodes = null;
+	Node.JspRoot jspRoot = null;
 
 	try {
+	    if (parent == null) {
+		// create dummy <jsp:root> element
+		AttributesImpl rootAttrs = new AttributesImpl();
+		rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
+		jspRoot = new Node.JspRoot(rootAttrs, null, null);
+		handler.current = jspRoot;
+		handler.addInclude(jspRoot,
+				   handler.pageInfo.getIncludePrelude());
+	    } else {
+		handler.current = parent;
+	    }
+
 	    // Use the default (non-validating) parser
 	    SAXParserFactory factory = SAXParserFactory.newInstance();
 
@@ -151,8 +172,9 @@ class JspDocumentParser extends DefaultHandler
 	    saxParser.parse(handler.inputSource, handler);
 
 	    if (parent == null) {
-		// Add the jsp:root element to the parse result
-		pageNodes = new Node.Nodes((Node.JspRoot) handler.current);
+		handler.addInclude(jspRoot, handler.pageInfo.getIncludeCoda());
+		// Create Node.Nodes from dummy (top-level) <jsp:root>
+		pageNodes = new Node.Nodes(jspRoot);
 	    } else {
 		pageNodes = parent.getBody();
 	    }
@@ -179,15 +201,6 @@ class JspDocumentParser extends DefaultHandler
 
 	Node node = null;
 
-	if (!qName.equals(JSP_ROOT) && !rootSeen) {
-	    // create dummy <jsp:root> element
-	    AttributesImpl rootAttrs = new AttributesImpl();
-	    rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
-	    node = new Node.JspRoot(rootAttrs, null, current, true);
-	    current = node;
-            rootSeen = true;
-	}
-
         // XXX - As of JSP 2.0, xmlns: can appear in any node (not just
         // <jsp:root>).  The spec still needs clarification here.
         // What we implement is that it can appear in any node and
@@ -205,8 +218,7 @@ class JspDocumentParser extends DefaultHandler
             // give the <jsp:root> element the original attributes set
             // (attrs) instead of the copy without the xmlns: elements 
             // (attrsCopy)
-	    node = new Node.JspRoot(new AttributesImpl( attrs ), start, 
-                current, false);
+	    node = new Node.JspRoot(new AttributesImpl(attrs), start, current);
 	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
 	    if (isTagFile) {
 		throw new SAXParseException(
@@ -221,16 +233,7 @@ class JspDocumentParser extends DefaultHandler
 	    }
 	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE)) {
 	    node = new Node.IncludeDirective(attrsCopy, start, current);
-	    String file = attrsCopy.getValue("file");
-	    try {
-		parserController.parse(file, node);
-	    } catch (FileNotFoundException fnfe) {
-		throw new SAXParseException(
-                    err.getString("jsp.error.file.not.found", file),
-		    locator, fnfe);
-	    } catch (Exception e) {
-		throw new SAXException(e);
-	    }
+	    processIncludeDirective(attrsCopy.getValue("file"), node);
 	} else if (qName.equals(JSP_DECLARATION)) {
 	    node = new Node.Declaration(start, current);
 	} else if (qName.equals(JSP_SCRIPTLET)) {
@@ -589,6 +592,51 @@ class JspDocumentParser extends DefaultHandler
 		    throw new SAXException(msg);
 		}
 	    }
+	}
+    }
+
+    /*
+     * Processes the given list of included files.
+     *
+     * This is used to implement the include-prelude and include-coda
+     * subelements of the jsp-config element in web.xml
+     */
+    private void addInclude(Node parent, List files) throws SAXException {
+        if (files != null) {
+            Iterator iter = files.iterator();
+            while (iter.hasNext()) {
+                String file = (String) iter.next();
+                AttributesImpl attrs = new AttributesImpl();
+                attrs.addAttribute("", "file", "file", "CDATA", file);
+
+                // Create a dummy Include directive node
+                Node includeDir = new Node.IncludeDirective(attrs, 
+							    null, // XXX
+							    parent);
+                processIncludeDirective(file, includeDir);
+            }
+        }
+    }
+
+    /*
+     * Parses the given file that is being specified in the given include
+     * directive.
+     */
+    private void processIncludeDirective(String fname, Node includeDir) 
+		throws SAXException {
+
+	if (fname == null) {
+	    return;
+	}
+
+	try {
+	    parserController.parse(fname, includeDir);
+	} catch (FileNotFoundException fnfe) {
+	    throw new SAXParseException(err.getString(
+                                            "jsp.error.file.not.found", fname),
+					locator, fnfe);
+	} catch (Exception e) {
+	    throw new SAXException(e);
 	}
     }
 }
