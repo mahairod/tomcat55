@@ -263,6 +263,12 @@ public interface Session {
 
 
     /**
+     * End access to the session.
+     */
+    public void endAccess();
+
+
+    /**
      * Perform the internal processing required to invalidate this session,
      * without triggering an exception if the session has already expired.
      */
