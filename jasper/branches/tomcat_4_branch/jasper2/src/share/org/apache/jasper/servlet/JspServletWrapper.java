@@ -244,7 +244,7 @@ public class JspServletWrapper {
                         ex, Logger.ERROR);
                 }
             }
-        } catch (JasperException ex) {
+        } catch (ServletException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new JasperException(ex);
