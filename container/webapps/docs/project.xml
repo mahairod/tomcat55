@@ -17,7 +17,7 @@
 
     <menu name="Getting Started">
         <item name="Introduction"          href="introduction.html"/>
-        <item name="READ ME"               href="README.txt"/>
+        <item name="README"                href="RELEASE-NOTES.txt"/>
         <item name="Install and Run"       href="RUNNING.txt"/>
         <item name="Building from Source"  href="BUILDING.txt"/>
     </menu>
@@ -42,6 +42,7 @@
     </menu>
 
     <menu name="Catalina Developers">
+        <item name="Changelog"             href="CHANGELOG.txt"/>
         <item name="Functional Specs."     href="catalina/funcspecs/index.html"/>
         <item name="Javadocs"              href="catalina/docs/api/index.html"/>
     </menu>
