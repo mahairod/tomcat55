@@ -453,7 +453,7 @@ Transport.send(message);
     database that is configured in the server.xml file.
   &lt;/description&gt;
   &lt;res-ref-name&gt;
-    jdbc/EmployeDB
+    jdbc/EmployeeDB
   &lt;/res-ref-name&gt;
   &lt;res-type&gt;
     javax.sql.DataSource
