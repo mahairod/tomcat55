@@ -21,7 +21,27 @@
 
   <!-- Global JNDI resources -->
   <GlobalNamingResources>
+
+    <!-- Test entry for demonstration purposes -->
     <Environment name="simpleValue" type="java.lang.Integer" value="30"/>
+
+    <!-- Editable user database that can also be used by
+         UserDatabaseRealm to authenticate users -->
+    <Resource name="catalina/UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+       description="User database that can be updated and saved">
+    </Resource>
+    <ResourceParams name="catalina/UserDatabase">
+      <parameter>
+        <name>factory</name>
+        <value>org.apache.catalina.users.MemoryUserDatabaseFactory</value>
+      </parameter>
+      <parameter>
+        <name>pathname</name>
+        <value>conf/tomcat-users.xml</value>
+      </parameter>
+    </ResourceParams>
+
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share
@@ -139,7 +159,18 @@
 
       <!-- Because this Realm is here, an instance will be shared globally -->
 
+      <!-- This Realm uses the UserDatabase configured in the global JNDI
+           resources under the key "catalina/UserDatabase".  Any edits
+           that are performed against this UserDatabase are immediately
+           available for use by the Realm.  -->
+      <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                 debug="0" resourceName="catalina/UserDatabase"/>
+
+      <!-- Comment out the old realm but leave here for now in case we
+           need to go back quickly -->
+<!--
       <Realm className="org.apache.catalina.realm.MemoryRealm" />
+-->
 
       <!-- Replace the above Realm with one of the following to get a Realm
            stored in a database and accessed via JDBC -->
@@ -224,6 +255,24 @@
           <Ejb   name="ejb/EmplRecord" type="Entity"
                  home="com.wombat.empl.EmployeeRecordHome"
                remote="com.wombat.empl.EmployeeRecord"/>
+
+          <!-- If you wanted the examples app to be able to edit the
+               user database, you would uncomment the following entry.
+               Of course, you would want to enable security on the
+               application as well, so this is not done by default!
+               The database object could be accessed like this:
+
+               Context initCtx = new InitialContext();
+               Context envCtx = (Context) initCtx.lookup("java:comp/env");
+               UserDatabase database =
+                    (UserDatabase) envCtx.lookup("userDatabase");
+          -->
+<!--
+          <ResourceLink name="userDatabase" global="catalina/UserDatabase"
+                        type="org.apache.catalina.UserDatabase"/>
+-->
+
+
           <!-- PersistentManager: Uncomment the section below to test Persistent 
 		       Sessions.
                          
