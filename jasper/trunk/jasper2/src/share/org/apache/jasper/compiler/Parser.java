@@ -1165,7 +1165,7 @@ class Parser {
      *                    | 'plugin'        StdActionContent
      *                    | 'element'       StdActionContent
      */
-    private void parseAction(Node parent) throws JasperException {
+    private void parseStandardAction(Node parent) throws JasperException {
 	Mark start = reader.mark();
 
 	if (reader.matches("include")) {
@@ -1196,8 +1196,10 @@ class Parser {
 	    parsePlugin(parent);
 	} else if (reader.matches("element")) {
 	    parseElement(parent);
+	} else if (reader.matches("param")) {
+	    err.jspError(start, "jsp.error.param.invalidUse");
 	} else {
-	    err.jspError(start, "jsp.error.badaction");
+	    err.jspError(start, "jsp.error.badStandardAction");
 	}
     }
 
@@ -1447,7 +1449,7 @@ class Parser {
         } else if (reader.matches("${")) {
             parseELExpression(parent);
 	} else if (reader.matches("<jsp:")) {
-	    parseAction(parent);
+	    parseStandardAction(parent);
 	} else if (!parseCustomTag(parent)) {
 	    parseTemplateText(parent);
 	}
@@ -1501,7 +1503,7 @@ class Parser {
 	} else if (reader.matches("${")) {
 	    parseELExpression(parent);
 	} else if (reader.matches("<jsp:")) {
-	    parseAction(parent);
+	    parseStandardAction(parent);
 	} else if (!parseCustomTag(parent)) {
 	    parseTemplateText(parent);
 	}
