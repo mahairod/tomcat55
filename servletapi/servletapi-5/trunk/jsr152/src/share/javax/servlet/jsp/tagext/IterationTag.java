@@ -128,9 +128,13 @@ public interface IterationTag extends Tag {
      * <p>
      * If doAfterBody returns EVAL_BODY_AGAIN, a new evaluation of the
      * body will happen (followed by another invocation of doAfterBody).
-     * If doAfterBody returns SKIP_BODY no more body evaluations will
-     * occur, the value of out will be restored using the popBody method
-     * in pageContext, and then doEndTag will be invoked.
+     * If doAfterBody returns SKIP_BODY, no more body evaluations will occur,
+     * and the doEndTag method will be invoked.
+     *
+     * <p>
+     * If this tag handler implements BodyTag and doAfterBody returns
+     * SKIP_BODY, the value of out will be restored using the popBody 
+     * method in pageContext prior to invoking doEndTag.
      *
      * <p>
      * The method re-invocations may be lead to different actions because

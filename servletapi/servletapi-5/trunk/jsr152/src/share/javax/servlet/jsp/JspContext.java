@@ -84,45 +84,30 @@ import javax.servlet.jsp.el.VariableResolver;
  *
  * <p><B>Methods Intended for JSP authors</B>
  * <p>
+ * Some methods provide <B>uniform access</B> to the diverse objects
+ * representing scopes.
+ * The implementation must use the underlying machinery
+ * corresponding to that scope, so information can be passed back and
+ * forth between the underlying environment (e.g. Servlets) and JSP pages.
+ * The methods are:
+ * <code>setAttribute()</code>,  <code>getAttribute()</code>,
+ * <code>findAttribute()</code>,  <code>removeAttribute()</code>,
+ * <code>getAttributesScope()</code> and 
+ * <code>getAttributeNamesInScope()</code>.
+ * 
+ * <p>
  * The following methods provide <B>convenient access</B> to implicit objects:
- * <ul>
  * <code>getOut()</code>
+ *
+ * <p>
+ * The following methods provide <B>programmatic access</b> to the 
+ * Expression Language evaluator:
+ * <code>getExpressionEvaluator()</code>, <code>getVariableResolver()</code>
  *
  * @since 2.0
  */
 
 public abstract class JspContext {
-
-    /**
-     * Page scope: (this is the default) the named reference remains available
-     * in this JspContext until the return from the current Servlet.service()
-     * invocation.
-     */
-
-    public static final int PAGE_SCOPE		= 1;
-
-    /**
-     * Request scope: the named reference remains available from the 
-     * ServletRequest associated with the Servlet until the current 
-     * request is completed.
-     */
-
-    public static final int REQUEST_SCOPE	= 2;
-
-    /**
-     * Session scope (only valid if this page participates in a session):
-     * the named reference remains available from the HttpSession (if any)
-     * associated with the Servlet until the HttpSession is invalidated.
-     */
-
-    public static final int SESSION_SCOPE	= 3;
-
-    /**
-     * Application scope: named reference remains available in the 
-     * ServletContext until it is reclaimed.
-     */
-
-    public static final int APPLICATION_SCOPE	= 4;
 
     /** 
      * Register the name and value specified with page scope semantics.

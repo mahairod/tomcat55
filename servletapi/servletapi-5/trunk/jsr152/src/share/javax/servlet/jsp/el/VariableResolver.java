@@ -76,17 +76,12 @@ public interface VariableResolver
    * Returns null if the variable is not found.
    * 
    * @param pName the name of the variable to resolve
-   * @param pContext the context in which the variable is being resolved.
-   *     The actual instance varies depending on the environment in which
-   *     the Expression Evaluator is used.  For example, in a JSP context, 
-   *     the context would normally be an instance of JspContext.
    * @return the result of the variable resolution
    *
    * @throws ELException if a failure occurred while trying to resolve
    *     the given variable
    **/
-  public Object resolveVariable (String pName,
-				 Object pContext)
+  public Object resolveVariable (String pName)
     throws ELException;
 					
   //-------------------------------------

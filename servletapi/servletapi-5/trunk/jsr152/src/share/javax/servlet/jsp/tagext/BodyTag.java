@@ -96,7 +96,7 @@ import javax.servlet.jsp.*;
  * object, where the JSP Page implementation object will place the
  * evaluation (and reevaluation, if appropriate) of the body.  The setter
  * method (setBodyContent) will only be invoked if doStartTag() returns
- * EVAL_BODY_BUFFERED.
+ * EVAL_BODY_BUFFERED and the corresponding action element is not empty.
  *
  * <p><B>Methods</B>
  * <p> In addition to the setter method for the bodyContent property, there
@@ -113,29 +113,38 @@ import javax.servlet.jsp.*;
  * interface for details.
  * <p>
  * <IMG src="doc-files/BodyTagProtocol.gif"/>
-
+ *
  * <p><B>Empty and Non-Empty Action</B>
  * <p> If the TagLibraryDescriptor file indicates that the action must
- * always have an empty action, by an &lt;body-content&gt; entry of "empty",
- * then the doStartTag() method must return SKIP_BODY.
- *
+ * always have an empty element body, by an &lt;body-content&gt; entry 
+ * of "empty", then the doStartTag() method must return SKIP_BODY.
  * Otherwise, the doStartTag() method may return SKIP_BODY,
  * EVAL_BODY_INCLUDE, or EVAL_BODY_BUFFERED.
+ *
+ * <p>Note that which methods are invoked after the doStartTag() depends on 
+ * both the return value and on if the custom action element is empty
+ * or not in the JSP page, not how it's declared in the TLD.
  *
  * <p>
  * If SKIP_BODY is returned the body is not evaluated, and doEndTag() is
  * invoked.
  *
  * <p>
- * If EVAL_BODY_INCLUDE is returned, setBodyContent() is not invoked,
+ * If EVAL_BODY_INCLUDE is returned, and the custom action element is not
+ * empty, setBodyContent() is not invoked,
  * doInitBody() is not invoked, the body is evaluated and
  * "passed through" to the current out, doAfterBody() is invoked
  * and then, after zero or more iterations, doEndTag() is invoked.
+ * If the custom action element is empty, only doStart() and 
+ * doEndTag() are invoked.
  *
  * <p>
- * If EVAL_BODY_BUFFERED is returned, setBodyContent() is invoked,
+ * If EVAL_BODY_BUFFERED is returned, and the custom action element is not
+ * empty, setBodyContent() is invoked,
  * doInitBody() is invoked, the body is evaluated, doAfterBody() is
  * invoked, and then, after zero or more iterations, doEndTag() is invoked.
+ * If the custom action element is empty, only doStart() and doEndTag() 
+ * are invoked.
  */
 
 public interface BodyTag extends IterationTag {
