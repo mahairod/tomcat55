@@ -450,7 +450,7 @@ public class JspServlet extends HttpServlet {
 	}
 	//	Class jspClass = (Class) loadedJSPs.get(jspUri);
 	boolean firstTime = jsw.servletClass == null;
-        JspCompilationContext ctxt = new JspEngineContext(loader, classpath,
+   JspCompilationContext ctxt = new JspEngineContext(loader, classpath,
                                                      context, jspUri, 
                                                      isErrorPage, options,
                                                      req, res);
@@ -469,6 +469,7 @@ public class JspServlet extends HttpServlet {
 		}
             }
         } catch (FileNotFoundException ex) {
+			  compiler.removeGeneratedFiles();
             throw ex;
         } catch (JasperException ex) {
             throw ex;
