@@ -575,6 +575,12 @@ public class DefaultServlet
         
         String path = getRelativePath(req);
         
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        
         // Looking for a Content-Range header
         if (req.getHeader("Content-Range") != null) {
             // No content range header is supported
@@ -636,6 +642,12 @@ public class DefaultServlet
         }
         
         String path = getRelativePath(req);
+        
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         
         // Retrieve the Catalina context
         // Retrieve the resources

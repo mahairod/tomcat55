@@ -1686,6 +1686,12 @@ public class WebdavServlet
                                    HttpServletResponse resp)
         throws ServletException, IOException {
         
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(WebdavStatus.SC_FORBIDDEN);
+            return false;
+        }
+        
         String ifHeader = req.getHeader("If");
         if (ifHeader == null)
             ifHeader = "";
