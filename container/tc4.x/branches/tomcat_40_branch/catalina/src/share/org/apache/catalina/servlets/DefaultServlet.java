@@ -1216,7 +1216,7 @@ public class DefaultServlet
                                    + range.start
                                    + "-" + range.end + "/"
                                    + range.length);
-                response.setContentLength((int) (range.end - range.start));
+                response.setContentLength((int) (range.end - range.start + 1));
 
                 if (contentType != null) {
                     if (debug > 0)
@@ -1327,6 +1327,7 @@ public class DefaultServlet
         // bytes is the only range unit supported (and I don't see the point
         // of adding new ones).
         if (!rangeHeader.startsWith("bytes")) {
+            response.addHeader("Content-Range", "bytes */" + fileLength);
             response.sendError
                 (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
             return null;
@@ -1349,6 +1350,7 @@ public class DefaultServlet
             int dashPos = rangeDefinition.indexOf('-');
 
             if (dashPos == -1) {
+                response.addHeader("Content-Range", "bytes */" + fileLength);
                 response.sendError
                     (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
                 return null;
@@ -1361,6 +1363,8 @@ public class DefaultServlet
                     currentRange.start = fileLength + offset;
                     currentRange.end = fileLength - 1;
                 } catch (NumberFormatException e) {
+                    response.addHeader
+                        ("Content-Range", "bytes */" + fileLength);
                     response.sendError
                         (HttpServletResponse
                          .SC_REQUESTED_RANGE_NOT_SATISFIABLE);
@@ -1379,6 +1383,8 @@ public class DefaultServlet
                     else
                         currentRange.end = fileLength - 1;
                 } catch (NumberFormatException e) {
+                    response.addHeader
+                        ("Content-Range", "bytes */" + fileLength);
                     response.sendError
                         (HttpServletResponse
                          .SC_REQUESTED_RANGE_NOT_SATISFIABLE);
@@ -1388,6 +1394,7 @@ public class DefaultServlet
             }
 
             if (!currentRange.validate()) {
+                response.addHeader("Content-Range", "bytes */" + fileLength);
                 response.sendError
                     (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
                 return null;
@@ -2089,8 +2096,10 @@ public class DefaultServlet
          * Validate range.
          */
         public boolean validate() {
+            if (end >= length)
+                end = length - 1;
             return ( (start >= 0) && (end >= 0) && (length > 0)
-                     && (start <= end) && (end < length) );
+                     && (start <= end) );
         }
 
         public void recycle() {
