@@ -152,15 +152,41 @@ public class ServerLifecycleListener
     /**
      * MX4J adaptor name.
      */
-    protected String adaptor = null;
+	protected String adaptor = null;
 
-    public String getAdaptor() {
-        return (this.adaptor);
-    }
+	public String getAdaptor() {
+		return (this.adaptor);
+	}
 
-    public void setAdaptor(String adaptor) {
-        this.adaptor = adaptor;
-    }
+	public void setAdaptor(String adaptor) {
+		this.adaptor = adaptor;
+	}
+
+	/**
+	 * MX4J jrmp/iiop listen host
+	 */ 
+	protected String adaptorHost = null;
+
+	public String getAdaptorHost() {
+		return (this.adaptorHost);
+	}
+
+	public void setAdaptorHost(String adaptorHost) {
+		this.adaptorHost = adaptorHost;
+	}
+
+	/**
+	 * MX4J jrmp/iiop listen port
+	 */ 
+	protected int adaptorPort = -1;
+
+	public int getAdaptorPort() {
+		return (this.adaptorPort);
+	}
+
+	public void setAdaptorPort(int adaptorPort) {
+		this.adaptorPort = adaptorPort;
+	}
 
 
     // ---------------------------------------------- ContainerListener Methods
@@ -212,7 +238,7 @@ public class ServerLifecycleListener
 
                 if (adaptor != null) {
                     try {
-                        MBeanUtils.createRMIAdaptor(adaptor);
+                        MBeanUtils.createRMIAdaptor(adaptor, adaptorHost, adaptorPort);
                     } catch (Exception e) {
                         log.error("createAdaptor: Exception", e);
                     }

@@ -1711,7 +1711,7 @@ public class MBeanUtils {
     /**
      * Create a RMI adapter [MX4J specific].
      */
-    public static void createRMIAdaptor(String adaptorType)
+    public static void createRMIAdaptor(String adaptorType, String host, int port)
         throws Exception {
 
         String namingProviderObjectName = null;
@@ -1724,6 +1724,9 @@ public class MBeanUtils {
         String contextFactory = null;
         String providerUrl = null;
 
+		if ((host == null) || (host.trim().length() == 0))
+			host = "localhost";
+
         if (adaptorType.equals("jrmp")) {
             namingProviderObjectName = "Naming:type=rmiregistry";
             namingProviderClassName = "mx4j.tools.naming.NamingService";
@@ -1732,7 +1735,12 @@ public class MBeanUtils {
             adaptorMbeanClassName = "mx4j.adaptor.rmi.jrmp.JRMPAdaptorMBean";
             contextFactory = 
                 "com.sun.jndi.rmi.registry.RegistryContextFactory";
-            providerUrl = "rmi://localhost:1099";
+                
+			if (port == -1)
+				port = 1099;
+				            	    
+            providerUrl = "rmi://" + host + ":" + Integer.toString(port);
+            
         } else if (adaptorType.equals("iiop")) {
             namingProviderObjectName = "Naming:type=tnameserv";
             namingProviderClassName = "mx4j.tools.naming.CosNamingService";
@@ -1741,7 +1749,11 @@ public class MBeanUtils {
             adaptorClassName = "mx4j.adaptor.rmi.iiop.IIOPAdaptor";
             adaptorMbeanClassName = "mx4j.adaptor.rmi.iiop.IIOPAdaptorMBean";
             contextFactory = "com.sun.jndi.cosnaming.CNCtxFactory";
-            providerUrl = "iiop://localhost:900";
+
+			if (port == -1)
+				port = 900;
+				            	    
+            providerUrl = "iiop://" + host + ":" + Integer.toString(port);
         } else {
             throw new IllegalArgumentException("Unknown adaptor type");
         }
