@@ -16,7 +16,7 @@
 
 <section name="Introduction">
 
-  <p>A <strong>Valve</strong> element represents a comonent that will be
+  <p>A <strong>Valve</strong> element represents a component that will be
   inserted into the request processing pipeline for the associated
   Catalina container (<a href="engine.html">Engine</a>,
   <a href="host.html">Host</a>, or <a href="context.html">Context</a>).
