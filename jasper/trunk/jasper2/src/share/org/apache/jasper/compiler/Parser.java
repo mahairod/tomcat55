@@ -1173,6 +1173,8 @@ class Parser {
 	    parsePlugin(parent);
 	} else if (reader.matches("element")) {
 	    parseElement(parent);
+	} else if (reader.matches("attribute")) {
+	    err.jspError(start, "jsp.error.attribute.invalidUse");
 	} else if (reader.matches("fallback")) {
 	    err.jspError(start, "jsp.error.fallback.invalidUse");
 	} else if (reader.matches("params")) {
