@@ -107,6 +107,7 @@ import org.apache.jasper.xmlparser.TreeNode;
  * the TLD of this tag library.
  *
  * @author Pierre Delisle
+ * @author Jan Luehe
  */
 
 public class TldLocationsCache {
@@ -118,45 +119,56 @@ public class TldLocationsCache {
     public static final int ROOT_REL_URI = 1;
     public static final int NOROOT_REL_URI = 2;
 
-    static private final String WEB_XML = "/WEB-INF/web.xml";
+    private static final String WEB_XML = "/WEB-INF/web.xml";
     
     /**
-     * The mapping of the 'global' tag library URI to the location
-     * (resource path) of the TLD associated with that tag library.
-     * The location is returned as a String array:
+     * The mapping of the 'global' tag library URI to the location (resource
+     * path) of the TLD associated with that tag library. The location is
+     * returned as a String array:
      *    [0] The location
-     *    [1] If the location is a jar file, this is the location
-     *        of the tld.
+     *    [1] If the location is a jar file, this is the location of the tld.
      */
-    private Hashtable mappings = new Hashtable();
+    private Hashtable mappings;
 
-    private Hashtable tlds = new Hashtable();
+    private Hashtable tlds;
 
-    private boolean initialized=false;
-    ServletContext ctxt;
+    private boolean initialized;
+    private ServletContext ctxt;
+
     //*********************************************************************
     // Constructor and Initilizations
     
+    /**
+     * Constructor.
+     *
+     * @param ctxt the servlet context of the web application in which Jasper 
+     * is running
+     */
     public TldLocationsCache(ServletContext ctxt) {
-        this.ctxt=ctxt;
+        this.ctxt = ctxt;
+        mappings = new Hashtable();
+        tlds = new Hashtable();
+        initialized = false;
     }
 
     private void init() {
         if( initialized ) return;
         try {
-            processWebDotXml(ctxt);
-            processJars(ctxt);
-            initialized=true;
+            processWebDotXml();
+            processJars();
+	    processTldsInFileSystem();
+            initialized = true;
         } catch (JasperException ex) {
             Constants.message("jsp.error.internal.tldinit",
                               new Object[] { ex.getMessage() },
                               Logger.ERROR);
         }
     }
-    
-    private void processWebDotXml(ServletContext ctxt)
-        throws JasperException
-    {
+
+    /*
+     * Populates taglib map described in web.xml.
+     */    
+    private void processWebDotXml() throws JasperException {
 
         // Acquire an input stream to the web application deployment descriptor
         InputStream is = ctxt.getResourceAsStream(WEB_XML);
@@ -168,11 +180,8 @@ public class TldLocationsCache {
         }
 
         // Parse the web application deployment descriptor
-        ClassLoader cl =
-            // (ClassLoader) ctxt.getAttribute(Constants.SERVLET_CLASS_LOADER);
-            this.getClass().getClassLoader();
-        ParserUtils pu = ParserUtils.createParserUtils(cl);
-        TreeNode webtld = pu.parseXMLDocument(WEB_XML, is);
+        TreeNode webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
+
         Iterator taglibs = webtld.findChildren("taglib");
         while (taglibs.hasNext()) {
 
@@ -196,44 +205,38 @@ public class TldLocationsCache {
             if (tagLoc.endsWith(".jar"))
                 tagLoc2 = "META-INF/taglib.tld";
             mappings.put(tagUri, new String[] {tagLoc, tagLoc2});
-
         }
-
     }
 
     /**
-     * Process all the jar files contained in this web application
+     * Processes any JAR files contained in this web application's
      * WEB-INF/lib directory.
      */
-    private void processJars(ServletContext ctxt)
-        throws JasperException
-    {
-
+    private void processJars() throws JasperException {
         Set libSet = ctxt.getResourcePaths("/WEB-INF/lib");
         if (libSet != null) {
             Iterator it = libSet.iterator();
             while (it.hasNext()) {
                 String resourcePath = (String) it.next();
                 if (resourcePath.endsWith(".jar")) 
-                    tldConfigJar(ctxt, resourcePath);
+                    processTldsInJar(resourcePath);
             }
         }
-
     }
 
     /**
-     * Process a TLD in the JAR file at the specified resource path 
-     * (if there is one).  Will update the URI mappings for all
-     * the .tld files found in the META-INF directory tree, if
-     * a <uri> element is defined in the TLD.
+     * Parses any TLD files located in the META-INF directory (or any 
+     * subdirectory of it) of the JAR file at the given resource path, and adds
+     * an implicit map entry to the taglib map for any TLD that has a <uri>
+     * element.
      *
      * @param resourcePath Context-relative resource path
      */
-    private void tldConfigJar(ServletContext ctxt, String resourcePath) 
-        throws JasperException
-    {
+    private void processTldsInJar(String resourcePath) throws JasperException {
+
         JarFile jarFile = null;
         InputStream stream = null;
+
         try {
             URL url = ctxt.getResource(resourcePath);
             if (url == null) return;
@@ -247,23 +250,15 @@ public class TldLocationsCache {
                 String name = entry.getName();
                 if (!name.startsWith("META-INF/")) continue;
                 if (!name.endsWith(".tld")) continue;
-                //p("tldConfigJar(" + resourcePath +
-                //  "): Processing entry '" + name + "'");
                 stream = jarFile.getInputStream(entry);
-                String uri = parseTldForUri(resourcePath, stream);
-                //p("uri in TLD is: " + uri);
-                if (uri != null) {
-                    mappings.put(uri, 
-                                 new String[]{resourcePath, name});
-                    //p("added mapping: " + uri +
-                    //  " -> " + resourcePath + " " + name);
-                }
+		String uri = getUriFromTld(resourcePath, stream);
+		// Add implicit map entry only if its uri is not already
+		// present in the map
+		if (uri != null && mappings.get(uri) == null) {
+		    mappings.put(uri, new String[]{ resourcePath, name });
+		}
             }
-            // FIXME @@@
-            // -- it seems that the JarURLConnection class caches JarFile 
-            // objects for particular URLs, and there is no way to get 
-            // it to release the cached entry, so
-            // there's no way to redeploy from the same JAR file.  Wierd.
+
         } catch (Exception ex) {
             if (stream != null) {
                 try {
@@ -275,24 +270,63 @@ public class TldLocationsCache {
                     jarFile.close();
                 } catch (Throwable t) {}
             }
-        }
+	    throw new JasperException(ex);
+	}
     }
 
-    private String parseTldForUri(String resourcePath, InputStream in) 
+    /*
+     * Searches the filesystem under /WEB-INF for any TLD files, and adds
+     * an implicit map entry to the taglib map for any TLD that has a <uri>
+     * element.
+     */
+    private void processTldsInFileSystem() throws JasperException {
+	Set dirList = ctxt.getResourcePaths("/WEB-INF/");
+	if (dirList != null) {
+	    Iterator it = dirList.iterator();
+	    while (it.hasNext()) {
+		String path = (String) it.next();
+                if (!path.endsWith(".tld")) {
+		    continue;
+		}
+		InputStream stream = ctxt.getResourceAsStream(path);
+		String uri = null;
+                try {
+                    uri = getUriFromTld(path, stream);
+                } finally {
+                    if (stream != null) {
+                        try {
+                            stream.close();
+                        } catch (Throwable t) {
+			    // do nothing
+			}
+                    }
+                }
+		// Add implicit map entry only if its uri is not already
+		// present in the map
+		if (uri != null && mappings.get(uri) == null) {
+		    mappings.put(uri, new String[] { path, null });
+		}
+	    }
+	}
+    }
+
+    /*
+     * Returns the value of the uri element of the given TLD, or null if the
+     * given TLD does not contain any such element.
+     */
+    private String getUriFromTld(String resourcePath, InputStream in) 
         throws JasperException
     {
-
         // Parse the tag library descriptor at the specified resource path
-        ParserUtils pu = new ParserUtils();
-        TreeNode tld = pu.parseXMLDocument(resourcePath, in);
+        TreeNode tld = new ParserUtils().parseXMLDocument(resourcePath, in);
         TreeNode uri = tld.findChild("uri");
         if (uri != null) {
             String body = uri.getBody();
             if (body != null)
                 return body;
         }
-        return null; // No <uri> element is present
 
+        return null;
     }
 
     //*********************************************************************
@@ -328,7 +362,7 @@ public class TldLocationsCache {
      *     ROOT_REL_URI
      *     NOROOT_REL_URI
      */
-    static public int uriType(String uri) {
+    public static int uriType(String uri) {
         if (uri.indexOf(':') != -1) {
             return ABS_URI;
         } else if (uri.startsWith("/")) {
@@ -338,19 +372,13 @@ public class TldLocationsCache {
         }
     }
 
-    public TagLibraryInfo getTagLibraryInfo( String uri ) {
-        if( ! initialized ) init();
-        Object o=tlds.get( uri );
-        if( o==null ) return null;
-        return (TagLibraryInfo)o;
+    public TagLibraryInfo getTagLibraryInfo(String uri) {
+        if (!initialized) init();
+        return (TagLibraryInfo) tlds.get(uri);
     }
 
-    public void addTagLibraryInfo( String uri, TagLibraryInfo tld ) {
-        if( ! initialized ) init();
-        tlds.put( uri, tld);
-    }
-    
-    private void p(String s) {
-        System.out.println("[TldLocationsCache] " + s);
+    public void addTagLibraryInfo(String uri, TagLibraryInfo tld) {
+        if (!initialized) init();
+        tlds.put(uri, tld);
     }
 }
