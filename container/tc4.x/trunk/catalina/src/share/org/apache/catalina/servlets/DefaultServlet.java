@@ -452,9 +452,6 @@ public class DefaultServlet
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
 	throws IOException, ServletException {
-
-	doPut(request, response);
-
     }
 
 
@@ -627,10 +624,12 @@ public class DefaultServlet
         // Checking If-None-Match
         headerValue = request.getHeader("If-None-Match");
         if (headerValue != null) {
-            if (headerValue.indexOf("*") == -1) {
+
+            boolean conditionSatisfied = false;
+            
+            if (!headerValue.equals("*")) {
                 
                 commaTokenizer = new StringTokenizer(headerValue, ",");
-                boolean conditionSatisfied = false;
                 
                 while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
                     String currentToken = commaTokenizer.nextToken();
@@ -638,29 +637,28 @@ public class DefaultServlet
                         conditionSatisfied = true;
                 }
                 
-                if (conditionSatisfied) {
-                    
-                    // For GET and HEAD, we should respond with 
-                    // 304 Not Modified.
-                    // For every other method, 412 Precondition Failed is sent
-                    // back.
-                    if ( ("GET".equals(request.getMethod()))
-                         || ("HEAD".equals(request.getMethod())) ) {
-                        response.sendError
-                            (HttpServletResponse.SC_NOT_MODIFIED);
-                        return false;
-                    } else {
-                        response.sendError
-                            (HttpServletResponse.SC_PRECONDITION_FAILED);
-                        return false;
-                    }
-                }
-                
             } else {
-                if (resourceInfo.exists()) {
-                    
+                conditionSatisfied = true;
+            }
+            
+            if (conditionSatisfied) {
+                
+                // For GET and HEAD, we should respond with 
+                // 304 Not Modified.
+                // For every other method, 412 Precondition Failed is sent
+                // back.
+                if ( ("GET".equals(request.getMethod()))
+                     || ("HEAD".equals(request.getMethod())) ) {
+                    response.sendError
+                        (HttpServletResponse.SC_NOT_MODIFIED);
+                    return false;
+                } else {
+                    response.sendError
+                        (HttpServletResponse.SC_PRECONDITION_FAILED);
+                    return false;
                 }
             }
+            
         }
         
         // Checking If-Unmodified-Since
@@ -1280,8 +1278,9 @@ public class DefaultServlet
 	}
 
         // Checking If headers
-        if ( !checkIfHeaders(request, response, resourceInfo) )
+        if ( !checkIfHeaders(request, response, resourceInfo) ) {
             return;
+        }
         
         // Find content type.
         String contentType = 
