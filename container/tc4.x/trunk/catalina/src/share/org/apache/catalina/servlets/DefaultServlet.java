@@ -973,6 +973,586 @@ public class DefaultServlet
     }
     
     
+    /**
+     * Display the size of a file.
+     */
+    protected void displaySize(StringBuffer buf, int filesize) {
+        
+	int leftside = filesize / 1024;
+	int rightside = (filesize % 1024) / 103;  // makes 1 digit
+	// To avoid 0.0 for non-zero file, we bump to 0.1
+	if (leftside == 0 && rightside == 0 && filesize != 0) 
+	    rightside = 1;
+	buf.append(leftside).append(".").append(rightside);
+	buf.append(" KB");
+        
+    }
+    
+    
+    /**
+     * Serve the specified resource, optionally including the data content.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @param content Should the content be included?
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet-specified error occurs
+     */
+    protected void serveResource(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 boolean content)
+	throws IOException, ServletException {
+
+        // Identify the requested resource path
+        String path = getRelativePath(request);
+	if (debug > 0) {
+	    if (content)
+		log("DefaultServlet.serveResource:  Serving resource '" +
+		    path + "' headers and data");
+	    else
+		log("DefaultServlet.serveResource:  Serving resource '" +
+		    path + "' headers only");
+	}
+
+	// Exclude any resource in the /WEB-INF and /META-INF subdirectories
+	// (the "toUpperCase()" avoids problems on Windows systems)
+	if ((path == null) ||
+            path.toUpperCase().startsWith("/WEB-INF") ||
+	    path.toUpperCase().startsWith("/META-INF")) {
+	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+	    return;
+	}
+
+        // Retrieve the Catalina context and Resources implementation
+        DirContext resources = getResources();
+        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
+
+        if (!resourceInfo.exists) {
+	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+	    return;
+        }
+
+        // If the resource is not a collection, and the resource path
+        // ends with "/" or "\", return NOT FOUND
+        if (!resourceInfo.collection) {
+            if (path.endsWith("/") || (path.endsWith("\\"))) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+                return;
+            }
+        }
+
+        // If the resource is a collection (aka a directory), we check 
+        // the welcome files list.
+        if (resourceInfo.collection) {
+
+	    if (!request.getRequestURI().endsWith("/")) {
+	        response.sendRedirect(request.getRequestURI() + "/");
+		return;
+	    }
+
+            ResourceInfo welcomeFileInfo = checkWelcomeFiles(path, resources);
+            if (welcomeFileInfo != null) {
+                String redirectPath = welcomeFileInfo.path;
+                String contextPath = request.getContextPath();
+                if ((contextPath != null) && (!contextPath.equals("/"))) {
+                    redirectPath = contextPath + redirectPath;
+                }
+                response.sendRedirect(rewriteUrl(redirectPath));
+                return;
+            }
+            
+        }
+        
+        // Checking If headers
+        if ( !checkIfHeaders(request, response, resourceInfo) ) {
+            return;
+        }
+        
+        // Find content type.
+        String contentType = 
+            getServletContext().getMimeType(resourceInfo.path);
+        
+        if (resourceInfo.collection) {
+            // Skip directory listings if we have been configured to 
+            // suppress them
+            if (!listings) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                   resourceInfo.path);
+                return;
+            }
+            contentType = "text/html;charset=UTF-8";
+        }
+
+
+        // Parse range specifier
+        Vector ranges = null;
+        if (!resourceInfo.collection) {
+            
+            ranges = parseRange(request, response, resourceInfo);
+            
+            // ETag header
+            response.setHeader("ETag", getETag(resourceInfo, true));
+            
+        }
+        
+        // Last-Modified header
+        if (debug > 0)
+            log("DefaultServlet.serveFile:  lastModified='" +
+                (new Timestamp(resourceInfo.date)).toString() + "'");
+        response.setDateHeader("Last-Modified", resourceInfo.date);
+        
+        ServletOutputStream ostream = null;
+        PrintWriter writer = null;
+        
+        if (content) {
+
+            // Trying to retrieve the servlet output stream
+            
+            try {
+                ostream = response.getOutputStream();
+            } catch (IllegalStateException e) {
+                // If it fails, we try to get a Writer instead if we're 
+                // trying to serve a text file
+                if ( (contentType != null) 
+                     && (contentType.startsWith("text")) ) {
+                    writer = response.getWriter();
+                } else {
+                    throw e;
+                }
+            }
+
+        }
+        
+        if ( (resourceInfo.collection) || 
+             ( ((ranges == null) || (ranges.isEmpty())) 
+               && (request.getHeader("Range") == null) ) ) {
+            
+            // Set the appropriate output headers
+            if (contentType != null) {
+                if (debug > 0)
+                    log("DefaultServlet.serveFile:  contentType='" +
+                        contentType + "'");
+                response.setContentType(contentType);
+            }
+            long contentLength = resourceInfo.length;
+            if ((!resourceInfo.collection) && (contentLength >= 0)) {
+                if (debug > 0)
+                    log("DefaultServlet.serveFile:  contentLength=" +
+                        contentLength);
+                response.setContentLength((int) contentLength);
+            }
+            
+            if (resourceInfo.collection) {
+                
+                if (content) {
+                    // Serve the directory browser
+                    resourceInfo.setStream
+                        (render(request.getContextPath(), resourceInfo));
+                }
+                
+            }
+            
+            // Copy the input stream to our output stream (if requested)
+            if (content) {
+                try {
+                    response.setBufferSize(output);
+                } catch (IllegalStateException e) {
+                    // Silent catch
+                }
+                if (ostream != null) {
+                    copy(resourceInfo, ostream);
+                } else {
+                    copy(resourceInfo, writer);
+                }
+            }
+            
+        } else {
+            
+            if ((ranges == null) || (ranges.isEmpty()))
+                return;
+            
+            // Partial content response.
+            
+            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+            
+            if (ranges.size() == 1) {
+                
+                Range range = (Range) ranges.elementAt(0);
+                response.addHeader("Content-Range", "bytes " 
+                                   + range.start
+                                   + "-" + range.end + "/" 
+                                   + range.length);
+                response.setContentLength((int) range.length);
+                
+                if (contentType != null) {
+                    if (debug > 0)
+                        log("DefaultServlet.serveFile:  contentType='" +
+                            contentType + "'");
+                    response.setContentType(contentType);
+                }
+                
+                if (content) {
+                    try {
+                        response.setBufferSize(output);
+                    } catch (IllegalStateException e) {
+                        // Silent catch
+                    }
+                    if (ostream != null) {
+                        copy(resourceInfo, ostream, range);
+                    } else {
+                        copy(resourceInfo, writer, range);
+                    }
+                }
+                
+            } else {
+                
+                response.setContentType("multipart/byteranges; boundary="
+                                        + mimeSeparation);
+                
+                if (content) {
+                    try {
+                        response.setBufferSize(output);
+                    } catch (IllegalStateException e) {
+                        // Silent catch
+                    }
+                    if (ostream != null) {
+                        copy(resourceInfo, ostream, ranges.elements(), 
+                             contentType);
+                    } else {
+                        copy(resourceInfo, writer, ranges.elements(), 
+                             contentType);
+                    }
+                }
+                
+            }
+            
+        }
+        
+    }
+
+
+    /**
+     * Parse the range header.
+     * 
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @return Vector of ranges
+     */
+    protected Vector parseRange(HttpServletRequest request, 
+                                HttpServletResponse response, 
+                                ResourceInfo resourceInfo) 
+        throws IOException {
+        
+        // Checking If-Range
+        String headerValue = request.getHeader("If-Range");
+        if (headerValue != null) {
+            
+            String eTag = getETag(resourceInfo, true);
+            long lastModified = resourceInfo.date;
+            
+            Date date = null;
+            
+            // Parsing the HTTP Date
+            for (int i = 0; (date == null) && (i < formats.length); i++) {
+                try {
+                    date = formats[i].parse(headerValue);
+                } catch (ParseException e) {
+                    ;
+                }
+            }
+            
+            if (date == null) {
+                
+                // If the ETag the client gave does not match the entity
+                // etag, then the entire entity is returned.
+                if (!eTag.equals(headerValue.trim()))
+                    return null;
+                
+            } else {
+                
+                // If the timestamp of the entity the client got is older than
+                // the last modification date of the entity, the entire entity
+                // is returned.
+                if (lastModified > (date.getTime() + 1000))
+                    return null;
+                
+            }
+            
+        }
+        
+        long fileLength = resourceInfo.length;
+        
+        if (fileLength == 0)
+            return null;
+        
+        // Retrieving the range header (if any is specified
+        String rangeHeader = request.getHeader("Range");
+        
+        if (rangeHeader == null)
+            return null;
+        // bytes is the only range unit supported (and I don't see the point
+        // of adding new ones).
+        if (!rangeHeader.startsWith("bytes")) {
+            response.sendError
+                (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+            return null;
+        }
+        
+        rangeHeader = rangeHeader.substring(6);
+        
+        // Vector which will contain all the ranges which are successfully
+        // parsed.
+        Vector result = new Vector();
+        StringTokenizer commaTokenizer = new StringTokenizer(rangeHeader, ",");
+        
+        // Parsing the range list
+        while (commaTokenizer.hasMoreTokens()) {
+            String rangeDefinition = commaTokenizer.nextToken();
+            
+            Range currentRange = new Range();
+            currentRange.length = fileLength;
+            
+            int dashPos = rangeDefinition.indexOf('-');
+            
+            if (dashPos == -1) {
+                response.sendError
+                    (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                return null;
+            }
+            
+            if (dashPos == 0) {
+                
+                try {
+                    long offset = Long.parseLong(rangeDefinition);
+                    currentRange.start = fileLength + offset;
+                    currentRange.end = fileLength - 1;
+                } catch (NumberFormatException e) {
+                    response.sendError
+                        (HttpServletResponse
+                         .SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                    return null;
+                }
+                
+            } else {
+                
+                try {
+                    currentRange.start = Long.parseLong
+                        (rangeDefinition.substring(0, dashPos));
+                    if (dashPos < rangeDefinition.length() - 1)
+                        currentRange.end = Long.parseLong
+                            (rangeDefinition.substring
+                             (dashPos + 1, rangeDefinition.length()));
+                    else
+                        currentRange.end = fileLength - 1;
+                } catch (NumberFormatException e) {
+                    response.sendError
+                        (HttpServletResponse
+                         .SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                    return null;
+                }
+                
+            }
+            
+            if (!currentRange.validate()) {
+                response.sendError
+                    (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                return null;
+            }
+            
+            result.addElement(currentRange);
+        }
+        
+        return result;
+    }
+
+
+    /**
+     * Return an InputStream to an HTML representation of the contents
+     * of this directory.
+     *
+     * @param contextPath Context path to which our internal paths are
+     *  relative
+     */
+    protected InputStream render
+        (String contextPath, ResourceInfo resourceInfo) {
+
+        String name = resourceInfo.path;
+
+	// Number of characters to trim from the beginnings of filenames
+	int trim = name.length();
+	if (!name.endsWith("/"))
+	    trim += 1;
+	if (name.equals("/"))
+	    trim = 1;
+
+	// Prepare a writer to a buffered area
+	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        OutputStreamWriter osWriter = null;
+        try {
+            osWriter = new OutputStreamWriter(stream, "UTF8");
+        } catch (Exception e) {
+            // Should never happen
+            osWriter = new OutputStreamWriter(stream);
+        }
+        PrintWriter writer = new PrintWriter(osWriter);
+
+	// Render the page header
+	writer.print("<html>\r\n");
+	writer.print("<head>\r\n");
+	writer.print("<title>");
+	writer.print(sm.getString("directory.title", name));
+	writer.print("</title>\r\n</head>\r\n");
+	writer.print("<body bgcolor=\"white\">\r\n");
+	writer.print("<table width=\"90%\" cellspacing=\"0\"" +
+		     " cellpadding=\"5\" align=\"center\">\r\n");
+
+	// Render the in-page title
+	writer.print("<tr><td colspan=\"3\"><font size=\"+2\">\r\n<strong>");
+	writer.print(sm.getString("directory.title", name));
+	writer.print("</strong>\r\n</font></td></tr>\r\n");
+
+	// Render the link to our parent (if required)
+        String parentDirectory = name;
+        if (parentDirectory.endsWith("/")) {
+            parentDirectory = 
+                parentDirectory.substring(0, parentDirectory.length() - 1);
+        }
+	int slash = parentDirectory.lastIndexOf("/");
+	if (slash >= 0) {
+	    String parent = name.substring(0, slash);
+	    writer.print("<tr><td colspan=\"3\" bgcolor=\"#ffffff\">\r\n");
+	    writer.print("<a href=\"");
+	    writer.print(rewriteUrl(contextPath));
+            if (parent.equals(""))
+                parent = "/";
+	    writer.print(rewriteUrl(parent));
+            if (!parent.endsWith("/"))
+                writer.print("/");
+            writer.print("\">");
+	    writer.print(sm.getString("directory.parent", parent));
+	    writer.print("</a>\r\n");
+	    writer.print("</td></tr>\r\n");
+	}
+
+	// Render the column headings
+	writer.print("<tr bgcolor=\"#cccccc\">\r\n");
+	writer.print("<td align=\"left\"><font size=\"+1\"><strong>");
+	writer.print(sm.getString("directory.filename"));
+	writer.print("</strong></font></td>\r\n");
+	writer.print("<td align=\"center\"><font size=\"+1\"><strong>");
+	writer.print(sm.getString("directory.size"));
+	writer.print("</strong></font></td>\r\n");
+	writer.print("<td align=\"right\"><font size=\"+1\"><strong>");
+	writer.print(sm.getString("directory.lastModified"));
+	writer.print("</strong></font></td>\r\n");
+	writer.print("</tr>\r\n");
+
+        try {
+
+            // Render the directory entries within this directory
+            DirContext directory = resourceInfo.directory;
+            NamingEnumeration enum = 
+                resourceInfo.resources.list(resourceInfo.path);
+            boolean shade = false;
+            while (enum.hasMoreElements()) {
+
+                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                String resourceName = ncPair.getName();
+                ResourceInfo childResourceInfo = 
+                    new ResourceInfo(resourceName, directory);
+
+                String trimmed = resourceName/*.substring(trim)*/;
+                if (trimmed.equalsIgnoreCase("WEB-INF") ||
+                    trimmed.equalsIgnoreCase("META-INF"))
+                    continue;
+
+                writer.print("<tr");
+                if (shade)
+                    writer.print(" bgcolor=\"eeeeee\"");
+                writer.print(">\r\n");
+                shade = !shade;
+
+                writer.print("<td align=\"left\">&nbsp;&nbsp;\r\n");
+                writer.print("<a href=\"");
+                writer.print(rewriteUrl(contextPath));
+                resourceName = rewriteUrl(name + resourceName);
+                writer.print(resourceName);
+                if (childResourceInfo.collection)
+                    writer.print("/");
+                writer.print("\"><tt>");
+                writer.print(trimmed);
+
+                if (childResourceInfo.collection)
+                    writer.print("/");
+                writer.print("</tt></a></td>\r\n");
+
+                writer.print("<td align=\"right\"><tt>");
+                if (childResourceInfo.collection)
+                    writer.print("&nbsp;");
+                else
+                    writer.print(renderSize(childResourceInfo.length));
+                writer.print("</tt></td>\r\n");
+
+                writer.print("<td align=\"right\"><tt>");
+                writer.print(renderLastModified(childResourceInfo.date));
+                writer.print("</tt></td>\r\n");
+
+                writer.print("</tr>\r\n");
+            }
+
+        } catch (NamingException e) {
+            // Something went wrong
+            e.printStackTrace();
+        }
+
+	// Render the page footer
+	writer.print("<tr><td colspan=\"3\">&nbsp;</td></tr>\r\n");
+	writer.print("<tr><td colspan=\"3\" bgcolor=\"#cccccc\">");
+	writer.print("<font size=\"-1\">");
+	writer.print(Globals.SERVER_INFO);
+	writer.print("</font></td></tr>\r\n");
+	writer.print("</table>\r\n");
+	writer.print("</body>\r\n");
+	writer.print("</html>\r\n");
+
+	// Return an input stream to the underlying bytes
+	writer.flush();
+	return (new ByteArrayInputStream(stream.toByteArray()));
+
+    }
+
+
+    /**
+     * Render the last modified date and time for the specified timestamp.
+     *
+     * @param lastModified Last modified date and time, in milliseconds since
+     *  the epoch
+     */
+    protected String renderLastModified(long lastModified) {
+
+	return (formats[0].format(new Date(lastModified)));
+
+    }
+
+
+    /**
+     * Render the specified file size (in bytes).
+     *
+     * @param size File size (in bytes)
+     */
+    protected String renderSize(long size) {
+
+	long leftSide = size / 1024;
+	long rightSide = (size % 1024) / 103;	// Makes 1 digit
+	if ((leftSide == 0) && (rightSide == 0) && (size > 0))
+	    rightSide = 1;
+
+	return ("" + leftSide + "." + rightSide + " kb");
+
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 
@@ -1393,22 +1973,6 @@ public class DefaultServlet
 
 
     /**
-     * Display the size of a file.
-     */
-    private void displaySize(StringBuffer buf, int filesize) {
-        
-	int leftside = filesize / 1024;
-	int rightside = (filesize % 1024) / 103;  // makes 1 digit
-	// To avoid 0.0 for non-zero file, we bump to 0.1
-	if (leftside == 0 && rightside == 0 && filesize != 0) 
-	    rightside = 1;
-	buf.append(leftside).append(".").append(rightside);
-	buf.append(" KB");
-        
-    }
-    
-    
-    /**
      * Check to see if a default page exists.
      * 
      * @param pathname Pathname of the file to be served
@@ -1444,569 +2008,6 @@ public class DefaultServlet
         
         return null;
         
-    }
-
-
-    /**
-     * Serve the specified resource, optionally including the data content.
-     *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
-     * @param content Should the content be included?
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet-specified error occurs
-     */
-    private void serveResource(HttpServletRequest request,
-                               HttpServletResponse response,
-                               boolean content)
-	throws IOException, ServletException {
-
-        // Identify the requested resource path
-        String path = getRelativePath(request);
-	if (debug > 0) {
-	    if (content)
-		log("DefaultServlet.serveResource:  Serving resource '" +
-		    path + "' headers and data");
-	    else
-		log("DefaultServlet.serveResource:  Serving resource '" +
-		    path + "' headers only");
-	}
-
-	// Exclude any resource in the /WEB-INF and /META-INF subdirectories
-	// (the "toUpperCase()" avoids problems on Windows systems)
-	if ((path == null) ||
-            path.toUpperCase().startsWith("/WEB-INF") ||
-	    path.toUpperCase().startsWith("/META-INF")) {
-	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
-	    return;
-	}
-
-        // Retrieve the Catalina context and Resources implementation
-        DirContext resources = getResources();
-        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
-
-        if (!resourceInfo.exists) {
-	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
-	    return;
-        }
-
-        // If the resource is not a collection, and the resource path
-        // ends with "/" or "\", return NOT FOUND
-        if (!resourceInfo.collection) {
-            if (path.endsWith("/") || (path.endsWith("\\"))) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
-                return;
-            }
-        }
-
-        // If the resource is a collection (aka a directory), we check 
-        // the welcome files list.
-        if (resourceInfo.collection) {
-
-	    if (!request.getRequestURI().endsWith("/")) {
-	        response.sendRedirect(request.getRequestURI() + "/");
-		return;
-	    }
-
-            ResourceInfo welcomeFileInfo = checkWelcomeFiles(path, resources);
-            if (welcomeFileInfo != null) {
-                String redirectPath = welcomeFileInfo.path;
-                String contextPath = request.getContextPath();
-                if ((contextPath != null) && (!contextPath.equals("/"))) {
-                    redirectPath = contextPath + redirectPath;
-                }
-                response.sendRedirect(rewriteUrl(redirectPath));
-                return;
-            }
-            
-        }
-        
-        // Checking If headers
-        if ( !checkIfHeaders(request, response, resourceInfo) ) {
-            return;
-        }
-        
-        // Find content type.
-        String contentType = 
-            getServletContext().getMimeType(resourceInfo.path);
-        
-        if (resourceInfo.collection) {
-            // Skip directory listings if we have been configured to 
-            // suppress them
-            if (!listings) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                                   resourceInfo.path);
-                return;
-            }
-            contentType = "text/html;charset=UTF-8";
-        }
-
-
-        // Parse range specifier
-        Vector ranges = null;
-        if (!resourceInfo.collection) {
-            
-            ranges = parseRange(request, response, resourceInfo);
-            
-            // ETag header
-            response.setHeader("ETag", getETag(resourceInfo, true));
-            
-        }
-        
-        // Last-Modified header
-        if (debug > 0)
-            log("DefaultServlet.serveFile:  lastModified='" +
-                (new Timestamp(resourceInfo.date)).toString() + "'");
-        response.setDateHeader("Last-Modified", resourceInfo.date);
-        
-        ServletOutputStream ostream = null;
-        PrintWriter writer = null;
-        
-        if (content) {
-
-            // Trying to retrieve the servlet output stream
-            
-            try {
-                ostream = response.getOutputStream();
-            } catch (IllegalStateException e) {
-                // If it fails, we try to get a Writer instead if we're 
-                // trying to serve a text file
-                if ( (contentType != null) 
-                     && (contentType.startsWith("text")) ) {
-                    writer = response.getWriter();
-                } else {
-                    throw e;
-                }
-            }
-
-        }
-        
-        if ( (resourceInfo.collection) || 
-             ( ((ranges == null) || (ranges.isEmpty())) 
-               && (request.getHeader("Range") == null) ) ) {
-            
-            // Set the appropriate output headers
-            if (contentType != null) {
-                if (debug > 0)
-                    log("DefaultServlet.serveFile:  contentType='" +
-                        contentType + "'");
-                response.setContentType(contentType);
-            }
-            long contentLength = resourceInfo.length;
-            if ((!resourceInfo.collection) && (contentLength >= 0)) {
-                if (debug > 0)
-                    log("DefaultServlet.serveFile:  contentLength=" +
-                        contentLength);
-                response.setContentLength((int) contentLength);
-            }
-            
-            if (resourceInfo.collection) {
-                
-                if (content) {
-                    // Serve the directory browser
-                    resourceInfo.setStream
-                        (render(request.getContextPath(), resourceInfo));
-                }
-                
-            }
-            
-            // Copy the input stream to our output stream (if requested)
-            if (content) {
-                try {
-                    response.setBufferSize(output);
-                } catch (IllegalStateException e) {
-                    // Silent catch
-                }
-                if (ostream != null) {
-                    copy(resourceInfo, ostream);
-                } else {
-                    copy(resourceInfo, writer);
-                }
-            }
-            
-        } else {
-            
-            if ((ranges == null) || (ranges.isEmpty()))
-                return;
-            
-            // Partial content response.
-            
-            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
-            
-            if (ranges.size() == 1) {
-                
-                Range range = (Range) ranges.elementAt(0);
-                response.addHeader("Content-Range", "bytes " 
-                                   + range.start
-                                   + "-" + range.end + "/" 
-                                   + range.length);
-                response.setContentLength((int) range.length);
-                
-                if (contentType != null) {
-                    if (debug > 0)
-                        log("DefaultServlet.serveFile:  contentType='" +
-                            contentType + "'");
-                    response.setContentType(contentType);
-                }
-                
-                if (content) {
-                    try {
-                        response.setBufferSize(output);
-                    } catch (IllegalStateException e) {
-                        // Silent catch
-                    }
-                    if (ostream != null) {
-                        copy(resourceInfo, ostream, range);
-                    } else {
-                        copy(resourceInfo, writer, range);
-                    }
-                }
-                
-            } else {
-                
-                response.setContentType("multipart/byteranges; boundary="
-                                        + mimeSeparation);
-                
-                if (content) {
-                    try {
-                        response.setBufferSize(output);
-                    } catch (IllegalStateException e) {
-                        // Silent catch
-                    }
-                    if (ostream != null) {
-                        copy(resourceInfo, ostream, ranges.elements(), 
-                             contentType);
-                    } else {
-                        copy(resourceInfo, writer, ranges.elements(), 
-                             contentType);
-                    }
-                }
-                
-            }
-            
-        }
-        
-    }
-
-
-    /**
-     * Parse the range header.
-     * 
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
-     * @return Vector of ranges
-     */
-    private Vector parseRange(HttpServletRequest request, 
-                              HttpServletResponse response, 
-                              ResourceInfo resourceInfo) 
-        throws IOException {
-        
-        // Checking If-Range
-        String headerValue = request.getHeader("If-Range");
-        if (headerValue != null) {
-            
-            String eTag = getETag(resourceInfo, true);
-            long lastModified = resourceInfo.date;
-            
-            Date date = null;
-            
-            // Parsing the HTTP Date
-            for (int i = 0; (date == null) && (i < formats.length); i++) {
-                try {
-                    date = formats[i].parse(headerValue);
-                } catch (ParseException e) {
-                    ;
-                }
-            }
-            
-            if (date == null) {
-                
-                // If the ETag the client gave does not match the entity
-                // etag, then the entire entity is returned.
-                if (!eTag.equals(headerValue.trim()))
-                    return null;
-                
-            } else {
-                
-                // If the timestamp of the entity the client got is older than
-                // the last modification date of the entity, the entire entity
-                // is returned.
-                if (lastModified > (date.getTime() + 1000))
-                    return null;
-                
-            }
-            
-        }
-        
-        long fileLength = resourceInfo.length;
-        
-        if (fileLength == 0)
-            return null;
-        
-        // Retrieving the range header (if any is specified
-        String rangeHeader = request.getHeader("Range");
-        
-        if (rangeHeader == null)
-            return null;
-        // bytes is the only range unit supported (and I don't see the point
-        // of adding new ones).
-        if (!rangeHeader.startsWith("bytes")) {
-            response.sendError
-                (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-            return null;
-        }
-        
-        rangeHeader = rangeHeader.substring(6);
-        
-        // Vector which will contain all the ranges which are successfully
-        // parsed.
-        Vector result = new Vector();
-        StringTokenizer commaTokenizer = new StringTokenizer(rangeHeader, ",");
-        
-        // Parsing the range list
-        while (commaTokenizer.hasMoreTokens()) {
-            String rangeDefinition = commaTokenizer.nextToken();
-            
-            Range currentRange = new Range();
-            currentRange.length = fileLength;
-            
-            int dashPos = rangeDefinition.indexOf('-');
-            
-            if (dashPos == -1) {
-                response.sendError
-                    (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                return null;
-            }
-            
-            if (dashPos == 0) {
-                
-                try {
-                    long offset = Long.parseLong(rangeDefinition);
-                    currentRange.start = fileLength + offset;
-                    currentRange.end = fileLength - 1;
-                } catch (NumberFormatException e) {
-                    response.sendError
-                        (HttpServletResponse
-                         .SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                    return null;
-                }
-                
-            } else {
-                
-                try {
-                    currentRange.start = Long.parseLong
-                        (rangeDefinition.substring(0, dashPos));
-                    if (dashPos < rangeDefinition.length() - 1)
-                        currentRange.end = Long.parseLong
-                            (rangeDefinition.substring
-                             (dashPos + 1, rangeDefinition.length()));
-                    else
-                        currentRange.end = fileLength - 1;
-                } catch (NumberFormatException e) {
-                    response.sendError
-                        (HttpServletResponse
-                         .SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                    return null;
-                }
-                
-            }
-            
-            if (!currentRange.validate()) {
-                response.sendError
-                    (HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                return null;
-            }
-            
-            result.addElement(currentRange);
-        }
-        
-        return result;
-    }
-
-
-    /**
-     * Return an InputStream to an HTML representation of the contents
-     * of this directory.
-     *
-     * @param contextPath Context path to which our internal paths are
-     *  relative
-     */
-    private InputStream render(String contextPath, ResourceInfo resourceInfo) {
-
-        String name = resourceInfo.path;
-
-	// Number of characters to trim from the beginnings of filenames
-	int trim = name.length();
-	if (!name.endsWith("/"))
-	    trim += 1;
-	if (name.equals("/"))
-	    trim = 1;
-
-	// Prepare a writer to a buffered area
-	ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        OutputStreamWriter osWriter = null;
-        try {
-            osWriter = new OutputStreamWriter(stream, "UTF8");
-        } catch (Exception e) {
-            // Should never happen
-            osWriter = new OutputStreamWriter(stream);
-        }
-        PrintWriter writer = new PrintWriter(osWriter);
-
-	// Render the page header
-	writer.print("<html>\r\n");
-	writer.print("<head>\r\n");
-	writer.print("<title>");
-	writer.print(sm.getString("directory.title", name));
-	writer.print("</title>\r\n</head>\r\n");
-	writer.print("<body bgcolor=\"white\">\r\n");
-	writer.print("<table width=\"90%\" cellspacing=\"0\"" +
-		     " cellpadding=\"5\" align=\"center\">\r\n");
-
-	// Render the in-page title
-	writer.print("<tr><td colspan=\"3\"><font size=\"+2\">\r\n<strong>");
-	writer.print(sm.getString("directory.title", name));
-	writer.print("</strong>\r\n</font></td></tr>\r\n");
-
-	// Render the link to our parent (if required)
-        String parentDirectory = name;
-        if (parentDirectory.endsWith("/")) {
-            parentDirectory = 
-                parentDirectory.substring(0, parentDirectory.length() - 1);
-        }
-	int slash = parentDirectory.lastIndexOf("/");
-	if (slash >= 0) {
-	    String parent = name.substring(0, slash);
-	    writer.print("<tr><td colspan=\"3\" bgcolor=\"#ffffff\">\r\n");
-	    writer.print("<a href=\"");
-	    writer.print(rewriteUrl(contextPath));
-            if (parent.equals(""))
-                parent = "/";
-	    writer.print(rewriteUrl(parent));
-            if (!parent.endsWith("/"))
-                writer.print("/");
-            writer.print("\">");
-	    writer.print(sm.getString("directory.parent", parent));
-	    writer.print("</a>\r\n");
-	    writer.print("</td></tr>\r\n");
-	}
-
-	// Render the column headings
-	writer.print("<tr bgcolor=\"#cccccc\">\r\n");
-	writer.print("<td align=\"left\"><font size=\"+1\"><strong>");
-	writer.print(sm.getString("directory.filename"));
-	writer.print("</strong></font></td>\r\n");
-	writer.print("<td align=\"center\"><font size=\"+1\"><strong>");
-	writer.print(sm.getString("directory.size"));
-	writer.print("</strong></font></td>\r\n");
-	writer.print("<td align=\"right\"><font size=\"+1\"><strong>");
-	writer.print(sm.getString("directory.lastModified"));
-	writer.print("</strong></font></td>\r\n");
-	writer.print("</tr>\r\n");
-
-        try {
-
-            // Render the directory entries within this directory
-            DirContext directory = resourceInfo.directory;
-            NamingEnumeration enum = 
-                resourceInfo.resources.list(resourceInfo.path);
-            boolean shade = false;
-            while (enum.hasMoreElements()) {
-
-                NameClassPair ncPair = (NameClassPair) enum.nextElement();
-                String resourceName = ncPair.getName();
-                ResourceInfo childResourceInfo = 
-                    new ResourceInfo(resourceName, directory);
-
-                String trimmed = resourceName/*.substring(trim)*/;
-                if (trimmed.equalsIgnoreCase("WEB-INF") ||
-                    trimmed.equalsIgnoreCase("META-INF"))
-                    continue;
-
-                writer.print("<tr");
-                if (shade)
-                    writer.print(" bgcolor=\"eeeeee\"");
-                writer.print(">\r\n");
-                shade = !shade;
-
-                writer.print("<td align=\"left\">&nbsp;&nbsp;\r\n");
-                writer.print("<a href=\"");
-                writer.print(rewriteUrl(contextPath));
-                resourceName = rewriteUrl(name + resourceName);
-                writer.print(resourceName);
-                if (childResourceInfo.collection)
-                    writer.print("/");
-                writer.print("\"><tt>");
-                writer.print(trimmed);
-
-                if (childResourceInfo.collection)
-                    writer.print("/");
-                writer.print("</tt></a></td>\r\n");
-
-                writer.print("<td align=\"right\"><tt>");
-                if (childResourceInfo.collection)
-                    writer.print("&nbsp;");
-                else
-                    writer.print(renderSize(childResourceInfo.length));
-                writer.print("</tt></td>\r\n");
-
-                writer.print("<td align=\"right\"><tt>");
-                writer.print(renderLastModified(childResourceInfo.date));
-                writer.print("</tt></td>\r\n");
-
-                writer.print("</tr>\r\n");
-            }
-
-        } catch (NamingException e) {
-            // Something went wrong
-            e.printStackTrace();
-        }
-
-	// Render the page footer
-	writer.print("<tr><td colspan=\"3\">&nbsp;</td></tr>\r\n");
-	writer.print("<tr><td colspan=\"3\" bgcolor=\"#cccccc\">");
-	writer.print("<font size=\"-1\">");
-	writer.print(Globals.SERVER_INFO);
-	writer.print("</font></td></tr>\r\n");
-	writer.print("</table>\r\n");
-	writer.print("</body>\r\n");
-	writer.print("</html>\r\n");
-
-	// Return an input stream to the underlying bytes
-	writer.flush();
-	return (new ByteArrayInputStream(stream.toByteArray()));
-
-    }
-
-
-    /**
-     * Render the last modified date and time for the specified timestamp.
-     *
-     * @param lastModified Last modified date and time, in milliseconds since
-     *  the epoch
-     */
-    private String renderLastModified(long lastModified) {
-
-	return (formats[0].format(new Date(lastModified)));
-
-    }
-
-
-    /**
-     * Render the specified file size (in bytes).
-     *
-     * @param size File size (in bytes)
-     */
-    private String renderSize(long size) {
-
-	long leftSide = size / 1024;
-	long rightSide = (size % 1024) / 103;	// Makes 1 digit
-	if ((leftSide == 0) && (rightSide == 0) && (size > 0))
-	    rightSide = 1;
-
-	return ("" + leftSide + "." + rightSide + " kb");
-
     }
 
 
