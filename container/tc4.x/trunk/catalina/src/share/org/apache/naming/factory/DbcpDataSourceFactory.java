@@ -65,6 +65,7 @@
 package org.apache.naming.factory;
 
 import java.util.Hashtable;
+import java.security.AccessControlException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import javax.naming.Name;
@@ -206,7 +207,7 @@ public class DbcpDataSourceFactory
         if (user == null)
             throw new NamingException
                 ("DbcpDataSourceFactory:  username is required");
-        log("driverClassName=" + driverClassName + ", password=" + password +
+        log("driverClassName=" + driverClassName +
             ", url=" + url + ", user=" + user);
 
         // Load and register the JDBC driver
@@ -257,14 +258,20 @@ public class DbcpDataSourceFactory
         } catch (Throwable t) {
             log("Error setting maxWait", t);
         }
-        DriverManagerConnectionFactory connectionFactory =
-            new DriverManagerConnectionFactory(url, user, password);
-        PoolableConnectionFactory poolableConnectionFactory =
-            new PoolableConnectionFactory(connectionFactory, connectionPool,
-                                          null, validationQuery,
-                                          false, true);
-        PoolingDataSource dataSource =
-            new PoolingDataSource(connectionPool);
+        PoolingDataSource dataSource = null;
+        try {
+            DriverManagerConnectionFactory connectionFactory =
+                new DriverManagerConnectionFactory(url, user, password);
+            PoolableConnectionFactory poolableConnectionFactory =
+                new PoolableConnectionFactory(connectionFactory, connectionPool,
+                                              null, validationQuery,
+                                              false, true);
+            dataSource = new PoolingDataSource(connectionPool);
+        } catch(Throwable t) {
+            log("Cannot create DataSource, Exception",t);
+            throw new NamingException(
+                "Exception creating DataSource: " + t.getMessage());
+        }
         return (dataSource);
 
         

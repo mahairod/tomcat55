@@ -4,21 +4,25 @@ rem catalina.bat - Start/Stop Script for the CATALINA Server
 rem
 rem Environment Variable Prequisites:
 rem
-rem   CATALINA_BASE (Optional) Base directory for resolving dynamic portions
-rem                 of a Catalina installation.  If not present, resolves to
-rem                 the same directory that CATALINA_HOME points to.
+rem   CATALINA_BASE   (Optional) Base directory for resolving dynamic portions
+rem                   of a Catalina installation.  If not present, resolves to
+rem                   the same directory that CATALINA_HOME points to.
 rem
-rem   CATALINA_HOME (Optional) May point at your Catalina "build" directory.
-rem                 If not present, the current working directory is assumed.
+rem   CATALINA_HOME   (Optional) May point at your Catalina "build" directory.
+rem                   If not present, the current working directory is assumed.
 rem
-rem   CATALINA_OPTS (Optional) Java runtime options used when the "start",
-rem                 "stop", or "run" command is executed.
+rem   CATALINA_OPTS   (Optional) Java runtime options used when the "start",
+rem                   "stop", or "run" command is executed.
 rem
-rem   JAVA_HOME     Must point at your Java Development Kit installation.
+rem   CATALINA_TMPDIR (Optional) Directory path location of temporary directory
+rem                   the JVM should use (java.io.tmpdir).  Defaults to
+rem                   $CATALINA_BASE/temp.
 rem
-rem   JSSE_HOME     (Optional) May point at your Java Secure Sockets Extension
-rem                 (JSSE) installation, whose JAR files will be added to the
-rem                 system class path used to start Tomcat.
+rem   JAVA_HOME       Must point at your Java Development Kit installation.
+rem
+rem   JSSE_HOME       (Optional) May point at your Java Secure Sockets Extension
+rem                   (JSSE) installation, whose JAR files will be added to the
+rem                   system class path used to start Tomcat.
 rem
 rem $Id$
 rem ---------------------------------------------------------------------------
@@ -28,6 +32,7 @@ rem ----- Save Environment Variables That May Change --------------------------
 
 set _CATALINA_BASE=%CATALINA_BASE%
 set _CATALINA_HOME=%CATALINA_HOME%
+set _CATALINA_TMPDIR=%CATALINA_TMPDIR%
 set _CLASSPATH=%CLASSPATH%
 set _CP=%CP%
 
@@ -60,6 +65,9 @@ echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto cleanup
 :gotJava
 
+if not "%CATALINA_TMPDIR%" == "" goto gotTmpdir
+set CATALINA_TMPDIR=%CATALINA_BASE%\temp
+:gotTmpdir
 
 rem ----- Prepare Appropriate Java Execution Commands -------------------------
 
@@ -79,10 +87,11 @@ if "%JSSE_HOME%" == "" goto noJsse
 set CP=%CP%;%JSSE_HOME%\lib\jcert.jar;%JSSE_HOME%\lib\jnet.jar;%JSSE_HOME%\lib\jsse.jar
 :noJsse
 set CLASSPATH=%CP%
-echo Using CATALINA_BASE: %CATALINA_BASE%
-echo Using CATALINA_HOME: %CATALINA_HOME%
-echo Using CLASSPATH:     %CLASSPATH%
-echo Using JAVA_HOME:     %JAVA_HOME%
+echo Using CATALINA_BASE:   %CATALINA_BASE%
+echo Using CATALINA_HOME:   %CATALINA_HOME%
+echo Using CATALINA_TMPDIR: %CATALINA_TMPDIR%
+echo Using CLASSPATH:       %CLASSPATH%
+echo Using JAVA_HOME:       %JAVA_HOME%
 
 
 rem ----- Execute The Requested Command ---------------------------------------
@@ -106,23 +115,23 @@ goto finish
 
 :doRun
 if "%2" == "-security" goto doRunSecure
-%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 :doRunSecure
-%_RUNJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_BASE%/conf/catalina.policy" -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
+%_RUNJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_BASE%/conf/catalina.policy" -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStart
 if "%2" == "-security" goto doStartSecure
-%_STARTJAVA% %CATALINA_OPTS% -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+%_STARTJAVA% %CATALINA_OPTS% -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 :doStartSecure
 echo Using Security Manager
-%_STARTJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_BASE%/conf/catalina.policy" -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
+%_STARTJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_BASE%/conf/catalina.policy" -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStop
-%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
+%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.base="%CATALINA_BASE%" -Dcatalina.home="%CATALINA_HOME%" -Djava.io.tmpdir="%CATALINA_TMPDIR%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
 goto cleanup
 
 
@@ -134,6 +143,8 @@ set CATALINA_BASE=%_CATALINA_BASE%
 set _CATALINA_BASE=
 set CATALINA_HOME=%_CATALINA_HOME%
 set _CATALINA_HOME=
+set CATALINA_TMPDIR=%_CATALINA_TMPDIR%
+set _CATALINA_TMPDIR=
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
 set CP=%_CP%

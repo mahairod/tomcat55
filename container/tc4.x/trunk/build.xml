@@ -117,6 +117,7 @@
     <mkdir dir="${tomcat.dist}/shared/lib"/>
     <mkdir dir="${tomcat.dist}/webapps"/>
     <mkdir dir="${tomcat.dist}/work"/>
+    <mkdir dir="${tomcat.dist}/temp"/>
   </target>
 
 
@@ -254,6 +255,8 @@
        includes="webapps/**" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="work/**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
+       includes="temp/**" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="LICENSE" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
@@ -289,6 +292,7 @@
         <include name="shared/**" />
         <include name="webapps/**" />
         <include name="work/**" />
+        <include name="temp/**" />
         <include name="LICENSE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES-*" />

@@ -4,25 +4,29 @@
 #
 # Environment Variable Prequisites
 #
-#   CATALINA_BASE (Optional) Base directory for resolving dynamic portions
-#                 of a Catalina installation.  If not present, resolves to
-#                 the same directory that CATALINA_HOME points to.
+#   CATALINA_BASE   (Optional) Base directory for resolving dynamic portions
+#                   of a Catalina installation.  If not present, resolves to
+#                   the same directory that CATALINA_HOME points to.
 #
-#   CATALINA_HOME (Optional) May point at your Catalina "build" directory.
-#                 If not present, the current working directory is assumed.
+#   CATALINA_HOME   (Optional) May point at your Catalina "build" directory.
+#                   If not present, the current working directory is assumed.
 #
-#   CATALINA_OPTS (Optional) Java runtime options used when the "start",
-#                 "stop", or "run" command is executed.
+#   CATALINA_OPTS   (Optional) Java runtime options used when the "start",
+#                   "stop", or "run" command is executed.
 #
-#   JAVA_HOME     Must point at your Java Development Kit installation.
+#   CATALINA_TMPDIR (Optional) Directory path location of temporary directory
+#                   the JVM should use (java.io.tmpdir).  Defaults to
+#                   $CATALINA_BASE/temp.
 #
-#   JPDA_OPTS     (Optional) Java runtime options used when the "jpda start"
-#                 command is executed.  Defaults to
-#                 "-classic -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+#   JAVA_HOME       Must point at your Java Development Kit installation.
 #
-#   JSSE_HOME     (Optional) May point at your Java Secure Sockets Extension
-#                 (JSSE) installation, whose JAR files will be added to the
-#                 system class path used to start Tomcat.
+#   JPDA_OPTS       (Optional) Java runtime options used when the "jpda start"
+#                   command is executed.  Defaults to
+#                   "-classic -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+#
+#   JSSE_HOME       (Optional) May point at your Java Secure Sockets Extension
+#                   (JSSE) installation, whose JAR files will be added to the
+#                   system class path used to start Tomcat.
 #
 # $Id$
 # -----------------------------------------------------------------------------
@@ -118,12 +122,21 @@ if [ -z "$CATALINA_BASE" ] ; then
 fi
 
 
+# ---- Set Up CATALINA_TMPDIR If Necessary ------------------------------------
+
+if [ -z "$CATALINA_TMPDIR" ] ; then
+  ## define the java.io.tmpdir to use for catalina
+  CATALINA_TMPDIR=${CATALINA_BASE}/temp
+fi
+
+
 # ----- Execute The Requested Command -----------------------------------------
 
-echo "Using CLASSPATH:     $CP"
-echo "Using CATALINA_BASE: $CATALINA_BASE"
-echo "Using CATALINA_HOME: $CATALINA_HOME"
-echo "Using JAVA_HOME:     $JAVA_HOME"
+echo "Using CLASSPATH:       $CP"
+echo "Using CATALINA_BASE:   $CATALINA_BASE"
+echo "Using CATALINA_HOME:   $CATALINA_HOME"
+echo "Using CATALINA_TMPDIR: $CATALINA_TMPDIR"
+echo "Using JAVA_HOME:       $JAVA_HOME"
 
 if [ "$1" = "jpda" ] ; then
   CATALINA_OPTS="${CATALINA_OPTS} ${JPDA_OPTS}"
@@ -141,6 +154,7 @@ if [ "$1" = "debug" ] ; then
        -classpath $CP \
        -Dcatalina.base=$CATALINA_BASE \
        -Dcatalina.home=$CATALINA_HOME \
+       -Djava.io.tmpdir=$CATALINA_TMPDIR \
        org.apache.catalina.startup.Bootstrap "$@" start
   else
     $JAVA_HOME/bin/jdb \
@@ -149,6 +163,7 @@ if [ "$1" = "debug" ] ; then
        -classpath $CP \
        -Dcatalina.base=$CATALINA_BASE \
        -Dcatalina.home=$CATALINA_HOME \
+       -Djava.io.tmpdir=$CATALINA_TMPDIR \
        org.apache.catalina.startup.Bootstrap "$@" start
   fi
 
@@ -165,6 +180,7 @@ elif [ "$1" = "embedded" ] ; then
   $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.base=$CATALINA_BASE \
    -Dcatalina.home=$CATALINA_HOME \
+   -Djava.io.tmpdir=$CATALINA_TMPDIR \
    org.apache.catalina.startup.Embedded "$@"
 
 elif [ "$1" = "env" ] ; then
@@ -183,11 +199,13 @@ elif [ "$1" = "run" ] ; then
      -Djava.security.policy==$CATALINA_BASE/conf/catalina.policy \
      -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
+     -Djava.io.tmpdir=$CATALINA_TMPDIR \
      org.apache.catalina.startup.Bootstrap "$@" start
   else
     $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
+     -Djava.io.tmpdir=$CATALINA_TMPDIR \
      org.apache.catalina.startup.Bootstrap "$@" start
   fi
 
@@ -203,12 +221,14 @@ elif [ "$1" = "start" ] ; then
      -Djava.security.policy==$CATALINA_BASE/conf/catalina.policy \
      -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
+     -Djava.io.tmpdir=$CATALINA_TMPDIR \
      org.apache.catalina.startup.Bootstrap "$@" start \
      >> $CATALINA_BASE/logs/catalina.out 2>&1 &
   else
     $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
+     -Djava.io.tmpdir=$CATALINA_TMPDIR \
      org.apache.catalina.startup.Bootstrap "$@" start \
      >> $CATALINA_BASE/logs/catalina.out 2>&1 &
   fi
@@ -219,6 +239,7 @@ elif [ "$1" = "stop" ] ; then
   $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.base=$CATALINA_BASE \
    -Dcatalina.home=$CATALINA_HOME \
+   -Djava.io.tmpdir=$CATALINA_TMPDIR \
    org.apache.catalina.startup.Bootstrap "$@" stop
 
 else

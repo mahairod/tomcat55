@@ -124,17 +124,28 @@ public class ResourceFactory
                     try {
                         factoryClass = tcl.loadClass(factoryClassName);
                     } catch(ClassNotFoundException e) {
+                        throw new NamingException(
+                            "Could not create resource factory, ClassNotFoundException:" +
+                            e.getMessage());
                     }
                 } else {
                     try {
                         factoryClass = Class.forName(factoryClassName);
                     } catch(ClassNotFoundException e) {
+                        throw new NamingException(
+                            "Could not create resource factory, ClassNotFoundException:" +
+                            e.getMessage());
                     }
                 }
                 if (factoryClass != null) {
                     try {
                         factory = (ObjectFactory) factoryClass.newInstance();
                     } catch(Throwable t) {
+                        if( t instanceof NamingException)
+                            throw t;
+                        throw new NamingException(
+                            "Could not create resource factory instance, " +
+                            t.getMessage());
                     }
                 }
             } else {
@@ -147,6 +158,7 @@ public class ResourceFactory
                             Class.forName(javaxSqlDataSourceFactoryClassName)
                             .newInstance();
                     } catch(Throwable t) {
+
                     }
                 } else if (ref.getClassName().equals("javax.mail.Session")) {
                     String javaxMailSessionFactoryClassName =
