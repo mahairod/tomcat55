@@ -1,0 +1,36 @@
+<html>
+<head>
+<title><jspc></title>
+</head>
+<body>
+<h1>jspc</h1>
+<pre>
+Usage: jspc <options> [--] <jsp files>
+where jsp files is any number of:
+    <file>         A file to be parsed as a jsp page
+    -webapp <dir>  A directory containing a web-app, all jsp pages
+                   will recursivly be parsed
+where options include:
+    -q          Quite mode (same as -v0)
+    -v[#]       Verbose mode (optional number is level, default is 2)
+    -d &lt;dir&gt;    Output Directory
+    -dd &lt;dir&gt;   Literal Output Directory.  (package dirs will not be made)
+    -p <name>         Name of target package
+    -c <name>         Name of target class name
+                (only applies to first JSP page)
+    -mapped     Generate separate write() calls for each HTML line in the JSP
+    -die[#]     Generate an error return code (#) on fatal errors.
+                If the number is absent or unparsable it defaults to 1.
+    -uribase &lt;dir&gt;  The uri directory compilations shoule be relative to
+                    (Default is "/")
+    -uriroot &lt;dir&gt;  The root directory that uri files should be resolved
+                    against, (Default is the directory jspc is invoked from)
+    -webinc <file>  Creates partial servlet mapings for the -webapp option
+    -webxml <file>  Creates a complete web.xml when using the -webapp option.
+    -ieplugin <clsid>  Java Plugin classid for Internet Explorer
+</pre>
+<p>
+
+<i>Yes, we could do better... new doc coming up soon!!!</i>
+</body>
+</html>
