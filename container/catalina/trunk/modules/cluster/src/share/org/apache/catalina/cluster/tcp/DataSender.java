@@ -74,6 +74,26 @@ public class DataSender implements IDataSender {
     protected long dataResendCounter = 0;
 
     /**
+     * doProcessingStats
+     */
+    protected boolean doProcessingStats = false;
+
+    /**
+     * proessingTime
+     */
+    protected long processingTime = 0;
+    
+    /**
+     * min proessingTime
+     */
+    protected long minProcessingTime = Long.MAX_VALUE ;
+
+    /**
+     * max proessingTime
+     */
+    protected long maxProcessingTime = 0;
+   
+    /**
      * keep socket open for no more than one min
      */
     private long keepAliveTimeout = 60 * 1000;
@@ -136,6 +156,47 @@ public class DataSender implements IDataSender {
         return totalBytes;
     }
 
+    /**
+     * @return Returns the avg processingTime/nrOfRequests.
+     */
+    public long getAvgProcessingTime() {
+        return processingTime / nrOfRequests;
+    }
+ 
+    /**
+     * @return Returns the maxProcessingTime.
+     */
+    public long getMaxProcessingTime() {
+        return maxProcessingTime;
+    }
+    
+    /**
+     * @return Returns the minProcessingTime.
+     */
+    public long getMinProcessingTime() {
+        return minProcessingTime;
+    }
+    
+    /**
+     * @return Returns the processingTime.
+     */
+    public long getProcessingTime() {
+        return processingTime;
+    }
+    
+    /**
+     * @return Returns the doProcessingStats.
+     */
+    public boolean isDoProcessingStats() {
+        return doProcessingStats;
+    }
+    /**
+     * @param doProcessingStats The doProcessingStats to set.
+     */
+    public void setDoProcessingStats(boolean doProcessingStats) {
+        this.doProcessingStats = doProcessingStats;
+    }
+ 
     /**
      * @return Returns the connectCounter.
      */
@@ -329,6 +390,9 @@ public class DataSender implements IDataSender {
         dataResendCounter = 0;
         socketOpenCounter =isConnected() ? 1 : 0;
         socketCloseCounter = 0;
+        processingTime = 0 ;
+        minProcessingTime = Long.MAX_VALUE ;
+        maxProcessingTime = 0 ;
     }
 
     /**
@@ -392,10 +456,21 @@ public class DataSender implements IDataSender {
             log.debug(sm.getString("IDataSender.stats", new Object[] {
                     getAddress().getHostAddress(), new Integer(getPort()),
                     new Long(totalBytes), new Long(nrOfRequests),
-                    new Long(totalBytes / nrOfRequests) }));
+                    new Long(totalBytes / nrOfRequests),
+                    new Long(getProcessingTime()),
+                    new Long(getAvgProcessingTime())}));
         }
     }
 
+    protected void addProcessingStats(long startTime) {
+        long time = System.currentTimeMillis() - startTime ;
+        if(time < minProcessingTime)
+            minProcessingTime = time ;
+        if( time > maxProcessingTime)
+            maxProcessingTime = time ;
+        processingTime += time ;
+    }
+    
     /**
      * push messages with only one socket at a time
      * 
@@ -407,6 +482,10 @@ public class DataSender implements IDataSender {
      */
     protected synchronized void pushMessage(String messageid, byte[] data)
             throws java.io.IOException {
+        long time = 0 ;
+        if(doProcessingStats) {
+            time = System.currentTimeMillis();
+        }
         checkIfCloseSocket();
         if (!isConnected())
             openSocket();
@@ -430,6 +509,9 @@ public class DataSender implements IDataSender {
         }
         this.keepAliveCount++;
         checkIfCloseSocket();
+        if(doProcessingStats) {
+            addProcessingStats(time);
+        }
         addStats(data.length);
         if (log.isTraceEnabled())
             log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),
