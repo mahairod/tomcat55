@@ -9,8 +9,8 @@
    <target name="main" depends="jsp-test" />
 
   <!-- ==================== Watchdog JSP tests ==================== -->
-  
- 
+
+
    <target name="jsp-test">
 <!-- Precompilation tests -->
       <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
@@ -502,23 +502,31 @@
 	   testStrategy="correct syntax is used in the expression  with no space between tags"
  	/>
 
-   <!--  #####Commented ..has to be debugged 
  <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptlet.html"
- 	   testName="positiveScriptlet.jsp" 
+ 	   testName="positiveScriptlet.jsp"
 	   assertion="Create a valid scriplet in the JSP page.Declare a variable and increment it, specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
 	   testStrategy="correct syntax is used in the scriptlet"
  	/>
-  -->
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletComment.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletComment.html"
- 	   testName="positiveScriptlet.jsp" 
+ 	   testName="positiveScriptletComment.jsp" 
 	   assertion="Create a valid scriplet in the JSP page.Declare a variable and increment it, specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
 	   testStrategy="correct syntax is used in the scriptlet"
  	/>
+
+<!-- Test commented out as the JSP file contains invalid Java code in the scriptlet
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletLiteral.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletLiteral.html"
+ 	   testName="positiveScriptletLiteral.jsp" 
+           assertion="Create a valid scriptlet in a JSP page that includes the usual scriptlet end tag in a String literal."
+	   testStrategy="correct syntax is used in the scriptlet"
+ 	/>
+-->
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"

@@ -21,6 +21,9 @@
            target="gtestservlet-test"/>
    </target>
 
+   <!-- JSP (non-XML) plus SERVLET Tests -->
+   <target name="jsp-servlet" depends="jsp,servlet"/>
+
    <!-- ALL TESTS -->
    <target name="all" depends="jsp-all,servlet"/>
 
