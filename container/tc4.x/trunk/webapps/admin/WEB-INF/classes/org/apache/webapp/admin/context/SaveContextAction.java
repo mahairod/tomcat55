@@ -185,7 +185,10 @@ public final class SaveContextAction extends Action {
         String cObjectName = cform.getObjectName();
         String lObjectName = cform.getLoaderObjectName();
         String mObjectName = cform.getManagerObjectName();
-        
+        if ((cform.getPath() == null) || (cform.getPath().length()<1)) {
+            cform.setPath("/");
+        }
+       
         // Perform a "Create Context" transaction (if requested)
         if ("Create".equals(adminAction)) {
 
@@ -318,13 +321,11 @@ public final class SaveContextAction extends Action {
             
             attribute = "workDir";
             String workDir = "";
-            try {
-                workDir = cform.getWorkDir();
-            } catch (Throwable t) {
-                workDir = "";
-            }
-            mBServer.setAttribute(coname,
+            workDir = cform.getWorkDir();
+            if ((workDir!=null) && (workDir.length()>=1)) {
+                mBServer.setAttribute(coname,
                                   new Attribute("workDir", workDir));
+            }
  
             attribute = "cookies";
             String cookies = "false";
@@ -407,14 +408,11 @@ public final class SaveContextAction extends Action {
 
             // Manager properties            
             attribute = "entropy";
-            String entropy = "";
-            try {
-                entropy = cform.getMgrSessionIDInit();
-            } catch (Throwable t) {
-                entropy = "";
-            }
-            mBServer.setAttribute(moname,
+            String entropy = cform.getMgrSessionIDInit();
+            if ((entropy!=null) && (entropy.length()>=1)) {
+                mBServer.setAttribute(moname,
                                   new Attribute("entropy",entropy));
+            }
             
             attribute = "debug";
             try {

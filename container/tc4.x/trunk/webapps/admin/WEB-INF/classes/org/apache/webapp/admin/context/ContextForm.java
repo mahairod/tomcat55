@@ -769,14 +769,15 @@ public final class ContextForm extends ActionForm {
                 errors.add("docBase", new ActionError("error.docBase.required"));
             }
             
+            // if path is empty, it's root context
             // validate context starting with "/" only at the time of context creation.
-            if ("Create".equalsIgnoreCase(adminAction) && !path.startsWith("/")) {
-                errors.add("path", new ActionError("error.path.prefix"));                
-            }
+            //if ("Create".equalsIgnoreCase(adminAction) && !path.startsWith("/")) {
+            //    errors.add("path", new ActionError("error.path.prefix"));                
+            //}
                         
-            if ((workDir == null) || (workDir.length() < 1)) {
-                errors.add("workDir", new ActionError("error.workDir.required"));
-            }
+            //if ((workDir == null) || (workDir.length() < 1)) {
+            //    errors.add("workDir", new ActionError("error.workDir.required"));
+            //}
             
             // loader properties
             // FIXME-- verify if these ranges are ok.
@@ -786,9 +787,9 @@ public final class ContextForm extends ActionForm {
             numberCheck("mgrCheckInterval",  mgrCheckInterval, true, 0, 10000);
             numberCheck("mgrMaxSessions",  mgrMaxSessions, false, -1, 100);
             
-            if ((mgrSessionIDInit == null) || (mgrSessionIDInit.length() < 1)) {
-                errors.add("mgrSessionIDInit", new ActionError("error.mgrSessionIDInit.required"));
-            }
+            //if ((mgrSessionIDInit == null) || (mgrSessionIDInit.length() < 1)) {
+            //    errors.add("mgrSessionIDInit", new ActionError("error.mgrSessionIDInit.required"));
+            //}
         }
         
         return errors;

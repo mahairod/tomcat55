@@ -368,11 +368,12 @@ public final class DataSourceForm extends BaseForm {
                            new ActionError("users.error.username.required"));
             }
             
+            // commented out password can be an empty string
             // password is a required field
-            if ((password == null) || (password.length() < 1)) {
-                errors.add("password",
-                           new ActionError("error.userPassword.required"));
-            }
+            //if ((password == null) || (password.length() < 1)) {
+            //    errors.add("password",
+            //               new ActionError("error.userPassword.required"));
+            //
             
             // FIX ME -- need to do a range check
             numberCheck("active", active , false, 0, 10000);
