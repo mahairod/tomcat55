@@ -142,6 +142,7 @@ public class ValidatorTask extends Task {
             InputSource is = new InputSource(file.toURL().toExternalForm());
             is.setByteStream(stream);
             digester.parse(is);
+            System.out.println("web.xml validated");
         } catch (Throwable t) {
             throw new BuildException("Validation failure", t);
         } finally {
