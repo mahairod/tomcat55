@@ -71,6 +71,10 @@
           description="Maximum number of active sessions so far"
                  type="int" />
 
+    <attribute   name="sessionMaxAliveTime"
+          description="Longest time an expired session had been alive"
+                 type="int" />
+
     <attribute   name="rejectedSessions"
           description="Number of sessions we rejected due to maxActive beeing reached"
                  type="int" />
