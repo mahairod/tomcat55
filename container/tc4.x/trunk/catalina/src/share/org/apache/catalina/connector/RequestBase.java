@@ -119,6 +119,12 @@ public abstract class RequestBase
 
 
     /**
+     * The character encoding for this Request.
+     */
+    protected String characterEncoding = null;
+
+
+    /**
      * The Connector through which this Request was received.
      */
     protected Connector connector = null;
@@ -477,6 +483,7 @@ public abstract class RequestBase
 
 	attributes.clear();
 	authorization = null;
+	characterEncoding = null;
 	// connector is NOT reset when recycling
 	contentLength = -1;
 	contentType = null;
@@ -520,6 +527,8 @@ public abstract class RequestBase
     public void setContentType(String type) {
 
 	this.contentType = type;
+	if (type.indexOf(";") >= 0)
+	    characterEncoding = RequestUtil.parseCharacterEncoding(type);
 
     }
 
@@ -647,7 +656,7 @@ public abstract class RequestBase
      */
     public String getCharacterEncoding() {
 
-	return (RequestUtil.parseCharacterEncoding(getContentType()));
+	return (this.characterEncoding);
 
     }
 
@@ -942,7 +951,7 @@ public abstract class RequestBase
      */
     public void setCharacterEncoding(String enc) {
 
-        ; // FIXME - setCharacterEncoding()
+        this.characterEncoding = enc;
 
     }
 

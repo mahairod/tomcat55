@@ -81,12 +81,12 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
 import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.StringParser;
 
 
 /**
@@ -525,74 +525,99 @@ public class HttpRequestBase
 
 	HashMap results = new HashMap();
 
-	// Parse any query string parameters for this request
-	Hashtable queryParameters = null;
-	try {
-	    queryParameters = HttpUtils.parseQueryString(getQueryString());
-	} catch (IllegalArgumentException e) {
-	    ;
+	// Parse any parameters specified in the query string
+	String queryString = getQueryString();
+	if ((queryString != null) && (queryString.length() > 0)) {
+	    try {
+	        parseParameters(results, queryString);
+	    } catch (Throwable t) {
+	        ;
+	    }
 	}
 
-	// Parse any posted parameters in the input stream
-	Hashtable postParameters = null;
-	if ("POST".equals(getMethod()) &&
+	// Parse any parameters specified in the input stream
+	if ("POST".equals(getMethod()) && (getContentLength() > 0) &&
 	    "application/x-www-form-urlencoded".equals(getContentType())) {
 	    try {
+	        byte buf[] = new byte[getContentLength()];
 		ServletInputStream is = getInputStream();
-		postParameters =
-		    HttpUtils.parsePostData(getContentLength(), is);
-	    } catch (IllegalArgumentException e) {
-		;
-	    } catch (IOException e) {
-		;
-	    }
-	}
-
-	// Process the query parameters first
-	if (queryParameters != null) {
-	    Enumeration queryKeys = queryParameters.keys();
-	    while (queryKeys.hasMoreElements()) {
-		String queryKey = (String) queryKeys.nextElement();
-		Object queryValues = queryParameters.get(queryKey);
-		ArrayList values = new ArrayList();
-		if (queryValues instanceof String)
-		    values.add((String) queryValues);
-		else if (queryValues instanceof String[]) {
-		    String queryStrings[] = (String[]) queryValues;
-		    for (int i = 0; i < queryStrings.length; i++)
-			values.add(queryStrings[i]);
-		}
-		results.put(queryKey,
-			    (String[]) values.toArray(new String[0]));
-	    }
-	}
-
-	// Process the post parameters second
-	if (postParameters != null) {
-	    Enumeration postKeys = postParameters.keys();
-	    while (postKeys.hasMoreElements()) {
-		String postKey = (String) postKeys.nextElement();
-		Object postValues = postParameters.get(postKey);
-		ArrayList values = new ArrayList();
-		String queryValues[] = (String[]) results.get(postKey);
-		if (queryValues != null) {
-		    for (int i = 0; i < queryValues.length; i++)
-			values.add(queryValues[i]);
-		}
-		if (postValues instanceof String)
-		    values.add((String) postValues);
-		else if (postValues instanceof String[]) {
-		    String postStrings[] = (String[]) postValues;
-		    for (int i = 0; i < postStrings.length; i++)
-			values.add(postStrings[i]);
-		}
-		results.put(postKey,
-			    (String[]) values.toArray(new String[0]));
+		is.read(buf);
+		is.close();
+		String data = null;
+		String encoding = getCharacterEncoding();
+		if (encoding == null)
+		    parseParameters(results, new String(buf));
+		else
+		    parseParameters(results, new String(buf, encoding));
+	    } catch (Throwable t) {
+	        ;
 	    }
 	}
 
 	// Store the final results
 	parameters = results;
+
+    }
+
+
+    /**
+     * Append request parameters from the specified String to the specified
+     * Map.  It is presumed that the specified Map is not accessed from any
+     * other thread, so no synchronization is performed.
+     *
+     * @param map Map that accumulates the resulting parameters
+     * @param data Input string containing request parameters
+     *
+     * @exception IllegalArgumentException if the data is malformed
+     */
+    private void parseParameters(Map map, String data) {
+
+        if ((data == null) || (data.length() < 1))
+	    return;
+
+	// Initialize the variables we will require
+	StringParser parser = new StringParser(data);
+	boolean first = true;
+	int nameStart = 0;
+	int nameEnd = 0;
+	int valueStart = 0;
+	int valueEnd = 0;
+	String name = null;
+	String value = null;
+	String oldValues[] = null;
+	String newValues[] = null;
+
+	// Loop through the "name=value" entries in the input data
+	while (true) {
+
+	    // Extract the name and value components
+	    if (first)
+	        first = false;
+	    else
+	        parser.advance();
+	    nameStart = parser.getIndex();
+	    nameEnd = parser.findChar('=');
+	    parser.advance();
+	    valueStart = parser.getIndex();
+	    valueEnd = parser.findChar('&');
+	    name = parser.extract(nameStart, nameEnd);
+	    value = parser.extract(valueStart, valueEnd);
+
+	    // A zero-length name or value means we are done
+	    if ((name.length() < 1) || (value.length() < 1))
+	        break;
+
+	    // Create or update the array of values for this name
+	    oldValues = (String[]) map.get(name);
+	    if (oldValues == null)
+	        oldValues = new String[0];
+	    newValues = new String[oldValues.length + 1];
+	    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+	    newValues[oldValues.length] = value;
+	    map.put(name, newValues);
+
+	}
+
 
     }
 
@@ -633,7 +658,10 @@ public class HttpRequestBase
      */
     public Map getParameterMap() {
 
-        return (null); // FIXME - getParameterMap()
+        parseParameters();
+	synchronized (parameters) {
+	    return ((Map) parameters.clone());
+	}
 
     }
 
@@ -943,7 +971,23 @@ public class HttpRequestBase
      */
     public StringBuffer getRequestURL() {
 
-        return (null); // FIXME - getRequestURL()
+        StringBuffer url = new StringBuffer();
+	String scheme = getScheme();
+	int port = getServerPort();
+	if (port < 0)
+	    port = 80; // Work around java.net.URL bug
+
+	url.append(scheme);
+	url.append("://");
+	url.append(getServerName());
+	if ((scheme.equals("http") && (port != 80))
+	    || (scheme.equals("https") && (port != 443))) {
+	    url.append(':');
+	    url.append(port);
+	}
+	url.append(getRequestURI());
+
+	return (url);
 
     }
 
