@@ -46,6 +46,8 @@ the parent class loader is above the child class loaders:</p>
                       Bootstrap
                           |
                        System
+                          |
+                       Common
                       /      \
                  Catalina   Shared
                            /     \
@@ -68,11 +70,19 @@ described further below:</p>
     <li><code>$CATALINA_HOME/bin/bootstrap.jar</code> - The Bootstrap class
         that is used to initialize the Catalina server, and the class
         loader implementation classes it depends on.</li>
+    <li><code>$JAVA_HOME/lib/tools.jar</code> - Contains the Javac
+        compiler used to compile the servlets generated from JSP pages.</li>
+    </ul>
+<li><strong>Common</strong> - This class loader is initialized to include all 
+    JAR files in the <code>$CATALINA_HOME/bin</code> directory, except 
+    <code>bootstrap.jar</code>. The following two JAR files are installed
+    by default, and are necessary to run Tomcat 4.
+    <ul>
     <li><code>$CATALIA_HOME/bin/servlet.jar</code> - The Servlet and JSP
         API classes, placed here so that they are shared between Catalina
         and the web applications that run under it.</li>
-    <li><code>$JAVA_HOME/lib/tools.jar</code> - Contains the Javac
-        compiler used to compile the servlets generated from JSP pages.</li>
+    <li><code>$CATALIA_HOME/bin/naming.jar</code> - The JNDI implementation
+        used by Tomcat 4.</li>
     </ul>
 <li><strong>Catalina</strong> - This class loader is initialized to include
     all JAR files in the <code>$CATALINA_HOME/server</code> directory, which
