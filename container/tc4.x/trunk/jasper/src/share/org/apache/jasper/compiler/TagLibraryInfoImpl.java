@@ -369,15 +369,15 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    if (! (tmp instanceof Element)) continue;
             Element e = (Element) tmp;
             String tname = e.getTagName();
-            if (tname.equals("tlibversion")) {
+            if (tname.equals("tlibversion") || tname.equals("tlib-version")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     this.tlibversion = t.getData();
-            } else if (tname.equals("jspversion")) {
+            } else if (tname.equals("jspversion") || tname.equals("jsp-version")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     this.jspversion = t.getData();
-            } else if (tname.equals("shortname")) {
+            } else if (tname.equals("shortname") || tname.equals("short-name")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     this.shortname = t.getData();
@@ -452,19 +452,19 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     name = t.getData();
-            } else if (tname.equals("tagclass")) {
+            } else if (tname.equals("tagclass") || tname.equals("tag-class")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     tagclass = t.getData();
-            } else if (tname.equals("teiclass")) {
+            } else if (tname.equals("teiclass") || tname.equals("tei-class")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     teiclass = t.getData();
-            } else if (tname.equals("bodycontent")) {
+            } else if (tname.equals("bodycontent") || tname.equals("body-content")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     bodycontent = t.getData();
-            } else if (tname.equals("info")) {
+            } else if (tname.equals("info") || tname.equals("tlib-description")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     info = t.getData();
