@@ -61,12 +61,14 @@
 
 package org.apache.webapp.admin.users;
 
-
+import java.net.URLDecoder;
+import javax.management.MBeanServer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
@@ -82,6 +84,10 @@ public final class GroupForm extends BaseForm {
 
     // ----------------------------------------------------- Instance Variables
 
+   /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mserver = null;
 
     // ------------------------------------------------------------- Properties
 
@@ -163,6 +169,22 @@ public final class GroupForm extends BaseForm {
     public ActionErrors validate(ActionMapping mapping,
     HttpServletRequest request) {
 
+        try {
+            // Look up the components we will be using as needed
+            if (mserver == null) {
+                mserver = ((ApplicationServlet) getServlet()).getServer();
+            }
+         
+            // Set up beans containing all possible groups and roles
+            String databaseName =
+                URLDecoder.decode(request.getParameter("databaseName"));
+            request.setAttribute("rolesForm",
+                                 UserUtils.getRolesForm(mserver,
+                                                        databaseName));
+        } catch (Exception e) {
+            // do nothing since the form returns validation error
+        }
+        
         ActionErrors errors = new ActionErrors();
 
         String submit = request.getParameter("submit");
