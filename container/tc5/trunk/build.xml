@@ -403,13 +403,14 @@
       <fileset dir="resources" />
     </copy>
     <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
-    <copy file="${nsis.home}/Contrib/Icons/modern.bmp"
+    <copy file="${nsis.home}/Examples/Modern UI/ModernUI.nsh"
          todir="${tomcat.dist}" />
     <copy file="${javaservice.exe}" tofile="${tomcat.dist}/bin/tomcat.exe" />
     <filter token="VERSION" value="${version}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
     <exec dir="${tomcat.dist}" executable="${nsis.exe}">
+      <arg value="/DNSISDIR=${nsis.home}" />
       <arg value="tomcat.nsi" />
     </exec>
     <move file="${tomcat.dist}/tomcat-installer.exe" 

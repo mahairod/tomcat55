@@ -2,39 +2,56 @@
 ; Tomcat script for Nullsoft Installer
 ; $Id$
 
-Name "Apache Tomcat @VERSION@"
-OutFile tomcat-installer.exe
-CRCCheck on
-SetCompress force
-SetCompressor bzip2
-SetDatablockOptimize on
+!define NAME "Apache Tomcat"
+!define VERSION "@VERSION@"
 
-XPStyle On
-SetFont Tahoma 8
-CheckBitmap modern.bmp
-InstallColors /windows
-InstProgressFlags smooth
-BrandingText /TRIMRIGHT
+!verbose 3
+  !include "ModernUI.nsh"
+!verbose 4
 
-Icon main.ico
-UninstallIcon uninst.ico 
+;--------------------------------
+;Configuration
 
-LicenseText "You must read the following license before installing:"
-LicenseData INSTALLLICENSE
-ComponentText "This will install the Apache Tomcat 5.0 servlet container on your computer:"
+  ;General
+  Name "${NAME} ${VERSION}"
+  OutFile tomcat-installer.exe
+  BrandingText "${NAME} ${VERSION} Installer"
+
+  ;Compression options
+  CRCCheck on
+  SetCompress force
+  SetCompressor bzip2
+  SetDatablockOptimize on
+
+  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9"
+
+  ;License dialog
+  LicenseText "Press Page Down to see the rest of the agreement."
+  LicenseData INSTALLLICENSE
+
+  ;Component-select dialog
+  ComponentText "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue."
+
+  ;Folder-select dialog
+  InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
+  DirText "Setup will install ${NAME} in the following folder.$\r$\n$\r$\nTo install in this folder, click Install. To install in a different folder, click Browse and select another folder." " "
+
+  ;Uninstaller
+  UninstallText "This will uninstall ${NAME} from your system."
+
 InstType Normal
 InstType Minimum
-InstType "Full (w/ Source Code)"
+InstType Full
 AutoCloseWindow false
 ShowInstDetails show
-DirText "Please select a location to install Tomcat 5.0 (or use the default):"
 SetOverwrite on
 SetDateSave on
 
-InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
 InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
 
-Section "Tomcat (required)"
+SubSection "Tomcat" SecTomcat
+
+Section "Core" SecTomcatCore
 
   SectionIn 1 2 3
 
@@ -58,11 +75,9 @@ Section "Tomcat (required)"
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
 
-  WriteUninstaller "$INSTDIR\uninst-tomcat4.exe"
-
 SectionEnd
 
-Section "NT Service (NT/2k/XP only)"
+Section "Service" SecTomcatService
 
   SectionIn 3
 
@@ -78,56 +93,15 @@ Section "NT Service (NT/2k/XP only)"
 
 SectionEnd
 
-Section "JSP Development Shell Extensions"
+Section "Source Code" SecTomcatSource
 
-  SectionIn 1 2 3
-  ; back up old value of .jsp
-  ReadRegStr $1 HKCR ".jsp" ""
-  StrCmp $1 "" Label1
-    StrCmp $1 "JSPFile" Label1
-    WriteRegStr HKCR ".jsp" "backup_val" $1
-
-Label1:
-
-  WriteRegStr HKCR ".jsp" "" "JSPFile"
-  WriteRegStr HKCR "JSPFile" "" "Java Server Pages source"
-  WriteRegStr HKCR "JSPFile\shell" "" "open"
-  WriteRegStr HKCR "JSPFile\DefaultIcon" "" "$INSTDIR\tomcat.ico"
-  WriteRegStr HKCR "JSPFile\shell\open\command" "" 'notepad.exe "%1"'
+  SectionIn 3
+  SetOutPath $INSTDIR
+  File /r src
 
 SectionEnd
 
-Section "Tomcat Start Menu Group"
-
-  SectionIn 1 2 3
-
-  Call findJavaPath
-  Pop $2
-
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Home Page.lnk" \
-                 "http://jakarta.apache.org/tomcat"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Uninstall Tomcat 5.0.lnk" \
-                 "$INSTDIR\uninst-tomcat4.exe"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
-                 "$INSTDIR"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
-                 "$2\bin\java.exe" \
-                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Stop Tomcat.lnk" \
-                 "$2\bin\java.exe" \
-                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina stop' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
-
-SectionEnd
-
-Section "Tomcat Documentation"
+Section "Documentation" SecTomcatDocs
 
   SectionIn 1 3
   SetOutPath $INSTDIR\webapps
@@ -144,7 +118,39 @@ Section "Tomcat Documentation"
 
 SectionEnd
 
-Section "Example Web Applications"
+SubSectionEnd
+
+Section "Start Menu Items" SecMenu
+
+  SectionIn 1 2 3
+
+  Call findJavaPath
+  Pop $2
+
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Home Page.lnk" \
+                 "http://jakarta.apache.org/tomcat"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Uninstall Tomcat 5.0.lnk" \
+                 "$INSTDIR\Uninstall.exe"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
+                 "$INSTDIR"
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
+                 "$2\bin\java.exe" \
+                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Stop Tomcat.lnk" \
+                 "$2\bin\java.exe" \
+                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina stop' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
+
+SectionEnd
+
+Section "Examples" SecExamples
 
   SectionIn 1 3
 
@@ -155,15 +161,11 @@ Section "Example Web Applications"
 
 SectionEnd
 
-Section "Tomcat Source Code"
-
-  SectionIn 3
-  SetOutPath $INSTDIR
-  File /r src
-
-SectionEnd
-
 Section -post
+
+  !insertmacro MUI_FINISHHEADER SetPage
+
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   SetOverwrite off
   SetOutPath $INSTDIR
@@ -171,15 +173,13 @@ Section -post
 
   SetOverwrite on
 
-  Call configure
-
   Call startService
 
   WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\5.0" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
                    "DisplayName" "Apache Tomcat 5.0 (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
-                   "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
+                   "UninstallString" '"$INSTDIR\Uninstall.exe"'
 
   Sleep 500
   BringToFront
@@ -201,6 +201,96 @@ FunctionEnd
 Function .onInstSuccess
 
   ExecShell open '$SMPROGRAMS\Apache Tomcat 5.0'
+
+FunctionEnd
+
+
+Function .onInitDialog
+
+  !insertmacro MUI_INNERDIALOG_INIT
+
+    !insertmacro MUI_INNERDIALOG_START 1
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+    !insertmacro MUI_INNERDIALOG_STOP 1
+
+    !insertmacro MUI_INNERDIALOG_START 2
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
+    !insertmacro MUI_INNERDIALOG_STOP 2
+
+    !insertmacro MUI_INNERDIALOG_START 3
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
+      !insertmacro MUI_INNERDIALOG_STOP 3
+
+  !insertmacro MUI_INNERDIALOG_END
+
+FunctionEnd
+
+Function .onNextPage
+
+  !insertmacro MUI_NEXTPAGE SetPage
+
+FunctionEnd
+
+Function .onPrevPage
+
+  !insertmacro MUI_PREVPAGE SetPage
+
+FunctionEnd
+
+Function SetPage
+
+  !insertmacro MUI_PAGE_INIT
+
+    !insertmacro MUI_PAGE_START 1
+       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
+    !insertmacro MUI_PAGE_STOP 1
+
+    !insertmacro MUI_PAGE_START 2
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+    !insertmacro MUI_PAGE_STOP 2
+
+    !insertmacro MUI_PAGE_START 3
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
+    !insertmacro MUI_PAGE_STOP 3
+
+    !insertmacro MUI_PAGE_START 4
+      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+    !insertmacro MUI_PAGE_STOP 4
+
+    !insertmacro MUI_PAGE_START 5
+      !insertmacro MUI_HEADER_TEXT 1033 "Configuration" "Tomcat basic configuration."
+       Call configure
+    !insertmacro MUI_PAGE_STOP 5
+
+    !insertmacro MUI_PAGE_START 6
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+    !insertmacro MUI_PAGE_STOP 6
+
+  !insertmacro MUI_PAGE_END
+
+FunctionEnd
+
+Function .onMouseOverSection
+
+  !insertmacro MUI_DESCRIPTION_INIT
+
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcat} "Install the Tomcat Servlet container."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatCore} "Install the Tomcat Servlet container core."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatService} "Install the Tomcat service, used to automatically start Tomcat in the background when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatSource} "Install the Tomcat source code."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatDocs} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecMenu} "Create a Start Menu program group for Tomcat."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecExamples} "Installs some examples web applications."
+
+ !insertmacro MUI_DESCRIPTION_END
+
+FunctionEnd
+
+Function .onUserAbort
+
+  !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
+  !insertmacro MUI_ABORTWARNING_END
 
 FunctionEnd
 
@@ -429,26 +519,15 @@ Function un.stopService
 FunctionEnd
 
 
-UninstallText "This will uninstall Apache Tomcat 5.0 from your system:"
-
+;--------------------------------
+;Uninstaller Section
 
 Section Uninstall
 
-  Delete "$INSTDIR\uninst-tomcat4.exe"
+  Delete "$INSTDIR\Uninstall.exe"
 
   ; Stopping NT service (if in use)
   Call un.stopService
-
-  ReadRegStr $1 HKCR ".jsp" ""
-  StrCmp $1 "JSPFile" 0 NoOwn ; only do this if we own it
-    ReadRegStr $1 HKCR ".jsp" "backup_val"
-    StrCmp $1 "" 0 RestoreBackup ; if backup == "" then delete the whole key
-      DeleteRegKey HKCR ".jsp"
-    Goto NoOwn
-    RestoreBackup:
-      WriteRegStr HKCR ".jsp" "" $1
-      DeleteRegValue HKCR ".jsp" "backup_val"
-  NoOwn:
 
   ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 5.0"'
   ClearErrors
@@ -491,4 +570,37 @@ Section Uninstall
                  "Note: $INSTDIR could not be removed."
   Removed:
 
+  !insertmacro MUI_FINISHHEADER un.SetPage
+
 SectionEnd
+
+;--------------------------------
+;Uninstaller Functions
+
+Function un.onNextPage
+
+  !insertmacro MUI_NEXTPAGE un.SetPage
+
+FunctionEnd
+
+Function un.SetPage
+
+  !insertmacro MUI_PAGE_INIT
+
+    !insertmacro MUI_PAGE_START 1
+      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
+    !insertmacro MUI_PAGE_STOP 1
+
+    !insertmacro MUI_PAGE_START 2
+      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
+    !insertmacro MUI_PAGE_STOP 2
+
+    !insertmacro MUI_PAGE_START 3
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
+    !insertmacro MUI_PAGE_STOP 3
+
+  !insertmacro MUI_PAGE_END
+
+FunctionEnd
+
+;eof
