@@ -72,6 +72,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import org.apache.catalina.loader.StandardClassLoader;
+import org.apache.catalina.security.SecurityClassLoad;
 
 
 /**
@@ -114,7 +115,7 @@ public final class Bootstrap {
             if ("-debug".equals(args[i]))
                 debug = 1;
         }
-
+        
         // Configure catalina.base from catalina.home if not yet set
         if (System.getProperty("catalina.base") == null)
             System.setProperty("catalina.base", getCatalinaHome());
@@ -160,13 +161,11 @@ public final class Bootstrap {
             System.exit(1);
 
         }
-
-
         Thread.currentThread().setContextClassLoader(catalinaLoader);
 
+ 
         // Load our startup class and call its process() method
         try {
-
             SecurityClassLoad.securityClassLoad(catalinaLoader);
 
             // Instantiate a startup class instance

@@ -72,6 +72,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import org.apache.catalina.loader.StandardClassLoader;
+import org.apache.catalina.security.SecurityClassLoad;
 
 
 /**
