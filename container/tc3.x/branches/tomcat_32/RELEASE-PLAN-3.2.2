@@ -52,11 +52,13 @@ Plan:
 
 Release Criteria:
     
-    Any bug introduced after Tomcat 3.2.1 MUST be fixed.  Bugs that existed 
-    prior to the release of Tomcat 3.2.1 that are not fixed before the 
-    code freeze/beta release will not be fixed in Tomcat 3.2.2.  Once 
-    Tomcat 3.2.2 is finalized the tomcat_32 branch will be unfrozen and 
-    developers may commit fixes for a future release.
+    Any bug introduced by a code change since Tomcat 3.2.1 was released MUST
+    be fixed.  If it worked in 3.2.1 it will work in 3.2.2.
+
+    All Bugzilla items opened against "Tocmat 3" must be marked as RESOLVED.
+    Those items that are not going to be fixed in Tomcat 3.2.2 will be given
+    a resolution of LATER.  After Tomcat 3.2.2 is released items marked LATER
+    will be re-opened and may then be addressed in a future release.
 
     The Tomcat 3.2.2 release MUST run the jakarta-watchdog test suite with no 
     errors on the following platforms:  Linux, Solaris, Windows 9x, 
