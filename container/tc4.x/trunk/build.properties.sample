@@ -234,9 +234,10 @@ struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.2/jakart
 
 
 # ----- Tyrex Data Source, version 1.0 -----
+# Now tyrex is http://tyrex.sourceforge.net/
 tyrex.home=${base.path}/tyrex-1.0
 tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-1.0.jar
-tyrex.loc=ftp://ftp.exolab.org/pub/tyrex/tyrex-1.0/tyrex-1.0.jar
+tyrex.loc=http://belnet.dl.sourceforge.net/sourceforge/tyrex/tyrex-1.0.jar
 
 
