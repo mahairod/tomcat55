@@ -63,6 +63,7 @@ package org.apache.jasper.compiler;
 import java.util.*;
 
 import org.apache.jasper.Constants;
+import javax.servlet.jsp.tagext.TagLibraryInfo;
 
 /**
  * A repository for various info about the translation unit under compilation.
@@ -167,17 +168,6 @@ class PageInfo {
 
     public BeanRepository getBeanRepository() {
 	return beanRepository;
-    }
-
-    public HashMap getTagLibraries() {
-	return taglibsMap;
-    }
-
-    /*
-     * Returns the prefix-to-URI mapper.
-     */
-    public Hashtable getPrefixMapper() {
-	return prefixMapper;
     }
 
     public String getLanguage() {
@@ -348,6 +338,9 @@ class PageInfo {
 	omitXmlDecl = omit;
     }
 
+
+    /* Tag library and XML namespace management methods */
+
     public void setIsJspPrefixHijacked(boolean isHijacked) {
 	isJspPrefixHijacked = isHijacked;
     }
@@ -369,10 +362,73 @@ class PageInfo {
      * Checks to see if this translation unit contains the given prefix.
      *
      * @param prefix The prefix to check
+     *
      * @return true if this translation unit contains the given prefix, false
      * otherwise
      */
     public boolean containsPrefix(String prefix) {
 	return prefixes.contains(prefix);
     }
+
+    /*
+     * Maps the given URI to the given tag library.
+     *
+     * @param uri The URI to map
+     * @param info The tag library to be associated with the given URI
+     */
+    public void addTaglib(String uri, TagLibraryInfo info) {
+	taglibsMap.put(uri, info);
+    }
+
+    /*
+     * Gets the tag library corresponding to the given URI.
+     *
+     * @return Tag library corresponding to the given URI
+     */
+    public TagLibraryInfo getTaglib(String uri) {
+	return (TagLibraryInfo) taglibsMap.get(uri);
+    }
+
+    /*
+     * Gets the collection of tag libraries that are associated with a URI
+     *
+     * @return Collection of tag libraries that are associated with a URI
+     */
+    public Collection getTaglibs() {
+	return taglibsMap.values();
+    }
+
+    /*
+     * Checks to see if the given URI is mapped to a tag library.
+     *
+     * @param uri The URI to map
+     *
+     * @return true if the given URI is mapped to a tag library, false
+     * otherwise
+     */
+    public boolean hasTaglib(String uri) {
+	return taglibsMap.containsKey(uri);
+    }
+
+    /*
+     * Maps the given prefix to the given URI.
+     *
+     * @param prefix The prefix to map
+     * @param uri The URI to be associated with the given prefix
+     */
+    public void addPrefixToURIMapping(String prefix, String uri) {
+	prefixMapper.put(prefix, uri);
+    }
+
+    /*
+     * Maps the given prefix to its URI.
+     *
+     * @param prefix The prefix to map
+     *
+     * @return The URI to which the given prefix maps
+     */
+    public String getURI(String prefix) {
+	return (String) prefixMapper.get(prefix);
+    }
+
 }

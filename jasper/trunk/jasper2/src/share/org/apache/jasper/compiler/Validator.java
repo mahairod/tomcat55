@@ -66,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.jsp.tagext.*;
 import javax.servlet.jsp.el.FunctionMapper;
@@ -375,7 +376,6 @@ class Validator {
 	private ErrorDispatcher err;
 	private TagInfo tagInfo;
         private ClassLoader loader;
-	private HashMap taglibs;
 
 	private static final JspUtil.ValidAttribute[] jspRootAttrs = {
 	    new JspUtil.ValidAttribute("version", true) };
@@ -454,7 +454,6 @@ class Validator {
 	 */
 	ValidateVisitor(Compiler compiler) {
 	    this.pageInfo = compiler.getPageInfo();
-	    this.taglibs = pageInfo.getTagLibraries();
 	    this.err = compiler.getErrorDispatcher();
 	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
 	    this.loader = compiler.getCompilationContext().getClassLoader();
@@ -1247,8 +1246,7 @@ class Validator {
 		    if (n.getRoot().isXmlSyntax()) {
 		        uri = findUri(prefix, n);
 		    } else if (prefix != null) {
-			Hashtable prefixMapper = pageInfo.getPrefixMapper();
-			uri = (String) prefixMapper.get(prefix);
+			uri = pageInfo.getURI(prefix);
 		    }
 
 		    if (uri == null) {
@@ -1261,7 +1259,7 @@ class Validator {
 				"jsp.error.attribute.invalidPrefix", prefix);
 			}
 		    }
-		    TagLibraryInfo taglib = (TagLibraryInfo) taglibs.get(uri);
+		    TagLibraryInfo taglib = pageInfo.getTaglib(uri);
 		    FunctionInfo funcInfo = null;
 		    if (taglib != null) {
 			funcInfo = taglib.getFunction(function);
@@ -1526,14 +1524,13 @@ class Validator {
 	StringBuffer errMsg = null;
 	ErrorDispatcher errDisp = compiler.getErrorDispatcher();
 
-	Object[] objs
-	    = compiler.getPageInfo().getTagLibraries().values().toArray();
+	for (Iterator iter=compiler.getPageInfo().getTaglibs().iterator();
+	         iter.hasNext(); ) {
 
-	for (int i=0; i<objs.length; i++) {
-
-	    if (!(objs[i] instanceof TagLibraryInfoImpl))
+	    Object o = iter.next();
+	    if (!(o instanceof TagLibraryInfoImpl))
 		continue;
-	    TagLibraryInfoImpl tli = (TagLibraryInfoImpl) objs[i];
+	    TagLibraryInfoImpl tli = (TagLibraryInfoImpl) o;
 
 	    ValidationMessage[] errors = tli.validate(xmlView);
             if ((errors != null) && (errors.length != 0)) {
@@ -1544,12 +1541,12 @@ class Validator {
                 errMsg.append(Localizer.getMessage("jsp.error.tlv.invalid.page",
 						   tli.getShortName()));
                 errMsg.append("</h3>");
-                for (int j=0; j<errors.length; j++) {
-		    if (errors[j] != null) {
+                for (int i=0; i<errors.length; i++) {
+		    if (errors[i] != null) {
 			errMsg.append("<p>");
-			errMsg.append(errors[j].getId());
+			errMsg.append(errors[i].getId());
 			errMsg.append(": ");
-			errMsg.append(errors[j].getMessage());
+			errMsg.append(errors[i].getMessage());
 			errMsg.append("</p>");
 		    }
                 }

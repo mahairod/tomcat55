@@ -96,13 +96,12 @@ class Parser implements TagConstants {
     private JspReader reader;
     private String currentFile;
     private Mark start;
-    private HashMap taglibs;
-    private Hashtable prefixMapper;
     private ErrorDispatcher err;
     private int scriptlessCount;
     private boolean isTagFile;
     private boolean directivesOnly;
     private URL jarFileUrl;
+    private PageInfo pageInfo;
 
     // Virtual body content types, to make parsing a little easier.
     // These are not accessible from outside the parser.
@@ -120,8 +119,7 @@ class Parser implements TagConstants {
 		   boolean directivesOnly, URL jarFileUrl) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
-	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
-	this.prefixMapper = pc.getCompiler().getPageInfo().getPrefixMapper();
+	this.pageInfo = pc.getCompiler().getPageInfo();
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.reader = reader;
 	this.currentFile = reader.mark().getFile();
@@ -228,7 +226,7 @@ class Parser implements TagConstants {
 	int index = qName.indexOf(':');
 	if (index != -1) {
 	    String prefix = qName.substring(0, index);
-	    uri = (String) prefixMapper.get(prefix);
+	    uri = pageInfo.getURI(prefix);
 	    if (uri == null) {
 		err.jspError(reader.mark(),
 			     "jsp.error.attribute.invalidPrefix", prefix);
@@ -451,27 +449,31 @@ class Parser implements TagConstants {
 	String prefix = attrs.getValue("prefix");
 	if (prefix != null) {
 	    if (uri != null) {
-		if (taglibs.get(uri) == null) {
+		if (pageInfo.getTaglib(uri) == null) {
 		    String[] location = ctxt.getTldLocation(uri);
-		    taglibs.put(uri,
-				new TagLibraryInfoImpl(ctxt, parserController,
-						       prefix, uri, location,
-						       err));
+		    pageInfo.addTaglib(uri,
+				       new TagLibraryInfoImpl(ctxt,
+							      parserController,
+							      prefix,
+							      uri,
+							      location,
+							      err));
 		}
-		prefixMapper.put(prefix, uri);
+		pageInfo.addPrefixToURIMapping(prefix, uri);
 	    } else {
 		String tagdir = attrs.getValue("tagdir");
 		if (tagdir != null) {
 		    String urnTagdir = URN_JSPTAGDIR + tagdir;
-		    if (taglibs.get(urnTagdir) == null) {
-			taglibs.put(urnTagdir,
-				    new ImplicitTagLibraryInfo(ctxt,
-							       parserController,
-							       prefix, 
-							       tagdir,
-							       err));
+		    if (pageInfo.getTaglib(urnTagdir) == null) {
+			pageInfo.addTaglib(urnTagdir,
+					   new ImplicitTagLibraryInfo(
+                                                   ctxt,
+						   parserController,
+						   prefix, 
+						   tagdir,
+						   err));
 		    }
-		    prefixMapper.put(prefix, urnTagdir);
+		    pageInfo.addPrefixToURIMapping(prefix, urnTagdir);
 		}
 	    }
 	}
@@ -1327,13 +1329,13 @@ class Parser implements TagConstants {
 	String shortTagName = tagName.substring(i+1);
 
 	// Check if this is a user-defined tag.
-	String uri = (String) prefixMapper.get(prefix);
+	String uri = pageInfo.getURI(prefix);
         if (uri == null) {
 	    reader.reset(start);
 	    return false;
 	}
 
-        TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(uri);
+        TagLibraryInfo tagLibInfo = pageInfo.getTaglib(uri);
 	TagInfo tagInfo = tagLibInfo.getTag(shortTagName);
 	TagFileInfo tagFileInfo = tagLibInfo.getTagFile(shortTagName);
 	if (tagInfo == null && tagFileInfo == null) {

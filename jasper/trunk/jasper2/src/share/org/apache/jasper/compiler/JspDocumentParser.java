@@ -102,8 +102,6 @@ class JspDocumentParser extends DefaultHandler
     // Document locator
     private Locator locator;
 
-    private HashMap taglibs;
-
     // Flag indicating whether we are inside DTD declarations
     private boolean inDTD;
 
@@ -123,7 +121,6 @@ class JspDocumentParser extends DefaultHandler
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.pageInfo = pc.getCompiler().getPageInfo();
-	this.taglibs = this.pageInfo.getTagLibraries();
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.path = path;
 	this.inputSource = new InputSource(inStream);
@@ -268,7 +265,7 @@ class JspDocumentParser extends DefaultHandler
 			isTaglib = true;
 		    } else {
 			String attrUri = attrs.getValue(i);
-			if (!taglibs.containsKey(attrUri)) {
+			if (!pageInfo.hasTaglib(attrUri)) {
 			    TagLibraryInfo tagLibInfo = null;
 			    try {
 				tagLibInfo = getTaglibInfo(attrQName, attrUri);
@@ -280,7 +277,7 @@ class JspDocumentParser extends DefaultHandler
 			    if (tagLibInfo != null) {
 				isTaglib = true;
 			    }
-			    taglibs.put(attrUri, tagLibInfo);
+			    pageInfo.addTaglib(attrUri, tagLibInfo);
 			}
 		    }
 		    if (isTaglib) {
@@ -555,7 +552,22 @@ class JspDocumentParser extends DefaultHandler
         throw e;
     }
 
-    
+    /*
+     * Receives notification of the start of a Namespace mapping. 
+     */
+     public void startPrefixMapping(String prefix, String uri)
+	     throws SAXException {
+	 // XXX
+     }
+
+     /*
+      * Receives notification of the end of a Namespace mapping. 
+      */
+    public void endPrefixMapping(String prefix) throws SAXException {
+	// XXX
+    }
+
+
     //*********************************************************************
     // Private utility methods
 
@@ -732,7 +744,7 @@ class JspDocumentParser extends DefaultHandler
 				   Node parent) throws SAXException {
 
 	// Check if this is a user-defined (custom) tag
-        TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(uri);
+        TagLibraryInfo tagLibInfo = pageInfo.getTaglib(uri);
         if (tagLibInfo == null) {
             return null;
 	}
