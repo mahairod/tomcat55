@@ -384,6 +384,20 @@ Transport.send(message);
     Customize the value of the <code>mail.smtp.host</code> parameter to
     point at the server that provides SMTP service for your network.</p>
 
+    <h3>4.  Install the JavaMail libraries</h3>
+
+    <p><a href="http://java.sun.com/products/javamail/downloads/index.html" target="_blank">
+    Download the JavaMail API</a>.</p>
+
+    <p>This download includes 2 vital libraries for the configuration; 
+    activation.jar and mail.jar. Unpackage the JavaMail distribution and place 
+    them into $CATALINA_HOME/common/lib so that they are available to
+    Tomcat during the initialization of the mail Session Resource.
+    <strong>Note:</strong> placing these jars in both common/lib and a 
+    web application's lib folder will cause an error, so ensure you have
+    them in the $CATALINA_HOME/common/lib location only.
+    </p>
+
     <h3>Example Application</h3>
 
     <p>The <code>/examples</code> application included with Tomcat contains

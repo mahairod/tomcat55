@@ -53,6 +53,9 @@
       <fix> 
         <bug>32373</bug>: outdated installation.xml page. (yoavs)
       </fix>
+      <update>
+        <bug>32454</bug>: amended JNDI documentation for JavaMail/JavaActivationFramework usage. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
