@@ -74,11 +74,6 @@ public interface Options {
     public boolean getDevelopment();
 
     /**
-     * JSP reloading check ?
-     */
-    public boolean getReloading();
-
-    /**
      * Is the generation of SMAP info for JSR45 debugging suppressed?
      */
     public boolean isSmapSuppressed();

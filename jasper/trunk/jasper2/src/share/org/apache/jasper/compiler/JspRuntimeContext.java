@@ -125,7 +125,7 @@ public final class JspRuntimeContext implements Runnable {
         String appBase = context.getRealPath("/");         
         if (!options.getDevelopment()
                 && appBase != null
-                && options.getReloading() ) {
+                && options.getCheckInterval() > 0) {
             if (appBase.endsWith(File.separator) ) {
                 appBase = appBase.substring(0,appBase.length()-1);
             }
@@ -181,6 +181,7 @@ public final class JspRuntimeContext implements Runnable {
      */
     public void addWrapper(String jspUri, JspServletWrapper jsw) {
         jsps.remove(jspUri);
+System.out.println("XXXX ADDING WRAPPER" + jspUri + " " + this);
         jsps.put(jspUri,jsw);
     }
 
@@ -200,6 +201,7 @@ public final class JspRuntimeContext implements Runnable {
      * @param jspUri JSP URI of JspServletWrapper to remove
      */
     public void removeWrapper(String jspUri) {
+System.out.println("XXXX REMOVING WRAPPER" + jspUri);
         jsps.remove(jspUri);
     }
 
@@ -210,6 +212,7 @@ public final class JspRuntimeContext implements Runnable {
      * @return The number of JSPs that have been loaded into the webapp
      */
     public int getJspCount() {
+System.out.println("XXXXX CALLING GETJSPCOUNT: " + jsps.size() + " " + this);
         return jsps.size();
     }
 
@@ -262,6 +265,7 @@ public final class JspRuntimeContext implements Runnable {
      * Increments the JSP reload counter.
      */
     public synchronized void incrementJspReloadCount() {
+System.out.println("XXXX INCREMENTING");
         jspReloadCount++;
     }
 
@@ -446,6 +450,8 @@ public final class JspRuntimeContext implements Runnable {
      *  a background thread now
      */
     protected void threadStart() {
+
+System.out.println("XXX STARTING THREAD");
 
         // Has the background thread already been started?
         if (thread != null) {

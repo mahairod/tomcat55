@@ -387,13 +387,6 @@ public class JspC implements Options {
     }
 
     /**
-     * JSP reloading check ?
-     */
-    public boolean getReloading() {
-        return true;
-    }
-
-    /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
     public boolean isSmapSuppressed() {

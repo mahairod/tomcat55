@@ -94,11 +94,6 @@ public final class EmbeddedServletOptions implements Options {
     private int checkInterval = 300;
 
     /**
-     * JSP reloading check ?
-     */
-    private boolean reloading = false;
-
-    /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
     private boolean isSmapSuppressed = false;
@@ -242,13 +237,6 @@ public final class EmbeddedServletOptions implements Options {
      */
     public boolean getDevelopment() {
         return development;
-    }
-
-    /**
-     * JSP reloading check ?
-     */
-    public boolean getReloading() {
-        return reloading;
     }
 
     /**
@@ -482,19 +470,6 @@ public final class EmbeddedServletOptions implements Options {
             } else {
 		if (log.isWarnEnabled()) {
 		    log.warn(Localizer.getMessage("jsp.warning.development"));
-		}
-	    }
-        }
-
-        String reloading = config.getInitParameter("reloading");
-        if (reloading != null) {
-            if (reloading.equalsIgnoreCase("true")) {
-                this.reloading = true;
-            } else if (reloading.equalsIgnoreCase("false")) {
-                this.reloading = false;
-            } else {
-		if (log.isWarnEnabled()) {
-		    log.warn(Localizer.getMessage("jsp.warning.reloading"));
 		}
 	    }
         }
