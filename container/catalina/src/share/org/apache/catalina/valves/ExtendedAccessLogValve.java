@@ -359,6 +359,10 @@ public final class ExtendedAccessLogValve
     private boolean checkExists = false;
 
 
+    /**
+     * Date format to place in log file name. Use at your own risk!
+     */
+    private String fileDateFormat = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -534,6 +538,23 @@ public final class ExtendedAccessLogValve
         this.checkExists = checkExists;
 
     }
+
+
+    /**
+     *  Return the date format date based log rotation.
+     */
+    public String getFileDateFormat() {
+        return fileDateFormat;
+    }
+
+
+    /**
+     *  Set the date format date based log rotation.
+     */
+    public void setFileDateFormat(String fileDateFormat) {
+        this.fileDateFormat =  fileDateFormat;
+    }
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -1072,7 +1093,9 @@ public final class ExtendedAccessLogValve
         timeFormatter = new SimpleDateFormat("HH:mm:ss");
         timeFormatter.setTimeZone(tz);
         currentDate = new Date(System.currentTimeMillis());
-        fileDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        if (fileDateFormat==null || fileDateFormat.length()==0)
+            fileDateFormat = "yyyy-MM-dd";
+        fileDateFormatter = new SimpleDateFormat(fileDateFormat);
         dateStamp = fileDateFormatter.format(currentDate);
         timeTakenFormatter = new DecimalFormat("0.000");
 
