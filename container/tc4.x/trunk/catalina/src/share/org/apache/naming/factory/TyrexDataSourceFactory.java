@@ -211,26 +211,21 @@ public class TyrexDataSourceFactory
                     Driver databaseDriver = (Driver) driverClass.newInstance();
                     DriverManager.registerDriver(databaseDriver);
                     
-                    if (ref.getClassName().equals
-                        ("tyrex.jdbc.ServerDataSource")) {
-                        
-                        ServerDataSource sds = 
-                            new ServerDataSource((javax.sql.XADataSource) ds);
-                        
-                        currentRefAddr = ref.get(DESCRIPTION);
-                        if (currentRefAddr != null)
-                            sds.setDescription
-                                (currentRefAddr.getContent().toString());
-                        
-                        return sds;
-                        
+                    ServerDataSource sds = 
+                        new ServerDataSource((javax.sql.XADataSource) ds);
+                    
+                    currentRefAddr = ref.get(DESCRIPTION);
+                    if (currentRefAddr != null) {
+                        sds.setDescription
+                            (currentRefAddr.getContent().toString());
                     }
                     
-                    return ds;
+                    return sds;
                     
                 } catch (Throwable t) {
-                    // Another factory could handle this, so just give up
-                    return null;
+                    log("Cannot create DataSource, Exception", t);
+                    throw new NamingException
+                        ("Exception creating DataSource: " + t.getMessage());
                 }
                 
             } else {
@@ -241,6 +236,21 @@ public class TyrexDataSourceFactory
             return null;
         }
         
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    private void log(String message) {
+        System.out.print("TyrexDataSourceFactory:  ");
+        System.out.println(message);
+    }
+
+
+    private void log(String message, Throwable exception) {
+        log(message);
+        exception.printStackTrace(System.out);
     }
 
 

@@ -122,11 +122,9 @@ public class TyrexTransactionFactory
                     return Tyrex.getUserTransaction();
                     
                 } catch (Throwable t) {
-                    // TEMP
-                    t.printStackTrace();
-                    // END TEMP
-                    // Another factory could handle this, so just give up
-                    return null;
+                    log("Cannot create Transaction, Exception", t);
+                    throw new NamingException
+                        ("Exception creating Transaction: " + t.getMessage());
                 }
                 
             }
@@ -135,6 +133,21 @@ public class TyrexTransactionFactory
         
         return null;
         
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    private void log(String message) {
+        System.out.print("TyrexTransactionFactory:  ");
+        System.out.println(message);
+    }
+
+
+    private void log(String message, Throwable exception) {
+        log(message);
+        exception.printStackTrace(System.out);
     }
 
 
