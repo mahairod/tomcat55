@@ -180,46 +180,60 @@ class ParserController {
 	        throws FileNotFoundException, JasperException, IOException {
 
 	Node.Nodes parsedPage = null;
-        InputStreamReader reader = null;
 	String absFileName = resolveFileName(inFileName);
 
 	JarFile jarFile = (JarFile) ctxt.getTagFileJars().get(inFileName);
 
-        try {
-            // Figure out what type of JSP document and encoding type we are
-	    // dealing with
-            String encoding = figureOutJspDocument(absFileName, jarFile);
+	// Figure out what type of JSP document and encoding type we are
+	// dealing with
+	String encoding = figureOutJspDocument(absFileName, jarFile);
 
-	    if (isTopFile) {
-		pageInfo.setIsXml(isXml);
-		isTopFile = false;
-	    } else {
-		compiler.getPageInfo().addDependant(absFileName);
-	    }
+	if (isTopFile) {
+	    pageInfo.setIsXml(isXml);
+	    isTopFile = false;
+	} else {
+	    compiler.getPageInfo().addDependant(absFileName);
+	}
 
-            // dispatch to the proper parser
-            reader = JspUtil.getReader(absFileName, encoding, jarFile, ctxt,
-				       err);
-            if (isXml) {
-                parsedPage = JspDocumentParser.parse(this, absFileName,
-						     reader, parent,
+	// Dispatch to the proper parser
+	if (isXml) {
+	    InputStream inStream = null;
+	    try {
+		inStream = JspUtil.getInputStream(absFileName, jarFile, ctxt,
+						  err);
+		parsedPage = JspDocumentParser.parse(this, absFileName,
+						     inStream, parent,
 						     isTagFile,
 						     directivesOnly);
-            } else {
-		JspReader r = new JspReader(ctxt, absFileName, encoding,
-					    reader, err);
-                parsedPage = Parser.parse(this, r, parent, isTagFile,
-					  directivesOnly);
-            }
-	    baseDirStack.pop();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-		} catch (Exception any) {
+	    } finally {
+		if (inStream != null) {
+		    try {
+			inStream.close();
+		    } catch (Exception any) {
+		    }
 		}
 	    }
-        }
+	} else {
+	    InputStreamReader inStreamReader = null;
+	    try {
+		inStreamReader = JspUtil.getReader(absFileName, encoding,
+						   jarFile, ctxt, err);
+		JspReader jspReader = new JspReader(ctxt, absFileName,
+						    encoding, inStreamReader,
+						    err);
+                parsedPage = Parser.parse(this, jspReader, parent, isTagFile,
+					  directivesOnly);
+            } finally {
+		if (inStreamReader != null) {
+		    try {
+			inStreamReader.close();
+		    } catch (Exception any) {
+		    }
+		}
+	    }
+	}
+
+	baseDirStack.pop();
 
 	return parsedPage;
     }

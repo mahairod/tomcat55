@@ -119,7 +119,7 @@ class JspDocumentParser extends DefaultHandler
      */
     public JspDocumentParser(ParserController pc,
 			     String path,
-			     InputStreamReader reader,
+			     InputStream inStream,
 			     boolean isTagFile,
 			     boolean directivesOnly) {
 	this.parserController = pc;
@@ -128,7 +128,7 @@ class JspDocumentParser extends DefaultHandler
 	this.taglibs = this.pageInfo.getTagLibraries();
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.path = path;
-	this.inputSource = new InputSource(reader);
+	this.inputSource = new InputSource(inStream);
 	this.isTagFile = isTagFile;
 	this.directivesOnly = directivesOnly;
 	this.isTop = true;
@@ -141,13 +141,13 @@ class JspDocumentParser extends DefaultHandler
      */
     public static Node.Nodes parse(ParserController pc,
 				   String path,
-				   InputStreamReader reader,
+				   InputStream inStream,
 				   Node parent,
 				   boolean isTagFile,
 				   boolean directivesOnly)
 	        throws JasperException {
 
-	JspDocumentParser handler = new JspDocumentParser(pc, path, reader,
+	JspDocumentParser handler = new JspDocumentParser(pc, path, inStream,
 							  isTagFile,
 							  directivesOnly);
 	Node.Nodes pageNodes = null;
