@@ -86,7 +86,7 @@ import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.loader.StandardLoader;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.net.SSLServerSocketFactory;
@@ -639,7 +639,7 @@ public class Embedded implements Lifecycle {
             logger.log("Creating Loader with parent class loader '" +
                        parent + "'");
 
-        StandardLoader loader = new StandardLoader(parent);
+        WebappLoader loader = new WebappLoader(parent);
         return (loader);
 
     }
