@@ -3123,6 +3123,8 @@ class Generator {
         out.printil( "    throw (java.io.IOException) t;" );
         out.printil( "if( t instanceof javax.servlet.jsp.JspException )" );
         out.printil( "    throw (javax.servlet.jsp.JspException) t;" );
+        out.printil( "if( t instanceof IllegalArgumentException )" );
+        out.printil( "    throw (IllegalArgumentException) t;" );
         out.printil("throw new javax.servlet.jsp.JspException(t);" );
         out.popIndent();
         out.printil( "} finally {" );

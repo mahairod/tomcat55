@@ -179,8 +179,11 @@ class TagFileProcessor {
             String attrName = n.getAttributeValue("name");
             boolean required = JspUtil.booleanValue(
 					n.getAttributeValue("required"));
+            boolean rtexprvalue = true;
             String rtexprvalueString = n.getAttributeValue("rtexprvalue");
-            boolean rtexprvalue = JspUtil.booleanValue( rtexprvalueString );
+	    if (rtexprvalueString != null) {
+		rtexprvalue = JspUtil.booleanValue( rtexprvalueString );
+	    }
             boolean fragment = JspUtil.booleanValue(
 					n.getAttributeValue("fragment"));
 	    String type = n.getAttributeValue("type");

@@ -303,6 +303,7 @@ public class ErrorDispatcher {
      */
     public void javacError(String errMsg, String fname, Node.Nodes page)
 	        throws JasperException, IOException {
+	System.out.println("LLL: " + errMsg);
 	JavacErrorDetail[] errDetails = parseJavacMessage(errMsg, fname, page);
 	errHandler.javacError(errDetails);
     }
