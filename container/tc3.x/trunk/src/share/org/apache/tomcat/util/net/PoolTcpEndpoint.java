@@ -428,6 +428,9 @@ class TcpWorkerThread implements ThreadPoolRunnable {
 			con=(TcpConnection)connectionCache.get();
 			if( con == null ) 
 			    con = new TcpConnection();
+		    } else {
+			if( con==null )
+			    continue;
 		    }
 		    
 		    con.setEndpoint(endpoint);
