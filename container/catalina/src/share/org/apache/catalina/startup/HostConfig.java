@@ -458,8 +458,6 @@ public class HostConfig
 
         if (!(host instanceof Deployer))
             return;
-        if (log.isDebugEnabled())
-            log.debug(sm.getString("hostConfig.deploying"));
 
         File appBase = appBase();
         if (!appBase.exists() || !appBase.isDirectory())
@@ -805,7 +803,7 @@ public class HostConfig
     /**
      * Process a "start" event for this Host.
      */
-    protected void start() {
+    public void start() {
 
         if (log.isDebugEnabled())
             log.debug(sm.getString("hostConfig.start"));
@@ -824,7 +822,7 @@ public class HostConfig
     /**
      * Process a "stop" event for this Host.
      */
-    protected void stop() {
+    public void stop() {
 
         if (log.isDebugEnabled())
             log.debug(sm.getString("hostConfig.stop"));
