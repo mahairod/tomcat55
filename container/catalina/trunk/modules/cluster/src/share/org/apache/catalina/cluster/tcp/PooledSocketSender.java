@@ -81,7 +81,7 @@ public class PooledSocketSender implements IDataSender
 {
 
     private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( org.apache.catalina.cluster.tcp.SimpleTcpCluster.class );
+        org.apache.commons.logging.LogFactory.getLog( org.apache.catalina.cluster.CatalinaCluster.class );
 
     private InetAddress address;
     private int port;

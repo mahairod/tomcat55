@@ -73,7 +73,7 @@ import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.catalina.cluster.tcp.IDataSender;
 import org.apache.catalina.cluster.tcp.SocketSender;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.SessionMessage;
 
 
@@ -112,6 +112,8 @@ import java.net.InetAddress;
 public class SimpleTcpReplicationManager extends org.apache.catalina.session.StandardManager
 implements org.apache.catalina.cluster.ClusterManager
 {
+    public static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SimpleTcpReplicationManager.class );
 
     //the channel configuration
     protected String mChannelConfig = null;
@@ -146,7 +148,7 @@ implements org.apache.catalina.cluster.ClusterManager
 
     protected boolean distributable = true;
 
-    protected org.apache.catalina.cluster.tcp.SimpleTcpCluster cluster;
+    protected CatalinaCluster cluster;
 
     protected java.util.HashMap invalidatedSessions = new java.util.HashMap();
 
@@ -181,7 +183,7 @@ implements org.apache.catalina.cluster.ClusterManager
         mExpireSessionsOnShutdown = expireSessionsOnShutdown;
     }
 
-    public void setCluster(SimpleTcpCluster cluster) {
+    public void setCluster(CatalinaCluster cluster) {
         this.log("Cluster associated with SimpleTcpReplicationManager");
         this.cluster = cluster;
     }
@@ -660,7 +662,7 @@ implements org.apache.catalina.cluster.ClusterManager
         if ( getDebug() >= level ) {
             String lmsg = msg;
             if ( mPrintToScreen ) System.out.println(lmsg);
-            SimpleTcpCluster.log.info(lmsg);
+            log.info(lmsg);
         }
     }
 
@@ -671,7 +673,7 @@ implements org.apache.catalina.cluster.ClusterManager
                 System.out.println(lmsg);
                 x.printStackTrace();
             }
-            SimpleTcpCluster.log.error(lmsg,x);
+            log.error(lmsg,x);
         }//end if
     }
     public void setName(String name) {

@@ -69,6 +69,7 @@ import java.util.List;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import org.apache.catalina.cluster.io.ObjectReader;
+
 import java.util.LinkedList;
 /**
      * A worker thread class which can drain channels and echo-back
@@ -85,7 +86,7 @@ import java.util.LinkedList;
 public class TcpReplicationThread extends WorkerThread
 {
     private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
+        org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
     private SelectionKey key;
     private boolean synchronous=false;

@@ -80,7 +80,7 @@ public class Jdk13ReplicationListener implements Runnable
 {
 
     private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
+        org.apache.commons.logging.LogFactory.getLog( Jdk13ReplicationListener.class );
     private ThreadPool pool = null;
     private boolean doListen = false;
     private ListenCallback callback;

@@ -78,13 +78,14 @@ import java.util.Iterator;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.ObjectReader;
 import org.apache.catalina.cluster.io.XByteBuffer;
+import org.apache.catalina.cluster.CatalinaCluster;
 /**
  */
 public class ReplicationListener extends Thread
 {
 
     private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
+        org.apache.commons.logging.LogFactory.getLog( ReplicationListener.class );
     private ThreadPool pool = null;
     private boolean doListen = false;
     private ListenCallback callback;

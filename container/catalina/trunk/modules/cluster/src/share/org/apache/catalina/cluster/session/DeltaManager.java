@@ -94,7 +94,8 @@ import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.cluster.CatalinaCluster;
+
 
 /**
  * The DeltaManager manages replicated sessions by only
@@ -172,7 +173,7 @@ public class DeltaManager
     int expiredSessions=0;
     long processingTime=0;
 
-    private SimpleTcpCluster cluster = null;
+    private CatalinaCluster cluster = null;
     private boolean stateTransferred;
     private boolean useDirtyFlag;
     private boolean expireSessionsOnShutdown;
@@ -967,10 +968,10 @@ public class DeltaManager
     public void setStateTransferred(boolean stateTransferred) {
         this.stateTransferred = stateTransferred;
     }
-    public SimpleTcpCluster getCluster() {
+    public CatalinaCluster getCluster() {
         return cluster;
     }
-    public void setCluster(SimpleTcpCluster cluster) {
+    public void setCluster(CatalinaCluster cluster) {
         this.cluster = cluster;
     }
 
