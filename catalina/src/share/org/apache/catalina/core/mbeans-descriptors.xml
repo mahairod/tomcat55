@@ -256,6 +256,11 @@
                type="[Ljava.lang.String;"
                writeable="false"/>
 
+    <attribute name="saveConfig"
+               description="Should the configuration be written as needed on startup"
+               is="true"
+               type="boolean"/>
+      
     <attribute name="server"
                description="The J2EE Server this module is deployed on"
                type="java.lang.String"/>
