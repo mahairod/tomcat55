@@ -321,8 +321,12 @@ public class ServletWrapper extends Handler {
 	    unavailable=ex;
 	    unavailableTime=System.currentTimeMillis();
 	    unavailableTime += ex.getUnavailableSeconds() * 1000;
+	    servlet=null;
+	    throw ex;
 	} catch( Exception ex ) {
 	    unavailable=ex;
+	    servlet=null;
+	    throw ex;
 	}
     }
 
@@ -358,20 +362,8 @@ public class ServletWrapper extends Handler {
 	}
 
 	if( unavailable!=null  ) {
-		// Don't load at all if permanently unavailable 
-	    if (((UnavailableException) unavailable).getUnavailableSeconds() == -1) { 
-		handleUnavailable( req, res );
-		initialized = false; 
-		return; 
-	    } 
-
-		// Don't load if Unavailable timer is in place
-	    if(  stillUnavailable() ) {
-		handleUnavailable( req, res );
-		initialized=false;
-		return;
-	    }
-	    unavailable=null;// timer expired
+	    // check servlet availability, throw appropriate exception if not
+	    servletAvailable();
 	}
 
 	// called only if unavailable==null or timer expired.
@@ -380,10 +372,21 @@ public class ServletWrapper extends Handler {
             super.service( req, res );
         } catch( IOException e ) {
             throw e;
-        } catch( UnavailableException e ) {
-            // if unavailable set, assume problem in init()
-            handleUnavailable( req, res );
-            throw e;
+	} catch ( UnavailableException e ) {
+	    // if unavailable not set, assume thrown from service(), not init()
+	    if (unavailable == null) {
+		synchronized(this) {
+		    if (unavailable == null) {
+			unavailable = e;
+			// XXX if the UnavailableException is permanent we are supposed
+			// to destroy the servlet.  Synchronization of this destruction
+			// needs review before adding this.
+			unavailableTime = System.currentTimeMillis();
+			unavailableTime += e.getUnavailableSeconds() * 1000;
+		    }
+		}
+	    }
+	    throw e;
         } catch( ServletException e ) {
             throw e;
         }
@@ -469,55 +472,26 @@ public class ServletWrapper extends Handler {
     // -------------------- Unavailable --------------------
     /** Check if we can try again an init
      */
-    private boolean stillUnavailable() {
+    private void servletAvailable()
+        throws IOException, ServletException
+    {
+	// if permanently unavailable, rethrow exception
+	if (unavailable instanceof UnavailableException &&
+		((UnavailableException)unavailable).isPermanent())
+	    throw (UnavailableException)unavailable;
 	// we have a timer - maybe we can try again - how much
 	// do we have to wait - (in mSec)
 	long moreWaitTime=unavailableTime - System.currentTimeMillis();
-	if( unavailableTime > 0 && ( moreWaitTime < 0 )) {
-	    // we can try again
-	    unavailable=null;
-	    unavailableTime=-1;
-	    context.log(getServletName() + " unavailable time expired," +
-			" try again ");
-	    return false;
-	} else {
-	    return true;
+	if( moreWaitTime > 0 ) {
+	    // get seconds left, rounded up to at least one second
+	    int secs = (int)((moreWaitTime + 999) / 1000);
+	    // throw updated exception
+	    throw new UnavailableException(unavailable.getMessage(), secs);
 	}
+	// we can try again
+	unavailable=null;
+	unavailableTime=-1;
+	context.log(getServletName() + " unavailable time expired," +
+		" try again ");
     }
-    
-    /** Send 503. Should be moved in ErrorHandling
-     */
-    private void handleUnavailable( Request req, Response res ) {
-	if( unavailable instanceof UnavailableException ) {
-	    int unavailableTime = ((UnavailableException)unavailable).
-		getUnavailableSeconds();
-	    if( unavailableTime > 0 ) {
-		res.setHeader("Retry-After",
-			      Integer.toString(unavailableTime));
-	    }
-	}
-
-	String msg=unavailable.getMessage();
-	long moreWaitTime=unavailableTime - System.currentTimeMillis();
-	context.log( "Error in " + getServletName() +
-		     "init(), error happened at " +
-		     unavailableTime + " wait " + moreWaitTime +
-		     " : " + msg, unavailable);
-	req.setAttribute("javax.servlet.error.message", msg );
-	res.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE); // 503
-	contextM.handleStatus( req, res,
-			       HttpServletResponse.SC_SERVICE_UNAVAILABLE );
-	return;
-    }
-
-
-    // -------------------- Not found
-    private void handleNotFound( Request req, Response res) {
-	context.log( "Can't find servet " + getServletName() + " " +
-		     getServletClass() );
-	res.setStatus( 404 );
-	contextM.handleStatus( req, res,  404 );
-    }
-
-
 }
