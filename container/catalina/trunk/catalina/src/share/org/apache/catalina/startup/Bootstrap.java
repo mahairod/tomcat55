@@ -382,8 +382,9 @@ public final class Bootstrap {
         try {
             String command = "start";
             if (args.length > 0) {
-                command = args[0];
+                command = args[args.length - 1];
             }
+
             if (command.equals("startd")) {
                 args[0] = "start";
                 daemon.load(args);
