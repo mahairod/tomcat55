@@ -545,25 +545,28 @@ public class Compiler {
         }
 
         Iterator it = depends.iterator();
+        boolean outDated = false;
         while (it.hasNext()) {
             String include = (String)it.next();
             try {
                 URL includeUrl = ctxt.getResource(include);
                 if (includeUrl == null) {
                     //System.out.println("Compiler: outdated, no includeUri " + include );
-                    return true;
+                    outDated = true;
                 }
                 if (includeUrl.openConnection().getLastModified() >
                     targetLastModified) {
                     //System.out.println("Compiler: outdated, include old " + include );
-                    return true;
+                    outDated = true;
+                    // Remove any potential Wrappers for tag files
+                    ctxt.getRuntimeContext().removeWrapper(include);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                return true;
+                outDated = true;
             }
         }
-        return false;
+        return outDated;
 
     }
 
