@@ -2126,6 +2126,89 @@
   </mbean>
 
 
+  <mbean         name="PersistentManager"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Standard implementation of the Manager interface"
+               domain="Catalina"
+                group="Manager"
+                 type="org.apache.catalina.session.PersistentManager" >
+
+    <attribute   name="algorithm"
+          description="The message digest algorithm to be used when generating
+                        session identifiers"
+                 type="java.lang.String"/>
+
+    <attribute   name="checkInterval"
+          description="The interval (in seconds) between checks for expired
+                        sessions"
+                 type="int"/>
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="distributable"
+          description="The distributable flag for Sessions created by this
+                        Manager"
+                 type="boolean"/>
+
+    <attribute   name="entropy"
+          description="A String initialization parameter used to increase the
+                        entropy of the initialization of our random number
+                        generator"
+                 type="java.lang.String"/>
+
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
+
+    <attribute   name="maxActiveSessions"
+          description="The maximum number of active Sessions allowed, or -1
+                        for no limit"
+                 type="int"/>
+
+    <attribute   name="maxInactiveInterval"
+          description="The default maximum inactive interval for Sessions
+                        created by this Manager"
+                 type="int"/>
+
+    <attribute name="maxIdleBackup" 
+          description="The time interval (in seconds) since the last access
+                        to a session before it is eligible for being
+                        persisted to the session store, or -1 to disable"
+                 type="int"/>
+
+    <attribute name="maxIdleSwap"
+          description="The time interval (in seconds) since the last access
+                        to a session before it should be persisted to the
+                        session store, or -1 to disable"
+                 type="int" />
+
+    <attribute name="minIdleSwap" 
+          description="The time interval (in seconds) since the last access
+                        to a session before it will be eligible to be
+                        persisted to the session store, or -1 to disable"
+                 type="int" />
+
+    <attribute name="saveOnRestart"
+          description="Should all sessions be persisted and reloaded when
+                        Tomcat is shut down and restarted?"
+                 type="boolean" />
+
+    <attribute   name="name"
+          description="The descriptive name of this Manager implementation
+                        (for logging)"
+                 type="java.lang.String"
+            writeable="false"/>
+
+  </mbean>
+
+
   <mbean         name="StandardManager"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Standard implementation of the Manager interface"
