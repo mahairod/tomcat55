@@ -35,7 +35,7 @@
     <!-- Should not be able to use relative path above document root -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${examples.path}/../.." debug="${debug}"
-          status="404"/>
+          status="302"/>
 
     <!-- Should be able to successfully retrieve a golden file -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
