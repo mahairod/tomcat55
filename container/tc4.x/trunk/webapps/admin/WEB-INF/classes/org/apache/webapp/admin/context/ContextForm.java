@@ -1,4 +1,4 @@
-/*
+p/*
  * $Header$
  * $Revision$
  * $Date$
@@ -769,7 +769,8 @@ public final class ContextForm extends ActionForm {
                 errors.add("docBase", new ActionError("error.docBase.required"));
             }
             
-            if (!path.startsWith("/")) {
+            // validate context starting with "/" only at the time of context creation.
+            if ("Create".equalsIgnoreCase(adminAction) && !path.startsWith("/")) {
                 errors.add("path", new ActionError("error.path.prefix"));                
             }
                         
