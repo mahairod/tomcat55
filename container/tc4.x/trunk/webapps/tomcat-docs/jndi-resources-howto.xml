@@ -299,9 +299,9 @@ writer.println("foo = " + bean.getFoo() + ", bar = " +
     messages, preconfigured to connect to the appropriate
     SMTP server.
   &lt;/description&gt;
-  &lt;resource-ref-name&gt;
+  &lt;res-ref-name&gt;
     mail/Session
-  &lt;/resource-ref-name&gt;
+  &lt;/res-ref-name&gt;
   &lt;res-type&gt;
     javax.mail.Session
   &lt;/res-type&gt;
@@ -442,9 +442,9 @@ Transport.send(message);
     instances that may be used for talking to a particular
     database that is configured in the server.xml file.
   &lt;/description&gt;
-  &lt;resource-ref-name&gt;
+  &lt;res-ref-name&gt;
     jdbc/EmployeDB
-  &lt;/resource-ref-name&gt;
+  &lt;/res-ref-name&gt;
   &lt;res-type&gt;
     javax.sql.DataSource
   &lt;/res-type&gt;
@@ -670,9 +670,9 @@ public class MyBeanFactory implements ObjectFactory {
 
 <source>
 &lt;resource-env-ref&gt;
-  &lt;Description&gt;
+  &lt;description&gt;
     Object factory for MyBean instances.
-  &lt;/Description&gt;
+  &lt;/description&gt;
   &lt;resource-env-ref-name&gt;
     bean/MyBeanFactory
   &lt;/resource-env-ref-name&gt;
