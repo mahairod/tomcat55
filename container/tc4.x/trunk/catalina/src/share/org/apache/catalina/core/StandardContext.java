@@ -204,6 +204,12 @@ public final class StandardContext
 
 
     /**
+     * The display name of this web application.
+     */
+    private String displayName = null;
+
+
+    /**
      * The distributable flag for this web application.
      */
     private boolean distributable = false;
@@ -521,6 +527,30 @@ public final class StandardContext
 				   new Boolean(oldCrossContext),
 				   new Boolean(this.crossContext));
 
+    }
+
+
+    /**
+     * Return the display name of this web application.
+     */
+    public String getDisplayName() {
+
+        return (this.displayName);
+
+    }
+
+
+    /**
+     * Set the display name of this web application.
+     *
+     * @param displayName The new display name
+     */
+    public void setDisplayName(String displayName) {
+
+        String oldDisplayName = this.displayName;
+        this.displayName = displayName;
+        support.firePropertyChange("displayName", oldDisplayName,
+                                   this.displayName);
     }
 
 
