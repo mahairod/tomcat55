@@ -823,6 +823,9 @@ public class FileDirContext extends BaseDirContext {
         File file = new File(base, name);
         if (file.exists() && file.canRead()) {
 
+        	if (allowLinking)
+        		return file;
+        	
             // Check that this file belongs to our root path
             String canPath = null;
             try {
@@ -833,12 +836,12 @@ public class FileDirContext extends BaseDirContext {
                 return null;
 
             // Check to see if going outside of the web application root
-            if ((!allowLinking) && (!canPath.startsWith(absoluteBase))) {
+            if (!canPath.startsWith(absoluteBase)) {
                 return null;
             }
 
             // Case sensitivity check
-            if (!allowLinking && caseSensitive) {
+            if (caseSensitive) {
                 String fileAbsPath = file.getAbsolutePath();
                 if (fileAbsPath.endsWith("."))
                     fileAbsPath = fileAbsPath + "/";
