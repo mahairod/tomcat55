@@ -80,6 +80,11 @@ It will also support version 2.3 of the Java Servlet specification.
 (First-round support for version 2.3 for the servlet specification may be 
 included in version 3.3.)
 
+- Tomcat 4.0 is separate development from Tomcat 3.x.  It is based on the
+Catalina architecture, which is very different from the architecture of
+Tomcat 3.x.  In addition, Tomcat 4.0 is to be the reference implementation
+for the Servlet 2.3 and JSP 1.2 specifications.
+
 
 =============================================================================
 5.  NEW FEATURES IN THIS RELEASE
