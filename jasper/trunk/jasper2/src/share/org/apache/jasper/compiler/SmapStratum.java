@@ -282,7 +282,13 @@ public class SmapStratum {
 	for (int i = 0; i < bound; i++) {
 	    if (filePathList.get(i) != null) {
 		out.append("+ " + i + " " + fileNameList.get(i) + "\n");
-		out.append(filePathList.get(i) + "\n");
+                // Source paths must be relative, not absolute, so we
+                // remove the leading "/", if one exists.
+                String filePath = (String)filePathList.get(i);
+                if (filePath.startsWith("/")) {
+                    filePath = filePath.substring(1);
+                }
+                out.append(filePath + "\n");
 	    } else {
 		out.append(i + " " + fileNameList.get(i) + "\n");
 	    }
