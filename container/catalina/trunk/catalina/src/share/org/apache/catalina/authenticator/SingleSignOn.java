@@ -275,7 +275,8 @@ public class SingleSignOn
     public void sessionEvent(SessionEvent event) {
 
         // We only care about session destroyed events
-        if (!Session.SESSION_DESTROYED_EVENT.equals(event.getType()))
+        if (!Session.SESSION_DESTROYED_EVENT.equals(event.getType())
+                && (!Session.SESSION_PASSIVATED_EVENT.equals(event.getType())))
             return;
 
         // Look up the single session id associated with this session (if any)
@@ -294,9 +295,10 @@ public class SingleSignOn
         // If so, we'll just remove the expired session from the
         // SSO.  If the session was logged out, we'll log out
         // of all session associated with the SSO.
-        if ((session.getMaxInactiveInterval() > 0)
+        if (((session.getMaxInactiveInterval() > 0)
             && (System.currentTimeMillis() - session.getLastAccessedTime() >=
-                session.getMaxInactiveInterval() * 1000)) {
+                session.getMaxInactiveInterval() * 1000)) 
+            || (Session.SESSION_PASSIVATED_EVENT.equals(event.getType()))) {
             removeSession(ssoId, session);
         } else {
             // The session was logged out.

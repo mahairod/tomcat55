@@ -51,6 +51,18 @@ public interface Session {
     public static final String SESSION_DESTROYED_EVENT = "destroySession";
 
 
+    /**
+     * The SessionEvent event type when a session is activated.
+     */
+    public static final String SESSION_ACTIVATED_EVENT = "activateSession";
+
+
+    /**
+     * The SessionEvent event type when a session is passivated.
+     */
+    public static final String SESSION_PASSIVATED_EVENT = "passivateSession";
+
+
     // ------------------------------------------------------------- Properties
 
 
