@@ -378,7 +378,7 @@ public class SingleSignOn
 
         // FIXME: Find a way to deregister only a single session in case of 
         // a timeout
-        deregister(ssoId, session);
+        deregister(ssoId);
 
     }
 
