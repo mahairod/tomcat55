@@ -8,7 +8,7 @@
      version="2.0">
 <xsd:annotation>
 <xsd:documentation>
-%W% %G%
+@(#)jsp_2_0.xsds	1.14 11/06/02
 </xsd:documentation>
 </xsd:annotation>
 
@@ -172,12 +172,15 @@ following additional properties can be described:
         <xsd:documentation>
 
         The valid values of page-encoding are those of the
-        pageEncoding page directive. It is a
-        translation-time error to define the pageEncoding
-        of a JSP page through one value in the JSP
-        configuration element and then give it a different
-        value in a pageEncoding directive, but it is legal
-        to give it the same value.
+        pageEncoding page directive.  It is a
+	translation-time error to name different encodings
+	in the pageEncoding attribute of the page directive
+	of a JSP page and in a JSP configuration element
+	matching the page.  It is also a translation-time
+	error to name different encodings in the prolog of
+	a document in XML syntax and in a JSP configuration
+	element matching the document.  It is legal to name
+	the same encoding through mulitple mechanisms.
 
         </xsd:documentation>
         </xsd:annotation>

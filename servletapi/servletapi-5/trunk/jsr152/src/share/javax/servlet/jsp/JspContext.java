@@ -124,28 +124,37 @@ public abstract class JspContext {
 
     public static final int APPLICATION_SCOPE	= 4;
 
-    /** Register the name and object specified with page scope semantics.
+    /** 
+     * Register the name and value specified with page scope semantics.
+     * If the value passed in is <code>null</code>, this has the same 
+     * effect as calling 
+     * <code>removeAttribute( name, JspContext.PAGE_SCOPE )</code>.
      *
      * @param name the name of the attribute to set
-     * @param attribute the object to associate with the name
-     * @throws NullPointerException if the name or object is null
+     * @param value the value to associate with the name, or null if the
+     *     attribute is to be removed from the page scope.
+     * @throws NullPointerException if the name is null
      */
 
-    abstract public void setAttribute(String name, Object attribute);
+    abstract public void setAttribute(String name, Object value);
 
     /**
-     * Register the name and object specified with appropriate scope semantics.
+     * Register the name and value specified with appropriate 
+     * scope semantics.  If the value passed in is <code>null</code>, 
+     * this has the same effect as calling
+     * <code>removeAttribute( name, scope )</code>.
      * 
      * @param name the name of the attribute to set
-     * @param o    the object to associate with the name
+     * @param value the object to associate with the name, or null if
+     *     the attribute is to be removed from the specified scope.
      * @param scope the scope with which to associate the name/object
      * 
-     * @throws NullPointerException if the name or object is null
+     * @throws NullPointerException if the name is null
      * @throws IllegalArgumentException if the scope is invalid
      *
      */
 
-    abstract public void setAttribute(String name, Object o, int scope);
+    abstract public void setAttribute(String name, Object value, int scope);
 
     /**
      * Returns the object associated with the name in the page scope or null
@@ -187,8 +196,8 @@ public abstract class JspContext {
     abstract public Object findAttribute(String name);
 
     /**
-     * Remove the object reference associated with the given name,
-     * look in all scopes in the scope order.
+     * Remove the object reference associated with the given name
+     * from all scopes.  Does nothing if there is no such object.
      *
      * @param name The name of the object to remove.
      */
@@ -197,7 +206,7 @@ public abstract class JspContext {
 
     /**
      * Remove the object reference associated with the specified name
-     * in the given scope.
+     * in the given scope.  Does nothing if there is no such object.
      *
      * @param name The name of the object to remove.
      * @param scope The scope where to look.
