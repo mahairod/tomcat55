@@ -1847,8 +1847,8 @@ public class CGIServlet extends HttpServlet {
             try {
                 while ((line = rdr.readLine()) != null) {
                     log("runCGI (stderr):" +  line) ;
+                    lineCount++ ;
                 }
-                lineCount++ ;
             } catch (IOException e) {
                 log("sendToLog error", e) ;
             } finally {
