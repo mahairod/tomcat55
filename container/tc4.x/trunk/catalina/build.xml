@@ -649,6 +649,7 @@
     <mkdir dir="${catalina.build}/bin"/>
     <mkdir dir="${catalina.build}/common/classes"/>
     <mkdir dir="${catalina.build}/common/lib"/>
+    <mkdir dir="${catalina.build}/common/endorsed"/>
     <mkdir dir="${catalina.build}/conf"/>
     <mkdir dir="${catalina.build}/logs"/>
     <mkdir dir="${catalina.build}/server/classes"/>
