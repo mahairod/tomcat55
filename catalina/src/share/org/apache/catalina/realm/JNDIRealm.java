@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.CommunicationException;
+import javax.naming.CompositeName;
 import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
@@ -1081,7 +1082,10 @@ public class JNDIRealm extends RealmBase {
         NameParser parser = context.getNameParser("");
         Name contextName = parser.parse(context.getNameInNamespace());
         Name baseName = parser.parse(userBase);
-        Name entryName = parser.parse(result.getName());
+
+        // Bugzilla 32267
+        Name entryName = parser.parse(new CompositeName(result.getName()).get(0));
+
         Name name = contextName.addAll(baseName);
         name = name.addAll(entryName);
         String dn = name.toString();
