@@ -1233,7 +1233,7 @@ final class WrappedRequest
      * Set the character encoding to be used for this request.
      */
     public void setCharacterEncoding(String enc) {
-        ; // FIXME - setCharacterEncoding()
+        request.getRequest().setCharacterEncoding(enc);
     }
 
 

@@ -75,6 +75,7 @@ import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.CharsetMapper;
 
 
 /**
@@ -122,6 +123,20 @@ public interface Context extends Container {
      * @param listeners The set of instantiated listener objects.
      */
     public void setApplicationListeners(Object listeners[]);
+
+
+    /**
+     * Return the Locale to character set mapper for this Context.
+     */
+    public CharsetMapper getCharsetMapper();
+
+
+    /**
+     * Set the Locale to character set mapper for this Context.
+     *
+     * @param mapper The new mapper
+     */
+    public void setCharsetMapper(CharsetMapper mapper);
 
 
     /**

@@ -77,7 +77,7 @@ import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
-import org.apache.catalina.util.LocaleToCharsetMap;
+import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 
@@ -751,9 +751,10 @@ public abstract class ResponseBase
 	    return;	// Ignore any call from an included servlet
 
 	this.locale = locale;
-	String encoding = LocaleToCharsetMap.getCharset(locale);
-	if (encoding != null)
-	    this.encoding = encoding;
+	if ((this.encoding == null) && (this.context != null)) {
+	    CharsetMapper mapper = context.getCharsetMapper();
+	    this.encoding = mapper.getCharset(locale);
+	}
 
     }
 

@@ -97,6 +97,7 @@ import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.CharsetMapper;
 
 
 /**
@@ -149,6 +150,19 @@ public final class StandardContext
      */
     private ApplicationParameter applicationParameters[] =
         new ApplicationParameter[0];
+
+
+    /**
+     * The Locale to character set mapper for this application.
+     */
+    private CharsetMapper charsetMapper = null;
+
+
+    /**
+     * The Java class name of the CharsetMapper class to be created.
+     */
+    private String charsetMapperClass =
+      "org.apache.catalina.util.CharsetMapper";
 
 
     /**
@@ -385,6 +399,68 @@ public final class StandardContext
     public void setApplicationListeners(Object listeners[]) {
 
         applicationListenersObjects = listeners;
+
+    }
+
+
+    /**
+     * Return the Locale to character set mapper for this Context.
+     */
+    public CharsetMapper getCharsetMapper() {
+
+        // Create a mapper the first time it is requested
+        if (this.charsetMapper == null) {
+            try {
+	        Class clazz = Class.forName(charsetMapperClass);
+		this.charsetMapper =
+		  (CharsetMapper) clazz.newInstance();
+	    } catch (Throwable t) {
+	        this.charsetMapper = new CharsetMapper();
+	    }
+	}
+
+        return (this.charsetMapper);
+
+    }
+
+
+    /**
+     * Set the Locale to character set mapper for this Context.
+     *
+     * @param mapper The new mapper
+     */
+    public void setCharsetMapper(CharsetMapper mapper) {
+
+        CharsetMapper oldCharsetMapper = this.charsetMapper;
+	this.charsetMapper = mapper;
+	support.firePropertyChange("charsetMapper", oldCharsetMapper,
+				   this.charsetMapper);
+
+    }
+
+
+    /**
+     * Return the Locale to character set mapper class for this Context.
+     */
+    public String getCharsetMapperClass() {
+
+        return (this.charsetMapperClass);
+
+    }
+
+
+    /**
+     * Set the Locale to character set mapper class for this Context.
+     *
+     * @param mapper The new mapper class
+     */
+    public void setCharsetMapperClass(String mapper) {
+
+        String oldCharsetMapperClass = this.charsetMapperClass;
+	this.charsetMapperClass = mapper;
+	support.firePropertyChange("charsetMapperClass",
+				   oldCharsetMapperClass,
+				   this.charsetMapperClass);
 
     }
 
