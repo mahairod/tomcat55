@@ -272,6 +272,10 @@
   <!--   executable          Name of the exectuable used to run the script. -->
   <!--                       [perl]                                         -->
   <!--                                                                      -->
+  <!--   parameterEncoding   Name of parameter encoding to be used with CGI -->
+  <!--                       servlet.                                       -->
+  <!--                       [System.getProperty("file.encoding","UTF-8")]  -->
+  <!--                                                                      -->
   <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
   <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->
   <!--            to $CATALINA_HOME/server/lib/servlets-cgi.jar             -->

@@ -61,6 +61,11 @@ wait for input from the browser before assuming that there is none.
 Default is <code>100</code> seconds.</li>
 <li><strong>debug</strong> - Debugging detail level for messages logged
 by this servlet. Default 0.</li>
+<li><strong>executable</strong> - The of the executable to be used to
+run the script. Default is <code>perl</code>.</li>
+<li><strong>parameterEncoding</strong> - Name of the parameter encoding
+to be used with the GCI servlet. Default is
+<code>System.getProperty("file.encoding","UTF-8")</code>.</li>
 </ul>
 </p>
 

@@ -315,6 +315,10 @@ public final class CGIServlet extends HttpServlet {
     /** the command to use with the script */
     private String cgiExecutable = "perl";
     
+    /** the encoding to use for parameters */
+    private String parameterEncoding = System.getProperty("file.encoding",
+                                                          "UTF-8");
+
     /** object used to ensure multiple threads don't try to expand same file */
     static Object expandFileLock = new Object();
 
@@ -766,7 +770,8 @@ public final class CGIServlet extends HttpServlet {
                 String param = paramNames.nextElement().toString();
                 if (param != null) {
                     queryParameters.put(
-                        param, URLEncoder.encode(req.getParameter(param)));
+                        param, URLEncoder.encode(req.getParameter(param),
+                                                 parameterEncoding));
                 }
             }
 
@@ -1658,7 +1663,7 @@ public final class CGIServlet extends HttpServlet {
                     if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
                         StringBuffer arg = new StringBuffer(k);
                         arg.append("=");
-                        v = java.net.URLEncoder.encode(v);
+                        v = java.net.URLEncoder.encode(v, parameterEncoding);
                         arg.append(v);
                         if (arg.toString().indexOf(" ") < 0) {
                             cmdAndArgs.append(arg);
