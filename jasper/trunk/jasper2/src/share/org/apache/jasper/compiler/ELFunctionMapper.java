@@ -83,14 +83,15 @@ public class ELFunctionMapper {
 	map.ds = new StringBuffer();
 	map.ss = new StringBuffer();
 
-	map.ds.append("static {\n");
 	page.visit(map.new ELFunctionVisitor());
-	map.ds.append("}\n");
 
 	// Append the declarations to the root node
-	Node root = page.getRoot();
-	new Node.Declaration(map.ss.toString(), root.getStart(), root);
-	new Node.Declaration(map.ds.toString(), root.getStart(), root);
+	String ds = map.ds.toString();
+	if (ds.length() > 0) {
+	    Node root = page.getRoot();
+	    new Node.Declaration(map.ss.toString(), root.getStart(), root);
+	    new Node.Declaration("static {\n" + ds + "}\n", root.getStart(), root);
+	}
     }
 
     class ELFunctionVisitor extends Node.Visitor {

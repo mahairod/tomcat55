@@ -1020,7 +1020,7 @@ class Generator {
                     "pageContext.findAttribute(\""  + name + "\"), \""
                     + property + "\", "
                     + quote(value.getValue()) + ", "
-                    + "pageContext, _jspx_fnmap);");
+                    + "pageContext, " + value.getEL().getMapName() + ");");
 /*
                     + "(javax.servlet.jsp.el.VariableResolver) pageContext, "
                     + "(javax.servlet.jsp.el.FunctionMapper) this );");

@@ -1205,7 +1205,7 @@ class Validator {
 		    if (prefix == null) {
 			// In XML syntax, use the default namespace
 			if (defaultNS == null) {
-			    err.jspError(n, "jsp.error.noFuncionPrefix",
+			    err.jspError(n, "jsp.error.noFunctionPrefix",
 					 function);
 		        }
 			uri = defaultNS;
