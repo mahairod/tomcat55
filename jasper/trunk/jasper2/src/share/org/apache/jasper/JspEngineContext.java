@@ -312,6 +312,7 @@ public class JspEngineContext
         return options.getKeepGenerated();
     }
 
+
     /**
      * Get the content type of this JSP.
      *
@@ -516,12 +517,12 @@ public class JspEngineContext
         try {
             URL outURL = options.getScratchDir().toURL();
             String outURI = outURL.toString();
-            if( outURI.endsWith("/") ) {
-                outURI = outURI +
-                         jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+            if (outURI.endsWith("/")) {
+                outURI = outURI 
+                    + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
             } else {
-                outURI = outURI +
-                         jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
+                outURI = outURI 
+                    + jspUri.substring(0,jspUri.lastIndexOf("/")+1);
             }
             outURL = new URL(outURI);
             outDir = new File(outURL.getFile());
@@ -535,6 +536,7 @@ public class JspEngineContext
                                             e.getMessage());
         }
     }
+
 
     /**
      * Mangle the specified character to create a legal Java class name.
