@@ -255,7 +255,19 @@ public final class ContextConfig
             start();
         } else if (event.getType().equals(StandardContext.BEFORE_START_EVENT)) {
             beforeStart();
+        } else if (event.getType().equals(StandardContext.AFTER_START_EVENT)) {
+            // Restore docBase for management tools
+            if (originalDocBase != null) {
+                String docBase = context.getDocBase();
+                context.setDocBase(originalDocBase);
+                originalDocBase = docBase;
+            }
         } else if (event.getType().equals(Lifecycle.STOP_EVENT)) {
+            if (originalDocBase != null) {
+                String docBase = context.getDocBase();
+                context.setDocBase(originalDocBase);
+                originalDocBase = docBase;
+            }
             stop();
         } else if (event.getType().equals(Lifecycle.INIT_EVENT)) {
             init();
