@@ -145,6 +145,8 @@ final class StandardHostValve
         throws IOException, ServletException {
 
         // Validate the request and response object types
+        // XXX This should move to Engine ( the entry point )
+        // will it be skiped if the mapper maps the valve ? 
         if (!(request.getRequest() instanceof HttpServletRequest) ||
             !(response.getResponse() instanceof HttpServletResponse)) {
             return;     // NOTE - Not much else we can do generically
@@ -161,9 +163,13 @@ final class StandardHostValve
         }
 
         // Bind the context CL to the current thread
-        Thread.currentThread().setContextClassLoader
-            (context.getLoader().getClassLoader());
-
+        if( context.getLoader() != null ) {
+            // Not started - it should check for availability first
+            // This should eventually move to Engine, it's generic.
+            Thread.currentThread().setContextClassLoader
+                    (context.getLoader().getClassLoader());
+        }
+        
         // Update the session last access time for our session (if any)
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String sessionId = hreq.getRequestedSessionId();
