@@ -507,26 +507,39 @@ public class Generator {
 	 *
 	 * @param n the parent node for the param action nodes.
 	 */
-	private void printParams(Node n) throws JasperException {
+	private void printParams(Node n, Node.JspAttribute page)
+						throws JasperException {
 
 	    class ParamVisitor extends Node.Visitor {
-		char separator = '?';
+		String separator;
+
+		ParamVisitor(String separator){
+		    this.separator = separator;
+		}
 
 		public void visit(Node.ParamAction n) throws JasperException {
 
-		    out.print(" + \"");
+		    out.print(" + ");
 		    out.print(separator);
+		    out.print(" + \"");
 		    out.print(n.getAttributeValue("name"));
 		    out.print("=\" + ");
 		    out.print(attributeValue(n.getValue(), true));
 
 		    // The separator is '&' after the second use
-		    separator = '&';
+		    separator = "\"&\"";
 		}
 	    }
 
+	    String pValue = page.getValue();
+	    String sep;
+	    if (page.isExpression()) {
+		sep = "((" + pValue + ").indexOf('?')>0? '&': '?')";
+	    } else {
+		sep = pValue.indexOf('?')>0? "\"&\"": "\"?\"";
+	    }
 	    if (n.getBody() != null) {
-		n.getBody().visit(new ParamVisitor());
+		n.getBody().visit(new ParamVisitor(sep));
 	    }
 	}
 
@@ -554,7 +567,7 @@ public class Generator {
 
 	    out.printin("JspRuntimeLibrary.include(request, response, ");
 	    out.print(attributeValue(n.getPage(), false));
-	    printParams(n);
+	    printParams(n, n.getPage());
 	    out.println(", out, " + isFlush + ");");
 
 	    n.setEndJavaLine(out.getJavaLine());
@@ -568,8 +581,8 @@ public class Generator {
 	    out.printil("if (true) {");	// So that javac won't complain about
 	    out.pushIndent();		// codes after "return"
 	    out.printin("pageContext.forward(");
-	    out.print  (attributeValue(n.getPage(), false));
-	    printParams(n);
+	    out.print(attributeValue(n.getPage(), false));
+	    printParams(n, n.getPage());
 	    out.println(");");
 	    out.printil((methodNesting > 0)? "return true;": "return;");
 	    out.popIndent();
