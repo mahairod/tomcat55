@@ -771,15 +771,24 @@ public class HostConfig
                 ResourceAttributes webXmlAttributes = 
                     (ResourceAttributes) 
                     resources.getAttributes("/WEB-INF/web.xml");
+                ResourceAttributes webInfAttributes = 
+                    (ResourceAttributes) 
+                    resources.getAttributes("/WEB-INF");
                 long newLastModified = webXmlAttributes.getLastModified();
+                long webInfLastModified = webInfAttributes.getLastModified();
                 Long lastModified = (Long) webXmlLastModified.get(contextName);
                 if (lastModified == null) {
                     webXmlLastModified.put
                         (contextName, new Long(newLastModified));
                 } else {
                     if (lastModified.longValue() != newLastModified) {
-                        webXmlLastModified.remove(contextName);
-                        restartContext(context);
+                        if (newLastModified > (webInfLastModified + 5000)) {
+                            webXmlLastModified.remove(contextName);
+                            restartContext(context);
+                        } else {
+                            webXmlLastModified.put
+                                (contextName, new Long(newLastModified));
+                        }
                     }
                 }
             } catch (NamingException e) {
