@@ -325,10 +325,19 @@ public class PoolTcpEndpoint  { // implements Endpoint {
 	// exceptions, catch them here and log as above
 
 	catch(Throwable e) {
-    	    running = false;
-    	    String msg = sm.getString("endpoint.err.fatal",
-				      serverSocket, e);
-	    log(msg, e, Logger.ERROR);
+            // Catch Java2 AcessControlException errors in a manner
+            // that should still be compatible with JDK 1.1.
+            if (e.getClass().getName().equals
+                ("java.security.AccessControlException")) {
+                String msg = sm.getString("endpoint.err.access",
+                                          serverSocket, e);
+                log(msg, e, Logger.WARNING);
+            } else {
+                running = false;
+                String msg = sm.getString("endpoint.err.fatal",
+                                          serverSocket, e);
+                log(msg, e, Logger.ERROR);
+            }
     	}
 
     	return accepted;
