@@ -67,11 +67,11 @@
             <controls:action url="">  <bean:message key="actions.valves.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valves.deletes"/> </controls:action>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
+            --%> 
             <controls:action url='<%= "/AddContext.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.contexts.create"/>
             </controls:action>              
-            --%> 
             <controls:action url='<%= "/DeleteContext.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.contexts.deletes"/> 

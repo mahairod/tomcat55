@@ -227,17 +227,19 @@ public final class SaveContextAction extends Action {
                     mBServer.invoke(fname, operation,
                                     values, createStandardContextTypes);
 
-                // Create a new StandardLoader object
+                // Create a new Loader object
                 values = new String[1];
-                values[0] = parentName;
-                operation = "createStandardLoader";
+                // parent of loader is the newly created context
+                values[0] = cObjectName.toString();
+                operation = "createWebappLoader";
                 lObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardLoaderTypes);                
                 
                 // Create a new StandardManager object
                 values = new String[1];
-                values[0] = parentName;
+                // parent of manager is the newly created Context
+                values[0] = cObjectName.toString();
                 operation = "createStandardManager";
                 mObjectName = (String)
                     mBServer.invoke(fname, operation,
@@ -394,11 +396,11 @@ public final class SaveContextAction extends Action {
                                   new Attribute("debug", new Integer(debug)));
             
             attribute = "checkInterval";
-            int checkInterval = 0;
+            int checkInterval = 15;
             try {
                 checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
             } catch (Throwable t) {
-                checkInterval = 0;
+                checkInterval = 15;
             }
             mBServer.setAttribute(loname,
                                   new Attribute("checkInterval", new Integer(checkInterval)));
@@ -427,7 +429,7 @@ public final class SaveContextAction extends Action {
             try {
                 checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
             } catch (Throwable t) {
-                checkInterval = 0;
+                checkInterval = 60;
             }
             mBServer.setAttribute(moname,
                                   new Attribute("checkInterval", new Integer(checkInterval)));

@@ -21,6 +21,7 @@
                name="contextForm" property="objectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
+  <html:hidden property="parentObjectName"/>
   <html:hidden property="loaderObjectName"/>
   <html:hidden property="managerObjectName"/>
 

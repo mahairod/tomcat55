@@ -159,7 +159,7 @@ public final class ContextForm extends ActionForm {
     /**
      * The text for the loader check interval.
      */
-    private String ldrCheckInterval = "0";
+    private String ldrCheckInterval = "15";
     
     /**
      * The text for the loader Debug level.
@@ -174,7 +174,7 @@ public final class ContextForm extends ActionForm {
     /**
      * The text for the session manager check interval.
      */
-    private String mgrCheckInterval = "0";
+    private String mgrCheckInterval = "60";
     
     /**
      * The text for the session manager Debug level.
@@ -666,6 +666,7 @@ public final class ContextForm extends ActionForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
         this.objectName = null;
+        this.parentObjectName = null;
         this.loaderObjectName = null;
         this.managerObjectName = null;
         
@@ -679,17 +680,67 @@ public final class ContextForm extends ActionForm {
         this.reloadable = "false";
         
         // loader properties
-        this.ldrCheckInterval = "0";
+        this.ldrCheckInterval = "15";
         this.ldrDebugLvl = "0";
         this.ldrReloadable = "true";
         
         // session manager properties
-        this.mgrCheckInterval = "0";
+        this.mgrCheckInterval = "60";
         this.mgrDebugLvl = "0";
         this.mgrSessionIDInit = "0";
         this.mgrMaxSessions = "-1";
     }
     
+    /**
+     * Render this object as a String.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("ContextForm[adminAction=");
+        sb.append(adminAction);
+        sb.append(",debugLvl=");
+        sb.append(debugLvl);
+        sb.append(",docBase=");
+        sb.append(docBase);
+        sb.append(",path=");
+        sb.append(path);
+        sb.append(",cookies=");
+        sb.append(cookies);
+        sb.append(",crossContext=");
+        sb.append(crossContext);
+        sb.append(",override=");
+        sb.append(override);
+        sb.append(",reloadable=");
+        sb.append(reloadable);
+        // loader properties
+        sb.append(",ldrCheckInterval=");
+        sb.append(ldrCheckInterval);        
+        sb.append(",ldrDebugLvl=");
+        sb.append(ldrDebugLvl);
+        sb.append(",ldrReloadable=");
+        sb.append(ldrReloadable);
+        // manager properties
+        sb.append(",mgrDebugLvl=");
+        sb.append(mgrDebugLvl);
+        sb.append(",mgrCheckInterval=");
+        sb.append(mgrCheckInterval);
+        sb.append(",mgrSessionIDInit=");
+        sb.append(mgrSessionIDInit);
+        sb.append(",mgrMaxSessions=");
+        sb.append(mgrMaxSessions);
+        // object names
+        sb.append("',objectName='");
+        sb.append(objectName);
+        sb.append("',parentObjectName=");
+        sb.append(parentObjectName);
+        sb.append("',loaderObjectName=");
+        sb.append(loaderObjectName);
+        sb.append("',managerObjectName=");
+        sb.append(managerObjectName);
+        sb.append("]");
+        return (sb.toString());
+
+    }
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any
