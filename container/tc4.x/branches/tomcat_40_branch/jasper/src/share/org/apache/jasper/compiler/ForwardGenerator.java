@@ -63,6 +63,7 @@ package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.net.URLEncoder;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -101,8 +102,7 @@ public class ForwardGenerator
     }
     
     public void generate(ServletWriter writer, Class phase) {
-	boolean initial = true;
-	String sep = "?";	
+	char sep = '?';	
         writer.println("if (true) {");
         writer.pushIndent();
         writer.println("out.clear();");
@@ -113,29 +113,16 @@ public class ForwardGenerator
 	    while (en.hasMoreElements()) {
 		String key = (String) en.nextElement();
 		String []value = (String []) params.get(key);
-		if (initial == true) {
-		    sep = "?";
-		    initial = false;
-		} else sep = "&";
 		
-		if (value.length == 1 && JspUtil.isExpression(value[0], isXml))
+		for (int i = 0; i < value.length; i++) {
+		    String v;
+		    if (JspUtil.isExpression(value[i], isXml))
+			v = JspUtil.getExpr(value[i], isXml);
+		    else
+			v = "\"" + URLEncoder.encode(value[i]) + "\"";
 		    writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-				   key + "=\" + " + JspUtil.getExpr(value[0], isXml) + ";");
-		else {
-		    if (value.length == 1)
-			writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-				       key + "=\" + \"" + value[0] + "\";");			
-		    else {
-			for (int i = 0; i < value.length; i++) {
-			    if (!JspUtil.isExpression(value[i], isXml))
-				writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-					       key + "=\" + \"" + value[i] + "\";");
-			    else
-				writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-					       key + "=\" +" + JspUtil.getExpr(value[i], isXml)+ ";");
-			    if (sep.equals("?")) sep = "&";			    
-			}
-		    }
+			       key + "=\" +" + v + ";");
+		    sep = '&';			    
 		}
 	    }
 	}
