@@ -20,7 +20,7 @@ import org.apache.catalina.cluster.ClusterMessage;
 /**
  * Session id change cluster message
  * 
- * @author Peter Roßbach
+ * @author Peter Rossbach
  * 
  */
 public class SessionIDMessage implements ClusterMessage {
