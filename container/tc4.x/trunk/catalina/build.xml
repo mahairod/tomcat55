@@ -23,7 +23,6 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
-  <echo message="regexp.jar = ${regexp.jar}"/>
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
     <mkdir dir="${catalina.build}/classes"/>
