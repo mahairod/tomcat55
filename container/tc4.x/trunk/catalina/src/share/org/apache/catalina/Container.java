@@ -405,6 +405,14 @@ public interface Container {
 
 
     /**
+     * Return the set of container listeners associated with this Container.
+     * If this Container has no registered container listeners, a zero-length
+     * array is returned.
+     */
+    public ContainerListener[] findContainerListeners();
+
+
+    /**
      * Return the Mapper associated with the specified protocol, if there
      * is one.  If there is only one defined Mapper, use it for all protocols.
      * If there is no matching Mapper, return <code>null</code>.
