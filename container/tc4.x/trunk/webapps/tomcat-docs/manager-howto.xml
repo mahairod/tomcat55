@@ -48,15 +48,45 @@ the following functions:</p>
     directory.</li>
 </ul>
 
-<p>Since <code>Manager</code> is itself a web application, it interacts with
-you using standard HTTP requests and responses.  However, it's "user interface"
-is minimal, because it is intended to be accessed from scripts set up by the
-system administrator.  For this reason, commands are given as part of the
+<p>There are two ways to configure the Manager web application
+<code>Context</code>:
+<ul>
+<li>Install the <code>manager.xml</code> context configuration file
+    in the <code>appBase</code> for your <code>Host</code>.</li>
+<li>Configure the Manager <code>Context</code> within the
+    <code>Host</code> configuration in your Tomcat <code>server.xml</code>
+    configuration. Here is an example:
+<pre>
+&lt;Context path="/manager" debug="0" privileged="true"
+         docBase="/usr/local/kinetic/tomcat4/server/webapps/manager"&gt;
+&lt;/Context&gt;
+</pre>
+</li>
+</ul>
+</p>
+
+<p>If you have Tomcat configured to support multiple virtual hosts
+(websites) you would need to configure a Manager for each.</p>
+
+<p>There are three ways to use the <code>Manager</code> web application.
+<ul>
+<li>As an application with a user interface you use in your browser.
+Here is an example URL where you can replace <code>localhost</code> with
+your website host name:  <code>http://localhost/manager/html/</code> .</li>
+<li>A minimal version using HTTP requests only which is suitable for use
+by scripts setup by system administrators.  Commands are given as part of the
 request URI, and responses are in the form of simple text that can be easily
-parsed and processed.</p>
+parsed and processed.  See <a href="#Supported Manager Commands">
+Supported Manager Commands</a> for more information.</li>
+<li>A convenient set of task definitions for the <em>Ant</em>
+(version 1.4 or later) build tool.  See
+<a href="#Executing Manager Commands With Ant">Executing Manager Commands
+With Ant</a> for more information.</li>
+</ul>
+</p>
 
 <p>Future versions of Tomcat 4 will include administrative functionality that
-is presented in (at least) the following forms:</p>
+is presented in (at least) the following forms:
 <ul>
 <li>As web services, so that Tomcat administration can be easily integrated
     into remote and/or non-Java mnagement environments.</li>
@@ -64,12 +94,7 @@ is presented in (at least) the following forms:</p>
     web services processing layer) for easy Tomcat administration via a
     web browser.</li>
 </ul>
-
-<p>In addition to executing Manager commands directly via HTTP, Tomcat 4
-includes a convenient set of task definitions for the <em>Ant</em>
-(version 1.4 or later) build tool.  See
-<a href="#Executing Manager Commands With Ant">Executing Manager Commands
-With Ant</a> for more information.</p>
+</p>
 
 </section>
 
@@ -134,6 +159,18 @@ BASIC authentication.  The username and password you enter do not matter,
 as long as they identify a valid user in the users database who possesses
 the role <strong>manager</strong>.</p>
 
+<p>In addition to the password restrictions the manager web application
+could be restricted by the remote IP address or host by adding a
+<code>RemoteAddrValve</code> or <code>RemoteHostValve</code>.  Here is
+an example of restricting access to the localhost by IP address:
+<pre>
+&lt;Context path="/manager" debug="0" privileged="true"
+         docBase="/usr/local/kinetic/tomcat4/server/webapps/manager"&gt;
+         &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve"
+                allow="127.0.0.1"/&gt;
+&lt;/Context&gt;
+</pre>
+</p>
 </section>
 
 
