@@ -78,6 +78,8 @@ it in production</li>
 <li>Improved Taglibs handling, including advanced pooling and tag plugins</li>
 <li>Improved platform integration, with native Windows and Unix wrappers</li>
 <li>Embedding of Tomcat using JMX</li>
+<li>Enhanced Security Manager support</li>
+<li>Integrated session clustering</li>
 <li>Expanded documentation</li>
 </ul>
 </p>
