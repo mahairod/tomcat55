@@ -560,7 +560,7 @@ public abstract class RequestBase
     public void recycle() {
 
         String log = SystemLogHandler.stopCapture();
-        if (log != null) {
+        if (log != null && log.length() > 0) {
             context.getServletContext().log(log);
         }
         attributes.clear();
