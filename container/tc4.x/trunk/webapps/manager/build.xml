@@ -52,7 +52,7 @@
     <!-- Images Subdirectory -->
     <copy todir="${webapps.build}/${webapp.name}/images">
       <fileset dir="../tomcat-docs/images">
-        <include name="jakarta-logo.gif,tomcat.gif"/>
+        <exclude name="printer.gif"/>
       </fileset>
     </copy>
 
