@@ -164,7 +164,11 @@ public class SSIServlet extends HttpServlet {
             return;
         }
 
-        res.setContentType("text/html;charset=UTF-8");
+        String resourceMimeType = servletContext.getMimeType(path);
+        if(resourceMimeType == null) {
+          resourceMimeType = "text/html;charset=UTF-8";
+        }
+        res.setContentType(resourceMimeType);
 
         if (expires != null) {
             res.setDateHeader("Expires", (
