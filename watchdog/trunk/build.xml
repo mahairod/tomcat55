@@ -9,6 +9,34 @@
    <property name="watchdog.build" value="../build/watchdog"/>
    <property name="watchdog.dist" value="../dist/watchdog"/>
    <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../build/tomcat/classes" />
+   <property name="tomcat.build" value="../build/tomcat"/>
+   <property name="tomcat.home" value="../dist/tomcat"/>
+
+   <target name="install" depends="dist">
+      <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
+                dest="${tomcat.build}/webapps/jsp-tests.war" />
+      <copyfile src="${watchdog.dist}/webapps/servlet-tests.war" 
+                dest="${tomcat.build}/webapps/servlet-tests.war" />
+      <copyfile src="${watchdog.dist}/conf/watchdog.xml" 
+                dest="${tomcat.build}/conf/watchdog.xml" />
+      <copyfile src="${watchdog.dist}/lib/moo.jar" 
+                dest="${tomcat.build}/lib/moo.jar" />
+      <copyfile src="${watchdog.dist}/lib/client.jar" 
+                dest="${tomcat.build}/lib/client.jar" />
+   </target>
+
+   <target name="install.dist" depends="dist">
+      <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
+                dest="${tomcat.home}/webapps/jsp-tests.war" />
+      <copyfile src="${watchdog.dist}/webapps/servlet-tests.war" 
+                dest="${tomcat.home}/webapps/servlet-tests.war" />
+      <copyfile src="${watchdog.dist}/conf/watchdog.xml" 
+                dest="${tomcat.home}/conf/watchdog.xml" />
+      <copyfile src="${watchdog.dist}/lib/moo.jar" 
+                dest="${tomcat.home}/lib/moo.jar" />
+      <copyfile src="${watchdog.dist}/lib/client.jar" 
+                dest="${tomcat.home}/lib/client.jar" />
+   </target>
 
    <target name="prepare">
 
