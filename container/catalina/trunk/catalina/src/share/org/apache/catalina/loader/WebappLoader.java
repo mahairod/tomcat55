@@ -557,7 +557,9 @@ public class WebappLoader
      * Used to periodically signal to the classloader to release JAR resources.
      */
     public void closeJARs(boolean force) {
-        classLoader.closeJARs(force);
+        if (classLoader !=null){
+            classLoader.closeJARs(force);
+        }
     }
 
 
