@@ -152,10 +152,12 @@ public class FormAuthenticator
                     context.getRealm().authenticate(username, password);
                 if (principal != null) {
                     session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
-                    register(request, response, principal,
-                             Constants.FORM_METHOD,
-                             username, password);
-                    return (true);
+                    if (!matchRequest(request)) {
+                        register(request, response, principal,
+                                 Constants.FORM_METHOD,
+                                 username, password);
+                        return (true);
+                    }
                 }
                 if (log.isDebugEnabled())
                     log.debug("Reauthentication failed, proceed normally");
