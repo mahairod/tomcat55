@@ -12,14 +12,14 @@
 ;--------------------------------
 ;Configuration
 
-  !define MUI_INSTALLOPTIONS
-
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
+
   !define MUI_UNINSTALLER
 
+  !define MUI_WINDOWTITLE
   !define MUI_CUSTOMPAGECOMMANDS
 
   !define TEMP1 $R0
@@ -247,23 +247,19 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "config.ini" "$(TEXT_CONF_PAGETITLE)"
   !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "jvm.ini" "$(TEXT_JVM_PAGETITLE)"
 
-  ;Abort warnings for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "config.ini"
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "jvm.ini"
-
 FunctionEnd
 
 Function SetChooseJVM
-  !insertmacro MUI_HEADER_TEXT $(TEXT_JVM_TITLE) $(TEXT_JVM_SUBTITLE)
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_JVM_TITLE)" "$(TEXT_JVM_SUBTITLE)"
   Call findJavaPath
   Pop $3
   !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Field 2" "State" $3
-  !insertmacro MUI_INSTALLOPTIONS_SHOW "jvm.ini"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "jvm.ini"
 FunctionEnd
 
 Function SetConfiguration
-  !insertmacro MUI_HEADER_TEXT $(TEXT_CONF_TITLE) $(TEXT_CONF_SUBTITLE)
-  !insertmacro MUI_INSTALLOPTIONS_SHOW "config.ini"
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_CONF_TITLE)" "$(TEXT_CONF_SUBTITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "config.ini"
 FunctionEnd
 
 Function .onInstSuccess
@@ -275,7 +271,7 @@ FunctionEnd
 ;--------------------------------
 ;Descriptions
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} $(DESC_SecTomcat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
