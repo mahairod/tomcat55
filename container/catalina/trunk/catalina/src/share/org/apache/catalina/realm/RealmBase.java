@@ -73,6 +73,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.io.IOException;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -441,14 +443,16 @@ public abstract class RealmBase
     }
 
     /**
-     * Return the SecurityConstraint configured to guard the request URI for
+     * Return the SecurityConstraints configured to guard the request URI for
      * this request, or <code>null</code> if there is no such constraint.
      *
      * @param request Request we are processing
+     * @param context Context the Request is mapped to
      */
-    public SecurityConstraint findSecurityConstraint(HttpRequest request,
+    public SecurityConstraint [] findSecurityConstraints(HttpRequest request,
                                                      Context context) {
 
+        ArrayList results = null;
         // Are there any defined security constraints?
         SecurityConstraint constraints[] = context.findConstraints();
         if ((constraints == null) || (constraints.length == 0)) {
@@ -469,14 +473,22 @@ public abstract class RealmBase
                 log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
-            if (constraints[i].included(uri, method))
-                return (constraints[i]);
+            if (constraints[i].included(uri, method)) {
+                if(results == null) {
+                    results = new ArrayList();
+                }
+                results.add(constraints[i]);
+            }
         }
 
         // No applicable security constraint was found
         if (log.isDebugEnabled())
             log.debug("  No applicable constraint located");
-        return (null);
+        if(results == null)
+            return null;
+        SecurityConstraint [] array = new SecurityConstraint [results.size()];
+        System.arraycopy(results.toArray(), 0, array, 0, array.length);
+        return array;
 
     }
  
