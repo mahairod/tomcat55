@@ -70,6 +70,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.catalina.HttpResponse;
+import org.apache.catalina.connector.HttpResponseFacade;
 import org.apache.catalina.util.StringManager;
 
 
@@ -147,7 +148,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
     /**
      * The parent object that is actually an internal response object.
      */
-    protected HttpResponse parent = null;
+    protected HttpServletResponse parent = null;
 
 
     /**
@@ -402,7 +403,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 	    return;
 	}
 	while (response != null) {
-	    if (response instanceof HttpResponse)
+	    if ((response instanceof HttpResponse) 
+                || (response instanceof HttpResponseFacade))
 		break;
 	    if (!(response instanceof HttpServletResponseWrapper)) {
 		throw new IllegalArgumentException
@@ -415,7 +417,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 	    throw new IllegalArgumentException
 		(sm.getString("applicationResponse.badParent"));
 	}
-	this.parent = (HttpResponse) response;
+	this.parent = response;
 
     }
 
@@ -424,7 +426,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      * Get the parent of the wrapped servlet response that is actually an
      * internal Response implementation.
      */
-    HttpResponse getParent() {
+    HttpServletResponse getParent() {
 
 	return (this.parent);
 

@@ -75,6 +75,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
+import org.apache.catalina.connector.HttpRequestFacade;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
@@ -160,7 +161,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     /**
      * The parent object that is actually an internal request object.
      */
-    protected HttpRequest parent = null;
+    protected HttpServletRequest parent = null;
 
 
     /**
@@ -419,7 +420,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	    return;
 	}
 	while (request != null) {
-	    if (request instanceof HttpRequest)
+	    if ((request instanceof HttpRequest) 
+                || (request instanceof HttpRequestFacade))
 		break;
 	    if (!(request instanceof HttpServletRequestWrapper)) {
 		throw new IllegalArgumentException
@@ -432,7 +434,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	    throw new IllegalArgumentException
 		(sm.getString("applicationRequest.badParent"));
 	}
-	this.parent = (HttpRequest) request;
+	this.parent = request;
 
     }
 
@@ -463,7 +465,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * Get the parent of the wrapped servlet request that is actually an
      * internal Request implementation.
      */
-    HttpRequest getParent() {
+    HttpServletRequest getParent() {
 
 	return (this.parent);
 

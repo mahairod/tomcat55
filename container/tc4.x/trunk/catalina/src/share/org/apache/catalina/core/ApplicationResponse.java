@@ -72,6 +72,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletResponseWrapper;
 import org.apache.catalina.Response;
+import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.util.StringManager;
 
 
@@ -141,7 +142,7 @@ class ApplicationResponse extends ServletResponseWrapper {
     /**
      * The parent object that is actually an internal response object.
      */
-    protected Response parent = null;
+    protected ServletResponse parent = null;
 
 
     /**
@@ -232,7 +233,8 @@ class ApplicationResponse extends ServletResponseWrapper {
 	    return;
 	}
 	while (response != null) {
-	    if (response instanceof Response)
+	    if ((response instanceof Response) 
+                || (response instanceof ResponseFacade))
 		break;
 	    if (!(response instanceof ServletResponseWrapper)) {
 		throw new IllegalArgumentException
@@ -244,7 +246,7 @@ class ApplicationResponse extends ServletResponseWrapper {
 	    throw new IllegalArgumentException
 		(sm.getString("applicationResponse.badParent"));
 	}
-	this.parent = (Response) response;
+	this.parent = response;
 
     }
 
@@ -253,7 +255,7 @@ class ApplicationResponse extends ServletResponseWrapper {
      * Get the parent of the wrapped servlet response that is actually an
      * internal Response implementation.
      */
-    Response getParent() {
+    ServletResponse getParent() {
 
 	return (this.parent);
 
