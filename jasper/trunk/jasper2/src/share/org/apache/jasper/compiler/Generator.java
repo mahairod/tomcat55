@@ -1271,6 +1271,10 @@ public class Generator {
 		    out.pushIndent();
                     out.printil("_jspxState.outs[_jspxState.tagDepth] = new org.apache.jasper.runtime.BodyContentImpl(out);");
 		    out.popIndent();
+		    out.printil("} else {");
+		    out.pushIndent();
+		    out.printil("_jspxState.outs[_jspxState.tagDepth].clear();");
+		    out.popIndent();
 		    out.printil("}");
 
                     out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
@@ -1332,7 +1336,6 @@ public class Generator {
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
-		    out.printil("_jspxState.outs[_jspxState.tagDepth].clear();");
                     if (!implementsTryCatchFinally) {
                         out.printil("_jspxState.tagCount--;");
  		    }
