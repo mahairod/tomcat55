@@ -69,7 +69,7 @@
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-             classpath="${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}"
+             classpath="${xerces.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**"/>
 
