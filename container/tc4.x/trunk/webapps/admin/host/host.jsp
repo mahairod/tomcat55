@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" %>
+<%@ page language="java" import="java.net.URLEncoder" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -17,21 +17,33 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/host" focus="name">
+<html:form method="POST" action="/SaveHost">
 
+  <bean:define id="hostName" name="hostForm" property="hostName"/>
+  <bean:define id="thisObjectName" type="java.lang.String"
+               name="hostForm" property="objectName"/>
+  <html:hidden property="adminAction"/>
+  <html:hidden property="objectName"/>
+  <html:hidden property="serviceName"/>
+  
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
       <td align="left" nowrap>
-        <div class="page-title-text">
-            <bean:write name="hostForm" property="nodeLabel" scope="session"/>
-            <bean:define id="hostName" name="hostForm" property="hostName"/>
+        <div class="page-title-text" align="left">
+          <logic:equal name="hostForm" property="adminAction" value="Create">
+            <bean:message key="actions.hosts.create"/>
+          </logic:equal>
+          <logic:equal name="hostForm" property="adminAction" value="Edit">
+            <bean:message key="actions.hosts.edit"/>
+          </logic:equal>
         </div>
       </td>
-      <td align="right" nowrap> 
+      <td width="19%"> 
        <div align="right">
         <controls:actions>
             <controls:action selected="true"> -----<bean:message key="actions.available.actions"/>----- </controls:action>
             <controls:action> ------------------------------------- </controls:action>
+            <logic:notEqual name="hostForm" property="adminAction" value="Create">              
             <%--
             <controls:action url="">  <bean:message key="actions.accesslogger.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.accesslogger.delete"/> </controls:action>
@@ -52,28 +64,25 @@
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
             --%>
-            <%--
-            <controls:action url='<%= "/setUpDeleteHost.do?this=" + 
-                             java.net.URLEncoder.encode(hostName.toString()) %>'>  
-                <bean:message key="actions.thishost.delete"/> 
+            <controls:action url='<%= "/DeleteHost.do?select=" + 
+                                        URLEncoder.encode(thisObjectName) %>'>  
+                <bean:message key="actions.hosts.delete"/> 
             </controls:action>
-            --%>
-        </controls:actions>
-          </div>
+           </logic:notEqual>          
+         </controls:actions>
+       </div>
       </td>
     </tr>
   </table>
 
   <%@ include file="../buttons.jsp" %>
-<br>
+  <br>
 
+ <%-- Host Properties --%>
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td> 
-        <div class="table-title-text"> 
-            <bean:message key="host.properties"/>
-             <html:hidden property="hostName"/>
-        </div>
-    </td> </tr>
+    <tr> <td> <div class="table-title-text"> 
+        <bean:message key="host.properties"/>
+    </div> </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
@@ -82,19 +91,27 @@
         <controls:table tableStyle="front-table" lineStyle="line-row">
             <controls:row header="true" 
                 labelStyle="table-header-text" dataStyle="table-header-text">
-            <controls:label><bean:message key="service.property"/></controls:label>
-            <controls:data><bean:message key="service.value"/></controls:data>
+            <controls:label>
+                <bean:message key="service.property"/>
+            </controls:label>
+            <controls:data>
+                <bean:message key="service.value"/>
+            </controls:data>
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="host.name"/>:</controls:label>
+            <controls:label>
+                <bean:message key="host.name"/>:
+            </controls:label>
             <controls:data>
-<%-- FIXME - input only allowed on create transaction --%>
-<%--
-              <html:text property="name" size="24" maxlength="24"/>
---%>
-              <bean:write name="hostForm" property="name"/>
-              <html:hidden property="name"/>
+            <%-- input only allowed on create transaction --%>
+             <logic:equal name="hostForm" property="adminAction" value="Create">
+              <html:text property="hostName" size="24" maxlength="24"/>
+             </logic:equal>
+             <logic:equal name="hostForm" property="adminAction" value="Edit">
+              <bean:write name="hostForm" property="hostName"/>
+              <html:hidden property="hostName"/>
+             </logic:equal>
             </controls:data>
         </controls:row>
 
@@ -102,12 +119,13 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="host.base"/>:</controls:label>
             <controls:data>
-<%-- FIXME - input only allowed on create transaction --%>
-<%--
+             <logic:equal name="hostForm" property="adminAction" value="Create">
               <html:text property="appBase" size="24"/>
---%>
+             </logic:equal>
+             <logic:equal name="hostForm" property="adminAction" value="Edit">
               <bean:write name="hostForm" property="appBase"/>
               <html:hidden property="appBase"/>
+             </logic:equal>
             </controls:data>
         </controls:row>
 
@@ -141,7 +159,8 @@
 <br>
 <br>
 
- <!-- Aliases -->
+<%-- Aliases List --%>
+ <logic:notEqual name="hostForm" property="adminAction" value="Create">              
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr> <td> 
         <div class="table-title-text"> 
@@ -150,7 +169,7 @@
     </td> </tr>
   </table>
 
- <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
+  <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
     <tr> <td>
         <table class="front-table" border="1" cellspacing="0" cellpadding="0" width="100%">
           <tr class="header-row"> 
@@ -166,8 +185,8 @@
          </table>
 
     </td> </tr>
- </table>
-  <!-- Alias table end -->
+  </table>
+ </logic:notEqual>
 
   <%@ include file="../buttons.jsp" %>
 

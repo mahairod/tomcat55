@@ -74,41 +74,6 @@ import org.apache.struts.action.ActionMapping;
 
 public class DeleteHostForm extends ActionForm {
     
-    // ----------------------------------------------------- Instance Variables
-    
-    /**
-     * The text for the serviceName.
-     */
-    private String serviceName = null;
-    
-    /**
-     * Return the Service Name.
-     */
-    public String getServiceName() {
-        
-        return this.serviceName;
-        
-    }
-    
-    /**
-     * Set the Service Name.
-     */
-    public void setServiceName(String serviceName) {
-        
-        this.serviceName = serviceName;
-        
-    }
-    
-    // --------------------------------------------------------- Public Methods
-    
-    /**
-     * Reset all properties to their default values.
-     *
-     * @param mapping The mapping used to select this instance
-     * @param request The servlet request we are processing
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {        
-        this.serviceName = null;
-    }
+  // No extensions needed
     
 }

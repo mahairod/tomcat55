@@ -16,13 +16,12 @@
 
 <html:errors/>
 
-<html:form method="post" action="/deleteHost">
+<html:form method="POST" action="/DeleteHosts">
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
         <div class="page-title-text" align="left">
-          <html:hidden property="serviceName"/>
-          <bean:message key="actions.host.delete"/>
+          <bean:message key="actions.hosts.delete"/>
         </div>
       </td>
       <td width="19%"> 
@@ -55,21 +54,20 @@
             </div></td>
           </tr>
 
-          <logic:iterate name="hosts" id="host">
-
-            <tr class="line-row">
-                <td><div align="left" class="table-normal-text">&nbsp;
-                    <input type="checkbox" name="checkbox" 
-                     value='<%= host.toString() %>' >                  
-                </div></td>
-              <td><div align="left" class="table-normal-text">&nbsp;
-                <html:link page='<%= "/setUpHost.do?select=" + 
-                               java.net.URLEncoder.encode(host.toString())%>'>
-                  <controls:attribute name="host" attribute="name"/>
-                </html:link>
-              </div></td>
-            </tr>
-          </logic:iterate>
+        <logic:iterate name="hostsList" id="host">
+          <tr class="line-row">
+            <td><div align="left" class="table-normal-text">&nbsp;
+              <html:multibox property="hosts"
+                                value="<%= host.toString() %>"/>
+            </div></td>
+            <td><div align="left" class="table-normal-text">&nbsp;
+              <html:link page='<%= "/EditHost.do?select=" + 
+                         java.net.URLEncoder.encode(host.toString()) %>'>
+                <controls:attribute name="host" attribute="name"/>
+              </html:link>
+            </div></td>
+          </tr>
+        </logic:iterate>
         </table>
       </td>
     </tr>

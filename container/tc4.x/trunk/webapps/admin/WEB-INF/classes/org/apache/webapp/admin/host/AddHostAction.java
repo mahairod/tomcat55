@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Struts", and "Apache Software
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -61,45 +61,38 @@
 
 package org.apache.webapp.admin.host;
 
-import java.util.Iterator;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import javax.management.Attribute;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.JMException;
 import org.apache.struts.util.MessageResources;
-
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TomcatTreeBuilder;
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.Lists;
 
 /**
- * Implementation of <strong>Action</strong> that validates
- * add host actions.
+ * The <code>Action</code> that sets up <em>Add Host</em> transactions.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class AddHostAction extends Action {
+public class AddHostAction extends Action {
     
-    private static MBeanServer mBServer = null;
-    private static MessageResources resources = null;
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+    
     
     // --------------------------------------------------------- Public Methods
-    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -122,138 +115,34 @@ public final class AddHostAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        // Look up the components we will be using as needed
-        if (mBServer == null) {
-            mBServer = ((ApplicationServlet) getServlet()).getServer();
-        }
+        // Acquire the resources that we need
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
-        // Validate the request parameters specified by the user
-        ActionErrors errors = new ActionErrors();
-        
-        // Report any errors we have discovered back to the original form
-        if (!errors.empty()) {
-            saveErrors(request, errors);
-            return (new ActionForward(mapping.getInput()));
-        }
-        
+        // the service Name is needed to retrieve the engine mBean to
+        // which the new host mBean will be added.
         String serviceName = request.getParameter("serviceName");
-        String hostName = request.getParameter("name");
-        String unpackWARs = request.getParameter("unpackWARs");
-        String appBase = request.getParameter("appBase");
-        String debugLvlText = request.getParameter("debugLvl");
         
-        ObjectInstance mBeanFactory = null;
+        // Fill in the form values for display and editing
+        HostForm hostFm = new HostForm();
+        session.setAttribute("hostForm", hostFm);
+        hostFm.setAdminAction("Create");
+        hostFm.setObjectName("");
+        hostFm.setHostName("");
+        hostFm.setDebugLvl("0");
+        hostFm.setServiceName(serviceName);
+        hostFm.setAppBase("");
+        hostFm.setUnpackWARs("false");
+        hostFm.setDebugLvlVals(Lists.getDebugLevels());
+        hostFm.setBooleanVals(Lists.getBooleanValues());        
         
-        // unique mBean name of the new service that is created.
-        String newHost = null;
+        // Forward to the host display page
+        return (mapping.findForward("Host"));
         
-        // Get hold of the parent engine.
-        ObjectName engine = null;
-        try {
-            Iterator engineItr =
-            mBServer.queryMBeans(new ObjectName(
-            TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName),
-            null).iterator();
-            
-            ObjectInstance objInstance = (ObjectInstance)engineItr.next();
-            engine = (objInstance).getObjectName();
-            
-        } catch (Exception e) {
-            throw new ServletException("Error getting engine mBean", e);
-        }
-        
-        // invoke createStandardHost operation on the mBean factory.
-        try {
-            mBeanFactory = TomcatTreeBuilder.getMBeanFactory();
-            ObjectName factory = mBeanFactory.getObjectName();
-            
-            Object[] params = new Object[2];
-            // mBean name of the parent engine
-            params[0] = new String(engine.toString());
-            // name of the new host to be added
-            params[1] = new String(hostName);
-            
-            String[] types = new String[2];
-            types[0]= "java.lang.String";
-            types[1]= "java.lang.String";
-            
-            newHost = (String)
-            mBServer.invoke(factory, "createStandardHost", params, types);
-            
-        } catch (Throwable t) {
-            getServlet().log
-            (resources.getMessage(locale, "users.error.invoke",
-            "createStandardHost"), t);
-            response.sendError
-            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.invoke","createStandardHost"));
-            return (null);
-        } 
-        
-        // add the newly created service to the server mBean.
-        try {
-            Object[] params = new Object[1];
-            params[0] = new String(newHost);
-            
-            String[] type = new String[1];
-            type[0]= "java.lang.String";
-            
-            mBServer.invoke(engine, "addHost", params, type);
-            
-        } catch (Exception e) {
-            getServlet().log
-            (resources.getMessage(locale, "users.error.invoke",
-            "addHost"), e);
-            response.sendError
-            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.invoke",
-            "addHost"));
-            return (null);
-        }
-        
-        // set the attributes read from the form to this newly created host.
-        String attribute = null;
-        try{
-            ObjectName hostObjName = new ObjectName(newHost);
-            
-            if(debugLvlText != null) {
-                Integer debugLvl = new Integer(debugLvlText);
-                mBServer.setAttribute(hostObjName,
-                new Attribute(attribute=SetUpHostAction.DEBUG_PROP_NAME,
-                debugLvl));
-            }
-            
-            if (unpackWARs != null) {
-                mBServer.setAttribute(hostObjName,
-                new Attribute(attribute=SetUpHostAction.UNPACKWARS_PROP_NAME,
-                new Boolean(unpackWARs)));
-            }
-            
-            if(appBase != null) {
-                mBServer.setAttribute(hostObjName,
-                new Attribute(attribute=SetUpHostAction.APPBASE_PROP_NAME,
-                appBase));
-            }
-            
-        }catch(Exception e){
-            getServlet().log
-            (resources.getMessage(locale, "users.error.set.attribute",
-            attribute), e);
-            response.sendError
-            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.set.attribute",
-            attribute));
-            return (null);
-        }
-        
-        if (servlet.getDebug() >= 1)
-            servlet.log(" Forwarding to success page");
-        return (mapping.findForward("Save Successful"));
     }
+    
     
 }

@@ -123,6 +123,19 @@ public class ActionTag extends BodyTagSupport {
         this.selected = selected;
     }
 
+    /**
+     * Should this action selection be disabled? 
+     * e.g. Action separators should be disabled.
+     */
+    protected boolean disabled = false;
+
+    public boolean getDisabled() {
+        return (this.disabled);
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
     /**
      * The URL to which control is transferred if this action is selected.
@@ -203,7 +216,7 @@ public class ActionTag extends BodyTagSupport {
         } else {
             path = url;
         }
-        actions.addAction(label, selected,
+        actions.addAction(label, selected, disabled,
                           response.encodeURL(path));
 
         return (EVAL_PAGE);
@@ -218,6 +231,7 @@ public class ActionTag extends BodyTagSupport {
 
         this.label = null;
         this.selected = false;
+        this.disabled = false;
         this.url = null;
 
     }

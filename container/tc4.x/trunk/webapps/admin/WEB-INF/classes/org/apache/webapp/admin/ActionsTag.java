@@ -120,6 +120,10 @@ public class ActionsTag extends BodyTagSupport {
      */
     protected ArrayList selecteds = new ArrayList();
 
+    /**
+     * The set of "disabled" flags for Actions displayed by this control.
+     */
+    protected ArrayList disableds = new ArrayList();
 
     /**
      * The set of URLs for the Actions displayed by this control.
@@ -211,10 +215,16 @@ public class ActionsTag extends BodyTagSupport {
             for (int i = 0; i < n; i++) {
                 String label = (String) labels.get(i);
                 boolean selected = ((Boolean) selecteds.get(i)).booleanValue();
+                boolean disabled = ((Boolean) disableds.get(i)).booleanValue();             
                 String url = (String) urls.get(i);
+                if (disabled) {
+                    out.println("<optgroup disabled> </optgroup>");
+                } else {    
                 out.print("<option");
                 if (selected)
                     out.print(" selected=\"selected\"");
+                //if (disabled)
+                   // out.print(" disabled");                
                 out.print(" value=\"");
                 if (url != null)
                     out.print(url);
@@ -223,6 +233,7 @@ public class ActionsTag extends BodyTagSupport {
                 if (label != null)
                     out.print(label);
                 out.println("</option>");
+                }
             }
 
             // Render the end of this element
@@ -261,12 +272,14 @@ public class ActionsTag extends BodyTagSupport {
      *
      * @param label Localized label visible to the user
      * @param selected Initial selected state of this option
+     * @param disabled Ability to be selected state of this option
      * @param url URL to which control should be transferred if selected
      */
-    void addAction(String label, boolean selected, String url) {
+    void addAction(String label, boolean selected, boolean disabled, String url) {
 
         labels.add(label);
         selecteds.add(new Boolean(selected));
+        disableds.add(new Boolean(disabled));
         urls.add(url);
 
     }

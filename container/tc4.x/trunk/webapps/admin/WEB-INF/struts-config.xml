@@ -23,18 +23,6 @@
     <form-bean      name="connectorForm"
                     type="org.apache.webapp.admin.connector.ConnectorForm"/>
 
-    <!-- Host form bean -->
-    <form-bean      name="hostForm"
-                    type="org.apache.webapp.admin.host.HostForm"/>
-
-    <!-- Add Host form bean -->
-    <form-bean      name="addHostForm"
-                    type="org.apache.webapp.admin.host.AddHostForm"/>
-
-    <!-- Delete Host form bean -->
-    <form-bean      name="deleteHostForm"
-                    type="org.apache.webapp.admin.host.DeleteHostForm"/>
-                    
     <!-- Context form bean -->
     <form-bean      name="contextForm"
                     type="org.apache.webapp.admin.context.ContextForm"/>
@@ -72,6 +60,13 @@
     <form-bean      name="servicesForm"
                     type="org.apache.webapp.admin.service.ServicesForm"/>
 
+    <!-- ============= Host Module ============= -->
+
+    <form-bean      name="hostForm"
+                    type="org.apache.webapp.admin.host.HostForm"/>
+                    
+    <form-bean      name="hostsForm"
+                    type="org.apache.webapp.admin.host.HostsForm"/>
 
     <!-- ========== User Database Module ========== -->
 
@@ -189,6 +184,15 @@
                     path="/service/services.jsp"
                 redirect="false"/>
 
+    <!-- ============ Host Module ============== -->
+
+    <forward        name="Host"
+                    path="/host/host.jsp"
+                redirect="false"/>
+
+    <forward        name="Hosts"
+                    path="/host/hosts.jsp"
+                redirect="false"/>
 
     <!-- ========== User Database Module ========== -->
 
@@ -280,28 +284,7 @@
                scope="session">
     </action>
 
-     <!-- Set up Host datastructure -->
-    <action    path="/setUpHost"
-               type="org.apache.webapp.admin.host.SetUpHostAction"
-               name="hostForm"
-               scope="session">
-    </action>
-
-    <!-- Set up add Host datastructure -->
-    <action    path="/setUpAddHost"
-               type="org.apache.webapp.admin.host.SetUpAddHostAction"
-               name="addHostForm"
-               scope="session">
-    </action>
-    
-    <!-- Set up delete Host datastructure -->
-    <action    path="/setUpDeleteHost"
-               type="org.apache.webapp.admin.host.SetUpDeleteHostAction"
-               name="deleteHostForm"
-               scope="session">
-    </action>
-    
-      <!-- Set up Context datastructure -->
+    <!-- Set up Context datastructure -->
     <action    path="/setUpContext"
                type="org.apache.webapp.admin.context.SetUpContextAction"
                name="contextForm"
@@ -365,30 +348,6 @@
                name="connectorForm"
               scope="session"
               input="/connector.jsp">
-    </action>
-
-    <!-- Process a host change -->
-    <action    path="/host"
-               type="org.apache.webapp.admin.host.HostAction"
-               name="hostForm"
-              scope="session"
-              input="/host/host.jsp">
-    </action>
-
-    <!-- Process a add host change -->
-    <action    path="/addHost"
-               type="org.apache.webapp.admin.host.AddHostAction"
-               name="addHostForm"
-              scope="session"
-              input="/host/addHost.jsp">
-    </action>
-
-    <!-- Process a delete host change -->
-    <action    path="/deleteHost"
-               type="org.apache.webapp.admin.host.DeleteHostAction"
-               name="deleteHostForm"
-              scope="session"
-              input="/host/deleteHost.jsp">
     </action>
     
      <!-- Process a context change -->
@@ -477,6 +436,37 @@
               input="/service/service.jsp"
                scope="session"/>
 
+    <!-- ============= Host Module ============== -->
+
+    <!-- Set up Add Host transaction -->
+    <action    path="/AddHost"
+               type="org.apache.webapp.admin.host.AddHostAction">
+    </action>
+
+    <!-- Set up Delete Hosts transaction -->
+    <action    path="/DeleteHost"
+               type="org.apache.webapp.admin.host.DeleteHostAction"
+               name="hostsForm"
+               scope="request"/>
+
+    <!-- Perform Delete Hosts transaction -->
+    <action    path="/DeleteHosts"
+               type="org.apache.webapp.admin.host.DeleteHostsAction"
+               name="hostsForm"
+               scope="request"/>
+
+    <!-- Set up Edit Host transaction -->
+    <action    path="/EditHost"
+               type="org.apache.webapp.admin.host.EditHostAction">
+    </action>
+
+    <!-- Perform Save Host transaction -->
+    <action    path="/SaveHost"
+               type="org.apache.webapp.admin.host.SaveHostAction"
+               name="hostForm"
+              input="/host/host.jsp"
+               scope="session"/>
+               
     <!-- ========== User Database Module ========== -->
 
     <action    path="/users/deleteGroups"

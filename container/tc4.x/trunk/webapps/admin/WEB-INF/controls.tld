@@ -205,6 +205,16 @@
     </attribute>
 
     <attribute>
+      <name>disabled</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        (Boolean) variable set to "true" or "yes" if the selection
+        for this action should be disabled.        
+      </description>
+    </attribute>
+
+    <attribute>
       <name>url</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>

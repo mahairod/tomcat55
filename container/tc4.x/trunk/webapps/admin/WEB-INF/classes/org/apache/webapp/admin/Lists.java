@@ -113,6 +113,15 @@ public class Lists {
         debugLevels.add(new LabelValueBean("9", "9"));
     }
 
+    /**
+     * Precomputed list of (true,false) labels and values.
+     */
+    private static List booleanValues = new ArrayList();
+
+    static {
+            booleanValues.add(new LabelValueBean("True", "true"));
+            booleanValues.add(new LabelValueBean("False", "false"));
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -127,6 +136,15 @@ public class Lists {
 
     }
 
+    /**
+     * Return a <code>List</code> of {@link LabelValueBean}s for the legal
+     * settings for <code>boolean</code> properties.
+     */
+    public static List getBooleanValues() {
+
+        return (booleanValues);
+
+    }
 
     /**
      * Return a list of <code>Connector</code> object name strings

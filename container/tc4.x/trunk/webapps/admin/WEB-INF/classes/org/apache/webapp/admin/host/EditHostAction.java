@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,16 +59,13 @@
  *
  */
 
-
 package org.apache.webapp.admin.host;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.TreeSet;
-import java.util.StringTokenizer;
-import java.util.Set;
+import java.util.Arrays;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -79,27 +76,39 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import javax.management.MBeanServer;
-import javax.management.QueryExp;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
 import org.apache.struts.util.MessageResources;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.JMException;
+
 import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
- * Test <code>Action</code> that handles events to delete hosts.
+ * The <code>Action</code> that sets up <em>Edit Host</em> transactions.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class SetUpDeleteHostAction extends Action {
+public class EditHostAction extends Action {
     
-    private static MBeanServer mBServer = null;
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
     
+
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+    
+
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -118,24 +127,17 @@ public class SetUpDeleteHostAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform(ActionMapping mapping,
-    ActionForm form,
-    HttpServletRequest request,
-    HttpServletResponse response)
-    throws IOException, ServletException {
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws IOException, ServletException {
         
+        // Acquire the resources that we need
         HttpSession session = request.getSession();
-        
-        if (form == null) {
-            getServlet().log(" Creating new DeleteHostForm bean under key "
-            + mapping.getAttribute());
-            
-            form = new DeleteHostForm();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        if (resources == null) {
+            resources = getServlet().getResources();
         }
-        
-        if ("request".equals(mapping.getScope()))
-            request.setAttribute(mapping.getAttribute(), form);
-        else
-            session.setAttribute(mapping.getAttribute(), form);
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
@@ -145,50 +147,82 @@ public class SetUpDeleteHostAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        // get the parent engine name to get the parent Engine mBean
-        // on which the removeHost operation will be invoked.
-        String serviceName = request.getParameter("serviceName");
-        String deleteThis = request.getParameter("this");
-
-        // get the service name from the host mBean
-        if (serviceName == null) {
-            StringTokenizer st = new StringTokenizer(deleteThis, "=");
-            while (st.hasMoreTokens()) {
-                serviceName = st.nextToken().trim();
-            }
-        }
-        
-        DeleteHostForm deleteForm = (DeleteHostForm) form;
-        
-        String pattern = null;
-        
-        if (deleteThis != null) {
-            // this particular host is to be deleted.
-            pattern = deleteThis ;
-        } else {
-            // Acquire the entire set of host MBean names to be listed
-            pattern = TomcatTreeBuilder.HOST_TYPE + TomcatTreeBuilder.WILDCARD +
-            ",service=" + serviceName;
-        }
-        
-        Set results = null;
+        // Set up the object names of the MBeans we are manipulating
+        ObjectName hname = null;
+        StringBuffer sb = null;
         try {
-            results = mBServer.queryNames(new ObjectName(pattern), null);
+            hname = new ObjectName(request.getParameter("select"));
+        } catch (Exception e) {
+            String message =
+                resources.getMessage("error.hostName.bad",
+                                     request.getParameter("select"));
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
+        
+        // Fill in the form values for display and editing
+        HostForm hostFm = new HostForm();
+        session.setAttribute("hostForm", hostFm);
+        hostFm.setAdminAction("Edit");
+        hostFm.setObjectName(hname.toString());
+        sb = new StringBuffer("Host (");
+        sb.append(hname.getKeyProperty("name"));
+        sb.append(")");
+        hostFm.setNodeLabel(sb.toString());
+        hostFm.setDebugLvlVals(Lists.getDebugLevels());
+        hostFm.setBooleanVals(Lists.getBooleanValues());
+        
+        String attribute = null;
+        try {
+
+            // Copy scalar properties
+            attribute = "name";
+            hostFm.setHostName
+                ((String) mBServer.getAttribute(hname, attribute));
+            attribute = "debug";
+            hostFm.setDebugLvl
+                (((Integer) mBServer.getAttribute(hname, attribute)).toString());
+            attribute = "appBase";
+            hostFm.setAppBase
+                ((String) mBServer.getAttribute(hname, attribute));
+            attribute = "unpackWARs";
+            hostFm.setUnpackWARs
+                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
+
         } catch (Throwable t) {
-            throw new ServletException("queryNames(" + pattern + ")", t);
+            getServlet().log
+                (resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute));
+            return (null);
         }
-        
-        TreeSet hosts = new TreeSet();
-        Iterator names = results.iterator();
-        while (names.hasNext()) {
-            ObjectName name = (ObjectName) names.next();
-            hosts.add(name);
+
+        // retrieve all aliases
+        String operation = null;
+        try {
+            operation = "findAliases";
+            String aliases[] = 
+                (String[]) mBServer.invoke(hname, operation, null, null);
+            
+            hostFm.setAliasVals(new ArrayList(Arrays.asList(aliases)));
+
+        } catch (Throwable t) {
+            getServlet().log
+            (resources.getMessage(locale, "users.error.invoke",
+                                  operation), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                resources.getMessage(locale, "users.error.invoke",
+                                     operation));
+            return (null);            
         }
+                
+        // Forward to the host display page
+        return (mapping.findForward("Host"));
         
-        // Forward the Set as a request attribute
-        request.setAttribute("hosts", hosts);
-        deleteForm.setServiceName(serviceName);
-        
-        return (mapping.findForward("Delete Host"));
     }
 }

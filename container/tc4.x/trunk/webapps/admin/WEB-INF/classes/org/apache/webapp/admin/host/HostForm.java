@@ -67,7 +67,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Form bean for the host page.
@@ -79,7 +79,17 @@ import java.util.ArrayList;
 public final class HostForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
-    
+        
+    /**
+     * The administrative action represented by this form.
+     */
+    private String adminAction = "Edit";
+
+    /**
+     * The object name of the Service this bean refers to.
+     */
+    private String objectName = null;
+
     /**
      * The text for the node label. This is of the form 'Host(name)'
      * and is picked up from the node of the tree that is clicked on.
@@ -89,13 +99,12 @@ public final class HostForm extends ActionForm {
     /**
      * The text for the hostName.
      */
-    private String name = null;
+    private String hostName = null;
     
     /**
-     * The text for the selected host name that is used to lookup the MBean info.
-     * This contains all information including the service name to which this host belongs etc.
+     * The name of the service this host belongs to.
      */
-    private String hostName = null;
+    private String serviceName = null;
     
     /**
      * The directory for the appBase.
@@ -120,19 +129,78 @@ public final class HostForm extends ActionForm {
     /**
      * Set of valid values for debug level.
      */
-    private ArrayList debugLvlVals = null;
+    private List debugLvlVals = null;
     
     /*
      * Represent boolean (true, false) values for unpackWARs etc.
      */
-    private ArrayList booleanVals = null;
+    private List booleanVals = null;
     
     /*
      * Represent aliases as a List.
      */    
-    private ArrayList aliasVals = null;
+    private List aliasVals = null;
    
     // ------------------------------------------------------------- Properties
+
+    /**
+     * Return the administrative action represented by this form.
+     */
+    public String getAdminAction() {
+
+        return this.adminAction;
+
+    }
+
+
+    /**
+     * Set the administrative action represented by this form.
+     */
+    public void setAdminAction(String adminAction) {
+
+        this.adminAction = adminAction;
+
+    }
+
+    /**
+     * Return the object name of the Host this bean refers to.
+     */
+    public String getObjectName() {
+
+        return this.objectName;
+
+    }
+
+
+    /**
+     * Set the object name of the Host this bean refers to.
+     */
+    public void setObjectName(String objectName) {
+
+        this.objectName = objectName;
+
+    }
+
+    
+    /**
+     * Return the object name of the service this host belongs to.
+     */
+    public String getServiceName() {
+
+        return this.serviceName;
+
+    }
+
+
+    /**
+     * Set the object name of the Service this host belongs to.
+     */
+    public void setServiceName(String serviceName) {
+
+        this.serviceName = serviceName;
+
+    }
+    
     /**
      * Return the label of the node that was clicked.
      */
@@ -152,7 +220,7 @@ public final class HostForm extends ActionForm {
     }
     
     /**
-     * Return the selected node host name to lookup mBean.
+     * Return the host name.
      */
     public String getHostName() {
         
@@ -161,29 +229,11 @@ public final class HostForm extends ActionForm {
     }
     
     /**
-     * Set the selected node host name to lookup mBean.
+     * Set the host name.
      */
     public void setHostName(String hostName) {
         
         this.hostName = hostName;
-        
-    }
-    
-    /**
-     * Return the host name.
-     */
-    public String getName() {
-        
-        return this.name;
-        
-    }
-    
-    /**
-     * Set the host name.
-     */
-    public void setName(String name) {
-        
-        this.name = name;
         
     }
     
@@ -229,7 +279,7 @@ public final class HostForm extends ActionForm {
     /**
      * Return the debugVals.
      */
-    public ArrayList getDebugLvlVals() {
+    public List getDebugLvlVals() {
         
         return this.debugLvlVals;
         
@@ -238,7 +288,7 @@ public final class HostForm extends ActionForm {
     /**
      * Set the debugVals.
      */
-    public void setDebugLvlVals(ArrayList debugLvlVals) {
+    public void setDebugLvlVals(List debugLvlVals) {
         
         this.debugLvlVals = debugLvlVals;
         
@@ -267,7 +317,7 @@ public final class HostForm extends ActionForm {
     /**
      * Return the booleanVals.
      */
-    public ArrayList getBooleanVals() {
+    public List getBooleanVals() {
         
         return this.booleanVals;
         
@@ -276,7 +326,7 @@ public final class HostForm extends ActionForm {
     /**
      * Set the booleanVals.
      */
-    public void setBooleanVals(ArrayList booleanVals) {
+    public void setBooleanVals(List booleanVals) {
         
         this.booleanVals = booleanVals;
         
@@ -285,7 +335,7 @@ public final class HostForm extends ActionForm {
     /**
      * Return the List of alias Vals.
      */
-    public ArrayList getAliasVals() {
+    public List getAliasVals() {
         
         return this.aliasVals;
         
@@ -294,7 +344,7 @@ public final class HostForm extends ActionForm {
     /**
      * Set the alias Vals.
      */
-    public void setAliasVals(ArrayList aliasVals) {
+    public void setAliasVals(List aliasVals) {
         
         this.aliasVals = aliasVals;
         
@@ -310,13 +360,39 @@ public final class HostForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
-        this.name = null;
+        this.objectName = null;        
+        this.serviceName = null;
+        this.hostName = null;
         this.appBase = null;
         this.debugLvl = "0";
         this.unpackWARs = "false";
         
     }
     
+     /**
+     * Render this object as a String.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("HostForm[adminAction=");
+        sb.append(adminAction);
+        sb.append(",debugLvl=");
+        sb.append(debugLvl);
+        sb.append(",appBase=");
+        sb.append(appBase);
+        sb.append(",unpackWARs=");
+        sb.append(unpackWARs);
+        sb.append("',objectName='");
+        sb.append(objectName);
+        sb.append("',hostName=");
+        sb.append(hostName);
+        sb.append("',serviceName=");
+        sb.append(serviceName);
+        sb.append("]");
+        return (sb.toString());
+
+    }
+
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any
@@ -338,9 +414,9 @@ public final class HostForm extends ActionForm {
         // front end validation when save is clicked.
         if (submit != null) {
             
-            // name cannot be null
-            if ((name== null) || (name.length() < 1)) {
-                errors.add("name", new ActionError("error.hostName.required"));
+            // hostName cannot be null
+            if ((hostName== null) || (hostName.length() < 1)) {
+                errors.add("hostName", new ActionError("error.hostName.required"));
             }
             
             // appBase cannot be null
