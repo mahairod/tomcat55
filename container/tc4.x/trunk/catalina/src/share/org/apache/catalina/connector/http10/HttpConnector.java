@@ -977,6 +977,14 @@ public final class HttpConnector
             throw new LifecycleException (
                 sm.getString("httpConnector.alreadyInitialized"));
         this.initialized=true;
+
+        // Establish a server socket on the specified port
+        try {
+            serverSocket = open();
+        } catch (IOException e) {
+            throw new LifecycleException(threadName + ".open", e);
+        }
+
     }
 
     /**
@@ -993,13 +1001,6 @@ public final class HttpConnector
         threadName = "HttpConnector[" + port + "]";
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
-
-        // Establish a server socket on the specified port
-        try {
-            serverSocket = open();
-        } catch (IOException e) {
-            throw new LifecycleException(threadName + ".open", e);
-        }
 
         // Start our background thread
         threadStart();
