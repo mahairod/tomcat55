@@ -70,19 +70,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.naming.NamingException;
@@ -95,9 +90,7 @@ import org.apache.catalina.Authenticator;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -109,20 +102,12 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.deploy.ApplicationParameter;
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.catalina.loader.Extension;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -926,6 +911,16 @@ public final class ContextConfig
             }
             // FIXME - Closing the JAR file messes up the class loader???
             //            jarFile.close();
+        } catch (IOException ioe) {
+            File tmp = new File(System.getProperty("java.io.tmpdir"));
+            if (!tmp.canWrite()) {
+                throw new ServletException
+                    (sm.getString("contextConfig.noTempDir"), ioe);
+            } else {
+                throw new ServletException
+                    (sm.getString("contextConfig.tldJarIOException",
+                                  resourcePath), ioe);
+            }
         } catch (Exception e) {
             if (name == null) {
                 throw new ServletException
