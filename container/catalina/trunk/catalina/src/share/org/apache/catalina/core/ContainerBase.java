@@ -1496,6 +1496,10 @@ public abstract class ContainerBase
                                   ObjectName name) throws Exception {
         oname=name;
         mserver=server;
+        if (name == null ){
+            return null;
+        }
+
         domain=name.getDomain();
 
         type=name.getKeyProperty("type");
