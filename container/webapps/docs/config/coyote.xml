@@ -56,12 +56,6 @@
 
   <attributes>
 
-    <attribute name="className" required="true">
-      <p>Java class name of the implementation to use.  This class must
-      implement the <code>org.apache.catalina.Connector</code> interface.
-      You must specify the standard value defined below.</p>
-    </attribute>
-
     <attribute name="enableLookups" required="false">
       <p>Set to <code>true</code> if you want calls to
       <code>request.getRemoteHost()</code> to perform DNS lookups in
@@ -166,18 +160,33 @@
       this attribute is set to "false".</p>
     </attribute>
 
-    <attribute name="maxProcessors" required="false">
+    <attribute name="maxKeepAliveRequests" required="false">
+      <p>The maximum number of HTTP requests which can be pipelined until
+      the connection is closed by the server. Setting this attribute to 1 will
+      disable HTTP/1.0 keep-alive, as well as HTTP/1.1 keep-alive and 
+      pipelining. If
+      not specified, this attribute is set to 100.</p>
+    </attribute>
+
+    <attribute name="maxSpareThreads" required="false">
+      <p>The maximum number of unused request processing threads that 
+      will be allowed to exist until the thread pool starts stopping the
+      unnecessary threads.  The default value is 50.</p>
+    </attribute>
+
+    <attribute name="maxThreads" required="false">
       <p>The maximum number of request processing threads to be created
       by this <strong>Connector</strong>, which therefore determines the
       maximum number of simultaneous requests that can be handled.  If
-      not specified, this attribute is set to 20.</p>
+      not specified, this attribute is set to 200.</p>
     </attribute>
 
-    <attribute name="minProcessors" required="false">
+    <attribute name="minSpareThreads" required="false">
       <p>The number of request processing threads that will be created
-      when this <strong>Connector</strong> is first started.  This
-      attribute should be set to a value smaller than that set for
-      <code>maxProcessors</code>.  The default value is 5.</p>
+      when this <strong>Connector</strong> is first started.  The connector
+      will also make sure it has the specified number of idle processing
+      threads available. This attribute should be set to a value smaller 
+      than that set for <code>maxThreads</code>.  The default value is 4.</p>
     </attribute>
 
     <attribute name="port" required="true">
@@ -185,6 +194,11 @@
       will create a server socket and await incoming connections.  Your
       operating system will allow only one server application to listen
       to a particular port number on a particular IP address.</p>
+    </attribute>
+
+    <attribute name="protocol" required="false">
+      <p>This attribute value must be <code>HTTP/1.1</code> to use the HTTP
+      handler, which is the default.</p>
     </attribute>
 
     <attribute name="proxyName" required="false">
