@@ -96,7 +96,8 @@ public class URLUtil {
 	//        construct file uri by prepending the
 	//        working directory
 
-	if (s.indexOf(":/") > -1) {
+	if (s.indexOf("://") > -1 ||
+            s.indexOf("file:") > -1 ) {
 	    resolve = new URL(s);
 	} else if (url != null) {
 	    resolve = new URL(url, s);
