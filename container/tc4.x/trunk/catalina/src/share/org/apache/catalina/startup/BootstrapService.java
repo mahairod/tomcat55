@@ -170,6 +170,9 @@ public final class BootstrapService
             catalinaLoader =
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                      commonLoader);
+            System.err.println("Created catalinaLoader in: " + getCatalinaHome()
+                 +  File.separator +
+                 "server" + File.separator + "lib");
 
             unpacked[0] = new File(getCatalinaBase(),
                                    "shared" + File.separator + "classes");
@@ -289,7 +292,9 @@ public final class BootstrapService
         if (service == null) {
             service = new BootstrapService();
             try {
-                service.init(null);
+                BootstrapServiceContext p0 = new BootstrapServiceContext();
+                p0.setArguments(args);
+                service.init(p0);
             } catch (Throwable t) {
                 t.printStackTrace();
                 return;

@@ -815,6 +815,8 @@
        unless="compile.jaas"/>
       <exclude name="org/apache/catalina/startup/BootstrapService.java"
        unless="compile.daemon"/>
+      <exclude name="org/apache/catalina/startup/BootstrapServiceContext.java"
+       unless="compile.daemon"/>
       <exclude name="org/apache/catalina/ssi/**"
        unless="compile.ssi"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"
@@ -1075,6 +1077,7 @@
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/BootstrapService.class" />
+        <include name="org/apache/catalina/startup/BootstrapServiceContext.class" />
         <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <include name="org/apache/catalina/startup/Tool.class" />
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
