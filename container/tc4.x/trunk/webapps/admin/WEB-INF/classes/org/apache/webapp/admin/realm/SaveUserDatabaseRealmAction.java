@@ -96,6 +96,7 @@ import org.apache.webapp.admin.logger.DeleteLoggerAction;
  * <em>Edit Realm</em> transactions for UserDatabase realm.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -110,6 +111,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
     private String createUserDatabaseRealmTypes[] =
     { "java.lang.String",     // parent
       "java.lang.String",     // name
+      "java.lang.String",     // host
     };
 
 
@@ -177,8 +179,9 @@ public final class SaveUserDatabaseRealmAction extends Action {
 
             try {
 
-                String parent = rform.getParentObjectName();                
-                String objectName = DeleteLoggerAction.getObjectName(parent,
+                String parent = rform.getParentObjectName();       
+                String host = rform.getHostName();           
+                String objectName = DeleteLoggerAction.getObjectName(parent, host,
                                     TomcatTreeBuilder.REALM_TYPE);
                 
                 ObjectName pname = new ObjectName(parent);
@@ -217,9 +220,10 @@ public final class SaveUserDatabaseRealmAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardRealm object
-                values = new String[2];
+                values = new String[3];
                 values[0] = parent;
                 values[1] = rform.getResource();
+                values[2] = host;
                 operation = "createUserDatabaseRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,

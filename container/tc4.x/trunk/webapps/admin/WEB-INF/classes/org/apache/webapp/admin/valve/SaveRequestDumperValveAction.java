@@ -88,6 +88,7 @@ import org.apache.webapp.admin.ApplicationServlet;
  * <em>Edit Valve</em> transactions for Request Dumper valve.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -150,12 +151,13 @@ public final class SaveRequestDumperValveAction extends Action {
         String adminAction = vform.getAdminAction();
         String vObjectName = vform.getObjectName();
         String parent = vform.getParentObjectName();
+        String host = vform.getHostName();
         String valveType = vform.getValveType();
             
         // Perform a "Create Valve" transaction (if requested)
         if ("Create".equals(adminAction)) {
         
-            vObjectName = ValveUtil.createValve(parent, valveType, 
+            vObjectName = ValveUtil.createValve(parent, host, valveType, 
                                 response, request, mapping, 
                                 (ApplicationServlet) getServlet());
            

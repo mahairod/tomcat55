@@ -113,6 +113,11 @@ public class ValveForm extends ActionForm {
      * The object name of the parent of this valve.
      */
     private String parentObjectName = null;
+    
+    /**
+     * The object name of the host of this Logger (if exists).
+     */
+    private String hostName = null;
 
     /**
      * Set of valid values for valves.
@@ -152,7 +157,6 @@ public class ValveForm extends ActionForm {
      * Set the Object Name.
      */
     public void setObjectName(String objectName) {
-        
         this.objectName = objectName;
         
     }
@@ -212,6 +216,25 @@ public class ValveForm extends ActionForm {
 
     }
     
+    
+    /**
+     * Return the host object name of the Logger this bean refers to.
+     */
+    public String getHostName() {
+
+        return this.hostName;
+
+    }
+
+
+    /**
+     * Set the host object name of the Logger this bean refers to.
+     */
+    public void setHostName(String hostName) {
+
+        this.hostName = hostName;
+
+    }    
         
    /**
      * Return the valveTypeVals.

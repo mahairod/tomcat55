@@ -19,10 +19,13 @@
 <html:form method="POST" action="/SaveJNDIRealm">
   <bean:define id="thisObjectName" type="java.lang.String"
                name="jndiRealmForm" property="objectName"/>
+  <bean:define id="thisHostName" type="java.lang.String"
+               name="jndiRealmForm" property="hostName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="parentObjectName"/>
   <html:hidden property="allowDeletion"/>
+  <html:hidden property="hostName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -44,7 +47,8 @@
             <logic:notEqual name="jndiRealmForm" property="adminAction" value="Create">
                 <logic:notEqual name="jndiRealmForm" property="allowDeletion" value="false">
                 <controls:action url='<%= "/DeleteRealm.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName) +
+                                 "&host="+ URLEncoder.encode(thisHostName) %>'>
                 <bean:message key="actions.realms.delete"/>
             </controls:action>
            </logic:notEqual>

@@ -82,6 +82,7 @@ import org.apache.webapp.admin.Lists;
  * The <code>Action</code> that sets up <em>Add Valve</em> transactions.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -138,44 +139,53 @@ public class AddValveAction extends Action {
         String type = request.getParameter("type");        
         if (type == null) 
             type = "AccessLogValve";    // default type is AccessLog
+            
+        String host = request.getParameter("host");
+        if (host == null) {
+            host = "";
+        }
         
         types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "/admin/AddValve.do?parent=" + URLEncoder.encode(parent) 
+                "AddValve.do?parent=" + URLEncoder.encode(parent) 
+                + "&host=" + URLEncoder.encode(host)
                 + "&type=" + type));        
         for (int i=0; i< valveTypes.length; i++) {
             if (!type.equalsIgnoreCase(valveTypes[i])) {
                 types.add(new LabelValueBean(valveTypes[i],
-                "/admin/AddValve.do?parent=" + URLEncoder.encode(parent) 
+                "AddValve.do?parent=" + URLEncoder.encode(parent) 
+                + "&host=" + URLEncoder.encode(host)
                 + "&type=" + valveTypes[i]));        
             }
         }
        
         if ("AccessLogValve".equalsIgnoreCase(type)) {
-            createAccessLogger(session, parent);
+            createAccessLogger(session, parent, host);
         } else if ("RemoteAddrValve".equalsIgnoreCase(type)) {
-            createRemoteAddrValve(session, parent);
+            createRemoteAddrValve(session, parent, host);
         } else if ("RemoteHostValve".equalsIgnoreCase(type)) {
-            createRemoteHostValve(session, parent);
+            createRemoteHostValve(session, parent, host);
         } else if ("RequestDumperValve".equalsIgnoreCase(type)) {
-            createRequestDumperValve(session, parent);
+            createRequestDumperValve(session, parent, host);
         } else {
             //SingleSignOn
-            createSingleSignOnValve(session, parent);
+            createSingleSignOnValve(session, parent, host);
         }
         // Forward to the valve display page
         return (mapping.findForward(type));
         
     }
 
-    private void createAccessLogger(HttpSession session, String parent) {
+    private void createAccessLogger(HttpSession session, String parent, 
+                                        String host) {
 
         AccessLogValveForm valveFm = new AccessLogValveForm();
         session.setAttribute("accessLogValveForm", valveFm);
         valveFm.setAdminAction("Create");
         valveFm.setObjectName("");
         valveFm.setParentObjectName(parent);
+        valveFm.setHostName(host);
         String valveType = "AccessLogValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
@@ -191,13 +201,15 @@ public class AddValveAction extends Action {
         valveFm.setValveTypeVals(types);        
     }
 
-    private void createRemoteAddrValve(HttpSession session, String parent) {
+    private void createRemoteAddrValve(HttpSession session, String parent, 
+                                        String host) {
 
         RemoteAddrValveForm valveFm = new RemoteAddrValveForm();
         session.setAttribute("remoteAddrValveForm", valveFm);
         valveFm.setAdminAction("Create");
         valveFm.setObjectName("");
         valveFm.setParentObjectName(parent);
+        valveFm.setHostName(host);
         String valveType = "RemoteAddrValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
@@ -206,13 +218,15 @@ public class AddValveAction extends Action {
         valveFm.setValveTypeVals(types);        
     }
 
-    private void createRemoteHostValve(HttpSession session, String parent) {
+    private void createRemoteHostValve(HttpSession session, String parent, 
+                                        String host) {
 
         RemoteHostValveForm valveFm = new RemoteHostValveForm();
         session.setAttribute("remoteHostValveForm", valveFm);
         valveFm.setAdminAction("Create");
         valveFm.setObjectName("");
         valveFm.setParentObjectName(parent);
+        valveFm.setHostName(host);
         String valveType = "RemoteHostValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
@@ -221,26 +235,30 @@ public class AddValveAction extends Action {
         valveFm.setValveTypeVals(types);        
     }
 
-    private void createRequestDumperValve(HttpSession session, String parent) {
+    private void createRequestDumperValve(HttpSession session, String parent, 
+                                        String host) {
 
         RequestDumperValveForm valveFm = new RequestDumperValveForm();
         session.setAttribute("requestDumperValveForm", valveFm);
         valveFm.setAdminAction("Create");
         valveFm.setObjectName("");
         valveFm.setParentObjectName(parent);
+        valveFm.setHostName(host);
         String valveType = "RequestDumperValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
         valveFm.setValveTypeVals(types);        
     }
 
-    private void createSingleSignOnValve(HttpSession session, String parent) {
+    private void createSingleSignOnValve(HttpSession session, String parent, 
+                                        String host) {
 
         SingleSignOnValveForm valveFm = new SingleSignOnValveForm();
         session.setAttribute("singleSignOnValveForm", valveFm);
         valveFm.setAdminAction("Create");
         valveFm.setObjectName("");
         valveFm.setParentObjectName(parent);
+        valveFm.setHostName(host);
         String valveType = "SingleSignOn";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);

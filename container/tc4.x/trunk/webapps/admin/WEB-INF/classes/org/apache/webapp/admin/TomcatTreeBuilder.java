@@ -94,6 +94,7 @@ import javax.management.MBeanInfo;
  *
  * @author Jazmin Jonson
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 

@@ -78,6 +78,7 @@ import javax.management.ObjectName;
  * is returned.
  *
  * @author Craig R. McClanahan
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -607,6 +608,100 @@ public class Lists {
 
     }
     
+    
+    /**
+     * Return a list of <code>Valve</code> object name strings
+     * for the specified container (service, host, or context) object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select
+     *                  Valves
+     * @param host Object name of the host for which to select
+     *                  Valves     
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getValves(MBeanServer mbserver, String parent,
+                                String hostName) throws Exception {
+
+        ObjectName container = null;
+        if (parent != null) {
+            container = new ObjectName(parent);    
+        }
+        ObjectName hname = null;
+        if (hostName != null) {
+            hname = new ObjectName(hostName);
+        }
+        StringBuffer sb = new StringBuffer(container.getDomain());
+        sb.append(":type=Valve");
+        String type = container.getKeyProperty("type");
+        sb.append(TomcatTreeBuilder.WILDCARD);
+        
+        String service = container.getKeyProperty("service");
+        String host = container.getKeyProperty("host");
+        String path = container.getKeyProperty("path");
+        if (service == null) {
+            service = hname.getKeyProperty("service");
+            host = hname.getKeyProperty("host");
+            String name = container.getKeyProperty("name");
+            path = name.substring(name.lastIndexOf('/'));
+        }
+        
+        if ("Service".equals(type)) {
+            service = container.getKeyProperty("name");
+        }
+        if (service != null) {
+            sb.append(",service=");
+            sb.append(service);
+        }
+        
+        ObjectName search = new ObjectName(sb.toString());        
+        ArrayList valves = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            ObjectName valve = (ObjectName) names.next();
+            String vpath = valve.getKeyProperty("path");            
+            String vhost = valve.getKeyProperty("host");
+            
+            String valveType = null;
+            String className = (String) 
+                    mbserver.getAttribute(valve, "className");
+            int period = className.lastIndexOf(".");
+            if (period >= 0)
+                valveType = className.substring(period + 1);
+
+            // Return only user-configurable valves.
+            if ("AccessLogValve".equalsIgnoreCase(valveType) ||
+                "RemoteAddrValve".equalsIgnoreCase(valveType) ||
+                "RemoteHostValve".equalsIgnoreCase(valveType) || 
+                "RequestDumperValve".equalsIgnoreCase(valveType) ||
+                "SingleSignOn".equalsIgnoreCase(valveType)) {
+                // if service is the container, then the valve name
+                // should not contain path or host                   
+                if ("Service".equalsIgnoreCase(type)) {
+                    if ((vpath == null) && (vhost == null)) {
+                        valves.add(valve.toString());
+                    }
+                } 
+            
+                if ("Host".equalsIgnoreCase(type)) {
+                    if ((vpath == null) && (host.equalsIgnoreCase(vhost))) { 
+                        valves.add(valve.toString());      
+                    }
+                }
+            
+                if ((type == null) || "Context".equalsIgnoreCase(type))  {
+                    if ((path.equalsIgnoreCase(vpath)) && (host.equalsIgnoreCase(vhost))) {
+                        valves.add(valve.toString());      
+                    }
+                }
+            }
+        }        
+        Collections.sort(valves);
+        return (valves);
+    }
+    
+        
     /**
      * Return a list of <code>Server</code> object name strings.
      *

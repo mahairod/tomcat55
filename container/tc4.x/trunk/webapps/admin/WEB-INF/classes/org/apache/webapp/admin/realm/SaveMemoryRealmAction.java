@@ -96,6 +96,7 @@ import org.apache.webapp.admin.logger.DeleteLoggerAction;
  * <em>Edit Realm</em> transactions for Memory realm.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -109,6 +110,7 @@ public final class SaveMemoryRealmAction extends Action {
      */
     private String createStandardRealmTypes[] =
     { "java.lang.String",     // parent
+      "java.lang.String",     // host
     };
 
 
@@ -176,8 +178,9 @@ public final class SaveMemoryRealmAction extends Action {
 
             try {
 
-                String parent = rform.getParentObjectName();                
-                String objectName = DeleteLoggerAction.getObjectName(parent,
+                String parent = rform.getParentObjectName();    
+                String host = rform.getHostName();                
+                String objectName = DeleteLoggerAction.getObjectName(parent, host,
                                     TomcatTreeBuilder.REALM_TYPE);
                 
                 ObjectName pname = new ObjectName(parent);
@@ -216,8 +219,9 @@ public final class SaveMemoryRealmAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardRealm object
-                values = new String[1];
+                values = new String[2];
                 values[0] = parent;
+                values[1] = host;
                 operation = "createMemoryRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,

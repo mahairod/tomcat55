@@ -110,6 +110,7 @@ public final class SaveJNDIRealmAction extends Action {
      */
     private String createStandardRealmTypes[] =
     { "java.lang.String",     // parent
+      "java.lang.String",     // host
     };
 
 
@@ -178,7 +179,8 @@ public final class SaveJNDIRealmAction extends Action {
             try {
 
                 String parent = rform.getParentObjectName();
-                String objectName = DeleteLoggerAction.getObjectName(parent,
+                String host = rform.getHostName();
+                String objectName = DeleteLoggerAction.getObjectName(parent, host,
                                     TomcatTreeBuilder.REALM_TYPE);
 
                 ObjectName pname = new ObjectName(parent);
@@ -217,8 +219,9 @@ public final class SaveJNDIRealmAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardRealm object
-                values = new String[1];
+                values = new String[2];
                 values[0] = parent;
+                values[1] = host;
                 operation = "createJNDIRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,

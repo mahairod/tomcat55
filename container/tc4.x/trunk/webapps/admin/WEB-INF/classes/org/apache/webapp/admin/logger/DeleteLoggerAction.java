@@ -96,6 +96,7 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  * The <code>Action</code> that sets up <em>Delete Loggers</em> transactions.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -169,10 +170,11 @@ public class DeleteLoggerAction extends Action {
         // Accumulate a list of all available loggers
         ArrayList list = new ArrayList();
         String parent = request.getParameter("parent");
+        String host = request.getParameter("host");
         
         if (parent != null) {
             try {
-                pattern = getObjectName(parent, TomcatTreeBuilder.LOGGER_TYPE);
+                pattern = getObjectName(parent, host, TomcatTreeBuilder.LOGGER_TYPE);
             } catch (Exception e) {
                 getServlet().log
                 (resources.getMessage(locale, "users.error.select"));
@@ -207,20 +209,34 @@ public class DeleteLoggerAction extends Action {
     }
     
     public static String getObjectName(String parent, String MBeanType)
+    throws Exception {
+        
+        return getObjectName(parent, null, MBeanType);
+        
+    }
+    
+    
+    public static String getObjectName(String parent, String host, String MBeanType)
     throws Exception{
         
         // Form the pattern that gets the logger for this particular
         // service, host or context.
         StringBuffer sb = new StringBuffer(MBeanType);
         ObjectName poname = new ObjectName(parent);
+        ObjectName honame = null;
+        if (host != null) {
+            honame = new ObjectName(host);
+        }
         String type = poname.getKeyProperty("type");
-        if ("Context".equalsIgnoreCase(type)) { // container is context            
+        //if ("Context".equalsIgnoreCase(type)) { // container is context  
+        if (type == null) { // container is context            
             sb.append(",path=");
-            sb.append(poname.getKeyProperty("path"));
+            String name = poname.getKeyProperty("name");
+            sb.append(name.substring(name.lastIndexOf('/')));
             sb.append(",host=");
-            sb.append(poname.getKeyProperty("host"));
+            sb.append(honame.getKeyProperty("host"));
             sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
+            sb.append(honame.getKeyProperty("service"));
         }
         if ("Host".equalsIgnoreCase(type)) {    // container is host
             sb.append(",host=");

@@ -91,6 +91,7 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  * The <code>Action</code> that sets up <em>Edit Context</em> transactions.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -229,6 +230,7 @@ public class EditContextAction extends Action {
         session.setAttribute("contextForm", contextFm);
         contextFm.setAdminAction("Edit");
         contextFm.setObjectName(cname.toString());
+        contextFm.setParentObjectName(hname.toString());
         contextFm.setLoaderObjectName(lname.toString());
         contextFm.setManagerObjectName(mname.toString());
         sb = new StringBuffer("Context (");

@@ -17,13 +17,17 @@
 <html:errors/>
 
 <html:form method="POST" action="/SaveContext">
+
+  <bean:define id="parentObjectName" type="java.lang.String"
+               name="contextForm" property="parentObjectName"/>
   <bean:define id="thisObjectName" type="java.lang.String"
-               name="contextForm" property="objectName"/>
+               name="contextForm" property="objectName"/>      
+                   
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
-  <html:hidden property="parentObjectName"/>
   <html:hidden property="loaderObjectName"/>
   <html:hidden property="managerObjectName"/>
+  <html:hidden property="parentObjectName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -44,11 +48,15 @@
             <controls:action disabled="true"> --------------------------------- </controls:action>
             <logic:notEqual name="contextForm" property="adminAction" value="Create">
             <controls:action url='<%= "/AddLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName) +
+                                  "&host=" + 
+                                  URLEncoder.encode(parentObjectName) %>'>
                 <bean:message key="actions.loggers.create"/>
             </controls:action>
             <controls:action url='<%= "/DeleteLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName) +
+                                  "&host=" + 
+                                  URLEncoder.encode(parentObjectName) %>'>
                 <bean:message key="actions.loggers.deletes"/>
             </controls:action>
             <%-- cannot delete or add the realm of the context of the admin app --%>
@@ -56,21 +64,29 @@
                             value='<%= request.getContextPath() %>'>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
             <controls:action url='<%= "/AddRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName) + 
+                                  "&host=" + 
+                                  URLEncoder.encode(parentObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
             </controls:action>
             <controls:action url='<%= "/DeleteRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName) +
+                                  "&host=" + 
+                                  URLEncoder.encode(parentObjectName) %>'>
                 <bean:message key="actions.realms.deletes"/>
             </controls:action>
             </logic:notEqual>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url='<%= "/AddValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName) +
+                                  "&host=" + 
+                                  URLEncoder.encode(parentObjectName) %>'>
                <bean:message key="actions.valves.create"/>
             </controls:action>
             <controls:action url='<%= "/DeleteValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
+                                  URLEncoder.encode(thisObjectName) +
+                                  "&host=" + 
+                                  URLEncoder.encode(parentObjectName) %>'>
                <bean:message key="actions.valves.deletes"/>
             </controls:action>
             <%-- cannot delete the context of the admin app  from the tool --%>

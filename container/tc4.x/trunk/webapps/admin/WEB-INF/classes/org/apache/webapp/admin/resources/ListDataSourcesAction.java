@@ -90,6 +90,7 @@ import org.apache.webapp.admin.ApplicationServlet;
  * </ul>
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  * @since 4.1
  */

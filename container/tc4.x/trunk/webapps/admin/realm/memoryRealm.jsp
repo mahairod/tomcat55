@@ -20,10 +20,13 @@
 
   <bean:define id="thisObjectName" type="java.lang.String"
                name="memoryRealmForm" property="objectName"/>
+  <bean:define id="thisHostName" type="java.lang.String"
+               name="memoryRealmForm" property="hostName"/>
   <html:hidden property="parentObjectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="allowDeletion"/>
+  <html:hidden property="hostName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -45,7 +48,8 @@
             <logic:notEqual name="memoryRealmForm" property="adminAction" value="Create">
                 <logic:notEqual name="memoryRealmForm" property="allowDeletion" value="false">
                 <controls:action url='<%= "/DeleteRealm.do?select=" +
-                                        URLEncoder.encode(thisObjectName) %>'>
+                                        URLEncoder.encode(thisObjectName) +
+                                 "&host="+ URLEncoder.encode(thisHostName) %>'>
                 <bean:message key="actions.realms.delete"/>
                 </controls:action>
             </logic:notEqual>
