@@ -71,7 +71,9 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.catalina.Context;
@@ -309,21 +311,21 @@ public final class JarResources extends ResourcesBase {
 
 
     /**
-     * Returns true if a resource exists at the specified path, 
+     * Returns true if a resource exists at the specified path,
      * where <code>path</code> would be suitable for passing as an argument to
-     * <code>getResource()</code> or <code>getResourceAsStream()</code>.  
+     * <code>getResource()</code> or <code>getResourceAsStream()</code>.
      * If there is no resource at the specified location, return false.
      *
      * @param path The path to the desired resource
      */
     public boolean exists(String path) {
-        
+
 	// Look up and return the last modified time for this resource
 	String normalized = normalize(path);
 	if (normalized == null)
 	    return (false);
 	validate(normalized);
-        
+
 	ResourceBean resource = null;
 	synchronized (resourcesCache) {
 	    resource = (ResourceBean) resourcesCache.get(normalized);
@@ -332,7 +334,7 @@ public final class JarResources extends ResourcesBase {
 	    return (true);
 	else
 	    return (false);
-        
+
     }
 
 
@@ -372,11 +374,30 @@ public final class JarResources extends ResourcesBase {
 
 
     /**
+     * Return the set of context-relative paths of all available resources.
+     * Each path will begin with a "/" character.
+     */
+     public String[] getResourcePaths() {
+
+        ArrayList paths = new ArrayList();
+        // NOTE: assumes directories are included
+        synchronized (resourcesCache) {
+            Iterator names = resourcesCache.keySet().iterator();
+            while (names.hasNext())
+                paths.add((String) names.next());
+        }
+        String results[] = new String[paths.size()];
+        return ((String[]) paths.toArray(results));
+
+     }
+
+
+    /**
      * Return the creation date/time of the resource at the specified
      * path, where <code>path</code> would be suitable for passing as an
      * argument to <code>getResource()</code> or
      * <code>getResourceAsStream()</code>.  If there is no resource at the
-     * specified location, return -1. If this time is unknown, the 
+     * specified location, return -1. If this time is unknown, the
      * implementation should return getResourceModified(path).
      *
      * @param path The path to the desired resource
@@ -391,7 +412,7 @@ public final class JarResources extends ResourcesBase {
      * path, where <code>path</code> would be suitable for passing as an
      * argument to <code>getResource()</code> or
      * <code>getResourceAsStream()</code>.  If the content length
-     * of the resource can't be determined, return -1. If no content is 
+     * of the resource can't be determined, return -1. If no content is
      * available (when for exemple, the resource is a collection), return 0.
      *
      * @param path The path to the desired resource
@@ -403,7 +424,7 @@ public final class JarResources extends ResourcesBase {
 
     /**
      * Return true if the resource at the specified path is a collection. A
-     * collection is a special type of resource which has no content but 
+     * collection is a special type of resource which has no content but
      * contains child resources.
      *
      * @param path The path to the desired resource
@@ -415,9 +436,9 @@ public final class JarResources extends ResourcesBase {
 
     /**
      * Return the children of the resource at the specified path, if any. This
-     * will return null if the resource is not a collection, or if it is a 
+     * will return null if the resource is not a collection, or if it is a
      * collection but has no children.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public String[] getCollectionMembers(String path) {
@@ -428,11 +449,11 @@ public final class JarResources extends ResourcesBase {
     /**
      * Set the content of the resource at the specified path. If the resource
      * already exists, its previous content is overwritten. If the resource
-     * doesn't exist, its immediate parent collection (according to the path 
+     * doesn't exist, its immediate parent collection (according to the path
      * given) exists, then its created, and the given content is associated
      * with it. Return false if either the resource is a collection, or
      * no parent collection exist.
-     * 
+     *
      * @param path The path to the desired resource
      * @param content InputStream to the content to be set
      */
@@ -445,7 +466,7 @@ public final class JarResources extends ResourcesBase {
      * Create a collection at the specified path. A parent collection for this
      * collection must exist. Return false if a resource already exist at the
      * path specified, or if the parent collection doesn't exist.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public boolean createCollection(String path) {
@@ -456,9 +477,9 @@ public final class JarResources extends ResourcesBase {
     /**
      * Delete the specified resource. Non-empty collections cannot be deleted
      * before deleting all their member resources. Return false is deletion
-     * fails because either the resource specified doesn't exist, or the 
+     * fails because either the resource specified doesn't exist, or the
      * resource is a non-empty collection.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public boolean deleteResource(String path) {

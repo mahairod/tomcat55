@@ -75,6 +75,8 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.catalina.Context;
 
 
@@ -293,14 +295,14 @@ public final class FileResources extends ResourcesBase {
                 File currentFile = fileList[i];
                 ResourceBean newEntry = null;
                 if (currentFile.isDirectory()) {
-                    newEntry = 
-                        new DirectoryBean(normalize(normalized + "/" 
-                                                    + currentFile.getName()), 
+                    newEntry =
+                        new DirectoryBean(normalize(normalized + "/"
+                                                    + currentFile.getName()),
                                                     currentFile);
                 } else {
-                    newEntry = 
-                        new ResourceBean(normalize(normalized + "/" 
-                                                   + currentFile.getName()), 
+                    newEntry =
+                        new ResourceBean(normalize(normalized + "/"
+                                                   + currentFile.getName()),
                                                    currentFile);
                 }
                 directory.addResource(newEntry);
@@ -342,15 +344,15 @@ public final class FileResources extends ResourcesBase {
 
 
     /**
-     * Returns true if a resource exists at the specified path, 
+     * Returns true if a resource exists at the specified path,
      * where <code>path</code> would be suitable for passing as an argument to
-     * <code>getResource()</code> or <code>getResourceAsStream()</code>.  
+     * <code>getResource()</code> or <code>getResourceAsStream()</code>.
      * If there is no resource at the specified location, return false.
      *
      * @param path The path to the desired resource
      */
     public boolean exists(String path) {
-        
+
         String normalized = normalize(path);
 	if (normalized == null) {
             //            if (debug >= 1)
@@ -364,7 +366,7 @@ public final class FileResources extends ResourcesBase {
             //                log("exists(" + path + ") --> IAE");
             throw e;
         }
-        
+
 	File file = new File(base, normalized.substring(1));
         if (file != null) {
             //            if (debug >= 1)
@@ -376,7 +378,7 @@ public final class FileResources extends ResourcesBase {
             //                log("exists(" + path + ") --> NO FILE");
             return (false);
         }
-        
+
     }
 
 
@@ -412,14 +414,29 @@ public final class FileResources extends ResourcesBase {
 
 
     /**
+     * Return the set of context-relative paths of all available resources.
+     * Each path will begin with a "/" character.
+     */
+     public String[] getResourcePaths() {
+
+        ArrayList paths = new ArrayList();
+        paths.add("/"); // NOTE: Assumes directories are included
+        appendResourcePaths(paths, "", base);
+        String results[] = new String[paths.size()];
+        return (results);
+
+     }
+
+
+    /**
      * Return the creation date/time of the resource at the specified
      * path, where <code>path</code> would be suitable for passing as an
      * argument to <code>getResource()</code> or
      * <code>getResourceAsStream()</code>.  If there is no resource at the
-     * specified location, return -1. If this time is unknown, the 
+     * specified location, return -1. If this time is unknown, the
      * implementation should return getResourceModified(path).
      * <p>
-     * <strong>IMPLEMENTATION NOTE</strong>: The creation date of a file 
+     * <strong>IMPLEMENTATION NOTE</strong>: The creation date of a file
      * shouldn't change except if the file is deleted and the recreated, so
      * this method uses the cache.
      *
@@ -449,7 +466,7 @@ public final class FileResources extends ResourcesBase {
      * path, where <code>path</code> would be suitable for passing as an
      * argument to <code>getResource()</code> or
      * <code>getResourceAsStream()</code>.  If the content length
-     * of the resource can't be determined, return -1. If no content is 
+     * of the resource can't be determined, return -1. If no content is
      * available (when for exemple, the resource is a collection), return 0.
      *
      * @param path The path to the desired resource
@@ -469,20 +486,20 @@ public final class FileResources extends ResourcesBase {
         if (resource != null) {
             return (resource.getSize());
         }
-        
+
         // No entry was found in the cache
 	File file = file(normalized);
 	if (file != null)
 	    return (file.length());
 	else
 	    return (-1L);
-        
+
     }
 
 
     /**
      * Return true if the resource at the specified path is a collection. A
-     * collection is a special type of resource which has no content but 
+     * collection is a special type of resource which has no content but
      * contains child resources.
      *
      * @param path The path to the desired resource
@@ -499,15 +516,15 @@ public final class FileResources extends ResourcesBase {
 	    return (file.isDirectory());
 	else
 	    return (false);
-        
+
     }
 
 
     /**
      * Return the children of the resource at the specified path, if any. This
-     * will return null if the resource is not a collection, or if it is a 
+     * will return null if the resource is not a collection, or if it is a
      * collection but has no children.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public String[] getCollectionMembers(String path) {
@@ -534,16 +551,16 @@ public final class FileResources extends ResourcesBase {
     /**
      * Set the content of the resource at the specified path. If the resource
      * already exists, its previous content is overwritten. If the resource
-     * doesn't exist, its immediate parent collection (according to the path 
+     * doesn't exist, its immediate parent collection (according to the path
      * given) exists, then its created, and the given content is associated
      * with it. Return false if either the resource is a collection, or
      * no parent collection exist.
-     * 
+     *
      * @param path The path to the desired resource
      * @param content InputStream to the content to be set
      */
     public boolean setResource(String path, InputStream content) {
-        
+
         String normalized = normalize(path);
 	if (normalized == null)
 	    return (false);
@@ -552,9 +569,9 @@ public final class FileResources extends ResourcesBase {
 	File file = new File(base, normalized.substring(1));
         //if ((file.exists()) && (file.isDirectory()))
         //return (false);
-        
+
         OutputStream os = null;
-        
+
         try {
             os = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
@@ -562,7 +579,7 @@ public final class FileResources extends ResourcesBase {
 	} catch (IOException e) {
 	  return (false);
         }
-        
+
         try {
             byte[] buffer = new byte[BUFFER_SIZE];
             while (true) {
@@ -574,21 +591,21 @@ public final class FileResources extends ResourcesBase {
         } catch (IOException e) {
             return (false);
         }
-        
+
         try {
             os.close();
         } catch (IOException e) {
             return (false);
         }
-        
+
         try {
             content.close();
         } catch (IOException e) {
             return (false);
         }
-        
+
         return (true);
-        
+
     }
 
 
@@ -596,7 +613,7 @@ public final class FileResources extends ResourcesBase {
      * Create a collection at the specified path. A parent collection for this
      * collection must exist. Return false if a resource already exist at the
      * path specified, or if the parent collection doesn't exist.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public boolean createCollection(String path) {
@@ -618,9 +635,9 @@ public final class FileResources extends ResourcesBase {
     /**
      * Delete the specified resource. Non-empty collections cannot be deleted
      * before deleting all their member resources. Return false is deletion
-     * fails because either the resource specified doesn't exist, or the 
+     * fails because either the resource specified doesn't exist, or the
      * resource is a non-empty collection.
-     * 
+     *
      * @param path The path to the desired resource
      */
     public boolean deleteResource(String path) {
@@ -642,6 +659,27 @@ public final class FileResources extends ResourcesBase {
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Append resource paths for files in the specified directory to the
+     * list we are accumulating.
+     *
+     * @param paths The list containing our accumulated paths
+     * @param path Context-relative path for this directory
+     * @param dir File object for this directory
+     */
+    private void appendResourcePaths(List paths, String path, File dir) {
+
+        String names[] = dir.list();
+        for (int i = 0; i < names.length; i++) {
+            paths.add(path + "/" + names[i]);
+            File file = new File(dir, names[i]);        // Assume dirs included
+            if (file.isDirectory())
+                appendResourcePaths(paths, path + "/" + names[i], file);
+        }
+
+    }
 
 
     /**
