@@ -169,7 +169,7 @@
     <!-- Build Coyote JK2 documentation -->
     <mkdir     dir="${webapps.build}/${webapp.name}/jk2"/>
     <mkdir     dir="${webapps.build}/${webapp.name}/jk2/printer"/>
-    <ant dir="${tomcat-jk.home}/xdocs" />
+    <ant dir="${tomcat-jk.home}/xdocs" >
        <property name="build.dir" value="${webapps.build}/${webapp.name}" />
        <property name="dist.name" value="jk2" />
     </ant>
