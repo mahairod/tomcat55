@@ -233,6 +233,9 @@
         <equals arg1="${jdk.1.3.present}" arg2="true" />
       </or>
     </condition>
+<!-- Uncomment this to compile the SSI code
+    <property name="compile.ssi" value="true"/>
+-->
     <condition property="compile.tyrex">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -417,6 +420,7 @@
     <echo message="compile.jta=${compile.jta}" />
     <echo message="compile.junit=${compile.junit}" />
     <echo message="compile.ldap=${compile.ldap}" />
+    <echo message="compile.ssi=${compile.ssi}" />
     <echo message="compile.tyrex=${compile.tyrex}" />
 
     <echo message="--- Distribution flags ---" />
@@ -568,6 +572,10 @@
        unless="compile.jmx"/>
       <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
        unless="compile.jsse"/>
+      <exclude name="org/apache/catalina/servlets/SsiInvokerServlet.java"
+       unless="compile.ssi"/>
+      <exclude name="org/apache/catalina/util/ssi/**"
+       unless="compile.ssi"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"
        unless="compile.jsse"/>
       <exclude name="org/apache/naming/factory/MailSessionFactory.java"
