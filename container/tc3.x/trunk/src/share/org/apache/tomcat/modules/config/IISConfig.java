@@ -333,7 +333,7 @@ public class IISConfig extends BaseJkConfig  {
     {
         if( debug > 0 )
             log( "Adding extension map for " + ctxPath + "/*." + ext );
-	uri_worker.println(ctxPath + "/*." + ext + " " + jkProto);
+	uri_worker.println(ctxPath + "/*." + ext + "=$(default.worker)");
         return true;
     }
 
