@@ -84,7 +84,7 @@ public class JspFactoryImpl extends JspFactory {
     static {
 	try {
 	    lineSeparator =  System.getProperty("line.separator");
-	} catch( Exception ex ) {
+	} catch( RuntimeException ex ) {
 	    lineSeparator="\r\n";
 	}
 	// This whole things allows us to set the writer line
@@ -124,10 +124,6 @@ public class JspFactoryImpl extends JspFactory {
 
     public void releasePageContext(PageContext pc) {
 	if( pc==null ) return;
-	JspWriterImpl out=(JspWriterImpl)pc.getOut();
-	if( out!=null ) {
-	    out.flushBuffer();
-	}
 	pc.release();
 	if( usePool) {
 	    pool.put( pc );
