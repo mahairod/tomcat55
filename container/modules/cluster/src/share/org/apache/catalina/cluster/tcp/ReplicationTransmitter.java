@@ -111,7 +111,7 @@ public class ReplicationTransmitter
         java.util.Iterator i = map.entrySet().iterator();
         while ( i.hasNext() )
         {
-            IDataSender sender = (IDataSender)((java.util.HashMap.Entry)i.next()).getValue();
+            IDataSender sender = (IDataSender)((java.util.Map.Entry)i.next()).getValue();
             if ( sender.isConnected() )
             {
                 try { sender.disconnect(); } catch ( Exception x ){}
@@ -125,7 +125,7 @@ public class ReplicationTransmitter
         java.util.Vector v = new java.util.Vector();
         while ( i.hasNext() )
         {
-            IDataSender sender = (IDataSender)((java.util.HashMap.Entry)i.next()).getValue();
+            IDataSender sender = (IDataSender)((java.util.Map.Entry)i.next()).getValue();
             if ( sender!=null) v.addElement(sender);
         }
         IDataSender[] result = new IDataSender[v.size()];
@@ -149,7 +149,7 @@ public class ReplicationTransmitter
         byte[] data = XByteBuffer.createDataPackage(indata);
         while ( i.hasNext() )
         {
-            IDataSender sender = (IDataSender)((java.util.HashMap.Entry)i.next()).getValue();
+            IDataSender sender = (IDataSender)((java.util.Map.Entry)i.next()).getValue();
             try
             {
                 if (!sender.isConnected())
