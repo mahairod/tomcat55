@@ -215,7 +215,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Add a new JspServletWrapper.
      *
-     * @param jspUri of JSP
+     * @param jspUri JSP URI
      * @param jsw Servlet wrapper for JSP
      */
     public void addWrapper(String jspUri, JspServletWrapper jsw) {
@@ -236,7 +236,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Remove a  JspServletWrapper.
      *
-     * @param jspUri of JspServletWrapper to remove
+     * @param jspUri JSP URI of JspServletWrapper to remove
      */
     public void removeWrapper(String jspUri) {
         jsps.remove(jspUri);

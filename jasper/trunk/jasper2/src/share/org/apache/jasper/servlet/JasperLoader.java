@@ -199,7 +199,7 @@ public class JasperLoader extends URLClassLoader {
      * a web application context, we just return our preset
      * PermissionCollection for the web app context.
      *
-     * @param codeSource where the code was loaded from
+     * @param codeSource Code source where the code was loaded from
      * @return PermissionCollection for CodeSource
      */
     public final PermissionCollection getPermissions(CodeSource codeSource) {
