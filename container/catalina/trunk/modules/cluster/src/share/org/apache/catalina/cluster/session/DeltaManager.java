@@ -750,7 +750,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 session.resetDeltaRequest();
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString(
-                            "deltaManager.createMessage.deltaRequest",
+                            "deltaManager.createMessage.delta",
                             getName(), sessionId));
                 }
             } else if (!session.isPrimarySession()) {
