@@ -115,16 +115,15 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
      * Stores a mapping from the given EL function prefix and name to 
      * the given Java method.
      *
-     * @param prefix The EL function prefix
-     * @param fnName The EL function name
+     * @param fnQName The EL function qualified name (including prefix)
      * @param c The class containing the Java method
      * @param methodName The name of the Java method
      * @param args The arguments of the Java method
      * @throws RuntimeException if no method with the given signature
      *     could be found.
      */
-    public void mapFunction( String prefix, String fnName,
-        final Class c, final String methodName, final Class[] args ) 
+    public void mapFunction(String fnQName, final Class c,
+			    final String methodName, final Class[] args ) 
     {
 	java.lang.reflect.Method method;
         if (System.getSecurityManager() != null){
@@ -137,18 +136,20 @@ public final class ProtectedFunctionMapper implements FunctionMapper {
                 });      
             } catch (PrivilegedActionException ex){
                 throw new RuntimeException(
-                    "Invalid function mapping - no such method: " + ex.getException().getMessage());               
+                    "Invalid function mapping - no such method: "
+		    + ex.getException().getMessage());               
             }
         } else {
              try {
                 method = c.getDeclaredMethod(methodName, args);
             } catch( NoSuchMethodException e ) {
                 throw new RuntimeException(
-                    "Invalid function mapping - no such method: " + e.getMessage());
+                    "Invalid function mapping - no such method: "
+		    + e.getMessage());
             }
         }
 
-	this.fnmap.put( prefix + ":" + fnName, method );
+	this.fnmap.put(fnQName, method );
     }
 
     /**

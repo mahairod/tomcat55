@@ -448,8 +448,7 @@ class Validator {
 	    this.err = compiler.getErrorDispatcher();
 	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
 	    this.loader = compiler.getCompilationContext().getClassLoader();
-            this.functionMapper = new ValidatorFunctionMapper( this.pageInfo, 
-                this.err, this.loader );
+	    this.functionMapper = pageInfo.getFunctionMapper();
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
@@ -1268,96 +1267,6 @@ class Validator {
 	if (errMsg != null) {
             errDisp.jspError(errMsg.toString());
 	}
-    }
-   
-    /**
-     * A Function Mapper to be used by the validator to help in parsing
-     * EL Expressions.  
-     */
-    private static class ValidatorFunctionMapper 
-        implements FunctionMapper
-    {
-        private PageInfo pageInfo;
-        private ErrorDispatcher err;
-        private ClassLoader loader;
-
-        /**
-         * HashMap of cached functions that we already looked up.
-         * Key = prefix, value = HashMap, where key = localName,
-         * value = Method.
-         */
-        private HashMap cachedFunctions = new HashMap();
-        
-        public ValidatorFunctionMapper( PageInfo pageInfo, 
-            ErrorDispatcher err, ClassLoader loader ) 
-        {
-            this.pageInfo = pageInfo;
-            this.err = err;
-	    this.loader = loader;
-        }
-        
-        public Method resolveFunction( String prefix, String localName ) {
-            boolean cached = false;
-            Method result = null;
-            
-            // Look up entry in cache:
-            HashMap cachedMethods = (HashMap)this.cachedFunctions.get( prefix );
-            if( cachedMethods != null ) {
-                if( cachedMethods.containsKey( localName ) ) {
-                    result = (Method)cachedMethods.get( localName );
-                    cached = true;
-                }
-            }
-            
-            // If not cached, look it up:
-            if( !cached ) {
-                Hashtable taglibraries = pageInfo.getTagLibraries();
-                TagLibraryInfo info = 
-                    (TagLibraryInfo)taglibraries.get( prefix );
-                if( info != null ) {
-                    FunctionInfo fnInfo = 
-                        (FunctionInfo)info.getFunction( localName );
-                    if( fnInfo != null ) {
-                        String clazz = fnInfo.getFunctionClass();
-                        try {
-                            JspUtil.FunctionSignature functionSignature = 
-                                new JspUtil.FunctionSignature( 
-                                fnInfo.getFunctionSignature(),
-                                info.getShortName(), this.err, this.loader );
-                            Class c = Class.forName( clazz );
-                            result = c.getDeclaredMethod( 
-                                functionSignature.getMethodName(),
-                                functionSignature.getParameterTypes() );
-                        }
-                        catch( JasperException e ) {
-                            // return null.
-                            // XXX - If the EL API evolves to allow for
-                            // an exception to be thrown, we should provide
-                            // details here.
-                        }
-                        catch( ClassNotFoundException e ) {
-                            // return null.
-                            // XXX - See above comment regarding detailed
-                            // error reporting.
-                        }
-                        catch( NoSuchMethodException e ) {
-                            // return null.
-                            // XXX - See above comment regarding detailed
-                            // error reporting.
-                        }
-                    }
-                }
-                
-                // Store result in cache:
-                if( cachedMethods == null ) {
-                    cachedMethods = new HashMap();
-                    this.cachedFunctions.put( prefix, cachedMethods );
-                }
-                cachedMethods.put( localName, result );
-            }
-            
-            return result;
-        }
     }
 }
 

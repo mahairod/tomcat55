@@ -613,66 +613,42 @@ class Generator {
     private void generateELFunctionMap() 
         throws JasperException
     {
-        Hashtable taglibs = pageInfo.getTagLibraries();
-        Iterator iter = taglibs.keySet().iterator();
-        boolean fnPresent = false;
-        
-        // Check to see if at least one function is present.
-        while( iter.hasNext() ) {
-            String key = (String)iter.next();
-            TagLibraryInfo tli = (TagLibraryInfo)taglibs.get( key );
-            if( tli.getFunctions() != null && tli.getFunctions().length > 0 ) {
-                fnPresent = true;
-                break;
-            }
-        }
-        
+        FunctionMapperImpl fnMap = pageInfo.getFunctionMapper();
+
         out.printil("private static org.apache.jasper.runtime.ProtectedFunctionMapper _jspx_fnmap;");
-        if( fnPresent ) {
-            iter = taglibs.keySet().iterator();
+        if (!fnMap.isEmpty()) {
+            Iterator iter = fnMap.keySet().iterator();
             out.println();
             out.printil("static {");
             out.pushIndent();
 	    out.printil("_jspx_fnmap = org.apache.jasper.runtime.ProtectedFunctionMapper.getInstance();");
-            while( iter.hasNext() ) {
-                String key = (String)iter.next();
-                TagLibraryInfo tli = (TagLibraryInfo)taglibs.get( key );
-                FunctionInfo[] fnInfo = tli.getFunctions();
-                String fnPrefix = tli.getPrefixString();
-                out.printil( "// Functions for " + tli.getShortName() );
-                for( int i = 0; i < fnInfo.length; i++ ) {
-		    out.printin("_jspx_fnmap.mapFunction(");
-		    out.print(quote(fnPrefix));
-                    out.print(", ");
-		    out.print(quote(fnInfo[i].getName()));
-                    out.print(", ");
-                    out.print(fnInfo[i].getFunctionClass() + ".class, ");
-                    String fnSignature = fnInfo[i].getFunctionSignature();
-                    JspUtil.FunctionSignature functionSignature = 
-                        new JspUtil.FunctionSignature( fnSignature, 
-                        tli.getShortName(), err, ctxt.getClassLoader() );
-                    out.print( quote( functionSignature.getMethodName() ) );
-                    out.print(", ");
-                    Class[] args = functionSignature.getParameterTypes();
-		    if (args != null) {
-			out.print("new Class[] {" );
-			for( int j = 0; j < args.length; j++ ) {
-			    out.print( args[j].getName() + ".class" );
-			    if( j < (args.length - 1) ) {
-				out.print( ", " );
-			    }
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+		out.printin("_jspx_fnmap.mapFunction(");
+		out.print(quote(key));
+		out.print(", ");
+		out.print(fnMap.getFunctionClass(key) + ".class, ");
+		out.print(quote(fnMap.getMethodName(key)));
+		out.print(", ");
+		Class[] args = fnMap.getParameterTypes(key);
+		if (args != null) {
+		    out.print("new Class[] {" );
+		    for( int j = 0; j < args.length; j++ ) {
+			out.print( args[j].getName() + ".class" );
+			if( j < (args.length - 1) ) {
+			    out.print( ", " );
 			}
-			out.print("} ");
-		    } else {
-			out.print("null");
 		    }
-                    out.println(");");
-                }
-            }
-	    out.popIndent();
-            out.printil("}");
-            out.println();
-        }
+		    out.print("} ");
+		} else {
+		    out.print("null");
+		}
+		out.println(");");
+	    }
+	}
+	out.popIndent();
+	out.printil("}");
+	out.println();
     }
     
     /**

@@ -63,12 +63,9 @@ package org.apache.jasper.compiler;
 import java.net.URL;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.NoSuchElementException;
 import java.util.Vector;
-import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -629,117 +626,6 @@ public class JspUtil {
      */
     public static String nextTemporaryVariableName() {
         return Constants.TEMP_VARIABLE_NAME_PREFIX + (tempSequenceNumber++);
-    }
-    
-    /**
-     * Parses and encapsulates a function signature, as would appear in
-     * a TLD.
-     */
-    public static class FunctionSignature {
-        private String returnType;
-        private String methodName;
-        private Class[] parameterTypes;
-        
-        /**
-         * Parses a function signature, as would appear in the TLD
-         *
-         * @param signature The signature to parse
-         * @param tagName Name of tag, for error messages.
-         * @throws JasperException If an error occurred while parsing the 
-         *     signature.
-         */
-        public FunctionSignature( String signature, String tagName,
-            ErrorDispatcher err, ClassLoader loader )
-            throws JasperException
-        {
-            try {
-                // Parse function signature, assuming syntax:
-                // <return-type> S <method-name> S? '('
-                // ( <arg-type> ( ',' <arg-type> )* )? ')'
-                String ws = " \t\n\r";
-                StringTokenizer sigTokenizer = new StringTokenizer( 
-                    signature, ws + "(),", true);
-
-                // Return type:
-                this.returnType = sigTokenizer.nextToken();
-
-                // Skip whitespace and read <method-name>:
-                do {
-                    this.methodName = sigTokenizer.nextToken();
-                } while( ws.indexOf( this.methodName ) != -1 );
-
-                // Skip whitespace and read '(':
-                String paren;
-                do {
-                    paren = sigTokenizer.nextToken();
-                } while( ws.indexOf( paren ) != -1 );
-
-                if( !paren.equals( "(" ) ) {
-                    err.jspError("jsp.error.tld.fn.invalid.signature.parenexpected",
-				 tagName, this.methodName);
-                }
-
-                // ( <arg-type> S? ( ',' S? <arg-type> S? )* )? ')'
-
-                // Skip whitespace and read <arg-type>:
-                String argType;
-                do {
-                    argType = sigTokenizer.nextToken();
-                } while( ws.indexOf( argType ) != -1 );
-
-                if( !argType.equals( ")" ) ) {
-                    ArrayList parameterTypes = new ArrayList();
-                    do {
-                        if( ",(".indexOf( argType ) != -1 ) {
-                            err.jspError("jsp.error.tld.fn.invalid.signature",
-					 tagName, this.methodName);
-                        }
-
-                        parameterTypes.add(toClass(argType, loader));
-
-                        String comma;
-                        do {
-                            comma = sigTokenizer.nextToken();
-                        } while( ws.indexOf( comma ) != -1 );
-
-                        if( comma.equals( ")" ) ) {
-                            break;
-                        }
-                        if( !comma.equals( "," ) ) {
-                            err.jspError("jsp.error.tld.fn.invalid.signature.commaexpected",
-					 tagName, this.methodName);
-                        }
-
-                        // <arg-type>
-                        do {
-                            argType = sigTokenizer.nextToken();
-                        } while( ws.indexOf( argType ) != -1 );
-                    } while( true );
-                    this.parameterTypes = (Class[])parameterTypes.toArray( 
-                        new Class[parameterTypes.size()] );
-                }
-            }
-            catch( NoSuchElementException e ) {
-                err.jspError("jsp.error.tld.fn.invalid.signature",
-			     tagName, this.methodName);
-            }
-            catch( ClassNotFoundException e ) {
-                err.jspError("jsp.error.tld.fn.invalid.signature.classnotfound",
-			     e.getMessage(), tagName, this.methodName);
-            }
-        }
-        
-        public String getReturnType() {
-            return this.returnType;
-        }
-        
-        public String getMethodName() {
-            return this.methodName;
-        }
-        
-        public Class[] getParameterTypes() {
-            return this.parameterTypes;
-        }    
     }
 
     public static String coerceToPrimitiveBoolean(String s,

@@ -77,6 +77,7 @@ class PageInfo {
 
     private BeanRepository beanRepository;
     private Hashtable tagLibraries;
+    private FunctionMapperImpl funcMap;
 
     private String language = "java";
     private String xtends = Constants.JSP_SERVLET_BASE;
@@ -373,5 +374,13 @@ class PageInfo {
 
     public void setOmitXmlDecl(String omit) {
 	omitXmlDecl = omit;
+    }
+
+    public void setFunctionMapper(FunctionMapperImpl map) {
+	this.funcMap = map;
+    }
+
+    public FunctionMapperImpl getFunctionMapper() {
+	return this.funcMap;
     }
 }

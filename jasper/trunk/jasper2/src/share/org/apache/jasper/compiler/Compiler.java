@@ -249,6 +249,10 @@ public class Compiler {
 	    return;
 	}
 
+	// Generate FunctionMapper (used for validation of EL expressions and
+	// code generation)
+	pageInfo.setFunctionMapper(new FunctionMapperImpl(this));
+
 	// Validate and process attributes
 	Validator.validate(this, pageNodes);
 
