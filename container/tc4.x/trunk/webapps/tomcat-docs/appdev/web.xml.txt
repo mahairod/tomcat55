@@ -55,7 +55,7 @@
          makes relative references to images and other resources
          required by your servlet more complicated, so defining
          all of your servlets (and defining a mapping to them with
-         a <servlet-mapping> element) is recommended.
+         a servlet-mapping element) is recommended.
 
          Servlet initialization parameters can be retrieved in a
          servlet or JSP page by calling:
