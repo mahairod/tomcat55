@@ -17,6 +17,7 @@
 
 package org.apache.naming;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import javax.naming.Context;
@@ -65,7 +66,7 @@ public class NamingContext implements Context {
      */
     public NamingContext(Hashtable env, String name) 
         throws NamingException {
-        this.bindings = new Hashtable();
+        this.bindings = new HashMap();
         this.env = new Hashtable();
         // FIXME ? Could be put in the environment ?
         this.name = name;
@@ -83,7 +84,7 @@ public class NamingContext implements Context {
     /**
      * Builds a naming context using the given environment.
      */
-    public NamingContext(Hashtable env, String name, Hashtable bindings) 
+    public NamingContext(Hashtable env, String name, HashMap bindings) 
         throws NamingException {
         this(env, name);
         this.bindings = bindings;
@@ -108,7 +109,7 @@ public class NamingContext implements Context {
     /**
      * Bindings in this Context.
      */
-    protected Hashtable bindings;
+    protected HashMap bindings;
 
 
     /**
@@ -334,7 +335,7 @@ public class NamingContext implements Context {
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
             name = name.getSuffix(1);
         if (name.isEmpty()) {
-            return new NamingContextEnumeration(bindings.elements());
+            return new NamingContextEnumeration(bindings.values().iterator());
         }
         
         NamingEntry entry = (NamingEntry) bindings.get(name.get(0));
@@ -386,7 +387,7 @@ public class NamingContext implements Context {
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
             name = name.getSuffix(1);
         if (name.isEmpty()) {
-            return new NamingContextBindingsEnumeration(bindings.elements());
+            return new NamingContextBindingsEnumeration(bindings.values().iterator());
         }
         
         NamingEntry entry = (NamingEntry) bindings.get(name.get(0));

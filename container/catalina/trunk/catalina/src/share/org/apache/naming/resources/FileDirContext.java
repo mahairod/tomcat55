@@ -22,10 +22,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
@@ -305,9 +305,7 @@ public class FileDirContext extends BaseDirContext {
             throw new NamingException
                 (sm.getString("resources.notFound", name));
 
-        Vector entries = list(file);
-
-        return new NamingContextEnumeration(entries);
+        return new NamingContextEnumeration(list(file).iterator());
 
     }
 
@@ -334,9 +332,7 @@ public class FileDirContext extends BaseDirContext {
             throw new NamingException
                 (sm.getString("resources.notFound", name));
 
-        Vector entries = list(file);
-
-        return new NamingContextBindingsEnumeration(entries);
+        return new NamingContextBindingsEnumeration(list(file).iterator());
 
     }
 
@@ -878,9 +874,9 @@ public class FileDirContext extends BaseDirContext {
      * @param file Collection
      * @return Vector containg NamingEntry objects
      */
-    protected Vector list(File file) {
+    protected ArrayList list(File file) {
 
-        Vector entries = new Vector();
+        ArrayList entries = new ArrayList();
         if (!file.isDirectory())
             return entries;
         String[] names = file.list();
@@ -909,7 +905,7 @@ public class FileDirContext extends BaseDirContext {
                 object = new FileResource(currentFile);
             }
             entry = new NamingEntry(names[i], object, NamingEntry.ENTRY);
-            entries.addElement(entry);
+            entries.add(entry);
 
         }
 
