@@ -837,9 +837,11 @@ public class JspC implements Options {
                 clctxt.setServletPackageName(targetPackage);
             }
 
+            originalClassLoader = Thread.currentThread().getContextClassLoader();
             if( loader==null ) {
-                originalClassLoader = initClassLoader( clctxt );
+                initClassLoader( clctxt );
             }
+            Thread.currentThread().setContextClassLoader(loader);
 
             clctxt.setClassLoader(loader);
             clctxt.setClassPath(classPath);
@@ -1096,7 +1098,7 @@ public class JspC implements Options {
      * @return The original classloader before modifying
      * @throws IOException If an error occurs
      */
-    private ClassLoader initClassLoader(JspCompilationContext clctxt)
+    private void initClassLoader(JspCompilationContext clctxt)
         throws IOException {
 
         classPath = getClassPath();
@@ -1174,10 +1176,6 @@ public class JspC implements Options {
         urls.toArray(urlsA);
         loader = new URLClassLoader(urlsA, this.getClass().getClassLoader());
 
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(loader);
-
-        return originalClassLoader;
     }
 
     /**
