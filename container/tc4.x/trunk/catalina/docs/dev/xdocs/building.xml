@@ -205,23 +205,23 @@
 
   <p>After downloading and installing the Tomcat source code, and all of the
   prerequisites listed above, you can build Tomcat by executing the following
-  commands (assuming that TOMCAT_HOME is an environment variable containing
+  commands (assuming that CATALINA_HOME is an environment variable containing
   the path to the Tomcat 4.0 source repository directory).</p>
 
   <p>On UNIX platforms:</p>
   <source>
-  cd $TOMCAT_HOME
+  cd $CATALINA_HOME
   ./build.sh
   </source>
 
   <p>On Windows platforms:</p>
   <source>
-  cd %TOMCAT_HOME%
+  cd %CATALINA_HOME%
   build
   </source>
 
   <p>On either platform, this script will use the Ant build tool to create
-  a runnable version of Tomcat 4.0 in the <code>TOMCAT_HOME/build</code>
+  a runnable version of Tomcat 4.0 in the <code>CATALINA_HOME/build</code>
   directory on your computer.</p>
 
 </section>
@@ -230,62 +230,62 @@
 <section name="Executing and Testing Your Build">
 
   <p>To execute Tomcat once you have built it, issue one of the following
-  commands (assuming that TOMCAT_HOME is an environment variable containing
+  commands (assuming that CATALINA_HOME is an environment variable containing
   the path to the Tomcat 4.0 source repository directory).</p>
 
   <p>On UNIX platforms:</p>
   <source>
-  $TOMCAT_HOME/build/bin/startup.sh
+  $CATALINA_HOME/build/bin/startup.sh
   </source>
 
   <p>On Windows platforms:</p>
   <source>
-  %TOMCAT_HOME%\build\bin\startup
+  %CATALINA_HOME%\build\bin\startup
   </source>
 
   <p>To shut down Tomcat once you have started it, issue one of the following
-  commands (assuming that TOMCAT_HOME is an environment variable containing
+  commands (assuming that CATALINA_HOME is an environment variable containing
   the path to the Tomcat 4.0 source repository directory).</p>
 
   <p>On UNIX platforms:</p>
   <source>
-  $TOMCAT_HOME/build/bin/shutdown.sh
+  $CATALINA_HOME/build/bin/shutdown.sh
   </source>
 
   <p>On Windows platforms:</p>
   <source>
-  %TOMCAT_HOME%\build\bin\shutdown
+  %CATALINA_HOME%\build\bin\shutdown
   </source>
 
   <p>You can also compile and install the unit test suite by executing one
-  of the following commands (assuming TOMCAT_HOME is an environment variable
+  of the following commands (assuming CATALINA_HOME is an environment variable
   containing the path to the Tomcat 4.0 source repository directory).</p>
 
   <p>On UNIX platforms:</p>
   <source>
-  cd $TOMCAT_HOME/tester
+  cd $CATALINA_HOME/tester
   ./build.sh deploy-main
   </source>
 
   <p>On Windows platforms:</p>
   <source>
-  cd %TOMCAT_HOME%\tester
+  cd %CATALINA_HOME%\tester
   build deploy-main
   </source>
 
   <p>After restarting Tomcat, you can execute the unit test suite by
-  executing one of the following commands (assuming TOMCAT_HOME is an
+  executing one of the following commands (assuming CATALINA_HOME is an
   environment variable containing the path to the Tomcat 4.0 source
   repository directory).</p>
 
   <p>On UNIX platforms:</p>
   <source>
-  $TOMCAT_HOME/build/bin/tester.sh
+  $CATALINA_HOME/build/bin/tester.sh
   </source>
 
   <p>On Windows platforms:</p>
   <source>
-  %TOMCAT_HOME%\build\bin\tester
+  %CATALINA_HOME%\build\bin\tester
   </source>
 
 </section>
@@ -295,23 +295,23 @@
 
   <p>To create a complete binary distribution of Tomcat 4.0 (such as for a
   nightly build or a release), execute one of the following commands
-  (assuming TOMCAT_HOME is an environment variable containing the path to
+  (assuming CATALINA_HOME is an environment variable containing the path to
   the Tomcat 4.0 source repository directory).</p>
 
   <p>On UNIX platforms:</p>
   <source>
-  cd $TOMCAT_HOME
+  cd $CATALINA_HOME
   ./build.sh dist
   </source>
 
   <p>On Windows platforms:</p>
   <source>
-  cd %TOMCAT_HOME%
+  cd %CATALINA_HOME%
   build dist
   </source>
 
   <p>On either platform, this will create a complete binary distribution in
-  the <code>$TOMCAT_HOME/dist</code> directory on your computer.</p>
+  the <code>$CATALINA_HOME/dist</code> directory on your computer.</p>
 
 </section>
 

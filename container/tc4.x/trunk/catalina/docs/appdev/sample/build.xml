@@ -7,7 +7,7 @@
      values for the properties that are defined below.
      In particular, it is assumed that you wish to install this
      application under context path "/${app.name}" in the Tomcat installation
-     defined by your TOMCAT_HOME environment variable.
+     defined by your CATALINA_HOME environment variable.
 -->
 
   <property name="app.name"       value="myapp"/>

@@ -125,9 +125,9 @@ it as described in <a href="deployment.html#Integration">Section 3.4</a>.
 Any of the proposed techniques can be used.  For our purposes, we will assume
 that you are using the first approach (unpacked hierarchy), because we set
 the deployment home to be an appropriate directory under the
-<code>$TOMCAT_HOME/webapps</code> directory.  With multiple developers, it
+<code>$CATALINA_HOME/webapps</code> directory.  With multiple developers, it
 is easiest to install Tomcat separately for each of them, so that they can
-have their own TOMCAT_HOME (as well as start and stop Tomcat) independently.
+have their own CATALINA_HOME (as well as start and stop Tomcat) independently.
 
 
 <!-- 5.3 Edit -->
@@ -214,12 +214,12 @@ conditional checking did not catch.
 Assuming you have integrated your application as described earlier, this
 is very simple.  Under Unix, simply execute:
 <pre>
-	$TOMCAT_HOME/bin/startup.sh
+	$CATALINA_HOME/bin/startup.sh
 </pre>
 
 <p>or, under Windows, execute:
 <pre>
-	%TOMCAT_HOME%\bin\startup
+	%CATALINA_HOME%\bin\startup
 </pre>
 
 <p>This command starts Tomcat as a background process.  Now, point your

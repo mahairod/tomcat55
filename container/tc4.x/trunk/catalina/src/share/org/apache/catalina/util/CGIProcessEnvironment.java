@@ -357,7 +357,7 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
     /**
      * Resolves core information about the cgi script. <p> Example URI:
      * <PRE> /servlet/cgigateway/dir1/realCGIscript/pathinfo1 </PRE> <ul>
-     * <LI><b>path</b> = $TOMCAT_HOME/mywebapp/dir1/realCGIscript
+     * <LI><b>path</b> = $CATALINA_HOME/mywebapp/dir1/realCGIscript
      * <LI><b>scriptName</b> = /servlet/cgigateway/dir1/realCGIscript</LI>
      * <LI><b>cgiName</b> = /dir1/realCGIscript
      * <LI><b>name</b> = realCGIscript

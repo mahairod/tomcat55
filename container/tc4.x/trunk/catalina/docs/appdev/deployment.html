@@ -144,13 +144,13 @@ A web application can be deployed in Tomcat by one of three different
 approaches:
 <ul>
 <li><i>Copy unpacked directory hierarchy into a subdirectory in directory
-    <code>$TOMCAT_HOME/webapps/</code></i>.  Tomcat will assign a context path
+    <code>$CATALINA_HOME/webapps/</code></i>.  Tomcat will assign a context path
     to your application based on the subdirectory name you choose.  We will
     use this technique in the <code>build.xml</code> file that we construct,
     because it is the quickest and easiest approach during development.
     <br><br>
 <li><i>Copy the web application archive file into directory
-    <code>$TOMCAT_HOME/webapps/</code></i>.  When Tomcat is started, it will
+    <code>$CATALINA_HOME/webapps/</code></i>.  When Tomcat is started, it will
     automatically expand the web application archive file into its unpacked
     form, and execute the application that way.  This approach would typically
     be used to install an additional application, provided by a third party
@@ -165,14 +165,14 @@ approaches:
     <code>server.xml</code> configuration file</i>.  This approach is
     described briefly below, and allows you to position the document root
     of your web application at some point other than the
-    <code>$TOMCAT_HOME/webapps/</code> directory.  Doing this requires
+    <code>$CATALINA_HOME/webapps/</code> directory.  Doing this requires
     the following steps (for Tomcat 4.0):
 </ul>
 
 <p>Adding a new <code>&lt;Context&gt;</code> entry in Tomcat's
 <code>server.xml</code> file involves the following steps (for Tomcat 4.0):
 <ul>
-<li>Open file <code>$TOMCAT_HOME/conf/server.xml</code> in an editor.
+<li>Open file <code>$CATALINA_HOME/conf/server.xml</code> in an editor.
     <br><br>
 <li>Navigate to the bottom of the file (after the last existing
     <code>&lt;Context&gt;</code> element).

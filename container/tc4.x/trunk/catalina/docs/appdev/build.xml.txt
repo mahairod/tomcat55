@@ -16,7 +16,7 @@
      build file.  The values specified can be overridden at run time by
      adding a "-Dname=value" argument to the command line that invokes Ant.
      This technique is normally used to copy the values of the ANT_HOME
-     and TOMCAT_HOME environment variables into the "ant.home" and
+     and CATALINA_HOME environment variables into the "ant.home" and
      "tomcat.home" properties, which are normally not defined explicitly.
 
      app.name          Base name of this application, used to
@@ -25,7 +25,7 @@
      deploy.home       The name of the directory into which the
                        deployment hierarchy will be created.
                        Normally, this will be the name of a
-                       subdirectory under $TOMCAT_HOME/webapps.
+                       subdirectory under $CATALINA_HOME/webapps.
 
      dist.home	       The name of the base directory in which
                        distribution files are created.
@@ -46,7 +46,7 @@
      tomcat.home       The name of the base directory in which
                        Tomcat has been installed.  This value is
                        normally set automatically from the value
-                       of the TOMCAT_HOME environment variable.
+                       of the CATALINA_HOME environment variable.
 
      In the example below, the application being developed will be deployed
      to a subdirectory named "myapp", and will therefore be accessible at:

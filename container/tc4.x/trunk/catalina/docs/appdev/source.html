@@ -211,13 +211,13 @@ that make it executable, and customized as required:
 # $Id$
 
 # Identify the custom class path components we need
-CP=$TOMCAT_HOME/lib/ant.jar:$TOMCAT_HOME/lib/servlet.jar
-CP=$CP:$TOMCAT_HOME/lib/jaxp.jar:$TOMCAT_HOME/lib/parser.jar
+CP=$CATALINA_HOME/lib/ant.jar:$CATALINA_HOME/lib/servlet.jar
+CP=$CP:$CATALINA_HOME/lib/jaxp.jar:$CATALINA_HOME/lib/parser.jar
 CP=$CP:$JAVA_HOME/lib/tools.jar
 
 # Execute ANT to perform the requested build target
 java -classpath $CP:$CLASSPATH org.apache.tools.ant.Main \
-  -Dtomcat.home=$TOMCAT_HOME "$@"
+  -Dtomcat.home=$CATALINA_HOME "$@"
 </pre>
 
 <p>On Windows-based systems, the following script should be saved as file
@@ -232,12 +232,12 @@ rem $Id$
 set _CP=%CP%
 
 rem Identify the custom class path components we need
-set CP=%TOMCAT_HOME%\lib\ant.jar;%TOMCAT_HOME%\lib\servlet.jar
-set CP=%TOMCAT_HOME%\lib\jaxp.jar;%TOMCAT_HOME%\lib\parser.jar
+set CP=%CATALINA_HOME%\lib\ant.jar;%CATALINA_HOME%\lib\servlet.jar
+set CP=%CATALINA_HOME%\lib\jaxp.jar;%CATALINA_HOME%\lib\parser.jar
 set CP=%CP%;%JAVA_HOME%\lib\tools.jar
 
 rem Execute ANT to perform the requird build target
-java -classpath %CP%;%CLASSPATH% org.apache.tools.ant.Main -Dtomcat.home=%TOMCAT_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java -classpath %CP%;%CLASSPATH% org.apache.tools.ant.Main -Dtomcat.home=%CATALINA_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 set CP=%_CP%
 set _CP=
@@ -245,7 +245,7 @@ set _CP=
 
 <p>Build script customizations you might consider include:
 <ul>
-<li>Setting the JAVA_HOME and TOMCAT_HOME environment variables (probably
+<li>Setting the JAVA_HOME and CATALINA_HOME environment variables (probably
     near the top of the script) if they are not defined already.
     <br><br>
 <li>Overriding properties defined in the <code>build.xml</code> file
