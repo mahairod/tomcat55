@@ -68,7 +68,6 @@ import java.net.URLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileNotFoundException;
-import java.io.FilePermission;
 import java.security.Permission;
 import java.util.Date;
 import java.util.Enumeration;
@@ -79,6 +78,7 @@ import javax.naming.NameClassPair;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import org.apache.naming.JndiPermission;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.ResourceAttributes;
 
@@ -105,8 +105,9 @@ public class DirContextURLConnection
         if (context == null)
             throw new IllegalArgumentException
                 ("Directory context can't be null");
-        if (System.getSecurityManager() != null)
-            this.permission = new FilePermission(url.toString(), "read");
+        if (System.getSecurityManager() != null) {
+            this.permission = new JndiPermission(url.toString());
+	}
         this.context = context;
     }
     
