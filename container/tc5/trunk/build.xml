@@ -319,6 +319,12 @@
       <include name="**" />
     </javac>
 
+    <copy todir="${jsp-examples.base}/WEB-INF/classes">
+      <fileset dir="${jsp-examples.base}/WEB-INF/src/tags">
+        <include name="**/*.class" />
+      </fileset>
+    </copy>
+
     <javac destdir="${jsp-examples.base}/WEB-INF/classes"
            optimize="off"
            debug="on" failonerror="false"
@@ -336,8 +342,10 @@
           <include name="*.jar"/>
         </fileset>
         <pathelement location="${tomcat.build}/classes"/>
+        <pathelement location="${jsp-examples.base}/WEB-INF/classes"/>
       </classpath>
       <include name="**" />
+      <exclude name="tags/**" />
     </javac>
 
     <javac destdir="${admin.base}/WEB-INF/classes"
@@ -360,7 +368,6 @@
       </classpath>
       <include name="admin/**" />
     </javac>
-
   </target>
 
   <target name="build" depends="init"
