@@ -315,6 +315,10 @@ public class JspC implements Options {
         return xpoweredBy;
     }
 
+    public void setXpoweredBy(boolean xpoweredBy) {
+        this.xpoweredBy = xpoweredBy;
+    }
+
     public boolean getErrorOnUseBeanInvalidClassAttribute() {
         return errorOnUseBeanInvalidClassAttribute;
     }
