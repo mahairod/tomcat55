@@ -76,7 +76,7 @@ goto staticClasspath
 
 :dynClasspath
 set _LIBJARS=
-for %%i in (%TOMCAT_HOME%\lib\*.jar) do call %TOMCAT_HOME%\bin\cpappend.bat %%i
+for %%i in (%TOMCAT_HOME%\lib\*.*) do call %TOMCAT_HOME%\bin\cpappend.bat %%i
 if not "%_LIBJARS%" == "" goto gotLibJars
 echo Unable to set CLASSPATH dynamically.
 if "%OS%" == "Windows_NT" goto staticClasspath
