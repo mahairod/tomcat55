@@ -38,7 +38,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
@@ -88,12 +87,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     protected Container container;
 
 
-    /**
-     * The DefaultContext with which this Manager is associated.
-     */
-    protected DefaultContext defaultContext = null;
-    
-    
     /**
      * Return the MessageDigest implementation to be used when
      * creating session identifiers.
@@ -251,30 +244,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     }
 
 
-    /**
-     * Return the DefaultContext with which this Manager is associated.
-     */
-    public DefaultContext getDefaultContext() {
-
-        return (this.defaultContext);
-
-    }
-
-
-    /**
-     * Set the DefaultContext with which this Manager is associated.
-     *
-     * @param defaultContext The newly associated DefaultContext
-     */
-    public void setDefaultContext(DefaultContext defaultContext) {
-
-        DefaultContext oldDefaultContext = this.defaultContext;
-        this.defaultContext = defaultContext;
-        support.firePropertyChange("defaultContext", oldDefaultContext, this.defaultContext);
-
-    }
-    
-    
     /** Returns the name of the implementation class.
      */
     public String getClassName() {
