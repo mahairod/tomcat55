@@ -366,6 +366,7 @@ public class CoyoteAdapter
                 // Override anything requested in the URL
                 if (!request.isRequestedSessionIdFromCookie()) {
                     // Accept only the first session id cookie
+                    convertMB(scookie.getValue());
                     request.setRequestedSessionId
                         (scookie.getValue().toString());
                     request.setRequestedSessionCookie(true);
@@ -376,6 +377,7 @@ public class CoyoteAdapter
                 } else {
                     if (!request.isRequestedSessionIdValid()) {
                         // Replace the session id until one is valid
+                        convertMB(scookie.getValue());
                         request.setRequestedSessionId
                             (scookie.getValue().toString());
                     }
@@ -432,6 +434,31 @@ public class CoyoteAdapter
             cbuf[i] = (char) (bbuf[i + start] & 0xff);
         }
         uri.setChars(cbuf, 0, bc.getLength());
+
+    }
+
+
+    /**
+     * Character conversion of the a US-ASCII MessageBytes.
+     */
+    protected void convertMB(MessageBytes mb) {
+
+        // This is of course only meaningful for bytes
+        if (mb.getType() != MessageBytes.T_BYTES)
+            return;
+        
+        ByteChunk bc = mb.getByteChunk();
+        CharChunk cc = mb.getCharChunk();
+        cc.allocate(bc.getLength(), -1);
+
+        // Default encoding: fast conversion
+        byte[] bbuf = bc.getBuffer();
+        char[] cbuf = cc.getBuffer();
+        int start = bc.getStart();
+        for (int i = 0; i < bc.getLength(); i++) {
+            cbuf[i] = (char) (bbuf[i + start] & 0xff);
+        }
+        mb.setChars(cbuf, 0, bc.getLength());
 
     }
 
