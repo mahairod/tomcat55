@@ -39,6 +39,9 @@
       <fix>
         <bug>30624</bug>: Enhanced null checking in RealmBase#findSecurityConstraints. (yoavs)
       </fix>
+      <fix>
+        Added explicit close of randomIS DataInputStream to ManagerBase for better resource handling. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
