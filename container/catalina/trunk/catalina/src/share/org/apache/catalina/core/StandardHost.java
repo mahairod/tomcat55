@@ -676,9 +676,10 @@ public class StandardHost
             try {
                 realmName=new ObjectName( domain + ":type=Realm,host=" + getName());
                 if( mserver.isRegistered(realmName ) ) {
-                    Realm nrealm = (Realm)mserver.getAttribute(realmName,
-                                                       "managedResource");
-                    setRealm(nrealm);
+                    mserver.invoke(realmName, "init", 
+                            new Object[] {},
+                            new String[] {}
+                    );            
                 }
             } catch( Throwable t ) {
                 log.debug("No realm for this host " + realmName);
