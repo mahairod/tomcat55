@@ -118,6 +118,7 @@ public final class SimplePool  {
 	synchronized( lock ) {
 	    if( current >= 0 ) {
 		item = pool[current];
+        pool[current] = null;
 		current -= 1;
 	    }
 	}
