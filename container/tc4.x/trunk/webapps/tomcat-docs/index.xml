@@ -36,6 +36,8 @@ manual is described in more detail below.</p>
 Tomcat 4, and (if you wish to) building a distribution from the source code.
 </p>
 <ul>
+<li><a href="introduction.html"><strong>Introduction</strong></a> - A
+    brief, high level, overview of Tomcat.</li>
 <li><a href="README.txt"><strong>README.txt</strong></a> - Describes the
     contents and directory structure of a Tomcat 4 binary distribution.</li>
 <li><a href="RUNNING.txt"><strong>RUNNING.txt</strong></a> - Documents the

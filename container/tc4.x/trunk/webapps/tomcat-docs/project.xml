@@ -11,8 +11,12 @@
     
     <body>
 
-    <menu name="Getting Started">
+    <menu name="Links">
         <item name="Docs Home"             href="index.html"/>
+    </menu>
+
+    <menu name="Getting Started">
+        <item name="Introduction"          href="introduction.html"/>
         <item name="READ ME"               href="README.txt"/>
         <item name="Install and Run"       href="RUNNING.txt"/>
         <item name="Building from Source"  href="BUILDING.txt"/>
