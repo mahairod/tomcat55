@@ -64,7 +64,9 @@ import org.apache.jasper34.core.*;
 
 
 /** Another implementation of Options, backed by a Properties file
- *  and with no external dependencies. 
+ *  and with no external dependencies.
+ *
+ *  You must set at least: SCRATCH_DIR
  *
  * @author Costin Manolache
  */

@@ -205,7 +205,9 @@ public class ManglerCli extends Mangler {
     private final String getInitialClassName() {
         String prefix = getPrefix(jsp.getPath());
 
-        return prefix + getBaseClassName() + Constants.JSP_TOKEN + "0";
+	System.out.println(" XXX ManglerCli prefix=" + prefix );
+        return prefix + getBaseClassName();
+	// No versioning needed + Constants.JSP_TOKEN + "0";
     }
 
     private final String getBaseClassName() {

@@ -106,6 +106,29 @@ public final class OptionsServletConfig extends Options {
 	}
 
 	public String getProperty( String s, String def ) {
+	    //	    System.out.println("GetOption: " + s + " " + def ); 
+	    // Special cases
+	    if( Options.SCRATCH_DIR.equals( s ) ) {
+		String sd=config.getInitParameter(s);
+		if( sd==null ) {
+		    File f=(File)context.getAttribute( Constants.TMP_DIR );
+		    if( f==null ) return null;
+		    sd=f.toString();
+		}
+		// Options will also try java.io.tmpdir
+		return sd;
+	    }
+	    
+	    if( Options.CLASS_PATH.equals( s ) ) {
+		String sd=config.getInitParameter(s);
+		if( sd==null ) {
+		    sd=(String)context.
+			getAttribute( Constants.SERVLET_CLASSPATH );
+		}
+		// Options will also try java.io.tmpdir
+		return sd;
+	    }
+	    
 	    String v=config.getInitParameter( s );
 	    if( v==null ) return def;
 	    return v;

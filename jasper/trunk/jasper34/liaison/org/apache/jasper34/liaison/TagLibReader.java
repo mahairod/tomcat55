@@ -117,8 +117,8 @@ public class TagLibReader {
 	this.libs=libs;
     }
     
-    public void readTagLib(TagLibraryInfoImpl tli,
-			   String prefix, String uriIn) 
+    public void readTLD(TagLibraryInfoImpl tli,
+			   String prefix, String uriIn, String jspBase) 
         throws IOException, JasperException
     {
 	tli.setURI( uriIn );
@@ -127,7 +127,7 @@ public class TagLibReader {
 
         // Try to resolve URI relative to the current JSP page
         if (!uri.startsWith("/") && isRelativeURI(uri))
-            uri = containerL.resolveRelativeUri(uri);
+            uri = containerL.resolveRelativeUri(uri, jspBase);
 
 	tli.setURI( uri ); // ?? as in the original code
 
