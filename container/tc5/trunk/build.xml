@@ -546,6 +546,12 @@
       tofile="${commons-daemon-launcher-bootstrap.class}"
     />
 
+
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-lang.loc}"/>
+      <param name="destfile" value="${commons-lang.jar}"/>
+    </antcall>
+
     <!-- commons-dbcp/pool need something different. -->
     <!-- Pool 1.0 -->
     <antcall target="downloadgz">
