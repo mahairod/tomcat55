@@ -9,7 +9,9 @@
     <menu name="Tomcat">
         <item name="Front Page"           href="/index.html"/> 
 	<item name="News &amp; Status"    href="/news.html"/>
+	<item name="Bug Database"         href="/bugreport.html"/>
 	<item name="Resources"            href="/resources.html"/>
+        <item name="IRC"                   href="/irc.html"/>
     </menu>
 
     <menu name="Documentation">
@@ -36,9 +38,7 @@
         <item name="Overview"              href="/site/getinvolved.html"/>
         <item name="CVS Repositories"      href="/site/cvsindex.html"/>
         <item name="Mailing Lists"         href="/site/mail.html"/>
-        <item name="IRC"                   href="/irc.html"/>
         <item name="Reference Library"     href="/site/library.html"/>
-        <item name="Bug Database"          href="/site/bugs.html"/>
     </menu>
 
     <menu name="Misc">
