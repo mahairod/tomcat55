@@ -327,45 +327,6 @@ public class MBeanFactory extends BaseModelMBean {
     }
 
     /**
-     * Create a new DefaultContext.
-     *
-     * @param parent MBean Name of the associated parent component
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public String createDefaultContext(String parent)
-        throws Exception {
-        // XXX FIXME
-        // Create a new StandardDefaultContext instance
-        /*
-        StandardDefaultContext context = new StandardDefaultContext();
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        Service service = getService(pname);       
-        Engine engine = (Engine) service.getContainer();
-        String hostName = pname.getKeyProperty("host");
-        if (hostName == null) { //if DefaultContext is nested in Engine
-            context.setParent(engine);
-            engine.addDefaultContext(context);
-        } else {                // if DefaultContext is nested in Host
-            Host host = (Host) engine.findChild(hostName);
-            context.setParent(host);
-            host.addDefaultContext(context);
-        }
-
-        // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("DefaultContext");
-        ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), context);
-        return (oname.toString());
-        */
-        return null;
-
-    }
-
-
-    /**
      * Create a new HttpConnector
      *
      * @param parent MBean Name of the associated parent component
