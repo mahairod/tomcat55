@@ -53,6 +53,7 @@ import org.apache.catalina.Session;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 import org.apache.naming.resources.ProxyDirContext;
@@ -455,7 +456,8 @@ public class ManagerServlet
 
         // Validate the requested context path
         if ((path == null) || path.length() == 0 || !path.startsWith("/")) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -644,7 +646,7 @@ public class ManagerServlet
 
             if (path == null || path.length() == 0 || !path.startsWith("/")) {
                 writer.println(sm.getString("managerServlet.invalidPath",
-                                            path));
+                                            RequestUtil.filter(path)));
                 return;
             }
             String displayPath = path;
@@ -724,7 +726,8 @@ public class ManagerServlet
             log("restart: Reloading web application at '" + path + "'");
 
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -773,7 +776,8 @@ public class ManagerServlet
             log("remove: Removing web application at '" + path + "'");
 
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -783,7 +787,8 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
+                writer.println(sm.getString("managerServlet.noContext",
+                                            RequestUtil.filter(displayPath)));
                 return;
             }
             // It isn't possible for the manager to remove itself
@@ -977,7 +982,8 @@ public class ManagerServlet
             log("sessions: Session information for web application at '" + path + "'");
 
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -986,7 +992,8 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
+                writer.println(sm.getString("managerServlet.noContext",
+                                            RequestUtil.filter(displayPath)));
                 return;
             }
             writer.println(sm.getString("managerServlet.sessions", displayPath));
@@ -1040,7 +1047,8 @@ public class ManagerServlet
             log("start: Starting web application at '" + path + "'");
 
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -1050,7 +1058,8 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
+                writer.println(sm.getString("managerServlet.noContext",
+                                            RequestUtil.filter(displayPath)));
                 return;
             }
             deployer.start(path);
@@ -1084,7 +1093,8 @@ public class ManagerServlet
             log("stop: Stopping web application at '" + path + "'");
 
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -1094,7 +1104,8 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
+                writer.println(sm.getString("managerServlet.noContext",
+                                            RequestUtil.filter(displayPath)));
                 return;
             }
             // It isn't possible for the manager to stop itself
@@ -1125,7 +1136,8 @@ public class ManagerServlet
             log("undeploy: Undeploying web application at '" + path + "'");
 
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
+            writer.println(sm.getString("managerServlet.invalidPath",
+                                        RequestUtil.filter(path)));
             return;
         }
         String displayPath = path;
@@ -1138,7 +1150,7 @@ public class ManagerServlet
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext",
-                                            displayPath));
+                                            RequestUtil.filter(displayPath)));
                 return;
             }
 

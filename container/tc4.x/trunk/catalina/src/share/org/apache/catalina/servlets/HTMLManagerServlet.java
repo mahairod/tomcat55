@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.DiskFileUpload;
@@ -110,7 +111,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
             message = stop(path);
         } else {
             message =
-                sm.getString("managerServlet.unknownCommand", command);
+                sm.getString("managerServlet.unknownCommand",
+                             RequestUtil.filter(command));
         }
 
         list(request, response, message);
