@@ -14,9 +14,8 @@
 
 <%@ taglib uri="/TestLib.tld" prefix="test"  %>
 <test:firstWinner winner="santosh" >
-<test:secondWinner winner="santosh" >
-<test:thirdWinner winner="craig" />
-</test:secondWinner>
+<test:secondWinner winner="santosh" />
+<test:secondWinner winner="pierre" />
 </test:firstWinner>
 
 </body>
