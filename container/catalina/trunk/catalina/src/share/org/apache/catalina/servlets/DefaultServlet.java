@@ -500,7 +500,15 @@ public class DefaultServlet
             showRequestInfo(request);
 
         // Serve the requested resource, including the data content
-        serveResource(request, response, true);
+        try {
+            serveResource(request, response, true);
+        } catch( IOException ex ) {
+            // we probably have this check somewhere else too.
+            if( ex.getMessage().indexOf("Broken pipe") >= 0 ) {
+                // ignore it.
+            }
+            throw ex;
+        }
 
     }
 
