@@ -921,8 +921,25 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        name = new ObjectName(domain + ":type=Environment,name=" +
+        Object container = 
+                environment.getNamingResources().getContainer();
+        if (container instanceof Server) {
+            name = new ObjectName(domain + ":type=Environment,name=" +
                               environment.getName());
+        } else if (container instanceof Context) {        
+            String path = ((Context)container).getPath();
+            if (path.length() < 1)
+                path = "/";
+            name = new ObjectName(domain + ":type=Environment,name=" +
+                              environment.getName() + ",path=" +
+                              path);
+        } else if (container instanceof DefaultContext) {
+            String defaultContextName = ((DefaultContext)container).getName();
+            name = new ObjectName(domain + ":type=Environment,name=" +
+                              environment.getName() + ",defaultContext=" +
+                              defaultContextName);
+        }
+        
         return (name);
 
     }
@@ -943,9 +960,28 @@ public class MBeanUtils {
 
         ObjectName name = null;
         String encodedResourceName = encodeStr(resource.getName());
-        name = new ObjectName(domain + ":type=Resource,class=" +
+        Object container = 
+                resource.getNamingResources().getContainer();
+        if (container instanceof Server) {        
+            name = new ObjectName(domain + ":type=Resource,class=" +
                               resource.getType()+",name=" + 
                               encodedResourceName);
+        } else if (container instanceof Context) {        
+            String path = ((Context)container).getPath();
+            if (path.length() < 1)
+                path = "/";
+            name = new ObjectName(domain + ":type=Resource,class=" +
+                              resource.getType()+",name=" + 
+                              encodedResourceName + ",path=" +
+                              path);
+        } else if (container instanceof DefaultContext) {
+            String defaultContextName = ((DefaultContext)container).getName();
+            name = new ObjectName(domain + ":type=Resource,class=" +
+                              resource.getType()+",name=" + 
+                              encodedResourceName + ",defaultContext=" +
+                              defaultContextName);
+        }
+        
         return (name);
 
     }
@@ -966,9 +1002,28 @@ public class MBeanUtils {
 
         ObjectName name = null;
         String encodedResourceLinkName = encodeStr(resourceLink.getName());
-        name = new ObjectName(domain + ":type=ResourceLink,class=" +
+        Object container = 
+                resourceLink.getNamingResources().getContainer();
+        if (container instanceof Server) {        
+            name = new ObjectName(domain + ":type=ResourceLink,class=" +
                               resourceLink.getType()+",name=" + 
                               encodedResourceLinkName);
+        } else if (container instanceof Context) {        
+            String path = ((Context)container).getPath();
+            if (path.length() < 1)
+                path = "/";
+            name = new ObjectName(domain + ":type=ResourceLink,class=" +
+                              resourceLink.getType()+",name=" + 
+                              encodedResourceLinkName + ",path=" +
+                              path);
+        } else if (container instanceof DefaultContext) {
+            String defaultContextName = ((DefaultContext)container).getName();
+            name = new ObjectName(domain + ":type=ResourceLink,class=" +
+                              resourceLink.getType()+",name=" + 
+                              encodedResourceLinkName + ",defaultContext=" +
+                              defaultContextName);
+        }
+        
         return (name);
 
     }   
@@ -1210,16 +1265,31 @@ public class MBeanUtils {
      * <code>Server</code> object.
      *
      * @param domain Domain in which this name is to be created
-     * @param resource The NamingResources to be named
+     * @param resources The NamingResources to be named
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
     public static ObjectName createObjectName(String domain,
-                                              NamingResources resource)
+                                              NamingResources resources)
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        name = new ObjectName(domain + ":type=NamingResources");
+        Object container = resources.getContainer();        
+        if (container instanceof Server) {        
+            name = new ObjectName(domain + ":type=NamingResources");
+        } else if (container instanceof Context) {        
+            String path = ((Context)container).getPath();
+            if (path.length() < 1)
+                path = "/";
+            name = new ObjectName(domain + ":type=NamingResources,path=" +
+                                path);
+        } else if (container instanceof DefaultContext) {
+            String defaultContextName = ((DefaultContext)container).getName();
+            name = new ObjectName(domain + 
+                                ":type=NamingResources,defaultContext=" +
+                                defaultContextName);
+        }
+        
         return (name);
 
     }
@@ -1815,14 +1885,14 @@ public class MBeanUtils {
      * Deregister the MBean for this
      * <code>NamingResources</code> object.
      *
-     * @param resource The NamingResources to be managed
+     * @param resources The NamingResources to be managed
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(NamingResources resource)
+    public static void destroyMBean(NamingResources resources)
         throws Exception {
 
-        String mname = createManagedName(resource);
+        String mname = createManagedName(resources);
         ManagedBean managed = registry.findManagedBean(mname);
         if (managed == null) {
             return;
@@ -1830,7 +1900,7 @@ public class MBeanUtils {
         String domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName oname = createObjectName(domain, resource);
+        ObjectName oname = createObjectName(domain, resources);
         mserver.unregisterMBean(oname);
 
     }

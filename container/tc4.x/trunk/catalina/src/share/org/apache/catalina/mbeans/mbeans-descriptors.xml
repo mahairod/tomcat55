@@ -1624,6 +1624,15 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="addResourceLink"
+          description="Add a resource link reference for this web application"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="resourceLinkName"
+          description="New resource reference name"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="removeEnvironment"
           description="Remove any environment entry with the specified name"
                impact="ACTION"
@@ -1638,6 +1647,15 @@
                impact="ACTION"
            returnType="void">
       <parameter name="resourceName"
+          description="Name of the resource reference to remove"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeResourceLink"
+          description="Remove any resource link reference with the specified name"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="resourceLinkName"
           description="Name of the resource reference to remove"
                  type="java.lang.String"/>
     </operation>

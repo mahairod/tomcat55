@@ -102,6 +102,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 
@@ -469,7 +470,26 @@ public class ServerLifecycleListener
 
     }
 
+    
+    /**
+     * Create the MBeans for the specified ContextResourceLink entry.
+     *
+     * @param resourceLink ContextResourceLink for which to create MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void createMBeans(ContextResourceLink resourceLink)
+        throws Exception {
 
+        // Create the MBean for the ContextResourceLink itself
+        if (debug >= 3) {
+            log("Creating MBean for ContextResourceLink " + resourceLink);
+        }
+        MBeanUtils.createMBean(resourceLink);
+
+    }
+
+    
     /**
      * Create the MBeans for the specified Engine and its nested components.
      *
@@ -619,8 +639,12 @@ public class ServerLifecycleListener
         for (int i = 0; i < cresources.length; i++) {
             createMBeans(cresources[i]);
         }
-
-        // FIXME - Add other resource types when supported by admin tool
+        
+        // Create the MBeans for each child resource link entry
+        ContextResourceLink cresourcelinks[] = resources.findResourceLinks();
+        for (int i = 0; i < cresourcelinks.length; i++) {
+            createMBeans(cresourcelinks[i]);
+        }
 
     }
 
@@ -794,6 +818,12 @@ public class ServerLifecycleListener
             MBeanUtils.destroyMBean(cLoader);
         }
 
+        // Destroy the MBeans for the NamingResources (if any)
+        NamingResources resources = context.getNamingResources();
+        if (resources != null) {
+            destroyMBeans(resources);
+        }
+        
         // deregister the MBean for the Context itself
         if (debug >= 4)
             log("Destroying MBean for Context " + context);
@@ -844,6 +874,25 @@ public class ServerLifecycleListener
     }
 
 
+    /**
+     * Deregister the MBeans for the specified ContextResourceLink entry.
+     *
+     * @param resourceLink ContextResourceLink for which to destroy MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean destruction
+     */
+    protected void destroyMBeans(ContextResourceLink resourceLink)
+        throws Exception {
+
+        // Destroy the MBean for the ContextResourceLink itself
+        if (debug >= 3) {
+            log("Destroying MBean for ContextResourceLink " + resourceLink);
+        }
+        MBeanUtils.destroyMBean(resourceLink);
+
+    }
+    
+    
     /**
      * Deregister the MBeans for the specified Engine and its nested
      * components.
@@ -959,14 +1008,18 @@ public class ServerLifecycleListener
      */
     protected void destroyMBeans(NamingResources resources) throws Exception {
 
-        // FIXME - Add other resource types when supported by admin tool
-
         // Destroy the MBeans for each child resource entry
         ContextResource cresources[] = resources.findResources();
         for (int i = 0; i < cresources.length; i++) {
             destroyMBeans(cresources[i]);
         }
-
+        
+        // Destroy the MBeans for each child resource link entry
+        ContextResourceLink cresourcelinks[] = resources.findResourceLinks();
+        for (int i = 0; i < cresourcelinks.length; i++) {
+            destroyMBeans(cresourcelinks[i]);
+        }
+        
         // Destroy the MBeans for each child environment entry
         ContextEnvironment environments[] = resources.findEnvironments();
         for (int i = 0; i < environments.length; i++) {

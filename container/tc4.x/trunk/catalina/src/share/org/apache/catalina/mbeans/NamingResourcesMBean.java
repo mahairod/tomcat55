@@ -71,6 +71,7 @@ import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.commons.modeler.BaseModelMBean;
@@ -171,7 +172,30 @@ public class NamingResourcesMBean extends BaseModelMBean {
         return ((String[]) results.toArray(new String[results.size()]));
 
     }
+    
+    
+    /**
+     * Return the MBean Names of all the defined resource link references for 
+     * this application.
+     */
+    public String[] getResourceLinks() {
+        
+        ContextResourceLink[] resourceLinks = 
+                            ((NamingResources)this.resource).findResourceLinks();
+        ArrayList results = new ArrayList();
+        for (int i = 0; i < resourceLinks.length; i++) {
+            try {
+                ObjectName oname =
+                    MBeanUtils.createObjectName(managed.getDomain(), resourceLinks[i]);
+                results.add(oname.toString());
+            } catch (MalformedObjectNameException e) {
+                throw new IllegalArgumentException
+                    ("Cannot create object name for resource " + resourceLinks[i]);
+            }
+        }
+        return ((String[]) results.toArray(new String[results.size()]));
 
+    }
 
     // ------------------------------------------------------------- Operations
 
@@ -238,6 +262,37 @@ public class NamingResourcesMBean extends BaseModelMBean {
 
     
     /**
+     * Add a resource link reference for this web application.
+     *
+     * @param resourceLinkName New resource link reference name
+     */
+    public String addResourceLink(String resourceLinkName, String type) 
+        throws MalformedObjectNameException {
+        
+        NamingResources nresources = (NamingResources) this.resource;
+        if (nresources == null) {
+            return null;
+        }
+        ContextResourceLink resourceLink = 
+                            nresources.findResourceLink(resourceLinkName);
+        if (resourceLink != null) {
+            throw new IllegalArgumentException
+                ("Invalid resource link name - already exists'" + 
+                resourceLinkName + "'");
+        }
+        resourceLink = new ContextResourceLink();
+        resourceLink.setName(resourceLinkName);
+        resourceLink.setType(type);
+        nresources.addResourceLink(resourceLink);
+        
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("ContextResourceLink");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
+        return (oname.toString());
+    }
+    
+    /**
      * Remove any environment entry with the specified name.
      *
      * @param name Name of the environment entry to remove
@@ -276,6 +331,28 @@ public class NamingResourcesMBean extends BaseModelMBean {
                 ("Invalid resource name '" + resourceName + "'");
         }
         nresources.removeResource(resourceName);
+    }
+    
+    
+    /**
+     * Remove any resource link reference with the specified name.
+     *
+     * @param resourceLinkName Name of the resource link reference to remove
+     */
+    public void removeResourceLink(String resourceLinkName) {
+
+        resourceLinkName = URLDecoder.decode(resourceLinkName);
+        NamingResources nresources = (NamingResources) this.resource;
+        if (nresources == null) {
+            return;
+        }
+        ContextResourceLink resourceLink = 
+                            nresources.findResourceLink(resourceLinkName);
+        if (resourceLink == null) {
+            throw new IllegalArgumentException
+                ("Invalid resource Link name '" + resourceLinkName + "'");
+        }
+        nresources.removeResourceLink(resourceLinkName);
     }
 
 }
