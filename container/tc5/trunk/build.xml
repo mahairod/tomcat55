@@ -868,7 +868,12 @@
       <param name="destfile" value="${tyrex.jar}"/>
       <param name="destdir" value="${tyrex.home}"/>
     </antcall>
-<!--
+
+  </target>
+
+  <target name="download.watchdog"  depends="proxyflags"
+    description="Download Watchdog binary">
+
     <antcall target="cvsbuild">
       <param name="location" value="${servlet23api.loc}"/>
       <param name="subdir" value="${servlet23api.home}"/>
@@ -880,7 +885,6 @@
       <param name="subdir" value="${watchdog.home}"/>
       <param name="destfile" value="${watchdog.war}"/>
     </antcall>
--->
 
   </target>
 

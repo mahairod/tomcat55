@@ -108,14 +108,9 @@ xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.2.0.tar.gz
 
 
 # --------------------------------------------------
-#                OPTIONAL LIBRARIES
+#              CORE OPTIONAL LIBRARIES
 # --------------------------------------------------
 
-
-# ----- Java Activation Framework (JAF), version 1.0.1 or later -----
-activation.home=${base.path}/jaf-1.0.1
-activation.lib=${activation.home}
-activation.jar=${activation.lib}/activation.jar
 
 # ----- Log4j -----
 log4j.home=${base.path}/jakarta-log4j-1.2.7
@@ -123,20 +118,12 @@ log4j.lib=${log4j.home}
 log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.7.jar
 log4j.loc=http://jakarta.apache.org/log4j/jakarta-log4j-1.2.7.tar.gz
 
+
 # ----- LogKit -----
 logkit.home=${base.path}/LogKit-1.1
 logkit.lib=${logkit.home}
 logkit.jar=${logkit.lib}/logkit-1.1.jar
 logkit.loc=http://jakarta.apache.org/builds/jakarta-avalon/release/logkit/latest/LogKit-1.1-bin.tar.gz
-
-
-# ----- Jaxen ( required by taglibs/standard required by jasper ) -----
-jaxen.home=${base.path}/jaxen-1.0-FCS
-jaxen.jar=${jaxen.home}/jaxen-full.jar
-
-# ----- Saxpath ( required by taglibs/standard required by jasper ) -----
-saxpath.home=${base.path}/saxpath-1.0-FCS
-saxpath.jar=${saxpath.home}/saxpath.jar
 
 
 # ----- Commons DBCP, version 1.0 or later -----
@@ -166,32 +153,12 @@ javaservice.exe=${javaservice.home}/bin/JavaService.exe
 javaservice.loc=http://www.alexandriasc.com/software/JavaService/JavaService-bin-1.2.0.zip
 
 
-# ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
-jdbc20ext.home=${base.path}/jdbc2_0-stdext
-jdbc20ext.lib=${jdbc20ext.home}
-jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
-
-
 # ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.1 or later -----
 jmx.home=${base.path}/mx4j-1.1.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j-jmx.jar
 jmx-tools.jar=${jmx.lib}/mx4j-tools.jar
 jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.1.tar.gz
-
-
-# ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
-jsse.home=${base.path}/jsse-1.0.2
-jsse.lib=${jsse.home}/lib
-jcert.jar=${jsse.lib}/jcert.jar
-jnet.jar=${jsse.lib}/jnet.jar
-jsse.jar=${jsse.lib}/jsse.jar
-
-
-# ----- Java Transaction API (JTA), version 1.0.1a or later -----
-jta.home=${base.path}/jta-1_0_1a
-jta.lib=${jta.home}
-jta.jar=${jta.lib}/jta.jar
 
 
 # ----- JUnit Unit Test Suite, version 3.7 or later -----
@@ -201,23 +168,11 @@ junit.jar=${junit.lib}/junit.jar
 junit.loc=http://download.sourceforge.net/junit/junit3.7.zip
 
 
-# ----- Java Mail, version 1.2 or later -----
-mail.home=${base.path}/javamail-1.2
-mail.lib=${mail.home}
-mail.jar=${mail.lib}/mail.jar
-
-
 # ----- NSIS, version 2.0a7 or later -----
 nsis.home=${base.path}/nsis-2.0
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
 nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis/nsis20a7.exe
-
-
-# ----- PureTLS Extension, version 0.9 or later -----
-puretls.home=${base.path}/puretls-0.9b2
-puretls.lib=${puretls.home}/build
-puretls.jar=${puretls.lib}/puretls.jar
 
 
 # ----- Struts, version 1.1 Beta 2 or later -----
@@ -234,6 +189,59 @@ tyrex.jar=${tyrex.lib}/tyrex-1.0.jar
 tyrex.loc=http://telia.dl.sourceforge.net/sourceforge/tyrex/tyrex-1.0.jar
 
 
+# --------------------------------------------------
+#                OPTIONAL LIBRARIES
+# --------------------------------------------------
+
+
+# ----- Java Activation Framework (JAF), version 1.0.1 or later -----
+activation.home=${base.path}/jaf-1.0.1
+activation.lib=${activation.home}
+activation.jar=${activation.lib}/activation.jar
+
+
+# ----- Jaxen ( required by taglibs/standard required by jasper ) -----
+jaxen.home=${base.path}/jaxen-1.0-FCS
+jaxen.jar=${jaxen.home}/jaxen-full.jar
+
+
+# ----- Saxpath ( required by taglibs/standard required by jasper ) -----
+saxpath.home=${base.path}/saxpath-1.0-FCS
+saxpath.jar=${saxpath.home}/saxpath.jar
+
+
+# ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
+jdbc20ext.home=${base.path}/jdbc2_0-stdext
+jdbc20ext.lib=${jdbc20ext.home}
+jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
+
+
+# ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
+jsse.home=${base.path}/jsse-1.0.2
+jsse.lib=${jsse.home}/lib
+jcert.jar=${jsse.lib}/jcert.jar
+jnet.jar=${jsse.lib}/jnet.jar
+jsse.jar=${jsse.lib}/jsse.jar
+
+
+# ----- Java Transaction API (JTA), version 1.0.1a or later -----
+jta.home=${base.path}/jta-1_0_1a
+jta.lib=${jta.home}
+jta.jar=${jta.lib}/jta.jar
+
+
+# ----- Java Mail, version 1.2 or later -----
+mail.home=${base.path}/javamail-1.2
+mail.lib=${mail.home}
+mail.jar=${mail.lib}/mail.jar
+
+
+# ----- PureTLS Extension, version 0.9 or later -----
+puretls.home=${base.path}/puretls-0.9b2
+puretls.lib=${puretls.home}/build
+puretls.jar=${puretls.lib}/puretls.jar
+
+
 # ----- Servlet 2.3, version 20020801 or later -----
 servlet23api.home=${base.path}/servletapi-4
 servlet23api.lib=${servlet23api.home}/lib
@@ -246,5 +254,3 @@ watchdog.home=${base.path}/watchdog-4.0
 watchdog.webapps=${watchdog.home}/dist/webapps
 watchdog.war=${watchdog.webapps}/servlet-tests.war
 watchdog.loc=jakarta-watchdog-4.0
-
-
