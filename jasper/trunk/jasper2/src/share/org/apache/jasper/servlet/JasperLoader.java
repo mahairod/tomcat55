@@ -153,8 +153,8 @@ public class JasperLoader extends URLClassLoader {
         }                          
                           
         // (.5) Permission to access this class when using a SecurityManager
-	int dot = name.lastIndexOf('.');
         if (securityManager != null) {     
+            int dot = name.lastIndexOf('.');
             if (dot >= 0) {                
                 try {        
                     // Do not call the security manager since by default, we grant that package.
