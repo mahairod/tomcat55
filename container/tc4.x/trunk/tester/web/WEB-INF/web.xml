@@ -149,6 +149,11 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedFilterRequest02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>UpperCaseFilter</filter-name>
         <url-pattern>/FilterResponse01</url-pattern>
     </filter-mapping>
@@ -191,6 +196,11 @@
     <filter-mapping>
         <filter-name>UpperCaseFilter</filter-name>
         <url-pattern>/WrappedFilterResponse03.txt</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedFilterResponse04</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -557,8 +567,28 @@
     </servlet>
 
     <servlet>
+        <servlet-name>FilterRequest02</servlet-name>
+        <servlet-class>org.apache.tester.FilterRequest02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FilterRequest02a</servlet-name>
+        <servlet-class>org.apache.tester.FilterRequest02a</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>FilterResponse01</servlet-name>
         <servlet-class>org.apache.tester.FilterResponse01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FilterResponse04</servlet-name>
+        <servlet-class>org.apache.tester.FilterResponse04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FilterResponse04a</servlet-name>
+        <servlet-class>org.apache.tester.FilterResponse04a</servlet-class>
     </servlet>
 
     <servlet>
@@ -1169,6 +1199,21 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>FilterRequest02</servlet-name>
+        <url-pattern>/FilterRequest02/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterRequest02</servlet-name>
+        <url-pattern>/WrappedFilterRequest02/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterRequest02a</servlet-name>
+        <url-pattern>/FilterRequest02a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>FilterResponse01</servlet-name>
         <url-pattern>/FilterResponse01</url-pattern>
     </servlet-mapping>
@@ -1176,6 +1221,21 @@
     <servlet-mapping>
         <servlet-name>FilterResponse01</servlet-name>
         <url-pattern>/WrappedFilterResponse01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterResponse04</servlet-name>
+        <url-pattern>/FilterResponse04/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterResponse04</servlet-name>
+        <url-pattern>/WrappedFilterResponse04/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FilterResponse04a</servlet-name>
+        <url-pattern>/FilterResponse04a</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
