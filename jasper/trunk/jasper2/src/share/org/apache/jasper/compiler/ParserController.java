@@ -112,20 +112,6 @@ public class ParserController {
     private boolean isTopFile = true;
 
     /*
-     * Tells if the file to be parsed is a regular jsp page or tag file.
-     * Usually we get the info from the compilation context, but it can
-     * be temporarily overridden with a parameter to the parse method,
-     * when parsing a tag file for its tagFileInfo content.
-     */
-    private boolean isTagFile = false;
-
-    /*
-     * True if the file to be parsed is a tag file and only we are only
-     * interested for the directives needed for constructing a TagFileInfo.
-     */ 
-    private boolean directivesOnly = false;
-
-    /*
      * The encoding of the "top" file. This encoding is used
      * for included files by default.
      * Defaults to "ISO-8859-1" per JSP spec.
@@ -164,9 +150,7 @@ public class ParserController {
      */
     public Node.Nodes parse(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	isTagFile = ctxt.isTagFile();
-	directivesOnly = false;
-	return parseFile(inFileName, null);
+	return parse(inFileName, null);
     }
 
     /**
@@ -177,7 +161,7 @@ public class ParserController {
      */
     public Node.Nodes parse(String inFileName, Node parent)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parseFile(inFileName, parent);
+	return parseFile(inFileName, parent, ctxt.isTagFile(), false);
     }
 
     /**
@@ -188,10 +172,8 @@ public class ParserController {
      */
     public Node.Nodes parseTagFile(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	isTagFile = true;
 	isTopFile = true;
-	directivesOnly = true;
-	return parseFile(inFileName, null);
+	return parseFile(inFileName, null, true, true);
     }
 
     /**
@@ -201,8 +183,14 @@ public class ParserController {
      * @param inFileName The name of the jsp file to be parsed.
      * @param parent The parent node for the parser, and is non-null when
      *               parsing an included file
+     * @param isTagFile true if file to be parsed is tag file, and false if it
+     * is a regular jsp page
+     * @param directivesOnly true if the file to be parsed is a tag file and
+     * we are only interested in the directives needed for constructing a
+     * TagFileInfo.
      */
-    private Node.Nodes parseFile(String inFileName, Node parent)
+    private Node.Nodes parseFile(String inFileName, Node parent,
+				 boolean isTagFile, boolean directivesOnly)
 	        throws FileNotFoundException, JasperException, IOException {
 
 	Node.Nodes parsedPage = null;
