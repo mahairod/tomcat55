@@ -1473,7 +1473,7 @@ public class JNDIRealm extends RealmBase {
             // Ensure that we have a directory context available
             context = new InitialDirContext(getDirectoryContextEnvironment());
 
-        } catch (NamingException e) {
+        } catch (Exception e) {
 
             connectionAttempt = 1;
 
