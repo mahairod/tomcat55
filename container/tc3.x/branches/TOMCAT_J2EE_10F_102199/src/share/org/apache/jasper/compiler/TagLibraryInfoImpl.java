@@ -462,10 +462,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     rtexprvalue = Boolean.valueOf(t.getData()).booleanValue();
-            } else if (tname.equals("reqtime")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    reqTime = Boolean.valueOf(t.getData()).booleanValue();
             } else if (tname.equals("type")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
@@ -479,8 +475,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                                   );
         }
         
-        return new TagAttributeInfo(name, required, rtexprvalue, type, 
-                                    reqTime);
+        return new TagAttributeInfo(name, required, rtexprvalue, type);
     }
 
     static void copy(InputStream in, String fileName) 
