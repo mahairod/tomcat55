@@ -589,15 +589,21 @@ public class Generator {
                         new JspUtil.FunctionSignature( fnSignature, 
                         tli.getShortName(), err );
                     out.print( quote( functionSignature.getMethodName() ) );
-                    out.print( ", new Class[] {" );
+                    out.print(", ");
                     Class[] args = functionSignature.getParameterTypes();
-                    for( int j = 0; j < args.length; j++ ) {
-                        out.print( args[j].getName() + ".class" );
-                        if( j < (args.length - 1) ) {
-                            out.print( ", " );
-                        }
-                    }
-                    out.println( "} ) );" );
+		    if (args != null) {
+			out.print("new Class[] {" );
+			for( int j = 0; j < args.length; j++ ) {
+			    out.print( args[j].getName() + ".class" );
+			    if( j < (args.length - 1) ) {
+				out.print( ", " );
+			    }
+			}
+			out.print("} ");
+		    } else {
+			out.print("null");
+		    }
+                    out.println("));");
                 }
             }
             out.popIndent();
