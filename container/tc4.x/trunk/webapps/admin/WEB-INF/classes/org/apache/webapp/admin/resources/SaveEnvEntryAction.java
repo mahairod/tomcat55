@@ -171,13 +171,15 @@ public final class SaveEnvEntryAction extends Action {
         // Perform an "Add Entry" transaction
         if (objectName == null) {
 
-            String signature[] = new String[2];
+            String signature[] = new String[3];
             signature[0] = "java.lang.String";
             signature[1] = "java.lang.String";
+            signature[2] = "java.lang.String";
 
-            Object params[] = new Object[2];
+            Object params[] = new Object[3];
             params[0] = envEntryForm.getName();
             params[1] = envEntryForm.getEntryType();
+            params[2] = envEntryForm.getValue();
             
             String resourcetype = envEntryForm.getResourcetype();
             String path = envEntryForm.getPath();
