@@ -479,6 +479,9 @@ public class DeltaManager
                     DeltaSession session = getNewDeltaSession();
                     session.readObjectData(ois);
                     session.setManager(this);
+                    session.setValid(true);
+                    session.setPrimarySession(false);
+                    session.access();
                     sessions.put(session.getId(), session);
                 }
             } catch (ClassNotFoundException e) {
@@ -660,6 +663,14 @@ public class DeltaManager
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
                                        "GET-ALL");
+                //just to make sure the other server has the context started
+//                long timetowait = 20000-mbr.getMemberAliveTime();
+//                if ( timetowait > 0 ) {
+//                    log.info("The other server has not been around more than 20 seconds, will sleep for "+timetowait+" ms. in order to let it startup");
+//                    try { Thread.currentThread().sleep(timetowait); } catch ( Exception x ) {}
+//                }//end if
+                
+                //request session state
                 cluster.send(msg, mbr);
                 log.warn("Manager["+getName()+"], requesting session state from "+mbr+
                          ". This operation will timeout if no session state has been received within "+
@@ -712,6 +723,7 @@ public class DeltaManager
 
         // Expire all active sessions
         if ( this.getExpireSessionsOnShutdown() ) {
+            log.info("Expiring sessions upon shutdown");
             Session sessions[] = findSessions();
             for (int i = 0; i < sessions.length; i++) {
                 DeltaSession session = (DeltaSession) sessions[i];
@@ -884,9 +896,12 @@ public class DeltaManager
                    case SessionMessage.EVT_SESSION_DELTA : {
                        byte[] delta = msg.getSession();
                        DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
-                       DeltaRequest dreq = loadDeltaRequest(session,delta);
-                       dreq.execute(session);
-                       session.setPrimarySession(false);
+                       if (session != null) {
+                           DeltaRequest dreq = loadDeltaRequest(session, delta);
+                           dreq.execute(session);
+                           session.setPrimarySession(false);
+                           session.access();
+                       }
                        
                        break;
                    }
