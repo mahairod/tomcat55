@@ -346,6 +346,27 @@ public class FileUtil {
 	    return null;
     }
 
+    /** Name without path and extension. 
+     */
+    public static String getBase( String path ) {
+        int i = path.lastIndexOf(".");
+	int j = path.lastIndexOf("/");
+
+	if( j < 0 ) {// no /
+	    if( i<0 )
+		return path;
+	    else
+		return path.substring( 0, i );
+	} else {
+	    if( i<j ) {
+		// . in a dir, before last component, or no "."
+		return path.substring( j );
+	    } else {
+		return path.substring( j, i );
+	    }
+	}
+    }
+
     public static void expand( String src, String dest)
 	throws IOException
     {
