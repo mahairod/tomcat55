@@ -88,7 +88,9 @@
         #include <arpa/inet.h>
         #include <sys/un.h>
         #include <sys/socketvar.h>
-        #include <sys/select.h>
+        #ifndef HPUX11
+            #include <sys/select.h>
+        #endif
     #endif
         
     #include <sys/time.h>
