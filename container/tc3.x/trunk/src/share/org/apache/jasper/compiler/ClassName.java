@@ -200,7 +200,7 @@ public class ClassName {
 	    for(int i = 0; i < args.length; i++)
 		System.out.println("Filename: "+ args[i]+" Classname: "+getClassName(args[i]));
 	} catch (Exception ex) {
-	    ex.printStackTrace();
+	    ex.printStackTrace();	// OK
 	}
     }
 }

@@ -69,6 +69,7 @@ import javax.servlet.jsp.JspEngineInfo;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.tomcat.util.SimplePool;
+import org.apache.tomcat.logging.Logger;
 
 /**
  * Implementation of JspFactory from the spec. Helps create
@@ -79,7 +80,9 @@ import org.apache.tomcat.util.SimplePool;
 public class JspFactoryImpl extends JspFactory {
     private SimplePool pool=new SimplePool( 100 );
     private static final boolean usePool=true;
-
+    
+    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspFactoryImpl");
+    
     public PageContext getPageContext(Servlet servlet, ServletRequest request,
                                       ServletResponse response, 
 				      String errorPageURL, 
@@ -102,7 +105,7 @@ public class JspFactoryImpl extends JspFactory {
             return pc;
         } catch (Throwable ex) {
             /* FIXME: need to do something reasonable here!! */
-            ex.printStackTrace();
+	    loghelper.log("Exception initializing page context", ex);
             return null;
         }
     }

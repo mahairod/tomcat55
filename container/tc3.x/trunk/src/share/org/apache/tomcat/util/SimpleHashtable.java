@@ -248,7 +248,7 @@ public final class SimpleHashtable implements Enumeration
 	table = newMap;
 
 	/*
-	System.out.println("rehash old=" + oldCapacity
+	System.out.pr intln("rehash old=" + oldCapacity
 		+ ", new=" + newCapacity
 		+ ", thresh=" + threshold
 		+ ", count=" + count);

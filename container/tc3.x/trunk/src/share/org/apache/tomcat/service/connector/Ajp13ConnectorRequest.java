@@ -167,7 +167,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
 
             String hValue = msg.getString();
             headers.putHeader( hName , hValue );
-            //System.out.println( "Head: " + hName + "=" + hValue);
+            //log( "Head: " + hName + "=" + hValue);
         }
 
         for(bsc = msg.getByte() ;
@@ -179,7 +179,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
                 break;
 
                 case SC_A_SERVLET_PATH :
-                    System.out.println("SC_A_SERVLET_PATH not in use " + msg.getString());
+                    log("SC_A_SERVLET_PATH not in use " + msg.getString());
                 break;
 
                 case SC_A_REMOTE_USER  :
@@ -261,7 +261,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
         for(int i = off ; i < (len + off) ; i++) {
             int a = doRead();
             if(-1 == a) {
-                System.out.println("Y");
+                log("Y");
                 return i-off;
             }
             b[i] = (byte)a;

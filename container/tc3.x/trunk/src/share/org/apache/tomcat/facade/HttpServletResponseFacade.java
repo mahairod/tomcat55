@@ -92,6 +92,8 @@ final class HttpServletResponseFacade  implements HttpServletResponse
     ServletOutputStreamFacade osFacade=null;
     PrintWriter writer = null; // XXX will go away when we add the convertor
 
+    // Logger.Helper loghelper = new Logger.Helper("tc_log", "HttpServletResponseFacade");    
+    
     /** Package
      */
     HttpServletResponseFacade(Response response) {
@@ -199,8 +201,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
     public void sendError(int sc, String msg) throws IOException {
 	if (isCommitted()) {
 	    Context ctx=response.getRequest().getContext();
-	    ctx.log( "Servlet API error: sendError with commited buffer ");
-	    // 	    /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	    ctx.log( "Servlet API error: sendError with commited buffer ", new Throwable("Trace"));
 	    throw new IllegalStateException(sm.
 					    getString("hsrf.error.ise"));
 	}

@@ -135,8 +135,8 @@ public class StringManager {
         try {
 	    str = bundle.getString(key);
         } catch (MissingResourceException mre) {
-            str = "cannot find message associated with key : " + key;
-	    mre.printStackTrace();
+            str = "[cannot find message associated with key '" + key + "' due to " + mre + "]";
+	    // mre. print Stack Trace();
         }
 
         return str;

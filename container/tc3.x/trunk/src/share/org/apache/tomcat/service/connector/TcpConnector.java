@@ -70,6 +70,7 @@ import java.net.*;
 import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.logging.*;
 //import org.apache.tomcat.server.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -123,6 +124,7 @@ class TcpConnector implements MsgConnector
 	rd=in.read( b, 4, len );
 	if( rd != len ) {
 	    System.out.println( "Incomplete read, deal with it " + len + " " + rd);
+	    // ??? log
 	}
 	// 	msg.dump( "Incoming");
 	return rd;

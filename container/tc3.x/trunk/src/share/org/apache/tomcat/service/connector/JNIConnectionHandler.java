@@ -74,6 +74,10 @@ public class JNIConnectionHandler {
 
     ContextManager contextM;
 
+    // Note: I don't really understand JNI and its use of output
+    // streams, but this should really be changed to use
+    // tomcat.logging.Logger and not merely System.out  -Alex
+    
     public JNIConnectionHandler() {
     }
 

@@ -108,7 +108,7 @@ public class URLPatternMatcher implements PatternMatcher {
             p.set(args[0], "works");
             System.out.println("Match: " + p.match(args[1]));
         }catch(Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();	// OK
         }
     }
 }

@@ -133,7 +133,7 @@ public class JNIEndpointConnector  implements ServerConnector {
         return null;
     }
 
-    private LogHelper loghelper = new LogHelper("tc_log", "JNIEndpointConnector");
+    private Logger.Helper loghelper = new Logger.Helper("tc_log", "JNIEndpointConnector");
 
     /**
      * Set a logger explicitly.

@@ -131,7 +131,7 @@ public class ThreadPool  {
     /**
      * Helper object for logging
      **/
-    LogHelper loghelper = new LogHelper("tc_log", "ThreadPool");
+    Logger.Helper loghelper = new Logger.Helper("tc_log", "ThreadPool");
     
     public ThreadPool() {
         maxThreads      = MAX_THREADS;
@@ -248,9 +248,9 @@ public class ThreadPool  {
                     ((ControlRunnable)(pool.elementAt(i))).terminate();
                 } catch(Throwable t) {
                     /* 
-					 * Do nothing... The show must go on, we are shutting 
-					 * down the pool and nothing should stop that.
-					 */
+		     * Do nothing... The show must go on, we are shutting 
+		     * down the pool and nothing should stop that.
+		     */
 		    loghelper.log("Ignored exception while shutting down thread pool", t, Logger.ERROR);
                 }
             }
@@ -520,9 +520,9 @@ public class ThreadPool  {
                     }
 
                     /*
-		            * Check if should terminate.
-                    * termination happens when the pool is shutting down.
-                    */
+		     * Check if should terminate.
+		     * termination happens when the pool is shutting down.
+		     */
                     if(shouldTerminate) {
                         break;
                     }

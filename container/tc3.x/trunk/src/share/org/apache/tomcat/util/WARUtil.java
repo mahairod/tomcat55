@@ -65,6 +65,7 @@
 package org.apache.tomcat.util;
 
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.logging.*;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 import java.io.File;
@@ -80,6 +81,9 @@ import java.io.FileNotFoundException;
  */
 
 public class WARUtil {
+
+    static Logger.Helper log = new Logger.Helper("tc_log", "WARUtil");
+    
     /** Expand a WAR/Jar file in a directory.
      *  @param dir destination directory
      *  @param war URL for the source WAR/JAR/ZIP file. Starting
@@ -111,8 +115,8 @@ public class WARUtil {
 		    fos.close();
 		}
 	    } catch( FileNotFoundException ex ) {
-		// XXX replace with a call to log() when available
-		System.out.println("WARUtil: FileNotFoundException: " +  ze.getName() + " / " + s );
+		// ???
+		log.log("FileNotFoundException: " +  ze.getName() + " / " + s, Logger.ERROR );
 	    }
 	}
 

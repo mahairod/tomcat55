@@ -86,6 +86,10 @@ public class JNIEndpoint {
 
     boolean running = false;
 
+    // Note: I don't really understand JNI and its use of output
+    // streams, but this should really be changed to use
+    // tomcat.logging.Logger and not merely System.out  -Alex
+    
     public JNIEndpoint() {
     }
 
@@ -202,7 +206,7 @@ class StartupThread extends Thread {
             org.apache.tomcat.startup.Tomcat.main(cmdLine);
             failed = false;
         } catch(Throwable t) {
-            t.printStackTrace();
+            t.printStackTrace(); // OK
         } finally {
             if(failed) {
 		System.out.println("Failed ??");

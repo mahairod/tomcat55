@@ -708,7 +708,6 @@ public class JspParseEventListener extends BaseJspListener {
                                                                uri);
                 libraries.addTagLibrary(prefix, tl);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 Object[] args = new Object[] { uri, ex.getMessage() };
                 throw new CompileException(start, Constants.getString("jsp.error.badtaglib",
                                                               args));

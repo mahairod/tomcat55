@@ -105,11 +105,11 @@ public class BufferedServletOutputStream extends ServletOutputStream {
     ResponseImpl resA;
     
     protected BufferedServletOutputStream() {
-	//	System.out.println("new BOS " + closed);
+	//	debug("new BOS " + closed);
     }
 
     protected BufferedServletOutputStream(Response resA) {
-	//	System.out.println("new BOS " + closed);
+	//	debug("new BOS " + closed);
 	setResponse(resA);
     }
 
@@ -141,10 +141,9 @@ public class BufferedServletOutputStream extends ServletOutputStream {
     
     public void write(int i) throws IOException {
 	if (closed) {
-	    //	    System.out.println("CLOSED");
+	    //	    debug("CLOSED");
 	    return;
 	}
-	//	System.out.print(".");
         buffer[bufferCount] = (byte)i;
 	bufferCount++;
 	totalCount++;
@@ -299,13 +298,13 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	// Reset the buffer.
 	bufferCount = 0;
 	totalCount = 0;
-	//	System.out.println("Reset buffer ");
+	//	debug("Reset buffer ");
     }
 
     /** Reuse the object instance, avoid GC
      */
     public void recycle() {
-	// 	System.out.println("Recycle BOS " );
+	// 	debug("Recycle BOS " );
 	bufferCount = 0;
 	totalCount = 0;
 	closed = false;
