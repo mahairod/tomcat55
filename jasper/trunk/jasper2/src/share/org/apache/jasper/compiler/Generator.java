@@ -556,6 +556,12 @@ class Generator {
         if (pageInfo.isErrorPage()) {
             out.printil(
                 "Throwable exception = org.apache.jasper.runtime.JspRuntimeLibrary.getThrowable(request);");
+            out.printil("if (exception != null) {");
+            out.pushIndent();
+            out.printil(
+                "response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);");
+            out.popIndent();
+            out.printil("}");
         }
 
         out.printil("ServletContext application = null;");
