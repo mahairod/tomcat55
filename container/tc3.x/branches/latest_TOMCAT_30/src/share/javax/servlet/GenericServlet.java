@@ -254,7 +254,7 @@ public abstract class GenericServlet
 
     public void init(ServletConfig config) throws ServletException {
 	this.config = config;
-	log("init");
+	//log("init");
 	this.init();
     }
 
