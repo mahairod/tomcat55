@@ -167,7 +167,7 @@
         <strong>org.apache.catalina.valves.RemoteAddrValve</strong>.</p>
       </attribute>
 
-      <attribute name="accept" required="false">
+      <attribute name="allow" required="false">
         <p>A comma-separated list of <em>regular expression</em> patterns
         that the remote client's IP address is compared to.  If this attribute
         is specified, the remote address MUST match for this request to be
@@ -218,7 +218,7 @@
         <strong>org.apache.catalina.valves.RemoteHostValve</strong>.</p>
       </attribute>
 
-      <attribute name="accept" required="false">
+      <attribute name="allow" required="false">
         <p>A comma-separated list of <em>regular expression</em> patterns
         that the remote client's hostname is compared to.  If this attribute
         is specified, the remote hostname MUST match for this request to be
