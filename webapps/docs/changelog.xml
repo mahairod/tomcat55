@@ -54,6 +54,11 @@
   </subsection>
 
   <subsection name="Webapps">
+    <changelog>
+      <fix>
+        <bug>29485</bug>: I broke the HTML manager when adding JavaScript confirmation, fixed now ;) (yoavs)
+      </fix>
+    </changelog>
   </subsection>
 </section>
 
