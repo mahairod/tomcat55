@@ -183,8 +183,11 @@ public final class SaveConnectorAction extends Action {
                 sb.append(TomcatTreeBuilder.CONNECTOR_TYPE);
                 sb.append(",port=" + cform.getPortText());
                 String address = cform.getAddress();
-                if ((address!=null) && (address.length()>0)) {
+                if ((address!=null) && (address.length()>0) && 
+                        (!address.equalsIgnoreCase(" "))) {
                     sb.append(",address=" + address);
+                } else {
+                    address = null;
                 }
                 ObjectName oname = new ObjectName(sb.toString());
                                                 
@@ -203,7 +206,7 @@ public final class SaveConnectorAction extends Action {
                 // Create a new Connector object
                 values = new Object[3];                
                 values[0] = serviceName;  //service parent object name
-                values[1] = cform.getAddress();
+                values[1] = address;
                 values[2] = new Integer(cform.getPortText());
 
                 if ("HTTP".equalsIgnoreCase(connectorType)) {
