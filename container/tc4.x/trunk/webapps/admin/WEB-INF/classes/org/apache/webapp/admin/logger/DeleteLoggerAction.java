@@ -172,7 +172,7 @@ public class DeleteLoggerAction extends Action {
         
         if (parent != null) {
             try {
-                pattern = getObjectName(parent);
+                pattern = getObjectName(parent, TomcatTreeBuilder.LOGGER_TYPE);
             } catch (Exception e) {
                 getServlet().log
                 (resources.getMessage(locale, "users.error.select"));
@@ -206,12 +206,12 @@ public class DeleteLoggerAction extends Action {
         
     }
     
-    public static String getObjectName(String parent)
+    public static String getObjectName(String parent, String MBeanType)
     throws Exception{
         
         // Form the pattern that gets the logger for this particular
         // service, host or context.
-        StringBuffer sb = new StringBuffer(TomcatTreeBuilder.LOGGER_TYPE);
+        StringBuffer sb = new StringBuffer(MBeanType);
         ObjectName poname = new ObjectName(parent);
         String type = poname.getKeyProperty("type");
         if ("Context".equalsIgnoreCase(type)) { // container is context
@@ -224,7 +224,7 @@ public class DeleteLoggerAction extends Action {
         }
         if ("Host".equalsIgnoreCase(type)) {    // container is host
             sb.append(",host=");
-            sb.append(poname.getKeyProperty("name"));
+            sb.append(poname.getKeyProperty("host"));
             sb.append(",service=");
             sb.append(poname.getKeyProperty("service"));
         }

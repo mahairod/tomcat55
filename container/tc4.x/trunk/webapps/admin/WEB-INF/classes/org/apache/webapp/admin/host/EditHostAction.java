@@ -167,7 +167,7 @@ public class EditHostAction extends Action {
         hostFm.setAdminAction("Edit");
         hostFm.setObjectName(hname.toString());
         sb = new StringBuffer("Host (");
-        sb.append(hname.getKeyProperty("name"));
+        sb.append(hname.getKeyProperty("host"));
         sb.append(")");
         hostFm.setNodeLabel(sb.toString());
         hostFm.setDebugLvlVals(Lists.getDebugLevels());

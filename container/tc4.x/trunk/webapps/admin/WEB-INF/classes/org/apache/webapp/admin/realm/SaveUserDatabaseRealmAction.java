@@ -89,8 +89,7 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-
-
+import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 /**
  * The <code>Action</code> that completes <em>Add Realm</em> and
@@ -177,11 +176,33 @@ public final class SaveUserDatabaseRealmAction extends Action {
 
             try {
 
-                // Ensure that the requested realm name is unique
-                // TBD -- create not yet implemented
+                String parent = rform.getParentObjectName();                
+                String objectName = DeleteLoggerAction.getObjectName(parent,
+                                    TomcatTreeBuilder.REALM_TYPE);
+                
+                ObjectName pname = new ObjectName(parent);
+                StringBuffer sb = new StringBuffer(pname.getDomain());                    
+                
+                // For service, create the corresponding Engine mBean  
+                // Parent in this case needs to be the container mBean for the service 
+                try {                                                        
+                    if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
+                        sb.append(":type=Engine,service=");
+                        sb.append(pname.getKeyProperty("name"));
+                        parent = sb.toString();
+                    }
+                } catch (Exception e) {
+                    String message =
+                        resources.getMessage("error.engineName.bad",
+                                         sb.toString());
+                    getServlet().log(message);
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+                    return (null);
+                }
+                                                
+                // Ensure that the requested user database name is unique
                 ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.REALM_TYPE +
-                                   TomcatTreeBuilder.WILDCARD);
+                    new ObjectName(objectName);
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("realmName",
@@ -196,9 +217,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
 
                 // Create a new StandardRealm object
                 values = new String[1];
-                // parent mBean as string
-                // TBD -- not yet implemented
-                values[0] = TomcatTreeBuilder.ENGINE_TYPE;
+                values[0] = parent;
                 operation = "createUserDatabaseRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,
@@ -208,9 +227,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    // TBD -- FIX ME
-                    String parentName = TomcatTreeBuilder.SERVER_TYPE;
-                    TreeControlNode parentNode = control.findNode(parentName);
+                    TreeControlNode parentNode = control.findNode(rform.getParentObjectName());
                     if (parentNode != null) {
                         String nodeLabel =
                             "Realm (" + rform.getRealmType() + ")";
@@ -228,7 +245,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
                         // FIXME - force a redisplay
                     } else {
                         getServlet().log
-                            ("Cannot find parent node '" + parentName + "'");
+                            ("Cannot find parent node '" + parent + "'");
                     }
                 } else {
                     getServlet().log

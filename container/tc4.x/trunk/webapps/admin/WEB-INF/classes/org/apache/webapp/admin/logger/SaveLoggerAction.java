@@ -177,7 +177,8 @@ public final class SaveLoggerAction extends Action {
             try {
    
                 String parent = lform.getParentObjectName();                
-                String objectName = DeleteLoggerAction.getObjectName(parent);
+                String objectName = DeleteLoggerAction.getObjectName(
+                                        parent, TomcatTreeBuilder.LOGGER_TYPE);
                 
                 ObjectName pname = new ObjectName(parent);
                 StringBuffer sb = new StringBuffer(pname.getDomain());                    

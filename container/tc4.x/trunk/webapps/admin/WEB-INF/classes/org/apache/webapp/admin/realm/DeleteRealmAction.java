@@ -91,6 +91,7 @@ import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
+import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 /**
  * The <code>Action</code> that sets up <em>Delete Realms</em> transactions.
@@ -172,7 +173,8 @@ public class DeleteRealmAction extends Action {
         
         if (parent != null) {
             try {
-                pattern = getObjectName(parent);
+                pattern = DeleteLoggerAction.getObjectName(
+                             parent,TomcatTreeBuilder.REALM_TYPE);
             } catch (Exception e) {
                 getServlet().log
                 (resources.getMessage(locale, "users.error.select"));
@@ -205,33 +207,5 @@ public class DeleteRealmAction extends Action {
         return (mapping.findForward("Realms"));
         
     }
-    
-    public static String getObjectName(String parent)
-    throws Exception{
-        
-        // Form the pattern that gets the realm for this particular
-        // service, host or context.
-        StringBuffer sb = new StringBuffer(TomcatTreeBuilder.REALM_TYPE);
-        ObjectName poname = new ObjectName(parent);
-        String type = poname.getKeyProperty("type");
-        if ("Context".equalsIgnoreCase(type)) { // container is context
-            sb.append(",path=");
-            sb.append(poname.getKeyProperty("path"));
-            sb.append(",host=");
-            sb.append(poname.getKeyProperty("host"));
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
-        }
-        if ("Host".equalsIgnoreCase(type)) {    // container is host
-            sb.append(",host=");
-            sb.append(poname.getKeyProperty("name"));
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
-        }
-        if ("Service".equalsIgnoreCase(type)) {  // container is service
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("name"));
-        }
-        return sb.toString();  
-    }
+
 }

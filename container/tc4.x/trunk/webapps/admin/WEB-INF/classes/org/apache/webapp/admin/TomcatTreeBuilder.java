@@ -264,7 +264,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String hostName = (String) hostNames.next();
             ObjectName objectName = new ObjectName(hostName);
             String nodeLabel =
-                "Host (" + objectName.getKeyProperty("name") + ")";
+                "Host (" + objectName.getKeyProperty("host") + ")";
             TreeControlNode hostNode =
                 new TreeControlNode(hostName,
                                     "folder_16_pad.gif",
@@ -276,7 +276,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "content",
                                     true);
             serviceNode.addChild(hostNode);
-            getContexts(hostNode, hostName);
+            getContexts(hostNode, hostName);            
             getLoggers(hostNode, hostName);
             getRealms(hostNode, hostName);
         }

@@ -228,7 +228,7 @@ public class Lists {
 
         StringBuffer sb = new StringBuffer(host.getDomain());
         sb.append(":type=Context,host=");
-        sb.append(host.getKeyProperty("name"));
+        sb.append(host.getKeyProperty("host"));
         sb.append(",service=");
         sb.append(host.getKeyProperty("service"));
         sb.append(",*");
@@ -329,7 +329,7 @@ public class Lists {
         }
         String host = container.getKeyProperty("host");
         if ("Host".equals(type)) {
-            host = container.getKeyProperty("name");
+            host = container.getKeyProperty("host");
         }
         if (host != null) {
             sb.append(",host=");
@@ -396,7 +396,7 @@ public class Lists {
         }
         String host = container.getKeyProperty("host");
         if ("Host".equals(type)) {
-            host = container.getKeyProperty("name");
+            host = container.getKeyProperty("host");
         }
         if (host != null) {
             sb.append(",host=");

@@ -184,7 +184,7 @@ public final class SaveHostAction extends Action {
                 // Ensure that the requested host name is unique
                 ObjectName oname =
                     new ObjectName(TomcatTreeBuilder.HOST_TYPE +
-                                   ",name=" + hform.getHostName() +
+                                   ",host=" + hform.getHostName() +
                                    ",service=" + serviceName);
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();

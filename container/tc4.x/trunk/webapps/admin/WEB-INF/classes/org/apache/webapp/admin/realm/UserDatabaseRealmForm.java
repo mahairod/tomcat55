@@ -94,6 +94,11 @@ public final class UserDatabaseRealmForm extends ActionForm {
     private String objectName = null;
 
     /**
+     * The object name of the parent of this Logger.
+     */
+    private String parentObjectName = null;
+
+    /**
      * The text for the debug level.
      */
     private String debugLvl = "0";
@@ -155,6 +160,25 @@ public final class UserDatabaseRealmForm extends ActionForm {
         
         this.objectName = objectName;
         
+    }
+            
+    /**
+     * Return the parent object name of the Realm this bean refers to.
+     */
+    public String getParentObjectName() {
+
+        return this.parentObjectName;
+
+    }
+
+
+    /**
+     * Set the parent object name of the Realm this bean refers to.
+     */
+    public void setParentObjectName(String parentObjectName) {
+
+        this.parentObjectName = parentObjectName;
+
     }
     
     /**
