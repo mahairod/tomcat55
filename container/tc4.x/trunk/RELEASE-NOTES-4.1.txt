@@ -54,6 +54,16 @@ Catalina New Features:
 [4.1.3] CoyoteConnector:
         Add PureTLS support.
 
+[4.1.4] Embedded:
+        Add support for Coyote HTTP/1.1 and Coyote JK 2.
+
+[4.1.4] DefaultContext:
+        Refactoring of DefaultContext to support dynamic configuration (naming
+        resources and other misc properties).
+
+[4.1.4] MBeanUtils:
+        Allow specifying custom MBean descriptor files.
+
 
 -------------------
 Jasper New Features:
@@ -85,6 +95,12 @@ Jasper New Features:
         single page, which was cause by the 64K bytecode limit for a sigle 
         method. Now Jasper generates separate methods for tag bodies when lots
         of tags are used.
+
+[4.1.4] Generator:
+        Add tag instance reuse for performance improvement.
+
+[4.1.4] Generator:
+        Add tag BodyContent reuse.
 
 
 ==========================
@@ -203,6 +219,17 @@ Catalina Bug Fixes:
         Fix ServletContext.getResourcePaths to match spec
         ApplicationContext:
         getResourcePaths now returns null for non existing paths.
+
+[4.1.4] #9676
+        org.apache.coyote.tomcat4.CoyoteServerSocketFactory doesn't recognize 
+        keystoreType attribute
+        Http11Protocol:
+        Add missing setKeytype method.
+
+[4.1.4] #5446
+        Can't change webapp class loader
+        WebappLoader:
+        Use introspection to instantiate the class loader.
 
 
 ----------------
