@@ -71,6 +71,8 @@ public class WarpConnectionHandler extends WarpHandler {
     private WarpReader reader=new WarpReader();
     /** The WarpPacket used to write data. */
     private WarpPacket packet=new WarpPacket();
+    /** The current request id. */
+    private int request=WarpConstants.RID_MIN;
 
     /**
      * Process a WARP packet.
@@ -93,38 +95,48 @@ public class WarpConnectionHandler extends WarpHandler {
         this.packet.reset();
         try {
             switch (type) {
-                case WarpConstants.TYP_HOST:
+                case WarpConstants.TYP_CONINIT_HST:
                     // Retrieve this host id
                     int hid=123;
-                    if (DEBUG) this.debug("HST "+reader.readString()+":"+
-                                          reader.readShort()+"="+hid);
+                    if (DEBUG) this.debug("CONINIT_HST "+reader.readString()+
+                                          ":"+reader.readShort()+"="+hid);
                     // Send the HOST ID back to the WARP client
                     this.packet.reset();
                     this.packet.writeShort(hid);
-                    this.send(WarpConstants.TYP_HOST_ID,this.packet);
+                    this.send(WarpConstants.TYP_CONINIT_HID,this.packet);
                     break;
-                case WarpConstants.TYP_APPLICATION:
+                case WarpConstants.TYP_CONINIT_APP:
                     // Retrieve this application id
                     int aid=321;
-                    if (DEBUG) this.debug("APP "+reader.readString()+":"+
-                               reader.readString()+"="+aid);
+                    if (DEBUG) this.debug("CONINIT_APP "+reader.readString()+
+                                          ":"+reader.readString()+"="+aid);
                     // Send the APPLICATION ID back to the WARP client
                     this.packet.reset();
                     this.packet.writeShort(aid);
-                    this.send(WarpConstants.TYP_APPLICATION_ID,this.packet);
+                    this.send(WarpConstants.TYP_CONINIT_AID,this.packet);
                     break;
-                case WarpConstants.TYP_REQUEST:
-                    // Retrieve this request id
-                    int rid=999;
-                    if (DEBUG) this.debug("REQ "+reader.readShort()+":"+
-                               reader.readShort()+"="+rid);
+                case WarpConstants.TYP_CONINIT_REQ:
+                    // Create a new WarpRequestHandler and register it with
+                    // an unique RID.
+                    int r=this.request;
+                    WarpConnection c=this.getConnection();
+                    WarpRequestHandler h=new WarpRequestHandler();
+                    // Iterate until a valid RID is found
+                    c.registerHandler(h,r);
+                    this.request=r+1;
+                    h.init(c,r);
+                    if (DEBUG) this.debug("CONINIT_REQ "+reader.readShort()+
+                                          ":"+reader.readShort()+"="+r);
                     // Send the RID back to the WARP client
                     this.packet.reset();
-                    this.packet.writeShort(rid);
-                    this.send(WarpConstants.TYP_REQUEST_ID,this.packet);
+                    this.packet.writeShort(r);
+                    this.send(WarpConstants.TYP_CONINIT_RID,this.packet);
                     break;
                 default:
                     this.log("Wrong packet type "+type+". Closing connection");
+                    // Post an error message back to the WARP client
+                    this.packet.reset();
+                    this.send(WarpConstants.TYP_CONINIT_ERR,this.packet);
                     return(false);
             }
             return(true);
