@@ -11,11 +11,12 @@ import java.util.*;
 import java.net.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.TaskContainer;
 
 
 // derived from Jsp
 
-public class GTest extends Task {
+public class GTest extends Task implements TaskContainer {
 
     private static final String ZEROS        = "00000000";
     private static final String CRLF         = "\r\n";
@@ -26,17 +27,23 @@ public class GTest extends Task {
 
     private static int failureCount = 0;
     private static int passCount = 0;
+    private static boolean result = false;
 
     String prefix = "http";
     String host = "localhost";
     int port = 8080;
     int debug = 0;
 
+    private ArrayList children = new ArrayList();
+
     String description = "No description";
 
     String request;
     HashMap requestHeaders = new HashMap();
     String content;
+    
+    // true if task is nested
+    private boolean nested = false;
 
     // Expected response
     boolean magnitude = true;
@@ -90,7 +97,8 @@ public class GTest extends Task {
      * Creates a new <code>GTest</code> instance.
      *
      */
-    public GTest() {}
+    public GTest() {
+    }
 
     /**
      * <code>setTestSession</code> adds a 
@@ -339,6 +347,10 @@ public class GTest extends Task {
         getHeaderDetails( s, unexpectedHeaders, false );
     }
 
+    public void setNested( String s ) {
+        nested = Boolean.valueOf( s ).booleanValue();
+    }
+
     /**
      * <code>setResponseMatch</code> Match the
      * passed value in the server's response.
@@ -409,6 +421,15 @@ public class GTest extends Task {
     }
 
     /**
+     * Add a Task to this container
+     *
+     * @param Task to add
+     */
+    public void addTask(Task task) {
+        children.add(task);
+    }
+
+    /**
      * <code>execute</code> Executes the test.
      *
      * @exception BuildException if an error occurs
@@ -417,7 +438,7 @@ public class GTest extends Task {
 
         try {
 
-            if ( resultOut != null ) {
+            if ( resultOut != null && !nested ) {
                 resultOut.write( "<test>".getBytes() );
                 resultOut.write( ( "\n<testName>" + testName + "</testName>" ).getBytes() );
                 resultOut.write( ( "\n<assertion>" + assertion + "</assertion>" ).getBytes() );
@@ -426,31 +447,39 @@ public class GTest extends Task {
 
             dispatch( request, requestHeaders );
 
-            boolean result = checkResponse( magnitude );
+            result = checkResponse( magnitude );
 
-            if ( result ) {
+            if ( !children.isEmpty() ) {
+                Iterator iter = children.iterator();
+                while (iter.hasNext()) {
+                    Task task = (Task) iter.next();
+                    task.execute();
+                }
+            }
+
+            if ( result && !nested ) {
 		        passCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>PASS</result>\n".getBytes() );
                 }
                 if ( testName != null ) {
-                    System.out.println( " PASSED " + testName + " (" + request + ")" );
+                    System.out.println( " PASSED " + testName + "\n        (" + request + ")" );
                 } else {
                     System.out.println( " PASSED " + request );
                 }
-            } else {
+            } else if ( !result && !nested ){
 		        failureCount++;
                 if ( resultOut != null ) {
                     resultOut.write( "<result>FAIL</result>\n".getBytes() );
                 }
                 if ( testName != null ) {
-                    System.out.println( " FAILED " + testName + " (" + request + ")" );
+                    System.out.println( " FAILED " + testName + "\n        (" + request + ")" );
                 } else {
                     System.out.println( " FAILED " + request );
                 }
             }
 
-            if ( resultOut != null ) {
+            if ( resultOut != null && !nested ) {
                 resultOut.write( "</test>\n".getBytes() );
 
                 if ( lastTask ) {
@@ -473,6 +502,7 @@ public class GTest extends Task {
 
             ex.printStackTrace();
         }
+
     }
 
     /**
