@@ -283,7 +283,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 	    case SESSION_SCOPE:
 		if (session == null) {
-		    throw new IllegalArgumentException(
+		    throw new IllegalStateException(
 		            Localizer.getMessage("jsp.error.page.noSession"));
 		}
 		return session.getAttribute(name);
@@ -326,7 +326,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 	    case SESSION_SCOPE:
 		if (session == null) {
-		    throw new IllegalArgumentException(
+		    throw new IllegalStateException(
 		            Localizer.getMessage("jsp.error.page.noSession"));
 		}
 		session.setAttribute(name, o);
@@ -356,7 +356,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 	case SESSION_SCOPE:
 	    if (session == null) {
-		throw new IllegalArgumentException(
+		throw new IllegalStateException(
 		            Localizer.getMessage("jsp.error.page.noSession"));
 	    }
 	    session.removeAttribute(name);
@@ -418,7 +418,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 	case SESSION_SCOPE:
 	    if (session == null) {
-		throw new IllegalArgumentException(
+		throw new IllegalStateException(
 		            Localizer.getMessage("jsp.error.page.noSession"));
 	    }
 	    return session.getAttributeNames();

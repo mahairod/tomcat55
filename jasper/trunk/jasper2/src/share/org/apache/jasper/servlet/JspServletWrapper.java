@@ -363,9 +363,8 @@ public class JspServletWrapper {
 	    throw ex;
         } catch (IOException ex) {
             throw ex;
-        // Jikes won't compile this ( JasperException extends ServletException
-        //} catch (JasperException ex) {
-        //    throw ex;
+        } catch (IllegalStateException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new JasperException(ex);
         }

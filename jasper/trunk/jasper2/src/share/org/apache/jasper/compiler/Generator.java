@@ -3132,6 +3132,8 @@ class Generator {
         out.printil( "    throw (javax.servlet.jsp.SkipPageException) t;" );
         out.printil( "if( t instanceof java.io.IOException )" );
         out.printil( "    throw (java.io.IOException) t;" );
+        out.printil( "if( t instanceof IllegalStateException )" );
+        out.printil( "    throw (IllegalStateException) t;" );
         out.printil( "if( t instanceof javax.servlet.jsp.JspException )" );
         out.printil( "    throw (javax.servlet.jsp.JspException) t;" );
         out.printil("throw new javax.servlet.jsp.JspException(t);" );
