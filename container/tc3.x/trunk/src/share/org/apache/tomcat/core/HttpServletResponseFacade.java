@@ -155,7 +155,7 @@ implements HttpServletResponse {
     public void sendError(int sc, String msg) throws IOException {
 	if (isCommitted())
 	    throw new IllegalStateException(sm.getString("hsrf.error.ise"));
-	else
+	else if (sc != HttpServletResponse.SC_UNAUTHORIZED)	// CRM: FIXME
 	    reset();
 	setStatus( sc );
 	Request request=response.getRequest();
