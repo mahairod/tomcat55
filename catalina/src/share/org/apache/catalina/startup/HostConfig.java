@@ -713,8 +713,23 @@ public class HostConfig
 
 
     protected boolean restartContext(Context context) {
-        log.info("restartContext(" + context.getName() + ")");
         boolean result = true;
+        if( context.getReloadable() == false ) {
+            log.info("restartContext(" + context.getName() + "): not reloadable");
+            return false;
+        }
+
+        log.info("restartContext(" + context.getName() + ")");
+
+        /*
+        try {
+            StandardContext sctx=(StandardContext)context;
+            sctx.reload();
+        } catch( Exception ex ) {
+            log.warn("Erorr stopping context " + context.getName()  +  " " +
+                    ex.toString());
+        }
+        */
         try {
             ((Lifecycle) context).stop();
         } catch( Exception ex ) {
@@ -730,6 +745,7 @@ public class HostConfig
                     e.toString());
             result = false;
         }
+        
         return result;
     }
 
