@@ -1221,7 +1221,7 @@ public class ContextManager {
 			  .append("</h1>\r\n<b>");
 		 buf.append(sm.getString("defaulterrorpage.originalrequest"))
 			  .append("</b> ")
-			  .append( requestURI );
+			  .append(RequestUtil.filter(requestURI));
 
 		 if (getShowDebugInfo()) {
 			  if (res.isIncluded()) {
@@ -1232,7 +1232,7 @@ public class ContextManager {
 			 buf.append("<br><br>\r\n<b>")
 				  .append(sm.getString("defaulterrorpage.notfoundrequest"))
 				  .append("</b> ")
-				  .append( requestURI );
+				  .append(RequestUtil.filter(requestURI));
 			  }
 		 }
 
