@@ -1103,9 +1103,8 @@ public class JspParseEventListener implements ParseEventListener {
     {
 	if (data != null) {
 	    handleCharData(start, stop, data);
-            xo.append("jsp:cdata", null, data);
-            // FLAG: JSP 1.2 PFD2 implement later
-            // xo.append("jsp:text", null, data);
+            // xo.append("jsp:cdata", null, data);
+            xo.append("jsp:text", null, data);
 	}
     }
 

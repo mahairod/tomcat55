@@ -304,9 +304,7 @@ class ParserXJspSaxHandler
 	    if (name.equals("jsp:root")) {
 		node.validate(true, false);
 		jspHandler.handleRootEnd();
-	    } else if (name.equals("jsp:cdata")) {
-            // FLAG: JSP 1.2 PFD2 implement later
-	    // } else if (name.equals("jsp:text")) {
+            } else if (name.equals("jsp:text")) {
 		node.validate(false, true);
 		jspHandler.handleJspCdata(node.start, stop, node.getText());
 	    } else if (name.equals("jsp:directive.include")) {
