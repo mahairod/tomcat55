@@ -188,6 +188,21 @@ public final class ConnectorForm extends ActionForm {
     private String maxKeepAliveText = null;
     
     /**
+     * The text for the maxSpare.
+     */
+    private String maxSpare = null;
+    
+    /**
+     * The text for the maxThreads.
+     */
+    private String maxThreads = null;
+    
+    /**
+     * The text for the minSpare.
+     */
+    private String minSpare = null;
+    
+    /**
      * The text for the port.
      */
     private String portText = null;
@@ -824,7 +839,6 @@ public final class ConnectorForm extends ActionForm {
         
     }
     
-    
     /**
      * Set the maxKeepAliveText.
      */
@@ -834,6 +848,63 @@ public final class ConnectorForm extends ActionForm {
         this.maxKeepAliveText = maxKeepAliveText;
         
     }
+    
+    /**
+     * Return the maxSpare.
+     */
+    public String getMaxSpare() {
+        
+        return this.maxSpare;
+        
+    }
+    
+    /**
+     * Set the maxSpare.
+     */
+    
+    public void setMaxSpare(String maxSpare) {
+        
+        this.maxSpare = maxSpare;
+        
+    } 
+    
+    /**
+     * Return the maxThreads.
+     */
+    public String getMaxThreads() {
+        
+        return this.maxThreads;
+        
+    }
+    
+    /**
+     * Set the maxThreads.
+     */
+    
+    public void setMaxThreads(String maxThreads) {
+        
+        this.maxThreads = maxThreads;
+        
+    } 
+    
+    /**
+     * Return the minSpare.
+     */
+    public String getMinSpare() {
+        
+        return this.minSpare;
+        
+    }
+    
+    /**
+     * Set the minSpare.
+     */
+    
+    public void setMinSpare(String minSpare) {
+        
+        this.minSpare = minSpare;
+        
+    }  
     
     /**
      * Return the port text.
@@ -986,6 +1057,9 @@ public final class ConnectorForm extends ActionForm {
         this.minProcessorsText = null;
         this.maxProcessorsText = null;
         this.maxKeepAliveText = null;
+        this.maxSpare = null;
+        this.maxThreads = null;
+        this.minSpare = null;
         this.portText = null;
         this.redirectPortText = null;
         this.proxyName = null;
@@ -1020,11 +1094,6 @@ public final class ConnectorForm extends ActionForm {
         String submit = request.getParameter("submit");
         // front end validation when save is clicked.
         //if (submit != null) {
-            
-            /* general */
-            numberCheck("acceptCountText", acceptCountText, true, 0, 128);
-            //numberCheck("connTimeOutText", connTimeOutText, true, -1, 60000);
-            numberCheck("bufferSizeText", bufferSizeText, true, 1, 8192);
   
             /* The IP address can also be null -- which means open the
              server socket on *all* IP addresses for this host */
@@ -1043,15 +1112,15 @@ public final class ConnectorForm extends ActionForm {
             numberCheck("redirectPortText",  redirectPortText, true, -1, 65535);
             
             /* processors*/
-            numberCheck("minProcessorsText",  minProcessorsText, true, 1, 512);
-            try {
+            //numberCheck("minProcessorsText",  minProcessorsText, true, 1, 512);
+            //try {
                 // if min is a valid integer, then check that max >= min
-                int min = Integer.parseInt(minProcessorsText);
-                numberCheck("maxProcessorsText",  maxProcessorsText, true, min, 512);
-            } catch (Exception e) {
+                //int min = Integer.parseInt(minProcessorsText);
+                //numberCheck("maxProcessorsText",  maxProcessorsText, true, min, 512);
+            //} catch (Exception e) {
                 // check for the complete range
-                numberCheck("maxProcessorsText",  maxProcessorsText, true, 1, 512);
-            }
+                //numberCheck("maxProcessorsText",  maxProcessorsText, true, 1, 512);
+            //}
             
             // proxy                  
             if ((proxyName!= null) && (proxyName.length() > 0)) {
@@ -1063,8 +1132,12 @@ public final class ConnectorForm extends ActionForm {
             }   
             
             // supported only by Coyote HTTP and HTTPS connectors
-            if (!("AJP".equalsIgnoreCase(connectorType)))
-                numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);            
+            if (!("AJP".equalsIgnoreCase(connectorType))) {
+                numberCheck("acceptCountText", acceptCountText, true, 0, 128);
+                //numberCheck("connTimeOutText", connTimeOutText, true, -1, 60000);
+                numberCheck("bufferSizeText", bufferSizeText, true, 1, 8192);
+                numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);  
+            }
         //}
         
         return errors;

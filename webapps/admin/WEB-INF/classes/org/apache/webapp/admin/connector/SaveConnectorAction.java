@@ -357,8 +357,8 @@ public final class SaveConnectorAction extends Action {
             } catch (Throwable t) {
                 minProcessors = 5;
             }
-            mBServer.setAttribute(coname,
-                                  new Attribute("minProcessors", new Integer(minProcessors))); 
+            //mBServer.setAttribute(coname,
+            //                      new Attribute("minProcessors", new Integer(minProcessors))); 
             attribute = "maxProcessors";
             int maxProcessors = 20;
             try {
@@ -366,8 +366,8 @@ public final class SaveConnectorAction extends Action {
             } catch (Throwable t) {
                 maxProcessors = 20;
             }
-            mBServer.setAttribute(coname,
-                                  new Attribute("maxProcessors", new Integer(maxProcessors))); 
+            //mBServer.setAttribute(coname,
+            //                      new Attribute("maxProcessors", new Integer(maxProcessors))); 
        
             attribute = "maxKeepAliveRequests";
             int maxKeepAliveRequests = 100;
@@ -378,6 +378,35 @@ public final class SaveConnectorAction extends Action {
             }
             mBServer.setAttribute(coname,
                                   new Attribute("maxKeepAliveRequests", new Integer(maxKeepAliveRequests))); 
+            attribute = "maxSpareThreads";
+            int maxSpare = 50;
+            try {
+                maxSpare = Integer.parseInt(cform.getMaxSpare());
+            } catch (Throwable t) {
+                maxSpare = 50;
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, (new Integer(maxSpare)).toString())); 
+            attribute = "maxThreads";
+            int maxThreads = 200;
+            try {
+                maxThreads = Integer.parseInt(cform.getMaxThreads());
+            } catch (Throwable t) {
+                maxThreads = 200;
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, (new Integer(maxThreads)).toString())); 
+			
+            attribute = "minSpareThreads";
+            int minSpare = 4;
+            try {
+                minSpare = Integer.parseInt(cform.getMinSpare());
+            } catch (Throwable t) {
+                minSpare = 4;
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, (new Integer(minSpare)).toString())); 
+				  
             attribute = "secure";
             mBServer.setAttribute(coname,
                                   new Attribute("secure", new Boolean(cform.getSecure())));    
