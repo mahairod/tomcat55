@@ -19,6 +19,7 @@
 <a href="#Upgrading">Upgrading</a><br />
 <a href="#Configuration">Configuration</a><br />
 <a href="#Production Configuration">Production Configuration</a><br />
+<a href="#Web Application Compilation">Web Application Compilation</a><br />
 <a href="#Using Jikes">Using Jikes</a><br />
 </p>
 </section>
@@ -168,9 +169,9 @@ collected by the JVM Tomcat is running in.</li>
 
 </section>
 
-<section name="Web application precompilation">
+<section name="Web Application Compilation">
 
-<p>Using Ant is the preferred way to precompile web applications. 
+<p>Using Ant is the preferred way to compile web applications using JSPC. 
 Use the script given below to precompile a webapp:
 </p>
 
@@ -193,7 +194,6 @@ Use the script given below to precompile a webapp:
     &lt;/taskdef&gt; 
 
     &lt;jasper2 
-             compile="false" 
              validateXml="false" 
              uriroot="${webapp.path}" 
              webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" 
@@ -253,11 +253,14 @@ during the precompilation must be added to the web application deployment
 descriptor. Insert the <code>${webapp.path}/WEB-INF/generated_web.xml</code>
 at the right place inside the <code>${webapp.path}/WEB-INF/web.xml</code> file.
 Restart the web application (using the manager) and test it to verify it is 
-running fine with precompiled servlets.
+running fine with precompiled servlets. An appropriate token placed in the
+web application deployment descriptor may also be used to automatically
+insert the generated servlet declarations and mappings using Ant filtering 
+capabilities. This is actually how all the webapps distributed with Tomcat 
+are automatically compiled as part of the build process.
 </p>
 
 </section>
-
 
 <section name="Using Jikes">
 
