@@ -742,7 +742,7 @@
     <copy todir="embed/lib" file="${jmx.jar}"/>
     <copy todir="embed/lib" file="${regexp.jar}"/>
 
-    <copy todir="embed/lib" file="${jdt.jar}"/>
+    <copy todir="embed/lib" file="${jasper-compiler-jdt.jar}"/>
 
     <copy todir="embed/lib">
       <fileset dir="build/server/lib">
