@@ -113,6 +113,7 @@ public class CoyoteServerSocketFactory
     private String keystorePass = "changeit";
     private String keystoreType = "JKS";
     private String protocol = "TLS";
+    private String protocols;
     private String sslImplementation = null;
     private String cipherSuites;
     private String keyAlias;
@@ -277,6 +278,24 @@ public class CoyoteServerSocketFactory
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    /**
+     * Gets the SSL protocol variants to be enabled.
+     *
+     * @return Comma-separated list of SSL protocol variants
+     */
+    public String getProtocols() {
+        return this.protocols;
+    }
+
+    /**
+     * Sets the SSL protocol variants to be enabled.
+     *
+     * @param protocols Comma-separated list of SSL protocol variants
+     */
+    public void setProtocols(String protocols) {
+        this.protocols = protocols;
     }
 
     /**
