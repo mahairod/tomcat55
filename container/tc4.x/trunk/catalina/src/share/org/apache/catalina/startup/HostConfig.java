@@ -157,6 +157,12 @@ public class HostConfig
 
 
     /**
+     * Should we deploy XML Context config files?
+     */
+    private boolean deployXML = false;
+
+
+    /**
      * Should we monitor the <code>appBase</code> directory for new
      * applications and automatically deploy them?
      */
@@ -265,6 +271,28 @@ public class HostConfig
 
 
     /**
+     * Return the deploy XML config file flag for this component.
+     */
+    public boolean isDeployXML() {
+
+        return (this.deployXML);
+
+    }
+
+
+    /**
+     * Set the deploy XML config file flag for this component.
+     *
+     * @param deployXML The new deploy XML flag
+     */
+    public void setDeployXML(boolean deployXML) {
+
+        this.deployXML= deployXML;
+
+    }
+
+
+    /**
      * Return the live deploy flag for this component.
      */
     public boolean isLiveDeploy() {
@@ -326,6 +354,7 @@ public class HostConfig
                 if (hostDebug > this.debug) {
                     this.debug = hostDebug;
                 }
+                setDeployXML(((StandardHost) host).isDeployXML());
                 setLiveDeploy(((StandardHost) host).getLiveDeploy());
                 setUnpackWARs(((StandardHost) host).isUnpackWARs());
             }
@@ -388,6 +417,9 @@ public class HostConfig
      * Deploy XML context descriptors.
      */
     protected void deployDescriptors(File appBase, String[] files) {
+
+        if (!deployXML)
+           return;
 
         for (int i = 0; i < files.length; i++) {
 
@@ -888,7 +920,7 @@ public class HostConfig
 
     /**
      * Start the background thread that will periodically check for
-     * session timeouts.
+     * web application autoDeploy and changes to the web.xml config.
      *
      * @exception IllegalStateException if we should not be starting
      *  a background thread now
@@ -913,7 +945,7 @@ public class HostConfig
 
     /**
      * Stop the background thread that is periodically checking for
-     * modified classes.
+     * for web application autoDeploy and changes to the web.xml config.
      */
     protected void threadStop() {
 
@@ -954,7 +986,8 @@ public class HostConfig
 
 
     /**
-     * The background thread that checks for session timeouts and shutdown.
+     * The background thread that checks for web application autoDeploy
+     * and changes to the web.xml config.
      */
     public void run() {
 

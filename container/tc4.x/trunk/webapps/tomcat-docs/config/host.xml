@@ -115,6 +115,15 @@
         debugging detail level is zero (0).</p>
       </attribute>
 
+      <attribute name="deployXML" required="false">
+        <p>Set to <code>false</code> if you want to disable deploying
+        applications using a Context XML config file. Applications are
+        deployed with the security permissions of catalina, for security
+        this may need to be set to <code>false</code> if untrusted users
+        can manage web applications.  The flag's value defaults to
+        <code>true</code>.</p>
+      </attribute>
+
       <attribute name="errorReportValveClass" required="false">
         <p>Java class name of the error reporting valve which will be used
         by this Host. The responsability of this valve is to output error

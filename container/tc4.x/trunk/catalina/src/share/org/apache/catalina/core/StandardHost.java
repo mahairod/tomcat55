@@ -162,6 +162,12 @@ public class StandardHost
 
 
     /**
+     * deploy Context XML config files property.
+     */
+    private boolean deployXML = true;
+
+
+    /**
      * The Java class name of the default error reporter implementation class 
      * for deployed web applications.
      */
@@ -329,6 +335,26 @@ public class StandardHost
         this.contextClass = contextClass;
         support.firePropertyChange("contextClass",
                                    oldContextClass, this.contextClass);
+
+    }
+
+
+    /**
+     * Deploy XML Context config files flag accessor.
+     */
+    public boolean isDeployXML() {
+
+        return (deployXML);
+
+    }
+
+
+    /**
+     * Deploy XML Context config files flag mutator.
+     */
+    public void setDeployXML(boolean deployXML) {
+
+        this.deployXML = deployXML;
 
     }
 

@@ -293,6 +293,10 @@ public class StandardHostDeployer implements Deployer {
             throw new IllegalArgumentException
                 (sm.getString("standardHost.configRequired"));
 
+        if (!host.isDeployXML())
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.configNotAllowed"));
+
         // Calculate the document base for the new web application (if needed)
         String docBase = null; // Optional override for value in config file
         if (war != null) {
