@@ -594,7 +594,6 @@ public class JspC implements Options {
                               new Object[] {fne.getMessage()}, Logger.WARNING);
             throw new JasperException( fne );
         } catch (Exception e) {
-            e.printStackTrace();
             Constants.message("jspc.error.generalException",
                     new Object[] {file, e}, Logger.ERROR);
             if ( listErrors ) {
