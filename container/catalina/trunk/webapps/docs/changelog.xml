@@ -32,13 +32,13 @@
       <add>
         Add installer for mod_jk on IIS. (mturk)
       </add>
-	  <add>
-	    New store config module for better server.xml saving support (pero)
-	  </add>
-	  <update>
-	    <bug>32081</bug>: Remove the JDK requirement from the Unix scripts, submitted
-	    by Ben Souther (remm)
-	  </update>
+      <add>
+        New store config module for better server.xml saving support (pero)
+      </add>
+      <update>
+        <bug>32081</bug>: Remove the JDK requirement from the Unix scripts, submitted
+        by Ben Souther (remm)
+      </update>
     </changelog>
   </subsection>
 
@@ -141,6 +141,10 @@
       <fix>
         <bug>32771</bug>: Cannot undeploy/deploy misconfigured app after tomcat startup, 
         submitted by Gabriele Garuglieri (remm)
+      </fix>
+      <fix>
+        <bug>28867</bug>: Correct manager documentation to document correct way to
+        reference the ROOT context. Submitted by Stephane Bailliez. (markt)
       </fix>
     </changelog>
   </subsection>

@@ -229,7 +229,7 @@ the host and port appropriately for your installation.</p>
 <ul>
 <li><strong>path</strong> - The context path (including the leading slash)
     of the web application you are dealing with.  To select the ROOT web
-    application, specify a zero-length string.  <strong>NOTE</strong> -
+    application, specify "/".  <strong>NOTE</strong> -
     It is not possible to perform administrative commands on the
     Manager application itself.</li>
 <li><strong>war</strong> - URL of a web application archive (WAR) file,
@@ -333,9 +333,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
+    <p>The context path must start with a slash character. To reference the
+    ROOT web application use "/".</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
     <blockquote>
@@ -523,9 +522,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a "/" string.</p>
+    <p>The context path must start with a slash character. To reference the
+    ROOT web application use "/".</p>
     </blockquote></li>
 <li><em>Context path must match the directory or WAR file name:</em>
     <blockquote>
@@ -598,9 +596,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
+    <p>The context path must start with a slash character. To reference the
+    ROOT web application use "/".</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
@@ -796,9 +793,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
+    <p>The context path must start with a slash character. To reference the
+    ROOT web application use "/".</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
@@ -839,9 +835,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
+    <p>The context path must start with a slash character. To reference the
+    ROOT web application use "/".</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
@@ -892,9 +887,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
-    <p>The context path must start with a slash character, unless you are
-    referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
+    <p>The context path must start with a slash character. To reference the
+    ROOT web application use "/".</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
