@@ -98,12 +98,17 @@
 
   <!-- ====================== DIST: Create Archives ======================= -->
   <target name="dist" depends="dist-static,dist-javadoc,dist-source">
+<!-- Comment out until startup timing issues are resolved
     <jar jarfile="${tomcat.dist}/webapps/ROOT.war"
          basedir="${tomcat.build}/webapps/ROOT" includes="**"/>
     <jar jarfile="${tomcat.dist}/webapps/examples.war"
          basedir="${tomcat.build}/webapps/examples" includes="**"/>
+    <jar jarfile="${tomcat.dist}/webapps/manager.war"
+         basedir="${tomcat.build}/webapps/manager" includes="**"/>
     <jar jarfile="${tomcat.dist}/webapps/webdav.war"
          basedir="${tomcat.build}/webapps/webdav" includes="**"/>
+-->
+    <copydir src="${tomcat.build}/webapps" dest="${tomcat.dist}/webapps"/>
   </target>
 
 
