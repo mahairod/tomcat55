@@ -69,6 +69,7 @@ import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ResourceParams;
 
 
@@ -338,6 +339,14 @@ public interface DefaultContext {
 
 
     /**
+     * Add a resource link for this web application.
+     *
+     * @param resource New resource link
+     */
+    public void addResourceLink(ContextResourceLink resourceLink);
+
+
+    /**
      * Add the classname of a LifecycleListener to be added to each
      * Wrapper appended to this Context.
      *
@@ -460,6 +469,22 @@ public interface DefaultContext {
 
 
     /**
+     * Return the resource link with the specified name, if any;
+     * otherwise return <code>null</code>.
+     *
+     * @param name Name of the desired resource link
+     */
+    public ContextResourceLink findResourceLink(String name);
+
+
+    /**
+     * Return the defined resource links for this application.  If
+     * none have been defined, a zero-length array is returned.
+     */
+    public ContextResourceLink[] findResourceLinks();
+
+
+    /**
      * Return the defined resource references for this application.  If
      * none have been defined, a zero-length array is returned.
      */
@@ -546,6 +571,14 @@ public interface DefaultContext {
      * @param name Name of the resource environment reference to remove
      */
     public void removeResourceEnvRef(String name);
+
+
+    /**
+     * Remove any resource link with the specified name.
+     *
+     * @param name Name of the resource link to remove
+     */
+    public void removeResourceLink(String name);
 
 
     /**
