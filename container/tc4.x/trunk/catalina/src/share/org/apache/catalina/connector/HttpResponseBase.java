@@ -175,7 +175,6 @@ public class HttpResponseBase
             (status >= HttpServletResponse.SC_BAD_REQUEST) &&
             (contentType == null) &&
             (contentCount == 0)) {
-            System.out.println("finishResponse: " + status + " " + message);
             try {
                 setContentType("text/html");
                 PrintWriter writer = getWriter();
