@@ -838,6 +838,8 @@ public class NamingContext implements Context {
                         entry.type = NamingEntry.ENTRY;
                     }
                     return obj;
+                } catch (NamingException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new NamingException(e.getMessage());
                 }
