@@ -18,9 +18,8 @@
 
 <!-- Tree Component -->
 
-<td width="200">
   <controls:tree tree="treeControlTest"
-               action="treeControlTest.do?tree=${name}"
+               action="treeControlTest.do?tree={name}"
                 style="tree-control"
         styleSelected="tree-control-selected"
       styleUnselected="tree-control-unselected"
