@@ -137,8 +137,7 @@ package javax.servlet.jsp.tagext;
  * The scope value for a variable implies what methods may affect its
  * value and thus where synchronization is needed as illustrated by
  * the table below.  <b>Note:</b> the synchronization of the variable(s)
- * will occur <em>after</em> the associated method has been called.
- *
+ * will occur <em>after</em> the respective method has been called.
  *
  * <blockquote>
  * <table cellpadding="2" cellspacing="2" border="0" width="55%"

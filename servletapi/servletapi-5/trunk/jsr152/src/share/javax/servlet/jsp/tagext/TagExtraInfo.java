@@ -97,7 +97,7 @@ public abstract class TagExtraInfo {
      * Request-time attributes are indicated as such in the TagData parameter.
      *
      * @param data The TagData instance.
-     * @return An array of VariableInfo data, or a zero length array
+     * @return An array of VariableInfo data, or null or a zero length array
      *         if no scripting variables are to be defined.
      */
     public VariableInfo[] getVariableInfo(TagData data) {

@@ -138,9 +138,9 @@ public interface IterationTag extends Tag {
      * of external computation.
      *
      * <p>
-     * The JSP container will resynchronize any variable values that are 
-     * indicated as so in TagExtraInfo or TLD after the invocation of 
-     * doAfterBody().
+     * The JSP container will resynchronize the values of any AT_BEGIN and
+     * NESTED variables (defined by the associated TagExtraInfo or TLD) after
+     * the invocation of doAfterBody().
      *
      * @return whether additional evaluations of the body are desired
      * @throws JspException

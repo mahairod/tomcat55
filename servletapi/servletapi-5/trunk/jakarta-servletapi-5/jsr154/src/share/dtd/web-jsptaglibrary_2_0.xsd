@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.19 09/30/02
+@(#)web-jsptaglibrary_2_0.xsds	1.21 10/15/02
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -318,7 +318,9 @@ name    The unique action name
 path    Where to find the .tag file implementing this
         action, relative to the root of the web application or
 	the root of the JAR file for a tag library packaged in
-	a JAR.
+	a JAR.  This must begin with /WEB-INF/tags if the .tag
+	file resides in the WAR, or /META-INF/tags if the .tag
+	file resides in a JAR.
 
 </xsd:documentation>
 </xsd:annotation>
@@ -816,7 +818,7 @@ The variableType provides information on the scripting
 variables defined by using this tag.  It is a (translation
 time) error for a tag that has one or more variable
 subelements to have a TagExtraInfo class that returns a
-non-null object.
+non-null value from a call to getVariableInfo().
 
 The subelements of variableType are of the form:
 

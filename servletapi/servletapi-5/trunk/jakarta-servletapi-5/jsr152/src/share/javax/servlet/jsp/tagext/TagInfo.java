@@ -265,22 +265,31 @@ public class TagInfo {
     /**
      * Information on the scripting objects created by this tag at runtime.
      * This is a convenience method on the associated TagExtraInfo class.
-     * <p>
-     * Default is null if the tag has no "id" attribute,
-     * otherwise, {"id", Object}
      *
      * @param data TagData describing this action.
-     * @return Array of VariableInfo elements, or a zero length
-     *         array if the associated TagExtraInfo defines no scripting
-     *         variables.
+     * @return if a TagExtraInfo object is associated with this TagInfo, the
+     *     the result of getTagExtraInfo().getVariableInfo( data ), otherwise
+     *     null if the tag has no "id" attribute or new VariableInfo[] {
+     *     new VariableInfo( data.getId(), "java.lang.Object", true,
+     *     VariableInfo.NESTED ) } if an "id" attribute is present.
      */
-
    public VariableInfo[] getVariableInfo(TagData data) {
+       VariableInfo[] result = null;
        TagExtraInfo tei = getTagExtraInfo();
-       if (tei == null) {
-	   return null;
+       if (tei != null) {
+	   result = tei.getVariableInfo( data );
        }
-       return tei.getVariableInfo(data);
+       else {
+	   String idValue = data.getId();
+	   if( idValue != null ) {
+	       result = 
+		   new VariableInfo[] {
+		       new VariableInfo( idValue, "java.lang.Object",
+			   true, VariableInfo.NESTED )
+	           };
+	   }
+       }
+       return result;
    }
 
     /**

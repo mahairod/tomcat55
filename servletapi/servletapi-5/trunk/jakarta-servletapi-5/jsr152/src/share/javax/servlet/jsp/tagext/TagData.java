@@ -119,9 +119,10 @@ public class TagData implements Cloneable {
     }
 
     /**
-     * The value of the jsp:id attribute.
+     * The value of the tag's id attribute.
      *
-     * @return the value of the jsp:id attribute.
+     * @return the value of the tag's id attribute, or null if no such
+     *     attribute was specified.
      */
 
     public String getId() {
