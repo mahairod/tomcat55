@@ -1,0 +1,580 @@
+<?xml version="1.0"?>
+<mbeans-descriptors>
+
+  <mbean name="DefaultContext"
+         description="Used to store the default configuration a Host will use when creating a Context"
+         domain="Catalina"
+         group="Default-Context"
+         type="org.apache.catalina.core.StandardDefaultContext">
+
+    <attribute name="cookies"
+               description="Should we attempt to use cookies for session id communication?"
+               type="boolean"/>
+      
+    <attribute name="crossContext"
+               description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
+               type="boolean"/>
+      
+    <attribute name="reloadable"
+               description="The reloadable flag for this web application"
+               type="boolean"/>
+
+    <attribute name="swallowOutput"
+               description="Flag to set to cause the system.out and system.err to be redirected to the logger when executing a servlet"
+               type="boolean"/>
+
+    <attribute name="useNaming"
+               description="Create JNDI naming context?"
+               is="true"
+               type="boolean"/>
+
+    <attribute name="resourceNames"
+               description="Object names for the resources"
+               is="true"
+               type="[Ljava.lang.String;"/>
+                 
+    <operation name="addEnvironment"
+               description="Add an environment entry for this web application"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="envName"
+                 description="New environment entry name"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation name="addResource"
+               description="Add a resource reference for this web application"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="resourceName"
+                 description="New resource reference name"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation name="removeEnvironment"
+               description="Remove any environment entry with the specified name"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="envName"
+                 description="Name of the environment entry to remove"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation name="removeResource"
+               description="Remove any resource reference with the specified name"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="resourceName"
+                 description="Name of the resource reference to remove"
+                 type="java.lang.String"/>
+    </operation>
+    
+  </mbean>
+  
+  <mbean name="NamingContextListener"
+         description="Helper class used to initialize and populate the JNDI context associated with each context and server"
+         domain="Catalina"
+         group="Listener"
+         type="org.apache.catalina.core.NamingContextListener">
+    
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+      
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+  </mbean>
+
+  <mbean name="StandardContext"
+         description="Standard Context Component"
+         domain="Catalina"
+         group="Context"
+         type="org.apache.catalina.core.StandardContext">
+    
+    <attribute   name="cookies"
+               description="Should we attempt to use cookies for session id
+               communication?"
+               type="boolean"/>
+      
+    <attribute name="crossContext"
+               description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
+               type="boolean"/>
+      
+    <attribute name="defaultWebXml"
+               description="Location of the default web.xml resource or file"
+               type="java.lang.String"/>
+      
+    <attribute name="privileged"
+               description="Access to tomcat internals"
+               type="boolean"/>
+      
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+    <attribute name="docBase"
+               description="The document root for this web application"
+               type="java.lang.String"/>
+
+    <attribute name="environments"
+               description="MBean Names of the set of defined environment entries for this web application"
+               type="[Ljava.lang.String;"
+               writeable="false"/>
+      
+    <attribute name="managedResource"
+               description="The managed resource this MBean is associated with"
+               type="java.lang.Object"/>
+      
+    <attribute name="mappingObject"
+               description="The object used for mapping"
+               type="java.lang.Object"/>
+      
+    <attribute name="override"
+               description="The DefaultContext override flag for this web application"
+               type="boolean"/>
+      
+    <attribute name="path"
+               description="The context path for this Context"
+               type="java.lang.String"/>
+      
+    <attribute name="startupTime"
+               description="Startup time for this context"
+               type="long"/>
+      
+    <attribute name="tldScanTime"
+               description="Time spend scanning jars for TLDs for this context"
+               type="long"/>
+      
+    <attribute name="servlets"
+               description="JSR77 list of servlets"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false"/>
+
+    <attribute name="reloadable"
+               description="The reloadable flag for this web application"
+               type="boolean"/>
+
+    <attribute name="resourceNames"
+               description="MBean Names of all the defined resource references for this application."
+               type="[Ljava.lang.String;"
+               writeable="false"/>
+      
+    <attribute name="staticResources"
+               description="Static resources associated with the context."
+               type="javax.naming.directory.DirContext"
+               writeable="false"/>
+      
+    <attribute   name="swallowOutput"
+               description="Flag to set to cause the system.out and system.err to be redirected to the logger when executing a servlet"
+               type="boolean"/>
+
+    <attribute name="useNaming"
+               description="Create a JNDI naming context for this application?"
+               is="true"
+               type="boolean"/>
+
+    <attribute name="welcomeFiles"
+               description="The welcome files for this context"
+               type="[Ljava.lang.String;"
+               writeable="false"/>
+      
+    <attribute name="workDir"
+               description="The pathname to the work directory for this context"
+               type="java.lang.String"/>
+      
+    <attribute name="children"
+               description="Object names of all children"
+               type="[Ljavax.management.ObjectName;"/>
+      
+    <operation name="addEnvironment"
+               description="Add an environment entry for this web application"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="envName"
+                 description="New environment entry name"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation   name="addResource"
+               description="Add a resource reference for this web application"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="resourceName"
+                 description="New resource reference name"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation   name="removeEnvironment"
+               description="Remove any environment entry with the specified name"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="envName"
+                 description="Name of the environment entry to remove"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation   name="removeResource"
+               description="Remove any resource reference with the specified name"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="resourceName"
+                 description="Name of the resource reference to remove"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation   name="setRealm"
+               description="Configures the realm for this webapp"
+               impact="ACTION" returnType="void">
+      <parameter name="realm"  
+                 description="Realm object"
+                 type="org.apache.catalina.Realm"/>
+    </operation>
+    
+    <operation   name="reload"
+               description="Reload the webapplication"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+    <operation   name="init"
+               description="Register the context into the running server"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+    <operation   name="start"
+               description="Start the contex"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+    <operation name="stop"
+               description="Stop the contex"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+    <operation name="destroy"
+               description="Destroy the contex"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+  </mbean>
+  
+  <mbean name="StandardContextValve"
+         description="Valve that implements the default basic behavior for the
+         StandardContext container implementation"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.core.StandardContextValve">
+    
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+      
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+  </mbean>
+  
+  <mbean name="StandardEngine"
+         type="org.apache.catalina.core.StandardEngine"
+         description="Standard Engine Component"
+         domain="Catalina"
+         group="Engine">
+    
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+    <attribute name="defaultHost"
+               description="Name of the default Host for this Engine"
+               type="java.lang.String"/>
+      
+    <attribute   name="managedResource"
+               description="The managed resource this MBean is associated with"
+               type="java.lang.Object"/>
+      
+    <attribute   name="name"
+               description="Unique name of this Engine"
+               type="java.lang.String"/>
+      
+    <attribute   name="baseDir"
+               description="Base dir for this engine, typically same as catalina.base system property"
+               type="java.lang.String"/>
+      
+    <attribute   name="jvmRoute"
+               description="Route used for load balancing"
+               type="java.lang.String"/>
+      
+    <operation name="addChild"
+               description="Add a virtual host"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="child"
+                 description="Host object"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+    
+    <operation   name="setRealm"
+               description="Configures the realm for this engine"
+               impact="ACTION" returnType="void">
+      <parameter name="realm"  description="Realm object"
+                 type="org.apache.catalina.Realm"/>
+    </operation>
+    
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+      
+  </mbean>
+
+  
+  <mbean name="StandardEngineValve"
+         description="Valve that implements the default basic behavior for the
+         StandardEngine container implementation"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.core.StandardEngineValve">
+    
+    <attribute   name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+      
+    <attribute   name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+  </mbean>
+  
+  <mbean name="StandardHost"
+         description="Standard Host Component"
+         domain="Catalina"
+         group="Host"
+         type="org.apache.catalina.core.StandardHost">
+    
+    <attribute name="appBase"
+               description="The application root for this Host"
+               type="java.lang.String"/>
+      
+    <attribute name="autoDeploy"
+               description="The auto deploy flag for this Host"
+               type="boolean"/>
+                 
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+    <attribute name="deployXML"
+               description="deploy Context XML config files property"
+               is="true"
+               type="boolean"/>
+      
+    <attribute name="liveDeploy"
+               description="The live deploy flag for this Host"
+               type="boolean"/>
+      
+    <attribute name="managedResource"
+               description="The managed resource this MBean is associated with"
+               type="java.lang.Object"/>
+      
+    <attribute name="name"
+               description="Unique name of this Host"
+               type="java.lang.String"/>
+      
+    <attribute name="unpackWARs"
+               description="Unpack WARs property"
+               is="true"
+               type="boolean"/>
+      
+    <attribute name="xmlNamespaceAware"
+               description="Attribute value used to turn on/off XML namespace awareness"
+               type="boolean"/>
+      
+    <attribute name="xmlValidation"
+               description="Attribute value used to turn on/off XML validation"
+               type="boolean"/>
+      
+    <attribute name="children"
+               description="Object names of all children"
+               type="[Ljavax.management.ObjectName;"/>
+      
+    <attribute name="aliases"
+               description="Host aliases"
+               type="[Ljava.lang.String;"/>
+      
+    <attribute name="valveNames"
+               description="Return the MBean Names of the Valves associated with this Host"
+               type="[Ljava.lang.String;"/>
+      
+    <attribute name="valveObjectNames"
+               description="Return the MBean ObjectNames of the Valves associated with this Host"
+               type="[Ljavax.management.ObjectName;"/>
+      
+    <operation name="addAlias"
+               description="Add an alias name that should be mapped to this Host"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="alias"
+                 description="The alias to be added"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation name="findAliases"
+               description="Return the set of alias names for this Host"
+               impact="INFO"
+               returnType="[Ljava.lang.String;"/>
+
+    <operation name="addChild"
+               description="Add a context"
+               impact="ACTION"
+               returnType="org.apache.catalina.Container"/>
+      
+    <operation   name="removeAlias"
+               description="Remove the specified alias name from the aliases for this  Host"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="alias"
+                 description="Alias name to be removed"
+                 type="java.lang.String"/>
+    </operation>
+    
+    <operation   name="setRealm"
+               description="Configures the realm for this host"
+               impact="ACTION" returnType="void">
+      <parameter name="realm"  description="Realm object"
+                 type="org.apache.catalina.Realm"/>
+    </operation>
+    
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
+  </mbean>
+  
+  <mbean name="StandardHostValve"
+         description="Valve that implements the default basic behavior for the
+         StandardHost container implementation"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.core.StandardHostValve">
+    
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+
+  </mbean>
+
+  <mbean name="StandardServer"
+         description="Standard Server Component"
+         domain="Catalina"
+         group="Server"
+         type="org.apache.catalina.core.StandardServer">
+    
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+    <attribute name="managedResource"
+               description="The managed resource this MBean is associated with"
+               type="java.lang.Object"/>
+      
+    <attribute name="port"
+               description="TCP port for shutdown messages"
+               type="int"/>
+      
+    <attribute name="shutdown"
+               description="Shutdown password"
+               type="java.lang.String"/>
+      
+    <operation name="store"
+               description="Save current state to server.xml file"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+  </mbean>
+
+  
+  <mbean name="StandardService"
+         description="Standard Service Component"
+         domain="Catalina"
+         group="Service"
+         type="org.apache.catalina.core.StandardService">
+    
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+      
+    <attribute name="managedResource"
+               description="The managed resource this MBean is associated with"
+               type="java.lang.Object"/>
+      
+    <attribute name="name"
+               description="Unique name of this Service"
+               type="java.lang.String"/>
+      
+    <attribute name="connectorNames"
+               description="ObjectNames of the connectors"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false" />
+      
+    <attribute name="container"
+               description="ObjectNames of the engine"
+               type="javax.management.ObjectName"
+               writeable="false" />
+
+    <operation name="addConnector"
+               description="Add a new connector"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="connector"
+                 description="Connector object"
+                 type="org.apache.catalina.Connector"/>
+    </operation>
+    
+    <operation name="setContainer"
+               description="Set the servlet engine that will process the requests "
+               impact="ACTION"
+               returnType="void">
+      <parameter name="engine"
+                 description="Engine object"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+    
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+  </mbean>
+  
+  
+  <mbean name="StandardWrapperValve"
+         description="Valve that implements the default basic behavior for the
+         StandardWrapper container implementation"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.core.StandardWrapperValve">
+    
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+      
+    <attribute name="debug"
+               description="The debugging detail level for this component"
+               type="int"/>
+
+  </mbean>
+
+</mbeans-descriptors>
