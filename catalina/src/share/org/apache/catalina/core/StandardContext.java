@@ -3631,9 +3631,7 @@ public class StandardContext
      */
     public FilterConfig findFilterConfig(String name) {
 
-        synchronized (filterConfigs) {
-            return ((FilterConfig) filterConfigs.get(name));
-        }
+        return ((FilterConfig) filterConfigs.get(name));
 
     }
 
