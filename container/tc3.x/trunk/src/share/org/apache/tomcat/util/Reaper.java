@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -62,83 +58,58 @@
  */ 
 
 
-package org.apache.tomcat.catalina;
+package org.apache.tomcat.util;
 
-
-import javax.servlet.ServletContext;
-
+import org.apache.tomcat.core.*;
+import org.apache.tomcat.util.*;
 
 /**
- * A <b>Host</b> is a Container that represents a virtual host in the
- * Tomcat servlet engine.  It is useful in the following types of scenarios:
- * <ul>
- * <li>You wish to use Interceptors that see every single request processed
- *     by this particular virtual host.
- * <li>You wish to run Tomcat in with a standalone HTTP connector, but still
- *     want support for multiple virtual hosts.
- * </ul>
- * In general, you would not use a Host when deploying Tomcat connected
- * to a web server (such as Apache), because the Connector will have
- * utilized the web server's facilities to determine which Context (or
- * perhaps even which Wrapper) should be utilized to process this request.
- * <p>
- * The parent Container attached to a Host is generally an Engine, but may
- * be some other implementation, or may be omitted if it is not necessary.
- * <p>
- * The child containers attached to a Host are generally implementations
- * of Host (representing a virtual host) or Context (representing individual
- * an individual servlet context), depending upon the Engine implementation.
- *
- * @author Craig R. McClanahan
- * @version $Revision$ $Date$
+ * The reaper is a background thread with which ticks every minute
+ * and calls registered objects to allow reaping of old session
+ * data.
+ * 
+ * @author James Duncan Davidson [duncan@eng.sun.com]
  */
 
-public interface Host extends Container {
+public class Reaper extends Thread {
 
+    private static Reaper reaper;
+    
+    static {
+	reaper = new Reaper();
+    }
+    
+    static Reaper getReaper() {
+	return reaper;
+    }
 
-    // ------------------------------------------------------------- Properties
+    private int interval = 1000 * 60; //ms    
+    //XXX    private ServerSessionManager serverSessionMgr;
+    
+    private Reaper() {
+	this.setDaemon(true);
+    }
+    
+//XXX     void setServerSessionManager(ServerSessionManager serverSessionMgr) {
+// 	this.serverSessionMgr = serverSessionMgr;
+//     }
+    
+    public void run() {
 
+	// XXX
+	// eventually, to be nice, this should know when everything
+	// goes down so that it's not continuing to tick in the background
 
-    /**
-     * Return the canonical, fully qualified, name of the virtual host
-     * this Container represents.
-     */
-    public String getHost();
+	while (true) {
+	    try {
+		this.sleep(interval);
+	    } catch (InterruptedException ie) {
+		// sometimes will happen
+	    }
 
-
-    /**
-     * Set the canonical, fully qualified, name of the virtual host
-     * this Container represents.
-     *
-     * @param host Virtual host name
-     */
-    public void setHost(String host);
-
-
-    /**
-     * Return the canonical port number to which this virtual host is
-     * connected.
-     */
-    public int getPort();
-
-
-    /**
-     * Set the canonical port number to which this virtual host is
-     * connected.
-     *
-     * @param port The port number
-     */
-    public void setPort(int port);
-
-
-    /**
-     * Return a specialized ServletContext instance that wraps the
-     * resources of the underlying virtual host; or <code>null</code>
-     * if access to these resources is not supported or not allowed.
-     * In general, this method will be used when a servlet calls
-     * <code>ServletContext.getContext("/")</code>.
-     */
-    public ServletContext getRootContext();
-
-
+	    //XXX     if (serverSessionMgr != null) {
+	    // 		serverSessionMgr.reap();
+	    //     }
+	}
+    }
 }

@@ -66,8 +66,7 @@ package org.apache.tomcat.util;
 
 
 import javax.servlet.http.Cookie;
-import org.apache.tomcat.catalina.Request;
-import org.apache.tomcat.core.Constants;
+import org.apache.tomcat.core.*;
 
 
 /**
@@ -104,10 +103,10 @@ public final class SessionUtil {
     public static Cookie createCookie(Request req, String id) {
 
 	Cookie cookie = new Cookie(Constants.SESSION_COOKIE_NAME, id);
-	String serverName = req.getRequest().getServerName();
+	String serverName = req.getServerName();
 	if (serverName != null)
 	    cookie.setDomain(serverName);
-	String contextPath = req.getRequest().getContextPath();
+	String contextPath = req.getContext().getPath();
 	if ((contextPath != null) && (contextPath.length() > 0))
 	    cookie.setPath(contextPath);
 	else
@@ -164,7 +163,7 @@ public final class SessionUtil {
 	}
 
 	// Encode all absolute URLs that return to this hostname
-	String serverName = req.getRequest().getServerName();
+	String serverName = req.getServerName();
 	String match = "http://" + serverName;
 	if (url.startsWith("http://" + serverName))
 	    return (encode(id, url));
