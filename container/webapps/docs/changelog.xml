@@ -40,6 +40,9 @@
         <bug>32081</bug>: Remove the JDK requirement from the Unix scripts, submitted
         by Ben Souther (remm)
       </update>
+      <fix>
+        <bug>32953</bug>: SERVLETAPI: XSS Issues, submitted by Mark Thomas (jfarcand)
+      </fix>
     </changelog>
   </subsection>
 
