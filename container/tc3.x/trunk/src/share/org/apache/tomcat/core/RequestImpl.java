@@ -424,13 +424,8 @@ public class RequestImpl  implements Request {
 	// SessionManager is just a repository and doesn't deal with
 	// request internals.
 	// hardcoded - will change!
-	Cookie cookie = new Cookie(Constants.SESSION_COOKIE_NAME,
-				   reqSessionId);
-	cookie.setMaxAge(-1);
-	cookie.setPath("/");
-	cookie.setVersion(1);
-	response.addSystemCookie(cookie);
-
+	response.setSessionId( reqSessionId );
+	
 	return serverSession;
     }
 

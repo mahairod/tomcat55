@@ -228,7 +228,7 @@ public class HttpRequestAdapter extends RequestImpl {
 
 	if (requestErrorCode != 0) {
             try {
-	        response.sendError(requestErrorCode, msg);
+	        response.getFacade().sendError(requestErrorCode, msg);
 	    } catch (IOException ioe) {
             }
 
