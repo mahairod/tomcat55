@@ -12,6 +12,7 @@
 
 
 #include <windows.h>
+#include <winuser.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <process.h>
@@ -26,6 +27,8 @@
 SERVICE_STATUS          ssStatus;
 SERVICE_STATUS_HANDLE   sshStatusHandle;
 DWORD                   dwErr;
+HANDLE                  hServerStopEvent = NULL;
+HANDLE                  hMonitorProcess = NULL;
 
 /*
  * NT/other detection
@@ -68,9 +71,9 @@ VOID AddToMessageLog(LPTSTR lpszMsg)
 	    hEventSource = NULL;
 
 #ifdef CYGWIN
-	sprintf(szMsg, TEXT("%s error: %d"), TEXT(SZSERVICENAME), dwErr);
+	sprintf(szMsg, TEXT("%s ERROR: %d"), TEXT(SZSERVICENAME), dwErr);
 #else
-        _stprintf(szMsg, TEXT("%s error: %d"), TEXT(SZSERVICENAME), dwErr);
+        _stprintf(szMsg, TEXT("%s ERROR: %d"), TEXT(SZSERVICENAME), dwErr);
 #endif
         lpszStrings[0] = szMsg;
         lpszStrings[1] = lpszMsg;
@@ -98,25 +101,178 @@ VOID AddToMessageLog(LPTSTR lpszMsg)
                 time( &long_time );
                 newtime = localtime( &long_time );
 
-
-		fprintf(log,"%.24s:%s: %s\n",asctime(newtime),szMsg, lpszMsg);
+                if (dwErr)
+		    fprintf(log,"%.24s:%s: %s\n",asctime(newtime),szMsg, lpszMsg);
+                else
+		    fprintf(log,"%.24s: %s\n",asctime(newtime), lpszMsg);
 		fclose(log);
 	    }
 	}
 }
 
+//
+//  FUNCTION: ServiceStop
+//
+//  PURPOSE: Stops the service
+//
+//  PARAMETERS:
+//    none
+//
+//  RETURN VALUE:
+//    none
+//
+//  COMMENTS:
+//    If a ServiceStop procedure is going to
+//    take longer than 3 seconds to execute,
+//    it should spawn a thread to execute the
+//    stop code, and return.  Otherwise, the
+//    ServiceControlManager will believe that
+//    the service has stopped responding.
+//    
+VOID ServiceStop()
+{
+    if ( hServerStopEvent )
+        SetEvent(hServerStopEvent);
+}
+
+/*
+ * Wait for the monitor process to stop
+ */
+int WaitForMonitor(int num)
+{
+    DWORD   qreturn;
+    int     i;
+
+    for (i=0;i<num;i++) {
+        if (hMonitorProcess == NULL) break;
+        if (GetExitCodeProcess(hMonitorProcess, &qreturn)) {
+            if (qreturn == STILL_ACTIVE) {
+                Sleep(1000);
+                continue;
+            }
+            hMonitorProcess = NULL;
+            break;
+        }
+        break;
+    }
+    if (i==num)
+        return -1;
+    return 0;
+}
 /*  This group of functions are provided for the service/console app
  *  to register itself a HandlerRoutine to accept tty or service messages
  *  adapted from src/os/win32/Win9xConHook.c (httpd-1.3!).
  */
 
-/*  Exported function that creates a Win9x 'service' via a hidden window,
- *  that notifies the process via the HandlerRoutine messages.
+/* This is the WndProc procedure for our invisible window.
+ * When our subclasssed tty window receives the WM_CLOSE, WM_ENDSESSION,
+ * or WM_QUERYENDSESSION messages, the message is dispatched to our hidden
+ * window (this message process), and we call the installed HandlerRoutine
+ * that was registered by the app.
  */
-BOOL __declspec(dllexport) WINAPI Windows9xServiceCtrlHandler(
-        PHANDLER_ROUTINE phandler,
-        LPCSTR name)
+#ifndef ENDSESSION_LOGOFF
+#define ENDSESSION_LOGOFF    0x80000000
+#endif
+static LRESULT CALLBACK ttyConsoleCtrlWndProc(HWND hwnd, UINT msg,
+                                              WPARAM wParam, LPARAM lParam)
 {
+    int   qreturn;
+    if (msg == WM_CREATE) {
+        AddToMessageLog(TEXT("ttyConsoleCtrlWndProc WM_CREATE"));
+        return 0;
+    } else if (msg == WM_DESTROY) {
+        AddToMessageLog(TEXT("ttyConsoleCtrlWndProc WM_DESTROY"));
+        return 0;
+    } else if (msg == WM_CLOSE) {
+        // Call StopService?.
+        AddToMessageLog(TEXT("ttyConsoleCtrlWndProc WM_CLOSE"));
+        return 0; // May return 1 if StopService failed.
+    } else if ((msg == WM_QUERYENDSESSION) || (msg == WM_ENDSESSION)) {
+        if (lParam & ENDSESSION_LOGOFF) {
+            // Here we have nothing to our hidden windows should stay.
+            AddToMessageLog(TEXT("ttyConsoleCtrlWndProc LOGOFF"));
+            return(1); // Otherwise it cancels the logoff
+        } else {
+            // Stop Service.
+            AddToMessageLog(TEXT("ttyConsoleCtrlWndProc SHUTDOWN"));
+            ServiceStop();
+
+            // Wait until it stops.
+            qreturn = WaitForMonitor(3);
+
+            if (msg == WM_QUERYENDSESSION) {
+                AddToMessageLog(
+                    TEXT("ttyConsoleCtrlWndProc SHUTDOWN (query)"));
+                if (qreturn) {
+                    AddToMessageLog(
+                        TEXT("Cancelling shutdown: cannot stop service"));
+                    return(0);
+                }
+            } else
+                AddToMessageLog(TEXT("ttyConsoleCtrlWndProc SHUTDOWN"));
+            return(1); // Otherwise it cancels the shutdown.
+        }
+    }
+    return (DefWindowProc(hwnd, msg, wParam, lParam));
+}                                                                               
+/* ttyConsoleCreateThread is the process that runs within the user app's
+ * context.  It creates and pumps the messages of a hidden monitor window,
+ * watching for messages from the system, or the associated subclassed tty
+ * window.  Things can happen in our context that can't be done from the
+ * tty's context, and visa versa, so the subclass procedure and this hidden
+ * window work together to make it all happen.
+ */
+static DWORD WINAPI ttyConsoleCtrlThread()
+{
+    HWND monitor_hwnd;
+    WNDCLASS wc;
+    MSG msg;
+    wc.style         = CS_GLOBALCLASS;
+    wc.lpfnWndProc   = ttyConsoleCtrlWndProc;
+    wc.cbClsExtra    = 0;
+    wc.cbWndExtra    = 8;
+    wc.hInstance     = NULL;
+    wc.hIcon         = NULL;
+    wc.hCursor       = NULL;
+    wc.hbrBackground = NULL;
+    wc.lpszMenuName  = NULL;
+    wc.lpszClassName = "ApacheJakartaService";
+ 
+    if (!RegisterClass(&wc)) {
+        AddToMessageLog(TEXT("RegisterClass failed"));
+        return 0;
+    }
+ 
+    /* Create an invisible window */
+    monitor_hwnd = CreateWindow(wc.lpszClassName, 
+                                "ApacheJakartaService",
+                                WS_OVERLAPPED & ~WS_VISIBLE,
+                                CW_USEDEFAULT, CW_USEDEFAULT,
+                                CW_USEDEFAULT, CW_USEDEFAULT,
+                                NULL, NULL,
+                                GetModuleHandle(NULL), NULL);
+ 
+    if (!monitor_hwnd) {
+        AddToMessageLog(TEXT("RegisterClass failed"));
+        return 0;
+    }
+ 
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+ 
+    return 0;
+}
+/*
+ * Register the process to resist logoff and start the thread that will receive
+ * the shutdown via a hidden window.
+ */
+BOOL Windows9xServiceCtrlHandler()
+{
+    HANDLE hThread;
+    DWORD tid;
     HINSTANCE hkernel;
     DWORD (WINAPI *register_service_process)(DWORD, DWORD) = NULL;
 
@@ -145,28 +301,13 @@ BOOL __declspec(dllexport) WINAPI Windows9xServiceCtrlHandler(
     /*
      * To be handle notice the shutdown, we need a thread and window.
      */
-/*
-    if (name)
-    {
-        DWORD tid;
-        HANDLE hThread;
-        static tty_info tty; // Must be static, because we are going to return.
-        tty.instance = GetModuleHandle(NULL);
-        tty.phandler = phandler;
-        tty.parent = NULL;
-        tty.name = name;
-        tty.type = 2;
-        RegisterWindows9xService(TRUE);
-        hThread = CreateThread(NULL, 0, ttyConsoleCtrlThread,
-                               (LPVOID)&tty, 0, &tid);
-        if (hThread)
-        {
-            CloseHandle(hThread);
-            return TRUE;
-        }
-    }
-    return FALSE;
- */
+     hThread = CreateThread(NULL, 0, ttyConsoleCtrlThread,
+                               (LPVOID)NULL, 0, &tid);
+     if (hThread) {
+        CloseHandle(hThread);
+        return TRUE;
+     }
+    AddToMessageLog(TEXT("jsvc shutdown listener start failed"));
     return TRUE;
 }
  
@@ -231,12 +372,6 @@ int ReportManager(int event)
             3000));                // wait hint
     return(1);
 } 
-
-// this event is signalled when the
-// service should end
-//
-HANDLE  hServerStopEvent = NULL;
-
 
 //
 //  FUNCTION: ServiceStart
@@ -327,6 +462,7 @@ char *qptr;
     AddToMessageLog(TEXT("ServiceStart: jsvc started"));
     CloseHandle(ProcessInformation.hThread);
     ProcessInformation.hThread = NULL;
+    hMonitorProcess = ProcessInformation.hProcess;
 
     if (!ReportManager(SERVICE_START_PENDING))
         goto cleanup;
@@ -368,6 +504,7 @@ char *qptr;
           if (qreturn == STILL_ACTIVE) continue;
           }
         AddToMessageLog(TEXT("ServiceStart: jsvc crashed"));
+        hMonitorProcess = NULL;
         CloseHandle(hServerStopEvent);
         CloseHandle(ProcessInformation.hProcess);
         exit(0); // exit ungracefully so
@@ -385,6 +522,7 @@ char *qptr;
         AddToMessageLog(TEXT("ServiceStart: jsvc stop failed"));
         break;
         }
+      WaitForMonitor(6);
       AddToMessageLog(TEXT("ServiceStart: jsvc stopped"));
       break; // finished!!!
       }
@@ -398,32 +536,6 @@ char *qptr;
     if (ProcessInformation.hProcess)
         CloseHandle(ProcessInformation.hProcess);
 
-}
-
-
-//
-//  FUNCTION: ServiceStop
-//
-//  PURPOSE: Stops the service
-//
-//  PARAMETERS:
-//    none
-//
-//  RETURN VALUE:
-//    none
-//
-//  COMMENTS:
-//    If a ServiceStop procedure is going to
-//    take longer than 3 seconds to execute,
-//    it should spawn a thread to execute the
-//    stop code, and return.  Otherwise, the
-//    ServiceControlManager will believe that
-//    the service has stopped responding.
-//    
-VOID ServiceStop()
-{
-    if ( hServerStopEvent )
-        SetEvent(hServerStopEvent);
 }
 
 
@@ -570,9 +682,10 @@ void _CRTAPI1 main(int argc, char **argv)
 		AddToMessageLog(TEXT("StartServiceCtrlDispatcher failed."));
 		return;
 	    }
+	    AddToMessageLog(TEXT("StartService started"));
 	} else {
-	    Windows9xServiceCtrlHandler(service_ctrl,TEXT(SZSERVICENAME));
+	    Windows9xServiceCtrlHandler();
 	    ServiceStart(argc,argv);
+	    AddToMessageLog(TEXT("StartService stopped"));
 	}
-	AddToMessageLog(TEXT("StartService started"));
 }
