@@ -39,6 +39,7 @@ cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
 
 
 # ----- Default Base Path for Dependent Packages -----
+#base.path=/usr/share/java
 base.path=/usr/local
 
 
@@ -119,6 +120,18 @@ xerces.loc=http://xml.apache.org/dist/xerces-j/old_xerces2/Xerces-J-bin.2.0.1.ta
 activation.home=${base.path}/jaf-1.0.1
 activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
+
+# ----- Log4j -----
+log4j.home=${base.path}/log4j
+log4j.jar=${log4j.home}/log4j.jar
+
+# ----- Jaxen ( required by taglibs/standard required by jasper ) -----
+jaxen.home=${base.path}/jaxen-1.0-FCS
+jaxen.jar=${jaxen.home}/jaxen-full.jar
+
+# ----- Saxpath ( required by taglibs/standard required by jasper ) -----
+saxpath.home=${base.path}/saxpath-1.0-FCS
+saxpath.jar=${saxpath.home}/saxpath.jar
 
 
 # ----- Commons DBCP, version 20011030 or later -----
