@@ -96,6 +96,7 @@ import org.apache.catalina.ValveContext;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -671,6 +672,7 @@ public abstract class AuthenticatorBase
 	String contextPath = hreq.getContextPath();
 	if (contextPath.length() > 0)
 	    uri = uri.substring(contextPath.length());
+        uri = RequestUtil.URLDecode(uri); // Before checking constraints
 	String method = hreq.getMethod();
 	for (int i = 0; i < constraints.length; i++) {
 	    if (debug >= 2)
