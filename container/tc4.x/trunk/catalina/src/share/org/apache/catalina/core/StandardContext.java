@@ -1146,7 +1146,6 @@ public class StandardContext
     public synchronized void setResources(DirContext resources) {
 
         if (resources instanceof BaseDirContext) {
-            ((BaseDirContext) resources).setDocBase(getBasePath());
             ((BaseDirContext) resources).setCached(isCachingAllowed());
         }
         if (resources instanceof FileDirContext) {
@@ -3389,13 +3388,14 @@ public class StandardContext
                 log("Error initializing resources: " + e.getMessage());
                 ok = false;
             }
-            if (ok) {
-                DirContext dirContext = 
-                    ((ProxyDirContext) resources).getDirContext();
-                if ((dirContext != null) 
-                    && (dirContext instanceof BaseDirContext)) {
-                    ((BaseDirContext) dirContext).allocate();
-                }
+        }
+        if (ok && (resources instanceof ProxyDirContext)) {
+            DirContext dirContext = 
+                ((ProxyDirContext) resources).getDirContext();
+            if ((dirContext != null) 
+                && (dirContext instanceof BaseDirContext)) {
+                ((BaseDirContext) dirContext).setDocBase(getBasePath());
+                ((BaseDirContext) dirContext).allocate();
             }
         }
         if (getLoader() == null) {      // (2) Required by Manager
