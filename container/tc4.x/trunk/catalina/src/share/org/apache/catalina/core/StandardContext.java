@@ -1072,6 +1072,31 @@ public class StandardContext
 
 
     /**
+     * Return the default Mapper class name.
+     */
+    public String getMapperClass() {
+
+        return (this.mapperClass);
+
+    }
+
+
+    /**
+     * Set the default Mapper class name.
+     *
+     * @param mapperClass The new default Mapper class name
+     */
+    public void setMapperClass(String mapperClass) {
+
+        String oldMapperClass = this.mapperClass;
+        this.mapperClass = mapperClass;
+        support.firePropertyChange("mapperClass",
+                                   oldMapperClass, this.mapperClass);
+
+    }
+
+
+    /**
      * Return the work directory for this Context.
      */
     public String getWorkDir() {

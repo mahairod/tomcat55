@@ -279,6 +279,31 @@ public class StandardHost
 
 
     /**
+     * Return the default Mapper class name.
+     */
+    public String getMapperClass() {
+
+        return (this.mapperClass);
+
+    }
+
+
+    /**
+     * Set the default Mapper class name.
+     *
+     * @param mapperClass The new default Mapper class name
+     */
+    public void setMapperClass(String mapperClass) {
+
+        String oldMapperClass = this.mapperClass;
+        this.mapperClass = mapperClass;
+        support.firePropertyChange("mapperClass",
+                                   oldMapperClass, this.mapperClass);
+
+    }
+
+
+    /**
      * Return the canonical, fully qualified, name of the virtual host
      * this Container represents.
      */
@@ -775,7 +800,7 @@ public class StandardHost
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
