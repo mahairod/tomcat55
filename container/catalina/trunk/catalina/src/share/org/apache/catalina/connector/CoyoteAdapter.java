@@ -555,25 +555,4 @@ public class CoyoteAdapter
     }
 
 
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-        log.info( message );
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-        log.error( message, throwable);
-    }
-
-
 }

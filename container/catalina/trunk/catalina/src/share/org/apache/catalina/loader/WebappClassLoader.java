@@ -1500,7 +1500,7 @@ public class WebappClassLoader
                     }
                 }
             } catch (IOException e) {
-                log("Failed to close JAR", e);
+                log.warn("Failed to close JAR", e);
             }
         }
     }
@@ -1521,7 +1521,7 @@ public class WebappClassLoader
                         jarFiles[i] = new JarFile(jarRealFiles[i]);
                     }
                 } catch (IOException e) {
-                    log("Failed to open JAR", e);
+                    log.warn("Failed to open JAR", e);
                 }
             }
         }
@@ -2107,31 +2107,6 @@ public class WebappClassLoader
 
     }
 
-
-    /**
-     * Log a debugging output message.
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        System.out.println("WebappClassLoader: " + message);
-
-    }
-
-
-    /**
-     * Log a debugging output message with an exception.
-     *
-     * @param message Message to be logged
-     * @param throwable Exception to be logged
-     */
-    private void log(String message, Throwable throwable) {
-
-        System.out.println("WebappClassLoader: " + message);
-        throwable.printStackTrace(System.out);
-
-    }
 
 }
 

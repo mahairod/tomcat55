@@ -647,10 +647,4 @@ public class OutputBuffer extends Writer
     }
 
 
-
-    protected void log( String s ) {
-	System.out.println("OutputBuffer: " + s);
-    }
-
-
 }
