@@ -63,7 +63,7 @@
 
 package org.apache.catalina.mbeans;
 
-
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import javax.management.MalformedObjectNameException;
 import javax.management.MBeanException;
@@ -265,6 +265,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
      */
     public void removeResource(String resourceName) {
 
+        resourceName = URLDecoder.decode(resourceName);
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
             return;
@@ -275,7 +276,6 @@ public class NamingResourcesMBean extends BaseModelMBean {
                 ("Invalid resource name '" + resourceName + "'");
         }
         nresources.removeResource(resourceName);
-
     }
 
 }

@@ -169,6 +169,18 @@ public class MBeanUtils {
 
     // --------------------------------------------------------- Static Methods
 
+    /**
+     * Translates a string into x-www-form-urlencoded format
+     *
+     * @param t string to be encoded
+     * @return encoded string
+     */
+    private static final String encodeStr(String t) {
+   
+        return URLEncoder.encode(t);
+
+    }
+
 
     /**
      * Create and return the name of the <code>ManagedBean</code> that
@@ -901,7 +913,7 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        String encodedResourceName = URLEncoder.encode(resource.getName());
+        String encodedResourceName = encodeStr(resource.getName());
         name = new ObjectName(domain + ":type=Resource,class=" +
                               resource.getType()+",name=" + 
                               encodedResourceName);
