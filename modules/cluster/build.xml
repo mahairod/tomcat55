@@ -1,4 +1,4 @@
-<project name="Catalina-Cluster" default="dist" basedir=".">
+<project name="Cluster" default="dist" basedir=".">
 
 
   <!-- ===================== Initialize Property Values =================== -->
@@ -10,17 +10,16 @@
   <property file="${user.home}/build.properties"/-->
 
   <!-- Build Defaults -->
-  <property name="catalina.home"     location="../.."/>
+  <property name="catalina.build"     location="../.."/>
   <property name="cluster.build"     value="${catalina.home}/modules/cluster/build"/>
   <property name="cluster.dist"     value="${catalina.home}/modules/cluster/dist"/>
-  <property name="cluster.lib" value="../../../jakarta-tomcat-5/dist"/>
 
     <!-- Construct Catalina classpath -->
-  <path id="catalina.classpath">
-    <pathelement location="${cluster.lib}/server/lib/catalina.jar"/>
-    <pathelement location="${cluster.lib}/server/lib/commons-logging.jar"/>
-    <pathelement location="${cluster.lib}/common/lib/mx4j-jmx.jar"/>
-    <pathelement location="${cluster.lib}/common/lib/servlet-api.jar"/>
+  <path id="cluster.classpath">
+    <pathelement location="${catalina.build}/server/lib/catalina.jar"/>
+    <pathelement location="${catalina.build}/server/lib/commons-logging.jar"/>
+    <pathelement location="${catalina.build}/common/lib/mx4j-jmx.jar"/>
+    <pathelement location="${catalina.build}/common/lib/servlet-api.jar"/>
   </path>
 
     <!-- Source path -->
@@ -65,9 +64,8 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
-    <delete dir="${cluster.build}/classes"/>
-    <mkdir dir="${cluster.build}"/>
-    <mkdir dir="${cluster.build}/classes"/>
+    <mkdir dir="${catalina.build}"/>
+    <mkdir dir="${catalina.build}/classes"/>
     <mkdir dir="${cluster.dist}"/>
   </target>
 
@@ -78,25 +76,25 @@
   
   <target name="build-catalina-cluster" depends="build-prepare">
     <!-- Compile internal server components -->
-    <javac srcdir="src/share" destdir="${cluster.build}/classes"
+    <javac srcdir="src/share" destdir="${catalina.build}/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
-      <classpath refid="catalina.classpath" />
+      <classpath refid="cluster.classpath" />
     </javac>
     <copy file="src/share/org/apache/catalina/cluster/LocalStrings.properties"
-    	  tofile="${cluster.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
+    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
   </target>
 
 
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
   <target name="javadoc">
-    <delete dir="${cluster.build}/javadoc"/>
-    <mkdir dir="${cluster.build}/javadoc"/>
+    <delete dir="${catalina.build}/javadoc"/>
+    <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
       classpathref="catalina.classpath"
       sourcepathref="javadoc.sourcepath"
-      destdir="${cluster.build}/javadoc"
+      destdir="${catalina.build}/javadoc"
       author="true"
       version="true"
       windowtitle="Catalina Internal API Documentation"
@@ -108,7 +106,7 @@
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
-    <delete dir="${cluster.build}"/>
+    <delete dir="${catalina.build}"/>
   </target>
 
 
@@ -120,8 +118,10 @@
   <!-- ================ DIST: Create Distribution ========================= -->
   <target name="dist" depends="build-catalina-cluster">
     
-    <jar destfile="${cluster.dist}/tomcat-replication.jar"
-         basedir="${cluster.build}/classes"/>
+    <jar destfile="${cluster.dist}/catalina-cluster.jar"
+         basedir="${catalina.build}/classes">
+       <include name="org/apache/catalina/cluster/**" />
+    </jar>
   </target>
 
   <!-- ======================== DIST: Clean Directory ===================== -->
