@@ -323,12 +323,12 @@ public class ResponseImpl implements Response {
     }
 
     public void flushBuffer() throws IOException {
-	if( notIncluded) {
+	//	if( notIncluded) {
 	    if (usingWriter == true && writer != null)
 		writer.flush();
 	    
 	    out.reallyFlush();
-	} 
+	    //} 
     }
 
 
