@@ -480,7 +480,9 @@ public class HttpResponseBase
 	    Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
 				       session.getId());
 	    cookie.setMaxAge(-1);
-	    String contextPath = context.getPath();
+	    String contextPath = null;
+            if (context != null)
+                contextPath = context.getPath();
 	    if ((contextPath != null) && (contextPath.length() > 0))
 		cookie.setPath(contextPath);
 	    if (hreq.isSecure())

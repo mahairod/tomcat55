@@ -659,6 +659,9 @@ public class HttpRequestBase
      */
     public RequestDispatcher getRequestDispatcher(String path) {
 
+        if (context == null)
+            return (null);
+
 	// If the path is already context-relative, just pass it through
 	if (path == null)
 	    return (null);
@@ -851,6 +854,9 @@ public class HttpRequestBase
      */
     public String getPathTranslated() {
 
+        if (context == null)
+            return (null);
+
 	if (pathInfo == null)
 	    return (null);
 	else
@@ -979,7 +985,9 @@ public class HttpRequestBase
 	    return (session.getSession());
 
 	// Return the requested session if it exists and is valid
-	Manager manager = context.getManager();
+	Manager manager = null;
+        if (context != null)
+            manager = context.getManager();
 	if (manager == null)
 	    return (null);	// Sessions are not supported
 	if (requestedSessionId != null) {
@@ -1058,6 +1066,8 @@ public class HttpRequestBase
 
 	if (requestedSessionId == null)
 	    return (false);
+        if (context == null)
+            return (false);
 	Manager manager = context.getManager();
 	if (manager == null)
 	    return (false);
@@ -1082,6 +1092,9 @@ public class HttpRequestBase
      * @param role Role name to be validated
      */
     public boolean isUserInRole(String role) {
+
+        if (context == null)
+            return (false);
 
 	// Respect role name translations in the deployment descriptor
 	String realRole = context.findRoleMapping(role);
