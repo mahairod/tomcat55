@@ -119,7 +119,7 @@ public final class ClassLoaderFactory {
                         + file.getAbsolutePath());
                 URL url = new URL("file", null,
                                   file.getCanonicalPath() + File.separator);
-                list.add(url.toString());
+                list.add(url);
             }
         }
 
@@ -140,7 +140,7 @@ public final class ClassLoaderFactory {
                         log.debug("  Including jar file " + file.getAbsolutePath());
                     URL url = new URL("file", null,
                                       file.getCanonicalPath());
-                    list.add(url.toString());
+                    list.add(url);
                 }
             }
         }
@@ -148,18 +148,17 @@ public final class ClassLoaderFactory {
         // Add URLs
         if (urls != null) {
             for (int i = 0; i < urls.length; i++) {
-                list.add(urls[i].toString());
+                list.add(urls[i]);
             }
         }
 
         // Construct the class loader itself
-        String array[] = (String[]) list.toArray(new String[list.size()]);
+        URL[] array = (URL[]) list.toArray(new URL[list.size()]);
         StandardClassLoader classLoader = null;
         if (parent == null)
             classLoader = new StandardClassLoader(array);
         else
             classLoader = new StandardClassLoader(array, parent);
-        classLoader.setDelegate(true);
         return (classLoader);
 
     }
