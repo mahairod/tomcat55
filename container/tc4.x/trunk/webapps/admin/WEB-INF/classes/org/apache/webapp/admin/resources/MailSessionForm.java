@@ -239,14 +239,14 @@ public final class MailSessionForm extends BaseForm {
 
         String submit = request.getParameter("submit");
 
-        if (submit != null) {
+        //if (submit != null) {
 
             // mailSmtpHost is a required field
             if ((mailhost == null) || (mailhost.length() < 1)) {
                 errors.add("mailhost",
                       new ActionError("resources.error.mailhost.required"));
             }
-         }
+         //}
         
         return (errors);
     }

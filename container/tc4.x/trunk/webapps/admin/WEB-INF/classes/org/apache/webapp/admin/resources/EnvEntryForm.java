@@ -307,7 +307,7 @@ public final class EnvEntryForm extends BaseForm {
         errors = new ActionErrors();
 
         String submit = request.getParameter("submit");
-        if (submit != null) {
+        //if (submit != null) {
 
             // name is a required field
             if ((name == null) || (name.length() < 1)) {
@@ -346,7 +346,7 @@ public final class EnvEntryForm extends BaseForm {
                    errors.add("value",
                            new ActionError("resources.error.value.mismatch"));
             }
-        }
+        //}
         return (errors);
     }
 
