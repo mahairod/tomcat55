@@ -430,23 +430,6 @@ public class Request
 
 
     /**
-     * Return the authorization credentials sent with this request.
-     */
-    public String getAuthorization() {
-        return (coyoteRequest.getHeader(Constants.AUTHORIZATION_HEADER));
-    }
-
-    /**
-     * Set the authorization credentials sent with this request.
-     *
-     * @param authorization The new authorization credentials
-     */
-    public void setAuthorization(String authorization) {
-        // Not used
-    }
-
-
-    /**
      * Associated Catalina connector.
      */
     protected Connector connector;
