@@ -433,8 +433,11 @@ public class PageContextImpl extends PageContext {
     }
 
     public void handlePageException(Exception e)
-    throws IOException, ServletException {
-
+	throws IOException, ServletException
+    {
+	if( out!= null  && out.getBufferSize() != 0) {
+	    out.clearBuffer();
+	}
 	// set the request attribute with the exception.
 	request.setAttribute("javax.servlet.jsp.jspException", e);
 

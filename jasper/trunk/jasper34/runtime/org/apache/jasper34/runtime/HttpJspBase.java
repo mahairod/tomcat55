@@ -81,6 +81,7 @@ public abstract class HttpJspBase
     private ClassLoader cl;
 
     protected PageContext pageContext;
+    protected JspFactory _jspxFactory = null;
 
     protected HttpJspBase() {
     }
@@ -89,6 +90,7 @@ public abstract class HttpJspBase
 	throws ServletException 
     {
         super.init(config);
+	_jspxFactory = JspFactory.getDefaultFactory();
 	jspInit();
     }
     
@@ -113,10 +115,43 @@ public abstract class HttpJspBase
     /**
      * Entry point into service.
      */
-    public final void service(HttpServletRequest request, HttpServletResponse response) 
+    public final void service(HttpServletRequest request,
+			      HttpServletResponse response) 
 	throws ServletException, IOException 
     {
-	_jspService(request, response);
+
+	PageContext pageContext=null;
+	try {
+	    try {
+		_jspx_init(); // need to be in init !
+		pageContext = _getPageContext( request, response ); 
+		_jspService(pageContext, request, response );
+	    } catch (Exception ex) {
+		if (pageContext != null)
+		    pageContext.handlePageException(ex);
+	    } catch (Error error) {
+		throw error;
+	    } catch (Throwable throwable) {
+		throw new ServletException(throwable);
+	    }
+	} finally {
+	    IOException err=null;
+	    if( pageContext!=null ) {
+		try {
+		    JspWriterImpl out=(JspWriterImpl)pageContext.getOut();
+		    if( out != null )
+			out.flushBuffer();
+		} catch( IOException ex ) {
+		    err=ex;
+		    // handlePageException( ex );
+		    // This was a bug in previous implementations:
+		    // if flushBuffer throws exceptions release() is not
+		    // corectly called !( this was part of the generated code )
+		}
+	    }
+	    _jspxFactory.releasePageContext(pageContext);
+	    if( err!=null ) throw err;
+	}
     }
     
     public void jspInit() {
@@ -124,8 +159,22 @@ public abstract class HttpJspBase
     
     public void jspDestroy() {
     }
+
+    public abstract void _jspx_init()
+	throws Throwable;
+
+    public abstract PageContext _getPageContext(HttpServletRequest request, 
+					       HttpServletResponse response);
+
     
-    public abstract void _jspService(HttpServletRequest request, 
+    public abstract void _jspService(PageContext pageContext,
+				     HttpServletRequest request, 
 				     HttpServletResponse response) 
-	throws ServletException, IOException;
+	throws Throwable;
+
+    public void _jspService(HttpServletRequest request, 
+			    HttpServletResponse response)
+	throws ServletException, IOException {
+    }
+
 }
