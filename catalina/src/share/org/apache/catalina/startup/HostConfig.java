@@ -588,29 +588,35 @@ public class HostConfig
                 }
             }
             host.addChild(context);
+            // Get paths for WAR and expanded WAR in appBase
+            String name = null;
+            String path = context.getPath();
+            if (path.equals("")) {
+                name = "ROOT";
+            } else {
+                if (path.startsWith("/")) {
+                    name = path.substring(1);
+                } else {
+                    name = path;
+                }
+            }
+            File expandedDocBase = new File(name);
+            File warDocBase = new File(name + ".war");
+            if (!expandedDocBase.isAbsolute()) {
+                expandedDocBase = new File(appBase(), name);
+                warDocBase = new File(appBase(), name + ".war");
+            }
             // Add the eventual unpacked WAR and all the resources which will be
             // watched inside it
             if (isWar && unpackWARs) {
-                String name = null;
-                String path = context.getPath();
-                if (path.equals("")) {
-                    name = "ROOT";
-                } else {
-                    if (path.startsWith("/")) {
-                        name = path.substring(1);
-                    } else {
-                        name = path;
-                    }
-                }
-                File docBase = new File(name);
-                if (!docBase.isAbsolute()) {
-                    docBase = new File(appBase(), name);
-                }
-                deployedApp.redeployResources.put(docBase.getAbsolutePath(),
-                        new Long(docBase.lastModified()));
-                addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
+                deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
+                        new Long(expandedDocBase.lastModified()));
+                addWatchedResources(deployedApp, expandedDocBase.getAbsolutePath(), context);
             } else {
                 if (context.getDocBase() != null) {
+                    // If the context is outside of the Host appBase, removing the xml
+                    // should remove the webapp
+                    boolean external = false;
                     File docBase = new File(context.getDocBase());
                     if (!docBase.isAbsolute()) {
                         docBase = new File(appBase(), context.getDocBase());
@@ -618,6 +624,7 @@ public class HostConfig
                     try {
                         docBase = docBase.getCanonicalFile();
                         if (!docBase.getAbsolutePath().startsWith(appBase().getAbsolutePath())) {
+                            external = true;
                             deployedApp.redeployResources.put
                                 (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                             deployedApp.reloadResources.remove(contextXml.getAbsolutePath());
@@ -625,8 +632,22 @@ public class HostConfig
                     } catch (IOException e) {
                         // Ignore
                     }
+                    if (!external) {
+                        // Find an existing matching war and expanded folder
+                        if (warDocBase.exists()) {
+                            deployedApp.redeployResources.put(warDocBase.getAbsolutePath(),
+                                    new Long(warDocBase.lastModified()));
+                        }
+                        if (expandedDocBase.exists()) {
+                            deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
+                                    new Long(expandedDocBase.lastModified()));
+                            addWatchedResources(deployedApp, 
+                                    expandedDocBase.getAbsolutePath(), context);
+                        }
+                    }
+                } else {
+                    addWatchedResources(deployedApp, null, context);
                 }
-                addWatchedResources(deployedApp, null, context);
             }
         } catch (Throwable t) {
             log.error(sm.getString("hostConfig.deployDescriptor.error",
