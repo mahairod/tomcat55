@@ -111,8 +111,48 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public class ApplicationContext
-    implements ServletContext {
+public class ApplicationContext implements ServletContext {
+
+    protected class PrivilegedGetInitParameter implements PrivilegedAction {
+
+        private String name;
+        
+        PrivilegedGetInitParameter(String name){
+            this.name = name;
+        }
+                
+        public Object run(){
+            return ((String) parameters.get(name));
+        }
+    }
+
+
+    protected class PrivilegedGetInitParameterNames
+        implements PrivilegedAction {
+
+            PrivilegedGetInitParameterNames(){
+        }
+   
+        public Object run() {
+            return (new Enumerator(parameters.keySet()));
+        }
+    }        
+
+
+    protected class PrivilegedGetNamedDispatcher
+        implements PrivilegedAction {
+
+            private Wrapper wrapper;
+            private String name;
+
+            PrivilegedGetNamedDispatcher(Wrapper wrapper, String name) {
+            this.wrapper = wrapper;
+            this.name = name;
+        }
+        public Object run() {
+            return new ApplicationDispatcher(wrapper, null, null, null, name);
+        }
+    }
 
 
     protected class PrivilegedGetRequestDispatcher
@@ -453,13 +493,17 @@ public class ApplicationContext
      *
      * @param name Name of the initialization parameter to retrieve
      */
-    public String getInitParameter(String name) {
-
+    public String getInitParameter(final String name) {
         mergeParameters();
         synchronized (parameters) {
-            return ((String) parameters.get(name));
+            if (System.getSecurityManager() != null){
+                PrivilegedGetInitParameter ip =
+                    new PrivilegedGetInitParameter(name);
+                return (String)AccessController.doPrivileged(ip);
+            } else {
+                return ((String) parameters.get(name));
+            }                   
         }
-
     }
 
 
@@ -468,12 +512,16 @@ public class ApplicationContext
      * empty enumeration if the context has no initialization parameters.
      */
     public Enumeration getInitParameterNames() {
-
         mergeParameters();
         synchronized (parameters) {
-            return (new Enumerator(parameters.keySet()));
+            if (System.getSecurityManager() != null){
+                PrivilegedGetInitParameterNames pn =
+                    new PrivilegedGetInitParameterNames();
+                return (Enumeration)AccessController.doPrivileged(pn);
+            } else {
+                return (new Enumerator(parameters.keySet()));
+            }
         }
-
     }
 
 
@@ -534,10 +582,18 @@ public class ApplicationContext
         Wrapper wrapper = (Wrapper) context.findChild(name);
         if (wrapper == null)
             return (null);
-        ApplicationDispatcher dispatcher =
-          new ApplicationDispatcher(wrapper, null, null, null, name);
-        return ((RequestDispatcher) dispatcher);
 
+        ApplicationDispatcher dispatcher;
+        if (System.getSecurityManager() != null){
+            PrivilegedGetNamedDispatcher nd = 
+                new PrivilegedGetNamedDispatcher(wrapper, name);
+            dispatcher = (ApplicationDispatcher)AccessController.doPrivileged(nd);
+        } else {
+            dispatcher =
+                new ApplicationDispatcher(wrapper, null, null, null, name);
+        }
+
+        return ((RequestDispatcher) dispatcher);
     }
 
 
@@ -775,9 +831,18 @@ public class ApplicationContext
      * @deprecated As of Java Servlet API 2.1, with no direct replacement.
      */
     public Enumeration getServletNames() {
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new PrivilegedAction(){
 
-        return (new Enumerator(empty));
-
+                    public Object run(){
+                        return (new Enumerator(empty)); 
+                    }
+                }
+            );
+        } else {
+            return (new Enumerator(empty));
+        }
     }
 
 
@@ -785,9 +850,18 @@ public class ApplicationContext
      * @deprecated As of Java Servlet API 2.1, with no direct replacement.
      */
     public Enumeration getServlets() {
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new PrivilegedAction(){
 
-        return (new Enumerator(empty));
-
+                    public Object run(){
+                        return (new Enumerator(empty)); 
+                    }
+                }
+            );
+        } else {
+            return (new Enumerator(empty));
+        }        
     }
 
 

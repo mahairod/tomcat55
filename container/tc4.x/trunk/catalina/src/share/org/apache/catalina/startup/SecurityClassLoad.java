@@ -84,6 +84,15 @@ public final class SecurityClassLoad {
         String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage +
+             "core.ApplicationContext$PrivilegedGetNamedDispatcher");
+        loader.loadClass
+            (basePackage +
+             "core.ApplicationContext$PrivilegedGetInitParameter");
+        loader.loadClass
+            (basePackage +
+             "core.ApplicationContext$PrivilegedGetInitParameterNames");
+        loader.loadClass
+            (basePackage +
              "core.ApplicationContext$PrivilegedGetRequestDispatcher");
         loader.loadClass
             (basePackage +
