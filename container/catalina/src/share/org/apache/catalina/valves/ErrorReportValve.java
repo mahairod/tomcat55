@@ -242,7 +242,7 @@ public class ErrorReportValve
         sb.append("<h1>");
         sb.append(sm.getString("errorReportValve.statusHeader",
                                "" + statusCode, message)).append("</h1>");
-        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<HR size=\"1\" noshade=\"noshade\">");
         sb.append("<p><b>type</b> ");
         if (throwable != null) {
             sb.append(sm.getString("errorReportValve.exceptionReport"));
@@ -302,7 +302,7 @@ public class ErrorReportValve
 
         }
 
-        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<HR size=\"1\" noshade=\"noshade\">");
         sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
         sb.append("</body></html>");
 

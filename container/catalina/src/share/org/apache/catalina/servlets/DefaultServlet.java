@@ -1471,7 +1471,7 @@ public class DefaultServlet
         }
 
         sb.append("</h1>");
-        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<HR size=\"1\" noshade=\"noshade\">");
 
         sb.append("<table width=\"100%\" cellspacing=\"0\"" +
                      " cellpadding=\"5\" align=\"center\">\r\n");
@@ -1549,12 +1549,12 @@ public class DefaultServlet
         // Render the page footer
         sb.append("</table>\r\n");
 
-        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<HR size=\"1\" noshade=\"noshade\">");
 
         String readme = getReadme(resourceInfo.directory);
         if (readme!=null) {
             sb.append(readme);
-            sb.append("<HR size=\"1\" noshade>");
+            sb.append("<HR size=\"1\" noshade=\"noshade\">");
         }
 
         sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
