@@ -291,7 +291,10 @@ public class MimeHeaderField {
 	case T_CHARS:
 	    return valueC.toInteger();
 	case T_BYTES:
-	    return valueB.toInteger();
+	    if(valueB.getType() == MessageBytes.T_BYTES )
+		return Ascii.parseInt(valueB.getBytes(), valueB.getOffset(),
+				      valueB.getLength());
+	    return  Integer.parseInt(valueB.toString());
 	default:
             String msg = sm.getString("mimeHeaderField.int.nfe");
 
@@ -370,7 +373,7 @@ public class MimeHeaderField {
 	case T_CHARS:
 	    return nameC.equalsIgnoreCase(s);
 	case T_BYTES:
-	    return Ascii.equalsIgnoreCase( s, nameB );
+	    return nameB.equalsIgnoreCase( s );
 	default:
 	    return false;
 	}

@@ -135,6 +135,10 @@ public class HttpResponseAdapter extends  ResponseImpl {
 	switch( status ) {
 	case 200: printHead("200");
 	    break;
+	case 400: printHead("400");
+	    break;
+	case 404: printHead("404");
+	    break;
 	    
 	default:
 	    printHead(String.valueOf(status));

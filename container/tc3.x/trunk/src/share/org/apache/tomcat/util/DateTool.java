@@ -80,9 +80,6 @@ import org.apache.tomcat.core.Constants;
  */
 public class DateTool {
 
-    private static StringManager sm =
-        StringManager.getManager("org.apache.tomcat.util");
-
     /** US locale - all HTTP dates are in english
      */
     public final static Locale LOCALE_US = Locale.US;

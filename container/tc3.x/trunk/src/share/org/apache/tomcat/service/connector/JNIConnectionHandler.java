@@ -264,11 +264,11 @@ class JNIRequestAdapter extends RequestImpl {
             serverPort  = Integer.parseInt(env[6]);
             authType    = env[7];
             remoteUser  = env[8];
-            scheme      = env[9];
+            schemeMB.setString(env[9]);
             protocol    = env[10];
             // response.setServerHeader(env[11]);
             
-            if(scheme.equalsIgnoreCase("https")) {
+            if(schemeMB.equalsIgnoreCase("https")) {
                 if(null != env[12]) {
 		            attributes.put("javax.servlet.request.X509Certificate",
 	                               env[12]);

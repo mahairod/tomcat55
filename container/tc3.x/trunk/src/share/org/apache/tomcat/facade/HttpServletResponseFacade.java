@@ -103,7 +103,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
     void recycle() {
 	usingStream = false;
 	usingWriter= false;
-	writer=null;
+	// 	writer=null; // no need - the OutputBuffer will deal with enc
 	if( osFacade != null ) osFacade.recycle();
     }
 
@@ -160,12 +160,12 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    throw new IllegalStateException(msg);
 	}
 	usingStream=true;
-	response.setUsingStream( true );
+	// 	response.setUsingStream( true );
 
 	if( osFacade!=null) return osFacade;
 	//if( response.getOutputBuffer() != null ) {
 	osFacade=new ServletOutputStreamFacade(response);
-	response.setServletOutputStream( osFacade );
+	// response.setServletOutputStream( osFacade );
 	//}
 	return osFacade;
 
@@ -180,7 +180,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    throw new IllegalStateException(msg);
 	}
 	usingWriter= true ;
-	response.setUsingWriter( true );
+	// 	response.setUsingWriter( true );
 
 	// old mechanism
 	// if( osFacade==null && response.getOutputBuffer() == null )
@@ -191,9 +191,12 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    osFacade=new ServletOutputStreamFacade(response);
 	}
 
-	writer=((ResponseImpl)response).getWriter( osFacade );
-	response.setServletOutputStream( osFacade );
-	response.setWriter(  writer );
+	OutputBuffer oBuffer= response.getBuffer();
+	writer = new ServletWriterFacade( oBuffer, response);
+	
+	// writer=((ResponseImpl)response).getWriter( osFacade );
+	// 	response.setServletOutputStream( osFacade );
+	// 	response.setWriter(  writer );
 
 	return writer;
     }

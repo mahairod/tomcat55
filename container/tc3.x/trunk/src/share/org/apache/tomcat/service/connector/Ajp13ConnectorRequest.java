@@ -179,7 +179,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
                 break;
 
                 case SC_A_SERVLET_PATH :
-                    log("SC_A_SERVLET_PATH not in use " + msg.getString());
+                    //log("SC_A_SERVLET_PATH not in use " + msg.getString());
                 break;
 
                 case SC_A_REMOTE_USER  :
@@ -261,7 +261,6 @@ public class Ajp13ConnectorRequest extends RequestImpl
         for(int i = off ; i < (len + off) ; i++) {
             int a = doRead();
             if(-1 == a) {
-                log("Y");
                 return i-off;
             }
             b[i] = (byte)a;
