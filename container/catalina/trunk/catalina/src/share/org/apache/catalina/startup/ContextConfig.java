@@ -329,7 +329,7 @@ public final class ContextConfig
         }
         long t2=System.currentTimeMillis();
         if( (t2-t1 ) > 200 ) 
-            log.info("Processed  " + url + " "  + ( t2-t1));
+            log.log("Processed  " + url + " "  + ( t2-t1));
 
 
     }
@@ -663,7 +663,7 @@ public final class ContextConfig
         }
         long t2=System.currentTimeMillis();
         if( (t2-t1) > 200 )
-            log.info("Processed default web.xml " + file + " "  + ( t2-t1));
+            log.log("Processed default web.xml " + file + " "  + ( t2-t1));
     }
 
 
