@@ -13,7 +13,13 @@
 <Server port="8005" shutdown="SHUTDOWN" debug="0">
 
 
-  <!-- Uncomment these entries to enable JMX MBeans support -->
+  <!-- Comment these entries out to disable JMX MBeans support -->
+  <!-- You may also configure custom components (e.g. Valves/Realms) by 
+       including your own mbean-descriptor file(s), and setting the 
+       "descriptors" attribute to point to a ';' seperated list of paths
+       (in the ClassLoader sense) of files to add to the default list.
+       e.g. descriptors="/com/myfirm/mypackage/mbean-descriptor.xml"
+  -->
   <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener"
             debug="0"/>
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"
