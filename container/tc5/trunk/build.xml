@@ -1698,7 +1698,7 @@
          command="checkout -P ${cvstag} jakarta-servletapi-5" 
          dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${cvstag} ${commons-daemon.cvs.loc}"
+         command="checkout -P ${cvstag} -d ${commons-daemon.home} ${commons-daemon.cvs.loc}"
          dest="${cvs.base}"/>
 <!--
     <cvs cvsroot="${cvsroot}" quiet="true"
