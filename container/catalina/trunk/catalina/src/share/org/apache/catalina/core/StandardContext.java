@@ -4594,7 +4594,9 @@ public class StandardContext
         if (host != null) {
             configBase = new File(configBase, host.getName());
         }
-        configBase.mkdirs();
+        if (saveConfig) {
+            configBase.mkdirs();
+        }
         return configBase;
     }
 
