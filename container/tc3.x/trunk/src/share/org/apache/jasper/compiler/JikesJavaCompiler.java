@@ -77,14 +77,9 @@ public class JikesJavaCompiler implements JavaCompiler {
 
     static final int OUTPUT_BUFFER_SIZE = 1024;
     static final int BUFFER_SIZE = 512;
-    static final String q;
-    static {
-        if( System.getProperty("file.separator").equals("\\") ){
-            q="\"";
-        } else {
-            q="";
-        }
-    }
+    static final String q =
+            "\\".equals(System.getProperty("file.separator")) ? "\"" : "";
+
     /*
      * Contains extra classpath for Jikes use from Microsoft systems:
      * Microsoft does not report it's internal classpath in
