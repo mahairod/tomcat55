@@ -2792,6 +2792,10 @@ public class Generator {
 
     private void generateTagHandlerPostamble() {
         out.popIndent();
+        out.printil("} catch (java.io.IOException ioe) {");
+	out.pushIndent();
+	out.printil("throw new javax.servlet.jsp.JspException(ioe);");
+	out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
         out.printil("getJspContext().popPageScope();");
