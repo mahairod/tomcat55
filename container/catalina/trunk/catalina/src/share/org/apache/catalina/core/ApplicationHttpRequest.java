@@ -94,6 +94,7 @@ import org.apache.catalina.util.StringManager;
  * keep these two classes in synchronization when making changes!
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -138,13 +139,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The request attributes for this request.  This is initialized from the
-     * wrapped request, but updates are allowed.
-     */
-    //protected HashMap attributes = new HashMap();
 
 
     /**
@@ -252,21 +246,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * request.
      */
     public Enumeration getAttributeNames() {
-
         return (new AttributeNamesEnumerator());
-        /*
-        HashMap clone = (HashMap)attributes.clone();
-        Enumeration enum = getRequest().getAttributeNames();
-        Object key;
-        while(enum.hasMoreElements()){
-            key = enum.nextElement();
-            if (!clone.containsKey(key)){
-                clone.put(key, getRequest().getAttribute(key.toString()));
-            }
-        }
-        return (new Enumerator(clone.keySet()));
-        */
-
     }
 
 
@@ -524,20 +504,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         super.setRequest(request);
 
         // Initialize the attributes for this request
-        /*
-        synchronized (attributes) {
-            attributes.clear();
-            Enumeration names = request.getAttributeNames();
-            while (names.hasMoreElements()) {
-                String name = (String) names.nextElement();
-                if( ! ( Globals.INCLUDE_REQUEST_URI_ATTR.equals(name) ||
-                        Globals.INCLUDE_SERVLET_PATH_ATTR.equals(name) ) ) {
-                    Object value = request.getAttribute(name);
-                    attributes.put(name, value);
-                }
-            }
-        }
-        */
+        dispatcherType = request.getAttribute(Globals.DISPATCHER_TYPE_ATTR);
+        requestDispatcherPath = 
+            request.getAttribute(Globals.DISPATCHER_REQUEST_PATH_ATTR);
 
         // Initialize the path elements for this request
         contextPath = request.getContextPath();
@@ -756,6 +725,10 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     // ----------------------------------- AttributeNamesEnumerator Inner Class
 
 
+    /**
+     * Utility class used to expose the special attributes as being available
+     * as request attributes.
+     */
     protected class AttributeNamesEnumerator implements Enumeration {
 
         protected int pos = -1;
