@@ -60,32 +60,22 @@
 
 package javax.servlet;
 
-import java.util.Enumeration;
+import java.util.EventListener;
 
+	/** 
+	* Implementations of this interface recieve notifications about changes to the servlet context of the web application they are part of.
+	* To recieve notification events, the implementation class
+	* must be configured in the deployment descriptor for the web application.
+	* @see ServletContextEvent
+	 * @since	v 2.3
+	*/
 
+public interface ServletContextListener extends EventListener {
+	/** Notification that the web application is ready to process requests.*/
 
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
-    
+    public void contextInitialized ( ServletContextEvent sce );
 
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
-
+	/** Notification that the servlet context is about to be shut down. */
+    public void contextDestroyed ( ServletContextEvent sce );
 }
+

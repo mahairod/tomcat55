@@ -66,11 +66,13 @@ import java.util.EventObject;
 
 /**
  *
- * Sent to an object that implements
- * {@link HttpSessionBindingListener} when the object is
- * bound to or unbound from the session.
+ * Either Sent to an object that implements
+ * {@link HttpSessionBindingListener} when it is bound or 
+ * unbound from a session, or to a {@link HttpSessionAttributesListener} 
+ * that has been configured in the deploymewnt descriptor when any attribute is
+ * bound, unbound or replaced in a session.
  *
- * <p>The session binds the object by a call to
+ * <p>Yhe session binds the object by a call to
  * <code>HttpSession.putValue</code> and unbinds the object
  * by a call to <code>HttpSession.removeValue</code>.
  *
@@ -78,13 +80,13 @@ import java.util.EventObject;
  *
  * @author		Various
  * @version		$Version$
- *
+ * @since v2.3
  * @see 		HttpSession
  * @see 		HttpSessionBindingListener
- *
+ * @see			HttpSessionAttributesListener
  */
 
-public class HttpSessionBindingEvent extends EventObject {
+public class HttpSessionBindingEvent extends HttpSessionEvent {
 
 
 
@@ -92,6 +94,10 @@ public class HttpSessionBindingEvent extends EventObject {
     /* The name to which the object is being bound or unbound */
 
     private String name;
+    
+    /* The object is being bound or unbound */
+
+    private Object value;
     
   
 
@@ -118,6 +124,30 @@ public class HttpSessionBindingEvent extends EventObject {
 	this.name = name;
     }
     
+    /**
+     *
+     * Constructs an event that notifies an object that it
+     * has been bound to or unbound from a session. 
+     * To receive the event, the object must implement
+     * {@link HttpSessionBindingListener}.
+     *
+     *
+     *
+     * @param session 	the session to which the object is bound or unbound
+     *
+     * @param name 	the name with which the object is bound or unbound
+     *
+     * @see			#getName
+     * @see			#getSession
+     *
+     */
+    
+    public HttpSessionBindingEvent(HttpSession session, String name, Object value) {
+	super(session);
+	this.name = name;
+	this.value = value;
+    }
+    
     
     
    
@@ -140,27 +170,18 @@ public class HttpSessionBindingEvent extends EventObject {
 	return name;
     }
     
-    
-  
-  
-    
-
     /**
-     *
-     * Returns the session to or from which the object is
-     * bound or unbound.
-     *
-     * @return		the session to which the object is
-     *			bound or from which the object is
-     *			unbound
-     *
-     *
-     *
-     */
+	* Returns the value of the attribute being added, removed or replaced.
+	* If the attribute was added (or bound), this is the value of the attribute. If the attrubute was
+	* removed (or unbound), this is the value of the removed attribute. If the attribute was replaced, this
+	* is the old value of the attribute.
+	*
+	*/
+	
+	public Object getValue() {
+	    return this.value;   
+	}
     
-    public HttpSession getSession() {
-	return (HttpSession) getSource();
-    }
 }
 
 

@@ -58,34 +58,22 @@
  * DO NOT add / change / or delete method signatures!
  */
 
-package javax.servlet;
+package javax.servlet.http;
 
-import java.util.Enumeration;
+import java.util.EventListener;
 
+	/** This listener interface can be implemented in order to
+	* get notifications of changes made to sessions within this web application.
+	 * @since	v 2.3
+*/
 
-
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
-    
-
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
+public interface HttpSessionAttributesListener extends EventListener {
+	/** Notification that an attribute has been added to a session.*/
+    public void attributeAdded ( HttpSessionBindingEvent se );
+	/** Notification that an attribute has been removed from a session.*/
+    public void attributeRemoved ( HttpSessionBindingEvent se );
+	/** Notification that an attribute has been replaced in a session.*/
+    public void attributeReplaced ( HttpSessionBindingEvent se );
 
 }
+

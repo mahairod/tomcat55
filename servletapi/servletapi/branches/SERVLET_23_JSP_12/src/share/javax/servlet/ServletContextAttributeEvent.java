@@ -60,32 +60,43 @@
 
 package javax.servlet;
 
-import java.util.Enumeration;
 
+	/** 
+	* This is the event class for notifications about changes to the attributes of the
+	*  servlet context of a web application.
+	* @see ServletContextAttributesListener
+	 * @since	v 2.3
+	*/
 
-
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
-    
-
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
-
-    public String getServletName();
-
+public class ServletContextAttributeEvent extends ServletContextEvent { 
+	private String name;
+	private String value;
+	/** Construct a ServletContextAttributeEvent from the given context for the
+	** given attribute name and attribute value. 
+	*/
+	public ServletContextAttributeEvent(ServletContext source, String name, Object value) {
+	    super(source);
+	    this.name = name;
+	}
+	
+	/**
+	* Return the name of the attribute that changed on the ServletContext.
+	*
+	*/
+	public String getName() {
+		return this.name;
+	}
+	
+	/**
+	* Returns the value of the attribute being added removed or replaced.
+	* If the attribute was added, this is the value of the attribute. If the attrubute was
+	* removed, this is the value of the removed attribute. If the attribute was replaced, this
+	* is the old value of the attribute.
+	*
+	*/
+	
+	public Object getValue() {
+	    return this.value;   
+	}
 }
+
