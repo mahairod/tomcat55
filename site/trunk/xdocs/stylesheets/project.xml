@@ -15,6 +15,7 @@
     </menu>
 
     <menu name="Documentation">
+        <item name="Tomcat 5.5"           href="/tomcat-5.5-doc/index.html"/>
         <item name="Tomcat 5.0"           href="/tomcat-5.0-doc/index.html"/>
         <item name="Tomcat 4.1"           href="/tomcat-4.1-doc/index.html"/>
         <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/>
