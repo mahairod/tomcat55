@@ -33,10 +33,6 @@
         <exclude name="build.*"/>
       </fileset>
     </copy>
-    <copy todir="${webapps.build}/${webapp.name}/docs">
-      <fileset dir="../../catalina/docs" />
-    </copy>
-    <!-- FIXME: JavaDocs????? -->
   </target>
 
 

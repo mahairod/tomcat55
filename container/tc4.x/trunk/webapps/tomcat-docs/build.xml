@@ -55,28 +55,10 @@
     <!-- Catalina Functional Specifications -->
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina/funcspecs"/>
 
-    <!-- Catalina Javadocs -->
-    <mkdir     dir="${webapps.build}/${webapp.name}/catalina/docs/api"/>
-    <copy    todir="${webapps.build}/${webapp.name}/catalina/docs/api">
-      <fileset dir="../../catalina/build/javadoc"/>
-    </copy>
-
     <!-- Images Subdirectory -->
     <mkdir     dir="${webapps.build}/${webapp.name}/images"/>
     <copy    todir="${webapps.build}/${webapp.name}/images">
       <fileset dir="images"/>
-    </copy>
-
-    <!-- Jasper Javadocs -->
-    <mkdir     dir="${webapps.build}/${webapp.name}/jasper/docs/api"/>
-    <copy    todir="${webapps.build}/${webapp.name}/jasper/docs/api">
-      <fileset dir="../../jasper/build/javadoc"/>
-    </copy>
-
-    <!-- Servlet/JSP Javadocs -->
-    <mkdir     dir="${webapps.build}/${webapp.name}/servletapi"/>
-    <copy    todir="${webapps.build}/${webapp.name}/servletapi">
-      <fileset dir="${servletapi.home}/docs/api"/>
     </copy>
 
     <!-- WEB-INF Subdirectory -->

@@ -140,14 +140,17 @@
   <!-- ====================== DIST: Create Javadoc ======================== -->
   <target name="dist-javadoc">
     <ant dir="./catalina" target="javadoc"/>
-    <copy todir="${tomcat.build}/webapps/ROOT/catalina-javadoc">
+    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/catalina/docs/api"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs/catalina/docs/api">
       <fileset dir="${catalina.build}/javadoc" />
     </copy>
     <ant dir="./jasper" target="javadoc"/>
-    <copy todir="${tomcat.build}/webapps/ROOT/jasper-javadoc">
+    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/jasper/docs/api"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs/jasper/docs/api">
       <fileset dir="${jasper.build}/javadoc" />
     </copy>
-    <copy todir="${tomcat.build}/webapps/ROOT/servletapi-javadoc">
+    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/servletapi"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs/servletapi">
       <fileset dir="${servletapi.home}/docs/api" />
     </copy>
   </target>
