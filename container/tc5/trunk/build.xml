@@ -13,7 +13,7 @@
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
   <property name="year"                  value="2004" />
-  <property name="version"               value="5.5.0" />
+  <property name="version"               value="5.5-dev" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
@@ -67,7 +67,7 @@
   <property name="compile.optimize"     value="false"/>
   <property name="compile.debug"        value="true" />
   <property name="compile.deprecation"  value="false" />
-
+  <property name="compile.source"       value="1.4" />
 
   <!-- =================== DETECT: Display configuration ================== -->
   <target name="detect"
@@ -378,6 +378,7 @@
            optimize="off"
            debug="${compile.debug}" 
            deprecation="${compile.deprecation}"
+           source="${compile.source}"
            failonerror="false"
            srcdir="${ROOT.base}/WEB-INF/src" 
 	   excludes="**/*.smap">
@@ -405,6 +406,7 @@
            optimize="off"
            debug="${compile.debug}"
            deprecation="${compile.deprecation}"
+           source="${compile.source}"
            failonerror="false"
            srcdir="${jsp-examples.base}/WEB-INF/src" 
 	   excludes="**/*.smap">
@@ -430,6 +432,7 @@
            optimize="off"
            debug="${compile.debug}"
            deprecation="${compile.deprecation}"
+           source="${compile.source}"
            failonerror="false"
            srcdir="${admin.base}/WEB-INF/src" 
 	   excludes="**/*.smap">
@@ -659,6 +662,7 @@
            optimize="off"
            debug="${compile.debug}"
            deprecation="${compile.deprecation}"
+           source="${compile.source}"
            sourcepath="${tomcat-dbcp.home}/src/java"
            srcdir="src/java" >
       <include name="**" />
