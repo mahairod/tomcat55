@@ -296,7 +296,8 @@
         <include name="RUNNING.txt" />
       </fileset>
     </copy>
-    <tar tarfile="${tomcat.dist}/${final.name}.tar">
+    <fixcrlf srcdir="${tomcat.dist}/${final.name}/conf" eol="lf"/>
+    <tar longfile="gnu" tarfile="${tomcat.dist}/${final.name}.tar">
       <tarfileset dir="${tomcat.dist}" mode="755">
         <include name="${final.name}/bin/catalina.sh" />
         <include name="${final.name}/bin/digest.sh" />
@@ -323,8 +324,7 @@
 
   <target name="package-src-zip">
     <zip zipfile="${tomcat.dist}/${final-src.name}.zip">
-      <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" 
-       includes="**" />
+      <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" />
     </zip>
   </target>
 
@@ -335,7 +335,9 @@
         <include name="**" />
       </fileset>
     </copy>
-    <tar tarfile="${tomcat.dist}/${final-src.name}.tar">
+    <fixcrlf srcdir="${tomcat.dist}/${final-src.name}" 
+     excludes="**/*.jar" eol="lf"/>
+    <tar longfile="gnu" tarfile="${tomcat.dist}/${final-src.name}.tar">
       <tarfileset dir="${tomcat.dist}">
         <include name="${final-src.name}/**" />
       </tarfileset>
