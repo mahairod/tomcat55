@@ -117,7 +117,7 @@ present, then the JSP should be precompiled and loaded.
 -->
 
 <!ELEMENT servlet (icon?, servlet-name, display-name?, description?,
-(servlet-class|jsp-file), init-param*, load-on-startup?, security-role-ref*)>
+(servlet-class|jsp-file), init-param*, load-on-startup?, run-as?, security-role-ref*)>
 
 <!--
 The servlet-name element contains the canonical name of the
@@ -530,10 +530,10 @@ java.lang.Double, java.lang.Float.
 
 <!--
 The ejb-ref element is used to declare a reference to an
-enterprise bean. If the optional runAs element is used, the security identity of the call to the EJB must be propogated as the security role with the same name to the EJB.
+enterprise bean. 
 -->
 
-<!ELEMENT ejb-ref (description?, ejb-ref-name, ejb-ref-type, home, remote, ejb-link?, run-as?)>
+<!ELEMENT ejb-ref (description?, ejb-ref-name, ejb-ref-type, home, remote, ejb-link?)>
 
 <!--
 The ejb-ref-name element contains the name of an EJB
@@ -577,7 +577,8 @@ application package.
 
 
 <!--
-The run-as element must contain the name of a security role defined for this web application. 
+The run-as element must contain the name of a security role defined for this web application. If the optional run-as element is used for a servlet definition, the security identity of a call to any EJBs from the servlet must be propogated as the security role with the same name.
+
 -->
 
 <!ELEMENT run-as (#PCDATA)>
