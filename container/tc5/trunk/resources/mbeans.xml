@@ -1,4 +1,4 @@
-<project name="modeler-test" default="mini-tomcat" basedir=".">
+<project name="modeler-test" default="start" basedir=".">
 
   <property file="${user.home}/build.properties"/>
   <property file="build.properties"/>
@@ -28,6 +28,13 @@
 
     <path id="tomcatCP" >
       <path refid="tomcatCP-extra"/>
+      <!-- Just include everything for now 
+       -->
+      <fileset dir="${jmx.home}/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/common/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/server/lib" includes="*.jar" 
+               excludes="mx4j**"/>
+      <fileset dir="${tomcat.home}/bin" includes="*.jar"/>
       <fileset dir="${jmx.home}/lib" includes="*.jar"/>
       <pathelement path="${commons-logging.jar}" />
       <pathelement path="${log4j.jar}" />
@@ -104,23 +111,22 @@
          For example: The ajp connector will create it's own pool, while the http
          connector is configured with a specific instance.
       -->
+    <property name="domain" value="tcmini" />
 
-    <modeler code="org.apache.tomcat.util.threads.ThreadPool"
-           name="tomcat:type=ThreadPool,name=HttpConnectorPool" />
+    <mbean code="org.apache.catalina.mbeans.Tomcat"
+           name="${domain}:type=Tomcat" />
 
-    <mbean code="org.apache.commons.modeler.BaseModelMBean"
-           name="tomcat:type=HttpConnector,port=9080" >
-      <arg type="java.lang.String" >org.apache.coyote.http11.Http11Protocol</arg>
-    </mbean>
+    <modeler code="org.apache.coyote.http11.Http11Protocol"
+           name="${domain}:type=HttpConnector,port=9080" />
 
     <modeler code="org.apache.catalina.core.StandardServer"
-           name="tomcat:type=Server" />
+           name="${domain}:type=Server" />
 
     <modeler code="org.apache.catalina.core.StandardHost"
-           name="tomcat:type=Host,host=default" />
+           name="${domain}:type=Host,host=default" />
 
     <modeler code="org.apache.catalina.core.StandardContext"
-           name="tomcat:type=Context,host=default,context=/" />
+           name="${domain}:type=Context,host=default,context=/" />
 
 
     <!-- Customization -->
@@ -128,60 +134,40 @@
          ( in the standalone version, not the ant file )
       -->
     <!--
-    <jmx-attribute objectName="tomcat:type=HttpConnector,port=9080" 
+    <jmx-attribute objectName="${domain}:type=HttpConnector,port=9080" 
                    attribute="poolName" 
-                   value="tomcat:type=ThreadPool,name=HttpConnectorPool" />   
+                   value="${domain}:type=ThreadPool,name=HttpConnectorPool" />   
     -->
 
-    <jmx-attribute objectName="tomcat:type=Host,host=default" 
+    <jmx-attribute objectName="${domain}:type=Host,host=default" 
                    attribute="appBase" 
                    value="webapps" />   
-
-    <jmx-attribute objectName="tomcat:type=ThreadPool,name=HttpConnectorPool"
-                   attribute="daemon"
-                   type="boolean"
-                   value="false" />
 
     <!-- Start the server -->
     <!-- 
       -->
-    <jmx-operation objectName="tomcat:type=Server" 
+    <jmx-operation objectName="${domain}:type=Server" 
                    operation="start" />
-
-    <jmx-operation objectName="tomcat:type=ThreadPool,name=HttpConnectorPool"
-                   operation="start" />
-
-    <jmx-operation objectName="tomcat:type=Server" 
-                   operation="await" />
 
   </target>
 
 
   <!-- ======================= Server.xml based ================ -->
-   <target name="set-cp-all" >
-    <path id="tomcatCP-extra">
-      <fileset dir="${jmx.home}/lib" includes="*.jar"/>
-      <fileset dir="${tomcat.home}/common/lib" includes="*.jar"/>
-      <fileset dir="${tomcat.home}/server/lib" includes="*.jar" 
-               excludes="mx4j**"/>
-      <fileset dir="${tomcat.home}/bin" includes="*.jar"/>
-    </path>
-  </target>
 
-  <target name="run" depends="set-cp-all,init"
+  <target name="run" depends="init"
         description="Start tomcat as an mbean using server.xml config and returns">
 
     <modeler code="org.apache.catalina.startup.Catalina"
-          name="catalina:type=server" />
+          name="Catalina:type=server" />
 
-    <jmxSet objectName="catalina:type=server"
+    <jmxSet objectName="Catalina:type=server"
             attribute="catalinaHome"
             value="${tomcat.home}"/>
   
     <!-- We could also call init and set other properties - 
          init should load the modules -->
 
-    <jmx objectName="catalina:type=server"
+    <jmx objectName="Catalina:type=server"
          operation="start" />
     
     <echo message="Tomcat5 running"/>
@@ -194,19 +180,11 @@
   <target name="await" depends="init"
         description="Wait for tomcat stop. Call this target after run">
 
-    <jmx objectName="catalina:type=server"
+    <jmx objectName="Catalina:type=server"
          operation="await" />
 
   </target>
 
-  <target name="start" depends="set-cp-all,init,run,await" description="Start tomcat, wait for stop message"/>
-
-
-  <!-- ==================== Build tools ==================== 
-  -->
-  <target name="convert-mbeans" depends="init" >
-    <mbeans-descriptors file="${catalina.src}/catalina/src/share/org/apache/catalina/mbeans/mbeans-descriptors.xml"
-              out="${catalina.src}/catalina/src/share/org/apache/catalina/mbeans/mbeans-descriptors.xml.ser" />
-  </target>
+  <target name="start" depends="init,jmx-console,run,await" description="Start tomcat, wait for stop message"/>
 
 </project>
