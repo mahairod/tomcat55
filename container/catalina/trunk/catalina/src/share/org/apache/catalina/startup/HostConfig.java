@@ -532,15 +532,30 @@ public class HostConfig
 
                     // Expand and deploy this application as a directory
                     log.debug(sm.getString("hostConfig.expand", files[i]));
+                    URL url = null;
+                    String path = null;
                     try {
-                        URL url = new URL("jar:file:" +
-                                          dir.getCanonicalPath() + "!/");
-                        String path = ExpandWar.expand(host,url);
-                        url = new URL("file:" + path);
-                        ((Deployer) host).install(contextPath, url);
+                        url = new URL("jar:file:" +
+                                      dir.getCanonicalPath() + "!/");
+                        path = ExpandWar.expand(host, url);
+                    } catch (IOException e) {
+                        // JAR decompression failure
+                        log.warn(sm.getString
+                                 ("hostConfig.expand.error", files[i]));
+                        continue;
                     } catch (Throwable t) {
-                        log.error(sm.getString("hostConfig.expand.error", files[i]),
-                            t);
+                        log.error(sm.getString
+                                  ("hostConfig.expand.error", files[i]), t);
+                        continue;
+                    }
+                    try {
+                        if (path != null) {
+                            url = new URL("file:" + path);
+                            ((Deployer) host).install(contextPath, url);
+                        }
+                    } catch (Throwable t) {
+                        log.error(sm.getString
+                                  ("hostConfig.expand.error", files[i]), t);
                     }
 
                 } else {
@@ -721,14 +736,19 @@ public class HostConfig
                                                              true);
                                 }
                             } catch (Throwable t) {
-                                log.error(sm.getString("hostConfig.undeployJar.error",
-                                                       files[i]), t);
+                                log.error(sm.getString
+                                          ("hostConfig.undeployJar.error",
+                                           files[i]), t);
                             }
                             deployApps();
                         }
-                        webXmlLastModified.remove(contextPath);
-                        warLastModified.put
-                            (files[i], new Long(dir.lastModified()));
+                        // If deployment was successful, reset 
+                        // the last modified values
+                        if (host.findChild(contextPath) != null) {
+                            webXmlLastModified.remove(contextPath);
+                            warLastModified.put
+                                (files[i], new Long(dir.lastModified()));
+                        }
                     }
                 }
             }
