@@ -335,6 +335,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedRedirect01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedReflection01</url-pattern>
     </filter-mapping>
 
@@ -884,6 +889,16 @@
     <servlet>
         <servlet-name>Lifecycle03</servlet-name>
         <servlet-class>org.apache.tester.Lifecycle03</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Redirect01</servlet-name>
+        <servlet-class>org.apache.tester.Redirect01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Redirect01a</servlet-name>
+        <servlet-class>org.apache.tester.Redirect01a</servlet-class>
     </servlet>
 
     <servlet>
@@ -1646,6 +1661,26 @@
     <servlet-mapping>
         <servlet-name>Lifecycle03</servlet-name>
         <url-pattern>/WrappedLifecycle03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Redirect01</servlet-name>
+        <url-pattern>/Redirect01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Redirect01</servlet-name>
+        <url-pattern>/WrappedRedirect01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Redirect01a</servlet-name>
+        <url-pattern>/Redirect01a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Redirect01a</servlet-name>
+        <url-pattern>/WrappedRedirect01a</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

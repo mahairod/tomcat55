@@ -1464,6 +1464,26 @@
       outHeaders="Content-Language:en-US"/>
 
 
+    <!-- ========== SendRedirect Handling ================================= -->
+
+    <tester host="${host}" port="${port}" protocol=""
+         request="${context.path}/Redirect01" debug="${debug}"
+      outContent="Redirect01a PASSED" redirect="true"/>
+
+    <tester host="${host}" port="${port}" protocol=""
+         request="${context.path}/WrappedRedirect01" debug="${debug}"
+      outContent="Redirect01a PASSED" redirect="true"/>
+
+    <!-- JSP page includes "return" after redirect -->
+    <tester host="${host}" port="${port}" protocol=""
+         request="${context.path}/Redirect02.jsp" debug="${debug}"
+      outContent="Redirect02a.jsp PASSED" redirect="true"/>
+
+    <!-- Same as "Redirect02.jsp" except without the "return" -->
+    <tester host="${host}" port="${port}" protocol=""
+         request="${context.path}/Redirect03.jsp" debug="${debug}"
+      outContent="Redirect03a.jsp PASSED" redirect="true"/>
+
   </target>
 
 
