@@ -153,7 +153,7 @@ final class StandardEngineValve
         Host host = (Host) engine.map(request, true);
         if (host == null) {
             ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                (HttpServletResponse.SC_BAD_REQUEST,
                  sm.getString("standardEngine.noHost",
                               request.getRequest().getServerName()));
             return;
