@@ -29,7 +29,7 @@
 <p>To install and configure SSL support on Tomcat 5, you need to follow
 these simple steps.  For more information, read the rest of this HOW-TO.</p>
 <ol>
-<li>If you are running a 1.3 JVM, download JSSE 1.0.2 (or later) from
+<li>If you are running a 1.3 JVM, download JSSE 1.0.3 (or later) from
    <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>
    and either make it an <em>installed extension</em> on the system, or else
    set an environment variable <code>JSSE_HOME</code> that points at the
@@ -176,10 +176,10 @@ hosts are commonly used with SSL in a production environment.</p>
 <subsection name="Download and Install JSSE">
 
 <p>Download the <em>Java Secure Socket Extensions</em> (JSSE) package,
-version 1.0.2 or later, from
+version 1.0.3 or later, from
 <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>.
 If you built Tomcat from source, you have probably already downloaded this
-package.  If you are running JDK 1.4 (currently in beta), these classes have
+package.  If you are running JDK 1.4.x, these classes have
 been integrated directly into the JDK, so you can skip this entire step.</p>
 
 <p>After expanding the package, there are two ways to make it available to
@@ -197,15 +197,27 @@ Tomcat (choose one or the other):</p>
 
 <subsection name="Prepare the Certificate Keystore">
 
-<p>Tomcat currently operates only on <code>JKS</code> format keystores.  This
+<p>Tomcat currently operates only on <code>JKS</code> or <code>PKCS12</code>
+format keystores.  The <code>JKS</code> format
 is Java's standard "Java KeyStore" format, and is the format created by the
 <code>keytool</code> command-line utility.  This tool is included in the JDK.
+The <code>PKCS12</code> format is an internet standard, and can be manipulated
+via (among other things) OpenSSL and Microsoft's Key-Manager.  However, 
+currently there are some limitations on the support for <code>PKCS12</code>.
 </p>
 
 <p>To import an existing certificate into a JKS keystore, please read the
 documentation (in your JDK documentation package) about <code>keytool</code>.
 </p>
-
+<p>To import an existing certificate signed by your own CA into a PKCS12 
+keystore using OpenSSL you would execute a command like:
+</source>openssl pkcs12 -export -infile mycert.crt -inkey mykey.key \
+                        -outfile mycert.p12 -name tomcat -CAfile myCA.crt \
+                        -caname root -chain
+</source>
+For more advanced cases, consult the <a href="http://www.openssl.org/">OpenSSL
+documententation</a>.
+</p>
 <p>To create a new keystore from scratch, containing a single self-signed
 Certificate, execute the following from a terminal command line:</p>
 <p>Windows:</p>
@@ -276,7 +288,7 @@ file installed with Tomcat.  It will look something like this:</p>
            port="8443" minProcessors="5" maxProcessors="75"
            enableLookups="true" disableUploadTimeout="true"
            acceptCount="100" debug="0" scheme="https" secure="true";
-           clientAuth="false" sslprotocol="TLS"/&gt;
+           clientAuth="false" sslProtocol="TLS"/&gt;
 --&gt;
 </source>
 
@@ -333,14 +345,37 @@ values, depending on how you configured your keystore earlier:</p>
         password than the one Tomcat expects (<code>changeit</code>).</td>
   </tr>
   <tr>
+    <td><code>keystoreType</code></td>
+    <td>Add this element if using a PKCS12 keystore.  The valid values are
+        <code>JKS</code> and <code>PKCS12</code>.
+  <tr>
     <td><code>sslProtocol</code></td>
     <td>The encryption/decryption protocol to be used on this socket.
-        Do not change the default value.</td>
+        It is not recommended to change this value if you are using Sun's
+        JVM.  It is reported that IBM's 1.4.1 implementation
+        of the TLS protocol is not compatible with some popular browsers.
+        In this case, use the value <code>SSL</code>.</td>
   </tr>
   <tr>
     <td><code>ciphers</code></td>
     <td>The comma separated list of encryption ciphers that this socket is 
         allowed to use.  By default, any available cipher is allowed.</td>
+  </tr>
+  <tr>
+    <td><code>algorithm</code></td>
+    <td>The <code>X509</code> algorithm to use.  This defaults to the Sun 
+        implementation (<code>SunX509</code>).  For IBM JVMs you should use
+        the value <code>IbmX509</code>.  For other vendors, consult the JVM
+        documentation for the correct value.
+    </td>
+  </tr>
+  <tr>
+   <td><code>truststoreFile</code></td>
+   <td>The TrustStore file to use to validate client certificates.</td>
+  </tr>
+  <tr>
+   <td><code>truststorePass</code></td>
+   <td>The password to access the TrustStore.</td>
   </tr>
 </table>
 
