@@ -407,13 +407,13 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	public void visit(Node.CustomTag n) throws JasperException {
 	    boolean resetDefaultNSSave = resetDefaultNS;
-	    appendTag(n);
+	    appendTag(n, resetDefaultNS);
 	    resetDefaultNS = resetDefaultNSSave;
 	}
 
 	public void visit(Node.UninterpretedTag n) throws JasperException {
 	    boolean resetDefaultNSSave = resetDefaultNS;
-	    appendTag(n);
+	    appendTag(n, resetDefaultNS);
 	    resetDefaultNS = resetDefaultNSSave;
 	}
 
@@ -453,6 +453,15 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * Appends the given tag, including its body, to the XML view.
 	 */
 	private void appendTag(Node n) throws JasperException {
+	    appendTag(n, false);
+	}
+
+	/*
+	 * Appends the given tag, including its body, to the XML view,
+	 * and optionally reset default namespace to "", if none specified.
+	 */
+	private void appendTag(Node n, boolean addDefaultNS)
+		throws JasperException {
 
 	    Node.Nodes body = n.getBody();
 	    String text = n.getText();
@@ -460,7 +469,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("<").append(n.getQName());
 	    buf.append("\n");
 
-	    printAttributes(n);
+	    printAttributes(n, addDefaultNS);
 	    buf.append("  ").append(jspIdPrefix).append(":id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
 
@@ -682,7 +691,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	/*
 	 * Appends the attributes of the given Node to the XML view.
 	 */
-	private void printAttributes(Node n) {
+	private void printAttributes(Node n, boolean addDefaultNS) {
 
 	    /*
 	     * Append "xmlns" attributes that represent tag libraries
@@ -707,10 +716,10 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append("  ").append(name).append("=\"").append(value).append("\"\n");
 		defaultNSSeen |= "xmlns".equals(name);
 	    }
-	    if (resetDefaultNS && !defaultNSSeen) {
+	    if (addDefaultNS && !defaultNSSeen) {
 		buf.append("  xmlns=\"\"\n");
-		resetDefaultNS = false;
 	    }
+	    resetDefaultNS = false;
 
 	    /*
 	     * Append all other attributes
