@@ -18,7 +18,7 @@
   Each of the following properties are used in the build script.
   Values for these properties are set by the first place they are
   defined, from the following list:
-  * Definitions on the "ant" command line (ant -Ddeploy.home=xyz compile)
+  * Definitions on the "ant" command line (ant -Dcatalina.home=xyz compile)
   * Definitions from a "build.properties" file in the top level
     source directory
   * Definitions from a "build.properties" file in the developer's
@@ -109,15 +109,10 @@
   * Being copied into the "/WEB-INF/lib" directory during execution
     of the "deploy" target.
 
-  For the purposes of this example, the "servlet.jar" property should be set
-  to the pathname of the "servlet.jar" file included in your Tomcat 4 release.
-  It is included on the compiler classpath (because this is required in order
-  to compile a servlet), but is not copied to the deployment directory because
-  servlet containers already provide it at runtime.
-
-  This example also includes a dummy "foo.jar" property, used to illustrate
-  where you would make customizations for your own external dependencies
-  in order to use them for compilation and/or deployment.
+  Because we will automatically include all of the Java classes that Tomcat 4
+  exposes to web applications, we will not need to explicitly list any of those
+  dependencies.  You only need to worry about external dependencies for JAR
+  files that you are going to include inside your "/WEB-INF/lib" directory.
 
 -->
 
@@ -127,10 +122,6 @@
            value="/path/to/foo.jar"/>
 -->
 
-  <property name="servlet.jar"         
-           value="${catalina.home}/common/lib/servlet.jar"/>
-
-
 
 <!-- ==================== Compilation Classpath =========================== -->
 
@@ -139,23 +130,30 @@
   Rather than relying on the CLASSPATH environment variable, Ant includes
   features that makes it easy to dynamically construct the classpath you
   need for each compilation.  The example below constructs the compile
-  classpath to include the servlet.jar file, and includes comments on where
-  you would insert your own additional JAR files.  Such references should
-  be based on external dependency properties, as described above, so that
-  you can customize the actual location of the JAR files using build.properties
-  files.
+  classpath to include the servlet.jar file, as well as the other components
+  that Tomcat makes available to web applications automatically, plus anything
+  that you explicitly added.
 
 -->
 
   <path id="compile.classpath">
 
-<!-- Include for the servlet.jar file -->
-    <pathelement location="${servlet.jar}"/>
-
-<!-- Dummy include for our foo.jar file -->
+    <!-- Include all JAR files that will be included in /WEB-INF/lib -->
+    <!-- *** CUSTOMIZE HERE AS REQUIRED BY YOUR APPLICATION *** -->
 <!--
     <pathelement location="${foo.jar}"/>
 -->
+
+    <!-- Include all elements that Tomcat exposes to applications -->
+    <pathelement location="${catalina.home}/common/classes"/>
+    <fileset dir="${catalina.home}/common/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement location="${catalina.home}/classes"/>
+    <fileset dir="${catalina.home}/lib">
+      <include name="*.jar"/>
+    </fileset>
+
   </path>
 
 
@@ -244,11 +242,11 @@
       <fileset dir="${build.home}"/>
     </copy>
 
-    <!-- Pick up external dependencies as required -->
-    <mkdir     dir="${deploy.home}/WEB-INF/lib"/>
+    <!-- Copy external dependencies as required -->
+    <!-- *** CUSTOMIZE HERE AS REQUIRED BY YOUR APPLICATION *** -->
+    <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
 <!--
-    <copy   tofile="${deploy.home}/WEB-INF/lib/foo.jar"
-              file="${foo.jar}"/>
+    <copy todir="${deploy.home}/WEB-INF/lib" file="${foo.jar}"/>
 -->
 
   </target>
