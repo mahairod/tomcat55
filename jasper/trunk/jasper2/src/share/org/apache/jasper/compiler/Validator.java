@@ -114,16 +114,6 @@ class Validator {
 	    new JspUtil.ValidAttribute("isELIgnored")
 	};
 
-	private boolean languageSeen = false;
-	private boolean extendsSeen = false;
-	private boolean sessionSeen = false;
- 	private boolean bufferSeen = false;
-	private boolean autoFlushSeen = false;
-	private boolean isThreadSafeSeen = false;
-	private boolean errorPageSeen = false;
-	private boolean isErrorPageSeen = false;
-	private boolean contentTypeSeen = false;
-	private boolean infoSeen = false;
 	private boolean pageEncodingSeen = false;
 
 	/*
@@ -156,112 +146,89 @@ class Validator {
 		String value = attrs.getValue(i);
 
 		if ("language".equals(attr)) {
-		    if (languageSeen)
-			err.jspError(n, "jsp.error.page.multiple.language");
-		    languageSeen = true;
-		    if (!"java".equalsIgnoreCase(value))
-			err.jspError(n, "jsp.error.language.nonjava");
-		    pageInfo.setLanguage(value);
+		    if (pageInfo.getLanguage() == null) {
+			pageInfo.setLanguage(value, n, err, true);
+		    } else if (!pageInfo.getLanguage().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.language",
+				     pageInfo.getLanguage(), value);
+		    }
 		} else if ("extends".equals(attr)) {
-		    if (extendsSeen)
-			err.jspError(n, "jsp.error.page.multiple.extends");
-		    extendsSeen = true;
-		    pageInfo.setExtends(value);
-		    /*
-		     * If page superclass is top level class (i.e. not in a
-		     * pkg) explicitly import it. If this is not done, the
-		     * compiler will assume the extended class is in the same
-		     * pkg as the generated servlet.
-		     */
-		    if (value.indexOf('.') < 0)
-			n.addImport(value);
+		    if (pageInfo.getExtends() == null) {
+			pageInfo.setExtends(value, n);
+		    } else if (!pageInfo.getExtends().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.extends",
+				     pageInfo.getExtends(), value);
+		    }
 		} else if ("contentType".equals(attr)) {
-		    if (contentTypeSeen) 
-			err.jspError(n, "jsp.error.page.multiple.contenttypes");
-		    contentTypeSeen = true;
-		    pageInfo.setContentType(value);
+		    if (pageInfo.getContentType() == null) {
+			pageInfo.setContentType(value);
+		    } else if (!pageInfo.getContentType().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.contenttype",
+				     pageInfo.getContentType(), value);
+		    }
 		} else if ("session".equals(attr)) {
-		    if (sessionSeen)
-			err.jspError(n, "jsp.error.session.multiple");
-		    sessionSeen = true;
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setSession(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setSession(false);
-		    else
-			err.jspError(n, "jsp.error.session.invalid");
+		    if (pageInfo.getSession() == null) {
+			pageInfo.setSession(value, n, err);
+		    } else if (!pageInfo.getSession().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.session",
+				     pageInfo.getSession(), value);
+		    }
 		} else if ("buffer".equals(attr)) {
-		    if (bufferSeen)
-			err.jspError(n, "jsp.error.page.multiple.buffer");
-		    bufferSeen = true;
-
-		    if ("none".equalsIgnoreCase(value))
-			pageInfo.setBuffer(0);
-		    else {
-			if (value == null || !value.endsWith("kb"))
-			    err.jspError(n, "jsp.error.buffer.invalid");
-
-			try {
-			    Integer k = new Integer(
-			        value.substring(0, value.length()-2));
-			    pageInfo.setBuffer(k.intValue()*1024);
-			} catch (NumberFormatException e) {
-			    err.jspError(n, "jsp.error.buffer.invalid");
-			}
+		    if (pageInfo.getBufferValue() == null) {
+			pageInfo.setBufferValue(value, n, err);
+		    } else if (!pageInfo.getBufferValue().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.buffer",
+				     pageInfo.getBufferValue(), value);
 		    }
 		} else if ("autoFlush".equals(attr)) {
-		    if (autoFlushSeen)
-			err.jspError(n, "jsp.error.page.multiple.autoflush");
-		    autoFlushSeen = true;
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setAutoFlush(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setAutoFlush(false);
-		    else
-			err.jspError(n, "jsp.error.autoFlush.invalid");
+		    if (pageInfo.getAutoFlush() == null) {
+			pageInfo.setAutoFlush(value, n, err);
+		    } else if (!pageInfo.getAutoFlush().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.autoflush",
+				     pageInfo.getAutoFlush(), value);
+		    }
 		} else if ("isThreadSafe".equals(attr)) {
-		    if (isThreadSafeSeen)
-			err.jspError(n, "jsp.error.page.multiple.threadsafe");
-		    isThreadSafeSeen = true;
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setThreadSafe(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setThreadSafe(false);
-		    else
-			err.jspError(n, "jsp.error.isThreadSafe.invalid");
+		    if (pageInfo.getIsThreadSafe() == null) {
+			pageInfo.setIsThreadSafe(value, n, err);
+		    } else if (!pageInfo.getIsThreadSafe().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.isthreadsafe",
+				     pageInfo.getIsThreadSafe(), value);
+		    }
 		} else if ("isELIgnored".equals(attr)) {
-		    if (! pageInfo.isELIgnoredSpecified()) {
-			// If specified in jsp-config, use it
-			if ("true".equalsIgnoreCase(value))
-			    pageInfo.setELIgnored(true);
-			else if ("false".equalsIgnoreCase(value))
-			    pageInfo.setELIgnored(false);
-			else
-			    err.jspError(n, "jsp.error.isELIgnored.invalid");
+		    if (pageInfo.getIsELIgnored() == null) {
+			if (!pageInfo.isELIgnoredSpecified()) {
+			    // If specified in jsp-config, use it
+			    pageInfo.setIsELIgnored(value, n, err, true);
+			} 
+		    } else if (!pageInfo.getIsELIgnored().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.iselignored",
+				     pageInfo.getIsELIgnored(), value);
 		    }
 		} else if ("isErrorPage".equals(attr)) {
-		    if (isErrorPageSeen)
-			err.jspError(n, "jsp.error.page.multiple.iserrorpage");
-		    isErrorPageSeen = true;
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setIsErrorPage(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setIsErrorPage(false);
-		    else
-			err.jspError(n, "jsp.error.isErrorPage.invalid");
+		    if (pageInfo.getIsErrorPage() == null) {
+			pageInfo.setIsErrorPage(value, n, err);
+		    } else if (!pageInfo.getIsErrorPage().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.iserrorpage",
+				     pageInfo.getIsErrorPage(), value);
+		    }
 		} else if ("errorPage".equals(attr)) {
-		    if (errorPageSeen) 
-			err.jspError(n, "jsp.error.page.multiple.errorpage");
-		    errorPageSeen = true;
-		    pageInfo.setErrorPage(value);
+		    if (pageInfo.getErrorPage() == null) {
+			pageInfo.setErrorPage(value);
+		    } else if (!pageInfo.getErrorPage().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.errorpage",
+				     pageInfo.getErrorPage(), value);
+		    }
 		} else if ("info".equals(attr)) {
-		    if (infoSeen) 
-			err.jspError(n, "jsp.error.info.multiple");
-		    infoSeen = true;
+		    if (pageInfo.getInfo() == null) {
+			pageInfo.setInfo(value);
+		    } else if (!pageInfo.getInfo().equals(value)) {
+			err.jspError(n, "jsp.error.page.conflict.info",
+				     pageInfo.getInfo(), value);
+		    }
 		} else if ("pageEncoding".equals(attr)) {
 		    if (pageEncodingSeen) 
-			err.jspError(n,
-				     "jsp.error.page.multiple.pageencoding");
+			err.jspError(n, "jsp.error.page.multi.pageencoding");
+		    // 'pageEncoding' can occur at most once per file
 		    pageEncodingSeen = true;
 		    /*
 		     * Report any encoding conflict, treating "UTF-16",
@@ -293,25 +260,25 @@ class Validator {
 		String value = attrs.getValue(i);
 
 		if ("language".equals(attr)) {
-		    if (languageSeen)
-			err.jspError(n, "jsp.error.page.multiple.language");
-		    languageSeen = true;
-		    if (!"java".equalsIgnoreCase(value))
-			err.jspError(n, "jsp.error.language.nonjava");
-		    pageInfo.setLanguage(value);
+		    if (pageInfo.getLanguage() == null) {
+			pageInfo.setLanguage(value, n, err, false);
+		    } else if (!pageInfo.getLanguage().equals(value)) {
+			err.jspError(n, "jsp.error.tag.conflict.language",
+				     pageInfo.getLanguage(), value);
+		    }
 		} else if ("isELIgnored".equals(attr)) {
-		    if (! pageInfo.isELIgnoredSpecified()) {
-			// If specified in jsp-config, use it
-			if ("true".equalsIgnoreCase(value))
-			    pageInfo.setELIgnored(true);
-			else if ("false".equalsIgnoreCase(value))
-			    pageInfo.setELIgnored(false);
-			else
-			    err.jspError(n, "jsp.error.isELIgnored.invalid");
+		    if (pageInfo.getIsELIgnored() == null) {
+			if (!pageInfo.isELIgnoredSpecified()) {
+			    // If specified in jsp-config, use it
+			    pageInfo.setIsELIgnored(value, n, err, false);
+			} 
+		    } else if (!pageInfo.getIsELIgnored().equals(value)) {
+			err.jspError(n, "jsp.error.tag.conflict.iselignored",
+				     pageInfo.getIsELIgnored(), value);
 		    }
 		} else if ("pageEncoding".equals(attr)) {
 		    if (pageEncodingSeen) 
-			err.jspError(n, "jsp.error.page.multiple.pageencoding");
+			err.jspError(n, "jsp.error.tag.multi.pageencoding");
 		    pageEncodingSeen = true;
 		    n.getRoot().setPageEncoding(value);
 		}

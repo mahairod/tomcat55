@@ -63,6 +63,7 @@ package org.apache.jasper.compiler;
 import java.util.*;
 
 import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 
 /**
@@ -83,17 +84,24 @@ class PageInfo {
     private String language = "java";
     private String xtends = Constants.JSP_SERVLET_BASE;
     private String contentType = null;
-    private boolean session = true;
+    private String session;
+    private boolean isSession = true;
+    private String bufferValue;
     private int buffer = 8*1024;	// XXX confirm
-    private boolean autoFlush = true;
-    private boolean threadSafe = true;
+    private String autoFlush;
+    private boolean isAutoFlush = true;
+    private String isThreadSafeValue;
+    private boolean isThreadSafe = true;
+    private String isErrorPageValue;
     private boolean isErrorPage = false;
     private String errorPage = null;
+    private String info;
 
     private int maxTagNesting = 0;
     private boolean scriptless = false;
     private boolean scriptingInvalid = false;
-    private boolean elIgnored = false;
+    private String isELIgnoredValue;
+    private boolean isELIgnored = false;
     private boolean elIgnoredSpecified = false;
     private String omitXmlDecl = null;
 
@@ -170,78 +178,6 @@ class PageInfo {
 	return beanRepository;
     }
 
-    public String getLanguage() {
-	return language;
-    }
-
-    public void setLanguage(String language) {
-	this.language = language;
-    }
-
-    public String getExtends() {
-	return xtends;
-    }
-
-    public void setExtends(String xtends) {
-	this.xtends = xtends;
-    }
-
-    public String getContentType() {
-	return contentType;
-    }
-
-    public void setContentType(String contentType) {
-	this.contentType = contentType;
-    }
-
-    public String getErrorPage() {
-	return errorPage;
-    }
-
-    public void setErrorPage(String errorPage) {
-	this.errorPage = errorPage;
-    }
-
-    public int getBuffer() {
-	return buffer;
-    }
-
-    public void setBuffer(int buffer) {
-	this.buffer = buffer;
-    }
-
-    public boolean isSession() {
-	return session;
-    }
-
-    public void setSession(boolean session) {
-	this.session = session;
-    }
-
-    public boolean isAutoFlush() {
-	return autoFlush;
-    }
-
-    public void setAutoFlush(boolean autoFlush) {
-	this.autoFlush = autoFlush;
-    }
-
-    public boolean isThreadSafe() {
-	return threadSafe;
-    }
-
-    public void setThreadSafe(boolean threadSafe) {
-	this.threadSafe = threadSafe;
-    }
-
-    public boolean isIsErrorPage() {
-	return isErrorPage;
-    }
-
-    public void setIsErrorPage(boolean isErrorPage) {
-	this.isErrorPage = isErrorPage;
-    }
-
     public int getMaxTagNesting() {
         return maxTagNesting;
     }
@@ -264,14 +200,6 @@ class PageInfo {
 
     public boolean isScriptingInvalid() {
 	return scriptingInvalid;
-    }
-
-    public void setELIgnored(boolean s) {
-	elIgnored = s;
-    }
-
-    public boolean isELIgnored() {
-	return elIgnored;
     }
 
     public void setELIgnoredSpecified(boolean s) {
@@ -431,4 +359,249 @@ class PageInfo {
 	return (String) prefixMapper.get(prefix);
     }
 
+
+    /* Page/Tag directive attributes */
+
+    /*
+     * language
+     */
+    public void setLanguage(String value, Node n, ErrorDispatcher err,
+			    boolean pagedir)
+	    throws JasperException {
+
+	if (!"java".equalsIgnoreCase(value)) {
+	    if (pagedir)
+		err.jspError(n, "jsp.error.page.language.nonjava");
+	    else
+		err.jspError(n, "jsp.error.tag.language.nonjava");
+	}
+
+	language = value;
+    }
+
+    public String getLanguage() {
+	return language;
+    }
+
+
+    /*
+     * extends
+     */
+    public void setExtends(String value, Node.PageDirective n) {
+
+	xtends = value;
+
+	/*
+	 * If page superclass is top level class (i.e. not in a package)
+	 * explicitly import it. If this is not done, the compiler will assume
+	 * the extended class is in the same pkg as the generated servlet.
+	 */
+	if (value.indexOf('.') < 0)
+	    n.addImport(value);
+    }
+
+    public String getExtends() {
+	return xtends;
+    }
+
+
+    /*
+     * contentType
+     */
+    public void setContentType(String value) {
+	contentType = value;
+    }
+
+    public String getContentType() {
+	return contentType;
+    }
+
+
+    /*
+     * buffer
+     */
+    public void setBufferValue(String value, Node n, ErrorDispatcher err)
+	    throws JasperException {
+
+	if ("none".equalsIgnoreCase(value))
+	    buffer = 0;
+	else {
+	    if (value == null || !value.endsWith("kb"))
+		err.jspError(n, "jsp.error.page.invalid.buffer");
+	    try {
+		Integer k = new Integer(value.substring(0, value.length()-2));
+		buffer = k.intValue() * 1024;
+	    } catch (NumberFormatException e) {
+		err.jspError(n, "jsp.error.page.invalid.buffer");
+	    }
+	}
+
+	bufferValue = value;
+    }
+
+    public String getBufferValue() {
+	return bufferValue;
+    }
+
+    public int getBuffer() {
+	return buffer;
+    }
+
+
+    /*
+     * session
+     */
+    public void setSession(String value, Node n, ErrorDispatcher err)
+	    throws JasperException {
+
+	if ("true".equalsIgnoreCase(value))
+	    isSession = true;
+	else if ("false".equalsIgnoreCase(value))
+	    isSession = false;
+	else
+	    err.jspError(n, "jsp.error.page.invalid.session");
+
+	session = value;
+    }
+
+    public String getSession() {
+	return session;
+    }
+
+    public boolean isSession() {
+	return isSession;
+    }
+
+
+    /*
+     * autoFlush
+     */
+    public void setAutoFlush(String value, Node n, ErrorDispatcher err)
+	    throws JasperException {
+
+	if ("true".equalsIgnoreCase(value))
+	    isAutoFlush = true;
+	else if ("false".equalsIgnoreCase(value))
+	    isAutoFlush = false;
+	else
+	    err.jspError(n, "jsp.error.autoFlush.invalid");
+
+	autoFlush = value;
+    }
+
+    public String getAutoFlush() {
+	return autoFlush;
+    }
+
+    public boolean isAutoFlush() {
+	return isAutoFlush;
+    }
+
+
+    /*
+     * isThreadSafe
+     */
+    public void setIsThreadSafe(String value, Node n, ErrorDispatcher err)
+	    throws JasperException {
+
+	if ("true".equalsIgnoreCase(value))
+	    isThreadSafe = true;
+	else if ("false".equalsIgnoreCase(value))
+	    isThreadSafe = false;
+	else
+	    err.jspError(n, "jsp.error.page.invalid.isthreadsafe");
+
+	isThreadSafeValue = value;
+    }
+
+    public String getIsThreadSafe() {
+	return isThreadSafeValue;
+    }
+
+    public boolean isThreadSafe() {
+	return isThreadSafe;
+    }
+
+
+    /*
+     * info
+     */
+    public void setInfo(String value) {
+	info = value;
+    }
+
+    public String getInfo() {
+	return info;
+    }
+
+    
+    /*
+     * errorPage
+     */
+    public void setErrorPage(String value) {
+	errorPage = value;
+    }
+
+    public String getErrorPage() {
+	return errorPage;
+    }
+
+
+    /*
+     * isErrorPage
+     */
+    public void setIsErrorPage(String value, Node n, ErrorDispatcher err)
+	    throws JasperException {
+
+	if ("true".equalsIgnoreCase(value))
+	    isErrorPage = true;
+	else if ("false".equalsIgnoreCase(value))
+	    isErrorPage = false;
+	else
+	    err.jspError(n, "jsp.error.page.invalid.iserrorpage");
+
+	isErrorPageValue = value;
+    }
+
+    public String getIsErrorPage() {
+	return isErrorPageValue;
+    }
+
+    public boolean isErrorPage() {
+	return isErrorPage;
+    }
+
+
+    /*
+     * isELIgnored
+     */
+    public void setIsELIgnored(String value, Node n, ErrorDispatcher err,
+			       boolean pagedir)
+	    throws JasperException {
+
+	if ("true".equalsIgnoreCase(value))
+	    isELIgnored = true;
+	else if ("false".equalsIgnoreCase(value))
+	    isELIgnored = false;
+	else {
+	    if (pagedir) 
+		err.jspError(n, "jsp.error.page.invalid.iselignored");
+	    else 
+		err.jspError(n, "jsp.error.tag.invalid.iselignored");
+	}
+
+	isELIgnoredValue = value;
+    }
+
+    public void setELIgnored(boolean s) {
+	isELIgnored = s;
+    }
+
+    public String getIsELIgnored() {
+	return isELIgnoredValue;
+    }
+
+    public boolean isELIgnored() {
+	return isELIgnored;
+    }
 }

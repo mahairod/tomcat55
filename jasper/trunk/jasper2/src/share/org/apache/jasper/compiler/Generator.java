@@ -539,7 +539,7 @@ class Generator {
 	if (pageInfo.isSession())
 	    out.printil("HttpSession session = null;");
 
-	if (pageInfo.isIsErrorPage()) {
+	if (pageInfo.isErrorPage()) {
             out.printil("Throwable exception = org.apache.jasper.runtime.JspRuntimeLibrary.getThrowable(request);");
 	}
 

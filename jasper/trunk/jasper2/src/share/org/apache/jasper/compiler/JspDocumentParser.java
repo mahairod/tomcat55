@@ -557,7 +557,7 @@ class JspDocumentParser extends DefaultHandler
      */
      public void startPrefixMapping(String prefix, String uri)
 	     throws SAXException {
-	 // XXX
+         // XXX
      }
 
      /*
