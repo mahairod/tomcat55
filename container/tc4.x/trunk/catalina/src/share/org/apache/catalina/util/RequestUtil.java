@@ -399,7 +399,7 @@ public final class RequestUtil {
             String value = null;
             while (ix < data.length) {
                 byte c = data[ix++];
-                switch (c) {
+                switch ((char) c) {
                 case '&':
                     value = new String(data, 0, ox, encoding);
                     if (key != null) {
