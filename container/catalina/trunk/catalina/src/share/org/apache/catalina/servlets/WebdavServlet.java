@@ -819,7 +819,7 @@ public class WebdavServlet
         String path = getRelativePath(req);
 
         if (copyResource(req, resp)) {
-            deleteResource(path, req, resp);
+            deleteResource(path, req, resp, false);
         }
 
     }
@@ -1618,10 +1618,8 @@ public class WebdavServlet
 
             // Delete destination resource, if it exists
             if (exists) {
-                if (!deleteResource(destinationPath, req, resp)) {
+                if (!deleteResource(destinationPath, req, resp, true)) {
                     return false;
-                } else {
-                    resp.setStatus(WebdavStatus.SC_NO_CONTENT);
                 }
             } else {
                 resp.setStatus(WebdavStatus.SC_CREATED);
@@ -1749,7 +1747,7 @@ public class WebdavServlet
 
         String path = getRelativePath(req);
 
-        return deleteResource(path, req, resp);
+        return deleteResource(path, req, resp, true);
 
     }
 
@@ -1760,9 +1758,11 @@ public class WebdavServlet
      * @param path Path of the resource which is to be deleted
      * @param req Servlet request
      * @param resp Servlet response
+     * @param setStatus Should the response status be set on successful
+     *                  completion
      */
     private boolean deleteResource(String path, HttpServletRequest req,
-                                   HttpServletResponse resp)
+                                   HttpServletResponse resp, boolean setStatus)
         throws ServletException, IOException {
 
         if ((path.toUpperCase().startsWith("/WEB-INF")) ||
@@ -1834,8 +1834,9 @@ public class WebdavServlet
             }
 
         }
-
-        resp.setStatus(WebdavStatus.SC_NO_CONTENT);
+        if (setStatus) {
+            resp.setStatus(WebdavStatus.SC_NO_CONTENT);
+        }
         return true;
 
     }
