@@ -202,6 +202,71 @@
 	</servlet-class>
   </servlet>
 
+ <!-- Error -->
+
+  <servlet>
+    <servlet-name>
+	    ServletToServletErrorPageTest
+    </servlet-name>
+    <servlet-class>
+	    tests.javax_servlet.Error.ServletToServletErrorPageTestServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+        JSPErrorPage
+    </servlet-name>
+    <jsp-file>
+        /tests/javax_servlet/Error/JSPErrorPage.jsp
+    </jsp-file>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+        ServletToHTMLErrorPageTest
+    </servlet-name>
+    <servlet-class>
+        tests.javax_servlet.Error.ServletToHTMLErrorPageTestServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+        ServletErrorPage
+    </servlet-name>
+    <servlet-class>
+        tests.javax_servlet.Error.ServletErrorPage
+    </servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+        ServletToServletError501PageTest
+    </servlet-name>
+    <servlet-class>
+        tests.javax_servlet.Error.ServletToServletError501PageTestServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+        ServletToJSPError502PageTest
+    </servlet-name>
+    <servlet-class>
+        tests.javax_servlet.Error.ServletToJSPError502PageTestServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+        ServletToJSPErrorPageTest
+    </servlet-name>
+    <servlet-class>
+        tests.javax_servlet.Error.ServletToJSPErrorPageTestServlet
+    </servlet-class>
+  </servlet>
+
  
  <!--	UnavailableException		-->
 
@@ -1958,6 +2023,72 @@
 		/ServletRequestGetRequestDispatcherTest
 	</url-pattern>
   </servlet-mapping>
+
+  <!-- Error -->
+
+  <servlet-mapping>
+    <servlet-name>
+        ServletToServletErrorPageTest
+    </servlet-name>
+    <url-pattern>
+        /ServletToServletErrorPageTest
+    </url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>
+        JSPErrorPage
+    </servlet-name>
+    <url-pattern>
+        /JSPErrorPage
+    </url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>
+        ServletToHTMLErrorPageTest
+    </servlet-name>
+    <url-pattern>
+        /ServletToHTMLErrorPageTest
+    </url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>
+        ServletErrorPage
+    </servlet-name>
+    <url-pattern>
+        /ServletErrorPage
+    </url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>
+        ServletToServletError501PageTest
+    </servlet-name>
+    <url-pattern>
+        /ServletToServletError501PageTest
+    </url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>
+        ServletToJSPError502PageTest
+    </servlet-name>
+    <url-pattern>
+        /ServletToJSPError502PageTest
+    </url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>
+        ServletToJSPErrorPageTest
+    </servlet-name>
+    <url-pattern>
+        /ServletToJSPErrorPageTest
+    </url-pattern>
+  </servlet-mapping>
+
 
   <!--		UnavailableException	-->
 
@@ -4112,59 +4243,50 @@
 		</session-timeout>
 	</session-config>
 
-	<error-page>
-		<error-code>
-			404	
-		</error-code>
-		<location>
-			/IsNotThere
-		</location>
-	</error-page>
+  <error-page>
+    <exception-type>
+        java.lang.ArrayIndexOutOfBoundsException
+    </exception-type>
+    <location>
+        /JSPErrorPage
+    </location>
+  </error-page>
 
-	<error-page>
-		<error-code>
-			503	
-		</error-code>
-		<location>
-			/503.html
-		</location>
-	</error-page>
+  <error-page>
+    <error-code>
+        502
+    </error-code>
+    <location>
+        /JSPErrorPage
+    </location>
+  </error-page>
 
-	<error-page>
-		<error-code>
-			500	
-		</error-code>
-		<location>
-			/IsNotThere
-		</location>
-	</error-page>
+  <error-page>
+    <exception-type>
+        java.lang.ArithmeticException
+    </exception-type>
+    <location>
+        /ServletErrorPage
+    </location>
+  </error-page>
 
-	<error-page>
-		<exception-type>
-			ServletException
-		</exception-type>
-		<location>
-			/IsNotThere
-		</location>
-	</error-page>
+  <error-page>
+    <error-code>
+        501
+    </error-code>
+    <location>
+        /ServletErrorPage
+    </location>
+  </error-page>
 
-	<error-page>
-		<exception-type>
-			UnavaialableException
-		</exception-type>
-		<location>
-			/503.html
-		</location>
-	</error-page>
-
-	<error-page>
-		<exception-type>
-			FileNotFoundException
-		</exception-type>
-		<location>
-			/NotAvailable
-		</location>
-	</error-page>
+  <error-page>
+    <exception-type>
+        java.lang.NumberFormatException
+    </exception-type>
+    <location>
+        /tests/javax_servlet/Error/HTMLErrorPage.html
+    </location>
+  </error-page>	
 
   <security-constraint>
 	<web-resource-collection>
