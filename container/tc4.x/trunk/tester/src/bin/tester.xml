@@ -202,7 +202,6 @@
          request="${context.path}/ErrorPage01" debug="${debug}"
       outContent="ErrorPage02 PASSED"/>
 
-
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage01" debug="${debug}"
       outContent="ErrorPage02 PASSED"/>
@@ -214,11 +213,45 @@
          request="${context.path}/ErrorPage03" debug="${debug}"
       outContent="ErrorPage04 PASSED"/>
 
-
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage03" debug="${debug}"
       outContent="ErrorPage04 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage05?type=Arithmetic"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - SERVLET"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage05?type=Arithmetic"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - SERVLET"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage05?type=Array"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - JSP"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage05?type=Array"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - JSP"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage05?type=Number"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - HTML"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage05?type=Number"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - HTML"/>
 
   </target>
 

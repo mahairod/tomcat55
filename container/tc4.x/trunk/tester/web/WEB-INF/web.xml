@@ -77,6 +77,16 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage05</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage06</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedForward01</url-pattern>
     </filter-mapping>
 
@@ -255,6 +265,16 @@
     <servlet>
         <servlet-name>ErrorPage04</servlet-name>
         <servlet-class>org.apache.tester.ErrorPage04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage05</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage05</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage06</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage06</servlet-class>
     </servlet>
 
     <servlet>
@@ -474,6 +494,26 @@
     <servlet-mapping>
         <servlet-name>ErrorPage04</servlet-name>
         <url-pattern>/WrappedErrorPage04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage05</servlet-name>
+        <url-pattern>/ErrorPage05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage05</servlet-name>
+        <url-pattern>/WrappedErrorPage05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage06</servlet-name>
+        <url-pattern>/ErrorPage06</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage06</servlet-name>
+        <url-pattern>/WrappedErrorPage06</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -752,6 +792,21 @@
     <error-page>
         <exception-type>org.apache.tester.TesterException</exception-type>
         <location>/ErrorPage04</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>java.lang.ArithmeticException</exception-type>
+        <location>/ErrorPage06</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>java.lang.ArrayIndexOutOfBoundsException</exception-type>
+        <location>/ErrorPage06.jsp</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>java.lang.NumberFormatException</exception-type>
+        <location>/ErrorPage06.html</location>
     </error-page>
 
 
