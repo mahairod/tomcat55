@@ -152,9 +152,9 @@ commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/common
 
 # ----- Commons FileUpload, nightly build -----
 commons-fileupload.home=${base.path}/commons-fileupload
-commons-fileupload.lib=${commons-fileupload.home}
-commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-dev.jar
-#commons-fileupload.loc=http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-fileupload/commons-fileupload-20030106.zip
+commons-fileupload.lib=${commons-fileupload.home}/dist
+commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload.jar
+commons-fileupload.loc=jakarta-commons/fileupload
 
 
 # ----- JavaGroups, version 2.0.3 or later -----
