@@ -207,14 +207,29 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(10) Steps (11)-(23) are optional, but are necessary to build a complete binary
+(10) Download and Install the JNDI 1.2.1 Reference Implementation
+
+* Download the Java Naming and Directory Interface (JNDI) package,
+  (version 1.2.1 or later) from
+
+    http://java.sun.com/products/jndi/
+
+* Unpack the reference implementation into a convenient location so that
+  it resides in its own subdirectory.
+
+* You will also need the "LDAP Provider" (ldap.jar), available on the
+  same download page.  Be sure that you unpack "ldap.jar" into the "lib"
+  subdirectory of the JNDI directory, parallel to "jndi.jar".
+
+
+(11) Steps (12)-(23) are optional, but are necessary to build a complete binary
      distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
      build.properties file (see step (23)) to build a complete distribution.
      Regular contributors to Tomcat are encouraged to use the complete build 
      option.
 
 
-(11) Download and Install JDBC Optional Package API Binary Distribution
+(12) Download and Install JDBC Optional Package API Binary Distribution
 
 * Download the JDBC Optional Pacakge API package (version 2.0) from:
 
@@ -223,7 +238,7 @@ of Tomcat 4.0.
 * Place the jar in a convenient location.
 
 
-(12) Download and Install an implementation of the JMX 1.0 specification. This
+(13) Download and Install an implementation of the JMX 1.0 specification. This
      can be either OpenJMX (http://www.open-jmx.org) or Sun JMX 1.0 Reference 
      Implementation.
 
@@ -243,21 +258,6 @@ NOTE:  The Tomcat binaries are distrbuted with OpenJMX.
 
 * Unpack OpenJMX or the reference implementation into a convenient location 
   so that it resides in its own subdirectory.
-
-(13) Download and Install the JNDI 1.2.1 Reference Implementation
-
-* Download the Java Naming and Directory Interface (JNDI) package,
-  (version 1.2.1 or later) from
-
-    http://java.sun.com/products/jndi/
-
-* Unpack the reference implementation into a convenient location so that
-  it resides in its own subdirectory.
-
-* You will also need the "LDAP Provider" (ldap.jar), available on the
-  same download page.  Be sure that you unpack "ldap.jar" into the "lib"
-  subdirectory of the JNDI directory, parallel to "jndi.jar".
-
 
 (14) Download and Install the Java Activation Framework 1.0.1
 
