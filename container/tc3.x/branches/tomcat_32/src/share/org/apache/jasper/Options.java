@@ -125,4 +125,10 @@ public interface Options {
      * ProtectionDomain for this JSP Context when using a SecurityManager
      */
     public Object getProtectionDomain();
+
+    /**
+     * Java platform encoding to generate the JSP
+     * page servlet.
+     */
+    public String getJavaEncoding();
 }

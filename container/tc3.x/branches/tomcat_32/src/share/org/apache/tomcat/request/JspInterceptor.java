@@ -524,6 +524,16 @@ class TomcatOptions implements Options {
     public String getJspCompilerPath() {
         return jspCompilerPath;
     }
+
+    /**
+     * FIXME: see how compiler.Compiler handles javaEncoding
+     * and implement that behavior in this class when it 
+     * is 'enabled' (pierred). This has been added only so the
+     * code compiles.
+     */
+    public String getJavaEncoding() {
+	return "FIXME: NOT IMPLEMENTED";
+    }
 }
 
 

@@ -200,6 +200,10 @@ public class JspC implements Options { //, JspCompilationContext {
         return null;
     }
 
+    public String getJavaEncoding() {
+	return "UTF-8";
+    }
+
     public String getClassPath() {
         return System.getProperty("java.class.path");
     }

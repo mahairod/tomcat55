@@ -66,6 +66,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
@@ -143,7 +144,10 @@ public class Compiler {
         // XXX - There are really three encodings of interest.
 
         String jspEncoding = "8859_1";          // default per JSP spec
-        String javaEncoding = "UTF8";           // perhaps debatable?
+
+	// We try UTF8 by default. If it fails, we use the java encoding 
+	// specified for JspServlet init parameter "javaEncoding".
+        String javaEncoding = "UTF8";
 
 	// This seems to be a reasonable point to scan the JSP file
 	// for a 'contentType' directive. If it found then the set
@@ -166,11 +170,34 @@ public class Compiler {
             jspEncoding
         );
 
-        ServletWriter writer = 
-            (new ServletWriter
-                (new PrintWriter
-                    (new java.io.OutputStreamWriter(
-                        new FileOutputStream(javaFileName),javaEncoding))));
+	OutputStreamWriter osw; 
+	try {
+	    osw = new OutputStreamWriter(
+		      new FileOutputStream(javaFileName),javaEncoding);
+	} catch (java.io.UnsupportedEncodingException ex) {
+	    // Try to get the java encoding from the "javaEncoding"
+	    // init parameter for JspServlet.
+	    javaEncoding = ctxt.getOptions().getJavaEncoding();
+	    if (javaEncoding != null) {
+		try {
+		    osw = new OutputStreamWriter(
+			      new FileOutputStream(javaFileName),javaEncoding);
+		} catch (java.io.UnsupportedEncodingException ex2) {
+		    // no luck :-(
+		    throw new JasperException(
+			Constants.getString("jsp.error.invalid.javaEncoding",
+					    new Object[] { 
+						"UTF8", 
+						javaEncoding,
+					    }));
+		}
+	    } else {
+		throw new JasperException(
+		    Constants.getString("jsp.error.needAlternateJavaEncoding",
+					new Object[] { "UTF8" }));		
+	    }
+	}
+	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
 
         ctxt.setReader(reader);
         ctxt.setWriter(writer);
