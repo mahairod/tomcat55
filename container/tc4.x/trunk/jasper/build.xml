@@ -9,6 +9,7 @@
   <property name="jaxp.home"       value="../../jaxp"/>
   <property name="regexp.home"     value="../../jakarta-regexp"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
+  <property name="catalina.build"   value="../../build/catalina"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
@@ -26,6 +27,7 @@
     <mkdir dir="${jasper.build}/lib"/>
     <mkdir dir="${jasper.build}/logs"/>
     <mkdir dir="${jasper.build}/server"/>
+    <mkdir dir="${jasper.dist}/lib"/>
   </target>
 
 
@@ -81,6 +83,14 @@
 
   </target>
 
+  <!-- ================ BUILD: dist ==================================== -->
+  <target name="dist" depends="build-main">
+    <jar jarfile="${jasper.dist}/lib/jasper.jar"
+         basedir="${jasper.build}/classes" > 
+         <include name="org/apache/jasper/**" /> 
+    </jar>
+  </target>
+
   <!-- ================ BUILD: Create Jasper Javadocs =================== -->
   <target name="build-javadoc" depends="build-main">
     <mkdir dir="${jasper.build}/webapps/ROOT/javadoc"/>
@@ -96,6 +106,11 @@
     />
   </target>
 
+
+  <!-- ===================== Deploy for catalina ========================= -->
+  <target name="deploy" depends="build-clean,dist">
+    <copyfile src="${jasper.dist}/lib/jasper.jar" dest="${catalina.build}/lib/jasper.jar"/>
+  </target>
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
