@@ -1388,9 +1388,9 @@ public class ProxyDirContext implements DirContext {
      * Validate entry.
      */
     protected boolean validate(CacheEntry entry) {
-        if (((entry.resource != null) 
-             && (entry.resource.getContent() != null)) 
-            || (System.currentTimeMillis() < entry.timestamp)) {
+        if ((entry.resource != null) 
+            && (entry.resource.getContent() != null) 
+            && (System.currentTimeMillis() < entry.timestamp)) {
             return true;
         }
         return false;
