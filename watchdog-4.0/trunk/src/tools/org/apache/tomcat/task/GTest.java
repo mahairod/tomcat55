@@ -306,7 +306,11 @@ public class GTest extends Task {
      */
     public void setExpectHeaders( String s ) {
         this.expectHeaders = new HashMap();
-        getHeaderDetails( s, expectHeaders, false );
+        StringTokenizer tok = new StringTokenizer( s, "|" );
+        while ( tok.hasMoreElements() ) {
+            String header = (String) tok.nextElement();
+            getHeaderDetails( header, expectHeaders, false );
+        }
     }
 
     /**
