@@ -262,7 +262,7 @@
                      override="false"/>
           <Resource name="jdbc/EmployeeAppDb" auth="SERVLET"
                     type="javax.sql.DataSource"/>
-          <ResourceParams name="jdbc/TestDB">
+          <ResourceParams name="jdbc/EmployeeAppDb">
             <parameter><name>user</name><value>sa</value></parameter>
             <parameter><name>password</name><value></value></parameter>
             <parameter><name>driverClassName</name>
