@@ -115,6 +115,47 @@
       </fileset>
     </copy>
 
+    <copy todir="${jsp-api.build}/examples/jsp2/simpletag">
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples">
+        <include name="BookBean.java"/>
+      </fileset>
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples/simpletag">
+        <include name="FindBookSimpleTag.java"/>
+        <include name="RepeatSimpleTag.java"/>
+        <include name="HelloWorldSimpleTag.java"/>
+      </fileset>
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples/el">
+        <include name="Functions.java"/>
+      </fileset>
+      <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples/jsp2/jspattribute">
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples">
+        <include name="FooBean.java"/>
+      </fileset>
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples/simpletag">
+        <include name="ShuffleSimpleTag.java"/>
+        <include name="TileSimpleTag.java"/>
+        <include name="HelloWorldSimpleTag.java"/>
+      </fileset>
+      <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples/jsp2/el">
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples/el">
+        <include name="Functions.java"/>
+      </fileset>
+      <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples/jsp2/misc">
+      <fileset dir="examples/WEB-INF/classes/jsp2/examples/simpletag">
+        <include name="EchoAttributesTag.java"/>
+      </fileset>
+      <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
     <javac   srcdir="examples/WEB-INF/classes" 
              destdir="${jsp-api.build}/examples/WEB-INF/classes"
              debug="${compile.debug}" deprecation="${compile.deprecation}"
