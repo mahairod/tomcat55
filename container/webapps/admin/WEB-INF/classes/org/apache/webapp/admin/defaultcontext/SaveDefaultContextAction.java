@@ -218,7 +218,7 @@ public final class SaveDefaultContextAction extends Action {
                 }
                 
                 // Look up our MBeanFactory MBean
-                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
 
                 // Create a new DefaultContext object
                 values = new Object[1];

@@ -154,16 +154,18 @@ public class EditServerAction extends Action {
         }
 
         // label of the node that was clicked on.
-        String nodeLabel = request.getParameter("nodeLabel");        
+        String nodeLabel = request.getParameter("nodeLabel");  
+        String select = request.getParameter("select");        
         
         ServerForm serverFm = new ServerForm();
         session.setAttribute("serverForm", serverFm);
         serverFm.setNodeLabel(nodeLabel);        
         serverFm.setDebugLvlVals(Lists.getDebugLevels());
+        serverFm.setObjectName(select);
         
         ObjectName sname = null;    
         try {
-           sname = new ObjectName(TomcatTreeBuilder.SERVER_TYPE);
+            sname = new ObjectName(select);
         } catch (Exception e) {
             String message =
                 resources.getMessage("error.serviceName.bad",

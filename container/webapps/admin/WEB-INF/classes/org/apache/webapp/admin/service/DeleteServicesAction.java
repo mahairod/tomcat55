@@ -175,7 +175,7 @@ public class DeleteServicesAction extends Action {
                 ObjectName oname = new ObjectName(services[i]);
                 String domain = oname.getDomain();
                 ObjectName fname = 
-                        TomcatTreeBuilder.getMBeanFactory(domain);
+                        TomcatTreeBuilder.getMBeanFactory();
                 mBServer.invoke(fname, operation,
                                 values, removeServiceTypes);
                 if (control != null) {

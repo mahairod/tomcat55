@@ -152,16 +152,17 @@ public final class SaveServerAction extends Action {
             return (new ActionForward(mapping.getInput()));
         }
         
-       // Acquire a reference to the Server MBean
+        ServerForm sform = (ServerForm) form;
+        String sObjectName = sform.getObjectName();
+        // Acquire a reference to the Server MBean
         ObjectName soname = null;
         try {            
-            soname = new ObjectName(TomcatTreeBuilder.SERVER_TYPE);
-       } catch (Throwable t) {
+            soname = new ObjectName(sObjectName);
+        } catch (Throwable t) {
             throw new ServletException
             ("Cannot acquire Server MBean reference ", t);
         }
         
-        ServerForm sform = (ServerForm) form;
 
         // Perform attribute updates as requested
         String attribute = null;
