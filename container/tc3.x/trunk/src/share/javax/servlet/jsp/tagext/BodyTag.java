@@ -1,9 +1,5 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
- * ====================================================================
+ * $Header$ $Date$ $Revision$
  * 
  * The Apache Software License, Version 1.1
  *
@@ -57,8 +53,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
- 
+ */
 package javax.servlet.jsp.tagext;
 
 import javax.servlet.jsp.*;
@@ -132,7 +127,7 @@ public interface BodyTag extends Tag {
      * @seealso #doAfterBody
      */
 
-    void doInitBody() throws JspError;
+    void doInitBody() throws JspException;
 
     /**
      * Actions after some body has been evaluated.
@@ -151,5 +146,5 @@ public interface BodyTag extends Tag {
      * @seealso #doInitBody
      */
 
-    int doAfterBody() throws JspError;
+    int doAfterBody() throws JspException;
 }

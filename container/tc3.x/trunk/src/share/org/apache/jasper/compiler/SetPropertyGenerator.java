@@ -240,7 +240,8 @@ public class SetPropertyGenerator
 			    throw new JasperException(m);
 			} else {
 			    if (tp.equals(String.class))
-				writer.println (name+"."+methodName+"(\"" + value + "\");");
+			        writer.println (name+"."+methodName+"(" +
+						writer.quoteString(value) + ");");
 			    else if (tp.equals(char.class))
 				writer.println (name+"."+methodName+"((new String (\"" +
 						value + "\")).charAt(0));");

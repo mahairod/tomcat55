@@ -184,6 +184,7 @@ class ServletLoader extends ClassLoader {
     }
 
     private URL getResource(URL base, Enumeration paths, String name) {
+	
         return getResource(base, paths, name, false);
     }
 
@@ -282,7 +283,7 @@ class ServletLoader extends ClassLoader {
             String path = (String)paths.nextElement();
             String entryName = name.replace('.', '/') + ".class";
 	    Vector v = new Vector();
-
+	    
 	    if (! lib) {
 	        v = getPathURL(base, path, entryName);
 	    } else {

@@ -90,13 +90,12 @@ public class TagAttributeInfo {
     // TODO -- add the content descriptor...
 
     public TagAttributeInfo(String name, boolean required, boolean rtexprvalue, 
-                            String type, boolean reqTime) 
+                            String type)
     {
 	this.name = name;
         this.required = required;
         this.rtexprvalue = rtexprvalue;
         this.type = type;
-	this.reqTime = reqTime;
     }
 
     /**
@@ -120,7 +119,7 @@ public class TagAttributeInfo {
      */
 
     public boolean canBeRequestTime() {
-	return reqTime;
+	return rtexprvalue;
     }
 
     /**
@@ -147,7 +146,6 @@ public class TagAttributeInfo {
         StringBuffer b = new StringBuffer();
         b.append("name = "+name+" ");
         b.append("type = "+type+" ");
-        b.append("reqTime = "+reqTime+" ");
         b.append("required = "+required+" ");
         b.append("rtexprvalue = "+rtexprvalue+" ");
         return b.toString();
@@ -159,7 +157,6 @@ public class TagAttributeInfo {
 
     private String name;
     private String type;
-    private boolean reqTime;
     private boolean required;
     private boolean rtexprvalue;
 }

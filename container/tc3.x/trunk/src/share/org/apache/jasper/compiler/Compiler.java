@@ -118,7 +118,7 @@ public abstract class Compiler {
         Constants.message("jsp.message.class_file_name_is",
                           new Object[] { classFileName },
                           Constants.MED_VERBOSITY);
-        
+
         JspReader reader = JspReader.createJspReader(ctxt.getJspFile(), ctxt.getServletContext());
 
         ServletWriter writer = 
