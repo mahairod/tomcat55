@@ -69,6 +69,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.net.URLClassLoader;
 
 /**
  * An internationalization / localization helper class which reduces
@@ -112,7 +113,18 @@ public class StringManager {
 
     private StringManager(String packageName) {
         String bundleName = packageName + ".LocalStrings";
-        bundle = ResourceBundle.getBundle(bundleName);
+        try {
+            bundle = ResourceBundle.getBundle(bundleName);
+            return;
+        } catch( MissingResourceException ex ) {
+            ClassLoader cl=this.getClass().getClassLoader();
+
+            System.out.println("Can't find resource " + bundleName +
+                    " " + cl);
+            if( cl instanceof URLClassLoader ) {
+                System.out.println( ((URLClassLoader)cl).getURLs());
+            }
+        }
     }
 
     /**
@@ -130,6 +142,8 @@ public class StringManager {
 
         String str = null;
 
+        if( bundle==null )
+            return key;
         try {
             str = bundle.getString(key);
         } catch (MissingResourceException mre) {
@@ -256,6 +270,7 @@ public class StringManager {
 
     public synchronized static StringManager getManager(String packageName) {
         StringManager mgr = (StringManager)managers.get(packageName);
+
         if (mgr == null) {
             mgr = new StringManager(packageName);
             managers.put(packageName, mgr);
