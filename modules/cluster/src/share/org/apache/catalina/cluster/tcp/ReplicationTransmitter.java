@@ -124,7 +124,7 @@ public class ReplicationTransmitter
         v.copyInto(result);
         return result;
     }
-    
+
     protected void sendMessageData(String sessionId, byte[] data, IDataSender sender) throws java.io.IOException  {
         if ( sender == null ) throw new java.io.IOException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try
@@ -132,9 +132,14 @@ public class ReplicationTransmitter
             if (!sender.isConnected())
                 sender.connect();
             sender.sendMessage(sessionId,data);
+            sender.setSuspect(false);
         }catch ( Exception x)
         {
-            log.warn("Unable to send replicated message, is server down?",x);
+            if ( !sender.getSuspect() ) {
+                log.warn("Unable to send replicated message, is server down?",
+                         x);
+            }
+            sender.setSuspect(true);
         }
 
     }

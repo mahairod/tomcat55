@@ -142,33 +142,46 @@ public class ReplicationListener extends Thread
         while (doListen) {
             // this may block for a long time, upon return the
             // selected set contains keys of the ready channels
-            int n = selector.select(timeout);
-            if (n == 0) {
-                continue;	// nothing to do
-            }
-            // get an iterator over the set of selected keys
-            Iterator it = selector.selectedKeys().iterator();
-            // look at each key in the selected set
-            while (it.hasNext()) {
-                SelectionKey key = (SelectionKey) it.next();
-                // Is a new connection coming in?
-                if (key.isAcceptable()) {
-                    ServerSocketChannel server =
-                        (ServerSocketChannel) key.channel();
-                    SocketChannel channel = server.accept();
-                    registerChannel (selector,
-                                     channel,
-                                     SelectionKey.OP_READ | SelectionKey.OP_WRITE,
-                                     new ObjectReader(channel,selector,callback));
+            try {
+
+                int n = selector.select(timeout);
+                if (n == 0) {
+                    continue; // nothing to do
                 }
-                // is there data to read on this channel?
-                if (key.isReadable()) {
-                    readDataFromSocket (key);
+                // get an iterator over the set of selected keys
+                Iterator it = selector.selectedKeys().iterator();
+                // look at each key in the selected set
+                while (it.hasNext()) {
+                    SelectionKey key = (SelectionKey) it.next();
+                    // Is a new connection coming in?
+                    if (key.isAcceptable()) {
+                        ServerSocketChannel server =
+                            (ServerSocketChannel) key.channel();
+                        SocketChannel channel = server.accept();
+                        registerChannel(selector,
+                                        channel,
+                                        SelectionKey.OP_READ |
+                                        SelectionKey.OP_WRITE,
+                                        new ObjectReader(channel, selector,
+                            callback));
+                    }
+                    // is there data to read on this channel?
+                    if (key.isReadable()) {
+                        readDataFromSocket(key);
+                    }
+                    // remove key from selected set, it's been handled
+                    it.remove();
                 }
-                // remove key from selected set, it's been handled
-                it.remove();
             }
-        }//while
+            catch (java.nio.channels.CancelledKeyException nx) {
+                log.warn(
+                    "Replication client disconnected, error when polling key. Ignoring client.");
+            }
+            catch (Exception x) {
+                log.error("Unable to process request in ReplicationListener", x);
+            }
+
+        } //while
         serverChannel.close();
         selector.close();
     }
@@ -197,10 +210,6 @@ public class ReplicationListener extends Thread
     }
 
     // ----------------------------------------------------------
-
-    // Use the same byte buffer for all channels.  A single thread is
-    // servicing all the channels, so no danger of concurrent acccess.
-    private ByteBuffer buffer = ByteBuffer.allocateDirect (1024);
 
     /**
      * Sample data handler method for a channel with data ready to read.

@@ -162,10 +162,6 @@ public class SimpleTcpCluster
     protected int tcpThreadCount = 2;
 
     /**
-     * ReplicationListener to listen for incoming data
-     */
-    protected ReplicationListener mReplicationListener;
-    /**
      * ReplicationTransmitter to send data with
      */
     protected ReplicationTransmitter mReplicationTransmitter;
@@ -272,6 +268,12 @@ public class SimpleTcpCluster
      * defaults to synchronous
      */
     protected String replicationMode="synchronous";
+
+    private long nrOfMsgsReceived = 0;
+    private long msgSendTime = 0;
+    private long lastChecked = System.currentTimeMillis();
+    private boolean isJdk13 = false;
+
     // ------------------------------------------------------------- Properties
 
     public SimpleTcpCluster() {
@@ -475,15 +477,31 @@ public class SimpleTcpCluster
                 (sm.getString("cluster.alreadyStarted"));
         log.info("Cluster is about to start");
         try {
-            mReplicationListener =
-                new ReplicationListener(this,
-                                        this.tcpThreadCount,
-                                        this.tcpAddress,
-                                        this.tcpPort,
-                                        this.tcpSelectorTimeout,
-                                        "synchronous".equals(this.replicationMode));
-            mReplicationListener.setDaemon(true);
-            mReplicationListener.start();
+            if ( isJdk13 ) {
+                Jdk13ReplicationListener mReplicationListener =
+                    new Jdk13ReplicationListener(this,
+                                            this.tcpThreadCount,
+                                            this.tcpAddress,
+                                            this.tcpPort,
+                                            this.tcpSelectorTimeout,
+                                            "synchronous".equals(this.
+                    replicationMode));
+                Thread t = new Thread(mReplicationListener);
+                t.setDaemon(true);
+                t.start();
+            } else {
+                ReplicationListener mReplicationListener =
+                    new ReplicationListener(this,
+                                            this.tcpThreadCount,
+                                            this.tcpAddress,
+                                            this.tcpPort,
+                                            this.tcpSelectorTimeout,
+                                            "synchronous".equals(this.
+                    replicationMode));
+                mReplicationListener.setDaemon(true);
+                mReplicationListener.start();
+            }
+
             mReplicationTransmitter = new ReplicationTransmitter(new IDataSender[0]);
             mReplicationTransmitter.start();
 
@@ -777,15 +795,19 @@ public class SimpleTcpCluster
     // ---------------------------------------------  Inner Class
 
     // ---------------------------------------------  Performance
-    private long nrOfMsgsReceived = 0;
-    private long msgSendTime = 0;
-    private long lastChecked = System.currentTimeMillis();
+
     private void perfMessageRecvd(long timeSent) {
         nrOfMsgsReceived++;
         msgSendTime+=(System.currentTimeMillis()-timeSent);
         if ( (System.currentTimeMillis() - lastChecked) > 5000 ) {
             log.debug("Calc msg send time total="+msgSendTime+"ms num request="+nrOfMsgsReceived+" average per msg="+(msgSendTime/nrOfMsgsReceived)+"ms.");
         }
+    }
+    public boolean getIsJdk13() {
+        return isJdk13;
+    }
+    public void setIsJdk13(boolean isJdk13) {
+        this.isJdk13 = isJdk13;
     }
 
 }
