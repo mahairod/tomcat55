@@ -4,6 +4,8 @@
   <!-- ===================== Initialize Property Values =================== -->
   <property name="ant.home"        value="../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
+  <property name="catalina.build"  value="../build/catalina"/>
+  <property name="jasper.build"    value="../build/jasper"/>
   <property name="jaxp.home"       value="../jaxp"/>
   <property name="jsse.home"       value="../jsse"/>
   <property name="regexp.home"     value="../jakarta-regexp"/>
@@ -91,13 +93,25 @@
   <!-- ====================== DIST: Create Javadoc ======================== -->
   <target name="dist-javadoc">
     <ant dir="./catalina" target="javadoc"/>
+    <copydir src="${catalina.build}/javadoc"
+            dest="${tomcat.build}/webapps/ROOT/catalina-javadoc"/>
     <ant dir="./jasper" target="javadoc"/>
+    <copydir src="${jasper.build}/javadoc"
+            dest="${tomcat.build}/webapps/ROOT/jasper-javadoc"/>
     <copydir src="${servletapi.dist}/docs/api"
             dest="${tomcat.build}/webapps/ROOT/servletapi-javadoc"/>
   </target>
 
+
+  <!-- ====================== DIST: Copy Source Code ====================== -->
+  <target name="dist-source">
+    <mkdir dir="${tomcat.build}/src"/>
+    <copydir src="." dest="${tomcat.build}/src"/>
+  </target>
+
+
   <!-- ====================== DIST: Create Archives ======================= -->
-  <target name="dist" depends="dist-javadoc,dist-static">
+  <target name="dist" depends="dist-static,dist-javadoc,dist-source">
     <jar jarfile="${tomcat.dist}/webapps/ROOT.war"
          basedir="${tomcat.build}/webapps/ROOT" includes="**"/>
     <jar jarfile="${tomcat.dist}/webapps/examples.war"
