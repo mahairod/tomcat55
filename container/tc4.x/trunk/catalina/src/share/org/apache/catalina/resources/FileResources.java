@@ -123,6 +123,12 @@ public final class FileResources extends ResourcesBase {
     protected static final int BUFFER_SIZE = 2048;
 
 
+    /**
+     * Absolute normalized filename of the base.
+     */
+    protected String absoluteBase;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -153,7 +159,8 @@ public final class FileResources extends ResourcesBase {
 	    throw new IllegalArgumentException
 		(sm.getString("fileResources.base", docBase));
 	this.base = base;
-
+        this.absoluteBase = normalize(base.getAbsolutePath());
+        
 	// Perform the standard superclass processing
 	super.setDocBase(docBase);
 
@@ -369,17 +376,22 @@ public final class FileResources extends ResourcesBase {
 
 	File file = new File(base, normalized.substring(1));
 
-        String absPath = normalize(file.getAbsolutePath());
-        String canPath = null;
-        try {
-            canPath = file.getCanonicalPath();
-            if (canPath != null)
-                canPath = normalize(canPath);
-        } catch (IOException e) {
+        // Windows only check
+	if (File.separatorChar  == '\\') {
+            String absPath = normalize(file.getAbsolutePath());
+            String canPath = null;
+            try {
+                canPath = file.getCanonicalPath();
+                if (canPath != null)
+                    canPath = normalize(canPath);
+            } catch (IOException e) {
+            }
+            absPath = absPath.substring(absoluteBase.length());
+            canPath = canPath.substring(absoluteBase.length());
+            if ((canPath == null) || (absPath == null)
+                || (!canPath.equals(absPath)))
+                return (false);
         }
-        if ((canPath == null) || (absPath == null)
-            || (!canPath.equals(absPath)))
-            return (false);
 
         //File file = file(normalized.substring(1));
         if (file != null) {
@@ -709,17 +721,22 @@ public final class FileResources extends ResourcesBase {
 	    return (null);
 	File file = new File(base, name.substring(1));
         if (file.exists() && file.canRead()) {
-            String absPath = normalize(file.getAbsolutePath());
-            String canPath = null;
-            try {
-                canPath = file.getCanonicalPath();
-                if (canPath != null)
-                    canPath = normalize(canPath);
-            } catch (IOException e) {
+            // Windows only check
+            if (File.separatorChar  == '\\') {
+                String absPath = normalize(file.getAbsolutePath());
+                String canPath = null;
+                try {
+                    canPath = file.getCanonicalPath();
+                    if (canPath != null)
+                        canPath = normalize(canPath);
+                } catch (IOException e) {
+                }
+                absPath = absPath.substring(absoluteBase.length());
+                canPath = canPath.substring(absoluteBase.length());
+                if ((canPath == null) || (absPath == null)
+                    || (!canPath.equals(absPath)))
+                    return (null);
             }
-            if ((canPath == null) || (absPath == null)
-                || (!canPath.equals(absPath)))
-                return (null);
             return (file);
 	} else {
 	    return (null);
