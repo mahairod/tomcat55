@@ -649,7 +649,7 @@
        unless="compile.jmx"/>
       <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
        unless="compile.jsse"/>
-      <exclude name="org/apache/catalina.realm/JAAS**"
+      <exclude name="org/apache/catalina/realm/JAAS**"
        unless="compile.jaas"/>
       <exclude name="org/apache/catalina/servlets/SsiInvokerServlet.java"
        unless="compile.ssi"/>
