@@ -126,7 +126,7 @@
         Remove authenticator "debug" attributes from the descriptors. (remm)
       </fix>
       <update>
-        Refactor org.apache.catalina.deploy.ContextXXX to use new super class ContextBase. (pero)
+        Refactor org.apache.catalina.deploy.ContextXXX to use new super class ResourceBase. (pero)
       </update>
       <fix>
         Enable Connector.findLifecycleListener that we can listen start/stop Connector events and save the listener to xml. (pero)
