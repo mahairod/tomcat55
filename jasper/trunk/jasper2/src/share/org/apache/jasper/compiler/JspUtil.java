@@ -910,7 +910,7 @@ public class JspUtil {
 	    }
 	}
 
-	className += path.substring(begin).replace(File.separatorChar, '.');
+	className += path.substring(begin).replace('/', '.');
 
 	return className;
     }
