@@ -719,25 +719,11 @@ public class JspParseEventListener extends BaseJspListener {
                 if (genCoords) {
 		    commentGenerator.generateStartComment
 			(generator, out, start, stop);
-                    //if (start != null && stop != null) {
-		    //  if (start.fileid == stop.fileid) {
-		    //    String fileName = out.quoteString(
-		    //    				start.getFile ());
-		    //      out.println("// begin [file="+fileName+";from="+
-		    //                  start.toShortString()+";to="+stop.toShortString()+"]");
-		    //}
-		    //  else
-		    //      out.println("// begin [from="+start+";to="+stop+"]");
-                    //} else
-		    //  out.println("// begin");
-                    //out.pushIndent();
                 }
                 generator.generate(out, phase);
                 if (genCoords) {
 		    commentGenerator.generateEndComment
 			(generator, out, start, stop);
-                    //out.popIndent();
-                    //out.println("// end");
                 }
             }
         }
