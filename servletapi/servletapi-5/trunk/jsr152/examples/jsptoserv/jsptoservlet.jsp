@@ -6,6 +6,6 @@
 <body bgcolor="white">
 
 <!-- Forward to a servlet -->
-<jsp:forward page="/servlet/servletToJsp" />
+<jsp:forward page="/servletToJsp" />
 
 </html>
