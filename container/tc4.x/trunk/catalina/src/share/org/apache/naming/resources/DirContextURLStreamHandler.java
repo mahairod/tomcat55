@@ -207,18 +207,34 @@ public class DirContextURLStreamHandler
      * Get the bound context.
      */
     public static DirContext get() {
+
         DirContext result = null;
+
         Thread currentThread = Thread.currentThread();
-        result = (DirContext) threadBindings.get(currentThread);
         ClassLoader currentCL = currentThread.getContextClassLoader();
-        while ((result == null) && (currentCL != null)) {
+
+        // Checking CL binding
+        result = (DirContext) clBindings.get(currentCL);
+        if (result != null)
+            return result;
+
+        // Checking thread biding
+        result = (DirContext) threadBindings.get(currentThread);
+
+        // Checking parent CL binding
+        currentCL = currentCL.getParent();
+        while (currentCL != null) {
             result = (DirContext) clBindings.get(currentCL);
-            if (result == null)
-                currentCL = currentCL.getParent();
+            if (result != null)
+                return result;
+            currentCL = currentCL.getParent();
         }
+
         if (result == null)
             throw new IllegalStateException("Illegal class loader binding");
+
         return result;
+
     }
     
     
