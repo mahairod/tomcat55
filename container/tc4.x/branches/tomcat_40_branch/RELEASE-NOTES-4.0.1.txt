@@ -72,10 +72,22 @@ Catalina Bug Fixes:
 Jasper Bug Fixes:
 ----------------
 
+BeanGenerator: If a bean is an abstract class or interface, throw an 
+InstantiationException.
+
 
 -----------------
 Webapps Bug Fixes:
 -----------------
+
+
+----------------------
+Bugzilla Bugs Resolved:
+----------------------
+
+4021    UseBean with only class and scope attributes specified, will result 
+        in a fatal translation error if the class is abstract, an interface, 
+        or a class without a public no-arg constructor.
 
 
 ============================
@@ -194,18 +206,19 @@ this can be accomplished by copying the "xerces.jar" file from "common/lib"
 to both "server/lib" and "jasper", and removing it from "common/lib".
 
 
--------------------------
-Context reloading and JCE:
--------------------------
+---------------------------------------------------------------
+Web application reloading and static fields in shared libraries:
+---------------------------------------------------------------
 
-JCE's handling of custom security providers may make context reloading fail 
-with a message saying that the class loader is stopped, followed by a stack 
-trace.
-The problem is that JCE attempts to use the class loader which originally
-loaded the security provider, which is the old class loader.
+Some shared libraries (many are part of the JDK) keep references to objects
+instantiated by the web application. To avoid class loading related problems
+(ClassCastExceptions, messages indicating that the classloader 
+is stopped, ...), the shared libraries state should be reinitialized.
 
-There are two solutions to this problem. Either:
-- Move JCE and your custom security provider to the shared class loader
-- Use Security.removeProvider to remove the custom security provider on destory
+Something which could help is to avoid putting classes which would be 
+referenced by a shared static field in the web application classloader, 
+and put them in the shared classloader instead (the JARs should be put in the 
+"lib" folder, and classes should be put in the "classes" folder).
+
 
 

@@ -48,8 +48,8 @@ Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4,
 Catalina    3770    HttpSessionListener.sessionCreated() called twice for each
                     session.
 
-Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped (bug 
-                    confirmed, but conditions to reproduce it still unclear).
+Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped (bug may be
+                    invalid).
 
 Catalina    3993    j_security_check gives 403 error.
 
@@ -61,13 +61,13 @@ Jasper      3668    Validation error reporting.
 
 Jasper      3704    Forward errors not reported when response is committed.
 
+Catalina    3953    If context is listed in server.xml then webapp servlets 
+                    are loaded twice.
+
 Catalina    3990    JNDI/LDAP Realm password authentication process.
 
 
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):
 -----------------------------------------------------
-
-Catalina    3953    If context is listed in server.xml then webapp servlets 
-                    are loaded twice.
 
 Catalina    3970    Cannot send more that 1 MB using multipart/form-data.
