@@ -987,7 +987,8 @@ public class HostConfig
                         File current = new File(resources2[j]);
                         current = current.getCanonicalFile();
                         if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
-                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath()))) {
+                            || ((current.getAbsolutePath().startsWith(configBase().getAbsolutePath())
+                                 && (current.getAbsolutePath().endsWith(".xml"))))) {
                             if (log.isDebugEnabled())
                                 log.debug("Delete " + current);
                             ExpandWar.delete(current);
