@@ -151,7 +151,6 @@ public class DeleteConnectorAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        String serviceName = request.getParameter("serviceName");
         String domain = null;
         // Set up a form bean containing the currently selected
         // objects to be deleted
@@ -175,12 +174,13 @@ public class DeleteConnectorAction extends Action {
         // Accumulate a list of all available connectors
         ArrayList list = new ArrayList();
          try {
-            String pattern = domain + ":" + TomcatTreeBuilder.CONNECTOR_TYPE +
+            String pattern = domain + TomcatTreeBuilder.CONNECTOR_TYPE +
                 TomcatTreeBuilder.WILDCARD;          
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();
             while (items.hasNext()) {
-                list.add(items.next().toString());
+                Object item = items.next();
+                list.add(item.toString());
             }
         } catch (Exception e) {
             getServlet().log

@@ -207,7 +207,7 @@ public final class SaveServiceAction extends Action {
             try {
                 // engine name is domain
                 String engineName = sform.getEngineName();
-                String domain = (new ObjectName(serverObjectName)).getDomain();
+                //String domain = (new ObjectName(serverObjectName)).getDomain();
                 // Ensure that the requested service name is unique
                 ObjectName oname =
                     new ObjectName(engineName + TomcatTreeBuilder.SERVICE_TYPE);
@@ -264,7 +264,8 @@ public final class SaveServiceAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = TomcatTreeBuilder.SERVER_TYPE;
+                    String parentName = TomcatTreeBuilder.DEFAULT_DOMAIN + 
+                                            TomcatTreeBuilder.SERVER_TYPE;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
@@ -278,7 +279,7 @@ public final class SaveServiceAction extends Action {
                                                 "EditService.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true, domain);
+                                                true, engineName);
                         parentNode.addChild(childNode);
                         // FIXME - force a redisplay
                     } else {

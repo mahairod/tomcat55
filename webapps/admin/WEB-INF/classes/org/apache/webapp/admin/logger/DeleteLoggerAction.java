@@ -215,7 +215,8 @@ public class DeleteLoggerAction extends Action {
         String domain = poname.getDomain();
         StringBuffer sb = new StringBuffer(domain+MBeanType);
         String type = poname.getKeyProperty("type");
-        if ("Context".equalsIgnoreCase(type)) { // container is context            
+        String j2eeType = poname.getKeyProperty("j2eeType");
+        if ("WebModule".equalsIgnoreCase(j2eeType)) { // container is context            
             sb.append(",path=");
             sb.append(poname.getKeyProperty("path"));
             sb.append(",host=");
