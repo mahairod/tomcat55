@@ -132,7 +132,9 @@ public class ReplicationValve
         throws IOException, ServletException
     {
         //this happens before the request
+        //long _debugstart = System.currentTimeMillis();
         context.invokeNext(request, response);
+        //System.out.println("[DEBUG] Regular invoke took="+(System.currentTimeMillis()-_debugstart)+" ms.");
         //this happens after the request
         try
         {

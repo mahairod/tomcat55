@@ -104,6 +104,7 @@ public class SessionMessage
     private Member mSrc;
     private String mContextName;
     private long serializationTimestamp;
+    private String uniqueId;
 
 
     /**
@@ -144,6 +145,17 @@ public class SessionMessage
         mSession = session;
         mSessionID = sessionID;
         mContextName = contextName;
+        uniqueId = sessionID;
+    }
+
+    public SessionMessage( String contextName,
+                           int eventtype,
+                           byte[] session,
+                           String sessionID,
+                           String uniqueID)
+    {
+        this(contextName,eventtype,session,sessionID);
+        uniqueId = uniqueID;
     }
 
     /**
@@ -211,5 +223,11 @@ public class SessionMessage
 
     public String getContextName() {
        return mContextName;
+    }
+    public String getUniqueId() {
+        return uniqueId;
+    }
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 }//SessionMessage

@@ -400,7 +400,7 @@ public class SimpleTcpCluster
                   }//end if
             }
             else {
-                clusterSender.sendMessage(msg.getSessionID(),data);
+                clusterSender.sendMessage(msg.getUniqueId(),data);
             }
         } catch ( Exception x ) {
             log.error("Unable to send message through cluster sender.",x);
@@ -493,6 +493,7 @@ public class SimpleTcpCluster
             if ( myobj != null && myobj instanceof SessionMessage ) {
                 
                 SessionMessage msg = (SessionMessage)myobj;
+                log.debug("Assuming clocks are synched: Replication took="+(System.currentTimeMillis()-msg.getTimestamp())+" ms.");
                 String ctxname = msg.getContextName();
                 //check if the message is a EVT_GET_ALL_SESSIONS,
                 //if so, wait until we are fully started up
