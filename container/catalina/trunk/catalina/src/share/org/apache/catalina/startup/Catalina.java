@@ -443,8 +443,9 @@ public class Catalina extends Embedded {
         Exception ex = null;
         InputSource inputSource = null;
         InputStream inputStream = null;
+        File file = null;
         try {
-            File file = configFile();
+            file = configFile();
             inputStream = new FileInputStream(file);
             inputSource = new InputSource("file://" + file.getAbsolutePath());
         } catch (Exception e) {
@@ -462,8 +463,8 @@ public class Catalina extends Embedded {
             }
         }
 
-        if (inputStream == null) {
-            log.warn("Can't load server.xml");
+        if ((inputStream == null) && (file != null)) {
+            log.warn("Can't load server.xml from " + file.getAbsolutePath());
             return;
         }
 

@@ -34,13 +34,16 @@
       </update>
     </changelog>
   </subsection>
-
   <subsection name="Catalina">
     <changelog>
       <fix>
         <bug>20380</bug>: Access log timestamps now take account of Daylight Saving
         Time (DST). (markt)
       </fix>
+      <add>
+        <bug>34220</bug>: Provide better error message when server.xml can't be located.
+          [Modified patch from Ralf Hauser] (yoavs)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Jasper">
