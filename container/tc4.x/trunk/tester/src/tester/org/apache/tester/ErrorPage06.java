@@ -81,39 +81,24 @@ public class ErrorPage06 extends HttpServlet {
         PrintWriter writer = response.getWriter();
 
         // Accumulate all the reasons this request might fail
-        ServletException exception = null;
-        Throwable rootCause = null;
         StringBuffer sb = new StringBuffer();
         Object value = null;
 
         value = request.getAttribute("javax.servlet.error.exception");
+        StaticLogger.write("exception is '" + value + "'");
         if (value == null) {
             sb.append(" exception is missing/");
-        } else if (!(value instanceof javax.servlet.ServletException)) {
+        } else if (!(value instanceof java.lang.ArithmeticException)) {
             sb.append(" exception class is ");
             sb.append(value.getClass().getName());
             sb.append("/");
-        } else {
-            exception = (ServletException) value;
-            rootCause = exception.getRootCause();
-        }
-
-        if (rootCause == null) {
-            sb.append(" rootCause is missing/");
-        } else if (!(rootCause instanceof java.lang.ArithmeticException)) {
-            sb.append(" rootCause type is ");
-            sb.append(rootCause.getClass().getName());
-            sb.append("/");
-        } else {
-            String message = rootCause.getMessage();
-            if (!"ErrorPage05 Threw ArithmeticException".equals(message)) {
-                sb.append(" rootCause message is ");
-                sb.append(message);
-                sb.append("/");
-            }
         }
 
         value = request.getAttribute("javax.servlet.error.exception_type");
+        StaticLogger.write("exception_type is '" + value + "'");
+        if (value != null)
+            StaticLogger.write("exception_type class is '" +
+                               value.getClass().getName() + "'");
         if (value == null)
             sb.append(" exception_type is missing/");
         else if (!(value instanceof Class)) {
@@ -122,23 +107,28 @@ public class ErrorPage06 extends HttpServlet {
             sb.append("/");
         } else {
             Class clazz = (Class) value;
-            if (!"javax.servlet.ServletException".equals(clazz.getName())) {
-                sb.append(" exception_type class is ");
-                sb.append(clazz.getName());
+            String name = clazz.getName();
+            if (!"java.lang.ArithmeticException".equals(name)) {
+                sb.append(" exception_type is ");
+                sb.append(name);
                 sb.append("/");
             }
         }
 
         value = request.getAttribute("javax.servlet.error.message");
+        StaticLogger.write("message is '" + value + "'");
         if (value == null)
             sb.append(" message is missing/");
         else if (!(value instanceof String)) {
             sb.append(" message class is ");
             sb.append(value.getClass().getName());
             sb.append("/");
+        } else if (!"ErrorPage05 Threw ArithmeticException".equals(value)) {
+            sb.append(" message is not correct");
         }
 
         value = request.getAttribute("javax.servlet.error.request_uri");
+        StaticLogger.write("request_uri is '" + value + "'");
         if (value == null)
             sb.append(" request_uri is missing/");
         else if (!(value instanceof String)) {
@@ -157,6 +147,7 @@ public class ErrorPage06 extends HttpServlet {
         }
 
         value = request.getAttribute("javax.servlet.error.servlet_name");
+        StaticLogger.write("servlet_name is '" + value + "'");
         if (value == null)
             sb.append(" servlet_name is missing/");
         else if (!(value instanceof String)) {
