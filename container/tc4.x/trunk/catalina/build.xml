@@ -129,6 +129,8 @@
      classname="org.apache.avalon.blocks.Block" />
     <available property="javamail.present"
      classname="javax.mail.internet.MimeMessage" />
+    <available property="jdk.1.3.present"
+     classname="java.lang.reflect.Proxy" />
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
              classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
@@ -147,9 +149,9 @@
       <exclude name="**/startup/CatalinaBlock.java" 
        unless="avalon.present" />
       <exclude name="**/util/ProcessHelper.java"
-       unless="using.jdk.1.3"/>
+       unless="jdk.1.3.present"/>
       <exclude name="**/servlets/CGIServlet.java"
-       unless="using.jdk.1.3"/>
+       unless="jdk.1.3.present"/>
     </javac>
 
     <!-- Copy static resource files -->
@@ -166,7 +168,7 @@
            />
     <jar   jarfile="${catalina.build}/common/lib/naming.jar"
            basedir="${catalina.build}/classes"
-           includes="**/org/apache/naming/*,**/org/apache/naming/factory/Constants.class,**/org/apache/naming/java/*" 
+           includes="**/org/apache/naming/*,**/org/apache/naming/factory/Constants.class,**/org/apache/naming/java/*"
            />
     <jar   jarfile="${catalina.build}/common/lib/resources.jar"
            basedir="${catalina.build}/classes"
