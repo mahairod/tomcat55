@@ -2680,6 +2680,14 @@ of locale and character encoding of directory listings.</p>
         <code>useAcceptLanguage</code> attribute is used.</td>
     <td><i>not specified</i></td>
   </tr>
+  <tr valign="top">
+    <td>useInternal<br><b>[Tomcat 3.3.2-dev]</b></td>
+    <td>Controls how to handle welcome pages for URLs ending in &quote;/&quote;.
+        If <code>true</code>, then the welcome page is served via an internal
+        sub-request.  If <code>false</code> than it returns an external redirect
+        to the actual welcome page URL.</td>
+   <td>false</td>
+  </tr>
 </table>
 
 <h4>Example(s)</h4>
