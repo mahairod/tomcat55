@@ -378,6 +378,13 @@ values, depending on how you configured your keystore earlier:</p>
    <td><code>truststorePass</code></td>
    <td>The password to access the TrustStore.</td>
   </tr>
+  <tr>
+   <td><code>truststoreType</code></td>
+    <td>Add this element if your are using a different format for the 
+        TrustStore then you are using for the KeyStore.  The valid values are
+        <code>JKS</code> and <code>PKCS12</code>.</td>
+    </td>
+  </tr>
 </table>
 
 <p>After completing these configuration changes, you must restart Tomcat as
