@@ -71,27 +71,19 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
-import javax.naming.Context;
 import javax.naming.Name;
-import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.CompositeName;
-import javax.naming.NameParser;
 import javax.naming.OperationNotSupportedException;
-import javax.naming.NameAlreadyBoundException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
-import org.apache.naming.StringManager;
-import org.apache.naming.NameParserImpl;
 import org.apache.naming.NamingEntry;
 import org.apache.naming.NamingContextBindingsEnumeration;
 import org.apache.naming.NamingContextEnumeration;
@@ -178,7 +170,7 @@ public class WARDirContext extends BaseDirContext {
 	// Validate that the document base is an existing directory
 	if (!base.exists() || !base.canRead() || base.isDirectory())
 	    throw new IllegalArgumentException
-		(sm.getString("warResources.notWar"));
+		(sm.getString("warResources.invalidWar", docBase));
         try {
             this.base = new ZipFile(base);
         } catch (Exception e) {
@@ -503,7 +495,7 @@ public class WARDirContext extends BaseDirContext {
         if (!zipEntry.isDirectory())
             attrs.setResourceType("");
         attrs.setContentLength(zipEntry.getSize());
-        attrs.setLastModified(new Date(zipEntry.getTime()));
+        attrs.setLastModified(zipEntry.getTime());
         
         return attrs;
         
