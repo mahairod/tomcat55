@@ -58,6 +58,15 @@
       </fix>
     </changelog>
   </subsection>
+
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        Fix the webDAV servlet so it can be used via any arbitrary mapping
+        (eg /webdav/*) to edit the contents of a web application. (markt)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.6 (yoavs)">
