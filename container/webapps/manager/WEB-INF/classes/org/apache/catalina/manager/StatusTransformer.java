@@ -19,6 +19,7 @@ package org.apache.catalina.manager;
 
 import java.io.PrintWriter;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
@@ -607,6 +608,10 @@ public class StatusTransformer {
             writer.print("</a>");
 
             writer.print("<p>");
+            Object startTime = mBeanServer.getAttribute(objectName,
+                                                        "startTime");
+            writer.print(" Start time: " +
+                         new Date(((Long) startTime).longValue()));
             writer.print(" Startup time: ");
             writer.print(formatTime(mBeanServer.getAttribute
                                     (objectName, "startupTime"), false));
