@@ -28,6 +28,8 @@ Bug No.  Description
 
 31474    Fix the query-string that is passed by forwarded requests.
 
+31800    Clean up reference to Session when one is unmananged.
+
 Jasper:
 
 Bug No.  Description
