@@ -1159,16 +1159,27 @@ public class Generator {
 		}
 	    }
 
+	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
+	    boolean implementsIterationTag = 
+		IterationTag.class.isAssignableFrom(tagHandlerClass);
+	    boolean implementsBodyTag = 
+		BodyTag.class.isAssignableFrom(tagHandlerClass);
+	    boolean implementsTryCatchFinally = 
+		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
+
 	    // Generate code for start tag, body, and end tag
-	    generateCustomStart(n, handlerInfo, tagHandlerVar, tagEvalVar);
+	    generateCustomStart(n, handlerInfo, tagHandlerVar, tagEvalVar,
+			      implementsIterationTag, implementsBodyTag,
+			      implementsTryCatchFinally);
 
 	    String tmpParent = parent;
 	    parent = tagHandlerVar;
 	    visitBody(n);
 
 	    parent = tmpParent;
-	    generateCustomEnd(n, handlerInfo.getTagHandlerClass(),
-			      tagHandlerVar, tagEvalVar);
+	    generateCustomEnd(n, tagHandlerVar, tagEvalVar,
+			      implementsIterationTag, implementsBodyTag,
+			      implementsTryCatchFinally);
 
 	    if (n.isScriptless() && !n.hasScriptingVars()) {
 		// Generate end of method
@@ -1293,7 +1304,10 @@ public class Generator {
 	private void generateCustomStart(Node.CustomTag n,
 					 TagHandlerInfo handlerInfo,
 					 String tagHandlerVar,
-					 String tagEvalVar)
+					 String tagEvalVar,
+					 boolean implementsIterationTag,
+					 boolean implementsBodyTag,
+					 boolean implementsTryCatchFinally)
 	                    throws JasperException {
 
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
@@ -1304,9 +1318,6 @@ public class Generator {
 	    out.println(" ---- */");
 	    out.printil("{");
 	    out.pushIndent();
-
-            boolean implementsTryCatchFinally =
-                TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
 
 	    // Declare scripting variables with NESTED scope
 	    declareNestedScriptingVariables(n);
@@ -1348,11 +1359,11 @@ public class Generator {
 	    out.print(tagHandlerVar);
 	    out.println(".doStartTag();");
 
-	    boolean isBodyTag
-		= BodyTag.class.isAssignableFrom(tagHandlerClass);
-
-	    // Synchronize AT_BEGIN scripting variables
-	    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
+	    // Synchronize AT_BEGIN and NESTED scripting variables
+	    if (!implementsBodyTag) {
+		syncScriptingVariables(n, VariableInfo.AT_BEGIN);
+		syncScriptingVariables(n, VariableInfo.NESTED);
+	    }
 
 	    if (n.getBody() != null) {
 		out.printin("if (");
@@ -1360,7 +1371,7 @@ public class Generator {
 		out.println(" != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {");
 		out.pushIndent();
 		
-		if (isBodyTag) {
+		if (implementsBodyTag) {
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
@@ -1374,48 +1385,51 @@ public class Generator {
 		    out.println(".setBodyContent(_bc);");
 		    out.printin(tagHandlerVar);
 		    out.println(".doInitBody();");
+
+		    // Synchronize AT_BEGIN and NESTED scripting variables
+		    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
+		    syncScriptingVariables(n, VariableInfo.NESTED);
 		    
 		    out.popIndent();
 		    out.printil("}");
 		}
 		
-		if (IterationTag.class.isAssignableFrom(tagHandlerClass)) {
+		if (implementsIterationTag) {
 		    out.printil("do {");
 		    out.pushIndent();
 		}
 	    }
-
-	    // Synchronize NESTED scripting variables
-	    syncScriptingVariables(n, VariableInfo.NESTED);
-
-	    // Synchronize AT_BEGIN scripting variables
-	    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
 	};
 	
 	private void generateCustomEnd(Node.CustomTag n,
-				       Class tagHandlerClass,
 				       String tagHandlerVar,
-				       String tagEvalVar) {
+				       String tagEvalVar,
+				       boolean implementsIterationTag,
+				       boolean implementsBodyTag,
+				       boolean implementsTryCatchFinally) {
 
 	    VariableInfo[] varInfos = n.getVariableInfos();
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 
-	    boolean implementsIterationTag = 
-		IterationTag.class.isAssignableFrom(tagHandlerClass);
-	    boolean implementsBodyTag = 
-		BodyTag.class.isAssignableFrom(tagHandlerClass);
-	    boolean implementsTryCatchFinally = 
-		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
-
 	    if ((n.getBody() != null) && implementsIterationTag) {
-		out.popIndent();
-		out.printin("} while (");
+		out.printin("int evalDoAfterBody = ");
 		out.print(tagHandlerVar);
-		out.println(".doAfterBody() == javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN);");
-	    }
+		out.println(".doAfterBody();");
 
-	    // Synchronize AT_BEGIN scripting variables
-	    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
+		// Synchronize AT_BEGIN and NESTED scripting variables
+		if (implementsBodyTag) {
+		    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
+		    syncScriptingVariables(n, VariableInfo.NESTED);
+		}
+
+		out.printil("if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)");
+		out.pushIndent();
+		out.printil("break;");
+		out.popIndent();
+
+		out.popIndent();
+		out.printil("} while (true);");
+	    }
 
 	    if (n.getBody() != null) {
 		if (implementsBodyTag) {
@@ -1437,6 +1451,10 @@ public class Generator {
 	    out.pushIndent();
 	    out.printil((methodNesting > 0)? "return true;": "return;");
 	    out.popIndent();
+
+	    // Synchronize AT_BEGIN and AT_END scripting variables
+	    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
+	    syncScriptingVariables(n, VariableInfo.AT_END);
 
 	    // TryCatchFinally
 	    if (implementsTryCatchFinally) {
@@ -1463,9 +1481,6 @@ public class Generator {
                 out.popIndent();
                 out.println("}");
 	    }
-
-	    // Synchronize AT_END variables
-	    syncScriptingVariables(n, VariableInfo.AT_END);
 
 	    restoreScriptingVariables(n);
 	    out.popIndent();
@@ -1511,7 +1526,7 @@ public class Generator {
 			    out.printin(varInfos[i].getClassName());
 			    out.print(" ");
 			    out.print(name);
-			    out.println(";");
+			    out.println(" = null;");
 			}
 		    }
 		} else {
@@ -1546,7 +1561,7 @@ public class Generator {
 			out.printin(tagVarInfos[i].getClassName());
 			out.print(" ");
 			out.print(name);
-			out.println(";");
+			out.println(" = null;");
 		    }
 		}
 	    }
