@@ -1135,20 +1135,30 @@ public class HttpRequestBase
      */
     public boolean isUserInRole(String role) {
 
-        if (context == null)
+        // Have we got an authenticated principal at all?
+        if (userPrincipal == null)
             return (false);
 
-	// Respect role name translations in the deployment descriptor
-	String realRole = context.findRoleMapping(role);
-
-	// Determine whether the current user has this role
-	if (userPrincipal == null)
-	    return (false);
+        // Identify the Realm we will use for checking role assignmenets
+        if (context == null)
+            return (false);
 	Realm realm = context.getRealm();
 	if (realm == null)
 	    return (false);
 
-	return (realm.hasRole(userPrincipal, realRole));
+        // See if this role is assigned directly to the authenticated user
+        if (realm.hasRole(userPrincipal, role))
+            return (true);
+
+        // Map the specified role if it is an alias defined in a
+        // <security-role-ref> element
+        if (wrapper == null)
+            return (false);
+        String realRole = wrapper.findSecurityReference(role);
+        if (realRole != null)
+            return (realm.hasRole(userPrincipal, realRole));
+        else
+            return (false);
 
     }
 
