@@ -7,6 +7,29 @@
          group="Default-Context"
          type="org.apache.catalina.core.StandardDefaultContext">
 
+    <attribute name="allowLinking"
+               description="Allow symlinking to outside the webapp root directory, if the webapp is an exploded directory"
+               is="true"
+               type="boolean"/>
+      
+    <attribute name="cacheMaxSize"
+               description="Maximum cache size in KB"
+               type="int"/>
+      
+    <attribute name="cacheTTL"
+               description="Time interval in ms between cache refeshes"
+               type="int"/>
+      
+    <attribute name="cachingAllowed"
+               description="Should we cache static resources for this webapp"
+               is="true"
+               type="boolean"/>
+      
+    <attribute name="caseSensitive"
+               description="Should case sensitivity checks be performed"
+               is="true"
+               type="boolean"/>
+      
     <attribute name="cookies"
                description="Should we attempt to use cookies for session id communication?"
                type="boolean"/>
@@ -94,6 +117,29 @@
          group="Context"
          type="org.apache.catalina.core.StandardContext">
     
+    <attribute name="allowLinking"
+               description="Allow symlinking to outside the webapp root directory, if the webapp is an exploded directory"
+               is="true"
+               type="boolean"/>
+      
+    <attribute name="cacheMaxSize"
+               description="Maximum cache size in KB"
+               type="int"/>
+      
+    <attribute name="cacheTTL"
+               description="Time interval in ms between cache refeshes"
+               type="int"/>
+      
+    <attribute name="cachingAllowed"
+               description="Should we cache static resources for this webapp"
+               is="true"
+               type="boolean"/>
+      
+    <attribute name="caseSensitive"
+               description="Should case sensitivity checks be performed"
+               is="true"
+               type="boolean"/>
+      
     <attribute name="children"
                description="Object names of all children"
                type="[Ljavax.management.ObjectName;"/>

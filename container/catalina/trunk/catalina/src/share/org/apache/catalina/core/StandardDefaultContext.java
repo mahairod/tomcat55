@@ -275,6 +275,36 @@ public class StandardDefaultContext
 
 
     /**
+     * Case sensitivity.
+     */
+    protected boolean caseSensitive = true;
+
+
+    /**
+     * Allow linking.
+     */
+    protected boolean allowLinking = false;
+
+
+    /**
+     * Cache max size in KB.
+     */
+    protected int cacheMaxSize = 10240; // 10 MB
+
+
+    /**
+     * Cache TTL in ms.
+     */
+    protected int cacheTTL = 5000;
+
+
+    /**
+     * CachingAllowed.
+     */
+    protected boolean cachingAllowed = true;
+
+
+    /**
      * The string manager for this package.
      */
     protected static StringManager sm =
@@ -288,6 +318,86 @@ public class StandardDefaultContext
 
 
     // ----------------------------------------------------- Context Properties
+
+
+    /**
+     * Set case sensitivity.
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+
+    /**
+     * Is case sensitive ?
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+
+    /**
+     * Set allow linking.
+     */
+    public void setAllowLinking(boolean allowLinking) {
+        this.allowLinking = allowLinking;
+    }
+
+
+    /**
+     * Is linking allowed.
+     */
+    public boolean isAllowLinking() {
+        return allowLinking;
+    }
+
+
+    /**
+     * Set cache TTL.
+     */
+    public void setCacheTTL(int cacheTTL) {
+        this.cacheTTL = cacheTTL;
+    }
+
+
+    /**
+     * Get cache TTL.
+     */
+    public int getCacheTTL() {
+        return cacheTTL;
+    }
+
+
+    /**
+     * Return the maximum size of the cache in KB.
+     */
+    public int getCacheMaxSize() {
+        return cacheMaxSize;
+    }
+
+
+    /**
+     * Set the maximum size of the cache in KB.
+     */
+    public void setCacheMaxSize(int cacheMaxSize) {
+        this.cacheMaxSize = cacheMaxSize;
+    }
+
+
+    /**
+     * Set cachingAllowed.
+     */
+    public void setCachingAllowed(boolean cachingAllowed) {
+        this.cachingAllowed = cachingAllowed;
+    }
+
+
+    /**
+     * Is cachingAllowed ?
+     */
+    public boolean isCachingAllowed() {
+        return cachingAllowed;
+    }
 
 
     /**
@@ -1412,6 +1522,11 @@ public class StandardDefaultContext
         if (context instanceof StandardContext) {
             ((StandardContext)context).setUseNaming(isUseNaming());
             ((StandardContext)context).setSwallowOutput(getSwallowOutput());
+            ((StandardContext)context).setCachingAllowed(isCachingAllowed());
+            ((StandardContext)context).setCacheTTL(getCacheTTL());
+            ((StandardContext)context).setCacheMaxSize(getCacheMaxSize());
+            ((StandardContext)context).setAllowLinking(isAllowLinking());
+            ((StandardContext)context).setCaseSensitive(isCaseSensitive());
             if (!contexts.containsKey(context)) {
                 ((StandardContext) context).addLifecycleListener(this);
             }
@@ -1455,7 +1570,6 @@ public class StandardDefaultContext
      * @param context current web application context
      */
     public void importDefaultContext(Context context) {
-
         context.setCookies(getCookies());
         context.setCrossContext(getCrossContext());
         context.setReloadable(getReloadable());
