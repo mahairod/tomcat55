@@ -137,6 +137,12 @@ final class ServletContextFacade implements ServletContext {
     }
 
     public InputStream getResourceAsStream(String path) {
+        if(path == null)
+            return null;
+
+        if(URLUtil.hasEscape(path))
+            return null;
+
         InputStream is = null;
         try {
             URL url = getResource(path);
@@ -145,6 +151,8 @@ final class ServletContextFacade implements ServletContext {
             is = con.getInputStream();
         } catch (MalformedURLException e) {
         } catch (IOException e) {
+        } catch (NullPointerException e){
+            // probably because getResource() returned null
         }
 	return is;
     }

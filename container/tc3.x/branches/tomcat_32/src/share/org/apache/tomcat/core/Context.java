@@ -169,8 +169,6 @@ public class Context {
     Vector vhostAliases=new Vector();
     FacadeManager facadeM;
 
-    private boolean fileURLBug = URLUtil.hasFileURLBug();	// Saves a synchronized method call for each request
-    
     public Context() {
 	defaultContainer=new Container();
 	defaultContainer.setContext( this );
@@ -753,6 +751,9 @@ public class Context {
     public URL getResource(String rpath) throws MalformedURLException {
         if (rpath == null) return null;
 
+        if(URLUtil.hasEscape(rpath))
+            return null;
+
         URL url = null;
 	String absPath=getAbsolutePath();
 
@@ -769,10 +770,6 @@ public class Context {
 	}
 	
 	try {
-        if(!fileURLBug){
-            realPath = URLEncoder.encode(realPath);
-        }
-        System.out.println("Context.getResource:  realPath = " + realPath);
         url=new URL("file", null, 0,realPath );
 	    if( debug>9) log( "getResourceURL=" + url + " request=" + rpath );
         return url;
