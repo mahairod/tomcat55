@@ -65,6 +65,7 @@
 package org.apache.catalina.connector.http;
 
 import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Response;
 import org.apache.catalina.connector.ResponseStream;
 
@@ -98,13 +99,7 @@ public final class HttpResponseStream extends ResponseStream {
     public HttpResponseStream(HttpResponseImpl response) {
 
 	super(response);
-        this.useChunking = (!response.isCommitted()
-                            && response.isChunkingAllowed()
-                            && response.getContentLength() == -1
-                            && response.getStatus() != 206
-                            && response.getStatus() != 304);
-        if (this.useChunking)
-            response.addHeader("Transfer-Encoding", "chunked");
+        checkChunking(response);
 
     }
 
@@ -179,6 +174,28 @@ public final class HttpResponseStream extends ResponseStream {
         }
         super.close();
 
+    }
+
+
+    // -------------------------------------------------------- Package Methods
+
+
+    void checkChunking(HttpResponseImpl response) {
+        // If any data has already been written to the stream, we must not
+        // change the chunking mode
+        if (count != 0)
+            return;
+        this.useChunking = 
+            (!response.isCommitted()
+             && response.isChunkingAllowed()
+             && response.getContentLength() == -1
+             && response.getStatus() != HttpServletResponse.SC_PARTIAL_CONTENT
+             && response.getStatus() != HttpServletResponse.SC_NOT_MODIFIED
+             && !response.isCloseConnection());
+        if (this.useChunking)
+            response.addHeader("Transfer-Encoding", "chunked");
+        else
+            response.removeHeader("Transfer-Encoding", "chunked");
     }
 
 

@@ -68,6 +68,7 @@ package org.apache.catalina.connector.http;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import javax.servlet.ServletOutputStream;
 import org.apache.catalina.connector.HttpResponseBase;
 
@@ -76,6 +77,7 @@ import org.apache.catalina.connector.HttpResponseBase;
  * Implementation of <b>HttpResponse</b> specific to the HTTP connector.
  *
  * @author Craig R. McClanahan
+ * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  * @version $Revision$ $Date$
  */
 
@@ -97,6 +99,12 @@ final class HttpResponseImpl
      * True if chunking is allowed.
      */
     protected boolean allowChunking;
+
+
+    /**
+     * Associated HTTP response stream.
+     */
+    protected HttpResponseStream responseStream;
 
 
     // ------------------------------------------------------------- Properties
@@ -140,6 +148,7 @@ final class HttpResponseImpl
     public void recycle() {
 
 	super.recycle();
+        responseStream = null;
         allowChunking = false;
 
     }
@@ -195,7 +204,118 @@ final class HttpResponseImpl
      */
     public ServletOutputStream createOutputStream() throws IOException {
 
-	return (new HttpResponseStream(this));
+        responseStream = new HttpResponseStream(this);
+	return (responseStream);
+
+    }
+
+
+    /**
+     * Tests is the connection will be closed after the processing of the 
+     * request.
+     */
+    public boolean isCloseConnection() {
+        String connectionValue = (String) getHeader("Connection");
+        return (connectionValue != null 
+                && connectionValue.equals("close"));
+    }
+
+
+    /**
+     * Add the specified header to the specified value.
+     *
+     * @param name Name of the header to set
+     * @param value Value to be set
+     */
+    public void addHeader(String name, String value) {
+
+	if (isCommitted())
+	    return;
+
+	if (included)
+	    return;	// Ignore any call from an included servlet
+
+        super.addHeader(name, value);
+
+        if (name.equals("Connection") && responseStream != null)
+            responseStream.checkChunking(this);
+
+    }
+
+
+
+
+    /**
+     * Set the specified header to the specified value.
+     *
+     * @param name Name of the header to set
+     * @param value Value to be set
+     */
+    public void setHeader(String name, String value) {
+
+	if (isCommitted())
+	    return;
+
+	if (included)
+	    return;	// Ignore any call from an included servlet
+
+        super.setHeader(name, value);
+
+        if (name.equals("Connection") && responseStream != null)
+            responseStream.checkChunking(this);
+
+    }
+
+
+    /**
+     * Removes the specified header.
+     *
+     * @param name Name of the header to remove
+     * @param value Value to remove
+     */
+    public void removeHeader(String name, String value) {
+
+	if (isCommitted())
+	    return;
+
+	if (included)
+	    return;	// Ignore any call from an included servlet
+
+	synchronized (headers) {
+            ArrayList values = (ArrayList) headers.get(name);
+            if ((values != null) && (!values.isEmpty())) {
+                values.remove(value);
+                if (values.isEmpty())
+                    headers.remove(name);
+            }
+	}
+
+        if (name.equals("Connection") && responseStream != null)
+            responseStream.checkChunking(this);
+
+    }
+
+
+    // -------------------------------------------- HttpServletResponse Methods
+
+
+    /**
+     * Set the content length (in bytes) for this Response.
+     *
+     * @param length The new content length
+     */
+    public void setContentLength(int length) {
+
+	if (isCommitted())
+	    return;
+
+	if (included)
+	    return;	// Ignore any call from an included servlet
+
+        super.setContentLength(length);
+
+        if (responseStream != null)
+            responseStream.checkChunking(this);
 
     }
 
