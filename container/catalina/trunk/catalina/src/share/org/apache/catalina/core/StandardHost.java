@@ -1049,12 +1049,22 @@ public class StandardHost
         }
     }
 
+    public ObjectName preRegister(MBeanServer server, ObjectName oname ) 
+        throws Exception
+    {
+        ObjectName res=super.preRegister(server, oname);
+        String name=oname.getKeyProperty("host");
+        if( name != null )
+            setName( name );
+        return res;        
+    }
+    
     public ObjectName createObjectName(String domain, ObjectName parent)
         throws Exception
     {
         if( log.isDebugEnabled())
             log.debug("Create ObjectName " + domain + " " + parent );
-        return new ObjectName( domain + ":type=Host,name=" + getName());
+        return new ObjectName( domain + ":type=Host,host=" + getName());
     }
 
 }

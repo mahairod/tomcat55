@@ -3761,7 +3761,7 @@ public class StandardContext
                 throw new LifecycleException("Error initializaing ", ex);
             }
         }
-
+        
         String logName="tomcat." + getParent().getName() + "." +
                 ("".equals(getName()) ? "ROOT" : getName()) + ".Context";
         log=org.apache.commons.logging.LogFactory.getLog(logName);
@@ -4783,6 +4783,9 @@ public class StandardContext
             }
             ContextConfig config = new ContextConfig();
             this.addLifecycleListener(config);
+
+            mserver.invoke(parentName, "addChild", new Object[] { this },
+                    new String[] {"org.apache.catalina.Container"});
         }            
         super.init();
     }
