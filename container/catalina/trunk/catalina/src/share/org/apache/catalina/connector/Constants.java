@@ -39,11 +39,6 @@ public final class Constants {
     public static final int PROCESSOR_ACTIVE = 1;
 
     /**
-     * SSL Certificate Request Attributite.
-     */
-    public static final String SSL_CERTIFICATE_ATTR = "org.apache.coyote.request.X509Certificate";
-
-    /**
      * Security flag.
      */
     public static final boolean SECURITY = 
