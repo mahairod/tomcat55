@@ -26,12 +26,6 @@
     <mkdir dir="${catalina.build}/conf"/>
     <mkdir dir="${catalina.build}/lib"/>
     <mkdir dir="${catalina.build}/server"/>
-
-    <!-- =================== Conditional Compilation Falgs ================ -->
-    <available property="tyrex.present"
-     classname="tyrex.jdbc.ServerDataSource" />
-    <available property="jta.present"
-     classname="javax.transaction.UserTransaction" />
   </target>
 
 
@@ -73,6 +67,13 @@
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static">
+
+
+    <!-- =================== Conditional Compilation Falgs ================ -->
+    <available property="tyrex.present"
+     classname="tyrex.jdbc.ServerDataSource" />
+    <available property="jta.present"
+     classname="javax.transaction.UserTransaction" />
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
