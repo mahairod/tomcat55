@@ -814,14 +814,14 @@ public abstract class PersistentManagerBase
         try {
             if (System.getSecurityManager() != null){
                 try{
-                    AccessController.doPrivileged(new PrivilegedStoreLoad(id));
+                    session = (Session) AccessController.doPrivileged(new PrivilegedStoreLoad(id));
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
                     log("Exception clearing the Store: " + exception);
                     exception.printStackTrace();                        
                 }
             } else {
-                 store.load(id);
+                 session = store.load(id);
             }   
         } catch (ClassNotFoundException e) {
             log(sm.getString("persistentManager.deserializeError", id, e));
