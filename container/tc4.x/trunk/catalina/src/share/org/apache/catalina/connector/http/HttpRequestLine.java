@@ -98,7 +98,7 @@ final class HttpRequestLine {
     public HttpRequestLine() {
 
         this(new char[INITIAL_METHOD_SIZE], 0, new char[INITIAL_URI_SIZE], 0, 
-             new char[INITIAL_URI_SIZE], 0);
+             new char[INITIAL_PROTOCOL_SIZE], 0);
 
     }
 
