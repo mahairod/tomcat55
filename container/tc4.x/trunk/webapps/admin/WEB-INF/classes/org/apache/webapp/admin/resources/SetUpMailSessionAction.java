@@ -22,7 +22,7 @@
  *    the documentation and/or other materials provided with the
  *    distribution.
  *
- * 3. The end-DataSource documentation included with the redistribution, if
+ * 3. The end-user documentation included with the redistribution, if
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
@@ -91,16 +91,16 @@ import org.apache.webapp.admin.ApplicationServlet;
 
 /**
  * <p>Implementation of <strong>Action</strong> that sets up and stashes
- * a <code>DataSourceForm</code> bean in request scope.  The form bean will have
- * a null <code>objectName</code> property if this form represents a DataSource
- * being added, or a non-null value for an existing DataSource.</p>
+ * a <code>MailSessionForm</code> bean in request scope.  The form bean will have
+ * a null <code>objectName</code> property if this form represents a MailSession
+ * being added, or a non-null value for an existing MailSession.</p>
  *
- * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public final class SetUpDataSourceAction extends Action {
+public final class SetUpMailSessionAction extends Action {
 
     // ----------------------------------------------------- Instance Variables
 
@@ -157,76 +157,35 @@ public final class SetUpDataSourceAction extends Action {
         String host = request.getParameter("host");
         String service = request.getParameter("service");
         
-        DataSourceForm dataSourceForm = new DataSourceForm();       
-        dataSourceForm.setResourcetype(resourcetype);
-        dataSourceForm.setPath(path);
-        dataSourceForm.setHost(host);
-        dataSourceForm.setService(service);
-        dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
+        MailSessionForm mailSessionForm = new MailSessionForm();       
+        mailSessionForm.setResourcetype(resourcetype);
+        mailSessionForm.setPath(path);
+        mailSessionForm.setHost(host);
+        mailSessionForm.setService(service);
+        mailSessionForm.setType(ResourceUtils.MAILSESSION_CLASS);
 
         if (objectName == null) {
-            dataSourceForm.setNodeLabel
-                (resources.getMessage(locale, "resources.actions.datasrc.create"));
-            dataSourceForm.setObjectName(null);
-            dataSourceForm.setActive("4");
-            dataSourceForm.setIdle("2");
-            dataSourceForm.setWait("5000");
-            dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
+            mailSessionForm.setNodeLabel
+                (resources.getMessage(locale, "resources.actions.mailsession.create"));
+            mailSessionForm.setObjectName(null);
+            mailSessionForm.setType(ResourceUtils.MAILSESSION_CLASS);
             
         } else {
-            dataSourceForm.setNodeLabel
-                (resources.getMessage(locale, "resources.actions.datasrc.edit"));
-            dataSourceForm.setObjectName(objectName);
+            mailSessionForm.setNodeLabel
+                (resources.getMessage(locale, "resources.actions.mailsession.edit"));
+            mailSessionForm.setObjectName(objectName);
             
             String attribute = null;
             try {
+                
                 ObjectName oname = new ObjectName(objectName);
                 attribute = "name";
-                dataSourceForm.setJndiName
+                mailSessionForm.setName
                     ((String) mserver.getAttribute(oname, attribute));
-                attribute = "url";
-                dataSourceForm.setUrl
+                attribute = "mail.smtp.host";
+                mailSessionForm.setMailhost
                     ((String) mserver.getAttribute(oname, attribute));
-                attribute = "driverClassName";
-                dataSourceForm.setDriverClass
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "user";
-                dataSourceForm.setUsername
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "password";
-                dataSourceForm.setPassword
-                    ((String) mserver.getAttribute(oname, attribute));
-                try {
-                    attribute = "maxActive";
-                    dataSourceForm.setActive
-                        ((String) mserver.getAttribute(oname, attribute));                
-                } catch (Exception e) {
-                    // if maxActive not defined, display default value
-                    dataSourceForm.setActive("4");
-                }
-                try {
-                    attribute = "maxIdle";
-                    dataSourceForm.setIdle
-                        ((String) mserver.getAttribute(oname, attribute)); 
-                } catch (Exception e) {
-                    // if maxIdle not defined, display default value
-                    dataSourceForm.setIdle("2");
-                }                    
-                try {
-                    attribute = "maxWait";
-                    dataSourceForm.setWait
-                        ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
-                    // if maxWait not defined, display default value
-                    dataSourceForm.setWait("5000");
-                }
-                try {
-                    attribute = "validationQuery";
-                    dataSourceForm.setQuery
-                        ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
-                    // don't display anything
-                }
+        
             } catch (Exception e) {
                 getServlet().log
                     (resources.getMessage(locale,
@@ -241,8 +200,8 @@ public final class SetUpDataSourceAction extends Action {
             
         // Stash the form bean and forward to the display page
         saveToken(request);
-        request.setAttribute("dataSourceForm", dataSourceForm);
-        return (mapping.findForward("DataSource"));
+        request.setAttribute("mailSessionForm", mailSessionForm);
+        return (mapping.findForward("MailSession"));
 
     }
 }

@@ -22,7 +22,7 @@
  *    the documentation and/or other materials provided with the
  *    distribution.
  *
- * 3. The end-DataSource documentation included with the redistribution, if
+ * 3. The end-user documentation included with the redistribution, if
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
@@ -59,12 +59,22 @@
  *
  */
 
+
 package org.apache.webapp.admin.resources;
 
 import java.io.IOException;
-import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -76,31 +86,21 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanInfo;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * <p>Implementation of <strong>Action</strong> that sets up and stashes
- * a <code>DataSourceForm</code> bean in request scope.  The form bean will have
- * a null <code>objectName</code> property if this form represents a DataSource
- * being added, or a non-null value for an existing DataSource.</p>
+ * <p>Implementation of <strong>Action</strong> that deletes the
+ * specified set of mailSession entries.</p>
  *
- * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public final class SetUpDataSourceAction extends Action {
+public final class DeleteMailSessionsAction extends Action {
+
 
     // ----------------------------------------------------- Instance Variables
 
@@ -115,7 +115,8 @@ public final class SetUpDataSourceAction extends Action {
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-    
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -150,99 +151,77 @@ public final class SetUpDataSourceAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
-        // Set up the form bean based on the creating or editing state
-        String objectName = request.getParameter("objectName");
-        String resourcetype = request.getParameter("resourcetype");
-        String path = request.getParameter("path");
-        String host = request.getParameter("host");
-        String service = request.getParameter("service");
-        
-        DataSourceForm dataSourceForm = new DataSourceForm();       
-        dataSourceForm.setResourcetype(resourcetype);
-        dataSourceForm.setPath(path);
-        dataSourceForm.setHost(host);
-        dataSourceForm.setService(service);
-        dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
-
-        if (objectName == null) {
-            dataSourceForm.setNodeLabel
-                (resources.getMessage(locale, "resources.actions.datasrc.create"));
-            dataSourceForm.setObjectName(null);
-            dataSourceForm.setActive("4");
-            dataSourceForm.setIdle("2");
-            dataSourceForm.setWait("5000");
-            dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
-            
-        } else {
-            dataSourceForm.setNodeLabel
-                (resources.getMessage(locale, "resources.actions.datasrc.edit"));
-            dataSourceForm.setObjectName(objectName);
-            
-            String attribute = null;
-            try {
-                ObjectName oname = new ObjectName(objectName);
-                attribute = "name";
-                dataSourceForm.setJndiName
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "url";
-                dataSourceForm.setUrl
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "driverClassName";
-                dataSourceForm.setDriverClass
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "user";
-                dataSourceForm.setUsername
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "password";
-                dataSourceForm.setPassword
-                    ((String) mserver.getAttribute(oname, attribute));
-                try {
-                    attribute = "maxActive";
-                    dataSourceForm.setActive
-                        ((String) mserver.getAttribute(oname, attribute));                
-                } catch (Exception e) {
-                    // if maxActive not defined, display default value
-                    dataSourceForm.setActive("4");
-                }
-                try {
-                    attribute = "maxIdle";
-                    dataSourceForm.setIdle
-                        ((String) mserver.getAttribute(oname, attribute)); 
-                } catch (Exception e) {
-                    // if maxIdle not defined, display default value
-                    dataSourceForm.setIdle("2");
-                }                    
-                try {
-                    attribute = "maxWait";
-                    dataSourceForm.setWait
-                        ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
-                    // if maxWait not defined, display default value
-                    dataSourceForm.setWait("5000");
-                }
-                try {
-                    attribute = "validationQuery";
-                    dataSourceForm.setQuery
-                        ((String) mserver.getAttribute(oname, attribute));
-                } catch (Exception e) {
-                    // don't display anything
-                }
-            } catch (Exception e) {
-                getServlet().log
-                    (resources.getMessage(locale,
-                        "users.error.attribute.get", attribute), e);
-                response.sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     resources.getMessage
-                         (locale, "users.error.attribute.get", attribute));
-                return (null);
-            } 
+        // Has this transaction been cancelled?
+        if (isCancelled(request)) {
+            return (mapping.findForward("List MailSessions Setup"));
         }
+
+        // Check the transaction token
+        if (!isTokenValid(request)) {
+            response.sendError
+                (HttpServletResponse.SC_BAD_REQUEST,
+                 resources.getMessage(locale, "users.error.token"));
+            return (null);
+        }
+
+        // Perform any extra validation that is required
+        MailSessionsForm mailSessionsForm = (MailSessionsForm) form;
+        String mailSessions[] = mailSessionsForm.getMailSessions();
+        if (mailSessions == null) {
+            mailSessions = new String[0];
+        }
+
+        // Perform "Delete EnvEntry" transactions as required
+        try {
             
-        // Stash the form bean and forward to the display page
-        saveToken(request);
-        request.setAttribute("dataSourceForm", dataSourceForm);
-        return (mapping.findForward("DataSource"));
+            String resourcetype = mailSessionsForm.getResourcetype();
+            String path = mailSessionsForm.getPath();
+            String host = mailSessionsForm.getHost();
+            String service = mailSessionsForm.getService();
+            
+            ObjectName dname = null;
+
+            if (resourcetype!=null) {
+                // Construct the MBean Name for the naming source
+                if (resourcetype.equals("Global")) {
+                    dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                                            ResourceUtils.GLOBAL_TYPE);
+                } else if (resourcetype.equals("Context")) {            
+                    dname = new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                                ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                                ",host=" + host + ",service=" + service);
+                } else if (resourcetype.equals("DefaultContext")) {
+                    // add defaultcontext support later
+                }
+            }
+
+            String signature[] = new String[1];
+            signature[0] = "java.lang.String";
+            Object params[] = new String[1];
+             
+            for (int i = 0; i < mailSessions.length; i++) {
+                ObjectName oname = new ObjectName(mailSessions[i]);
+                params[0] = oname.getKeyProperty("name");
+                mserver.invoke(dname, "removeResource",
+                               params, signature);
+            }
+          
+        } catch (Throwable t) {
+
+            getServlet().log
+                (resources.getMessage(locale, "users.error.invoke",
+                                      "removeResource"), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.invoke",
+                                      "removeResource"));
+            return (null);
+
+        }
+
+        // Proceed to the list envEntrys screen
+        return (mapping.findForward("MailSessions List Setup"));
 
     }
+
 }

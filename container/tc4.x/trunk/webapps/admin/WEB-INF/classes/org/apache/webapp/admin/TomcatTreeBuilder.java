@@ -480,6 +480,18 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 URLEncoder.encode("DataSources List Setup"),
             "content",
             false);
+        TreeControlNode mailsessions = new TreeControlNode
+            ("Context Mail Sessions " + containerName,
+            "Datasource.gif",
+            resources.getMessage("resources.treeBuilder.mailsessions"),
+            "resources/listMailSessions.do?resourcetype=" + 
+                URLEncoder.encode(type) + "&path=" +
+                URLEncoder.encode(path) + "&host=" + 
+                URLEncoder.encode(host) + "&service=" +
+                URLEncoder.encode(service) + "&forward=" +
+                URLEncoder.encode("MailSessions List Setup"),
+            "content",
+            false);
         TreeControlNode resourcelinks = new TreeControlNode
             ("Resource Links " + containerName,
             "Datasource.gif",
@@ -505,6 +517,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "content",
             false);
         subtree.addChild(datasources);
+        subtree.addChild(mailsessions);
         subtree.addChild(resourcelinks);
         subtree.addChild(envs);
     }

@@ -137,6 +137,14 @@ public class ResourcesTreeBuilder implements TreeBuilder {
              URLEncoder.encode("DataSources List Setup"),
              "content",
              false);
+        TreeControlNode mailsessions = new TreeControlNode
+            ("Globally Administer Mail Sessions ",
+            "Datasource.gif",
+            resources.getMessage("resources.treeBuilder.mailsessions"),
+            "resources/listMailSessions.do?resourcetype=Global&forward=" +
+            URLEncoder.encode("MailSessions List Setup"),
+            "content",
+            false);
         TreeControlNode userdbs = new TreeControlNode
             ("Globally Administer UserDatabase Entries",
              "Realm.gif",
@@ -155,6 +163,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
             false);
         root.addChild(subtree);
         subtree.addChild(datasources);
+        subtree.addChild(mailsessions);
         subtree.addChild(envs);
         subtree.addChild(userdbs);
     }

@@ -75,6 +75,7 @@ import javax.management.ObjectInstance;
  * <p>Shared utility methods for the resource administration module.</p>
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  * @since 4.1
  */
@@ -92,6 +93,7 @@ public class ResourceUtils {
     // resource class names
     public final static String USERDB_CLASS = "org.apache.catalina.UserDatabase";
     public final static String DATASOURCE_CLASS = "javax.sql.DataSource";
+    public final static String MAILSESSION_CLASS = "javax.mail.Session";
 
     // --------------------------------------------------------- Public Methods
 
@@ -100,7 +102,6 @@ public class ResourceUtils {
      * resources in the specified resource database.
      *
      * @param mserver MBeanServer to be consulted
-     * @param databaseName MBean Name of the resource database to be consulted
      *
      * @exception Exception if an error occurs
      */
@@ -165,7 +166,6 @@ public class ResourceUtils {
      * datasources in the specified resource database.
      *
      * @param mserver MBeanServer to be consulted
-     * @param databaseName MBean Name of the resource database to be consulted
      *
      * @exception Exception if an error occurs
      */
@@ -225,13 +225,77 @@ public class ResourceUtils {
         return (dataSourcesForm);
 
     }
+    
+    /**
+     * Construct and return a MailSessionsForm identifying all currently defined
+     * mailsessions in the specified resource database.
+     *
+     * @param mserver MBeanServer to be consulted
+     *
+     * @exception Exception if an error occurs
+     */
+    public static MailSessionsForm getMailSessionsForm(MBeanServer mserver, 
+        String resourcetype, String path, String host, String service) 
+        throws Exception {
+                            
+        ObjectName rname = null;
+        if (resourcetype!=null) {
+            if (resourcetype.equals("Global")) {
+                rname = new ObjectName( RESOURCE_TYPE + GLOBAL_TYPE + 
+                                        ",class=" + MAILSESSION_CLASS + ",*");
+            } else if (resourcetype.equals("Context")) {
+                rname = new ObjectName (RESOURCE_TYPE + CONTEXT_TYPE + 
+                    ",path=" + path + ",host=" + host + ",service=" + 
+                    service + ",class=" + MAILSESSION_CLASS + ",*");
+            } else if (resourcetype.equals("DefaultContext")) {
+                // add defaultcontext support later
+            }
+        }
+       
+        Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
+        
+        ArrayList results = new ArrayList();        
+        while (iterator.hasNext()) {
+            
+            ObjectInstance instance = (ObjectInstance) iterator.next(); 
+            results.add(instance.getObjectName().toString());
+        }
 
+        Collections.sort(results);        
+        MailSessionsForm mailSessionsForm = new MailSessionsForm();
+        mailSessionsForm.setMailSessions((String[]) 
+                        results.toArray(new String[results.size()]));        
+        
+        if (resourcetype != null) {
+            mailSessionsForm.setResourcetype(resourcetype);
+        } else {
+            mailSessionsForm.setResourcetype("");
+        }
+         if (path != null) {
+            mailSessionsForm.setPath(path);
+        } else {
+            mailSessionsForm.setPath("");
+        }        
+        if (host != null) {
+            mailSessionsForm.setHost(host);
+        } else {
+            mailSessionsForm.setHost("");
+        }        
+        if (service != null) {
+            mailSessionsForm.setService(service);
+        } else {
+            mailSessionsForm.setService("");
+        }   
+        
+        return (mailSessionsForm);
+
+    }
+    
     /**
      * Construct and return a ResourceLinksForm identifying all currently defined
      * resourcelinks in the specified resource database.
      *
      * @param mserver MBeanServer to be consulted
-     * @param name MBean Name of the resource link to be consulted
      *
      * @exception Exception if an error occurs
      */
@@ -295,7 +359,6 @@ public class ResourceUtils {
      * user databases in the specified resource database.
      *
      * @param mserver MBeanServer to be consulted
-     * @param databaseName MBean Name of the resource database to be consulted
      *
      * @exception Exception if an error occurs
      */
