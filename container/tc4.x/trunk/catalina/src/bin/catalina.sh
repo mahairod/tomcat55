@@ -54,7 +54,9 @@ if [ -z "$CATALINA_HOME" ] ; then
 fi
 
 # Get user customizable environment variables
-. $CATALINA_HOME/bin/setenv.sh
+if [ -r "$CATALINA_HOME/bin/setenv.sh" ] ; then
+  . "$CATALINA_HOME/bin/setenv.sh"
+fi
 
 if [ -z "$CATALINA_OPTS" ] ; then
   CATALINA_OPTS=""
