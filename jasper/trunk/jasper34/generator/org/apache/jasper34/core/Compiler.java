@@ -69,6 +69,7 @@ import org.apache.jasper34.parser.*;
 import org.apache.jasper34.generator.*;
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.javacompiler.*;
+import org.apache.jasper34.jsptree.*;
 
 import org.apache.tomcat.util.log.*;
 
@@ -83,66 +84,36 @@ import org.apache.tomcat.util.log.*;
  * If you want to customize JSP compilation aspects, this class is
  * something you should take a look at. 
  * 
- * Hope is that people can just extend Compiler and override things
- * like isOutDated() but inherit things like compile(). This might
- * change. 
- *
  * @author Anil K. Vijendran
  * @author Mandar Raje
  */
 public class Compiler {
-    protected JavaCompiler javac;
-    protected Mangler mangler;
-    protected JspCompilationContext ctxt;
-    protected ContainerLiaison liaison;
-
-    public Compiler(ContainerLiaison liaison, JspCompilationContext ctxt) {
-        this.ctxt = ctxt;
-	this.liaison=liaison;
-    }
-    public Compiler(JspCompilationContext ctxt) {
-        this.ctxt = ctxt;
-	this.liaison=null;
-    }
+    protected ContainerLiaison containerL;
     
+    /**
+     */
+    public Compiler(ContainerLiaison liaison) {
+	this.containerL=liaison;
+    }
+
+    // -------------------- Conversion methods --------------------
+
     /** 
      * Compile the jsp file from the current engine context
      *
      * @return true if the class file was outdated the jsp file
      *         was recomp iled. 
      */
-    public boolean compile()
+    public boolean jsp2java(JspPageInfo pageInfo)
         throws FileNotFoundException, JasperException, Exception 
     {
-        String pkgName = mangler.getPackageName();
-        String classFileName = mangler.getClassFileName();
+	// assert pageInfo has valid mangler, jspFile
 
-        ctxt.setServletPackageName(pkgName);
-        Constants.message("jsp.message.package_name_is",
-                          new Object[] { (pkgName==null)?
-                                          "[default package]":pkgName },
-                          Log.DEBUG);
-        Constants.message("jsp.message.class_file_name_is",
-                          new Object[] { classFileName },
-                          Log.DEBUG);
+        String javaFileName = pageInfo.getMangler().getJavaFileName();
+        //pageInfo.setServletJavaFileName(javaFileName);
 
-	if (!isOutDated())
-            return false;
-
-	// Hack to avoid readign the class file every time -
-	// getClassName() is an _expensive_ operation, and it's needed only
-	// if isOutDated() return true. 
-        String javaFileName = mangler.getJavaFileName();
-        ctxt.setServletJavaFileName(javaFileName);
-
-        Constants.message("jsp.message.java_file_name_is",
+        containerL.message("jsp.message.java_file_name_is",
                           new Object[] { javaFileName },
-                          Log.DEBUG);
-
-	String className = mangler.getClassName();
-        ctxt.setServletClassName(className);
-        Constants.message("jsp.message.class_name_is",
-                          new Object[] { className },
                           Log.DEBUG);
 
         
@@ -166,19 +137,14 @@ public class Compiler {
 	// taken out once we have a more efficient method.
 
 	if (true) {
-	    JspReader tmpReader = JspReader.createJspReader(
-							    ctxt.getJspFile(),
-							    ctxt,
-							    jspEncoding);
+	    JspReader tmpReader = JspReader.
+		createJspReader(pageInfo.getJspFile(), containerL,jspEncoding);
 	    String newEncode = changeEncodingIfNecessary(tmpReader);
 	    if (newEncode != null) jspEncoding = newEncode;
 	}
 
-        JspReader reader = JspReader.createJspReader(
-            ctxt.getJspFile(),
-            ctxt,
-            jspEncoding
-        );
+        JspReader reader = JspReader.
+	    createJspReader(pageInfo.getJspFile(),containerL,jspEncoding);
 
 	OutputStreamWriter osw; 
 	try {
@@ -187,7 +153,7 @@ public class Compiler {
 	} catch (java.io.UnsupportedEncodingException ex) {
 	    // Try to get the java encoding from the "javaEncoding"
 	    // init parameter for JspServlet.
-	    javaEncoding = ctxt.getOptions().getJavaEncoding();
+	    javaEncoding = containerL.getOptions().getJavaEncoding();
 	    if (javaEncoding != null) {
 		try {
 		    osw = new OutputStreamWriter(
@@ -195,7 +161,7 @@ public class Compiler {
 		} catch (java.io.UnsupportedEncodingException ex2) {
 		    // no luck :-(
 		    throw new JasperException(
-			Constants.getString("jsp.error.invalid.javaEncoding",
+			containerL.getString("jsp.error.invalid.javaEncoding",
 					    new Object[] { 
 						"UTF8", 
 						javaEncoding,
@@ -203,97 +169,125 @@ public class Compiler {
 		}
 	    } else {
 		throw new JasperException(
-		    Constants.getString("jsp.error.needAlternateJavaEncoding",
+		    containerL.getString("jsp.error.needAlternateJavaEncoding",
 					new Object[] { "UTF8" }));		
 	    }
 	}
+
+	pageInfo.setJavaEncoding( javaEncoding );
+	
 	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
 
-        ctxt.setReader(reader);
-        ctxt.setWriter(writer);
+	//        ctxt.setReader(reader);
+	//        ctxt.setWriter(writer);
 
-        ParseEventListener listener = new JspParseEventListener(ctxt);
+        ParseEventListener listener =
+	    new JspParseEventListener(containerL,
+				      reader,
+				      writer,
+				      pageInfo);
         
-        Parser p = new Parser(reader, listener);
+        Parser p = new Parser(containerL,reader, listener);
         listener.beginPageProcessing();
         p.parse();
         listener.endPageProcessing();
         writer.close();
+	
+	return true;
+    }
 
-        String classpath = ctxt.getClassPath(); 
+    
+    /** 
+     * Compile the jsp file from the current engine context
+     *
+     * @return true if the class file was outdated the jsp file
+     *         was recomp iled. 
+     */
+    public boolean compile(JspPageInfo pageInfo, JavaCompiler javac)
+        throws FileNotFoundException, JasperException, Exception 
+    {
+	jsp2java( pageInfo );
+	return javac( pageInfo, javac );
+    }
 
-        // I'm nuking
-        //          System.getProperty("jsp.class.path", ".") 
-        // business. If anyone badly needs this we can talk. -akv
-
-        // I'm adding tc_path_add because it solves a real problem
-        // and nobody has yet to come up with a better alternative.
-        // Note: this is in two places.  Search for tc_path_add below.
-        // If you have one, please let me know.  -Sam Ruby
-
-        String sep = System.getProperty("path.separator");
-        String[] argv = new String[] 
-        {
-            "-encoding",
-            javaEncoding,
-            "-classpath",
-	    System.getProperty("java.class.path")+ sep + classpath + sep +
-                System.getProperty("tc_path_add") + sep + ctxt.getOutputDir(),
-            "-d", ctxt.getOutputDir(),
-            javaFileName
-        };
-
-        StringBuffer b = new StringBuffer();
-        for(int i = 0; i < argv.length; i++) {
-            b.append(argv[i]);
-            b.append(" ");
-        }
-
-        Constants.message("jsp.message.compiling_with",
-                          new Object[] { b.toString() },
-                          Log.DEBUG);
-
-        /**
-         * 256 chosen randomly. The default is 32 if you don't pass
-         * anything to the constructor which will be less. 
-         */
-        ByteArrayOutputStream out = new ByteArrayOutputStream (256);
-
-        // if no compiler was set we can kick out now
-
-        if (javac == null) {
-            return true;
-        }
-
-        /**
-         * Configure the compiler object
-         * See comment above: re tc_path_add
-         */
-        javac.setEncoding(javaEncoding);
+    public void prepareCompiler( JavaCompiler javac, Options options,
+				 JspPageInfo pageInfo)
+    {
+	String sep = System.getProperty("path.separator");
+	String classpath = containerL.getClassPath(); 
+        javac.setEncoding(pageInfo.getJavaEncoding());
         javac.setClasspath( System.getProperty("java.class.path")+ sep + 
                             System.getProperty("tc_path_add") + sep +
-                            classpath + sep + ctxt.getOutputDir());
-        javac.setOutputDir(ctxt.getOutputDir());
-        javac.setMsgOutput(out);
-        javac.setClassDebugInfo(ctxt.getOptions().getClassDebugInfo());
+                            classpath + sep + containerL.getOutputDir());
+        javac.setOutputDir(containerL.getOutputDir());
+        javac.setClassDebugInfo(pageInfo.getOptions().getClassDebugInfo());
 
+	String compilerPath = options.getJspCompilerPath();
+        if (compilerPath != null)
+            javac.setCompilerPath(compilerPath);
+
+    }
+    
+    public boolean javac(JspPageInfo pageInfo, String javacName)
+        throws FileNotFoundException, JasperException, Exception 
+    {
+	JavaCompiler javaC=null;
+	try {
+	    Class jspCompilerPlugin=Class.forName(javacName);
+	    javaC=JavaCompiler.createJavaCompiler( containerL,
+						   jspCompilerPlugin );
+	} catch( Exception ex ) {
+	    throw ex;
+	}
+	return javac( pageInfo, javaC );
+    }
+
+
+    public boolean javac(JspPageInfo pageInfo, JavaCompiler javac)
+        throws FileNotFoundException, JasperException, Exception 
+    {
+	prepareCompiler( javac, pageInfo.getOptions(), pageInfo);
+        ByteArrayOutputStream out = new ByteArrayOutputStream (256);
+
+	prepareCompiler( javac, pageInfo.getOptions(), pageInfo );
+	javac.setMsgOutput(out);
         /**
          * Execute the compiler
          */
-        boolean status = javac.compile(javaFileName);
+        boolean status = javac.compile(pageInfo.getMangler().getJavaFileName());
 
-        if (!ctxt.keepGenerated()) {
-            File javaFile = new File(javaFileName);
+        if (!containerL.getOptions().getKeepGenerated()) {
+            File javaFile = new File(pageInfo.getMangler().getJavaFileName());
             javaFile.delete();
         }
     
         if (status == false) {
             String msg = out.toString ();
-            throw new JasperException(Constants.getString("jsp.error.unable.compile")
+            throw new JasperException(containerL.getString("jsp.error.unable.compile")
                                       + msg);
         }
 
-        String classFile = ctxt.getOutputDir() + File.separatorChar;
+        String classFile = containerL.getOutputDir() + File.separatorChar;
+
+        String pkgName = pageInfo.getMangler().getPackageName();
+        containerL.message("jsp.message.package_name_is",
+                          new Object[] { (pkgName==null)?
+                                          "[default package]":pkgName },
+			   Log.DEBUG);
+
+	String className = pageInfo.getMangler().getClassName();
+        //pageInfo.setServletClassName(className);
+        containerL.message("jsp.message.class_name_is",
+                          new Object[] { className },
+                          Log.DEBUG);
+
+	String classFileName = pageInfo.getMangler().getClassFileName();
+        containerL.message("jsp.message.class_file_name_is",
+                          new Object[] { classFileName },
+                          Log.DEBUG);
+
+
+
         if (pkgName != null && !pkgName.equals(""))
             classFile = classFile + pkgName.replace('.', File.separatorChar) + 
                 File.separatorChar;
@@ -305,7 +299,7 @@ public class Compiler {
             if (myClassFileObject.exists())
                 myClassFileObject.delete();
             if (classFileObject.renameTo(myClassFileObject) == false)
-                throw new JasperException(Constants.getString("jsp.error.unable.rename",
+                throw new JasperException(containerL.getString("jsp.error.unable.rename",
                                                               new Object[] { 
                                                                   classFileObject, 
                                                                   myClassFileObject
@@ -315,44 +309,12 @@ public class Compiler {
         return true;
     }
 
-    public void computeServletClassName() {
-	// Hack to avoid readign the class file every time -
-	// getClassName() is an _expensive_ operation, and it's needed only
-	// if isOutDated() return true. 
-	String className = mangler.getClassName();
-        ctxt.setServletClassName(className);
-        Constants.message("jsp.message.class_name_is",
-                          new Object[] { className },
-                          Log.DEBUG);
-    }
-    
-    /**
-     * This is a protected method intended to be overridden by 
-     * subclasses of Compiler. This is used by the compile method
-     * to do all the compilation. 
-     */
-    public boolean isOutDated() {
-	return true;
-    }
-    
-    /**
-     * Set java compiler info
-     */
-    public void setJavaCompiler(JavaCompiler javac) {
-        this.javac = javac;
-    }
 
-    /**
-     * Set Mangler which will be used as part of compile().
-     */
-    public void setMangler(Mangler mangler) {
-        this.mangler = mangler;
-    }
-
+    // XXX move to parser
     /**
      * Change the encoding for the reader if specified.
      */
-    public String changeEncodingIfNecessary(JspReader tmpReader)
+    private String changeEncodingIfNecessary(JspReader tmpReader)
 	throws ParseException
     {
 
@@ -390,11 +352,11 @@ public class Compiler {
     /**
      * Remove generated files
      */
-    public void removeGeneratedFiles()
+    public void removeGeneratedFiles(JspPageInfo pageInfo )
     {
 	try{
 	    // XXX Should we delete the generated .java file too?
-	    String classFileName = mangler.getClassFileName();
+	    String classFileName = pageInfo.getMangler().getClassFileName();
 	    if(classFileName != null){
 		File classFile = new File(classFileName);
 		classFile.delete();
@@ -402,6 +364,37 @@ public class Compiler {
 	}catch(Exception e){
 	}
     }
+
+    // For debug mostly
+    public String getJavacCommand(JspPageInfo pageInfo) {
+	String classpath = containerL.getClassPath();
+	
+        String sep = System.getProperty("path.separator");
+        String[] argv = new String[] 
+        {
+            "-encoding",
+            pageInfo.getJavaEncoding(),
+            "-classpath",
+	    System.getProperty("java.class.path")+ sep + classpath + sep +
+	    System.getProperty("tc_path_add") + sep +
+	    containerL.getOutputDir(),
+            "-d", containerL.getOutputDir(),
+            pageInfo.getServletJavaFileName()
+        };
+
+        StringBuffer b = new StringBuffer();
+        for(int i = 0; i < argv.length; i++) {
+            b.append(argv[i]);
+            b.append(" ");
+        }
+
+        containerL.message("jsp.message.compiling_with",
+                          new Object[] { b.toString() },
+                          Log.DEBUG);
+	return b.toString();
+    }
+
+
 }
 
 
