@@ -70,6 +70,8 @@ import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ErrorPage;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 
@@ -302,6 +304,22 @@ public interface Context extends Container {
 
 
     /**
+     * Add a filter definition to this Context.
+     *
+     * @param filterDef The filter definition to be added
+     */
+    public void addFilterDef(FilterDef filterDef);
+
+
+    /**
+     * Add a filter mapping to this Context.
+     *
+     * @param filterMap The filter mapping to be added
+     */
+    public void addFilterMap(FilterMap filterMap);
+
+
+    /**
      * Add the classname of an InstanceListener to be added to each
      * Wrapper appended to this Context.
      *
@@ -474,11 +492,33 @@ public interface Context extends Container {
     public ErrorPage findErrorPage(String exceptionType);
 
 
+
     /**
      * Return the set of defined error pages for all specified error codes
      * and exception types.
      */
     public ErrorPage[] findErrorPages();
+
+
+    /**
+     * Return the filter definition for the specified filter name, if any;
+     * otherwise return <code>null</code>.
+     *
+     * @param filterName Filter name to look up
+     */
+    public FilterDef findFilterDef(String filterName);
+
+
+    /**
+     * Return the set of defined filters for this Context.
+     */
+    public FilterDef[] findFilterDefs();
+
+
+    /**
+     * Return the set of filter mappings for this Context.
+     */
+    public FilterMap[] findFilterMaps();
 
 
     /**
@@ -675,6 +715,23 @@ public interface Context extends Container {
      * @param errorPage The error page definition to be removed
      */
     public void removeErrorPage(ErrorPage errorPage);
+
+
+    /**
+     * Remove the specified filter definition from this Context, if it exists;
+     * otherwise, no action is taken.
+     *
+     * @param filterDef Filter definition to be removed
+     */
+    public void removeFilterDef(FilterDef filterDef);
+
+
+    /**
+     * Remove a filter mapping from this Context.
+     *
+     * @param filterMap The filter mapping to be removed
+     */
+    public void removeFilterMap(FilterMap filterMap);
 
 
     /**

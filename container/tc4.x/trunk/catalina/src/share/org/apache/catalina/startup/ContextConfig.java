@@ -361,15 +361,15 @@ public final class ContextConfig
 		       mapper.methodParam(6));
 
 	mapper.addRule("web-app/env-entry",
-		       mapper.methodSetter("addEnvironment", 4));
-	mapper.addRule("web-app/env-entry/description",
-		       mapper.methodParam(1));
+	 mapper.objectCreate("org.apache.catalina.deploy.ContextEnvironment"));
+	mapper.addRule("web-app/env-entry/env-entry-description",
+		       mapper.methodSetter("setDescription", 0));
 	mapper.addRule("web-app/env-entry/env-entry-name",
-		       mapper.methodParam(0));
+		       mapper.methodSetter("setName", 0));
 	mapper.addRule("web-app/env-entry/env-entry-type",
-		       mapper.methodParam(2));
+		       mapper.methodSetter("setType", 0));
 	mapper.addRule("web-app/env-entry/env-entry-value",
-		       mapper.methodParam(3));
+		       mapper.methodSetter("setValue", 0));
 
 	mapper.addRule("web-app/error-page",
 		  mapper.objectCreate("org.apache.catalina.deploy.ErrorPage"));
@@ -382,6 +382,36 @@ public final class ContextConfig
 		       mapper.methodSetter("setExceptionType", 0));
 	mapper.addRule("web-app/error-page/location",
 		       mapper.methodSetter("setLocation", 0));
+
+	mapper.addRule("web-app/filter",
+		  mapper.objectCreate("org.apache.catalina.deploy.FilterDef"));
+	mapper.addRule("web-app/filter/description",
+		       mapper.methodSetter("setDescription", 0));
+	mapper.addRule("web-app/filter/display-name",
+		       mapper.methodSetter("setDisplayName", 0));
+	mapper.addRule("web-app/filter/filter-class",
+		       mapper.methodSetter("setFilterClass", 0));
+	mapper.addRule("web-app/filter/filter-name",
+		       mapper.methodSetter("setFilterName", 0));
+	mapper.addRule("web-app/filter/icon/large-icon",
+		       mapper.methodSetter("setLargeIcon", 0));
+	mapper.addRule("web-app/filter/icon/small-icon",
+		       mapper.methodSetter("setSmallIcon", 0));
+	mapper.addRule("web-app/filter/init-param",
+		       mapper.methodSetter("addInitParameter", 2));
+	mapper.addRule("web-app/filter/init-param/param-name",
+		       mapper.methodParam(0));
+	mapper.addRule("web-app/filter/init-param/param-value",
+		       mapper.methodParam(1));
+
+	mapper.addRule("web-app/filter-mapping",
+		  mapper.objectCreate("org.apache.catalina.deploy.FilterMap"));
+	mapper.addRule("web-app/filter-mapping/filter-name",
+		       mapper.methodSetter("setFilterName", 0));
+	mapper.addRule("web-app/filter-mapping/servlet-name",
+		       mapper.methodSetter("setServletName", 0));
+	mapper.addRule("web-app/filter-mapping/url-pattern",
+		       mapper.methodSetter("setURLPattern", 0));
 
 	mapper.addRule("web-app/listener/listener-class",
 		       mapper.methodSetter("addApplicationListener", 0));

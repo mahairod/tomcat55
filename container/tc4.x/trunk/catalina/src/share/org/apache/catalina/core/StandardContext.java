@@ -90,6 +90,8 @@ import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ErrorPage;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 
@@ -193,6 +195,20 @@ public final class StandardContext
      * class name of the Java exception.
      */
     private HashMap exceptionPages = new HashMap();
+
+
+    /**
+     * The set of filter definitions for this application, keyed by
+     * filter name.
+     */
+    private HashMap filterDefs = new HashMap();
+
+
+    /**
+     * The set of filter mappings for this application, in the order
+     * they were defined in the deployment descriptor.
+     */
+    private FilterMap filterMaps[] = new FilterMap[0];
 
 
     /**
@@ -753,22 +769,6 @@ public final class StandardContext
 
 
     /**
-     * Add an environment entry for this web application.
-     *
-     * @param name Name of the environment entry
-     * @param description Description of the environment entry
-     * @param type Java class of the environment entry
-     * @param value Value of the environment entry (as a String)
-     */
-    public void addEnvironment(String name, String description,
-			       String type, String value) {
-
-	addEnvironment(new ContextEnvironment(name, description, type, value));
-
-    }
-
-
-    /**
      * Add an error page for the specified error or Java exception.
      *
      * @param errorPage The error page definition to be added
@@ -787,6 +787,39 @@ public final class StandardContext
 	    }
 	}
 	fireContainerEvent("addErrorPage", errorPage);
+
+    }
+
+
+    /**
+     * Add a filter definition to this Context.
+     *
+     * @param filterDef The filter definition to be added
+     */
+    public void addFilterDef(FilterDef filterDef) {
+
+	synchronized (filterDefs) {
+	    filterDefs.put(filterDef.getFilterName(), filterDef);
+	}
+	fireContainerEvent("addFilterDef", filterDef);
+
+    }
+
+
+    /**
+     * Add a filter mapping to this Context.
+     *
+     * @param filterMap The filter mapping to be added
+     */
+    public void addFilterMap(FilterMap filterMap) {
+
+	synchronized (filterMaps) {
+	    FilterMap results[] =new FilterMap[filterMaps.length + 1];
+	    System.arraycopy(filterMaps, 0, results, 0, filterMaps.length);
+	    results[filterMaps.length] = filterMap;
+	    filterMaps = results;
+	}
+	fireContainerEvent("addFilterMap", filterMap);
 
     }
 
@@ -1194,6 +1227,44 @@ public final class StandardContext
 		return (results);
 	    }
 	}
+
+    }
+
+
+    /**
+     * Return the filter definition for the specified filter name, if any;
+     * otherwise return <code>null</code>.
+     *
+     * @param filterName Filter name to look up
+     */
+    public FilterDef findFilterDef(String filterName) {
+
+	synchronized (filterDefs) {
+	    return ((FilterDef) filterDefs.get(filterName));
+	}
+
+    }
+
+
+    /**
+     * Return the set of defined filters for this Context.
+     */
+    public FilterDef[] findFilterDefs() {
+
+	synchronized (filterDefs) {
+	    FilterDef results[] = new FilterDef[filterDefs.size()];
+	    return ((FilterDef[]) filterDefs.values().toArray(results));
+	}
+
+    }
+
+
+    /**
+     * Return the set of filter mappings for this Context.
+     */
+    public FilterMap[] findFilterMaps() {
+
+	return (filterMaps);
 
     }
 
@@ -1775,13 +1846,63 @@ public final class StandardContext
 
 
     /**
+     * Remove the specified filter definition from this Context, if it exists;
+     * otherwise, no action is taken.
+     *
+     * @param filterDef Filter definition to be removed
+     */
+    public void removeFilterDef(FilterDef filterDef) {
+
+	synchronized (filterDefs) {
+	    filterDefs.remove(filterDef.getFilterName());
+	}
+	fireContainerEvent("removeFilterDef", filterDef);
+
+    }
+
+
+    /**
+     * Remove a filter mapping from this Context.
+     *
+     * @param filterMap The filter mapping to be removed
+     */
+    public void removeFilterMap(FilterMap filterMap) {
+
+	synchronized (filterMaps) {
+
+	    // Make sure this filter mapping is currently present
+	    int n = -1;
+	    for (int i = 0; i < filterMaps.length; i++) {
+		if (filterMaps[i] == filterMap) {
+		    n = i;
+		    break;
+		}
+	    }
+	    if (n < 0)
+		return;
+
+	    // Remove the specified filter mapping
+	    FilterMap results[] = new FilterMap[filterMaps.length - 1];
+	    System.arraycopy(filterMaps, 0, results, 0, n);
+	    System.arraycopy(filterMaps, n + 1, results, n,
+			     (filterMaps.length - 1) - n);
+	    filterMaps = results;
+
+	}
+
+	// Inform interested listeners
+	fireContainerEvent("removeFilterMap", filterMap);
+
+    }
+
+
+    /**
      * Remove a class name from the set of InstanceListener classes that
      * will be added to newly created Wrappers.
      *
      * @param listener Class name of an InstanceListener class to be removed
      */
     public void removeInstanceListener(String listener) {
-
 
 	synchronized (instanceListeners) {
 

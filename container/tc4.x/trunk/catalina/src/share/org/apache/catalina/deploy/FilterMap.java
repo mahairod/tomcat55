@@ -66,72 +66,87 @@ package org.apache.catalina.deploy;
 
 
 /**
- * Representation of an application environment entry, as represented in
- * an <code>&lt;env-entry&gt;</code> element in the deployment descriptor.
+ * Representation of a filter mapping for a web application, as represented
+ * in a <code>&lt;filter-mapping&gt;</code> element in the deployment
+ * descriptor.  Each filter mapping must contain a filter name plus either
+ * a URL pattern or a servlet name.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public final class ContextEnvironment {
+public final class FilterMap {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * The description of this environment entry.
+     * The name of this filter to be executed when this mapping matches
+     * a particular request.
      */
-    private String description = null;
+    private String filterName = null;
 
-    public String getDescription() {
-	return (this.description);
+    public String getFilterName() {
+	return (this.filterName);
     }
 
-    public void setDescription(String description) {
-	this.description = description;
+    public void setFilterName(String filterName) {
+	this.filterName = filterName;
     }
 
 
     /**
-     * The name of this environment entry.
+     * The servlet name this mapping matches.
      */
-    private String name = null;
+    private String servletName = null;
 
-    public String getName() {
-	return (this.name);
+    public String getServletName() {
+	return (this.servletName);
     }
 
-    public void setName(String name) {
-	this.name = name;
+    public void setServletName(String servletName) {
+	this.servletName = servletName;
     }
 
 
     /**
-     * The type of this environment entry.
+     * The URL pattern this mapping matches.
      */
-    private String type = null;
+    private String urlPattern = null;
 
-    public String getType() {
-	return (this.type);
+    public String getURLPattern() {
+	return (this.urlPattern);
     }
 
-    public void setType(String type) {
-	this.type = type;
+    public void setURLPattern(String urlPattern) {
+	this.urlPattern = urlPattern;
     }
+
+
+    // --------------------------------------------------------- Public Methods
 
 
     /**
-     * The value of this environment entry.
+     * Render a String representation of this object.
      */
-    private String value = null;
+    public String toString() {
 
-    public String getValue() {
-	return (this.value);
+	StringBuffer sb = new StringBuffer("FilterMap[");
+	sb.append("filterName=");
+	sb.append(this.filterName);
+	if (servletName != null) {
+	    sb.append(", servletName=");
+	    sb.append(servletName);
+	}
+	if (urlPattern != null) {
+	    sb.append(", urlPattern=");
+	    sb.append(urlPattern);
+	}
+	sb.append("]");
+	return (sb.toString());
+
     }
 
-    public void setValue(String value) {
-	this.value = value;
-    }
 
 }
