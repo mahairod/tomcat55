@@ -152,7 +152,7 @@ goto cleanup
 
 :startSecure
 echo Starting Tomcat with a SecurityManager
-%_SECSTARTJAVA% %TOMCAT_OPTS% -Djava.security.manager -Djava.security.policy="%TOMCAT_HOME%/conf/tomcat.policy" -Dtomcat.home="%TOMCAT_HOME%" org.apache.tomcat.startup.Tomcat %3 %4 %5 %6 %7 %8 %9
+%_SECSTARTJAVA% %TOMCAT_OPTS% -Djava.security.manager -Djava.security.policy=="%TOMCAT_HOME%/conf/tomcat.policy" -Dtomcat.home="%TOMCAT_HOME%" org.apache.tomcat.startup.Tomcat %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :runServer
