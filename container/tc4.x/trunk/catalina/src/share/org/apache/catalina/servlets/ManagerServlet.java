@@ -75,6 +75,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.UnavailableException;
@@ -90,6 +91,8 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
+import org.apache.naming.resources.ProxyDirContext;
+import org.apache.naming.resources.WARDirContext;
 
 
 /**
@@ -741,6 +744,14 @@ public class ManagerServlet
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
             return;
+            }
+            DirContext resources = context.getResources();
+            if (resources instanceof ProxyDirContext) {
+                resources = ((ProxyDirContext) resources).getDirContext();
+            }
+            if (resources instanceof WARDirContext) {
+                writer.println(sm.getString("managerServlet.noReload", displayPath));
+                return;
             }
             context.reload();
             writer.println(sm.getString("managerServlet.reloaded", displayPath));

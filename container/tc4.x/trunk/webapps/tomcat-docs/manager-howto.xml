@@ -378,6 +378,15 @@ error message.  Possible causes for problems include:</p>
     <blockquote>
     The <code>path</code> parameter is required.
     </blockquote></li>
+<li><em>Reload note supported on WAR deployed at path /foo</em>
+    <blockquote>
+    Currently, application reloading (to pick up changes to the classes or
+    <code>web.xml</code> file) is not supported when a web application is
+    installed directly from a WAR file.  It only works when the web application
+    is installed from an unpacked directory.  If you are using a WAR file,
+    you should <code>remove</code> and then <code>install</code> the
+    application again to pick up your changes.
+    </blockquote></li>
 </ul>
 
 </subsection>

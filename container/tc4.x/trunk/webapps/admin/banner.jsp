@@ -15,16 +15,14 @@
 
 <body bgcolor="white">
 
-<center>
-
-<h2><bean:message key="index.success"/></h2>
+<h2 align="center"><bean:message key="index.success"/></h2>
 <p>
-<h2>
+<h3 align="center">
   <bean:message key="index.logout"/>
   <html:link page="/logOut.do" target="_top">
     <bean:message key="index.here"/>
   </html:link>
-</h2>
+</h3>
 
 <!-- Select language -->
 
@@ -52,8 +50,6 @@
   </table>
 </html:form>
 -->
-
-</center>
 
 </body>
 
