@@ -390,6 +390,31 @@ public class WebappLoader
 
 
     /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void backgroundProcess() {
+        if (reloadable && modified()) {
+            try {
+                Thread.currentThread().setContextClassLoader
+                    (WebappLoader.class.getClassLoader());
+                if (container instanceof StandardContext) {
+                    ((StandardContext) container).reload();
+                }
+            } finally {
+                if (container.getLoader() != null) {
+                    Thread.currentThread().setContextClassLoader
+                        (container.getLoader().getClassLoader());
+                }
+            }
+        } else {
+            closeJARs(false);
+        }
+    }
+
+
+    /**
      * Return the set of repositories defined for this class loader.
      * If none are defined, a zero-length array is returned.
      * For security reason, returns a clone of the Array (since 

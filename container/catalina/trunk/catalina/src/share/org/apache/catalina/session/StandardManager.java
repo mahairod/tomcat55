@@ -108,6 +108,21 @@ public class StandardManager
 
 
     /**
+     * Iteration count for background processing.
+     */
+    private int count = 0;
+
+
+    /**
+     * Frequency of the session expiration, and related manager operations.
+     * Manager operations will be done once for the specified amount of
+     * backgrondProcess calls (ie, the lower the amount, the most often the
+     * checks will occur).
+     */
+    protected int processExpiresFrequency = 6;
+
+
+    /**
      * The maximum number of active Sessions allowed, or -1 for no limit.
      */
     protected int maxActiveSessions = -1;
@@ -221,6 +236,36 @@ public class StandardManager
 
     public void setProcessingTime(long processingTime) {
         this.processingTime = processingTime;
+    }
+
+
+    /**
+     * Return the frequency of manager checks.
+     */
+    public int getProcessExpiresFrequency() {
+
+        return (this.processExpiresFrequency);
+
+    }
+
+
+    /**
+     * Set the manager checks frequency.
+     *
+     * @param processExpiresFrequency the new manager checks frequency
+     */
+    public void setProcessExpiresFrequency(int processExpiresFrequency) {
+
+        if (processExpiresFrequency <= 0) {
+            return;
+        }
+
+        int oldProcessExpiresFrequency = this.processExpiresFrequency;
+        this.processExpiresFrequency = processExpiresFrequency;
+        support.firePropertyChange("processExpiresFrequency",
+                                   new Integer(oldProcessExpiresFrequency),
+                                   new Integer(this.processExpiresFrequency));
+
     }
 
 
@@ -776,7 +821,9 @@ public class StandardManager
      * Implements the Manager interface, direct call to processExpires
      */
     public void backgroundProcess() {
-        processExpires();
+        count = (count + 1) % processExpiresFrequency;
+        if (count == 0)
+            processExpires();
     }
 
 

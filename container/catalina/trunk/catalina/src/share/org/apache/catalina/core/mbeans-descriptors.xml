@@ -117,10 +117,6 @@
                description="Associated manager."
                type="org.apache.catalina.Manager" />
       
-    <attribute name="managerChecksFrequency"
-               description="The frequency of the manager checks (expiration and passivation)"
-               type="int"/>
-               
     <attribute name="mappingObject"
                description="The object used for mapping"
                type="java.lang.Object"/>

@@ -544,21 +544,6 @@ public class StandardContext
 
 
     /**
-     * Frequency of the session expiration, and related manager operations.
-     * Manager operations will be done once for the specified amount of
-     * backgrondProcess calls (ie, the lower the amount, the most often the
-     * checks will occur).
-     */
-    private int managerChecksFrequency = 6;
-
-
-    /**
-     * Iteration count for background processing.
-     */
-    private int count = 0;
-
-
-    /**
      * Caching allowed flag.
      */
     private boolean cachingAllowed = true;
@@ -1212,36 +1197,6 @@ public class StandardContext
 
     public void setLazy(boolean lazy) {
         this.lazy = lazy;
-    }
-
-
-    /**
-     * Return the frequency of manager checks.
-     */
-    public int getManagerChecksFrequency() {
-
-        return (this.managerChecksFrequency);
-
-    }
-
-
-    /**
-     * Set the manager checks frequency.
-     *
-     * @param managerChecksFrequency the new manager checks frequency
-     */
-    public void setManagerChecksFrequency(int managerChecksFrequency) {
-
-        if (managerChecksFrequency <= 0) {
-            return;
-        }
-
-        int oldManagerChecksFrequency = this.managerChecksFrequency;
-        this.managerChecksFrequency = managerChecksFrequency;
-        support.firePropertyChange("managerChecksFrequency",
-                                   new Integer(oldManagerChecksFrequency),
-                                   new Integer(this.managerChecksFrequency));
-
     }
 
 
@@ -4392,47 +4347,6 @@ public class StandardContext
         sb.append(getName());
         sb.append("]");
         return (sb.toString());
-
-    }
-
-
-    /**
-     * Execute a periodic task, such as reloading, etc. This method will be
-     * invoked inside the classloading context of this container. Unexpected
-     * throwables will be caught and logged.
-     */
-    public void backgroundProcess() {
-
-        if (!started)
-            return;
-
-        count = (count + 1) % managerChecksFrequency;
-
-        if ((getManager() != null) && (count == 0)) {
-            try {
-                getManager().backgroundProcess();
-            } catch ( Exception x ) {
-                log.warn("Unable to perform background process on manager",x);
-            }
-        }
-
-        if (getLoader() != null) {
-            if (reloadable && (getLoader().modified())) {
-                try {
-                    Thread.currentThread().setContextClassLoader
-                        (StandardContext.class.getClassLoader());
-                    reload();
-                } finally {
-                    if (getLoader() != null) {
-                        Thread.currentThread().setContextClassLoader
-                            (getLoader().getClassLoader());
-                    }
-                }
-            }
-            if (getLoader() instanceof WebappLoader) {
-                ((WebappLoader) getLoader()).closeJARs(false);
-            }
-        }
 
     }
 

@@ -100,6 +100,16 @@ public interface Cluster {
     public Manager createManager(String name);
 
     // --------------------------------------------------------- Cluster Wide Deployments
+    
+    
+    /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void backgroundProcess();
+
+
     /**
      * Start an existing web application, attached to the specified context
      * path in all the other nodes in the cluster.
