@@ -63,10 +63,9 @@ expressions are utilized to define variable text that is replaced by
 corresponding values:</p>
 <ul>
 <li><em>${GROUP}</em> - One of the standard MBean names of the specified
-    "group" category.  For example, the expression <code>${LOGGER}</code>
-    represents the values <code>FileLogger</code>,
-    <code>SystemErrLogger</code>, and <code>SystemOutLogger</code> that
-    identify the various MBeans for possible Logger components.</li>
+    "group" category.  For example, the expression <code>${REALM}</code>
+    represents the values like <code>JDBCRealm</code> and <code>JAASRealm</code>
+    that identify the various MBeans for possible <code>Realm</code> components.</li>
 <li><em>${name}</em> - Replaced by the value of property <code>name</code>
     from the current component.</li>
 <li><em>${parent.name}</em> - Replaced by the value of property
@@ -170,13 +169,6 @@ corresponding values:</p>
   </tr>
 
   <tr>
-    <td>Server / Service / Engine / DefaultContext / Logger</td>
-    <td align="center">0..1</td>
-    <td align="center">(none)</td>
-    <td></td>
-  </tr>
-
-  <tr>
     <td>Server / Service / Engine / DefaultContext / Manager</td>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
@@ -260,14 +252,6 @@ corresponding values:</p>
   </tr>
 
   <tr>
-    <td>Server / Service / Engine / Host / Context / Logger</td>
-    <td align="center">0..1</td>
-    <td align="center">(none)</td>
-    <td><code>type=${LOGGER}, path=${context.path}, host=${host.name},
-        service=${service.name}</code></td>
-  </tr>
-
-  <tr>
     <td>Server / Service / Engine / Host / Context / Manager</td>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
@@ -346,13 +330,6 @@ corresponding values:</p>
   </tr>
 
   <tr>
-    <td>Server / Service / Engine / Host / DefaultContext / Logger</td>
-    <td align="center">0..1</td>
-    <td align="center">(none)</td>
-    <td></td>
-  </tr>
-
-  <tr>
     <td>Server / Service / Engine / Host / DefaultContext / Manager</td>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
@@ -404,14 +381,6 @@ corresponding values:</p>
   </tr>
 
   <tr>
-    <td>Server / Service / Engine / Host / Logger</td>
-    <td align="center">0..1</td>
-    <td align="center">(none)</td>
-    <td><code>type=${LOGGER}, host=${host.name},
-        service=${service.name}</code></td>
-  </tr>
-
-  <tr>
     <td>Server / Service / Engine / Host / Realm</td>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
@@ -434,13 +403,6 @@ corresponding values:</p>
     <td><code>type=${LISTENER}, sequence=${###}</code>
         (<strong>FIXME</strong> - disambiguate from Server / Service /
         Listener)</td>
-  </tr>
-
-  <tr>
-    <td>Server / Service / Engine / Logger</td>
-    <td align="center">0..1</td>
-    <td align="center">(none)</td>
-    <td><code>type=${LOGGER}, service=${service.name}</code></td>
   </tr>
 
   <tr>
@@ -576,13 +538,6 @@ web application for Tomcat):</p>
     <td align="center"><code>VALVE</code></td>
     <td><code>org.apache.catalina.Valve</code></td>
     <td><code>org.apache.catalina.valves.ErrorDispatcherValve</code></td>
-  </tr>
-
-  <tr>
-    <td><code>FileLogger</code></td>
-    <td align="center"><code>LOGGER</code></td>
-    <td><code>org.apache.catalina.Logger</code></td>
-    <td><code>org.apache.catalina.logger.FileLogger</code></td>
   </tr>
 
   <tr>
@@ -807,20 +762,6 @@ web application for Tomcat):</p>
     <td align="center"><code>VALVE</code></td>
     <td><code>org.apache.catalina.Valve</code></td>
     <td><code>org.apache.catalina.core.StandardWrapperValve</code></td>
-  </tr>
-
-  <tr>
-    <td><code>SystemErrLogger</code></td>
-    <td align="center"><code>LOGGER</code></td>
-    <td><code>org.apache.catalina.Logger</code></td>
-    <td><code>org.apache.catalina.logger.SystemErrLogger</code></td>
-  </tr>
-
-  <tr>
-    <td><code>SystemOutLogger</code></td>
-    <td align="center"><code>LOGGER</code></td>
-    <td><code>org.apache.catalina.Logger</code></td>
-    <td><code>org.apache.catalina.logger.SystemErrLogger</code></td>
   </tr>
 
   <tr>

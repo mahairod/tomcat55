@@ -36,7 +36,6 @@ Objects:</p>
 <li><a href="#Host">Host</a></li>
 <li><a href="#JDBC Resource">JDBC Resource</a></li>
 <li><a href="#Loader">Loader</a></li>
-<li><a href="#Logger">Logger</a></li>
 <li><a href="#Manager">Manager</a></li>
 <li><a href="#Realm">Realm</a></li>
 <li><a href="#Request Filter">Request Filter</a></li>
@@ -98,10 +97,6 @@ Objects:</p>
       this object.</li>
   <li>Edit the configurable properties of the associated <em>Loader</em>.</li>
   <li>Remove the associated <em>Loader</em>.</li>
-  <li>Create and configure a new <em>Logger</em> associated with
-      this object.</li>
-  <li>Edit the configurable properties of the associated <em>Logger</em>.</li>
-  <li>Remove the associated <em>Logger</em>.</li>
   <li>Create and configure a new <em>Manager</em> associated with
       this object.</li>
   <li>Edit the configurable properties of the associated <em>Manager</em>.</li>
@@ -164,10 +159,6 @@ Objects:</p>
   <li>Select and edit the configurable properties of an
       associated <em>Host</em>.</li>
   <li>Remove an associated <em>Host</em>.</li>
-  <li>Create and configure a new <em>Logger</em> associated with
-      this object.</li>
-  <li>Edit the configurable properties of the associated <em>Logger</em>.</li>
-  <li>Remove the associated <em>Logger</em>.</li>
   <li>Create and configure a new <em>Realm</em> associated with
       this object.</li>
   <li>Edit the configurable properties of the associated <em>Realm</em>.</li>
@@ -216,10 +207,6 @@ Objects:</p>
   <li>Edit the configurable properties of the associated <em>Default
       Context</em>.</li>
   <li>Remove the associated <em>Default Context</em>.</li>
-  <li>Create and configure a new <em>Logger</em> associated with
-      this object.</li>
-  <li>Edit the configurable properties of the associated <em>Logger</em>.</li>
-  <li>Remove the associated <em>Logger</em>.</li>
   <li>Create and configure a new <em>Realm</em> associated with
       this object.</li>
   <li>Edit the configurable properties of the associated <em>Realm</em>.</li>
@@ -252,19 +239,6 @@ Objects:</p>
   be possible to perform the following administrative operations:</p>
   <ul>
   <li>Navigate to the owning <em>Context</em>.</li>
-  <li>Edit the configurable properties of this object.</li>
-  </ul>
-
-</section>
-
-
-<section name="Logger">
-
-  <p>From the perspective of a particular <em>Logger</em>, it shall
-  be possible to perform the following administrative operations:</p>
-  <ul>
-  <li>Navigate to the owning <em>Engine</em>, <em>Host</em>, or
-      <em>Context</em>.</li>
   <li>Edit the configurable properties of this object.</li>
   </ul>
 

@@ -35,7 +35,6 @@ Operations</a> that can be performed when the administrative application is
 <li><a href="#Host">Host</a></li>
 <li><a href="#JDBC Resource">JDBC Resource</a></li>
 <li><a href="#Loader">Loader</a></li>
-<li><a href="#Logger">Logger</a></li>
 <li><a href="#Manager">Manager</a></li>
 <li><a href="#Realm">Realm</a></li>
 <li><a href="#Request Filter">Request Filter</a></li>
@@ -168,9 +167,6 @@ Operations</a> that can be performed when the administrative application is
       pools associated with a web application.</li>
   <li>A <em>Loader</em> representing the web application class loader used
       by this web application.</li>
-  <li>An optional <em>Logger</em> that logs all internally generated debug,
-      information, and error messages (including application messages using
-      <code>ServletContext.log()</code>).</li>
   <li>A <em>Manager</em> representing the session manager used by this
       web application.</li>
   <li>An optional <em>Realm</em> used to provide authentication and access
@@ -260,8 +256,6 @@ Operations</a> that can be performed when the administrative application is
       component).</li>
   <li>One or more <em>Hosts</em> representing individual virtual hosts
       supported by this container.</li>
-  <li>A <em>Logger</em> that logs all internally generated debug, information,
-      and error messages (unless overridden by a subordinate component).</li>
   <li>A <em>Realm</em> used to provide authentication and access control
       information for all virtual hosts and web applications (unless
       overridden by a subordinate component).</li>
@@ -325,9 +319,6 @@ Operations</a> that can be performed when the administrative application is
   <li>A <em>Default Context</em> representing default <em>Context</em>
       properties for web applications that are automatically deployed
       by this <em>Host</em>.</li>
-  <li>An optional <em>Logger</em> that logs all internally generated debug,
-      information, and error messages (unless overridden by a subordinate
-      component).</li>
   <li>A optional <em>Realm</em> used to provide authentication and access
       control information for all web applications associated with this
       virtual host (unless overridden by a subordinate component).</li>
@@ -371,60 +362,6 @@ Operations</a> that can be performed when the administrative application is
   </ul>
 
   <p>Each <em>Loader</em> is owned by a parent <em>Context</em>.</p>
-
-</section>
-
-
-<section name="Logger">
-
-  <p>A <em>Logger</em> represents an object that stores debugging traces,
-  error messages, and other information on some permanent (or transient)
-  media.  Several standard implementations are provided (with
-  <code>FileLogger</code> being the default).</p>
-
-  <p><code>org.apache.catalina.logger.FileLogger</code> creates disk files
-  in a specified directory, with the filenames being a combination of the
-  specified prefix, the current date, and the specified suffix.  The logger
-  will switch log files automatically on the first logged message after
-  midnight, without requiring a restart of the entire container.  The
-  following configurable properties are supported:</p>
-  <ul>
-  <li><code>debug</code> - Debugging detail level.  [0]</li>
-  <li><code>directory</code> - Absolute or relative (to $CATALINA_HOME) path
-      of the directory in which log files are created.  [logs]</li>
-  <li><code>prefix</code> - String added to the beginning of generated log
-      file names.  [catalina]</li>
-  <li><code>suffix</code> - String added to the end of generated log file
-      names.  [.log]</li>
-  <li><code>timestamp</code> - Should log messages be date/time stamped?
-      [true]</li>
-  <li><code>verbosity</code> - Minimum verbosity level for messages to be
-      actually written to this logger.  Note that messages that are logged
-      with no verbosity level at all are logged unconditionally.  [0]</li>
-  </ul>
-
-  <p><code>org.apache.catalina.logger.SystemErrLogger</code> logs all messages
-  to the system error stream of the process running the container.  The
-  following configurable properties are supported:</p>
-  <ul>
-  <li><code>debug</code> - Debugging detail level.  [0]</li>
-  <li><code>verbosity</code> - Minimum verbosity level for messages to be
-      actually written to this logger.  Note that messages that are logged
-      with no verbosity level at all are logged unconditionally.  [0]</li>
-  </ul>
-
-  <p><code>org.apache.catalina.logger.SystemOutLogger</code> logs all messages
-  to the system output stream of the process running the container.  The
-  following configurable properties are supported:</p>
-  <ul>
-  <li><code>debug</code> - Debugging detail level.  [0]</li>
-  <li><code>verbosity</code> - Minimum verbosity level for messages to be
-      actually written to this logger.  Note that messages that are logged
-      with no verbosity level at all are logged unconditionally.  [0]</li>
-  </ul>
-
-  <p>Each <em>Logger</em> is owned by a parent <em>Engine</em>,
-  <em>Host</em>, or <em>Context</em>.</p>
 
 </section>
 
