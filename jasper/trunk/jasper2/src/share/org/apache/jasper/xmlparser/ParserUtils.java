@@ -54,18 +54,8 @@
  */ 
 package org.apache.jasper.xmlparser;
 
-
 import java.io.InputStream;
 import java.io.IOException;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -100,13 +90,6 @@ import org.xml.sax.SAXParseException;
  */
 
 public class ParserUtils {
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * The class loader to use for accessing our XML parser.
-     */
-    protected ClassLoader classLoader = null;
-
 
     /**
      * An error handler for use when parsing XML documents.
@@ -120,7 +103,8 @@ public class ParserUtils {
     static EntityResolver entityResolver = new MyEntityResolver();
 
     // Turn off for JSP 2.0 until switch over to using xschema.
-    public static boolean validating=false;
+    public static boolean validating = false;
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -173,20 +157,6 @@ public class ParserUtils {
 
         // Convert the resulting document to a graph of TreeNodes
         return (convert(null, document.getDocumentElement()));
-        
-
-    }
-
-
-    /**
-     * Set the class loader used to access our XML parser.
-     *
-     * @param classLoader The new class loader
-     */
-    public void setClassLoader(ClassLoader classLoader) {
-
-        this.classLoader = classLoader;
-
     }
 
 
@@ -204,7 +174,6 @@ public class ParserUtils {
 
         // Construct a new TreeNode for this node
         TreeNode treeNode = new TreeNode(node.getNodeName(), parent);
-        //         System.out.println("PU: " + node.getNodeName());
 
         // Convert all attributes of this node
         NamedNodeMap attributes = node.getAttributes();
@@ -214,9 +183,6 @@ public class ParserUtils {
                 Node attribute = attributes.item(i);
                 treeNode.addAttribute(attribute.getNodeName(),
                                       attribute.getNodeValue());
-                //                 System.out.println("PU: " + 
-                //                                    attribute.getNodeName() + "=" + 
-                //                                    attribute.getNodeValue());
             }
         }
 
@@ -243,39 +209,6 @@ public class ParserUtils {
         
         // Return the completed TreeNode graph
         return (treeNode);
-
-    }
-
-
-    // ------------------------------------------------------- Static Variables
-
-
-    /**
-     * The special class loaders for each web application's XML parser,
-     * keyed by the web application class loader instance.  FIXME - this
-     * probably interferes with garbage collection after an application reload.
-     */
-    //    private static HashMap classLoaders = new HashMap();
-
-
-    // --------------------------------------------------------- Static Methods
-
-
-    /**
-     * Create (if necessary) and return an instance of ParserUtils that has
-     * been loaded by our subordinate class loader (and therefore should have
-     * access to the XML parser that is visible to repositories of that
-     * class loader).
-     *
-     * @param parentLoader The web application class loader
-     */
-    public synchronized static ParserUtils createParserUtils
-        (ClassLoader parentLoader) {
-
-        ParserUtils parserUtils = null;
-        parserUtils = new ParserUtils();
-        parserUtils.setClassLoader(parentLoader);
-        return (parserUtils);
     }
 }
 
@@ -297,14 +230,14 @@ class MyEntityResolver implements EntityResolver {
                         Constants.getString("jsp.error.internal.filenotfound", 
 					    new Object[]{resourcePath}));
 		}
-		InputSource isrc =
-		    new InputSource(input);
+		InputSource isrc = new InputSource(input);
 		return isrc;
 	    }
 	}
-        System.out.println("Resolve entity failed"  + publicId + " " + systemId );
+        System.out.println("Resolve entity failed"  + publicId + " "
+			   + systemId );
 	Constants.message("jsp.error.parse.xml.invalidPublicId",
-				new Object[]{publicId}, Logger.ERROR);
+			  new Object[]{publicId}, Logger.ERROR);
         return null;
     }
 }

@@ -258,8 +258,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         Vector functionVector = new Vector();
 
         // Create an iterator over the child elements of our <taglib> element
-        ClassLoader cl = ctxt.getClassLoader();
-        ParserUtils pu = ParserUtils.createParserUtils(cl);
+        ParserUtils pu = new ParserUtils();
         TreeNode tld = pu.parseXMLDocument(uri, in);
         Iterator list = tld.findChildren();
 

@@ -105,8 +105,7 @@ public class JspConfig {
 	    return;
 	}
 
-	ClassLoader cl = this.getClass().getClassLoader();
-	ParserUtils pu = ParserUtils.createParserUtils(cl);
+	ParserUtils pu = new ParserUtils();
 	TreeNode webApp = pu.parseXMLDocument(WEB_XML, is);
 	if (webApp == null || !"2.4".equals(webApp.findAttribute("version"))) {
 	    defaultIsELIgnored = "true";

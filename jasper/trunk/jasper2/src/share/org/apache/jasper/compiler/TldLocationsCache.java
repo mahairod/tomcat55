@@ -118,7 +118,7 @@ public class TldLocationsCache {
     public static final int ROOT_REL_URI = 1;
     public static final int NOROOT_REL_URI = 2;
 
-    static private final String WEB_XML = "/WEB-INF/web.xml";
+    private static final String WEB_XML = "/WEB-INF/web.xml";
     
     /**
      * The mapping of the 'global' tag library URI to the location
@@ -128,17 +128,21 @@ public class TldLocationsCache {
      *    [1] If the location is a jar file, this is the location
      *        of the tld.
      */
-    private Hashtable mappings = new Hashtable();
+    private Hashtable mappings;
 
-    private Hashtable tlds = new Hashtable();
+    private Hashtable tlds;
 
-    private boolean initialized=false;
-    ServletContext ctxt;
+    private boolean initialized;
+    private ServletContext ctxt;
+
     //*********************************************************************
     // Constructor and Initilizations
     
     public TldLocationsCache(ServletContext ctxt) {
-        this.ctxt=ctxt;
+        this.ctxt = ctxt;
+	mappings = new Hashtable();
+	tlds = new Hashtable();
+	initialized = false;
     }
 
     private void init() {
@@ -168,10 +172,7 @@ public class TldLocationsCache {
         }
 
         // Parse the web application deployment descriptor
-        ClassLoader cl =
-            // (ClassLoader) ctxt.getAttribute(Constants.SERVLET_CLASS_LOADER);
-            this.getClass().getClassLoader();
-        ParserUtils pu = ParserUtils.createParserUtils(cl);
+        ParserUtils pu = new ParserUtils();
         TreeNode webtld = pu.parseXMLDocument(WEB_XML, is);
 
 	// Allow taglib be an element of the root or jsp-config (JSP2.0)
@@ -286,7 +287,6 @@ public class TldLocationsCache {
     private String parseTldForUri(String resourcePath, InputStream in) 
         throws JasperException
     {
-
         // Parse the tag library descriptor at the specified resource path
         ParserUtils pu = new ParserUtils();
         TreeNode tld = pu.parseXMLDocument(resourcePath, in);
@@ -297,7 +297,6 @@ public class TldLocationsCache {
                 return body;
         }
         return null; // No <uri> element is present
-
     }
 
     //*********************************************************************
@@ -333,7 +332,7 @@ public class TldLocationsCache {
      *     ROOT_REL_URI
      *     NOROOT_REL_URI
      */
-    static public int uriType(String uri) {
+    public static int uriType(String uri) {
         if (uri.indexOf(':') != -1) {
             return ABS_URI;
         } else if (uri.startsWith("/")) {
