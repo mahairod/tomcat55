@@ -64,7 +64,6 @@
 
 package org.apache.catalina;
 
-
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.security.Principal;
@@ -171,7 +170,14 @@ public interface Realm {
      */
     public Principal authenticate(X509Certificate certs[]);
     
-
+    /**
+     * Return the SecurityConstraint configured to guard the request URI for
+     * this request, or <code>null</code> if there is no such constraint.
+     *
+     * @param request Request we are processing
+     */
+    public SecurityConstraint findSecurityConstraint(HttpRequest request,
+                                                     Context context);
     /**
      * Perform access control based on the specified authorization constraint.
      * Return <code>true</code> if this constraint is satisfied and processing
@@ -184,10 +190,10 @@ public interface Realm {
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean hasResourceAccess(HttpRequest request,
-                                     HttpResponse response,
-                                     SecurityConstraint constraint,
-                                     Context context)
+    public boolean hasResourcePermission(HttpRequest request,
+                                         HttpResponse response,
+                                         SecurityConstraint constraint,
+                                         Context context)
         throws IOException;
     
     
@@ -201,7 +207,23 @@ public interface Realm {
      */
     public boolean hasRole(Principal principal, String role);
 
-
+        /**
+     * Enforce any user data constraint required by the security constraint
+     * guarding this request URI.  Return <code>true</code> if this constraint
+     * was not violated and processing should continue, or <code>false</code>
+     * if we have created a response already.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param constraint Security constraint being checked
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public boolean hasUserDataPermission(HttpRequest request,
+                                         HttpResponse response,
+                                         SecurityConstraint constraint)
+        throws IOException;
+    
     /**
      * Remove a property change listener from this component.
      *
