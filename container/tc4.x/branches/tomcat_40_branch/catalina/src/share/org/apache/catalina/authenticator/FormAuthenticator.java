@@ -91,7 +91,7 @@ import org.apache.catalina.deploy.LoginConfig;
  * @version $Revision$ $Date$
  */
 
-public final class FormAuthenticator
+public class FormAuthenticator
     extends AuthenticatorBase {
 
 

@@ -91,7 +91,7 @@ import org.apache.catalina.util.MD5Encoder;
  * @version $Revision$ $Date$
  */
 
-public final class DigestAuthenticator
+public class DigestAuthenticator
     extends AuthenticatorBase {
 
 

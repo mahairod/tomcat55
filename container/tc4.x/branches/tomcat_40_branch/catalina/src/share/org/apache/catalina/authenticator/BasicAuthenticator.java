@@ -87,7 +87,7 @@ import org.apache.catalina.util.Base64;
  * @version $Revision$ $Date$
  */
 
-public final class BasicAuthenticator
+public class BasicAuthenticator
     extends AuthenticatorBase {
 
 
