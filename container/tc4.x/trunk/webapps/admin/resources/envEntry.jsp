@@ -37,12 +37,12 @@
             <controls:action>
               ---------------------------------
             </controls:action>
-<%--
-            <controls:action url='<%= "/users/setUpEnvEntry.do" %>'>
+
+            <controls:action url="/resources/setUpEnvEntry.do">
                 <bean:message key="resources.actions.env.create"/>
             </controls:action>
-
-            <controls:action url='<%= "/users/listEnvEntries.do?forward=" 
+<%--
+            <controls:action url='<%= "/resources/listEnvEntries.do?forward=" 
                         + URLEncoder.encode("Users Delete List") %>'>
                 <bean:message key="resources.actions.env.delete"/>
             </controls:action>
