@@ -1507,9 +1507,9 @@ public class CGIServlet extends HttpServlet {
          * </UL>
          * </p>
          *
-         * For more information, see java.lang.Runtime#exec(String command, 
+         * For more information, see java.lang.Runtime#exec(String command,
          * String[] envp, File dir)
-         * 
+         *
          * @exception IOException if problems during reading/writing occur
          *
          */
@@ -1663,7 +1663,6 @@ public class CGIServlet extends HttpServlet {
              *                               bugParade/bugs/4223650.html
              */
 
-            boolean isRunning = true;
             commandsStdOut = new BufferedReader
                 (new InputStreamReader(proc.getInputStream()));
             commandsStdErr = new BufferedReader
@@ -1680,63 +1679,97 @@ public class CGIServlet extends HttpServlet {
                 //NOOP: no output will be written
             }
 
+            boolean inHeader = true;
+            int pauseCount = 0;
+
+            boolean isRunning = true;
+
             while (isRunning) {
 
-                try {
-                    //read stderr first
-                    cBuf = new char[1024];
-                    while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
-                        if (servletContainerStdout != null) {
-                            servletContainerStdout.write(cBuf, 0, bufRead);
-                        }
-                    }
+                if (commandsStdErr != null && commandsStdErr.ready()) {
+                    // about to read something; reset pause count
+                    pauseCount = 0;
 
-                    //set headers
-                    String line = null;
-                    while (((line = commandsStdOut.readLine()) != null)
-                           && !("".equals(line))) {
-                        if (debug >= 2) {
-                            log("runCGI: addHeader(\"" + line + "\")");
-                        }
-                        if (line.startsWith("HTTP")) {
-                            //TODO: should set status codes (NPH support)
-                            /*
-                             * response.setStatus(getStatusCode(line));
-                             */
-                        } else {
-                            response.addHeader
-                                (line.substring(0, line.indexOf(":")).trim(),
-                                 line.substring(line.indexOf(":") + 1).trim());
-                        }
-                    }
-
-                    //write output
-                    cBuf = new char[1024];
-                    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+                    bufRead = commandsStdErr.read(cBuf);
+                    if (bufRead == -1) {
+                        commandsStdErr.close();
+                        commandsStdErr = null;
+                        isRunning = (commandsStdOut != null);
+                    } else {
                         if (servletContainerStdout != null) {
-                            if (debug >= 4) {
-                                log("runCGI: write(\"" + cBuf + "\")");
+                            if (inHeader) {
+                                servletContainerStdout.write(cBuf, 0, bufRead);
+                            } else {
+                                log("runCGI: Throwing away StdErr \"" +
+                                    new String(cBuf, 0, bufRead) + "\"");
                             }
-                            servletContainerStdout.write(cBuf, 0, bufRead);
+                        }
+                    }
+                } else if (commandsStdOut != null && commandsStdOut.ready()) {
+                    // about to read something; reset pause count
+                    pauseCount = 0;
+
+                    if (inHeader) {
+                        //set headers
+                        String line = commandsStdOut.readLine();
+                        if (line == null || "".equals(line)) {
+                            inHeader = false;
+                        } else {
+                            if (debug >= 2) {
+                                log("runCGI: addHeader(\"" + line + "\")");
+                            }
+                            if (line.startsWith("HTTP")) {
+                                //TODO: should set status codes (NPH support)
+                                /*
+                                 * response.setStatus(getStatusCode(line));
+                                 */
+                            } else if (line.indexOf(":") >= 0) {
+                                response.addHeader
+                                    (line.substring(0, line.indexOf(":")).trim(),
+                                     line.substring(line.indexOf(":") + 1).trim());
+                            } else {
+                                log("runCGI: bogus header line \"" + line + "\"");
+                            }
+                        }
+
+                    } else {
+                        //write output
+                        bufRead = commandsStdOut.read(cBuf);
+                        if (bufRead == -1) {
+                            commandsStdOut.close();
+                            commandsStdOut = null;
+                            isRunning = (commandsStdErr != null);
+                        } else {
+                            if (servletContainerStdout != null) {
+                                if (debug >= 4) {
+                                    log("runCGI: write(\"" + new String(cBuf, 0, bufRead) + "\")");
+                                }
+                                servletContainerStdout.write(cBuf, 0, bufRead);
+                            }
                         }
                     }
 
-                    if (servletContainerStdout != null) {
-                        servletContainerStdout.flush();
-                    }
-
-                    proc.exitValue(); // Throws exception if alive
-
-                    isRunning = false;
-
-                } catch (IllegalThreadStateException e) {
+                } else {
                     try {
-                        Thread.currentThread().sleep(500);
-                    } catch (InterruptedException ignored) {
+                        int exitVal = proc.exitValue();
+                        pauseCount++;
+                        if (pauseCount > 2) {
+                            isRunning = false;
+                        } else {
+                            // pause for half a second
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException ie) {
+                            }
+                        }
+                    } catch (IllegalThreadStateException ex) {
                     }
                 }
-            } //replacement for Process.waitFor()
 
+                if (servletContainerStdout != null) {
+                    servletContainerStdout.flush();
+                }
+            } //replacement for Process.waitFor()
 
         }
 
