@@ -35,9 +35,15 @@ these simple steps.  For more information, read the rest of this HOW-TO.</p>
    set an environment variable <code>JSSE_HOME</code> that points at the
    directory into which you installed JSSE.</li><br/><br/>
 <li>Create a certificate keystore by executing the following command:
+<p>Windows:</p>
 <source>
-keytool -genkey -alias tomcat -keyalg RSA
+%JAVA_HOME%\bin\keytool -genkey -alias tomcat -keyalg RSA
 </source>
+<p>Unix:</p>
+<source>
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA
+</source>
+<p></p>
     and specify a password value of "changeit".</li><br/><br/>
 <li>Uncomment the "SSL HTTP/1.1 Connector" entry in
     <code>$CATALINA_HOME/conf/server.xml</code> and tweak as necessary.</li>
@@ -202,8 +208,13 @@ documentation (in your JDK documentation package) about <code>keytool</code>.
 
 <p>To create a new keystore from scratch, containing a single self-signed
 Certificate, execute the following from a terminal command line:</p>
+<p>Windows:</p>
 <source>
-keytool -genkey -alias tomcat -keyalg RSA
+%JAVA_HOME%\bin\keytool -genkey -alias tomcat -keyalg RSA
+</source>
+<p>Unix:</p>
+<source>
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA
 </source>
 
 <p>(The RSA algorithm should be preferred as a secure algorithm, and this
@@ -216,8 +227,14 @@ followed by the complete pathname to your keystore file,
 to the <code>keytool</code> command shown above.  You will also need to
 reflect this new location in the <code>server.xml</code> configuration file,
 as described later.  For example:</p>
+<p>Windows:</p>
 <source>
-keytool -genkey -alias tomcat -keyalg RSA \
+%JAVA_HOME%\bin\keytool -genkey -alias tomcat -keyalg RSA \
+  -keystore \path\to\my\keystore
+</source>
+<p>Unix:</p>
+<source>
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA \
   -keystore /path/to/my/keystore
 </source>
 
