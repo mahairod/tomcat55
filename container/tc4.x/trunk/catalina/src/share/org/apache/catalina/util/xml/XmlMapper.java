@@ -873,7 +873,7 @@ class  MethodSetter extends 	    XmlAction {
 	}
 	m.invoke( parent, realParam );
 
-	if(ctx.getDebug() > 0 ) {
+	if  ((ctx.getDebug() > 0) && (paramC > 0)) {
 	    // debug
 	    StringBuffer sb=new StringBuffer();
 	    sb.append("" + parent.getClass().getName() + "." + mName + "( " );
@@ -882,7 +882,7 @@ class  MethodSetter extends 	    XmlAction {
 		sb.append(params[i]);
 	    }
 	    sb.append(")");
-	    if( ctx.getDebug() > 0 ) ctx.log(sb.toString());
+	    ctx.log(sb.toString());
 	}
     }
 }
