@@ -94,7 +94,10 @@
   <subsection name="Coyote">
     <changelog>
       <fix>
-       <bug>30770</bug>: Check that the browser actually sent a user-agent header before using it. (billbarker)
+        <bug>30770</bug>: Check that the browser actually sent a user-agent header before using it. (billbarker)
+      </fix>
+      <fix>
+        Default charset not included in Content-Type response header if no char encoding was specified (see Bugtraq 6152759). (luehe)
       </fix>
     </changelog>
   </subsection>
