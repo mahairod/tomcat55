@@ -1,7 +1,7 @@
-                           Release Notes for:
-                           ==================
-                           TOMCAT Version 3.2
-                           ==================
+                            Release Notes for:
+                           ====================
+                           TOMCAT Version 3.2.1
+                           ====================
 
 
 0.  TABLE OF CONTENTS:
@@ -12,6 +12,7 @@
     4.  Tomcat: Past, Present, and Future
     5.  New Features In This Release
     6.  Known Bugs and Issues
+    7.  Fixes and Enhancements in Updates
 
 
 =============================================================================
@@ -26,6 +27,10 @@ be used stand alone, or in conjunction with several popular web servers:
 
 You should read the License Agreement (in the LICENSE file of the top level
 directory), which applies to all software included in this release.
+
+This document adds descriptions of the bug fixes and enhancements that have
+been added in update releases of Tomcat 3.2 since the original release.  See
+Section 7 for details.
 
 
 =============================================================================
@@ -142,3 +147,27 @@ conform to Java's definition of an absolute path on this platform:
     BAD:   /mydirectory/mydocroot
 
 Under Unix, absolute pathnames must begin with a slash ('/') character.
+
+
+=============================================================================
+7.  FIXES AND ENHANCEMENTS IN UPDATES
+
+7.1 Fixes and Enhancements In Release 3.2.1
+
+JDBCRealm - The exception message that is logged when an exception occurs now
+includes a description of the actual SQLException, to aid in debugging the
+cause of the problem.  Also, this class is no longer marked "final", so that
+it can be conveniently subclassed by customized versions.
+
+ShowSource - The mechanism used to display the JSP source examples could be
+used to display sensitive files from the WEB-INF and META-INF directories.
+This has been corrected.
+
+SSL Documentation - The "doc/tomcat-ssl-howto.html" document has been updated
+to reflect more current information about using Tomcat+Apache in an SSL
+environment.
+
+Security Vulnerability - Tomcat 3.2 (final) exposes sensitive information when
+a URL like "http://localhost:8080/examples//WEB-INF/web.xml" (note the double
+slash) is presented.  This has been corrected so that a 404 is returned.
+
