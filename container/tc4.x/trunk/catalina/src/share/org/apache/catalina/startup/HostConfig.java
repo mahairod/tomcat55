@@ -157,6 +157,13 @@ public class HostConfig
 
 
     /**
+     * Should we monitor the <code>appBase</code> directory for new
+     * applications and automatically deploy them?
+     */
+    private boolean liveDeploy = false;
+
+
+    /**
      * The background thread.
      */
     private Thread thread = null;
@@ -258,6 +265,28 @@ public class HostConfig
 
 
     /**
+     * Return the live deploy flag for this component.
+     */
+    public boolean isLiveDeploy() {
+
+        return (this.liveDeploy);
+
+    }
+
+
+    /**
+     * Set the live deploy flag for this component.
+     *
+     * @param liveDeploy The new live deploy flag
+     */
+    public void setLiveDeploy(boolean liveDeploy) {
+
+        this.liveDeploy = liveDeploy;
+
+    }
+
+
+    /**
      * Return the unpack WARs flag.
      */
     public boolean isUnpackWARs() {
@@ -297,6 +326,7 @@ public class HostConfig
                 if (hostDebug > this.debug) {
                     this.debug = hostDebug;
                 }
+                setLiveDeploy(((StandardHost) host).getLiveDeploy());
                 setUnpackWARs(((StandardHost) host).isUnpackWARs());
             }
         } catch (ClassCastException e) {
@@ -746,7 +776,13 @@ public class HostConfig
         if (debug >= 1)
             log(sm.getString("hostConfig.start"));
 
-        threadStart();
+        if (host.getAutoDeploy()) {
+            deployApps();
+        }
+
+        if (isLiveDeploy()) {
+            threadStart();
+        }
 
     }
 
@@ -869,15 +905,14 @@ public class HostConfig
         // Loop until the termination semaphore is set
         while (!threadDone) {
 
+            // Wait for our check interval
+            threadSleep();
+
             // Deploy apps if the Host allows auto deploying
-            if (host.getAutoDeploy())
-                deployApps();
+            deployApps();
 
             // Check for web.xml modification
             checkWebXmlLastModified();
-
-            // Wait for our check interval
-            threadSleep();
 
         }
 

@@ -126,6 +126,14 @@
         will be used by default.</p>
       </attribute>
 
+      <attribute name="liveDeploy" required="false">
+        <p>This flag value indicates if new web applications, dropped in to
+        the <code>appBase</code> directory while Tomcat is running, should
+        be automatically deployed.  The flag's value defaults to true.  See
+        <a href="#Automatic Application Deployment">Automatic Application
+        Deployment</a> for more information.</p>
+      </attribute>
+
       <attribute name="unpackWARs" required="false">
         <p>Set to <code>true</code> if you want web applications that are
         placed in the <code>appBase</code> directory as web application
@@ -227,10 +235,8 @@
 
     <p>If you are using the standard <strong>Host</strong> implementation,
     the following actions take place automatically when Catalina is first
-    started.  All processing takes place in the <em>application base
-    directory</em> that is configured by the <code>appBase</code> property.
-    This behavior is enabled by setting the <code>autoDeploy</code> attribute
-    to <code>true</code> (which is the default value):</p>
+    started, if the <code>autoDeploy</code> property is set to
+    <code>true</code> (which is the default value:</p>
     <ul>
     <li>Any XML file in this directory is assumed to contain a
         <a href="context.html">Context</a> element (and its associated
@@ -259,10 +265,10 @@
     </ul>
 
     <p>In addition to the automatic deployment that occurs at startup time,
-    you can also add new WAR files, directory, or XML configuration files
-    into the <code>appBase</code> directory at any time, and the corresponding
-    applications will be automatically deployed if the <code>autoDeploy</code>
-    property is set to <code>true</code>.</p>
+    you can also request that new XML configuration files, WAR files, or
+    subdirectories (containing web applications) that are dropped in to the
+    <code>appBase</code> directory while Tomcat is running will be
+    automatically deployed, according to the rules described above.</p>
 
   </subsection>
 
