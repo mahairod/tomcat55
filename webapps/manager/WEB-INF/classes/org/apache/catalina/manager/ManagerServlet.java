@@ -618,30 +618,27 @@ public class ManagerServlet
         if (debug >= 2) {
             log("Uploading WAR file to " + localWar);
         }
-        try {
-            uploadWar(request, localWar);
-        } catch (IOException e) {
-            log("managerServlet.upload[" + displayPath + "]", e);
-            writer.println(sm.getString("managerServlet.exception",
-                                        e.toString()));
-            return;
-        }
-
-        // Copy WAR and XML to the host base
-        if (tag != null) {
-            deployedPath = deployed;
-            File localWarCopy = new File(deployedPath, basename + ".war");
-            copy(localWar, localWarCopy);
-            localWar = localWarCopy;
-        }
 
         // Copy WAR to appBase
         try {
             if (!isServiced(path)) {
                 addServiced(path);
-                copy(localWar, new File(getAppBase(), basename + ".war"));
-                check(path);
-                removeServiced(path);
+                try {
+                    // Upload WAR
+                    uploadWar(request, localWar);
+                    // Copy WAR and XML to the host app base if needed
+                    if (tag != null) {
+                        deployedPath = deployed;
+                        File localWarCopy = new File(deployedPath, basename + ".war");
+                        copy(localWar, localWarCopy);
+                        localWar = localWarCopy;
+                        copy(localWar, new File(getAppBase(), basename + ".war"));
+                    }
+                    // Perform new deployment
+                    check(path);
+                } finally {
+                    removeServiced(path);
+                }
             }
         } catch (Exception e) {
             log("managerServlet.check[" + displayPath + "]", e);
@@ -701,9 +698,13 @@ public class ManagerServlet
         try {
             if (!isServiced(path)) {
                 addServiced(path);
-                copy(localWar, new File(getAppBase(), getDocBase(path) + ".war"));
-                check(path);
-                removeServiced(path);
+                try {
+                    copy(localWar, new File(getAppBase(), getDocBase(path) + ".war"));
+                    // Perform new deployment
+                    check(path);
+                } finally {
+                    removeServiced(path);
+                }
             }
         } catch (Exception e) {
             log("managerServlet.check[" + displayPath + "]", e);
@@ -794,21 +795,25 @@ public class ManagerServlet
         try {
             if (!isServiced(path)) {
                 addServiced(path);
-                if (config != null) {
-                    copy(new File(config), 
-                            new File(configBase, getConfigFile(path) + ".xml"));
-                }
-                if (war != null) {
-               	    if (war.endsWith(".war")) {
-                        copy(new File(war), 
-                            new File(getAppBase(), getDocBase(path) + ".war"));
-                    } else {
-                        copy(new File(war), 
-                            new File(getAppBase(), getDocBase(path)));
+                try {
+                    if (config != null) {
+                        copy(new File(config), 
+                                new File(configBase, getConfigFile(path) + ".xml"));
                     }
+                    if (war != null) {
+                        if (war.endsWith(".war")) {
+                            copy(new File(war), 
+                                    new File(getAppBase(), getDocBase(path) + ".war"));
+                        } else {
+                            copy(new File(war), 
+                                    new File(getAppBase(), getDocBase(path)));
+                        }
+                    }
+                    // Perform new deployment
+                    check(path);
+                } finally {
+                    removeServiced(path);
                 }
-                check(path);
-                removeServiced(path);
             }
             writer.println(sm.getString("managerServlet.deployed",
                     displayPath));
@@ -1312,19 +1317,23 @@ public class ManagerServlet
             // Stop the context first to be nicer
             if (!isServiced(path)) {
                 addServiced(path);
-                ((Lifecycle) context).stop();
-                File war = new File(getAppBase(), getDocBase(path) + ".war");
-                File dir = new File(getAppBase(), getDocBase(path));
-                File xml = new File(configBase, getConfigFile(path) + ".xml");
-                if (war.exists()) {
-                    war.delete();
-                } else if (dir.exists()) {
-                    undeployDir(dir);
-                } else {
-                    xml.delete();
+                try {
+                    ((Lifecycle) context).stop();
+                    File war = new File(getAppBase(), getDocBase(path) + ".war");
+                    File dir = new File(getAppBase(), getDocBase(path));
+                    File xml = new File(configBase, getConfigFile(path) + ".xml");
+                    if (war.exists()) {
+                        war.delete();
+                    } else if (dir.exists()) {
+                        undeployDir(dir);
+                    } else {
+                        xml.delete();
+                    }
+                    // Perform new deployment
+                    check(path);
+                } finally {
+                    removeServiced(path);
                 }
-                check(path);
-                removeServiced(path);
             }
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
