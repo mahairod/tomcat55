@@ -97,6 +97,9 @@
       <fix>
         <bug>30949</bug>: Make sure ApplicationDispatcher unwraps requests even if include fails. (yoavs)
       </fix>
+      <fix>
+        <bug>31511</bug>: Don't call setenv.bat if not found in *using-launcher scripts. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
