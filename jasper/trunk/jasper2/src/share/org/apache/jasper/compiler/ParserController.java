@@ -105,6 +105,8 @@ class ParserController implements TagConstants {
 
     private String sourceEnc;
 
+    private boolean isDefaultPageEncoding;
+
     /*
      * Constructor
      */
@@ -187,6 +189,8 @@ class ParserController implements TagConstants {
 
 	Node.Nodes parsedPage = null;
 	isEncodingSpecifiedInProlog = false;
+	isDefaultPageEncoding = false;
+
 	String absFileName = resolveFileName(inFileName);
 	String jspConfigPageEnc = getJspConfigPageEncoding(absFileName);
 
@@ -246,7 +250,8 @@ class ParserController implements TagConstants {
 						    err);
                 parsedPage = Parser.parse(this, jspReader, parent, isTagFile,
 					  directivesOnly, jarFile, sourceEnc,
-					  jspConfigPageEnc);
+					  jspConfigPageEnc,
+					  isDefaultPageEncoding);
             } finally {
 		if (inStreamReader != null) {
 		    try {
@@ -409,13 +414,18 @@ class ParserController implements TagConstants {
 	sourceEnc = jspConfigPageEnc;
 	if (sourceEnc == null) {
 	    sourceEnc = getPageEncodingForJspSyntax(jspReader, startMark);
+	    if (sourceEnc == null) {
+		// Default to "ISO-8859-1" per JSP spec
+		sourceEnc = "ISO-8859-1";
+		isDefaultPageEncoding = true;
+	    }
 	}
-
-	return;
     }
     
     /*
-     * Determines page source encoding for JSP page or tag file in JSP syntax
+     * Determines page source encoding for page or tag file in JSP syntax
+     *
+     * @return The page encoding, or null if not found
      */
     private String getPageEncodingForJspSyntax(JspReader jspReader,
 						 Mark startMark)
@@ -451,11 +461,6 @@ class ParserController implements TagConstants {
                         Parser.parseAttributes(this, jspReader));
 		if (encoding != null) break;
 	    }
-	}
-
-	if (encoding == null) {
-	    // Default to "ISO-8859-1" per JSP spec
-	    encoding = "ISO-8859-1";
 	}
 
 	return encoding;

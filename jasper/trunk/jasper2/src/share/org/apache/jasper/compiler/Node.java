@@ -396,6 +396,18 @@ abstract class Node implements TagConstants {
 	private String jspConfigPageEnc;
 
 	/*
+	 * Flag indicating if the default page encoding is being used (only
+	 * applicable with standard syntax).
+	 *
+	 * True if the page does not provide a page directive with a
+	 * 'contentType' attribute (or the 'contentType' attribute doesn't
+	 * have a CHARSET value), the page does not provide a page directive
+	 * with a 'pageEncoding' attribute, and there is no JSP configuration
+	 * element page-encoding whose URL pattern matches the page.
+	 */
+	private boolean isDefaultPageEncoding;
+
+	/*
 	 * Indicates whether an encoding has been explicitly specified in the
 	 * page's XML prolog (only used for pages in XML syntax).
 	 * This information is used to decide whether a translation error must
@@ -451,6 +463,14 @@ abstract class Node implements TagConstants {
 	    return pageEnc;
 	}
 
+	public void setIsDefaultPageEncoding(boolean isDefault) {
+	    isDefaultPageEncoding = isDefault;
+	}
+
+	public boolean isDefaultPageEncoding() {
+	    return isDefaultPageEncoding;
+	}
+	
 	public void setIsEncodingSpecifiedInProlog(boolean isSpecified) {
 	    isEncodingSpecifiedInProlog = isSpecified;
 	}

@@ -1455,6 +1455,7 @@ class Validator {
 	// Determine the default output content type
 	PageInfo pageInfo = compiler.getPageInfo();
 	String contentType = pageInfo.getContentType();
+
 	if (contentType == null || contentType.indexOf("charset=") < 0) {
 	    boolean isXml = page.getRoot().isXmlSyntax();
 	    String defaultType;
@@ -1468,8 +1469,9 @@ class Validator {
 	    if (isXml) {
 		charset = "UTF-8";
 	    } else {
-		charset = page.getRoot().getPageEncoding();
-		// The resulting charset might be null
+		if (!page.getRoot().isDefaultPageEncoding()) {
+		    charset = page.getRoot().getPageEncoding();
+		}
 	    }
 
 	    if (charset != null) {
