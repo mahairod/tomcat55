@@ -116,7 +116,7 @@ public final class SaveJNDIRealmAction extends Action {
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mBServer = null;
-    
+
 
     /**
      * The MessageResources we will be retrieving messages from.
@@ -125,8 +125,8 @@ public final class SaveJNDIRealmAction extends Action {
 
 
     // --------------------------------------------------------- Public Methods
-    
-    
+
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -147,14 +147,14 @@ public final class SaveJNDIRealmAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-        
+
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        
+
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -162,7 +162,7 @@ public final class SaveJNDIRealmAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-        
+
         // Identify the requested action
         JNDIRealmForm rform = (JNDIRealmForm) form;
         String adminAction = rform.getAdminAction();
@@ -176,16 +176,16 @@ public final class SaveJNDIRealmAction extends Action {
 
             try {
 
-                String parent = rform.getParentObjectName();                
+                String parent = rform.getParentObjectName();
                 String objectName = DeleteLoggerAction.getObjectName(parent,
                                     TomcatTreeBuilder.REALM_TYPE);
-                
+
                 ObjectName pname = new ObjectName(parent);
-                StringBuffer sb = new StringBuffer(pname.getDomain());                    
-                
-                // For service, create the corresponding Engine mBean  
-                // Parent in this case needs to be the container mBean for the service 
-                try {                                                        
+                StringBuffer sb = new StringBuffer(pname.getDomain());
+
+                // For service, create the corresponding Engine mBean
+                // Parent in this case needs to be the container mBean for the service
+                try {
                     if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
                         sb.append(":type=Engine,service=");
                         sb.append(pname.getKeyProperty("name"));
@@ -199,7 +199,7 @@ public final class SaveJNDIRealmAction extends Action {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
                     return (null);
                 }
-                                                
+
                 // Ensure that the requested user database name is unique
                 ObjectName oname =
                     new ObjectName(objectName);
@@ -228,8 +228,8 @@ public final class SaveJNDIRealmAction extends Action {
                     session.getAttribute("treeControlTest");
                 if (control != null) {
                     TreeControlNode parentNode = control.findNode(rform.getParentObjectName());
-                    if (parentNode != null) {                        
-                        String nodeLabel = rform.getNodeLabel(); 
+                    if (parentNode != null) {
+                        String nodeLabel = rform.getNodeLabel();
                         String encodedName =
                             URLEncoder.encode(rObjectName);
                         TreeControlNode childNode =
@@ -320,11 +320,15 @@ public final class SaveJNDIRealmAction extends Action {
 
             attribute = "userBase";
             mBServer.setAttribute(roname,
-                                  new Attribute("userBase",  rform.getUserBase()));            
+                                  new Attribute("userBase",  rform.getUserBase()));
 
             attribute = "userPattern";
             mBServer.setAttribute(roname,
                                   new Attribute("userPattern",  rform.getUserPattern()));
+
+            attribute = "userSearch";
+            mBServer.setAttribute(roname,
+                                  new Attribute("userSearch",  rform.getUserSearch()));
 
             attribute = "connectionName";
             mBServer.setAttribute(roname,
@@ -349,11 +353,11 @@ public final class SaveJNDIRealmAction extends Action {
                                       attribute));
             return (null);
         }
-        
+
         // Forward to the success reporting page
         session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));
-        
+
     }
-    
+
 }

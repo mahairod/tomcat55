@@ -86,7 +86,7 @@ import org.apache.webapp.admin.Lists;
  */
 
 public class AddRealmAction extends Action {
-        
+
     /**
      * The MessageResources we will be retrieving messages from.
      */
@@ -96,7 +96,7 @@ public class AddRealmAction extends Action {
     private ArrayList types = null;
 
     // --------------------------------------------------------- Public Methods
-    
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -124,33 +124,33 @@ public class AddRealmAction extends Action {
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        
+
         // Fill in the form values for display and editing
-        
+
         String realmTypes[] = new String[4];
         realmTypes[0] = "UserDatabaseRealm";
         realmTypes[1] = "JNDIRealm";
         realmTypes[2] = "MemoryRealm";
-        realmTypes[3] = "JDBCRealm";       
-                     
+        realmTypes[3] = "JDBCRealm";
+
         String parent = request.getParameter("parent");
-        String type = request.getParameter("type");        
-        if (type == null) 
+        String type = request.getParameter("type");
+        if (type == null)
             type = "UserDatabaseRealm";    // default type is UserDatabaseRealm
-        
-        types = new ArrayList();    
+
+        types = new ArrayList();
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "/admin/AddRealm.do?parent=" + URLEncoder.encode(parent) 
-                + "&type=" + type));        
+                "/admin/AddRealm.do?parent=" + URLEncoder.encode(parent)
+                + "&type=" + type));
         for (int i=0; i< realmTypes.length; i++) {
             if (!type.equalsIgnoreCase(realmTypes[i])) {
                 types.add(new LabelValueBean(realmTypes[i],
-                "/admin/AddRealm.do?parent=" + URLEncoder.encode(parent) 
-                + "&type=" + realmTypes[i]));        
+                "/admin/AddRealm.do?parent=" + URLEncoder.encode(parent)
+                + "&type=" + realmTypes[i]));
             }
         }
-       
+
         if ("UserDatabaseRealm".equalsIgnoreCase(type)) {
             createUserDatabaseRealm(session, parent);
         } else if ("JNDIRealm".equalsIgnoreCase(type)) {
@@ -163,7 +163,7 @@ public class AddRealmAction extends Action {
         }
         // Forward to the realm display page
         return (mapping.findForward(type));
-        
+
     }
 
     private void createUserDatabaseRealm(HttpSession session, String parent) {
@@ -179,7 +179,7 @@ public class AddRealmAction extends Action {
         realmFm.setDebugLvl("0");
         realmFm.setResource("");
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
-        realmFm.setRealmTypeVals(types);        
+        realmFm.setRealmTypeVals(types);
     }
 
     private void createJNDIRealm(HttpSession session, String parent) {
@@ -194,23 +194,24 @@ public class AddRealmAction extends Action {
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvl("0");
         realmFm.setDigest("");
-        realmFm.setRoleBase("");                
+        realmFm.setRoleBase("");
         realmFm.setUserSubtree("false");
         realmFm.setRoleSubtree("false");
         realmFm.setRolePattern("");
-        realmFm.setUserRoleName("");        
-        realmFm.setRoleName("");        
-        realmFm.setRoleBase("");        
+        realmFm.setUserRoleName("");
+        realmFm.setRoleName("");
+        realmFm.setRoleBase("");
         realmFm.setContextFactory("");
         realmFm.setUserBase("");
         realmFm.setUserPattern("");
+        realmFm.setUserSearch("");
         realmFm.setUserPassword("");
         realmFm.setConnectionName("");
         realmFm.setConnectionPassword("");
         realmFm.setConnectionURL("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());        
+        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setSearchVals(Lists.getBooleanValues());
-        realmFm.setRealmTypeVals(types);        
+        realmFm.setRealmTypeVals(types);
     }
 
     private void createMemoryRealm(HttpSession session, String parent) {
@@ -223,10 +224,10 @@ public class AddRealmAction extends Action {
         String realmType = "MemoryRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvl("0");        
+        realmFm.setDebugLvl("0");
         realmFm.setPathName("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());                
-        realmFm.setRealmTypeVals(types);        
+        realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setRealmTypeVals(types);
     }
 
     private void createJDBCRealm(HttpSession session, String parent) {
@@ -241,7 +242,7 @@ public class AddRealmAction extends Action {
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvl("0");
         realmFm.setDigest("");
-        realmFm.setDriver("");        
+        realmFm.setDriver("");
         realmFm.setRoleNameCol("");
         realmFm.setPasswordCol("");
         realmFm.setUserTable("");
@@ -249,10 +250,10 @@ public class AddRealmAction extends Action {
         realmFm.setConnectionName("");
         realmFm.setConnectionPassword("");
         realmFm.setConnectionURL("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());        
-        realmFm.setRealmTypeVals(types);        
+        realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setRealmTypeVals(types);
     }
 
 
-    
+
 }

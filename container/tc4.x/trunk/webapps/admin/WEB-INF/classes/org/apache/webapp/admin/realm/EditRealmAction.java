@@ -88,7 +88,7 @@ import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
- * A generic <code>Action</code> that sets up <em>Edit 
+ * A generic <code>Action</code> that sets up <em>Edit
  * Realm </em> transactions, based on the type of Realm.
  *
  * @author Manveen Kaur
@@ -96,25 +96,25 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  */
 
 public class EditRealmAction extends Action {
-    
+
 
     /**
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mBServer = null;
-    
+
 
     /**
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-    
+
     private HttpSession session = null;
     private Locale locale = null;
     private HttpServletRequest request = null;
-    
+
     // --------------------------------------------------------- Public Methods
-    
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -135,7 +135,7 @@ public class EditRealmAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-        
+
         // Acquire the resources that we need
         session = request.getSession();
         this.request = request;
@@ -143,7 +143,7 @@ public class EditRealmAction extends Action {
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        
+
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -151,7 +151,7 @@ public class EditRealmAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-        
+
         // Set up the object names of the MBeans we are manipulating
         ObjectName rname = null;
         StringBuffer sb = null;
@@ -165,14 +165,14 @@ public class EditRealmAction extends Action {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
-        
+
        String realmType = null;
        String attribute = null;
-        
+
        // Find what type of Realm this is
-       try {    
+       try {
             attribute = "className";
-            String className = (String) 
+            String className = (String)
                 mBServer.getAttribute(rname, attribute);
             int period = className.lastIndexOf(".");
             if (period >= 0)
@@ -185,11 +185,11 @@ public class EditRealmAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.attribute.get",
                                       attribute));
-            return (null); 
+            return (null);
         }
 
         // Forward to the appropriate realm display page
-        
+
         if ("UserDatabaseRealm".equalsIgnoreCase(realmType)) {
                setUpUserDatabaseRealm(rname, response);
         } else if ("MemoryRealm".equalsIgnoreCase(realmType)) {
@@ -199,23 +199,23 @@ public class EditRealmAction extends Action {
         } else {
                setUpJNDIRealm(rname, response);
         }
-       
+
         return (mapping.findForward(realmType));
-                
+
     }
 
     private void setUpUserDatabaseRealm(ObjectName rname,
-                                        HttpServletResponse response) 
+                                        HttpServletResponse response)
     throws IOException {
         // Fill in the form values for display and editing
         UserDatabaseRealmForm realmFm = new UserDatabaseRealmForm();
         session.setAttribute("userDatabaseRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
-        realmFm.setObjectName(rname.toString());        
+        realmFm.setObjectName(rname.toString());
         String realmType = "UserDatabaseRealm";
         StringBuffer sb = new StringBuffer("");
         String host = rname.getKeyProperty("host");
-        String context = rname.getKeyProperty("path");        
+        String context = rname.getKeyProperty("path");
         if (host!=null) {
             sb.append("Host (" + host + ") > ");
         }
@@ -227,7 +227,7 @@ public class EditRealmAction extends Action {
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setAllowDeletion(allowDeletion(rname));
-        
+
         String attribute = null;
         try {
 
@@ -247,17 +247,17 @@ public class EditRealmAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.attribute.get",
                                       attribute));
-        }     
+        }
     }
-    
+
     private void setUpMemoryRealm(ObjectName rname,
-                                        HttpServletResponse response) 
+                                        HttpServletResponse response)
     throws IOException {
         // Fill in the form values for display and editing
         MemoryRealmForm realmFm = new MemoryRealmForm();
         session.setAttribute("memoryRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
-        realmFm.setObjectName(rname.toString());        
+        realmFm.setObjectName(rname.toString());
         String realmType = "MemoryRealm";
         StringBuffer sb = new StringBuffer("Realm (");
         sb.append(realmType);
@@ -286,17 +286,17 @@ public class EditRealmAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.attribute.get",
                                       attribute));
-        }     
+        }
     }
-    
+
     private void setUpJDBCRealm(ObjectName rname,
-                                        HttpServletResponse response) 
+                                        HttpServletResponse response)
     throws IOException {
         // Fill in the form values for display and editing
         JDBCRealmForm realmFm = new JDBCRealmForm();
         session.setAttribute("jdbcRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
-        realmFm.setObjectName(rname.toString());        
+        realmFm.setObjectName(rname.toString());
         String realmType = "JDBCRealm";
         StringBuffer sb = new StringBuffer("Realm (");
         sb.append(realmType);
@@ -343,7 +343,7 @@ public class EditRealmAction extends Action {
             attribute = "connectionURL";
             realmFm.setConnectionURL
                 ((String) mBServer.getAttribute(rname, attribute));
-            
+
         } catch (Throwable t) {
             getServlet().log
                 (resources.getMessage(locale, "users.error.attribute.get",
@@ -352,17 +352,17 @@ public class EditRealmAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.attribute.get",
                                       attribute));
-        }     
+        }
     }
-    
+
     private void setUpJNDIRealm(ObjectName rname,
-                                        HttpServletResponse response) 
+                                        HttpServletResponse response)
     throws IOException {
         // Fill in the form values for display and editing
         JNDIRealmForm realmFm = new JNDIRealmForm();
         session.setAttribute("jndiRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
-        realmFm.setObjectName(rname.toString());        
+        realmFm.setObjectName(rname.toString());
         String realmType = "JNDIRealm";
         StringBuffer sb = new StringBuffer("Realm (");
         sb.append(realmType);
@@ -413,6 +413,9 @@ public class EditRealmAction extends Action {
             attribute = "userPattern";
             realmFm.setUserPattern
                 ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userSearch";
+            realmFm.setUserSearch
+                ((String) mBServer.getAttribute(rname, attribute));
             attribute = "connectionName";
             realmFm.setConnectionName
                 ((String) mBServer.getAttribute(rname, attribute));
@@ -431,16 +434,16 @@ public class EditRealmAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.attribute.get",
                                       attribute));
-        }     
+        }
     }
-    
+
     /*
      * Check if "delete this realm" operation should be enabled.
      * this operation is not allowed in case the realm is under service,
      * host or context that the admin app runs on.
      * return "true" if deletion is allowed.
      */
-     
+
     private String allowDeletion(ObjectName rname) {
 
      boolean retVal = true;
@@ -448,27 +451,27 @@ public class EditRealmAction extends Action {
         // admin app's values
         String adminService = Lists.getAdminAppService(
                               mBServer, rname.getDomain(),request);
-        String adminHost = request.getServerName();                                         
+        String adminHost = request.getServerName();
         String adminContext = request.getContextPath();
 
         String thisService = rname.getKeyProperty("service");
         String thisHost = rname.getKeyProperty("host");
         String thisContext = rname.getKeyProperty("path");
-        
+
         // realm is under context
         if (thisContext!=null) {
-            retVal = !(thisContext.equalsIgnoreCase(adminContext));            
+            retVal = !(thisContext.equalsIgnoreCase(adminContext));
         } else if (thisHost != null) {
-            // realm is under host            
+            // realm is under host
             retVal = !(thisHost.equalsIgnoreCase(adminHost));
         } else {
-            // realm is under service            
+            // realm is under service
             retVal = !(thisService.equalsIgnoreCase(adminService));
         }
-                
+
      } catch (Exception e) {
-           getServlet().log("Error getting admin service, host or context", e);           
+           getServlet().log("Error getting admin service, host or context", e);
      }
         return new Boolean(retVal).toString();
-    }    
+    }
 }

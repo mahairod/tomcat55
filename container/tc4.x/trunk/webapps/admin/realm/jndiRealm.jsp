@@ -199,6 +199,13 @@
             </controls:data>
         </controls:row>
 
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+           <controls:label><bean:message key="realm.userSearch"/>:</controls:label>
+           <controls:data>
+               <html:text property="userSearch" size="30"/>
+           </controls:data>
+       </controls:row>
+
       </controls:table>
       </td>
     </tr>
