@@ -1561,6 +1561,11 @@ public class WebappClassLoader
                                         entry.binaryContent.length, 
                                         codeSource);
                     entry.loadedClass = clazz;
+                    entry.binaryContent = null;
+                    entry.source = null;
+                    entry.codeBase = null;
+                    entry.manifest = null;
+                    entry.certificates = null;
                 } else {
                     clazz = entry.loadedClass;
                 }
