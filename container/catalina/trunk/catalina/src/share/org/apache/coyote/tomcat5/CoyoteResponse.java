@@ -734,6 +734,9 @@ public class CoyoteResponse
             return;
 
         coyoteResponse.setContentType(type);
+        if ((type != null) && (type.indexOf(";charset=") != -1)) {
+            isCharacterEncodingSet = true;
+        }
         isContentTypeSet = true;    
     }
 
@@ -760,7 +763,7 @@ public class CoyoteResponse
             return;
 
         coyoteResponse.setCharacterEncoding(charset);
-        isCharacterEncodingSet= true;
+        isCharacterEncodingSet = true;
     }
 
     
@@ -779,26 +782,23 @@ public class CoyoteResponse
         // Ignore any call from an included servlet
         if (included)
             return;
-        
+
+        coyoteResponse.setLocale(locale);
+
         // Ignore any call made after the getWriter has been invoked.
         // The default should be used
         if (usingWriter)
             return;
-        
-        if (isCharacterEncodingSet){
-            return;       
+
+        if (isCharacterEncodingSet) {
+            return;
         }
-        
-        if (isContentTypeSet){
-            return;       
-        }
-        
-        coyoteResponse.setLocale(locale);
 
         CharsetMapper cm = context.getCharsetMapper();
         String charset = cm.getCharset( locale );
         if ( charset != null ){
             coyoteResponse.setCharacterEncoding(charset);
+            isCharacterEncodingSet = true;
         }
 
     }
