@@ -406,8 +406,6 @@ public class StandardHostDeployer implements Deployer {
         if (context == null)
             throw new IllegalArgumentException
                 (sm.getString("standardHost.pathMissing", contextPath));
-        File workDir = (File) context.getServletContext().getAttribute
-            (Globals.WORK_DIR_ATTR);
 
         // Remove this web application
         host.log(sm.getString("standardHost.removing", contextPath));
