@@ -117,6 +117,11 @@ public final class Options {
      */
     public String classpath = null;
     
+    /**
+     * Path of the compiler to use for compiling JSP pages.
+     */
+    public String jspCompilerPath = null;
+
 
     /**
      * Are we keeping generated code around?
@@ -166,6 +171,13 @@ public final class Options {
      */
     public String getClassPath() {
         return classpath;
+    }
+
+    /**
+     * Path of the compiler to use for compiling JSP pages.
+     */
+    public String getJspCompilerPath() {
+	return jspCompilerPath;
     }
 
     /**
@@ -246,6 +258,17 @@ public final class Options {
                                   scratchDir.getAbsolutePath()
                               }, Constants.FATAL_ERRORS);
 				  
+	String jspCompilerPath = config.getInitParameter("jspCompilerPath");
+	if (jspCompilerPath != null) {
+	    if (new File(jspCompilerPath).exists()) {
+		this.jspCompilerPath = jspCompilerPath;
+	    } else { 
+		Constants.message("jsp.warning.compiler.notfound",
+				  new Object[] { jspCompilerPath }, 
+				  Constants.FATAL_ERRORS);
+	    }
+	}
+  
     }
 }
 
