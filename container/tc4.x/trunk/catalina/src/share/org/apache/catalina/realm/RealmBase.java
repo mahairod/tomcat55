@@ -336,7 +336,7 @@ public abstract class RealmBase
     /**
      * Return the Principal associated with the specified username, which
      * matches the digest calculated using the given parameters using the
-     * method described in RFC 2069; otherwise return <code>null</code>.
+     * method described in RFC 2617; otherwise return <code>null</code>.
      *
      * @param username Username of the Principal to look up
      * @param clientDigest Digest which has been submitted by the client
@@ -369,7 +369,11 @@ public abstract class RealmBase
         String md5a1 = getDigest(username, realm);
         if (md5a1 == null)
             return null;
-        String serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
+        String serverDigestValue;
+        if (!"auth".equals(qop))
+          serverDigestValue = md5a1 + ":" + nOnce + ":" + md5a2;
+        else
+          serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
             + cnonce + ":" + qop + ":" + md5a2;
         String serverDigest =
             md5Encoder.encode(md5Helper.digest(serverDigestValue.getBytes()));

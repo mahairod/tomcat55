@@ -731,6 +731,8 @@ Catalina Bug Fixes:
          JDBCStore
          Fix bug where first session in result set was skipped.
 
+[4.1.25] #9851
+         Improve Digest Authentication compatibility
 
 ----------------
 Coyote Bug Fixes:

@@ -313,8 +313,14 @@ public class DigestAuthenticator
                 nc = currentTokenValue;
             if ("cnonce".equals(currentTokenName))
                 cnonce = removeQuotes(currentTokenValue);
-            if ("qop".equals(currentTokenName))
-                qop = removeQuotes(currentTokenValue);
+            if ("qop".equals(currentTokenName)) {
+                //support both quoted and non-quoted
+                if (currentTokenValue.startsWith("\"") &&
+                    currentTokenValue.endsWith("\""))
+                  qop = removeQuotes(currentTokenValue);
+                else
+                  qop = currentTokenValue;
+            }
             if ("uri".equals(currentTokenName))
                 uri = removeQuotes(currentTokenValue);
             if ("response".equals(currentTokenName))
@@ -323,6 +329,9 @@ public class DigestAuthenticator
 
         if ( (userName == null) || (realmName == null) || (nOnce == null)
              || (uri == null) || (response == null) )
+            return null;
+
+        if (qop != null && (cnonce == null || nc == null))
             return null;
 
         // Second MD5 digest used to calculate the digest :
