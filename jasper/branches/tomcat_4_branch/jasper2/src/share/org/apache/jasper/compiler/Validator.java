@@ -255,6 +255,7 @@ public class Validator {
         private ErrorDispatcher err;
 
         private static final JspUtil.ValidAttribute[] jspRootAttrs = {
+            new JspUtil.ValidAttribute("xsi:schemaLocation"),
             new JspUtil.ValidAttribute("version", true) };
 
         private static final JspUtil.ValidAttribute[] includeDirectiveAttrs = {

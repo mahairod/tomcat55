@@ -85,6 +85,8 @@ public class JspDocumentParser extends DefaultHandler
     private static final String XMLNS = "xmlns:";
     private static final String XMLNS_JSP = "xmlns:jsp";
     private static final String JSP_VERSION = "version";
+    private static final String XMLNS_XSI = "xmlns:xsi";
+    private static final String XSI_SCHEMA_LOCATION = "xsi:schemaLocation";
     private static final String URN_JSPTLD = "urn:jsptld:";
     private static final String LEXICAL_HANDLER_PROPERTY
         = "http://xml.org/sax/properties/lexical-handler";
@@ -432,7 +434,9 @@ public class JspDocumentParser extends DefaultHandler
         for (int i=0; i<len; i++) {
             String qName = attrs.getQName(i);
             if (!qName.startsWith(XMLNS_JSP)
-                        && !qName.startsWith(JSP_VERSION)) {
+                        && !qName.startsWith(JSP_VERSION)
+                        && !qName.startsWith(XMLNS_XSI)
+                        && !qName.startsWith(XSI_SCHEMA_LOCATION)) {
 
                 // get the prefix
                 String prefix = null;
