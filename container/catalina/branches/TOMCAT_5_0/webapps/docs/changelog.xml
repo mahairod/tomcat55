@@ -37,6 +37,9 @@
       <fix>
         <bug>31592</bug>: Allow specification of digest encoding for realms. (yoavs)
       </fix>
+      <update>
+        Added and updated Connector documentation: <bug>31945</bug>. (yoavs)
+      </update>
     </changelog>
   </subsection>
 

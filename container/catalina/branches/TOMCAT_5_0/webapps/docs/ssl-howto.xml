@@ -278,7 +278,7 @@ Certificate that can be used by your server.</p>
 <p>The final step is to configure your secure socket in the
 <code>$CATALINA_HOME/conf/server.xml</code> file, where
 <code>$CATALINA_HOME</code> represents the directory into which you
-installed Tomcat 5.  An example <code>&lt;Connector&gt;</code> element
+installed Tomcat 5.  An example <code>&lt;<a href="config/connector.html">Connector</a>&gt;</code> element
 for an SSL connector is included in the default <code>server.xml</code>
 file installed with Tomcat.  It will look something like this:</p>
 <source>
@@ -310,7 +310,7 @@ numbers lower than 1024 on many operating systems.</p>
   <blockquote><em>
   <p>If you change the port number here, you should also change the
   value specified for the <code>redirectPort</code> attribute on the
-  non-SSL connector.  This allows Tomcat to automatically redirect
+  non-SSL <a href="config/connector.html">connector</a>.  This allows Tomcat to automatically redirect
   users who attempt to access a page with a security constraint specifying
   that SSL is required, as required by the Servlet 2.4 Specification.</p>
   </em></blockquote>

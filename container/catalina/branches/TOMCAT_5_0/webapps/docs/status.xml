@@ -29,17 +29,16 @@
 
   <section name="Current Status Summary">
     <p>
-      <b>Tomcat 5.0.27</b> was released on June 17th, 2004.  At that time, the TOMCAT_5_0
-      branch was tagged in CVS, and work on Tomcat 5.1 (or 5.5, or 5.next, we haven't
-      decided yet) began.  Until the first stable release of Tomcat 5.1, building from
-      CVS head may be unstable or broken: use the TOMCAT_5_0 branch tag to build
-      the Tomcat 5.0 releases.
+      <b>Tomcat 5.0.29</b> was released on October 6th, 2004.  Work on the 5.0 branch is primarily
+      for maintenance and bug fixes.  It is still considered the best branch for production use, but
+      Tomcat 5.5 is rapidly nearing a stable release.
     </p>
     <p>
-      <b>Tomcat 5.1</b> has several major goals.  They are discussed in the tomcat-dev
+      <b>Tomcat 5.5</b> has several major goals.  They are discussed in the tomcat-dev
       mailing list's "5.next" thread: 
       <a href="http://marc.theaimsgroup.com/?l=tomcat-dev&amp;w=2&amp;r=1&amp;s=5.next&amp;q=b">MARC</a>.
-      The status of some of these items is detailed below.
+      The status of some of these items is detailed below.  This branch has yet to have a stable
+      release, but stability is improving and a stable release is expected soon.
     </p>
     <p>
       <b>Tomcat 4.0.x</b> is relatively old, and not actively maintained or supported.
@@ -93,19 +92,19 @@
 
     <status>
       <item priority="High" owner="remm, costin">
-        Refactor ClassLoaders for Tomcat 5.1.
+        Refactor ClassLoaders for Tomcat 5.5.
       </item>
       <item priority="High" owner="remm">
-        Refactor application deployment for Tomcat 5.1.
+        Refactor application deployment for Tomcat 5.5.
       </item>
       <item priority="High" owner="remm">
         Remove Logger interface and implementation, use commons-logging everywhere.
       </item>
       <item priority="Medium" owner="fhanik">
-        Enhance Cluster functionality for Tomcat 5.1.
+        Enhance Cluster functionality for Tomcat 5.5.
       </item>
       <item priority="Low" owner="yoavs, funkman">
-        Update docs, site, and FAQ for Tomcat 5.1 once ready.
+        Update docs, site, and FAQ for Tomcat 5.5.
       </item>
       <item priority="Low" owner="everyone">
         Continue fixing bugs ;)

@@ -15,6 +15,11 @@
 
 
 <section name="Introduction">
+  <p>
+    <strong>Please note that Loggers are deprecated in Tomcat 5.0 and removed
+    from Tomcat 5.5.  Tomcat 5.5 uses <a href="http://jakarta.apache.org/commons/logging">Commons-Logging</a>
+    instead.</strong>
+  </p>
 
   <p>A <strong>Logger</strong> element represents a destination for
   logging, debugging, and error messages (including stack tracebacks)
@@ -31,7 +36,8 @@
   <a href="context.html#Access Logs">Context</a>.</p>
 
   <p>For a more in-depth description of the class loader hierarchy
-  that is implemented by Catalina, see <strong>FIXME - Reference</strong>.</p>
+  that is implemented by Catalina, see <a href="../class-loader-howto.html">the ClassLoader HOW-TO</a>
+  </p>
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME

@@ -17,7 +17,7 @@
 <section name="Introduction">
 
   <p>A <strong>Service</strong> element represents the combination of one or
-  more <strong>Connector</strong> components that share a single
+  more <strong><a href="connector.html">Connector</a></strong> components that share a single
   <a href="engine.html">Engine</a> component for processing incoming
   requests.  One or more <strong>Service</strong> elements may be nested
   inside a <a href="server.html">Server</a> element.</p>
@@ -74,7 +74,7 @@
 <section name="Nested Components">
 
   <p>The only components that may be nested inside a <strong>Service</strong>
-  element are one or more <strong>Connector</strong> elements,
+  element are one or more <strong><a href="connector.html">Connector</a></strong> elements,
   followed by exactly one <a href="engine.html">Engine</a> element.</p>
 
 </section>

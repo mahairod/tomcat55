@@ -159,9 +159,9 @@ loaders as it is initialized:</p>
         These are separated so that they can be completely removed if the
         corresponding service is not required, or they can be subject to
         specialized security manager permissions.</li>
-    <li><em>tomcat-coyote.jar</em> - Coyote connector for Tomcat 5.</li>
+    <li><em>tomcat-coyote.jar</em> - Coyote <a href="config/connector.html">connector</a> for Tomcat 5.</li>
     <li><em>tomcat-http11.jar</em> - Standalone Java HTTP/1.1 
-        connector.</li>
+        <a href="config/connector.html">connector.</a></li>
     <li><em>tomcat-jk2.jar</em> - Classes for the Java portion of the
         <code>JK 2</code> web server connector, which allows Tomcat to
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>

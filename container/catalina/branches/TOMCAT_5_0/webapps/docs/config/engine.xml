@@ -19,13 +19,13 @@
   <p>The <strong>Engine</strong> element represents the entire request
   processing machinery associated with a particular Catalina
   <a href="service.html">Service</a>.  It receives and processes
-  <em>all</em> requests from one or more <strong>Connectors</strong>,
-  and returns the completed response to the Connector for ultimate
+  <em>all</em> requests from one or more <strong><a href="connector.html">Connectors</a></strong>,
+  and returns the completed response to the <a href="connector.html">Connector</a> for ultimate
   transmission back to the client.</p>
 
   <p>Exactly one <strong>Engine</strong> element MUST be nested inside
   a <a href="service.html">Service</a> element, following all of the
-  corresponding Connector elements associated with this Service.</p>
+  corresponding <a href="connector.html">Connector</a> elements associated with this Service.</p>
 
 </section>
 
@@ -129,7 +129,7 @@
   <li><a href="logger.html"><strong>Logger</strong></a> -
       Configure a logger that will receive
       and process all log messages for this <strong>Engine</strong>, plus
-      messages from <strong>Connectors</strong> associated with this Engine
+      messages from <strong><a href="connector.html">Connectors</a></strong> associated with this Engine
       in the surrounding Service.  In addition, this Logger will log messages
       from subordinate <a href="host.html">Hosts</a> and
       <a href="context.html">Contexts</a>, unless overridden by a

@@ -21,7 +21,7 @@ the server name and port number to which the request was directed for
 processing.  When Tomcat is running standalone with the
 <a href="config/coyote.html">Coyote HTTP/1.1 Connector</a>, it will generally
 report the server name specified in the request, and the port number on
-which the <strong>Connector</strong> is listening.  The two servlet API
+which the <strong><a href="config/connector.html">Connector</a></strong> is listening.  The two servlet API
 calls of interest, for this purpose, are:</p>
 <ul>
 <li><code>ServletRequest.getServerName()</code></li>
@@ -32,9 +32,9 @@ calls of interest, for this purpose, are:</p>
 configured to behave like a proxy server), you will sometimes prefer to
 manage the values returned by these calls.  In particular, you will
 generally want the port number to reflect that specified in the original
-request, not the one on which the <strong>Connector</strong> itself is
+request, not the one on which the <strong><a href="config/connector.html">Connector</a></strong> itself is
 listening.  You can use the <code>proxyName</code> and <code>proxyPort</code>
-attributes on the <code>&lt;Connector&gt;</code> element to configure
+attributes on the <code>&lt;<a href="config/connector.html">Connector</a>&gt;</code> element to configure
 these values.</p>
 
 <p>Proxy support can take many forms.  The following sections describe
@@ -70,10 +70,10 @@ ProxyPass         /myapp  http://localhost:8081/myapp
 ProxyPassReverse  /myapp  http://localhost:8081/myapp
 </source>
     which tells Apache to forward URLs of the form
-    <code>http://localhost/myapp/*</code> to the Tomcat 5 connector
+    <code>http://localhost/myapp/*</code> to the Tomcat 5 <a href="config/connector.html">connector</a>
     listening on port 8081.</li>
 <li>Configure your copy of Tomcat 5 to include a special
-    <code>&lt;Connector&gt;</code> element, with appropriate
+    <code>&lt;<a href="config/connector.html">Connector</a>&gt;</code> element, with appropriate
     proxy settings, for example:
 <source>
 &lt;Connector port="8081" ...
@@ -100,7 +100,7 @@ ProxyPassReverse  /myapp  http://localhost:8081/myapp
     only available via proxying, as follows:
     <ul>
     <li>Configure another <code>&lt;Service&gt;</code> that contains
-        only a <code>&lt;Connector&gt;</code> for the proxy port.</li>
+        only a <code>&lt;<a href="config/connector.html">Connector</a>&gt;</code> for the proxy port.</li>
     <li>Configure appropriate <a href="config/engine.html">Engine</a>,
         <a href="config/host.html">Host</a>, and
         <a href="config/context.html">Context</a> elements for the virtual hosts
