@@ -250,6 +250,8 @@ public class SocketInputStream extends InputStream {
         
         space = false;
         
+        boolean eol = false;
+        
         while (!space) {
             // if the buffer is full, extend it
             if (readCount >= maxRead) {
@@ -275,6 +277,10 @@ public class SocketInputStream extends InputStream {
             }
             if (buf[pos] == SP) {
                 space = true;
+            } else if ((buf[pos] == CR) || (buf[pos] == LF)) {
+                // HTTP/0.9 style request
+                eol = true;
+                space = true;
             }
             requestLine.uri[readCount] = (char) buf[pos];
             readCount++;
@@ -288,8 +294,6 @@ public class SocketInputStream extends InputStream {
         maxRead = requestLine.protocol.length;
         readStart = pos;
         readCount = 0;
-        
-        boolean eol = false;
         
         while (!eol) {
             // if the buffer is full, extend it
