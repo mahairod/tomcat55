@@ -72,9 +72,10 @@ public class Jar extends Task {
 
     private File jarFile;
     private File baseDir;
-    private Vector items;
+    private Vector items = new Vector();
     private File manifest;    
-
+    private Vector ignoreList = new Vector();
+    
     public void setJarfile(String jarFilename) {
 	jarFile = project.resolveFile(jarFilename);
     }
@@ -84,13 +85,35 @@ public class Jar extends Task {
     }
 
     public void setItems(String itemString) {
-	items = new Vector();
 	StringTokenizer tok = new StringTokenizer(itemString, ",", false);
 	while (tok.hasMoreTokens()) {
 	    items.addElement(tok.nextToken().trim());
 	}
     }
-
+    /**
+        List of filenames and directory names to not 
+        include in the final .jar file. They should be either 
+        , or " " (space) separated.
+        <p>
+        For example:
+        <p>
+        ignore="package.html, foo.class"
+        <p>
+        The ignored files will be logged.
+        
+        @author Jon S. Stevens <a href="mailto:jon@clearink.com">jon@clearink.com</a>
+    */
+    public void setIgnore(String ignoreString) {
+        ignoreString = ignoreString;
+        if (ignoreString != null && ignoreString.length() > 0) {
+            StringTokenizer tok =
+            new StringTokenizer(ignoreString, ", ", false);
+            while (tok.hasMoreTokens()) {
+                ignoreList.addElement ( tok.nextToken().trim() );
+            }
+        }
+    }
+    
     public void setManifest(String manifestFilename) {
 	manifest = project.resolveFile(manifestFilename);
     }
@@ -122,13 +145,19 @@ public class Jar extends Task {
 	    
 	    Enumeration e = items.elements();
 	    while (e.hasMoreElements()) {
-		String s = (String)e.nextElement();
-		File f = new File(baseDir, s);
-		if (f.isDirectory()) {
-		    jarDir(f, zOut, s + "/");
-		} else {
-		    jarFile(f, zOut, s);
-		}
+            String s = (String)e.nextElement();
+            // check to make sure item is not in ignore list
+            // shouldn't be ignored here, but just want to make sure
+            if (! ignoreList.contains(s)) {
+                File f = new File(baseDir, s);
+                if (f.isDirectory()) {
+                    jarDir(f, zOut, s + "/");
+                } else {
+                    jarFile(f, zOut, s);
+                }
+            } else {
+                project.log("Ignored: " + s);
+            }
 	    }
 
 	    // close up
@@ -154,12 +183,17 @@ public class Jar extends Task {
 	String[] list = dir.list();
 	for (int i = 0; i < list.length; i++) {
 	    String f = list[i];
-	    File file = new File(dir, f);
-	    if (file.isDirectory()) {
-		jarDir(file, zOut, vPath + f + "/");
-	    } else {
-		jarFile(file, zOut, vPath + f);
-	    }
+        // check to make sure item is not in ignore list
+        if (! ignoreList.contains(f)) {
+            File file = new File(dir, f);
+            if (file.isDirectory()) {
+                jarDir(file, zOut, vPath + f + "/");
+            } else {
+                jarFile(file, zOut, vPath + f);
+            }
+        } else {
+            project.log("Ignored: " + f);
+        }
 	}
     }
 
@@ -185,7 +219,6 @@ public class Jar extends Task {
 	fIn.close();
     }
 }
-
 
 
 
