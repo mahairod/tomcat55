@@ -18,7 +18,7 @@
 package org.apache.webapp.admin.resources;
 
 import java.io.IOException;
-import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -133,6 +133,8 @@ public final class SaveDataSourceAction extends Action {
             Object params[] = new Object[2];
             params[0] = dataSourceForm.getJndiName();
             params[1] = ResourceUtils.DATASOURCE_CLASS;
+            String encodedJndiName = URLEncoder.encode(params[0].toString(), 
+                                                       "UTF-8");
 
             String resourcetype = dataSourceForm.getResourcetype();
             String path = dataSourceForm.getPath();
@@ -140,6 +142,7 @@ public final class SaveDataSourceAction extends Action {
             String domain = dataSourceForm.getDomain();
 
             ObjectName oname = null;
+            ObjectName encodedOName = null;
 
             try {
             
@@ -148,15 +151,27 @@ public final class SaveDataSourceAction extends Action {
                                             ResourceUtils.GLOBAL_TYPE + 
                                             ",class=" + params[1] + 
                                             ",name=" + params[0]);
+                    encodedOName = new ObjectName( domain + 
+                                            ResourceUtils.RESOURCE_TYPE + 
+                                            ResourceUtils.GLOBAL_TYPE + 
+                                            ",class=" + params[1] + 
+                                            ",name=" + encodedJndiName);
                 } else if (resourcetype.equals("Context")) {
                     oname = new ObjectName( domain + ResourceUtils.RESOURCE_TYPE + 
                                             ResourceUtils.CONTEXT_TYPE + 
                                             ",path=" + path + ",host=" + host + 
                                             ",class=" + params[1] + 
                                             ",name=" + params[0]);
+                    encodedOName = new ObjectName( domain + 
+                                            ResourceUtils.RESOURCE_TYPE + 
+                                            ResourceUtils.CONTEXT_TYPE + 
+                                            ",path=" + path + ",host=" + host + 
+                                            ",class=" + params[1] + 
+                                            ",name=" + encodedJndiName);
                 }
-                    
-                if (mserver.isRegistered(oname)) {
+                
+                if (mserver.isRegistered(oname) || 
+                                        mserver.isRegistered(encodedOName)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("jndiName",
                                new ActionError("resources.invalid.name"));
