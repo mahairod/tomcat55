@@ -89,9 +89,10 @@
   </target>
 
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
-  <target name="build-javadoc" depends="build-main">
-    <mkdir dir="${catalina.build}/webapps/ROOT/javadoc"/>
-    <javadoc packagenames="org.apache.tomcat.*"
+  <target name="javadoc" depends="build-main">
+    <deltree dir="${catalina.build}/webapps/ROOT/catalina-javadoc"/>
+    <mkdir dir="${catalina.build}/webapps/ROOT/catalina-javadoc"/>
+    <javadoc packagenames="org.apache.catalina.*"
              classpath="${regexp.jar}:${servlet.jar}:${catalina.build}/classes"
                sourcepath="src/share"
                   destdir="${catalina.build}/webapps/ROOT/javadoc"
