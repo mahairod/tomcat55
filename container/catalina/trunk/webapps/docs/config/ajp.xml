@@ -9,6 +9,7 @@
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
     <author email="yoavs@apache.org">Yoav Shapira</author>
+    <author email="arjaquith@mindspring.com">Andrew R. Jaquith</author>
     <title>The AJP Connector</title>
   </properties>
 
@@ -167,7 +168,9 @@ with AJP enabled</li>
       <p>For servers with more than one IP address, this attribute
       specifies which address will be used for listening on the specified
       port.  By default, this port will be used on all IP addresses
-      associated with the server.</p>
+      associated with the server. A value of <code>127.0.0.1</code>
+      indicates that the Connector will only listen on the loopback
+      interface.</p>
     </attribute>
 
     <attribute name="backlog" required="false">
@@ -176,6 +179,25 @@ with AJP enabled</li>
       received when the queue is full will be refused.  The default
       value is 10.</p>
     </attribute>
+
+    <attribute name="minProcessors" required="false">
+      <strong>deprecated</strong>
+      <p>The minimum number of processors to start at initialization time.
+      If not specified, this atttribute is set to 5.</p>
+    </attribute>
+
+    <attribute name="maxProcessors" required="false">
+      <strong>deprecated</strong>
+      <p>The maximum number of processors allowed. This should be
+      set to a value that is greater than or equal to the maximum number
+      of concurrent connections the remote web server can open to Tomcat 
+      simultaneously. For example, if the web server is Apache 1.x or 2.x
+      Tomcat's <code>maxProcessors</code> should be set to the 
+      value of Apache's <code>maxClients</code> directive.</p>
+      <p>A <code>maxProcessors</code> value of zero (0) signifies that 
+      the number of processors is unlimited. If not specified, this
+      atttribute defaults to 20.</p>
+     </attribute>
 
     <attribute name="maxSpareThreads" required="false">
       <p>The maximum number of unused request processing threads that
