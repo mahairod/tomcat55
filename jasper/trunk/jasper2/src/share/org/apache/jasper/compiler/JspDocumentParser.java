@@ -169,7 +169,7 @@ class JspDocumentParser extends DefaultHandler
 		// create dummy <jsp:root> element
 		AttributesImpl rootAttrs = new AttributesImpl();
 		rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
-		jspRoot = new Node.JspRoot(rootAttrs, null, null);
+		jspRoot = new Node.JspRoot(rootAttrs, null, null, null);
 		handler.current = jspRoot;
 	    } else {
 		handler.isTop = false;
@@ -228,24 +228,33 @@ class JspDocumentParser extends DefaultHandler
 	// is valid from that point forward.  Redefinitions cause an
 	// error.  This isn't quite consistent with how xmlns: normally
 	// works.
-	Attributes attrsCopy = null;
-	try {
-	    attrsCopy = addCustomTagLibraries(attrs);
-	} catch (JasperException je) {
-	    throw new SAXParseException(
-                    Localizer.getMessage("jsp.error.could.not.add.taglibraries"),
-		    locator, je );
+	AttributesImpl attrsCopy = null;
+	Attributes xmlnsAttrs = null;
+	if (attrs != null) {
+	    attrsCopy = new AttributesImpl(attrs);
+	    xmlnsAttrs = getXmlnsAttributes(attrsCopy);
+	    if (xmlnsAttrs != null) {
+		try {
+		    addCustomTagLibraries(xmlnsAttrs);
+		} catch (JasperException je) {
+		    throw new SAXParseException(
+		        Localizer.getMessage(
+                            "jsp.error.could.not.add.taglibraries"),
+			locator, je);
+		}
+	    }
 	}
 
 	Node node = null;
 	if (qName.startsWith("jsp:")) {
-	    node = parseStandardAction(qName, attrs, attrsCopy, start,
+	    node = parseStandardAction(qName, attrsCopy, xmlnsAttrs, start,
 				       current);
 	} else {
-	    node = parseCustomAction(qName, attrsCopy, start, current);
+	    node = parseCustomAction(qName, attrsCopy, xmlnsAttrs, start,
+				     current);
 	    if (node == null) {
-		node = new Node.UninterpretedTag(attrsCopy, start, qName,
-						 current);
+		node = new Node.UninterpretedTag(qName, attrsCopy, xmlnsAttrs,
+						 start, current);
 	    }
 	}
 
@@ -483,7 +492,7 @@ class JspDocumentParser extends DefaultHandler
     // Private utility methods
 
     private Node parseStandardAction(String qName, Attributes attrs,
-				     Attributes attrsCopy, Mark start,
+				     Attributes xmlnsAttrs, Mark start,
 				     Node parent)
 	        throws SAXException {
 
@@ -493,7 +502,7 @@ class JspDocumentParser extends DefaultHandler
             // give the <jsp:root> element the original attributes set
             // (attrs) instead of the copy without the xmlns: elements 
             // (attrsCopy)
-	    node = new Node.JspRoot(new AttributesImpl(attrs), start, current);
+	    node = new Node.JspRoot(attrs, xmlnsAttrs, start, current);
 	    if (isTop) {
 		pageInfo.setHasJspRoot(true);
 	    }
@@ -503,45 +512,46 @@ class JspDocumentParser extends DefaultHandler
 		    Localizer.getMessage("jsp.error.action.istagfile", qName),
 		    locator);
 	    }
-	    node = new Node.PageDirective(attrsCopy, start, current);
+	    node = new Node.PageDirective(attrs, xmlnsAttrs, start, current);
 	    String imports = attrs.getValue("import");
 	    // There can only be one 'import' attribute per page directive
 	    if (imports != null) {
 		((Node.PageDirective) node).addImport(imports);
 	    }
 	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE)) {
-	    node = new Node.IncludeDirective(attrsCopy, start, current);
-	    processIncludeDirective(attrsCopy.getValue("file"), node);
+	    node = new Node.IncludeDirective(attrs, xmlnsAttrs, start,
+					     current);
+	    processIncludeDirective(attrs.getValue("file"), node);
 	} else if (qName.equals(JSP_DECLARATION)) {
-	    node = new Node.Declaration(start, current);
+	    node = new Node.Declaration(xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_SCRIPTLET)) {
-	    node = new Node.Scriptlet(start, current);
+	    node = new Node.Scriptlet(xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_EXPRESSION)) {
-	    node = new Node.Expression(start, current);
+	    node = new Node.Expression(xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_USE_BEAN)) {
-	    node = new Node.UseBean(attrsCopy, start, current);
+	    node = new Node.UseBean(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_SET_PROPERTY)) {
-	    node = new Node.SetProperty(attrsCopy, start, current);
+	    node = new Node.SetProperty(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_GET_PROPERTY)) {
-	    node = new Node.GetProperty(attrsCopy, start, current);
+	    node = new Node.GetProperty(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_INCLUDE)) {
-	    node = new Node.IncludeAction(attrsCopy, start, current);
+	    node = new Node.IncludeAction(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_FORWARD)) {
-	    node = new Node.ForwardAction(attrsCopy, start, current);
+	    node = new Node.ForwardAction(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_PARAM)) {
-	    node = new Node.ParamAction(attrsCopy, start, current);
+	    node = new Node.ParamAction(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_PARAMS)) {
-	    node = new Node.ParamsAction(start, current);
+	    node = new Node.ParamsAction(xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_PLUGIN)) {
-	    node = new Node.PlugIn(attrsCopy, start, current);
+	    node = new Node.PlugIn(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_TEXT)) {
-	    node = new Node.JspText(start, current);
+	    node = new Node.JspText(xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_BODY)) {
-	    node = new Node.JspBody(start, current);
+	    node = new Node.JspBody(xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_ATTRIBUTE)) {
-	    node = new Node.NamedAttribute(attrsCopy, start, current);
+	    node = new Node.NamedAttribute(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_OUTPUT)) {
-	    node = new Node.JspOutput(attrsCopy, start, current);
+	    node = new Node.JspOutput(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
@@ -549,7 +559,7 @@ class JspDocumentParser extends DefaultHandler
 					 qName),
 		    locator);
 	    }
-	    node = new Node.TagDirective(attrsCopy, start, current);
+	    node = new Node.TagDirective(attrs, xmlnsAttrs, start, current);
 	    String imports = attrs.getValue("import");
 	    // There can only be one 'import' attribute per tag directive
 	    if (imports != null) {
@@ -562,7 +572,8 @@ class JspDocumentParser extends DefaultHandler
 					 qName),
 		    locator);
 	    }
-	    node = new Node.AttributeDirective(attrsCopy, start, current);
+	    node = new Node.AttributeDirective(attrs, xmlnsAttrs, start,
+					       current);
 	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
@@ -570,7 +581,8 @@ class JspDocumentParser extends DefaultHandler
 					 qName),
 		    locator);
 	    }
-	    node = new Node.VariableDirective(attrsCopy, start, current);
+	    node = new Node.VariableDirective(attrs, xmlnsAttrs, start,
+					      current);
 	} else if (qName.equals(JSP_INVOKE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
@@ -578,7 +590,7 @@ class JspDocumentParser extends DefaultHandler
 					 qName),
 		    locator);
 	    }
-	    node = new Node.InvokeAction(attrsCopy, start, current);
+	    node = new Node.InvokeAction(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_DO_BODY)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
@@ -586,11 +598,11 @@ class JspDocumentParser extends DefaultHandler
 					 qName),
 		    locator);
 	    }
-	    node = new Node.DoBodyAction(attrsCopy, start, current);
+	    node = new Node.DoBodyAction(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_ELEMENT)) {
-	    node = new Node.JspElement(attrsCopy, start, current);
+	    node = new Node.JspElement(attrs, xmlnsAttrs, start, current);
 	} else if (qName.equals(JSP_FALLBACK)) {
-	    node = new Node.FallBackAction(start, current);
+	    node = new Node.FallBackAction(xmlnsAttrs, start, current);
 	} else {
 	    throw new SAXParseException(
 		    Localizer.getMessage("jsp.error.xml.badStandardAction",
@@ -607,6 +619,7 @@ class JspDocumentParser extends DefaultHandler
      */
     private Node parseCustomAction(String qName,
 				   Attributes attrs,
+				   Attributes xmlnsAttrs,
 				   Mark start,
 				   Node parent) throws SAXException {
 	int colon = qName.indexOf(':');
@@ -645,89 +658,121 @@ class JspDocumentParser extends DefaultHandler
             tagInfo = tagFileInfo.getTagInfo();
         }
        
-	return new Node.CustomTag(attrs, start, qName, prefix, shortName,
-				  tagInfo, tagFileInfo, tagHandlerClass,
-				  parent);
+	return new Node.CustomTag(attrs, xmlnsAttrs, start, qName, prefix,
+				  shortName, tagInfo, tagFileInfo,
+				  tagHandlerClass, parent);
     }
 
     /*
-     * Parses the xmlns:prefix attributes from the jsp:root element and adds 
-     * the corresponding TagLibraryInfo objects to the set of custom tag
-     * libraries.  In the process, returns a new Attributes object that does
-     * not contain any of the xmlns: attributes.
+     * Extracts and removes any xmlns attributes from the given Attributes.
+     *
+     * @param attrs The Attributes from which to extract any xmlns attributes
+     *
+     * @return The set of xmlns attributes extracted from the given Attributes,
+     * or null if the given Attributes do not contain any xmlns attributes
      */
-    private Attributes addCustomTagLibraries(Attributes attrs)
-	        throws JasperException 
+    private Attributes getXmlnsAttributes(AttributesImpl attrs) {
+
+	AttributesImpl result = null;
+
+	if (attrs == null) {
+	    return null;
+	}
+
+	int len = attrs.getLength();
+	for (int i=len-1; i>=0; i--) {
+	    String qName = attrs.getQName(i);
+	    if (qName.startsWith(XMLNS)) {
+		if (result == null) {
+		    result = new AttributesImpl();
+		}
+		result.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
+				    attrs.getQName(i), attrs.getType(i),
+				    attrs.getValue(i));
+		attrs.removeAttribute(i);
+	    }	    
+	}
+	
+	return result;
+    }
+
+    /*
+     * Enumerates the xmlns:prefix attributes of the given Attributes object
+     * and adds the corresponding TagLibraryInfo objects to the set of custom
+     * tag libraries.
+     */
+    private void addCustomTagLibraries(Attributes attrs)
+	    throws JasperException 
     {
-        AttributesImpl result = new AttributesImpl( attrs );
-        int len = attrs.getLength();
+        if (attrs == null) {
+	    return;
+	}
+
+	int len = attrs.getLength();
         for (int i=len-1; i>=0; i--) {
 	    String qName = attrs.getQName(i);
-	    if (qName.startsWith( XMLNS ) 
-                        && !qName.startsWith(XMLNS_JSP)
-		        && !qName.startsWith(JSP_VERSION)) {
-
-		// get the prefix
-		String prefix = null;
-		try {
-		    prefix = qName.substring(XMLNS.length());
-		} catch (StringIndexOutOfBoundsException e) {
-		    continue;
-		}
-
-                if( taglibs.containsKey( prefix ) ) {
-                    // Prefix already in taglib map.
-                    throw new JasperException(
-                            Localizer.getMessage("jsp.error.xmlns.redefinition.notimplemented",
-						 prefix));
-                }
-
-		// get the uri
-		String uri = attrs.getValue(i);
-
-		TagLibraryInfo tagLibInfo = null;
-		if (uri.startsWith(URN_JSPTAGDIR)) {
-		    /*
-		     * uri references tag file directory
-		     * (is of the form "urn:jsptagdir:path")
-		     */
-		    String tagdir = uri.substring(URN_JSPTAGDIR.length());
-		    tagLibInfo = new ImplicitTagLibraryInfo(ctxt,
-							    parserController,
-							    prefix, 
-							    tagdir,
-							    err);
-		} else {
-		    /*
-		     * uri references TLD file
-		     */
-		    if (uri.startsWith(URN_JSPTLD)) {
-			// uri is of the form "urn:jsptld:path"
-			uri = uri.substring(URN_JSPTLD.length());
-		    }
-
-		    TldLocationsCache cache
-			= ctxt.getOptions().getTldLocationsCache();
-		    tagLibInfo = cache.getTagLibraryInfo(uri);
-		    if (tagLibInfo == null) {
-			// get the location
-			String[] location = ctxt.getTldLocation(uri);
-                
-			tagLibInfo = new TagLibraryInfoImpl(ctxt,
-							    parserController,
-							    prefix,
-							    uri,
-							    location,
-							    err);
-		    }
-		}
-                
-		taglibs.put(prefix, tagLibInfo);
-		result.removeAttribute( i );
+	    if (qName.startsWith(XMLNS_JSP)) {
+		continue;
 	    }
-        }
 
-        return result;
+	    // get the prefix
+	    String prefix = null;
+	    try {
+		prefix = qName.substring(XMLNS.length());
+	    } catch (StringIndexOutOfBoundsException e) {
+		continue;
+	    }
+
+	    if( taglibs.containsKey( prefix ) ) {
+		// Prefix already in taglib map.
+		throw new JasperException(
+		        Localizer.getMessage(
+                                "jsp.error.xmlns.redefinition.notimplemented",
+				prefix));
+	    }
+
+	    // get the uri
+	    String uri = attrs.getValue(i);
+
+	    TagLibraryInfo tagLibInfo = null;
+	    if (uri.startsWith(URN_JSPTAGDIR)) {
+		/*
+		 * uri references tag file directory
+		 * (is of the form "urn:jsptagdir:path")
+		 */
+		String tagdir = uri.substring(URN_JSPTAGDIR.length());
+		tagLibInfo = new ImplicitTagLibraryInfo(ctxt,
+							parserController,
+							prefix, 
+							tagdir,
+							err);
+	    } else {
+		/*
+		 * uri references TLD file
+		 */
+		if (uri.startsWith(URN_JSPTLD)) {
+		    // uri is of the form "urn:jsptld:path"
+		    uri = uri.substring(URN_JSPTLD.length());
+		}
+
+		TldLocationsCache cache
+		    = ctxt.getOptions().getTldLocationsCache();
+		tagLibInfo = cache.getTagLibraryInfo(uri);
+		if (tagLibInfo == null) {
+		    // get the location
+		    String[] location = ctxt.getTldLocation(uri);
+		    
+		    tagLibInfo = new TagLibraryInfoImpl(ctxt,
+							parserController,
+							prefix,
+							uri,
+							location,
+							err);
+		}
+	    }
+                
+	    taglibs.put(prefix, tagLibInfo);
+	}
     }
 
     /*

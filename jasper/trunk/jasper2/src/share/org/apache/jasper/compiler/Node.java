@@ -83,6 +83,7 @@ abstract class Node {
     private static final VariableInfo[] ZERO_VARIABLE_INFO = { };
     
     protected Attributes attrs;
+    protected Attributes xmlnsAttrs;
     protected Nodes body;
     protected String text;
     protected Mark startMark;
@@ -117,6 +118,22 @@ abstract class Node {
 	addToParent(parent);
     }
 
+    /**
+     * Constructor.
+     * @param attrs The attributes for this node
+     * @param xmlnsAttrs The xmlns attributes for this node
+     * @param start The location of the jsp page
+     * @param parent The enclosing node
+     */
+    public Node(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+		Node parent) {
+	this.attrs = attrs;
+	this.xmlnsAttrs = xmlnsAttrs;
+	this.startMark = start;
+	this.isDummy = (start == null);
+	addToParent(parent);
+    }
+
     /*
      * Constructor.
      * @param text The text associated with this node
@@ -132,6 +149,10 @@ abstract class Node {
 
     public Attributes getAttributes() {
 	return attrs;
+    }
+
+    public Attributes getXmlnsAttributes() {
+	return xmlnsAttrs;
     }
 
     public void setAttributes(Attributes attrs) {
@@ -354,8 +375,10 @@ abstract class Node {
      */
     public static class JspRoot extends Root {
 
-	public JspRoot(Attributes attrs, Mark start, Node parent) {
+	public JspRoot(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+		       Node parent) {
 	    super(attrs, start, parent);
+	    this.xmlnsAttrs = xmlnsAttrs;
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -375,7 +398,12 @@ abstract class Node {
 	private Vector imports;
 
 	public PageDirective(Attributes attrs, Mark start, Node parent) {
-	    super(attrs, start, parent);
+	    this(attrs, null, start, parent);
+	}
+
+	public PageDirective(Attributes attrs, Attributes xmlnsAttrs,
+			     Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
 	    imports = new Vector();
 	}
 
@@ -418,6 +446,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public IncludeDirective(Attributes attrs, Attributes xmlnsAttrs,
+				Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -444,7 +477,12 @@ abstract class Node {
         private Vector imports;
 
 	public TagDirective(Attributes attrs, Mark start, Node parent) {
-	    super(attrs, start, parent);
+	    this(attrs, null, start, parent);
+	}
+
+	public TagDirective(Attributes attrs, Attributes xmlnsAttrs,
+			    Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
             imports = new Vector();
 	}
 
@@ -487,6 +525,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public AttributeDirective(Attributes attrs, Attributes xmlnsAttrs,
+				  Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -499,6 +542,11 @@ abstract class Node {
 
 	public VariableDirective(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+	}
+
+	public VariableDirective(Attributes attrs, Attributes xmlnsAttrs,
+				 Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -515,6 +563,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public InvokeAction(Attributes attrs, Attributes xmlnsAttrs,
+			    Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -527,6 +580,11 @@ abstract class Node {
 
 	public DoBodyAction(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+	}
+
+	public DoBodyAction(Attributes attrs, Attributes xmlnsAttrs,
+			    Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -558,8 +616,9 @@ abstract class Node {
 	    super(text, start, parent);
 	}
 
-	public ScriptingElement(Mark start, Node parent) {
-	    super(start, parent);
+	public ScriptingElement(Attributes xmlnsAttrs, Mark start,
+				Node parent) {
+	    super(null, xmlnsAttrs, start, parent);
 	}
 
 	/**
@@ -591,8 +650,8 @@ abstract class Node {
 	    super(text, start, parent);
 	}
 
-	public Declaration(Mark start, Node parent) {
-	    super(start, parent);
+	public Declaration(Attributes xmlnsAttrs, Mark start, Node parent) {
+	    super(xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -610,8 +669,8 @@ abstract class Node {
 	    super(text, start, parent);
 	}
 
-	public Expression(Mark start, Node parent) {
-	    super(start, parent);
+	public Expression(Attributes xmlnsAttrs, Mark start, Node parent) {
+	    super(xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -628,8 +687,8 @@ abstract class Node {
 	    super(text, start, parent);
 	}
 
-	public Scriptlet(Mark start, Node parent) {
-	    super(start, parent);
+	public Scriptlet(Attributes xmlnsAttrs, Mark start, Node parent) {
+	    super(xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -663,6 +722,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public ParamAction(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+			   Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -682,7 +746,11 @@ abstract class Node {
     public static class ParamsAction extends Node {
 
 	public ParamsAction(Mark start, Node parent) {
-	    super(start, parent);
+	    this(null, start, parent);
+	}
+
+	public ParamsAction(Attributes xmlnsAttrs, Mark start, Node parent) {
+	    super(null, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -699,6 +767,10 @@ abstract class Node {
 	    super(start, parent);
 	}
 
+	public FallBackAction(Attributes xmlnsAttrs, Mark start, Node parent) {
+	    super(null, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -713,6 +785,11 @@ abstract class Node {
 
 	public IncludeAction(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+	}
+
+	public IncludeAction(Attributes attrs, Attributes xmlnsAttrs,
+			     Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -739,6 +816,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public ForwardAction(Attributes attrs, Attributes xmlnsAttrs,
+			     Mark start, Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -761,6 +843,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public GetProperty(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+			   Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -775,6 +862,11 @@ abstract class Node {
 
 	public SetProperty(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+	}
+
+	public SetProperty(Attributes attrs, Attributes xmlsAttrs, Mark start,
+			   Node parent) {
+	    super(attrs, xmlsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -799,6 +891,11 @@ abstract class Node {
 
 	public UseBean(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+	}
+
+	public UseBean(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+		       Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -826,6 +923,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public PlugIn(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+		      Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -851,11 +953,13 @@ abstract class Node {
      * Represents an uninterpreted tag, from a Jsp document
      */
     public static class UninterpretedTag extends Node {
+
 	private String tagName;
 
-	public UninterpretedTag(Attributes attrs, Mark start, String name,
+	public UninterpretedTag(String name, Attributes attrs,
+				Attributes xmlnsAttrs, Mark start,
 				Node parent) {
-	    super(attrs, start, parent);
+	    super(attrs, xmlnsAttrs, start, parent);
 	    tagName = name;
 	}
 
@@ -879,6 +983,11 @@ abstract class Node {
 	    super(attrs, start, parent);
 	}
 
+	public JspElement(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+			  Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
+	}
+
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
@@ -897,8 +1006,9 @@ abstract class Node {
      */
     public static class JspOutput extends Node {
 
-	public JspOutput(Attributes attrs, Mark start, Node parent) {
-	    super(attrs, start, parent);
+	public JspOutput(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+			 Node parent) {
+	    super(attrs, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -999,11 +1109,20 @@ abstract class Node {
 	private Nodes atSTag;
 	private Nodes atETag;
 
-	public CustomTag(Attributes attrs, Mark start, String name,
-			 String prefix, String shortName,
+	public CustomTag(Attributes attrs, Mark start,
+			 String name, String prefix, String shortName,
 			 TagInfo tagInfo, TagFileInfo tagFileInfo,
 			 Class tagHandlerClass, Node parent) {
-	    super(attrs, start, parent);
+	    this(attrs, null, start, name, prefix, shortName, tagInfo,
+		 tagFileInfo, tagHandlerClass, parent);
+	}
+
+	public CustomTag(Attributes attrs, Attributes xmlnsAttrs, Mark start,
+			 String name, String prefix, String shortName,
+			 TagInfo tagInfo, TagFileInfo tagFileInfo,
+			 Class tagHandlerClass, Node parent) {
+
+	    super(attrs, xmlnsAttrs, start, parent);
 	    this.name = name;
 	    this.prefix = prefix;
 	    this.shortName = shortName;
@@ -1347,8 +1466,8 @@ abstract class Node {
      */
     public static class JspText extends Node {
 
-	public JspText(Mark start, Node parent) {
-	    super(start, parent);
+	public JspText(Attributes xmlnsAttrs, Mark start, Node parent) {
+	    super(null, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -1372,8 +1491,14 @@ abstract class Node {
 	private String localName;
 	private String prefix;
 
-        public NamedAttribute( Attributes attrs, Mark start, Node parent) {
-            super( attrs, start, parent );
+        public NamedAttribute(Attributes attrs, Mark start, Node parent) {
+	    this(attrs, null, start, parent);
+	}
+
+        public NamedAttribute(Attributes attrs, Attributes xmlnsAttrs,
+			      Mark start, Node parent) {
+
+            super(attrs, xmlnsAttrs, start, parent);
             temporaryVariableName = JspUtil.nextTemporaryVariableName();
             if( "false".equals( this.getAttributeValue( "trim" ) ) ) {
                 // (if null or true, leave default of true)
@@ -1467,7 +1592,11 @@ abstract class Node {
         private ChildInfo childInfo;
 
         public JspBody(Mark start, Node parent) {
-            super(start, parent);
+            this(null, start, parent);
+        }
+
+        public JspBody(Attributes xmlnsAttrs, Mark start, Node parent) {
+            super(null, xmlnsAttrs, start, parent);
             this.childInfo = new ChildInfo();
         }
 
