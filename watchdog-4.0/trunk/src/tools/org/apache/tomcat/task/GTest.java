@@ -9,10 +9,12 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 import java.net.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 
 // derived from Jsp
-public class GTest  {
+public class GTest extends Task {
     String prefix="http://localhost:8080/test";
     String host="localhost";
     int port=8080;
@@ -242,7 +244,7 @@ public class GTest  {
 	   //parseHeader( s, requestHeaders );
     }
     
-    public void execute() throws Exception {
+    public void execute() throws BuildException {
 	
 	try {
 
