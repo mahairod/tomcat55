@@ -1,0 +1,21 @@
+<project name="runtest" default="main">
+
+   <target name="jsp-test">
+     <ant antfile="${watchdog.home}/conf/jsp-gtest.xml" target="jsp-test"/>
+   </target>
+
+   <target name="servlet-test">
+     <ant antfile="${watchdog.home}/conf/servlet-moo.xml" target="servlet-test"/>
+   </target>
+
+   <target name="startup">
+     <java classname="org.apache.tomcat.startup.Tomcat" args=""
+        jvmargs="-Dtomcat.home=${tomcat.home}" />
+   </target>
+
+   <target name="shutdown">
+     <java classname="org.apache.tomcat.startup.Tomcat" args="-stop" />
+   </target>
+
+</project>
+
