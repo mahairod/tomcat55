@@ -21,6 +21,9 @@ public class TroubleShooter extends HttpServlet {
     }
 
     public void printValue(PrintWriter out, String key, String val) {
+        if (val!=null) {
+            if (val.length()>255) val=val.substring(0,128)+" <i>(... more)</i>";
+        }
         out.println("   <tr>");
         out.println("    <td bgcolor=\"#cccccc\">"+key+"</td>");
         out.println("    <td bgcolor=\"#ffffff\">"+val+"</td>");
@@ -160,7 +163,7 @@ public class TroubleShooter extends HttpServlet {
 
         printHeader(out,"Cookies in this request:");
         Cookie[] cookies = request.getCookies();
-        for (int i = 0; i < cookies.length; i++) {
+        if (cookies!=null) for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
             printValue(out,cookie.getName(),cookie.getValue());
         }
@@ -181,21 +184,23 @@ public class TroubleShooter extends HttpServlet {
 
         printHeader(out,"Session information:");
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS z");
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+        if (session!=null) {
         printValue(out,"Requested Session Id:", request.getRequestedSessionId());
-        printValue(out,"Current Session Id:", session.getId());
-        printValue(out,"Current Time:", format.format(new Date()));
-        printValue(out,"Session Created Time:", format.format(new Date(session.getCreationTime())));
-        printValue(out,"Session Last Accessed Time:", format.format(new Date(session.getLastAccessedTime())));
-        printValue(out,"Session Max Inactive Interval Seconds:", Integer.toString(session.getMaxInactiveInterval()));
-        printVoid(out);
+            printValue(out,"Current Session Id:", session.getId());
+            printValue(out,"Current Time:", format.format(new Date()));
+            printValue(out,"Session Created Time:", format.format(new Date(session.getCreationTime())));
+            printValue(out,"Session Last Accessed Time:", format.format(new Date(session.getLastAccessedTime())));
+            printValue(out,"Session Max Inactive Interval Seconds:", Integer.toString(session.getMaxInactiveInterval()));
+            printVoid(out);
 
-        printHeader(out,"Session values:");
-        enum = session.getAttributeNames();
-        while (enum.hasMoreElements()) {
-            String key = (String) enum.nextElement();
-            Object val = session.getAttribute(key);
-            printValue(out,key,val.toString());
+            printHeader(out,"Session values:");
+            enum = session.getAttributeNames();
+            while (enum.hasMoreElements()) {
+                String key = (String) enum.nextElement();
+                Object val = session.getAttribute(key);
+                printValue(out,key,val.toString());
+            }
         }
         printVoid(out);
 
