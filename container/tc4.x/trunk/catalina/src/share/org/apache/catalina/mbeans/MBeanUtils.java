@@ -930,14 +930,14 @@ public class MBeanUtils {
             String path = ((Context)container).getPath();
             if (path.length() < 1)
                 path = "/";
-            name = new ObjectName(domain + ":type=Environment,name=" +
-                              environment.getName() + ",path=" +
-                              path);
+            name = new ObjectName(domain + ":type=Environment,path=" +
+                              path + ",name=" +
+                              environment.getName());
         } else if (container instanceof DefaultContext) {
             String defaultContextName = ((DefaultContext)container).getName();
-            name = new ObjectName(domain + ":type=Environment,name=" +
-                              environment.getName() + ",defaultContext=" +
-                              defaultContextName);
+            name = new ObjectName(domain + ":type=Environment,defaultContext=" +
+                              defaultContextName + ",name=" +
+                              environment.getName());
         }
         
         return (name);
@@ -964,22 +964,22 @@ public class MBeanUtils {
                 resource.getNamingResources().getContainer();
         if (container instanceof Server) {        
             name = new ObjectName(domain + ":type=Resource,class=" +
-                              resource.getType()+",name=" + 
+                              resource.getType() + ",name=" + 
                               encodedResourceName);
         } else if (container instanceof Context) {        
             String path = ((Context)container).getPath();
             if (path.length() < 1)
                 path = "/";
-            name = new ObjectName(domain + ":type=Resource,class=" +
-                              resource.getType()+",name=" + 
-                              encodedResourceName + ",path=" +
-                              path);
+            name = new ObjectName(domain + ":type=Resource,path=" +
+                              path + ",class=" +
+                              resource.getType() + ",name=" + 
+                              encodedResourceName);
         } else if (container instanceof DefaultContext) {
             String defaultContextName = ((DefaultContext)container).getName();
-            name = new ObjectName(domain + ":type=Resource,class=" +
-                              resource.getType()+",name=" + 
-                              encodedResourceName + ",defaultContext=" +
-                              defaultContextName);
+            name = new ObjectName(domain + ":type=Resource,defaultContext=" +
+                              defaultContextName + ",class=" +
+                              resource.getType() + ",name=" + 
+                              encodedResourceName);
         }
         
         return (name);
@@ -1006,22 +1006,22 @@ public class MBeanUtils {
                 resourceLink.getNamingResources().getContainer();
         if (container instanceof Server) {        
             name = new ObjectName(domain + ":type=ResourceLink,class=" +
-                              resourceLink.getType()+",name=" + 
+                              resourceLink.getType() + ",name=" + 
                               encodedResourceLinkName);
         } else if (container instanceof Context) {        
             String path = ((Context)container).getPath();
             if (path.length() < 1)
                 path = "/";
-            name = new ObjectName(domain + ":type=ResourceLink,class=" +
-                              resourceLink.getType()+",name=" + 
-                              encodedResourceLinkName + ",path=" +
-                              path);
+            name = new ObjectName(domain + ":type=ResourceLink,path=" +
+                              path + ",class=" +
+                              resourceLink.getType() + ",name=" + 
+                              encodedResourceLinkName);
         } else if (container instanceof DefaultContext) {
             String defaultContextName = ((DefaultContext)container).getName();
-            name = new ObjectName(domain + ":type=ResourceLink,class=" +
+            name = new ObjectName(domain + ":type=ResourceLink,defaultContext=" +
+                              defaultContextName + ",class=" +
                               resourceLink.getType()+",name=" + 
-                              encodedResourceLinkName + ",defaultContext=" +
-                              defaultContextName);
+                              encodedResourceLinkName);
         }
         
         return (name);
