@@ -136,7 +136,7 @@
              excludes="**/CVS/**" />
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-             classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
+             classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}:${jndi.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**">
       <exclude name="**/factory/Tyrex*.java" 

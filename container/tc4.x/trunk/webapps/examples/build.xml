@@ -41,7 +41,7 @@
 
     <javac   srcdir="WEB-INF/classes" 
              destdir="${webapps.build}/${webapp.name}/WEB-INF/classes"
-             classpath="${servlet.jar}"
+             classpath="${servlet.jar}:${jndi.jar}"
              deprecation="off" debug="on" optimize="off"
              excludes="**/CVS/**"/>
 
