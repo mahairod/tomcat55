@@ -724,8 +724,14 @@ public class GTest extends Task {
         boolean cmp = true;
 
         if ( exactMatch ) {
+            if ( debug > 0 ) {
+                System.out.println( " Performing exact match of server response and goldenfile" );
+            }
             cmp = compare( responseBody, expResult );
 	} else {
+            if ( debug > 0 ) {
+                System.out.println( " Performing token match of server response and goldenfile" );
+            }
             cmp = compareWeak( responseBody, expResult );
 	}
 
