@@ -318,7 +318,7 @@
    description="Create binary distribution">
 
     <!-- Copy documentation subdirectories -->
-    <mkdir   todir="${dist.home}/docs"/>
+    <mkdir   dir="${dist.home}/docs"/>
     <copy    todir="${dist.home}/docs">
       <fileset dir="${docs.home}"/>
     </copy>
