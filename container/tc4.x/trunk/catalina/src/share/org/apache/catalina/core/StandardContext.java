@@ -3177,6 +3177,9 @@ public class StandardContext
             setManager(new StandardManager());
         }
 
+        // Initialize character set mapper
+        getCharsetMapper();
+
         // Post work directory
 	postWorkDirectory();
 
@@ -3325,6 +3328,9 @@ public class StandardContext
                                  getName()));
             }
         }
+
+        // Finalize our character set mapper
+        setCharsetMapper(null);
 
         // Normal container shutdown processing
         if (debug >= 1)
