@@ -409,7 +409,7 @@ public class StandardEngine
                     domain=getName();
                 }
                 log.debug( "Register " + domain );
-                oname=new ObjectName(domain + ":type=Engine,name="+getName());
+                oname=new ObjectName(domain + ":type=Engine");
                 controller=oname;
                 Registry.getRegistry().registerComponent(this, oname, null);
             } catch( Throwable t ) {
@@ -595,7 +595,7 @@ public class StandardEngine
     {
         if( log.isDebugEnabled())
             log.debug("Create ObjectName " + domain + " " + parent );
-        return new ObjectName( domain + ":type=Engine,name="+getName());
+        return new ObjectName( domain + ":type=Engine");
     }
 
     
