@@ -147,7 +147,7 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="userNameCol">
             <controls:label><bean:message key="realm.userNameCol"/>:</controls:label>
             <controls:data>
-                <html:text property="userNameCol" size="30" styleId=userNameCol"/>
+                <html:text property="userNameCol" size="30" styleId="userNameCol"/>
             </controls:data>
         </controls:row>
 
