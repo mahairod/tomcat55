@@ -198,21 +198,17 @@ final class CoyoteAdapter
         }
 
         try {
+
             // Parse and set Catalina and configuration specific 
             // request parameters
-            if( !postParseRequest(req, request, res, response) ) {
-                return;
-            }
-            if (!request.getMappingData().redirectPath.isNull()) {
-                response.sendRedirect
-                    (request.getMappingData().redirectPath.toString());
-            } else {
+            if ( postParseRequest(req, request, res, response) ) {
                 // Calling the container
                 connector.getContainer().invoke(request, response);
             }
-            response.finishResponse();
 
+            response.finishResponse();
             req.action( ActionCode.ACTION_POST_REQUEST , null);
+
         } catch (IOException e) {
             ;
         } catch (Throwable t) {
@@ -233,7 +229,7 @@ final class CoyoteAdapter
      * Parse additional request parameters.
      */
     protected boolean postParseRequest(Request req, CoyoteRequest request,
-                                    Response res, CoyoteResponse response)
+                                       Response res, CoyoteResponse response)
         throws Exception {
         // XXX the processor needs to set a correct scheme and port prior to this point, 
         // in ajp13 protocols dont make sense to get the port from the connector..
@@ -249,9 +245,9 @@ final class CoyoteAdapter
             req.scheme().setString(connector.getScheme());
             request.setSecure(connector.getSecure());
         }
- 
 
-        // FIXME: the code below doesnt belongs to here, this is only  have sense 
+        // FIXME: the code below doesnt belongs to here, 
+        // this is only have sense 
         // in Http11, not in ajp13..
         // At this point the Host header has been processed.
         // Override if the proxyPort/proxyHost are set 
@@ -309,6 +305,20 @@ final class CoyoteAdapter
                                   request.getMappingData());
         request.setContext((Context) request.getMappingData().context);
         request.setWrapper((Wrapper) request.getMappingData().wrapper);
+
+        // Possible redirect
+        MessageBytes redirectPathMB = request.getMappingData().redirectPath;
+        if (!redirectPathMB.isNull()) {
+            String redirectPath = redirectPathMB.toString();
+            String query = request.getQueryString();
+            if (query != null) {
+                // This is not optimal, but as this is not very common, it
+                // shouldn't matter
+                redirectPath = redirectPath + "?" + query;
+            }
+            response.sendRedirect(redirectPath);
+            return false;
+        }
 
         // Parse cookies
         parseCookies(req, request);
