@@ -12,7 +12,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
 
 
   <target name="ROOT">
@@ -33,6 +33,38 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/../.." debug="${debug}"
           status="404"/>
+
+  </target>
+
+
+  <target name="Authentication">
+
+    <!-- ========== Authentication ======================================== -->
+
+    <!-- Once a user has been authenticated, the corresponding user identity
+         should be visible to all other requests in this web application, even
+         for URIs that are not protected by security constraints.  This is
+         tested by invoking a protected URI followed by a non-protected URI
+    -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
+         request="${context.path}/protected/Authentication01"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
+         request="${context.path}/protected/Authentication02"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication02 PASSED"/>
+
+    <!-- Test isUserInRole() on actual role and on an alias -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
+         request="${context.path}/protected/Authentication03"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication03 PASSED"/>
 
   </target>
 
@@ -489,27 +521,6 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
-
-
-    <!-- ========== Authentication ======================================== -->
-
-    <!-- Once a user has been authenticated, the corresponding user identity
-         should be visible to all other requests in this web application, even
-         for URIs that are not protected by security constraints.  This is
-         tested by invoking a protected URI followed by a non-protected URI
-    -->
-
-    <tester host="${host}" port="${port}" protocol="${protocol}"
-          debug="${debug}"
-         request="${context.path}/protected/Authentication01"
-       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
-      outContent="Authentication01 PASSED"/>
-
-    <tester host="${host}" port="${port}" protocol="${protocol}"
-          debug="${debug}"
-         request="${context.path}/protected/Authentication02"
-       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
-      outContent="Authentication02 PASSED"/>
 
 
   </target>
