@@ -213,13 +213,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Object getAttribute(String name) {
 
-        synchronized (attributes) {
-            Object value = attributes.get(name);
-            if (value == null && !isSpecial(name)){
-                value = getRequest().getAttribute(name);
-            }
-            return value;
+        Object value = attributes.get(name);
+        if (value == null && !isSpecial(name)){
+            value = getRequest().getAttribute(name);
         }
+        return value;
 
     }
 
@@ -230,14 +228,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Enumeration getAttributeNames() {
 
-        synchronized (attributes) {
-            Set keySet = attributes.keySet();
-            Enumeration enum = getRequest().getAttributeNames();
-            while(enum.hasMoreElements()){
-                keySet.add(enum.nextElement());
-            }
-            return (new Enumerator(keySet));
+        Set keySet = attributes.keySet();
+        Enumeration enum = getRequest().getAttributeNames();
+        while(enum.hasMoreElements()){
+            keySet.add(enum.nextElement());
         }
+        return (new Enumerator(keySet));
 
     }
 
