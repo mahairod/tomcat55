@@ -86,7 +86,7 @@ import org.xml.sax.*;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
-import org.apache.jasper.runtime.JspLoader;
+//import org.apache.jasper.runtime.JspLoader;
 
 import org.apache.tomcat.logging.Logger;
 
@@ -273,7 +273,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		else
 		    copy(url.openStream(), jarFileName);
 	    
-	        ctxt.getClassLoader().addJar(jarFileName);
+	        ctxt.addJar(jarFileName);
 	    }
 	    
 	    

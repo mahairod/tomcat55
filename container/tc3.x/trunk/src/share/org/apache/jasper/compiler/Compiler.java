@@ -90,7 +90,7 @@ public class Compiler {
     protected Mangler mangler;
     protected JspCompilationContext ctxt;
 
-    protected Compiler(JspCompilationContext ctxt) {
+    public Compiler(JspCompilationContext ctxt) {
         this.ctxt = ctxt;
     }
     
