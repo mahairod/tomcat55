@@ -244,35 +244,62 @@ public class TableTag extends BodyTagSupport {
                 String dataStyle = (String) dataStyles.get(i);
                 String styleId = (String) styleIds.get(i);
                 
-                if (header)
+                if (header) {
                     out.println("<tr class=\"header-row\" >");
-                else out.println("<tr>");
+                    out.println("  <th scope=\"col\" width=\"27%\"> ");
                 
-                out.println("  <td width=\"27%\"> ");
+                    out.print("    <div align=\"left\"");
+                    if (labelStyle != null)
+                        out.print( " class=\"" + labelStyle +"\"");
+                    out.print(">");
+                    if (styleId != null) {
+                        out.print("<label for=\"" + styleId + "\">");
+                    }
+                    out.print(label);
+                    if (styleId != null) {
+                        out.print("</label>");
+                    }
+                    out.println("    </div>");
+                    out.println("  </th>");
                 
-                out.print("    <div align=\"left\"");
-                if (labelStyle != null)
-                    out.print( " class=\"" + labelStyle +"\"");
-                out.print(">");
-                if (styleId != null) {
-                    out.print("<label for=\"" + styleId + "\">");
+                    out.println("  <th scope=\"col\" width=\"73%\"> ");
+                    out.print("    <div align=\"left\"" );
+                    if (dataStyle != null)
+                        out.print(" class=\"" + dataStyle + "\"");
+                    out.print(">");
+                    out.print(data);
+                    out.println("    </div>");
+                    out.print("  </th>");
+                    out.println("</tr>");
+                } else {
+                    out.println("<tr>");
+                
+                    out.println("  <td scope=\"row\" width=\"27%\"> ");
+                
+                    out.print("    <div align=\"left\"");
+                    if (labelStyle != null)
+                        out.print( " class=\"" + labelStyle +"\"");
+                    out.print(">");
+                    if (styleId != null) {
+                        out.print("<label for=\"" + styleId + "\">");
+                    }
+                    out.print(label);
+                    if (styleId != null) {
+                        out.print("</label>");
+                    }
+                    out.println("    </div>");
+                    out.println("  </td>");
+                
+                    out.println("  <td width=\"73%\"> ");
+                    out.print("    <div align=\"left\"" );
+                    if (dataStyle != null)
+                        out.print(" class=\"" + dataStyle + "\"");
+                    out.print(">");
+                    out.print(data);
+                    out.println("    </div>");
+                    out.print("  </td>");
+                    out.println("</tr>");
                 }
-                out.print(label);
-                if (styleId != null) {
-                    out.print("</label>");
-                }
-                out.println("    </div>");
-                out.println("  </td>");
-                
-                out.println("  <td width=\"73%\"> ");
-                out.print("    <div align=\"left\"" );
-                if (dataStyle != null)
-                    out.print(" class=\"" + dataStyle + "\"");
-                out.print(">");
-                out.print(data);
-                out.println("    </div>");
-                out.print("  </td>");
-                out.println("</tr>");
                 
                 /*
                 if (!header) {
