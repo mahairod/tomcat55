@@ -68,6 +68,7 @@ package org.apache.catalina.core;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -773,6 +774,31 @@ final class WrappedRequest
      */
     public void setResponse(Response response) {
 	request.setResponse(response);
+    }
+
+
+    /**
+     * Return the Socket (if any) through which this Request was received.
+     * This should <strong>only</strong> be used to access underlying state
+     * information about this Socket, such as the SSLSession associated with
+     * an SSLSocket.
+     */
+    public Socket getSocket() {
+
+        return (request.getSocket());
+
+    }
+
+
+    /**
+     * Set the Socket (if any) through which this Request was received.
+     *
+     * @param socket The socket through which this request was received
+     */
+    public void setSocket(Socket socket) {
+
+        request.setSocket(socket);
+
     }
 
 

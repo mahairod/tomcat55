@@ -339,6 +339,7 @@ final class HttpProcessor
 		", port=" + connector.getPort());
 	((HttpRequestImpl) request).setInet(socket.getInetAddress());
 	request.setServerPort(connector.getPort());
+        request.setSocket(socket);
 
     }
 

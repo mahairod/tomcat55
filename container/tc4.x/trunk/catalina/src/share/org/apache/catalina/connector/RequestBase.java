@@ -69,6 +69,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.net.Socket;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -235,6 +236,12 @@ public abstract class RequestBase
 
 
     /**
+     * The socket through which this Request was received.
+     */
+    protected Socket socket = null;
+
+
+    /**
      * The ServletInputStream that has been returned by
      * <code>getInputStream()</code>, if any.
      */
@@ -360,6 +367,31 @@ public abstract class RequestBase
     public void setResponse(Response response) {
 
 	this.response = response;
+
+    }
+
+
+    /**
+     * Return the Socket (if any) through which this Request was received.
+     * This should <strong>only</strong> be used to access underlying state
+     * information about this Socket, such as the SSLSession associated with
+     * an SSLSocket.
+     */
+    public Socket getSocket() {
+
+        return (this.socket);
+
+    }
+
+
+    /**
+     * Set the Socket (if any) through which this Request was received.
+     *
+     * @param socket The socket through which this request was received
+     */
+    public void setSocket(Socket socket) {
+
+        this.socket = socket;
 
     }
 
@@ -499,6 +531,7 @@ public abstract class RequestBase
 	secure = false;
 	serverName = null;
 	serverPort = -1;
+        socket = null;
 	stream = null;
 	wrapper = null;
 
