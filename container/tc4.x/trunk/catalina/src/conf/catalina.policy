@@ -82,13 +82,11 @@ grant codeBase "jar:file:${catalina.home}/server/webapps/admin/WEB-INF/lib/jaspe
         permission java.security.AllPermission;                                
 };
 
-grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-compiler.jar!/
--" {
+grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-compiler.jar!/-" {
         permission java.security.AllPermission;                                
 };                                                           
 
-grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-runtime.jar!/-
-" {
+grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-runtime.jar!/-" {
         permission java.security.AllPermission;                                
 };
 
