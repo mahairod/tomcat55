@@ -4571,12 +4571,10 @@ public class StandardContext
         count = (count + 1) % managerChecksFrequency;
 
         if ((getManager() != null) && (count == 0)) {
-            if (getManager() instanceof StandardManager) {
-                ((StandardManager) getManager()).processExpires();
-            } else if (getManager() instanceof PersistentManagerBase) {
-                PersistentManagerBase pManager = 
-                    (PersistentManagerBase) getManager();
-                pManager.backgroundProcess();
+            try {
+                getManager().backgroundProcess();
+            } catch ( Exception x ) {
+                log.warn("Unable to perform background process on manager",x);
             }
         }
 
