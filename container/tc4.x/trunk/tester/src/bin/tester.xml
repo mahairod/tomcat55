@@ -6,7 +6,7 @@
   <property name="host"           value="localhost"/>
   <property name="port"           value="8080"/>
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
-  <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
+  <property name="protocol"       value="HTTP/1.0"/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
   <property name="examples.path"  value="/examples"/>
   <property name="golden.path"    value="${context.path}/golden"/>
@@ -226,10 +226,12 @@
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage03" debug="${debug}"
+          status="200"
       outContent="ErrorPage04 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage03" debug="${debug}"
+          status="200"
       outContent="ErrorPage04 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -247,25 +249,25 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage05?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage05?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage05?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage05?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <!-- ========== Load On Startup Exception Handling ==================== -->
@@ -298,25 +300,25 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage08?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage08?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage08?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage08?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <!-- ========== Exception Mapping (JSP Error Page) ==================== -->
