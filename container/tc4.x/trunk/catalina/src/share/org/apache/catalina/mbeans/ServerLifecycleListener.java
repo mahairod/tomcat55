@@ -493,6 +493,42 @@ public class ServerLifecycleListener
 
     }
 
+
+    /**
+     * Create the MBeans for the specified DefaultContext and its nested components.
+     *
+     * @param dcontext DefaultContext for which to create MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void createMBeans(DefaultContext dcontext) throws Exception {
+
+        // Create the MBean for the DefaultContext itself
+        if (debug >= 4)
+            log("Creating MBean for DefaultContext " + dcontext);
+        MBeanUtils.createMBean(dcontext);
+   
+        // Create the MBeans for the associated nested components
+        Loader dLoader = dcontext.getLoader();
+        if (dLoader != null) {
+            if (debug >= 4)
+                log("Creating MBean for Loader " + dLoader);
+            MBeanUtils.createMBean(dLoader);
+        }
+     
+        Manager dManager = dcontext.getManager();
+        if (dManager != null) {
+            if (debug >= 4)
+                log("Creating MBean for Manager " + dManager);
+            MBeanUtils.createMBean(dManager);
+        }
+        
+        // Create the MBeans for the NamingResources (if any)
+        NamingResources resources = dcontext.getNamingResources();
+        createMBeans(resources);
+
+    }
+
     
     /**
      * Create the MBeans for the specified Engine and its nested components.
@@ -542,6 +578,12 @@ public class ServerLifecycleListener
         for (int j = 0; j < hosts.length; j++) {
             createMBeans((Host) hosts[j]);
         }
+
+	// Create the MBeans for DefaultContext
+	DefaultContext dcontext = engine.getDefaultContext();
+	if (dcontext != null) {
+	    createMBeans(dcontext);
+	}
 
     }
 
@@ -596,6 +638,13 @@ public class ServerLifecycleListener
         for (int k = 0; k < contexts.length; k++) {
             createMBeans((Context) contexts[k]);
         }
+
+	// Create the MBeans for DefaultContext
+	DefaultContext dcontext = host.getDefaultContext();
+	if (dcontext != null) {
+	    createMBeans(dcontext);
+	}
+	
 
     }
 

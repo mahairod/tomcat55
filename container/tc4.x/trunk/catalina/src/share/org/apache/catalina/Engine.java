@@ -148,6 +148,12 @@ public interface Engine extends Container {
     public void addDefaultContext(DefaultContext defaultContext);
 
 
+    /**
+     * Retrieve the DefaultContext for new web applications.
+     */
+    public DefaultContext getDefaultContext();
+
+
     // --------------------------------------------------------- Public Methods
 
 

@@ -70,6 +70,7 @@ import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 
 
@@ -350,6 +351,12 @@ public interface DefaultContext {
      * @param listener Java class name of a ContainerListener class
      */
     public void addWrapperListener(String listener);
+
+
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public NamingResources getNamingResources();
 
 
     /**

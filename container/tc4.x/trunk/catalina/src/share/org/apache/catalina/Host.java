@@ -156,6 +156,12 @@ public interface Host extends Container {
 
 
     /**
+     * Retrieve the DefaultContext for new web applications.
+     */
+    public DefaultContext getDefaultContext();
+
+
+    /**
      * Return the canonical, fully qualified, name of the virtual host
      * this Container represents.
      */

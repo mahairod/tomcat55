@@ -318,7 +318,7 @@
 
 
   <mbean         name="DefaultContext"
-              className="org.apache.catalina.mbeans.ClassNameMBean"
+              className="org.apache.catalina.mbeans.DefaultContextMBean"
           description="Used to store the default configuration a Host will use
                         when creating a Context"
                domain="Catalina"
@@ -340,10 +340,51 @@
           description="The reloadable flag for this web application"
                  type="boolean"/>
 
+    <attribute   name="swallowOutput"
+          description="Flag to set to cause the system.out and system.err 
+	  to be redirected to the logger when executing a servlet"
+                 type="boolean"/>
+
     <attribute   name="useNaming"
           description="Create JNDI naming context?"
                    is="true"
                  type="boolean"/>
+
+    <operation   name="addEnvironment"
+          description="Add an environment entry for this web application"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="envName"
+          description="New environment entry name"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="addResource"
+          description="Add a resource reference for this web application"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="resourceName"
+          description="New resource reference name"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeEnvironment"
+          description="Remove any environment entry with the specified name"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="envName"
+          description="Name of the environment entry to remove"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeResource"
+          description="Remove any resource reference with the specified name"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="resourceName"
+          description="Name of the resource reference to remove"
+                 type="java.lang.String"/>
+    </operation>
 
   </mbean>
 
