@@ -29,7 +29,7 @@ import org.apache.catalina.util.StringManager;
  * 
  * @author Peter Rossbach
  * @author Filip Hanik
- * @version 1.2
+ * @version $Revision$ $Date$
  */
 public class DataSender implements IDataSender {
 
@@ -268,7 +268,7 @@ public class DataSender implements IDataSender {
     public void connect() throws java.io.IOException {
         connectCounter++;
         if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.connect", address,
+            log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),
                     new Integer(port)));
         openSocket();
     }
@@ -283,7 +283,7 @@ public class DataSender implements IDataSender {
     public void disconnect() {
         disconnectCounter++;
         if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.disconnect", address,
+            log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),
                     new Integer(port)));
         closeSocket();
     }
@@ -350,7 +350,7 @@ public class DataSender implements IDataSender {
     protected void openSocket() throws IOException, SocketException {
         socketOpenCounter++;
         if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.openSocket", address, new Integer(
+            log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(
                     port)));
         sc = new Socket(getAddress(), getPort());
         if (isWaitForAck())
@@ -371,7 +371,7 @@ public class DataSender implements IDataSender {
             socketCloseCounter++;
             if (log.isDebugEnabled())
                 log.debug(sm.getString("IDataSender.closeSocket",
-                        address, new Integer(port)));
+                        address.getHostAddress(), new Integer(port)));
             try {
                 sc.close();
             } catch (Exception x) {
@@ -419,7 +419,7 @@ public class DataSender implements IDataSender {
             // second try with fresh connection
             dataResendCounter++;
             if (log.isTraceEnabled())
-                log.trace(sm.getString("IDataSender.send.again", address,
+                log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
                         new Integer(port)));
             closeSocket();
             openSocket();
@@ -432,7 +432,7 @@ public class DataSender implements IDataSender {
         checkIfCloseSocket();
         addStats(data.length);
         if (log.isTraceEnabled())
-            log.trace(sm.getString("IDataSender.send.message", address,
+            log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),
                     new Integer(port), messageid, new Long(data.length)));
 
     }

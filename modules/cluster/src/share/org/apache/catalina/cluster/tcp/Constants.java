@@ -22,6 +22,7 @@ package org.apache.catalina.cluster.tcp;
  * package.
  *
  * @author Peter Rossbach
+ * @version $Revision$ $Date$
  */
 
 public class Constants {
