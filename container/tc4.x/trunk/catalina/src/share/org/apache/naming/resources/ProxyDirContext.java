@@ -1302,7 +1302,7 @@ public class ProxyDirContext implements DirContext {
      */
     protected String parseName(String name) 
         throws NamingException {
-        return name.replace('\\', '/');
+        return name;
     }
 
 
@@ -1313,9 +1313,7 @@ public class ProxyDirContext implements DirContext {
      */
     protected Name parseName(Name name) 
         throws NamingException {
-
         return name;
-
     }
 
 
