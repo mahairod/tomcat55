@@ -116,7 +116,8 @@ public class DigesterFactory{
         Digester digester = new Digester();
         digester.setNamespaceAware(xmlNamespaceAware);
         digester.setValidating(xmlValidation);
-        
+        digester.setUseContextClassLoader(true);
+
         String parserName = 
                 digester.getFactory().getClass().getName();
         if (parserName.indexOf("xerces")!=-1) {
