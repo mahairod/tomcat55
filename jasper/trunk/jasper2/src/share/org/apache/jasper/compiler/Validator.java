@@ -691,7 +691,7 @@ public class Validator {
                                     expectedType = JspFragment.class;
                                 }
                                 else if( typeStr != null ) {
-                                    expectedType = Class.forName( typeStr );
+                                    expectedType = JspUtil.toClass( typeStr );
                                 }
                                 jspAttrs[i]
                                     = getJspAttribute(attrs.getQName(i),

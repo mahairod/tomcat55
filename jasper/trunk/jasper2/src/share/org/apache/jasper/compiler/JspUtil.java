@@ -530,6 +530,30 @@ public class JspUtil {
     }
 
     /**
+     *
+     */
+    public static Class toClass(String type) throws ClassNotFoundException {
+	if ("boolean".equals(type))
+	    return boolean.class;
+	else if ("char".equals(type))
+	    return char.class;
+	else if ("byte".equals(type))
+	    return byte.class;
+	else if ("short".equals(type))
+	    return short.class;
+	else if ("int".equals(type))
+	    return int.class;
+	else if ("long".equals(type))
+	    return long.class;
+	else if ("float".equals(type))
+	    return float.class;
+	else if ("double".equals(type))
+	    return double.class;
+	else
+	    return Class.forName(type);
+    }
+
+    /**
      * Produces a String representing a call to the EL interpreter.
      * @param expression a String containing zero or more "${}" expressions
      * @param expectedType the expected type of the interpreted result
@@ -780,32 +804,9 @@ public class JspUtil {
         
         public Class[] getParameterTypes() {
             return this.parameterTypes;
-        }
-
-	private Class toClass(String type) throws ClassNotFoundException {
-	    if ("boolean".equals(type))
-		return boolean.class;
-	    else if ("char".equals(type))
-		return char.class;
-	    else if ("byte".equals(type))
-		return byte.class;
-	    else if ("short".equals(type))
-		return short.class;
-	    else if ("int".equals(type))
-		return int.class;
-	    else if ("long".equals(type))
-		return long.class;
-	    else if ("float".equals(type))
-		return float.class;
-	    else if ("double".equals(type))
-		return double.class;
-	    else
-		return Class.forName(type);
-	}
+        }    
     }
-    
 }
-
 
 class MyEntityResolver implements EntityResolver {
     public InputSource resolveEntity(String publicId, String systemId)
