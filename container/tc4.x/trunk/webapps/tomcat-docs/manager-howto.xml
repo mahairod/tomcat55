@@ -642,20 +642,20 @@ file might look something like this:</p>
     ... construct web application in ${build} subdirectory ...
   &lt;/target&gt;
 
-  &lt;target name="deploy" description="Deploy web application"
+  &lt;target name="install" description="Install web application"
           depends="compile"&gt;
-    &lt;deploy url="${url}" username="${username}" password="${password}"
+    &lt;install url="${url}" username="${username}" password="${password}"
             path="${path}" war="file://${build}"/&gt;
   &lt;/target&gt;
 
   &lt;target name="reload" description="Reload web application"
           depends="compile"&gt;
     &lt;reload  url="${url}" username="${username}" password="${password}"
-            path="${path}" war="file://${build}"/&gt;
+            path="${path}"/&gt;
   &lt;/target&gt;
 
-  &lt;target name="undeploy" description="Undeploy and delete web application"&gt;
-    &lt;deploy url="${url}" username="${username}" password="${password}"
+  &lt;target name="remove" description="Remove web application"&gt;
+    &lt;remove url="${url}" username="${username}" password="${password}"
             path="${path}"/&gt;
   &lt;/target&gt;
 
@@ -663,7 +663,7 @@ file might look something like this:</p>
 </pre></td></tr>
 </table>
 
-<p>Now, you can execute commands like <code>ant deploy</code> to deploy the
+<p>Now, you can execute commands like <code>ant install</code> to install th
 applcation to a running instance of Tomcat, or <code>ant reload</code> to
 tell Tomcat to reload it.  Note also that most of the interesting values in
 this <code>build.xml</code> file are defined as replaceable properties, so
