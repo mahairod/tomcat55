@@ -67,7 +67,6 @@ import org.xml.sax.Attributes;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-import org.apache.jasper.JasperError;
 import org.apache.jasper.logging.Logger;
 
 /**
@@ -99,20 +98,9 @@ public class Compiler {
     
     /** 
      * Compile the jsp file from the current engine context
-     *
-     * @return true if the class file was outdated the jsp file
-     *         was recompiled. 
      */
-    public boolean compile()
+    public void compile()
 	    throws FileNotFoundException, JasperException, Exception {
-
-        String classFileName = mangler.getClassFileName();
-
-        String className = mangler.getClassName();
-        ctxt.setServletClassName(className);
-
-	if (!isOutDated())
-            return false;
 
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
@@ -192,6 +180,7 @@ public class Compiler {
             b.append(" ");
         }
 
+
         Constants.message("jsp.message.compiling_with",
                           new Object[] { b.toString() },
                           Logger.DEBUG);
@@ -204,7 +193,7 @@ public class Compiler {
 
         // if no compiler was set we can kick out now
         if (javac == null) {
-            return true;
+            return;
         }
 
         /*
@@ -230,8 +219,6 @@ public class Compiler {
         if (!success) {
             errDispatcher.javacError(out.toString(), javaFileName, pageNodes);
         }
-
-        return true;
     }
 
     /**

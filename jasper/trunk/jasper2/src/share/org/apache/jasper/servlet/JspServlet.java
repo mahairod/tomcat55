@@ -83,7 +83,6 @@ import java.security.PermissionCollection;
 import java.security.Policy;
 import java.security.PrivilegedAction;
 
-import org.apache.jasper.JasperError;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
@@ -101,7 +100,7 @@ import org.apache.jasper.logging.DefaultLogger;
 import org.apache.jasper.logging.JasperLogger;
 
 /**
- * The JSP engine (a.k.a Jasper)! 
+ * The JSP engine (a.k.a Jasper).
  *
  * The servlet container is responsible for providing a
  * URLClassLoader for the web application context Jasper
@@ -113,6 +112,7 @@ import org.apache.jasper.logging.JasperLogger;
  * @author Anil K. Vijendran
  * @author Harish Prabandham
  * @author Remy Maucherat
+ * @author Kin-man Chung
  */
 public class JspServlet extends HttpServlet {
 
@@ -396,10 +396,13 @@ public class JspServlet extends HttpServlet {
 
 	boolean isErrorPage = exception != null;
 	
-	JspServletWrapper wrapper = (JspServletWrapper) jsps.get(jspUri);
-	if (wrapper == null) {
-	    wrapper = new JspServletWrapper(jspUri, isErrorPage);
-	    jsps.put(jspUri, wrapper);
+	JspServletWrapper wrapper;
+	synchronized (this) {
+	    wrapper = (JspServletWrapper) jsps.get(jspUri);
+	    if (wrapper == null) {
+		wrapper = new JspServletWrapper(jspUri, isErrorPage);
+		jsps.put(jspUri, wrapper);
+	    }
 	}
 	
 	wrapper.service(request, response, precompile);
@@ -497,9 +500,6 @@ public class JspServlet extends HttpServlet {
             serviceJspFile(request, response, jspUri, null, precompile);
 	} catch (RuntimeException e) {
 	    throw e;
-        } catch (JasperError ex) {
-            response.setContentType("text/html");
-            response.getWriter().print(ex.getMessage());
 	} catch (ServletException e) {
 	    throw e;
 	} catch (IOException e) {
@@ -567,19 +567,16 @@ public class JspServlet extends HttpServlet {
                  req, res);
         }
         JspCompilationContext ctxt = jsw.ctxt;
-	boolean outDated = false; 
-
+	boolean outDated; 
         Compiler compiler = ctxt.createCompiler();
         
         try {
-            outDated = compiler.compile();
-            if ( (jsw.servletClass == null) || (compiler.isOutDated()) ) {
-                synchronized ( this ) {
-                    if ((jsw.servletClass == null) ||
-			(compiler.isOutDated() ))  {
-                        outDated = compiler.compile();
-                    }
-		}
+	    synchronized(jsw) {
+		// Synchronizing on jsw enables simultaneous compilations of
+		// different pages, but not the same page.
+		outDated = compiler.isOutDated();
+		if (outDated)
+		    compiler.compile();
             }
         } catch (FileNotFoundException ex) {
             compiler.removeGeneratedFiles();
@@ -591,18 +588,24 @@ public class JspServlet extends HttpServlet {
                                       ex);
 	}
 
-	// Reload only if it's outdated
-	if((jsw.servletClass == null) || outDated) {
+        // Reload only if it's outdated
+	if ((jsw.servletClass == null) || outDated) {
 	    try {
-		URL [] urls = new URL[1];
-                File outputDir = new File(normalize(ctxt.getOutputDir()));
-                urls[0] = outputDir.toURL();
-                jsw.loader = new JasperLoader(urls,ctxt.getServletClassName(),
-					      parentClassLoader,
-					      permissionCollection,
-					      codeSource);
-		jsw.servletClass = jsw.loader.loadClass(
-			Constants.JSP_PACKAGE_NAME + "." + ctxt.getServletClassName());
+		synchronized (jsw) {
+		    if (jsw.servletClass == null) {
+			URL [] urls = new URL[1];
+			File outputDir = new File(normalize(ctxt.getOutputDir()));
+			urls[0] = outputDir.toURL();
+			jsw.loader = new JasperLoader(
+						urls,ctxt.getServletClassName(),
+						parentClassLoader,
+						permissionCollection,
+						codeSource);
+			jsw.servletClass = jsw.loader.loadClass(
+				Constants.JSP_PACKAGE_NAME + "." +
+				ctxt.getServletClassName());
+		    }
+		}
 	    } catch (ClassNotFoundException cex) {
 		throw new JasperException(
 		    Constants.getString("jsp.error.unable.load"),cex);
@@ -620,6 +623,7 @@ public class JspServlet extends HttpServlet {
     /**
      * Determines whether the current JSP class is older than the JSP file
      * from whence it came
+     * KMC: This is currently no used
      */
     public boolean isOutDated(File jsp, JspCompilationContext ctxt,
 			      Mangler mangler ) {
@@ -695,6 +699,4 @@ public class JspServlet extends HttpServlet {
 	return (normalized);
 
     }
-
-
 }

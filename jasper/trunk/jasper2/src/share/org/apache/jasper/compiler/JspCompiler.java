@@ -85,11 +85,6 @@ public class JspCompiler extends Compiler implements Mangler {
     String jsp;
     String outputDir;
 
-    //    ClassFileData cfd;
-    boolean outDated;
-
-    long lastChecked = -1;
-
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspCompiler");
     
     public JspCompiler(JspCompilationContext ctxt) throws JasperException {
@@ -97,13 +92,14 @@ public class JspCompiler extends Compiler implements Mangler {
         
         this.jsp = ctxt.getJspFile();
         this.outputDir = ctxt.getOutputDir();
-        this.outDated = false;
         setMangler(this);
     }
 
     public final String getClassName() {
-	if( realClassName == null )
+	if( realClassName == null ) {
 	    realClassName = getBaseClassName();
+	    ctxt.setServletClassName(realClassName);
+	}
         return realClassName;
     }
 
@@ -111,7 +107,7 @@ public class JspCompiler extends Compiler implements Mangler {
         if( javaFileName!=null ) return javaFileName;
 	javaFileName = getClassName() + ".java";
  	if (outputDir != null && !outputDir.equals(""))
- 	    javaFileName = outputDir + File.separatorChar + javaFileName;
+	    javaFileName = outputDir + javaFileName;
 	return javaFileName;
     }
     
@@ -177,10 +173,6 @@ public class JspCompiler extends Compiler implements Mangler {
     public boolean isOutDated() {
 
         long time = System.currentTimeMillis();
-        if (time < lastChecked)
-            return false;
-
-        lastChecked = time + 2000;
 
         long jspRealLastModified = 0;
 
@@ -195,13 +187,10 @@ public class JspCompiler extends Compiler implements Mangler {
         }
 
         File classFile = new File(getClassFileName());
-        if (classFile.exists()) {
-            outDated = classFile.lastModified() < jspRealLastModified;
-        } else {
-            outDated = true;
-        }
+        if (classFile.exists())
+            return classFile.lastModified() < jspRealLastModified;
 
-        return outDated;
+        return true;
 
     }
 }
