@@ -128,7 +128,7 @@ import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.StandardClassLoader;
-import org.apache.catalina.loader.StandardLoader;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
@@ -3151,7 +3151,7 @@ public class StandardContext
         if (getLoader() == null) {      // (2) Required by Manager
             if (debug >= 1)
                 log("Configuring default Loader");
-            setLoader(new StandardLoader(getParentClassLoader()));
+            setLoader(new WebappLoader(getParentClassLoader()));
         }
         if (getManager() == null) {     // (3) After prerequisites
             if (debug >= 1)
@@ -3740,8 +3740,15 @@ public class StandardContext
 
 	// Create this directory if necessary
 	File dir = new File(workDir);
-	if (!dir.isAbsolute())
-	    dir = new File(System.getProperty("catalina.home"), workDir);
+	if (!dir.isAbsolute()) {
+            File catalinaHome = new File(System.getProperty("catalina.home"));
+            String catalinaHomePath = null;
+            try {
+                catalinaHomePath = catalinaHome.getCanonicalPath();
+                dir = new File(catalinaHomePath, workDir);
+            } catch (IOException e) {
+            }
+        }
 	dir.mkdirs();
 
 	// Set the appropriate servlet context attribute
