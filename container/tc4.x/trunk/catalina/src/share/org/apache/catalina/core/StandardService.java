@@ -137,6 +137,12 @@ public final class StandardService
     private boolean started = false;
 
 
+    /**
+     * Has this component been initialized?
+     */
+    private boolean initialized = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -236,6 +242,15 @@ public final class StandardService
             System.arraycopy(connectors, 0, results, 0, connectors.length);
             results[connectors.length] = connector;
             connectors = results;
+
+	    if (initialized) {
+		try {
+		    connector.initialize();
+		} catch (LifecycleException e) {
+		    e.printStackTrace(System.err);
+		}
+	    }
+
             if (started && (connector instanceof Lifecycle)) {
                 try {
                     ((Lifecycle) connector).start();
@@ -402,5 +417,23 @@ public final class StandardService
 
     }
 
+    /**
+     * Invoke a pre-startup initialization. This is used to allow connectors
+     * to bind to restricted ports under Unix operating environments.
+     */
+    public void initialize()
+    throws LifecycleException {
+        if (initialized)
+            throw new LifecycleException (
+                sm.getString("standardService.initialize.initialized"));
+        initialized = true;
+
+        // Initialize our defined Connectors
+        synchronized (connectors) {
+		for (int i = 0; i < connectors.length; i++) {
+		    connectors[i].initialize();
+		}
+        }
+    }
 
 }

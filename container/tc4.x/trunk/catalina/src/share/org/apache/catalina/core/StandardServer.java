@@ -141,6 +141,12 @@ public final class StandardServer
     private boolean started = false;
 
 
+    /**
+     * Has this component been initialized?
+     */
+    private boolean initialized = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -215,6 +221,15 @@ public final class StandardServer
             System.arraycopy(services, 0, results, 0, services.length);
             results[services.length] = service;
             services = results;
+
+	    if (initialized) {
+		try {
+		    service.initialize();
+		} catch (LifecycleException e) {
+		    e.printStackTrace(System.err);
+		}
+	    }
+
             if (started && (service instanceof Lifecycle)) {
                 try {
                     ((Lifecycle) service).start();
@@ -489,5 +504,21 @@ public final class StandardServer
 
     }
 
+    /**
+     * Invoke a pre-startup initialization. This is used to allow connectors
+     * to bind to restricted ports under Unix operating environments.
+     */
+    public void initialize()
+    throws LifecycleException {
+        if (initialized)
+            throw new LifecycleException (
+		sm.getString("standardServer.initialize.initialized"));
+	initialized = true;
+
+	// Initialize our defined Services
+	for (int i = 0; i < services.length; i++) {
+	    services[i].initialize();
+	}
+    }
 
 }

@@ -130,6 +130,8 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
 
     /** The lifecycle event support for this component. */
     private LifecycleSupport lifecycle=new LifecycleSupport(this);
+    /** The "initialized" flag. */
+    private boolean initialized=false;
     /** The "started" flag. */
     private boolean started=false;
 
@@ -428,6 +430,16 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
      */
     public void removeLifecycleListener(LifecycleListener listener) {
         lifecycle.removeLifecycleListener(listener);
+    }
+
+    /**
+     * Initialize this connector (create ServerSocket here!)
+     */
+    public void initialize()
+    throws LifecycleException {
+        if (initialized)
+            throw new LifecycleException("Already initialized");
+        this.initialized=true;
     }
 
     /**

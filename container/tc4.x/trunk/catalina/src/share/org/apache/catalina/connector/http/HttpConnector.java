@@ -258,6 +258,12 @@ public final class HttpConnector
 
 
     /**
+     * Has this component been initialized yet?
+     */
+    private boolean initialized = false;
+
+
+    /**
      * Has this component been started yet?
      */
     private boolean started = false;
@@ -1055,6 +1061,19 @@ public final class HttpConnector
 
 	lifecycle.removeLifecycleListener(listener);
 
+    }
+
+
+    /**
+     * Initialize this connector (create ServerSocket here!)
+     */
+    public void initialize()
+    throws LifecycleException {
+	if (initialized)
+	    throw new LifecycleException (
+		sm.getString("httpConnector.alreadyInitialized"));
+	this.initialized=true;
+	System.err.println("HTTP Connector initialized");
     }
 
 
