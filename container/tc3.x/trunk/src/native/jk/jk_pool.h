@@ -85,6 +85,8 @@ extern "C" {
     typedef long long   jk_pool_atom_t;
 #elif defined(LINUX)
     typedef long long   jk_pool_atom_t;
+#elif defined(FREEBSD)
+    typedef long long   jk_pool_atom_t;
 #elif defined(OS2)
     typedef long long   jk_pool_atom_t;
 #endif
