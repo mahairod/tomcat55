@@ -76,7 +76,6 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.naming.Binding;
@@ -357,10 +356,7 @@ public class ManagerServlet
         }
 
         // Prepare our output writer to generate the response message
-        Locale locale = Locale.getDefault();
-        String charset = context.getCharsetMapper().getCharset(locale);
-        response.setLocale(locale);
-        response.setContentType("text/plain; charset=" + charset);
+        response.setContentType("text/plain; charset=" + Constants.CHARSET);
         PrintWriter writer = response.getWriter();
 
         // Process the requested command (note - "/deploy" is not listed here)
@@ -439,9 +435,7 @@ public class ManagerServlet
         }
 
         // Prepare our output writer to generate the response message
-        response.setContentType("text/plain");
-        Locale locale = Locale.getDefault();
-        response.setLocale(locale);
+        response.setContentType("text/plain;charset="+Constants.CHARSET);
         PrintWriter writer = response.getWriter();
 
         // Process the requested command

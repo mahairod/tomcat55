@@ -96,9 +96,9 @@ public class StatusTransformer {
     public static void setContentType(HttpServletResponse response, 
                                       int mode) {
         if (mode == 0){
-            response.setContentType("text/html");
+            response.setContentType("text/html;charset="+Constants.CHARSET);
         } else if (mode == 1){
-            response.setContentType("text/xml");
+            response.setContentType("text/xml;charset="+Constants.CHARSET);
         }
     }
 
