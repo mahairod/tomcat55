@@ -189,6 +189,11 @@ public class Compiler {
         //          System.getProperty("jsp.class.path", ".") 
         // business. If anyone badly needs this we can talk. -akv
 
+        // I'm adding tc_path_add because it solves a real problem
+        // and nobody has yet to come up with a better alternative.
+        // Note: this is in two places.  Search for tc_path_add below.
+        // If you have one, please let me know.  -Sam Ruby
+
         String sep = System.getProperty("path.separator");
         String[] argv = new String[] 
         {
@@ -196,6 +201,8 @@ public class Compiler {
             javaEncoding,
             "-classpath",
             System.getProperty("java.class.path")+ sep + classpath 
+	    System.getProperty("java.class.path")+ sep + classpath + sep +
+                System.getProperty("tc_path_add") + sep
             + sep + ctxt.getOutputDir(),
             "-d", ctxt.getOutputDir(),
             javaFileName
@@ -225,9 +232,11 @@ public class Compiler {
 
         /**
          * Configure the compiler object
+         * See comment above: re tc_path_add
          */
         javac.setEncoding(javaEncoding);
         javac.setClasspath( System.getProperty("java.class.path")+ sep + 
+                            System.getProperty("tc_path_add") + sep +
                             classpath + sep + ctxt.getOutputDir());
         javac.setOutputDir(ctxt.getOutputDir());
         javac.setMsgOutput(out);
