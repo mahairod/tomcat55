@@ -400,6 +400,39 @@ public class ServletRequestWrapper implements ServletRequest {
 	return this.request.getRealPath(path);
     }
     
+    /**
+     * Returns the Internet Protocol (IP) source port of the client
+     * or last proxy that sent the request.
+     */    
+    public int getRemotePort(){
+        return this.request.getRemotePort();
+    }
+
+
+    /**
+     * Returns the host name of the Internet Protocol (IP) interface on
+     * which the request was received.
+     */
+    public String getLocalName(){
+        return this.request.getLocalName();
+    }
+
+    /**
+     * Returns the Internet Protocol (IP) address of the interface on
+     * which the request  was received.
+     */       
+    public String getLocalAddr(){
+        return this.request.getLocalAddr();
+    }
+
+
+    /**
+     * Returns the Internet Protocol (IP) port number of the interface
+     * on which the request was received.
+     */
+    public int getLocalPort(){
+        return this.request.getLocalPort();
+    }
     
 }
 
