@@ -169,7 +169,7 @@ public class AddConnectorAction extends Action {
         String schemeTypes[]= new String[3];
         schemeTypes[0] = "HTTP";
         schemeTypes[1] = "HTTPS";                
-        schemeTypes[2] = "HTTP(AJP)";
+        schemeTypes[2] = "AJP";
         
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected

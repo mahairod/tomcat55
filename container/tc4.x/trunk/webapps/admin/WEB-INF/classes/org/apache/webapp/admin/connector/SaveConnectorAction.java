@@ -205,11 +205,11 @@ public final class SaveConnectorAction extends Action {
 
                 // FIX ME -- fix all create operations
                 if ("HTTP".equalsIgnoreCase(connectorType)) {
-                        operation = "createHttp11Connector"; // HTTP
+                        operation = "createHttpConnector"; // HTTP
                 } else if ("HTTPS".equalsIgnoreCase(connectorType)) { 
-                        operation = "createCoyoteConnector";   // HTTPS
+                        operation = "createHttpsConnector";   // HTTPS
                 } else {
-                        operation = "createAjp13Connector";   // HTTP (AJP)                  
+                        operation = "createAjpConnector";   // AJP(HTTP)                  
                 }
                 
                 cObjectName = (String)
@@ -337,9 +337,9 @@ public final class SaveConnectorAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("maxProcessors", new Integer(maxProcessors))); 
       
-            // proxy name and port exist only for Coyote HTTP/1.1 Connectors.
-            // and not for AJP connector
-            if (!("HTTP(AJP)".equalsIgnoreCase(connectorType))) {
+            // proxy name and port do not exist for AJP connector
+            /*
+            if (!("AJP".equalsIgnoreCase(connectorType))) {
                 attribute = "proxyName";              
                 mBServer.setAttribute(coname,
                                   new Attribute("proxyName", cform.getProxyName()));            
@@ -353,12 +353,14 @@ public final class SaveConnectorAction extends Action {
                 mBServer.setAttribute(coname,
                               new Attribute("proxyPort", new Integer(proxyPort))); 
             }
+            */
             
             // HTTPS specific properties
             if("HTTPS".equalsIgnoreCase(connectorType)) {
                 attribute = "clientAuth";              
                 mBServer.setAttribute(coname,
-                              new Attribute("clientAuth", new Boolean(cform.getClientAuthentication())));            
+                              new Attribute("clientAuth", new Boolean(
+                                             cform.getClientAuthentication())));            
                 
                 attribute = "keystoreFile";
                 String keyFile = cform.getKeyStoreFileName();
