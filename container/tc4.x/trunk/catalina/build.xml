@@ -593,6 +593,7 @@
     <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/tool-wrapper.sh"/>
 
     <!-- Common Extensions -->
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
@@ -791,9 +792,10 @@
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
-    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
+    <chmod perm="+x" file="${catalina.deploy}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
+    <chmod perm="+x" file="${catalina.deploy}/bin/tool-wrapper.sh"/>
 
     <!-- Common Extensions -->
     <copy todir="${catalina.deploy}/common/lib">
@@ -831,6 +833,7 @@
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/BootstrapService.class" />
         <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
+        <include name="org/apache/catalina/startup/Tool.class" />
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <include name="org/apache/catalina/loader/Extension.class" />
         <include name="org/apache/catalina/loader/Reloader.class" />
@@ -847,6 +850,7 @@
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
         <exclude name="org/apache/catalina/startup/BootstrapService.class" />
         <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
+        <exclude name="org/apache/catalina/startup/Tool.class" />
         <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <exclude name="org/apache/catalina/loader/Extension.class" />
         <exclude name="org/apache/catalina/loader/Reloader.class" />
@@ -964,6 +968,7 @@
     <chmod perm="+x" file="${catalina.dist}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/shutdown.sh"/>
+    <chmod perm="+x" file="${catalina.dist}/bin/tool-wrapper.sh"/>
 
     <!-- Common Extensions -->    
     <mkdir dir="${catalina.dist}/common/classes"/>
