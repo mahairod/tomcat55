@@ -208,7 +208,7 @@ public class RequestFacade implements ServletRequest {
 
 
     public String getRemoteHost() {
-        return request.getRemoteAddr();
+        return request.getRemoteHost();
     }
 
 
