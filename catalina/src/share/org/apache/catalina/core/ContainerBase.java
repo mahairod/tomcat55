@@ -1351,7 +1351,6 @@ public abstract class ContainerBase
             current = current.getParent();
         }
         logName = ContainerBase.class.getName() + "." + loggerName;
-        System.out.println(logName);
         return logName;
         
     }
