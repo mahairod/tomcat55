@@ -58,6 +58,8 @@
 package org.apache.jasper34.cli;
 
 import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import org.apache.jasper34.generator.*;
 import org.apache.jasper34.core.*;
@@ -88,26 +90,22 @@ public class CommandLineContext extends ContainerLiaison
     ClassLoader loader;
     boolean errPage;
     String jspFile;
-    String servletClassName;
-    String servletPackageName;
-    String servletJavaFileName;
     String contentType;
     Options options;
 
     String uriBase;
     File uriRoot;
 
-    boolean packageNameLocked;
-    boolean classNameLocked;
+    //    boolean packageNameLocked;
+    //    boolean classNameLocked;
     boolean outputInDirs;
 
-    public CommandLineContext(ClassLoader newLoader, String newClassPath,
+    public CommandLineContext(String newClassPath,
                               String newJspFile, String newUriBase,
                               String newUriRoot, boolean newErrPage,
                               Options newOptions)
     throws JasperException
     {
-        loader = newLoader;
         classPath = newClassPath;
         uriBase = newUriBase;
         String tUriRoot = newUriRoot;
@@ -164,13 +162,57 @@ public class CommandLineContext extends ContainerLiaison
      * this JSP? I don't think this is used right now -- akv. 
      */
     public ClassLoader getClassLoader() {
-        return loader;
+	// Construct a loader
+	if( loader != null ) return loader;
+	File uriDir = new File(this.getRealPath("/"));
+
+	ClassLoader parentLoader=getClass().getClassLoader();
+
+	try {
+	    URL urls[]=getWebAppClassPath(uriDir);
+	    // XXX compat XXX
+	    loader= new URLClassLoader( urls,
+					parentLoader );
+	} catch( IOException ex ) {
+	    ex.printStackTrace();
+	}
+	return loader;
     }
 
-//     public void addJar( String jar ) throws IOException  {
-// 	loader.addJar( jar );
-//     }
-    
+    // XXX compat XXX 
+    private URL[] getWebAppClassPath( File uriDir )
+	throws IOException
+    {
+	String uriRoot=uriDir.toString();
+	if(debug>0) log( "URIRoot " + uriRoot );
+	Vector urls=new Vector();
+	
+	urls.add( options.getScratchDir().toURL());
+	if(debug>0) log("CP: " + options.getScratchDir().toURL());
+	
+	File classes = new File(uriRoot + "/WEB-INF/classes");
+	if (classes.exists()) {
+	    if(debug>0) log("CP: " + classes.toURL());
+	    urls.add(classes.toURL());
+	}
+
+	File lib = new File( uriRoot + "/WEB-INF/lib");
+	if (lib.exists() && lib.isDirectory()) {
+	    String[] libs = lib.list();
+	    for (int i = 0; i < libs.length; i++) {
+		File libFile = new File(lib.toString()
+					+ File.separator
+					+ libs[i]);
+		urls.add(libFile.toURL());
+		if(debug>0) log("CP: " + libFile.toURL());
+	    }
+	}
+	
+	URL urlA[]=new URL[ urls.size() ];
+	urls.toArray( urlA );
+	return urlA;
+    }
+
     /**
      * Are we processing something that has been declared as an
      * errorpage? 
@@ -188,56 +230,6 @@ public class CommandLineContext extends ContainerLiaison
         return options.getScratchDir().toString();
     }
     
-    /**
-     * Path of the JSP URI. Note that this is not a file name. This is
-     * the context rooted URI of the JSP file. 
-     */
-    public String getJspFile() {
-        return jspFile;
-    }
-    
-    /**
-     * Just the class name (does not include package name) of the
-     * generated class. 
-     */
-    public String getServletClassName() {
-        return servletClassName;
-    }
-    
-    /**
-     * The package name into which the servlet class is generated. 
-     */
-    public String getServletPackageName() {
-        return servletPackageName;
-    }
-
-    /**
-     * Utility method to get the full class name from the package and
-     * class name. 
-     */
-    public String getFullClassName() {
-        String pkg = getServletPackageName();
-        if (pkg != null) {
-            pkg += ".";
-        } else {
-            pkg = "";
-        }
-        return pkg + getServletClassName();
-   }
-
-    /**
-     * Full path name of the Java file into which the servlet is being
-     * generated. 
-     */
-    public String getServletJavaFileName() {
-        if (outputInDirs) {
-            return getServletPackageName().replace('.', File.separatorChar)
-                   + servletJavaFileName;
-        } else {
-            return servletJavaFileName;
-        }
-    }
-
     /**
      * Are we keeping generated code around?
      */
@@ -272,37 +264,18 @@ public class CommandLineContext extends ContainerLiaison
         this.writer = writer;
     }
     
-    public void setServletClassName(String servletClassName) {
-        if (classNameLocked) {
-            //System.out.println("Did not change clazz to " + servletClassName);
-        } else {
-            this.servletClassName = servletClassName;
-        }
-    }
-    
-    public void setServletPackageName(String servletPackageName) {
-        if (packageNameLocked) {
-            //System.out.println("Did not change pkg to " + servletPackageName);
-        } else {
-            this.servletPackageName = servletPackageName;
-        }
-    }
-    
-    public void setServletJavaFileName(String servletJavaFileName) {
-        this.servletJavaFileName = servletJavaFileName;
-    }
-    
     public void setErrorPage(boolean isErrPage) {
         errPage = isErrPage;
     }
 
-    public void lockPackageName() {
-        packageNameLocked = true;
-    }
-
-    public void lockClassName() {
-        classNameLocked = true;
-    }
+    // What is this ?
+    //     public void lockPackageName() {
+    //         packageNameLocked = true;
+    //     }
+    
+    //     public void lockClassName() {
+    //         classNameLocked = true;
+    //     }
 
     public void setOutputInDirs(boolean newValue) {
         outputInDirs = true;
@@ -317,7 +290,7 @@ public class CommandLineContext extends ContainerLiaison
      * Get the full value of a URI relative to this compilations context
      * uses current file as the base.
      */
-    public String resolveRelativeUri(String uri) {
+    public String resolveRelativeUri(String uri, String uriBase ) {
         if (uri.startsWith("/")) {
             return uri;
         } else {
@@ -348,7 +321,7 @@ public class CommandLineContext extends ContainerLiaison
         }
         // that dind't work, last chance is to try the classloaders
         if (in == null) {
-            in = loader.getResourceAsStream(res);
+            in = getClassLoader().getResourceAsStream(res);
         }
         return in;
     }
@@ -359,7 +332,7 @@ public class CommandLineContext extends ContainerLiaison
      * the compilation.
      */
     public String getRealPath(String path) {
-        path = resolveRelativeUri(path);
+        path = resolveRelativeUri(path, uriBase);
         if (path.startsWith("/")) {
             path = path.substring(1);
         }
@@ -379,12 +352,14 @@ public class CommandLineContext extends ContainerLiaison
 	implementation ( TagLibReader ).
     */
     public void readTLD( TagLibraries libs,
-			 TagLibraryInfoImpl tl, String prefix, String uri )
+			 TagLibraryInfoImpl tl, String prefix, String uri,
+			 String uriBase )
     	throws IOException, JasperException
     {
 	TagLibReader reader=new TagLibReader( this, libs );
-	reader.readTagLib( tl, prefix, uri );
+	reader.readTLD( tl, prefix, uri, uriBase );
     }
 
+    private static int debug=1;
 }
 

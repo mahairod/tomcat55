@@ -68,9 +68,6 @@ import org.apache.jasper34.core.*;
 import org.apache.jasper34.javacompiler.*;
 import org.apache.jasper34.liaison.*;
 
-// XXX Will be replaced with URLClassLoader ( via JDKCompat )
-import org.apache.jasper34.servlet.JasperLoader;
-
 import org.apache.tomcat.util.log.*;
 
 /**
@@ -145,6 +142,7 @@ public class JspC {
         return jspVerbosityLevel;
     }
 
+    // -------------------- Argument processing --------------------
     int argPos;
     // value set by beutifully obsfucscated java
     boolean fullstop = false;
@@ -252,54 +250,21 @@ public class JspC {
             }
         }
      }
+
+    // -------------------- Process a file --------------------
     
     public boolean parseFile(PrintStream log, String file,
 			     Writer servletout, Writer mappingout)
     {
         try {
-            JasperLoader loader =
-                    new JasperLoader();
-	    loader.setParentClassLoader(getClass().getClassLoader());
-	    //loader.setOptions( optionsP );
-	    loader.setScratchDir( optionsP.getScratchDir().toString() );
-            CommandLineContext clctxt = new CommandLineContext(
-                    loader, optionsP.getClassPath(), file, uriBase,
-		    uriRoot, false,
-                    optionsP );
-            if ((targetClassName != null) && (targetClassName.length() > 0)) {
-                clctxt.setServletClassName(targetClassName);
-                clctxt.lockClassName();
-            }
-            if (targetPackage != null) {
-                clctxt.setServletPackageName(targetPackage);
-                clctxt.lockPackageName();
-            }
+            CommandLineContext clctxt =
+		new CommandLineContext(optionsP.getClassPath(), file, uriBase,
+				       uriRoot, false,  optionsP );
             if (dirset) {
                 clctxt.setOutputInDirs(true);
             }
-            File uriDir = new File(clctxt.getRealPath("/"));
-            if (uriDir.exists()) {
-                if ((new File(uriDir, "WEB-INF/classes")).exists()) {
-                    loader.addJar(clctxt.getRealPath("/WEB-INF/classes"));
-                }
-                File lib = new File(clctxt.getRealPath("WEB-INF/lib"));
-                if (lib.exists() && lib.isDirectory()) {
-                    String[] libs = lib.list();
-                    for (int i = 0; i < libs.length; i++) {
-                        try {
-                            loader.addJar(lib.getCanonicalPath()
-                                    + File.separator
-                                    + libs[i]);
-                        } catch (IOException ioe) {
-                            // failing a toCanonicalPath on a file that
-                            // exists() should be a JVM regression test,
-                            // therefore we have permission to freak out
-                            throw new RuntimeException(ioe.toString());
-                        }
-                    }
-                }
-            }
-            Compiler clc = new Compiler(clctxt);
+
+            Compiler compiler = new Compiler(clctxt);
 	    ManglerCli mangler=new ManglerCli();
 	    
 	    mangler.init(file,
@@ -308,7 +273,24 @@ public class JspC {
 
 	    JspPageInfo pageInfo=new JspPageInfo( clctxt,optionsP, mangler);
 	    
-            clc.compile(pageInfo, JavaCompiler.getDefaultCompiler());
+	    compiler.jsp2java( pageInfo );
+
+	    String javaFile=
+		pageInfo.getMangler().getJavaFileName();
+	    
+	    JavaCompiler javaC=
+		compiler.createJavaCompiler( pageInfo );
+	    compiler.prepareCompiler( javaC, pageInfo );
+	    boolean status = javaC.compile( javaFile );
+
+	    if (status == false) {
+		String msg = javaC.getCompilerMessage();
+		throw new JasperException("Unable to compile "
+					  + msg);
+	    }
+	    
+	    // remove java file if !keepgenerated, etc
+	    compiler.postCompile(pageInfo);
 
             targetClassName = null;
             String thisServletName;
@@ -353,12 +335,8 @@ public class JspC {
         return false;
     }
 
-
-    public void parseFiles(PrintStream log)  throws JasperException {
-
-        boolean scratchDirSet = (optionsP.getScratchDir() != null);
-        boolean urirootSet = (uriRoot != null);
-
+    // -------------------- Process all files --------------------
+    private void prepareScratchDir( ) {
         // set up a scratch/output dir if none is provided
         if (optionsP.getScratchDir() == null) {
             String temp = System.getProperty("java.io.tempdir");
@@ -368,8 +346,64 @@ public class JspC {
             options.put( Options.SCRATCH_DIR,  
 			 new File(new File(temp).getAbsolutePath()));
         }
+    }
 
- 
+    /** Search for uriRoot
+     */
+    private void findUriRoot( File f ) {
+	String tUriBase = uriBase;
+	if (tUriBase == null) {
+	    tUriBase = "/";
+	}
+	try {
+	    if (f.exists()) {
+		f = new File(f.getCanonicalPath());
+		while (f != null) {
+		    File g = new File(f, "WEB-INF");
+		    if (g.exists() && g.isDirectory()) {
+			uriRoot = f.getCanonicalPath();
+			uriBase = tUriBase;
+			ContainerLiaison.message("jspc.implicit.uriRoot",
+						 new Object[] { uriRoot },
+						 Log.INFORMATION);
+			break;
+		    }
+		    if (f.exists() && f.isDirectory()) {
+			tUriBase = "/" + f.getName() + "/" + tUriBase;
+		    }
+		    
+		    String fParent = f.getParent();
+		    if (fParent == null) {
+			f = new File(args[argPos]);
+			fParent = f.getParent();
+			if (fParent == null) {
+			    fParent = File.separator;
+			}
+			uriRoot = new File(fParent).getCanonicalPath();
+			uriBase = "/";
+			break;
+                        } else {
+                            f = new File(fParent);
+                        }
+		    
+		    // If there is no acceptible candidate, uriRoot will
+		    // remain null to indicate to the CompilerContext to
+		    // use the current working/user dir.
+		}
+	    }
+	} catch (IOException ioe) {
+	    // since this is an optional default and a null value
+	    // for uriRoot has a non-error meaning, we can just
+	    // pass straight through
+	}
+    }
+    File froot=null;
+    
+    public void parseFiles(PrintStream log)
+	throws JasperException, IOException
+    {
+	prepareScratchDir();
+
         File f = new File(args[argPos]);
         while (!f.exists()) {
             boolean webApp = false;
@@ -399,7 +433,8 @@ public class JspC {
                 }
             }
         }
-        if (uriRoot == null) {
+
+	if (uriRoot == null) {
             if (SWITCH_FILE_WEBAPP.equals(args[argPos])) {
                 if (args.length > argPos + 1) {
                     f = new File(args[argPos + 1]);
@@ -409,56 +444,12 @@ public class JspC {
                 }
             }
             // set up the uri root if none is explicitly set
-            String tUriBase = uriBase;
-            if (tUriBase == null) {
-                tUriBase = "/";
-            }
-            try {
-                if (f.exists()) {
-                    f = new File(f.getCanonicalPath());
-                    while (f != null) {
-                        File g = new File(f, "WEB-INF");
-                        if (g.exists() && g.isDirectory()) {
-                            uriRoot = f.getCanonicalPath();
-                            uriBase = tUriBase;
-                            ContainerLiaison.message("jspc.implicit.uriRoot",
-                                              new Object[] { uriRoot },
-                                              Log.INFORMATION);
-                            break;
-                        }
-                        if (f.exists() && f.isDirectory()) {
-                            tUriBase = "/" + f.getName() + "/" + tUriBase;
-                        }
-                        
-                        String fParent = f.getParent();
-                        if (fParent == null) {
-                            f = new File(args[argPos]);
-                            fParent = f.getParent();
-                            if (fParent == null) {
-                                fParent = File.separator;
-                            }
-                            uriRoot = new File(fParent).getCanonicalPath();
-                            uriBase = "/";
-                            break;
-                        } else {
-                            f = new File(fParent);
-                        }
-
-                        // If there is no acceptible candidate, uriRoot will
-                        // remain null to indicate to the CompilerContext to
-                        // use the current working/user dir.
-                    }
-                }
-            } catch (IOException ioe) {
-                // since this is an optional default and a null value
-                // for uriRoot has a non-error meaning, we can just
-                // pass straight through
-            }
+	    findUriRoot(f);
         }
 
 
         String file = nextFile();
-        File froot = new File(uriRoot);
+	froot = new File(uriRoot);
         String ubase = null;
         try {
             ubase = froot.getCanonicalPath();
@@ -469,131 +460,7 @@ public class JspC {
         while (file != null) {
             if (SWITCH_FILE_WEBAPP.equals(file)) {
                 String base = nextFile();
-                if (base == null) {
-                    ContainerLiaison.message("jspc.error.emptyWebApp", 
-                            Log.ERROR);
-                    return;
-                }// else if (".".equals(base)) {
-                //    base = "";
-                //}
-                String oldRoot = uriRoot;
-                if (!urirootSet) {
-                    uriRoot = base;
-                }
-                Vector pages = new Vector();
-
-                Stack dirs = new Stack();
-                dirs.push(base);
-                if (extensions == null) {
-                    extensions = new Vector();
-                    extensions.addElement("jsp");
-                }
-                while (!dirs.isEmpty()) {
-                    String s = dirs.pop().toString();
-                    //System.out.println("--" + s);
-                    f = new File(s);
-                    if (f.exists() && f.isDirectory()) {
-                        String[] files = f.list();
-                        String ext;
-                        for (int i = 0; i < files.length; i++) {
-                            File f2 = new File(s, files[i]);
-                            //System.out.println(":" + f2.getPath());
-                            if (f2.isDirectory()) {
-                                dirs.push(f2.getPath());
-                                //System.out.println("++" + f2.getPath());
-                            } else {
-                                ext = files[i].substring(
-                                        files[i].lastIndexOf('.') + 1);
-                                if (extensions.contains(ext)) {
-                                    //System.out.println(s + "?" + files[i]);
-                                    pages.addElement(
-                                        s + File.separatorChar + files[i]);
-                                } else {
-                                    //System.out.println("not done:" + ext);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                String ubaseOld = ubase;
-                File frootOld = froot;
-                froot = new File(uriRoot);
-
-                try {
-                    ubase = froot.getCanonicalPath();
-                } catch (IOException ioe) {
-                    // if we cannot get the base, leave it null
-                }
-
-                //System.out.println("==" + ubase);
-
-
-                Writer mapout;
-                CharArrayWriter servletout, mappingout;
-                try {
-                    if (webxmlLevel >= INC_WEBXML) {
-                        File fmapings = new File(webxmlFile);
-                        mapout = new FileWriter(fmapings);
-                        servletout = new CharArrayWriter();
-                        mappingout = new CharArrayWriter();
-                    } else {
-                        mapout = null;
-                        servletout = null;
-                        mappingout = null;
-                    }
-                    if (webxmlLevel >= ALL_WEBXML) {
-                        mapout.write(ContainerLiaison.getString("jspc.webxml.header"));
-                    } else if (webxmlLevel>= INC_WEBXML) {
-                        mapout.write(ContainerLiaison.getString("jspc.webinc.header"));
-                    }
-                } catch (IOException ioe) {
-                    mapout = null;
-                    servletout = null;
-                    mappingout = null;
-                }
-
-                Enumeration e = pages.elements();
-                while (e.hasMoreElements())
-                {
-                    String nextjsp = e.nextElement().toString();
-                    try {
-                        if (ubase != null) {
-                            File fjsp = new File(nextjsp);
-                            String s = fjsp.getCanonicalPath();
-                            //System.out.println("**" + s);
-                            if (s.startsWith(ubase)) {
-                                nextjsp = s.substring(ubase.length());
-                            }
-                        }
-                    } catch (IOException ioe) {
-                        // if we got problems dont change the file name
-                    }
-
-                    if (nextjsp.startsWith("." + File.separatorChar)) {
-                        nextjsp = nextjsp.substring(2);
-                    }
-
-                    parseFile(log, nextjsp, servletout, mappingout);
-                }
-                uriRoot = oldRoot;
-                ubase = ubaseOld;
-                froot = frootOld;
-
-                if (mapout != null) {
-                    try {
-                        servletout.writeTo(mapout);
-                        mappingout.writeTo(mapout);
-                        if (webxmlLevel >= ALL_WEBXML) {
-                            mapout.write(ContainerLiaison.getString("jspc.webxml.footer"));
-                        } else if (webxmlLevel >= INC_WEBXML) {
-                            mapout.write(ContainerLiaison.getString("jspc.webinc.footer"));
-                        }
-                        mapout.close();
-                    } catch (IOException ioe) {
-                        // noting to do if it fails since we are done with it
-                    }
-                }
+		processWebApp( base, uriRoot, ubase, log );
             } else {
                 try {
                     if (ubase != null) {
@@ -616,6 +483,113 @@ public class JspC {
         }
     }
 
+    private void processJspFiles( Vector pages, String ubase,
+				  PrintStream log,
+				  Writer servletout, Writer mappingout)
+	throws IOException
+    {
+	Enumeration e = pages.elements();
+	while (e.hasMoreElements()) {
+	    String nextjsp = e.nextElement().toString();
+	    try {
+		if (ubase != null) {
+		    File fjsp = new File(nextjsp);
+		    String s = fjsp.getCanonicalPath();
+		    //System.out.println("**" + s);
+		    if (s.startsWith(ubase)) {
+			nextjsp = s.substring(ubase.length());
+		    }
+		}
+	    } catch (IOException ioe) {
+		// if we got problems dont change the file name
+	    }
+
+	    if (nextjsp.startsWith("." + File.separatorChar)) {
+		nextjsp = nextjsp.substring(2);
+	    }
+
+	    parseFile(log, nextjsp, servletout, mappingout);
+	}
+    }
+    
+    public void processWebApp( String base, String uriRoot, String ubase,
+			       PrintStream log)
+	throws IOException
+    {
+	if (base == null) {
+	    ContainerLiaison.message("jspc.error.emptyWebApp", 
+				     Log.ERROR);
+	    return;
+	}
+
+	String oldRoot = uriRoot;
+        boolean urirootSet = (uriRoot != null);
+	if (!urirootSet) {
+	    uriRoot = base;
+	}
+	if (extensions == null) {
+	    extensions = new Vector();
+	    extensions.addElement("jsp");
+	}
+	
+	Vector pages=findByExtension( base, extensions );
+	
+	String ubaseOld = ubase;
+	File frootOld = froot;
+	froot = new File(uriRoot);
+
+	try {
+	    ubase = froot.getCanonicalPath();
+	} catch (IOException ioe) {
+	    // if we cannot get the base, leave it null
+	}
+
+	Writer mapout;
+	CharArrayWriter servletout, mappingout;
+	try {
+	    if (webxmlLevel >= INC_WEBXML) {
+		File fmapings = new File(webxmlFile);
+		mapout = new FileWriter(fmapings);
+		servletout = new CharArrayWriter();
+		mappingout = new CharArrayWriter();
+	    } else {
+		mapout = null;
+		servletout = null;
+		mappingout = null;
+	    }
+	    if (webxmlLevel >= ALL_WEBXML) {
+		mapout.write(ContainerLiaison.getString("jspc.webxml.header"));
+	    } else if (webxmlLevel>= INC_WEBXML) {
+		mapout.write(ContainerLiaison.getString("jspc.webinc.header"));
+	    }
+	} catch (IOException ioe) {
+	    mapout = null;
+	    servletout = null;
+	    mappingout = null;
+	}
+	
+	processJspFiles( pages, ubase, log, servletout, mappingout );
+	
+	uriRoot = oldRoot;
+	ubase = ubaseOld;
+	froot = frootOld;
+	
+	if (mapout != null) {
+	    try {
+		servletout.writeTo(mapout);
+		mappingout.writeTo(mapout);
+		if (webxmlLevel >= ALL_WEBXML) {
+		    mapout.write(ContainerLiaison.getString("jspc.webxml.footer"));
+		} else if (webxmlLevel >= INC_WEBXML) {
+		    mapout.write(ContainerLiaison.getString("jspc.webinc.footer"));
+		}
+		mapout.close();
+	    } catch (IOException ioe) {
+		// noting to do if it fails since we are done with it
+	    }
+	}
+    }
+    
     public static void main(String arg[]) {
         if (arg.length == 0) {
            System.out.println(ContainerLiaison.getString("jspc.usage"));
@@ -623,7 +597,7 @@ public class JspC {
             try {
                 JspC jspc = new JspC(arg, System.out);
                 jspc.parseFiles(System.out);
-            } catch (JasperException je) {
+            } catch (Exception je) {
                 System.err.print("error:");
                 System.err.println(je.getMessage());
                 if (die != NO_DIE_LEVEL) {
@@ -632,6 +606,53 @@ public class JspC {
             }
         }
     }
+
+    private static final int debug=1;
+    private void log( String s ) {
+	System.out.println("JspC: " + s );
+    }
+
+    // -------------------- utils --------------------
+
+
+    public Vector findByExtension(String base, Vector extensions )
+	throws IOException
+    {
+	Vector pages = new Vector();
+
+	Stack dirs = new Stack();
+
+	dirs.push(base);
+	while (!dirs.isEmpty()) {
+	    String s = dirs.pop().toString();
+	    //System.out.println("--" + s);
+	    File f = new File(s);
+	    if (f.exists() && f.isDirectory()) {
+		String[] files = f.list();
+		String ext;
+		for (int i = 0; i < files.length; i++) {
+		    File f2 = new File(s, files[i]);
+		    //System.out.println(":" + f2.getPath());
+		    if (f2.isDirectory()) {
+			dirs.push(f2.getPath());
+			//System.out.println("++" + f2.getPath());
+		    } else {
+			ext = files[i].substring(
+						 files[i].lastIndexOf('.') + 1);
+			if (extensions.contains(ext)) {
+			    //System.out.println(s + "?" + files[i]);
+			    pages.addElement(
+					     s + File.separatorChar + files[i]);
+			} else {
+			    //System.out.println("not done:" + ext);
+			}
+		    }
+		}
+	    }
+	}
+	return pages;
+    }
+
 
 }
 
