@@ -264,7 +264,12 @@ public class PoolTcpEndpoint { // implements Endpoint {
 	    running = false;
 	    try {
 		// Need to create a connection to unlock the accept();
-		Socket s=new Socket("127.0.0.1", port );
+		Socket s;
+		if (inet == null) {
+		    s=new Socket("127.0.0.1", port );
+		}else{
+		    s=new Socket(inet, port );
+		}
 		s.close();
 		//		System.out.println("Closing socket " + port );
 		serverSocket.close(); // XXX?
