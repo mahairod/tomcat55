@@ -65,19 +65,37 @@
 package org.apache.tomcat.core;
 
 /** 
+ * This is the adapter between the servlet world and the
+ * protocol implementation.
  *
+ *  Tomcat.core will receive a Request/Response object - it
+ *  can be either a normal HTTP request or any other protocol that
+ *  can be mapped to a Request/Response model - including AJPxx,
+ *  JNI, etc. If tomcat is integrated with a web server it will
+ *  probably use a optimized binary protocol or JNI to communicate with
+ *  the server, and in this case tomcat will be in fact a AJP or
+ *  JNI server. 
+ * 
+ *  The Request and Response can be created and should be reused by the connector.
+ *
+ *  The connector must implement the get/set pattern for configuration, and
+ *  may use setProperty( name, value ) pattern, but this is not
+ *  under the control of the servlet engine ( and it's not part of this
+ *  interface!).
  */
-
 public interface ServerConnector {
 
+    /** Start the adapter. This is done by the context manager when the server
+     * is ready to accept requests.
+     */
     public void start() throws Exception;
 
+    /** Stop the connector. Will be called by the context manager when the
+     *  server is shut-down.
+     */
     public void stop() throws Exception;
 
-    public void setContextManager( ContextManager ctx );
-
-    /** Something better is needed */
-    public void setProperty( String prop, String value);
-    public void setAttribute( String prop, Object value);
-    public Object getAttribute( String prop);
+    /** Set the entry point to tomcat
+     */
+    public void setContextManager( ContextManager cm );
 }
