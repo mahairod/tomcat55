@@ -171,5 +171,18 @@ public class CharsetMapper {
 
     }
 
+    /**
+     * The deployment descriptor can have a
+     * locale-encoding-mapping-list element which describes the
+     * webapp's desired mapping from locale to charset.  This method
+     * gets called when processing the web.xml file for a context
+     *
+     * @param locale The locale for a character set
+     * @param charset The charset to be associated with the locale
+     */
+    public void addCharsetMappingFromDeploymentDescriptor(String locale,String charset) {
+        map.put( locale, charset );
+    }
+
 
 }

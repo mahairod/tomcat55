@@ -385,6 +385,11 @@ public class WebRuleSet extends RuleSetBase {
         digester.addCallMethod(prefix + "web-app/welcome-file-list/welcome-file",
                                "addWelcomeFile", 0);
 
+        digester.addCallMethod(prefix + "web-app/locale-encoding-mapping-list/locale-encoding-mapping",
+                              "addLocaleEncodingMappingParameter", 2);
+        digester.addCallParam(prefix + "web-app/locale-encoding-mapping-list/locale-encoding-mapping/locale", 0);
+        digester.addCallParam(prefix + "web-app/locale-encoding-mapping-list/locale-encoding-mapping/encoding", 1);
+
     }
 
 
