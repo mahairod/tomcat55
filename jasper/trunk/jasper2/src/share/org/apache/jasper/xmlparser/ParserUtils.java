@@ -100,39 +100,7 @@ import org.xml.sax.SAXParseException;
  */
 
 public class ParserUtils {
-
-
-    // ------------------------------------------------------ Unit Test Program
-
-    /**
-     * Usage:  java org.apache.jasper.xmlparser.ParserUtils {pathname}
-     */
-    public static void main(String args[])  {
-
-        if (args.length < 1) {
-            System.out.println("usage: java ParserUtils {filename}");
-            System.exit(1);
-        }
-
-        try {
-            ParserUtils pu = new ParserUtils();
-            System.out.println("Opening " + args[0]);
-            java.io.FileInputStream fis =
-                new java.io.FileInputStream(args[0]);
-            System.out.println("Execute the parse");
-            TreeNode tree = pu.parseXMLDocument(args[0], fis);
-            System.out.println("Dump results");
-            System.out.println(tree);
-        } catch (Throwable t) {
-            System.out.println("Exception: " + t.toString());
-            t.printStackTrace(System.out);
-        }
-
-    }
-
-
     // ----------------------------------------------------- Instance Variables
-
 
     /**
      * The class loader to use for accessing our XML parser.
@@ -143,14 +111,15 @@ public class ParserUtils {
     /**
      * An error handler for use when parsing XML documents.
      */
-    protected ErrorHandler errorHandler = new MyErrorHandler();
+    static ErrorHandler errorHandler = new MyErrorHandler();
 
 
     /**
      * An entity resolver for use when parsing XML documents.
      */
-    protected EntityResolver entityResolver = new MyEntityResolver();
+    static EntityResolver entityResolver = new MyEntityResolver();
 
+    public static boolean validating=true;
 
     // --------------------------------------------------------- Public Methods
 
@@ -158,11 +127,11 @@ public class ParserUtils {
     /**
      * Return the class loader used to access our XML parser.
      */
-    public ClassLoader getClassLoader() {
+//     public ClassLoader getClassLoader() {
 
-        return (this.classLoader);
+//         return (this.classLoader);
 
-    }
+//     }
 
 
     /**
@@ -194,11 +163,12 @@ public class ParserUtils {
                 method.invoke(null, new Object[0]);
             */
             factory.setNamespaceAware(true);
-            factory.setValidating(true);
+            factory.setValidating(validating);
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(entityResolver);
             builder.setErrorHandler(errorHandler);
             document = builder.parse(is);
+            //System.out.println("Parsing " + uri );
             /*
         } catch (ClassNotFoundException ex) {
             throw new JasperException("CNFE: " + ex); // FIXME
@@ -266,6 +236,7 @@ public class ParserUtils {
 
         // Construct a new TreeNode for this node
         TreeNode treeNode = new TreeNode(node.getNodeName(), parent);
+        //         System.out.println("PU: " + node.getNodeName());
 
         // Convert all attributes of this node
         NamedNodeMap attributes = node.getAttributes();
@@ -275,6 +246,9 @@ public class ParserUtils {
                 Node attribute = attributes.item(i);
                 treeNode.addAttribute(attribute.getNodeName(),
                                       attribute.getNodeValue());
+                //                 System.out.println("PU: " + 
+                //                                    attribute.getNodeName() + "=" + 
+                //                                    attribute.getNodeValue());
             }
         }
 
@@ -298,7 +272,7 @@ public class ParserUtils {
                 }
             }
         }
-
+        
         // Return the completed TreeNode graph
         return (treeNode);
 
@@ -313,7 +287,7 @@ public class ParserUtils {
      * keyed by the web application class loader instance.  FIXME - this
      * probably interferes with garbage collection after an application reload.
      */
-    private static HashMap classLoaders = new HashMap();
+    //    private static HashMap classLoaders = new HashMap();
 
 
     // --------------------------------------------------------- Static Methods
@@ -356,7 +330,6 @@ public class ParserUtils {
         parserUtils = new ParserUtils();
         parserUtils.setClassLoader(parentLoader);
         return (parserUtils);
-
     }
 
 
@@ -370,7 +343,9 @@ public class ParserUtils {
      * @exception MalformedURLException if we cannot create a valid URL for
      *  one of the required repositories
      */
-    public synchronized static ClassLoader createClassLoader
+    /* This  doesn't work.
+      
+      public synchronized static ClassLoader createClassLoader
         (ClassLoader parentLoader) throws MalformedURLException {
 
         // Return any existing class loader for this web application
@@ -392,6 +367,7 @@ public class ParserUtils {
         return (classLoader);
 
     }
+    */
 
 
 }
@@ -416,9 +392,11 @@ class MyEntityResolver implements EntityResolver {
 		}
 		InputSource isrc =
 		    new InputSource(input);
+                //System.out.println("Resolve entity "  + publicId + " " + systemId + " " + resourcePath);
 		return isrc;
 	    }
 	}
+        System.out.println("Resolve entity failed"  + publicId + " " + systemId );
 	Constants.message("jsp.error.parse.xml.invalidPublicId",
 				new Object[]{publicId}, Logger.ERROR);
         return null;
@@ -429,6 +407,7 @@ class MyErrorHandler implements ErrorHandler {
     public void warning(SAXParseException ex)
 	throws SAXException
     {
+        System.out.println("ParserUtils: warning " + ex );
 	// We ignore warnings
     }
 
