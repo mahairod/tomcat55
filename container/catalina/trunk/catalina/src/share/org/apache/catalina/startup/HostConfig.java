@@ -93,6 +93,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.StringManager;
 
 
@@ -716,11 +717,17 @@ public class HostConfig
         boolean result = true;
         try {
             ((Lifecycle) context).stop();
-            // Note: If the context was already stopped, a 
-            // Lifecycle exception will be thrown, and the context
-            // won't be restarted
+        } catch( Exception ex ) {
+            log.warn("Erorr stopping context " + context.getName()  +  " " +
+                    ex.toString());
+        }
+        // if the context was not started ( for example an error in web.xml)
+        // we'll still get to try to start
+        try {
             ((Lifecycle) context).start();
-        } catch (LifecycleException e) {
+        } catch (Exception e) {
+            log.warn("Error restarting context " + context.getName() + " " +
+                    e.toString());
             result = false;
         }
         return result;
