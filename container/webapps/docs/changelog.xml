@@ -26,6 +26,24 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.5 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <update>
+        <bug>32235</bug>: Sync conf/web.xml MIME types with Apache httpd. (yoavs)
+      </update>
+    </changelog>
+  </subsection>
+
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>32130</bug>: Add safety check to FileStore#keys method. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.4 (yoavs)">
   <subsection name="General">
     <changelog>
@@ -35,16 +53,13 @@
       <update>
         <bug>31912</bug>: Add PNG and CSS file types to replication filter default. (yoavs)
       </update>
-      <update>
-        <bug>32235</bug>: Sync conf/web.xml MIME types with Apache httpd. (yoavs)
-      </update>
     </changelog>
   </subsection>
   
   <subsection name="Catalina">
     <changelog>
       <fix>
-        . Add processExpiresFrequency to PersistentManagerBase and made some small JDBCStore optimizations (pero)
+        Add processExpiresFrequency to PersistentManagerBase and made some small JDBCStore optimizations (pero)
       </fix>
       <fix>
         Register JSP monitoring mbean for each servlet that declares a jsp-file in web.xml. (luehe)
