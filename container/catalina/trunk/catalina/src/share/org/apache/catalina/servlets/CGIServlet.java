@@ -247,20 +247,11 @@ public final class CGIServlet extends HttpServlet {
 
     /* some vars below copied from Craig R. McClanahan's InvokerServlet */
 
-    /** the string manager for this package. */
-    /* YAGNI
-    private static StringManager sm =
-        StringManager.getManager(Constants.Package);
-    */
-
     /** the Context container associated with our web application. */
     private ServletContext context = null;
 
     /** the debugging detail level for this servlet. */
     private int debug = 0;
-
-    /** the time in ms to wait for the client to send us CGI input data */
-    private int iClientInputTimeout = 100;
 
     /**
      *  The CGI search path will start at
@@ -314,9 +305,6 @@ public final class CGIServlet extends HttpServlet {
             debug = Integer.parseInt(value);
             cgiPathPrefix =
                 getServletConfig().getInitParameter("cgiPathPrefix");
-            value =
-                getServletConfig().getInitParameter("iClientInputTimeout");
-            iClientInputTimeout = Integer.parseInt(value);
         } catch (Throwable t) {
             //NOOP
         }
@@ -328,13 +316,7 @@ public final class CGIServlet extends HttpServlet {
         }
         
         // Identify the internal container resources we need
-        //Wrapper wrapper = (Wrapper) getServletConfig();
-        //context = (Context) wrapper.getParent();
-
         context = config.getServletContext();
-        if (debug >= 1) {
-            //log("init: Associated with Context '" + context.getPath() + "'");
-        }
 
     }
 
