@@ -339,7 +339,7 @@ public class DeltaManager
       
       
       if ( distribute ) {
-          SessionMessage msg = new SessionMessage(
+          SessionMessage msg = new SessionMessageImpl(
               getName(),
               SessionMessage.EVT_SESSION_CREATED,
               null,
@@ -631,7 +631,7 @@ public class DeltaManager
             if (cluster.getMembers().length > 0) {
                 Member mbr = cluster.getMembers()[0];
                 SessionMessage msg =
-                    new SessionMessage(this.getName(),
+                    new SessionMessageImpl(this.getName(),
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
                                        "GET-ALL");
@@ -777,12 +777,12 @@ public class DeltaManager
                if (deltaRequest.getSize() > 0) {
    
                    byte[] data = unloadDeltaRequest(deltaRequest);
-                   msg = new SessionMessage(name, SessionMessage.EVT_SESSION_DELTA,
+                   msg = new SessionMessageImpl(name, SessionMessage.EVT_SESSION_DELTA,
                                             data, sessionId,
                                             sessionId+System.currentTimeMillis());
                    session.resetDeltaRequest();
                } else if ( !session.isPrimarySession() ) {
-                   msg = new SessionMessage(getName(),
+                   msg = new SessionMessageImpl(getName(),
                                          SessionMessage.EVT_SESSION_ACCESSED,
                                          null,
                                          sessionId,
@@ -793,7 +793,7 @@ public class DeltaManager
                if ( (msg == null) ) {
                    long replDelta = System.currentTimeMillis() - session.getLastTimeReplicated();
                    if ( replDelta > (getMaxInactiveInterval()*1000) ) {
-                       msg = new SessionMessage(getName(),
+                       msg = new SessionMessageImpl(getName(),
                                              SessionMessage.EVT_SESSION_ACCESSED,
                                              null,
                                              sessionId+System.currentTimeMillis());
@@ -813,7 +813,7 @@ public class DeltaManager
        }
        
        protected void sessionExpired(String id) {
-           SessionMessage msg = new SessionMessage(getName(), 
+           SessionMessage msg = new SessionMessageImpl(getName(), 
                                                    SessionMessage.EVT_SESSION_EXPIRED,
                                                    null,
                                                    id);
@@ -848,7 +848,7 @@ public class DeltaManager
                        log.debug("Manager ("+name+") unloading sessions");
                        byte[] data = doUnload();
                        log.debug("Manager ("+name+") unloading sessions complete");
-                       SessionMessage newmsg = new SessionMessage(name,
+                       SessionMessage newmsg = new SessionMessageImpl(name,
                            SessionMessage.EVT_ALL_SESSION_DATA,
                            data, "");
                        cluster.send(newmsg, sender);
