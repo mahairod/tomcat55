@@ -39,6 +39,9 @@
       <add>
         Add host manager webapp (remm)
       </add>
+      <add>
+        Add ant JkStatusUpdateTask for remote status worker handling ( >=mod_jk 1.2.9) (pero)
+      </add>
     </changelog>
    </subsection>
 
@@ -80,6 +83,9 @@
        <update>
          Use the standard struts taglib URIs in admin JSPs. (billbarker)
        </update>
+      <add>
+        Add more host parameters to create new host with host-manager (pero)
+      </add>
      </changelog>
    </subsection>
 </section>
