@@ -270,10 +270,12 @@
     </servlet-mapping>
 
     <!-- The mapping for the invoker servlet -->
+<!--
     <servlet-mapping>
         <servlet-name>invoker</servlet-name>
         <url-pattern>/servlet/*</url-pattern>
     </servlet-mapping>
+-->
 
     <!-- The mapping for the JSP servlet -->
     <servlet-mapping>
