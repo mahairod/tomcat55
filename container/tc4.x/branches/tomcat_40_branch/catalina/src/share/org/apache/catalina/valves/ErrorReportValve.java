@@ -173,8 +173,6 @@ public class ErrorReportValve
         if (sresp.isCommitted())
             return;
 
-        response.setSuspended(false);
-
         ServletRequest sreq = (ServletRequest) request;
         Throwable throwable = 
             (Throwable) sreq.getAttribute(Globals.EXCEPTION_ATTR);
@@ -197,6 +195,8 @@ public class ErrorReportValve
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         }
+
+        response.setSuspended(false);
 
         try {
             report(request, response, throwable);
