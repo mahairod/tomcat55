@@ -281,7 +281,8 @@ public class JspRuntimeLibrary {
             } else {
                 throw new JasperException(Constants.getString(
                         "jsp.error.beans.nomethod.setproperty",
-                        new Object[] {prop, bean.getClass().getName()}));
+                        new Object[] {prop, type.getName(),
+				      bean.getClass().getName()}));
             }
         }
     }
@@ -665,7 +666,8 @@ public class JspRuntimeLibrary {
             } else {
                 throw new JasperException(Constants.getString(
                         "jsp.error.beans.nomethod.setproperty",
-                        new Object[] {prop, beanClass.getName()}));
+                        new Object[] {prop, type.getName(),
+				      beanClass.getName()}));
             }
         }
         return method;
