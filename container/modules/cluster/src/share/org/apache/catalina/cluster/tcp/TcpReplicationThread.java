@@ -145,6 +145,7 @@ public class TcpReplicationThread extends WorkerThread
         this.key = key;
         this.synchronous=synchronous;
         key.interestOps (key.interestOps() & (~SelectionKey.OP_READ));
+        key.interestOps (key.interestOps() & (~SelectionKey.OP_WRITE));
         this.notify();		// awaken the thread
     }
 
@@ -190,7 +191,7 @@ public class TcpReplicationThread extends WorkerThread
             return;
         }
         // resume interest in OP_READ, OP_WRITE
-        key.interestOps (key.interestOps() | SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        key.interestOps (key.interestOps() | SelectionKey.OP_READ);
         // cycle the selector so this key is active again
         key.selector().wakeup();
     }
