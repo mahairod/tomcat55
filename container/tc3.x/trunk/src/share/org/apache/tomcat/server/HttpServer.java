@@ -359,7 +359,7 @@ public class HttpServer {
     public String getServerHeader() {
 	// XXX XXX Ugly, but we want to remove the properties stuff
 	// which is worse
-	if(serverHeader==null) serverHeader="Tomcat Web Server 3.0";
+	if(serverHeader==null) serverHeader="Tomcat Web Server 3.1M1";
         return serverHeader;
     }
 
