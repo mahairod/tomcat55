@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="host.html">
 
   &project;
 
@@ -117,11 +117,13 @@
 
       <attribute name="deployXML" required="false">
         <p>Set to <code>false</code> if you want to disable deploying
-        applications using a Context XML config file. Applications are
-        deployed with the security permissions of catalina, for security
-        this may need to be set to <code>false</code> if untrusted users
-        can manage web applications.  The flag's value defaults to
-        <code>true</code>.</p>
+        applications using a Context XML config file. This also disables
+        the ability to install web application directories or ".war" files
+        with the manager app which are not located in the Host appBase
+        directory. Applications are deployed with the security permissions
+        of catalina, for security this may need to be set to <code>false</code>
+        if untrusted users can manage web applications.  The flag's value
+        defaults to <code>true</code>.</p>
       </attribute>
 
       <attribute name="errorReportValveClass" required="false">
@@ -348,7 +350,7 @@
     <p>You can ask Catalina to check the IP address, or host name, on every
     incoming request directed to the surrounding
     <a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
-    <a href="context.htm">Context</a> element.  The remote address or name
+    <a href="context.html">Context</a> element.  The remote address or name
     will be checked against a configured list of "accept" and/or "deny"
     filters, which are defined using the Regular Expression syntax supported
     by the <a href="http://jakarta.apache.org/regexp/">Jakarta Regexp</a>
@@ -368,7 +370,7 @@
 </source>
 
   <p>See <a href="valve.html#Remote Address Filter">Remote Address Filter</a>
-  and <a href="valve.html#Remove Host Filter">Remote Host Filter</a> for
+  and <a href="valve.html#Remote Host Filter">Remote Host Filter</a> for
   more information about the configuration options that are supported.</p>
 
   </subsection>

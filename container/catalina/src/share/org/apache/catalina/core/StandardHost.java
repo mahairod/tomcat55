@@ -908,6 +908,31 @@ public class StandardHost
 
 
     /**
+     * Remove an existing web application, attached to the specified context
+     * path.  If this application is successfully removed, a
+     * ContainerEvent of type <code>REMOVE_EVENT</code> will be sent to all
+     * registered listeners, with the removed <code>Context</code> as
+     * an argument. Deletes the web application war file and/or directory
+     * if they exist in the Host's appBase.
+     *
+     * @param contextPath The context path of the application to be removed
+     * @param undeploy boolean flag to remove web application from server
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalArgumentException if the specified context path does
+     *  not identify a currently installed web application
+     * @exception IOException if an input/output error occurs during
+     *  removal
+     */
+    public void remove(String contextPath, boolean undeploy) throws IOException {
+
+        deployer.remove(contextPath,undeploy);
+
+    }
+
+
+    /**
      * Start an existing web application, attached to the specified context
      * path.  Only starts a web application if it is not running.
      *

@@ -29,6 +29,7 @@
     <menu name="Administrators">
         <item name="CGI HOW-TO"            href="cgi-howto.html"/>
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
+        <item name="HTML Manager App HOW-TO" href="html-manager-howto.html"/>
         <item name="JK Documentation"      href="coyote/jk2/index.html"/>
         <item name="JNDI DataSource HOW-TO" 
               href="jndi-datasource-examples-howto.html"/>

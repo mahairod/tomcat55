@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="realm-howto.html">
 
     &project;
 
@@ -387,7 +387,7 @@ as your database structure conforms to the following requirements:</p>
     at least read only access to the tables described above.  (Tomcat will
     never attempt to write to these tables.)</li>
 <li>Configure a JNDI named JDBC DataSource for your database.  Refer to the
-    <a href="jndi-datasource-examples-howto.xml">JNDI DataSource Example HOW-TO</a>
+    <a href="jndi-datasource-examples-howto.html">JNDI DataSource Example HOW-TO</a>
     for information on how to configure a JNDI named JDBC DataSource.</li>
 <li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
     <code>$CATALINA_HOME/conf/server.xml</code> file.</li>

@@ -59,6 +59,25 @@
       <fileset dir="images"/>
     </copy>
 
+    <mkdir     dir="${webapps.build}/${webapp.name}/printer"/>
+    <!-- Top Level Static Files -->
+    <copy    todir="${webapps.build}/${webapp.name}/printer">
+      <fileset dir="../..">
+        <include name="BUILDING.txt"/>
+        <include name="README.txt"/>
+        <include name="RUNNING.txt"/>
+      </fileset>
+    </copy>
+    <style basedir="."
+           destdir="${webapps.build}/${webapp.name}/printer"
+         extension=".html"
+             style="tomcat-docs.xsl"
+          excludes="build.xml project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="./.."/>
+      <param name="project-menu" expression="nomenu"/>
+    </style>
+
     <!-- WEB-INF Subdirectory -->
     <mkdir     dir="${webapps.build}/${webapp.name}/WEB-INF"/>
     <copy    todir="${webapps.build}/${webapp.name}/WEB-INF">
@@ -122,6 +141,20 @@
           includes="*.xml">
       <param name="relative-path" expression=".."/>
     </style>
+    <mkdir     dir="${webapps.build}/${webapp.name}/appdev/printer"/>
+    <!-- Application Developer's Guide Examples -->
+    <copy    todir="${webapps.build}/${webapp.name}/appdev/printer">
+      <fileset dir="appdev" includes="*.txt"/>
+    </copy>
+    <style basedir="appdev"
+           destdir="${webapps.build}/${webapp.name}/appdev/printer"
+         extension=".html"
+             style="tomcat-docs.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="../.."/>
+      <param name="project-menu" expression="nomenu"/>
+    </style>
 
     <!-- Catalina Functional Specifications -->
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina"/>
@@ -134,6 +167,16 @@
           includes="*.xml">
       <param name="relative-path" expression="../.."/>
     </style>
+    <mkdir     dir="${webapps.build}/${webapp.name}/catalina/funcspecs/printer"/>
+    <style basedir="funcspecs"
+           destdir="${webapps.build}/${webapp.name}/catalina/funcspecs/printer"
+         extension=".html"
+             style="tomcat-docs.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="../../.."/>
+      <param name="project-menu" expression="nomenu"/>
+    </style>
 
     <!-- Server Configuration Reference -->
     <style basedir="config"
@@ -143,6 +186,16 @@
           excludes="project.xml"
           includes="*.xml">
       <param name="relative-path" expression=".."/>
+    </style>
+    <mkdir     dir="${webapps.build}/${webapp.name}/config/printer"/>
+    <style basedir="config"
+           destdir="${webapps.build}/${webapp.name}/config/printer"
+         extension=".html"
+             style="tomcat-docs.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="../.."/>
+      <param name="project-menu" expression="nomenu"/>
     </style>
 
   </target>

@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="jk2.html">
 
   &project;
 
@@ -72,8 +72,7 @@
       <p>Set this attribute to the name of the protocol you wish to have
       returned by calls to <code>request.getScheme()</code>.  For
       example, you would set this attribute to "<code>https</code>"
-      for an SSL Connector.  The default value is "<code>http</code>".
-      See <a href="#SSL Support">SSL Support</a> for more information.</p>
+      for an SSL Connector.  The default value is "<code>http</code>".</p>
     </attribute>
 
     <attribute name="secure" required="false">

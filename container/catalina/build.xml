@@ -50,6 +50,7 @@
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${commons-fileupload.jar}"/>
     <pathelement location="${commons-launcher.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
@@ -83,6 +84,7 @@
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${commons-fileupload.jar}"/>
     <pathelement location="${commons-launcher.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
@@ -145,6 +147,9 @@
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
      classpath="${commons-digester.jar}"/>
+    <available property="fileupload.present"
+     classname="org.apache.commons.fileupload.FileUpload"
+     classpath="${commons-fileupload.jar}"/>
     <available property="launcher.present"
      classname="org.apache.commons.launcher.Launcher"
      classpath="${commons-launcher.jar}"/>
@@ -220,6 +225,7 @@
 
     <!-- JAR files availability flags -->
     <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
+    <available property="fileupload.jar.present" file="${commons-fileupload.jar}" />
     <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
       <and>
@@ -426,6 +432,7 @@
 
     <echo message="--- Optional Libraries ---" />
     <echo message="dbcp.present=${dbcp.present}" />
+    <echo message="fileupload.present=${fileupload.present}" />
     <echo message="jaas.present=${jaas.present}" />
     <echo message="javamail.present=${javamail.present}" />
     <echo message="jmx.present=${jmx.present}" />
@@ -448,6 +455,7 @@
 
     <echo message="--- Optional JARs ---" />
     <echo message="dbcp.jar.present=${dbcp.jar.present}" />
+    <echo message="fileupload.jar.present=${fileupload.jar.present}" />
     <echo message="jaas.jar.present=${jaas.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
@@ -505,6 +513,10 @@
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
     <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
   </target>
+  <target name="copy-fileupload.jar" if="fileupload.jar.present">
+    <copy todir="${catalina.build}/server/lib"
+          file="${commons-fileupload.jar}"/>
+  </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
     <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="../etc/mx4j.license"/>
@@ -533,7 +545,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-dbcp.jar,copy-jmx.jar,copy-launcher.jars,copy-modeler.jar,copy-pool.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-dbcp.jar,copy-fileupload.jar,copy-jmx.jar,copy-launcher.jars,copy-modeler.jar,copy-pool.jar,copy-xerces2.jars">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
