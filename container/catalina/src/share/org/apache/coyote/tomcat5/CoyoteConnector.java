@@ -983,36 +983,6 @@ public final class CoyoteConnector
         setProperty("maxKeepAliveRequests", String.valueOf(mkar));
     }
 
-     /**
-      * Set the flag to see if we do internal redirects to welcome-files.
-      */
-     public void setProcessWelcomeResources(boolean pwr) {
-         mapper.setProcessWelcomeResources(pwr);
-     }
-
-     /**
-      * Return the flag to see if we do internal redirects to welcome-files.
-      */
-     public boolean getProcessWelcomeResources() {
-         return mapper.getProcessWelcomeResources();
-     }
-
-    /**
-     * Set the flag to see if we do a redirect to directories that don't end
-     * in a '/'.
-     */
-    public void setRedirectDirectories(boolean rd) {
-        mapper.setRedirectDirectories(rd);
-    }
-
-    /**
-     * Return the flag to see if we do a redirect to directories that don't
-     * end in a '/'.
-     */
-    public boolean getRedirectDirectories() {
-        return mapper.getRedirectDirectories();
-    }
-
     /**
      * Return the scheme that will be assigned to requests received
      * through this connector.  Default value is "http".
