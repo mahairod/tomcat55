@@ -359,9 +359,66 @@ class JspDocumentParser extends DefaultHandler
 	if ((current instanceof Node.JspText) || !isAllSpace) {
 	    Mark start = new Mark(path, locator.getLineNumber(),
 				  locator.getColumnNumber());
-	    char[] bufCopy = new char[len];
-	    System.arraycopy(buf, offset, bufCopy, 0, len);
-	    new Node.TemplateText(bufCopy, start, current);
+
+	    CharArrayWriter ttext = new CharArrayWriter();
+	    int limit = offset + len;
+	    int lastCh = 0;
+	    for (int i = offset; i < limit; i++) {
+		int ch = buf[i];
+		if (lastCh == '$' && ch == '{') {
+		    char[] bufCopy = ttext.toCharArray();
+		    if (bufCopy.length > 0) {
+			new Node.TemplateText(bufCopy, start, current);
+		        ttext = new CharArrayWriter();
+		    }
+		    // following "${" to first unquoted "}"
+		    i++;
+		    boolean singleQ = false;
+		    boolean doubleQ = false;
+		    lastCh = 0;
+		    for (; ; i++) {
+			if (i >= limit) {
+			    throw new SAXParseException(
+				err.getString("jsp.error.unterminated", "${"),
+				locator);
+
+			}
+			ch = buf[i];
+			if (lastCh == '\\' && (singleQ || doubleQ)) {
+			    ttext.write(ch);
+			    lastCh = 0;
+			    continue;
+			}
+			if (ch == '}') {
+			    new Node.ELExpression(ttext.toCharArray(), start, current);
+			    ttext = new CharArrayWriter();
+			    break;
+			}
+			if (ch == '"')
+			    doubleQ = !doubleQ;
+			else if (ch == '\'')
+			    singleQ = !singleQ;
+
+			ttext.write(ch);
+			lastCh = ch;
+		    }
+		} else {
+		    if( (lastCh == '$') && (ch != '{') ) {
+                        ttext.write( '$' );
+                    }
+                    if( ch != '$' ) {
+                        ttext.write( ch );
+                    }
+                }
+                lastCh = ch;
+	    }
+	    if (lastCh == '$') {
+		ttext.write('$');
+	    }
+	    char[] bufCopy = ttext.toCharArray();
+	    if (bufCopy.length > 0) {
+		new Node.TemplateText(bufCopy, start, current);
+	    }
 	}
     }
 

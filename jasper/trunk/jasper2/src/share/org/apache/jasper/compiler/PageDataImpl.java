@@ -306,6 +306,21 @@ class PageDataImpl extends PageData implements TagConstants {
 	    appendTag(JSP_SCRIPTLET, n.getAttributes(), null, n.getText());
 	}
 
+	public void visit(Node.ELExpression n) throws JasperException {
+	    if (!n.isXmlSyntax()) {
+		buf.append("<").append(JSP_TEXT);
+		buf.append(" jsp:id=\"");
+		buf.append(jspId++).append("\">");
+	    }
+	    buf.append("${");
+	    buf.append(n.getText());
+	    buf.append("}");
+	    if (!n.isXmlSyntax()) {
+		buf.append(JSP_TEXT_END);
+	    }
+	    buf.append("\n");
+	}
+
 	public void visit(Node.IncludeAction n) throws JasperException {
 	    appendTag(JSP_INCLUDE, n.getAttributes(), n.getBody(), null);
 	}
