@@ -68,6 +68,10 @@
         Read patch causing Session.getId to throw an ISE, and make all internal components
         use a safe getIdInternal method (remm)
       </update>
+      <update>
+        Store principal to be exposed for Request.getUserPrincipal inside the GenericPrincipal,
+        to remove hacks from the JAAS realm (remm)
+      </update>
     </changelog>
   </subsection>
   
@@ -76,8 +80,13 @@
       <fix>
         <bug>18477</bug>: Allow symbolic links when precompiling JSPs (markt)
       </fix>
+      <add>
+        <bug>34727</bug>: Allow specifying the Option class used by the Jasper engine,
+        submitted by Scott Stark (remm)
+      </add>
     </changelog>
   </subsection>
+  
   <subsection name="Cluster">
     <changelog>
       <update>
