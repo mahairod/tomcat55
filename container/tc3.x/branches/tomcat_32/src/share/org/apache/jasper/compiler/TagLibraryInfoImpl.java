@@ -122,7 +122,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         print("tlibversion", tlibversion, out);
         print("jspversion", jspversion, out);
         print("shortname", shortname, out);
-        print("urn", urn, out);
+        print("uri", uri, out);
         print("info", info, out);
 
         for(int i = 0; i < tags.length; i++)
@@ -370,10 +370,10 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     this.shortname = t.getData();
-            } else if (tname.equals("urn")) {
+            } else if (tname.equals("uri")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.urn = t.getData();
+                    this.uri = t.getData();
             } else if (tname.equals("info")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
@@ -492,12 +492,18 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                     name = t.getData();
             } else if (tname.equals("required"))  {
                 Text t = (Text) e.getFirstChild();
-                if (t != null)
+                if (t != null) {
                     required = Boolean.valueOf(t.getData()).booleanValue();
+                    if( t.getData().equalsIgnoreCase("yes") )
+                        required = true;
+                }
             } else if (tname.equals("rtexprvalue")) {
                 Text t = (Text) e.getFirstChild();
-                if (t != null)
+                if (t != null) {
                     rtexprvalue = Boolean.valueOf(t.getData()).booleanValue();
+                    if( t.getData().equalsIgnoreCase("yes") )
+                        rtexprvalue = true;
+                }
             } else if (tname.equals("type")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
