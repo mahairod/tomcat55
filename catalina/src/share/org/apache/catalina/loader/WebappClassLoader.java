@@ -1082,7 +1082,8 @@ public class WebappClassLoader
             ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
             try {
                 String repository = entry.codeBase.toString();
-                if (repository.endsWith(".jar")) {
+                if ((repository.endsWith(".jar")) 
+                    && (!(name.endsWith(".class")))) {
                     // Copy binary content to the work directory if not present
                     File resourceFile = new File(loaderDir, name);
                     url = resourceFile.toURL();
