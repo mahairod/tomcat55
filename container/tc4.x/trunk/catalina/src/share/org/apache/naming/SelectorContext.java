@@ -96,6 +96,12 @@ public class SelectorContext implements Context {
     public static final int prefixLength = prefix.length();
 
 
+    /**
+     * Initial context prefix.
+     */
+    public static final String IC_PREFIX = "IC_";
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -657,8 +663,12 @@ public class SelectorContext implements Context {
         throws NamingException {
 
         if (initialContext) {
-            String ICName = 
-                "IC_" + ContextBindings.getThreadName();
+            String ICName = IC_PREFIX;
+            if (ContextBindings.isThreadBound()) {
+                ICName += ContextBindings.getThreadName();
+            } else if (ContextBindings.isClassLoaderBound()) {
+                ICName += ContextBindings.getClassLoaderName();
+            }
             Context initialContext = ContextBindings.getContext(ICName);
             if (initialContext == null) {
                 // Allocating a new context and binding it to the appropriate 
@@ -668,7 +678,11 @@ public class SelectorContext implements Context {
             }
             return initialContext;
         } else {
-            return ContextBindings.getThread();
+            if (ContextBindings.isThreadBound()) {
+                return ContextBindings.getThread();
+            } else {
+                return ContextBindings.getClassLoader();
+            }
         }
 
     }
