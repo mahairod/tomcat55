@@ -206,9 +206,10 @@ public class StandardHostDeployer implements Deployer {
      * @exception IllegalStateException if the specified context path
      *  is already attached to an existing web application
      * @exception IOException if an input/output error was encountered
-     *  during install
+     *  during installation
      */
-    public void install(String contextPath, URL war) throws IOException {
+    public synchronized void install(String contextPath, URL war)
+        throws IOException {
 
         // Validate the format and state of our arguments
         if (contextPath == null)
@@ -224,49 +225,23 @@ public class StandardHostDeployer implements Deployer {
             throw new IllegalArgumentException
                 (sm.getString("standardHost.warRequired"));
 
-        // Prepare the local variables we will require
+        // Calculate the document base for the new web application
+        host.log(sm.getString("standardHost.installing",
+                              contextPath, war.toString()));
         String url = war.toString();
         String docBase = null;
-        host.log(sm.getString("standardHost.installing", contextPath, url));
-
-        // Expand a WAR archive into an unpacked directory if needed
-        // NOTE:  If the user supplies a "jar:file:" URL, assume that
-        // they do not want WAR expansion even if unpackWARs is set
-        if (host.isUnpackWARs() && !url.startsWith("jar:file:")) {
-
-            if (url.startsWith("jar:"))
-                docBase = expand(war);
-            else if (url.startsWith("file://"))
-                docBase = url.substring(7);
-            else if (url.startsWith("file:"))
-                docBase = url.substring(5);
-            else
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.warURL", url));
-
-            // Make sure the document base directory exists and is readable
-            File docBaseDir = new File(docBase);
-            if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
-                !docBaseDir.canRead())
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.accessBase", docBase));
-
-        } else {
-
-            if (url.startsWith("jar:")) {
-                url = url.substring(4, url.length() - 2);
-            }
-            if (url.startsWith("file://"))
-                docBase = url.substring(7);
-            else if (url.startsWith("file:"))
-                docBase = url.substring(5);
-            else
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.warURL", url));
-
+        if (url.startsWith("jar:")) {
+            url = url.substring(4, url.length() - 2);
         }
+        if (url.startsWith("file://"))
+            docBase = url.substring(7);
+        else if (url.startsWith("file:"))
+            docBase = url.substring(5);
+        else
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warURL", url));
 
-        // Install this new web application
+        // Install the new web application
         try {
             Class clazz = Class.forName(host.getContextClass());
             Context context = (Context) clazz.newInstance();
@@ -321,54 +296,26 @@ public class StandardHostDeployer implements Deployer {
             throw new IllegalArgumentException
                 (sm.getString("standardHost.configRequired"));
 
-        // Prepare the local variables we will require
+        // Calculate the document base for the new web application (if needed)
         String docBase = null; // Optional override for value in config file
-
-        // Expand a WAR archive into an unpacked directory if needed
         if (war != null) {
-
             String url = war.toString();
             host.log(sm.getString("standardHost.installingWAR", url));
-
-            if (host.isUnpackWARs()) {
-
-                // Calculate the document base directory pathname
-                if (url.startsWith("jar:"))
-                    docBase = expand(war);
-                else if (url.startsWith("file://"))
-                    docBase = url.substring(7);
-                else if (url.startsWith("file:"))
-                    docBase = url.substring(5);
-                else
-                    throw new IllegalArgumentException
-                        (sm.getString("standardHost.warURL", url));
-
-                // Make sure the document base directory exists and is readable
-                File docBaseDir = new File(docBase);
-                if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
-                    !docBaseDir.canRead())
-                    throw new IllegalArgumentException
-                        (sm.getString("standardHost.accessBase", docBase));
-
-            } else {
-
-                // Calculate the WAR file absolute pathname
-                if (url.startsWith("jar:")) {
-                    url = url.substring(4, url.length() - 2);
-                }
-                if (url.startsWith("file://"))
-                    docBase = url.substring(7);
-                else if (url.startsWith("file:"))
-                    docBase = url.substring(5);
-                else
-                    throw new IllegalArgumentException
-                        (sm.getString("standardHost.warURL", url));
-
+            // Calculate the WAR file absolute pathname
+            if (url.startsWith("jar:")) {
+                url = url.substring(4, url.length() - 2);
             }
+            if (url.startsWith("file://"))
+                docBase = url.substring(7);
+            else if (url.startsWith("file:"))
+                docBase = url.substring(5);
+            else
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.warURL", url));
 
         }
 
-        // Install this new web application
+        // Install the new web application
         this.context = null;
         this.overrideDocBase = docBase;
         InputStream stream = null;
@@ -608,147 +555,6 @@ public class StandardHostDeployer implements Deployer {
             digester.addRuleSet(namingRuleSet);
         }
         return (digester);
-
-    }
-
-
-    /**
-     * Expand the WAR file found at the specified URL into an unpacked
-     * directory structure, and return the absolute pathname to the expanded
-     * directory.
-     *
-     * @param war URL of the web application archive to be expanded
-     *  (must start with "jar:")
-     *
-     * @exception IllegalArgumentException if this is not a "jar:" URL
-     * @exception IOException if an input/output error was encountered
-     *  during expansion
-     */
-    protected String expand(URL war) throws IOException {
-
-        // Calculate the directory name of the expanded directory
-        if (host.getDebug() >= 1)
-            host.log("expand(" + war.toString() + ")");
-        String pathname = war.toString().replace('\\', '/');
-        if (pathname.endsWith("!/"))
-            pathname = pathname.substring(0, pathname.length() - 2);
-        int period = pathname.lastIndexOf('.');
-        if (period >= pathname.length() - 4)
-            pathname = pathname.substring(0, period);
-        int slash = pathname.lastIndexOf('/');
-        if (slash >= 0)
-            pathname = pathname.substring(slash + 1);
-        if (host.getDebug() >= 1)
-            host.log("  Proposed directory name: " + pathname);
-
-        // Make sure that there is no such directory already existing
-        File appBase = new File(host.getAppBase());
-        if (!appBase.isAbsolute())
-            appBase = new File(System.getProperty("catalina.base"),
-                               host.getAppBase());
-        if (!appBase.exists() || !appBase.isDirectory())
-            throw new IOException
-                (sm.getString("standardHost.appBase",
-                              appBase.getAbsolutePath()));
-        File docBase = new File(appBase, pathname);
-        if (docBase.exists()) {
-            // War file is already installed
-            return (docBase.getAbsolutePath());
-        }
-        docBase.mkdir();
-        if (host.getDebug() >= 2)
-            host.log("  Have created expansion directory " +
-                docBase.getAbsolutePath());
-
-        // Expand the WAR into the new document base directory
-        JarURLConnection juc = (JarURLConnection) war.openConnection();
-        juc.setUseCaches(false);
-        JarFile jarFile = juc.getJarFile();
-        if (host.getDebug() >= 2)
-            host.log("  Have opened JAR file successfully");
-        Enumeration jarEntries = jarFile.entries();
-        if (host.getDebug() >= 2)
-            host.log("  Have retrieved entries enumeration");
-        while (jarEntries.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-            String name = jarEntry.getName();
-            if (host.getDebug() >= 2)
-                host.log("  Am processing entry " + name);
-            int last = name.lastIndexOf('/');
-            if (last >= 0) {
-                File parent = new File(docBase,
-                                       name.substring(0, last));
-                if (host.getDebug() >= 2)
-                    host.log("  Creating parent directory " + parent);
-                parent.mkdirs();
-            }
-            if (name.endsWith("/"))
-                continue;
-            if (host.getDebug() >= 2)
-                host.log("  Creating expanded file " + name);
-            InputStream input = jarFile.getInputStream(jarEntry);
-            expand(input, docBase, name);
-            input.close();
-        }
-        jarFile.close();
-
-        // Return the absolute path to our new document base directory
-        return (docBase.getAbsolutePath());
-
-    }
-
-
-    /**
-     * Expand the specified input stream into the specified directory, creating
-     * a file named from the specified relative path.
-     *
-     * @param input InputStream to be copied
-     * @param docBase Document base directory into which we are expanding
-     * @param name Relative pathname of the file to be created
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void expand(InputStream input, File docBase, String name)
-        throws IOException {
-
-        File file = new File(docBase, name);
-        BufferedOutputStream output =
-            new BufferedOutputStream(new FileOutputStream(file));
-        byte buffer[] = new byte[2048];
-        while (true) {
-            int n = input.read(buffer);
-            if (n <= 0)
-                break;
-            output.write(buffer, 0, n);
-        }
-        output.close();
-
-    }
-
-
-    /**
-     * Remove the specified directory and all of its contents.
-     *
-     * @param dir Directory to be removed
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void remove(File dir) throws IOException {
-
-        String list[] = dir.list();
-        for (int i = 0; i < list.length; i++) {
-            File file = new File(dir, list[i]);
-            if (file.isDirectory()) {
-                remove(file);
-            } else {
-                if (!file.delete())
-                    throw new IOException("Cannot delete file " +
-                                          file.getAbsolutePath());
-            }
-        }
-        if (!dir.delete())
-            throw new IOException("Cannot delete directory " +
-                                  dir.getAbsolutePath());
 
     }
 

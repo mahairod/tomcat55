@@ -453,7 +453,7 @@ public class ManagerServlet
             return;
         }
 
-        // Upload the web application archive to a temporary JAR file
+        // Upload the web application archive to a local WAR file
         File tempDir = (File) getServletContext().getAttribute
             ("javax.servlet.context.tempdir");
         File localWar = new File(tempDir, basename + ".war");
@@ -500,35 +500,6 @@ public class ManagerServlet
         // Acknowledge successful completion of this deploy command
         writer.println(sm.getString("managerServlet.installed",
                                     displayPath));
-
-    }
-
-
-    /**
-     * Expand the specified input stream into the specified dirctory, creating
-     * a file named from the specified relative path.
-     *
-     * @param istream InputStream to be copied
-     * @param docBaseDir Document base directory into which we are expanding
-     * @param name Relative pathname of the file to be created
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void deployExpand(InputStream istream, File docBaseDir,
-                                String name) throws IOException {
-
-        File file = new File(docBaseDir, name);
-        BufferedOutputStream ostream =
-            new BufferedOutputStream(new FileOutputStream(file));
-        byte buffer[] = new byte[2048];
-        while (true) {
-            int n = istream.read(buffer);
-            if (n <= 0) {
-                break;
-            }
-            ostream.write(buffer, 0, n);
-        }
-        ostream.close();
 
     }
 
@@ -937,14 +908,7 @@ public class ManagerServlet
                 docBaseDir = new File(appBaseDir, docBase);
             }
             String docBasePath = docBaseDir.getCanonicalPath();
-            boolean ok = false;
-            if (docBasePath.startsWith(tempDirPath)) {
-                ok = true;
-            } else if ((appBasePath != null) &&
-                       docBasePath.startsWith(appBasePath)) {
-                ok = true;
-            }
-            if (!ok) {
+            if (!docBasePath.startsWith(tempDirPath)) {
                 writer.println(sm.getString("managerServlet.noDocBase",
                                             displayPath));
                 return;
@@ -958,7 +922,7 @@ public class ManagerServlet
             if (docBaseDir.isDirectory()) {
                 undeployDir(docBaseDir);
             } else {
-                docBaseDir.delete();  // WAR file
+                docBaseDir.delete();  // Delete the WAR file
             }
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));

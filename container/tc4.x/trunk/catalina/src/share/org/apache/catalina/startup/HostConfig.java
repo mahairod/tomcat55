@@ -73,6 +73,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -174,6 +175,13 @@ public class HostConfig
 
 
     /**
+     * Should we unpack WAR files when auto-deploying applications in the
+     * <code>appBase</code> directory?
+     */
+    private boolean unpackWARs = false;
+
+
+    /**
      * Last modified dates of the web.xml files of the contexts, keyed by
      * context name.
      */
@@ -249,6 +257,28 @@ public class HostConfig
     }
 
 
+    /**
+     * Return the unpack WARs flag.
+     */
+    public boolean isUnpackWARs() {
+
+        return (this.unpackWARs);
+
+    }
+
+
+    /**
+     * Set the unpack WARs flag.
+     *
+     * @param unpackWARs The new unpack WARs flag
+     */
+    public void setUnpackWARs(boolean unpackWARs) {
+
+        this.unpackWARs = unpackWARs;
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -264,8 +294,10 @@ public class HostConfig
             host = (Host) event.getLifecycle();
             if (host instanceof StandardHost) {
                 int hostDebug = ((StandardHost) host).getDebug();
-                if (hostDebug > this.debug)
+                if (hostDebug > this.debug) {
                     this.debug = hostDebug;
+                }
+                setUnpackWARs(((StandardHost) host).isUnpackWARs());
             }
         } catch (ClassCastException e) {
             log(sm.getString("hostConfig.cce", event.getLifecycle()), e);
@@ -386,15 +418,35 @@ public class HostConfig
                 if (host.findChild(contextPath) != null)
                     continue;
 
-                // Deploy the application in this WAR file
-                log(sm.getString("hostConfig.deployJar", files[i]));
-                try {
-                    URL url = new URL("file", null, dir.getCanonicalPath());
-                    url = new URL("jar:" + url.toString() + "!/");
-                    ((Deployer) host).install(contextPath, url);
-                } catch (Throwable t) {
-                    log(sm.getString("hostConfig.deployJar.error", files[i]),
-                        t);
+                if (isUnpackWARs()) {
+
+                    // Expand and deploy this application as a directory
+                    log(sm.getString("hostConfig.expand", files[i]));
+                    try {
+                        URL url = new URL("jar:file:" +
+                                          dir.getCanonicalPath() + "!/");
+                        String path = expand(url);
+                        url = new URL("file:" + path);
+                        ((Deployer) host).install(contextPath, url);
+                    } catch (Throwable t) {
+                        log(sm.getString("hostConfig.expand.error", files[i]),
+                            t);
+                    }
+
+                } else {
+
+                    // Deploy the application in this WAR file
+                    log(sm.getString("hostConfig.deployJar", files[i]));
+                    try {
+                        URL url = new URL("file", null,
+                                          dir.getCanonicalPath());
+                        url = new URL("jar:" + url.toString() + "!/");
+                        ((Deployer) host).install(contextPath, url);
+                    } catch (Throwable t) {
+                        log(sm.getString("hostConfig.deployJar.error",
+                                         files[i]), t);
+                    }
+
                 }
 
             }
@@ -512,6 +564,135 @@ public class HostConfig
 
     }
 
+
+
+    /**
+     * Expand the WAR file found at the specified URL into an unpacked
+     * directory structure, and return the absolute pathname to the expanded
+     * directory.
+     *
+     * @param war URL of the web application archive to be expanded
+     *  (must start with "jar:")
+     *
+     * @exception IllegalArgumentException if this is not a "jar:" URL
+     * @exception IOException if an input/output error was encountered
+     *  during expansion
+     */
+    protected String expand(URL war) throws IOException {
+
+        // Calculate the directory name of the expanded directory
+        if (getDebug() >= 1) {
+            log("expand(" + war.toString() + ")");
+        }
+        String pathname = war.toString().replace('\\', '/');
+        if (pathname.endsWith("!/")) {
+            pathname = pathname.substring(0, pathname.length() - 2);
+        }
+        int period = pathname.lastIndexOf('.');
+        if (period >= pathname.length() - 4)
+            pathname = pathname.substring(0, period);
+        int slash = pathname.lastIndexOf('/');
+        if (slash >= 0) {
+            pathname = pathname.substring(slash + 1);
+        }
+        if (getDebug() >= 1) {
+            log("  Proposed directory name: " + pathname);
+        }
+
+        // Make sure that there is no such directory already existing
+        File appBase = new File(host.getAppBase());
+        if (!appBase.isAbsolute()) {
+            appBase = new File(System.getProperty("catalina.base"),
+                               host.getAppBase());
+        }
+        if (!appBase.exists() || !appBase.isDirectory()) {
+            throw new IOException
+                (sm.getString("standardHost.appBase",
+                              appBase.getAbsolutePath()));
+        }
+        File docBase = new File(appBase, pathname);
+        if (docBase.exists()) {
+            // War file is already installed
+            return (docBase.getAbsolutePath());
+        }
+
+        // Create the new document base directory
+        docBase.mkdir();
+        if (getDebug() >= 2) {
+            log("  Have created expansion directory " +
+                docBase.getAbsolutePath());
+        }
+
+        // Expand the WAR into the new document base directory
+        JarURLConnection juc = (JarURLConnection) war.openConnection();
+        juc.setUseCaches(false);
+        JarFile jarFile = juc.getJarFile();
+        if (getDebug() >= 2) {
+            log("  Have opened JAR file successfully");
+        }
+        Enumeration jarEntries = jarFile.entries();
+        if (getDebug() >= 2) {
+            log("  Have retrieved entries enumeration");
+        }
+        while (jarEntries.hasMoreElements()) {
+            JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+            String name = jarEntry.getName();
+            if (getDebug() >= 2) {
+                log("  Am processing entry " + name);
+            }
+            int last = name.lastIndexOf('/');
+            if (last >= 0) {
+                File parent = new File(docBase,
+                                       name.substring(0, last));
+                if (getDebug() >= 2) {
+                    log("  Creating parent directory " + parent);
+                }
+                parent.mkdirs();
+            }
+            if (name.endsWith("/")) {
+                continue;
+            }
+            if (getDebug() >= 2) {
+                log("  Creating expanded file " + name);
+            }
+            InputStream input = jarFile.getInputStream(jarEntry);
+            expand(input, docBase, name);
+            input.close();
+        }
+        jarFile.close();
+
+        // Return the absolute path to our new document base directory
+        return (docBase.getAbsolutePath());
+
+    }
+
+
+    /**
+     * Expand the specified input stream into the specified directory, creating
+     * a file named from the specified relative path.
+     *
+     * @param input InputStream to be copied
+     * @param docBase Document base directory into which we are expanding
+     * @param name Relative pathname of the file to be created
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void expand(InputStream input, File docBase, String name)
+        throws IOException {
+
+        File file = new File(docBase, name);
+        BufferedOutputStream output =
+            new BufferedOutputStream(new FileOutputStream(file));
+        byte buffer[] = new byte[2048];
+        while (true) {
+            int n = input.read(buffer);
+            if (n <= 0)
+                break;
+            output.write(buffer, 0, n);
+        }
+        output.close();
+
+    }
 
 
     /**
