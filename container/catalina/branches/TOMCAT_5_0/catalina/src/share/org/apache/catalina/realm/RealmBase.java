@@ -1094,7 +1094,7 @@ public abstract class RealmBase
 
         byte[] digest = null;
         // Bugzilla 32137
-        synchornized(md5Helper) {
+        synchronized(md5Helper) {
             digest = md5Helper.digest(valueBytes);
         }
 
