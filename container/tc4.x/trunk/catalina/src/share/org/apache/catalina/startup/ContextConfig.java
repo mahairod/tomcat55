@@ -408,26 +408,22 @@ public final class ContextConfig
         boolean secure = false;
         Container container = context.getParent();
         if (container instanceof Host) {
-            System.out.println("certificatesConfig found Host");
             container = container.getParent();
         }
         if (container instanceof Engine) {
-            System.out.println("certificatesConfig found Engine");
             Service service = ((Engine)container).getService();
             Connector [] connectors = service.findConnectors();
             for (int i = 0; i < connectors.length; i++) {
-                System.out.println("certificatesConfig found Connector");
                 secure = connectors[i].getSecure();
                 if (secure) {
                     break;
                 }
             }
         }
-
         if (!secure) {
             return;
         }
-        System.out.println("certificatesConfig add CertificatesValve");
+
         // Validate that the JSSE classes are present
         try {
             Class clazz = this.getClass().getClassLoader().loadClass
