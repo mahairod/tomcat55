@@ -173,6 +173,9 @@
       <fix>
         <bug>31549</bug>: Add name to WebappClassLoader's stopped message. (yoavs)
       </fix>
+      <fix>
+        Add name to WebappClassLoader's stopped message. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
@@ -205,7 +208,7 @@
         Catalina Connector class. (remm)
       </update>
       <fix>
-        Fix handling of the "timeout" attribute of the HTTP protocol handler. (remm)
+        Register JSP monitoring mbean for each servlet that declares a jsp-file in web.xml. (luehe)
       </fix>
     </changelog>
   </subsection>

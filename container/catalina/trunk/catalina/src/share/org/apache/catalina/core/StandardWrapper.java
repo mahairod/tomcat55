@@ -335,13 +335,10 @@ public class StandardWrapper
      */
     public void setJspFile(String jspFile) {
 
-        //        if ((jspFile != null) && !jspFile.startsWith("/"))
-        //        throw new IllegalArgumentException
-        //                (sm.getString("standardWrapper.jspFile.format", jspFile));
-
         String oldJspFile = this.jspFile;
         this.jspFile = jspFile;
         support.firePropertyChange("jspFile", oldJspFile, this.jspFile);
+        isJspServlet = true;
 
     }
 
@@ -1619,9 +1616,10 @@ public class StandardWrapper
 
         if (isJspServlet) {
             // Register JSP monitoring mbean
-            onameStr = domain + ":type=JspMonitor,WebModule=" + webMod +
-                       ",J2EEApplication=" + ctx.getJ2EEApplication() +
-                       ",J2EEServer=" + ctx.getJ2EEServer();
+            onameStr = domain + ":type=JspMonitor,name=" + getName()
+                       + ",WebModule=" + webMod
+                       + ",J2EEApplication=" + ctx.getJ2EEApplication()
+                       + ",J2EEServer=" + ctx.getJ2EEServer();
             try {
                 jspMonitorON = new ObjectName(onameStr);
                 Registry.getRegistry(null, null)
@@ -1631,7 +1629,6 @@ public class StandardWrapper
                          instance);
             }
         }
-
     }
     
 
