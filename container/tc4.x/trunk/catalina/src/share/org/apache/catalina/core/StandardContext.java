@@ -672,6 +672,9 @@ public final class StandardContext
      * of Wrapper.
      *
      * @param child Child container to be added
+     *
+     * @exception IllegalArgumentException if the proposed container is
+     *  not an implementation of Wrapper
      */
     public void addChild(Container child) {
 
@@ -773,9 +776,32 @@ public final class StandardContext
      * Add a filter mapping to this Context.
      *
      * @param filterMap The filter mapping to be added
+     *
+     * @exception IllegalArgumentException if the specified filter name
+     *  does not match an existing filter definition, or the filter mapping
+     *  is malformed
      */
     public void addFilterMap(FilterMap filterMap) {
 
+        // Validate the proposed filter mapping
+        String filterName = filterMap.getFilterName();
+        String servletName = filterMap.getServletName();
+        String urlPattern = filterMap.getURLPattern();
+        if (findFilterDef(filterName) == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.filterMap.name", filterName));
+        if ((servletName == null) && (urlPattern == null))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.filterMap.either"));
+        if ((servletName != null) && (urlPattern != null))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.filterMap.either"));
+        if ((urlPattern != null) && !validateURLPattern(urlPattern))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.filterMap.pattern",
+                              urlPattern));
+
+        // Add this filter mapping to our registered set
 	synchronized (filterMaps) {
 	    FilterMap results[] =new FilterMap[filterMaps.length + 1];
 	    System.arraycopy(filterMaps, 0, results, 0, filterMaps.length);
@@ -830,9 +856,22 @@ public final class StandardContext
      *
      * @param name Name of the new parameter
      * @param value Value of the new  parameter
+     *
+     * @exception IllegalArgumentException if the name or value is missing,
+     *  or if this context initialization parameter has already been
+     *  registered
      */
     public void addParameter(String name, String value) {
 
+        // Validate the proposed context initialization parameter
+        if ((name == null) || (value == null))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.parameter.required"));
+        if (parameters.get(name) != null)
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.parameter.duplicate", name));
+
+        // Add this parameter to our defined set
 	synchronized (parameters) {
 	    parameters.put(name, value);
 	}
@@ -897,9 +936,21 @@ public final class StandardContext
      *
      * @param pattern URL pattern to be mapped
      * @param name Name of the corresponding servlet to execute
+     *
+     * @exception IllegalArgumentException if the specified servlet name
+     *  is not known to this Context
      */
     public void addServletMapping(String pattern, String name) {
 
+        // Validate the proposed mapping
+        if (findChild(name) == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.servletMap.name", name));
+        if (!validateURLPattern(pattern))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.servletMap.pattern", pattern));
+
+        // Add this mapping to our registered set
 	synchronized (servletMappings) {
 	    servletMappings.put(pattern, name);
 	}
@@ -2283,6 +2334,30 @@ public final class StandardContext
     private void setPaused(boolean paused) {
 
 	this.paused = paused;
+
+    }
+
+
+    /**
+     * Validate the syntax of a proposed <code>&lt;url-pattern&gt;</code>
+     * for conformance with specification requirements.
+     *
+     * @param urlPattern URL pattern to be validated
+     */
+    private boolean validateURLPattern(String urlPattern) {
+
+        if (urlPattern == null)
+            return (false);
+        if (urlPattern.startsWith("*.")) {
+            if (urlPattern.indexOf("/") < 0)
+                return (true);
+            else
+                return (false);
+        }
+        if (urlPattern.startsWith("/"))
+            return (true);
+        else
+            return (false);
 
     }
 
