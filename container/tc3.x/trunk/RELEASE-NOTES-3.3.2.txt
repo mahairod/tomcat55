@@ -31,6 +31,8 @@ Bug No.  Description
          tasks allow the Tomcat work directory to be pre-populated with 
          compiled JSPs.
 
+13285	 Added improvements to the admin web-app to include support for vhosts.
+
 Server:
 
 Bug No.  Description
