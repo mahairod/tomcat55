@@ -89,9 +89,12 @@ public final class ForEach implements TagPlugin {
 	// We must have a begin and end attributes
 	index = ctxt.getTemporaryVariableName();
 	ctxt.generateJavaSource("for (int " + index + " = ");
+	ctxt.generateJavaSource("Integer.parseInt(");
 	ctxt.generateAttribute("begin");
-	ctxt.generateJavaSource("; " + index + " <= ");
+	ctxt.generateJavaSource("); " + index + " <= ");
+	ctxt.generateJavaSource("Integer.parseInt(");
 	ctxt.generateAttribute("end");
+	ctxt.generateJavaSource(")");
 	if (hasStep) {
 	    ctxt.generateJavaSource("; " + index + "+=");
 	    ctxt.generateAttribute("step");
