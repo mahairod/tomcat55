@@ -97,6 +97,7 @@ public final class Bootstrap {
 
 
     protected static final String CATALINA_TOKEN = "${catalina.home}";
+    protected static final String HTTP_TOKEN = "http://";
 
 
     // ------------------------------------------------------- Static Variables
@@ -153,10 +154,17 @@ public final class Bootstrap {
 
         ArrayList unpackedList = new ArrayList();
         ArrayList packedList = new ArrayList();
+        ArrayList urlList = new ArrayList();
 
         StringTokenizer tokenizer = new StringTokenizer(value, ",");
         while (tokenizer.hasMoreElements()) {
             String repository = tokenizer.nextToken();
+            // Check for a remote repository
+            if (repository.startsWith(HTTP_TOKEN)) {
+                urlList.add(new URL(repository));
+                continue;
+            }
+            // Local repository
             boolean packed = false;
             if (repository.startsWith(CATALINA_TOKEN)) {
                 repository = getCatalinaHome() 
@@ -176,8 +184,10 @@ public final class Bootstrap {
 
         File[] unpacked = (File[]) unpackedList.toArray(new File[0]);
         File[] packed = (File[]) packedList.toArray(new File[0]);
+        URL[] urls = (URL[]) urlList.toArray(new URL[0]);
 
-        return ClassLoaderFactory.createClassLoader(unpacked, packed, parent);
+        return ClassLoaderFactory.createClassLoader
+            (unpacked, packed, urls, parent);
 
     }
 
