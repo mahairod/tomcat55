@@ -65,6 +65,7 @@
 package org.apache.catalina.loader;
 
 import java.io.File;
+import java.io.FilePermission;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -74,6 +75,9 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
+import java.security.CodeSource;
+import java.security.PermissionCollection;
+import java.security.Policy;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -123,6 +127,9 @@ public class StandardClassLoader
     public StandardClassLoader() {
 
         super(new URL[0]);
+	this.parent = getParent();
+	this.system = getSystemClassLoader();
+	securityManager = System.getSecurityManager();
 
     }
 
@@ -150,6 +157,9 @@ public class StandardClassLoader
     public StandardClassLoader(ClassLoader parent) {
 
         super((new URL[0]), parent);
+	this.parent = parent;
+	this.system = getSystemClassLoader();
+	securityManager = System.getSecurityManager();
 
     }
 
@@ -179,6 +189,9 @@ public class StandardClassLoader
     public StandardClassLoader(String repositories[]) {
 
         super(convert(repositories));
+	this.parent = getParent();
+	this.system = getSystemClassLoader();
+	securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (int i = 0; i < repositories.length; i++)
                 addRepositoryInternal(repositories[i]);
@@ -197,6 +210,9 @@ public class StandardClassLoader
     public StandardClassLoader(String repositories[], ClassLoader parent) {
 
         super(convert(repositories), parent);
+	this.parent = parent;
+	this.system = getSystemClassLoader();
+	securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (int i = 0; i < repositories.length; i++)
                 addRepositoryInternal(repositories[i]);
@@ -215,6 +231,9 @@ public class StandardClassLoader
     public StandardClassLoader(URL repositories[], ClassLoader parent) {
 
         super(repositories, parent);
+	this.parent = parent;
+	this.system = getSystemClassLoader();
+	securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (int i = 0; i < repositories.length; i++)
                 addRepositoryInternal(repositories[i].toString());
@@ -224,14 +243,6 @@ public class StandardClassLoader
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The set of fully qualified class or resource names to which access
-     * will be allowed (if they exist) by this class loader, even if the
-     * class or resource name would normally be restricted.
-     */
-    protected String allowed[] = new String[0];
 
 
     /**
@@ -284,19 +295,28 @@ public class StandardClassLoader
 
 
     /**
-     * The set of class name prefixes to which access should be restricted.
-     * A request for a class or resource that starts with this prefix will
-     * fail with an appropriate exception or <code>null</code> return value,
-     * unless that specific class or resource name is on the allowed list.
+     * Instance of the SecurityManager installed.
      */
-    protected String restricted[] = new String[0];
+    private SecurityManager securityManager = null;
 
 
     /**
-     * The set of class and resource name prefixes that should be allowed,
-     * but only from the underlying system class loader.
+     * The context directory path read FilePermission if this loader
+     * is for a web application context.
      */
-    protected String systems[] = { "java." };
+    private FilePermission filePermission = null;
+
+
+    /**
+     * The parent class loader.
+     */
+    private ClassLoader parent = null;
+
+
+    /**
+     * The system class loader.
+     */
+    private ClassLoader system = null;
 
 
     /**
@@ -351,30 +371,27 @@ public class StandardClassLoader
 
     }
 
+    /**
+     * If there is a Java SecurityManager, refresh the security
+     * policies from file and set the context security permissions.
+     *
+     * @param String context directory file url string
+     */
+    public void setPermissions(URL url) {
+	if( securityManager != null ) {
+	    String contextDir = url.getFile();
+	    if( contextDir.endsWith(File.separator) )
+		contextDir = contextDir + "-";
+	    else
+		contextDir = contextDir + File.separator + "-";
+	    // Refresh the security policies
+	    Policy policy = Policy.getPolicy();
+	    policy.refresh();
+            filePermission = new FilePermission(contextDir,"read");
+	}
+    }
 
     // ------------------------------------------------------- Reloader Methods
-
-
-    /**
-     * Add a new fully qualified class or resource name to which access will be
-     * allowed, even if the class or resource name would otherwise match one
-     * of the restricted patterns.
-     *
-     * @param name Class or resource name to allow access for
-     */
-    public void addAllowed(String name) {
-
-	if (debug >= 1)
-	    log("addAllowed(" + name + ")");
-
-	synchronized (allowed) {
-	    String results[] = new String[allowed.length + 1];
-            System.arraycopy(allowed, 0, results, 0, allowed.length);
-	    results[allowed.length] = name;
-	    allowed = results;
-	}
-
-    }
 
 
     /**
@@ -411,65 +428,6 @@ public class StandardClassLoader
 
 
     /**
-     * Add a fully qualified class or resource name prefix that, if it matches
-     * the name of a requested class or resource, will cause access to that
-     * class or resource to fail (unless the complete name is on the allowed
-     * list).
-     *
-     * @param prefix The restricted prefix
-     */
-    public void addRestricted(String prefix) {
-
-	if (debug >= 1)
-	    log("addRestricted(" + prefix + ")");
-
-	synchronized (restricted) {
-	    String results[] = new String[restricted.length + 1];
-            System.arraycopy(restricted, 0, results, 0, restricted.length);
-	    results[restricted.length] = prefix;
-	    restricted = results;
-	}
-
-    }
-
-
-    /**
-     * Add a fully qualified class or resource name prefix that, if it matches
-     * the name of a requested class or resource, will cause access to that
-     * class or resource to be attempted in the system class loader only
-     * (bypassing the repositories defined in this class loader).  By default,
-     * the <code>java.</code> prefix is defined as a system prefix.
-     *
-     * @param prefix The system prefix
-     */
-    public void addSystem(String prefix) {
-
-	if (debug >= 1)
-	    log("addSystem(" + prefix + ")");
-
-	synchronized (systems) {
-	    String results[] = new String[systems.length + 1];
-            System.arraycopy(systems, 0, results, 0, systems.length);
-	    results[systems.length] = prefix;
-	    systems = results;
-	}
-
-    }
-
-
-    /**
-     * Return a String array of the allowed class or resource name list
-     * for this class loader.  If there are none, a zero-length array
-     * is returned.
-     */
-    public String[] findAllowed() {
-
-	return (allowed);
-
-    }
-
-
-    /**
      * Return a list of "optional packages" (formerly "standard extensions")
      * that have been declared to be available in the repositories associated
      * with this class loader, plus any parent class loader implemented with
@@ -485,12 +443,12 @@ public class StandardClassLoader
 
         // Trace our parentage tree and add declared extensions when possible
         ClassLoader loader = this;
-        while (true) {
-            loader = loader.getParent();
-            if (loader == null)
-                break;
-            if (!(loader instanceof StandardClassLoader))
-                continue;
+        while (true) {                                                       
+	    loader = loader.getParent();
+	    if (loader == null)        
+		break;        
+	    if (!(loader instanceof StandardClassLoader))
+		continue;
             Extension extensions[] =
                 ((StandardClassLoader) loader).findAvailable();
             for (int i = 0; i < extensions.length; i++)
@@ -533,7 +491,7 @@ public class StandardClassLoader
         // Trace our parentage tree and add declared extensions when possible
         ClassLoader loader = this;
         while (true) {
-            loader = loader.getParent();
+	    loader = loader.getParent();
             if (loader == null)
                 break;
             if (!(loader instanceof StandardClassLoader))
@@ -547,30 +505,6 @@ public class StandardClassLoader
         // Return the results as an array
         Extension extensions[] = new Extension[results.size()];
         return ((Extension[]) results.toArray(extensions));
-
-    }
-
-
-    /**
-     * Return a String array of the restricted class or resource name prefixes
-     * for this class loader.  If there are none, a zero-length array
-     * is returned.
-     */
-    public String[] findRestricted() {
-
-	return (restricted);
-
-    }
-
-
-    /**
-     * Return a Striong array of the sytsem class or resource name prefixes
-     * for this class loader.  If there are none, a zero-length array
-     * is returned.
-     */
-    public String[] findSystem() {
-
-	return (systems);
 
     }
 
@@ -636,13 +570,6 @@ public class StandardClassLoader
     public String toString() {
 
         StringBuffer sb = new StringBuffer("StandardClassLoader\r\n");
-        sb.append("  allowed: ");
-        for (int i = 0; i < allowed.length; i++) {
-            if (i > 0)
-                sb.append(", ");
-            sb.append(allowed[i]);
-        }
-        sb.append("\r\n");
         sb.append("  available:\r\n");
         Iterator available = this.available.iterator();
         while (available.hasNext()) {
@@ -666,19 +593,6 @@ public class StandardClassLoader
             sb.append(required.next().toString());
             sb.append("\r\n");
         }
-        sb.append("  restricted: ");
-        for (int i = 0; i < restricted.length; i++) {
-            if (i > 0)
-                sb.append(", ");
-            sb.append(restricted[i]);
-        }
-        sb.append("\r\n");
-        sb.append("  systems: ");
-        for (int i = 0; i < systems.length; i++) {
-            if (i > 0)
-                sb.append(", ");
-            sb.append(systems[i]);
-        }
         sb.append("\r\n");
         return (sb.toString());
 
@@ -700,6 +614,20 @@ public class StandardClassLoader
 
         if (debug >= 3)
             log("    findClass(" + name + ")");
+
+        // (1) Permission to define this class when using a SecurityManager
+        if (securityManager != null) {
+            int i = name.lastIndexOf('.');
+            if (i >= 0) {
+                try {
+                    securityManager.checkPackageDefinition(name.substring(0,i));
+                } catch (SecurityException se) {
+                    String error = "Security Violation, attempt to define " +
+                        "a Class in a restricted package: " + name;
+                    throw new ClassNotFoundException(error);
+                }
+            }
+        }
 
         // Ask our superclass to locate this class, if possible
         // (throws ClassNotFoundException if it is not found)
@@ -758,13 +686,6 @@ public class StandardClassLoader
         if (debug >= 3)
             log("    findResource(" + name + ")");
 
-        // Check for attempts to load restricted classes
-        if (restricted(name)) {
-            if (debug >= 2)
-                log("  Rejecting restricted resource name");
-            return (null);
-        }
-
         URL url = super.findResource(name);
         if (debug >= 3) {
             if (url != null)
@@ -822,48 +743,47 @@ public class StandardClassLoader
         if (debug >= 2)
             log("getResource(" + name + ")");
         URL url = null;
-        boolean isSystem = system(name);
 
         // (1) Delegate to parent if requested
-        if (delegate || isSystem) {
+        if (delegate) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
-            ClassLoader parent = getParent();
-            if (parent == null)
-                parent = getSystemClassLoader();
-            url = parent.getResource(name);
+            ClassLoader loader = parent;
+            if (loader == null)
+                loader = system;
+            url = loader.getResource(name);
             if (url != null) {
                 if (debug >= 2)
                     log("  --> Returning '" + url.toString() + "'");
                 return (url);
             }
-        }
-
+        }    
+         
         // (2) Search local repositories
-        if (!isSystem) {
-            if (debug >= 3)
-                log("  Searching local repositories");
-            url = findResource(name);
-            if (url != null) {
-                if (debug >= 2)
-                    log("  --> Returning '" + url.toString() + "'");
-                return (url);
-            }
-        }
-
-        // (3) Delegate to parent unconditionally
-        ClassLoader parent = getParent();
-        if (parent == null)
-            parent = getSystemClassLoader();
-        url = parent.getResource(name);
+        if (debug >= 3)
+            log("  Searching local repositories");
+        url = findResource(name);
         if (url != null) {
             if (debug >= 2)
                 log("  --> Returning '" + url.toString() + "'");
             return (url);
-        }
-
+        }                 
+            
+        // (3) Delegate to parent unconditionally if not already attempted
+	if( !delegate ) {
+	    ClassLoader loader = parent;
+	    if (loader == null)
+		loader = system;
+	    url = loader.getResource(name);
+	    if (url != null) {
+		if (debug >= 2)
+		    log("  --> Returning '" + url.toString() + "'");
+		return (url); 
+	    }
+        }                 
+                        
         // (4) Resource was not found
-        if (debug >= 2)
+        if (debug >= 2)   
             log("  --> Resource not found, returning null");
         return (null);
 
@@ -884,7 +804,6 @@ public class StandardClassLoader
         if (debug >= 2)
             log("getResourceAsStream(" + name + ")");
         InputStream stream = null;
-        boolean isSystem = system(name);
 
         // (0) Check for a cached copy of this resource
         stream = findLoadedResource(name);
@@ -895,13 +814,13 @@ public class StandardClassLoader
         }
 
         // (1) Delegate to parent if requested
-        if (delegate || isSystem) {
+        if (delegate) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
-            ClassLoader parent = getParent();
-            if (parent == null)
-                parent = getSystemClassLoader();
-            stream = parent.getResourceAsStream(name);
+            ClassLoader loader = parent;
+            if (loader == null)
+                loader = system;
+            stream = loader.getResourceAsStream(name);
             if (stream != null) {
                 // FIXME - cache???
                 if (debug >= 2)
@@ -911,31 +830,29 @@ public class StandardClassLoader
         }
 
         // (2) Search local repositories
-        if (!isSystem) {
-            if (debug >= 3)
-                log("  Searching local repositories");
-            URL url = findResource(name);
-            if (url != null) {
-                // FIXME - cache???
-                if (debug >= 2)
-                    log("  --> Returning stream from local");
-                try {
-                    return (url.openStream());
-                } catch (IOException e) {
-                    log("url.openStream(" + url.toString() + ")", e);
-                    return (null);
-                }
+        if (debug >= 3)
+            log("  Searching local repositories");
+        URL url = findResource(name);
+        if (url != null) {
+            // FIXME - cache???
+            if (debug >= 2)
+                log("  --> Returning stream from local");
+            try {
+               return (url.openStream());
+            } catch (IOException e) {
+               log("url.openStream(" + url.toString() + ")", e);
+               return (null);
             }
         }
 
         // (3) Delegate to parent unconditionally
-        if (delegate) {
+        if (!delegate) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
-            ClassLoader parent = getParent();
-            if (parent == null)
-                parent = getSystemClassLoader();
-            stream = parent.getResourceAsStream(name);
+            ClassLoader loader = parent;
+            if (loader == null)
+                loader = system;
+            stream = loader.getResourceAsStream(name);
             if (stream != null) {
                 // FIXME - cache???
                 if (debug >= 2)
@@ -999,14 +916,6 @@ public class StandardClassLoader
         if (debug >= 2)
             log("loadClass(" + name + ", " + resolve + ")");
         Class clazz = null;
-        boolean isSystem = system(name);
-
-        // Check for attempts to load restricted classes
-        if (restricted(name)) {
-            if (debug >= 2)
-                log("  Rejecting restricted class name");
-            throw new ClassNotFoundException("Restricted Clas: " + name);
-        }
 
         // (0) Check our previously loaded class cache
         clazz = findLoadedClass(name);
@@ -1018,15 +927,31 @@ public class StandardClassLoader
             return (clazz);
         }
 
+        // (.5) Permission to access this class when using a SecurityManager
+        if (securityManager != null) {
+            int i = name.lastIndexOf('.');
+            if (i >= 0) {
+                try {    
+                    securityManager.checkPackageAccess(name.substring(0,i));
+                } catch (SecurityException se) {
+                    String error = "Security Violation, attempt to use " +
+                        "Restricted Class: " + name;
+		    System.out.println(error);
+                    log(error);
+                    throw new ClassNotFoundException(error);
+                }
+            }    
+        }
+
         // (1) Delegate to our parent if requested
-        if (delegate || isSystem) {
+        if (delegate) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
-            ClassLoader parent = getParent();
-            if (parent == null)
-                parent = getSystemClassLoader();
+            ClassLoader loader = parent;
+            if (loader == null)
+                loader = system;
             try {
-                clazz = parent.loadClass(name);
+                clazz = loader.loadClass(name);
                 if (clazz != null) {
                     if (debug >= 3)
                         log("  Loading class from parent");
@@ -1040,32 +965,30 @@ public class StandardClassLoader
         }
 
         // (2) Search local repositories
-        if (!isSystem) {
-            if (debug >= 3)
-                log("  Searching local repositories");
-            try {
-                clazz = findClass(name);
-                if (clazz != null) {
-                    if (debug >= 3)
-                        log("  Loading class from local repository");
-                    if (resolve)
-                        resolveClass(clazz);
-                    return (clazz);
-                }
-            } catch (ClassNotFoundException e) {
-                ;
+        if (debug >= 3)
+            log("  Searching local repositories");
+        try {
+            clazz = findClass(name);
+            if (clazz != null) {
+                if (debug >= 3)
+                    log("  Loading class from local repository");
+                if (resolve)
+                    resolveClass(clazz);
+                return (clazz);
             }
+        } catch (ClassNotFoundException e) {
+            ;
         }
 
         // (3) Delegate to parent unconditionally
-        if (!delegate && !isSystem) {
+        if (!delegate) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
-            ClassLoader parent = getParent();
-            if (parent == null)
-                parent = getSystemClassLoader();
+            ClassLoader loader = parent;
+            if (loader == null)
+		loader = system;
             try {
-                clazz = parent.loadClass(name);
+                clazz = loader.loadClass(name);
                 if (clazz != null) {
                     if (debug >= 3)
                         log("  Loading class from parent");
@@ -1083,6 +1006,21 @@ public class StandardClassLoader
 
     }
 
+
+    /**
+     * Get the Permissions for a CodeSource.  If this instance
+     * of StandardClassLoader is for a web application context,
+     * add FilePermission "context root", "read".
+     *
+     * @param CodeSource where the code was loaded from
+     * @return PermissionCollection for CodeSource
+     */
+    protected final PermissionCollection getPermissions(CodeSource codeSource) {
+	PermissionCollection pc = super.getPermissions(codeSource);
+	if( filePermission != null && pc != null)
+	    pc.add(filePermission);
+	return pc;
+    }
 
     // ------------------------------------------------------ Protected Methods
 
@@ -1254,46 +1192,6 @@ public class StandardClassLoader
 
 	System.out.println("StandardClassLoader: " + message);
 	throwable.printStackTrace(System.out);
-
-    }
-
-
-    /**
-     * Is this a class or resource that should not be allowed to load
-     * in this class loader?
-     *
-     * @param name Name of the class or resource to be checked
-     */
-    private boolean restricted(String name) {
-
-	for (int i = 0; i < allowed.length; i++) {
-	    if (name.equals(allowed[i]))
-		return (false);
-	}
-
-	for (int i = 0; i < restricted.length; i++) {
-	    if (name.startsWith(restricted[i]))
-		return (true);
-	}
-
-	return (false);
-
-    }
-
-
-    /**
-     * Is this a class or resource that should be loaded only by the
-     * system class loader?
-     *
-     * @param name Name of the class or resource to be checked
-     */
-    private boolean system(String name) {
-
-        for (int i = 0; i < systems.length; i++) {
-            if (name.startsWith(systems[i]))
-                return (true);
-        }
-        return (false);
 
     }
 

@@ -78,16 +78,6 @@ public interface Reloader {
 
 
     /**
-     * Add a new fully qualified class or resource name to which access will be
-     * allowed, even if the class or resource name would otherwise match one
-     * of the restricted patterns.
-     *
-     * @param name Class or resource name to allow access for
-     */
-    public void addAllowed(String name);
-
-
-    /**
      * Add a new repository to the set of places this ClassLoader can look for
      * classes to be loaded.
      *
@@ -101,58 +91,11 @@ public interface Reloader {
 
 
     /**
-     * Add a fully qualified class or resource name prefix that, if it matches
-     * the name of a requested class or resource, will cause access to that
-     * class or resource to fail (unless the complete name is on the allowed
-     * list).
-     *
-     * @param prefix The restricted prefix
-     */
-    public void addRestricted(String prefix);
-
-
-    /**
-     * Add a fully qualified class or resource name prefix that, if it matches
-     * the name of a requested class or resource, will cause access to that
-     * class or resource to be attempted in the system class loader only
-     * (bypassing the repositories defined in this class loader).  By default,
-     * the <code>java.</code> prefix is defined as a system prefix.
-     *
-     * @param prefix The system prefix
-     */
-    public void addSystem(String prefix);
-
-
-    /**
-     * Return a String array of the allowed class or resource name list
-     * for this class loader.  If there are none, a zero-length array
-     * is returned.
-     */
-    public String[] findAllowed();
-
-
-    /**
      * Return a String array of the current repositories for this class
      * loader.  If there are no repositories, a zero-length array is
      * returned.
      */
     public String[] findRepositories();
-
-
-    /**
-     * Return a String array of the restricted class or resource name prefixes
-     * for this class loader.  If there are none, a zero-length array
-     * is returned.
-     */
-    public String[] findRestricted();
-
-
-    /**
-     * Return a Striong array of the sytsem class or resource name prefixes
-     * for this class loader.  If there are none, a zero-length array
-     * is returned.
-     */
-    public String[] findSystem();
 
 
     /**

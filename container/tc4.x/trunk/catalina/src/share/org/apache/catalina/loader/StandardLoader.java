@@ -602,9 +602,18 @@ public final class StandardLoader
                     (parentClassLoader, shFactory);
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
-	    classLoader.addRestricted("org.apache.catalina.");
-	    classLoader.addSystem("javax.servlet.");
             ((StandardClassLoader) classLoader).setDelegate(this.delegate);
+	    if (container instanceof Context) {
+		// Tell the class loader the root of the context
+		Resources resources = ((Context) container).getResources();
+		try {
+		    URL contextURL = resources.getResource("/");
+		    if( contextURL != null )
+			((StandardClassLoader)classLoader).setPermissions(
+			    contextURL);
+		} catch (MalformedURLException e) {
+		}
+	    }
 	    if (classLoader instanceof Lifecycle)
 		((Lifecycle) classLoader).start();
 	} catch (Throwable t) {
