@@ -981,11 +981,6 @@ public class Generator {
 	    out.println("();");
 	    generateSetters(n, tagHandlerVar, handlerInfo);
 	    
-	    // Declare AT_BEGIN variables
-	    declareVariableInfos(varInfos, VariableInfo.AT_BEGIN);
-	    declareTagVariableInfos(tagVarInfos, n.getTagData(),
-				    VariableInfo.AT_BEGIN);
-	    
             if (implementsTryCatchFinally) {
                 out.printil("try {");
                 out.pushIndent();
@@ -1004,11 +999,10 @@ public class Generator {
 	    boolean isBodyTag
 		= BodyTag.class.isAssignableFrom(tagHandlerClass);
 
-	    // Update AT_BEGIN variables
-	    updateVariableInfos(varInfos, VariableInfo.AT_BEGIN, false);
-	    updateTagVariableInfos(tagVarInfos, n.getTagData(),
-				   VariableInfo.AT_BEGIN, false);
-
+	    // Declare and synchronize AT_BEGIN scripting variables
+	    syncScriptingVariables(varInfos, tagVarInfos, n.getTagData(),
+				   VariableInfo.AT_BEGIN, true);
+ 
 	    if (n.getBody() != null) {
 		out.printin("if (");
 		out.print(tagEvalVar);
@@ -1042,14 +1036,13 @@ public class Generator {
 		}
 	    }
 
-	    // Declare and update NESTED variables
-	    updateVariableInfos(varInfos, VariableInfo.NESTED, true);
-	    updateTagVariableInfos(tagVarInfos, n.getTagData(),
-				   VariableInfo.NESTED, true);
 
-	    // Update AT_BEGIN variables
-	    updateVariableInfos(varInfos, VariableInfo.AT_BEGIN, false);
-	    updateTagVariableInfos(tagVarInfos, n.getTagData(),
+	    // Declare and synchronize NESTED scripting variables
+	    syncScriptingVariables(varInfos, tagVarInfos, n.getTagData(),
+ 				   VariableInfo.NESTED, true);
+
+	    // Synchronize AT_BEGIN scripting variables
+	    syncScriptingVariables(varInfos, tagVarInfos, n.getTagData(),
 				   VariableInfo.AT_BEGIN, false);
 	};
 	
@@ -1074,9 +1067,8 @@ public class Generator {
 		out.println(".doAfterBody() == javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN);");
 	    }
 
-	    // Update AT_BEGIN variables
-	    updateVariableInfos(varInfos, VariableInfo.AT_BEGIN, false);
-	    updateTagVariableInfos(tagVarInfos, n.getTagData(),
+	    // Synchronize AT_BEGIN scripting variables
+	    syncScriptingVariables(varInfos, tagVarInfos, n.getTagData(),
 				   VariableInfo.AT_BEGIN, false);
 
 	    if (n.getBody() != null) {
@@ -1125,85 +1117,46 @@ public class Generator {
                 out.println(".release();");
 	    }
 
-	    // Declare and update AT_END variables
-	    updateVariableInfos(varInfos, VariableInfo.AT_END, true);
-	    updateTagVariableInfos(tagVarInfos, n.getTagData(),
+	    // Declare and synchronize AT_END variables
+	    syncScriptingVariables(varInfos, tagVarInfos, n.getTagData(),
 				   VariableInfo.AT_END, true);
 
 	    n.setEndJavaLine(out.getJavaLine());
 	}
 
-	private void declareVariableInfos(VariableInfo[] varInfos, int scope) {
-	    if (varInfos == null)
-		return;
-	    
-	    for (int i=0; i<varInfos.length; i++) {
-		if ((varInfos[i].getScope() == scope)
-		        && varInfos[i].getDeclare()) {
-		    out.printin(varInfos[i].getClassName());
-		    out.print(" ");
-		    out.print(varInfos[i].getVarName());
-		    out.println(" = null;");
-		}
-	    }
-	}
-
-	private void updateVariableInfos(VariableInfo[] varInfos, int scope,
-					 boolean declare) {
-	    if (varInfos == null)
-		return;
-
-	    for (int i=0; i<varInfos.length; i++) {
-		if (varInfos[i].getScope() == scope) {
-		    if (declare && varInfos[i].getDeclare()) {
-			out.printin(varInfos[i].getClassName() + " ");
-		    }
-		    out.printin(varInfos[i].getVarName());
-		    out.print(" = (");
-		    out.print(varInfos[i].getClassName());
-		    out.print(") pageContext.findAttribute(");
-		    out.print(quote(varInfos[i].getVarName()));
-		    out.println(");");
-		}
-	    }		    
-	}
-
-	private void declareTagVariableInfos(TagVariableInfo[] tagVarInfos,
-					     TagData tagData, int scope) {
-	    if (tagVarInfos == null)
-		return;
-
-            for (int i=0; i<tagVarInfos.length; i++) {
-		String name = tagVarInfos[i].getNameGiven();
-		if (name == null) {
-		    name = tagData.getAttributeString(
-                                    tagVarInfos[i].getNameFromAttribute());
-		}
-                if ((tagVarInfos[i].getScope() == scope)
-                        && tagVarInfos[i].getDeclare()) {
-		    out.printin(tagVarInfos[i].getClassName());
-		    out.print(" ");
-		    out.print(name);
-		    out.println(" = null;");
-		}
-	    }
-	}
-
-	private void updateTagVariableInfos(TagVariableInfo[] tagVarInfos,
-					    TagData tagData, int scope,
+	private void syncScriptingVariables(VariableInfo[] varInfos,
+					    TagVariableInfo[] tagVarInfos,
+					    TagData tagData,
+					    int scope,
 					    boolean declare) {
-	    if (tagVarInfos == null)
+	    if ((varInfos == null) && (tagVarInfos == null)) {
 		return;
-
-            for (int i=0; i<tagVarInfos.length; i++) {
-		String name = tagVarInfos[i].getNameGiven();
-		if (name == null) {
-		    name = tagData.getAttributeString(
-                                    tagVarInfos[i].getNameFromAttribute());
+	    }
+	    if (varInfos != null) {
+		for (int i=0; i<varInfos.length; i++) {
+		    if (varInfos[i].getScope() == scope) {
+			if (declare && varInfos[i].getDeclare()) {
+			    out.printin(varInfos[i].getClassName() + " ");
+			}
+			out.printin(varInfos[i].getVarName());
+			out.print(" = (");
+			out.print(varInfos[i].getClassName());
+			out.print(") pageContext.findAttribute(");
+			out.print(quote(varInfos[i].getVarName()));
+			out.println(");");
+		    }
 		}
-                if (tagVarInfos[i].getScope() == scope) {
-		    if (declare && tagVarInfos[i].getDeclare()) {
-			out.printin(tagVarInfos[i].getClassName() + " ");
+	    } else {
+		for (int i=0; i<tagVarInfos.length; i++) {
+		    String name = tagVarInfos[i].getNameGiven();
+		    if (name == null) {
+			name = tagData.getAttributeString(
+                                        tagVarInfos[i].getNameFromAttribute());
+		    }
+		    if (tagVarInfos[i].getScope() == scope) {
+			if (declare && tagVarInfos[i].getDeclare()) {
+			    out.printin(tagVarInfos[i].getClassName() + " ");
+			}
 		    }
 		    out.printin(name);
 		    out.print(" = (");
