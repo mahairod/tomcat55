@@ -97,6 +97,7 @@ import javax.naming.NamingException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NameClassPair;
 
+import org.apache.tomcat.util.compat.JdkCompat;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -184,6 +185,10 @@ public class WebappClassLoader
         "javax.servlet.Servlet"                     // Servlet API
     };
 
+     /** 
+      * Jdk Compatibility Support.
+      */
+     private static JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
     /**
      * Set of package names which are not allowed to be loaded from a webapp
@@ -1948,13 +1953,7 @@ public class WebappClassLoader
     protected URL getURI(File file)
         throws MalformedURLException {
 
-        File realFile = file;
-        try {
-            realFile = realFile.getCanonicalFile();
-        } catch (IOException e) {
-            // Ignore
-        }
-        return realFile.toURI().toURL();
+        return jdkCompat.getURI(file);
 
     }
 
