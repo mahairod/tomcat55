@@ -17,7 +17,7 @@
 <!--Conforms to w3c http://www.w3.org/1999/XMLSchema draft of 7 April 2000-->
 
 <schema xmlns = "http://www.w3.org/1999/XMLSchema"
-        xmlns:jsp = "http://java.sun.com/JSP/Page"
+        xmlns:jsp = "http://java.sun.com/jsp_1_2"
         targetNamespace = "http://java.sun.com/xschema/jsp_1_2.xsd"
         elementFormDefault = "qualified"
         attributeFormDefault = "unqualified">
@@ -71,7 +71,7 @@
             <element ref = "include"/>
             <element ref = "forward"/>
             <element ref = "plugin"/>
-            <element ref = "text"/>
+            <element ref = "cdata"/>
         </choice>
     </group>
 
@@ -174,7 +174,6 @@
                 on any parameter entities.)
             </documentation>
         </annotation>
-	<attribute name = "root" use = "required" type = "string"/>
     </element>
     
     <element name = "directive.page">
@@ -222,9 +221,9 @@
     <element name = "declaration" type = "string"/>
     
     <element name = "expression" type = "string"/>
-    
-    <element name = "text" type = "string"/>
 
+    <element name = "cdata" type = "string"/>
+    
     <element name = "useBean">
         <annotation>
             <documentation>
