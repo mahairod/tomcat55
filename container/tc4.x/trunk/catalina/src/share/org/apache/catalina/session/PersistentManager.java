@@ -782,7 +782,33 @@ public final class PersistentManager
 	if (!started || maxIdleBackup < 0)
 	    return;
 	
-	// FIXME: Do something useful
+	Session sessions[] = findSessions();
+	long timeNow = System.currentTimeMillis();
+
+	// Back up all sessions idle longer than maxIdleBackup
+	if (maxIdleBackup >= 0) {
+	    for (int i = 0; i < sessions.length; i++) {
+		StandardSession session = (StandardSession) sessions[i];
+		if (!session.isValid())
+		    continue;
+		int timeIdle = // Truncate, do not round up
+		    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+		if (timeIdle > maxIdleBackup) {
+		    if (debug > 1)
+			log(sm.getString
+			    ("persistentManager.backupMaxIdle",
+			    session.getId(), new Integer(timeIdle)));
+	
+		    try {
+			backup(session);
+		    } catch (IOException e) {
+			log(sm.getString
+			    ("persistentManager.backupException", session.getId(), e));
+		    }
+		}
+	    }
+	}
+
     }
 
 
@@ -862,9 +888,11 @@ public final class PersistentManager
      * Write the session out to Store, but leave the copy in
      * the Manager's memory unmodified.
      */
-    private void backup() throws IOException {
+    private void backup(Session session) throws IOException {
 
-        // FIXME: Do something
+	if (!session.isValid()
+		|| isSessionStale(session, System.currentTimeMillis()))
+	    return;
 
     }
 
@@ -873,11 +901,11 @@ public final class PersistentManager
      * Read the session in from Store, overriding the copy in
      * the Manager's memory.
      */
-    private void recover() throws IOException {
+//    private void recover() throws IOException {
     
     	// FIXME: Do something
     
-    }
+//    }
 
 
     /**
