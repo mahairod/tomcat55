@@ -6,6 +6,7 @@
 <head>
   <title><bean:message key="application.title"/></title>
   <html:base/>
+  <link rel="stylesheet" type="text/css" href="tree-control-test.css">
 </head>
 
 <body bgcolor="white">
