@@ -203,6 +203,21 @@ public final class ConnectorForm extends ActionForm {
     private String minSpare = null;
     
     /**
+     * The text for the URIEncoding.
+     */
+    private String uriEncodingText = null;
+    
+    /**
+     * The value of useBodyEncodingForURI.
+     */
+    private String useBodyEncodingForURI = "false";
+
+    /**
+     * The value of allowTrace.
+     */
+    private String allowTrace = "false";
+
+    /**
      * The text for the port.
      */
     private String portText = null;
@@ -907,6 +922,60 @@ public final class ConnectorForm extends ActionForm {
     }  
     
     /**
+     * Return the URIEncoding text.
+     */
+    public String getURIEncodingText() {
+        
+        return this.uriEncodingText;
+        
+    }
+    
+    /**
+     * Set the URIEncoding Text.
+     */
+    public void setURIEncodingText(String uriEncodingText) {
+        
+        this.uriEncodingText = uriEncodingText;
+        
+    }
+    
+    /**
+     * Return the useBodyEncodingForURI Text.
+     */
+    public String getUseBodyEncodingForURIText() {
+        
+        return this.useBodyEncodingForURI;
+        
+    }
+    
+    /**
+     * Set the useBodyEncodingForURI Text.
+     */
+    public void setUseBodyEncodingForURIText(String useBodyEncodingForURI) {
+        
+        this.useBodyEncodingForURI = useBodyEncodingForURI;
+        
+    }    
+    
+    /**
+     * Return the allowTrace Text.
+     */
+    public String getAllowTraceText() {
+        
+        return this.allowTrace;
+        
+    }
+    
+    /**
+     * Set the allowTrace Text.
+     */
+    public void setAllowTraceText(String allowTrace) {
+        
+        this.allowTrace = allowTrace;
+        
+    }    
+    
+    /**
      * Return the port text.
      */
     public String getPortText() {
@@ -1060,6 +1129,8 @@ public final class ConnectorForm extends ActionForm {
         this.maxSpare = null;
         this.maxThreads = null;
         this.minSpare = null;
+        this.uriEncodingText = null;
+        this.useBodyEncodingForURI = "false";
         this.portText = null;
         this.redirectPortText = null;
         this.proxyName = null;
