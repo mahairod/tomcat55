@@ -78,6 +78,7 @@ public class WarWatcher implements Runnable {
         while ( alive ) {
             try {
                 File[] list = deployDir.listFiles(new WarFilter());
+                if ( list == null ) list = new File[0];
                 //first make sure all the files are listed in our current status
                 for ( int i=0; i<list.length; i++ ) {
                     addWarInfo(list[i]);
