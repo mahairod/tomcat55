@@ -64,8 +64,11 @@
         <logic:iterate name="contextsList" id="context">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+              <%-- admin context cannot be deleted from the tool --%>
+              <logic:notMatch name="context" value='<%= request.getContextPath() %>'>
               <html:multibox property="contexts"
                                 value="<%= context.toString() %>"/>
+              </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditContext.do?select=" + 
