@@ -169,6 +169,9 @@
     <copy todir="${catalina.base}/logs">
       <fileset dir="${tomcat.build}/logs"/> 
     </copy>
+    <copy todir="${catalina.base}/server/webapps">
+      <fileset dir="${tomcat.build}/server/webapps"/> 
+    </copy>
     <copy todir="${catalina.base}/temp">
       <fileset dir="${tomcat.build}/temp"/> 
     </copy>
