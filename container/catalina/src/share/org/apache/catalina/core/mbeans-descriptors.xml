@@ -170,6 +170,10 @@
     <attribute name="startupTime"
                description="Startup time for this context"
                type="long"/>
+
+    <attribute name="startTime"
+               description="Time that this context was started"
+               type="long"/>
                
     <attribute name="state"
                description="Current state of this component"
@@ -216,7 +220,6 @@
     <attribute name="workDir"
                description="The pathname to the work directory for this context"
                type="java.lang.String"/>
-      
 
     <operation   name="addValve"
                description="Add a valve to this Context"
