@@ -292,6 +292,11 @@ public final class SecurityUtil{
                     (HttpServletRequest)targetArguments[0];
                 subject = (Subject)request.getSession()
                                         .getAttribute(Globals.SUBJECT_ATTR);
+
+                if (subject == null){
+                    subject = new Subject();
+                    request.getSession().setAttribute(Globals.SUBJECT_ATTR, subject);
+                }
             }
 
             Subject.doAsPrivileged(subject, pea, null);       
