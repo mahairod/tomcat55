@@ -8,8 +8,7 @@
     ---------------------------------
   </controls:action>
 
-<%-- FIX ME --
-  <controls:action url="/resources/setUserDatabase.do">
+  <controls:action url="/resources/setUpUserDatabase.do">
     <bean:message key="resources.actions.userdb.create"/>
   </controls:action>
 
@@ -17,6 +16,5 @@
                         + URLEncoder.encode("UserDatabases Delete List") %>'>
     <bean:message key="resources.actions.userdb.delete"/>
   </controls:action>
---%>
 
 </controls:actions>

@@ -14,9 +14,11 @@
       <td width="20%"><div align="left" class="table-header-text">
         <bean:message key="service.name"/>
       </div></td>
+      <%--
       <td><div align="left" class="table-header-text">
         <bean:message key="resources.userdb.location"/>
       </div></td>
+      --%>
       <td><div align="left" class="table-header-text">
         <bean:message key="users.list.description"/>
       </div></td>
@@ -36,12 +38,12 @@
             <controls:attribute name="userDatabase" attribute="name"/>
           </html:link>
         </div></td>
-        <td><div align="left" class="table-normal-text">&nbsp;
-        <%-- FIX ME
-          <controls:attribute name="userDatabase" attribute="path"/>
-          --%> FIX ME
+        <%-- FIX ME -- commentred out for now as the page was looking too crowded.
+        <td><div align="left" class="table-normal-text">
+          <controls:attribute name="userDatabase" attribute="pathname"/>
         </div></td>
-        <td><div align="left" class="table-normal-text">&nbsp;
+        --%>
+        <td><div align="left" class="table-normal-text">
           <controls:attribute name="userDatabase" attribute="description"/>
         </div></td>
       </tr>

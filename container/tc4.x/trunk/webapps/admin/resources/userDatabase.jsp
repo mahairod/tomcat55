@@ -20,6 +20,8 @@
 <html:form method="POST" action="/resources/saveUserDatabase">
 
   <html:hidden property="objectName"/>
+  <html:hidden property="type"/>
+  <html:hidden property="factory"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -93,7 +95,17 @@
               <bean:message key="resources.userdb.location"/>:
             </controls:label>
             <controls:data>
-              <html:text property="path" size="24" maxlength="64"/>
+              <html:text property="path" size="32" maxlength="64"/>
+            </controls:data>
+          </controls:row>
+
+          <controls:row labelStyle="table-label-text"
+                         dataStyle="table-normal-text">
+            <controls:label>
+              <bean:message key="resources.userdb.factory"/>:
+            </controls:label>
+            <controls:data>
+              <bean:write name="userDatabaseForm" property="factory"/>
             </controls:data>
           </controls:row>
 
@@ -103,7 +115,7 @@
               <bean:message key="users.prompt.description"/>
             </controls:label>
             <controls:data>
-              <html:textarea property="description" cols="30" rows="3"/>
+              <html:textarea property="description" cols="32" rows="3"/>
             </controls:data>
           </controls:row>
 
