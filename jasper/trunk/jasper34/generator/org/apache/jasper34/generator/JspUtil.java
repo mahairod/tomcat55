@@ -69,13 +69,6 @@ import java.util.Enumeration;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 
 import org.apache.jasper34.jsptree.*;
 

@@ -138,7 +138,7 @@ public class JspPageInfo {
 
     public JspPageInfo(JspCompilationContext ctxt) {
 	this.beanInfo = new BeanRepository(ctxt.getClassLoader());
-        this.libraries = new TagLibraries(ctxt.getClassLoader());
+        this.libraries = new TagLibraries(ctxt);
         this.ctxt = ctxt;
 
         // FIXME: Is this good enough? (I'm just taking the easy way out - akv)

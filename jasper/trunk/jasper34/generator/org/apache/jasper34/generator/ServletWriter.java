@@ -312,6 +312,7 @@ public class ServletWriter extends JavaSourceGenerator {
 	this.println();
 	this.println("JspFactory _jspxFactory = JspFactory.getDefaultFactory();");
 	this.println("PageContext pageContext = null;");
+	this.println("JspWriter out=null;");
 	
 	this.println("try {");
 	this.pushIndent();
@@ -322,6 +323,7 @@ public class ServletWriter extends JavaSourceGenerator {
         this.println("_jspx_init();");
 	
 	this.println("pageContext = _getPageContext(request, response);");
+	this.println("out=pageContext.getOut();");
 	this.println();
 	this.println("_jspService( pageContext, request, response );");
 	//writer.println("} catch (Throwable t) {");
@@ -348,9 +350,12 @@ public class ServletWriter extends JavaSourceGenerator {
 	
 	// Use flush buffer ( which just empty JspWriterImpl buffer )
 	// instead of commiting the response.
-	this.println("JspWriter out=pageContext.getOut();");
+	this.println("if( out instanceof " + Constants.JSP_RUNTIME_PACKAGE +
+		     ".JspWriterImpl )");
+	this.pushIndent();
 	this.println("((" +  Constants.JSP_RUNTIME_PACKAGE +
 		     ".JspWriterImpl)out).flushBuffer();");
+	this.popIndent();
 	this.println("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
 	this.popIndent();
 	this.println("}");

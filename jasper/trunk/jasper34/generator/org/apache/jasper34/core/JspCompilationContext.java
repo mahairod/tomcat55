@@ -63,6 +63,7 @@ package org.apache.jasper34.core;
 
 import org.apache.jasper34.generator.*;
 import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 import java.io.IOException;
 import org.apache.jasper34.runtime.JasperException;
 
@@ -85,10 +86,17 @@ import org.apache.jasper34.runtime.JasperException;
 public interface JspCompilationContext {
 
     /**
-     * The classpath that is passed off to the Java compiler. 
+     * Get hold of the Options object for this context. 
      */
-    public String getClassPath();
-    
+    public Options getOptions();
+
+    /**
+     * Create a "Compiler" object based on some init param data. This
+     * is not done yet. Right now we're just hardcoding the actual
+     * compilers that are created. 
+     */
+    public Compiler createCompiler() throws JasperException;
+
     /**
      * Get the input reader for the JSP text. 
      */
@@ -99,28 +107,18 @@ public interface JspCompilationContext {
      */
     public ServletWriter getWriter();
     
-    /**
-     * What class loader to use for loading classes while compiling
-     * this JSP? I don't think this is used right now -- akv. 
-     */
-    public ClassLoader getClassLoader();
-
     /** Add a jar to the classpath used by the loader
      */
     public void addJar( String jar ) throws IOException ;
 
+
+    // -------------------- This goes to pageinfo --------------------
+    
     /**
      * Are we processing something that has been declared as an
      * errorpage? 
      */
     public boolean isErrorPage();
-    
-    /**
-     * What is the scratch directory we are generating code into?
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
-     */
-    public String getOutputDir();
     
     /**
      * Path of the JSP URI. Note that this is not a file name. This is
@@ -162,11 +160,6 @@ public interface JspCompilationContext {
      */
     public String getContentType();
 
-    /**
-     * Get hold of the Options object for this context. 
-     */
-    public Options getOptions();
-
     public void setContentType(String contentType);
 
     public void setReader(JspReader reader);
@@ -181,14 +174,26 @@ public interface JspCompilationContext {
     
     public void setErrorPage(boolean isErrPage);
 
+    // XXX move to ContainerLiaison --------------------
+    
     /**
-     * Create a "Compiler" object based on some init param data. This
-     * is not done yet. Right now we're just hardcoding the actual
-     * compilers that are created. 
+     * The classpath that is passed off to the Java compiler. 
      */
-    public Compiler createCompiler() throws JasperException;
+    public String getClassPath();
+    
+    /**
+     * What class loader to use for loading classes while compiling
+     * this JSP? I don't think this is used right now -- akv. 
+     */
+    public ClassLoader getClassLoader();
 
-
+    /**
+     * What is the scratch directory we are generating code into?
+     * FIXME: In some places this is called scratchDir and in some
+     * other places it is called outputDir.
+     */
+    public String getOutputDir();
+    
     /** 
      * Get the full value of a URI relative to this compilations context
      */
@@ -208,5 +213,20 @@ public interface JspCompilationContext {
      */
     public String getRealPath(String path);
 
+    /** Read web.xml and add all the taglib locations to the
+	TagLibraries ( if it wasn't done already ).
+	It'll call back addTaglibLocation.
+	You can use the default implementation ( TagLibReader )
+	or container specific code.
+    */
+    public void readWebXml( TagLibraries tli )
+	throws IOException, JasperException;
+
+    /** Read a tag lib descriptor ( tld ). You can use the default
+	implementation ( TagLibReader ).
+    */
+    public void readTLD( TagLibraries libs, TagLibraryInfoImpl tl,
+			 String prefix, String uri )
+	throws IOException, JasperException;
 }
 

@@ -94,9 +94,11 @@ public class Compiler {
     protected JavaCompiler javac;
     protected Mangler mangler;
     protected JspCompilationContext ctxt;
+    protected ContainerLiaison liaison;
 
-    public Compiler(JspCompilationContext ctxt) {
+    public Compiler(ContainerLiaison liaison, JspCompilationContext ctxt) {
         this.ctxt = ctxt;
+	this.liaison=liaison;
     }
     
     /** 

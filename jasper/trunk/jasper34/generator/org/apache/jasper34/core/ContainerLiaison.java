@@ -107,6 +107,49 @@ public abstract class ContainerLiaison {
      */
     public abstract String getRealPath(String path);
 
+    // -------------------- WEB-INF access --------------------
+
+    /** Read web.xml and add all the taglib locations to the
+	TagLibraries ( if it wasn't done already ).
+	It'll call back addTaglibLocation.
+	You can use the default implementation ( TagLibReader )
+	or container specific code.
+    */
+    public void readWebXml( TagLibraries tli )
+	throws IOException, JasperException;
+
+    /** Read a tag lib descriptor ( tld ). You can use the default
+	implementation ( TagLibReader ).
+    */
+    public void readTLD( TagLibraries libs, TagLibraryInfoImpl tl,
+			 String prefix, String uri )
+	throws IOException, JasperException;
+
+
+    // -------------------- Classpath and class loader
+
+    /**
+     * The classpath that is passed off to the Java compiler. 
+     */
+    public String getClassPath();
+
+    /**
+     * What class loader to use for loading classes while compiling
+     * this JSP? I don't think this is used right now -- akv. 
+     */
+    public ClassLoader getClassLoader();
+
+    // -------------------- Locations --------------------
+
+    /**
+     * What is the scratch directory we are generating code into?
+     * FIXME: In some places this is called scratchDir and in some
+     * other places it is called outputDir.
+     */
+    public String getOutputDir();
+
+
+    
     // -------------------- messages --------------------
     /**
      * Get hold of a "message" or any string from our resources

@@ -57,6 +57,7 @@ package org.apache.jasper34.jsptree;
 import java.lang.reflect.Constructor;
 
 import java.util.Hashtable;
+import java.io.IOException;
 
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
@@ -79,11 +80,60 @@ import org.apache.jasper34.parser.*;
  * @author Mandar Raje
  */
 public class TagLibraries {
+
+    private Hashtable tagLibInfos;
+    private JspCompilationContext ctxt;
+
+    // used to keep web.xml taglib-locations
+    private Hashtable locations=null;
     
-    public TagLibraries(ClassLoader cl) {
+    public TagLibraries(JspCompilationContext ctxt)
+    {
         this.tagLibInfos = new Hashtable();
-	//	this.tagCaches = new Hashtable();
-        this.cl = cl;
+	this.ctxt=ctxt;
+    }
+
+    /** Add a location mapping. The container may do so if it
+	has parsed web.xml ( and wants to share this info with
+	us ), so we'll not have to do that again.
+    */
+    public void addTaglibLocation( String uri, String loc ) {
+	if(locations==null )
+	    locations=new Hashtable();
+	locations.put( uri, loc );
+    }
+
+    // Get the taglib uri from web.xml data
+    public String findLocation( String uriIn )
+	throws IOException, JasperException
+    {
+	if( locations==null )
+	    ctxt.readWebXml( this );
+	
+	// ignorecase or toLowerCase
+	return (String)locations.get( uriIn );
+    }
+
+
+    
+    /** Add a taglib prefix and the associated URI.
+	This is the result of a taglib directive, we'll need to
+	read the descriptor if not already there.
+    */
+    public void addTagLibrary( String prefix, String uri )
+	throws JasperException, IOException
+    {
+	if( tagLibInfos.get( prefix ) != null ) {
+	    return;
+	    // we already parsed this 
+	}
+
+	TagLibraryInfoImpl tl = new TagLibraryInfoImpl(prefix, uri);
+
+	ctxt.readTLD(  this, tl, prefix, uri );
+
+
+	addTagLibrary(prefix, tl);
     }
     
     public void addTagLibrary(String prefix, TagLibraryInfo tli) {
@@ -110,31 +160,5 @@ public class TagLibraries {
         return (TagLibraryInfo) tagLibInfos.get(prefix);
     }
 
-//     public TagInfoImpl getTagInfoImpl(String prefix, String shortTagName) {
-// 	// Should use TagLibraryInfoImpl
-// 	Hashtable tagLib=(Hashtable)tagCaches.get( prefix );
-// 	if( tagLib==null ) return null;
-	
-// 	return (TagInfoImpl) tagLib.get( shortTagName );
-//     }
-
-//     public Class getTagHandlerClass( String prefix, String shortTagName ) {
-// 	return getTagInfoImpl( prefix, shortTagName ).getTagHandlerClass();
-//     }
-
-//     public void putTagInfoImpl(String prefix, String shortTagName,
-// 			       TagInfoImpl tc)
-//     {
-// 	Hashtable tagLib=(Hashtable)tagCaches.get( prefix );
-// 	if( tagLib==null ) {
-// 	    tagLib=new Hashtable();
-// 	    tagCaches.put( prefix, tagLib );
-// 	}
-// 	tagLib.put( shortTagName, tc);
-//     }
-
-    private Hashtable tagLibInfos;
-    //    private Hashtable tagCaches;
-    private ClassLoader cl;
 }
 
