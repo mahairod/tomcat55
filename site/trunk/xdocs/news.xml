@@ -10,6 +10,39 @@
 
 <section name="News &amp; Status">
 
+<h3>22 July 2001 - Jakarta Tomcat 3.3-b1 Released</h3>
+
+<p><strong>Tomcat 3.3 Beta 1</strong> is the latest update to Tomcat 3.3.
+This version implements the final feature set intended for Tomcat 3.3.
+Work for the remaining releases will focus on bug fixes and
+updating the documentation. 
+You can find everything <a href="http://jakarta.apache.org/builds/jakarta-tomcat/release/v3.3-b1">here</a>.</p>
+
+<p>As Tomcat 3.3 documentation is updated, an effort will be made to keep
+the <a href="http://jakarta.apache.org/tomcat/tomcat-3.3-doc/index.html">
+Tomcat 3.3 Documentation</a> site current with these updates.  For the
+most up to date documentation for Tomcat 3.3, please check this site.</p>
+
+<hr noshade="" size="1"/>
+
+<h3>20 July 2001 - Tomcat 4.0-beta-6 Released</h3>
+
+<p>The Tomcat team is proud to announce the availability of the latest beta
+release of Tomcat 4.0.  This next-generation servlet and JSP container includes
+support for the <em>Proposed Final Draft 3</em> versions of the Servlet 2.3
+and JSP 1.2 specifications, many bug fixes, performance improvements, an
+updated version of the Apache web connector, and a new experimental installer
+for Windows platforms.  Get your copy here:</p>
+<ul>
+<li><a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0-b6/">Binary Distributions</a></li>
+<li><a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0-b6/src/">Source Distributions</a></li>
+</ul>
+
+<p>See the enclosed <code>RELEASE-NOTES-4.0-B6.txt</code> for more information
+about the contents of this release.</p>
+
+<hr noshade="" size="1"/>
+
 <h3>17 July 2001 - Jakarta Tomcat 3.2.3 Released</h3>
 
 <p><strong>Tomcat 3.2.3</strong> is a security release.  A serious security problem
