@@ -709,6 +709,10 @@
         <mime-type>application/x-shar</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>sit</extension>
+        <mime-type>application/x-stuffit</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>smf</extension>
         <mime-type>audio/x-midi</mime-type>
     </mime-mapping>
