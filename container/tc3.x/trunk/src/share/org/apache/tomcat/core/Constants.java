@@ -172,6 +172,7 @@ public class Constants {
 
     public static class JSP {
 	public static final String NAME = "jsp";
+	public static final String CLASSNAME = "org.apache.jasper.runtime.JspServlet";
 	
         public static class Directive {
             public static class Compile {

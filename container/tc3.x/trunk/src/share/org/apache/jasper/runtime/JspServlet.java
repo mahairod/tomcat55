@@ -158,6 +158,7 @@ public class JspServlet extends HttpServlet {
 
                 theServlet.service(request, response);
             } catch (FileNotFoundException ex) {
+		//		ex.printStackTrace();
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, 
                                    Constants.getString("jsp.error.file.not.found", 
                                                        new Object[] {
