@@ -1702,6 +1702,7 @@ public class StandardContext
                 workDir = new File(catalinaHomePath,
                         getWorkDir());
             } catch (IOException e) {
+                log.warn("Exception obtaining work path for " + getPath());
             }
         }
         return workDir.getAbsolutePath();
@@ -1726,9 +1727,9 @@ public class StandardContext
 
         this.workDir = workDir;
 
-        if (started)
+        if (started) {
             postWorkDirectory();
-
+        }
     }
 
 
