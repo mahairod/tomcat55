@@ -1340,8 +1340,7 @@ public class JNDIRealm extends RealmBase {
             return (list);
 
         // Set up parameters for an appropriate search
-        String filter = roleFormat.format(new String[] { dn, username });
-        filter = doRFC2254Encoding(filter);
+        String filter = roleFormat.format(new String[] { doRFC2254Encoding(dn), username });
         SearchControls controls = new SearchControls();
         if (roleSubtree)
             controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
