@@ -394,15 +394,17 @@ public class HttpRequestAdapter extends RequestImpl {
 	if( endReq < 0 ) {
 	    endReq=count;
 	} else {
-	    if( endProto < 0 ) endProto = count;
-	    protoMB.setBytes( buf, startProto, endProto-startProto);
-	    if( protoMB.equalsIgnoreCase( "http/1.0" ))
-		protocol="HTTP/1.0";
-	    if( protoMB.equalsIgnoreCase( "http/1.1" ))
-		protocol="HTTP/1.1";
-	    
-	    if( protocol==null) 
-		protocol=new String( buf, startProto, endProto-startProto );
+	    if( startProto > 0 ) {
+		if( endProto < 0 ) endProto = count;
+		protoMB.setBytes( buf, startProto, endProto-startProto);
+		if( protoMB.equalsIgnoreCase( "http/1.0" ))
+		    protocol="HTTP/1.0";
+		if( protoMB.equalsIgnoreCase( "http/1.1" ))
+		    protocol="HTTP/1.1";
+		
+		if( protocol==null) 
+		    protocol=new String( buf, startProto, endProto-startProto );
+	    }
 	}
 
 	int qryIdx= findChar( '?', startReq, endReq );

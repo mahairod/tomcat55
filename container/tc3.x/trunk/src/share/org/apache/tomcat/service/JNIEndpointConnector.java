@@ -78,7 +78,7 @@ import org.apache.tomcat.logging.*;
  *
  * @author Gal Shachor <shachor@il.ibm.com>
  */
-public class JNIEndpointConnector  extends BaseInterceptor implements ServerConnector {
+public class JNIEndpointConnector  extends BaseInterceptor {
     // XXX define ConnectorException
     // XXX replace strings with sm.get...
     // XXX replace static strings with constants
