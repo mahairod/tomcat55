@@ -86,6 +86,7 @@ import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
 import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringParser;
 
@@ -169,8 +170,19 @@ public class HttpRequestBase
      * <code>getParameter()</code> family of method calls.  The key is the
      * parameter name, while the value is a String array of values for this
      * parameter.
+     * <p>
+     * <strong>IMPLEMENTATION NOTE</strong> - Once the parameters for a
+     * particular request are parsed and stored here, they are not modified.
+     * Therefore, application level access to the parameters need not be
+     * synchronized.
      */
-    protected HashMap parameters = null;
+    protected ParameterMap parameters = null;
+
+
+    /**
+     * Have the parameters for this request been parsed yet?
+     */
+    protected boolean parsed = false;
 
 
     /**
@@ -330,7 +342,11 @@ public class HttpRequestBase
 	cookies.clear();
 	headers.clear();
 	method = null;
-	parameters = null;
+        if (parameters != null) {
+            parameters.setLocked(false);
+            parameters.clear();
+        }
+        parsed = false;
 	pathInfo = null;
 	queryString = null;
 	requestedSessionCookie = false;
@@ -521,10 +537,13 @@ public class HttpRequestBase
      */
     protected void parseParameters() {
 
-	if (parameters != null)
+        if (parsed)
 	    return;
 
-	HashMap results = new HashMap();
+	ParameterMap results = parameters;
+        if (results == null)
+            results = new ParameterMap();
+        results.setLocked(false);
 
 	// Parse any parameters specified in the query string
 	String queryString = getQueryString();
@@ -557,6 +576,8 @@ public class HttpRequestBase
 	}
 
 	// Store the final results
+        results.setLocked(true);
+        parsed = true;
 	parameters = results;
 
     }
@@ -575,14 +596,11 @@ public class HttpRequestBase
     public String getParameter(String name) {
 
 	parseParameters();
-
-	synchronized (parameters) {
-	    String values[] = (String[]) parameters.get(name);
-	    if (values != null)
-		return (values[0]);
-	    else
-		return (null);
-	}
+        String values[] = (String[]) parameters.get(name);
+        if (values != null)
+            return (values[0]);
+        else
+            return (null);
 
     }
 
@@ -599,9 +617,7 @@ public class HttpRequestBase
     public Map getParameterMap() {
 
         parseParameters();
-	synchronized (parameters) {
-	    return ((Map) parameters.clone());
-	}
+        return (this.parameters);
 
     }
 
@@ -612,10 +628,7 @@ public class HttpRequestBase
     public Enumeration getParameterNames() {
 
 	parseParameters();
-
-	synchronized (parameters) {
-	    return (new Enumerator(parameters.keySet()));
-	}
+        return (new Enumerator(parameters.keySet()));
 
     }
 
@@ -629,14 +642,11 @@ public class HttpRequestBase
     public String[] getParameterValues(String name) {
 
 	parseParameters();
-
-	synchronized (parameters) {
-	    String values[] = (String[]) parameters.get(name);
-	    if (values != null)
-		return (values);
-	    else
-		return (null);
-	}
+        String values[] = (String[]) parameters.get(name);
+        if (values != null)
+            return (values);
+        else
+            return (null);
 
     }
 
