@@ -409,7 +409,11 @@ public class StandardSession
      */
     public long getLastAccessedTime() {
 
-        return (this.lastAccessedTime);
+         if ( !isValid() ) {
+             throw new IllegalStateException
+                 (sm.getString("standardSession.getLastAccessedTime.ise"));
+         }
+         return (this.lastAccessedTime);
 
     }
 
