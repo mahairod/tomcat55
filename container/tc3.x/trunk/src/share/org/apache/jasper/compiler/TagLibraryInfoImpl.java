@@ -373,7 +373,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             } else if (tname.equals("uri")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.uri = t.getData();
+                    this.urn = t.getData();
             } else if (tname.equals("info")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
