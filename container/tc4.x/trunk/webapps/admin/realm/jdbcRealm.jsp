@@ -6,7 +6,7 @@
 
 <html:html locale="true">
 
-<%@ include file="header.jsp" %>
+<%@ include file="../users/header.jsp" %>
 
 <!-- Body -->
 <body bgcolor="white">
@@ -36,7 +36,7 @@
       </td>
     </tr>
   </table>
-    <%@ include file="buttons.jsp" %>
+    <%@ include file="../buttons.jsp" %>
   <br>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -134,70 +134,8 @@
       </controls:table>
       </td>
     </tr>
-  </table>
-
-    <%-- Display the following fields only if it is a Filerealm --%>
-    <%-- These are the properties specific to a Filerealm --%>
-<%--
-     <logic:equal name="realmForm" property="realmType" scope="session" 
-                  value="Filerealm">
-     <br>
-        
-     <table border="0" cellspacing="0" cellpadding="0" width="100%">
-        <tr> <td>  <div class="table-title-text">  
-            <bean:message key="realm.filerealm.properties"/>
-        </div> </td> </tr>
-     </table>
-
-    <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-     <tr> 
-      <td> 
-     <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
-                labelStyle="table-header-text" dataStyle="table-header-text">
-            <controls:label><bean:message key="service.property"/></controls:label>
-            <controls:data><bean:message key="service.value"/></controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="realm.directory"/>:</controls:label>
-            <controls:data>
-               <html:text property="directory" size="25"/> 
-            </controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="realm.prefix"/>:</controls:label>
-            <controls:data>
-               <html:text property="prefix" size="25"/> 
-            </controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="realm.suffix"/>:</controls:label>
-            <controls:data>
-               <html:text property="suffix" size="15"/> 
-            </controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="realm.timestamp"/>:</controls:label>
-            <controls:data>
-                <html:select property="timestamp">
-                     <bean:define id="booleanVals" name="realmForm" property="booleanVals"/>
-                     <html:options collection="booleanVals" property="value"
-                   labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row> 
-   </controls:table>
-   </td>
-  </tr>
-  </table>
- </logic:equal>
- --%> 
-    
-    <%@ include file="buttons.jsp" %>
+  </table>    
+    <%@ include file="../buttons.jsp" %>
   <br>
   </html:form>
 <p>&nbsp;</p>

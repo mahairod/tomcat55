@@ -7,7 +7,7 @@
 
 <html:html locale="true">
 
-<%@ include file="header.jsp" %>
+<%@ include file="../users/header.jsp" %>
 
 <!-- Body -->
 <body bgcolor="white">
@@ -31,13 +31,15 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
+            <%--
             <controls:action url="">  <bean:message key="actions.thisrealm.delete"/> </controls:action>
+            --%>
        </controls:actions>   
          </div>
       </td>
     </tr>
   </table>
-    <%@ include file="buttons.jsp" %>
+    <%@ include file="../buttons.jsp" %>
   <br>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -80,7 +82,7 @@
     </tr>
   </table>
     
-    <%@ include file="buttons.jsp" %>
+    <%@ include file="../buttons.jsp" %>
   <br>
   </html:form>
 <p>&nbsp;</p>
