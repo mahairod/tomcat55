@@ -101,6 +101,8 @@ public class Ajp13Interceptor extends PoolTcpConnector
         Ajp13Request req=new Ajp13Request();
         Ajp13Response res=new Ajp13Response();
         Ajp13 con=new Ajp13();
+        con.setDebug(debug);
+        req.setDebug(debug);
         con.setTomcatAuthentication(isTomcatAuthentication());
         cm.initRequest(req, res);
         thData[0]=req;
@@ -165,6 +167,10 @@ public class Ajp13Interceptor extends PoolTcpConnector
 			continue;
 		    }
 		}
+
+        // special case - invalid AJP13 packet, error 
+        // decoding packet ...
+        // we drop the connection rigth now
 		if( status != 200 )
 		    break;
 
@@ -218,13 +224,18 @@ public class Ajp13Interceptor extends PoolTcpConnector
 
 class Ajp13Request extends Request 
 {
-    Ajp13 ajp13=new Ajp13();
-    
+    Ajp13 ajp13 = new Ajp13();
+    int   dL    = 0;
+ 
     public Ajp13Request() 
     {
         super();
     }
     
+    public void setDebug(int level) {
+        dL = level;
+    }
+
     protected int receiveNextRequest() throws IOException 
     {
 	return ajp13.receiveNextRequest( this );
@@ -262,7 +273,6 @@ class Ajp13Request extends Request
 	if( ajp13!=null) ajp13.recycle();
     }
 
-    private static final int dL=0;
     private void d(String s ) {
 	System.err.println( "Ajp13Request: " + s );
     }
