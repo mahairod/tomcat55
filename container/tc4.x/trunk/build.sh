@@ -15,6 +15,8 @@
 #
 #   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 #
+#   JMX_HOME         Must point at your JMX installation [REQUIRED]
+#
 #   REGEXP_HOME      Must point at your "jakarta-regexp" installation
 #                    [../jakarta-regexp]
 #
@@ -50,6 +52,11 @@ if [ "$JSSE_HOME" = "" ] ; then
   exit 1
 fi
 
+if [ "$JMX_HOME" = "" ] ; then
+  echo You must set JMX_HOME to point at your Java Management Extensions install
+  exit 1
+fi
+
 if [ "$REGEXP_HOME" = "" ] ; then
   echo You must set REGEXP_HOME to point at your Regular Expressions distribution install
   exit 1
@@ -63,7 +70,7 @@ fi
 
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
-CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME/xerces.jar
+CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME/xerces.jar:$JMX_HOME/lib/jmxri.jar
 
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
@@ -72,4 +79,4 @@ fi
 
 # ----- Execute The Requested Build -------------------------------------------
 
-java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Djsse.home=$JSSE_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"
+java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Djsse.home=$JSSE_HOME -Djmx.home=$JMX_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"

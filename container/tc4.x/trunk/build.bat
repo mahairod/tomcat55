@@ -15,6 +15,8 @@ rem   XERCES_HOME      Must point at your XERCES installation [REQUIRED]
 rem
 rem   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 rem
+rem   JMX_HOME         Must point at your JMX installation [REQUIRED]
+rem
 rem   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 rem
 rem   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
@@ -47,6 +49,11 @@ echo You must set JSSE_HOME to point at your Java Security Extensions install
 goto cleanup
 :gotJsseHome
 
+if not "%JMX_HOME%" == "" goto gotJmxHome
+echo You must set JMX_HOME to point at your Java Management Extensions install
+goto cleanup
+:gotJmxHome
+
 if not "%ANT_HOME%" == "" goto gotAntHome
 set ANT_HOME=../jakarta-ant
 :gotAntHome
@@ -65,12 +72,12 @@ goto cleanup
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
 if not "%CLASSPATH%" == "" set CLASSPATH=%CLASSPATH%;
-set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar;%XERCES_HOME%\xerces.jar
+set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar;%XERCES_HOME%\xerces.jar;%JMX_HOME%\lib\jmxri.jar
 
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home="%ANT_HOME%" -Dxerces.home="%XERCES_HOME%" -Djsse.home="%JSSE_HOME%" -Dregexp.home="%REGEXP_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
+java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home="%ANT_HOME%" -Dxerces.home="%XERCES_HOME%" -Djsse.home="%JSSE_HOME%" -Djmx.home="%JMX_HOME%" -Dregexp.home="%REGEXP_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------

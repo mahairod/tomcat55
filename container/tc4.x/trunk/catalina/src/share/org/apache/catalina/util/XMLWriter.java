@@ -194,7 +194,7 @@ public class XMLWriter {
                 if (namespaceInfo != null) {
                     buffer.append("<" + namespace + ":" + name + " xmlns:" 
                                   + namespace + "=\"" 
-                                  + namespaceInfo + ":\">");
+                                  + namespaceInfo + "\">");
                 } else {
                     buffer.append("<" + namespace + ":" + name + ">");
                 }
@@ -207,7 +207,7 @@ public class XMLWriter {
                 if (namespaceInfo != null) {
                     buffer.append("<" + namespace + ":" + name + " xmlns:" 
                                   + namespace + "=\"" 
-                                  + namespaceInfo + ":\"/>");
+                                  + namespaceInfo + "\"/>");
                 } else {
                     buffer.append("<" + namespace + ":" + name + "/>");
                 }

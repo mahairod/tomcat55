@@ -37,6 +37,12 @@ you are installing all of the required distributions.
   Set an environment variable "JSSE_HOME" pointing at the directory to which
   you installed this distribution.
 
+* Download and install the Java Management Extension (JMX) implementation
+  (current version number is 1.0) from 
+  <http://java.sun.com/products/JavaManagement/index.html>.
+  Set an environment variable "JMX_HOME" pointing at the directory to which
+  you installed this distribution.
+
 * Download and install the Ant distribution (subproject "jakarta-ant") into
   a directory named "$JAKARTA_HOME/jakarta-ant".  If you have downloaded the
   source distribution, you will need to build the executable version by

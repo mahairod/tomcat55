@@ -9,6 +9,7 @@
   <property name="catalina.dist"   value="../../dist/catalina"/>
   <property name="xerces.home"     value="${basedir}/../xerces"/>
   <property name="jsse.home"       value="../../jsse"/>
+  <property name="jmx.home"        value="../../jmx"/>
   <property name="regexp.home"     value="../../jakarta-regexp"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
 
@@ -18,6 +19,7 @@
   <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
+  <property name="jmxri.jar"       value="${jmx.home}/lib/jmxri.jar"/>
   <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.1.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
@@ -69,7 +71,7 @@
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-             classpath="${xerces.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}"
+             classpath="${xerces.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**"/>
 
@@ -90,7 +92,7 @@
     <deltree dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*"
-             classpath="${xerces.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${servlet.jar}:${catalina.build}/classes"
+             classpath="${xerces.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${jmxri.jar}:${servlet.jar}:${catalina.build}/classes"
                sourcepath="src/share"
                   destdir="${catalina.build}/javadoc"
                    author="true"
