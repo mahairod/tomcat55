@@ -57,7 +57,10 @@
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
   <property name="tomcat-dbcp.home" value="${base.path}/tomcat-deps" />
   <property name="tomcat-dbcp.jar" 
-       value="${tomcat-dbcp.home}/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+       value="${tomcat-dbcp.home}/naming-factory-dbcp.jar"/>
+  <property name="jasper-compiler-jdt.home" value="${base.path}/tomcat-deps" />
+  <property name="jasper-compiler-jdt.jar" 
+       value="${jasper-compiler-jdt.home}/jasper-compiler-jdt.jar"/>
   
   <!-- Some compilers will disable debugging if true. And it doesn't do anything 
        in most cases -->
@@ -140,7 +143,6 @@
 
     <copy todir="${tomcat.build}/bin" 
            file="${commons-logging-api.jar}" />
-    <copy tofile="${tomcat.build}/bin/jmx.jar" file="${jmx.jar}" />
 
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
 
@@ -148,8 +150,9 @@
     <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" 
             failonerror="false" />
 
-    <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
-    <copy todir="${tomcat.build}/common/lib" file="${ant-launcher.jar}"/>
+    <!-- <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
+    <copy todir="${tomcat.build}/common/lib" file="${ant-launcher.jar}"/> -->
+  	<copy todir="${tomcat.build}/common/lib" file="${jasper-compiler-jdt.jar}"/>
   </target>
 
   <!-- ====================== Build all components =================== -->
@@ -514,7 +517,14 @@
       <param name="destfile" value="${tomcat-dbcp.jar}" />
     </antcall>
 
-   <antcall target="build-tomcat-dbcp" />
+    <antcall target="build-tomcat-dbcp" />
+
+    <antcall target="downloadzip">
+      <param name="sourcefile" value="${jdt.loc}"/>
+      <param name="destfile" value="${jdt.jar}"/>
+      <param name="destdir" value="${base.path}"/>
+    </antcall>
+    <antcall target="build-jasper-compiler-jdt" />
   </target>
 
   <target name="build-tomcat-dbcp">
@@ -573,6 +583,24 @@
     </jar>
   </target>
 
+	  <target name="build-jasper-compiler-jdt">
+	   <mkdir dir="${jasper-compiler-jdt.home}"/>
+	   <antcall target="-build-jasper-compiler-jdt">
+	      <param name="basedir" value="${jasper-compiler-jdt.home}" />
+	   </antcall>
+	  </target>
+
+	  <target name="-build-jasper-compiler-jdt">
+	  	<unjar src="${jdt.jar}" dest="${jasper-compiler-jdt.home}" />
+	  	<jar destfile="${jasper-compiler-jdt.jar}" index="true">
+	  		<fileset dir="${jasper-compiler-jdt.home}">
+	  			<include name="org/eclipse/jdt/core/compiler/**"/>
+	  			<include name="org/eclipse/jdt/internal/compiler/**"/>
+	  			<include name="org/eclipse/jdt/internal/core/util/CommentRecorder*"/>
+	  		</fileset>
+	  	</jar>
+	  </target>
+	
   <target name="build-webapps" depends="init"
           description="build  webapps">
 
@@ -714,8 +742,7 @@
     <copy todir="embed/lib" file="${jmx.jar}"/>
     <copy todir="embed/lib" file="${regexp.jar}"/>
 
-    <copy todir="embed/lib" file="${ant.jar}"/>
-    <copy todir="embed/lib" file="${ant-launcher.jar}"/> 
+    <copy todir="embed/lib" file="${jdt.jar}"/>
 
     <copy todir="embed/lib">
       <fileset dir="build/server/lib">
@@ -849,8 +876,10 @@
        </fileset>
     </jar>
 
+  	<!--
     <copy todir="${tomcat.deployer}/lib" file="${xercesImpl.jar}"/>
     <copy todir="${tomcat.deployer}/lib" file="${xml-apis.jar}"/>
+    -->
 
     <copy todir="${tomcat.deployer}">
       <fileset dir="${basedir}/resources/deployer" />
@@ -870,10 +899,11 @@
 
   <!-- ====================== Compat target =================== -->
 
-  <target name="compat" description="Create compatibility binaries for JREs before 1.4" >
+  <target name="compat" description="Create compatibility binaries for JREs before 1.5" >
 
     <copy todir="${tomcat.compat}/common/endorsed" file="${xercesImpl.jar}"/>
     <copy todir="${tomcat.compat}/common/endorsed" file="${xml-apis.jar}"/>
+    <copy tofile="${tomcat.compat}/bin/jmx.jar" file="${jmx.jar}"/>
 
   </target>
 
@@ -927,7 +957,7 @@
 
     <antcall target="build-admin"/>
 
-    <ant dir="."   target="build-webapps-precompile" /> 
+    <ant dir="." target="build-webapps-precompile" />
 
   </target>
 

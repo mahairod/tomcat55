@@ -132,7 +132,7 @@ Section "Core" SecTomcatCore
   IfSilent +2 0
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
-  CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+;  CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
   ClearErrors
 
   Call configure
