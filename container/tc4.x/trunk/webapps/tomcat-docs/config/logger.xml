@@ -23,6 +23,13 @@
   In addition, Loggers associated with an Engine or a Host are automatically
   inherited by lower-level containers, unless explicitly overridden.</p>
 
+  <p>If you are interested in producing access logs like a web server does
+  (for example, to run hit count analysis software), you will want to configure
+  an <a href="valve.html#Access Log Valve">Access Log Valve</a> component on
+  your <a href="engine.html#Access Logs">Engine</a>,
+  <a href="host.html#Access Logs">Host</a>, or
+  <a href="context.html#Access Logs">Context</a>.</p>
+
   <p>For a more in-depth description of the class loader hierarchy
   that is implemented by Catalina, see <strong>FIXME - Reference</strong>.</p>
 
@@ -53,7 +60,7 @@
         implement the <code>org.apache.catalina.Logger</code> interface.</p>
       </attribute>
 
-      <attribute>
+      <attribute name="verbosity" required="false">
         <p>The verbosity level for this logger.  Messages with a higher
         verbosity level than the specified value will be silently ignored.
         Available levels are 0 (fatal messages only), 1 (errors), 2

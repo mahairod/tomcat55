@@ -67,9 +67,8 @@
 
 <section name="Nested Components">
 
-  <p>No nested components may be embedded inside a <strong>Server</strong>,
-  element, except for one or more <a href="service.html">Service</a> elements.
-  </p>
+  <p>The only components that may be nested inside a <strong>Server</strong>
+  element are one or more <a href="service.html">Service</a> elements.</p>
 
 </section>
 
