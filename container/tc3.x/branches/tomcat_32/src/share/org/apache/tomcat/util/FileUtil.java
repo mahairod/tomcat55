@@ -84,6 +84,8 @@ import java.util.Locale;
 
 public class FileUtil {
 
+    private static boolean isNetware = System.getProperty("os.name").startsWith("NetWare");
+
     public static File[] listFiles(File dir) {
 
 	String[] ss = dir.list();
@@ -244,7 +246,7 @@ public class FileUtil {
 	    patchPath.charAt(1) == ':') {
 	    char[] ca = patchPath.replace('/', '\\').toCharArray();
 	    char c;
-	    StringBuffer sb = new StringBuffer();
+	    StringBuffer sb = new StringBuffer(ca.length);
 
 	    for (int i = 0; i < ca.length; i++) {
 		if ((ca[i] != '\\') ||
@@ -268,7 +270,7 @@ public class FileUtil {
 	}
 
 	// fix path on NetWare - all '/' become '\\' and remove duplicate '\\'
-	if (System.getProperty("os.name").startsWith("NetWare") &&
+	if (isNetware &&
 	    path.length() >=3 &&
 	    path.indexOf(':') > 0) {
             char ca[] = patchPath.replace('/', '\\').toCharArray();
@@ -297,7 +299,7 @@ public class FileUtil {
 	    return true;
 
 	// NetWare volume:
-	if (System.getProperty("os.name").startsWith("NetWare") &&
+	if (isNetware &&
 	    path.length() >=3 &&
 	    path.indexOf(':') > 0)
 	    return true;
