@@ -135,15 +135,14 @@
     <attributes>
 
       <attribute name="deployXML" required="false">
-        <p>Set to <code>false</code> if you want to disable deploying
-        applications using a Context XML config file. This also disables
-        the ability to install web application directories or ".war" files
-        with the manager app which are not located in the Host config base
-        directory (<code>$CATALINA_HOME/conf/[engine_name]/[host_name]</code>).
-        Applications are deployed with the security permissions
-        of catalina, for security this may need to be set to <code>false</code>
-        if untrusted users can manage web applications.  The flag's value
-        defaults to <code>true</code>.</p>
+        <p>Set to <code>false</code> if you want to disable parsing the context.xml
+        file embedded inside the application (located at <code>/META-INF/context.xml</code>). 
+        Security consious environments should set this to <code>false</code> to prevent
+        applications from interacting with the container's configuration. The 
+        administrator will then be responsible for providing an external context 
+        configuration file, and put it in 
+        <code>$CATALINA_HOME/conf/[enginename]/[hostname]/</code>.
+        The flag's value defaults to <code>true</code>.</p>
       </attribute>
 
       <attribute name="errorReportValveClass" required="false">

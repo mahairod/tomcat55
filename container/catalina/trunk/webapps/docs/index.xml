@@ -95,6 +95,8 @@ Tomcat 5, and using many of the Tomcat features.</p>
     Enable session replication in a Tomcat environment.</li>
 <li><a href="balancer-howto.html"><strong>Balancer</strong></a> -
     Configuring, using, and extending the load balancer application.</li>
+<li><a href="connectors.html"><strong>Connectors</strong></a> -
+    Connectors available in Tomcat, and native web server integration.</li>
 
 </ol>
 
