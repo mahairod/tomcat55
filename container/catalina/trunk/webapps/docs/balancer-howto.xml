@@ -130,7 +130,7 @@ environments.  Rather, it is a simple, pure Java, easily extensible, and fast
 way to direct traffic among multiple servers.
 </p>
 <p>
-Although balancer ships with tomcat, it is not tomcat-specific and runs
+Although balancer ships with Tomcat, it is not Tomcat-specific and runs
 on other containers without any modification.  The balancer webapp 
 requires a Servlet Specification 2.3 or later container if you wish 
 to use a filter to redirect traffic.  If you wish to redirect traffic
@@ -177,7 +177,7 @@ should be JavaBeans (public no-args constructor, public
 setter method setXXX for property xxx), as they are
 instantiated by Jakarta Commons Digester.  Feel free
 to inquire on the tomcat-user mailing list regarding
-the availability of rules of the inclusion of your rules
+the availability of rules or the inclusion of your rules
 in the distribution.
 </p>
 
