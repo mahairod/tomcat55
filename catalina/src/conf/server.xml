@@ -102,7 +102,7 @@
     <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
                port="8443" minProcessors="5" maxProcessors="75"
                enableLookups="true" disableUploadTimeout="true"
-	       acceptCount="100" debug="0" scheme="https" secure="true">
+           acceptCount="100" debug="0" scheme="https" secure="true">
       <Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
                clientAuth="false" protocol="TLS" />
     </Connector>
@@ -226,7 +226,93 @@
         <!--
         <Cluster className="org.apache.catalina.cluster.JGCluster"/>
         -->
+        <!-- Defines a cluster for this node,
+             By defining this element, means that every manager will be changed.
+             So when running a cluster, only make sure that you have webapps in there
+             that need to be clustered and remove the other ones.
+             A cluster has the following parameters:
 
+             className = the fully qualified name of the cluster class
+
+             name = a descriptive name for your cluster, can be anything
+
+             debug = the debug level, higher means more output
+
+             mcastAddr = the multicast address, has to be the same for all the nodes
+
+             mcastPort = the multicast port, has to be the same for all the nodes
+
+             mcastFrequency = the number of milliseconds in between sending a "I'm alive" heartbeat
+
+             mcastDropTime = the number a milliseconds before a node is considered "dead" if no heartbeat is received
+
+             tcpThreadCount = the number of threads to handle incoming replication requests, optimal would be the same amount of threads as nodes 
+
+             tcpListenAddress = the listen address (bind address) for TCP cluster request on this host, 
+                                in case of multiple ethernet cards.
+                                auto means that address becomes
+                                InetAddress.getLocalHost().getHostAddress()
+
+             tcpListenPort = the tcp listen port
+
+             tcpSelectorTimeout = the timeout (ms) for the Selector.select() method in case the OS
+                                  has a wakup bug in java.nio. Set to 0 for no timeout
+
+             printToScreen = true means that managers will also print to std.out
+
+             expireSessionsOnShutdown = true means that 
+
+             useDirtyFlag = true means that we only replicate a session after setAttribute,removeAttribute has been called.
+                            false means to replicate the session after each request.
+                            false means that replication would work for the following piece of code:
+                            <%
+                            HashMap map = (HashMap)session.getAttribute("map");
+                            map.put("key","value");
+                            %>
+        -->             
+        
+        <!-- When uncommenting the cluster, REMEMBER to uncomment the replication Valve below as well
+        
+
+        <Cluster  className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
+                  name="FilipsCluster"
+                  debug="10"
+                  serviceclass="org.apache.catalina.cluster.mcast.McastService"
+                  mcastAddr="228.0.0.4"
+                  mcastPort="45564"
+                  mcastFrequency="500"
+                  mcastDropTime="3000"
+                  tcpThreadCount="2"
+                  tcpListenAddress="auto"
+                  tcpListenPort="4001"
+                  tcpSelectorTimeout="100"
+                  printToScreen="false"
+                  expireSessionsOnShutdown="false"
+                  useDirtyFlag="true"
+        />
+        -->
+        <!--
+            When configuring for clustering, you also add in a valve to catch all the requests
+            coming in, at the end of the request, the session may or may not be replicated.
+            A session is replicated if and only if all the conditions are met:
+            1. useDirtyFlag is true or setAttribute or removeAttribute has been called AND
+            2. a session exists (has been created)
+            3. the request is not trapped by the "filter" attribute
+
+            The filter attribute is to filter out requests that could not modify the session,
+            hence we don't replicate the session after the end of this request.
+            The filter is negative, ie, anything you put in the filter, you mean to filter out,
+            ie, no replication will be done on requests that match one of the filters.
+            The filter attribute is delimited by ;, so you can't escape out ; even if you wanted to.
+
+            filter=".*\.gif;.*\.js;" means that we will not replicate the session after requests with the URI
+            ending with .gif and .js are intercepted.
+        -->
+        <!--
+        <Valve className="org.apache.catalina.cluster.tcp.ReplicationValve"
+               filter=".*\.gif;.*\.js;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"/>
+
+        -->
         <!-- Normally, users must authenticate themselves to each web app
              individually.  Uncomment the following entry if you would like
              a user to be authenticated the first time they encounter a
@@ -258,7 +344,7 @@
              directory.-->
         <Logger className="org.apache.catalina.logger.FileLogger"
                  directory="logs"  prefix="localhost_log." suffix=".txt"
-	        timestamp="true"/>
+            timestamp="true"/>
 
         <!-- Define properties for each web application.  This is only needed
              if you want to set non-default properties, or have web application
