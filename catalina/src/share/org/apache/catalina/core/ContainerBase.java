@@ -843,12 +843,12 @@ public abstract class ContainerBase
                 // XXX we should also send JMX notifications
                 if( childCB.getObjectName() == null ) {
                     // child was not registered yet.
-                    ObjectName oname=childCB.createObjectName(this.getDomain(),
-                            this.getObjectName());
-                    if( oname != null ) {
-                        // XXX Register the child
-
-                    }
+//                    ObjectName oname=childCB.createObjectName(this.getDomain(),
+//                            this.getObjectName());
+//                    if( oname != null ) {
+//                        // XXX Register the child
+//
+//                    }
 
                 }
             }
@@ -1334,15 +1334,16 @@ public abstract class ContainerBase
 
         pipeline.addValve(valve);
         // If we are registered and the valve is not - create a default name
-//        if( domain != null && valve instanceof ValveBase &&
-//                ((ValveBase)valve).getObjectName()==null ) {
-//            try {
-//                ObjectName oname=((ValveBase)valve).createObjectName(domain, this.getObjectName());
-//                Registry.getRegistry().registerComponent(valve, oname, valve.getClass().getName());
-//            } catch( Throwable t ) {
-//                log.info( "Can't register valve " + valve , t );
-//            }
-//        }
+        if( domain != null && valve instanceof ValveBase &&
+                ((ValveBase)valve).getObjectName()==null ) {
+            try {
+                ObjectName vname=((ValveBase)valve).createObjectName(domain, this.getObjectName());
+                Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
+                ((ValveBase)valve).setController(oname);
+            } catch( Throwable t ) {
+                log.info( "Can't register valve " + valve , t );
+            }
+        }
         fireContainerEvent(ADD_VALVE_EVENT, valve);
     }
 
@@ -1378,14 +1379,20 @@ public abstract class ContainerBase
     public synchronized void removeValve(Valve valve) {
 
         pipeline.removeValve(valve);
-//        if( domain != null && valve instanceof ValveBase ) {
-//            try {
-//                ObjectName oname=((ValveBase)valve).getObjectName();
-//                Registry.getRegistry().getMBeanServer().unregisterMBean(oname);
-//            } catch( Throwable t ) {
-//                log.info( "Can't unregister valve " + valve , t );
-//            }
-//        }
+        if( domain != null &&
+                valve instanceof ValveBase ) {
+            try {
+                ValveBase vb=(ValveBase)valve;
+                if( vb.getController()!=null &&
+                        vb.getController() == oname ) {
+
+                    ObjectName vname=vb.getObjectName();
+                    Registry.getRegistry().getMBeanServer().unregisterMBean(vname);
+                }
+            } catch( Throwable t ) {
+                log.info( "Can't unregister valve " + valve , t );
+            }
+        }
         fireContainerEvent(REMOVE_VALVE_EVENT, valve);
 
     }
@@ -1580,7 +1587,9 @@ public abstract class ContainerBase
         return result;
     }
 
-    public ObjectName createObjectName(String domain, ObjectName parent) {
+    public ObjectName createObjectName(String domain, ObjectName parent)
+        throws Exception
+    {
         if( log.isDebugEnabled())
             log.debug("Create ObjectName " + domain + " " + parent );
         return null;
