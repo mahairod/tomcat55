@@ -24,6 +24,7 @@
     <menu name="Connectors">
         <item name="HTTP/1.1"              href="http11.html"/>
         <item name="Warp"                  href="warp.html"/>
+        <item name="AJP"                   href="ajp.html"/>
     </menu>
 
     <menu name="Containers">
