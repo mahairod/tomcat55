@@ -407,7 +407,7 @@
 
 
       <gtest request="GET /servlet-tests/ServletRequestGetCharacterEncodingTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain##charset:ISO-8859-1" 
+           debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain;charset=ISO-8859-1" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncodingTest.html" />
 
 
