@@ -550,6 +550,18 @@
     <!-- ========== Xerces Sealing Violation Test ========================= -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Xerces00.jsp" debug="${debug}"
+      outContent="Xerces00 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Xerces00" debug="${debug}"
+      outContent="Xerces00 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedXerces00" debug="${debug}"
+      outContent="Xerces00 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Xerces01" debug="${debug}"
       outContent="Xerces01 PASSED"/>
 
@@ -557,6 +569,17 @@
          request="${context.path}/WrappedXerces01" debug="${debug}"
       outContent="Xerces01 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Xerces02.jsp" debug="${debug}"
+      outContent="Xerces02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Xerces02" debug="${debug}"
+      outContent="Xerces02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedXerces02" debug="${debug}"
+      outContent="Xerces02 PASSED"/>
 
   </target>
 

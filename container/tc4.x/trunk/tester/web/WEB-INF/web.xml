@@ -172,7 +172,17 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedXerces00</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedXerces01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedXerces02</url-pattern>
     </filter-mapping>
 
 
@@ -324,8 +334,18 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Xerces00</servlet-name>
+        <jsp-file>/Xerces00.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
         <servlet-name>Xerces01</servlet-name>
         <servlet-class>org.apache.tester.Xerces01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Xerces02</servlet-name>
+        <jsp-file>/Xerces02.jsp</jsp-file>
     </servlet>
 
 
@@ -617,6 +637,16 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>Xerces00</servlet-name>
+        <url-pattern>/Xerces00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Xerces00</servlet-name>
+        <url-pattern>/WrappedXerces00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>Xerces01</servlet-name>
         <url-pattern>/Xerces01</url-pattern>
     </servlet-mapping>
@@ -624,6 +654,16 @@
     <servlet-mapping>
         <servlet-name>Xerces01</servlet-name>
         <url-pattern>/WrappedXerces01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Xerces02</servlet-name>
+        <url-pattern>/Xerces02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Xerces02</servlet-name>
+        <url-pattern>/WrappedXerces02</url-pattern>
     </servlet-mapping>
 
 
