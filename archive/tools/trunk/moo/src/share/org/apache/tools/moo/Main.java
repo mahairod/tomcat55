@@ -308,7 +308,6 @@ public class Main {
             } else {
                 sb.append("FAIL");
                 sb.append(" - not testable");
-		
 		failNumber++;
             }
 	    
