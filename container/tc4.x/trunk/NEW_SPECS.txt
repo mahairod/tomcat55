@@ -103,8 +103,8 @@ JSP 1.2 implementations will be required to accept input in the XML syntax
 as well as the JSP syntax.  Work is underway based on the existing Jasper
 parser to accept either kind of input.
 
-PropertyEditor.setAsText() Used If Available [Raw]
---------------------------------------------------
+PropertyEditor.setAsText() Used If Available [Medium Well]
+----------------------------------------------------------
 If the application has registered a PropertyEditor for the Java class of a
 particular property, that editor's setAsText() method will be called to
 convert from text format (such as a request parameter) into the internal
