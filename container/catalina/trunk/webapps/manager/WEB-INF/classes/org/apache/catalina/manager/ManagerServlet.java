@@ -1385,7 +1385,7 @@ public class ManagerServlet
                 // Delete the WAR file
                 docBaseDir.delete();
             }
-            File docBaseXml = new File(configBase, context.getPath() + ".xml");
+            File docBaseXml = new File(context.getConfigFile());
             docBaseXml.delete();
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
