@@ -403,10 +403,34 @@ class FileHandler extends ServletWrapper  {
 	}
 	if( debug>0) log( "Serving  " + absPath);
 	
-	res.setContentType(mimeType);
+    /*
+     * If the request contains an If-Modified-Since header, then we must
+     * compare its value with the file's last modification time.  However,
+     * these values can not be directly compares because the file.lasModified()
+     * method returns a value that includes milliseconds and HTTP date headers
+     * MJST NOT include milliseconds.  The date returned by Tomcat in the 
+     * Last-Modified header truncates * the milliseconds (as opposed to 
+     * rounding).  
+     *
+     * The following calculation will return a 304 result if the 
+     * last modification time is no nore more than 999 milliseconds after
+     * the If-Modified-Since header.  Note that this does violate RFC 2616
+     * 14.25 in that If-Modified-Since headers with values in the future 
+     * should result in a 200 response, not a 304.  The performance impact of 
+     * getting the system time for each file seems prohibitive.
+     */
+    long lastModified = file.lastModified();
+    long ifModifiedSince = getDateHeader(req, "If-Modified-Since");
+    if((lastModified - ifModifiedSince) < 1000){
+        res.setStatus(304);
+        res.setContentLength(0);
+        return;
+    }
+
+    res.setContentType(mimeType);
 	res.setContentLength((int)file.length());
 
-	setDateHeader(res, "Last-Modified", file.lastModified());
+	setDateHeader(res, "Last-Modified", lastModified);
 
 	FileInputStream in=null;
 	try {
@@ -448,6 +472,18 @@ class FileHandler extends ServletWrapper  {
 	headerF.setName( name );
 	headerF.setDateValue( value );
     }
+
+    static long getDateHeader( Request req, String name)
+    {
+        MimeHeaders headers=req.getMimeHeaders();
+        MimeHeaderField headerF=headers.find( name );
+        if(headerF == null){
+            return -1L;
+        }
+
+        return headerF.getDateValue();
+    }
+
 
     /** All path checks that were part of DefaultServlet
      */
