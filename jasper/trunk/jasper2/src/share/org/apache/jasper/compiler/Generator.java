@@ -1524,7 +1524,12 @@ class Generator {
 		    out.print(", ");
 		}
 //		out.println("pageContext, _jspxState)");
-		out.println("pageContext))");
+		out.print("pageContext");
+		if (pushBodyCountVar != null) {
+		    out.print(", ");
+		    out.print(pushBodyCountVar);
+		}
+		out.println("))");
 		out.pushIndent();
 		out.printil((methodNesting > 0)? "return true;": "return;");
 		out.popIndent();
@@ -1548,7 +1553,12 @@ class Generator {
 		    out.print(", ");
 		}
 //		out.println("PageContext pageContext, JspxState _jspxState)");
-		out.println("PageContext pageContext)");
+		out.print("PageContext pageContext");
+		if (pushBodyCountVar != null) {
+		    out.print(", int ");
+		    out.print(pushBodyCountVar);
+		}
+		out.println(")");
 		out.printil("        throws Throwable {");
 		out.pushIndent();
 
