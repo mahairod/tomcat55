@@ -19,7 +19,7 @@
   <xsl:param    name="home-logo"        select="'/images/jakarta-logo.gif'"/>
   <xsl:param    name="relative-path"    select="'.'"/>
   <xsl:param    name="void-image"       select="'/images/void.gif'"/>
-
+  <xsl:param    name="project-menu"     select="'menu'"/>
 
   <!-- Defined variables (non-overrideable) -->
   <xsl:variable name="body-bg"          select="'#ffffff'"/>
@@ -99,10 +99,12 @@
 
       <tr>
 
-        <xsl:comment>LEFT SIDE NAVIGATION</xsl:comment>
-        <td width="20%" valign="top" nowrap="true">
-          <xsl:apply-templates select="project/body/menu"/>
-        </td>
+        <xsl:if test="$project-menu = 'menu'">
+          <xsl:comment>LEFT SIDE NAVIGATION</xsl:comment>
+          <td width="20%" valign="top" nowrap="true">
+            <xsl:apply-templates select="project/body/menu"/>
+          </td>
+        </xsl:if>
 
         <xsl:comment>RIGHT SIDE MAIN BODY</xsl:comment>
         <td width="80%" valign="top" align="left">
