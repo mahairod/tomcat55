@@ -78,7 +78,7 @@
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.deletes"/>
             </controls:action-->                        
-            <logic:notEqual name="hostName" value='<%= request.getServerName() %>'>
+            <logic:notEqual name="hostName" value='<%= (String)request.getAttribute("adminAppHost") %>'>
             <controls:action disabled="true">
                 -------------------------------------
             </controls:action>

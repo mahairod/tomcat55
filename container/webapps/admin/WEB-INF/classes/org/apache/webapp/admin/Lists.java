@@ -696,4 +696,34 @@ public class Lists {
     }
 
 
+    /**
+     * Return the  <code>Host</code> object name string
+     * that the admin app belongs to.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param request Http request
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static String getAdminAppHost
+        (MBeanServer mbserver, String domain, HttpServletRequest request)
+        throws Exception {
+
+        // Get the admin app's host name
+        StringBuffer sb = new StringBuffer(domain);
+        sb.append(":type=Context");
+        sb.append(",path=");
+        sb.append(request.getContextPath());
+        sb.append(",*");
+        ObjectName search = new ObjectName(sb.toString());
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        String host = null;
+        while (names.hasNext()) {
+            host = ((ObjectName)names.next()).getKeyProperty("host");
+        }
+        return host;
+
+    }
+
+
 }

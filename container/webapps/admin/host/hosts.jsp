@@ -57,14 +57,18 @@
         <logic:iterate name="hostsList" id="host">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
-              <logic:match name="host" value='<%= "host="+request.getServerName()+"," %>'>
-                <font color='red'>*</font>
-              </logic:match>
-              <logic:notMatch name="host" value='<%= "host="+request.getServerName()+"," %>'>
-              <label for="hosts"></label>
+            
+             <logic:match name="host"
+                        value='<%= (String)request.getAttribute("adminAppHost") %>'>
+             <font color='red'>*</font>
+             </logic:match>
+             <logic:notMatch name="host"
+                        value='<%= (String)request.getAttribute("adminAppHost") %>'>
+              <label for="hosts"></label>          
               <html:multibox property="hosts"
                                 value="<%= host.toString() %>" styleId="hosts"/>
               </logic:notMatch>
+              
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditHost.do?select=" +
