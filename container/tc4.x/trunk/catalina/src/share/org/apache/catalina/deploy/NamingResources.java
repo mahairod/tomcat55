@@ -68,6 +68,7 @@ package org.apache.catalina.deploy;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 
 /**
@@ -92,6 +93,13 @@ public final class NamingResources {
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * List of naming entries, keyed by name. The value is the entry type, as
+     * declared by the user.
+     */
+    private Hashtable entries = new Hashtable();
 
 
     /**
@@ -154,6 +162,12 @@ public final class NamingResources {
      */
     public void addEjb(ContextEjb ejb) {
 
+        if (entries.containsKey(ejb.getName())) {
+            return;
+        } else {
+            entries.put(ejb.getName(), ejb.getType());
+        }
+
         synchronized (ejbs) {
             ejb.setNamingResources(this);
             ejbs.put(ejb.getName(), ejb);
@@ -169,6 +183,12 @@ public final class NamingResources {
      * @param environment New environment entry
      */
     public void addEnvironment(ContextEnvironment environment) {
+
+        if (entries.containsKey(environment.getName())) {
+            return;
+        } else {
+            entries.put(environment.getName(), environment.getType());
+        }
 
         synchronized (envs) {
             environment.setNamingResources(this);
@@ -187,6 +207,9 @@ public final class NamingResources {
     public void addResourceParams(ResourceParams resourceParameters) {
 
         synchronized (resourceParams) {
+            if (resourceParams.containsKey(resourceParameters.getName())) {
+                return;
+            }
             resourceParameters.setNamingResources(this);
             resourceParams.put(resourceParameters.getName(),
                                resourceParameters);
@@ -202,6 +225,12 @@ public final class NamingResources {
      * @param ejb New EJB resource reference
      */
     public void addLocalEjb(ContextLocalEjb ejb) {
+
+        if (entries.containsKey(ejb.getName())) {
+            return;
+        } else {
+            entries.put(ejb.getName(), ejb.getType());
+        }
 
         synchronized (localEjbs) {
             ejb.setNamingResources(this);
@@ -231,6 +260,12 @@ public final class NamingResources {
      */
     public void addResource(ContextResource resource) {
 
+        if (entries.containsKey(resource.getName())) {
+            return;
+        } else {
+            entries.put(resource.getName(), resource.getType());
+        }
+
         synchronized (resources) {
             resource.setNamingResources(this);
             resources.put(resource.getName(), resource);
@@ -248,6 +283,12 @@ public final class NamingResources {
      */
     public void addResourceEnvRef(String name, String type) {
 
+        if (entries.containsKey(name)) {
+            return;
+        } else {
+            entries.put(name, type);
+        }
+
         synchronized (resourceEnvRefs) {
             resourceEnvRefs.put(name, type);
         }
@@ -263,6 +304,12 @@ public final class NamingResources {
      * @param resource New resource link
      */
     public void addResourceLink(ContextResourceLink resourceLink) {
+
+        if (entries.containsKey(resourceLink.getName())) {
+            return;
+        } else {
+            entries.put(resourceLink.getName(), resourceLink.getType());
+        }
 
         synchronized (resourceLinks) {
             resourceLink.setNamingResources(this);
