@@ -24,24 +24,29 @@
 
   <!-- Construct Jasper classpath -->
   <path id="jasper.classpath">
+    <pathelement location="${ant.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-daemon-launcher.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
     <pathelement location="${jsp20el.jar}"/>
   </path>
 
   <!-- Construct unit tests classpath -->
   <path id="test.classpath">
+    <pathelement location="${ant.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
+    <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-launcher.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
     <pathelement location="${jasper.build}/tests"/>
   </path>
@@ -65,13 +70,17 @@
   <!-- =================== BUILD: Copy Static Files ======================= -->
   <target name="build-static" depends="build-prepare">
 
+    <!-- Copy the launcher classes -->
+    <copy todir="${jasper.build}/common/lib" file="${ant.jar}"/>
+    <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher.jar}"/>
+    <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher-bootstrap.class}"/>
+
     <!-- Executable Commands -->
     <copy todir="${jasper.build}/bin">
       <fileset dir="src/bin" />
     </copy>
     <fixcrlf srcdir="${jasper.build}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${jasper.build}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${jasper.build}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
 
   </target>
@@ -195,7 +204,6 @@
     </copy>
     <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${jasper.deploy}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.deploy}/bin/jspc.sh"/>
 
     <!-- Runtime Library -->
@@ -235,7 +243,6 @@
     </copy>
     <fixcrlf srcdir="${jasper.dist}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${jasper.dist}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${jasper.dist}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.dist}/bin/jspc.sh"/>
 
     <!-- Jasper Compiler and Runtime JAR Files -->
