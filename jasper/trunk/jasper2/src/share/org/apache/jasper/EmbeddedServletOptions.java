@@ -356,7 +356,7 @@ public final class EmbeddedServletOptions implements Options {
         
         // JVM version numbers
         try {
-            if (Float.parseFloat(System.getProperty("java.specification.version")) >= 1.4) {
+            if (Float.parseFloat(System.getProperty("java.specification.version")) > 1.4) {
                 compilerSourceVM = compilerTargetVM = "1.5";
             } else {
                 compilerSourceVM = compilerTargetVM = "1.4";

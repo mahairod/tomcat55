@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
 
@@ -524,7 +525,7 @@ class TagFileProcessor {
                 Object tagIns = tagClazz.newInstance();
                 if (tagIns instanceof JspSourceDependent) {
                     Iterator iter = 
-                        ((JspSourceDependent)tagIns).getDependants().iterator();
+                        ((List) ((JspSourceDependent) tagIns).getDependants()).iterator();
                     while (iter.hasNext()) {
                         parentPageInfo.addDependant((String)iter.next());
                     }

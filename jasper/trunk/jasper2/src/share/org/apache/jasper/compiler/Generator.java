@@ -428,14 +428,14 @@ class Generator {
      */
     private void genPreambleStaticInitializers() throws JasperException {
         // Static data for getDependants()
-        out.printil("private static java.util.Vector _jspx_dependants;");
+        out.printil("private static java.util.List _jspx_dependants;");
         out.println();
         List dependants = pageInfo.getDependants();
         Iterator iter = dependants.iterator();
         if (!dependants.isEmpty()) {
             out.printil("static {");
             out.pushIndent();
-            out.printin("_jspx_dependants = new java.util.Vector(");
+            out.printin("_jspx_dependants = new java.util.ArrayList(");
             out.print("" + dependants.size());
             out.println(");");
             while (iter.hasNext()) {
@@ -473,7 +473,7 @@ class Generator {
      */
     private void genPreambleMethods() throws JasperException {
         // Method used to get compile time file dependencies
-        out.printil("public java.util.List getDependants() {");
+        out.printil("public Object getDependants() {");
         out.pushIndent();
         out.printil("return _jspx_dependants;");
         out.popIndent();

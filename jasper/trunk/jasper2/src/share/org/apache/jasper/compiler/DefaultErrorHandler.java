@@ -24,7 +24,7 @@ import org.apache.jasper.JasperException;
  * @author Jan Luehe
  */
 class DefaultErrorHandler implements ErrorHandler {
-
+    
     /*
      * Processes the given JSP parse error.
      *
@@ -35,11 +35,11 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String fname, int line, int column, String errMsg,
-			 Exception ex) throws JasperException {
-	throw new JasperException(fname + "(" + line + "," + column + ")"
-				  + " " + errMsg, ex);
+            Exception ex) throws JasperException {
+        throw new JasperException(fname + "(" + line + "," + column + ")"
+                + " " + errMsg, ex);
     }
-
+    
     /*
      * Processes the given JSP parse error.
      *
@@ -47,9 +47,9 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String errMsg, Exception ex) throws JasperException {
-	throw new JasperException(errMsg, ex);
+        throw new JasperException(errMsg, ex);
     }
-
+    
     /*
      * Processes the given javac compilation errors.
      *
@@ -57,34 +57,33 @@ class DefaultErrorHandler implements ErrorHandler {
      * compilation errors
      */
     public void javacError(JavacErrorDetail[] details) throws JasperException {
-
+        
         if (details == null) {
             return;
         }
-
-	Object[] args = null;
+        
+        Object[] args = null;
         StringBuffer buf = new StringBuffer();
-
+        
         for (int i=0; i < details.length; i++) {
             if (details[i].getJspBeginLineNumber() >= 0) {
                 args = new Object[] {
                         new Integer(details[i].getJspBeginLineNumber()), 
                         details[i].getJspFileName() };
                 buf.append(Localizer.getMessage("jsp.error.single.line.number",
-                                                args));
+                        args));
                 buf.append("\n"); 
             }
-
+            
             buf.append(
-                Localizer.getMessage("jsp.error.corresponding.servlet"));
+                    Localizer.getMessage("jsp.error.corresponding.servlet"));
             buf.append(details[i].getErrorMessage());
             buf.append("\n\n");
         }
-
-	throw new JasperException(
-            Localizer.getMessage("jsp.error.unable.compile") + "\n\n" + buf);
+        
+        throw new JasperException(Localizer.getMessage("jsp.error.unable.compile") + "\n\n" + buf);
     }
-
+    
     /**
      * Processes the given javac error report and exception.
      *
@@ -92,10 +91,10 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param exception Compilation exception
      */
     public void javacError(String errorReport, Exception exception)
-            throws JasperException {
-
- 	throw new JasperException(
-            Localizer.getMessage("jsp.error.unable.compile"), exception);
+    throws JasperException {
+        
+        throw new JasperException(
+                Localizer.getMessage("jsp.error.unable.compile"), exception);
     }
-
+    
 }

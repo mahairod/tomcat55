@@ -31,6 +31,8 @@ public interface JspSourceDependent {
     * Returns a list of files names that the current page has a source
     * dependency on.
     */
-    public java.util.List getDependants();
+    // FIXME: Type used is Object due to very weird behavior 
+    // with Eclipse JDT 3.1 in Java 5 mode
+    public Object getDependants();
 
 }

@@ -246,7 +246,7 @@ public class JspServletWrapper {
 		target = getServlet();
 	    }
 	    if (target != null && target instanceof JspSourceDependent) {
-		return ((JspSourceDependent) target).getDependants();
+            return ((java.util.List) ((JspSourceDependent) target).getDependants());
 	    }
 	} catch (Throwable ex) {
 	}
