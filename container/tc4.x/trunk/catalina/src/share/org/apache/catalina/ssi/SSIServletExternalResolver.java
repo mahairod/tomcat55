@@ -95,8 +95,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Globals;
-import org.apache.catalina.util.RequestUtil;
 
 /**
  * An implementation of SSIExternalResolver that is used with servlets.
