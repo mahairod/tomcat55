@@ -36,7 +36,6 @@ import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.log.SystemLogHandler;
 
@@ -144,7 +143,7 @@ final class StandardWrapperValve
             }
         } catch (ServletException e) {
             container.getLogger().error(sm.getString("standardWrapper.allocateException",
-                             wrapper.getName()), e);
+                             wrapper.getName()), StandardWrapper.getRootCause(e));
             throwable = e;
             exception(request, response, e);
             servlet = null;
@@ -249,22 +248,7 @@ final class StandardWrapperValve
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
         	request.removeAttribute(Globals.JSP_FILE_ATTR);
-            Throwable rootCause = e;
-            Throwable rootCauseCheck = null;
-
-            // Extra aggressive rootCause finding
-            do {
-                try {
-                    rootCauseCheck = (Throwable)IntrospectionUtils.getProperty
-                                                (rootCause, "rootCause");
-                    if (rootCauseCheck!=null)
-                        rootCause = rootCauseCheck;
-
-                } catch (ClassCastException ex) {
-                    rootCauseCheck = null;
-                }
-            } while (rootCauseCheck != null);
-
+            Throwable rootCause = StandardWrapper.getRootCause(e);
             if (!(rootCause instanceof ClientAbortException)) {
                 container.getLogger().error(sm.getString("standardWrapper.serviceException",
                                  wrapper.getName()), rootCause);
