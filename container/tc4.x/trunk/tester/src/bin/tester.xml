@@ -591,9 +591,14 @@
 
     <!-- ========== Property Editor Support =============================== -->
 
+<!-- Cannot test PropertyEditor support under security manager
+     unless catalina.policy grants read/write access to
+     system properties -->
+<!--
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/Property01.jsp" debug="${debug}"
           golden="${golden.path}/Property01.txt"/>
+-->
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/Property02.jsp" debug="${debug}"
