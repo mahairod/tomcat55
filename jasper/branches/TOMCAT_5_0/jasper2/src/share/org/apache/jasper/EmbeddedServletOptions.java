@@ -139,9 +139,9 @@ public final class EmbeddedServletOptions implements Options {
     private String compiler = null;
 
     /**
-     * The compiler target VM ("1.2" by default).
+     * The compiler target VM ("1.3" by default).
      */
-    private String compilerTargetVM = "1.2";
+    private String compilerTargetVM = "1.3";
 
     /**
      * Cache for the TLD locations
@@ -565,7 +565,8 @@ public final class EmbeddedServletOptions implements Options {
 					   scratchDir.getAbsolutePath()));
                                   
         this.compiler = config.getInitParameter("compiler");
-        compilerTargetVM = config.getInitParameter("compilerTargetVM");
+
+        String compilerTargetVM = config.getInitParameter("compilerTargetVM");
         if(compilerTargetVM != null) {
             this.compilerTargetVM = compilerTargetVM;
         }

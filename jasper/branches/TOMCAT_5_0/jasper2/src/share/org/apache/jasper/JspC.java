@@ -144,7 +144,7 @@ public class JspC implements Options {
     private boolean compile = false;
 
     private String compiler = null;
-    private String compilerTargetVM = "1.2";
+    private String compilerTargetVM = "1.3";
 
     private boolean classDebugInfo = true;
     private Vector extensions;
