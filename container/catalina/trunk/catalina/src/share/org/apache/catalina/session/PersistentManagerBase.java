@@ -140,8 +140,7 @@ public abstract class PersistentManagerBase
         }
 
         public Object run() throws Exception{
-           store.load(id);
-           return null;
+           return store.load(id);
         }                       
     }   
           
@@ -802,7 +801,11 @@ public abstract class PersistentManagerBase
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
                     log.error("Exception clearing the Store: " + exception);
-                    exception.printStackTrace();                        
+                    if (exception instanceof IOException){
+                        throw (IOException)exception;
+                    } else if (exception instanceof ClassNotFoundException) {
+                        throw (ClassNotFoundException)exception;
+                    }
                 }
             } else {
                  session = store.load(id);
