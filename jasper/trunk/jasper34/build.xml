@@ -154,11 +154,13 @@
 	  todir="${tomcat.home}/lib/container" />
     <copy file="${build.dir}/jasper34_runtime.jar" 
 	  todir="${tomcat.home}/lib/common" />
+  </target>
 
+  <target name="hook" description="Replace the old jasper with the new one" >
     <!-- Easiest way to plug the new module -->
-    <replace file="${tomcat.home}/conf/modules.xml" 
-	     token="org.apache.tomcat.facade.JspInterceptor" 
-	     value="org.apache.jasper34.tomcat33.JspInterceptor"
+    <replace file="${tomcat.home}/conf/server.xml" 
+	     token="JspInterceptor" 
+	     value="JspInterceptor34"
 	     />
   </target>
 
