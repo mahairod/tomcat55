@@ -95,12 +95,6 @@ class ParserController implements TagConstants {
      */
     private Stack baseDirStack = new Stack();
     
-    /*
-     * Static information used in the process of figuring out
-     * the kind of document we're dealing with.
-     */
-    private static final String JSP_ROOT_TAG = "<jsp:root";
-
     private boolean isEncodingSpecifiedInProlog;
 
     private String sourceEnc;
