@@ -33,6 +33,9 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
 *
@@ -50,6 +53,7 @@ import org.apache.catalina.util.StringManager;
 public class DataSourceRealm
     extends RealmBase {
 
+    private static Log log = LogFactory.getLog(DataSourceRealm.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -290,7 +294,7 @@ public class DataSourceRealm
             
         } catch (SQLException e) {
             // Log the problem for posterity
-            container.getLogger().error(sm.getString("dataSourceRealm.exception"), e);
+            log.error(sm.getString("dataSourceRealm.exception"), e);
 
             // Return "not authenticated" for this request
             return (null);
@@ -318,8 +322,8 @@ public class DataSourceRealm
      *  authenticating this username
      */
     protected Principal authenticate(Connection dbConnection,
-                                               String username,
-                                               String credentials) throws SQLException{
+                                     String username,
+                                     String credentials) throws SQLException{
 
         String dbCredentials = getPassword(dbConnection, username);
 
@@ -332,13 +336,13 @@ public class DataSourceRealm
             validated = (digest(credentials).equals(dbCredentials));
 
         if (validated) {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(sm.getString("dataSourceRealm.authenticateSuccess",
-                                 username));
+            if (log.isTraceEnabled())
+                log.trace(sm.getString("dataSourceRealm.authenticateSuccess",
+                                       username));
         } else {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(sm.getString("dataSourceRealm.authenticateFailure",
-                                 username));
+            if (log.isTraceEnabled())
+                log.trace(sm.getString("dataSourceRealm.authenticateFailure",
+                                       username));
             return (null);
         }
 
@@ -368,7 +372,7 @@ public class DataSourceRealm
         	}
             dbConnection.close();
         } catch (SQLException e) {
-            container.getLogger().error(sm.getString("dataSourceRealm.close"), e); // Just log it here
+            log.error(sm.getString("dataSourceRealm.close"), e); // Just log it here
         }
 
     }
@@ -394,7 +398,7 @@ public class DataSourceRealm
 	    return dataSource.getConnection();
         } catch (Exception e) {
             // Log the problem for posterity
-            container.getLogger().error(sm.getString("dataSourceRealm.exception"), e);
+            log.error(sm.getString("dataSourceRealm.exception"), e);
         }  
         return null;
     }
@@ -450,9 +454,8 @@ public class DataSourceRealm
             return (dbCredentials != null) ? dbCredentials.trim() : null;
             
         } catch(SQLException e) {
-        	container.getLogger().error(sm
-	                .getString("dataSourceRealm.getPassword.exception",
-	        		           username));
+        	log.error(sm.getString("dataSourceRealm.getPassword.exception",
+	        		       username));
         } finally {
         	try {
 	            if (rs != null) {
@@ -462,10 +465,8 @@ public class DataSourceRealm
 	                stmt.close();
 	            }
         	} catch (SQLException e) {
-            	container.getLogger().error(sm
-                        .getString("dataSourceRealm.getPassword.exception",
+                    log.error(sm.getString("dataSourceRealm.getPassword.exception",
         		                   username));
-        		
         	}
         }
         
@@ -538,9 +539,8 @@ public class DataSourceRealm
     		}
     		return list;
     	} catch(SQLException e) {
-        	container.getLogger().error(sm
-	                .getString("dataSourceRealm.getRoles.exception",
-	        		           username));
+        	log.error(sm.getString("dataSourceRealm.getRoles.exception",
+	        		       username));
         }
     	finally {
         	try {
@@ -551,9 +551,8 @@ public class DataSourceRealm
 	                stmt.close();
 	            }
         	} catch (SQLException e) {
-            	container.getLogger().error(sm
-                        .getString("dataSourceRealm.getRoles.exception",
-        		                   username));
+                    log.error(sm.getString("dataSourceRealm.getRoles.exception",
+                                           username));
         		
         	}
         }
