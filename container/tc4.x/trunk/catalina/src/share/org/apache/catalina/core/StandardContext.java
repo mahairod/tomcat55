@@ -1058,7 +1058,8 @@ public class StandardContext
 
         if (context == null)
             context = new ApplicationContext(getBasePath(), this);
-        return (context);
+
+        return (context.getFacade());
 
     }
 
