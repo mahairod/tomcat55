@@ -65,6 +65,14 @@
       <fileset dir="WEB-INF"/>
     </copy>
 
+    <!-- Build Coyote JK2 documentation -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/jk2"/>
+    <ant dir="${jtc.home}/jk" target="docs"/>
+
+    <copy todir="${webapps.build}/${webapp.name}/jk2">
+      <fileset dir="${jtc.home}/jk/build/docs"/>
+    </copy>
+
   </target>
 
 
