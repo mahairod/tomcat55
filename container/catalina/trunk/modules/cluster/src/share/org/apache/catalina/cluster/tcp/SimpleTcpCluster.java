@@ -366,8 +366,7 @@ public class SimpleTcpCluster
                 if ( clusterDeployer != null ) {
                     clusterDeployer.setCluster(this);
                     Object deployer = IntrospectionUtils.getProperty(getContainer(), "deployer");
-                    clusterDeployer.setDeployer( (org.apache.catalina.Deployer)
-                                                deployer);
+                    // FIXME: clusterDeployer.setDeployer( (org.apache.catalina.Deployer) deployer);
                    clusterDeployer.start();
                 }
             } catch (Throwable x) {
