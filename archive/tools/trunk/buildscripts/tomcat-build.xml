@@ -1,12 +1,13 @@
 <project name="Tomcat" default="main" basedir=".">
   <property name="build.compiler" value="classic"/>
 
-
+  <!-- XXX need to re-think the directory structure -->
   <property name="tomcat.build" value="${user.home}/ws/build/tomcat"/>
   <property name="tomcat.home" value="${user.home}/ws/dist/tomcat"/>
   <property name="tools.home" value="${user.home}/ws/jakarta-tools"/>
   
   <property name="src_dir" value="${user.home}/ws" />
+  <property name="out_dir" value="/home/ftp/pub/tomcat" />
   <property name="tomcat_src" value="${src_dir}/jakarta-tomcat" />
 
   <!-- XXX define it in params or have "default" Project properties ??? -->
@@ -14,6 +15,7 @@
 
 
 
+  <!-- #################### getSources - from taz #################### -->
   <target name="getSources">
     <get src="http://jakarta.apache.org/builds/tomcat/standalone/nightly/tomcat-src-${DSTAMP}.zip" dest="${tomcat_src}/tomcat-src.zip"/>
     <expand src="${tomcat_src}/tomcat-src.zip" dest="${tomcat_src}" />
@@ -21,7 +23,7 @@
     <expand src="${tomcat_src}/tools-src.zip" dest="${tools.home}" />
   </target>
 
-
+  <!-- #################### prepare - create directories and copy static files #################### -->
   <target name="prepare" >
     <mkdir dir="${tomcat.build}"/>
     <mkdir dir="${tomcat.build}/classes"/>
@@ -58,6 +60,7 @@
               dest="${tomcat.build}/etc/SimpleStartup.java"/>
   </target>
 
+  <!-- #################### Main #################### -->
   <target name="main" depends="prepare">
     <javac srcdir="${tomcat_src}/src/share" destdir="${tomcat.build}/classes"
      classpath="${tomcat.build}/lib/xml.jar" debug="on"/>
@@ -73,20 +76,10 @@
 
     <rmic base="${tomcat.build}/classes"
      class="org.apache.tomcat.shell.AdminImpl"/>
-
-<!--
-
-    <javac srcdir="${tomcat.build}/examples/WEB-INF/classes/jsp/tags"
-            destdir="${tomcat.build}/examples/WEB-INF/classes/jsp/tags"
-            classpath="${tomcat.build}/classes"/>
-     <mkdir dir="${tomcat.build}/examples/jsp/libs"/>
-     <jar jarfile="${tomcat.build}/examples/jsp/libs/taglib.jar" 
-          basedir="${tomcat.build}/examples/WEB-INF/classes/jsp/tags"
-          items="examples,META-INF/taglib.tld"/>
--->
-
   </target>
 
+
+  <!-- #################### Dist - create jars and the final dir struct #################### -->
   <target name="dist" depends="main">
     <!-- cut & paste of "prepare", with tomcat.home instead of tomcat_build 
          XXX create "parametrized" targets
@@ -140,50 +133,21 @@
         items="org/apache/jasper"/>
   </target>
 
-  <target name="test" depends="main">
-    <mkdir dir="${tomcat.build}/test"/>
-    <mkdir dir="${tomcat.build}/test/classes"/>
-    <mkdir dir="${tomcat.build}/test/lib"/>
-    <mkdir dir="${tomcat.build}/test/webpages"/>
-
-    <copydir src="${tomcat_src}/src/tests/webpages"
-        dest="${tomcat.build}/test/webpages"/>
-
-    <copydir src="${tomcat_src}/src/tests/bin" dest="${tomcat.build}/test"/>
-    <copyfile src="src/tests/server.xml"
-        dest="${tomcat.build}/test/server.xml"/>
-    <copyfile src="${tomcat_src}/src/tests/testlist.txt"
-        dest="${tomcat.build}/test/testlist.txt"/>
-    <copyfile src="${tools.home}/moo.jar"
-        dest="${tomcat.build}/test/lib/moo.jar"/>
-    <copyfile src="${tools.home}/moo.jar"
-        dest="${tomcat.build}/test/webpages/WEB-INF/lib/moo.jar"/>
-
-    <javac srcdir="${tomcat_src}/src/tests/share"
-        destdir="${tomcat.build}/test/classes"
-        classpath="${test.classpath}"/>
-    <javac srcdir="${tomcat_src}/src/tests/webpages/WEB-INF/classes"
-        destdir="${tomcat.build}/test/webpages/WEB-INF/classes"
-        classpath="${test.classpath}"/>
-
+  <!-- #################### Build the "final" distributable #################### -->
+  <target name="package" depends="dist">
+    <jar jarfile="${out_dir}/tomcat-${DSTAMP}.zip"
+        basedir="${tomcat.home}/.."
+        items="tomcat" />
   </target>
 
-  <target name="servlet">
 
-    <mkdir dir="${tomcat.build}"/>
-    <mkdir dir="${tomcat.build}/classes"/>
-
-    <javac srcdir="${tomcat_src}/src/share/javax" destdir="${tomcat.build}/classes"/>
-
-    <jar jarfile="${tools.home}/servlet-2.2.0.jar"
-        basedir="${tomcat.build}/classes"
-        items="javax"/>
-  </target>
-
+  <!-- #################### Clean #################### -->
   <target name="clean">
     <deltree dir="${tomcat.build}"/>
+    <deltree dir="${tomcat.home}"/>
   </target>
 
-  <target name="all" depends="clean,main,dist,test"/>
+  <!-- #################### getSources + prep + package #################### -->
+  <target name="nightly" depends="clean,getSources,prep,dist,package"/>
   
 </project>
