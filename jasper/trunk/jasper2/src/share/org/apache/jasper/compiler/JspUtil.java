@@ -534,7 +534,7 @@ public class JspUtil {
          */
 	String jspCtxt = null;
 	if (isTagFile)
-	    jspCtxt = "getJspContext()";
+	    jspCtxt = "this.getJspContext()";
 	else
 	    jspCtxt = "pageContext";
 
