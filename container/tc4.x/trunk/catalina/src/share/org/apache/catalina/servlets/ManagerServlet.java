@@ -77,6 +77,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
@@ -252,6 +253,11 @@ public class ManagerServlet
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
         throws IOException, ServletException {
+
+        // Verify that we were not accessed using the invoker servlet
+        if (request.getAttribute(Globals.INVOKED_ATTR) != null)
+            throw new UnavailableException
+                (sm.getString("managerServlet.cannotInvoke"));
 
         // Identify the request parameters that we need
         String command = request.getPathInfo();

@@ -422,14 +422,30 @@ public final class InvokerServlet
                 request.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
             else
                 request.removeAttribute(Globals.JSP_FILE_ATTR);
+            request.setAttribute(Globals.INVOKED_ATTR,
+                                 request.getServletPath());
             //            if (debug >= 2)
             //                log("  Calling service() method, jspFile=" +
             //                    jspFile);
             instance.service(wrequest, response);
+            request.removeAttribute(Globals.INVOKED_ATTR);
             request.removeAttribute(Globals.JSP_FILE_ATTR);
         } catch (IOException e) {
             //            if (debug >= 2)
             //                log("  service() method IOException", e);
+            request.removeAttribute(Globals.INVOKED_ATTR);
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
+            try {
+                wrapper.deallocate(instance);
+            } catch (Throwable f) {
+                ;
+            }
+            throw e;
+        } catch (UnavailableException e) {
+            //            if (debug >= 2)
+            //                log("  service() method UnavailableException", e);
+            context.removeServletMapping(pattern);
+            request.removeAttribute(Globals.INVOKED_ATTR);
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);
@@ -440,6 +456,7 @@ public final class InvokerServlet
         } catch (ServletException e) {
             //            if (debug >= 2)
             //                log("  service() method ServletException", e);
+            request.removeAttribute(Globals.INVOKED_ATTR);
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);
@@ -450,6 +467,7 @@ public final class InvokerServlet
         } catch (RuntimeException e) {
             //            if (debug >= 2)
             //                log("  service() method RuntimeException", e);
+            request.removeAttribute(Globals.INVOKED_ATTR);
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);
@@ -460,6 +478,7 @@ public final class InvokerServlet
         } catch (Throwable e) {
             //            if (debug >= 2)
             //                log("  service() method Throwable", e);
+            request.removeAttribute(Globals.INVOKED_ATTR);
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);

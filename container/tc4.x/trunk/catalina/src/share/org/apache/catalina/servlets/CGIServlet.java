@@ -87,12 +87,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Wrapper;
 // import org.apache.catalina.util.StringManager;
 
@@ -334,6 +336,14 @@ public class CGIServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
 
         super.init(config);
+
+        // Verify that we were not accessed using the invoker servlet
+        String servletName = getServletConfig().getServletName();
+        if (servletName == null)
+            servletName = "";
+        if (servletName.startsWith("org.apache.catalina.INVOKER."))
+            throw new UnavailableException
+                ("Cannot invoke CGIServlet through the invoker");
 
         // Set our properties from the initialization parameters
         String value = null;
@@ -603,6 +613,11 @@ public class CGIServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
+
+        // Verify that we were not accessed using the invoker servlet
+        if (req.getAttribute(Globals.INVOKED_ATTR) != null)
+            throw new UnavailableException
+                ("Cannot invoke CGIServlet through the invoker");
 
         CGIEnvironment cgiEnv = new CGIEnvironment(req, getServletContext());
 

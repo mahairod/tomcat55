@@ -106,7 +106,9 @@
        <param-name>cgiPathPrefix</param-name>
        <param-value>WEB-INF/cgi</param-value>
      </init-param>
+<!-- Uncomment this if you want CGIServlet loaded at startup time
      <load-on-startup>6</load-on-startup>
+-->
    </servlet>
 
   <!-- The mapping for the default servlet -->
@@ -136,11 +138,13 @@
   </servlet-mapping>
 
      <!-- The mapping for the CGI Gateway servlet -->
-     <!-- Comment this out if you do not want "CGI Gateway" service -->
+     <!-- Uncomment this if you want "CGI Gateway" service -->
+     <!--
        <servlet-mapping>
            <servlet-name>cgi</servlet-name>
-       <url-pattern>/cgi-bin/*</url-pattern>
+           <url-pattern>/cgi-bin/*</url-pattern>
        </servlet-mapping>
+     -->
 
   <!-- Set the default session timeout (in seconds) -->
   <session-config>
