@@ -251,14 +251,14 @@ action_index=jsp.indexOf(":" , last_index); //might be an action
 
 if( cdata_closed )
 {
-xml+=new_line+ "<![CDATA[ " + new_line ;
+xml+=new_line+ "<jsp:cdata><![CDATA[ " + new_line ;
 cdata_closed=false;
 }
 
  if(element_index!=-1 && jsp_element_first) //JSP element was found before action
  {
  xml+=jsp.substring(last_index , element_index);
- xml+=new_line + "]]>" + new_line ; //end of CDATA section
+ xml+=new_line + "]]></jsp:cdata>" + new_line ; //end of CDATA section
  cdata_closed=true;
 
  char jsp_char = jsp.charAt(element_index+2);
@@ -377,7 +377,7 @@ action_name = action_name.trim();
 
          if(tag_level==0)
          {
-	 xml+=new_line + "]]>"+new_line ; //end of CDATA section
+	 xml+=new_line + "]]></jsp:cdata>"+new_line ; //end of CDATA section
          }
 
          tag_level++;
@@ -415,7 +415,7 @@ else  //template text again
 //Remaining part of the string
      xml+=jsp.substring(last_index);
 //close the CDATA section
-     xml+=new_line + "]]>" + new_line ;
+     xml+=new_line + "]]></jsp:cdata>" + new_line ;
  
 return xml;
 
