@@ -13,6 +13,220 @@
 
 <body>
 
+<section name="Tomcat 5.0.7 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <scode>
+      Tomcat 5.0.x release plan was voted (remm)
+      </scode>
+      <update>
+      Various JSP 2.0 API updates, submitted by Mark Roth (kinman)
+      </update>
+      <update>
+      Update to commons-modeler 1.1, submitted by Yoav Shapira (remm)
+      </update>
+      <update>
+      Simplify the use of the Ant script shipped in the embedded package (remm)
+      </update>
+      <update>
+      Bundle Xerces 2.5.0 again, due to bugs in Crimson (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Allow putting a /META-INF/context.xml inside any WAR file deployed
+      by the HostConfig (remm)
+      </update>
+      <fix>
+      Many bugfixes in JNDI realm: <bug>18698</bug>, <bug>11678</bug>,
+      <bug>19864</bug>, <bug>20518</bug>, with help from David DeWolf and
+      Jeff Tulley (funkman)
+      </fix>
+      <fix>
+      Fix for three related request dispatcher bugs, including 
+      <bug>22013</bug>, <bug>4690</bug> (cross context sessions support), and
+      port the fix for ServletContext.getContext(...) when using the root 
+      context (remm)
+      </fix>
+      <update>
+      Use PropertyUtils to obtain the rootCause. This way we can
+      also drill into nested JspExceptions or another Throwable object
+      which has a 'rootCause' property which returns a Throwable (funkman)
+      </update>
+      <update>
+      Extract all non class resources from a JAR on access to a non class
+      resource (remm)
+      </update>
+      <fix>
+      <bug>14817</bug>: JNDIRealm SHA digest implementation incorrect (funkman)
+      </fix>
+      <fix>
+      NPE when an invalid web.xml is deployed and the digester throws
+      an exception (jfarcand)
+      </fix>
+      <fix>
+      <bug>22236</bug>: addAttributeValues may return null. and this could 
+      trigger a NPE if debugging was turned up >=2 (funkman)
+      </fix>
+      <fix>
+      <bug>22146</bug>: Use Class.forName instead of ClassLoader.loadClass
+      (remm)
+      </fix>
+      <fix>
+      Split the applicationListeners array in two, for performance reasons
+      (remm)
+      </fix>
+      <fix>
+      Fix bug where welcome files were not being processed in the embedded
+      distribution (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      <bug>9351</bug>: parsing IPv6 hostnames (in IP form, obviously),
+      submitted by Masashi Yamaguchi (remm)
+      </fix>
+      <fix>
+      Allow extending CoyoteConnector (jfarcand)
+      </fix>
+      <update>
+      <bug>22192</bug>: the context mapping algorithm actually needs to be 
+      similar to the algorithm used for widcard wrapper mapping; optimize 
+      wildcard mapping: as the amount of nesting the mapping have is known, 
+      some mapping operations can be avoided (remm)
+      </update>
+      <update>
+      Allow for customization of JSSE trust and key managers (luehe)
+      </update>
+      <fix>
+      Added check for (keystoreType == null) before calling 
+      getKeyManagers/getTrustManagers (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>22090</bug>: Enable expression cache, submitted by Matthias Ernst
+      (remm)
+      </fix>
+      <fix>
+      <bug>22103</bug>: Release servlet writer after compilation, submitted by
+      Gilles Scokart (remm)
+      </fix>
+      <fix>
+      <bug>21206</bug>: Fix including a JSP, where Jasper would do weird 
+      things whenever the outer request had a non null pathInfo; it will now 
+      use the included servlet path correctly (remm)
+      </fix>
+      <fix>
+      Have 'isELIgnored' page directive attribute take precendence over JSP
+      config el-ignored (luehe)
+      </fix>
+      <update>
+      Replaced JspServlet's "tagPoolSize" config param with the correct
+      "tagpoolMaxSize" in web.xml, and removed getTagPoolSize() from Options, 
+      because tag pool size is no longer needed at compile time (luehe)
+      </update>
+      <update>
+      Simplify the way the URLClassLoader used by JSPC gets initialized (luehe)
+      </update>
+      <fix>
+      <bug>22133</bug>: : workaround for a JDK 1.3 scoping bug, submitted by
+      Matthias Ernst (remm)
+      </fix>
+      <docs>
+      Added javadocs for getExtends methods (luehe)
+      </docs>
+      <update>
+      Refactor some code in JspDocumentParser, since startPrefixMapping
+      got called before startElement, turn on push/pop prefixes for taglibs 
+      in XML syntax, so that proper prefix can be located (kinman)
+      </update>
+      <fix>
+      Make JspFragment.getJspContext abstract (kinman)
+      </fix>
+      <update>
+      JSPC will now display root cause for build errors; also fix a needed side
+      effect in classpath generation when tag files must be compiled (remm)
+      </update>
+      <fix>
+      In JspDocumentParser, pop is called in the same order as push, so 
+      the Stack should be replaced by a LinkedList (remm)
+      </fix>
+      <fix>
+      Replaced JSPC message with more meaningful warning (luehe)
+      </fix>
+      <fix>
+      <bug>22266</bug>: keep template text together with mappedfile="true",
+      submitted by Eric Carmichael (remm)
+      </fix>
+      <fix>
+      <bug>22006</bug>: Invalid SMAP line entries when running with 
+      mappedfile=true, submitted by Eric Carmichael (remm)
+      </fix>
+      <fix>
+      Apply workaround for failure in optimizeLineSection() when there are 
+      entries with an outputStartLine of 0, Submitted by Eric Carmichael (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <docs>
+      Update the documentation to reflect the fact that the Factory element 
+      is no longer required to setup a stand-alone SSL Connector (billbarker)
+      </docs>
+      <update>
+      The status servlet will now also display wrapper mappings (remm)
+      </update>
+      <fix>
+      Allow passing a regular path instead of a URL for the WAR to upload to
+      the DeployTask; also pass the right URL String so that the "update" flag
+      is no longer ignored (remm)
+      </fix>
+      <fix>
+      Fixes to the manager servlet: cleanup URL handling, to be consistent 
+      with the HTML manager; don't send extra "OK" messages; fix update flag;
+      make sure configFile is null if there's no context XML file (remm)
+      </fix>
+      <fix>
+      Fix webapp tagging and redeployment from a tag (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.6 (remm)">
 
   <subsection name="General">
