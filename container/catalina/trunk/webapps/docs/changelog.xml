@@ -32,6 +32,9 @@
       <fix>
         <bug>33204</bug>: Fixed SSL HowTo page. (yoavs)
       </fix>
+      <fix>
+        <bug>33351</bug>: Fix silent uninstallation. (remm)
+      </fix>
     </changelog>
   </subsection>
 
@@ -69,10 +72,35 @@
       <fix>
         <bug>26135</bug>: Workaround for memory leak when reloading Struts
         based web applications by clearing the bean instrospector cache of the JVM on
-        classloader stop, submitted by Tobias Löfstrand (remm)
+        classloader stop, submitted by Tobias Lofstrand. (remm)
       </fix>
       <fix>
          Ensure that if CLASSPATH is declared on startup - it is not used. (funkman)
+      </fix>
+      <fix>
+         Add back use of deployOnStartup in HostConfig (remm)
+      </fix>
+      <docs>
+         Ant tasks docs patches, submitted by Gabriele Garuglieri. (remm)
+      </docs>
+      <update>
+         Use NIO for the raw copying operation, as it is faster (a little under 30%), 
+         and decreases a little the impact of antResourceLocking. (remm)
+      </update>
+      <fix>
+         <bug>33357</bug>: Fix connection leaks with the DataSourceRealm, as well 
+         as improve efficiency, submitted by Dominik Drzewiecki. (remm)
+      </fix>
+      <update>
+         Improve a little logging of servlet exceptions, which should all log the root cause. (remm)
+      </update>
+      <update>
+         Add new Manager.createSession(sessionId) method, allowing the client to "specify" the session id which should be used using a cookie
+         when using emptySessionPath="true". This fixes session tracking in this case. (remm)
+      </update>
+      <fix>
+         <bug>33368</bug>: Fix memory leak in swallowOutput feature which occurred when the thread pool size is
+         reduced, submitted by Rainer Jung. (remm)
       </fix>
     </changelog>
   </subsection>
@@ -88,6 +116,11 @@
 	  <add>
 	    JkMX: make log4j mbean configureable with attribute log4jEnabled
 	  </add>
+	  <fix>
+	    When Tomcat runs on Windows and IE is uploading data to the server, the first read 
+	    must be at least 8KB, otherwise upload speed is extremely low, submitted by Noel 
+	    Rocher (remm)
+	  </fix>
     </changelog>
   </subsection>
  
