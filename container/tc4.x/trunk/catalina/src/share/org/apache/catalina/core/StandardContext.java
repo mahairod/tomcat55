@@ -2261,9 +2261,6 @@ public class StandardContext
      * of our class loader.  It does not handle changes to the web application
      * deployment descriptor.  If that has occurred, you should stop this
      * Context and create (and start) a new Context instance instead.
-     * <p>
-     * <b>FIXME</b>:  What about context attributes that have been created
-     * by servlets?  ClassCastException?
      *
      * @exception IllegalStateException if the <code>reloadable</code>
      *  property is set to <code>false</code>.
