@@ -936,7 +936,9 @@ public class WebappLoader
             } catch (NamingException e) {
                 // Silent catch: it's valid that no /WEB-INF/lib directory 
                 //exists
+                e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
             }
             
         }
