@@ -18,6 +18,8 @@
 package org.apache.catalina.connector;
 
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
@@ -251,6 +253,15 @@ public class Connector
      private boolean useBodyEncodingForURI = false;
 
 
+     protected static HashMap replacements = new HashMap();
+     static {
+         replacements.put("acceptCount", "backlog");
+         replacements.put("connectionLinger", "soLinger");
+         replacements.put("connectionTimeout", "soTimeout");
+         replacements.put("connectionUploadTimeout", "timeout");
+     }
+     
+     
     // ------------------------------------------------------------- Properties
 
 
@@ -258,7 +269,12 @@ public class Connector
      * Return a configured property.
      */
     public Object getProperty(String name) {
-        return IntrospectionUtils.getProperty(protocolHandler, name);
+        String repl = name;
+        if (replacements.get(name) != null) {
+            repl = (String) replacements.get(name);
+        }
+        log.info("get " + name + " as " + repl);
+        return IntrospectionUtils.getProperty(protocolHandler, repl);
     }
 
     
@@ -266,7 +282,11 @@ public class Connector
      * Set a configured property.
      */
     public void setProperty(String name, String value) {
-        IntrospectionUtils.setProperty(protocolHandler, name, value);
+        String repl = name;
+        if (replacements.get(name) != null) {
+            repl = (String) replacements.get(name);
+        }
+        IntrospectionUtils.setProperty(protocolHandler, repl, value);
     }
 
     
@@ -350,6 +370,25 @@ public class Connector
     }
 
 
+    /**
+     * Return the input buffer size for this Connector.
+     * 
+     * @deprecated
+     */
+    public int getBufferSize() {
+        return 2048;
+    }
+
+    /**
+     * Set the input buffer size for this Connector.
+     *
+     * @param bufferSize The new input buffer size.
+     * @deprecated
+     */
+    public void setBufferSize(int bufferSize) {
+    }
+
+    
     /**
      * Return the Container used for processing requests received by this
      * Connector.
@@ -717,7 +756,7 @@ public class Connector
      * @return true if generation of X-Powered-By response header is enabled,
      * false otherwise
      */
-    public boolean isXpoweredBy() {
+    public boolean getXpoweredBy() {
         return xpoweredBy;
     }
 

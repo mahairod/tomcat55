@@ -135,7 +135,7 @@ public class CoyoteAdapter
 
         }
 
-        if (connector.isXpoweredBy()) {
+        if (connector.getXpoweredBy()) {
             response.addHeader("X-Powered-By", "Servlet/2.4");
         }
 
