@@ -480,7 +480,7 @@ public class JspC implements Options {
      * @param encodingName The name, e.g. "UTF-8"
      */
     public void setJavaEncoding(String encodingName) {
-      javaEncoding = encodingName;
+        javaEncoding = encodingName;
     }
 
     public boolean getFork() {
@@ -831,14 +831,14 @@ public class JspC implements Options {
             if (uriRoot == null) {
                 if( pages.size() == 0 ) {
                     throw new JasperException(
-                                Localizer.getMessage("jsp.error.jspc.missingTarget"));
+                        Localizer.getMessage("jsp.error.jspc.missingTarget"));
                 }
                 String firstJsp=(String)pages.elementAt( 0 );
                 File firstJspF = new File( firstJsp );
                 if (!firstJspF.exists()) {
-                   throw new JasperException(
-                       Localizer.getMessage("jspc.error.fileDoesNotExist",
-                                            firstJsp));
+                    throw new JasperException(
+                        Localizer.getMessage("jspc.error.fileDoesNotExist",
+                                             firstJsp));
                 }
                 locateUriRoot( firstJspF );
             }
@@ -853,12 +853,12 @@ public class JspC implements Options {
 
             if (uriRoot == null) {
                 throw new JasperException(
-                            Localizer.getMessage("jsp.error.jspc.no_uriroot"));
+                    Localizer.getMessage("jsp.error.jspc.no_uriroot"));
             }
             File uriRootF = new File(uriRoot);
             if (!uriRootF.exists() || !uriRootF.isDirectory()) {
                 throw new JasperException(
-                            Localizer.getMessage("jsp.error.jspc.uriroot_not_dir"));
+                    Localizer.getMessage("jsp.error.jspc.uriroot_not_dir"));
             }
 
             initWebXml();
@@ -1082,10 +1082,11 @@ public class JspC implements Options {
                     if (g.exists() && g.isDirectory()) {
                         uriRoot = f.getCanonicalPath();
                         uriBase = tUriBase;
-            if (log.isInfoEnabled()) {
-                log.info(Localizer.getMessage("jspc.implicit.uriRoot",
-                              uriRoot));
-            }
+                        if (log.isInfoEnabled()) {
+                            log.info(Localizer.getMessage(
+                                        "jspc.implicit.uriRoot",
+                                        uriRoot));
+			}
                         break;
                     }
                     if (f.exists() && f.isDirectory()) {
