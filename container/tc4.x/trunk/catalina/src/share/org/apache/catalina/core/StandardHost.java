@@ -65,15 +65,28 @@
 package org.apache.catalina.core;
 
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Deployer;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Host;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 
@@ -89,7 +102,7 @@ import org.apache.catalina.Response;
 
 public final class StandardHost
     extends ContainerBase
-    implements Host {
+    implements Deployer, Host {
 
 
     // ----------------------------------------------------------- Constructors
@@ -119,6 +132,31 @@ public final class StandardHost
      * The application root for this Host.
      */
     private String appBase = ".";
+
+
+    /**
+     * The Java class name of the default context configuration class
+     * for deployed web applications.
+     */
+    private String configClass =
+        "org.apache.catalina.startup.ContextConfig";
+
+
+    /**
+     * The Java class name of the default Context implementation class for
+     * deployed web applications.
+     */
+    private String contextClass =
+        "org.apache.catalina.core.StandardContext";
+
+
+    /**
+     * The set of absolute pathnames to directories that were expanded
+     * from WAR files, keyed by context path.  These entries may be used
+     * to indicate that the expanded directory is to be removed when the
+     * application is undeployed.
+     */
+    private HashMap expanded = new HashMap();
 
 
     /**
@@ -160,6 +198,60 @@ public final class StandardHost
 	String oldAppBase = this.appBase;
 	this.appBase = appBase;
 	support.firePropertyChange("appBase", oldAppBase, this.appBase);
+
+    }
+
+
+    /**
+     * Return the Java class name of the context configuration class
+     * for new web applications.
+     */
+    public String getConfigClass() {
+
+        return (this.configClass);
+
+    }
+
+
+    /**
+     * Set the Java class name of the context configuration class
+     * for new web applications.
+     *
+     * @param configClass The new context configuration class
+     */
+    public void setConfigClass(String configClass) {
+
+        String oldConfigClass = this.configClass;
+        this.configClass = configClass;
+        support.firePropertyChange("configClass",
+                                   oldConfigClass, this.configClass);
+
+    }
+
+
+    /**
+     * Return the Java class name of the Context implementation class
+     * for new web applications.
+     */
+    public String getContextClass() {
+
+        return (this.contextClass);
+
+    }
+
+
+    /**
+     * Set the Java class name of the Context implementation class
+     * for new web applications.
+     *
+     * @param contextClass The new context implementation class
+     */
+    public void setContextClass(String contextClass) {
+
+        String oldContextClass = this.contextClass;
+        this.contextClass = contextClass;
+        support.firePropertyChange("contextClass",
+                                   oldContextClass, this.contextClass);
 
     }
 
@@ -372,6 +464,188 @@ public final class StandardHost
     }
 
 
+    // ------------------------------------------------------- Deployer Methods
+
+
+    /**
+     * Deploy a new web application, whose web application archive is at the
+     * specified URL, into this container with the specified context path.
+     * A context path of "" (the empty string) should be used for the root
+     * application for this container.  Otherwise, the context path must
+     * start with a slash.
+     * <p>
+     * If this application is successfully deployed, a ContainerEvent of type
+     * <code>DEPLOY_EVENT</code> will be sent to all registered listeners,
+     * with the newly created <code>Context</code> as an argument.
+     *
+     * @param contextPath The context path to which this application should
+     *  be deployed (must be unique)
+     * @param war A URL of type "jar:" that points to a WAR file, or type
+     *  "file:" that points to an unpacked directory structure containing
+     *  the web application to be deployed
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalArgumentException if the specified context path
+     *  is already attached to an existing web application
+     * @exception IOException if an input/output error was encountered
+     *  during deployment
+     */
+    public void deploy(String contextPath, URL war) throws IOException {
+
+        // Validate the format and state of our arguments
+        if (contextPath == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathRequired"));
+        if (!contextPath.equals("") && !contextPath.startsWith("/"))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathFormat", contextPath));
+        if (findDeployedApp(contextPath) != null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathUsed", contextPath));
+        if (war == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warRequired"));
+
+        // Prepare the local variables we will require
+        String url = war.toString();
+        String docBase = null;
+        log(sm.getString("standardHost.deploying", contextPath, url));
+
+        // Expand a WAR archive into an unpacked directory if needed
+        if (url.startsWith("jar:"))
+            docBase = expand(war);
+        else if (url.startsWith("file://"))
+            docBase = url.substring(7);
+        else if (url.startsWith("file:"))
+            docBase = url.substring(5);
+        else
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warURL", url));
+
+        // Make sure the document base directory exists and is readable
+        File docBaseDir = new File(docBase);
+        if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
+            !docBaseDir.canRead())
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.accessBase", docBase));
+
+        // Deploy this new web application
+        try {
+            Class clazz = Class.forName(contextClass);
+            Context context = (Context) clazz.newInstance();
+            context.setPath(contextPath);
+            context.setDocBase(docBase);
+            if (context instanceof Lifecycle) {
+                clazz = Class.forName(configClass);
+                LifecycleListener listener =
+                    (LifecycleListener) clazz.newInstance();
+                ((Lifecycle) context).addLifecycleListener(listener);
+            }
+            addChild(context);
+	    fireContainerEvent(DEPLOY_EVENT, context);
+            if (url.startsWith("jar:")) {
+                synchronized (expanded) {
+                    if (debug >= 1)
+                        log("Recording expanded app at path " + contextPath);
+                    expanded.put(contextPath, docBase);
+                }
+            }
+        } catch (Exception e) {
+            log(sm.getString("standardHost.deployError", contextPath), e);
+            throw new IOException(e.toString());
+        }
+
+    }
+
+
+    /**
+     * Return the Context for the deployed application that is associated
+     * with the specified context path (if any); otherwise return
+     * <code>null</code>.
+     *
+     * @param contextPath The context path of the requested web application
+     */
+    public Context findDeployedApp(String contextPath) {
+
+        if (name == null)
+            return (null);
+        synchronized (children) {
+            return ((Context) children.get(contextPath));
+        }
+
+    }
+
+
+    /**
+     * Return the context paths of all deployed web applications in this
+     * Container.  If there are no deployed applications, a zero-length
+     * array is returned.
+     */
+    public String[] findDeployedApps() {
+
+        synchronized (children) {
+            String results[] = new String[children.size()];
+            return ((String[]) children.keySet().toArray(results));
+
+        }
+
+    }
+
+
+    /**
+     * Undeploy an existing web application, attached to the specified context
+     * path.  If this application is successfully undeployed, a
+     * ContainerEvent of type <code>UNDEPLOY_EVENT</code> will be sent to all
+     * registered listeners, with the undeployed <code>Context</code> as
+     * an argument.
+     *
+     * @param contextPath The context path of the application to be undeployed
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalArgumentException if the specified context path does
+     *  not identify a currently deployed web application
+     * @exception IOException if an input/output error occurs during
+     *  undeployment
+     */
+    public void undeploy(String contextPath) throws IOException {
+
+        // Validate the format and state of our arguments
+        if (contextPath == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathRequired"));
+        if (!contextPath.equals("") && !contextPath.startsWith("/"))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathFormat", contextPath));
+        Context context = findDeployedApp(contextPath);
+        if (context == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathMissing", contextPath));
+
+        // Undeploy this web application
+        log(sm.getString("standardHost.undeploying", contextPath));
+        try {
+            removeChild(context);
+        } catch (Exception e) {
+            log(sm.getString("standardHost.undeployError", contextPath), e);
+            throw new IOException(e.toString());
+        }
+
+        // Remove the expanded directory if we created one
+        synchronized (expanded) {
+            String docBase = (String) expanded.get(contextPath);
+            if (docBase != null) {
+                if (debug >= 1)
+                    log("Removing expanded directory " + docBase);
+                expanded.remove(contextPath);
+                remove(new File(docBase));
+            }
+        }
+
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 
@@ -384,6 +658,137 @@ public final class StandardHost
     protected void addDefaultMapper(String mapperClass) {
 
 	super.addDefaultMapper(this.mapperClass);
+
+    }
+
+
+    /**
+     * Expand the WAR file found at the specified URL into an unpacked
+     * directory structure, and return the absolute pathname to the expanded
+     * directory.
+     *
+     * @param war URL of the web application archive to be expanded
+     *  (must start with "jar:")
+     *
+     * @exception IllegalArgumentException if this is not a "jar:" URL
+     * @exception IOException if an input/output error was encountered
+     *  during expansion
+     */
+    protected String expand(URL war) throws IOException {
+
+        // Calculate the directory name of the expanded directory
+        if (debug >= 1)
+            log("expand(" + war.toString() + ")");
+        String pathname = war.toString();
+        if (pathname.endsWith("!/"))
+            pathname = pathname.substring(0, pathname.length() - 2);
+        int period = pathname.lastIndexOf(".");
+        if (period >= pathname.length() - 4)
+            pathname = pathname.substring(0, period);
+        int slash = pathname.lastIndexOf("/");
+        if (slash >= 0)
+            pathname = pathname.substring(slash + 1);
+        if (debug >= 1)
+            log("  Proposed directory name: " + pathname);
+
+        // Make sure that there is no such directory already existing
+        File appBase = new File(getAppBase());
+        if (!appBase.isAbsolute())
+            appBase = new File(System.getProperty("catalina.home"),
+                               getAppBase());
+        if (!appBase.exists() || !appBase.isDirectory())
+            throw new IOException
+                (sm.getString("standardHost.appBase",
+                              appBase.getAbsolutePath()));
+        File docBase = new File(appBase, pathname);
+        if (docBase.exists())
+            throw new IOException
+                (sm.getString("standardHost.docBase",
+                              docBase.getAbsolutePath()));
+        docBase.mkdir();
+
+        // Expand the WAR into the new document base directory
+        JarFile jarFile =
+            ((JarURLConnection) war.openConnection()).getJarFile();
+        Enumeration jarEntries = jarFile.entries();
+        while (jarEntries.hasMoreElements()) {
+            JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+            String name = jarEntry.getName();
+            int last = name.lastIndexOf("/");
+            if (last >= 0) {
+                File parent = new File(docBase,
+                                       name.substring(0, last));
+                if (debug >= 2)
+                    log("  Creating parent directory " + parent);
+                parent.mkdirs();
+            }
+            if (name.endsWith("/"))
+                continue;
+            if (debug >= 2)
+                log("  Creating expanded file " + name);
+            InputStream input = jarFile.getInputStream(jarEntry);
+            expand(input, docBase, name);
+        }
+        jarFile.close();
+
+        // Return the absolute path to our new document base directory
+        return (docBase.getAbsolutePath());
+
+    }
+
+
+    /**
+     * Expand the specified input stream into the specified directory, creating
+     * a file named from the specified relative path.
+     *
+     * @param input InputStream to be copied
+     * @param docBase Document base directory into which we are expanding
+     * @param name Relative pathname of the file to be created
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void expand(InputStream input, File docBase, String name)
+        throws IOException {
+
+        File file = new File(docBase, name);
+        BufferedOutputStream output =
+            new BufferedOutputStream(new FileOutputStream(file));
+        byte buffer[] = new byte[2048];
+        while (true) {
+            int n = input.read(buffer);
+            if (n <= 0)
+                break;
+            output.write(buffer, 0, n);
+        }
+        output.close();
+        input.close();
+
+    }
+
+
+    /**
+     * Remove the specified directory and all of its contents.
+     *
+     * @param dir Directory to be removed
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void remove(File dir) throws IOException {
+
+        String list[] = dir.list();
+        for (int i = 0; i < list.length; i++) {
+            File file = new File(dir, list[i]);
+            if (file.isDirectory()) {
+                remove(file);
+            } else {
+                if (!file.delete())
+                    throw new IOException("Cannot delete file " +
+                                          file.getAbsolutePath());
+            }
+        }
+        if (!dir.delete())
+            throw new IOException("Cannot delete directory " +
+                                  dir.getAbsolutePath());
 
     }
 

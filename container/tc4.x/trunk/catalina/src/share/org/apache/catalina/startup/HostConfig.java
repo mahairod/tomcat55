@@ -79,6 +79,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.catalina.Context;
+import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -248,158 +249,84 @@ public final class HostConfig
 
 
     /**
-     * Deploy any directories found in our "application root" directory that
-     * look like they contain a web application.  For the purposes of this
-     * method, the directory must contain a WEB-INF subdirectory that contains
-     * a web application deployment descriptor file (<code>web.xml</code>).
+     * Deploy applications for any directories or WAR files that are found
+     * in our "application root" directory.
      */
-    private void deploy() {
+    private void deployApps() {
 
-	if (debug >= 1)
-	    log(sm.getString("hostConfig.deploying"));
+        if (!(host instanceof Deployer))
+            return;
+        if (debug >= 1)
+            log(sm.getString("hostConfig.deploying"));
 
-	// Discover and deploy web application directories as necessary
-	File appBase = appBase();
-	if (!appBase.exists() || !appBase.isDirectory())
-	    return;
-	String files[] = appBase.list();
+        File appBase = appBase();
+        if (!appBase.exists() || !appBase.isDirectory())
+            return;
+        String files[] = appBase.list();
 
-	for (int i = 0; i < files.length; i++) {
+        for (int i = 0; i < files.length; i++) {
 
-	    File dir = new File(appBase, files[i]);
-	    if (!dir.isDirectory())
-	        continue;
-	    File webXml = new File(dir, "/WEB-INF/web.xml");
-	    if (!webXml.exists() || !webXml.isFile() ||
-	        !webXml.canRead())
-	        continue;
-	    String contextPath = "/" + files[i];
-	    if (files[i].equals("ROOT"))
-	        contextPath = "";
-	    if (host.findChild(contextPath) != null)
-	        continue;
+            if (files[i].equalsIgnoreCase("META-INF"))
+                continue;
+            if (files[i].equalsIgnoreCase("WEB-INF"))
+                continue;
+            File dir = new File(appBase, files[i]);
+            if (dir.isDirectory()) {
 
-	    log(sm.getString("hostConfig.deploy", files[i]));
-	    try {
-		Class clazz = Class.forName(contextClass);
-		Context context =
-		  (Context) clazz.newInstance();
-		context.setPath(contextPath);
-		context.setDocBase(files[i]);
-		if (context instanceof Lifecycle) {
-		    clazz = Class.forName(configClass);
-		    LifecycleListener listener =
-		      (LifecycleListener) clazz.newInstance();
-		    ((Lifecycle) context).addLifecycleListener(listener);
-		}
-		host.addChild(context);
-	    } catch (Exception e) {
-		log(sm.getString("hostConfig.deploy.error", files[i]), e);
-	    }
+                // Make sure there is an application deployment descriptor
+                File webXml = new File(dir, "/WEB-INF/web.xml");
+                if (!webXml.exists() || !webXml.isFile() ||
+                    !webXml.canRead())
+                    continue;
 
-	}
+                // Calculate the context path and make sure it is unique
+                String contextPath = "/" + files[i];
+                if (files[i].equals("ROOT"))
+                    contextPath = "";
+                if (host.findChild(contextPath) != null)
+                    continue;
+
+                // Deploy the application in this directory
+                if (debug >= 1)
+                    log(sm.getString("hostConfig.deployDir", files[i]));
+                try {
+                    URL url = new URL("file", null, dir.getAbsolutePath());
+                    ((Deployer) host).deploy(contextPath, url);
+                } catch (Throwable t) {
+                    log(sm.getString("hostConfig.deployDir.error", files[i]),
+                        t);
+                }
+
+            } else if (files[i].toLowerCase().endsWith(".war")) {
+
+                // Calculate the context path and make sure it is unique
+                String contextPath = "/" + files[i];
+                int period = contextPath.lastIndexOf(".");
+                if (period >= 0)
+                    contextPath = contextPath.substring(0, period);
+                if (contextPath.equals("/ROOT"))
+                    contextPath = "";
+                if (host.findChild(contextPath) != null)
+                    continue;
+
+                // Deploy the application in this WAR file
+                if (debug >= 1)
+                    log(sm.getString("hostConfig.deployJar", files[i]));
+                try {
+                    URL url = new URL("file", null, dir.getAbsolutePath());
+                    url = new URL("jar:" + url.toString() + "!/");
+                    ((Deployer) host).deploy(contextPath, url);
+                } catch (Throwable t) {
+                    log(sm.getString("hostConfig.deployJar.error", files[i]),
+                        t);
+                }
+
+            }
+
+        }
 
     }
 
-
-    /**
-     * Expand any JAR files found in our "application root" directory that
-     * do not have a corresponding directory without the ".jar" extension.
-     */
-    private void expand() {
-
-	if (debug >= 1)
-	    log(sm.getString("hostConfig.expanding"));
-
-	// Discover and expand WAR files as necessary
-	File appBase = appBase();
-	if (!appBase.exists() || !appBase.isDirectory())
-	    return;
-	String files[] = appBase.list();
-
-	for (int i = 0; i < files.length; i++) {
-
-	    // Is this file a WAR that needs to be expanded?
-	    File file = new File(appBase, files[i]);
-	    if (file.isDirectory())
-		continue;
-	    String filename = files[i].toLowerCase();
-	    if (!filename.endsWith(".war"))
-		continue;
-
-	    // Has this WAR been expanded previously?
-	    File dir = new File(appBase,
-				files[i].substring(0, files[i].length() - 4));
-	    if (dir.exists())
-		continue;
-
-	    log(sm.getString("hostConfig.expand", files[i]));
-	    JarFile jarFile = null;
-	    try {
-		dir.mkdirs();
-		jarFile = new JarFile(new File(appBase, files[i]));
-		Enumeration jarEntries = jarFile.entries();
-		while (jarEntries.hasMoreElements()) {
-		    JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-		    String name = jarEntry.getName();
-		    int slash = name.lastIndexOf("/");
-		    if (slash >= 0) {
-			File parent = new File(dir,
-					       name.substring(0, slash));
-			if (debug >= 2)
-			    log(" Creating parent directory " + parent);
-			parent.mkdirs();
-		    }
-		    if (name.endsWith("/"))
-		        continue;
-		    if (debug >= 2)
-		        log(" Creating expanded file " + name);
-		    InputStream input = jarFile.getInputStream(jarEntry);
-		    expand(input, dir, name);
-		}
-	    } catch (Exception e) {
-		log(sm.getString("hostConfig.expand.error", files[i]), e);
-		if (jarFile != null) {
-		    try {
-			jarFile.close();
-		    } catch (Exception f) {
-			;
-		    }
-		}
-	    }
-
-	}
-
-    }
-
-
-    /**
-     * Expand the specified input stream into the specified directory, into
-     * a file named from the specified relative filename path.
-     *
-     * @param input InputStream to be copied
-     * @param directory Base directory into which the file is created
-     * @param path Relative pathname of the file to be created
-     *
-     * @exception IOException if any processing exception occurs
-     */
-    private void expand(InputStream input, File directory, String path)
-        throws IOException {
-
-	File file = new File(directory, path);
-	BufferedOutputStream output =
-	  new BufferedOutputStream(new FileOutputStream(file));
-	byte buffer[] = new byte[2048];
-	while (true) {
-	    int n = input.read(buffer);
-	    if (n <= 0)
-	        break;
-	    output.write(buffer, 0, n);
-	}
-	output.close();
-	input.close();
-
-    }
 
 
     /**
@@ -450,11 +377,10 @@ public final class HostConfig
      */
     private void start() {
 
-	if (debug > 0)
+	if (debug >= 1)
 	    log(sm.getString("hostConfig.start"));
 
-	expand();
-	deploy();
+        deployApps();
 
     }
 
@@ -464,8 +390,35 @@ public final class HostConfig
      */
     private void stop() {
 
-	if (debug > 0)
+	if (debug >= 1)
 	    log(sm.getString("hostConfig.stop"));
+
+        undeployApps();
+
+    }
+
+
+    /**
+     * Undeploy all deployed applications.
+     */
+    private void undeployApps() {
+
+        if (!(host instanceof Deployer))
+            return;
+        if (debug >= 1)
+            log(sm.getString("hostConfig.undeploying"));
+
+        String contextPaths[] = ((Deployer) host).findDeployedApps();
+        for (int i = 0; i < contextPaths.length; i++) {
+            if (debug >= 1)
+                log(sm.getString("hostConfig.undeploy", contextPaths[i]));
+            try {
+                ((Deployer) host).undeploy(contextPaths[i]);
+            } catch (Throwable t) {
+                log(sm.getString("hostConfig.undeploy.error",
+                                 contextPaths[i]), t);
+            }
+        }
 
     }
 
