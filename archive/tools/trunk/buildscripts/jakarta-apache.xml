@@ -61,11 +61,13 @@
    <target name="binaries.get" >
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat.zip" 
          dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+    <get src="ftp://tokyo.javasoft.com/pub/ant/ant.zip" 
+         dest="${nightly.dir}/ant.zip" />
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/ASFtomcat-pkg.zip" 
          dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat-test.log" 
          dest="${nightly.dir}/log/tomcat-test-SunOS-${DSTAMP}.log" />
-    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/watchdog-test.log" 
+    <get src="ftp://tokyo.javasoft.com/pub/tomcat/watchdog-test.log" 
          dest="${nightly.dir}/log/watchdog-test-SunOS-${DSTAMP}.log" />
 
     <get src="ftp://osaka.javasoft.com/pub/tomcat/watchdog-test.log" 
@@ -84,6 +86,28 @@
     <copyfile src="${nightly.dir}/tomcat-${DSTAMP}.zip" dest="${nightly.dir}/tomcat.zip" />
    </target>
 
+
+
+   <target name="tomcat.zip2tar" >
+     <deltree dir="${ws.dir}/tmp" />
+     <mkdir dir="${ws.dir}/tmp" />
+     <expand src="${nightly.dir}/tomcat.zip" dest="${ws.dir}/tmp" />
+     <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat/>
+     <exec dir="${ws.dir}/tmp"  command="compress tomcat.tar "/>
+     <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat/>
+     <exec dir="${ws.dir}/tmp"  command="bzip2 tomcat.tar "/>
+   </target>
+
+   <target name="ant.zip2tar" >
+     <deltree dir="${ws.dir}/tmp" />
+     <mkdir dir="${ws.dir}/tmp" />
+     <expand src="${nightly.dir}/ant.zip" dest="${ws.dir}/tmp" />
+     <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant/>
+     <exec dir="${ws.dir}/tmp"  command="compress ant.tar "/>
+     <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant/>
+     <exec dir="${ws.dir}/tmp"  command="bzip2 ant.tar "/>
+   </target>
+
    <target name="remove-old" >
       <exec dir="${nightly.dir}" command="find . -atime +3 -name tomcat-\*.zip -print -exec rm {} \;" />
       <exec dir="${nightly.dir}/logs" command="find . -atime +3  -print -exec rm {} \;" />
@@ -91,6 +115,9 @@
    <!-- ******************** Agregate targets  ******************** -->
 
   <target name="src.snap" depends="clean.src,ant.src.snap,tomcat.src.snap,watchdog.src.snap" >
+  </target>
+
+  <target name="bin.snap" depends="binaries.get,tomcat.zip2tar,ant.zip2tar" >
   </target>
   
 </project>

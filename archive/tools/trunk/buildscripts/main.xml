@@ -99,15 +99,22 @@
   </target>
 
 
-  <target name="rpm" > 
+  <target name="tomcat.rpm"> 
     <copyfile src="${ws.dir}/jakarta-tomcat.src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tomcat.src.zip" />
     <copyfile src="${ws.dir}/jakarta-tools.src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tools.src.zip" />
     <exec os="Linux" dir="${ws.dir}" command="rpm -ba --target noarch ${ws.dir}/jakarta-tomcat/src/etc/tomcat.spec " />
-    <exec os="Linux" dir="${ws.dir}" command="rpm -ba --target noarch ${ws.dir}/jakarta-tools/ant/src/etc/ant.spec " />
     <copyfile src="/usr/src/redhat/RPMS/noarch/tomcat-3.0-0.noarch.rpm" dest="${package.dir}/tomcat/tomcat-3.0-0.noarch.rpm" />
     <copyfile src="/usr/src/redhat/SRPMS/tomcat-3.0-0.src.rpm" dest="${package.dir}/tomcat/tomcat-3.0-0.src.rpm" />
+  </target>
+
+  <target name="ant.rpm"> 
+    <copyfile src="${ws.dir}/jakarta-tools.src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tools.src.zip" />
+    <exec os="Linux" dir="${ws.dir}" command="rpm -ba --target noarch ${ws.dir}/jakarta-tools/ant/src/etc/ant.spec " />
     <copyfile src="/usr/src/redhat/RPMS/noarch/ant-1.0-0.noarch.rpm" dest="${package.dir}/ant/ant-1.0-0.noarch.rpm" />
-    <copyfile src="/usr/src/redhat/SRPMS/ant-3.0-0.src.rpm" dest="${package.dir}/ant/ant-1.0-0.src.rpm" />
+    <copyfile src="/usr/src/redhat/SRPMS/ant-1.0-0.src.rpm" dest="${package.dir}/ant/ant-1.0-0.src.rpm" />
+  </target>
+
+  <target name="rpm"  depends="tomcat.rpm,ant.rpm"> 
   </target>
 
    <!-- ******************** Agregate targets  ******************** -->

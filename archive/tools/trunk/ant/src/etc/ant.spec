@@ -44,11 +44,10 @@ ln -s /opt/ant/bin/ant /usr/bin
 %dir /opt/ant/docs
 /opt/ant/lib/ant.jar
 /opt/ant/lib/xml.jar
-/opt/ant/lib/javac.jar
 /opt/ant/lib/moo.jar
 %config /opt/ant/lib/build.xml
 /opt/ant/bin/ant
-/opt/ant/bin/cvsget
+/opt/ant/bin/antRun
 /opt/ant/docs/index.html
 
 %changelog

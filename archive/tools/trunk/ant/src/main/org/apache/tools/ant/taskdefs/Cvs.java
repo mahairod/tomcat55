@@ -69,6 +69,7 @@ public class Cvs extends Task {
     private String cvsRoot;
     private String dest;
     private String pack;
+    private String tag;
     
     public void execute() throws BuildException {
 
@@ -79,8 +80,16 @@ public class Cvs extends Task {
 	    String ant=project.getProperty("ant.home");
 	    if(ant==null) throw new BuildException("Needs ant.home");
 
-	    String command=ant + "/bin/antRun " + dest + " cvs -d " + cvsRoot + " checkout " + pack;
+	    StringBuffer sb=new StringBuffer();
+	    sb.append(ant).append("/bin/antRun ").append(dest);
+	    sb.append(" cvs -d ").append( cvsRoot ).append(" checkout ");
+	    if(tag!=null)
+		sb.append("-r ").append(tag).append(" ");
+
+	    sb.append( pack );
             project.log(command, "cvs", Project.MSG_WARN);
+
+	    String command=sb.toString();
 
 	    // exec command on system runtime
 	    Process proc = Runtime.getRuntime().exec( command);
@@ -119,6 +128,10 @@ public class Cvs extends Task {
 
     public void setPackage(String p) {
 	this.pack = p;
+    }
+
+    public void setTag(String p) {
+	this.tag = p;
     }
 }
 
