@@ -64,6 +64,7 @@
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
+    <pathelement location="${java.home}/lib/jsse.jar"/>
     <pathelement location="${jta.jar}"/>
     <pathelement location="${ldap.jar}"/>
     <pathelement location="${mail.jar}"/>
@@ -613,8 +614,6 @@
 
       <exclude name="org/apache/catalina/util/ProcessHelper.java" 
                unless="jdk.1.3.present"/>
-      <exclude name="org/apache/catalina/realm/JAAS**"
-               unless="compile.jaas"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"
                unless="compile.jsse"/>
 
