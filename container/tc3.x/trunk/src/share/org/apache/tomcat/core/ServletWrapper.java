@@ -393,9 +393,9 @@ public class ServletWrapper {
             // the full exception object.  Oh well.
 
             request.setAttribute(Constants.ATTRIBUTE_ERROR_EXCEPTION_TYPE,
-	        t.getClass().getName());
+				 t.getClass().getName());
             request.setAttribute(Constants.ATTRIBUTE_ERROR_MESSAGE,
-                t.getMessage());
+				 t.getMessage());
 
             try {
 		// A forward would be ideal, so reset and try it
