@@ -601,6 +601,10 @@
     <extension>swf</extension>
     <mime-type>application/x-shockwave-flash</mime-type>
   </mime-mapping>
+  <mime-mapping>
+    <extension>dtd</extension>
+    <mime-type>text/plain</mime-type>
+  </mime-mapping>
 
   <!-- Establish the default list of welcome files -->
   <welcome-file-list>
