@@ -1496,13 +1496,7 @@ public class StandardSession
         if (!this.isValid || expiring || maxInactiveInterval < 0)
             return;
 
-        if (!isValid()) {
-            try {
-                expire();
-            } catch (Throwable t) {
-                log(sm.getString("standardSession.expireException"), t);
-            }
-        }
+        isValid();
 
     }
 
