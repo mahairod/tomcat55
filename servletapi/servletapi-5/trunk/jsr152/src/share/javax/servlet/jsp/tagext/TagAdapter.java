@@ -77,15 +77,22 @@ public class TagAdapter
 {
     /** The simple tag that's being adapted */
     private SimpleTag simpleTagAdaptee;
+
+    /** The parent, of this tag, converted (if necessary) to be of type Tag */
+    private Tag cachedParent;
     
     /**
-     * Creates a new TagAdapter that wraps the given SimeplTag and 
+     * Creates a new TagAdapter that wraps the given SimpleTag and 
      * returns the parent tag when getParent() is called.
      *
      * @param adaptee The SimpleTag being adapted as a Tag.
      */
     public TagAdapter( SimpleTag adaptee ) {
-        this.simpleTagAdaptee = simpleTagAdaptee;
+        if( adaptee == null ) {
+	    // Cannot wrap a null adaptee.
+	    throw new IllegalArgumentException();
+        }
+        this.simpleTagAdaptee = adaptee;
     }
     
     /**
@@ -122,9 +129,18 @@ public class TagAdapter
      * @return The parent of the tag being adapted.
      */
     public Tag getParent() {
-	// Note the parent tag must be an instance of Tag (either a 
-	// direct instance or a wrapped instance).
-	return (Tag)simpleTagAdaptee.getParent();
+	if( this.cachedParent == null ) {
+	    JspTag parent = simpleTagAdaptee.getParent();
+	    if( parent instanceof Tag ) {
+	        this.cachedParent = (Tag)parent;
+	    }
+	    else {
+                // Must be SimpleTag - no other types defined.
+	        this.cachedParent = new TagAdapter( (SimpleTag)parent );
+	    }
+	}
+
+	return this.cachedParent;
     }
     
     /**
