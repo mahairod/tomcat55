@@ -234,7 +234,6 @@ are for the actual TCP replication.
 <p>
     The membership is established by all the tomcat instances are sending broadcast messages
     on the same multicast IP and port.
-
     The TCP listen port, is the port where the session replication is received from other members.
 </p>
 <p>
@@ -242,18 +241,25 @@ are for the actual TCP replication.
     replication.
 </p>
 <p>
-    One of the most important performance considerations is the synchronous versus asynchronous replication
+    One of the most important performance considerations is the synchronous (pooled or not pooled) versus asynchronous replication
     mode. In a synchronous replication mode the request doesn't return until the replicated session has been
     sent over the wire and reinstantiated on all the other cluster nodes.
-    Using synchronous mode potentially becomes a bottleneck, but is a must if you cant have
-    sticky sessions, what is recommended here is to increase the number of threads that handle
+    There are two settings for synchronous replication. Pooled or not pooled.
+    Not pooled (ie replicationMode=&quot;synchronous&quot;) means that all the replication request are sent over a single
+    socket.
+    Using synchronous mode potentially becomes a bottleneck,
+    You can overcome this bottleneck by setting replicationMode=&quot;pooled&quot;.
+    What is recommended here is to increase the number of threads that handle
     incoming replication request. This is the tcpThreadCount property in the cluster
-    section of server.xml.
+    section of server.xml. The pooled setting means that we are using multiple sockets, hence increases the performance.
     Asynchronous replication, should be used if you have sticky sessions until fail over, then
     your replicated data is not time crucial, but the request time is, at this time leave the tcpThreadCount to
     be number-of-nodes-1.
     During async replication, the request is returned before the data has been replicated. async replication yields shorter
     request times, and synchronous replication guarantees the session to be replicated before the request returns.
+</p>
+<p>
+    The parameter &quot;replicationMode&quot; has three different settings: &quot;pooled&quot;, &quot;synchronous&quot; and &quot;asynchronous&quot;
 </p>
 </section>
 
