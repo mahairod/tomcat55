@@ -373,11 +373,10 @@ public class TagBeginGenerator
 
 	        writer.println("out = pageContext.pushBody();");
 	        writer.println(thVarName+".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
+	        writer.println(thVarName+".doInitBody();");
 
 	        writer.popIndent();
 	        writer.println("}");
-
-	        writer.println(thVarName+".doInitBody();");
 	    }
 
 	    writer.println("do {");
