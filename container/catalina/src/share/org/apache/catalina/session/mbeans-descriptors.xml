@@ -260,6 +260,15 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="getSession"
+          description="Get information about a session"
+               impact="ACTION"
+           returnType="java.util.HashMap">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="expireSession"
           description="Expire a session"
                impact="ACTION"

@@ -29,6 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivilegedAction;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
@@ -1121,6 +1122,42 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         Object o=s.getSession().getAttribute(key);
         if( o==null ) return null;
         return o.toString();
+    }
+
+
+    /**
+     * Returns information about the session with the given session id.
+     * 
+     * <p>The session information is organized as a HashMap, mapping 
+     * session attribute names to the String representation of their values.
+     *
+     * @param sessionId Session id
+     * 
+     * @return HashMap mapping session attribute names to the String
+     * representation of their values, or null if no session with the
+     * specified id exists, or if the session does not have any attributes
+     */
+    public HashMap getSession(String sessionId) {
+        Session s = (Session) sessions.get(sessionId);
+        if (s == null) {
+            if (log.isInfoEnabled()) {
+                log.info("Session not found " + sessionId);
+            }
+            return null;
+        }
+
+        Enumeration ee = s.getSession().getAttributeNames();
+        if (ee == null || !ee.hasMoreElements()) {
+            return null;
+        }
+
+        HashMap map = new HashMap();
+        while (ee.hasMoreElements()) {
+            String attrName = (String) ee.nextElement();
+            map.put(attrName, getSessionAttribute(sessionId, attrName));
+        }
+
+        return map;
     }
 
 
