@@ -3387,8 +3387,8 @@ public class StandardContext
             // Adding the additional parameters, if any
             addAdditionalParameters(ref, ejb.getName());
             try {
-                createSubcontexts(compCtx, ejb.getName());
-                compCtx.bind(ejb.getName(), ref);
+                createSubcontexts(envCtx, ejb.getName());
+                envCtx.bind(ejb.getName(), ref);
             } catch (NamingException e) {
                 log(sm.getString("standardContext.bindFailed", e));
             }
@@ -3407,8 +3407,8 @@ public class StandardContext
             // Adding the additional parameters, if any
             addAdditionalParameters(ref, resource.getName());
             try {
-                createSubcontexts(compCtx, resource.getName());
-                compCtx.bind(resource.getName(), ref);
+                createSubcontexts(envCtx, resource.getName());
+                envCtx.bind(resource.getName(), ref);
             } catch (NamingException e) {
                 log(sm.getString("standardContext.bindFailed", e));
             }
@@ -3426,8 +3426,8 @@ public class StandardContext
             // Adding the additional parameters, if any
             addAdditionalParameters(ref, key);
             try {
-                createSubcontexts(compCtx, key);
-                compCtx.bind(key, ref);
+                createSubcontexts(envCtx, key);
+                envCtx.bind(key, ref);
             } catch (NamingException e) {
                 log(sm.getString("standardContext.bindFailed", e));
             }
