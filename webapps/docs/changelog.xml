@@ -36,6 +36,11 @@
   </subsection>
 
   <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>29831</bug>: Added support for Boolean property to BeanFactory. (yoavs)
+      </fix>
+    </changelog>
   </subsection>
 
   <subsection name="Coyote">
