@@ -74,7 +74,8 @@ import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
- * Processes and extracts the directive info in a tag file.
+ * 1. Processes and extracts the directive info in a tag file.
+ * 2. Compiles and loads tag files used in a JSP file.
  *
  * @author Kin-man Chung
  */
@@ -158,9 +159,9 @@ public class TagFileProcessor {
 
             bodycontent = n.getAttributeValue("body-content");
             if (bodycontent != null &&
-                    !bodycontent.equals(TagInfo.BODY_CONTENT_EMPTY) &&
-                    !bodycontent.equals(TagInfo.BODY_CONTENT_TAG_DEPENDENT) &&
-                    !bodycontent.equals(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
+                    !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY) &&
+                    !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT) &&
+                    !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
                 err.jspError("jsp.error.tagdirective.badbodycontent",
                              bodycontent);
             }
@@ -331,7 +332,7 @@ public class TagFileProcessor {
     /**
      * Compiles and loads a tagfile.
      */
-    public static Class loadTagFile(JspCompilationContext ctxt,
+    private static Class loadTagFile(JspCompilationContext ctxt,
 				    String tagFilePath, TagInfo tagInfo,
 				    TagData tagData)
 	throws JasperException {
@@ -339,19 +340,18 @@ public class TagFileProcessor {
 	JspRuntimeContext rctxt = ctxt.getRuntimeContext();
         JspServletWrapper wrapper =
 		(JspServletWrapper) rctxt.getWrapper(tagFilePath);
+
+	// No need to synchronize wrapper creation since this can only
+	// happen when a JSP file is compiled, which is synchronized.
 	if (wrapper == null) {
-	    synchronized(rctxt) {
-		wrapper = (JspServletWrapper) rctxt.getWrapper(tagFilePath);
-		if (wrapper == null) {
-		    wrapper = new JspServletWrapper(ctxt.getServletContext(),
-						    ctxt.getOptions(),
-						    tagFilePath,
-                                                    tagInfo,
-						    tagData,
-						    ctxt.getRuntimeContext(),
-						    ctxt.getTagFileJars());
-		}
-	    }
+	    wrapper = new JspServletWrapper(ctxt.getServletContext(),
+					    ctxt.getOptions(),
+					    tagFilePath,
+					    tagInfo,
+					    tagData,
+					    ctxt.getRuntimeContext(),
+					    ctxt.getTagFileJars());
+	    rctxt.addWrapper(tagFilePath,wrapper);
 	}
 	return wrapper.loadTagFile();
     }
@@ -384,6 +384,12 @@ public class TagFileProcessor {
 	}
     }
 
+    /**
+     * Implements a phase of the translation that compiles (if necessary)
+     * the tag files used in a JSP files.  The directives in the tag files
+     * are assumed to have been proccessed and encapsulated as TagFileInfo
+     * in the CustomTag nodes.
+     */
     public static void loadTagFiles(Compiler compiler, Node.Nodes page)
 		throws JasperException {
 

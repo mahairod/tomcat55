@@ -1498,10 +1498,10 @@ public class Parser {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<%")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<jsp:scriptlet")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<jsp:text")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("${")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<jsp:")) {
