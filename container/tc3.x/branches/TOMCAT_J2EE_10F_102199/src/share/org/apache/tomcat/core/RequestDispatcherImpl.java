@@ -113,9 +113,23 @@ public class RequestDispatcherImpl implements RequestDispatcher {
 	ForwardedRequest fRequest =
 	    new ForwardedRequest(realRequest, urlPath);
 
+        // join the query strings of the destination request
+        // with the originaing request in that order.
+
+        String aggregatedQueryString = this.queryString;
+
+        if (realRequest.getQueryString() != null &&
+            realRequest.getQueryString().trim().length() > 0) {
+            if (aggregatedQueryString == null) {
+                aggregatedQueryString = realRequest.getQueryString();
+            } else {
+                aggregatedQueryString += "&" + realRequest.getQueryString();
+            }
+        }
+
         fRequest.setServletPath(this.lookupResult.getServletPath());
 	fRequest.setPathInfo(this.lookupResult.getPathInfo());
-        fRequest.setQueryString(queryString);
+        fRequest.setQueryString(aggregatedQueryString);
 
 	this.lookupResult.getWrapper().handleRequest(fRequest, resFacade);
     }
