@@ -15,7 +15,6 @@ KNOWN ISSUES IN THIS RELEASE:
 * JNI Based Applications
 * Bundled APIs
 * Web application reloading and static fields in shared libraries
-* JAVAC leaking memory
 * Tomcat on Linux
 * Enabling SSI and CGI Support
 * Security manager URLs
@@ -106,19 +105,6 @@ Something which might help is to avoid putting classes which would be
 referenced by a shared static field in the web application classloader,
 and putting them in the shared classloader instead (JARs should be put in the
 "lib" folder, and classes should be put in the "classes" folder).
-
-
-=====================
-JAVAC leaking memory:
-=====================
-The Java compiler leaks memory each time a class is compiled. Web applications
-containing hundreds of JSP files may as a result trigger out of memory errors
-once a significant number of pages have been accessed. The memory can only be
-freed by stopping Tomcat and then restarting it.
-
-The JSP command line compiler (JSPC) can also be used to precompile the JSPs.
-
-Note: This issue has been fixed in Sun JDK 1.4.x.
 
 
 ================
