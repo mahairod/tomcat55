@@ -275,6 +275,46 @@ public class Validator {
             // tag file in which the directive appeared.
         
             // This method does additional processing to collect page info
+            
+	    Attributes attrs = n.getAttributes();
+	    for (int i = 0; i < attrs.getLength(); i++) {
+		String attr = attrs.getQName(i);
+		String value = attrs.getValue(i);
+
+		if ("language".equals(attr)) {
+		    if (languageSeen)
+			err.jspError(n, "jsp.error.page.multiple.language");
+		    languageSeen = true;
+		    if (!"java".equalsIgnoreCase(value))
+			err.jspError(n, "jsp.error.language.nonjava");
+		    pageInfo.setLanguage(value);
+		} else if ("isScriptingEnabled".equals(attr)) {
+		    // XXX Test for multiple occurrence?
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setScriptingEnabled(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setScriptingEnabled(false);
+		    else
+			err.jspError(n, "jsp.error.isScriptingEnabled.invalid");
+		} else if ("isELEnabled".equals(attr)) {
+		    // XXX Test for multiple occurrence?
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setELEnabled(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setELEnabled(false);
+		    else
+			err.jspError(n, "jsp.error.isELEnabled.invalid");
+		} else if ("pageEncoding".equals(attr)) {
+		    if (pageEncodingSeen) 
+			err.jspError(n, "jsp.error.page.multiple.pageencoding");
+		    pageEncodingSeen = true;
+		    pageInfo.setPageEncoding(value);
+		}
+	    }
+
+	    // Attributes for imports for this node have been processed by
+	    // the parsers, just add them to pageInfo.
+	    pageInfo.addImports(n.getImports());
 	}
 
 	public void visit(Node.AttributeDirective n) throws JasperException {
