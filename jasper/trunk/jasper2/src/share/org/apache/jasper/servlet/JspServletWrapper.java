@@ -74,6 +74,7 @@ public class JspServletWrapper {
     private boolean isTagFile;
     private int tripCount;
     private JasperException compileException;
+    private long servletClassLastModifiedTime;
 
     /*
      * JspServletWrapper for JSP pages.
@@ -164,6 +165,23 @@ public class JspServletWrapper {
      */
     public void setCompilationException(JasperException je) {
         this.compileException = je;
+    }
+
+    /**
+     * Sets the last-modified time of the servlet class file associated with
+     * this JspServletWrapper.
+     *
+     * @param lastModified Last-modified time of servlet class
+     */
+    public void setServletClassLastModifiedTime(long lastModified) {
+        if (this.servletClassLastModifiedTime < lastModified) {
+            synchronized (this) {
+                if (this.servletClassLastModifiedTime < lastModified) {
+                    this.servletClassLastModifiedTime = lastModified;
+                    reload = true;
+                }
+            }
+        }
     }
 
     /**

@@ -543,6 +543,9 @@ public class Compiler {
             outDated = true;
         } else {
             targetLastModified = targetFile.lastModified();
+            if (checkClass) {
+                jsw.setServletClassLastModifiedTime(targetLastModified);
+            }   
             if (targetLastModified < jspRealLastModified) {
                 if( log.isDebugEnabled() ) {
                     log.debug("Compiler: outdated: " + targetFile + " " +
