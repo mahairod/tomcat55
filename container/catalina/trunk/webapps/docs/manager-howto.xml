@@ -1020,9 +1020,9 @@ property, and specify it from the command line:</p>
 
   <subsection name="JMX Query command">
     This takes the form:
-    <source>
+<source>
 http://webserver/manager/jmxproxy/?qry=STUFF
-    </source>
+</source>
     Where <code>STUFF</code> is the JMX query you wish to perform. For example,
     here are some queries you might wish to run:
     <ul>
@@ -1052,9 +1052,9 @@ http://webserver/manager/jmxproxy/?qry=STUFF
   <subsection name="JMX Set command">
     Now that you can query an MBean, its time to muck with Tomcat's internals!
     The general form of the set command is :
-    <source>
+<source>
 http://webserver/manager/jmxproxy/?set=BEANNAME&amp;att=MYATTRIBUTE&amp;val=NEWVALUE
-    </source>
+</source>
     So you need to provide 3 request parameters:
     <ol>
       <li><code>set</code>: The full bean name</li>
@@ -1064,25 +1064,25 @@ http://webserver/manager/jmxproxy/?set=BEANNAME&amp;att=MYATTRIBUTE&amp;val=NEWV
     If all goes ok, then it will say OK, otherwise an error message will be
     shown. For example, lets say we wish to turn up debugging on the fly for the
     <code>ErrorReportValve</code>. The following will set debugging to 10.
-    <source>
+<source>
 http://localhost:8080/manager/jmxproxy/
 ?set=Catalina%3Atype%3DValve%2Cname%3DErrorReportValve%2Chost%3Dlocalhost&amp;att=debug&amp;val=10
-    </source>
+</source>
     and my result is (YMMV):
-    <source>
+<source>
 Result: ok
-    </source>
+</source>
 
     Here is what I see if I pass in a bad value. Here is the URL I used,
     I try set debugging equal to 'cowbell':
-    <source>
+<source>
 http://localhost:8080/manager/jmxproxy/
 ?set=Catalina%3Atype%3DValve%2Cname%3DErrorReportValve%2Chost%3Dlocalhost&amp;att=debug&amp;val=cowbell
-    </source>
+</source>
     When I try that, my result is
-    <source>
+<source>
 Error: java.lang.NumberFormatException: For input string: "cowbell"
-    </source>
+</source>
   </subsection>
 
 

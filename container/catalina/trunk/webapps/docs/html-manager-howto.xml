@@ -147,9 +147,9 @@ stopped will see an HTTP error 404, and this application will show as
 "stopped" on a list applications command.</p>
                              
 <p>If this command succeeds, you will see a Message like this:</p>
-<source>                     
+<source>
 OK - Stopped application at context path /examples
-</source>                    
+</source>
                              
 <p>Otherwise, the Message will start with <code>FAIL</code> and include an
 error message.  Possible causes for problems include:
@@ -253,9 +253,9 @@ reuse later).  This command is the logical opposite of the
 in the HTML manager.</p>
                              
 <p>If this command succeeds, you will see a Message like this:</p>
-<source>                     
+<source>
 OK - Undeployed application at context path /examples
-</source>                    
+</source>
                              
 <p>Otherwise, the Message will start with <code>FAIL</code> and include an
 error message.  Possible causes for problems include:
