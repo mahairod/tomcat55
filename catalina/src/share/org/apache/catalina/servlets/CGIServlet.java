@@ -330,6 +330,11 @@ public final class CGIServlet extends HttpServlet {
             cgiExecutable = value;
         }
 
+        value = getServletConfig().getInitParameter("parameterEncoding");
+        if (value != null) {
+            parameterEncoding = value;
+        }
+
         // Identify the internal container resources we need
         context = config.getServletContext();
 
