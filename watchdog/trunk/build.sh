@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 #
 # $Id$
 # Ksh wrapper around ant build system.
@@ -7,13 +7,14 @@ baseDir=`pwd`
 
 echo $baseDir .....
 
-ADDL_CLASSPATH=./../jakarta-tools/ant.jar:./../jakarta-tools/moo.jar:./../jakarta-tools/projectx-tr2.jar:../build/tomcat/lib/servlet.jar:../build/tomcat/lib/jasper.jar:../build/tomcat/lib/xml.jar
+ADDL_CLASSPATH=../build/tomcat/classes:../jakarta-tools/ant.jar:../jakarta-tools/moo.jar:../jakarta-tools/projectx-tr2.jar:../build/tomcat/lib/servlet.jar:../build/tomcat/lib/jasper.jar:../build/tomcat/lib/xml.jar
 
 if [[ -n $CLASSPATH ]]; then
-  export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
+  CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
 else
-  export CLASSPATH=$ADDL_CLASSPATH
+  CLASSPATH=$ADDL_CLASSPATH
 fi
+export CLASSPATH
 
 echo Building with classpath $CLASSPATH
 

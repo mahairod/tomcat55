@@ -1,4 +1,5 @@
 <project name="jakarta-watchdog" default="main" basedir=".">
+  <property name="build.compiler" value="classic"/>
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
@@ -20,7 +21,6 @@
       <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
       <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
 
-      <copydir src="src/server/servlet-tests" dest="${watchdog.build}/webapps/servlet-tests"/>
       <copydir src="src/server/jsp-tests" dest="${watchdog.build}/webapps/jsp-tests"/>
       <copyfile src="../jakarta-tools/moo.jar" dest="${watchdog.build}/lib/moo.jar"/>
 
@@ -40,9 +40,6 @@
       <chmod src="${watchdog.build}/runtest.sh" perm="+x"/> 
    </target>       
    <target name="main" depends="prepare">
-
-      <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
-             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
 
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
