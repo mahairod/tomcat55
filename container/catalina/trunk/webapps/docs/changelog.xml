@@ -34,6 +34,9 @@
  
   <subsection name="Coyote">
     <changelog>
+      <fix>
+        <bug>29162</bug>: Added quote escape for mod_jk module location.
+      </fix>
     </changelog>
   </subsection>
 
