@@ -38,6 +38,9 @@ General New Features:
         Complete development of the initial version of the administration web
         application.
 
+[4.1.5] Administration Webapp:
+        Add support for manipulating JNDI resources of web applications.
+
 
 ---------------------
 Catalina New Features:
@@ -250,11 +253,19 @@ Catalina Bug Fixes:
         JNDIRealm:
         The security exploit has been fixed.
 
-[4.1.5] ProxyDirContext:
-        Use a LRUMap instead of an unbounded hashtable for the cache.
-
 [4.1.5] HTMLManagerServlet:
         Many improvements and small feature additions.
+
+[4.1.5] #8935
+        Deadlock with reload in manager
+        StandardWrapper:
+        The deallocation of a wrapper will not timeout after 500 ms.
+
+[4.1.5] #8013
+        DefaultServlet Throws NumberFormatException
+        DefaultServlet:
+        Use getDateHeader instead of instance local date parsers to solve
+        thread safety issues.
 
 
 ----------------
@@ -307,6 +318,12 @@ Jasper Bug Fixes:
 
 [4.1.5] Compiler:
         Clean up Ant error message generation.
+
+[4.1.5] #8926
+        Duplicate variable definition in generated Java source, related to 
+        custom tag scripting variable
+        Generator:
+        Fix variable declaration locations.
 
 
 ============================
