@@ -322,6 +322,9 @@ public class EditRealmAction extends Action {
             attribute = "roleNameCol";
             realmFm.setRoleNameCol
                 ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userNameCol";
+            realmFm.setUserNameCol
+                ((String) mBServer.getAttribute(rname, attribute));
             attribute = "userCredCol";
             realmFm.setPasswordCol
                 ((String) mBServer.getAttribute(rname, attribute));

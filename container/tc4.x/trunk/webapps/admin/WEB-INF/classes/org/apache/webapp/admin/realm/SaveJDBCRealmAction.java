@@ -294,6 +294,10 @@ public final class SaveJDBCRealmAction extends Action {
             mBServer.setAttribute(roname,
                                   new Attribute("roleNameCol",  rform.getRoleNameCol()));
 
+            attribute = "userNameCol";
+            mBServer.setAttribute(roname,
+                                  new Attribute("userNameCol",  rform.getUserNameCol()));
+
             attribute = "userCredCol";
             mBServer.setAttribute(roname,
                                   new Attribute("userCredCol",  rform.getPasswordCol()));

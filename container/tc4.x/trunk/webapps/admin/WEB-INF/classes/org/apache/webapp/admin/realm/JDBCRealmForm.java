@@ -98,7 +98,12 @@ public final class JDBCRealmForm extends RealmForm {
      * The text for the roleNameCol.
      */
     private String roleNameCol = null;
-    
+
+    /**
+     * The text for the userNameCol.
+     */
+    private String userNameCol = null;
+
     /**
      * The text for the passwordCol.
      */
@@ -170,6 +175,24 @@ public final class JDBCRealmForm extends RealmForm {
     public void setRoleNameCol(String roleNameCol) {
         
         this.roleNameCol = roleNameCol;
+        
+    }
+    
+    /**
+     * Return the userNameCol.
+     */
+    public String getUserNameCol() {
+        
+        return this.userNameCol;
+        
+    }
+    
+    /**
+     * Set the userNameCol.
+     */
+    public void setUserNameCol(String userNameCol) {
+        
+        this.userNameCol = userNameCol;
         
     }
     /**
@@ -316,6 +339,7 @@ public final class JDBCRealmForm extends RealmForm {
         this.driver = null;
         
         this.roleNameCol = null;
+        this.userNameCol = null;
         this.passwordCol = null;
         this.userTable = null;
         this.roleTable = null;
@@ -341,6 +365,8 @@ public final class JDBCRealmForm extends RealmForm {
         sb.append(driver);
         sb.append("',roleNameCol=");
         sb.append(roleNameCol);
+        sb.append("',userNameCol=");
+        sb.append(userNameCol);
         sb.append(",passwordCol=");
         sb.append(passwordCol);
         sb.append("',userTable='");
@@ -394,7 +420,12 @@ public final class JDBCRealmForm extends RealmForm {
                 errors.add("roleNameCol",
                 new ActionError("error.roleNameCol.required"));
             }
-         
+
+            if ((userNameCol == null) || (userNameCol.length() < 1)) {
+                errors.add("userNameCol",
+                new ActionError("error.userNameCol.required"));
+            }
+
              if ((passwordCol == null) || (passwordCol.length() < 1)) {
                 errors.add("passwordCol",
                 new ActionError("error.passwordCol.required"));
