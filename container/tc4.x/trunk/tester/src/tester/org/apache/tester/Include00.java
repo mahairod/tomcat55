@@ -88,6 +88,9 @@ public class Include00 extends HttpServlet {
         // Acquire the flush flag
         boolean flush = "true".equals(request.getParameter("flush"));
 
+        // Acquire the "create a session" flag
+        boolean create = "true".equals(request.getParameter("create"));
+
         // Create a request dispatcher and call include() on it
         RequestDispatcher rd = null;
         if (path.startsWith("!"))
@@ -97,6 +100,10 @@ public class Include00 extends HttpServlet {
         if (rd == null) {
             sb.append(" No RequestDispatcher returned/");
         } else {
+            HttpSession session;
+            if (create) {
+                session = request.getSession();
+            }
             if (flush) {
                 try {
                     response.flushBuffer();

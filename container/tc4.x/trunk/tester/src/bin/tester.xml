@@ -551,7 +551,7 @@
 
   <target name="Jsp">
 
-    <!-- ========== JSP Access To Bean Classes ============================ -->
+    <echo message="----- JSP Access To Bean Classes -----"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/JspBeans01.jsp" debug="${debug}"
@@ -565,7 +565,7 @@
          request="${context.path}/JspBeans03.jsp" debug="${debug}"
       outContent="JspBeans03 PASSED"/>
 
-    <!-- ========== <jsp:params> not legal in <jsp:include/forward> ======= -->
+    <echo message="----- jsp:params not legal in jsp:include/forward -----"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/JspParams01.jsp" debug="${debug}"
@@ -575,7 +575,7 @@
          request="${context.path}/JspParams02.jsp" debug="${debug}"
           status="500"/>
 
-    <!-- ========== Character Encoding and Escaping Tests ================= -->
+    <echo message="----- Character Encoding and Escaping Tests -----"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/Encoding01.jsp" debug="${debug}"
@@ -589,7 +589,7 @@
          request="${context.path}/Encoding03.jsp" debug="${debug}"
           golden="${golden.path}/Encoding03.txt"/>
 
-    <!-- ========== Property Editor Support =============================== -->
+    <echo message="----- PropertyEditor Support -----"/>
 
 <!-- Cannot test PropertyEditor support under security manager
      unless catalina.policy grants read/write access to
@@ -604,30 +604,38 @@
          request="${context.path}/Property02.jsp" debug="${debug}"
           status="500"/>
 
-    <!-- ========== JSP Document Parsing ================================== -->
+    <echo message="----- JSP Document Parsing -----"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${context.path}/JspDoc01.jsp" debug="${debug}"
           golden="${golden.path}/JspDoc01.txt"/>
 
-    <!-- ========== JSP Forwards and Includes ============================= -->
+    <echo message="----- jsp:forward -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/JspForward01.jsp" debug="${debug}"
+         request="${context.path}/JspForward01.jsp?path=/JspForward01a.jsp" debug="${debug}"
       outContent="JspForward01a PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/JspForward01.jsp?path=/Forward00a" debug="${debug}"
+      outContent="Forward00a PASSED"/>
+
+    <echo message="----- jsp:include flush=true -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/JspInclude01.jsp?path=/JspInclude01a.jsp" debug="${debug}"
           golden="${golden.path}/JspInclude01.txt"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/JspInclude02.jsp?path=/JspInclude02a.jsp" debug="${debug}"
-          golden="${golden.path}/JspInclude02.txt"/>
-
-    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/JspInclude01.jsp?path=/Include00a"
            debug="${debug}"
           golden="${golden.path}/JspInclude01a.txt"/>
+
+    <echo message="----- jsp:include flush=false -----"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/JspInclude02.jsp?path=/JspInclude02a.jsp" debug="${debug}"
+          golden="${golden.path}/JspInclude02.txt"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/JspInclude02.jsp?path=/Include00a"
@@ -679,7 +687,7 @@
 
   <target name="RequestDispatcher">
 
-    <!-- ========== Basic Forward Functionality =========================== -->
+    <echo message="----- Basic Forward Functionality -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Forward00?path=/Forward00a"
@@ -721,7 +729,7 @@
          request="${context.path}/WrappedForward00?path=!Forward00e"
       outContent="Forward00e PASSED" debug="${debug}"/>
 
-    <!-- ========== Basic Include Functionality (flush=false) ============= -->
+    <echo message="----- Basic Include Functionality (flush=false) -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include00?path=/Include00a&amp;flush=false"
@@ -763,49 +771,91 @@
          request="${context.path}/WrappedInclude00?path=!Include00e&amp;flush=false"
       outContent="Include00e PASSED" debug="${debug}"/>
 
-    <!-- ========== Basic Include Functionality (flush=true) ============== -->
+    <echo message="----- Basic Include (flush=true, create=true) -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include00?path=/Include00a&amp;flush=true"
+         request="${context.path}/Include00?path=/Include00a&amp;flush=true&amp;create=true"
       outContent="Include00a PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude00?path=/Include00a&amp;flush=true"
+         request="${context.path}/WrappedInclude00?path=/Include00a&amp;flush=true&amp;create=true"
       outContent="Include00a PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include00?path=/Include00b&amp;flush=true"
+         request="${context.path}/Include00?path=/Include00b&amp;flush=true&amp;create=true"
       outContent="Include00b PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude00?path=/Include00b&amp;flush=true"
+         request="${context.path}/WrappedInclude00?path=/Include00b&amp;flush=true&amp;create=true"
       outContent="Include00b PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include00?path=/Include00c.jsp&amp;flush=true"
+         request="${context.path}/Include00?path=/Include00c.jsp&amp;flush=true&amp;create=true"
       outContent="Include00c PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude00?path=/Include00c.jsp&amp;flush=true"
+         request="${context.path}/WrappedInclude00?path=/Include00c.jsp&amp;flush=true&amp;create=true"
       outContent="Include00c PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include00?path=!Include00d&amp;flush=true"
+         request="${context.path}/Include00?path=!Include00d&amp;flush=true&amp;create=true"
       outContent="Include00d PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude00?path=!Include00d&amp;flush=true"
+         request="${context.path}/WrappedInclude00?path=!Include00d&amp;flush=true&amp;create=true"
       outContent="Include00d PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include00?path=!Include00e&amp;flush=true"
+         request="${context.path}/Include00?path=!Include00e&amp;flush=true&amp;create=true"
       outContent="Include00e PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude00?path=!Include00e&amp;flush=true"
+         request="${context.path}/WrappedInclude00?path=!Include00e&amp;flush=true&amp;create=true"
       outContent="Include00e PASSED" debug="${debug}"/>
 
-    <!-- ========== Forward and Include to Static Resource ================ -->
+    <echo message="----- Basic Include (flush=true, create=false) -----"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=/Include00a&amp;flush=true&amp;create=false"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=/Include00a&amp;flush=true&amp;create=false"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=/Include00b&amp;flush=true&amp;create=false"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=/Include00b&amp;flush=true&amp;create=false"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=/Include00c.jsp&amp;flush=true&amp;create=false"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=/Include00c.jsp&amp;flush=true&amp;create=false"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=!Include00d&amp;flush=true&amp;create=false"
+      outContent="Include00d PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=!Include00d&amp;flush=true&amp;create=false"
+      outContent="Include00d PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include00?path=!Include00e&amp;flush=true&amp;create=false"
+      outContent="Include00e PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude00?path=!Include00e&amp;flush=true&amp;create=false"
+      outContent="Include00e PASSED" debug="${debug}"/>
+
+    <echo message="----- Forward and Include to Static Resource -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Forward01" debug="${debug}"
@@ -823,7 +873,7 @@
          request="${context.path}/WrappedInclude01" debug="${debug}"
       outContent="Include01 PASSED"/>
 
-    <!-- ========== Included Servlet Throwing Exceptions ================== -->
+    <echo message="----- Included Servlet Throwing Exceptions -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include02?exception=IOException"
@@ -849,7 +899,7 @@
          request="${context.path}/WrappedInclude02?exception=NullPointerException"
       outContent="Include02 PASSED" debug="${debug}"/>
 
-    <!-- ========== Forwarded Servlet/Page Sets Attribute ================ -->
+    <echo message="----- Forwarded Servlet/Page Sets Attribute -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Forward03?path=/Forward03a"
@@ -867,7 +917,7 @@
          request="${context.path}/WrappedForward03?path=/Forward03b.jsp"
       outContent="Forward03 PASSED" debug="${debug}"/>
 
-    <!-- ========== Included Servlet/Page Sets Attribute ================= -->
+    <echo message="----- Included Servlet/Page Sets Attribute -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include03?path=/Include03a"
@@ -885,7 +935,7 @@
          request="${context.path}/WrappedInclude03?path=/Include03b.jsp"
       outContent="Include03 PASSED" debug="${debug}"/>
 
-    <!-- ========== Include Then Forward ================================== -->
+    <echo message="----- Include Then Forward -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include04"
@@ -899,7 +949,7 @@
          request="${context.path}/Include05.jsp"
       outContent="Include05b PASSED" debug="${debug}"/>
 
-    <!-- ========== Include Then Include ================================== -->
+    <echo message="----- Include Then Include -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include06.jsp" debug="${debug}"
@@ -909,7 +959,7 @@
          request="${context.path}/Include07" debug="${debug}"
           golden="${golden.path}/Include07.txt"/>
 
-    <!-- ========== Forward Then Forward ================================== -->
+    <echo message="----- Forward Then Forward -----"/>
 
     <!-- Servlet to Servlet to Servlet -->
 
@@ -971,7 +1021,7 @@
          request="${context.path}/servlet/Forward08"
       outContent="Forward08b PASSED" debug="${debug}"/>
 
-    <!-- ========== ServletRequest.getRequestDispatcher() ================= -->
+    <echo message="----- ServletRequest.getRequestDispatcher() -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Forward09?path=/Forward00a"
@@ -1069,7 +1119,7 @@
          request="${context.path}/WrappedInclude09?path=Include00c.jsp"
       outContent="Include00c PASSED" debug="${debug}"/>
 
-    <!-- ========== Container-Created Include Attributes ================== -->
+    <echo message="----- Container-Created Include Attributes -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include10/extra/path?name1=value1"
@@ -1079,8 +1129,7 @@
          request="${context.path}/WrappedInclude10/extra/path?name1=value1"
       outContent="Include10a PASSED" debug="${debug}"/>
 
-
-    <!-- ========== Response Wrapping ===================================== -->
+    <echo message="----- Response Wrapping -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ResponseWrap01?type=F&amp;page=/ResponseWrap01a"
