@@ -1421,6 +1421,10 @@ public class CoyoteResponse
         if (location == null)
             return (location);
 
+		if (location.toLowerCase().startsWith("mailto")) {
+			return (location);
+		}
+		
         boolean leadingSlash = location.startsWith("/");
 
         if (leadingSlash 
