@@ -1,4 +1,5 @@
 /*
+ * ====================================================================
  * $Header$
  * $Revision$
  * $Date$
@@ -76,6 +77,8 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
@@ -109,6 +112,12 @@ import javax.naming.NameClassPair;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.Transformer;
 
 import org.apache.tomcat.util.http.FastHttpDateFormat;
 
@@ -191,6 +200,25 @@ public class DefaultServlet
      * Array containing the safe characters set.
      */
     protected static URLEncoder urlEncoder;
+
+
+    /**
+     * Allow customized directory listing per directory.
+     */
+    protected String  localXsltFile = null;
+
+
+    /**
+     * Allow customized directory listing per instance.
+     */
+    protected String  globalXsltFile = null;
+
+
+    /**
+     * Allow a readme file to be included.
+     */
+    protected String readmeFile = null;
+
 
 
     // ----------------------------------------------------- Static Initializer
@@ -282,6 +310,11 @@ public class DefaultServlet
         } catch (Throwable t) {
             ;
         }
+
+        globalXsltFile = getServletConfig().getInitParameter("globalXsltFile");
+        localXsltFile = getServletConfig().getInitParameter("localXsltFile");
+        readmeFile = getServletConfig().getInitParameter("readmeFile");
+
 
         // Sanity check on the specified buffer sizes
         if (input < 256)
@@ -623,12 +656,12 @@ public class DefaultServlet
 
 
     /**
-     * Handle a partial PUT.  New content specified in request is appended to 
-     * existing content in oldRevisionContent (if present). This code does 
+     * Handle a partial PUT.  New content specified in request is appended to
+     * existing content in oldRevisionContent (if present). This code does
      * not support simultaneous partial updates to the same resource.
      */
-    protected File executePartialPut(HttpServletRequest req, Range range, 
-                                     String path) 
+    protected File executePartialPut(HttpServletRequest req, Range range,
+                                     String path)
         throws IOException {
 
         // Append data specified in ranges to existing content for this
@@ -644,7 +677,7 @@ public class DefaultServlet
             contentFile.deleteOnExit();
         }
 
-        RandomAccessFile randAccessContentFile = 
+        RandomAccessFile randAccessContentFile =
             new RandomAccessFile(contentFile, "rw");
 
         Resource oldResource = null;
@@ -657,8 +690,8 @@ public class DefaultServlet
 
         // Copy data in oldRevisionContent to contentFile
         if (oldResource != null) {
-            BufferedInputStream bufOldRevStream = 
-                new BufferedInputStream(oldResource.streamContent(), 
+            BufferedInputStream bufOldRevStream =
+                new BufferedInputStream(oldResource.streamContent(),
                                         BUFFER_SIZE);
 
             int numBytesRead;
@@ -759,9 +792,9 @@ public class DefaultServlet
                                      ResourceInfo resourceInfo)
         throws IOException {
 
-        return checkIfMatch(request, response, resourceInfo) 
-            && checkIfModifiedSince(request, response, resourceInfo) 
-            && checkIfNoneMatch(request, response, resourceInfo) 
+        return checkIfMatch(request, response, resourceInfo)
+            && checkIfModifiedSince(request, response, resourceInfo)
+            && checkIfNoneMatch(request, response, resourceInfo)
             && checkIfUnmodifiedSince(request, response, resourceInfo);
 
     }
@@ -780,7 +813,7 @@ public class DefaultServlet
         } else if (resourceInfo.weakETag != null) {
             return resourceInfo.weakETag;
         } else {
-            return "W/\"" + resourceInfo.length + "-" 
+            return "W/\"" + resourceInfo.length + "-"
                 + resourceInfo.date + "\"";
         }
     }
@@ -908,7 +941,7 @@ public class DefaultServlet
         ResourceInfo resourceInfo = new ResourceInfo(path, resources);
 
         if (!resourceInfo.exists) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                request.getRequestURI());
             return;
         }
@@ -917,7 +950,7 @@ public class DefaultServlet
         // ends with "/" or "\", return NOT FOUND
         if (!resourceInfo.collection) {
             if (path.endsWith("/") || (path.endsWith("\\"))) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                    request.getRequestURI());
                 return;
             }
@@ -957,7 +990,7 @@ public class DefaultServlet
             // Checking If headers
             boolean included =
                 (request.getAttribute(Globals.INCLUDE_CONTEXT_PATH_ATTR) != null);
-            if (!included 
+            if (!included
                 && !checkIfHeaders(request, response, resourceInfo)) {
                 return;
             }
@@ -1170,7 +1203,7 @@ public class DefaultServlet
 
         try {
             range.start = Long.parseLong(rangeHeader.substring(0, dashPos));
-            range.end = 
+            range.end =
                 Long.parseLong(rangeHeader.substring(dashPos + 1, slashPos));
             range.length = Long.parseLong
                 (rangeHeader.substring(slashPos + 1, rangeHeader.length()));
@@ -1284,7 +1317,7 @@ public class DefaultServlet
                     currentRange.start = fileLength + offset;
                     currentRange.end = fileLength - 1;
                 } catch (NumberFormatException e) {
-                    response.addHeader("Content-Range", 
+                    response.addHeader("Content-Range",
                                        "bytes */" + fileLength);
                     response.sendError
                         (HttpServletResponse
@@ -1304,7 +1337,7 @@ public class DefaultServlet
                     else
                         currentRange.end = fileLength - 1;
                 } catch (NumberFormatException e) {
-                    response.addHeader("Content-Range", 
+                    response.addHeader("Content-Range",
                                        "bytes */" + fileLength);
                     response.sendError
                         (HttpServletResponse
@@ -1347,13 +1380,177 @@ public class DefaultServlet
 
 
     /**
+     *  Decide which way to render. HTML or XML.
+     */
+    protected InputStream render
+        (String contextPath, ResourceInfo resourceInfo) {
+        InputStream xsltInputStream = null;
+        try {
+            if (localXsltFile!=null) {
+                DirContext resources = getResources();
+                String xsltFile = resourceInfo.path + localXsltFile;
+                ResourceInfo xsltInfo = new ResourceInfo(xsltFile, resources);
+
+                if (xsltInfo.exists)
+                    xsltInputStream = xsltInfo.getStream();
+            }
+
+            if (xsltInputStream==null && globalXsltFile!=null)
+                xsltInputStream = new FileInputStream(globalXsltFile);
+
+        } catch(Throwable e) {
+            xsltInputStream = null;
+        }
+
+
+        if (xsltInputStream==null) {
+            return renderHtml(contextPath, resourceInfo);
+        } else {
+            try {
+                return renderXml(contextPath, resourceInfo, xsltInputStream);
+            } finally {
+                try {
+                    xsltInputStream.close();
+                } catch(Throwable e){
+                    ;
+                }
+            }
+        }
+
+    }
+
+    /**
      * Return an InputStream to an HTML representation of the contents
      * of this directory.
      *
      * @param contextPath Context path to which our internal paths are
      *  relative
      */
-    protected InputStream render
+    protected InputStream renderXml(String contextPath,
+                                    ResourceInfo resourceInfo,
+                                    InputStream xsltInputStream) {
+
+        StringBuffer sb = new StringBuffer();
+
+
+
+        sb.append("<?xml version=\"1.0\"?>");
+        sb.append("<listing ");
+        sb.append(" contextPath='");
+        sb.append(contextPath);
+        sb.append("'");
+        sb.append(" directory='");
+        sb.append(resourceInfo.path);
+        sb.append("' ");
+        sb.append(" hasParent='").append(!resourceInfo.path.equals("/"));
+        sb.append("'>");
+
+        sb.append("<entries>");
+
+
+        try {
+
+            // Render the directory entries within this directory
+            DirContext directory = resourceInfo.directory;
+            NamingEnumeration enum =
+                resourceInfo.resources.list(resourceInfo.path);
+            while (enum.hasMoreElements()) {
+
+                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                String resourceName = ncPair.getName();
+                ResourceInfo childResourceInfo =
+                    new ResourceInfo(resourceName, directory);
+
+                String trimmed = resourceName/*.substring(trim)*/;
+                if (trimmed.equalsIgnoreCase("WEB-INF") ||
+                    trimmed.equalsIgnoreCase("META-INF") ||
+                    trimmed.equalsIgnoreCase(localXsltFile))
+                    continue;
+
+
+                sb.append("<entry");
+                sb.append(" type='")
+                  .append(childResourceInfo.collection?"dir":"file")
+                  .append("'");
+                sb.append(" urlPath='")
+                  .append(rewriteUrl(contextPath))
+                  .append(rewriteUrl(resourceInfo.path + resourceName))
+                  .append(childResourceInfo.collection?"/":"")
+                  .append("'");
+                if (!childResourceInfo.collection) {
+                    sb.append(" size='")
+                      .append(renderSize(childResourceInfo.length))
+                      .append("'");
+                }
+                sb.append(" date='")
+                  .append(childResourceInfo.httpDate)
+                  .append("'");
+
+                sb.append(">");
+                sb.append(trimmed);
+                if (childResourceInfo.collection)
+                    sb.append("/");
+                sb.append("</entry>");
+
+            }
+
+        } catch (NamingException e) {
+            // Something went wrong
+            e.printStackTrace();
+        }
+
+        sb.append("</entries>");
+
+        if (readmeFile!=null) {
+            DirContext resources = getResources();
+            String readme = resourceInfo.path + readmeFile;
+            ResourceInfo readmeInfo = new ResourceInfo(readme,
+                                                       resources);
+            if (readmeInfo.exists()) {
+                try {
+                    StringWriter buffer = new StringWriter();
+                    copyRange(new InputStreamReader(readmeInfo.getStream()),
+                              new PrintWriter(buffer));
+
+                    sb.append("<readme><![CDATA[");
+                    sb.append(buffer.toString());
+                    sb.append("]]></readme>");
+                } catch(IOException e) {
+                    ; /* Change me if this should be verbose */
+                }
+            }
+        }
+
+
+        sb.append("</listing>");
+
+
+        try {
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Source xmlSource = new StreamSource(new StringReader(sb.toString()));
+            Source xslSource = new StreamSource(xsltInputStream);
+            Transformer transformer = tFactory.newTransformer(xslSource);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            OutputStreamWriter osWriter = new OutputStreamWriter(stream, "UTF8");
+            StreamResult out = new StreamResult(osWriter);
+            transformer.transform(xmlSource, out);
+            osWriter.flush();
+            return (new ByteArrayInputStream(stream.toByteArray()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return renderHtml(contextPath, resourceInfo);
+        }
+    }
+
+    /**
+     * Return an InputStream to an HTML representation of the contents
+     * of this directory.
+     *
+     * @param contextPath Context path to which our internal paths are
+     *  relative
+     */
+    protected InputStream renderHtml
         (String contextPath, ResourceInfo resourceInfo) {
 
         String name = resourceInfo.path;
@@ -1460,7 +1657,7 @@ public class DefaultServlet
 
                 sb.append("<tr");
                 if (shade)
-                    sb.append(" bgcolor=\"eeeeee\"");
+                    sb.append(" bgcolor=\"#eeeeee\"");
                 sb.append(">\r\n");
                 shade = !shade;
 
@@ -1500,6 +1697,26 @@ public class DefaultServlet
         sb.append("</table>\r\n");
 
         sb.append("<HR size=\"1\" noshade>");
+
+        if (readmeFile!=null) {
+            DirContext resources = getResources();
+            String readme = resourceInfo.path + readmeFile;
+            ResourceInfo readmeInfo = new ResourceInfo(readme,
+                                                       resources);
+            if (readmeInfo.exists()) {
+                try {
+                    StringWriter buffer = new StringWriter();
+                    copyRange(new InputStreamReader(readmeInfo.getStream()),
+                              new PrintWriter(buffer));
+
+                    sb.append(buffer.toString());
+                    sb.append("<HR size=\"1\" noshade>");
+                } catch(IOException e) {
+                    ; /* Change me if this should be verbose */
+                }
+            }
+         }
+
         sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
         sb.append("</body>\r\n");
         sb.append("</html>\r\n");
@@ -1539,7 +1756,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfMatch(HttpServletRequest request,
@@ -1584,7 +1801,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfModifiedSince(HttpServletRequest request,
@@ -1595,10 +1812,10 @@ public class DefaultServlet
             long headerValue = request.getDateHeader("If-Modified-Since");
             long lastModified = resourceInfo.date;
             if (headerValue != -1) {
-    
+
                 // If an If-None-Match header has been specified, if modified since
                 // is ignored.
-                if ((request.getHeader("If-None-Match") == null) 
+                if ((request.getHeader("If-None-Match") == null)
                     && (lastModified <= headerValue + 1000)) {
                     // The entity has not been modified since the date
                     // specified by the client. This is not an error case.
@@ -1621,7 +1838,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfNoneMatch(HttpServletRequest request,
@@ -1637,7 +1854,7 @@ public class DefaultServlet
 
             if (!headerValue.equals("*")) {
 
-                StringTokenizer commaTokenizer = 
+                StringTokenizer commaTokenizer =
                     new StringTokenizer(headerValue, ",");
 
                 while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
@@ -1679,7 +1896,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfUnmodifiedSince(HttpServletRequest request,
@@ -2283,7 +2500,7 @@ public class DefaultServlet
                         tempDate = tempAttrs.getLastModifiedDate();
                         if (tempDate != null) {
                             date = tempDate.getTime();
-                            httpDate = 
+                            httpDate =
                                 FastHttpDateFormat.formatDate(date, null);
                         } else {
                             httpDate = FastHttpDateFormat.getCurrentDate();
