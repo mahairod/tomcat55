@@ -27,6 +27,7 @@ import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
+import javax.management.Attribute;
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -1173,8 +1174,7 @@ public abstract class RealmBase
                 }
                 if( mserver.isRegistered(parent ))  {
                     log.debug("Register with " + parent);
-                    mserver.invoke(parent, "setRealm", new Object[] {this},
-                            new String[] {"org.apache.catalina.Realm"});
+                    mserver.setAttribute(parent, new Attribute("realm", this));
                 }
             } catch (Exception e) {
                 log.info("Parent not available yet: " + parent);  

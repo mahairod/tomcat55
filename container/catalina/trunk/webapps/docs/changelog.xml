@@ -36,6 +36,12 @@
       <update>
         Repackage naming features. (remm)
       </update>
+      <fix>
+        Fix deployer packaging. (remm)
+      </fix>
+      <fix>
+        Fix embed packaging. (remm)
+      </fix>
     </changelog>
   </subsection>
 
@@ -107,6 +113,9 @@
       <update>
         Remove package triggers from the classloader, which seem useless when using Java 5. (remm)
       </update>
+      <fix>
+        Realms will now use set attribute to set themselves in their container when using JMX. (remm)
+      </fix>
     </changelog>
   </subsection>
 

@@ -547,7 +547,7 @@
                returnType="void">
       <parameter name="connector"
                  description="Connector object"
-                 type="org.apache.catalina.Connector"/>
+                 type="org.apache.catalina.connector.Connector"/>
     </operation>
     
     <operation name="start" description="Start" impact="ACTION" returnType="void" />

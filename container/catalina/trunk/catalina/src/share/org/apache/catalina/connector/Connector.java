@@ -1156,7 +1156,7 @@ public class Connector
             log.debug("Adding to " + parentName );
             if( mserver.isRegistered(parentName )) {
                 mserver.invoke(parentName, "addConnector", new Object[] { this },
-                        new String[] {"org.apache.catalina.Connector"});
+                        new String[] {"org.apache.catalina.connector.Connector"});
                 // As a side effect we'll get the container field set
                 // Also initialize will be called
                 //return;

@@ -404,6 +404,23 @@ public class StandardEngine
         if( !initialized ) {
             init();
         }
+
+        // Look for a realm - that may have been configured earlier. 
+        // If the realm is added after context - it'll set itself.
+        if( realm == null ) {
+            ObjectName realmName=null;
+            try {
+                realmName=new ObjectName( domain + ":type=Realm");
+                if( mserver.isRegistered(realmName ) ) {
+                    Realm nrealm = (Realm)mserver.getAttribute(realmName,
+                                                       "managedResource");
+                    setRealm(nrealm);
+                }
+            } catch( Throwable t ) {
+                log.debug("No realm for this engine " + realmName);
+            }
+        }
+            
         // Log our server identification information
         //System.out.println(ServerInfo.getServerInfo());
         log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
