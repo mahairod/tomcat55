@@ -166,7 +166,7 @@ static char *get_cookie(jk_ws_service_t *s,
                         char *id_end;
                         id_start = jk_pool_strdup(s->pool, id_start);
                         if(id_end = strchr(id_start, ';')) {
-                            id_end = NULL;
+                            *id_end = '\0';
                         }
                         return id_start;
                     }
