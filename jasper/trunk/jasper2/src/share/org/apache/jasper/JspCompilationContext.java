@@ -195,26 +195,32 @@ public class JspCompilationContext {
             return jspCompiler;
         }
         jspCompiler = null;
-        try {
-            jspCompiler = 
-                (Compiler) Class.forName("org.apache.jasper.compiler.JDTCompiler").newInstance();
-        } catch (Throwable t) {
-            // Log ?
-            // FIXME: log
-        }
-        if (jspCompiler == null) {
-            try {
-                jspCompiler = 
-                    (Compiler) Class.forName("org.apache.jasper.compiler.AntCompiler").newInstance();
-            } catch (Throwable t) {
-                // Log ?
-                // FIXME: log
+        if (options.getCompiler() == null) {
+            jspCompiler = createCompiler("org.apache.jasper.compiler.JDTCompiler");
+            if (jspCompiler == null) {
+                jspCompiler = createCompiler("org.apache.jasper.compiler.AntCompiler");
+            }
+        } else {
+            jspCompiler = createCompiler("org.apache.jasper.compiler.AntCompiler");
+            if (jspCompiler == null) {
+                jspCompiler = createCompiler("org.apache.jasper.compiler.JDTCompiler");
             }
         }
         jspCompiler.init(this, jsw);
         return jspCompiler;
     }
 
+    private static Compiler createCompiler(String className) {
+        Compiler compiler = null; 
+        try {
+            compiler = (Compiler) Class.forName(className).newInstance();
+        } catch (Throwable t) {
+            // Log ?
+            // FIXME: log
+        }
+        return compiler;
+    }
+    
     public Compiler getCompiler() {
         return jspCompiler;
     }

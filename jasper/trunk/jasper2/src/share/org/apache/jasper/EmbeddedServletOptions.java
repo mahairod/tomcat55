@@ -96,7 +96,7 @@ public final class EmbeddedServletOptions implements Options {
     /**
      * JSP reloading check ?
      */
-    private boolean reloading = true;
+    private boolean reloading = false;
 
     /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
