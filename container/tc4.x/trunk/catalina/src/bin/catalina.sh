@@ -93,7 +93,10 @@ if [ "$1" = "debug" ] ; then
 elif [ "$1" = "embedded" ] ; then
 
   shift
-  for i in ${CATALINA_HOME}/server/*.jar ; do
+  for i in ${CATALINA_HOME}/server/lib/*.jar ; do
+    CP=$i:${CP}
+  done
+  for i in ${CATALINA_HOME}/common/lib/*.jar ; do
     CP=$i:${CP}
   done
   echo Embedded Classpath: $CP
