@@ -8,6 +8,7 @@
 
     <properties>
         <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+        <author email="yoavs@apache.org">Yoav Shapira</author>
         <author email="arjaquith@mindspring.com">Andrew R. Jaquith</author>
         <title>Realm Configuration HOW-TO</title>
     </properties>
@@ -109,9 +110,14 @@ sources of authentication information:</p>
 </ul>
 
 <p>It is also possible to write your own <code>Realm</code> implementation,
-and integrate it with Tomcat 5.  However, doing this is beyond the scope of
-this document.  See (<strong>FIXME</strong> - reference to developer stuff)
-for more information.</p>
+and integrate it with Tomcat 5.  To do so, you need to:
+<ul>
+  <li>Implement <code>org.apache.catalina.Realm</code>,</li>
+  <li>Place your compiled realm in $CATALINA_HOME/server/lib,</li>
+  <li>Declare your realm as described in the "Configuring a Realm" section below,</li>
+  <li>Declare your realm to the <a href="mbeans-descriptor-howto.html">MBeans Descriptor</a>.</li>
+</ul>
+</p>
 
 </subsection>
 
@@ -128,8 +134,9 @@ configuration file, that looks something like this:</p>
        ... other attributes for this implementation .../&gt;
 </source>
 
-<p>The <code>&lt;Realm&gt;</code> element can be nested inside one of three
-different elements, which has a direct impact on the "scope" of that Realm
+<p>The <code>&lt;Realm&gt;</code> element can be nested inside any one of 
+of the following <code>Container</code> elements.  The location of the
+Realm element has a direct impact on the "scope" of that Realm
 (i.e. which web applications will share the same authentication information):
 </p>
 <ul>
