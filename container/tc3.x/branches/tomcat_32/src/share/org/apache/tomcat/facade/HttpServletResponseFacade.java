@@ -421,20 +421,26 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    return (url);
 
    String sessionId = session.getId();
-	String path = null;
-	String query = null;
-	int question = url.indexOf("?");
-	if (question < 0)
+   String path = null;
+   String everythingElse = null;
+   // First look for a query string
+   int pathEnd = url.indexOf("?");
+   if(pathEnd < 0){
+       // If no query string see if there's an anchor
+       pathEnd = url.indexOf("#");
+   }
+
+	if(pathEnd < 0)
 	    path = url;
 	else {
-	    path = url.substring(0, question);
-	    query = url.substring(question);
+	    path = url.substring(0, pathEnd);
+	    everythingElse = url.substring(pathEnd);
 	}
 	StringBuffer sb = new StringBuffer(path);
 	sb.append(";jsessionid=");
 	sb.append(sessionId);
-	if (query != null)
-	    sb.append(query);
+	if(everythingElse != null)
+	    sb.append(everythingElse);
 
 	return (sb.toString());
 
