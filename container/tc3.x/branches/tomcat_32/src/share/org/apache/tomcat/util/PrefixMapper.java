@@ -215,11 +215,14 @@ public class PrefixMapper {
 	    if( container!=null ) return container;
 	}
 		
-	while (s.length() > 0) {
+	while (s.length() >= 0) {
 	    //if(debug>8) context.log( "Prefix: " + s  );
 	    container = myMap.prefixMappedServlets.get(s);
 	    
 	    if (container == null) {
+		// if empty string didn't map, time to give up
+		if ( s.length() == 0 )
+                    break;
 		s=URLUtil.removeLast( s );
 	    }  else {
 		if( myMap.mapCacheEnabled ) {
