@@ -313,7 +313,8 @@
 
             <Sender
                 className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
-                replicationMode="pooled"/>
+                replicationMode="pooled"
+                ackTimeout="15000"/>
 
             <Valve className="org.apache.catalina.cluster.tcp.ReplicationValve"
                    filter=".*\.gif;.*\.js;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"/>
