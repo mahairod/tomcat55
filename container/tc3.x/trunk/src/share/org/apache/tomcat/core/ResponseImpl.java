@@ -351,6 +351,13 @@ public class ResponseImpl implements Response {
         if( notIncluded) headers.clear();
     }
 
+    // Reset the response buffer but not headers and cookies
+    public void resetBuffer() throws IllegalStateException {
+
+	out.reset();	// May throw IllegalStateException
+
+    }
+
     public void flushBuffer() throws IOException {
 	//	if( notIncluded) {
 	    if (usingWriter == true && writer != null)
