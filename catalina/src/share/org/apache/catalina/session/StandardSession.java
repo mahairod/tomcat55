@@ -575,8 +575,19 @@ public class StandardSession
      */
     public boolean isValid() {
 
-        return (this.isValid);
+        if (!this.isValid || this.expiring) {
+            return false;
+        }
+ 
+        if (maxInactiveInterval >= 0) { 
+            long timeNow = System.currentTimeMillis();
+            int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
+            if (timeIdle >= maxInactiveInterval) {
+                this.isValid = false;
+            }
+        }
 
+        return (this.isValid);
     }
 
 
@@ -912,7 +923,7 @@ public class StandardSession
      */
     public long getCreationTime() {
 
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.getCreationTime.ise"));
 
@@ -967,7 +978,7 @@ public class StandardSession
      */
     public Object getAttribute(String name) {
 
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.getAttribute.ise"));
 
@@ -987,7 +998,7 @@ public class StandardSession
      */
     public Enumeration getAttributeNames() {
 
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.getAttributeNames.ise"));
 
@@ -1029,7 +1040,7 @@ public class StandardSession
      */
     public String[] getValueNames() {
 
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.getValueNames.ise"));
 
@@ -1046,7 +1057,7 @@ public class StandardSession
      */
     public void invalidate() {
 
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.invalidate.ise"));
 
@@ -1068,7 +1079,7 @@ public class StandardSession
      */
     public boolean isNew() {
 
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.isNew.ise"));
 
@@ -1143,7 +1154,7 @@ public class StandardSession
     public void removeAttribute(String name, boolean notify) {
 
         // Validate our current state
-        if (!expiring && !isValid)
+        if (!expiring && !isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.removeAttribute.ise"));
 
@@ -1261,7 +1272,7 @@ public class StandardSession
         }
 
         // Validate our current state
-        if (!isValid)
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.setAttribute.ise"));
         if ((manager != null) && manager.getDistributable() &&
@@ -1479,10 +1490,7 @@ public class StandardSession
         if (!this.isValid || expiring || maxInactiveInterval < 0)
             return;
 
-        long timeNow = System.currentTimeMillis();
-        int timeIdle =  (int) ((timeNow - lastAccessedTime) / 1000L);
-
-        if (timeIdle >= maxInactiveInterval) {
+        if (!isValid()) {
             try {
                 expire();
             } catch (Throwable t) {

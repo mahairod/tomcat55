@@ -835,8 +835,7 @@ public abstract class PersistentManagerBase
         if (session == null)
             return (null);
 
-        if (!session.isValid()
-                || isSessionStale(session, System.currentTimeMillis())) {
+        if (!session.isValid()) {
             log.error("session swapped in is invalid or expired");
             session.expire();
             removeSession(id);
@@ -867,10 +866,9 @@ public abstract class PersistentManagerBase
      */
     protected void swapOut(Session session) throws IOException {
 
-        if (store == null ||
-                !session.isValid() ||
-                isSessionStale(session, System.currentTimeMillis()))
+        if (store == null || !session.isValid()) {
             return;
+        }
 
         ((StandardSession)session).passivate();
         writeSession(session);
@@ -887,10 +885,9 @@ public abstract class PersistentManagerBase
      */
     protected void writeSession(Session session) throws IOException {
 
-        if (store == null ||
-                !session.isValid() ||
-                isSessionStale(session, System.currentTimeMillis()))
+        if (store == null || !session.isValid()) {
             return;
+        }
 
         try {
             if (System.getSecurityManager() != null){
@@ -1073,27 +1070,6 @@ public abstract class PersistentManagerBase
 
 
     /**
-     * Indicate whether the session has been idle for longer
-     * than its expiration date as of the supplied time.
-     *
-     * FIXME: Probably belongs in the Session class.
-     */
-    protected boolean isSessionStale(Session session, long timeNow) {
-
-        int maxInactiveInterval = session.getMaxInactiveInterval();
-        if (maxInactiveInterval >= 0) {
-            int timeIdle = // Truncate, do not round up
-                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-            if (timeIdle >= maxInactiveInterval)
-                return true;
-        }
-
-        return false;
-
-    }
-
-
-    /**
      * Invalidate all sessions that have expired.
      */
     protected void processExpires() {
@@ -1106,10 +1082,9 @@ public abstract class PersistentManagerBase
 
         for (int i = 0; i < sessions.length; i++) {
             StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid())
-                continue;
-            if (isSessionStale(session, timeNow))
+            if (!session.isValid()) {
                 session.expire();
+	    }
         }
 
     }
