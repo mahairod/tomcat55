@@ -12,7 +12,7 @@
     <property file="${user.home}/.ant.properties" />
    </target>
 
-  <target name="clean.src" depends="prepare">
+  <target name="clean.src" depends="init">
      <deltree dir="${ws.dir}/jakarta-tomcat" />
      <deltree dir="${ws.dir}/jakarta-watchdog" />
      <deltree dir="${ws.dir}/jakarta-tools" />
@@ -89,15 +89,16 @@
    <target name="pkg" depends="init"> 
      <deltree dir="${ws.dir}/build/ASFtomcat" />
      <exec os="SunOS" dir="${ws.dir}/jakarta-tomcat/src/etc" command="pkgmk -o -f prototype -d ${ws.dir}/build  -r / " />
-     <zip zipfile="${package.dir}/tomcat/ASFtomcat-pkg.zip" 
-         basedir="${ws.dir}/build"
-         items="ASFtomcat" />
+     <exec os="SunOS" dir="${ws.dir}/build" command="tar cf ASFtomcat.tar ASFtomcat " />
+     <exec os="SunOS" dir="${ws.dir}/build" command="compress ASFtomcat.tar " />
+     <copyfile src="${ws.dir}/build/ASFtomcat.tar.Z" dest="${package.dir}/tomcat/ASFtomcat.pkg.tar.Z" />
 
      <deltree dir="${ws.dir}/build/ASFant" />
      <exec os="SunOS" dir="${ws.dir}/jakarta-tools/ant/src/etc" command="pkgmk -o -f prototype -d ${ws.dir}/build  -r / " />
-     <zip zipfile="${package.dir}/ant/ASFant-pkg.zip" 
-         basedir="${ws.dir}/build"
-         items="ASFant" />
+     <exec os="SunOS" dir="${ws.dir}/build" command="tar cf ASFant.tar ASFant " />
+     <exec os="SunOS" dir="${ws.dir}/build" command="compress ASFant.tar " />
+     <copyfile src="${ws.dir}/build/ASFant.tar.Z" dest="${package.dir}/ant/ASFant.pkg.tar.Z" />
+
   </target>
 
 

@@ -60,10 +60,10 @@
          dest="${nightly.dir}/tomcat.zip" />
     <get src="ftp://tokyo.javasoft.com/pub/ant/ant.zip" 
          dest="${nightly.dir}/ant.zip" />
-    <get src="ftp://tokyo.javasoft.com/pub/tomcat/ASFtomcat-pkg.zip" 
-         dest="${nightly.dir}/ASFtomcat-pkg.zip" />
-    <get src="ftp://tokyo.javasoft.com/pub/ant/ASFant-pkg.zip" 
-         dest="${nightly.dir}/ASFant-pkg.zip" />
+    <get src="ftp://tokyo.javasoft.com/pub/tomcat/ASFtomcat.pkg.tar.Z" 
+         dest="${nightly.dir}/ASFtomcat.pkg.tar.Z" />
+    <get src="ftp://tokyo.javasoft.com/pub/ant/ASFant.pkg.tar.Z" 
+         dest="${nightly.dir}/ASFant.pkg.tar.Z" />
 
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat-test.log" 
          dest="${nightly.dir}/log/tomcat-test-SunOS-${DSTAMP}.log" />
