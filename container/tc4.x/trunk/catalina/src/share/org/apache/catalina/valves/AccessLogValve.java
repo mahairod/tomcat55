@@ -1049,6 +1049,8 @@ public final class AccessLogValve
         if ((offset<0))  {
             tz.append("-");
             offset = -offset;
+        } else {
+            tz.append("+");
         }
 
         long hourOffset = offset/(1000*60*60);
