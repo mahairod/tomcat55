@@ -1,8 +1,8 @@
 <project name="TestRun" default="main" basedir="." init="init">
 
    <target name="init">
-         <property name="test.hostname" value="localhost" />
-	 <property name="test.port"     value="8080" />
+     <property name="test.hostname" value="localhost" />
+     <property name="test.port"     value="8080" />
    </target>
 
    <target name="startup">
@@ -13,178 +13,18 @@
      <java class="org.apache.tomcat.shell.Startup" args="" />
    </target>
 
-   <target name="main" depends="startup,servlet-test,jsp-test,shutdown" />
+   <target name="main" depends="servlet-test,jsp-test" />
 
 
    <target name="jsp-test" >
+<!-- Sample configuration for future moo-based jsp test
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.HelloWorld" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSize" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSizeUnBuffered" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetRemaining" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveForward" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.HttpJspPage.positiveJSPInitExtends" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.include.positiveIncludeRel" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.content.positiveContenttype" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.forward.positiveDoubleQuotes" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkRequest" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropSingleQuotes" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropAll" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropNoParam" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropParam" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positivePopBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positivePushBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveNewLine" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveClear" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveFlush" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetRemainingBufferUnset" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveIsAutoFlush" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintDoubleMaxBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintDoubleMinBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintFloatMaxBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintFloatMinBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintIntMaxBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintIntMinBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintLongMaxBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintLongMinBound" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintln" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnBoolean" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnChar" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnCharArray" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnDouble" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnFloat" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnInt" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnLong" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnStr" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintBoolean" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintChar" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintCharArray" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintDouble" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintFloat" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintInt" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintLong" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintStr" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteCharArray1" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteCharArray2" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteInt" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteStr" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteStrOffset" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteIntMaxValue" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteIntLowBit" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveRemoveAttribute" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveSetAttribute" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveSetAttributeInScope" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.checkGetSession" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.checkGetResponse" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.checkGetRequest" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.checkGetServletContext" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.checkGetServletConfig" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.checkGetOut" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeAvbl" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeNotAvbl" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeNamesInScope" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeScope" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.HttpJspPage.positiveJSPInitJSP" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspFactory.positiveGetDefaultFactory" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspFactory.positiveSetDefaultFactory" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspFactory.positiveGetPageContext" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspFactory.positiveReleasePageContext" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.session.positiveSession" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.session.positiveSessionDefault" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.positiveImport" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.info.positiveInfo" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.language.positiveLang" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.errorpage.positiveErrorPage" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.extend.positiveExtends" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.buffer.positiveBuffAutoflush" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.buffer.positiveBuffCreate" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.forward.positiveSingleQuotes" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.forward.positiveForwardRelHtml" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptlet" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletComment" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletMultiline" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletMultiline2" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletUseBean" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.declaration.positiveDeclaration" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExpr" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExprBean" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExprComment" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExprSyntax" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkSession" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkApplication" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkException" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkOut" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkPage" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkPageContext" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkResponse" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkConfig" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.positiveGetProps" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropValue" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetBytePrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBeanNameClass" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBeanNameRes" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBodyExists" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBodyNew" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDPage1" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDPage2" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDRequest1" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDRequest2" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveNoBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positivePageScope" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveTypeAssignable" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveUseBeanInit" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveUseBeanNext" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetIntObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetIntPrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetLongObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetLongPrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetFloatObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetFloatPrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetIndexedProp" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetCharObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetCharPrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetDoublePrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetDoubleObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetBooleanObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetBooleanPrim" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetByteObj" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetVarName" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetScope" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetDeclare" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetClassName" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveDoEndTag" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveDoAfterBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveDoInitBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveRelease" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagData.positiveTagSetAttribute" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagData.positiveTagGetAttributeString" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagData.positiveTagGetAttribute" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positivePopBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.PageContext.positivePushBody" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetBodyContent" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetInfoString" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetAttributesWithNoInfo" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetTagClassName" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetTagName" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyContent.positiveGetEnclosingWriter" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyContent.positiveGetReader" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.BodyContent.positiveGetString" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagSupport.positiveGetValues" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagSupport.positiveGetValue" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagSupport.positiveRemoveValue" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagSupport.positiveSetValue" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.tagext.TagSupport.positiveGetParent" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportServlet" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportJsp" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportHttp" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportLang" />
-    <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.core_syntax.directives.taglib.positiveTagLib" />
-
+-->   
    </target>
 
    <target name="servlet-test">
-       			<!-- HttpSession -->
+    <!-- HttpSession -->
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRequestDispatcherTest" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeTest" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttribute_01Test" />
@@ -196,7 +36,7 @@
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttribute_02Test" />
      <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetAttributeTest" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetAttribute_01Test" />
-	<!-- HttpServletRequest -->
+    <!-- HttpServletRequest -->
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaders_01Test" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetContextPathTest" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetHeaderTest" />
@@ -215,7 +55,7 @@
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_3Test" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_4Test" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.IsPermanent_1Test" />
-		<!-- Cookie" -->
+        <!-- Cookie" -->
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.CookieCloneTest" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetCommentTest" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetVersionTest" />
@@ -400,6 +240,8 @@
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_1Test" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_2Test" />
     <java class="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_3Test" />
+
   </target>
+
 </project>
 
