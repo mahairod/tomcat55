@@ -275,7 +275,7 @@ public class McastService implements MembershipService,MembershipListener {
      * @throws Exception
      */
     public static void main(String args[]) throws Exception {
-        System.out.println("Usage McastService hostname tcpport");
+        log.info("Usage McastService hostname tcpport");
         McastService service = new McastService();
         java.util.Properties p = new java.util.Properties();
         p.setProperty("mcastPort","5555");

@@ -102,7 +102,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.session.Constants;
 import org.apache.catalina.cluster.ClusterSession;
-
+import org.apache.catalina.realm.GenericPrincipal;
 /**
  *
  * Similar to the StandardSession, this code is identical, but for update
@@ -1416,7 +1416,13 @@ public class DeltaSession
         isNew = ((Boolean) stream.readObject()).booleanValue();
         isValid = ((Boolean) stream.readObject()).booleanValue();
         thisAccessedTime = ((Long) stream.readObject()).longValue();
-        principal = null;        // Transient only
+        boolean hasPrincipal = stream.readBoolean();
+        principal = null;   
+        if ( hasPrincipal ) {
+            SerializablePrincipal p = (SerializablePrincipal)stream.readObject();
+            principal = p.getPrincipal(getManager().getContainer().getRealm());
+        }
+            
         //        setId((String) stream.readObject());
         id = (String) stream.readObject();
         if (log.isDebugEnabled())
@@ -1472,6 +1478,10 @@ public class DeltaSession
         stream.writeObject(new Boolean(isNew));
         stream.writeObject(new Boolean(isValid));
         stream.writeObject(new Long(thisAccessedTime));
+        stream.writeBoolean(getPrincipal()!=null);
+        if (getPrincipal() != null) stream.writeObject(SerializablePrincipal.
+            createPrincipal( (GenericPrincipal) getPrincipal()));
+        
         stream.writeObject(id);
         if (log.isDebugEnabled())
             log.debug("writeObject() storing session " + id);

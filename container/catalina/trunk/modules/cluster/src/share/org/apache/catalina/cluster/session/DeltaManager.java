@@ -149,7 +149,9 @@ public class DeltaManager
     /**
      * The descriptive name of this Manager implementation (for logging).
      */
-    protected static String name = "DeltaManager";
+    protected static String managerName = "DeltaManager";
+    
+    protected String name = null;
 
 
     /**
@@ -634,7 +636,6 @@ public class DeltaManager
      *  that prevents this component from being used
      */
     public void start() throws LifecycleException {
-
         if( ! initialized )
             init();
 
@@ -868,7 +869,7 @@ public class DeltaManager
         */
        protected void messageReceived(SessionMessage msg, Member sender) {
            try {
-               log.debug("Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
+               log.info("Manager ("+name+") Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
                switch (msg.getEventType()) {
                    case SessionMessage.EVT_GET_ALL_SESSIONS: {
                        //get a list of all the session from this manager
