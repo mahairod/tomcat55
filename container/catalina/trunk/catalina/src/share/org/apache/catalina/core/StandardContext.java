@@ -981,7 +981,7 @@ public class StandardContext
      *
      * XXX If a file is not found - we can attempt a getResource()
      *
-     * @param defaultWebXml
+     * @param defaultWebXml The default web xml 
      */
     public void setDefaultWebXml(String defaultWebXml) {
         this.defaultWebXml = defaultWebXml;
@@ -1508,7 +1508,7 @@ public class StandardContext
      * and system.err will be redirected to the logger during a servlet
      * execution.
      *
-     * @param swallowOuptut The new value
+     * @param swallowOutput The new value
      */
     public void setSwallowOutput(boolean swallowOutput) {
 
@@ -1634,7 +1634,7 @@ public class StandardContext
     /** Get the absolute path to the work dir.
      *  To avoid duplication.
      * 
-     * @return
+     * @return The work path
      */ 
     public String getWorkPath() {
         File workDir = new File(getWorkDir());
@@ -5362,12 +5362,11 @@ public class StandardContext
      *   1.The context is created and registered by internal APIS
      *   2. The context is created by JMX, and it'll self-register.
      *
-     * @param server
-     * @param name
-     * @return
-     * @throws Exception
+     * @param server The server
+     * @param name The object name
+     * @return ObjectName The name of the object
+     * @throws Exception If an error occurs
      */
-
     public ObjectName preRegister(MBeanServer server,
                                   ObjectName name)
             throws Exception
@@ -5502,7 +5501,7 @@ public class StandardContext
      /**
      * Set the validation feature of the XML parser used when
      * parsing xml instances.
-     * @param xmlValidation true to enable xml instance validation
+     * @param webXmlValidation true to enable xml instance validation
      */
     public void setXmlValidation(boolean webXmlValidation){
         
@@ -5532,7 +5531,7 @@ public class StandardContext
     /**
      * Set the namespace aware feature of the XML parser used when
      * parsing xml instances.
-     * @param xmlNamespaceAware true to enable namespace awareness
+     * @param webXmlNamespaceAware true to enable namespace awareness
      */
     public void setXmlNamespaceAware(boolean webXmlNamespaceAware){
         this.webXmlNamespaceAware= webXmlNamespaceAware;
@@ -5542,7 +5541,7 @@ public class StandardContext
     /**
      * Set the validation feature of the XML parser used when
      * parsing tlds files. 
-     * @param tldXmlValidation true to enable xml instance validation
+     * @param tldValidation true to enable xml instance validation
      */
     public void setTldValidation(boolean tldValidation){
         
@@ -5572,7 +5571,7 @@ public class StandardContext
     /**
      * Set the namespace aware feature of the XML parser used when
      * parsing xml instances.
-     * @param xmlNamespaceAware true to enable namespace awareness
+     * @param tldNamespaceAware true to enable namespace awareness
      */
     public void setTldNamespaceAware(boolean tldNamespaceAware){
         this.tldNamespaceAware= tldNamespaceAware;

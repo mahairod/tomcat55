@@ -624,7 +624,7 @@ public class StandardWrapper
     /**
      * Add a mapping associated with the Wrapper.
      *
-     * @param pattern The new wrapper mapping
+     * @param mapping The new wrapper mapping
      */
     public void addMapping(String mapping) {
 
