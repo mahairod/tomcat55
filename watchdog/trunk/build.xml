@@ -53,7 +53,7 @@
       <copyfile src="../jakarta-tools/moo.jar" 
                dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
 
-      <chmod    src="${watchdog.build}/bin/watchdog.sh" perm="+x"/> 
+      <chmod    file="${watchdog.build}/bin/watchdog.sh" perm="+x"/> 
 
    </target>       
 
@@ -127,7 +127,7 @@
       <copydir  src="src/bin" dest="${watchdog.dist}/bin"/>
       <copydir  src="src/conf" dest="${watchdog.dist}/conf" />
     
-      <chmod    src="${watchdog.dist}/bin/watchdog.sh" perm="+x"/>
+      <chmod    file="${watchdog.dist}/bin/watchdog.sh" perm="+x"/>
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
