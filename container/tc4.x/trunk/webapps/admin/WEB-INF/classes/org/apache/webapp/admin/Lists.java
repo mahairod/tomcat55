@@ -304,7 +304,8 @@ public class Lists {
         ArrayList defaultContexts = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
         while (names.hasNext()) {
-            defaultContexts.add(names.next().toString());
+            String name = names.next().toString();
+            defaultContexts.add(name);
         }
         Collections.sort(defaultContexts);
         return (defaultContexts);

@@ -110,6 +110,7 @@ public class ResourceUtils {
         throws Exception {
                            
         ObjectName ename = null;
+        StringBuffer sb = null;
         if (resourcetype!=null) {
             if (resourcetype.equals("Global")) {
                 ename = new ObjectName( ENVIRONMENT_TYPE + GLOBAL_TYPE + ",*");
@@ -119,17 +120,24 @@ public class ResourceUtils {
                     service + ",*");
             } else if (resourcetype.equals("DefaultContext")) {
                 if (host.length() > 0) {
-                    ename = new ObjectName(ENVIRONMENT_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",host=" + host +
-                        ",service=" + service + ",*");
+                    sb = new StringBuffer(ENVIRONMENT_TYPE);
+                    sb.append(DEFAULTCONTEXT_TYPE);
+                    sb.append(",host=");
+                    sb.append(host);
+                    sb.append(",service=");
+                    sb.append(service);
+                    sb.append(",*");
+                    ename = new ObjectName(sb.toString());
                 } else {
-                    ename = new ObjectName(ENVIRONMENT_TYPE +
-                        DEFAULTCONTEXT_TYPE + ",service=" +
-                        service + ",*");
+                    sb = new StringBuffer(ENVIRONMENT_TYPE);
+                    sb.append(DEFAULTCONTEXT_TYPE);
+                    sb.append(",service=");
+                    sb.append(service);
+                    sb.append(",*");
+                    ename = new ObjectName(sb.toString());
                 }
             }
         }
-        
         Iterator iterator = (mserver.queryMBeans(ename, null).iterator());
         
         ArrayList results = new ArrayList();        
