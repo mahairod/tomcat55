@@ -149,6 +149,20 @@ public final class Mark {
 	}
     }
 	    
+    Mark(String filename, int line, int col) {
+	//System.out.println("MARK: filename is: " + filename);
+	this.reader = null;
+	this.stream = null;
+	this.cursor = 0;
+	this.line = line;
+	this.col = col;
+	this.fileid = -1;
+	this.fileName = filename;
+	this.baseDir = "le-basedir";
+	this.encoding = "le-endocing";
+	this.includeStack = null;
+    }
+
     /** Sets this mark's state to a new stream.
      * It will store the current stream in it's includeStack.
      * @param inStream new stream for mark
