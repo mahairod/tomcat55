@@ -215,7 +215,7 @@ public class PrefixMapper {
 	    if( container!=null ) return container;
 	}
 		
-	while (s.length() >= 0) {
+	while (s.length() > 0) {
 	    //if(debug>8) context.log( "Prefix: " + s  );
 	    container = myMap.prefixMappedServlets.get(s);
 	    
