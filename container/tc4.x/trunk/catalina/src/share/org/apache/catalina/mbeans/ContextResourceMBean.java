@@ -161,7 +161,7 @@ public class ContextResourceMBean extends BaseModelMBean {
         } else if ("type".equals(name)) {
             return (cr.getType());
         } else {
-            NamingResources nr = cr.getNamingResource(); 
+            NamingResources nr = cr.getNamingResources(); 
             if (nr == null) {
                 throw new AttributeNotFoundException
                     ("Cannot find naming resource "+cr.getName());
@@ -233,18 +233,18 @@ public class ContextResourceMBean extends BaseModelMBean {
             cr.setType((String)value);
         } else {
             ResourceParams rp = 
-                cr.getNamingResource().findResourceParams(cr.getName());
+                cr.getNamingResources().findResourceParams(cr.getName());
             if (rp != null) {
                 String valueStr = ""+value;
                 rp.addParameter(name, valueStr);
-                cr.getNamingResource().removeResourceParams(cr.getName());
+                cr.getNamingResources().removeResourceParams(cr.getName());
             } else {
                 rp = new ResourceParams();
                 rp.setName(cr.getName());
                 String valueStr = ""+value;
                 rp.addParameter(name, valueStr);
             }
-            cr.getNamingResource().addResourceParams(rp);
+            cr.getNamingResources().addResourceParams(rp);
         }
     }
     

@@ -188,7 +188,7 @@ public final class ContextEnvironment {
      */
     protected NamingResources resources = null;
 
-    public NamingResources getNamingResource() {
+    public NamingResources getNamingResources() {
         return (this.resources);
     }
 

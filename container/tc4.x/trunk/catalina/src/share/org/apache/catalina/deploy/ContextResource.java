@@ -193,7 +193,7 @@ public final class ContextResource {
      */
     protected NamingResources resources = null;
 
-    public NamingResources getNamingResource() {
+    public NamingResources getNamingResources() {
         return (this.resources);
     }
 

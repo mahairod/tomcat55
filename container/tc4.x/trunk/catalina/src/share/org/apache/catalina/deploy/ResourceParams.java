@@ -131,7 +131,7 @@ public final class ResourceParams {
      */
     protected NamingResources resources = null;
 
-    public NamingResources getNamingResource() {
+    public NamingResources getNamingResources() {
         return (this.resources);
     }
 
