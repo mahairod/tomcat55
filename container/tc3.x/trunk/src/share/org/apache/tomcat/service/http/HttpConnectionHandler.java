@@ -130,8 +130,16 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		// we need a better solution here
 		InetAddress localAddress = socket.getLocalAddress();
 		reqA.setServerName(localAddress.getHostName());
-	    }
- 
+	    } else {
+		// strip out the port information
+		int i = hostHeader.indexOf(":");
+		
+		if (i > -1)
+		    hostHeader = hostHeader.substring(0, i);
+		
+		reqA.setServerName(hostHeader);
+             }
+    
 	    contextM.service( request, response );
 
 	    try {
