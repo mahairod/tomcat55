@@ -122,7 +122,7 @@ public class JspC implements Options {
     public static final String SWITCH_PACKAGE_NAME = "-p";
     public static final String SWITCH_CLASS_NAME = "-c";
     public static final String SWITCH_FULL_STOP = "--";
-    public static final String SWITCH_COMPILE = "--compile";
+    public static final String SWITCH_COMPILE = "-compile";
     public static final String SWITCH_URI_BASE = "-uribase";
     public static final String SWITCH_URI_ROOT = "-uriroot";
     public static final String SWITCH_FILE_WEBAPP = "-webapp";
