@@ -234,9 +234,7 @@ final class ApplicationFilterChain implements FilterChain {
                 } else {  
                     filter.doFilter(request, response, this);
                 }
-                
-                
-                
+
                 support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
                                           filter, request, response);
             } catch (IOException e) {
