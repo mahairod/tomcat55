@@ -952,8 +952,6 @@ public final class StandardWrapper
 
 	if (classname.startsWith("org.apache.catalina."))
 	    return (true);
-	else if (classname.startsWith("org.apache.jasper."))
-	    return (true);	// FIXME - Only because of internal dependencies!
 	else
 	    return (false);
 
