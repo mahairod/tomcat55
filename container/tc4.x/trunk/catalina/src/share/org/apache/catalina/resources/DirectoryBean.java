@@ -76,6 +76,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
+import org.apache.catalina.Globals;
 import org.apache.catalina.util.StringManager;
 
 
@@ -334,7 +335,7 @@ public final class DirectoryBean extends ResourceBean {
 	writer.print("<tr><td colspan=\"3\">&nbsp;</td></tr>\r\n");
 	writer.print("<tr><td colspan=\"3\" bgcolor=\"#cccccc\">");
 	writer.print("<font size=\"-1\">");
-	writer.print(sm.getString("directory.version"));
+	writer.print(Globals.SERVER_INFO);
 	writer.print("</font></td></tr>\r\n");
 	writer.print("</table>\r\n");
 	writer.print("</body>\r\n");
