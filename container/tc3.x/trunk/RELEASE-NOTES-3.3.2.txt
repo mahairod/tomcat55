@@ -19,6 +19,7 @@ Feature Additions:
 
 Bug No.  Description
 
+8099     Preserve the query string when redirecting to the welcome page.
 
 
 Server:
