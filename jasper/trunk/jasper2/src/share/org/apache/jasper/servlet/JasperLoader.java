@@ -66,6 +66,8 @@ import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
 
 import javax.servlet.http.*;
@@ -79,6 +81,7 @@ import org.apache.jasper.Constants;
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
+ * @author Jean-Francois Arcand
  */
 public class JasperLoader extends URLClassLoader {
 
@@ -140,7 +143,7 @@ public class JasperLoader extends URLClassLoader {
      *                                     
      * @exception ClassNotFoundException if the class was not found
      */                                    
-    public Class loadClass(String name, boolean resolve)
+    public Class loadClass(final String name, boolean resolve)
         throws ClassNotFoundException {
 
         Class clazz = null;                
@@ -157,12 +160,15 @@ public class JasperLoader extends URLClassLoader {
 	int dot = name.lastIndexOf('.');
         if (securityManager != null) {     
             if (dot >= 0) {                
-                try {                    
-                    securityManager.checkPackageAccess(name.substring(0,dot));
+                try {        
+                    // Do not call the security manager since by default, we grant that package.
+                    if (!"org.apache.jasper.runtime".equalsIgnoreCase(name.substring(0,dot))){
+                        securityManager.checkPackageAccess(name.substring(0,dot));
+                    }
                 } catch (SecurityException se) {
                     String error = "Security Violation, attempt to use " +
                         "Restricted Class: " + name;
-                    System.out.println(error);
+                    se.printStackTrace();
                     throw new ClassNotFoundException(error);
                 }                          
             }                              
@@ -170,13 +176,22 @@ public class JasperLoader extends URLClassLoader {
 
 	// Class is in a package, delegate to thread context class loader
 	if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
-            ClassLoader classLoader = null;
 	    if (securityManager != null) {
-                 classLoader = (ClassLoader)AccessController.doPrivileged(privLoadClass);
-            } else {
-	        classLoader = Thread.currentThread().getContextClassLoader();
-            }
-            clazz = classLoader.loadClass(name);
+                final ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(privLoadClass);
+                try{
+                    clazz = (Class)AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                        public Object run() throws Exception{
+                            return classLoader.loadClass(name);
+                        }
+                    });
+                } catch(PrivilegedActionException ex){
+                    ex.getException().printStackTrace();
+
+                }
+             } else {
+                clazz = Thread.currentThread().getContextClassLoader().loadClass(name);
+              }
+            
 	    if( resolve )
 		resolveClass(clazz);
 	    return clazz;
@@ -228,10 +243,21 @@ public class JasperLoader extends URLClassLoader {
     /*
      * Load JSP class data from file.
      */
-    private byte[] loadClassDataFromFile(String fileName) {
+    private byte[] loadClassDataFromFile(final String fileName) {
         byte[] classBytes = null;
         try {
-            InputStream in = getResourceAsStream(fileName);
+            InputStream in = null;
+            
+            if (System.getSecurityManager() != null){
+                in = (InputStream)AccessController.doPrivileged(new PrivilegedAction(){
+                    public Object run(){
+                        return getResourceAsStream(fileName);
+                    }
+                });
+            } else {
+                in = getResourceAsStream(fileName);
+            }
+            
             if (in == null) {
 		return null;
 	    }
