@@ -43,6 +43,11 @@
           description="Resolve hosts"
                    is="true"
                  type="boolean"/>
+                 
+    <attribute   name="rotatable"
+          description="Rotate log"
+                   is="true"
+                 type="boolean"/>
 
     <attribute   name="suffix"
           description="The suffix that is added to log file filenames"
