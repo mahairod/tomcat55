@@ -266,8 +266,8 @@ public class NamingResourcesMBean extends BaseModelMBean {
      *
      * @param resourceLinkName New resource link reference name
      */
-    public String addResourceLink(String resourceLinkName, String type) 
-        throws MalformedObjectNameException {
+    public String addResourceLink(String resourceLinkName, String type, 
+                            String global) throws MalformedObjectNameException {
         
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
@@ -283,6 +283,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
         resourceLink = new ContextResourceLink();
         resourceLink.setName(resourceLinkName);
         resourceLink.setType(type);
+        resourceLink.setGlobal(global);
         nresources.addResourceLink(resourceLink);
         
         // Return the corresponding MBean name
@@ -291,6 +292,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
             MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
         return (oname.toString());
     }
+    
     
     /**
      * Remove any environment entry with the specified name.

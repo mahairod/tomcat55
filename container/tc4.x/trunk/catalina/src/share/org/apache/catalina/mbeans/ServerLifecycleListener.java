@@ -1411,6 +1411,13 @@ o     * @exception Exception if an exception is thrown during MBean destruction
             if (newValue != null) {
                 createMBeans((ContextResource) newValue);
             }
+        } else if ("resourceLink".equals(propertyName)) {
+            if (oldValue != null) {
+                destroyMBeans((ContextResourceLink) oldValue);
+            }
+            if (newValue != null) {
+                createMBeans((ContextResourceLink) newValue);
+            }
         }
 
     }

@@ -174,7 +174,7 @@ public class ContextResourceMBean extends BaseModelMBean {
             value = (String) rp.getParameters().get(name);
             if (value == null) {
                 throw new AttributeNotFoundException
-                    ("Cannot find attribute "+cr.getName());
+                    ("Cannot find attribute "+name+rp);
             }
         }
         
