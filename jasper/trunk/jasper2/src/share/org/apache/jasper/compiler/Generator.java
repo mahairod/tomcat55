@@ -2459,9 +2459,15 @@ public class Generator {
 		if (attrs[i].isDynamic()) {
 		    out.printin(tagHandlerVar);
 		    out.print(".");
-		    out.print("setDynamicAttribute(\"");
-		    out.print(attrs[i].getURI());
-		    out.print("\", \"");
+		    out.print("setDynamicAttribute(");
+                    String uri = attrs[i].getURI();
+                    if( "".equals( uri ) || (uri == null) ) {
+                        out.print( "null" );
+                    }
+                    else {
+                        out.print("\"" + attrs[i].getURI() + "\"");
+                    }
+		    out.print(", \"");
 		    out.print(attrs[i].getLocalName());
 		    out.print("\", ");
 		    out.print(attrValue);
