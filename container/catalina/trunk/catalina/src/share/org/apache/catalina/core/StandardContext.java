@@ -3847,8 +3847,20 @@ public class StandardContext
         try {
             ProxyDirContext proxyDirContext =
                 new ProxyDirContext(env, webappResources);
+            if (webappResources instanceof FileDirContext) {
+                filesystemBased = true;
+                ((FileDirContext) webappResources).setCaseSensitive
+                    (isCaseSensitive());
+                ((FileDirContext) webappResources).setAllowLinking
+                    (isAllowLinking());
+            }
             if (webappResources instanceof BaseDirContext) {
                 ((BaseDirContext) webappResources).setDocBase(getBasePath());
+                ((BaseDirContext) webappResources).setCached
+                    (isCachingAllowed());
+                ((BaseDirContext) webappResources).setCacheTTL(getCacheTTL());
+                ((BaseDirContext) webappResources).setCacheMaxSize
+                    (getCacheMaxSize());
                 ((BaseDirContext) webappResources).allocate();
             }
             // Register the cache in JMX
