@@ -32,9 +32,11 @@ goto cleanup
 
 if not "%CATALINA_HOME%" == "" goto gotCatalinaHome
 set CATALINA_HOME=.
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
+set CATALINA_HOME=..
 :gotCatalinaHome
-if exist "%CATALINA_HOME%\server\catalina.jar" goto okCatalinaHome
-echo Unable to locate catalina.jar, check the value of CATALINA_HOME
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
+echo Unable to determine the value of CATALINA_HOME
 goto cleanup
 :okCatalinaHome
 
