@@ -70,6 +70,13 @@ package javax.servlet.jsp.tagext;
  * objects.  The container then, in turn, can use these
  * values to provide more precise information on the location
  * of an error.
+ *  
+ * <p>
+ * The actual prefix of the <code>id</code> attribute may or may not be 
+ * <code>jsp</code> but it will always map to the namespace
+ * <code>http://java.sun.com/JSP/Page</code>.  A TagLibraryValidator
+ * implementation must rely on the uri, not the prefix, of the <code>id</code>
+ * attribute.
  */
 
 public class ValidationMessage {

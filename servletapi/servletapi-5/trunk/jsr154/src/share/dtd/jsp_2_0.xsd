@@ -8,7 +8,7 @@
 	    version="2.0">
   <xsd:annotation>
     <xsd:documentation>
-      @(#)jsp_2_0.xsds	1.16 02/11/03
+      @(#)jsp_2_0.xsds	1.17 03/18/03
     </xsd:documentation>
   </xsd:annotation>
 
@@ -177,10 +177,11 @@
 	    in the pageEncoding attribute of the page directive
 	    of a JSP page and in a JSP configuration element
 	    matching the page.  It is also a translation-time
-	    error to name different encodings in the prolog of
-	    a document in XML syntax and in a JSP configuration
-	    element matching the document.  It is legal to name
-	    the same encoding through mulitple mechanisms.
+	    error to name different encodings in the prolog
+	    or text declaration of a document in XML syntax and
+	    in a JSP configuration element matching the document.
+	    It is legal to name the same encoding through
+	    mulitple mechanisms.
 
 	  </xsd:documentation>
 	</xsd:annotation>
@@ -258,9 +259,11 @@
     <xsd:annotation>
       <xsd:documentation>
 
-	A taglib can be used to provide information on a tag
-	library that is used by a JSP page within the Web
-	Application.
+	The taglibType defines the syntax for declaring in
+	the deployment descriptor that a tag library is
+	available to the application.  This can be done
+	to override implicit map entries from TLD files and
+	from the container.
 
       </xsd:documentation>
     </xsd:annotation>
