@@ -105,6 +105,9 @@
       <add>
         Added longest time an expired session had been alive to set of monitorable session manager attributes. (luehe)
       </add>
+      <add>
+        Added average time an expired session had been alive to set of monitorable session manager attributes. (luehe)
+      </add>
       <fix>
         Clear a reference in the digester where a context would be referenced for more time than it
         needed, until the next context deployment operation. (remm)
