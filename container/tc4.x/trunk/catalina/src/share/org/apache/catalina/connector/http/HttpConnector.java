@@ -767,7 +767,15 @@ public final class HttpConnector
 	    } catch (IOException e) {
 		if (started && !stopped)
 		    log("accept: ", e);
-		break;
+		try {
+                    serverSocket.close();
+                    serverSocket = open();
+                } catch (IOException ex) {
+                    // If reopening fails, exit
+                    log("socket reopen: ", ex);
+                    break;
+                }
+                continue;
 	    }
 
 	    // Hand this socket off to an appropriate processor
