@@ -195,6 +195,14 @@
             <parameter><name>driverName</name>
               <value>jdbc:HypersonicSQL:database</value></parameter>
           </ResourceParams>
+          <Resource name="mail/session" auth="CONTAINER"
+                    type="javax.mail.Session"/>
+          <ResourceParams name="mail/session">
+            <parameter>
+              <name>mail.smtp.host</name>
+              <value>localhost</value>
+            </parameter>
+          </ResourceParams>
         </Context>
 
       </Host>
