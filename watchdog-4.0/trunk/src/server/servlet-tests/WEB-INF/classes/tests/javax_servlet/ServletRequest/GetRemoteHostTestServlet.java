@@ -93,7 +93,7 @@ public class GetRemoteHostTestServlet extends GenericServlet {
                 boolean found = false;
 
                 while ( ( !found ) && ( i <= len - 1 ) ) {
-                    if ( result.equals( expectedResult[ i ] ) ) {
+                    if ( result.equalsIgnoreCase( expectedResult[ i ] ) ) {
                         found = true;
                     }
 
