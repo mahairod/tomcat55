@@ -365,7 +365,7 @@ public class WebdavServlet
 	resp.addHeader("DAV", "1,2");
         String methodsAllowed = null;
         
-        Resources resources = getResources();
+        Resources resources = getResources(req);
         
 	if (!resources.exists(path)) {
 	    methodsAllowed = "OPTIONS, MKCOL, PUT, LOCK";
@@ -478,7 +478,7 @@ public class WebdavServlet
             
         }
         
-        Resources resources = getResources();
+        Resources resources = getResources(req);
         
 	if (!resources.exists(path)) {
 	    resp.sendError(HttpServletResponse.SC_NOT_FOUND, path);
@@ -597,7 +597,7 @@ public class WebdavServlet
         
         String path = getRelativePath(req);
         
-        Resources resources = getResources();
+        Resources resources = getResources(req);
         
 	// Can't create a collection if a resource already exists at the given
         // path
@@ -914,7 +914,7 @@ public class WebdavServlet
         
         lock.path = path;
         
-        Resources resources = getResources();
+        Resources resources = getResources(req);
         
         Enumeration locksList = null;
         
@@ -1414,7 +1414,7 @@ public class WebdavServlet
         
         // Overwriting the destination
         
-        Resources resources = getResources();
+        Resources resources = getResources(req);
         
         if (overwrite) {
             
@@ -1548,7 +1548,7 @@ public class WebdavServlet
             return false;
         }
         
-        Resources resources = getResources();
+        Resources resources = getResources(req);
         
 	if (!resources.exists(path)) {
             resp.sendError(WebdavStatus.SC_NOT_FOUND);
