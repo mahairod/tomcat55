@@ -100,6 +100,7 @@ import org.apache.catalina.valves.ValveBase;
  * when processing HTTP requests.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -234,7 +235,7 @@ final class StandardHostValve
         // If this is an aborted request from a client just log it and return
         if (realError instanceof ClientAbortException ) {
             log(sm.getString(
-                "errorDispatcherValve.clientAbort",
+                "standardHost.clientAbort",
                 ((ClientAbortException)realError).getThrowable().getMessage()));
             return;
         }
