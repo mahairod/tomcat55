@@ -221,12 +221,6 @@ public final class StandardServer
 
 
     /**
-     * Debugging detail level.
-     */
-    private int debug = 0;
-
-
-    /**
      * Global naming resources context.
      */
     private javax.naming.Context globalNamingContext = null;
@@ -308,28 +302,6 @@ public final class StandardServer
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the debugging detail level.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
 
 
     /**
@@ -897,8 +869,7 @@ public final class StandardServer
             return (false);
         }
         WebappLoader wloader = (WebappLoader) loader;
-        if ((wloader.getDebug() != 0) ||
-            (wloader.getDelegate() != false) ||
+        if ((wloader.getDelegate() != false) ||
             !wloader.getLoaderClass().equals
              ("org.apache.catalina.loader.WebappClassLoader")) {
             return (false);
@@ -920,8 +891,7 @@ public final class StandardServer
             return (false);
         }
         StandardManager smanager = (StandardManager) manager;
-        if ((smanager.getDebug() != 0) ||
-            !smanager.getPathname().equals("SESSIONS.ser") ||
+        if (!smanager.getPathname().equals("SESSIONS.ser") ||
             !smanager.getRandomClass().equals("java.security.SecureRandom") ||
             (smanager.getMaxActiveSessions() != -1) ||
             !smanager.getAlgorithm().equals("MD5")) {

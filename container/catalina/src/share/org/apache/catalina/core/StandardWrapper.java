@@ -107,12 +107,6 @@ public class StandardWrapper
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
-
-
-    /**
      * The facade associated with this wrapper.
      */
     private StandardWrapperFacade facade =
@@ -288,31 +282,6 @@ public class StandardWrapper
     public int getCountAllocated() {
 
         return (this.countAllocated);
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        int oldDebug = this.debug;
-        this.debug = debug;
-        support.firePropertyChange("debug", new Integer(oldDebug),
-                                   new Long(this.debug));
 
     }
 

@@ -65,23 +65,6 @@ public class GlobalResourcesLifecycleListener
     protected static Registry registry = MBeanUtils.createRegistry();
 
 
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-    public int getDebug() {
-        return (this.debug);
-    }
-
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
-
     // ---------------------------------------------- LifecycleListener Methods
 
 
@@ -142,7 +125,7 @@ public class GlobalResourcesLifecycleListener
     protected void createMBeans(String prefix, Context context)
         throws NamingException {
 
-        if (debug >= 1) {
+        if (log.isDebugEnabled()) {
             log.debug("Creating MBeans for Global JNDI Resources in Context '" +
                 prefix + "'");
         }
@@ -153,7 +136,7 @@ public class GlobalResourcesLifecycleListener
                 Binding binding = (Binding) bindings.next();
                 String name = prefix + binding.getName();
                 Object value = context.lookup(binding.getName());
-                if (debug >= 2) {
+                if (log.isDebugEnabled()) {
                     log.debug("Checking resource " + name);
                 }
                 if (value instanceof Context) {
@@ -188,7 +171,7 @@ public class GlobalResourcesLifecycleListener
         throws Exception {
 
         // Create the MBean for the UserDatabase itself
-        if (debug >= 2) {
+        if (log.isDebugEnabled()) {
             log.debug("Creating UserDatabase MBeans for resource " + name);
             log.debug("Database=" + database);
         }
@@ -201,7 +184,7 @@ public class GlobalResourcesLifecycleListener
         Iterator roles = database.getRoles();
         while (roles.hasNext()) {
             Role role = (Role) roles.next();
-            if (debug >= 3) {
+            if (log.isDebugEnabled()) {
                 log.debug("  Creating Role MBean for role " + role);
             }
             if (MBeanUtils.createMBean(role) == null) {
@@ -214,7 +197,7 @@ public class GlobalResourcesLifecycleListener
         Iterator groups = database.getGroups();
         while (groups.hasNext()) {
             Group group = (Group) groups.next();
-            if (debug >= 3) {
+            if (log.isDebugEnabled()) {
                 log.debug("  Creating Group MBean for group " + group);
             }
             if (MBeanUtils.createMBean(group) == null) {
@@ -227,7 +210,7 @@ public class GlobalResourcesLifecycleListener
         Iterator users = database.getUsers();
         while (users.hasNext()) {
             User user = (User) users.next();
-            if (debug >= 3) {
+            if (log.isDebugEnabled()) {
                 log.debug("  Creating User MBean for user " + user);
             }
             if (MBeanUtils.createMBean(user) == null) {
@@ -244,7 +227,7 @@ public class GlobalResourcesLifecycleListener
      */
     protected void destroyMBeans() {
 
-        if (debug >= 1) {
+        if (log.isDebugEnabled()) {
             log.debug("Destroying MBeans for Global JNDI Resources");
         }
 

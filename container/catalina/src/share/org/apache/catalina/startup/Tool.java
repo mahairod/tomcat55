@@ -22,6 +22,9 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * <p>General purpose wrapper for command line tools that should execute in an
@@ -51,7 +54,6 @@ import java.util.ArrayList;
  *         (useful when your command line tool runs Ant).</li>
  *     <li><em>-common</em> : Add <code>common/classes</code> and
  *         <code>common/lib</codE) to the class loader repositories.</li>
- *     <li><em>-debug</em> : Enable debugging messages from this wrapper.</li>
  *     <li><em>-server</em> : Add <code>server/classes</code> and
  *         <code>server/lib</code> to the class loader repositories.</li>
  *     <li><em>-shared</em> : Add <code>shared/classes</code> and
@@ -70,6 +72,8 @@ import java.util.ArrayList;
 public final class Tool {
 
 
+    private static Log log = LogFactory.getLog(Tool.class);
+    
     // ------------------------------------------------------- Static Variables
 
 
@@ -89,12 +93,6 @@ public final class Tool {
      * Include common classes in the repositories?
      */
     private static boolean common = false;
-
-
-    /**
-     * Enable debugging detail messages?
-     */
-    private static boolean debug = false;
 
 
     /**
@@ -136,8 +134,6 @@ public final class Tool {
                 ant = true;
             else if ("-common".equals(args[index]))
                 common = true;
-            else if ("-debug".equals(args[index]))
-                debug = true;
             else if ("-server".equals(args[index]))
                 server = true;
             else if ("-shared".equals(args[index]))
@@ -158,10 +154,6 @@ public final class Tool {
         // Construct the class loader we will be using
         ClassLoader classLoader = null;
         try {
-            if (debug) {
-                log("Constructing class loader");
-                ClassLoaderFactory.setDebug(1);
-            }
             ArrayList packed = new ArrayList();
             ArrayList unpacked = new ArrayList();
             unpacked.add(new File(catalinaHome, "classes"));
@@ -199,8 +191,8 @@ public final class Tool {
         Class clazz = null;
         String className = args[index++];
         try {
-            if (debug)
-                log("Loading application class " + className);
+            if (log.isDebugEnabled())
+                log.debug("Loading application class " + className);
             clazz = classLoader.loadClass(className);
         } catch (Throwable t) {
             log("Exception creating instance of " + className, t);
@@ -212,8 +204,8 @@ public final class Tool {
         String params[] = new String[args.length - index];
         System.arraycopy(args, index, params, 0, params.length);
         try {
-            if (debug)
-                log("Identifying main() method");
+            if (log.isDebugEnabled())
+                log.debug("Identifying main() method");
             String methodName = "main";
             Class paramTypes[] = new Class[1];
             paramTypes[0] = params.getClass();
@@ -225,8 +217,8 @@ public final class Tool {
 
         // Invoke the main method of the application class
         try {
-            if (debug)
-                log("Calling main() method");
+            if (log.isDebugEnabled())
+                log.debug("Calling main() method");
             Object paramValues[] = new Object[1];
             paramValues[0] = params;
             method.invoke(null, paramValues);
