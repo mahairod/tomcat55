@@ -2433,8 +2433,6 @@ public class Generator {
 		}
 		
 		if (attrs[i].isDynamic()) {
-		    out.printil("try {");
-		    out.pushIndent();
 		    out.printin(tagHandlerVar);
 		    out.print(".");
 		    out.print("setDynamicAttribute(\"");
@@ -2444,13 +2442,6 @@ public class Generator {
 		    out.print("\", ");
 		    out.print(attrValue);
 		    out.println(");");
-		    out.popIndent();
-		    out.printin("}"); // catch
-		    out.println(" catch (javax.servlet.jsp.tagext.AttributeNotSupportedException e) {");
-		    out.pushIndent();
-		    out.printil("throw new javax.servlet.jsp.JspException(e);");
-		    out.popIndent();
-		    out.printil("}"); // catch
 		} else {
 		    out.printin(tagHandlerVar);
 		    out.print(".");
@@ -2934,7 +2925,7 @@ public class Generator {
      * variable can later be created for it.
      */
     public void generateSetDynamicAttribute() {
-        out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws javax.servlet.jsp.tagext.AttributeNotSupportedException {");
+        out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws javax.servlet.jsp.JspException {");
 	out.pushIndent();
 	out.printil("if (uri != null)");
 	out.pushIndent();
