@@ -120,7 +120,11 @@ elif [ "$1" = "env" ] ; then
 
 else
   echo "Usage:"
-  echo "tomcat [start|stop]"
+  echo "tomcat (start|env|run|stop)"
+  echo "        start - start tomcat in the background"
+  echo "        run   - start tomcat in the foreground"
+  echo "        stop  - stop tomcat"
+
   exit 0
 fi
 
