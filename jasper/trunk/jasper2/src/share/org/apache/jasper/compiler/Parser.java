@@ -1090,7 +1090,6 @@ class Parser implements TagConstants {
 			 "&lt;" + tag );
 	}
         
-        reader.skipSpaces();
         if( reader.matchesETag( tag ) ) {
             // EmptyBody
             return;
