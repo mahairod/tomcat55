@@ -285,7 +285,7 @@ public class Lists {
         StringBuffer sb = new StringBuffer(container.getDomain());
         if (containerType.equals("service")) {
             sb.append(":type=DefaultContext,service=");
-            sb.append(container.getKeyProperty("service"));
+            sb.append(container.getKeyProperty("name"));
             sb.append(",*");
         } else if (containerType.equals("host")) {
             sb.append(":type=DefaultContext,host=");

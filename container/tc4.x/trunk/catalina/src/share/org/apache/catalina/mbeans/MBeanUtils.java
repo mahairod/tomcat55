@@ -1103,7 +1103,7 @@ public class MBeanUtils {
         } else if (container instanceof Engine) {
             Engine engine = (Engine) container;
             Service service = engine.getService();
-            name = new ObjectName(domain + ":type=DefaultContext,,service=" +
+            name = new ObjectName(domain + ":type=DefaultContext,service=" +
                               service.getName());
         }
 

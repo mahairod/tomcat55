@@ -79,6 +79,14 @@
     <form-bean      name="contextsForm"
                     type="org.apache.webapp.admin.context.ContextsForm"/>
 
+    <!-- ============= DefaultContext Module ============= -->
+
+    <form-bean      name="defaultContextForm"
+                    type="org.apache.webapp.admin.defaultcontext.DefaultContextForm"/>
+                    
+    <form-bean      name="defaultContextsForm"
+                    type="org.apache.webapp.admin.defaultContext.DefaultContextsForm"/>
+
     <!-- ============= Connector Module ============= -->
 
     <form-bean      name="connectorForm"
@@ -254,6 +262,18 @@
                     path="/context/contexts.jsp"
                 redirect="false"/>
 
+
+    <!-- ============ DefaultContext Module ============== -->
+
+    <forward        name="DefaultContext"
+                    path="/defaultcontext/defaultcontext.jsp"
+                redirect="false"/>
+
+    <forward        name="DefaultContexts"
+                    path="/defaultcontext/defaultcontexts.jsp"
+                redirect="false"/>
+
+
     <!-- ============ Connector Module ============== -->
 
     <forward        name="Connector"
@@ -286,15 +306,6 @@
                     path="/realm/realms.jsp"
                 redirect="false"/>
 
-    <!-- ============ Context Module ============== -->
-
-    <forward        name="Context"
-                    path="/context/context.jsp"
-                redirect="false"/>
-
-    <forward        name="Contexts"
-                    path="/context/contexts.jsp"
-                redirect="false"/>
 
     <!-- ============ Valve Module ============== -->
 
@@ -719,6 +730,37 @@
                type="org.apache.webapp.admin.context.SaveContextAction"
                name="contextForm"
               input="/context/context.jsp"
+               scope="session"/>
+
+   <!-- ============= DefaultContext Module ============== -->
+
+    <!-- Set up Add DefaultContext transaction -->
+    <action    path="/AddDefaultContext"
+               type="org.apache.webapp.admin.defaultcontext.AddDefaultContextAction">
+    </action>
+
+    <!-- Set up Delete DefaultContexts transaction -->
+    <action    path="/DeleteDefaultContext"
+               type="org.apache.webapp.admin.defaultcontext.DeleteDefaultContextAction"
+               name="defaultContextsForm"
+               scope="request"/>
+
+    <!-- Perform Delete DefaultContexts transaction -->
+    <action    path="/DeleteDefaultContexts"
+               type="org.apache.webapp.admin.defaultcontext.DeleteDefaultContextsAction"
+               name="defaultContextsForm"
+               scope="request"/>
+
+    <!-- Set up Edit DefaultContext transaction -->
+    <action    path="/EditDefaultContext"
+               type="org.apache.webapp.admin.defaultcontext.EditDefaultContextAction">
+    </action>
+
+    <!-- Perform Save DefaultContext transaction -->
+    <action    path="/SaveDefaultContext"
+               type="org.apache.webapp.admin.defaultcontext.SaveDefaultContextAction"
+               name="defaultContextForm"
+               input="/defaultcontext/defaultcontext.jsp"
                scope="session"/>
 
    <!-- ============= Connector Module ============== -->

@@ -316,13 +316,19 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
+        String serviceName = pname.getKeyProperty("service");
+        if (serviceName == null) {
+            serviceName = pname.getKeyProperty("name");
+        }
+        Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
         String hostName = pname.getKeyProperty("host");
         if (hostName == null) { //if DefaultContext is nested in Engine
+            context.setParent(engine);
             engine.addDefaultContext(context);
         } else {                // if DefaultContext is nested in Host
             Host host = (Host) engine.findChild(hostName);
+            context.setParent(host);
             host.addDefaultContext(context);
         }
 
@@ -826,13 +832,15 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
         Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+        context.setParent(host);
         host.addChild(context);
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("StandardContext");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), context);
-        return (oname.toString());
+        throw new Exception(oname.toString());
+        //return (oname.toString());
 
     }
 
@@ -885,8 +893,8 @@ public class MBeanFactory extends BaseModelMBean {
      */
     public String createStandardHost(String parent, String name,
                                      String appBase, boolean autoDeploy,
-				     boolean deployXML, boolean liveDeploy,
-				     boolean unpackWARs)
+                                     boolean deployXML, boolean liveDeploy,
+                                     boolean unpackWARs)
         throws Exception {
 
         // Create a new StandardHost instance

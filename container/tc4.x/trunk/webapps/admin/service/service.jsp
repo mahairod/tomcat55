@@ -64,6 +64,17 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
+              <controls:action url='<%= "/AddDefaultContext.do?serviceName=" +
+                                        URLEncoder.encode(thisServiceName) %>'>
+                <bean:message key="actions.defaultcontexts.create"/>
+              </controls:action>
+              <!--controls:action url='<%= "/DeleteDefaultContext.do?serviceName=" +
+                                        URLEncoder.encode(thisServiceName) %>'>
+                <bean:message key="actions.defaultcontexts.deletes"/>
+              </controls:action-->
+              <controls:action disabled="true">
+                -------------------------------------
+              </controls:action>
               <controls:action url='<%= "/AddHost.do?serviceName=" +
                                         URLEncoder.encode(thisServiceName) %>'>
                 <bean:message key="actions.hosts.create"/>

@@ -579,11 +579,12 @@ public class ServerLifecycleListener
             createMBeans((Host) hosts[j]);
         }
 
-	// Create the MBeans for DefaultContext
-	DefaultContext dcontext = engine.getDefaultContext();
-	if (dcontext != null) {
-	    createMBeans(dcontext);
-	}
+        // Create the MBeans for DefaultContext
+        DefaultContext dcontext = engine.getDefaultContext();
+        if (dcontext != null) {
+            dcontext.setParent(engine);
+            createMBeans(dcontext);
+        }
 
     }
 
@@ -639,13 +640,13 @@ public class ServerLifecycleListener
             createMBeans((Context) contexts[k]);
         }
 
-	// Create the MBeans for DefaultContext
-	DefaultContext dcontext = host.getDefaultContext();
-	if (dcontext != null) {
-	    createMBeans(dcontext);
-	}
-	
-
+        // Create the MBeans for DefaultContext
+        DefaultContext dcontext = host.getDefaultContext();
+        if (dcontext != null) {
+            dcontext.setParent(host);
+            createMBeans(dcontext);
+        }
+    
     }
 
 
