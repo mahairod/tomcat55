@@ -62,6 +62,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.text.StringCharacterIterator;
 import java.text.CharacterIterator;
 
@@ -73,7 +74,7 @@ import java.text.CharacterIterator;
  * This class also encapsulates methods which allow Files to be refered
  * to using abstract path names which are translated to native system
  * file paths at runtime as well as defining various project properties.
- * 
+ *
  * @author duncan@x180.com
  */
 
@@ -95,7 +96,8 @@ public class Project {
     private Hashtable taskClassDefinitions = new Hashtable();
     private Hashtable targets = new Hashtable();
     private File baseDir;
-    
+    private Vector visitedTargets = new Vector();
+
     public Project() {
         detectJavaVersion();
 	String defs = "/org/apache/tools/ant/taskdefs/defaults.properties";
@@ -299,30 +301,40 @@ public class Project {
 
     public void executeTarget(Target target) throws BuildException {
 
-	// make sure any dependencies on this target are executed
-	// first
+        // Check to see if the target has already been visited. If so, assume
+        // it to be up to date and do not execute the target.
 
-	// XXX
-	// note that we aren't catching circular dependencies
-	// right now... The user will get a hell of an error message
-	// so it's not too bad..
-	
-	Enumeration enum = target.getDependencies();
-	while (enum.hasMoreElements()) {
-	    String dependency = (String)enum.nextElement();
-	    Target prereqTarget = (Target)targets.get(dependency);
-	    executeTarget(prereqTarget);
-	}
-	
-	log("Executing Target: " + target.getName(), MSG_INFO);
+        if (!visitedTargets.contains(target)) {
 
-	target.execute();
+            // make sure any dependencies on this target are executed
+            // first
+
+            Enumeration enum = target.getDependencies();
+            while (enum.hasMoreElements()) {
+                String dependency = (String)enum.nextElement();
+                Target prereqTarget = (Target)targets.get(dependency);
+                executeTarget(prereqTarget);
+            }
+
+            log("Executing Target: " + target.getName(), MSG_INFO);
+
+            visitedTargets.addElement(target);
+            target.execute();
+        } else {
+
+            // XXX
+            // note that we aren't catching circular dependencies right now.
+            // This log message is the only indicator of a circular dependency.
+
+            log("Skipping previously visited Target: " + target.getName(),
+                MSG_VERBOSE);
+        }
     }
 
     public File resolveFile(String fileName) {
 	// deal with absolute files
 	if(fileName.startsWith("/") ) return new File( fileName );
-	
+
 	File file = new File(baseDir.getAbsolutePath());
 	StringTokenizer tok = new StringTokenizer(fileName, "/", false);
 	while (tok.hasMoreTokens()) {
