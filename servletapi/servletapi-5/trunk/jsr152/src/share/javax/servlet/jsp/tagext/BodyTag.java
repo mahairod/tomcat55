@@ -96,11 +96,12 @@ import javax.servlet.jsp.*;
  * object, where the JSP Page implementation object will place the
  * evaluation (and reevaluation, if appropriate) of the body.  The setter
  * method (setBodyContent) will only be invoked if doStartTag() returns
- * EVAL_BODY_BUFFERED and the corresponding action element is not empty.
+ * EVAL_BODY_BUFFERED and the corresponding action element does not have
+ * an empty body.
  *
  * <p><B>Methods</B>
  * <p> In addition to the setter method for the bodyContent property, there
- * is a new action methods: doInitBody(), which is invoked right after
+ * is a new action method: doInitBody(), which is invoked right after
  * setBodyContent() and before the body evaluation.  This method is only
  * invoked if doStartTag() returns EVAL_BODY_BUFFERED.
  *
