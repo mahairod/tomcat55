@@ -98,6 +98,7 @@ import org.xml.sax.InputSource;
  * </u>
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
