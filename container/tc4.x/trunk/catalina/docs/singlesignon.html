@@ -1,11 +1,13 @@
 <html>
 <head>
-<title>Configuring Tomcat 4.0 for Single Sign On Support</title>
+<title>Configuring Tomcat for Single Sign On Support</title>
 </head>
 <body bgcolor="white">
 
+<a href="index.html">Home</a>
+
 <div align="center">
-<h1>Configuring Tomcat 4.0 for Single Sign On Support</h1>
+<h1>Configuring Tomcat for Single Sign On Support</h1>
 <br>
 <a href="#Introduction">[Introduction]</a>
 <a href="#Requirements">[Requirements]</a>
@@ -20,19 +22,19 @@
 user the first time that he or she tries to access a protected area in any
 web application, and then recognize that authenticated user across other web
 applications in the same environment without requiring the user to log in
-again.  Tomcat 4.0 supports that capability if it is configured as described
+again.  Tomcat supports that capability if it is configured as described
 in this document.</p>
 
 <a name="Requirements"></a>
 <h3>Configuration Requirements</h3>
 
-<p>To successfully configure Tomcat 4.0 for "single sign on" support, the
+<p>To successfully configure Tomcat for "single sign on" support, the
 following requirements must be taken into account:</p>
 <ul>
 <li>All clients that intend to utilize "single sign on" support must provide
     support for cookies, which are used to maintain the user identity across
     web applications.</li>
-<li>As implemented in Tomcat 4.0, the scope of "single sign on" support is
+<li>As implemented in Tomcat, the scope of "single sign on" support is
     the entire set of web applications registered with a single virtual host.
     </li>
 </ul>
@@ -44,7 +46,7 @@ following requirements must be taken into account:</p>
 <li>At the <code>&lt;Engine&gt;</code> or <code>&lt;Host&gt;</code> level,
     configure a <code>&lt;Realm&gt;</code> element that defines the database
     of valid users and their corresponding roles.  In the default configuration
-    shipped with Tomcat 4.0, this is done at the Engine level.</li>
+    shipped with Tomcat, this is done at the Engine level.</li>
 <li>You <strong>MUST NOT</strong> configure a <code>&lt;Realm&gt;</code>
     element inside one of the <code>&lt;Context&gt;</code> elements describing
     the web applications associated with this virtual host.</li>

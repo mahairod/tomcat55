@@ -1,11 +1,13 @@
 <html>
 <head>
-<title>Tomcat 4.0 Manager Application</title>
+<title>Tomcat Manager Application</title>
 </head>
 <body bgcolor="white">
 
+<a href="index.html">Home</a>
+
 <div align="center">
-<h1>Tomcat 4.0 Manager Application</h1>
+<h1>Tomcat Manager Application</h1>
 <br>
 <a href="#Introduction">[Introduction]</a>
 <a href="#Commands">[Commands]</a>
@@ -16,7 +18,7 @@
 <a name="Introduction"></a>
 <h3>Introduction</h3>
 
-<p>Tomcat 4.0 ships with a web application (by default installed at context
+<p>Tomcat ships with a web application (by default installed at context
 path <code>/manager</code>) that facilitates deploying, undeploying, and
 reloading (that is, forcing a reload of all class files without removing the
 application from service) of other applications that are running in the same
@@ -39,7 +41,7 @@ directory (on the same server that Tomcat is running on).</p>
 as the extra path information, and request parameters, of HTTP requests made to
 the manager application.  The following command descriptions assume that you
 have installed the Manager application on context path <code>/manager</code>
-on your local host installation of Tomcat 4.0.</p>
+on your local host installation of Tomcat.</p>
 <ul>
 <li><b>http://localhost:8080/manager/list</b> - List the context paths of all
     web applications currently deployed on the virtual host in which this
