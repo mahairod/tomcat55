@@ -239,6 +239,9 @@ Bug No.  Description
 
 6515	 Block setting of Date-Headers from within an include.
 
+6518	 Fix an edge condition where in some cases a JSP file beginning with
+	 a number wouldn't get mangled correctly.
+
 Configuration:
 
 Bug No.  Description
