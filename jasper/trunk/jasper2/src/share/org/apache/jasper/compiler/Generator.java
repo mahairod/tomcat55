@@ -1972,13 +1972,7 @@ public class Generator {
 
 	    // Declare AT_BEGIN scripting variables
 	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
-
-	    /*
-	     * Save current values of scripting variables, so that the 
-	     * scripting variables may be synchronized without affecting their
-	     * original values
-	     */
-	    saveScriptingVars(n);
+	    saveScriptingVars(n, VariableInfo.AT_BEGIN);
 
 	    out.printin(tagHandlerClass.getName());
 	    out.print(" ");
@@ -2013,9 +2007,6 @@ public class Generator {
 	    if (!n.implementsIterationTag()) {
 		// Synchronize AT_BEGIN scripting variables
 		syncScriptingVars(n, VariableInfo.AT_BEGIN);
-		// Declare and synchronize NESTED scripting variables
-		declareScriptingVars(n, VariableInfo.NESTED);
-		syncScriptingVars(n, VariableInfo.NESTED);
 	    }
 
 	    if (n.getBody() != null) {
@@ -2027,6 +2018,7 @@ public class Generator {
 		if (n.implementsIterationTag()) {
 		    // Declare NESTED scripting variables
 		    declareScriptingVars(n, VariableInfo.NESTED);
+		    saveScriptingVars(n, VariableInfo.NESTED);
 
 		    if (n.implementsBodyTag()) {
 			out.printin("if (");
@@ -2065,25 +2057,26 @@ public class Generator {
 	    VariableInfo[] varInfos = n.getVariableInfos();
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 
-	    if ((n.getBody() != null) && n.implementsIterationTag()) {
-		out.printin("int evalDoAfterBody = ");
-		out.print(tagHandlerVar);
-		out.println(".doAfterBody();");
-
-		// Synchronize AT_BEGIN and NESTED scripting variables
-		syncScriptingVars(n, VariableInfo.AT_BEGIN);
-		syncScriptingVars(n, VariableInfo.NESTED);
-
-		out.printil("if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)");
-		out.pushIndent();
-		out.printil("break;");
-		out.popIndent();
-
-		out.popIndent();
-		out.printil("} while (true);");
-	    }
-
 	    if (n.getBody() != null) {
+		if (n.implementsIterationTag()) {
+		    out.printin("int evalDoAfterBody = ");
+		    out.print(tagHandlerVar);
+		    out.println(".doAfterBody();");
+
+		    // Synchronize AT_BEGIN and NESTED scripting variables
+		    syncScriptingVars(n, VariableInfo.AT_BEGIN);
+		    syncScriptingVars(n, VariableInfo.NESTED);
+
+		    out.printil("if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)");
+		    out.pushIndent();
+		    out.printil("break;");
+		    out.popIndent();
+
+		    out.popIndent();
+		    out.printil("} while (true);");
+		    restoreScriptingVars(n, VariableInfo.NESTED);
+		}
+
 		if (n.implementsBodyTag()) {
 		    out.printin("if (");
 		    out.print(tagEvalVar);
@@ -2141,7 +2134,7 @@ public class Generator {
                 out.println("}");
 	    }
 
-	    restoreScriptingVars(n);
+	    restoreScriptingVars(n, VariableInfo.AT_BEGIN);
 
 	    n.setEndJavaLine(out.getJavaLine());
 	}
@@ -2160,16 +2153,10 @@ public class Generator {
             
             // Declare AT_BEGIN scripting variables
 	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
-            
+	    saveScriptingVars(n, VariableInfo.AT_BEGIN);
+
 	    out.printil("{");
 	    out.pushIndent();
-
-	    /*
-	     * Save current values of scripting variables, so that the 
-	     * scripting variables may be synchronized without affecting their
-	     * original values
-	     */
-	    saveScriptingVars(n);
 
 	    out.printin(tagHandlerClass.getName());
 	    out.print(" ");
@@ -2210,7 +2197,7 @@ public class Generator {
 	    out.printin(tagHandlerVar);
 	    out.println(".doTag();");
 
-	    restoreScriptingVars(n);
+	    restoreScriptingVars(n, VariableInfo.AT_BEGIN);
 	    out.popIndent();
 	    out.printil("}");
             
@@ -2265,7 +2252,7 @@ public class Generator {
 	 * end element. This way, the scripting variables may be synchronized
 	 * by the given tag without affecting their original values.
 	 */
-	private void saveScriptingVars(Node.CustomTag n) {
+	private void saveScriptingVars(Node.CustomTag n, int scope) {
 	    if (n.getCustomNestingLevel() == 0) {
 		return;
 	    }
@@ -2278,7 +2265,7 @@ public class Generator {
 
 	    if (varInfos != null) {
 		for (int i=0; i<varInfos.length; i++) {
-		    if (varInfos[i].getScope() == VariableInfo.AT_END)
+		    if (varInfos[i].getScope() != scope)
 			continue;
 		    String varName = varInfos[i].getVarName();
 		    String tmpVarName = "_jspx_" + varName + "_"
@@ -2290,7 +2277,7 @@ public class Generator {
 		}
 	    } else {
 		for (int i=0; i<tagVarInfos.length; i++) {
-		    if (tagVarInfos[i].getScope() == VariableInfo.AT_END)
+		    if (tagVarInfos[i].getScope() != scope)
 			continue;
 		    String varName = tagVarInfos[i].getNameGiven();
 		    if (varName == null) {
@@ -2314,7 +2301,7 @@ public class Generator {
 	 * restore its scripting variables to their original values that were
 	 * saved in the tag's start element.
 	 */
-	private void restoreScriptingVars(Node.CustomTag n) {
+	private void restoreScriptingVars(Node.CustomTag n, int scope) {
 	    if (n.getCustomNestingLevel() == 0) {
 		return;
 	    }
@@ -2327,7 +2314,7 @@ public class Generator {
 
 	    if (varInfos != null) {
 		for (int i=0; i<varInfos.length; i++) {
-		    if (varInfos[i].getScope() == VariableInfo.AT_END)
+		    if (varInfos[i].getScope() != scope)
 			continue;
 		    String varName = varInfos[i].getVarName();
 		    String tmpVarName = "_jspx_" + varName + "_"
@@ -2339,7 +2326,7 @@ public class Generator {
 		}
 	    } else {
 		for (int i=0; i<tagVarInfos.length; i++) {
-		    if (tagVarInfos[i].getScope() == VariableInfo.AT_END)
+		    if (tagVarInfos[i].getScope() != scope)
 			continue;
 		    String varName = tagVarInfos[i].getNameGiven();
 		    if (varName == null) {
