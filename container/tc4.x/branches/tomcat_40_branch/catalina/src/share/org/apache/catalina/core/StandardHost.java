@@ -595,14 +595,16 @@ public class StandardHost
     public synchronized void start() throws LifecycleException {
 
         // Set error report valve
-        if (errorReportValveClass != null) {
+        if ((errorReportValveClass != null)
+            && (!errorReportValveClass.equals(""))) {
             try {
                 Valve valve = (Valve) Class.forName(errorReportValveClass)
                     .newInstance();
                 addValve(valve);
             } catch (Throwable t) {
-                // FIXME
-                t.printStackTrace();
+                log(sm.getString
+                    ("standardHost.invalidErrorReportValveClass", 
+                     errorReportValveClass));
             }
         }
 
