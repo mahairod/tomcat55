@@ -60,6 +60,15 @@ Servlet/JSP specifications:</p>
 which one is right for you.  More details about each release can be found in 
 the associated release notes.</p> 
 
+<p>Please note that alhough we offer downloads and documentation of older
+releases, such as Tomcat 3.x and 4.x, we strongly encourage users to use the
+latest stable version of Tomcat whenever possible.  We recognize that upgrading
+across major version may not be a trivial task, and some support is still
+offered on the mailing list for users of old versions.  However, because of the
+community-driven support approach, the older your version the less people would
+be interested or able to support you.
+</p>
+
 <subsection name="Tomcat 5.x">
 
 <p><strong>Tomcat 5.x</strong> is the current release of Tomcat, and
@@ -94,6 +103,9 @@ Catalina) that is based on completely new architecture.  The 4.x releases
 implement the <strong>Servlet 2.3</strong> and <strong>JSP 1.2</strong>
 specifications.</p>
 
+<p><strong>We encourage all users to upgrade to Tomcat 5.x whenever
+possible.</strong></p>
+
 <p><strong>Tomcat 4.1.x</strong>. Tomcat 4.1 is a refactoring 
 of Tomcat 4.0.x, and contains significant enhancements, including:
 <ul>
@@ -116,6 +128,9 @@ performance.  Version 4.0 implements the final released versions of the Servlet
 2.3 and JSP 1.2 specifications.  As required by the specifications, Tomcat 4.0
 also supports web applications built for the Servlet 2.2 and JSP 1.1
 specifications with no changes.</p>
+
+<p><strong>We encourage all users to upgrade to Tomcat 5.x whenever
+possible.</strong></p>
 
 </subsection>
 
@@ -168,6 +183,9 @@ strongly encouraged to migrate to the current production release, Tomcat
 3.3.</p> 
 
 <p><strong>Tomcat 3.0.x</strong>. Initial Tomcat release.</p>
+
+<p><strong>We encourage all users to upgrade to Tomcat 5.x whenever
+possible.</strong></p>
 
 </subsection>
 
