@@ -62,8 +62,13 @@ import java.net.URL;
 import java.io.InputStream;
 
 /**
- * Information available at translation-time on a Tag Library.
- * This class is instantiated from the Tag Library Descriptor file (TLD).
+ * Translation-time information associated with a taglib directive, and its
+ * underlying TLD file.
+ *
+ * Most of the information is directly from the TLD, except for
+ * the prefix and the uri values used in the taglib directive
+ *
+ *
  */
 
 abstract public class TagLibraryInfo {
@@ -83,6 +88,8 @@ abstract public class TagLibraryInfo {
 	this.uri    = uri;
     }
 
+
+    // ==== methods accessing taglib information =======
 
     /**
      * The value of the uri attribute from the <%@ taglib directive for this library.
