@@ -18,15 +18,9 @@
 package org.apache.webapp.admin.context;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.ObjectInstance;
-import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;

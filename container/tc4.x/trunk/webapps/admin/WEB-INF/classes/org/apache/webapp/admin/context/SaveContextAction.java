@@ -275,6 +275,16 @@ public final class SaveContextAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("crossContext", new Boolean(crossContext)));
 
+            attribute = "privileged";
+            String privileged = "false";
+            try {
+                privileged = cform.getPrivileged();
+            } catch (Throwable t) {
+                privileged = "false";
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute("privileged", new Boolean(privileged)));
+
             attribute = "override";
             String override = "false";
             try {

@@ -22,7 +22,6 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.net.InetAddress;
 import java.util.List;
 
 /**
@@ -90,6 +89,11 @@ public final class ContextForm extends ActionForm {
      * The text for override boolean.
      */
     private String override = "false";
+    
+    /**
+     * The value of privileged.
+     */
+    private String privileged = "false";
     
     /**
      * The text for the context path for this context.
@@ -409,6 +413,24 @@ public final class ContextForm extends ActionForm {
     }
     
     
+    /**
+     * Return the privileged value.
+     */
+    
+    public String getPrivileged() {
+        
+        return this.privileged;
+        
+    }
+    
+    /**
+     * Set the privileged value.
+     */
+    public void setPrivileged(String privileged) {
+        
+        this.privileged = privileged;
+        
+    }
     /**
      * Return the context path.
      */

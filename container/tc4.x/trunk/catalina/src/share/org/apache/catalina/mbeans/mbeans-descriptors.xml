@@ -2125,6 +2125,10 @@
                         application"
                  type="boolean"/>
 
+    <attribute   name="privileged"
+          description="The privileged flag for this web application"
+                 type="boolean"/>
+
     <attribute   name="path"
           description="The context path for this Context"
                  type="java.lang.String"/>

@@ -16,9 +16,7 @@
 
 package org.apache.webapp.admin.context;
 
-import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean for the "Delete Context" page.
