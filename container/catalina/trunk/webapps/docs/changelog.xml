@@ -36,6 +36,9 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
+        Fix memory leak when Security Manager is turned on. (jfarcand)
+      </fix>
+      <fix>
         When checking status codes for error handling, only check if
         Response.isError() is true. This way, users may use setStatus() to set their own
         error status without having the error page invoked. (in which case, the user should've
