@@ -871,6 +871,8 @@ public class WebappLoader
                 classRepository.mkdirs();
                 classpath.append(classRepository.getAbsolutePath());
                 
+                System.out.println("Deploy class files: " + classesPath + " To: " + classRepository.getAbsolutePath());
+                
                 copyDir(classes, classRepository);
                 
             }
@@ -919,6 +921,9 @@ public class WebappLoader
                     // would get locked otherwise, which would make it 
                     // impossible to update it or remove it at runtime)
                     File destFile = new File(destDir, binding.getName());
+
+                    System.out.println("Deploy JAR: " + filename + " To: " + destFile.getAbsolutePath());
+                    
                     Resource jarResource = (Resource) binding.getObject();
                     if (copy(jarResource.streamContent(), 
                              new FileOutputStream(destFile))) {
