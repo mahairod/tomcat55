@@ -285,10 +285,12 @@ class Validator {
 
             /*
              * Compare the 'pageEncoding' attribute of the page directive with
-             * the encoding specified in the XML prolog (only for XML syntax!).
+             * the encoding specified in the XML prolog (only for XML syntax,
+             * and only if JSP document contains XML prolog with encoding
+             * declaration).
              * Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
              */
-	    if (root.isXmlSyntax()) {
+	    if (root.isXmlSyntax() && root.isEncodingSpecifiedInProlog()) {
 		String pageEnc = root.getPageEncoding();
                 if (!pageDirEnc.equals(pageEnc) 
                         && (!pageDirEnc.startsWith("UTF-16")
