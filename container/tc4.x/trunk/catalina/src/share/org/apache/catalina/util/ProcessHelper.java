@@ -309,10 +309,11 @@ private String[] hashToStringArray(Hashtable h)
  * </UL>
  * </p>
  *
+ * For more information, see java.lang.Runtime#exec(String command, 
+ * String[] envp, File dir)
+ *
  * @exception IOException if problems during reading/writing occur
  *
- * @see    java.lang.Runtime#exec(String command, String[] envp,
- *                                File dir)
  */
 public void run() throws IOException {
 
