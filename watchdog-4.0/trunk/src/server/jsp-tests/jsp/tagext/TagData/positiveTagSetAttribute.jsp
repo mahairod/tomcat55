@@ -14,7 +14,8 @@
 <%
 
 	java.util.Hashtable ht = new java.util.Hashtable();
-	TagData td = new TagData(ht);
+	javax.servlet.jsp.tagext.TagData td =
+          new javax.servlet.jsp.tagext.TagData(ht);
 	
 	td.setAttribute("Color1","red");
 	td.setAttribute("Color2","green");

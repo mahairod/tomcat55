@@ -19,7 +19,7 @@
 %>
 
 <%	
-	BodyContent bc = pageContext.pushBody();
+	javax.servlet.jsp.tagext.BodyContent bc = pageContext.pushBody();
 	JspWriter jw = pageContext.popBody();
 	jw.println("sun");
 %>

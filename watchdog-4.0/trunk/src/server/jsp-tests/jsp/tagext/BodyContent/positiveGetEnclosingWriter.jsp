@@ -13,7 +13,7 @@
 
 <!-- Using pageContext.pushBody() to create a BodyContent object -->
 <%	
-	BodyContent bc = pageContext.pushBody();
+        javax.servlet.jsp.tagext.BodyContent bc = pageContext.pushBody();
 %>
 <!-- checking for JspWriter object -->
 <%= (bc.getEnclosingWriter()) instanceof javax.servlet.jsp.JspWriter %>

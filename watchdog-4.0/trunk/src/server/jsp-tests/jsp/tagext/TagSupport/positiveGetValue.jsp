@@ -18,7 +18,8 @@
 
 <%
 
-	TagSupport ts = new TagSupport();
+	javax.servlet.jsp.tagext.TagSupport ts =
+          new javax.servlet.jsp.tagext.TagSupport();
 	
 	ts.setValue("Color1","red");
 	ts.setValue("Color2","green");

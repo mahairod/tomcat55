@@ -11,7 +11,7 @@
 	**/  
 %>	 
 <%	
-	BodyContent bc = pageContext.pushBody();
+	javax.servlet.jsp.tagext.BodyContent bc = pageContext.pushBody();
 	bc.println("Moon");
 %>
 <!-- checking for Reader object -->

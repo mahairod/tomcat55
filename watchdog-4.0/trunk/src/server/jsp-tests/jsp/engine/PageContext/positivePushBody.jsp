@@ -18,7 +18,7 @@
 
 
 <%	
-	BodyContent bc = pageContext.pushBody();
+	javax.servlet.jsp.tagext.BodyContent bc = pageContext.pushBody();
 	bc.println(".com");
 	out.println(bc.getString());
 	pageContext.popBody();

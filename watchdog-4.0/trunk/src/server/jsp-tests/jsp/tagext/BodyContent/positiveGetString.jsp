@@ -12,7 +12,7 @@
 
 <%	
 	// using pageContext.pushBody() to create a BodyContent object
-	BodyContent bc = pageContext.pushBody();
+	javax.servlet.jsp.tagext.BodyContent bc = pageContext.pushBody();
 	bc.println("Checking For getString() method");
 	out.println(bc.getString());
 	pageContext.popBody();		
