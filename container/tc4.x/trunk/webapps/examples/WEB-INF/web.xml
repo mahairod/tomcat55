@@ -159,7 +159,16 @@
 
     <taglib>
         <taglib-uri>
-	   http://java.apache.org/tomcat/examples-taglib
+	   http://jakarta.apache.org/tomcat/debug-taglib
+        </taglib-uri>
+        <taglib-location>
+           /WEB-INF/jsp/debug-taglib.tld
+        </taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>
+	   http://jakarta.apache.org/tomcat/examples-taglib
         </taglib-uri>
         <taglib-location>
            /WEB-INF/jsp/example-taglib.tld

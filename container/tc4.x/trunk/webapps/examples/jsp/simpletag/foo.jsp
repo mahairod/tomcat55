@@ -1,10 +1,11 @@
 <html>
 <!--
-  Copyright (c) 1999 The Apache Software Foundation.  All rights 
+  Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
   reserved.
 -->
 <body>
-<%@ taglib uri="http://java.apache.org/tomcat/examples-taglib" prefix="eg" %>
+<%@ taglib uri="http://jakarta.apache.org/tomcat/debug-taglib" prefix="d"%>
+<%@ taglib uri="http://jakarta.apache.org/tomcat/examples-taglib" prefix="eg"%>
 
 Radio stations that rock:
 

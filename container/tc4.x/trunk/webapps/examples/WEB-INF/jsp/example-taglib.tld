@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE taglib
-        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
-
-<!-- a tag library descriptor -->
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+	"http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
 
 <taglib>
-  <!-- after this the default space is
-	"http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
-   -->
 
-  <tlibversion>1.0</tlibversion>
-  <jspversion>1.1</jspversion>
-  <shortname>simple</shortname>
-  <uri></uri>
-  <info>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>simple</short-name>
+  <uri>http://jakarta.apache.org/tomcat/example-taglib</uri>
+  <description>
 	A simple tab library for the examples
-  </info>
+  </description>
 
   <tag>
     <name>ShowSource</name>
-    <tagclass>examples.ShowSource</tagclass>
-    <info> Display JSP sources </info>
+    <tag-class>examples.ShowSource</tag-class>
+    <description> Display JSP sources </description>
     <attribute>
        <name>jspFile</name>
        <required>true</required>
@@ -33,12 +28,12 @@
   <!-- foo tag -->
   <tag>
     <name>foo</name>
-    <tagclass>examples.FooTag</tagclass>
-    <teiclass>examples.FooTagExtraInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
-    <info>
+    <tag-class>examples.FooTag</tag-class>
+    <tei-class>examples.FooTagExtraInfo</tei-class>
+    <body-content>JSP</body-content>
+    <description>
 	Perform a server side action; uses 3 mandatory attributes
-    </info>
+    </description>
 
     <attribute>
       <name>att1</name>
@@ -58,11 +53,11 @@
   <!-- log tag -->
   <tag>
     <name>log</name>
-    <tagclass>examples.LogTag</tagclass>
-    <bodycontent>TAGDEPENDENT</bodycontent>
-    <info>
+    <tag-class>examples.LogTag</tag-class>
+    <body-content>TAGDEPENDENT</body-content>
+    <description>
 	Perform a server side action; Log the message.
-    </info>
+    </description>
     <attribute>
 	<name>toBrowser</name>
 	<required>false</required>
