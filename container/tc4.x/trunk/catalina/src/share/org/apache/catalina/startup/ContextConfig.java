@@ -77,16 +77,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import javax.servlet.ServletContext;
 import javax.naming.NamingException;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -591,8 +595,14 @@ public final class ContextConfig
         applicationConfig();
 
         // Scan tag library descriptor files for additional listener classes
-        if (ok)
-            tldConfig();
+        if (ok) {
+            try {
+                tldScan();
+            } catch (Exception e) {
+                log(e.getMessage(), e);
+                ok = false;
+            }
+        }
 
         // Configure a certificates exposer valve, if required
         if (ok)
@@ -781,76 +791,24 @@ public final class ContextConfig
 
 
     /**
-     * Scan the tag library descriptors of all tag libraries we can find, and
-     * register any application descriptor classes that are found there.
+     * Scan for and configure all tag library descriptors found in this
+     * web application.
+     *
+     * @exception Exception if a fatal input/output or parsing error occurs
      */
-    private void tldConfig() {
+    private void tldScan() throws Exception {
 
-        // Acquire a Digester to use for parsing
-        synchronized (tldDigester) {
+        // Acquire this list of TLD resource paths to be processed
+        Set resourcePaths = tldScanResourcePaths();
 
-            // First, scan tag libraries declared in our deployment descriptor
-            if (debug >= 1)
-                log("Scanning web.xml tag libraries");
-            ArrayList resourcePaths = new ArrayList(); // Already done TLDs
-            String taglibs[] = context.findTaglibs();
-            for (int i = 0; i < taglibs.length; i++) {
-                
-                // Calculate the resource path of the next tag library to check
-                String resourcePath = context.findTaglib(taglibs[i]);
-                if (!resourcePath.startsWith("/"))
-                    resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
-                if (debug >= 2)
-                    log("  URI='" + taglibs[i] + "', ResourcePath='" +
-                        resourcePath + "'");
-                if (resourcePaths.contains(resourcePath)) {
-                    if (debug >= 2)
-                        log("    Already processed");
-                    continue;
-                }
-                resourcePaths.add(resourcePath);
-
-                // Process either a JAR file or a TLD at this location
-                if (!tldConfigJar(resourcePath, tldDigester))
-                    tldConfigTld(resourcePath, tldDigester);
-
-            }
-
-            // Second, scan tag libraries defined in tld files in /WEB-INF
-            if (debug >= 1)
-                log("Scanning TLD files in /WEB-INF");
-            DirContext resources = context.getResources();
-            String webinfName = "/WEB-INF";
-            // Looking up directory /WEB-INF in the context
-            try {
-                NamingEnumeration enum = resources.list(webinfName);
-                while (enum.hasMoreElements()) {
-                    NameClassPair ncPair = (NameClassPair) enum.nextElement();
-                    String filename = webinfName + "/" + ncPair.getName();
-                    if (!filename.endsWith(".tld"))
-                        continue;
-                    tldConfigTld(filename, tldDigester);
-                }
-            } catch (NamingException e) {
-                // Silent catch: it's valid that no /WEB-INF directory exists
-            }
-
-            // Third, scan tag libraries defined in JAR files
-            if (debug >= 1)
-                log("Scanning library JAR files");
-            String libName = "/WEB-INF/lib";
-            // Looking up directory /WEB-INF/lib in the context
-            try {
-                NamingEnumeration enum = resources.list(libName);
-                while (enum.hasMoreElements()) {
-                    NameClassPair ncPair = (NameClassPair) enum.nextElement();
-                    String filename = libName + "/" + ncPair.getName();
-                    if (!filename.endsWith(".jar"))
-                        continue;
-                    tldConfigJar(filename, tldDigester);
-                }
-            } catch (NamingException e) {
-                // Silent catch: it's ok that no /WEB-INF/lib directory exists
+        // Scan each accumulated resource paths for TLDs to be processed
+        Iterator paths = resourcePaths.iterator();
+        while (paths.hasNext()) {
+            String path = (String) paths.next();
+            if (path.endsWith(".jar")) {
+                tldScanJar(path);
+            } else {
+                tldScanTld(path);
             }
         }
 
@@ -858,106 +816,239 @@ public final class ContextConfig
 
 
     /**
-     * Process a TLD (if there is one) in the JAR file (if there is one) at
-     * the specified resource path.  Return <code>true</code> if we actually
-     * found and processed such a TLD, or <code>false</code> otherwise.
+     * Scan the JAR file at the specified resource path for TLDs in the
+     * <code>META-INF</code> subdirectory, and scan them for application
+     * event listeners that need to be registered.
      *
-     * @param resourcePath Context-relative resource path
-     * @param digester Digester to use for parsing
+     * @param resourcePath Resource path of the JAR file to scan
+     *
+     * @exception Exception if an exception occurs while scanning this JAR
      */
-    private boolean tldConfigJar(String resourcePath, Digester digester) {
+    private void tldScanJar(String resourcePath) throws Exception {
+
+        if (debug >= 1) {
+            log(" Scanning JAR at resource path '" + resourcePath + "'");
+        }
 
         JarFile jarFile = null;
-        InputStream stream = null;
+        String name = null;
+        InputStream inputStream = null;
         try {
             URL url = context.getServletContext().getResource(resourcePath);
-            if (url == null)
-                return (false);
+            if (url == null) {
+                throw new IllegalArgumentException
+                    (sm.getString("contextConfig.tldResourcePath",
+                                  resourcePath));
+            }
             url = new URL("jar:" + url.toString() + "!/");
             JarURLConnection conn =
                 (JarURLConnection) url.openConnection();
+            conn.setUseCaches(false);
             jarFile = conn.getJarFile();
-            boolean found = false;
             Enumeration entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = (JarEntry) entries.nextElement();
-                String name = entry.getName();
-                if (!name.startsWith("META-INF/"))
+                name = entry.getName();
+                if (!name.startsWith("META-INF/")) {
                     continue;
-                if (!name.endsWith(".tld"))
-                    continue;
-                if (debug >= 2)
-                    log("    tldConfigJar(" + resourcePath +
-                        "): Processing entry '" + name + "'");
-                stream = jarFile.getInputStream(entry);
-                synchronized (digester) {
-                    digester.clear();
-                    digester.push(context);
-                    digester.parse(stream);
                 }
-                stream.close();
-                found = true;
+                if (!name.endsWith(".tld")) {
+                    continue;
+                }
+                if (debug >= 2) {
+                    log("  Processing TLD at '" + name + "'");
+                }
+                inputStream = jarFile.getInputStream(entry);
+                tldScanStream(inputStream);
+                inputStream.close();
+                inputStream = null;
+                name = null;
             }
-            // FIXME jarFile.close();
-            return (found);
+            // FIXME - Closing the JAR file messes up the class loader???
+            //            jarFile.close();
         } catch (Exception e) {
-            if (debug >= 2)
-                log("    tldConfigJar(" + resourcePath + "): " + e);
-            if (stream != null) {
+            if (name == null) {
+                throw new ServletException
+                    (sm.getString("contextConfig.tldJarException",
+                                  resourcePath), e);
+            } else {
+                throw new ServletException
+                    (sm.getString("contextConfig.tldEntryException",
+                                  name, resourcePath), e);
+            }
+        } finally {
+            if (inputStream != null) {
                 try {
-                    stream.close();
+                    inputStream.close();
                 } catch (Throwable t) {
                     ;
                 }
+                inputStream = null;
             }
             if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (Throwable t) {
-                    ;
-                }
+            // FIXME - Closing the JAR file messes up the class loader???
+            //                try {
+            //                    jarFile.close();
+            //                } catch (Throwable t) {
+            //                    ;
+            //                }
+                jarFile = null;
             }
-            return (false);
         }
 
     }
 
 
     /**
-     * Process a TLD (if there is one) at the specified resource path.
-     * Return <code>true</code> if we actually found and processed such
-     * a TLD, or <code>false</code> otherwise.
+     * Scan the TLD contents in the specified input stream, and register
+     * any application event listeners found there.  <b>NOTE</b> - It is
+     * the responsibility of the caller to close the InputStream after this
+     * method returns.
      *
-     * @param resourcePath Context-relative resource path
-     * @param digester Digester to use for parsing
+     * @param resourceStream InputStream containing a tag library descriptor
+     *
+     * @exception Exception if an exception occurs while scanning this TLD
      */
-    private boolean tldConfigTld(String resourcePath, Digester digester) {
+    private void tldScanStream(InputStream resourceStream)
+        throws Exception {
 
-        InputStream stream = null;
+        synchronized (tldDigester) {
+            tldDigester.clear();
+            tldDigester.push(context);
+            tldDigester.parse(resourceStream);
+        }
+
+    }
+
+
+    /**
+     * Scan the TLD contents at the specified resource path, and register
+     * any application event listeners found there.
+     *
+     * @param resourcePath Resource path being scanned
+     *
+     * @exception Exception if an exception occurs while scanning this TLD
+     */
+    private void tldScanTld(String resourcePath) throws Exception {
+
+        if (debug >= 1) {
+            log(" Scanning TLD at resource path '" + resourcePath + "'");
+        }
+
+        InputStream inputStream = null;
         try {
-            stream =
+            inputStream =
                 context.getServletContext().getResourceAsStream(resourcePath);
-            if (stream == null)
-                return (false);
-            synchronized (digester) {
-                digester.clear();
-                digester.push(context);
-                digester.parse(stream);
+            if (inputStream == null) {
+                throw new IllegalArgumentException
+                    (sm.getString("contextConfig.tldResourcePath",
+                                  resourcePath));
             }
-            stream.close();
-            return (true);
+            tldScanStream(inputStream);
+            inputStream.close();
+            inputStream = null;
         } catch (Exception e) {
-            if (debug >= 2)
-                log("    tldConfigTld(" + resourcePath + "): " + e);
-            if (stream != null) {
+            throw new ServletException
+                (sm.getString("contextConfig.tldFileException", resourcePath),
+                 e);
+        } finally {
+            if (inputStream != null) {
                 try {
-                    stream.close();
+                    inputStream.close();
                 } catch (Throwable t) {
                     ;
                 }
+                inputStream = null;
             }
-            return (false);
         }
+
+    }
+
+
+    /**
+     * Accumulate and return a Set of resource paths to be analyzed for
+     * tag library descriptors.  Each element of the returned set will be
+     * the context-relative path to either a tag library descriptor file,
+     * or to a JAR file that may contain tag library descriptors in its
+     * <code>META-INF</code> subdirectory.
+     *
+     * @exception IOException if an input/output error occurs while
+     *  accumulating the list of resource paths
+     */
+    private Set tldScanResourcePaths() throws IOException {
+
+        if (debug >= 1) {
+            log(" Accumulating TLD resource paths");
+        }
+        Set resourcePaths = new HashSet();
+
+        // Accumulate resource paths explicitly listed in the web application
+        // deployment descriptor
+        if (debug >= 2) {
+            log("  Scanning <taglib> elements in web.xml");
+        }
+        String taglibs[] = context.findTaglibs();
+        for (int i = 0; i < taglibs.length; i++) {
+            String resourcePath = context.findTaglib(taglibs[i]);
+            // FIXME - Servlet 2.3 DTD implies that the location MUST be
+            // a context-relative path starting with '/'?
+            if (!resourcePath.startsWith("/")) {
+                resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
+            }
+            if (debug >= 3) {
+                log("   Adding path '" + resourcePath +
+                    "' for URI '" + taglibs[i] + "'");
+            }
+            resourcePaths.add(resourcePath);
+        }
+
+        // Scan TLDs in the /WEB-INF subdirectory of the web application
+        if (debug >= 2) {
+            log("  Scanning TLDs in /WEB-INF subdirectory");
+        }
+        DirContext resources = context.getResources();
+        try {
+            NamingEnumeration items = resources.list("/WEB-INF");
+            while (items.hasMoreElements()) {
+                NameClassPair item = (NameClassPair) items.nextElement();
+                String resourcePath = "/WEB-INF/" + item.getName();
+                // FIXME - JSP 1.2 is not explicit about whether we should
+                // scan subdirectories of /WEB-INF for TLDs also
+                if (!resourcePath.endsWith(".tld")) {
+                    continue;
+                }
+                if (debug >= 3) {
+                    log("   Adding path '" + resourcePath + "'");
+                }
+                resourcePaths.add(resourcePath);
+            }
+        } catch (NamingException e) {
+            ; // Silent catch: it's valid that no /WEB-INF directory exists
+        }
+
+        // Scan JARs in the /WEB-INF/lib subdirectory of the web application
+        if (debug >= 2) {
+            log("  Scanning JARs in /WEB-INF/lib subdirectory");
+        }
+        try {
+            NamingEnumeration items = resources.list("/WEB-INF/lib");
+            while (items.hasMoreElements()) {
+                NameClassPair item = (NameClassPair) items.nextElement();
+                String resourcePath = "/WEB-INF/lib/" + item.getName();
+                if (!resourcePath.endsWith(".jar")) {
+                    continue;
+                }
+                if (debug >= 3) {
+                    log("   Adding path '" + resourcePath + "'");
+                }
+                resourcePaths.add(resourcePath);
+            }
+        } catch (NamingException e) {
+            ; // Silent catch: it's valid that no /WEB-INF/lib directory exists
+        }
+
+        // Return the completed set
+        return (resourcePaths);
 
     }
 

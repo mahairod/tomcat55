@@ -656,6 +656,7 @@ public class HostConfig
         // Expand the WAR into the new document base directory
         JarURLConnection juc = (JarURLConnection) war.openConnection();
         juc.setUseCaches(false);
+        /*
         JarFile jarFile = juc.getJarFile();
         if (getDebug() >= 2) {
             log("  Have opened JAR file successfully");
@@ -690,6 +691,64 @@ public class HostConfig
             input.close();
         }
         jarFile.close();
+        */
+        JarFile jarFile = null;
+        InputStream input = null;
+        try {
+            jarFile = juc.getJarFile();
+            if (getDebug() >= 2) {
+                log("  Have opened JAR file successfully");
+            }
+            Enumeration jarEntries = jarFile.entries();
+            if (getDebug() >= 2) {
+                log("  Have retrieved entries enumeration");
+            }
+            while (jarEntries.hasMoreElements()) {
+                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+                String name = jarEntry.getName();
+                if (getDebug() >= 2) {
+                    log("  Am processing entry " + name);
+                }
+                int last = name.lastIndexOf('/');
+                if (last >= 0) {
+                    File parent = new File(docBase,
+                                           name.substring(0, last));
+                    if (getDebug() >= 2) {
+                        log("  Creating parent directory " + parent);
+                    }
+                    parent.mkdirs();
+                }
+                if (name.endsWith("/")) {
+                    continue;
+                }
+                if (getDebug() >= 2) {
+                    log("  Creating expanded file " + name);
+                }
+                input = jarFile.getInputStream(jarEntry);
+                expand(input, docBase, name);
+                input.close();
+                input = null;
+            }
+            jarFile.close();
+            jarFile = null;
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                input = null;
+            }
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (Throwable t) {
+                    ;
+                }
+                jarFile = null;
+            }
+        }
 
         // Return the absolute path to our new document base directory
         return (docBase.getAbsolutePath());
