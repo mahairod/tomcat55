@@ -145,6 +145,12 @@
         <equals arg1="${javamail.present}" arg2="true" />
       </or>
     </condition>
+    <condition property="compile.jmx">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jmx.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="compile.jndi">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -295,6 +301,7 @@
 
     <echo message="--- Conditional compilation flags ---" />
     <echo message="compile.javamail=${compile.javamail}" />
+    <echo message="compile.jmx=${compile.jmx}" />
     <echo message="compile.jndi=${compile.jndi}" />
     <echo message="compile.jsse=${compile.jsse}" />
     <echo message="compile.jta=${compile.jta}" />
@@ -410,15 +417,28 @@
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
       <classpath refid="catalina.classpath" />
-      <exclude name="**/util/ProcessHelper.java" unless="jdk.1.3.present"/>
-      <exclude name="**/servlets/CGIServlet.java" unless="jdk.1.3.present"/>
-      <exclude name="**/Tyrex*.java" unless="compile.tyrex"/>
-      <exclude name="**/net/SSLServerSocketFactory.java" 
+      <exclude name="org/apache/catalina/util/ProcessHelper.java" 
+       unless="jdk.1.3.present"/>
+      <exclude name="org/apache/catalina/servlets/CGIServlet.java" 
+       unless="jdk.1.3.present"/>
+      <exclude name="org/apache/naming/factory/TyrexDataSourceFactory.java" 
+       unless="compile.tyrex"/>
+      <exclude name="org/apache/naming/factory/TyrexTransactionFactory.java" 
+       unless="compile.tyrex"/>
+      <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
        unless="compile.jsse"/>
-      <exclude name="**/naming/factory/MailSessionFactory.java"
+      <exclude name="org/apache/catalina/valves/CertificatesValve.java"
+       unless="compile.jsse"/>
+      <exclude name="org/apache/naming/factory/MailSessionFactory.java"
        unless="compile.javamail"/>
-      <exclude name="**/naming/factory/SendMailFactory.java"
+      <exclude name="org/apache/naming/factory/SendMailFactory.java"
        unless="compile.javamail"/>
+      <exclude name="org/apache/catalina/startup/EmbeddedManager.java"
+       unless="compile.jmx"/>
+      <exclude name="org/apache/catalina/startup/CatalinaManager.java"
+       unless="compile.jmx"/>
+      <exclude name="org/apache/naming/NamingService.java"
+       unless="compile.jmx"/>
     </javac>
 
     <!-- Copy static resource files -->
