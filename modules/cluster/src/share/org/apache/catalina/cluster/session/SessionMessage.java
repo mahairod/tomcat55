@@ -256,7 +256,7 @@ public class SessionMessage
     {
         switch (mEvtType)
         {
-            case EVT_SESSION_CREATED : return "SESSION-CREATED";
+            case EVT_SESSION_CREATED : return "SESSION-MODIFIED";
 //            case EVT_SESSION_EXPIRED_WNOTIFY : return "SESSION-EXPIRED-WITH-NOTIFY";
 //            case EVT_SESSION_EXPIRED_WONOTIFY : return "SESSION-EXPIRED-WITHOUT-NOTIFY";
 //            case EVT_ATTRIBUTE_ADDED : return "SESSION-ATTRIBUTE-ADDED";
@@ -279,7 +279,7 @@ public class SessionMessage
      */
     public Member getAddress()
     {
-    	return this.mSrc;
+        return this.mSrc;
     }
 
     /**
@@ -289,7 +289,7 @@ public class SessionMessage
      */
     public void setAddress(Member src)
     {
-    	this.mSrc = src;
+        this.mSrc = src;
     }
 
     public String getContextName() { return mContextName; }
