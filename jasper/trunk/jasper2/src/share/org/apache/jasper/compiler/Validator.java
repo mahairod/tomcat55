@@ -757,7 +757,7 @@ public class Validator {
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
 			jspAttrs[attrs.getLength() + i]
-			    = new Node.JspAttribute(na.getName(), na, false);
+			    = new Node.JspAttribute(na, false);
                         tagDataAttrs.put(na.getName(),
                                          TagData.REQUEST_TIME_VALUE);
 			found = true;
@@ -767,7 +767,7 @@ public class Validator {
 		if (!found) {
 		    if (tagInfo.hasDynamicAttributes()) {
 			jspAttrs[attrs.getLength() + i]
-			    = new Node.JspAttribute(na.getName(), na, true);
+			    = new Node.JspAttribute(na, true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
 				     na.getName());
@@ -816,7 +816,7 @@ public class Validator {
 		    nameSpecified = true;
 		}
 		jspAttrs[attrs.getLength() + i]
-		    = new Node.JspAttribute(na.getName(), na, false);
+		    = new Node.JspAttribute(na, false);
 	    }
 
 	    if (!nameSpecified) {
@@ -908,7 +908,7 @@ public class Validator {
                 Node.NamedAttribute namedAttributeNode =
                     n.getNamedAttributeNode( qName );
                 if( namedAttributeNode != null ) {
-                    result = new Node.JspAttribute(qName, namedAttributeNode,
+                    result = new Node.JspAttribute(namedAttributeNode,
 						   dynamic);
                 }
             }

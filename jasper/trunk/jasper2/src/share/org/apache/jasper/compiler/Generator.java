@@ -2515,7 +2515,8 @@ public class Generator {
 		if (attrs[i].isExpression()) {
 		    // Do nothing
 		} else if (attrs[i].isNamedAttribute()) {
-		    if (!n.checkIfAttributeIsJspFragment(attrs[i].getName())) {
+		    if (!n.checkIfAttributeIsJspFragment(attrs[i].getName())
+			    && !attrs[i].isDynamic()) {
 			attrValue = convertString(
                                 c[0], attrValue, attrName,
 				handlerInfo.getPropertyEditorClass(attrName),

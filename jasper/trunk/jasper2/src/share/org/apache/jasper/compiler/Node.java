@@ -1380,7 +1380,7 @@ public abstract class Node {
 
     public static class JspAttribute {
 
-	private String name;
+	private String qName;
 	private String uri;
 	private String localName;
 	private String value;
@@ -1393,9 +1393,9 @@ public abstract class Node {
         // The node in the parse tree for the NamedAttribute
         private NamedAttribute namedAttributeNode;
 
-        JspAttribute(String name, String uri, String localName, String value,
+        JspAttribute(String qName, String uri, String localName, String value,
 		     boolean expr, boolean el, boolean dyn ) {
-	    this.name = name;
+	    this.qName = qName;
 	    this.uri = uri;
 	    this.localName = localName;
 	    this.value = value;
@@ -1411,9 +1411,9 @@ public abstract class Node {
          * named attribute.  In this case, we have to store the nodes of
          * the body of the attribute.
          */
-        JspAttribute( String name, NamedAttribute namedAttributeNode,
-		      boolean dyn ) {
-            this.name = name;
+        JspAttribute(NamedAttribute namedAttributeNode, boolean dyn) {
+            this.qName = namedAttributeNode.getName();
+	    this.localName = this.qName;
             this.value = null;
             this.namedAttributeNode = namedAttributeNode;
             this.expression = false;
@@ -1426,7 +1426,7 @@ public abstract class Node {
  	 * @return The name of the attribute
 	 */
 	public String getName() {
-	    return name;
+	    return qName;
 	}
 
 	/**
