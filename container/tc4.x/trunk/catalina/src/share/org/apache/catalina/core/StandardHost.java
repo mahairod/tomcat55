@@ -393,6 +393,8 @@ public class StandardHost
 	    newAliases[i] = aliases[i];
 	newAliases[aliases.length] = alias;
 
+        aliases = newAliases;
+
 	// Inform interested listeners
 	fireContainerEvent(ADD_ALIAS_EVENT, alias);
 
