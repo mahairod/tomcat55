@@ -4221,12 +4221,11 @@ public class StandardContext
     public synchronized void stop() throws LifecycleException {
 
         // Validate and update our current component state
-        if (!started)
-            throw new LifecycleException
-                (sm.getString("containerBase.notStarted", logName()));
-
-        if (log.isDebugEnabled())
-            log.debug("Stopping");
+        if (!started) {
+            if(log.isInfoEnabled())
+                log.info(sm.getString("containerBase.notStarted", logName()));
+            return;
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
