@@ -37,8 +37,6 @@ General New Features:
      ***** Please note the revised documentation below related to *****
      ***** using XML parsers with Tomcat 4.0 based applications.  *****
 
-AJP: Add some documentation on AJP with Tomcat 4.
-
 
 ---------------------
 Catalina New Features:
@@ -46,6 +44,8 @@ Catalina New Features:
 
 StandardHost: Allow disabling the error report valve by setting its classname
   to an empty string.
+
+StandardWrapper: Add instance pooling for SingleThreadModel servlets.
 
 
 -------------------
@@ -57,9 +57,12 @@ by adding a "classdebuginfo" init parameter set to "true" in the JspSerlvet
 configuration.  This may be done in "conf/web.xml", or in the web.xml of
 a specific web application by adding a JspServlet configuration.
 
+
 --------------------
 Webapps New Features:
 --------------------
+
+AJP: Add some documentation on AJP with Tomcat 4.
 
 
 ==========================
@@ -162,6 +165,9 @@ ResponseFacade: getOutputStream(), getWriter(), and flushBuffer()
 
 ErrorReportValve: Fix regression when printing exception reports, caused by the
   change of behavior of sendError.
+
+Windows Installer: The Windows installer nows uses the improved NSIS 1.91, and
+  will also use the value of the JAVA_HOME environment variable if it is set.
 
 
 ----------------
@@ -435,7 +441,7 @@ Enabling SSI and CGI Support:
 
 Having CGI and SSI available to web applications created security problems when
 using a security manager (as a malicious web application could use them to 
-sidestep the security manager access control). In Tomcat 4.0.1, they have been
+sidestep the security manager access control). In Tomcat 4.0, they have been
 disabled by default, as our goal is to provide a fully secure default 
 configuration. However, CGI and SSI remain available.
 
