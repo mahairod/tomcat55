@@ -507,7 +507,9 @@ public class StandardHost
      * @param xmlValidation true to enable xml instance validation
      */
     public void setXmlValidation(boolean xmlValidation){
+        
         this.xmlValidation = xmlValidation;
+
     }
 
     /**
@@ -788,6 +790,11 @@ public class StandardHost
                      errorReportValveClass));
             }
         }
+
+        if (xmlValidation)
+            log.info( "XML validation enaled ");
+        else
+            log.info( "XML validation disabled ");
 
         super.start();
 
