@@ -72,7 +72,7 @@
      classpath="${struts.jar}" />
     <available property="beanutils.present"
      classname="org.apache.commons.beanutils.PropertyUtils"
-     classpath="${common-beanutils.jar}" />
+     classpath="${commons-beanutils.jar}" />
     <available property="regexp.present"
      classname="org.apache.regexp.RE"
      classpath="${regexp.jar}" />
