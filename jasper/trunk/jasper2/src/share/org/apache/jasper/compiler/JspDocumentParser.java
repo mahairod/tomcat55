@@ -657,13 +657,13 @@ class JspDocumentParser extends DefaultHandler
 	}
 	Class tagHandlerClass = null;
 	if (tagFileInfo == null) {
+	    String handlerClassName = tagInfo.getTagClassName();
 	    try {
-	        tagHandlerClass
-		    = ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
+	        tagHandlerClass = ctxt.getClassLoader().loadClass(handlerClassName);
 	    } catch (Exception e) {
 	        throw new SAXException(
-		        Localizer.getMessage("jsp.error.unable.loadclass",
-					     localName, prefix));
+		        Localizer.getMessage("jsp.error.loadclass.taghandler",
+					     handlerClassName, qName));
 	    }
 	} else {
             tagInfo = tagFileInfo.getTagInfo();

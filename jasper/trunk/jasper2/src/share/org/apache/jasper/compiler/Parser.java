@@ -1328,12 +1328,12 @@ class Parser implements TagConstants {
 	if (tagFileInfo == null) {
 	    // Must be a classic tag, load it here.
 	    // tag files will be loaded later, in TagFileProcessor
+	    String handlerClassName = tagInfo.getTagClassName();
 	    try {
-	        tagHandlerClass
-		    = ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
+	        tagHandlerClass = ctxt.getClassLoader().loadClass(handlerClassName);
 	    } catch (Exception e) {
-	        err.jspError(start, "jsp.error.unable.loadclass", shortTagName,
-			 prefix);
+	        err.jspError(start, "jsp.error.loadclass.taghandler",
+			     handlerClassName, tagName);
 	    }
 	} else {
 	    tagInfo = tagFileInfo.getTagInfo();
