@@ -221,19 +221,6 @@ public final class DigestAuthenticator
 	if (principal != null)
 	    return (true);
 
-	// Have we got a cached authenticated Principal?
-	Session session = null;
-	if (cache)
-	    session = getSession(request);
-	if (session != null) {
-	    principal = session.getPrincipal();
-	    if (principal != null) {
-	        request.setAuthType(session.getAuthType());
-		request.setUserPrincipal(principal);
-		return (true);
-	    }
-	}
-
 	// Validate any credentials already included with this request
 	HttpServletRequest hreq =
 	    (HttpServletRequest) request.getRequest();
@@ -243,10 +230,6 @@ public final class DigestAuthenticator
 	if (authorization != null) {
 	    principal = findPrincipal(hreq, authorization, context.getRealm());
 	    if (principal != null) {
-	        request.setAuthType(Constants.DIGEST_METHOD);
-		request.setUserPrincipal(principal);
-		if (cache && (session != null))
-		    session.setPrincipal(principal);
                 register(request, response, principal,
                          Constants.DIGEST_METHOD);
 		return (true);

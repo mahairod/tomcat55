@@ -419,6 +419,27 @@ public abstract class AuthenticatorBase
 		((HttpServletRequest) request.getRequest()).getRequestURI());
 	LoginConfig config = context.getLoginConfig();
 
+        // Have we got a cached authenticated Principal to record?
+        if (cache) {
+            Principal principal =
+                ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+            if (principal == null) {
+                Session session = getSession(hrequest);
+                if (session != null) {
+                    principal = session.getPrincipal();
+                    if (principal != null) {
+                        if (debug >= 1)
+                            log("We have cached auth type " +
+                                session.getAuthType() +
+                                " for principal " +
+                                session.getPrincipal());
+                        hrequest.setAuthType(session.getAuthType());
+                        hrequest.setUserPrincipal(principal);
+                    }
+                }
+            }
+        }
+
 	// Special handling for form-based logins to deal with the case
 	// where the login form (and therefore the "j_security_check" URI
 	// to which it submits) might be outside the secured area
@@ -450,6 +471,9 @@ public abstract class AuthenticatorBase
 	if (!checkUserData(hrequest, hresponse, constraint)) {
 	    if (debug >= 1)
 	        log(" Failed checkUserData() test");
+            ((HttpServletResponse) hresponse.getResponse()).sendError
+                (HttpServletResponse.SC_FORBIDDEN,
+                 ((HttpServletRequest) hrequest.getRequest()).getRequestURI());
 	    return;
 	}
 
@@ -457,6 +481,8 @@ public abstract class AuthenticatorBase
 	if (!authenticate(hrequest, hresponse, config)) {
 	    if (debug >= 1)
 	        log(" Failed authenticate() test");
+            // ASSERT: Authenticator already set the appropriate
+            // HTTP status code, so we do not have to do anything special
 	    return;
 	}
 
@@ -464,6 +490,8 @@ public abstract class AuthenticatorBase
 	if (!accessControl(hrequest, hresponse, constraint)) {
 	    if (debug >= 1)
 	        log(" Failed accessControl() test");
+            // ASSERT: Access control method has already set the appropriate
+            // HTTP status code, so we do not have to do anything special
 	    return;
 	}
 
@@ -538,9 +566,12 @@ public abstract class AuthenticatorBase
 	if (roles == null)
 	    roles = new String[0];
 	if (roles.length == 0) {
-            if (constraint.getAuthConstraint())
+            if (constraint.getAuthConstraint()) {
+                ((HttpServletResponse) response.getResponse()).sendError
+                    (HttpServletResponse.SC_FORBIDDEN,
+                     sm.getString("authenticator.forbidden"));
                 return (false); // No listed roles means no access at all
-            else
+            } else
                 return (true);	// Authenticated user is sufficient
         }
 	for (int i = 0; i < roles.length; i++) {
@@ -818,21 +849,39 @@ public abstract class AuthenticatorBase
 
 
     /**
-     * Register an authenticated Principal with our SingleSignOn valve,
-     * if there is one, and set the appropriate Cookie to be returned.
+     * Register an authenticated Principal and authentication type in our
+     * request, in the current session (if there is one), and with our
+     * SingleSignOn valve, if there is one.  Set the appropriate cookie
+     * to be returned.
      *
      * @param request The servlet request we are processing
      * @param response The servlet response we are generating
      * @param principal The authenticated Principal to be registered
      * @param authType The authentication type to be registered
      */
-    protected void register(Request request, Response response,
+    protected void register(HttpRequest request, HttpResponse response,
                             Principal principal, String authType) {
 
-        if (sso == null)
-            return;
+        if (debug >= 1)
+            log("Authenticated '" + principal.getName() + "' with type '"
+                + authType + "'");
+
+        // Cache the authentication information in our request
+        request.setAuthType(authType);
+        request.setUserPrincipal(principal);
+
+        // Cache the authentication information in our session, if any
+        if (cache) {
+            Session session = getSession((HttpRequest) request);
+            if (session != null) {
+                session.setAuthType(authType);
+                session.setPrincipal(principal);
+            }
+        }
 
         // Construct a cookie to be returned to the client
+        if (sso == null)
+            return;
         HttpServletRequest hreq =
             (HttpServletRequest) request.getRequest();
         HttpServletResponse hres =

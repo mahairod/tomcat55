@@ -145,26 +145,10 @@ public final class BasicAuthenticator
 	Principal principal =
 	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
 	if (principal != null) {
-            //            if (debug >= 1)
-            //                log("Already authenticated '" + principal.getName() + "'");
+            if (debug >= 1)
+                log("Already authenticated '" + principal.getName() + "'");
 	    return (true);
         }
-
-	// Have we got a cached authenticated Principal?
-	Session session = null;
-	if (cache)
-	    session = getSession(request);
-	if (session != null) {
-	    principal = session.getPrincipal();
-	    if (principal != null) {
-                //                if (debug >= 1)
-                //                    log("Cached authentication for '" + principal.getName()
-                //                        + "'");
-	        request.setAuthType(session.getAuthType());
-		request.setUserPrincipal(principal);
-		return (true);
-	    }
-	}
 
 	// Validate any credentials already included with this request
 	HttpServletRequest hreq =
@@ -175,12 +159,6 @@ public final class BasicAuthenticator
 	if (authorization != null) {
 	    principal = findPrincipal(authorization, context.getRealm());
 	    if (principal != null) {
-                //                if (debug >= 1)
-                //                    log("Authenticated '" + principal.getName() + "'");
-	        request.setAuthType(Constants.BASIC_METHOD);
-		request.setUserPrincipal(principal);
-		if (cache && (session != null))
-		    session.setPrincipal(principal);
                 register(request, response, principal, Constants.BASIC_METHOD);
 		return (true);
 	    }

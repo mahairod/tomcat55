@@ -140,20 +140,6 @@ public final class SSLAuthenticator
 	if (principal != null)
 	    return (true);
 
-	// Have we got a cached authenticated Principal?
-        // FIXME - what if the user switches certificates in the SSLSession?
-	Session session = null;
-	if (cache)
-	    session = getSession(request);
-	if (session != null) {
-	    principal = session.getPrincipal();
-	    if (principal != null) {
-	        request.setAuthType(session.getAuthType());
-		request.setUserPrincipal(principal);
-                return (true);
-	    }
-	}
-
         // Retrieve the certificate chain for this client
         if (debug >= 1)
             log(" Looking up certificates");
@@ -187,12 +173,6 @@ public final class SSLAuthenticator
         }
 
         // Cache the principal (if requested) and record this authentication
-        if (debug >= 1)
-            log(" Successfully identified '" + principal.getName() + "'");
-        request.setAuthType(Constants.CERT_METHOD);
-        request.setUserPrincipal(principal);
-        if (cache && (session != null))
-            session.setPrincipal(principal);
         register(request, response, principal, Constants.CERT_METHOD);
         return (true);
 

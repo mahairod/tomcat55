@@ -145,19 +145,6 @@ public final class FormAuthenticator
 	if (principal != null)
 	    return (true);
 
-	// Have we got a cached authenticated Principal?
-	Session session = null;
-	if (cache)
-	    session = getSession(request);
-	if (session != null) {
-	    principal = session.getPrincipal();
-	    if (principal != null) {
-	        request.setAuthType(session.getAuthType());
-		request.setUserPrincipal(principal);
-		return (true);
-	    }
-	}
-
 	// Acquire references to objects we will need to evaluate
 	HttpServletRequest hreq =
 	    (HttpServletRequest) request.getRequest();
@@ -166,6 +153,7 @@ public final class FormAuthenticator
 	String contextPath = hreq.getContextPath();
 	String requestURI = hreq.getRequestURI();
 	response.setContext(request.getContext());
+        Session session = null;
 
 	// Is this a request for the login page itself?  Test here to avoid
 	// displaying it twice (from the user's perspective) -- once because
@@ -200,10 +188,7 @@ public final class FormAuthenticator
 
 
 	// Restore this request and redirect to the original request URI
-	request.setAuthType(Constants.FORM_METHOD);
-	request.setUserPrincipal(principal);
-	if (cache && (session != null))
-	    session.setPrincipal(principal);
+        session = getSession(request, true);
         register(request, response, principal, Constants.FORM_METHOD);
 	if (restoreRequest(request, session))
 	    return (true);		// Perform the original request
