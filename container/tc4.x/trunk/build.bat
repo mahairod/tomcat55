@@ -139,7 +139,15 @@ goto cleanup
 :gotRegexpHome
 
 if not "%SERVLETAPI_HOME%" == "" goto gotServletapiHome
-set SERVLETAPI_HOME=..\jakarta-servletapi-4\dist
+if exist "..\jakarta-servletapi-4\dist" (
+set SERVLETAPI_HOME=..\..\jakarta-servletapi-4\dist
+) else (
+if exist "..\jakarta-servletapi-4\lib" (
+set SERVLETAPI_HOME=..\..\jakarta-servletapi-4
+) else (
+echo You must set SERVLETAPI_HOME to point at your Servlet API install
+goto cleanup
+))
 :gotServletapiHome
 
 
