@@ -98,7 +98,7 @@ class ProjectHelper {
 		throw new BuildException(msg);
 	    }
 
-	    project.setProperty(propertyName, propertyValue);
+	    project.setProperty(propertyName, replaceProperties( project, propertyValue ));
 	}
     }
 

@@ -1,7 +1,8 @@
 package org.apache.tools.ant;
 
 import java.io.File;
-
+import java.util.Properties;
+import java.util.Enumeration;
 /**
  * Command line entry point into BuildTool.
  *
@@ -13,7 +14,8 @@ public class Main {
     private static int msgOutputLevel = Project.MSG_INFO;
     private static File buildFile = new File("build.xml");
     private static String target = null;
-    
+
+    private static Properties defines=new Properties();
     /**
      * 
      *
@@ -35,6 +37,11 @@ public class Main {
 	    } else if (arg.equals("-verbose") || arg.equals("-v") ||
 		       arg.equals("v")) {
 		msgOutputLevel = Project.MSG_VERBOSE;
+	    } else if (arg.equals("-define") || arg.equals("-d")) {
+		String n=args[i+1];
+		String v=args[i+2];
+		i+=2;
+		defines.put( n, v );
 	    } else if (arg.equals("-buildfile") || arg.equals("-file")) {
 		try {
 		    buildFile = new File(args[i+1]);
@@ -84,6 +91,13 @@ public class Main {
 	}
 
 	Project project = new Project();
+	Enumeration preDef=defines.keys();
+	while( preDef.hasMoreElements() ) {
+	    String n=(String)preDef.nextElement();
+	    String v=(String)defines.get( n );
+	    project.setProperty( n, v );
+	}
+
 	project.setOutputLevel(msgOutputLevel);
 
 	try {

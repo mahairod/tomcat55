@@ -77,6 +77,10 @@ public class Project {
     }
 
     public void setProperty(String name, String value) {
+	if( properties.get( name ) != null )
+	    return; // this way command line arguments have priority.
+	// XXX we need a way to redefine properties
+	
 	properties.put(name, value);
     }
 

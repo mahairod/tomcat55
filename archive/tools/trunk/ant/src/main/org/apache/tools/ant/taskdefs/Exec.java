@@ -1,7 +1,7 @@
 package org.apache.tools.ant.taskdefs;
 
 import org.apache.tools.ant.*;
-
+import java.io.IOException;
 
 /**
  *
@@ -15,6 +15,12 @@ public class Exec extends Task {
     private String command;
     
     public void execute() throws BuildException {
+	try {
+	    // XXX if OS= current OS
+	    Runtime.getRuntime().exec(command);
+	} catch (IOException ioe) {
+	    throw new BuildException("Error exec: " + command );
+	}
 
     }
 
