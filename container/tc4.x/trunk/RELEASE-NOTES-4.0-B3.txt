@@ -23,6 +23,27 @@ Please use project codes "Catalina" and "Jasper" for servlet-related and
 JSP-related bug reports, respectively.
 
 
+------------------------
+Important Security Notes:
+------------------------
+
+This release includes fixes for security vulnerabilities that have been
+reported against Tomcat 4.0 beta 2:
+
+* Fixes to a similar vulnerability that was included in Tomcat 4.0-b2
+  is also included here.
+
+* "Tomcat 4.0-b2 for winnt/2000 show ".jsp" source vulnerability"
+  (BugTraq reference CSA-200110), which would cause JSP source to be
+  displayed on a URL like:
+    http://localhost:8080/examples/jsp/snp/snoop%252ejsp
+  on all platforms, not just Windows.  The same vulnerability was
+  fixed in the new server-side include facility.
+
+Any user who has downloaded Tomcat 4.0 beta 2 is encouraged to upgrade to
+beta 3 to fix these security vulnerabilities.
+
+
 ============
 NEW FEATURES:
 ============
@@ -64,6 +85,9 @@ SocketPermission AccessControlExceptions.
 
 StandardHost:  Ignore the "directory exists" exception when context startup
 tries to expand a WAR file that is already expanded.
+
+Extension:  Do not throw NullPointerException if a JAR file with no manifest
+file is added to the set of repositories for a StandardClassLoader.
 
 
 ----------------
