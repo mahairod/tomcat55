@@ -142,11 +142,11 @@ log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.8.jar
 log4j.loc=http://archive.apache.org/dist/jakarta/log4j/binaries/jakarta-log4j-1.2.8.tar.gz
 
 
-# ----- Commons DBCP, version 1.0 or later -----
-commons-dbcp.home=${base.path}/commons-dbcp-1.0
+# ----- Commons DBCP, version 1.1 or later -----
+commons-dbcp.home=${base.path}/commons-dbcp-1.1
 commons-dbcp.lib=${commons-dbcp.home}
-commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
-commons-dbcp.loc=http://archive.apache.org/dist/jakarta/commons/dbcp/binaries/commons-dbcp-1.0.tar.gz
+commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp-1.1.jar
+commons-dbcp.loc=http://archive.apache.org/dist/jakarta/commons/dbcp/binaries/commons-dbcp-1.1.tar.gz
 
 
 # ----- Commons HttpClient, version 2.0 or later -----
@@ -156,11 +156,11 @@ commons-httpclient.jar=${commons-httpclient.lib}/commons-httpclient-2.0-rc1.jar
 commons-httpclient.loc=http://archive.apache.org/dist/jakarta/commons/httpclient/binary/commons-httpclient-2.0-rc1.tar.gz
 
 
-# ----- Commons Pool, version 1.0.1 or later -----
-commons-pool.home=${base.path}/commons-pool-1.0.1
+# ----- Commons Pool, version 1.1 or later -----
+commons-pool.home=${base.path}/commons-pool-1.1
 commons-pool.lib=${commons-pool.home}
-commons-pool.jar=${commons-pool.lib}/commons-pool.jar
-commons-pool.loc=http://archive.apache.org/dist/jakarta/commons/pool/binaries/pool-1.0.1.tar.gz
+commons-pool.jar=${commons-pool.lib}/commons-pool-1.1.jar
+commons-pool.loc=http://archive.apache.org/dist/jakarta/commons/pool/binaries/commons-pool-1.1.tar.gz
 
 
 # ----- Commons FileUpload, version 1.0-20030531 or later -----
