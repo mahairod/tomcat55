@@ -161,7 +161,7 @@ public final class StandardWrapper
     /**
      * The facade associated with this wrapper.
      */
-    private final StandardWrapperFacade facade =
+    private StandardWrapperFacade facade =
         new StandardWrapperFacade(this);
 
 
@@ -833,7 +833,7 @@ public final class StandardWrapper
 
         PrintStream out = System.out;
         SystemLogHandler.startCapture();
-        final Servlet servlet;
+        Servlet servlet;
         try {
             // If this "servlet" is really a JSP file, get the right class.
             // HOLD YOUR NOSE - this is a kludge that avoids having to do special
@@ -963,7 +963,6 @@ public final class StandardWrapper
             } catch (UnavailableException f) {
                 instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
                                                   servlet, f);
-                System.out.println("*************************************");
                 unavailable(f);
                 throw f;
             } catch (ServletException f) {
