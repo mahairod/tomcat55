@@ -60,22 +60,6 @@
             <table width="100%" border="1" cellspacing="0" cellpadding="3" bordercolor="#000000">
                 <tr>
                     <td bgcolor="#D2A41C" bordercolor="#000000" align="left" nowrap>
-                        <font face="Verdana" size="+1"><i>Web Applications</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
-                    </td>
-                </tr>
-                <tr>
-                    <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
-                        <a href="examples/jsp/">JSP Examples</a><br>
-                        <a href="examples/servlets/">Servlet Examples</a><br>
-                        <a href="webdav/">WebDAV capabilities</a><br>
-                        &nbsp;
-                    </td>
-                </tr>
-            </table>
-            <br>
-            <table width="100%" border="1" cellspacing="0" cellpadding="3" bordercolor="#000000">
-                <tr>
-                    <td bgcolor="#D2A41C" bordercolor="#000000" align="left" nowrap>
                         <font face="Verdana" size="+1"><i>Administration</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
                     </td>
                 </tr>
@@ -96,6 +80,40 @@
                 <tr>
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
                         <a href="tomcat-docs">Tomcat Documentation</a><br>
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table width="100%" border="1" cellspacing="0" cellpadding="3" bordercolor="#000000">
+                <tr>
+                    <td bgcolor="#D2A41C" bordercolor="#000000" align="left" nowrap>
+                        <font face="Verdana" size="+1"><i>Tomcat Online</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
+                        <a href="http://jakarta.apache.org/tomcat/">Home Page</a><br>
+                        <a href="http://jakarta.apache.org/tomcat/bugreport.html">Bug Database</a><br>
+                        <a href="http://www.mail-archive.com/tomcat-user%40jakarta.apache.org/">Users Mailing List</a><br>
+                        <a href="http://www.mail-archive.com/tomcat-dev%40jakarta.apache.org/">Developers Mailing List</a><br>
+                        <a href="irc://irc.us.openprojects.net/tomcat">IRC</a><br>
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table width="100%" border="1" cellspacing="0" cellpadding="3" bordercolor="#000000">
+                <tr>
+                    <td bgcolor="#D2A41C" bordercolor="#000000" align="left" nowrap>
+                        <font face="Verdana" size="+1"><i>Examples</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
+                        <a href="examples/jsp/">JSP Examples</a><br>
+                        <a href="examples/servlets/">Servlet Examples</a><br>
+                        <a href="webdav/">WebDAV capabilities</a><br>
                         &nbsp;
                     </td>
                 </tr>
@@ -151,7 +169,7 @@
 
             <p align="right"><font size=-1><img src="tomcat-power.gif" width="77" height="80"></font><br>
             &nbsp;
-            <font size=-1>Copyright &copy; 1999-2001 Apache Software Foundation</font><br>
+            <font size=-1>Copyright &copy; 1999-2002 Apache Software Foundation</font><br>
             <font size=-1>All Rights Reserved</font> <br>
             &nbsp;</p>
             <p align="right">&nbsp;</p>
