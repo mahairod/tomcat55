@@ -41,6 +41,7 @@ public class Project {
     private File baseDir;
     
     public Project() {
+        detectJavaVersion();
 	String defs = "/org/apache/tools/ant/taskdefs/defaults.properties";
 	try {
 	    Properties props = new Properties();
@@ -126,15 +127,17 @@ public class Project {
     
 
     public static String getJavaVersion() {
-        if (javaVersion != null) {
-            return javaVersion;
-        }
+        return javaVersion;
+    }
+
+    private void detectJavaVersion() {
 
         // Determine the Java version by looking at available classes
         // java.lang.StrictMath was introduced in JDK 1.3
         // java.lang.ThreadLocal was introduced in JDK 1.2
         // java.lang.Void was introduced in JDK 1.1
         // Count up version until a NoClassDefFoundError ends the try
+
         try {
             javaVersion = "1.0";
             Class.forName("java.lang.Void");
@@ -144,10 +147,11 @@ public class Project {
             Class.forName("java.lang.StrictMath");
             javaVersion = "1.3";
         }
-        catch (Throwable t) {
+        catch (ClassNotFoundException cnfe) {
+            // swallow as we've hit the max class version that
+            // we have
         }
-
-        return javaVersion;
+        log("Detected Java Version: " + javaVersion);
     }
 
     public void addTaskDefinition(String taskName, Class taskClass) {
