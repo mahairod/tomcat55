@@ -156,6 +156,23 @@ public class XmlOutputter {
     }
     
     /**
+     * Append the start tag along with its attributes 
+     * (name, value) to the XML stream.
+     */
+    void append(String tag, Hashtable table) {
+	Enumeration enum = table.keys();
+	while (enum.hasMoreElements()) {
+	    String name = (String)enum.nextElement();
+	    String value = ((String[])table.get(name))[0];
+	    AttributesImpl attrs = new AttributesImpl();
+	    attrs.addAttribute("", "name", "name", "CDATA", name);
+	    attrs.addAttribute("", "value", "value", "CDATA", value);
+	    append(tag, attrs, sb);
+	    append(tag);
+	}
+    }
+    
+    /**
      * Append the start tag along with its attributes to the
      * specific XML stream. 
      * [StringBuffer is an argument so we can reuse the method

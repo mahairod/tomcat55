@@ -952,7 +952,9 @@ public class JspParseEventListener implements ParseEventListener {
                 new ForwardGenerator(start, attrs, param, isXml),
                 start, stop);
 	addGenerator(gen);
-	//@@@ xo
+	xo.append("jsp:forward", attrs);
+	xo.append("jsp:param", param);
+	xo.append("jsp:forward");
     }
 
     public void handleInclude(Mark start, Mark stop, Attributes attrs, 
@@ -971,7 +973,9 @@ public class JspParseEventListener implements ParseEventListener {
                 new IncludeGenerator(start, attrs, param, isXml),
                 start, stop);
 	addGenerator(gen);
-	//@@@ xo
+	xo.append("jsp:include", attrs);
+	xo.append("jsp:param", param);
+	xo.append("jsp:include");
     }
 
     public void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException {
