@@ -46,6 +46,11 @@
     </init-param>
 -->
     <init-param>
+      <!-- An alternate java encoding -->
+      <param-name>javaEncoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
       <!-- Levels: FATAL ERROR WARNING INFORMATION DEBUG -->
       <param-name>logVerbosityLevel</param-name>
       <param-value>WARNING</param-value>
