@@ -177,7 +177,7 @@ public class ContextResourceMBean extends BaseModelMBean {
                     ("Cannot find attribute "+cr.getName());
             }
         }
-        
+       
         return value;
         
     }
@@ -232,14 +232,17 @@ public class ContextResourceMBean extends BaseModelMBean {
         } else if ("type".equals(name)) {
             cr.setType((String)value);
         } else {
-            ResourceParams rp = cr.getNamingResource().findResourceParams(cr.getName());
-            if (rp == null) {
-                throw new AttributeNotFoundException
-                    ("Cannot find resource params "+cr.getName());
+            ResourceParams rp = 
+                cr.getNamingResource().findResourceParams(cr.getName());
+            if (rp != null) {
+                rp.addParameter(name, (String) value);
+            } else {
+                rp = new ResourceParams();
+                rp.setName(cr.getName());
+                rp.addParameter(name, (String) value);
+                cr.getNamingResource().addResourceParams(rp);
             }
-            rp.getParameters().put(name, value);
         }
-
     }
     
 }
