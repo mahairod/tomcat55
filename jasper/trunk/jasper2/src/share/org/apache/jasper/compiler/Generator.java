@@ -90,6 +90,7 @@ import org.apache.jasper.Constants;
 
 public class Generator {
 
+    private static final Class[] OBJECT_CLASS = { Object.class};
     private ServletWriter out;
     private MethodsBuffer methodsBuffer;
     private FragmentHelperClass fragmentHelperClass;
@@ -2207,34 +2208,60 @@ public class Generator {
                     }
 		}
 		String attrName = attrs[i].getName();
-		Method m = handlerInfo.getSetterMethod(attrName);
-		if (m == null) {
-		    err.jspError(n, "jsp.error.unable.to_find_method",
-				 attrName);
-		}
 
-		Class c[] = m.getParameterTypes();
-		// XXX assert(c.length > 0)
+		Method m = null;
+		Class[] c = null;
+		if (attrs[i].isDynamic()) {
+		    c = OBJECT_CLASS;
+		} else {
+		    m = handlerInfo.getSetterMethod(attrName);
+		    if (m == null) {
+			err.jspError(n, "jsp.error.unable.to_find_method",
+				     attrName);
+		    }
+		    c = m.getParameterTypes();
+		    // XXX assert(c.length > 0)
+		}
 
 		if (attrs[i].isExpression() || attrs[i].isNamedAttribute()) {
 		    // Do nothing
-		}
-		else if (attrs[i].isELInterpreterInput()) {
+		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
                     attrValue = JspUtil.interpreterCall( attrValue,
                         c[0], "_jspx_fnmap", n.getPrefix() );
-                }
-                else {
-		    attrValue = convertString(c[0], attrValue, attrName,
-					      handlerInfo.getPropertyEditorClass(attrName));
+                } else {
+		    attrValue = convertString(
+                                c[0], attrValue, attrName,
+				handlerInfo.getPropertyEditorClass(attrName));
 		}
 		
-		out.printin(tagHandlerVar);
-		out.print(".");
-		out.print(m.getName());
-		out.print("(");
-		out.print(attrValue);
-		out.println(");");
+		if (attrs[i].isDynamic()) {
+		    out.printil("try {");
+		    out.pushIndent();
+		    out.printin(tagHandlerVar);
+		    out.print(".");
+		    out.print("setDynamicAttribute(\"");
+		    out.print(attrs[i].getURI());
+		    out.print("\", \"");
+		    out.print(attrs[i].getLocalName());
+		    out.print("\", ");
+		    out.print(attrValue);
+		    out.println(");");
+		    out.popIndent();
+		    out.printin("}"); // catch
+		    out.println(" catch (javax.servlet.jsp.tagext.AttributeNotSupportedException e) {");
+		    out.pushIndent();
+		    out.printil("throw new javax.servlet.jsp.JspException(e);");
+		    out.popIndent();
+		    out.printil("}"); // catch
+		} else {
+		    out.printin(tagHandlerVar);
+		    out.print(".");
+		    out.print(m.getName());
+		    out.print("(");
+		    out.print(attrValue);
+		    out.println(");");
+		}
 	    }
 	}
 

@@ -798,6 +798,7 @@ public abstract class Node {
 	private boolean implementsBodyTag;
 	private boolean implementsTryCatchFinally;
 	private boolean implementsSimpleTag;
+	private boolean implementsDynamicAttributes;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
@@ -819,6 +820,8 @@ public abstract class Node {
 		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
 	    this.implementsSimpleTag = 
 		SimpleTag.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsDynamicAttributes = 
+		DynamicAttributes.class.isAssignableFrom(tagHandlerClass);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -898,6 +901,10 @@ public abstract class Node {
 
 	public boolean implementsSimpleTag() {
 	    return implementsSimpleTag;
+	}
+
+	public boolean implementsDynamicAttributes() {
+	    return implementsDynamicAttributes;
 	}
 
 	public TagVariableInfo[] getTagVariableInfos() {
@@ -1200,21 +1207,28 @@ public abstract class Node {
     public static class JspAttribute {
 
 	private String name;
+	private String uri;
+	private String localName;
 	private String value;
 	private boolean expression;
         private boolean el;
+	private boolean dynamic;
 
-        // If true, this JapAttribute represents a <jsp:attribute>
+        // If true, this JspAttribute represents a <jsp:attribute>
         private boolean namedAttribute;
         // The node in the parse tree for the NamedAttribute
         private NamedAttribute namedAttributeNode;
 
-        JspAttribute(String name, String value, boolean expr, boolean el ) {
+        JspAttribute(String name, String uri, String localName, String value,
+		     boolean expr, boolean el, boolean dyn ) {
 	    this.name = name;
+	    this.uri = uri;
+	    this.localName = localName;
 	    this.value = value;
             this.namedAttributeNode = null;
 	    this.expression = expr;
             this.el = el;
+	    this.dynamic = dyn;
             this.namedAttribute = false;
 	}
 
@@ -1223,12 +1237,14 @@ public abstract class Node {
          * named attribute.  In this case, we have to store the nodes of
          * the body of the attribute.
          */
-        JspAttribute( String name, NamedAttribute namedAttributeNode ) {
+        JspAttribute( String name, NamedAttribute namedAttributeNode,
+		      boolean dyn ) {
             this.name = name;
             this.value = null;
             this.namedAttributeNode = namedAttributeNode;
             this.expression = false;
             this.el = false;
+	    this.dynamic = dyn;
             this.namedAttribute = true;
         }
 
@@ -1237,6 +1253,21 @@ public abstract class Node {
 	 */
 	public String getName() {
 	    return name;
+	}
+
+	/**
+ 	 * @return The local name of the attribute
+	 */
+	public String getLocalName() {
+	    return localName;
+	}
+
+	/**
+ 	 * @return The namespace of the attribute, or null if in the default
+	 * namespace
+	 */
+	public String getURI() {
+	    return uri;
 	}
 
 	/**
@@ -1289,6 +1320,13 @@ public abstract class Node {
 	 */
 	public boolean isLiteral() {
 	    return !expression && !el && !namedAttribute;
+	}
+
+	/**
+	 * XXX
+	 */
+	public boolean isDynamic() {
+	    return dynamic;
 	}
     }
 
