@@ -131,14 +131,15 @@ implements HttpServletRequest {
     }
 
     public Cookie[] getCookies() {
-	Vector cookies = request.getCookies();
-	Cookie[] cookieArray = new Cookie[cookies.size()];
-
-	for (int i = 0; i < cookies.size(); i ++) {
-	    cookieArray[i] = (Cookie)cookies.elementAt(i);    
-	}
-
-        return cookieArray;
+	return request.getCookies();
+	// 	Vector cookies = request.getCookies();
+	// 	Cookie[] cookieArray = new Cookie[cookies.size()];
+	
+	// 	for (int i = 0; i < cookies.size(); i ++) {
+	// 	    cookieArray[i] = (Cookie)cookies.elementAt(i);    
+	// 	}
+	
+	//         return cookieArray;
     }
 
     public long getDateHeader(String name) {

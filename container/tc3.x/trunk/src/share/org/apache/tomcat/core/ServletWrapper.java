@@ -209,7 +209,10 @@ class ServletWrapper {
         if (path != null &&
             servletClass == null &&
             servletClassName == null) {
-            Request request = new ServerRequest();
+	    // XXX XXX XXX
+	    // core shouldn't depend on a particular connector!
+	    // need to find out what this code does!
+	    Request request = new ServerRequest();
             Response response = new ServerResponse();
 
             request.recycle();

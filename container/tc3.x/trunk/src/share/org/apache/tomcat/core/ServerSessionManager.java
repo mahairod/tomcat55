@@ -108,10 +108,12 @@ public class ServerSessionManager {
 	String sessionId = null;
 	ServerSession session = null;
 
-	Enumeration enum = request.getCookies().elements();
-
-	while (enum.hasMoreElements()) {
-	    Cookie cookie = (Cookie)enum.nextElement();
+	//	Enumeration enum = request.getCookies().elements();
+	Cookie cookies[]=request.getCookies(); // assert !=null
+	
+	//while (enum.hasMoreElements()) {
+	for( int i=0; i<cookies.length; i++ ) {
+	    Cookie cookie = cookies[i]; // (Cookie)enum.nextElement();
 
 	    if (cookie.getName().equals(
                 Constants.Cookie.SESSION_COOKIE_NAME)) {
