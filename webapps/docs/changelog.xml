@@ -125,6 +125,9 @@
       <fix>
         <bug>33961</bug>: Don't encode '~' in context paths (remm)
       </fix>
+      <fix>
+        <bug>32866</bug>: Propagate distributable property from context to manager (yoavs)
+      </fix>
     </changelog>
    </subsection>
    
