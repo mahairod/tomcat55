@@ -14,8 +14,6 @@
   <property name="catalina.build"    value="build"/>
   <property name="catalina.deploy"   value="../build"/>
   <property name="catalina.dist"     value="dist"/>
-  <property name="copy.crimson.jar"  value="../lib/crimson.jar"/>
-  <property name="copy.jaxp.jar"     value="../lib/jaxp.jar"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="test.webapp"       value="../webapps/build/examples"/>
@@ -24,8 +22,6 @@
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
     <pathelement location="${activation.jar}"/>
-    <pathelement location="${copy.crimson.jar}"/>
-    <pathelement location="${copy.jaxp.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -38,6 +34,7 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tyrex.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${catalina.build}/classes"/>
   </path>
 
@@ -45,8 +42,6 @@
   <path id="test.classpath">
     <pathelement location="${junit.jar}"/>
     <pathelement location="${activation.jar}"/>
-    <pathelement location="${copy.crimson.jar}"/>
-    <pathelement location="${copy.jaxp.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -59,6 +54,7 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tyrex.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${catalina.build}/classes"/>
     <pathelement location="${catalina.build}/tests"/>
   </path>
@@ -431,9 +427,8 @@
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
 
     <!-- Common Extensions -->
-    <copy todir="${catalina.build}/common/lib" file="${copy.crimson.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${copy.jaxp.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${xerces.jar}"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">

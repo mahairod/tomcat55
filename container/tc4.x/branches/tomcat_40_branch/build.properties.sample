@@ -109,3 +109,11 @@ junit.jar=${junit.lib}/junit.jar
 tyrex.home=${base.path}/tyrex-0.9.7.0
 tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
+
+
+# ----- Xerces XML Parser, version 1.4.3 or later -----
+xerces.home=${base.path}/xerces-1_4_3
+xerces.lib=${xerces.home}
+xercse.jar=${xerces.lib}/xerces.jar
+
+

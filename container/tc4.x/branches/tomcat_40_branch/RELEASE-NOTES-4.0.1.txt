@@ -134,15 +134,13 @@ Tomcat 4.0 Standard APIs Available:
 A standard installation of Tomcat 4 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "lib"):
 * activation.jar (Java Activation Framework)
-* crimson.jar (Unsealed version of JAXP/1.1 parser)
-* jaxp.jar (Unsealed version of JAXP/1.1 API classes)
 * jdbc2_0-stdext.jar (JDBC 2.0 Optional Package, javax.sql.*)
 * jndi.jar (JNDI 1.2 base API classes)
 * jta-spec1_0_1 (Java Transacation APIs)
-* ldap.jar (JNDI LDAP provider required by JNDIRealm)
 * mail.jar (JavaMail 1.2)
 * servlet.jar (Servlet 2.3 and JSP 1.2 APIs)
 * tyrex-0.9.7.0.jar (Tyrex XA-compatible data source from tyrex.exolab.org)
+* xerces.jar (Xerces 1.4.3)
 
 You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
@@ -156,37 +154,16 @@ Tomcat 4.0 and XML Parsers:
 As described above, Tomcat 4.0 makes an XML parser (and many other standard
 APIs) available to web applications.  This parser is also used internally
 to parse web.xml files and the server.xml configuration file.  If you wish,
-you may replace the "jaxp.jar" and "crimson.jar" files in "common/lib" with
-another XML parser, as long as it is compatible with the JAXP/1.1 APIs.
+you may replace the "xerces.jar" file in "common/lib" with another XML parser,
+as long as it is compatible with the JAXP/1.1 APIs.  Note, however, that
+problems have been observed when trying to use the "jaxp.jar" and
+"crimson.jar" files from the JAXP/1.1 Reference Implementation release
+as Tomcat's standard XML parser.
 
-WARNING:  If you include an XML parser such as Xerces inside your web app, you
-will likely encounter a ClassCastException error when trying to initialize it.
-This error occurs because two parsers are visible in the class loading path of
-the web application.  To correct this problem, you should take *one* of the
-following actions:
+If you wish to *not* make any XML parser visible to all web applications,
+this can be accomplished by copying the "xerces.jar" file from "common/lib"
+to both "server/lib" and "jasper", and removing it from "common/lib".
 
-* Remove the XML parser from your web application, and use the global
-  one provided by Tomcat (jaxp.jar and crimson.jar in the "common/lib"
-  directory).
 
-* Remove the XML parser from your web application, and put it in the
-  "common/lib" directory *in place of* the one provided by Tomcat
-  (jaxp.jar and crimson.jar).  This will work *only* if the XML parser
-  you supply supports the JAXP/1.1 APIs (as recent versions of Xerces do).
 
-* Make Tomcat no longer provide an XML parser by default.  This is accomplished
-  by moving the jaxp.jar and crimson.jar files from the "common/lib" directory
-  to the "server/lib" directory (so that Tomcat can still use it internally for
-  its own parsing requirements).  In this configuration, all web applications
-  that require an XML parser will need to include one in their /WEB-INF/lib
-  directory.
-
-WARNING:  Tomcat 4.0 ships with a modified version of the JAXP/1.1
-"jaxp.jar" and "crimson.jar" files from JAXP/1.1 final release.
-The "sealed" attribute has been removed from the manifest file for these
-two JARs, to avoid "package sealing violation" errors that were caused by
-them in a JDK 1.3 environment.  You MUST NOT replace these files with a
-different (or later) release of JAXP, unless that later release has had
-the sealed attribute removed, or you will encounter "package sealing violation"
-errors when trying to use a different XML parser in a web application.
 
