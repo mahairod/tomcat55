@@ -72,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -187,11 +188,25 @@ public final class SaveUserDatabaseAction extends Action {
 
             try {
                 String domain = userDatabaseForm.getDomain();
+                oname = new ObjectName( domain + 
+                            ResourceUtils.RESOURCE_TYPE + 
+                            ResourceUtils.GLOBAL_TYPE +
+                            ",class=" + ResourceUtils.USERDB_CLASS + 
+                            ",name=" + params[0]);
+                            
+                if (mserver.isRegistered(oname)) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add("name",
+                               new ActionError("resources.invalid.name"));
+                    saveErrors(request, errors);
+                    return (new ActionForward(mapping.getInput()));
+                }   
+                
                 // Construct the MBean Name for the naming source
                 oname = new ObjectName(domain + 
                             ResourceUtils.NAMINGRESOURCES_TYPE + 
                             ResourceUtils.GLOBAL_TYPE);
-
+ 
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResource",
                                                      params, signature);
