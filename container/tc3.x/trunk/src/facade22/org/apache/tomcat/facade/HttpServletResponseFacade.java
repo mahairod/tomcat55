@@ -250,13 +250,17 @@ final class HttpServletResponseFacade  implements HttpServletResponse
     }
 
     public void setDateHeader(String name, long date) {
-	MimeHeaders headers=response.getMimeHeaders();
-	headers.setValue( name ).setTime( date );
+	if( ! response.isIncluded() ) {
+	    MimeHeaders headers=response.getMimeHeaders();
+	    headers.setValue( name ).setTime( date );
+	}
     }
 
     public void addDateHeader(String name, long value) {
-	MimeHeaders headers=response.getMimeHeaders();
-	headers.addValue( name ).setTime( value );
+	if ( ! response.isIncluded() ) {
+	    MimeHeaders headers=response.getMimeHeaders();
+	    headers.addValue( name ).setTime( value );
+	}
     }
 
     public void setHeader(String name, String value) {
