@@ -1,0 +1,41 @@
+<%-- Roles List --%>
+
+<table class="back-table" border="0" cellspacing="0" cellpadding="1"
+       width="100%"><tr><td> 
+
+  <table class="front-table" border="1"
+   cellspacing="0" cellpadding="0" width="100%">
+    <tr class="header-row">
+      <logic:present name="roleChecks">
+        <td><div align="left" class="table-header-text">
+          &nbsp;
+        </td>
+      </logic:present>
+      <td><div align="left" class="table-header-text">
+        <bean:message key="users.list.rolename"/>
+      </div></td>
+      <td><div align="left" class="table-header-text">
+        <bean:message key="users.list.description"/>
+      </div></td>
+    </tr>
+    <logic:iterate name="roles" id="role" type="java.lang.String">
+      <tr class="line-row">
+        <logic:present name="roleChecks">
+          <td><div align="left" class="table-normal-text">
+            <input type="checkbox" name="roles">  <%-- FIXME: checks --%>
+          </td>
+        </logic:present>
+        <td><div align="left" class="table-normal-text">&nbsp;
+          <html:link page='<%= "/users/setUpRole.do?objectName=" + 
+                               URLEncoder.encode(role) %>'>
+            <controls:attribute name="role" attribute="rolename"/>
+          </html:link>
+        </div></td>
+        <td><div align="left" class="table-normal-text">&nbsp;
+          <controls:attribute name="role" attribute="description"/>
+        </div></td>
+      </tr>
+    </logic:iterate>
+  </table>
+
+</td></tr></table>
