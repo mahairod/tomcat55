@@ -151,7 +151,11 @@ class NotFoundHandler extends ServletWrapper {
     public void doService(Request req, Response res)
 	throws Exception
     {
-	res.setContentType("text/html");	// ISO-8859-1 default
+	String charset = LocaleToCharsetMap.getCharset(Locale.getDefault());
+	if (charset == null || charset.equalsIgnoreCase("ISO-8859-1"))
+	    res.setContentType("text/html");
+	else
+	    res.setContentType("text/html; charset=" + charset);
 
 	String requestURI = (String)req.
 	    getAttribute("javax.servlet.include.request_uri");
@@ -226,7 +230,11 @@ class ExceptionHandler extends ServletWrapper {
 	    return;
 	}
 
-	res.setContentType("text/html");
+	String charset = LocaleToCharsetMap.getCharset(Locale.getDefault());
+	if (charset == null || charset.equalsIgnoreCase("ISO-8859-1"))
+	    res.setContentType("text/html");
+	else
+	    res.setContentType("text/html; charset=" + charset);
 	res.setStatus( 500 );
 	
 	StringBuffer buf = new StringBuffer();
@@ -331,7 +339,11 @@ class StatusHandler extends ServletWrapper {
 	String msg=(String)req.getAttribute("javax.servlet.error.message");
 	String errorURI = res.getErrorURI();
 	
-	res.setContentType("text/html");
+	String charset = LocaleToCharsetMap.getCharset(Locale.getDefault());
+	if (charset == null || charset.equalsIgnoreCase("ISO-8859-1"))
+	    res.setContentType("text/html");
+	else
+	    res.setContentType("text/html; charset=" + charset);
 	// res is reset !!!
 	// status is already set
 	int sc=res.getStatus();
@@ -432,7 +444,11 @@ class RedirectHandler extends ServletWrapper {
 
 	if( debug>0) ctx.log("Redirect " + location + " " + req );
 
-	res.setContentType("text/html");	// ISO-8859-1 default
+	String charset = LocaleToCharsetMap.getCharset(Locale.getDefault());
+	if (charset == null || charset.equalsIgnoreCase("ISO-8859-1"))
+	    res.setContentType("text/html");
+	else
+	    res.setContentType("text/html; charset=" + charset);
 	res.setHeader("Location", location);
 
 	StringBuffer buf = new StringBuffer();
