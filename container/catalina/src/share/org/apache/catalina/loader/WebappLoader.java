@@ -132,7 +132,7 @@ import org.apache.commons.modeler.Registry;
  */
 
 public class WebappLoader
-    implements Lifecycle, Loader, PropertyChangeListener, Runnable, MBeanRegistration  {
+    implements Lifecycle, Loader, PropertyChangeListener, MBeanRegistration  {
 
     // ----------------------------------------------------------- Constructors
 
@@ -161,13 +161,6 @@ public class WebappLoader
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The number of seconds between checks for modified classes, if
-     * automatic reloading is enabled.
-     */
-    private int checkInterval = 15;
 
 
     /**
@@ -260,56 +253,12 @@ public class WebappLoader
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
-    /**
-     * The background thread.
-     */
-    private Thread thread = null;
-
-
-    /**
-     * The background thread completion semaphore.
-     */
-    private boolean threadDone = false;
-
-
-    /**
-     * Name to register for the background thread.
-     */
-    private String threadName = "WebappLoader";
-
-
     // Classpath set in the loader
     private String classpath=null;
 
     // repositories that are set in the loader, for jmx
     private ArrayList loaderRepositories;
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the check interval for this Loader.
-     */
-    public int getCheckInterval() {
-
-        return (this.checkInterval);
-
-    }
-
-
-    /**
-     * Set the check interval for this Loader.
-     *
-     * @param checkInterval The new check interval
-     */
-    public void setCheckInterval(int checkInterval) {
-
-        int oldCheckInterval = this.checkInterval;
-        this.checkInterval = checkInterval;
-        support.firePropertyChange("checkInterval",
-                                   new Integer(oldCheckInterval),
-                                   new Integer(this.checkInterval));
-
-    }
 
 
     /**
@@ -491,14 +440,6 @@ public class WebappLoader
         support.firePropertyChange("reloadable",
                                    new Boolean(oldReloadable),
                                    new Boolean(this.reloadable));
-
-        // Start or stop our background thread if required
-        if (!started)
-            return;
-        if (!oldReloadable && this.reloadable)
-            threadStart();
-        else if (oldReloadable && !this.reloadable)
-            threadStop();
 
     }
 
@@ -772,16 +713,6 @@ public class WebappLoader
             throw new LifecycleException("start: ", t);
         }
 
-        // Start our background thread if we are reloadable
-        if (reloadable) {
-            log.info(sm.getString("webappLoader.reloading"));
-            try {
-                threadStart();
-            } catch (IllegalStateException e) {
-                throw new LifecycleException(e);
-            }
-        }
-
     }
 
 
@@ -800,10 +731,6 @@ public class WebappLoader
             log.debug(sm.getString("webappLoader.stopping"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
-
-        // Stop our background thread if we are reloadable
-        if (reloadable)
-            threadStop();
 
         // Remove context attributes as appropriate
         if (container instanceof Context) {
@@ -924,17 +851,6 @@ public class WebappLoader
             System.out.println("" + throwable);
             throwable.printStackTrace(System.out);
         }
-
-    }
-
-
-    /**
-     * Notify our Context that a reload is appropriate.
-     */
-    private void notifyContext() {
-
-        WebappContextNotifier notifier = new WebappContextNotifier();
-        (new Thread(notifier)).start();
 
     }
 
@@ -1337,142 +1253,6 @@ public class WebappLoader
 
     }
 
-
-    /**
-     * Sleep for the duration specified by the <code>checkInterval</code>
-     * property.
-     */
-    private void threadSleep() {
-
-        try {
-            Thread.sleep(checkInterval * 1000L);
-        } catch (InterruptedException e) {
-            ;
-        }
-
-    }
-
-
-    /**
-     * Start the background thread that will periodically check for
-     * session timeouts.
-     *
-     * @exception IllegalStateException if we should not be starting
-     *  a background thread now
-     */
-    private void threadStart() {
-
-        // Has the background thread already been started?
-        if (thread != null)
-            return;
-
-        // Validate our current state
-        if (!reloadable)
-            throw new IllegalStateException
-                (sm.getString("webappLoader.notReloadable"));
-        if (!(container instanceof Context))
-            throw new IllegalStateException
-                (sm.getString("webappLoader.notContext"));
-
-        // Start the background thread
-        if (log.isDebugEnabled())
-            log.debug(" Starting background thread");
-        // XXX ONE TREAD PER WEBAPP IS _WRONG_ - IT DOESN'T SCALE
-        threadDone = false;
-        threadName = "WebappLoader[" + container.getName() + "]";
-        thread = new Thread(this, threadName);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-
-    /**
-     * Stop the background thread that is periodically checking for
-     * modified classes.
-     */
-    private void threadStop() {
-
-        if (thread == null)
-            return;
-
-        if (log.isDebugEnabled())
-            log.debug(" Stopping background thread");
-        threadDone = true;
-        thread.interrupt();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        thread = null;
-
-    }
-
-
-    // ------------------------------------------------------ Background Thread
-
-
-    /**
-     * The background thread that checks for session timeouts and shutdown.
-     */
-    public void run() {
-
-        if (log.isDebugEnabled())
-            log.debug("BACKGROUND THREAD Starting");
-
-        // Loop until the termination semaphore is set
-        while (!threadDone) {
-
-            // Wait for our check interval
-            threadSleep();
-
-            if (!started)
-                break;
-
-            try {
-                // Perform our modification check
-                if (!classLoader.modified())
-                    continue;
-            } catch (Exception e) {
-                log.error(sm.getString("webappLoader.failModifiedCheck"), e);
-                continue;
-            }
-
-            // Handle a need for reloading
-            notifyContext();
-            break;
-
-        }
-
-        if (log.isDebugEnabled())
-            log.debug("BACKGROUND THREAD Stopping");
-
-    }
-
-
-    // -------------------------------------- WebappContextNotifier Inner Class
-
-
-    /**
-     * Private thread class to notify our associated Context that we have
-     * recognized the need for a reload.
-     */
-    protected class WebappContextNotifier implements Runnable {
-
-
-        /**
-         * Perform the requested notification.
-         */
-        public void run() {
-
-            ((Context) container).reload();
-
-        }
-
-
-    }
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( WebappLoader.class );

@@ -927,8 +927,7 @@ public final class StandardServer
             return (false);
         }
         WebappLoader wloader = (WebappLoader) loader;
-        if ((wloader.getCheckInterval() != 15) ||
-            (wloader.getDebug() != 0) ||
+        if ((wloader.getDebug() != 0) ||
             (wloader.getDelegate() != false) ||
             !wloader.getLoaderClass().equals
              ("org.apache.catalina.loader.WebappClassLoader")) {
@@ -953,7 +952,6 @@ public final class StandardServer
         StandardManager smanager = (StandardManager) manager;
         if ((smanager.getDebug() != 0) ||
             !smanager.getPathname().equals("SESSIONS.ser") ||
-            (smanager.getCheckInterval() != 60) ||
             !smanager.getRandomClass().equals("java.security.SecureRandom") ||
             (smanager.getMaxActiveSessions() != -1) ||
             !smanager.getAlgorithm().equals("MD5")) {

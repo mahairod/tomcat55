@@ -208,6 +208,12 @@ public abstract class ContainerBase
 
 
     /**
+     * The execute delay for this component.
+     */
+    protected int executeDelay = -1;
+
+
+    /**
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
@@ -299,6 +305,18 @@ public abstract class ContainerBase
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
+    /**
+     * The background thread.
+     */
+    private Thread thread = null;
+
+
+    /**
+     * The background thread completion semaphore.
+     */
+    private boolean threadDone = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -324,6 +342,32 @@ public abstract class ContainerBase
         support.firePropertyChange("debug", new Integer(oldDebug),
                                    new Integer(this.debug));
 
+    }
+
+
+    /**
+     * Get the delay between the invocation of the execute method on
+     * this container and its children. Child containers will not be invoked
+     * if their delay value is not -1 (which would mean they are using their
+     * own thread). Setting this to a positive value will cause a thread to
+     * be spawn. After waiting the specified amount of time, the thread will
+     * invoke the executePeriodic method on this container and all 
+     * its children.
+     */
+    public int getExecuteDelay() {
+        return executeDelay;
+    }
+
+
+    /**
+     * Set the delay between the invocation of the execute method on this
+     * container and its children.
+     * 
+     * @param delay The delay in seconds between the invocation of execute 
+     *              methods
+     */
+    public void setExecuteDelay(int executeDelay) {
+        this.executeDelay = executeDelay;
     }
 
 
@@ -1090,6 +1134,9 @@ public abstract class ContainerBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(START_EVENT, null);
 
+        // Start our thread
+        threadStart();
+
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
 
@@ -1112,6 +1159,9 @@ public abstract class ContainerBase
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
+
+        // Stop out thread
+        threadStop();
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
@@ -1316,6 +1366,14 @@ public abstract class ContainerBase
     }
 
 
+    /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void execute() {
+    }
+
 
     // ------------------------------------------------------ Protected Methods
 
@@ -1516,5 +1574,102 @@ public abstract class ContainerBase
         return suffix.toString();
     }
 
-    
+
+    /**
+     * Start the background thread that will periodically check for
+     * session timeouts.
+     */
+    private void threadStart() {
+
+        if (thread != null)
+            return;
+        if (executeDelay <= 0)
+            return;
+
+        threadDone = false;
+        String threadName = "ExecuteDelay[" + getName() + "]";
+        thread = new Thread(new ContainerExecuteDelay(), threadName);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
+
+
+    /**
+     * Stop the background thread that is periodically checking for
+     * session timeouts.
+     */
+    private void threadStop() {
+
+        if (thread == null)
+            return;
+
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
+
+        thread = null;
+
+    }
+
+
+    // -------------------------------------- ContainerExecuteDelay Inner Class
+
+
+    /**
+     * Private thread class to invoke the execute method of this container 
+     * and its children after a fixed delay.
+     */
+    protected class ContainerExecuteDelay implements Runnable {
+
+
+        /**
+         * Perform the requested notification.
+         */
+        public void run() {
+            while (!threadDone) {
+                try {
+                    Thread.sleep(executeDelay * 1000L);
+                } catch (InterruptedException e) {
+                    ;
+                }
+                if (!threadDone) {
+                    Container parent = (Container) getMappingObject();
+                    ClassLoader cl = 
+                        Thread.currentThread().getContextClassLoader();
+                    if (parent.getLoader() != null) {
+                        cl = parent.getLoader().getClassLoader();
+                    }
+                    processChildren(parent, cl);
+                }
+            }
+        }
+
+        protected void processChildren(Container container, ClassLoader cl) {
+            try {
+                if (container.getLoader() != null) {
+                    Thread.currentThread().setContextClassLoader
+                        (container.getLoader().getClassLoader());
+                }
+                container.execute();
+            } catch (Throwable t) {
+                log.error("Exception invoking periodic operation: ", t);
+            } finally {
+                Thread.currentThread().setContextClassLoader(cl);
+            }
+            Container[] children = container.findChildren();
+            for (int i = 0; i < children.length; i++) {
+                if (children[i].getExecuteDelay() <= 0) {
+                    processChildren(children[i], cl);
+                }
+            }
+        }
+
+    }
+
+
 }
