@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -213,7 +214,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     public Object getAttribute(String name) {
 
         synchronized (attributes) {
-            return (attributes.get(name));
+            Object value = attributes.get(name);
+            if (value == null && !isSpecial(name)){
+                value = getRequest().getAttribute(name);
+            }
+            return value;
         }
 
     }
@@ -226,7 +231,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     public Enumeration getAttributeNames() {
 
         synchronized (attributes) {
-            return (new Enumerator(attributes.keySet()));
+            Set keySet = attributes.keySet();
+            Enumeration enum = getRequest().getAttributeNames();
+            while(enum.hasMoreElements()){
+                keySet.add(enum.nextElement());
+            }
+            return (new Enumerator(keySet));
         }
 
     }
