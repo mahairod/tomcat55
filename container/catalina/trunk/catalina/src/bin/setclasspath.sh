@@ -4,6 +4,9 @@
 #  $Id$
 # -----------------------------------------------------------------------------
 
+# First clear out the user classpath
+CLASSPATH=
+
 # Make sure prerequisite environment variables are set
 if [ -z "$JAVA_HOME" -a -z "$JRE_HOME" ]; then
   echo "Neither the JAVA_HOME nor the JRE_HOME environment variable is defined"
@@ -46,7 +49,7 @@ if [ ! -x "$BASEDIR"/bin/setclasspath.sh ]; then
     # -x will Only work on the os400 if the files are:
     # 1. owned by the user
     # 2. owned by the PRIMARY group of the user
-    # this will not work if the user belongs in secondary groups 
+    # this will not work if the user belongs in secondary groups
     eval
   else
     echo "The BASEDIR environment variable is not defined correctly"
