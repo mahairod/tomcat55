@@ -207,7 +207,7 @@ public class HttpRequestStream extends RequestStream {
                 chunkPos = 0;
                 
                 try {
-                    chunkLength = Integer.parseInt(readLine(), 16);
+                    chunkLength = Integer.parseInt(readLine().trim(), 16);
                 } catch (NumberFormatException e) {
                     // Critical error, unable to parse the chunk length
                     chunkLength = 0;
