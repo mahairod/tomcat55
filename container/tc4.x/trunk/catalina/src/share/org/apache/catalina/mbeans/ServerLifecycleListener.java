@@ -81,6 +81,9 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.Loader;
+import org.apache.catalina.Logger;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -322,6 +325,23 @@ public class ServerLifecycleListener
                                 (Globals.MBEAN_SERVER_ATTR, 
                                  MBeanUtils.createServer());
                         }
+                        Loader loader = context.getLoader();
+                        if (loader != null) {
+                            if (debug >= 5)
+                                log("Creating MBean for Loader " + loader);
+                            MBeanUtils.createMBean(loader);
+                            // FIX ME
+                            //loader.addLifecycleListener(this);
+                        }
+                        Manager manager = context.getManager();
+                        if (manager != null) {
+                            if (debug >= 5)
+                                log("Creating MBean for Manager" + manager);
+                            MBeanUtils.createMBean(manager);
+                            // FIX ME
+                            //manager.addLifecycleListener(this);
+                        }
+
                     }
 
                 }

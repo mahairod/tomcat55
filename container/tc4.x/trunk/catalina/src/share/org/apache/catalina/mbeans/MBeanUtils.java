@@ -84,7 +84,9 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
@@ -261,6 +263,29 @@ public class MBeanUtils {
 
     /**
      * Create, register, and return an MBean for this
+     * <code>Loader</code> object.
+     *
+     * @param loader The Loader to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(Loader loader)
+        throws Exception {
+
+        String mname = createManagedName(loader);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(loader);
+        ObjectName oname = createObjectName(domain, loader);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+
+    /**
+     * Create, register, and return an MBean for this
      * <code>Logger</code> object.
      *
      * @param logger The Logger to be managed
@@ -282,6 +307,29 @@ public class MBeanUtils {
 
     }
 
+
+    /**
+     * Create, register, and return an MBean for this
+     * <code>Manager</code> object.
+     *
+     * @param manager The Manager to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(Manager manager)
+        throws Exception {
+
+        String mname = createManagedName(manager);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(manager);
+        ObjectName oname = createObjectName(domain, manager);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
 
     /**
      * Create, register, and return an MBean for this
@@ -498,6 +546,45 @@ public class MBeanUtils {
 
     /**
      * Create an <code>ObjectName</code> for this
+     * <code>Loader</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param loader The Loader to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              Loader loader)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        Container container = loader.getContainer();
+
+        if (container instanceof Engine) {
+            Service service = ((Engine)container).getService();
+            name = new ObjectName(domain + ":type=Loader,service=" +
+                              service.getName());
+        } else if (container instanceof Host) {
+            Service service = ((Engine)container.getParent()).getService();
+            name = new ObjectName(domain + ":type=Loader,host=" +
+                              container.getName() + ",service=" +
+                              service.getName());
+        } else if (container instanceof Context) {
+            String path = ((Context)container).getPath();
+            Host host = (Host) container.getParent();
+            Service service = ((Engine)container.getParent()).getService();
+            name = new ObjectName(domain + ":type=Loader,path=" + path +
+                              ",host=" + host.getName() + ",service=" +
+                              service.getName());
+        }
+
+        return (name);
+
+    }
+
+
+    /**
+     * Create an <code>ObjectName</code> for this
      * <code>Logger</code> object.
      *
      * @param domain Domain in which this name is to be created
@@ -535,6 +622,45 @@ public class MBeanUtils {
     }
 
 
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>Manager</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param manager The Manager to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              Manager manager)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        Container container = manager.getContainer();
+
+        if (container instanceof Engine) {
+            Service service = ((Engine)container).getService();
+            name = new ObjectName(domain + ":type=Manager,service=" +
+                              service.getName());
+        } else if (container instanceof Host) {
+            Service service = ((Engine)container.getParent()).getService();
+            name = new ObjectName(domain + ":type=Manager,host=" +
+                              container.getName() + ",service=" +
+                              service.getName());
+        } else if (container instanceof Context) {
+            String path = ((Context)container).getPath();
+            Host host = (Host) container.getParent();
+            Service service = ((Engine)container.getParent()).getService();
+            name = new ObjectName(domain + ":type=Manager,path=" + path +
+                              ",host=" + host.getName() + ",service=" +
+                              service.getName());
+        }
+
+        return (name);
+
+    }
+
+    
     /**
      * Create an <code>ObjectName</code> for this
      * <code>Realm</code> object.
@@ -786,6 +912,28 @@ public class MBeanUtils {
         mserver.unregisterMBean(oname);
 
     }
+    
+
+    /**
+     * Deregister the MBean for this
+     * <code>Loader</code> object.
+     *
+     * @param loader The Loader to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Loader loader)
+        throws Exception {
+
+        String mname = createManagedName(loader);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, loader);
+        mserver.unregisterMBean(oname);
+
+    }
 
 
     /**
@@ -809,6 +957,27 @@ public class MBeanUtils {
 
     }
 
+
+    /**
+     * Deregister the MBean for this
+     * <code>Manager</code> object.
+     *
+     * @param manager The Manager to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Manager manager)
+        throws Exception {
+
+        String mname = createManagedName(manager);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, manager);
+        mserver.unregisterMBean(oname);
+
+    }
 
     /**
      * Deregister the MBean for this
