@@ -69,16 +69,16 @@ goto cleanup
 goto finish
 
 :doRun
-java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.tomcat.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 
 :doStart
-start java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.tomcat.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+start java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStop
-java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.tomcat.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
+java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
 goto cleanup
 
 

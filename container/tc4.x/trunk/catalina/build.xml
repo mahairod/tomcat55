@@ -84,7 +84,7 @@
     <!-- Construct bootstrap JAR file -->
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
            basedir="${catalina.build}/classes"
-          includes="org/apache/tomcat/startup/Bootstrap.class,org/apache/tomcat/loader/*"/>
+          includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/*"/>
 
   </target>
 
