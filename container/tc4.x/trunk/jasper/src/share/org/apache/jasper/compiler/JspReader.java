@@ -93,6 +93,12 @@ public class JspReader {
     
     private JspCompilationContext context;
 
+    /*
+    * Set to true when using the JspReader on a single file where we read up to the
+    * end and reset to the beginning many times. (as in ParserCtl.figureOutJspDocument().
+    */
+    boolean singleFile = false;
+
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
     
     public String getFile(int fileid) {
@@ -134,6 +140,7 @@ public class JspReader {
      * @param name The name of the file.
      * @param encoding The optional encoding for the file.
      */
+    /* NOT COMPILED -- kept temporarily for reference 
     public void pushFile(String name, String encoding) 
 	throws ParseException, FileNotFoundException
     {
@@ -149,12 +156,14 @@ public class JspReader {
 	    pushFile(new File(master), encoding);
 	}
     }
+    */
 
     /**
      * Push a new file to be parsed onto the stack.
      * @param inputFile The fully qualified path of the file.
      * @param encoding Optional encoding to read the file.
      */
+    /* NOT COMPILED -- kept temporarily for reference 
     private void pushFile(File file, String encoding) 
 	throws ParseException, FileNotFoundException 
     {
@@ -225,6 +234,50 @@ public class JspReader {
 	    }
 	}
     }
+    */
+
+    private void pushFile2(File file, String encoding, 
+			   InputStreamReader reader) 
+	throws ParseException, FileNotFoundException 
+    {
+	// Register the file
+	String longName = (context == null)
+	    ? file.getAbsolutePath()
+	    : context.getRealPath(file.toString());
+
+	int fileid = registerSourceFile(longName);
+
+        if (fileid == -1)
+            throw new ParseException(
+                Constants.getString("jsp.error.file.already.registered",
+				    new Object[] {file}));
+	currFileId = fileid;
+
+	try {
+	    CharArrayWriter caw   = new CharArrayWriter();
+	    char            buf[] = new char[1024];
+	    for (int i = 0 ; (i = reader.read(buf)) != -1 ; )
+		caw.write(buf, 0, i);
+	    caw.close();
+	    if (current == null) {
+		current = new Mark(this, caw.toCharArray(), fileid, 
+				   getFile(fileid), master, encoding );
+	    } else {
+		current.pushStream( caw.toCharArray(), fileid, getFile(fileid),
+				    longName, encoding );
+	    }
+	} catch (Throwable ex) {
+	    loghelper.log("Exception parsing file ", ex);
+	    // Pop state being constructed:
+	    popFile();
+	    throw new ParseException(Constants.getString("jsp.error.file.cannot.read",
+							new Object[] { new String("ze file") }));
+	} finally {
+	    if ( reader != null ) {
+		try { reader.close(); } catch (Exception any) {}
+	    }
+	}
+    }
 
     public boolean popFile() throws ParseException {
 	// Is stack created ? (will happen if the Jsp file we'r looking at is
@@ -247,6 +300,16 @@ public class JspReader {
 	return (result);
     }
 	
+    protected JspReader(JspCompilationContext ctx,
+			File file,
+			String encoding, InputStreamReader reader) 
+	throws ParseException, FileNotFoundException
+    {
+        this.context = ctx;
+	pushFile2(file, encoding, reader);
+    }
+
+    /* NOT COMPILED -- kept temporarily for reference 
     protected JspReader(String file, JspCompilationContext ctx, String encoding) 
 	throws ParseException, FileNotFoundException
     {
@@ -259,9 +322,11 @@ public class JspReader {
     {
 	return new JspReader(file, ctx, encoding);
     }
+    */
 
     public boolean hasMoreInput() throws ParseException {
 	if (current.cursor >= current.stream.length) {
+            if (singleFile) return false; 
 	    while (popFile()) {
 		if (current.cursor < current.stream.length) return true;
 	    }
@@ -717,5 +782,10 @@ public class JspReader {
 	    return true;
 	}
     }
+
+    public void setSingleFile(boolean val) {
+        singleFile = val;
+    }
+
 }
 
