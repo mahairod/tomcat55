@@ -474,7 +474,7 @@ public class Request  {
 
         try {
             this.parameters = HttpUtils.parseQueryString(queryString);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             this.parameters.clear();
         }
     }
@@ -508,7 +508,7 @@ public class Request  {
         Hashtable newParameters = null;
         try {
             newParameters = HttpUtils.parseQueryString(queryString);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return;
         }
 
