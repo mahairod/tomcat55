@@ -283,7 +283,7 @@ implements org.apache.catalina.cluster.ClusterManager
             if ( invalidatedSessions.get(sessionId) != null ) {
                 synchronized ( invalidatedSessions ) {
                     invalidatedSessions.remove(sessionId);
-                    SessionMessage msg = new SessionMessage(name,
+                    SessionMessage msg = new SessionMessageImpl(name,
                     SessionMessage.EVT_SESSION_EXPIRED,
                     null,
                     sessionId);
@@ -303,7 +303,7 @@ implements org.apache.catalina.cluster.ClusterManager
                         long lastaccdist = System.currentTimeMillis() -
                             session.getLastAccessWasDistributed();
                         if ( ((interval*1000) / lastaccdist)< 3 ) {
-                            SessionMessage accmsg = new SessionMessage(name,
+                            SessionMessage accmsg = new SessionMessageImpl(name,
                                 SessionMessage.EVT_SESSION_ACCESSED,
                                 null,
                                 sessionId);
@@ -320,7 +320,7 @@ implements org.apache.catalina.cluster.ClusterManager
                         }
                         catch (Exception ignore) {}
                     }
-                    SessionMessage msg = new SessionMessage(name,
+                    SessionMessage msg = new SessionMessageImpl(name,
                         SessionMessage.EVT_SESSION_CREATED,
                         writeSession(session),
                         session.getId());
@@ -438,7 +438,7 @@ implements org.apache.catalina.cluster.ClusterManager
             if (cluster.getMembers().length > 0) {
                 Member mbr = cluster.getMembers()[0];
                 SessionMessage msg =
-                    new SessionMessage(this.getName(),
+                    new SessionMessageImpl(this.getName(),
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
                                        "GET-ALL");
@@ -535,7 +535,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     oout.flush();
                     oout.close();
                     byte[] data = bout.toByteArray();
-                    SessionMessage newmsg = new SessionMessage(name,
+                    SessionMessage newmsg = new SessionMessageImpl(name,
                         SessionMessage.EVT_ALL_SESSION_DATA,
                         data, "");
                     cluster.send(newmsg, sender);
