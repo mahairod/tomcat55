@@ -320,7 +320,7 @@
                   type="boolean"/>
 
     <attribute    name="disableUploadTimeout"
-           description="Should Tomcat ignore setting a timeout for uploads?" />
+           description="Should Tomcat ignore setting a timeout for uploads?" 
                   type="boolean"/>
 
   </mbean>
