@@ -83,7 +83,7 @@ import java.util.Map;
  * @author Mark Roth
  */
 public abstract class JspFragmentHelper 
-    implements JspFragment 
+    extends JspFragment 
 {
     
     protected int discriminator;
