@@ -225,6 +225,9 @@
       <docs>
       Remove Tyrex documentation for now (remm)
       </docs>
+      <fix>
+      <bug>24787</bug>: Allow host aliases of more that 24 characters (remm)
+      </fix>
 
     </changelog>
 
