@@ -242,22 +242,30 @@
             </controls:data>
         </controls:row>
 
-      <%-- FIXME: Input only allowed on create transaction?? --%>
+        <%-- Input allowed only on create --%>
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.keystore.filename"/>:</controls:label>
             <controls:data>
+            <logic:equal name="connectorForm" property="adminAction" value="Create">
                 <html:text property="keyStoreFileName" size="30"/> 
+             </logic:equal>
+             <logic:equal name="connectorForm" property="adminAction" value="Edit">
+               <bean:write name="connectorForm" property="keyStoreFileName"/>
+             </logic:equal>
             </controls:data>
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.keystore.password"/>:</controls:label>
             <controls:data>
-                <%-- should the password be of type html:password or is cleartext ok? --%>
+             <logic:equal name="connectorForm" property="adminAction" value="Create">
                 <html:text property="keyStorePassword" size="30"/> 
+             </logic:equal>
+             <logic:equal name="connectorForm" property="adminAction" value="Edit">
+               <bean:write name="connectorForm" property="keyStoreFileName"/>
+             </logic:equal>
             </controls:data>
         </controls:row>
-
     </logic:equal>
    </controls:table>
   
