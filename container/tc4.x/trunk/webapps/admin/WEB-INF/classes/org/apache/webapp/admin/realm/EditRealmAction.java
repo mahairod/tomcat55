@@ -404,6 +404,9 @@ public class EditRealmAction extends Action {
             attribute = "contextFactory";
             realmFm.setContextFactory
                 ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userBase";
+            realmFm.setUserBase
+                ((String) mBServer.getAttribute(rname, attribute));
             attribute = "userPassword";
             realmFm.setUserPassword
                 ((String) mBServer.getAttribute(rname, attribute));

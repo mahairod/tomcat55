@@ -318,6 +318,10 @@ public final class SaveJNDIRealmAction extends Action {
             mBServer.setAttribute(roname,
                                   new Attribute("userPassword",  rform.getUserPassword()));
 
+            attribute = "userBase";
+            mBServer.setAttribute(roname,
+                                  new Attribute("userBase",  rform.getUserBase()));            
+
             attribute = "userPattern";
             mBServer.setAttribute(roname,
                                   new Attribute("userPattern",  rform.getUserPattern()));

@@ -142,6 +142,11 @@ public final class JNDIRealmForm extends RealmForm {
      * The text for the user Password.
      */
     private String userPassword = null;
+
+    /**
+     * The text for the user Base.
+     */
+    private String userBase = null;
     
     /**
      * The text for the user search Pattern.
@@ -261,6 +266,24 @@ public final class JNDIRealmForm extends RealmForm {
     public void setRoleName(String roleName) {
         
         this.roleName  = roleName ;
+        
+    }
+
+    /**
+     * Return the userBase.
+     */
+    public String getUserBase() {
+        
+        return this.userBase ;
+        
+    }
+    
+    /**
+     * Set the userBase.
+     */
+    public void setUserBase(String userBase ) {
+        
+        this.userBase  = userBase ;
         
     }
     
@@ -435,6 +458,7 @@ public final class JNDIRealmForm extends RealmForm {
         
         this.rolePattern = null;
         this.roleBase = null;
+        this.userBase = null;
         this.userPassword = null;
         this.userPattern = null;
         this.contextFactory = null;
@@ -471,6 +495,8 @@ public final class JNDIRealmForm extends RealmForm {
         sb.append(roleBase);
         sb.append("',userPassword='");
         sb.append(userPassword);
+        sb.append(",userBase=");
+        sb.append(userBase);        
         sb.append("',userPattern=");
         sb.append(userPattern);
         sb.append(",contextFactory=");
@@ -530,7 +556,12 @@ public final class JNDIRealmForm extends RealmForm {
                 errors.add("roleBase",
                 new ActionError("error.roleBase.required"));
             }
-            
+             
+            if ((userBase == null) || (userBase.length() < 1)) {
+                errors.add("userBase",
+                new ActionError("error.userBase.required"));
+            }
+           
             if ((userPassword == null) || (userPassword.length() < 1)) {
                 errors.add("userPassword",
                 new ActionError("error.userPassword.required"));

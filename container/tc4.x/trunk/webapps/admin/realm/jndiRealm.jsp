@@ -161,6 +161,13 @@
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.userBase"/>:</controls:label>
+            <controls:data>
+                <html:text property="userBase" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="realm.user.roleName"/>:</controls:label>
             <controls:data>
                 <html:text property="userRoleName" size="30"/>

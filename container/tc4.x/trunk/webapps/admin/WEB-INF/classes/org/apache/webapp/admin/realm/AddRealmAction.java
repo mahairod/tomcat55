@@ -202,6 +202,7 @@ public class AddRealmAction extends Action {
         realmFm.setRoleName("");        
         realmFm.setRoleBase("");        
         realmFm.setContextFactory("");
+        realmFm.setUserBase("");
         realmFm.setUserPattern("");
         realmFm.setUserPassword("");
         realmFm.setConnectionName("");

@@ -1047,6 +1047,10 @@
                         memberships?"
                  type="boolean"/>
 
+    <attribute   name="userBase"
+          description="The base element for user searches"
+                 type="java.lang.String"/>
+
     <attribute   name="userSubtree"
           description="Should we search the entire subtree for matching 
                        users?"
