@@ -71,6 +71,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 
  * @author Harish Prabandham
+ * @deprecated Will be removed after security is implemented in tomcat
  */
 
 //
@@ -78,11 +79,15 @@ import javax.servlet.http.HttpServletRequest;
 // Please talk to harishp@eng.sun.com before making any changes.
 //
 public interface RequestSecurityProvider {
+    // Will require a sub-request if role is not
+    // one of the roles in security-constraints
     public boolean isUserInRole(Context context,
         HttpServletRequest req, String role);
 
+    // Set by Security interceptors
     public java.security.Principal getUserPrincipal(
         Context context, HttpServletRequest req);
 
+    // Flag set by request adapter
     public boolean isSecure(Context context, HttpServletRequest req);
 }
