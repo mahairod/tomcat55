@@ -191,7 +191,7 @@ public class StandardEngine
      */
     public void importDefaultContext(Context context) {
 
-	if( this.defaultContext != null );
+	if ( this.defaultContext != null )
             this.defaultContext.importDefaultContext(context);
 
     }
