@@ -105,27 +105,16 @@ public class ProjectHelper {
 	project.setName(root.getAttribute("name"));
 	project.setDefaultTarget(root.getAttribute("default"));
 
-	if( project.getProperty( "basedir" ) == null) {
-	    String baseDir = root.getAttribute("basedir");
-	    if (!baseDir.equals("")) {
-		try {
-		    project.setBaseDir(new File(new File(baseDir)
-			.getCanonicalPath()));
-		} catch (IOException ioe) {
-		    String msg = "Can't set basedir " + baseDir + " due to " +
-			ioe.getMessage();
-		    throw new BuildException(msg);
-		}
-	    } else {
+	String baseDir = project.getProperty("basedir");
+	if (baseDir == null) {
+	    baseDir = root.getAttribute("basedir");
+	    if (baseDir.equals("")) {
 		// Using clunky JDK1.1 methods here
-		String absPath = buildFile.getAbsolutePath();
-		String parentPath = new File(absPath).getParent();
-		project.setBaseDir(new File(parentPath));
+		baseDir = new File(buildFile.getAbsolutePath()).getParent();
 	    }
-	} else {
-	    project.setBaseDir( new File( project.getProperty("basedir")));
 	}
-
+	project.setBasedir(baseDir);
+	    
 	// set up any properties that may be in the config file
 
 	//	configureProperties(project, root);
