@@ -239,7 +239,7 @@
      <subsection name="Sample worker.properties file">
 
         <p>
-<pre>
+<source>
 # ************ Begin worker.properties **************
 worker.ajp13.type=ajp13
 
@@ -314,7 +314,7 @@ worker.ajp13.port=8009
 worker.ajp13.host=localhost
 
 # ************ End worker.properties **************
-</pre>
+</source>
         </p>
 
      </subsection>
@@ -322,7 +322,7 @@ worker.ajp13.host=localhost
      <subsection name="Sample uriworkermap.properties">
 
         <p>
-<pre>
+<source>
 # *********** Begin uriworkermap.properties ***
 #
 # Simple worker configuration file
@@ -337,7 +337,7 @@ worker.ajp13.host=localhost
 # Advanced mount of the examples context
 # /examples/servlet/*=ajp13
 # ************* End uriworkermap.properties ****
-</pre>
+</source>
         </p>
 
      </subsection>
@@ -345,7 +345,7 @@ worker.ajp13.host=localhost
      <subsection name="iis_redirect.reg">
 
         <p>
-<pre>
+<source>
 REGEDIT4
 [HKEY_LOCAL_MACHINE\SOFTWARE\Apache Software Foundation\Jakarta Isapi Redirector\1.0]
 "extension_uri"="/jakarta/isapi_redirect.dll"
@@ -353,7 +353,7 @@ REGEDIT4
 "log_level"="emerg"
 "worker_file"="C:\\jakarta-tomcat-4.0.1\\conf\\worker.properties"
 "worker_mount_file"="C:\\jakarta-tomcat-4.0.1\\conf\\uriworkermap.properties"
-</pre>
+</source>
         </p>
 
      </subsection>

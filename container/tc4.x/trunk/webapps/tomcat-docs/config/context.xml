@@ -523,7 +523,7 @@
     <p>but does <em>not</em> require modification of the deployment
     descriptor to customize this value.</p>
 
-    <p>The valid attriutes for a <code>&lt;Resource&gt;</code> element
+    <p>The valid attributes for a <code>&lt;Resource&gt;</code> element
     are as follows:</p>
 
     <attributes>
@@ -641,6 +641,46 @@
 
   </subsection>
 
+  <subsection name="Resource Links">
+
+     <p>This element is used to create a link to a global JNDI resource. Doing
+     a JNDI lookup on the link name will then return the linked global 
+     resource.</p>
+
+    <p>For example, you can create a resource link like this:</p>
+<source>
+&lt;Context ...&gt;
+  ...
+  &lt;ResourceLink name="linkToGlobalResource"
+            global="simpleValue"
+            type="java.lang.Integer"
+  ...
+&lt;/Context&gt;
+</source>
+
+    <p>The valid attributes for a <code>&lt;ResourceLink&gt;</code> element
+    are as follows:</p>
+
+    <attributes>
+
+      <attribute name="global" required="true">
+        <p>The name of the linked global resource in the 
+        gobal JNDI context.</p>
+      </attribute>
+
+      <attribute name="name" required="true">
+        <p>The name of the resource link to be created, relative to the
+        <code>java:comp/env</code> context.</p>
+      </attribute>
+
+      <attribute name="type" required="true">
+        <p>The fully qualified Java class name expected by the web
+        application when it performs a lookup for this resource link.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
 
 </section>
 

@@ -35,6 +35,7 @@
 
     <menu name="Nested Components">
         <item name="Default Context"       href="defaultcontext.html"/>
+        <item name="Global Resources"      href="globalresources.html"/>
         <item name="Loader"                href="loader.html"/>
         <item name="Logger"                href="logger.html"/>
         <item name="Manager"               href="manager.html"/> 
