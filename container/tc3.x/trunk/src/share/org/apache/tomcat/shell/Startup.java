@@ -139,7 +139,15 @@ public class Startup {
 
 		context.setSessionTimeOut(
 		    contextConfig.getDefaultSessionTimeOut());
-		context.setInvokerEnabled(contextConfig.isInvokerEnabled());
+
+		// this is the semantic of disable invoker.
+		if( ! contextConfig.isInvokerEnabled() ) {
+		    context.addServlet(org.apache.tomcat.core.Constants.INVOKER_SERVLET_NAME,
+				       "org.apache.tomcat.core.NoInvokerServlet", null);
+		    context.addMapping(org.apache.tomcat.core.Constants.INVOKER_SERVLET_NAME,
+				       "/servlet");
+		}
+
 		context.setIsWARExpanded(contextConfig.isWARExpanded());
 		context.setIsWARValidated(contextConfig.isWARValidated());
 		context.setWorkDir(contextWorkDirPath,
