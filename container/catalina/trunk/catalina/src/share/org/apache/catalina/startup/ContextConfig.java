@@ -70,7 +70,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Container;
@@ -97,8 +96,6 @@ import org.apache.catalina.util.SchemaResolver;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -451,88 +448,29 @@ public final class ContextConfig
 
     }
 
-    private static Digester patchXerces(Digester digester){
-        // This feature is needed for backward compatibility with old DDs
-        // which used Java encoding names such as ISO8859_1 etc.
-        // with Crimson (bug 4701993). By default, Xerces does not
-        // support ISO8859_1.
-        try{
-            digester.setFeature(
-                "http://apache.org/xml/features/allow-java-encodings", true);
-        } catch(ParserConfigurationException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotRecognizedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotSupportedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        }
-        return digester;
-    }
-    
 
     /**
      * Create (if necessary) and return a Digester configured to process the
      * web application deployment descriptor (web.xml).
      */
     private static Digester createWebDigester() {
-        Digester webDigester = 
+        Digester webDigester =
             createWebXmlDigester(xmlNamespaceAware, xmlValidation);
-        webDigester.addRuleSet(webRuleSet);
         return webDigester;
     }
 
 
-    /**
+    /*
      * Create (if necessary) and return a Digester configured to process the
      * web application deployment descriptor (web.xml).
      */
     public static Digester createWebXmlDigester(boolean namespaceAware,
                                                 boolean validation) {
-        URL url = null;
-        Digester webDigester = new Digester();
-        webDigester.setNamespaceAware(namespaceAware);
-        webDigester.setValidating(validation);
-       
-        if (webDigester.getFactory().getClass()
-                .getName().indexOf("xerces")!=-1) {
-            webDigester = patchXerces(webDigester);
-        }
-
-        SchemaResolver webEntityResolver = new SchemaResolver( webDigester);
-
-        if (validation) {
-            if (webDigester.getFactory().getClass()
-                            .getName().indexOf("xerces")!=-1) {
-                try{
-                    webDigester.setFeature(
-                        "http://apache.org/xml/features/validation/dynamic",
-                        true);
-                    webDigester.setFeature(
-                        "http://apache.org/xml/features/validation/schema",
-                        true);
-                } catch(ParserConfigurationException e){
-                        // log("contextConfig.registerLocalSchema", e);
-                } catch(SAXNotRecognizedException e){
-                        // log("contextConfig.registerLocalSchema", e);
-                } catch(SAXNotSupportedException e){
-                        // log("contextConfig.registerLocalSchema", e);
-                }
-
-            }
-        }
         
-        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
-        webEntityResolver.register(Constants.WebDtdPublicId_22,
-                                   url.toString());
-        
-        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_23);
-        webEntityResolver.register(Constants.WebDtdPublicId_23,
-                                   url.toString());
-
-        webEntityResolver = registerLocalSchema(webEntityResolver);
-
-        webDigester.setEntityResolver(webEntityResolver);
-        return (webDigester);
+        Digester webDigester =  DigesterFactory.newDigester(xmlValidation,
+                                                            xmlNamespaceAware,
+                                                            webRuleSet);
+        return webDigester;
     }
 
     private String getBaseDir() {
@@ -672,45 +610,6 @@ public final class ContextConfig
             log.error( message, throwable );
         }
 
-    }
-
-    /**
-     * Utilities used to force the parser to use local schema, when available,
-     * instead of the <code>schemaLocation</code> XML element.
-     * @param digester The instance on which properties are set.
-     * @return an instance ready to parse XML schema.
-     */
-    protected static SchemaResolver registerLocalSchema(SchemaResolver entityResolver){
-
-        URL url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
-        entityResolver.register(Constants.J2eeSchemaPublicId_14,
-                                url.toString());
-
-        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        entityResolver.register(Constants.W3cSchemaPublicId_10,
-                                url.toString());
-
-        url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
-        entityResolver.register(Constants.JspSchemaPublicId_20,
-                                url.toString());
-
-        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        entityResolver.register(Constants.TldSchemaPublicId_20,
-                                url.toString());
-        
-        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
-        entityResolver.register(Constants.WebSchemaPublicId_24,
-                                url.toString());
-        
-        url = ContextConfig.class.getResource(Constants.J2eeWebServiceSchemaResourcePath_11);
-        entityResolver.register(Constants.J2eeWebServiceSchemaPublicId_11,
-                                url.toString());
-
-        url = ContextConfig.class.getResource(Constants.J2eeWebServiceClientSchemaResourcePath_11);
-        entityResolver.register(Constants.J2eeWebServiceClientSchemaPublicId_11,
-                                url.toString());
-        
-        return entityResolver;
     }
 
 

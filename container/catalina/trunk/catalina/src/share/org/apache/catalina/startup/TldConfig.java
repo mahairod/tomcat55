@@ -86,7 +86,6 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -95,8 +94,6 @@ import org.apache.catalina.util.SchemaResolver;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 
 /**
  * Startup event listener for a <b>Context</b> that configures the properties
@@ -452,112 +449,12 @@ public final class TldConfig  {
      */
     private static Digester createTldDigester() {
 
-        URL url = null;
-        Digester tldDigester = new Digester();
-        tldDigester.setNamespaceAware(xmlNamespaceAware);
-        tldDigester.setValidating(xmlValidation);
-        
-        if (tldDigester.getFactory().getClass()
-                    .getName().indexOf("xerces")!=-1) {
-            tldDigester = patchXerces(tldDigester);
-        }
-        // Set the schemaLocation
-        SchemaResolver tldEntityResolver = new SchemaResolver( tldDigester);
-
-        if (xmlValidation) {
-            if (tldDigester.getFactory().getClass()
-                            .getName().indexOf("xerces")!=-1) {
-                try{
-                    tldDigester.setFeature(
-                        "http://apache.org/xml/features/validation/dynamic",
-                        true);
-                    tldDigester.setFeature(
-                        "http://apache.org/xml/features/validation/schema",
-                        true);
-                } catch(ParserConfigurationException e){
-                        // log("contextConfig.registerLocalSchema", e);
-                } catch(SAXNotRecognizedException e){
-                        // log("contextConfig.registerLocalSchema", e);
-                } catch(SAXNotSupportedException e){
-                        // log("contextConfig.registerLocalSchema", e);
-                }
-
-            }
-        }
-        
-        url = TldConfig.class.getResource(Constants.TldDtdResourcePath_11);
-        tldEntityResolver.register(Constants.TldDtdPublicId_11,
-                                   url.toString());
-        
-        url = TldConfig.class.getResource(Constants.TldDtdResourcePath_12);
-        tldEntityResolver.register(Constants.TldDtdPublicId_12,
-                                   url.toString());
-        
-        tldEntityResolver = registerLocalSchema(tldEntityResolver);
-        
-        tldDigester.setEntityResolver(tldEntityResolver);
-        tldDigester.addRuleSet(new TldRuleSet());
-        return (tldDigester);
+        return DigesterFactory.newDigester(xmlValidation, 
+                                           xmlNamespaceAware, 
+                                           new TldRuleSet());
 
     }
 
-    
-    private static Digester patchXerces(Digester digester){
-        // This feature is needed for backward compatibility with old DDs
-        // which used Java encoding names such as ISO8859_1 etc.
-        // with Crimson (bug 4701993). By default, Xerces does not
-        // support ISO8859_1.
-        try{
-            digester.setFeature(
-                "http://apache.org/xml/features/allow-java-encodings", true);
-        } catch(ParserConfigurationException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotRecognizedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotSupportedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        }
-        return digester;
-    }
-
-    /**
-     * Utilities used to force the parser to use local schema, when available,
-     * instead of the <code>schemaLocation</code> XML element.
-     * @param entityResolver The instance on which properties are set.
-     * @return an instance ready to parse XML schema.
-     */
-    protected static SchemaResolver registerLocalSchema(SchemaResolver entityResolver){
-
-        URL url = TldConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
-        entityResolver.register(Constants.J2eeSchemaPublicId_14,
-                                url.toString());
-
-        url = TldConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        entityResolver.register(Constants.W3cSchemaPublicId_10,
-                                url.toString());
-
-        url = TldConfig.class.getResource(Constants.JspSchemaResourcePath_20);
-        entityResolver.register(Constants.JspSchemaPublicId_20,
-                                url.toString());
-
-        url = TldConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        entityResolver.register(Constants.TldSchemaPublicId_20,
-                                url.toString());
-        
-        url = TldConfig.class.getResource(Constants.WebSchemaResourcePath_24);
-        entityResolver.register(Constants.WebSchemaPublicId_24,
-                                url.toString());
-        
-        url = TldConfig.class.getResource(Constants.J2eeWebServiceSchemaResourcePath_11);
-        entityResolver.register(Constants.J2eeWebServiceSchemaPublicId_11,
-                                url.toString());
-
-        url = TldConfig.class.getResource(Constants.J2eeWebServiceClientSchemaResourcePath_11);
-        entityResolver.register(Constants.J2eeWebServiceClientSchemaPublicId_11,
-                                url.toString());
-        
-        return entityResolver;
-    }
 
     /**
      * Scan the JAR file at the specified resource path for TLDs in the
