@@ -344,6 +344,12 @@
       <p>Java class name of the JDBC driver to be used.</p>
     </attribute>
 
+    <attribute name="sessionAppCol" required="true">
+      <p>Name of the database column, contained in the specified session
+      table, that contains the Engine, Host, and Web Application Context
+      name in the format <code>/Engine/Host/Context</code>.</p>
+    </attribute>
+
     <attribute name="sessionDataCol" required="true">
       <p>Name of the database column, contained in the specified
       session table, that contains the serialized form of all session
@@ -399,7 +405,9 @@ create table tomcat_sessions (
   valid_session  char(1) not null,
   max_inactive   int not null,
   last_access    bigint not null,
-  session_data   mediumblob
+  app_name       varchar(255),
+  session_data   mediumblob,
+  KEY kapp_name(app_name)
 );
 </source>
 
