@@ -515,9 +515,6 @@ public class Catalina extends Embedded {
             return;
         }
 
-        long t2 = System.currentTimeMillis();
-        log.debug( "Server.xml processed " + (t2 - t1));
-
         // Replace System.out and System.err with a custom PrintStream
         // TODO: move to Embedded, make it configurable
         SystemLogHandler systemlog = new SystemLogHandler(System.out);
@@ -532,6 +529,9 @@ public class Catalina extends Embedded {
                 log.error("Catalina.start", e);
             }
         }
+
+        long t2 = System.currentTimeMillis();
+        log.info("Initialization processed in " + (t2 - t1) + " ms");
 
     }
 
@@ -563,9 +563,13 @@ public class Catalina extends Embedded {
      * Start a new server instance.
      */
     public void start() {
-        if( server==null ) {
+
+        if (server == null) {
             load();
         }
+
+        long t1 = System.currentTimeMillis();
+
         // Start the new server
         if (server instanceof Lifecycle) {
             try {
@@ -574,6 +578,9 @@ public class Catalina extends Embedded {
                 log.error("Catalina.start: ", e);
             }
         }
+
+        long t2 = System.currentTimeMillis();
+        log.info("Server startup in " + (t2 - t1) + " ms");
 
         try {
             // Register shutdown hook
