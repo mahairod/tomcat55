@@ -757,6 +757,8 @@ public class HttpRequestBase
     public Cookie[] getCookies() {
 
 	synchronized (cookies) {
+            if (cookies.size() < 1)
+                return (null);
 	    Cookie results[] = new Cookie[cookies.size()];
 	    return ((Cookie[]) cookies.toArray(results));
 	}
