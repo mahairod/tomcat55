@@ -440,9 +440,6 @@ public class JDBCStore
      * @exception IOException if an input/output error occurred
      */
     public String[] keys() throws IOException {
-        String keysSql =
-                "SELECT " + sessionIdCol + " FROM " + sessionTable +
-                " WHERE " + sessionAppCol + " = ?";
         ResultSet rst = null;
         String keys[] = null;
         synchronized (this) {
@@ -455,6 +452,9 @@ public class JDBCStore
                 }
                 try {
                     if (preparedKeysSql == null) {
+						String keysSql =
+							"SELECT " + sessionIdCol + " FROM " + sessionTable +
+							" WHERE " + sessionAppCol + " = ?";
                         preparedKeysSql = _conn.prepareStatement(keysSql);
                     }
 
@@ -500,9 +500,6 @@ public class JDBCStore
      */
     public int getSize() throws IOException {
         int size = 0;
-        String sizeSql =
-                "SELECT COUNT(" + sessionIdCol + ") FROM " + sessionTable +
-                " WHERE " + sessionAppCol + " = ?";
         ResultSet rst = null;
 
         synchronized (this) {
@@ -516,6 +513,9 @@ public class JDBCStore
 
                 try {
                     if (preparedSizeSql == null) {
+						String sizeSql =
+							"SELECT COUNT(" + sessionIdCol + ") FROM " + sessionTable +
+							" WHERE " + sessionAppCol + " = ?";
                         preparedSizeSql = _conn.prepareStatement(sizeSql);
                     }
 
@@ -562,11 +562,7 @@ public class JDBCStore
         ObjectInputStream ois = null;
         BufferedInputStream bis = null;
         Container container = manager.getContainer();
-        String loadSql =
-                "SELECT " + sessionIdCol + ", " + sessionDataCol + " FROM " +
-                sessionTable + " WHERE " + sessionIdCol + " = ? AND " +
-                sessionAppCol + " = ?";
-
+ 
         synchronized (this) {
             int numberOfTries = 2;
             while (numberOfTries > 0) {
@@ -577,7 +573,11 @@ public class JDBCStore
 
                 try {
                     if (preparedLoadSql == null) {
-                        preparedLoadSql = _conn.prepareStatement(loadSql);
+						String loadSql =
+								"SELECT " + sessionIdCol + ", " + sessionDataCol + " FROM " +
+								sessionTable + " WHERE " + sessionIdCol + " = ? AND " +
+								sessionAppCol + " = ?";
+                       preparedLoadSql = _conn.prepareStatement(loadSql);
                     }
 
                     preparedLoadSql.setString(1, id);
@@ -607,8 +607,7 @@ public class JDBCStore
                         _session = (StandardSession) manager.createEmptySession();
                         _session.readObjectData(ois);
                         _session.setManager(manager);
-
-                    } else if (manager.getContainer().getLogger().isDebugEnabled()) {
+                      } else if (manager.getContainer().getLogger().isDebugEnabled()) {
                         manager.getContainer().getLogger().debug(getStoreName() + ": No persisted data object found");
                     }
                 } catch (SQLException e) {
@@ -649,9 +648,6 @@ public class JDBCStore
      * @exception IOException if an input/output error occurs
      */
     public void remove(String id) throws IOException {
-        String removeSql =
-                "DELETE FROM " + sessionTable + " WHERE " + sessionIdCol +
-                " = ?  AND " + sessionAppCol + " = ?";
 
         synchronized (this) {
             int numberOfTries = 2;
@@ -664,6 +660,9 @@ public class JDBCStore
 
                 try {
                     if (preparedRemoveSql == null) {
+						String removeSql =
+							"DELETE FROM " + sessionTable + " WHERE " + sessionIdCol +
+							" = ?  AND " + sessionAppCol + " = ?";
                         preparedRemoveSql = _conn.prepareStatement(removeSql);
                     }
 
@@ -692,8 +691,6 @@ public class JDBCStore
      * @exception IOException if an input/output error occurs
      */
     public void clear() throws IOException {
-        String clearSql =
-                "DELETE FROM " + sessionTable + " WHERE " + sessionAppCol + " = ?";
 
         synchronized (this) {
             int numberOfTries = 2;
@@ -705,6 +702,8 @@ public class JDBCStore
 
                 try {
                     if (preparedClearSql == null) {
+						String clearSql =
+							"DELETE FROM " + sessionTable + " WHERE " + sessionAppCol + " = ?";
                         preparedClearSql = _conn.prepareStatement(clearSql);
                     }
 
@@ -729,13 +728,6 @@ public class JDBCStore
      * @exception IOException if an input/output error occurs
      */
     public void save(Session session) throws IOException {
-        String saveSql =
-                "INSERT INTO " + sessionTable + " (" + sessionIdCol + ", " +
-                sessionAppCol + ", " +
-                sessionDataCol + ", " +
-                sessionValidCol + ", " +
-                sessionMaxInactiveCol + ", " +
-                sessionLastAccessedCol + ") VALUES (?, ?, ?, ?, ?, ?)";
         ObjectOutputStream oos = null;
         ByteArrayOutputStream bos = null;
         ByteArrayInputStream bis = null;
@@ -767,6 +759,13 @@ public class JDBCStore
                     in = new BufferedInputStream(bis, size);
 
                     if (preparedSaveSql == null) {
+						String saveSql =
+							"INSERT INTO " + sessionTable + " (" + sessionIdCol + ", " +
+							sessionAppCol + ", " +
+							sessionDataCol + ", " +
+							sessionValidCol + ", " +
+							sessionMaxInactiveCol + ", " +
+							sessionLastAccessedCol + ") VALUES (?, ?, ?, ?, ?, ?)";
                         preparedSaveSql = _conn.prepareStatement(saveSql);
                     }
 
@@ -911,9 +910,8 @@ public class JDBCStore
         } catch (Throwable f) {
             ;
         }
-        this.preparedClearSql = null;
-
-        try {
+         
+		try {
             preparedRemoveSql.close();
         } catch (Throwable f) {
             ;

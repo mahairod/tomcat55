@@ -130,7 +130,7 @@ public abstract class PersistentManagerBase
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "PersistentManagerBase/1.0";
+    private static final String info = "PersistentManagerBase/1.1";
 
 
     /**
@@ -203,35 +203,76 @@ public abstract class PersistentManagerBase
      */
     protected long processingTime = 0;
 
+    /**
+     * Frequency of the session expiration, and related manager operations.
+     * Manager operations will be done once for the specified amount of
+     * backgrondProcess calls (ie, the lower the amount, the most often the
+     * checks will occur).
+     */
+    protected int processExpiresFrequency = 6;
+
+  
+    /**
+     * Iteration count for background processing.
+     */
+    private int count = 0;
 
     // ------------------------------------------------------------- Properties
 
-
     /**
-     * Perform the background processes for this Manager
+     * Return the frequency of manager checks.
      */
-    public void backgroundProcess() {
+    public int getProcessExpiresFrequency() {
 
-        long timeNow = System.currentTimeMillis();
-
-        this.processExpires();
-        this.processPersistenceChecks();
-        if ((this.getStore() != null)
-            && (this.getStore() instanceof StoreBase)) {
-            ((StoreBase) this.getStore()).processExpires();
-        }
-
-        long timeEnd = System.currentTimeMillis();
-        processingTime += ( timeEnd - timeNow );
+        return (this.processExpiresFrequency);
 
     }
 
 
     /**
-     * Indicates how many seconds old a session can get, after its last
-     * use in a request, before it should be backed up to the store. -1
-     * means sessions are not backed up.
+     * Set the manager checks frequency.
+     *
+     * @param processExpiresFrequency the new manager checks frequency
      */
+    public void setProcessExpiresFrequency(int processExpiresFrequency) {
+
+        if (processExpiresFrequency <= 0) {
+            return;
+        }
+
+        int oldProcessExpiresFrequency = this.processExpiresFrequency;
+        this.processExpiresFrequency = processExpiresFrequency;
+        support.firePropertyChange("processExpiresFrequency",
+                                   new Integer(oldProcessExpiresFrequency),
+                                   new Integer(this.processExpiresFrequency));
+
+    }
+    
+    /**
+	 * Implements the Manager interface, direct call to processExpires and processPersistenceChecks
+	 */
+	public void backgroundProcess() {
+		count = (count + 1) % processExpiresFrequency;
+		if (count == 0) {
+			long timeNow = System.currentTimeMillis();
+
+			processExpires();
+			processPersistenceChecks();
+			if ((getStore() != null) && (getStore() instanceof StoreBase)) {
+				((StoreBase) getStore()).processExpires();
+			}
+
+			long timeEnd = System.currentTimeMillis();
+			processingTime += (timeEnd - timeNow);
+		}
+	}
+
+
+    /**
+	 * Indicates how many seconds old a session can get, after its last use in a
+	 * request, before it should be backed up to the store. -1 means sessions
+	 * are not backed up.
+	 */
     public int getMaxIdleBackup() {
 
         return maxIdleBackup;
@@ -248,12 +289,12 @@ public abstract class PersistentManagerBase
      * means sessions are not backed up.
      * <p>
      * Note that this is not a hard limit: sessions are checked
-     * against this age limit periodically according to <b>checkInterval</b>.
+     * against this age limit periodically according to <b>processExpiresFrequency</b>.
      * This value should be considered to indicate when a session is
      * ripe for backing up.
      * <p>
      * So it is possible that a session may be idle for maxIdleBackup +
-     * checkInterval seconds, plus the time it takes to handle other
+     * processExpiresFrequency * engine.backgroundProcessorDelay seconds, plus the time it takes to handle other
      * session expiration, swapping, etc. tasks.
      *
      * @param backup The number of seconds after their last accessed
@@ -331,12 +372,13 @@ public abstract class PersistentManagerBase
 
 
     /**
-     * Set the Container with which this Manager has been associated.  If
-     * it is a Context (the usual case), listen for changes to the session
-     * timeout property.
-     *
-     * @param container The associated Container
-     */
+	 * Set the Container with which this Manager has been associated. If it is a
+	 * Context (the usual case), listen for changes to the session timeout
+	 * property.
+	 * 
+	 * @param container
+	 *            The associated Container
+	 */
     public void setContainer(Container container) {
 
         // De-register from the old Container (if any)
@@ -559,23 +601,23 @@ public abstract class PersistentManagerBase
 
 
     /**
-     * Invalidate all sessions that have expired.
-     */
-    public void processExpires() {
+	 * Invalidate all sessions that have expired.
+	 */
+	public void processExpires() {
+		
+		Session sessions[] = findSessions();
 
-        Session sessions[] = findSessions();
-
-        for (int i = 0; i < sessions.length; i++) {
-            sessions[i].isValid();
-        }
-    }
+		for (int i = 0; i < sessions.length; i++) {
+			sessions[i].isValid();
+		}
+		
+	}
 
 
     /**
-     * Called by the background thread after active sessions have
-     * been checked for expiration, to allow sessions to be
-     * swapped out, backed up, etc.
-     */
+	 * Called by the background thread after active sessions have been checked
+	 * for expiration, to allow sessions to be swapped out, backed up, etc.
+	 */
     public void processPersistenceChecks() {
 
         processMaxIdleSwaps();
@@ -1136,6 +1178,5 @@ public abstract class PersistentManagerBase
         }
 
     }
-
 
 }
