@@ -228,8 +228,9 @@ public class EditServiceAction extends Action {
             while (items.hasNext()) {
                 ObjectName hname = new ObjectName((String) items.next());
                 String name = hname.getKeyProperty("host");
-                if (name!=null)
+                if (name!=null) {
                     hosts.add(new LabelValueBean(name, name));
+                }
             }
             serviceFm.setHostNameVals(hosts);
 

@@ -53,34 +53,34 @@
               -------------------------------------
             </controls:action>
             <logic:notEqual name="serviceForm" property="adminAction" value="Create">
-              <controls:action url='<%= "/AddConnector.do?serviceName=" +
-                                        URLEncoder.encode(thisServiceName) %>'>
+              <controls:action url='<%= "/AddConnector.do?select=" +
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.connectors.create"/>
               </controls:action>
-              <controls:action url='<%= "/DeleteConnector.do?serviceName=" +
-                                        URLEncoder.encode(thisServiceName)%>'>
+              <controls:action url='<%= "/DeleteConnector.do?select=" +
+                                        URLEncoder.encode(thisObjectName)%>'>
                 <bean:message key="actions.connectors.deletes"/>
               </controls:action>
               <controls:action>
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddDefaultContext.do?serviceName=" +
-                                        URLEncoder.encode(thisServiceName) %>'>
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.create"/>
               </controls:action>
               <!--controls:action url='<%= "/DeleteDefaultContext.do?serviceName=" +
-                                        URLEncoder.encode(thisServiceName) %>'>
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.deletes"/>
               </controls:action-->
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddHost.do?serviceName=" +
-                                        URLEncoder.encode(thisServiceName) %>'>
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.hosts.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteHost.do?serviceName=" +
-                                        URLEncoder.encode(thisServiceName) %>'>
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.hosts.deletes"/>
               </controls:action>
               <controls:action disabled="true">

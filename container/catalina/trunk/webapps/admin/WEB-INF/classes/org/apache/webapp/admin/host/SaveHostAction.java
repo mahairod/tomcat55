@@ -184,9 +184,9 @@ public final class SaveHostAction extends Action {
             Object values[] = null;
 
             try {
-                honame = new ObjectName(hObjectName);
                 String serviceName = hform.getServiceName();
-                String domain = honame.getDomain();
+                ObjectName soname = new ObjectName(serviceName);
+                String domain = soname.getDomain();
                 // Ensure that the requested host name is unique
                 ObjectName oname =
                     new ObjectName(domain + 
@@ -225,8 +225,7 @@ public final class SaveHostAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = domain +
-                          TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
+                    String parentName = serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =

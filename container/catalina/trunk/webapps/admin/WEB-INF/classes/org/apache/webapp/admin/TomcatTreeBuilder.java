@@ -204,7 +204,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String serviceName = (String) serviceNames.next();
             ObjectName objectName = new ObjectName(serviceName);
             String nodeLabel =
-                "Service (" + objectName.getDomain() + ")";
+                "Service (" + objectName.getKeyProperty("serviceName") + ")";
             TreeControlNode serviceNode =
                 new TreeControlNode(serviceName,
                                     "Service.gif",
@@ -467,16 +467,23 @@ public class TomcatTreeBuilder implements TreeBuilder{
         ObjectName oname = new ObjectName(containerName);
         String type = oname.getKeyProperty("type");
         if (type == null) {
-            type = "";
+            type = oname.getKeyProperty("j2eeType");
+            if (type.equals("WebModule")) {
+                type = "Context";
+            } else {
+                type = "";
+            }
         }
-        String path = oname.getKeyProperty("path");
-        if (path == null) {
-            path = "";
-        }        
-        String host = oname.getKeyProperty("host");
-        if (host == null) {
-            host = "";
-        }                
+        String path = "";
+        String host = "";
+        String name = oname.getKeyProperty("name");
+        if ((name != null) && (name.length() > 0)) {
+            // context resource
+            name = name.substring(2);
+            int i = name.indexOf("/");
+            host = name.substring(0,i);
+            path = name.substring(i);
+        }     
         TreeControlNode subtree = new TreeControlNode
             ("Context Resource Administration " + containerName,
              "folder_16_pad.gif",

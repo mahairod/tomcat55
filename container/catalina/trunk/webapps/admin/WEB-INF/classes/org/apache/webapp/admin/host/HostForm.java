@@ -86,7 +86,7 @@ public final class HostForm extends ActionForm {
     private String adminAction = "Edit";
 
     /**
-     * The object name of the Service this bean refers to.
+     * The object name of this Host bean refers to.
      */
     private String objectName = null;
 
@@ -102,7 +102,7 @@ public final class HostForm extends ActionForm {
     private String hostName = null;
 
     /**
-     * The name of the service this host belongs to.
+     * The object name of the service this host belongs to.
      */
     private String serviceName = null;
 
@@ -205,7 +205,7 @@ public final class HostForm extends ActionForm {
         this.objectName = objectName;
 
     }
-
+    
 
     /**
      * Return the object name of the service this host belongs to.

@@ -177,8 +177,10 @@ public final class SaveConnectorAction extends Action {
             try {
                 // get service name which is same as domain
                 String serviceName = cform.getServiceName();
+                ObjectName soname = new ObjectName(serviceName);
+                String domain = soname.getDomain();
                 ObjectName oname =
-                    new ObjectName(serviceName + TomcatTreeBuilder.CONNECTOR_TYPE +
+                    new ObjectName(domain + TomcatTreeBuilder.CONNECTOR_TYPE +
                                    ",port=" + cform.getPortText() +
                                    ",address=" + cform.getAddress());
                                                 
@@ -196,8 +198,7 @@ public final class SaveConnectorAction extends Action {
 
                 // Create a new Connector object
                 values = new Object[3];                
-                values[0] = // parent 
-                    serviceName + TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
+                values[0] = serviceName;  //service parent object name
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
 
@@ -217,8 +218,7 @@ public final class SaveConnectorAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = serviceName + TomcatTreeBuilder.SERVICE_TYPE
-                         + ",name=" + serviceName;
+                    String parentName = serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
@@ -232,7 +232,7 @@ public final class SaveConnectorAction extends Action {
                                                 "EditConnector.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true, serviceName);
+                                                true, domain);
                         // FIXME--the node should be next to the rest of 
                         // the Connector nodes..
                         parentNode.addChild(childNode);

@@ -125,7 +125,7 @@ public class AddConnectorAction extends Action {
         
         // the service Name is needed to retrieve the engine mBean to
         // which the new connector mBean will be added.
-        String serviceName = request.getParameter("serviceName");
+        String serviceName = request.getParameter("select");
         
         // Fill in the form values for display and editing
         ConnectorForm connectorFm = new ConnectorForm();
@@ -174,12 +174,12 @@ public class AddConnectorAction extends Action {
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "AddConnector.do?serviceName=" + URLEncoder.encode(serviceName) 
+                "AddConnector.do?select=" + URLEncoder.encode(serviceName) 
                 + "&type=" + type));        
          for (int i=0; i< schemeTypes.length; i++) {
             if (!type.equalsIgnoreCase(schemeTypes[i])) {
                 types.add(new LabelValueBean(schemeTypes[i],
-                "AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
+                "AddConnector.do?select=" + URLEncoder.encode(serviceName)
                 + "&type=" + schemeTypes[i]));        
             }
         }
