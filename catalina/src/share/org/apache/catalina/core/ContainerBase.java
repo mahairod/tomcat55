@@ -1197,26 +1197,6 @@ public abstract class ContainerBase
                 }
             }
         }
-        // If we are registered and the valve is not - create a default name
-        Valve valves[]=getValves();
-        for( int i=0; i<valves.length; i++ ) {
-            Valve valve=valves[i];
-            //log.info("Valve: " + this + " " + valve + " " + domain  );
-            if( valve instanceof ValveBase &&
-                    ((ValveBase)valve).getObjectName()==null ) {
-                try {
-                    ObjectName vname=((ValveBase)valve).createObjectName(getDomain(),
-                            this.getObjectName());
-                    if( vname != null ) {
-                        ((ValveBase)valve).setObjectName(vname);
-                        Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
-                        ((ValveBase)valve).setController(oname);
-                    }
-                } catch( Throwable t ) {
-                    log.info( "Can't register valve " + valve , t );
-                }
-            }
-        }
         
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
@@ -1342,16 +1322,6 @@ public abstract class ContainerBase
             }
         }
 
-        // 
-        Valve valves[]=getValves();
-        for( int i=0; i<valves.length; i++ ) {
-            Valve valve=valves[i];
-            if( valve instanceof ValveBase &&
-                    ((ValveBase)valve).getObjectName()!=null ) {
-                Registry.getRegistry().unregisterComponent(((ValveBase)valve).getObjectName()); 
-            }
-        }
-
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
@@ -1468,21 +1438,7 @@ public abstract class ContainerBase
     public synchronized void removeValve(Valve valve) {
 
         pipeline.removeValve(valve);
-        if( valve instanceof ValveBase ) {
-            try {
-                ValveBase vb=(ValveBase)valve;
-                if( vb.getController()!=null &&
-                        vb.getController() == oname ) {
-                    
-                    ObjectName vname=vb.getObjectName();
-                    Registry.getRegistry().getMBeanServer().unregisterMBean(vname);
-                }
-            } catch( Throwable t ) {
-                log.info( "Can't unregister valve " + valve , t );
-            }
-        }
         fireContainerEvent(REMOVE_VALVE_EVENT, valve);
-
     }
 
 

@@ -286,9 +286,13 @@ public class StandardPipeline
         for (int i = 0; i < valves.length; i++) {
             if (valves[i] instanceof Lifecycle)
                 ((Lifecycle) valves[i]).start();
+            registerValve(valves[i]);
         }
         if ((basic != null) && (basic instanceof Lifecycle))
             ((Lifecycle) basic).start();
+        
+        if( basic!=null )
+            registerValve(basic);
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(START_EVENT, null);
@@ -320,18 +324,56 @@ public class StandardPipeline
         started = false;
 
         // Stop the Valves in our pipeline (including the basic), if any
-        if ((basic != null) && (basic instanceof Lifecycle))
+        if ((basic != null) && (basic instanceof Lifecycle)) 
             ((Lifecycle) basic).stop();
+        if( basic!=null ) {
+            unregisterValve(basic);
+        }
         for (int i = 0; i < valves.length; i++) {
             if (valves[i] instanceof Lifecycle)
                 ((Lifecycle) valves[i]).stop();
+            unregisterValve(valves[i]);
+        
         }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
-
     }
 
+    private void registerValve(Valve valve) {
+        if( valve instanceof ValveBase &&
+                ((ValveBase)valve).getObjectName()==null ) {
+            try {
+                ObjectName vname=((ValveBase)valve).createObjectName(
+                        ((ContainerBase)container).getDomain(),
+                        ((ContainerBase)container).getObjectName());
+                if( vname != null ) {
+                    ((ValveBase)valve).setObjectName(vname);
+                    Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
+                    ((ValveBase)valve).setController(((ContainerBase)container).getObjectName());
+                }
+            } catch( Throwable t ) {
+                log.info( "Can't register valve " + valve , t );
+            }
+        }
+    }
+    
+    private void unregisterValve(Valve valve) {
+        if( valve instanceof ValveBase ) {
+            try {
+                ValveBase vb=(ValveBase)valve;
+                if( vb.getController()!=null &&
+                        vb.getController() == 
+                        ((ContainerBase)container).getObjectName() ) {
+                    
+                    ObjectName vname=vb.getObjectName();
+                    Registry.getRegistry().getMBeanServer().unregisterMBean(vname);
+                }
+            } catch( Throwable t ) {
+                log.info( "Can't unregister valve " + valve , t );
+            }
+        }
+    }    
 
     // ------------------------------------------------------- Pipeline Methods
 
