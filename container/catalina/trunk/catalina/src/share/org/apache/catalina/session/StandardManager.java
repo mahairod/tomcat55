@@ -116,15 +116,15 @@ public class StandardManager
     private class PrivilegedDoLoad
         implements PrivilegedExceptionAction {
 
-        PrivilegedDoLoad() {           
+        PrivilegedDoLoad() {
         }
 
         public Object run() throws Exception{
            doLoad();
            return null;
-        }                       
+        }
     }
-        
+
     private class PrivilegedDoUnload
         implements PrivilegedExceptionAction {
 
@@ -134,11 +134,11 @@ public class StandardManager
         public Object run() throws Exception{
             doUnload();
             return null;
-        }            
-           
-    }        
+        }
 
-    
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -372,7 +372,7 @@ public class StandardManager
      * @exception IOException if an input/output error occurs
      */
     public void load() throws ClassNotFoundException, IOException {
-        if (System.getSecurityManager() != null){   
+        if (System.getSecurityManager() != null){
             try{
                 AccessController.doPrivileged( new PrivilegedDoLoad() );
             } catch (PrivilegedActionException ex){
@@ -384,11 +384,11 @@ public class StandardManager
                 }
                 if (log.isDebugEnabled())
                     log.debug("Unreported exception in load() "
-                        + exception);                
+                        + exception);
             }
         } else {
             doLoad();
-        }       
+        }
     }
 
 
@@ -401,7 +401,7 @@ public class StandardManager
      *  found during the reload
      * @exception IOException if an input/output error occurs
      */
-    protected void doLoad() throws ClassNotFoundException, IOException {    
+    protected void doLoad() throws ClassNotFoundException, IOException {
         if (log.isDebugEnabled())
             log.debug("Start: Loading persisted sessions");
 
@@ -515,7 +515,7 @@ public class StandardManager
      * @exception IOException if an input/output error occurs
      */
     public void unload() throws IOException {
-        if (System.getSecurityManager() != null){       
+        if (System.getSecurityManager() != null){
             try{
                 AccessController.doPrivileged( new PrivilegedDoUnload() );
             } catch (PrivilegedActionException ex){
@@ -525,14 +525,14 @@ public class StandardManager
                 }
                 if (log.isDebugEnabled())
                     log.debug("Unreported exception in unLoad() "
-                        + exception);                
-            }        
+                        + exception);
+            }
         } else {
             doUnload();
-        }       
+        }
     }
-        
-        
+
+
     /**
      * Save any currently active sessions in the appropriate persistence
      * mechanism, if any.  If persistence is not supported, this method
@@ -540,7 +540,7 @@ public class StandardManager
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void doUnload() throws IOException {   
+    protected void doUnload() throws IOException {
 
         if (log.isDebugEnabled())
             log.debug("Unloading persisted sessions");
@@ -650,7 +650,7 @@ public class StandardManager
 
 
     /**
-     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Get the lifecycle listeners associated with this lifecycle. If this
      * Lifecycle has no listeners registered, a zero-length array is returned.
      */
     public LifecycleListener[] findLifecycleListeners() {
@@ -683,7 +683,7 @@ public class StandardManager
 
         if( ! initialized )
             init();
-        
+
         // Validate and update our current component state
         if (started) {
             return;
@@ -720,7 +720,7 @@ public class StandardManager
 
         if (log.isDebugEnabled())
             log.debug("Stopping");
-        
+
         // Validate and update our current component state
         if (!started)
             throw new LifecycleException
@@ -832,6 +832,13 @@ public class StandardManager
         long timeEnd = System.currentTimeMillis();
         processingTime += ( timeEnd - timeNow );
 
+    }
+
+    /**
+     * Implements the Manager interface, direct call to processExpires
+     */
+    public void backgroundProcess() {
+        processExpires();
     }
 
 
