@@ -116,28 +116,6 @@ public class StandardServiceMBean extends BaseModelMBean {
 
 
     /**
-     * Add a new Connector assciate with this Service
-     *
-     * @param connector MBean Name of the Connector to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addConnector(String connector)
-        throws Exception {
-
-        Service service = (Service) this.resource;
-        ObjectName oname = new ObjectName(connector);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Connector connectorObj = null;
-        if (obj instanceof Connector) {
-            connectorObj = (Connector) obj;
-        }
-        service.addConnector(connectorObj);
-
-    }
-
-
-    /**
      * Remove an existing Connector associated with this Service
      *
      * @param connector MBean Name of the Connector to be removed

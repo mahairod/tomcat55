@@ -69,8 +69,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ObjectInstance;
 import javax.management.RuntimeOperationsException;
+import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Server;
@@ -161,9 +163,9 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (type.equals("org.apache.catalina.core.StandardDefaultContext")) {
             return "DefaultContext";
         } else if (type.equals("org.apache.catalina.core.StandardEngine")) {
-            return "StandardEngine";
+            return "Engine";
         } else if (type.equals("org.apache.catalina.core.StandardHost")) {
-            return "StandardHost";
+            return "Host";
         } else return null;
 
     }
@@ -179,26 +181,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createAccessLoggerValve(String parent)
         throws Exception {
 
+        // Create a new AccessLogValve instance
+        AccessLogValve accessLogger = new AccessLogValve();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            ((StandardContext)context).addValve(accessLogger);
+        } else if (tname.equals("Engine")) {
+            ((StandardEngine)engine).addValve(accessLogger);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            ((StandardHost)host).addValve(accessLogger);
         }
-        AccessLogValve accessLogger = new AccessLogValve();
-        accessLogger.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, accessLogger);
-        MBeanUtils.createMBean(accessLogger);
-        accessLogger.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("AccessLogValve");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), accessLogger);
         return (oname.toString());
 
     }
@@ -214,25 +222,23 @@ public class MBeanFactory extends BaseModelMBean {
     public String createDefaultContext(String parent)
         throws Exception {
 
-        String tname = "StandardHost";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Host host = null;
-        if (obj instanceof Host) {
-            host = (Host) obj;
-        }
+        // Create a new StandardDefaultContext instance
         StandardDefaultContext context = new StandardDefaultContext();
-        context.setParent(host);
-        ObjectName oname = MBeanUtils.createObjectName(domain, context);
-        MBeanUtils.createMBean(context);
-        context.setParent(null);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+        host.addDefaultContext(context);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("DefaultContext");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), context);
         return (oname.toString());
 
     }
@@ -248,26 +254,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createFileLogger(String parent)
         throws Exception {
 
+        // Create a new FileLogger instance
+        FileLogger fileLogger = new FileLogger();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            context.setLogger(fileLogger);
+        } else if (tname.equals("Engine")) {
+            engine.setLogger(fileLogger);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setLogger(fileLogger);
         }
-        FileLogger fileLogger = new FileLogger();
-        fileLogger.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, fileLogger);
-        MBeanUtils.createMBean(fileLogger);
-        fileLogger.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("FileLogger");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), fileLogger);
         return (oname.toString());
 
     }
@@ -285,28 +297,22 @@ public class MBeanFactory extends BaseModelMBean {
     public String createHttp10Connector(String parent, String address, int port)
         throws Exception {
 
-        String tname = "StandardService";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Service service = null;
-        if (obj instanceof Service) {
-            service = (Service) obj;
-        }
+        // Create a new HttpConnector instance
         org.apache.catalina.connector.http10.HttpConnector connector =
             new org.apache.catalina.connector.http10.HttpConnector();
         connector.setAddress(address);
         connector.setPort(port);
-        connector.setService(service);
-        ObjectName oname = MBeanUtils.createObjectName(domain, connector);
-        MBeanUtils.createMBean(connector);
-        connector.setService(null);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("name"));
+        service.addConnector(connector);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("Http10Connector");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), connector);
         return (oname.toString());
 
     }
@@ -324,28 +330,22 @@ public class MBeanFactory extends BaseModelMBean {
     public String createHttp11Connector(String parent, String address, int port)
         throws Exception {
 
-        String tname = "StandardService";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Service service = null;
-        if (obj instanceof Service) {
-            service = (Service) obj;
-        }
+        // Create a new HttpConnector instance
         org.apache.catalina.connector.http.HttpConnector connector =
             new org.apache.catalina.connector.http.HttpConnector();
         connector.setAddress(address);
         connector.setPort(port);
-        connector.setService(service);
-        ObjectName oname = MBeanUtils.createObjectName(domain, connector);
-        MBeanUtils.createMBean(connector);
-        connector.setService(null);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("name"));
+        service.addConnector(connector);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("Http11Connector");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), connector);
         return (oname.toString());
 
     }
@@ -361,26 +361,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createJDBCRealm(String parent)
         throws Exception {
 
+        // Create a new JDBCRealm instance
+        JDBCRealm realm = new JDBCRealm();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            context.setRealm(realm);
+        } else if (tname.equals("Engine")) {
+            engine.setRealm(realm);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setRealm(realm);
         }
-        JDBCRealm realm = new JDBCRealm();
-        realm.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, realm);
-        MBeanUtils.createMBean(realm);
-        realm.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("JDBCRealm");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), realm);
         return (oname.toString());
 
     }
@@ -396,26 +402,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createJNDIRealm(String parent)
         throws Exception {
 
+         // Create a new JNDIRealm instance
+        JNDIRealm realm = new JNDIRealm();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            context.setRealm(realm);
+        } else if (tname.equals("Engine")) {
+            engine.setRealm(realm);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setRealm(realm);
         }
-        JNDIRealm realm = new JNDIRealm();
-        realm.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, realm);
-        MBeanUtils.createMBean(realm);
-        realm.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("JNDIRealm");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), realm);
         return (oname.toString());
 
     }
@@ -431,26 +443,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createMemoryRealm(String parent)
         throws Exception {
 
+         // Create a new MemoryRealm instance
+        MemoryRealm realm = new MemoryRealm();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            context.setRealm(realm);
+        } else if (tname.equals("Engine")) {
+            engine.setRealm(realm);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setRealm(realm);
         }
-        MemoryRealm realm = new MemoryRealm();
-        realm.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, realm);
-        MBeanUtils.createMBean(realm);
-        realm.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("MemoryRealm");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), realm);
         return (oname.toString());
 
     }
@@ -466,26 +484,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createRemoteAddrValve(String parent)
         throws Exception {
 
+        // Create a new RemoteAddrValve instance
+        RemoteAddrValve valve = new RemoteAddrValve();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            ((StandardContext)context).addValve(valve);
+        } else if (tname.equals("Engine")) {
+            ((StandardEngine)engine).addValve(valve);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            ((StandardHost)host).addValve(valve);
         }
-        RemoteAddrValve valve = new RemoteAddrValve();
-        valve.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, valve);
-        MBeanUtils.createMBean(valve);
-        valve.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("RemoteAddrValve");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), valve);
         return (oname.toString());
 
     }
@@ -501,26 +525,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createRemoteHostValve(String parent)
         throws Exception {
 
+        // Create a new RemoteHostValve instance
+        RemoteHostValve valve = new RemoteHostValve();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            ((StandardContext)context).addValve(valve);
+        } else if (tname.equals("Engine")) {
+            ((StandardEngine)engine).addValve(valve);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            ((StandardHost)host).addValve(valve);
         }
-        RemoteHostValve valve = new RemoteHostValve();
-        valve.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, valve);
-        MBeanUtils.createMBean(valve);
-        valve.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("RemoteHostValve");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), valve);
         return (oname.toString());
 
     }
@@ -536,26 +566,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createRequestDumperValve(String parent)
         throws Exception {
 
+        // Create a new RequestDumperValve instance
+        RequestDumperValve valve = new RequestDumperValve();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            ((StandardContext)context).addValve(valve);
+        } else if (tname.equals("Engine")) {
+            ((StandardEngine)engine).addValve(valve);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            ((StandardHost)host).addValve(valve);
         }
-        RequestDumperValve valve = new RequestDumperValve();
-        valve.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, valve);
-        MBeanUtils.createMBean(valve);
-        valve.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("RequestDumperValve");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), valve);
         return (oname.toString());
 
     }
@@ -571,26 +607,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createSingleSignOn(String parent)
         throws Exception {
 
+        // Create a new SingleSignOn instance
+        SingleSignOn valve = new SingleSignOn();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            ((StandardContext)context).addValve(valve);
+        } else if (tname.equals("Engine")) {
+            ((StandardEngine)engine).addValve(valve);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            ((StandardHost)host).addValve(valve);
         }
-        SingleSignOn singleSignOn = new SingleSignOn();
-        singleSignOn.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, singleSignOn);
-        MBeanUtils.createMBean(singleSignOn);
-        singleSignOn.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("SingleSignOn");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), valve);
         return (oname.toString());
 
     }
@@ -711,30 +753,25 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardManager(String parent)
         throws Exception {
 
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
-        }
+        // Create a new StandardManager instance
         StandardManager manager = new StandardManager();
-        manager.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, manager);
-        MBeanUtils.createMBean(manager);
-        manager.setContainer(null);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+        Context context = (Context) host.findChild(pname.getKeyProperty("context"));
+        context.setManager(manager);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("StandardManager");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), manager);
         return (oname.toString());
 
     }
-
 
 
     /**
@@ -776,26 +813,32 @@ public class MBeanFactory extends BaseModelMBean {
     public String createSystemErrLogger(String parent)
         throws Exception {
 
+        // Create a new SystemErrLogger instance
+        SystemErrLogger logger = new SystemErrLogger();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            context.setLogger(logger);
+        } else if (tname.equals("Engine")) {
+            engine.setLogger(logger);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setLogger(logger);
         }
-        SystemErrLogger logger = new SystemErrLogger();
-        logger.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, logger);
-        MBeanUtils.createMBean(logger);
-        logger.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("SystemErrLogger");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), logger);
         return (oname.toString());
 
     }
@@ -811,28 +854,33 @@ public class MBeanFactory extends BaseModelMBean {
     public String createSystemOutLogger(String parent)
         throws Exception {
 
+        // Create a new SystemOutLogger instance
+        SystemOutLogger logger = new SystemOutLogger();
+
+        // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         String tname = findObjectName(type);
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Container container = null;
-        if (obj instanceof Container) {
-            container = (Container) obj;
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("context"));
+            context.setLogger(logger);
+        } else if (tname.equals("Engine")) {
+            engine.setLogger(logger);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setLogger(logger);
         }
-        SystemOutLogger logger = new SystemOutLogger();
-        logger.setContainer(container);
-        ObjectName oname = MBeanUtils.createObjectName(domain, logger);
-        MBeanUtils.createMBean(logger);
-        logger.setContainer(null);
 
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("SystemOutLogger");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), logger);
         return (oname.toString());
-
     }
 
 

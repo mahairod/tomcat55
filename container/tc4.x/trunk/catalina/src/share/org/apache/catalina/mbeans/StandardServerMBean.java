@@ -89,7 +89,7 @@ public class StandardServerMBean extends BaseModelMBean {
      * The <code>MBeanServer</code> for this application.
      */
     private static MBeanServer mserver = MBeanUtils.createServer();
-    
+
 
     // ----------------------------------------------------------- Constructors
 
@@ -119,47 +119,5 @@ public class StandardServerMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Operations
 
 
-    /**
-     * Add a new Service assciate with this Server
-     *
-     * @param service MBean Name of the Service to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addService(String service)
-        throws Exception {
-
-        StandardServer server = (StandardServer) this.resource;
-        ObjectName oname = new ObjectName(service);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        StandardService serviceObj = null;
-        if (obj instanceof StandardService) {
-            serviceObj = (StandardService) obj;
-        }
-        server.addService(serviceObj);
-
-    }
-
-    /**
-     * Remove an existing child Service
-     *
-     * @param service MBean Name of the Service to be removed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void removeService(String service)
-        throws Exception {
-
-        Server server = (Server) this.resource;
-        ObjectName oname = new ObjectName(service);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Service serviceObj = null;
-        if (obj instanceof Service) {
-            serviceObj = (Service) obj;
-        }
-        MBeanUtils.destroyMBean(serviceObj);
-        server.removeService(serviceObj);
-
-    }
 
 }
