@@ -98,6 +98,7 @@ import org.apache.catalina.util.ssi.ServletOutputStreamWrapper;
  * Mapped to a path from within web.xml.
  *
  * @author Bip Thelin
+ * @author Amy Roh
  * @version $Revision$, $Date$
  */
 public final class SsiInvokerServlet extends HttpServlet {
@@ -290,6 +291,12 @@ public final class SsiInvokerServlet extends HttpServlet {
 		    byteCmp(unparsed, bIdx, bEnd)) {
                     inside = false;
                     bIdx += bEnd.length;
+                    try {
+                        strCmd = parseCmd(command);
+                    } catch (IndexOutOfBoundsException ex) {
+                        out.write(ssiMediator.getError());
+                        continue;
+                    }
                     strCmd = parseCmd(command);
                     strParamType = parseParamType(command, strCmd.length());
                     strParam = parseParam(command, strCmd.length());
@@ -367,9 +374,8 @@ public final class SsiInvokerServlet extends HttpServlet {
 		quotes=0;
 
 		while(bIdx < cmd.length()&&quotes!=2) {
-		    if(cmd.charAt(bIdx)=='"'||
-		       cmd.charAt(bIdx)=='\'')
-			quotes++;
+		    if(cmd.charAt(bIdx)=='"')
+			    quotes++;
 
 		    bIdx++;
 		}
@@ -402,8 +408,7 @@ public final class SsiInvokerServlet extends HttpServlet {
 	while(bIdx < cmd.length()) {
 	    if(!inside) {
 		while(bIdx < cmd.length()&&
-		      cmd.charAt(bIdx)!='"'&&
-		      cmd.charAt(bIdx)!='\'')
+		      cmd.charAt(bIdx)!='"')
 		    bIdx++;
 
 		if(bIdx>=cmd.length())
@@ -411,9 +416,7 @@ public final class SsiInvokerServlet extends HttpServlet {
 
 		inside=!inside;
 	    } else {
-		while(bIdx < cmd.length()&&
-		      cmd.charAt(bIdx)!='"'&&
-		      cmd.charAt(bIdx)!='\'') {
+		while(bIdx < cmd.length() && cmd.charAt(bIdx)!='"') {
 		    retBuf.append(cmd.charAt(bIdx));
 		    bIdx++;
 		}
