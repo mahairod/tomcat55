@@ -81,9 +81,6 @@ Section "Tomcat 4.0 Start Menu Group"
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Uninstall Tomcat 4.0.lnk" \
                  "$INSTDIR\uninst-tomcat4.exe"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat 4.0 Documentation.lnk" \
-                 "http://jakarta.apache.org/tomcat/tomcat-4.0-doc/index.html"
-
   CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat 4.0 Program Directory.lnk" \
                  "$INSTDIR"
 
@@ -106,6 +103,24 @@ Section "Tomcat 4.0 Documentation"
   SectionIn 1 3
   SetOutPath $INSTDIR\webapps
   File /r webapps\ROOT
+
+  IfFileExists "$SMPROGRAMS\Tomcat 4.0" 0 NoLinks
+
+  SetOutPath "$SMPROGRAMS\Tomcat 4.0\Documentation"
+
+  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Tomcat Documentation.lnk" \
+                 "$INSTDIR\webapps\ROOT\docs\index.html"
+
+  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Catalina Javadoc.lnk" \
+                 "$INSTDIR\webapps\ROOT\catalina-javadoc\index.html"
+
+  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Jasper Javadoc.lnk" \
+                 "$INSTDIR\webapps\ROOT\jasper-javadoc\index.html"
+
+  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Servlet API Javadoc.lnk" \
+                 "$INSTDIR\webapps\ROOT\servletapi-javadoc\index.html"
+
+ NoLinks:
 
 SectionEnd
 
@@ -166,6 +181,8 @@ UninstallExeName uninst-tomcat4.exe
 
 Section Uninstall
 
+  Delete "$INSTDIR\uninst-tomcat4.exe"
+
   ReadRegStr $1 HKCR ".jsp" ""
   StrCmp $1 "JSPFile" 0 NoOwn ; only do this if we own it
     ReadRegStr $1 HKCR ".jsp" "backup_val"
@@ -180,8 +197,7 @@ Section Uninstall
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tomcat 4.0"
   DeleteRegKey HKLM "SOFTWARE\Apache\Jakarta\Tomcat 4.0"
-  Delete "$SMPROGRAMS\Tomcat 4.0\*.lnk"
-  RMDir "$SMPROGRAMS\Tomcat 4.0"
+  RMDir /r "$SMPROGRAMS\Tomcat 4.0"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
   Delete "$INSTDIR\README.txt"
@@ -202,13 +218,13 @@ Section Uninstall
   RMDir "$INSTDIR"
 
   ; if $INSTDIR was removed, skip these next ones
-  IfFileExists $INSTDIR 0 Removed 
+  IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
       "Remove all files in your Tomcat 4.0 directory? (If you have anything\
  you created that you want to keep, click No)" IDNO Removed
-    Delete $INSTDIR\*.* ; this would be skipped if the user hits no
-    RMDir /r $INSTDIR
-    IfFileExists $INSTDIR 0 Removed 
+    Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
+    RMDir /r "$INSTDIR"
+    IfFileExists "$INSTDIR" 0 Removed 
       MessageBox MB_OK|MB_ICONEXCLAMATION \
                  "Note: $INSTDIR could not be removed."
   Removed:
