@@ -26,7 +26,6 @@ import java.util.HashMap;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.core.StandardServer;
 
-import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -41,6 +40,7 @@ import org.apache.catalina.Host;
 
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.commons.beanutils.MethodUtils;
@@ -50,6 +50,7 @@ import org.apache.catalina.cluster.tcp.SocketSender;
 import org.apache.catalina.cluster.io.ListenCallback;
 
 import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.Constants;
@@ -385,15 +386,21 @@ public class SimpleTcpCluster
     }
 
 
-    public void send(SessionMessage msg, Member dest) {
+    public void send(ClusterMessage msg, Member dest) {
         try
         {
             msg.setAddress(membershipService.getLocalMember());
             Member destination = dest;
-            if ( (destination == null) && (msg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS) ) {
-                if (membershipService.getMembers().length > 0)
-                    destination = membershipService.getMembers()[0];
-            }
+            
+            if ( msg instanceof SessionMessage ) {
+                SessionMessage smsg = (SessionMessage) msg;
+                //if we request session state, send to the oldest of members
+                if ((destination == null) &&
+                    (smsg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS) &&
+                    (membershipService.getMembers().length > 0)) {
+                        destination = membershipService.getMembers()[0];
+                }//end if
+            }//end if
             msg.setTimestamp(System.currentTimeMillis());
             java.io.ByteArrayOutputStream outs = new java.io.ByteArrayOutputStream();
             java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(outs);
@@ -402,7 +409,7 @@ public class SimpleTcpCluster
             if(destination != null) {
                   Member tcpdest = dest;
                   if ( (tcpdest != null) && (!membershipService.getLocalMember().equals(tcpdest)))  {
-                       clusterSender.sendMessage(msg.getSessionID(), data, tcpdest);
+                       clusterSender.sendMessage(msg.getUniqueId(), data, tcpdest);
                   }//end if
             }
             else {
@@ -413,7 +420,7 @@ public class SimpleTcpCluster
         }
     }
 
-    public void send(SessionMessage msg) {
+    public void send(ClusterMessage msg) {
         send(msg,null);
     }
 
@@ -648,6 +655,15 @@ public class SimpleTcpCluster
     public void addValve(Valve valve) {
         this.valve = valve;
     }
+    
+    public void addClusterListener(MessageListener listener) {
+        //TO DO
+    }
+
+    public void removeClusterListener(MessageListener listener) {
+        //TO DO
+    }
+    
     
     private class MemberComparator implements java.util.Comparator {
         
