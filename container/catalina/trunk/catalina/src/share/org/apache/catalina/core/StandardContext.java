@@ -3956,6 +3956,8 @@ public class StandardContext
                 // Read tldListeners. XXX Option to disable
                 TldConfig tldConfig = new TldConfig();
                 tldConfig.setContext(this);
+                tldConfig.setXmlValidation(((StandardHost) getParent()).getXmlValidation());
+                tldConfig.setXmlNamespaceAware(((StandardHost) getParent()).getXmlNamespaceAware());
                 try {
                     tldConfig.execute();
                 } catch (Exception ex) {
