@@ -135,9 +135,19 @@ public class SetUpDeleteServiceAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        // Acquire the set of service MBean names to be listed
-        String pattern = TomcatTreeBuilder.SERVICE_TYPE +
-        TomcatTreeBuilder.WILDCARD;
+        String pattern = null;
+        
+        String deleteThis = request.getParameter("this");
+        if (deleteThis != null) {
+            // this particular service is to be deleted.
+            pattern = TomcatTreeBuilder.SERVICE_TYPE + 
+                      ",name=" + deleteThis;
+        } else {            
+            // Acquire the entire set of service MBean names to be listed
+            pattern = TomcatTreeBuilder.SERVICE_TYPE +
+                      TomcatTreeBuilder.WILDCARD;
+        }
+        
         Set results = null;
         try {
             results = mBServer.queryNames(new ObjectName(pattern), null);

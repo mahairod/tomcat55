@@ -23,6 +23,7 @@
       <td width="81%"> 
         <div class="page-title-text" align="left">
         <bean:write name="serviceForm" property="nodeLabel" scope="session"/>
+        <bean:define id="serviceName" name="serviceForm" property="serviceName"/>
         </div>
       </td>
       <td width="19%"> 
@@ -52,7 +53,9 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.service.delete"/> </controls:action>
+            <controls:action url='<%= "setUpDeleteService.do?this=" + serviceName %>'>  
+                    <bean:message key="actions.service.delete"/> 
+            </controls:action>
         </controls:actions>
           </div>
       </td>
@@ -82,7 +85,6 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="service.name"/>:</controls:label>
             <controls:data>
-              <html:hidden property="serviceName"/>
               <bean:write name="serviceForm" property="serviceName" 
                           scope="session"/> 
             </controls:data>
