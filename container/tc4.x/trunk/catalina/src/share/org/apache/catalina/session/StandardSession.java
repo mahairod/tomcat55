@@ -1052,8 +1052,13 @@ class StandardSession
         }
 
         // Call the valueBound() method if necessary
-        HttpSessionBindingEvent event =
-          new HttpSessionBindingEvent((HttpSession) this, name, value);
+        HttpSessionBindingEvent event = null;
+        if (unbound != null)
+            event = new HttpSessionBindingEvent
+                ((HttpSession) this, name, unbound);
+        else
+            event = new HttpSessionBindingEvent
+                ((HttpSession) this, name, value);
         if (value instanceof HttpSessionBindingListener)
             ((HttpSessionBindingListener) value).valueBound(event);
 

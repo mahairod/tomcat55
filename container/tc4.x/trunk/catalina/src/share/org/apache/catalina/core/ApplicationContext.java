@@ -888,6 +888,7 @@ public class ApplicationContext
             return;
         }
 
+        Object oldValue = null;
         boolean replaced = false;
 
 	// Add or replace the specified attribute
@@ -895,7 +896,8 @@ public class ApplicationContext
             // Check for read only attribute
             if (readOnlyAttributes.containsKey(name))
                 return;
-	    if (attributes.get(name) != null)
+            oldValue = attributes.get(name);
+            if (oldValue != null)
 	        replaced = true;
 	    attributes.put(name, value);
 	}
@@ -904,9 +906,16 @@ public class ApplicationContext
 	Object listeners[] = context.getApplicationListeners();
 	if ((listeners == null) || (listeners.length == 0))
 	    return;
-	ServletContextAttributeEvent event =
-	  new ServletContextAttributeEvent(context.getServletContext(),
-					    name, value);
+	ServletContextAttributeEvent event = null;
+        if (replaced)
+            event =
+                new ServletContextAttributeEvent(context.getServletContext(),
+                                                 name, oldValue);
+        else
+            event =
+                new ServletContextAttributeEvent(context.getServletContext(),
+                                                 name, value);
+
 	for (int i = 0; i < listeners.length; i++) {
 	    if (!(listeners[i] instanceof ServletContextAttributeListener))
 	        continue;
