@@ -29,26 +29,22 @@
        Uncomment this filter definition and the mapping to use
        the filter to decode post and get parameters -->
 
-  <!--
   <filter>
     <filter-name>Set Character Encoding</filter-name>
-    <filter-class>filters.SetCharacterEncodingFilter</filter-class>
+    <filter-class>org.apache.webapp.admin.filters.SetCharacterEncodingFilter</filter-class>
     <init-param>
       <param-name>encoding</param-name>
       <param-value>UTF8</param-value>
     </init-param>
   </filter>
-  -->
 
   <!-- Example filter mapping to apply the "Set Character Encoding" filter
        to *all* requests processed by this web application -->
 
-  <!--
   <filter-mapping>
     <filter-name>Set Character Encoding</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  -->
 
   <!-- Action Servlet Configuration -->
   <servlet>
