@@ -102,6 +102,15 @@
          <bug>33368</bug>: Fix memory leak in swallowOutput feature which occurred when the thread pool size is
          reduced, submitted by Rainer Jung. (remm)
       </fix>
+	  <fix>
+          StoreConfig: can't save cluster Membership element (pero)
+       </fix>
+	  <add>
+          StoreConfig: suppress default jkHome attribute at connector  (pero)
+      </add>
+	  <add>
+          StoreConfig: Save new dymanic properties from ReplicationTransmitter  (pero)
+      </add>
     </changelog>
   </subsection>
   
@@ -142,13 +151,28 @@
           Add instance based ReplicationValve statistics to Mbean descriptor (pero)
        </fix>
        <fix>
-          Better I18N support to Cluster Session classes (pero)
+          Better I18N support to cluster session and tcp classes (pero)
        </fix>
        <add>
           Support optional primaryIndicator at ReplicationValve to mark that 
 		  request processing to existing session is at primary cluster node. 
 		  Easy failover detection, when mark is not at 
 		  configurable primaryIndicator attribute, submitted by Rainer Jung (pero)
+       </add>
+       <update>
+          Refactor all implementation from interface IDataSenders (pero)
+	   </update>
+	   <add>
+		  Add some usefull attributes and operations to the all sender MBeans. (pero)
+       </add>
+	   <add>
+		  Add keepAlive and waitForAck handling to AsyncSocketSender and factor out a DataSender base class.(pero)
+       </add>
+       <add>
+          ReplicationTransmitter: Enable and Disable autoreconnect sender and waitForAck. (pero)
+       </add>
+       <add>
+          ReplicationTransmitter: transfer all properties to socket sender from server.xml configuration. (pero)
        </add>
     </changelog>
   </subsection>
