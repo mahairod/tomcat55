@@ -64,6 +64,7 @@ package org.apache.jasper;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagData;
@@ -122,6 +123,7 @@ public class JspCompilationContext {
     private boolean isTagFile;
     private boolean protoTypeMode;
     private TagInfo tagInfo;
+    private JarFile tagFileJar;
 
     // jspURI _must_ be relative to the context
     public JspCompilationContext(String jspUri,
@@ -162,13 +164,12 @@ public class JspCompilationContext {
                                  ServletContext context,
 				 JspServletWrapper jsw,
                                  JspRuntimeContext rctxt,
-				 Hashtable tagFileJars) {
-
+				 JarFile tagFileJar) {
         this(tagfile, false, options, context, jsw, rctxt);
         this.isTagFile = true;
         this.tagInfo = tagInfo;
-	this.tagFileJars = tagFileJars;
-	if (tagFileJars != null && tagFileJars.get(tagfile) != null) {
+	this.tagFileJar = tagFileJar;
+	if (tagFileJar != null) {
 	    isPackagedTagFile = true;
 	}
     }
@@ -284,13 +285,25 @@ public class JspCompilationContext {
     }
 
     /**
-     * Returns the tag-file-to-JAR-file mapping for tag files packaged in JARs.
+     * Returns the tag-file-name-to-JAR-file map of this compilation unit,
+     * which maps tag file names to the JAR files in which the tag files are
+     * packaged.
      *
-     * The mapping uses the tag file name as the key, and the JAR file 
-     * containing the tag file as the value. 
+     * The map is populated when parsing the tag-file elements of the TLDs
+     * of any imported taglibs. 
      */
     public Hashtable getTagFileJars() {
-	return tagFileJars;
+	return this.tagFileJars;
+    }
+
+    /**
+     * Returns the JAR file in which the tag file for which this
+     * JspCompilationContext was created is packaged, or null if this
+     * JspCompilationContext does not correspond to a tag file, or if the
+     * corresponding tag file is not packaged in a JAR.
+     */
+    public JarFile getTagFileJar() {
+	return this.tagFileJar;
     }
 
     /* ==================== Common implementation ==================== */

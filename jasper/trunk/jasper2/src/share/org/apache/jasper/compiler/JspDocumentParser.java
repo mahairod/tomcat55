@@ -759,7 +759,7 @@ class JspDocumentParser extends DefaultHandler
 	}
 
 	try {
-	    parserController.parse(fname, includeDir);
+	    parserController.parse(fname, includeDir, null);
 	} catch (FileNotFoundException fnfe) {
 	    throw new SAXParseException(err.getString(
                                             "jsp.error.file.not.found", fname),

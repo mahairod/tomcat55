@@ -115,7 +115,7 @@ class ParserController {
      * Constructor
      */
     public ParserController(JspCompilationContext ctxt, Compiler compiler) {
-        this.ctxt = ctxt; // @@@ can we assert that ctxt is not null?
+        this.ctxt = ctxt; 
 	this.compiler = compiler;
 	this.pageInfo = compiler.getPageInfo();
 	this.err = compiler.getErrorDispatcher();
@@ -130,59 +130,70 @@ class ParserController {
     }
 
     /**
-     * Parses a jsp file.  This is invoked by the compiler.
+     * Parses a JSP page or tag file. This is invoked by the compiler.
      *
-     * @param inFileName The name of the JSP file to be parsed.
+     * @param inFileName The path to the JSP page or tag file to be parsed.
      */
     public Node.Nodes parse(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parse(inFileName, null);
+	// If we're parsing a packaged tag file or a resource included by it
+	// (using an include directive), ctxt.getTagFileJar() returns the 
+	// JAR file from which to read the tag file or included resource,
+	// respectively.
+	return parse(inFileName, null, ctxt.getTagFileJar());
     }
 
     /**
-     * Parses a jsp file.  This is invoked to process an include file.
+     * Processes an include directive with the given path.
      *
-     * @param inFileName The name of the JSP file to be parsed.
-     * @param parent The node for the 'include' directive.
+     * @param inFileName The path to the resource to be included.
+     * @param parent The parent node of the include directive.
+     * @param jarFile The JAR file from which to read the included resource,
+     * or null of the included resource is to be read from the filesystem
      */
-    public Node.Nodes parse(String inFileName, Node parent)
+    public Node.Nodes parse(String inFileName, Node parent, JarFile jarFile)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parseFile(inFileName, parent, ctxt.isTagFile(), false);
+	return parse(inFileName, parent, ctxt.isTagFile(), false, jarFile);
     }
 
     /**
-     * Parses a tag file.  This is invoked by the compiler to extract tag
-     * file directive information.
+     * Extracts tag file directive information from the tag file with the
+     * given name.
+     *
+     * This is invoked by the compiler 
      *
      * @param inFileName The name of the tag file to be parsed.
      */
-    public Node.Nodes parseTagFile(String inFileName)
+    public Node.Nodes parseTagFileDirectives(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
 	isTopFile = true;
-	return parseFile(inFileName, null, true, true);
+	return parse(inFileName, null, true, true,
+		     (JarFile) ctxt.getTagFileJars().get(inFileName));
     }
 
     /**
-     * Parse the JSP page provided as an argument.
-     * This is invoked recursively to handle 'include' directives.
+     * Parses the JSP page or tag file with the given path name.
      *
-     * @param inFileName The name of the jsp file to be parsed.
-     * @param parent The parent node for the parser, and is non-null when
-     *               parsing an included file
+     * @param inFileName The name of the JSP page or tag file to be parsed.
+     * @param parent The parent node (non-null when processing an include
+     * directive)
      * @param isTagFile true if file to be parsed is tag file, and false if it
-     * is a regular jsp page
+     * is a regular JSP page
      * @param directivesOnly true if the file to be parsed is a tag file and
      * we are only interested in the directives needed for constructing a
      * TagFileInfo.
+     * @param jarFile The JAR file from which to read the JSP page or tag file,
+     * or null if the JSP page or tag file is to be read from the filesystem
      */
-    private Node.Nodes parseFile(String inFileName, Node parent,
-				 boolean isTagFile, boolean directivesOnly)
+    private Node.Nodes parse(String inFileName,
+			     Node parent,
+			     boolean isTagFile,
+			     boolean directivesOnly,
+			     JarFile jarFile)
 	        throws FileNotFoundException, JasperException, IOException {
 
 	Node.Nodes parsedPage = null;
 	String absFileName = resolveFileName(inFileName);
-
-	JarFile jarFile = (JarFile) ctxt.getTagFileJars().get(inFileName);
 
 	// Figure out what type of JSP document and encoding type we are
 	// dealing with
@@ -222,7 +233,7 @@ class ParserController {
 						    encoding, inStreamReader,
 						    err);
                 parsedPage = Parser.parse(this, jspReader, parent, isTagFile,
-					  directivesOnly);
+					  directivesOnly, jarFile);
             } finally {
 		if (inStreamReader != null) {
 		    try {

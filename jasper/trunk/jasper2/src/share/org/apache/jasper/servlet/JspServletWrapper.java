@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
+import java.util.jar.JarFile;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
@@ -144,7 +145,7 @@ public class JspServletWrapper {
 			     String tagFilePath,
 			     TagInfo tagInfo,
 			     JspRuntimeContext rctxt,
-			     Hashtable tagFileJars)
+			     JarFile tagFileJar)
 	    throws JasperException {
 
 	this.isTagFile = true;
@@ -154,7 +155,7 @@ public class JspServletWrapper {
 	this.tripCount = 0;
         ctxt = new JspCompilationContext(jspUri, tagInfo, options,
 					 servletContext, this, rctxt,
-					 tagFileJars);
+					 tagFileJar);
         ctxt.createOutdir("/tags/"
 			  + tagInfo.getTagClassName().replace('.', '/'));
     }

@@ -63,6 +63,7 @@ compiler/TagFileProcessor.java,v 1.16 2002/05/24 23:57:42 kinman Exp $
 package org.apache.jasper.compiler;
 
 import java.util.*;
+import java.util.jar.JarFile;
 import java.io.*;
 
 import javax.servlet.ServletException;
@@ -299,17 +300,17 @@ class TagFileProcessor {
      * @param tagLibInfo the TagLibraryInfo object associated with this TagInfo
      * @return a TagInfo object assembled from the directives in the tag file.
      */
-    public static TagInfo parseTagFile(ParserController pc,
-                                       String name,
-                                       String path,
-				       TagLibraryInfo tagLibInfo)
-                throws JasperException {
+    public static TagInfo parseTagFileDirectives(ParserController pc,
+						 String name,
+						 String path,
+						 TagLibraryInfo tagLibInfo)
+                        throws JasperException {
 
 	ErrorDispatcher err = pc.getCompiler().getErrorDispatcher();
 
         Node.Nodes page = null;
 	try {
-	    page = pc.parseTagFile(path);
+	    page = pc.parseTagFileDirectives(path);
 	} catch (FileNotFoundException e) {
 	    err.jspError("jsp.error.file.not.found", path);
 	} catch (IOException e) {
@@ -361,7 +362,7 @@ class TagFileProcessor {
 						tagFilePath,
 						tagInfo,
 						ctxt.getRuntimeContext(),
-						ctxt.getTagFileJars());
+						(JarFile) ctxt.getTagFileJars().get(tagFilePath));
 	        rctxt.addWrapper(tagFilePath,wrapper);
 	    }
 
@@ -374,13 +375,13 @@ class TagFileProcessor {
 		    // file is compiled in prototype mode, to avoid infinite
 		    // recursion.
 
-		    JspServletWrapper tempWrapper = new JspServletWrapper(
-					    ctxt.getServletContext(),
-                                            ctxt.getOptions(),
-                                            tagFilePath,
-                                            tagInfo,
-                                            ctxt.getRuntimeContext(),
-                                            ctxt.getTagFileJars());
+		    JspServletWrapper tempWrapper
+			= new JspServletWrapper(ctxt.getServletContext(),
+						ctxt.getOptions(),
+						tagFilePath,
+						tagInfo,
+						ctxt.getRuntimeContext(),
+						(JarFile) ctxt.getTagFileJars().get(tagFilePath));
 	            tagClazz = tempWrapper.loadTagFilePrototype();
 		    tempVector.add(
 			tempWrapper.getJspEngineContext().getCompiler());

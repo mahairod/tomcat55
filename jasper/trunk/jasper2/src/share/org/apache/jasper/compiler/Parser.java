@@ -65,6 +65,7 @@ import java.io.CharArrayWriter;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Iterator;
+import java.util.jar.JarFile;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagFileInfo;
@@ -98,7 +99,8 @@ class Parser {
     private int scriptlessCount;
     private boolean isTagFile;
     private boolean directivesOnly;
-    
+    private JarFile jarFile;
+
     // Virtual body content types, to make parsing a little easier.
     // These are not accessible from outside the parser.
     private static final String JAVAX_BODY_CONTENT_PARAM = 
@@ -112,7 +114,7 @@ class Parser {
      * The constructor
      */
     private Parser(ParserController pc, JspReader reader, boolean isTagFile,
-		   boolean directivesOnly) {
+		   boolean directivesOnly, JarFile jarFile) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
@@ -122,6 +124,7 @@ class Parser {
         this.scriptlessCount = 0;
 	this.isTagFile = isTagFile;
 	this.directivesOnly = directivesOnly;
+	this.jarFile = jarFile;
         start = reader.mark();
     }
 
@@ -138,10 +141,12 @@ class Parser {
 				   JspReader reader,
 				   Node parent,
 				   boolean isTagFile,
-				   boolean directivesOnly)
+				   boolean directivesOnly,
+				   JarFile jarFile)
 		throws JasperException {
 
-	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly);
+	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly,
+				   jarFile);
 
 	Node.Root root = new Node.Root(null, reader.mark(), parent);
 
@@ -185,7 +190,7 @@ class Parser {
     public static Attributes parseAttributes(ParserController pc,
 					     JspReader reader)
 		throws JasperException {
-	Parser tmpParser = new Parser(pc, reader, false, false);
+	Parser tmpParser = new Parser(pc, reader, false, false, null);
 	return tmpParser.parseAttributes();
     }
 
@@ -361,7 +366,7 @@ class Parser {
 	}
 
 	try {
-	    parserController.parse(file, parent);
+	    parserController.parse(file, parent, jarFile);
 	} catch (FileNotFoundException ex) {
 	    err.jspError(start, "jsp.error.file.not.found", file);
 	} catch (Exception ex) {

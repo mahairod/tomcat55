@@ -452,9 +452,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    err.jspError("jsp.error.tagfile.illegalPath", path);
 	}
 
-	TagInfo tagInfo = TagFileProcessor.parseTagFile(parserController,
-							name, path,
-							this);
+	TagInfo tagInfo
+	    = TagFileProcessor.parseTagFileDirectives(parserController, name,
+						      path, this);
 	return new TagFileInfo(name, path, tagInfo);
     }
 
