@@ -245,14 +245,23 @@ public class ParserController {
                     file.startsWith( "/META-INF/tags" );
 
 	PageInfo pageInfo = compiler.getPageInfo();
+
+	boolean isXmlFound = false;
 	if (pageInfo.isXmlSpecified()) {
+	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
 	    isXml = pageInfo.isXml();
+	    isXmlFound = true;
+	} else if (file.endsWith(".jspx")) {
+	    isXml = true;
+	    isXmlFound = true;
 	}
+	
 	if (pageInfo.getPageEncoding() != null) {
 	    newEncoding = pageInfo.getPageEncoding();
 	}
-	if (pageInfo.isXmlSpecified() && newEncoding != null)
-	    return;
+
+	if (isXmlFound && newEncoding != null)
+	    return;	// No need to scan the file
 
 	JspReader jspReader;
 	try {
@@ -264,7 +273,7 @@ public class ParserController {
         jspReader.setSingleFile(true);
         Mark startMark = jspReader.mark();
 
-	if (!pageInfo.isXmlSpecified()) {
+	if (!isXmlFound) {
 	    // Check for the jsp:root tag
 	    // No check for xml prolog, since nothing prevents a page
 	    // to output XML and still use JSP syntax.
