@@ -1446,9 +1446,9 @@ public class DeltaSession
             Object value = (Object) stream.readObject();
             if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
                 continue;
-            if (log.isDebugEnabled())
-                log.debug("  loading attribute '" + name +
-                    "' with value '" + value + "'");
+//            if (log.isDebugEnabled())
+//                log.debug("  loading attribute '" + name +
+//                    "' with value '" + value + "'");
             synchronized (attributes) {
                 attributes.put(name, value);
             }
@@ -1518,9 +1518,9 @@ public class DeltaSession
             stream.writeObject((String) saveNames.get(i));
             try {
                 stream.writeObject(saveValues.get(i));
-                if (log.isDebugEnabled())
-                    log.debug("  storing attribute '" + saveNames.get(i) +
-                        "' with value '" + saveValues.get(i) + "'");
+//                if (log.isDebugEnabled())
+//                    log.debug("  storing attribute '" + saveNames.get(i) +
+//                        "' with value '" + saveValues.get(i) + "'");
             } catch (NotSerializableException e) {
                 log.error(sm.getString("standardSession.notSerializable",
                                  saveNames.get(i), id), e);

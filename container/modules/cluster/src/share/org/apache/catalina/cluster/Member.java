@@ -106,4 +106,5 @@ public interface Member {
      * @return nr of milliseconds since this member started.
      */
     public long getMemberAliveTime();
+    
 }
