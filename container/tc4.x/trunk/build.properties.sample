@@ -144,23 +144,23 @@ activation.jar=${activation.lib}/activation.jar
 
 # ----- Commons Daemon, version 20020219 or later -----
 commons-daemon.home=${base.path}/commons-daemon
-commons-daemon.lib=${commons-daemon.home}
+commons-daemon.lib=${commons-daemon.home}/dist
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
 commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
 # ----- Commons DBCP, version 1.0 or later -----
 commons-dbcp.home=${base.path}/commons-dbcp-1.0
-commons-dbcp.lib=${commons-dbcp.home}
+commons-dbcp.lib=${commons-dbcp.home}/commons-dbcp-1.0
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
 commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-dbcp/v1.0/commons-dbcp-1.0.zip
 
 
 # ----- Commons Modeler, version 1.0 or later -----
-commons-modeler.home=${base.path}/commons-modeler-1.1dev
+commons-modeler.home=${base.path}/commons-modeler-1.1M1
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
-commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.1M1/commons-modeler-1.1M1.tar.gz
+commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.1-M1/commons-modeler-1.1M1.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
