@@ -456,7 +456,14 @@ public class PageDataImpl extends PageData implements TagConstants {
 
 	private void appendText(char[] text, boolean createJspTextElement) {
 	    if (createJspTextElement) {
-		buf.append(JSP_TEXT_START);
+		buf.append("<").append(JSP_TEXT);
+		buf.append("\n");
+
+		// append jsp:id
+		buf.append("  ").append("jsp:id").append("=\"");
+		buf.append(jspId++).append("\"\n");
+		buf.append(">\n");
+
 		appendCDATA(text);
 		buf.append(JSP_TEXT_END);
 	    } else {
