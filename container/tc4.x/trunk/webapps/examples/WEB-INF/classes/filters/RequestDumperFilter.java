@@ -72,6 +72,7 @@ import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.Locale;
 import javax.servlet.Filter;
+import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -113,11 +114,13 @@ public final class RequestDumperFilter implements Filter {
      *
      * @param request The servlet request we are processing
      * @param result The servlet response we are creating
+     * @param chain The filter chain we are processing
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void doFilter(ServletRequest request, ServletResponse response)
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain)
 	throws IOException, ServletException {
 
         if (filterConfig == null)
@@ -196,8 +199,9 @@ public final class RequestDumperFilter implements Filter {
 	filterConfig.getServletContext().log(sw.getBuffer().toString());
 
 	// Pass control on to the next filter
-	Filter next = filterConfig.getNext();
-	next.doFilter(request, response);
+//	Filter next = filterConfig.getNext();
+//	next.doFilter(request, response);
+        chain.doFilter(request, response);
 
     }
 

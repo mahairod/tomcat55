@@ -67,6 +67,7 @@ package filters;
 
 import java.io.IOException;
 import javax.servlet.Filter;
+import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -119,11 +120,13 @@ public final class ExampleFilter implements Filter {
      *
      * @param request The servlet request we are processing
      * @param result The servlet response we are creating
+     * @param chain The filter chain we are processing
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void doFilter(ServletRequest request, ServletResponse response)
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain)
 	throws IOException, ServletException {
 
 	// Store ourselves as a request attribute (if requested)
@@ -132,8 +135,9 @@ public final class ExampleFilter implements Filter {
 
 	// Time and log the subsequent processing
 	long startTime = System.currentTimeMillis();
-	Filter next = filterConfig.getNext();
-	next.doFilter(request, response);
+//	Filter next = filterConfig.getNext();
+//	next.doFilter(request, response);
+        chain.doFilter(request, response);
 	long stopTime = System.currentTimeMillis();
 	filterConfig.getServletContext().log
 	    (this.toString() + ": " + (stopTime - startTime) +
