@@ -10,6 +10,8 @@
   <property file="../../build.properties"/>
   <property file="${user.home}/build.properties"/>
 
+  <property name="tomcat-jk.home"         value="${jtc.home}/jk"/>
+
   <property name="build.compiler"  value="classic"/>
   <property name="webapps.build"   value="../build"/>
   <property name="webapps.dist"    value="../dist"/>
@@ -112,6 +114,14 @@
           includes="*.xml">
       <param name="relative-path" expression=".."/>
     </style>
+
+    <!-- Build Coyote JK2 documentation -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/jk2"/>
+    <ant dir="${tomcat-jk.home}" target="docs"/>
+
+    <copy todir="${webapps.build}/${webapp.name}/jk2">
+      <fileset dir="${tomcat-jk.home}/build/docs"/>
+    </copy>
 
   </target>
 

@@ -22,10 +22,14 @@
         <item name="Building from Source"  href="BUILDING.txt"/>
     </menu>
 
+    <menu name="Configuration">
+        <item name="Reference"             href="config/index.html"/>
+    </menu>
+
     <menu name="Administrators">
         <item name="CGI HOW-TO"            href="cgi-howto.html"/>
-        <item name="Config. Reference"     href="config/index.html"/>
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
+        <item name="Connectors List"       href="config/connectors.html"/>
         <item name="JNDI DataSource HOW-TO" 
               href="jndi-datasource-examples-howto.html"/>
         <item name="JNDI Resources HOW-TO" href="jndi-resources-howto.html"/>
