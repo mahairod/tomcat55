@@ -451,6 +451,11 @@ class Parser implements TagConstants {
 	String prefix = attrs.getValue("prefix");
 	if (prefix != null) {
 	    if (uri != null) {
+		String uriPrev = pageInfo.getURI(prefix);
+		if (uriPrev != null && !uriPrev.equals(uri)) {
+		    err.jspError(reader.mark(), "jsp.error.prefix.refined",
+			prefix, uri, uriPrev);
+		}
 		if (pageInfo.getTaglib(uri) == null) {
 		    String[] location = ctxt.getTldLocation(uri);
 		    pageInfo.addTaglib(uri,

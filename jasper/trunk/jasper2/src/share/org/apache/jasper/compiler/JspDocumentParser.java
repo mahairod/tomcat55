@@ -109,7 +109,6 @@ class JspDocumentParser extends DefaultHandler
     private boolean isTagFile;
     private boolean directivesOnly;
     private boolean isTop;
-    private LinkedList prefixMapLinkedList;
 
     /*
      * Constructor
@@ -128,7 +127,6 @@ class JspDocumentParser extends DefaultHandler
 	this.isTagFile = isTagFile;
 	this.directivesOnly = directivesOnly;
 	this.isTop = true;
-        this.prefixMapLinkedList = new LinkedList();;
     }
 
     /*
@@ -560,9 +558,8 @@ class JspDocumentParser extends DefaultHandler
         if (taglibInfo != null) {
             pageInfo.addTaglib(uri, taglibInfo);
             pageInfo.pushPrefixMapping(prefix, uri);
-            prefixMapLinkedList.addLast(new Boolean(true));
         } else {
-            prefixMapLinkedList.addLast(new Boolean(false));
+            pageInfo.pushPrefixMapping(prefix, null);
         }
      }
 
@@ -570,9 +567,7 @@ class JspDocumentParser extends DefaultHandler
       * Receives notification of the end of a Namespace mapping. 
       */
     public void endPrefixMapping(String prefix) throws SAXException {
-        if (((Boolean) prefixMapLinkedList.removeFirst()).booleanValue()) {
-            pageInfo.popPrefixMapping(prefix);
-        }
+        pageInfo.popPrefixMapping(prefix);
     }
 
 
