@@ -1034,7 +1034,7 @@ public class StandardContext
     /**
      * Return the servlet context for which this Context is a facade.
      */
-    public synchronized ServletContext getServletContext() {
+    public ServletContext getServletContext() {
 
         if (context == null)
             context = new ApplicationContext(getBasePath(), this);
