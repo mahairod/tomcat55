@@ -587,9 +587,6 @@ public class JDBCRealm
     }
 
 
-    // -------------------------------------------------------- Private Methods
-
-
     // ------------------------------------------------------ Lifecycle Methods
 
 
@@ -634,47 +631,5 @@ public class JDBCRealm
 
     }
 
-    /**
-     * Digest password using the algorithm especificied and
-     * convert the result to a corresponding hex string.
-     * If exception, the plain credentials string is returned
-     *
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     * @param algorithm Algorithm used to do th digest
-     */
-    public final static String Digest(String credentials, String algorithm) {
-        try {
-            // Obtain a new message digest with "digest" encryption
-            MessageDigest md =
-                (MessageDigest)MessageDigest.getInstance(algorithm).clone();
-            // encode the credentials
-            md.update(credentials.getBytes());
 
-            // Digest the credentials and return as hexadecimal
-            return (HexUtils.convert(md.digest()));
-        } catch(Exception ex) {
-            ex.printStackTrace();
-            return credentials;
-        }
-    }
-
-    /**
-     * Digest password using the algorithm especificied and
-     * convert the result to a corresponding hex string.
-     * If exception, the plain credentials string is returned
-     *
-     * @see JDBCRealm#Digest
-     */
-    public static void main(String args[]) {
-        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
-            for(int i=2; i < args.length ; i++){
-                System.out.print(args[i]+":");
-                System.out.println(Digest(args[i], args[1]));
-            }
-        } else {
-            System.out.println("Usage: JDBCRealm -a <algorithm> <credentials>");
-        }
-    }
 }
-

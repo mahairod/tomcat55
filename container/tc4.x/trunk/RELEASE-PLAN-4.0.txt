@@ -52,6 +52,8 @@ Catalina    2883    Error page for 401 error code is not populated
 
 Catalina    3292    Class reloading fails (awaiting test case)
 
+Catalina    3443    Class reloading fails for servlets that use JNI
+
 Connectors  1788    mod_webapp errors on Win2k
 
 Connectors  2997    Webapp connector should recover when Tomcat is restarted
@@ -98,6 +100,8 @@ Catalina    3194    Javadoc errors during build
 Catalina    3285    Tomcat 4.0-b5 class loader fails on IBM JDK
 
 Catalina    3293    Allow content lengths > 2^31
+
+Catalina    3434    NT/2K Service installation on JDK 1.4 b2 fails 
 
 Jasper      3055    <jsp:plugin> tag ignores the name attribute
 

@@ -669,7 +669,7 @@ public class JNDIRealm extends RealmBase {
         // Perform the configured search and process the results
         if (debug >= 3) {
             log("  Searching role base '" + roleBase + "' for attribute '" +
-                roleName + "'");
+                roleName[0] + "'");
             log("  With filter expression '" + filter + "'");
         }
         NamingEnumeration results =
