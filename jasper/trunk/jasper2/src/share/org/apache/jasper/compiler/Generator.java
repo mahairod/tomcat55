@@ -865,7 +865,12 @@ public class Generator {
             
             // If any of the params have their values specified by
             // jsp:attribute, prepare those values first.
-            prepareParams( findJspBody( n ) );
+	    Node jspBody = findJspBody(n);
+	    if (jspBody != null) {
+		prepareParams(jspBody);
+	    } else {
+		prepareParams(n);
+	    }
             
             out.printin("JspRuntimeLibrary.include(request, response, " +
                 pageParam );
@@ -951,7 +956,12 @@ public class Generator {
             
             // If any of the params have their values specified by
             // jsp:attribute, prepare those values first.
-            prepareParams( findJspBody( n ) );
+	    Node jspBody = findJspBody(n);
+	    if (jspBody != null) {
+		prepareParams(jspBody);
+	    } else {
+		prepareParams(n);
+	    }
             
 	    out.printin("pageContext.forward(");
 	    out.print( pageParam );
@@ -1681,6 +1691,87 @@ public class Generator {
 		out.println(");");
 	    } else {
 		visitBody(n);
+	    }
+	}
+
+        public void visit(Node.InvokeAction n) throws JasperException {
+
+	    /**
+	     * A visitor to handle <jsp:param> in a <jsp:invoke>
+	     */
+	    class ParamVisitor extends Node.Visitor {
+
+                public void visit(Node.ParamAction n) throws JasperException {
+		    out.printin("params.put(");
+		    out.print(n.getAttributeValue("name"));
+		    out.print(", ");
+		    out.print(attributeValue(n.getValue(), false,
+					     String.class, "null"));
+		    out.println(");");
+		}
+	    }
+
+	    // Assemble parameter map
+	    out.printil("params = new java.util.HashMap();");
+	    if (n.getBody() != null) {
+		prepareParams(n);
+		n.getBody().visit(new ParamVisitor());
+	    }
+	    
+	    // Invoke fragment with parameter map
+	    String getterMethodName
+		= getAccessorMethodName(n.getAttributeValue("fragment"),
+					true);
+	    String varReader = n.getAttributeValue("varReader");
+	    if (varReader != null) {
+		out.printil("sout = new java.io.StringWriter();");
+		out.printin(getterMethodName);
+		out.println("().invoke(sout, params);");
+	    } else {
+		out.printin(getterMethodName);
+		out.println("().invoke(null, params);");
+	    }
+	    if (varReader != null) {
+		out.printin("jspContext.setAttribute(\"");
+		out.print(varReader);
+		out.print("\", new java.io.StringReader(sout.toString()));");
+		// XXX evaluate scope
+	    }
+	}
+
+        public void visit(Node.DoBodyAction n) throws JasperException {
+
+	    /**
+	     * A visitor to handle <jsp:param> in a <jsp:doBody>
+	     */
+	    class ParamVisitor extends Node.Visitor {
+
+                public void visit(Node.ParamAction n) throws JasperException {
+		    out.printin("params.put(");
+		    out.print(n.getAttributeValue("name"));
+		    out.print(", ");
+		    out.print(attributeValue(n.getValue(), false,
+					     String.class, "null"));
+		    out.println(");");
+		}
+	    }
+
+	    // Assemble parameter map
+	    out.printil("params = new java.util.HashMap();");
+	    if (n.getBody() != null) {
+		prepareParams(n);
+		n.getBody().visit(new ParamVisitor());
+	    }
+
+	    // XXX Add scripting variables to parameter map
+
+	    // Invoke body with parameter map
+	    String varReader = n.getAttributeValue("varReader");
+	    if (varReader != null) {
+		out.printil("sout = new java.io.StringWriter();");
+		out.printil("getJspBody().invoke(sout, params);");
+	    } else {
+		out.printil("getJspBody().invoke(null, params);");
 	    }
 	}
 
@@ -2546,8 +2637,158 @@ public class Generator {
 	gen.generatePreamble(page);
 	gen.fragmentHelperClass.generatePreamble();
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, 
-            gen.fragmentHelperClass));
+					   gen.fragmentHelperClass));
 	gen.generatePostamble(page);
+    }
+
+    /**
+     * XXX
+     */
+    public static void generateTagHandler(ServletWriter out,
+					  Compiler compiler,
+					  Node.Nodes page)
+	                throws JasperException {
+	Generator gen = new Generator(out, compiler);
+	gen.generateTagHandlerPreamble(page);
+	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null));
+	gen.generateTagHandlerPostamble(page);
+    }
+
+    /*
+     * XXX
+     */
+    private void generateTagHandlerPreamble(Node.Nodes page)
+	    throws JasperException {
+
+	// Generate class declaration
+	out.printin("public class ");
+	out.print("XXX");
+	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport {");
+	out.pushIndent();
+	
+	// Class body begins here
+	MethodsBuffer accessorsBuf = new MethodsBuffer();
+	MethodsBuffer setAttributeBuf = new MethodsBuffer();
+	generateTagHandlerDeclarations(page, accessorsBuf, setAttributeBuf);
+	out.printMultiLn(accessorsBuf.toString());
+	out.printil("public int doTag() throws JspException {");
+	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
+	out.printil("jspContext.pushPageScope();");
+	// create page-scope attributes for each tag attribute
+	out.printMultiLn(setAttributeBuf.toString());
+	out.printil("try {");
+	out.pushIndent();
+    }
+
+    private void generateTagHandlerPostamble(Node.Nodes page) {
+        out.popIndent();
+        out.printil("} finally {");
+        out.pushIndent();
+        out.printil("jspContext.popPageScope();");
+        out.popIndent();
+	out.printil("}");
+	out.println();
+	out.printil("return EVAL_PAGE;");
+    }
+
+    /**
+     * Generates declarations for tag handler attributes.
+     */
+    private void generateTagHandlerDeclarations(Node.Nodes page,
+						MethodsBuffer accessorsBuf,
+						MethodsBuffer setAttributeBuf)
+	        throws JasperException {
+
+	class DeclarationVisitor extends Node.Visitor {
+
+	    private MethodsBuffer accessorsBuf;
+	    private MethodsBuffer setAttributeBuf;
+
+	    public DeclarationVisitor(MethodsBuffer accessorsBuf,
+				      MethodsBuffer setAttributeBuf) {
+		this.accessorsBuf = accessorsBuf;
+		this.setAttributeBuf = setAttributeBuf;
+	    }
+
+	    public void visit(Node.AttributeDirective n)
+		    throws JasperException {
+
+		boolean isFragment
+		    = "true".equalsIgnoreCase(n.getAttributeValue("fragment"));
+		if (isFragment)
+		    out.printin("private javax.servlet.jsp.tagext.JspFragment ");
+		else
+		    out.printin("private String ");
+		String attrName = n.getAttributeValue("name");
+		out.print(attrName);
+		out.println(";");
+
+		// generate getter and setter methods
+		ServletWriter outSave = out;
+		out = accessorsBuf.getOut();
+		if (isFragment)
+		    out.printin("public javax.servlet.jsp.tagext.JspFragment get");
+		else
+		    out.printin("public String get");
+		String getterMethodName = getAccessorMethodName(attrName,
+								true);
+		out.print(getterMethodName);
+		out.println("() {");
+		out.pushIndent();
+		out.printin("return this.");
+		out.print(attrName);
+		out.println(";");
+		out.popIndent();
+		out.printil("}");
+		out.println();
+		out.printin("public void set");
+		out.print(getAccessorMethodName(attrName, false));
+		if (isFragment)
+		    out.printin("javax.servlet.jsp.tagext.JspFragment ");
+		else
+		    out.printin("String ");
+		out.print(attrName);
+		out.println(") {");
+		out.pushIndent();
+		out.printin("this.");
+		out.print(attrName);
+		out.print(" = ");
+		out.print(attrName);
+		out.println(";");
+		out.popIndent();
+		out.printil("}");
+
+		// set attribute in JspContext
+		out = setAttributeBuf.getOut();
+		out.printin("this.jspContext.setAttribute(\"");
+		out.print(attrName);
+		out.print("\", ");
+		out.print(getterMethodName);
+		out.println("());");
+
+		out = outSave;
+	    }
+	}
+
+	out.println();
+
+	// Parameter map for fragment/body invocation
+	out.println("java.util.Map params = null;");
+
+	// Used for storing result of fragment/body invocation if 'varReader'
+	// attribute is specified
+	out.println("java.io.Writer sout = null;");
+
+	page.visit(new DeclarationVisitor(accessorsBuf, setAttributeBuf));
+    }
+
+    private String getAccessorMethodName(String attrName, boolean getter) {
+	char[] attrChars = attrName.toCharArray();
+	attrChars[0] = Character.toUpperCase(attrChars[0]);
+	if (getter)
+	    return "get" + new String(attrChars);
+	else
+	    return "set" + new String(attrChars);
     }
 
     /**
