@@ -5,126 +5,6 @@ import java.util.*;
 
 
 
-/*
-commented ....initial design...not using anymore
-class JSP_elements
-{
-//JSP Elements as known till JSP 1.2 specs
-
-public static final String JSP_COMMENT= "<%--" ; //comment
-public static final String JSP_DIRECTIVE= "<%@" ;//Directive
-public static final String JSP_SCRIPTLET="<%" ; //Scriptlet
-public static final String JSP_DECLARATION="<%!" ; //Declaration 
-public static final String JSP_EXPRESSION="<%=" ; //Expression
-
-public static final String isJSPToken(String token)
-{
-  if(token==null) 
-  return null;
-
-  if(token.equals(JSP_COMMENT) )
-  return JSP_COMMENT;
-  if(token.equals(JSP_DIRECTIVE) )
-  return JSP_DIRECTIVE;
-  if(token.equals(JSP_SCRIPTLET) )
-  return JSP_SCRIPTLET;
-  if(token.equals(JSP_DECLARATION) )
-  return JSP_DECLARATION;
-  if(token.equals(JSP_EXPRESSION) )
-  return JSP_EXPRESSION;
-
-  return null;
-
-}
-
-}
-
-
-class JSP_block
-{
-//this class is a helper class that is used to keep track of a block of code
-//which is under a JSP element
-
-//start_index and end_index give the start and end index in a string having a jsp block of code
-
-public int start_index;
-public int end_index;
-//element_type tells the type of jsp element for this block
-public String element_type;
-
-public JSP_block(int start , int end , String type)
-{
-start_index=start;
-end_index=end;
-element_type=type;
-}
-
-public static JSP_block getNextJSPBlock(String input_str , int start , int end)
-              throws Exception
-{
-//returns the next block of JSP from a string between the given indexes
- if(input_str ==null)
-  return null;
-
-String work_str = input_str.substr(start , end+1);
-int start_index=work_str.indexOf("<%"); //every element starts with <%
-int end_index=0;
- if(start_index==-1) //no JSp element is there
- return(null);
-
-char next_char =work_str.charAt(temp_index+2) ;
-
-  if(next_char=='@' )  //A directive
-  {
- end_index=work_str.indexOf("%>");
-
-    if(end_index==-1)
-    throw Exception;
-  return(new JSP_block(start_index,end_index+2,JSP_elements.JSP_DIRECTIVE );
-  }
-
-  if(next_char=='!' )  //A Decalaration
-  {
- end_index=work_str.indexOf("%>");
-
-    if(end_index==-1)
-    throw Exception;
-  return(new JSP_block(start_index,end_index+2,JSP_elements.JSP_DECLARATION );
-  }
-
-  if(next_char=='=' )  //An Expression
-  {
- end_index=work_str.indexOf("%>");
-
-    if(end_index==-1)
-    throw Exception;
-  return(new JSP_block(start_index,end_index+2,JSP_elements.JSP_EXPRESSION );
-  }
-
-  if(next_char=='-' )  //Might be a comment..treat a comment for time being
-  {
- end_index=work_str.indexOf("--%>");
-
-    if(end_index==-1)
-    throw Exception;
-  return(new JSP_block(start_index,end_index+4,JSP_elements.JSP_COMMENT );
-  }
-
-//if none of above then it should be a scriptlet
-
- end_index=work_str.indexOf("%>");
-
-    if(end_index==-1)
-    throw Exception;
-  return(new JSP_block(start_index,end_index+2,JSP_elements.JSP_SCRIPTELT );
-
-
-}
-
-
-}
-*/
-
 
 public class jsp2XML
 {
@@ -152,7 +32,7 @@ xml_prolog+="PUBLIC \"-//Sun Microsystems Inc.//DTD JavaServer Pages Version 1.2
 xml_prolog+="\"http://java.sun.com/products/jsp/dtd/jspcore_1_2.dtd\" > " ;
 
 author_comments = new_line + "<!-- This File is generated automatically by jsp2XML converter tool --> " + new_line ;
-author_comments+= "<!-- Written By Santosh Singh -->" ;
+author_comments+= "<!-- Written By Santosh Singh/Ramesh Mandava -->" ;
 
 jsp_root_tag = new_line + "<jsp:root" + new_line ;
 //note that we haven't yet closed the jsp:root since taglib directives will also be added here
@@ -194,7 +74,8 @@ String out_file="";
 
 st =new StringTokenizer(directive_str," =\t\n\r\"" , false );
 directive = st.nextToken();
-out_file+="<jsp:directive." + directive +" ";
+//Latest spec doesn't need jsp:directive.taglib - Ramesh
+//out_file+="<jsp:directive." + directive +" ";
 String uri="";
 String prefix="";
    while(st.hasMoreTokens() )
@@ -219,9 +100,12 @@ String next_token=st.nextToken();
  }
 
 //update xml output
+//Latest spec doesn't need jsp:directive.taglib, commenting out that part - Ramesh
+/*
 out_file += "uri=\"" + uri + "\"" + " " ;
 out_file+="prefix=\"" + prefix +"\"" + " ";
 out_file+="/>" ; //end of taglib
+*/
 return out_file;
 }
 
@@ -242,29 +126,34 @@ while(element_index>=0 || action_index>=0)
 element_index=jsp.indexOf("<%" , last_index);
 action_index=jsp.indexOf(":" , last_index); //might be an action
 
-  if((element_index < action_index) || (action_index==-1) )
+if ( ((element_index < action_index)  && ( element_index != -1 ) ) || (action_index==-1) )
+  {
          jsp_element_first=true;
+  }
+  else
+  {
+         jsp_element_first=false;
+  }
 
-       else
-  	 jsp_element_first=false;
 
-
-if( cdata_closed )
+if ( ( cdata_closed ) && ( jsp_element_first == true ) )
 {
-xml+=new_line+ "<jsp:cdata><![CDATA[ " + new_line ;
+//xml+=new_line+ "<jsp:cdata><![CDATA[ " + new_line ;
+xml+=new_line+ "<jsp:cdata><![CDATA[" ;
 cdata_closed=false;
 }
 
  if(element_index!=-1 && jsp_element_first) //JSP element was found before action
  {
  xml+=jsp.substring(last_index , element_index);
- xml+=new_line + "]]></jsp:cdata>" + new_line ; //end of CDATA section
- cdata_closed=true;
+ //xml+=new_line + "]]></jsp:cdata>" + new_line ; //end of CDATA section
 
  char jsp_char = jsp.charAt(element_index+2);
 
     if( jsp_char =='-' ) //jsp Comment
     {
+ xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ cdata_closed=true;
    xml+= new_line +"<!--" ; //XML comment
    end_index=jsp.indexOf("--%>" , last_index );
    xml+=jsp.substring(element_index+4,end_index);
@@ -275,11 +164,13 @@ cdata_closed=false;
 
     if( jsp_char =='=' ) //Jsp Expression
     {
+ xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ cdata_closed=true;
    xml+=new_line+"<jsp:expression>" ; 
    end_index=jsp.indexOf("%>" , last_index );
-   xml+= new_line + "<![CDATA[" + new_line ;
+   xml+= new_line + "<![CDATA["  ;
    xml+=jsp.substring(element_index+3,end_index);
-   xml+=new_line +"]]>"+new_line ; //end of CDATA
+   xml+="]]>"+new_line ; //end of CDATA
    xml+= new_line +"</jsp:expression>"+new_line ;
    last_index=end_index+2;
    continue;
@@ -287,11 +178,13 @@ cdata_closed=false;
 
 if( jsp_char =='!' ) //jsp Declaration
     {
+ xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ cdata_closed=true;
    xml+=new_line+"<jsp:declaration>" ;
    end_index=jsp.indexOf("%>" , last_index );
-   xml+=new_line+"<![CDATA[" + new_line ;
+   xml+=new_line+"<![CDATA["  ;
    xml+=jsp.substring(element_index+3,end_index);
-   xml+=new_line+"]]>" + new_line ; //end of CDATA
+   xml+="]]>" + new_line ; //end of CDATA
    xml+=new_line+"</jsp:declaration>"+new_line ;
    last_index=end_index+2;
    continue;
@@ -299,20 +192,30 @@ if( jsp_char =='!' ) //jsp Declaration
 
 if( jsp_char =='@' ) //jsp Directive
     {
+     
    end_index=jsp.indexOf("%>" , last_index );
  String directive = jsp.substring(element_index+3,end_index);
+
+  if (directive.indexOf ( "taglib" ) == -1 )
+  {
+ xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ cdata_closed=true;
+   }
 
    xml+=parseDirective(directive); //this adds to xml String itself
    last_index=end_index+2;
    continue;
     }//end JSP Directive
 
+ xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ cdata_closed=true;
  //if we reach here it means we got a JSP Scriptlet
    xml+=new_line+"<jsp:scriptlet>" +new_line;
    end_index=jsp.indexOf("%>" , last_index );
-   xml+=new_line+"<![CDATA[" +new_line ;
+   //xml+=new_line+"<![CDATA[" +new_line ;
+   xml+=new_line+"<![CDATA[" ;
    xml+=jsp.substring(element_index+2,end_index);
-   xml+=new_line+"]]>" +new_line ; //end of CDATA
+   xml+="]]>" +new_line ; //end of CDATA
    xml+=new_line+"</jsp:scriptlet>" +new_line ;
    last_index=end_index+2;
    continue;
@@ -323,17 +226,25 @@ if( jsp_char =='@' ) //jsp Directive
 //not used as part of template text. Note that all these elements
 //start with "jsp:" 
 
-if(action_index!=-1) // might be a custom or standard action
+//Ramesh: ":" can't appear at the beginning of line
+//if(action_index!=-1) // might be a custom or standard action
+if(action_index > 0) // might be a custom or standard action
   {
 //find the previous element
 int save_index=action_index ;
-char ch= jsp.charAt(action_index);
+char ch= jsp.charAt(action_index -1 );
+/*
+if  ( ch == ' ' ) // Ramesh: first letter left to":" should not be a whitespace
+{
+	continue;
+} 
+*/
  while( ch!='<' )
  {
  action_index--;
 
     //don't wanna go back to where we already are
-   if(action_index < last_index)
+   if ( (action_index < last_index) || ( ch=='>' ) ) // Ramesh: > can't appear before :
    break;
    
  ch=jsp.charAt(action_index);
@@ -354,14 +265,30 @@ char ch= jsp.charAt(action_index);
 
    if(action_name.startsWith("/") )
    {
-     //close the existiong CDATA section first
-      xml+=jsp.substring(last_index , action_index);
-      end_index=jsp.indexOf( ">" , action_index);
-      xml+=jsp.substring(action_index , end_index+1);
-      last_index=end_index+1;
+     //close the existiong CDATA section first, Ramesh
+      //xml+=jsp.substring(last_index , action_index);
       tag_level--;
-                if(tag_level==0)
-      		cdata_closed=true;
+      //if ( ( tag_level == 0 ) && ( cdata_closed == false ) )
+      /*
+      if ( ( tag_level == 0 )  )
+      {
+      */
+	xml+=new_line+ "<jsp:cdata><![CDATA[" ;
+      if ( action_index > last_index )
+      {
+            xml+=jsp.substring(last_index , action_index-1);
+      }
+	//xml+=new_line+"]]></jsp:cdata>" +new_line ; //end of CDATA
+	xml+= "]]></jsp:cdata>" +new_line ; //end of CDATA
+	cdata_closed= true;
+      /*
+      }
+      */
+      end_index=jsp.indexOf( ">" , action_index);
+      // Ramesh: need to have < included 
+      xml+=jsp.substring(action_index -1 , end_index+1);
+      //xml+=jsp.substring(action_index , end_index+1);
+      last_index=end_index+1;
       continue;
    }
 
@@ -373,15 +300,38 @@ action_name = action_name.trim();
 
    if(action_name.equals("jsp") || tag_prefix.containsKey(action_name) )
     {
-	 xml+=jsp.substring(last_index , action_index);
 
-         if(tag_level==0)
+	 //xml+=jsp.substring(last_index , action_index);
+	/*
+         if (tag_level==0) 
+          {  
+	*/
+	if  ( cdata_closed == false )  // If we had open cdata and one level of action
          {
-	 xml+=new_line + "]]></jsp:cdata>"+new_line ; //end of CDATA section
+	 // xml+=new_line + "]]></jsp:cdata>"+new_line ; //end of CDATA section
+	 xml+= "]]></jsp:cdata>"+new_line ; //end of CDATA section
+         cdata_closed=true;
          }
+    else
+    {
+	xml+=new_line+ "<jsp:cdata><![CDATA[" ;
+      if ( action_index > last_index )
+      {
+            xml+=jsp.substring(last_index , action_index-1);
+      }
+	//xml+=new_line+"]]></jsp:cdata>" +new_line ; //end of CDATA
+	xml+= "]]></jsp:cdata>" +new_line ; //end of CDATA
+	cdata_closed= true;
+     }
+	/*
+	}
+	*/
+	
 
          tag_level++;
-         cdata_closed=false;
+	//Ramesh. Need to set to true
+         //cdata_closed=false;
+         //cdata_closed=true;
 
          end_index=jsp.indexOf(">" , action_index); 
          ch=jsp.charAt(end_index-1);
@@ -398,16 +348,24 @@ action_name = action_name.trim();
          if( jsp.charAt(end_index-1)=='/' ) //end of tag
         {
                 tag_level--;
+		//Ramesh: need to allow the others to close so commenting out
+		/*
                 if(tag_level==0)
          	cdata_closed=true;
+		*/
 
         }
   }
+ /*
 else  //template text again
   {
       xml+=jsp.substring(last_index , save_index+1);
       last_index= save_index+1;
   }
+ */
+
+
+
 } //end action
 
 }//end while
@@ -415,7 +373,8 @@ else  //template text again
 //Remaining part of the string
      xml+=jsp.substring(last_index);
 //close the CDATA section
-     xml+=new_line + "]]></jsp:cdata>" + new_line ;
+     //xml+=new_line + "]]></jsp:cdata>" + new_line ;
+     xml+= "]]></jsp:cdata>" + new_line ;
  
 return xml;
 
