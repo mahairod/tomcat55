@@ -358,6 +358,7 @@ public class ServletWrapper {
 	    if( loader!=null) {
 		// XXX no need to check after we remove the old loader
 		if( loader.shouldReload() ) {
+		    destroy();
 		    initialized=false;
 		    loader.reload();
 		    servlet=null;
