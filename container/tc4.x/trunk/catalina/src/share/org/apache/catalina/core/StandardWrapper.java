@@ -675,9 +675,19 @@ public final class StandardWrapper
 	if (instance != null)
 	    return;
 
+        // If this "servlet" is really a JSP file, get the right class
+        // FIXME - This still does not solve all the problems, but it is
+        // pretty close to what Tomcat 3.x does
+        String actualClass = servletClass;
+        if ((actualClass == null) && (jspFile != null)) {
+            Wrapper jspWrapper = (Wrapper)
+                ((Context) getParent()).findChild(Constants.JSP_SERVLET_NAME);
+            if (jspWrapper != null)
+                actualClass = jspWrapper.getServletClass();
+        }
+
 	// Complain if no servlet class has been specified
-	// FIXME - support for JSP file servlets!!!
-	if (servletClass == null) {
+	if (actualClass == null) {
 	    unavailable(null);
 	    throw new ServletException
 		(sm.getString("standardWrapper.notClass", getName()));
@@ -691,7 +701,7 @@ public final class StandardWrapper
 		(sm.getString("standardWrapper.missingLoader", getName()));
 	}
 	ClassLoader classLoader = loader.getClassLoader();
-	if (isContainerServlet(servletClass)) {
+	if (isContainerServlet(actualClass)) {
 	    classLoader = this.getClass().getClassLoader();
 	    log(sm.getString
 	          ("standardWrapper.containerServlet", getName()));
@@ -701,19 +711,19 @@ public final class StandardWrapper
 	Class classClass = null;
 	try {
 	    if (classLoader != null)
-		classClass = classLoader.loadClass(servletClass);
+		classClass = classLoader.loadClass(actualClass);
 	    else
-		classClass = Class.forName(servletClass);
+		classClass = Class.forName(actualClass);
 	} catch (ClassNotFoundException e) {
 	    unavailable(null);
 	    throw new ServletException
-		(sm.getString("standardWrapper.missingClass", servletClass),
+		(sm.getString("standardWrapper.missingClass", actualClass),
 		 e);
 	}
 	if (classClass == null) {
 	    unavailable(null);
 	    throw new ServletException
-		(sm.getString("standardWrapper.missingClass", servletClass));
+		(sm.getString("standardWrapper.missingClass", actualClass));
 	}
 
 	// Instantiate and initialize an instance of the servlet class itself
@@ -723,11 +733,11 @@ public final class StandardWrapper
 	} catch (ClassCastException e) {
 	    unavailable(null);
 	    throw new ServletException
-		(sm.getString("standardWrapper.notServlet", servletClass), e);
+		(sm.getString("standardWrapper.notServlet", actualClass), e);
 	} catch (Throwable e) {
 	    unavailable(null);
 	    throw new ServletException
-		(sm.getString("standardWrapper.instantiate", servletClass), e);
+		(sm.getString("standardWrapper.instantiate", actualClass), e);
 	}
 
 	// Call the initialization method of this servlet
