@@ -95,6 +95,17 @@
   </subsection>
 
   <subsection name="Cluster">
+    <changelog>
+      <update>
+        Added flag to the cluster (notifyListenersOnReplication) to enable/disable the 
+        notifications of attribute/context listeners upon replication of a session delta
+        Works only with the DeltaManager (fhanik)
+      </update>
+      <update>
+        Added flag to the cluster (Cluster/Sender/ackTimeout) to set the timeout in milliseconds
+        for a synchronous request to go through, defaults to 15000ms (fhanik)
+      </update>
+    </changelog>  
   </subsection>
 
   <subsection name="Webapps">
