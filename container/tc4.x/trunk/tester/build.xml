@@ -2,6 +2,11 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
+
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
   <property name="build.compiler"  value="classic"/>
   <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
   <property name="tester.build"    value="build"/>

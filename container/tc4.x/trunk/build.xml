@@ -2,6 +2,9 @@
 
   <!-- ===================== Initialize Property Values =================== -->
 
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
   <property name="catalina.build"  value="${basedir}/catalina/build"/>
   <property name="jasper.build"    value="${basedir}/jasper/build"/>
   <property name="servletapi.home" value="../jakarta-servletapi-4/dist"/>
@@ -40,6 +43,7 @@
     <ant dir="./jasper"   target="clean"/>
     <ant dir="./tester"   target="clean"/>
     <ant dir="./webapps"  target="clean"/>
+    <delete dir="${tomcat.dist}"/>
   </target>
 
 
@@ -119,6 +123,7 @@
       <fileset dir="${servletapi.home}/docs/api" />
     </copy>
   </target>
+
 
   <!-- ====================== DIST: Copy Source Code ====================== -->
   <target name="dist-source">

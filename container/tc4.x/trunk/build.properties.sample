@@ -1,0 +1,97 @@
+# -----------------------------------------------------------------------------
+# build.properties.sample
+#
+# This is an example "build.properties" file, used to customize building Tomcat
+# for your local environment.  Make any changes you need, and rename this file
+# to "build.properties" in the same directory that contains the top level
+# "build.xml" file.
+#
+# $Id$
+# -----------------------------------------------------------------------------
+
+
+# The directory containing your binary distribution of JAXP and its
+# associated declarations.  You can customize the versions of JAXP used
+# for Catalina and Jasper below.  If you are using JAXP/1.0, replace
+# "crimson.jar" with "parser.jar"
+jaxp.home=/usr/local/jaxp-1.1
+jaxp.parser.jar=crimson.jar
+
+# The version of JAXP that is used for Catalina
+catalina.jaxp.home=${jaxp.home}
+catalina.jaxp.parser.jar=${jaxp.parser.jar}
+
+# The version of JAXP that is used for Jasper
+jasper.jaxp.home=${jaxp.home}
+jasper.jaxp.parser.jar=${jaxp.parser.jar}
+
+# The directory containing your binary distribution of the Java Management
+# Extensions (JMX) Reference Implementation, version 1.0 or later
+jmx.home=/usr/local/jmx_ri_1.0
+
+# The directory containing your binary distribution of the Java Naming and
+# Directory Interface (JNDI), version 1.2.1 or later.  (You must also add
+# "ldap.jar" into the ${jndi.home}/lib directory if you want to build and
+# use JNDIRealm.)
+jndi.home=/usr/local/jndi_1.2.1
+
+# The directory containing your binary distribution of Java Secure Sockets
+# Extension (JSSE), version 1.0.2 or later
+jsse.home=/usr/local/jsse1.0.2
+
+# The directory containing your binary distribution of the Jakarta
+# regular expressions package (jakarta-regexp), version 1.2.
+regexp.home=/usr/local/jakarta-regexp-1.2
+
+# The directory containing your binary distribution of the Servlet 2.3
+# and JSP 1.2 API classes
+servletapi.home=/usr/local/jakarta-servletapi-4/dist
+
+
+
+
+# The directory containing your binary distribution of Tomcat 4.0 ("Catalina"
+# is the servlet container part of this distribution), from CVS module
+# "jakarta-tomcat-4.0" at jakarta.apache.org).  This is only required
+# if you are going to execute the "deploy.catalina" target.
+catalina.home=../jakarta-tomcat-4.0/build
+
+# The JAR file containing the JDBC 2.0 Optional Package extensions API
+# (javax.sql).  This file will automatically be added to your class path
+# when you compile Struts
+jdbc20ext.jar=../jdbc20/jdbc2_0-stdext.jar
+
+# The JAR file containing the Servlet API classes to compile against (either
+# version 2.2 or 2.3)
+servlet.jar=../jakarta-servletapi/lib/servlet.jar
+
+# The directory containing your binary distribution of Tomcat 3.2, from CVS
+# module "jakarta-tomcat" (and branch "TOMCAT_32") at jakarta.apache.org.
+# This is only required if you are going to execute the "deploy.tomcat" target.
+tomcat.home=../build/tomcat
+
+# The JAR file containing the Xerces parser.  This is only required if you are
+# going to execute the "deploy.catalina" target.
+xerces.jar=../xml-xerces/xerces.jar
+
+# Properties related to Struts unit testing
+# -----------------------------------------
+
+# Cactus jar for the Servlet API corresponding to the servlet.jar file
+# selected above (either 2.2 or 2.3)
+cactus.jar = ../jakarta-commons/cactus/out/servlet22/dist/lib/commons-cactus.jar 
+
+# Cactus Ant custom tasks jar
+cactus.ant.jar = ../jakarta-commons/cactus/out/servlet22/dist/lib/commons-cactus-ant.jar
+
+# JUnit jar file
+junit.jar = f:/applis/jakarta-ant-1.4alpha/lib/junit.jar
+
+# Servlet engine locations for the tests
+
+# Note: If you don't want to run the test on a given servlet engine, just
+#       comment it's home property. For example, if you don't want to run the
+#       tests on Tomcat 4.0, comment the "tomcat.home.40" property.
+
+tomcat.home.32 = f:/applis/jakarta-tomcat-3.2.1
+tomcat.home.40 = f:/applis/jakarta-tomcat-4.0-b1

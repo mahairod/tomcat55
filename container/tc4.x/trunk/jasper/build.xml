@@ -2,10 +2,17 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
+
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
   <property name="build.compiler"  value="classic"/>
   <property name="jasper.build"    value="build"/>
   <property name="jasper.deploy"   value="../build"/>
   <property name="jasper.dist"     value="dist"/>
+  <property name="jasper.jaxp.home"       value="${jaxp.home}"/>
+  <property name="jasper.jaxp.parser.jar" value="crimson.jar"/>
   <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
 
   <!-- ================== Derived Property Values ========================= -->

@@ -2,10 +2,17 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
+
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
   <property name="build.compiler"    value="classic"/>
   <property name="catalina.build"    value="build"/>
   <property name="catalina.deploy"   value="../build"/>
   <property name="catalina.dist"     value="dist"/>
+  <property name="catalina.jaxp.home"       value="${jaxp.home}"/>
+  <property name="catalina.jaxp.parser.jar" value="crimson.jar"/>
 
   <property name="servletapi.home"   value="../../jakarta-servletapi-4/dist"/>
   <property name="avalon.dist"       value="../../dist/avalon"/>
