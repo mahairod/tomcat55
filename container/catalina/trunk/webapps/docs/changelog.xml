@@ -32,6 +32,9 @@
       <update>
         <bug>32532</bug>: updated logging documentation. (yoavs)
       </update>
+      <update>
+        <bug>32382</bug>: Index page and packaed WAR for sample webapp. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
