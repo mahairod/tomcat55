@@ -29,7 +29,7 @@
   <p>If you wish to configure the <strong>Connector</strong> that is used
   for connections to web servers using the WARP protocol (such as the
   <code>mod_webapp</code> connector for Apache 1.3), see
-  <a href="warp.html">here</a> instead.</p>
+  <a href="webapp.html">here</a> instead.</p>
 
   <p>At server startup time, this <strong>Connector</strong> will create a
   number of request processing threads (based on the value configured for
