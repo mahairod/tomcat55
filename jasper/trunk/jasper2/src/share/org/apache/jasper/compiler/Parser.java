@@ -348,11 +348,11 @@ public class Parser {
 	Attributes attrs = parseAttributes();
 	String uri = attrs.getValue("uri");
 	String prefix = attrs.getValue("prefix");
-	if (uri != null || prefix != null) {
+	if (uri != null && prefix != null) {
 	    // Errors to be checked in Validator
 	    String[] location = ctxt.getTldLocation(uri);
 	    TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
-						   location, err);
+						       location, err);
 	    taglibs.put(prefix, tl);
 	}
 
