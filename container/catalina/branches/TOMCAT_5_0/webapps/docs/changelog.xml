@@ -30,6 +30,11 @@
   </subsection>
   <subsection name="Catalina">
     <changelog>
+      <update>
+        Use CatalinaDigester on shutdown so you can use a sytem property to
+        configure the port. (funkman)
+      </update>
+      <update>
       <fix>
         <bug>28914</bug>: threadPriority attribute ignored. (yoavs)
       </fix>
