@@ -205,14 +205,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
         // initialize the initial out ...
         depth = -1;
         if (this.baseOut == null) {
-            this.baseOut = _createOut(bufferSize, autoFlush);
+            this.baseOut = new JspWriterImpl(response, bufferSize, autoFlush);
         } else {
             this.baseOut.init(response, bufferSize, autoFlush);
         }
         this.out = baseOut;
-
-	if (this.out == null)
-	    throw new IllegalStateException("failed initialize JspWriter");
 
 	// register names/values as per spec
 	setAttribute(OUT, this.out);
@@ -768,13 +765,4 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	return retValue;
     }
 
-    private JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
-                throws IOException {
-        try {
-            return new JspWriterImpl(response, bufferSize, autoFlush);
-        } catch( Throwable t ) {
-            log.warn("creating out", t);
-            return null;
-        }
-    }
 }
