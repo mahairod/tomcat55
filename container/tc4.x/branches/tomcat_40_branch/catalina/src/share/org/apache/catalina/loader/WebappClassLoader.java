@@ -113,6 +113,29 @@ import org.apache.naming.resources.Resource;
 /**
  * Specialized web application class loader.
  * <p>
+ * This class loader is a full reimplementation of the 
+ * <code>URLClassLoader</code> from the JDK. It is desinged to be fully
+ * compatible with a normal <code>URLClassLoader</code>, although its internal
+ * behavior may be completely different.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - This class loader faithfully follows 
+ * the delegation model recommended in the specification. The system class 
+ * loader will be queried first, then the local repositories, and only then 
+ * delegation to the parent class loader will occur. This allows the web 
+ * application to override any shared class except the classes from J2SE.
+ * Special handling is provided from the JAXP XML parser interfaces, the JNDI
+ * interfaces, and the classes from the servlet API, which are never loaded 
+ * from the webapp repository.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - Due to limitations in Jasper 
+ * compilation technology, any repository which contains classes from 
+ * the servlet API will be ignored by the class loader.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - The class loader generates source
+ * URLs which include the full JAR URL when a class is loaded from a JAR file,
+ * which allows setting security permission at the class level, even when a
+ * class is contained inside a JAR.
+ * <p>
  * <strong>IMPLEMENTATION NOTE</strong> - Local repositories are searched in
  * the order they are added via the initial constructor and/or any subsequent
  * calls to <code>addRepository()</code> or <code>addJar()</code>.
@@ -158,16 +181,7 @@ public class WebappClassLoader
      * earlier versions.
      */
     private static final String[] triggers = {
-        "com.sun.jndi.ldap.LdapCtxFactory",      // LDAP      added in 1.3
-        "com.sun.net.ssl.internal.ssl.Provider", // JSSE      added in 1.4
-        "javax.security.auth.Subject",           // JAAS      added in 1.4
-        //"javax.net.SocketFactory",               // JSSE      added in 1.4
-        //"javax.security.cert.X509Certificate",   // JSSE      added in 1.4
-        //"javax.sql.DataSource",                  // JDBC ext. added in 1.4
-        //"javax.xml.parsers.DocumentBuilder",     // JAXP      added in 1.4
-        "javax.servlet.Servlet"                 // Servlet API
-        // "org.apache.crimson.jaxp.DocumentBuilderImpl",
-                                                 // Crimson   added in 1.4
+        "javax.servlet.Servlet"                     // Servlet API
     };
 
 
@@ -176,16 +190,13 @@ public class WebappClassLoader
      * class loader.
      */
     private static final String[] packageTriggers = {
-        "javax.net",                                 // JSSE      added in 1.4
-        "javax.net.ssl",                             // JSSE      added in 1.4
-        "javax.security.cert",                       // JSSE      added in 1.4
-        "javax.naming",                              // JNDI      added in 1.3
-        "javax.naming.directory",                    // JNDI      added in 1.3
-        "javax.xml.parsers",                         // JAXP      added in 1.4
-        "org.xml.sax",
-        "org.xml.sax.ext",
-        "org.xml.sax.helpers",
-        "org.w3c.dom"
+        "javax.naming",                              // JNDI
+        "javax.naming.directory",                    // JNDI
+        "javax.xml.parsers",                         // JAXP
+        "org.xml.sax",                               // SAX 1 & 2
+        "org.xml.sax.ext",                           // SAX 1 & 2
+        "org.xml.sax.helpers",                       // SAX 1 & 2
+        "org.w3c.dom"                                // DOM 1 & 2
     };
 
 
@@ -1303,19 +1314,20 @@ public class WebappClassLoader
             return (clazz);
         }
 
-        // If a system class, use system class loader
-        if( name.startsWith("java.") ) {
-            ClassLoader loader = system;
-            clazz = loader.loadClass(name);
+        // (0.2) Try loading the class with the system class loader, to prevent
+        //       the webapp from overriding J2SE classes
+        try {
+            clazz = system.loadClass(name);
             if (clazz != null) {
                 if (resolve)
                     resolveClass(clazz);
                 return (clazz);
             }
-            throw new ClassNotFoundException(name);
+        } catch (ClassNotFoundException e) {
+            // Ignore
         }
 
-        // (.5) Permission to access this class when using a SecurityManager
+        // (0.5) Permission to access this class when using a SecurityManager
         if (securityManager != null) {
             int i = name.lastIndexOf('.');
             if (i >= 0) {

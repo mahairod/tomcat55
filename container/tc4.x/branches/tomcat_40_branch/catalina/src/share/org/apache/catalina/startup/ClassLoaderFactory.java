@@ -81,12 +81,10 @@ import org.apache.catalina.loader.StandardClassLoader;
  * <ul>
  * <li>A set of directories containing unpacked classes (and resources)
  *     that should be included in the class loader's
- *     repositories, <strong>unless</strong> a trigger class (see below)
- *     is discovered in that directory.</li>
+ *     repositories.</li>
  * <li>A set of directories containing classes and resources in JAR files.
  *     Each readable JAR file discovered in these directories will be
- *     added to the class loader's repositories, <strong>unless</strong> a
- *     trigger class (see below) is discovered in that directory.</li>
+ *     added to the class loader's repositories.</li>
  * <li><code>ClassLoader</code> instance that should become the parent of
  *     the new class loader.</li>
  * </ul>
@@ -105,28 +103,6 @@ public final class ClassLoaderFactory {
      * Debugging detail level for processing the startup.
      */
     private static int debug = 0;
-
-
-    /**
-     * The set of trigger classes that will cause a proposed repository not
-     * to be added if this class is visible to the class loader that loaded
-     * this factory class.  Typically, trigger classes will be listed for
-     * components that have been integrated into the JDK for later versions,
-     * but where the corresponding JAR files are required to run on
-     * earlier versions.
-     */
-    private static String[] triggers = {
-        "com.sun.jndi.ldap.LdapCtxFactory",      // LDAP      added in 1.3
-        "com.sun.net.ssl.internal.ssl.Provider", // JSSE      added in 1.4
-        "javax.naming.Context",                  // JNDI      added in 1.3
-        "javax.net.SocketFactory",               // JSSE      added in 1.4
-        "javax.security.cert.X509Certificate",   // JSSE      added in 1.4
-        "javax.sql.DataSource",                  // JDBC ext. added in 1.4
-        // "javax.xml.parsers.DocumentBuilder",     // JAXP      added in 1.4
-        "org.apache.catalina.startup.Bootstrap", // Don't load ourselves
-        // "org.apache.crimson.jaxp.DocumentBuilderImpl",
-                                                 // Crimson   added in 1.4
-    };
 
 
     // ------------------------------------------------------ Static Properties
@@ -154,28 +130,6 @@ public final class ClassLoaderFactory {
     }
 
 
-    /**
-     * Return the trigger class names that we check for.
-     */
-    public static String[] getTriggers() {
-
-        return (triggers);
-
-    }
-
-
-    /**
-     * Set the trigger class names that we check for.
-     *
-     * @param newTriggers The new trigger class names
-     */
-    public static void setTriggers(String newTriggers[]) {
-
-        triggers = newTriggers;
-
-    }
-
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -184,13 +138,11 @@ public final class ClassLoaderFactory {
      * defaults and the specified directory paths:
      *
      * @param unpacked Array of pathnames to unpacked directories that should
-     *  be added to the repositories of the class loader unless they contain
-     *  one of the trigger classes, or <code>null</code> for no unpacked
-     *  directories to be considered
+     *  be added to the repositories of the class loader, or <code>null</code> 
+     * for no unpacked directories to be considered
      * @param packed Array of pathnames to directories containing JAR files
-     *  that should be added to the repositories of the class loader unless
-     *  they contain one of the trigger classes, or <code>null</code> for no
-     *  directories of JAR files to be considered
+     *  that should be added to the repositories of the class loader, 
+     * or <code>null</code> for no directories of JAR files to be considered
      * @param parent Parent class loader for the new class loader, or
      *  <code>null</code> for the system class loader.
      *
@@ -207,7 +159,7 @@ public final class ClassLoaderFactory {
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
-        // Add unpacked directories that do not contain trigger classes
+        // Add unpacked directories
         if (unpacked != null) {
             for (int i = 0; i < unpacked.length; i++)  {
                 File file = unpacked[i];
@@ -221,7 +173,7 @@ public final class ClassLoaderFactory {
             }
         }
 
-        // Add packed directory JAR files that do not contain trigger classes
+        // Add packed directory JAR files
         if (packed != null) {
             for (int i = 0; i < packed.length; i++) {
                 File directory = packed[i];
@@ -252,80 +204,6 @@ public final class ClassLoaderFactory {
             classLoader = new StandardClassLoader(array, parent);
         classLoader.setDelegate(true);
         return (classLoader);
-
-    }
-
-
-
-    /**
-     * Check the specified directory, and return <code>true</code> if it does
-     * not contain any of the trigger classes.
-     *
-     * @param directory The directory to be checked
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public static boolean validateDirectory(File directory)
-        throws IOException {
-
-        if (triggers == null)
-            return (true);
-        for (int i = 0; i < triggers.length; i++) {
-            Class clazz = null;
-            try {
-                clazz = Class.forName(triggers[i]);
-            } catch (Throwable t) {
-                clazz = null;
-            }
-            if (clazz == null)
-                continue;
-            File file = new File(directory,
-                                 triggers[i].replace('.', File.separatorChar) +
-                                 ".class");
-            if (debug >= 2)
-                log(" Checking for " + file.getAbsolutePath());
-            if (file.exists() && file.canRead())
-                return (false);
-        }
-        return (true);
-
-    }
-
-
-    /**
-     * Check the specified JAR file, and return <code>true</code> if it does
-     * not contain any of the trigger classes.
-     *
-     * @param jarfile The JAR file to be checked
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public static boolean validateJarFile(File jarfile)
-        throws IOException {
-
-        if (triggers == null)
-            return (true);
-        JarFile jarFile = new JarFile(jarfile);
-        for (int i = 0; i < triggers.length; i++) {
-            Class clazz = null;
-            try {
-                clazz = Class.forName(triggers[i]);
-            } catch (Throwable t) {
-                clazz = null;
-            }
-            if (clazz == null)
-                continue;
-            String name = triggers[i].replace('.', '/') + ".class";
-            if (debug >= 2)
-                log(" Checking for " + name);
-            JarEntry jarEntry = jarFile.getJarEntry(name);
-            if (jarEntry != null) {
-                jarFile.close();
-                return (false);
-            }
-        }
-        jarFile.close();
-        return (true);
 
     }
 
