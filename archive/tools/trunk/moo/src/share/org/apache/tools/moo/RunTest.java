@@ -73,6 +73,7 @@ public class RunTest {
     int port=8080;
     boolean debug = true;
     String testClassName;
+    String testKey = null;
     
     public RunTest() {
 
@@ -121,6 +122,10 @@ public class RunTest {
 	Testable obj=null;
 	try {
 	    obj = (Testable)Class.forName(testClassName).newInstance();
+
+            if (obj instanceof ParameterizedTest) {
+                ((ParameterizedTest)obj).setKey(testKey);
+            }
 	} catch (ClassNotFoundException cnfe) {
 	    cnfe.printStackTrace();
 	} catch (IllegalAccessException iae) {
@@ -190,9 +195,11 @@ public class RunTest {
 		i++;
 		String portS=args[i];
 		port=Integer.valueOf( portS).intValue();
+	    } else if (arg.equals("-key")) {
+		i++;
+		testKey=args[i];
             } else {
 		testClassName=arg;
-		return;
 	    }
         }
     }
