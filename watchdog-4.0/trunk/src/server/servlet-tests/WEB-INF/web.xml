@@ -1719,6 +1719,10 @@
     <servlet-name>GetRequestURITest</servlet-name>
     <display-name>GetRequestURITest</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletRequest.GetRequestURITestServlet</servlet-class>
+    <init-param>
+      <param-name>expectedResult</param-name>
+      <param-value>/servlet-tests/GetRequestURITest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>

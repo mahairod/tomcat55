@@ -77,7 +77,7 @@ public class GetRequestURITestServlet extends HttpServlet {
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
 
-        String expectedResult = "/servlet-tests/GetRequestURITest";
+        String expectedResult = getServletConfig().getInitParameter("expectedResult");
         String result = request.getRequestURI();
         //not null value expected
         if ( result != null ) {
