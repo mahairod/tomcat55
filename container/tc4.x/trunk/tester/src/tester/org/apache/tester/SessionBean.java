@@ -108,6 +108,24 @@ public class SessionBean implements
     }
 
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a string representation of this bean.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("SessionBean[lifecycle=");
+        sb.append(this.lifecycle);
+        sb.append(",stringProperty=");
+        sb.append(this.stringProperty);
+        sb.append("]");
+        return (sb.toString());
+
+    }
+
+
     // ---------------------------------- HttpSessionActivationListener Methods
 
 
