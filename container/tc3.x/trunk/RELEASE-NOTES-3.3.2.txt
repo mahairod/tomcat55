@@ -53,6 +53,8 @@ Bug No.  Description
 
 	 Preserve sessions across session reloadings.
 
+	 Fix Cookie case name problem under Windows for Session Cookie.
+
 Jasper:
 
 Bug No.  Description
