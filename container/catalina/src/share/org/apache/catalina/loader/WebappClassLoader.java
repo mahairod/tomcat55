@@ -1569,13 +1569,17 @@ public class WebappClassLoader
 
         entry = findResourceInternal(name, classPath);
 
-        if ((entry == null) || (entry.binaryContent == null
-                && entry.loadedClass == null))
+        if (entry == null)
             throw new ClassNotFoundException(name);
 
         Class clazz = entry.loadedClass;
         if (clazz != null)
             return clazz;
+
+        synchronized (this) {
+            if (entry.binaryContent == null && entry.loadedClass == null)
+                throw new ClassNotFoundException(name);
+        }
 
         // Looking up the package
         String packageName = null;
