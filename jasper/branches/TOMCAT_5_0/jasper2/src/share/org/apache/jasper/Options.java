@@ -117,9 +117,14 @@ public interface Options {
     public String getCompiler();
 
     /**
-     * Compiler target VM, e.g. 1.1,1.2,1.3, or 1.4.
+     * Compiler target VM, e.g. 1.1,1.2,1.3,1.4, or 1.5.
      */
     public String getCompilerTargetVM();
+
+    /**
+     * Compiler source VM, e.g. 1.3, 1.4, or 1.5.
+     */
+    public String getCompilerSourceVM();    
 
     /**
      * The cache for the location of the TLD's

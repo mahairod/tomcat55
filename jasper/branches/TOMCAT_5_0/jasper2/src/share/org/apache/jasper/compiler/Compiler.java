@@ -386,6 +386,11 @@ public class Compiler {
             info.append("   compilerTargetVM=" + options.getCompilerTargetVM() + "\n");
         }
 
+        if (options.getCompilerSourceVM() != null) {
+            javac.setSource(options.getCompilerSourceVM());
+            info.append("   compilerSourceVM=" + options.getCompilerSourceVM() + "\n");
+        }
+
         // Build includes path
         PatternSet.NameEntry includes = javac.createInclude();
 

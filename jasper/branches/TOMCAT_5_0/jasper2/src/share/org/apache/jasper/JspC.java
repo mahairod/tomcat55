@@ -98,6 +98,8 @@ public class JspC implements Options {
     private static final String SWITCH_CLASS_NAME = "-c";
     private static final String SWITCH_FULL_STOP = "--";
     private static final String SWITCH_COMPILE = "-compile";
+    private static final String SWITCH_SOURCE = "-source";
+    private static final String SWITCH_TARGET = "-target";
     private static final String SWITCH_URI_BASE = "-uribase";
     private static final String SWITCH_URI_ROOT = "-uriroot";
     private static final String SWITCH_FILE_WEBAPP = "-webapp";
@@ -145,6 +147,7 @@ public class JspC implements Options {
 
     private String compiler = null;
     private String compilerTargetVM = "1.3";
+    private String compilerSourceVM = "1.3";
 
     private boolean classDebugInfo = true;
     private Vector extensions;
@@ -276,6 +279,10 @@ public class JspC implements Options {
                 }
             } else if (tok.equals(SWITCH_ENCODING)) {
                 setJavaEncoding(nextArg());
+            } else if (tok.equals(SWITCH_SOURCE)) {
+                setCompilerSourceVM(nextArg());
+            } else if (tok.equals(SWITCH_TARGET)) {
+                setCompilerTargetVM(nextArg());
             } else {
                 if (tok.startsWith("-")) {
                     throw new JasperException("Unrecognized option: " + tok +
@@ -479,8 +486,22 @@ public class JspC implements Options {
         compilerTargetVM = vm;
     }
 
+    /**
+     * @see Options#getCompilerSourceVM.
+     */
+    public String getCompilerSourceVM() {
+        return compilerSourceVM;
+    }
+        
+    /**
+     * @see Options#getCompilerSourceVM.
+     */
+    public void setCompilerSourceVM(String vm) {
+        compilerSourceVM = vm;
+    }     
+
     public TldLocationsCache getTldLocationsCache() {
-    return tldLocationsCache;
+        return tldLocationsCache;
     }
 
     /**
@@ -1156,5 +1177,4 @@ public class JspC implements Options {
             // pass straight through
         }
     }
-
 }
