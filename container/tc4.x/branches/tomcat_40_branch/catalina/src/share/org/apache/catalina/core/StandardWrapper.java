@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Stack;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -98,13 +99,9 @@ import org.apache.catalina.util.InstanceSupport;
  * Standard implementation of the <b>Wrapper</b> interface that represents
  * an individual servlet definition.  No child Containers are allowed, and
  * the parent Container must be a Context.
- * <p>
- * <b>IMPLEMENTATION NOTE</b>:  This implementation does <i>not</i> support
- * a pool of instances for servlets that implement SingleThreadModel.  IMHO
- * developers should not be encouraged to use this technique, so efforts to
- * make them efficient are counter-productive.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -128,12 +125,6 @@ public final class StandardWrapper
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Has our SingleThreadModel servlet instance been allocated already?
-     */
-    private boolean allocated = false;
 
 
     /**
@@ -176,6 +167,24 @@ public final class StandardWrapper
      * The (single) initialized instance of this servlet.
      */
     private Servlet instance = null;
+
+
+    /**
+     * Maximum number of STM instances.
+     */
+    private int maxInstances = 20;
+
+
+    /**
+     * Number of instances currently loaded for a STM servlet.
+     */
+    private int nInstances = 0;
+
+
+    /**
+     * Stack containing the STM instances.
+     */
+    private Stack instancePool = null;
 
 
     /**
@@ -408,6 +417,32 @@ public final class StandardWrapper
     }
 
 
+    /**
+     * Return maximum number of instances that will be allocated when a single
+     * thread model servlet is used.
+     */
+    public int getMaxInstances() {
+
+        return (this.maxInstances);
+
+    }
+
+
+    /**
+     * Set the maximum number of instances that will be allocated when a single
+     * thread model servlet is used.
+     *
+     * @param maxInstnces New value of maxInstances
+     */
+    public void setMaxInstances(int maxInstances) {
+
+        int oldMaxInstances = this.maxInstances;
+        this.maxInstances = maxInstances;
+        support.firePropertyChange("maxInstances", oldMaxInstances, 
+                                   this.maxInstances);
+
+    }
+
 
     /**
      * Set the parent Container of this Wrapper, but only if it is a Context.
@@ -497,7 +532,7 @@ public final class StandardWrapper
     public boolean isSingleThreadModel() {
 
         try {
-            load();
+            loadServlet();
         } catch (Throwable t) {
             ;
         }
@@ -592,8 +627,6 @@ public final class StandardWrapper
      * <code>SingleThreadModel</code>, the Wrapper implementation must ensure
      * that this instance is not allocated again until it is deallocated by a
      * call to <code>deallocate()</code>.
-     * <p>
-     * <b>FIXME:  Provide a way to avoid waiting forever.</b>
      *
      * @exception ServletException if the servlet init() method threw
      *  an exception
@@ -609,42 +642,61 @@ public final class StandardWrapper
             throw new ServletException
               (sm.getString("standardWrapper.unloading", getName()));
 
-        // Load and initialize our instance if necessary
-        if (instance == null) {
-            try {
-                load();
-            } catch (ServletException e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new ServletException
-                    (sm.getString("standardWrapper.allocate"), e);
-            }
-        }
-
         // If not SingleThreadedModel, return the same instance every time
         if (!singleThreadModel) {
-            if (debug >= 2)
-                log("  Returning non-STM instance");
-            countAllocated++;
-            return (instance);
+
+            // Load and initialize our instance if necessary
+            if (instance == null) {
+                synchronized (this) {
+                    if (instance == null) {
+                        try {
+                            instance = loadServlet();
+                        } catch (ServletException e) {
+                            throw e;
+                        } catch (Throwable e) {
+                            throw new ServletException
+                                (sm.getString("standardWrapper.allocate"), e);
+                        }
+                    }
+                }
+            }
+
+            if (!singleThreadModel) {
+                if (debug >= 2)
+                    log("  Returning non-STM instance");
+                countAllocated++;
+                return (instance);
+            }
+
         }
 
-        // Lock and return this instance
-        synchronized (instance) {
-            while (allocated) {
-                if (debug >= 2)
-                    log("  Waiting for allocated STM instance");
-                try {
-                    instance.wait();
-                } catch (InterruptedException e) {
-                    ;
+        synchronized (instancePool) {
+
+            while (countAllocated >= nInstances) {
+                // Allocate a new instance if possible, or else wait
+                if (nInstances < maxInstances) {
+                    try {
+                        instancePool.push(loadServlet());
+                        nInstances++;
+                    } catch (ServletException e) {
+                        throw e;
+                    } catch (Throwable e) {
+                        throw new ServletException
+                            (sm.getString("standardWrapper.allocate"), e);
+                    }
+                } else {
+                    try {
+                        instancePool.wait();
+                    } catch (InterruptedException e) {
+                        ;
+                    }
                 }
             }
             if (debug >= 2)
                 log("  Returning allocated STM instance");
-            allocated = true;
             countAllocated++;
-            return (instance);
+            return (Servlet) instancePool.pop();
+
         }
 
     }
@@ -661,16 +713,17 @@ public final class StandardWrapper
      */
     public void deallocate(Servlet servlet) throws ServletException {
 
-        countAllocated--;
-
         // If not SingleThreadModel, no action is required
-        if (!singleThreadModel)
+        if (!singleThreadModel) {
+            countAllocated--;
             return;
+        }
 
         // Unlock and free this instance
-        synchronized (instance) {
-            allocated = false;
-            instance.notify();
+        synchronized (instancePool) {
+            countAllocated--;
+            instancePool.push(servlet);
+            instancePool.notify();
         }
 
     }
@@ -752,10 +805,21 @@ public final class StandardWrapper
      * @exception ServletException if some other loading problem occurs
      */
     public synchronized void load() throws ServletException {
+        instance = loadServlet();
+    }
 
-        // Nothing to do if we already have an instance
-        if (instance != null)
-            return;
+
+    /**
+     * Load and initialize an instance of this servlet, if there is not already
+     * at least one initialized instance.  This can be used, for example, to
+     * load servlets that are marked in the deployment descriptor to be loaded
+     * at server startup time.
+     */
+    public synchronized Servlet loadServlet() throws ServletException {
+
+        // Nothing to do if we already have an instance or an instance pool
+        if (!singleThreadModel && (instance != null))
+            return instance;
 
         // If this "servlet" is really a JSP file, get the right class.
         // HOLD YOUR NOSE - this is a kludge that avoids having to do special
@@ -873,9 +937,13 @@ public final class StandardWrapper
         }
 
         // Register our newly initialized instance
-        instance = servlet;
-        singleThreadModel = instance instanceof SingleThreadModel;
+        singleThreadModel = servlet instanceof SingleThreadModel;
+        if (singleThreadModel) {
+            if (instancePool == null)
+                instancePool = new Stack();
+        }
         fireContainerEvent("load", this);
+        return servlet;
 
     }
 
@@ -977,7 +1045,7 @@ public final class StandardWrapper
     public synchronized void unload() throws ServletException {
 
         // Nothing to do if we have never loaded the instance
-        if (instance == null)
+        if (!singleThreadModel && (instance == null))
             return;
         unloading = true;
 
@@ -1015,6 +1083,8 @@ public final class StandardWrapper
             instanceSupport.fireInstanceEvent
               (InstanceEvent.AFTER_DESTROY_EVENT, instance, t);
             instance = null;
+            instancePool = null;
+            nInstances = 0;
             fireContainerEvent("unload", this);
             unloading = false;
             throw new ServletException
@@ -1027,6 +1097,30 @@ public final class StandardWrapper
 
         // Deregister the destroyed instance
         instance = null;
+
+        if (singleThreadModel && (instancePool != null)) {
+            try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                while (!instancePool.isEmpty()) {
+                    ((Servlet) instancePool.pop()).destroy();
+                }
+            } catch (Throwable t) {
+                instancePool = null;
+                nInstances = 0;
+                unloading = false;
+                fireContainerEvent("unload", this);
+                throw new ServletException
+                    (sm.getString("standardWrapper.destroyException", 
+                                  getName()), t);
+            } finally {
+                // restore the context ClassLoader
+                Thread.currentThread().setContextClassLoader
+                    (oldCtxClassLoader);
+            }
+            instancePool = null;
+            nInstances = 0;
+        }
+
         unloading = false;
         fireContainerEvent("unload", this);
 
