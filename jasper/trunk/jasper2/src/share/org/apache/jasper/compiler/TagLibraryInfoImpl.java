@@ -370,7 +370,14 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
         String tagName = null;
 	String tagClassName = null;
 	String teiClassName = null;
-        String bodycontent = null;
+
+        /*
+         * Default body content for JSP 1.2 tag handlers (<body-content> has
+         * become mandatory in JSP 2.0, because the default would be invalid
+         * for simple tag handlers)
+         */
+        String bodycontent = "JSP";
+
 	String info = null;
 	String displayName = null;
 	String smallIcon = null;
@@ -420,21 +427,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 						  tname));
 		}
 	    }
-	}
-
-	// Determine appropriate default value for body-content
-	if (bodycontent == null) {
-            try {
-                Class tagClass = ctxt.getClassLoader().loadClass(tagClassName);
-		if (SimpleTag.class.isAssignableFrom(tagClass)) {
-		    bodycontent = TagInfo.BODY_CONTENT_SCRIPTLESS;
-		} else {
-		    bodycontent = TagInfo.BODY_CONTENT_JSP;
-		}
-	    } catch (Exception e) {
-                err.jspError("jsp.error.loadclass.taghandler", tagClassName,
-			     tagName);
-            }
 	}
 
         TagExtraInfo tei = null;
