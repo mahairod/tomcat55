@@ -14,6 +14,43 @@
 
 <body>
 
+<section name="Tomcat 5.0.27 (yoavs)">
+  <subsection name="General">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>29048</bug>: Made DataSourceRealm easier to extend. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
+
+  <subsection name="Coyote">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Cluster">
+    <changelog>
+    </changelog>
+  </subsection>
+
+
+  <subsection name="Webapps">
+    <changelog>
+    </changelog>
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.26 (yoavs)">
 
   <subsection name="General">
