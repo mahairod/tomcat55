@@ -6,11 +6,16 @@
 !define VERSION "@VERSION@"
 
 !verbose 3
-  !include "ModernUI.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 !verbose 4
 
 ;--------------------------------
 ;Configuration
+
+  ;Language
+    ;English
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
 
   ;General
   Name "${NAME} ${VERSION}"
@@ -33,11 +38,11 @@
   ComponentText "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue."
 
   ;Folder-select dialog
+  !insertmacro MUI_ENGLISH_DIRTEXT
   InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
-  DirText "Setup will install ${NAME} in the following folder.$\r$\n$\r$\nTo install in this folder, click Install. To install in a different folder, click Browse and select another folder." " "
 
   ;Uninstaller
-  UninstallText "This will uninstall ${NAME} from your system."
+  !insertmacro MUI_ENGLISH_UNINSTALLTEXT
 
 InstType Normal
 InstType Minimum
@@ -210,17 +215,17 @@ Function .onInitDialog
   !insertmacro MUI_INNERDIALOG_INIT
 
     !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
     !insertmacro MUI_INNERDIALOG_STOP 1
 
     !insertmacro MUI_INNERDIALOG_START 2
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
+      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
     !insertmacro MUI_INNERDIALOG_STOP 2
 
     !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
-      !insertmacro MUI_INNERDIALOG_STOP 3
+      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+    !insertmacro MUI_INNERDIALOG_STOP 3
 
   !insertmacro MUI_INNERDIALOG_END
 
@@ -243,28 +248,28 @@ Function SetPage
   !insertmacro MUI_PAGE_INIT
 
     !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
+       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
-    !insertmacro MUI_PAGE_STOP 3
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
+   !insertmacro MUI_PAGE_STOP 3
 
     !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 4
 
     !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT 1033 "Configuration" "Tomcat basic configuration."
+      !insertmacro MUI_HEADER_TEXT "Configuration" "Tomcat basic configuration."
        Call configure
     !insertmacro MUI_PAGE_STOP 5
 
     !insertmacro MUI_PAGE_START 6
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 6
 
   !insertmacro MUI_PAGE_END
@@ -275,13 +280,13 @@ Function .onMouseOverSection
 
   !insertmacro MUI_DESCRIPTION_INIT
 
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcat} "Install the Tomcat Servlet container."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatCore} "Install the Tomcat Servlet container core."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatService} "Install the Tomcat service, used to automatically start Tomcat in the background when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatSource} "Install the Tomcat source code."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecTomcatDocs} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecMenu} "Create a Start Menu program group for Tomcat."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecExamples} "Installs some examples web applications."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} "Install the Tomcat Servlet container."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} "Install the Tomcat Servlet container core."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} "Install the Tomcat service, used to automatically start Tomcat in the background when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} "Install the Tomcat source code."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatDocs} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "Create a Start Menu program group for Tomcat."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} "Installs some examples web applications."
 
  !insertmacro MUI_DESCRIPTION_END
 
@@ -289,8 +294,7 @@ FunctionEnd
 
 Function .onUserAbort
 
-  !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
-  !insertmacro MUI_ABORTWARNING_END
+  !insertmacro MUI_ABORTWARNING
 
 FunctionEnd
 
@@ -586,17 +590,17 @@ FunctionEnd
 Function un.SetPage
 
   !insertmacro MUI_PAGE_INIT
-
+    
     !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 3
 
   !insertmacro MUI_PAGE_END

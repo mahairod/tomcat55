@@ -403,8 +403,6 @@
       <fileset dir="resources" />
     </copy>
     <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
-    <copy file="${nsis.home}/Examples/Modern UI/ModernUI.nsh"
-         todir="${tomcat.dist}" />
     <copy file="${javaservice.exe}" tofile="${tomcat.dist}/bin/tomcat.exe" />
     <filter token="VERSION" value="${version}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
