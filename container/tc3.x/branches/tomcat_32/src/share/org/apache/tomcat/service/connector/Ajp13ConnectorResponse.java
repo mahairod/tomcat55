@@ -130,18 +130,18 @@ public class Ajp13ConnectorResponse extends ResponseImpl
         headers.removeHeader("Status");
         headers.removeHeader("Servlet-Engine");
     
-        msg.appendInt(headers.size());
+		int numHeaders = headers.size();
+		msg.appendInt(numHeaders);
         
-        Enumeration e = headers.names();
-        while(e.hasMoreElements()) {
-            String headerName = (String)e.nextElement();            
+		for( int i=0 ; i < numHeaders ; i++ ) {
+			String headerName = headers.getHeaderName(i);
             int sc = headerNameToSc(headerName);
             if(-1 != sc) {
                 msg.appendInt(sc);
             } else {
                 msg.appendString(headerName);
             }
-            msg.appendString(headers.getHeader(headerName));
+            msg.appendString(headers.getHeader(i));
         }
 
         msg.end();
