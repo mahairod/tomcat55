@@ -212,7 +212,7 @@ public class DigestAuthenticator
         */
 
         // Validate any credentials already included with this request
-        String authorization = request.getAuthorization();
+        String authorization = request.getHeader("authorization");
         if (authorization != null) {
             principal = findPrincipal(request, authorization, context.getRealm());
             if (principal != null) {
