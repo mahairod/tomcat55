@@ -1239,9 +1239,9 @@ public class DeltaSession
      *  invalidated session
      */
     public void setAttribute(String name, Object value) {
-        setAttribute(name,value,true);
+        setAttribute(name,value,true, true);
     }
-    public void setAttribute(String name, Object value, boolean addDeltaRequest) {
+    public void setAttribute(String name, Object value, boolean notify, boolean addDeltaRequest) {
 
         // Name cannot be null
         if (name == null)
@@ -1274,7 +1274,7 @@ public class DeltaSession
         HttpSessionBindingEvent event = null;
         
         // Call the valueBound() method if necessary
-        if ( value instanceof HttpSessionBindingListener ) {
+        if ( value instanceof HttpSessionBindingListener && notify) {
             event = new HttpSessionBindingEvent(getSession(), name, value);
             try {
                 ( (HttpSessionBindingListener) value).valueBound(event);
@@ -1287,7 +1287,7 @@ public class DeltaSession
         Object unbound = attributes.put(name, value);
 
         // Call the valueUnbound() method if necessary
-        if ((unbound != null) &&
+        if ((unbound != null) && notify &&
             (unbound instanceof HttpSessionBindingListener)) {
             try {
                 ( (HttpSessionBindingListener) unbound).valueUnbound
@@ -1297,6 +1297,10 @@ public class DeltaSession
             }
 
         }
+        
+        //dont notify any listeners
+        if (!notify) return;
+
 
 
         // Notify interested application event listeners

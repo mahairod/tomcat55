@@ -71,5 +71,9 @@ public interface ClusterManager extends Manager {
    public void setUseDirtyFlag(boolean useDirtyFlag);
    
    public void setCluster(CatalinaCluster cluster);
+   
+   public boolean getNotifyListenersOnReplication();
+   
+   public void setNotifyListenersOnReplication(boolean notifyListenersOnReplication);
 
 }
