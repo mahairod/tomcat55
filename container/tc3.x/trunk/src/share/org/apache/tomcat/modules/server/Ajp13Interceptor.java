@@ -81,11 +81,15 @@ public class Ajp13Interceptor extends PoolTcpConnector
 {
     private boolean tomcatAuthentication=true;
     private boolean shutDownEnable=false;
+    // true if the incloming uri is encoded.
+    private boolean decoded=true;
+
+    private int decodedNote;
     
     public Ajp13Interceptor()
     {
         super();
-	super.setSoLinger( 100 );
+ 	super.setSoLinger( 100 );
 	super.setTcpNoDelay( true );
     }
 
@@ -104,11 +108,24 @@ public class Ajp13Interceptor extends PoolTcpConnector
     public void setShutDownEnable(boolean b ) {
 	shutDownEnable=b;
     }
+
+    public void setDecodedUri( boolean b ) {
+	decoded=b;
+    }
     
     protected void localInit() throws Exception {
 	ep.setConnectionHandler( this );
     }
 
+    public void engineInit( ContextManager cm )
+	throws TomcatException
+    {
+	super.engineInit( cm );
+	decodedNote=cm.getNoteId(ContextManager.REQUEST_NOTE,
+				  "req.decoded" );
+    }
+
+    
     // -------------------- Handler implementation --------------------
     
     public Object[] init()
@@ -184,12 +201,15 @@ public class Ajp13Interceptor extends PoolTcpConnector
 		    }
 		}
 
-        // special case - invalid AJP13 packet, error 
-        // decoding packet ...
-        // we drop the connection rigth now
+		// special case - invalid AJP13 packet, error 
+		// decoding packet ...
+		// we drop the connection rigth now
 		if( status != 200 )
 		    break;
 
+		if( decoded )
+		    req.setNote( decodedNote, this );
+		
 		cm.service(req, res);
 
 		req.recycle();
