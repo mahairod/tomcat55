@@ -62,7 +62,8 @@
 package org.apache.tomcat.modules.aaa;
 
 import org.apache.tomcat.core.*;
-import org.apache.tomcat.util.*;
+import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.util.buf.HexUtils;
 import java.security.*;
 //import java.security.Principal;
 //import java.io.File;
