@@ -218,7 +218,6 @@ public class FileDirContext extends BaseDirContext {
      */
     public Object lookup(String name)
         throws NamingException {
-        
         Object result = null;
         File file = file(name);
         
@@ -843,6 +842,8 @@ public class FileDirContext extends BaseDirContext {
      * @param name Normalized context-relative path (with leading '/')
      */
     protected File file(String name) {
+	if( File.separatorChar == '\\' )
+            name = name.replace('/',File.separatorChar);
 
         File file = new File(base, name);
         if (file.exists() && file.canRead()) {
