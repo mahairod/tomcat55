@@ -633,7 +633,7 @@ public class StandardSession
         this.lastAccessedTime = this.thisAccessedTime;
         this.thisAccessedTime = System.currentTimeMillis();
 
-	evaluateIfValid();
+        evaluateIfValid();
 
         accessCount++;
 
@@ -1256,7 +1256,11 @@ public class StandardSession
         // Call the valueBound() method if necessary
         if (value instanceof HttpSessionBindingListener) {
             event = new HttpSessionBindingEvent(this, name, value);
-            ((HttpSessionBindingListener) value).valueBound(event);
+            try {
+                ((HttpSessionBindingListener) value).valueBound(event);
+            } catch (Throwable t){
+                log(sm.getString("standardSession.bindingEvent"), t); 
+            }
         }
 
         // Replace or add this attribute
@@ -1265,8 +1269,12 @@ public class StandardSession
         // Call the valueUnbound() method if necessary
         if ((unbound != null) &&
             (unbound instanceof HttpSessionBindingListener)) {
-            ((HttpSessionBindingListener) unbound).valueUnbound
-                (new HttpSessionBindingEvent(this, name));
+            try {
+                ((HttpSessionBindingListener) unbound).valueUnbound
+                    (new HttpSessionBindingEvent(this, name));
+            } catch (Throwable t) {
+                log(sm.getString("standardSession.bindingEvent"), t);
+            }
         }
 
         // Notify interested application event listeners
@@ -1454,9 +1462,9 @@ public class StandardSession
 
     protected void evaluateIfValid() {
         /*
-	 * If this session has expired or is in the process of expiring or
-	 * will never expire, return
-	 */
+     * If this session has expired or is in the process of expiring or
+     * will never expire, return
+     */
         if (!this.isValid || expiring || maxInactiveInterval < 0)
             return;
 
