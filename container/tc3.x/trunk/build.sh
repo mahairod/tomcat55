@@ -18,4 +18,8 @@ if [ "$ANT_HOME" = "" ] ; then
   ANT_HOME=../jakarta-ant-1.3
 fi
 
+if [ "$ANT_OPTS" = "" ] ; then
+  ANT_OPTS=""
+fi
+
 $ANT_HOME/bin/ant "$@" 
