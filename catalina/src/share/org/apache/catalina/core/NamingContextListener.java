@@ -71,6 +71,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
@@ -748,6 +749,9 @@ public class NamingContextListener
                 compCtx.bind("UserTransaction", ref);
                 addAdditionalParameters
                     (namingResources, ref, "UserTransaction");
+            } catch (NameAlreadyBoundException e) {
+                // Ignore because UserTransaction was obviously 
+                // added via ResourceLink
             } catch (NamingException e) {
                 log(sm.getString("naming.bindFailed", e));
             }
@@ -938,11 +942,14 @@ public class NamingContextListener
         // Adding the additional parameters, if any
         addAdditionalParameters(resourceLink.getNamingResources(), ref, 
                                 resourceLink.getName());
+        javax.naming.Context ctx = 
+            "UserTransaction".equals(resourceLink.getName()) 
+            ? compCtx : envCtx;
         try {
             if (debug >= 2)
                 log("  Adding resource link " + resourceLink.getName());
             createSubcontexts(envCtx, resourceLink.getName());
-            envCtx.bind(resourceLink.getName(), ref);
+            ctx.bind(resourceLink.getName(), ref);
         } catch (NamingException e) {
             log(sm.getString("naming.bindFailed", e));
         }
