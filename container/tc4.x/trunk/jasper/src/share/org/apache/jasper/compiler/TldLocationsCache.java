@@ -161,23 +161,16 @@ public class TldLocationsCache {
 		String tagUri = null;
 		String tagLoc = null;
 		Element e =  (Element)nList.item(i);
+
 		NodeList uriList = e.getElementsByTagName("taglib-uri");
 		Element uriElem = (Element)uriList.item(0);
-		Text t = (Text)uriElem.getFirstChild();
-		if (t == null) continue;
-
-		tagUri = t.getData();
+		tagUri = JspUtil.getElementChildTextData(uriElem);
 		if (tagUri == null) continue;
 
-		tagUri = tagUri.trim();
 		NodeList locList = 
 		    e.getElementsByTagName("taglib-location");
 		Element locElem = (Element)locList.item(0);
-		Text tl = (Text)locElem.getFirstChild();
-		if (tl == null) continue;
-
-		tagLoc = tl.getData();
-		if (tagLoc != null) tagLoc = tagLoc.trim();
+		tagLoc = JspUtil.getElementChildTextData(locElem);
 		if (tagLoc == null) continue;
 
 		if (uriType(tagLoc) == NOROOT_REL_URI) {
@@ -293,10 +286,7 @@ public class TldLocationsCache {
             Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("uri")) {
-                Text t = (Text)e.getFirstChild();
-                if (t != null) {
-		    return t.getData();
-		}
+		return JspUtil.getElementChildTextData(e);
 	    }
 	}
 	//p("No URI defined for this tag library: " + resourcePath);

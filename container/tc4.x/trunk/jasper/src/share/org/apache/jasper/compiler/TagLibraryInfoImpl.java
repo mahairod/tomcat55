@@ -282,25 +282,15 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("tlibversion") || tname.equals("tlib-version")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    this.tlibversion = t.getData().trim();
+		this.tlibversion = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("jspversion") || tname.equals("jsp-version")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    this.jspversion = t.getData().trim();
+		this.jspversion = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("shortname") || tname.equals("short-name")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    this.shortname = t.getData().trim();
+		this.shortname = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("uri")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    this.urn = t.getData().trim();
+		this.urn = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("info")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    this.info = t.getData().trim();
+		this.info = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("validator")) {
 		this.tagLibraryValidator = createValidator(e);
             } else if (tname.equals("tag"))
@@ -339,42 +329,26 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("name")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    name = t.getData().trim();
+		name = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("tagclass") || tname.equals("tag-class")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    tagclass = t.getData().trim();
+		tagclass = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("teiclass") || tname.equals("tei-class")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    teiclass = t.getData().trim();
+		teiclass = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("bodycontent") || tname.equals("body-content")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    bodycontent = t.getData().trim();
+		bodycontent = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("info") || tname.equals("tlib-description")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    info = t.getData().trim();
+		info = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("attribute")) {
                 attributeVector.addElement(createAttribute(e));
 
 	    // JSP 1.2
 
 	    } else if (tname.equals("display-name")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    displayName = t.getData().trim();
+		displayName = JspUtil.getElementChildTextData(e);
 	    } else if (tname.equals("small-icon")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    smallIcon = t.getData().trim();
+		smallIcon = JspUtil.getElementChildTextData(e);
 	    } else if (tname.equals("large-icon")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    largeIcon = t.getData().trim();
+		largeIcon = JspUtil.getElementChildTextData(e);
 	    } else if (tname.equals("variable")) {
 		if (teiclass != null) {
 		    // teiclass comes first in the tag element
@@ -453,27 +427,19 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("name"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    name = t.getData().trim();
+		name = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("required"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null) {
-                    required = Boolean.valueOf(t.getData().trim()).booleanValue();
-		    if( t.getData().trim().equalsIgnoreCase("yes") )
-			required = true;
+                String s = JspUtil.getElementChildTextData(e);
+                if (s != null) {
+		    required = JspUtil.booleanValue(s);
 		}
             } else if (tname.equals("rtexprvalue")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null) {
-                    rtexprvalue = Boolean.valueOf(t.getData().trim()).booleanValue();
-                    if( t.getData().trim().equalsIgnoreCase("yes") )
-                        rtexprvalue = true;
+		String s = JspUtil.getElementChildTextData(e);
+                if (s != null) {
+		    rtexprvalue = JspUtil.booleanValue(s);
 		}
             } else if (tname.equals("type")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    type = t.getData().trim();
+		type = JspUtil.getElementChildTextData(e);
             } else 
                 Constants.message("jsp.warning.unknown.element.in.attribute", 
                                   new Object[] {
@@ -501,28 +467,19 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("name-given"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    nameGiven = t.getData().trim();
+		nameGiven = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("name-from-attribute"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    nameFromAttribute = t.getData().trim();
+		nameFromAttribute = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("variable-class"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    className = t.getData().trim();
+		className = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("declare"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null) {
-                    declare = Boolean.valueOf(t.getData().trim()).booleanValue();
-		    if (t.getData().trim().equalsIgnoreCase("yes"))
-			declare = true;
+                String s = JspUtil.getElementChildTextData(e);
+                if (s != null) {
+		    declare = JspUtil.booleanValue(s);
 		}
             } else if (tname.equals("scope")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null) {
-		    String s = t.getData().trim();
+		String s = JspUtil.getElementChildTextData(e);
+                if (s != null) {
 		    if ("NESTED".equals(s)) {
 			scope = VariableInfo.NESTED;
 		    } else if ("AT_BEGIN".equals(s)) {
@@ -531,10 +488,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 			scope = VariableInfo.AT_END;
 		    }
 		}
-            } else 
+            } else {
                 Constants.message("jsp.warning.unknown.element.in.variable",
                                   new Object[] {e.getTagName()},
                                   Logger.WARNING);
+	    }
         }
         return new TagVariableInfo(nameGiven, nameFromAttribute,
 				   className, declare, scope);
@@ -551,16 +509,15 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("validator-class"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    validatorClass = t.getData().trim();
+		validatorClass = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("init-param"))  {
 		String[] initParam = createInitParam(e);
 		initParams.put(initParam[0], initParam[1]);
-            } else 
+            } else {
                 Constants.message("jsp.warning.unknown.element.in.validator", //@@@ add in properties
                                   new Object[] {e.getTagName()},
                                   Logger.WARNING);
+	    }
         }
 
         TagLibraryValidator tlv = null;
@@ -595,19 +552,16 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("param-name"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    initParam[0] = t.getData().trim();
+		initParam[0] = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("param-value"))  {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    initParam[1] = t.getData().trim();
+		initParam[1] = JspUtil.getElementChildTextData(e);
             } else if (tname.equals("description"))  {
 		// do nothing
-            } else 
+            } else {
                 Constants.message("jsp.warning.unknown.element.in.initParam", //@@@ properties
                                   new Object[] {e.getTagName()},
                                   Logger.WARNING);
+	    }
         }
 	return initParam;
     }

@@ -345,6 +345,48 @@ public class JspUtil {
         return table;
     }
 
+    /**
+     * Get the data for the first child associated with the
+     * Element provided as argument. It is assumed that this
+     * first child is of type Text.
+     *
+     * @param e the DOM Element to read from 
+     * @return the data associated with the first child of the DOM
+     *  element.
+     */
+    public static String getElementChildTextData(Element e) {
+	String s = null;
+	Text t = (Text)e.getFirstChild();
+	if (t != null) {
+	    s = t.getData();
+	    if (s != null) {
+		s = s.trim();
+	    }
+	}
+	return s;
+    }
+
+    /**
+     * Convert a String value to 'boolean'.
+     * Besides the standard conversions done by
+     * Boolean.valueOf(s).booleanValue(), the value "yes"
+     * (ignore case) is also converted to 'true'. 
+     * If 's' is null, then 'false' is returned.
+     *
+     * @param s the string to be converted
+     * @return the boolean value associated with the string s
+     */
+    public static boolean booleanValue(String s) {
+	boolean b = false;
+	if (s != null) {
+	    if (s.equalsIgnoreCase("yes")) {
+		b = true;
+	    } else {
+		b = Boolean.valueOf(s).booleanValue();
+	    }
+	}
+	return b;
+    }
 }
 
 class MyEntityResolver implements EntityResolver {
