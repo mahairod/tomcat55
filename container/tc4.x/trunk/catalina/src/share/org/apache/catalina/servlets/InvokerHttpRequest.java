@@ -18,18 +18,8 @@
 package org.apache.catalina.servlets;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.util.Enumerator;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 
 
@@ -160,7 +150,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (InvokerHttpRequest.info);
 
     }
 
