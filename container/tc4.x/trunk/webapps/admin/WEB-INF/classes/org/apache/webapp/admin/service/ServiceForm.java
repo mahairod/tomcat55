@@ -80,6 +80,25 @@ public final class ServiceForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
+
+    /**
+     * The administrative action represented by this form.
+     */
+    private String adminAction = "Edit";
+
+
+    /**
+     * The object name of the Engine this bean refers to.
+     */
+    private String engineObjectName = null;
+
+
+    /**
+     * The object name of the Service this bean refers to.
+     */
+    private String objectName = null;
+
+
     /**
      * The text for the serviceName.
      */
@@ -104,13 +123,76 @@ public final class ServiceForm extends ActionForm {
     /**
      * The text for the defaultHost Name.
      */
-    private String defaultHost = " ";
+    private String defaultHost = "";
     
     private ArrayList debugLvlVals = null;
     private ArrayList hostNameVals = null;
+
+
     // ------------------------------------------------------------- Properties
     
-       /**
+
+    /**
+     * Return the administrative action represented by this form.
+     */
+    public String getAdminAction() {
+
+        return this.adminAction;
+
+    }
+
+
+    /**
+     * Set the administrative action represented by this form.
+     */
+    public void setAdminAction(String adminAction) {
+
+        this.adminAction = adminAction;
+
+    }
+
+
+    /**
+     * Return the object name of the Engine this bean refers to.
+     */
+    public String getEngineObjectName() {
+
+        return this.engineObjectName;
+
+    }
+
+
+    /**
+     * Set the object name of the Engine this bean refers to.
+     */
+    public void setEngineObjectName(String engineObjectName) {
+
+        this.engineObjectName = engineObjectName;
+
+    }
+
+
+    /**
+     * Return the object name of the Service this bean refers to.
+     */
+    public String getObjectName() {
+
+        return this.objectName;
+
+    }
+
+
+    /**
+     * Set the object name of the Service this bean refers to.
+     */
+    public void setObjectName(String objectName) {
+
+        this.objectName = objectName;
+
+    }
+
+
+    /**
      * Return the label of the node that was clicked.
      */
     public String getNodeLabel() {
@@ -236,10 +318,16 @@ public final class ServiceForm extends ActionForm {
      * Set the default Host.
      */
     public void setDefaultHost(String defaultHost) {
-        
-        this.defaultHost = defaultHost;
-        
+
+        if (defaultHost == null) {
+            this.defaultHost = "";
+        } else {
+            this.defaultHost = defaultHost;
+        }
+
     }
+
+
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -250,12 +338,39 @@ public final class ServiceForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
+        this.engineObjectName = null;
+        this.objectName = null;
         this.serviceName = null;
         this.engineName = null;
         this.debugLvl = "0";
-        this.defaultHost = " ";
+        this.defaultHost = "";
     }
     
+    /**
+     * Render this object as a String.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("ServiceForm[adminAction=");
+        sb.append(adminAction);
+        sb.append(",debugLvl=");
+        sb.append(debugLvl);
+        sb.append(",defaultHost=");
+        sb.append(defaultHost);
+        sb.append(",engineName=");
+        sb.append(engineName);
+        sb.append(",engineObjectName='");
+        sb.append(engineObjectName);
+        sb.append("',objectName='");
+        sb.append(objectName);
+        sb.append("',serviceName=");
+        sb.append(serviceName);
+        sb.append("]");
+        return (sb.toString());
+
+    }
+
+
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any

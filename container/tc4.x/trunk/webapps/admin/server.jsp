@@ -30,8 +30,10 @@
         <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <controls:action url="setUpAddService.do">  <bean:message key="actions.services.create"/> </controls:action>
+            <controls:action url="AddService.do">  <bean:message key="actions.services.create"/> </controls:action>
+            <%--
             <controls:action url="setUpDeleteService.do">  <bean:message key="actions.services.delete"/> </controls:action>
+            --%>
         </controls:actions>
         </div>
       </td>

@@ -76,12 +76,12 @@
                  type="java.lang.String"
             writeable="false"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="connectionTimeout"
           description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
                  type="int"/>
 
     <attribute   name="enableLookups"
@@ -1060,7 +1060,10 @@
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
       <parameter name="path"
-          description="path The context path for this Context"
+          description="The context path for this Context"
+                 type="java.lang.String"/>
+      <parameter name="docBase"
+          description="Document base directory (or WAR) for ths Context"
                  type="java.lang.String"/>
     </operation>
 
@@ -1071,18 +1074,30 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
+      <parameter name="name"
+          description="Unique name of this Engine"
+                 type="java.lang.String"/>
+      <parameter name="defaultHost"
+          description="Default host name for this Engine"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="createStandardHost"
           description="Create a new StandardHost"
                impact="ACTION"
            returnType="java.lang.String">
-      <parameter name="name"
-          description="Unique name of this Host"
-                 type="java.lang.String"/>
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
+      <parameter name="name"
+          description="Unique name of this Host"
+                 type="java.lang.String"/>
+      <parameter name="appBase"
+          description="Application base directory for this Host"
+                 type="java.lang.String"/>
+      <parameter name="unpackWARs"
+          description="Should we unpack WARs when auto-deploying?"
+                 type="boolean"/>
     </operation>
 
     <operation   name="createStandardManager"
@@ -1948,6 +1963,10 @@
                domain="Catalina"
                 group="Service"
                  type="org.apache.catalina.core.StandardService">
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
 
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"

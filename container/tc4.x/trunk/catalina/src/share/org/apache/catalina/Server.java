@@ -166,6 +166,15 @@ public interface Server {
 
 
     /**
+     * Return the specified Service (if it exists); otherwise return
+     * <code>null</code>.
+     *
+     * @param name Name of the Service to be returned
+     */
+    public Service findService(String name);
+
+
+    /**
      * Return the set of Services defined within this Server.
      */
     public Service[] findServices();

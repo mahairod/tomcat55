@@ -70,9 +70,11 @@ import javax.management.ObjectName;
 import javax.management.ObjectInstance;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Server;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.core.StandardContext;
@@ -599,32 +601,31 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @param parent MBean Name of the associated parent component
      * @param path The context path for this Context
+     * @param docBase Document base directory (or WAR) for this Context
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardContext(String parent, String path)
+    public String createStandardContext(String parent, String path,
+                                        String docBase)
         throws Exception {
 
-        String tname = "StandardHost";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Host host = null;
-        if (obj instanceof Host) {
-            host = (Host) obj;
-        }
+        // Create a new StandardContext instance
         StandardContext context = new StandardContext();
         context.setPath(path);
-        context.setParent(host);
-        ObjectName oname = MBeanUtils.createObjectName(domain, context);
-        MBeanUtils.createMBean(context);
-        context.setParent(null);
+        context.setDocBase(docBase);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+        host.addChild(context);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("StandardContext");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), context);
         return (oname.toString());
 
     }
@@ -635,31 +636,30 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new StandardEngine.
      *
      * @param parent MBean Name of the associated parent component
+     * @param name Unique name of this Engine
+     * @param defaultHost Default hostname of this Engine
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardEngine(String parent)
+    public String createStandardEngine(String parent, String name,
+                                       String defaultHost)
         throws Exception {
 
-        String tname = "StandardService";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        StandardService service = null;
-        if (obj instanceof StandardService) {
-            service = (StandardService) obj;
-        }
+        // Create a new StandardEngine instance
         StandardEngine engine = new StandardEngine();
-        engine.setService(service);
-        ObjectName oname = MBeanUtils.createObjectName(domain, service);
-        MBeanUtils.createMBean(engine);
-        engine.setService(null);
+        engine.setName(name);
+        engine.setDefaultHost(defaultHost);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("name"));
+        service.setContainer(engine);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("StandardEngine");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), engine);
         return (oname.toString());
 
     }
@@ -670,32 +670,32 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @param parent MBean Name of the associated parent component
      * @param name Unique name of this Host
+     * @param appBase Application base directory name
+     * @param unpackWARs Should we unpack WARs when auto deploying?
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardHost(String parent, String name)
+    public String createStandardHost(String parent, String name,
+                                     String appBase, boolean unpackWARs)
         throws Exception {
 
-        String tname = "StandardEngine";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        Engine engine = null;
-        if (obj instanceof Engine) {
-            engine = (Engine) obj;
-        }
+        // Create a new StandardHost instance
         StandardHost host = new StandardHost();
         host.setName(name);
-        host.setParent(engine);
-        ObjectName oname = MBeanUtils.createObjectName(domain, host);
-        MBeanUtils.createMBean(host);
-        host.setParent(null);
+        host.setAppBase(appBase);
+        host.setUnpackWARs(unpackWARs);
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        engine.addChild(host);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("StandardHost");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), host);
         return (oname.toString());
 
     }
@@ -748,26 +748,18 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardService(String parent, String name)
         throws Exception {
 
-        String tname = "StandardServer";
-        ManagedBean managed = registry.findManagedBean(tname);
-        String domain = null;
-        if (managed != null)
-            domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
-        Object obj = mserver.getAttribute(pname, "managedResource");
-        StandardServer server = null;
-        if (obj instanceof StandardServer) {
-            server = (StandardServer) obj;
-        }
+        // Create a new StandardService instance
         StandardService service = new StandardService();
         service.setName(name);
-        service.setServer(server);
-        ObjectName oname = MBeanUtils.createObjectName(domain, service);
-        MBeanUtils.createMBean(service);
-        service.setServer(null);
 
+        // Add the new instance to its parent component
+        Server server = ServerFactory.getServer();
+        server.addService(service);
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("StandardService");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), service);
         return (oname.toString());
 
     }

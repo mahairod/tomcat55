@@ -62,6 +62,8 @@
 
 package org.apache.webapp.admin;
 
+import java.io.Serializable;
+
 /**
  * Simple JavaBean to represent label-value pairs for use in collections
  * that are utilized by the <code>&lt;form:options&gt;</code> tag.
@@ -70,7 +72,7 @@ package org.apache.webapp.admin;
  * @version $Revision$ $Date$
  */
 
-public class LabelValueBean {
+public class LabelValueBean implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors

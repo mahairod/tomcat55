@@ -96,6 +96,8 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.StandardService;
 
 
 /**
@@ -220,7 +222,25 @@ public class ServerLifecycleListener
                                                event.getOldValue(),
                                                event.getNewValue());
             } catch (Exception e) {
-                log("Exception handling property change", e);
+                log("Exception handling Container property change", e);
+            }
+        } else if (event.getSource() instanceof Server) {
+            try {
+                processServerPropertyChange((Server) event.getSource(),
+                                            event.getPropertyName(),
+                                            event.getOldValue(),
+                                            event.getNewValue());
+            } catch (Exception e) {
+                log("Exception handing Server property change", e);
+            }
+        } else if (event.getSource() instanceof Service) {
+            try {
+                processServicePropertyChange((Service) event.getSource(),
+                                             event.getPropertyName(),
+                                             event.getOldValue(),
+                                             event.getNewValue());
+            } catch (Exception e) {
+                log("Exception handing Service property change", e);
             }
         }
 
@@ -253,6 +273,23 @@ public class ServerLifecycleListener
             log("createMBeans: Throwable", t);
 
         }
+
+    }
+
+
+    /**
+     * Create the MBeans for the specified Connector and its nested components.
+     *
+     * @param connector Connector for which to create MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void createMBeans(Connector connector) throws Exception {
+
+        // Create the MBean for the Connnector itself
+        if (debug >= 5)
+            log("Creating MBean for Connector " + connector);
+        MBeanUtils.createMBean(connector);
 
     }
 
@@ -465,6 +502,9 @@ public class ServerLifecycleListener
         if (debug >= 2)
             log("Creating MBean for Server " + server);
         MBeanUtils.createMBean(server);
+        if (server instanceof StandardServer) {
+            ((StandardServer) server).addPropertyChangeListener(this);
+        }
 
         // Create the MBeans for each child Service
         Service services[] = server.findServices();
@@ -496,37 +536,46 @@ public class ServerLifecycleListener
         if (debug >= 2)
             log("Creating MBean for Service " + service);
         MBeanUtils.createMBean(service);
+        if (service instanceof StandardService) {
+            ((StandardService) service).addPropertyChangeListener(this);
+        }
 
         // Create the MBeans for the corresponding Connectors
         Connector connectors[] = service.findConnectors();
         for (int j = 0; j < connectors.length; j++) {
-            if (debug >= 2)
-                log("Creating MBean for Connector " + connectors[j]);
-            MBeanUtils.createMBean(connectors[j]);
+            createMBeans(connectors[j]);
         }
 
         // Create the MBean for the associated Engine and friends
         Engine engine = (Engine) service.getContainer();
-        createMBeans(engine);
+        if (engine != null) {
+            createMBeans(engine);
+        }
 
     }
 
 
     /**
-     * Log a message.
+     * Deregister the MBeans for the specified Connector and its nested
+     * components.
      *
-     * @param message The message to be logged
+     * @param connector Connector for which to deregister MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
      */
-    protected void log(String message) {
+    protected void destroyMBeans(Connector connector) throws Exception {
 
-        System.out.print("ServerLifecycleListener: ");
-        System.out.println(message);
+        // deregister the MBean for the Connector itself
+        if (debug >= 5)
+            log("Destroying MBean for Connector " + connector);
+        MBeanUtils.destroyMBean(connector);
 
     }
 
 
     /**
-     * Deregister the MBeans for the specified Context and its nested components.
+     * Deregister the MBeans for the specified Context and its nested
+     * components.
      *
      * @param context Context for which to deregister MBeans
      *
@@ -589,6 +638,58 @@ public class ServerLifecycleListener
 
 
     /**
+     * Deregister the MBeans for the specified Engine and its nested
+     * components.
+     *
+     * @param engine Engine for which to destroy MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void destroyMBeans(Engine engine) throws Exception {
+
+        // Deregister the MBean for the Engine itself
+        if (debug >= 2) {
+            log("Destroying MBean for Engine " + engine);
+        }
+        MBeanUtils.destroyMBean(engine);
+
+        // Deregister the MBeans for the associated nested components
+        Logger eLogger = engine.getLogger();
+        if (eLogger != null) {
+            if (debug >= 3)
+                log("Destroying MBean for Logger " + eLogger);
+            MBeanUtils.destroyMBean(eLogger);
+        }
+        Realm eRealm = engine.getRealm();
+        if (eRealm != null) {
+            if (debug >= 3)
+                log("Destroying MBean for Realm " + eRealm);
+            MBeanUtils.destroyMBean(eRealm);
+        }
+
+        // Deregister the MBeans for the associated Valves
+        if (engine instanceof StandardEngine) {
+            Valve eValves[] = ((StandardEngine)engine).getValves();
+            for (int k = 0; k < eValves.length; k++) {
+                if (debug >= 3)
+                    log("Destroying MBean for Valve " + eValves[k]);
+                MBeanUtils.destroyMBean(eValves[k]);
+            }
+        }
+
+        // Deregister the MBeans for each child Host
+        Container hosts[] = engine.findChildren();
+        for (int k = 0; k < hosts.length; k++) {
+            destroyMBeans((Host) hosts[k]);
+        }
+
+        // Deregister ourselves as a ContainerListener
+        engine.removeContainerListener(this);
+
+    }
+
+
+    /**
      * Deregister the MBeans for the specified Host and its nested components.
      *
      * @param host Host for which to destroy MBeans
@@ -637,6 +738,53 @@ public class ServerLifecycleListener
 
         // Deregister ourselves as a ContainerListener
         host.removeContainerListener(this);
+
+    }
+
+
+    /**
+     * Deregister the MBeans for the specified Service and its nested
+     * components.
+     *
+     * @param service Service for which to destroy MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void destroyMBeans(Service service) throws Exception {
+
+        // Deregister the MBean for the Service itself
+        if (debug >= 2) {
+            log("Destroying MBean for Service " + service);
+        }
+        MBeanUtils.destroyMBean(service);
+        if (service instanceof StandardService) {
+            ((StandardService) service).removePropertyChangeListener(this);
+        }
+
+        // Deregister the MBeans for the corresponding Connectors
+        Connector connectors[] = service.findConnectors();
+        for (int j = 0; j < connectors.length; j++) {
+            destroyMBeans(connectors[j]);
+        }
+
+        // Deregister the MBeans for the associated Engine
+        Engine engine = (Engine) service.getContainer();
+        if (engine != null) {
+            destroyMBeans(engine);
+        }
+
+    }
+
+
+    /**
+     * Log a message.
+     *
+     * @param message The message to be logged
+     */
+    protected void log(String message) {
+
+        System.out.print("ServerLifecycleListener: ");
+        System.out.println(message);
 
     }
 
@@ -798,19 +946,11 @@ public class ServerLifecycleListener
                 MBeanUtils.createMBean((Realm) newValue);
             }
         } else if ("service".equals(propertyName)) {
-            // removeService() has non-null oldValue
             if (oldValue != null) {
-                if (debug >= 5) {
-                    log("Removing MBean for Service " + oldValue);
-                }
-                MBeanUtils.destroyMBean((Service) oldValue);
+                destroyMBeans((Service) oldValue);
             }
-            // addService() has non-null newValue
             if (newValue != null) {
-                if (debug >= 5) {
-                    log("Creating MBean for Service " + newValue);
-                }
-                MBeanUtils.createMBean((Service) newValue);
+                createMBeans((Service) newValue);
             }
         }
 
@@ -888,6 +1028,81 @@ public class ServerLifecycleListener
             log("processContainerRemoveValve: MBeanException", e);
         } catch (Throwable t) {
             log("processContainerRemoveValve: Throwable", t);
+        }
+
+    }
+
+
+    /**
+     * Process a property change event on a Server.
+     *
+     * @param server The server on which this event occurred
+     * @param propertyName The name of the property that changed
+     * @param oldValue The previous value (may be <code>null</code>)
+     * @param newValue The new value (may be <code>null</code>)
+     *
+     * @exception Exception if an exception is thrown
+     */
+    protected void processServerPropertyChange(Server server,
+                                               String propertyName,
+                                               Object oldValue,
+                                               Object newValue)
+        throws Exception {
+
+        if (debug >= 6) {
+            log("propertyChange[server=" + server +
+                ",propertyName=" + propertyName +
+                ",oldValue=" + oldValue +
+                ",newValue=" + newValue + "]");
+        }
+        if ("service".equals(propertyName)) {
+            if (oldValue != null) {
+                destroyMBeans((Service) oldValue);
+            }
+            if (newValue != null) {
+                createMBeans((Service) newValue);
+            }
+        }
+
+    }
+
+
+    /**
+     * Process a property change event on a Service.
+     *
+     * @param service The service on which this event occurred
+     * @param propertyName The name of the property that changed
+     * @param oldValue The previous value (may be <code>null</code>)
+     * @param newValue The new value (may be <code>null</code>)
+     *
+     * @exception Exception if an exception is thrown
+     */
+    protected void processServicePropertyChange(Service service,
+                                                String propertyName,
+                                                Object oldValue,
+                                                Object newValue)
+        throws Exception {
+
+        if (debug >= 6) {
+            log("propertyChange[service=" + service +
+                ",propertyName=" + propertyName +
+                ",oldValue=" + oldValue +
+                ",newValue=" + newValue + "]");
+        }
+        if ("connector".equals(propertyName)) {
+            if (oldValue != null) {
+                destroyMBeans((Connector) oldValue);
+            }
+            if (newValue != null) {
+                createMBeans((Connector) newValue);
+            }
+        } else if ("container".equals(propertyName)) {
+            if (oldValue != null) {
+                destroyMBeans((Engine) oldValue);
+            }
+            if (newValue != null) {
+                createMBeans((Engine) newValue);
+            }
         }
 
     }

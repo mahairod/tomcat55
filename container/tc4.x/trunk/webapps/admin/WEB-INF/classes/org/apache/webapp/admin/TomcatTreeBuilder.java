@@ -205,7 +205,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             new TreeControlNode(service.getObjectName().toString(),
             "folder_16_pad.gif",
             nodeLabel,
-            "setUpService.do?select=" + encodedServiceName
+            "EditService.do?select=" + encodedServiceName
             +"&nodeLabel=" + encodedNodeLabel,
             "content", true);
             
@@ -331,7 +331,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             nodeLabel,
             "setUpContext.do?select=" + encodedContextName
             +"&nodeLabel="+ encodedNodeLabel,
-            "content", true);
+            "content", false);
             
             hostNode.addChild(contextNode);
             //get all loggers for this context

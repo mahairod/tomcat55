@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,8 @@
 package org.apache.catalina.core;
 
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
@@ -107,10 +109,22 @@ public final class StandardService
 
 
     /**
+     * The debugging detail level for this component.
+     */
+    private int debug = 0;
+
+
+    /**
      * Descriptive information about this component implementation.
      */
     private static final String info =
         "org.apache.catalina.core.StandardService/1.0";
+
+
+    /**
+     * Has this component been initialized?
+     */
+    private boolean initialized = false;
 
 
     /**
@@ -143,9 +157,9 @@ public final class StandardService
 
 
     /**
-     * Has this component been initialized?
+     * The property change support for this component.
      */
-    private boolean initialized = false;
+    protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
     // ------------------------------------------------------------- Properties
@@ -196,6 +210,31 @@ public final class StandardService
                 ;
             }
         }
+
+        // Report this property change to interested listeners
+        support.firePropertyChange("container", oldContainer, this.container);
+
+    }
+
+
+    /**
+     * Return the debugging detail level of this component.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level of this component.
+     *
+     * @param debug The new debugging detail level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
 
     }
 
@@ -290,7 +329,22 @@ public final class StandardService
                     ;
                 }
             }
+
+            // Report this property change to interested listeners
+            support.firePropertyChange("connector", null, connector);
         }
+
+    }
+
+
+    /**
+     * Add a property change listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -340,7 +394,22 @@ public final class StandardService
                     results[k++] = connectors[i];
             }
             connectors = results;
+
+            // Report this property change to interested listeners
+            support.firePropertyChange("connector", connector, null);
         }
+
+    }
+
+
+    /**
+     * Remove a property change listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -410,9 +479,10 @@ public final class StandardService
     public void start() throws LifecycleException {
 
         // Validate and update our current component state
-        if (started)
+        if (started) {
             throw new LifecycleException
                 (sm.getString("standardService.start.started"));
+        }
 
         System.out.println
             (sm.getString("standardService.start.name", this.name));
@@ -420,9 +490,12 @@ public final class StandardService
         started = true;
 
         // Start our defined Container first
-        synchronized (container) {
-            if ((container != null) && (container instanceof Lifecycle))
-                ((Lifecycle) container).start();
+        if (container != null) {
+            synchronized (container) {
+                if (container instanceof Lifecycle) {
+                    ((Lifecycle) container).start();
+                }
+            }
         }
 
         // Start our defined Connectors second
@@ -449,9 +522,10 @@ public final class StandardService
     public void stop() throws LifecycleException {
 
         // Validate and update our current component state
-        if (!started)
+        if (!started) {
             throw new LifecycleException
                 (sm.getString("standardService.stop.notStarted"));
+        }
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 
         System.out.println
@@ -467,9 +541,12 @@ public final class StandardService
         }
 
         // Stop our defined Container second
-        synchronized (container) {
-            if ((container != null) && (container instanceof Lifecycle))
-                ((Lifecycle) container).stop();
+        if (container != null) {
+            synchronized (container) {
+                if (container instanceof Lifecycle) {
+                    ((Lifecycle) container).stop();
+                }
+            }
         }
 
     }

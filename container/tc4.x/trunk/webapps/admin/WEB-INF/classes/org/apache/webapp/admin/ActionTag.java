@@ -184,6 +184,9 @@ public class ActionTag extends BodyTagSupport {
 
         // Find our parent ActionsTag instance
         Tag parent = getParent();
+        while ((parent != null) && !(parent instanceof ActionsTag)) {
+            parent = parent.getParent();
+        }
         if ((parent == null) || !(parent instanceof ActionsTag))
             throw new JspException("Must be nested in an ActionsTag isntance");
         ActionsTag actions = (ActionsTag) parent;

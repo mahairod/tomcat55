@@ -52,10 +52,12 @@
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
             --%>
+            <%--
             <controls:action url='<%= "/setUpDeleteHost.do?this=" + 
                              java.net.URLEncoder.encode(hostName.toString()) %>'>  
                 <bean:message key="actions.thishost.delete"/> 
             </controls:action>
+            --%>
         </controls:actions>
           </div>
       </td>

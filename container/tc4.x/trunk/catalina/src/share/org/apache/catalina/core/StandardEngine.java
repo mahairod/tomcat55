@@ -172,7 +172,11 @@ public class StandardEngine
     public void setDefaultHost(String host) {
 
         String oldDefaultHost = this.defaultHost;
-        this.defaultHost = host.toLowerCase();
+        if (host == null) {
+            this.defaultHost = null;
+        } else {
+            this.defaultHost = host.toLowerCase();
+        }
         support.firePropertyChange("defaultHost", oldDefaultHost,
                                    this.defaultHost);
 

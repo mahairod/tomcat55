@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,7 @@
 package org.apache.catalina.core;
 
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.InputStream;
 import java.io.IOException;
@@ -466,6 +467,29 @@ public final class StandardServer
 
 
     /**
+     * Return the specified Service (if it exists); otherwise return
+     * <code>null</code>.
+     *
+     * @param name Name of the Service to be returned
+     */
+    public Service findService(String name) {
+
+        if (name == null) {
+            return (null);
+        }
+        synchronized (services) {
+            for (int i = 0; i < services.length; i++) {
+                if (name.equals(services[i].getName())) {
+                    return (services[i]);
+                }
+            }
+        }
+        return (null);
+
+    }
+
+
+    /**
      * Return the set of Services defined within this Server.
      */
     public Service[] findServices() {
@@ -511,6 +535,33 @@ public final class StandardServer
             // Report this property change to interested listeners
             support.firePropertyChange("service", service, null);
         }
+
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Add a property change listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+
+        support.addPropertyChangeListener(listener);
+
+    }
+
+
+    /**
+     * Remove a property change listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+        support.removePropertyChangeListener(listener);
 
     }
 
