@@ -258,19 +258,22 @@
   <!-- supports the following initialization parameters (default values     -->
   <!-- are in square brackets):                                             -->
   <!--                                                                      -->
-  <!--   cgiPathPrefix       The CGI search path will start at              -->
-  <!--                       webAppRootDir + File.separator + this prefix.  -->
-  <!--                       [WEB-INF/cgi]                                  -->
+  <!--   cgiPathPrefix        The CGI search path will start at             -->
+  <!--                        webAppRootDir + File.separator + this prefix. -->
+  <!--                        [WEB-INF/cgi]                                 -->
   <!--                                                                      -->
-  <!--   debug               Debugging detail level for messages logged     -->
-  <!--                       by this servlet.  [0]                          -->
+  <!--   debug                Debugging detail level for messages logged    -->
+  <!--                        by this servlet.  [0]                         -->
   <!--                                                                      -->
-  <!--   executable          Name of the exectuable used to run the script. -->
-  <!--                       [perl]                                         -->
+  <!--   executable           Name of the exectuable used to run the        -->
+  <!--                        script. [perl]                                -->
   <!--                                                                      -->
-  <!--   parameterEncoding   Name of parameter encoding to be used with CGI -->
-  <!--                       servlet.                                       -->
-  <!--                       [System.getProperty("file.encoding","UTF-8")]  -->
+  <!--   parameterEncoding    Name of parameter encoding to be used with    -->
+  <!--                        CGI servlet.                                  -->
+  <!--                        [System.getProperty("file.encoding","UTF-8")] -->
+  <!--                                                                      -->
+  <!--   passShellEnvironment Should the shell environment variables (if    -->
+  <!--                        any) be passed to the CGI script? [false]     -->
   <!--                                                                      -->
   <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
   <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->

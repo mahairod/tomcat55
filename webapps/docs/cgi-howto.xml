@@ -63,6 +63,9 @@ run the script. Default is <code>perl</code>.</li>
 <li><strong>parameterEncoding</strong> - Name of the parameter encoding
 to be used with the GCI servlet. Default is
 <code>System.getProperty("file.encoding","UTF-8")</code>.</li>
+<li><strong>passShellEnvironment</strong> - Should the shell environment
+variables (if any) be passed to the CGI script? Default is
+<code>false</code>.</li>
 </ul>
 </p>
 
