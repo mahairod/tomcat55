@@ -1436,12 +1436,12 @@ public class WebappClassLoader
             }
 
             repositoryURLs = urls;
-            return repositoryURLs;
 
         } catch (MalformedURLException e) {
             repositoryURLs = new URL[0];
-            return (new URL[0]);
         }
+
+        return repositoryURLs;
 
     }
 
