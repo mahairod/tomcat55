@@ -67,6 +67,7 @@ done
 for i in "$JASPER_HOME"/common/lib/*.jar; do
   CLASSPATH="$CLASSPATH":"$i"
 done
+CLASSPATH="$CLASSPATH":"$JASPER_HOME"/classes
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
