@@ -130,6 +130,8 @@ public class AddLoggerAction extends Action {
         loggerFm.setObjectName("");
         String parent = request.getParameter("parent");
         loggerFm.setParentObjectName(parent);
+        String engine = request.getParameter("engine");
+        loggerFm.setEngineObjectName(engine);
         String type = request.getParameter("type");
         if (type == null)
             type = "FileLogger";    // default type is FileLogger
@@ -148,12 +150,12 @@ public class AddLoggerAction extends Action {
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
                 "AddLogger.do?parent=" + URLEncoder.encode(parent) 
-                + "&type=" + type));        
+                + "&type=" + type + "&engine=" + URLEncoder.encode(engine)));        
         for (int i=0; i< loggerTypes.length; i++) {
             if (!type.equalsIgnoreCase(loggerTypes[i])) {
                 types.add(new LabelValueBean(loggerTypes[i],
                 "AddLogger.do?parent=" + URLEncoder.encode(parent) 
-                + "&type=" + loggerTypes[i]));        
+                + "&type=" + loggerTypes[i] + "&engine=" + URLEncoder.encode(engine)));       
             }
         }
         loggerFm.setLoggerTypeVals(types);

@@ -219,7 +219,7 @@ public class DeleteLoggerAction extends Action {
         String path = "";
         String host = "";
         String name = poname.getKeyProperty("name");
-        if ((name != null) && (name.length() > 0)) {
+        if ((name != null) && (name.length() > 0) && (name.indexOf("/")>0)) {
             name = name.substring(2);
             int i = name.indexOf("/");
             host = name.substring(0,i);
