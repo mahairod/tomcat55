@@ -349,7 +349,7 @@ public class StandardManager
     public void load() throws ClassNotFoundException, IOException {
 
         if (debug >= 1)
-            log("Loading persisted sessions");
+            log("Start: Loading persisted sessions");
 
         // Initialize our internal data structures
         recycled.clear();
@@ -432,22 +432,23 @@ public class StandardManager
                     ois = null;
                 }
                 throw e;
+            } finally {
+                // Close the input stream
+                try {
+                    if (ois != null)
+                        ois.close();
+                } catch (IOException f) {
+                    // ignored
+                }
+
+                // Delete the persistent storage file
+                if (file != null && file.exists() )
+                    file.delete();
             }
         }
 
-        // Close the input stream
-        try {
-            ois.close();
-        } catch (IOException f) {
-            ;
-        }
-
-        // Delete the persistent storage file
-        file.delete();
-
         if (debug >= 1)
-            log("Loading complete");
-
+            log("Finish: Loading persisted sessions");
     }
 
 
