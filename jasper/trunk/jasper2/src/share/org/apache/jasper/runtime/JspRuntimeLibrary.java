@@ -916,12 +916,14 @@ public class JspRuntimeLibrary {
             String pathInfo = (String)
                 request.getAttribute("javax.servlet.include.path_info");
             if (pathInfo == null) {
-                uri = uri.substring(0, uri.lastIndexOf('/'));
+                if (uri.lastIndexOf('/') >= 0) 
+                    uri = uri.substring(0, uri.lastIndexOf('/'));
             }
         }
         else {
             uri = hrequest.getServletPath();
-            uri = uri.substring(0, uri.lastIndexOf('/'));
+            if (uri.lastIndexOf('/') >= 0) 
+                uri = uri.substring(0, uri.lastIndexOf('/'));
         }
         return uri + '/' + relativePath;
 
