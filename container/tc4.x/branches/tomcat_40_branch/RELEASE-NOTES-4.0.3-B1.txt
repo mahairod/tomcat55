@@ -81,6 +81,13 @@ HttpResponseStream:  Fix rare NPE which could occur when processing an invalid
 
 HttpProcessor:  Improve robustness of the main processing loop.
 
+TyrexDataSourceFactory:  Add error logging.
+
+TyrexDataSourceFactory:  Always return a ServerDataSource, which is transaction
+  aware.
+
+TyrexTransactionFactory:  Add error logging.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -101,6 +108,7 @@ Docs:  Fix typos in the web application development guide.
 Bugzilla Bugs Resolved:
 ----------------------
 
+1450  Incorrect encode URL with session ID
 3770  HttpSessionListener.sessionCreated() called twice for each session
 4295  Cookies not following RFC2109
 4518  Jsp-file and load-on-startup and init-param does not work
@@ -124,6 +132,7 @@ Bugzilla Bugs Resolved:
       returns false
 6609  SendMailServlet.java is not compiled  even if javamail is installed 
       correctly
+6644  Whitespace after Content-type header value leads to POST method failure
 
 
 ============================
