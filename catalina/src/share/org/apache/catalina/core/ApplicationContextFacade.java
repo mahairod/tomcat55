@@ -104,8 +104,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public final class ApplicationContextFacade
     implements ServletContext {
-
-
+        
     // ---------------------------------------------------------- Attributes
     /**
      * Cache Class object used for reflection.
@@ -228,7 +227,7 @@ public final class ApplicationContextFacade
 
     public Servlet getServlet(String name)
         throws ServletException {
-       return (Servlet)doPrivileged("getServlet", null);
+       return (Servlet)doPrivileged("getServlet", new Object[]{name});
     }
 
 
@@ -243,7 +242,7 @@ public final class ApplicationContextFacade
 
 
     public void log(String msg) {
-        context.log(msg);
+        doPrivileged("log", new Object[]{msg} );
     }
 
 
@@ -327,11 +326,20 @@ public final class ApplicationContextFacade
             }
             
             return executeMethod(method,appContext,params);
-        } catch (Exception ex){
+        } catch (Throwable ex){
+            Throwable exception;
+            if (ex instanceof InvocationTargetException){
+                exception = ((InvocationTargetException)ex).getTargetException();
+            } else if (ex instanceof PrivilegedActionException){
+                exception = ((PrivilegedActionException)ex).getException();
+            } else {
+                exception = ex;
+            }   
+            
             if (log.isErrorEnabled()){
-                log.error("doPrivileged", ex);
+                log.error("doPrivileged", exception);
             }
-            return null;
+            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -350,11 +358,20 @@ public final class ApplicationContextFacade
             Method method = context.getClass()
                     .getMethod(methodName, (Class[])clazz);
             return executeMethod(method,context,params);
-        } catch (Exception ex){
+        } catch (Throwable ex){
+            Throwable exception;
+            if (ex instanceof InvocationTargetException){
+                exception = ((InvocationTargetException)ex).getTargetException();
+            } else if (ex instanceof PrivilegedActionException){
+                exception = ((PrivilegedActionException)ex).getException();
+            } else {
+                exception = ex;
+            }   
+            
             if (log.isErrorEnabled()){
-                log.error("doPrivileged", ex);
+                log.error("doPrivileged", exception);
             }
-            return null;
+            throw new RuntimeException(ex.getMessage());
         }
     }
     
