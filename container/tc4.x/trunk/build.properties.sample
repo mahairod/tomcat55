@@ -65,7 +65,7 @@ jmxri.jar=${jmx.lib}/jmxri.jar
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
-jndi.home=${base.path}/jndi_1.2.1
+jndi.home=${base.path}/jndi-1.2.1
 jndi.lib=${jndi.home}/lib
 jndi.jar=${jndi.lib}/jndi.jar
 ldap.jar=${jndi.lib}/ldap.jar
