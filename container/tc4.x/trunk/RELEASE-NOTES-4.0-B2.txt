@@ -10,6 +10,7 @@ $Id$
 INTRODUCTION:
 ============
 
+
 This document describes the changes that have been made in the current
 beta release of Apache Tomcat, relative to the previous release.
 
@@ -21,10 +22,22 @@ Jakarta projects at:
 Please use project codes "Catalina" and "Jasper" for servlet-related and
 JSP-related bug reports, respectively.
 
-IMPORTANT SECURITY NOTE:  This release includes a fix to a "cross site
-scripting vulnerability" caused by a request URI such as:
-  http://localhost:8080/<SCRIPT>alert(document.cookie)</SCRIPT>.xyz
-and the "may expose JSP source code" vulnerability caused by:
+
+------------------------
+Important Security Notes:
+------------------------
+
+This release includes fixes for two security vulnerabilities that have been
+reported against Tomcat 4.0 beta 1:
+
+* A "cross site scripting" vulnerability would cause the enclosed JavaScript
+  code to be executed (on the client) with a URL like:
+
+  http://localhost:8080/<SCRIPT>alert(document.cookie)</SCRIPT).xyz
+
+* Incorrect URL decoding of the request URI would cause JSP page source code
+  to be displayed, and/or security constraints to be bypassed, for URLs like:
+
   http://localhost:8080/examples/jsp/snp/snoop.js%70
 
 
