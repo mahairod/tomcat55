@@ -12,11 +12,11 @@
             <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
 
                                                     <meta name="author" value="Remy Maucherat">
-            <meta name="email" value="remm@apache.org">
+            <meta name="email" value="$au.getAttributeValue("email")">
             
            
                                     
-            <title>The Jakarta Site - Tomcat Resources</title>
+            <title>The Jakarta Site - Building Tomcat</title>
         </head>
 
         <body bgcolor="#ffffff" text="#000000" link="#525D76">        
@@ -114,14 +114,15 @@
                                                                     <table border="0" cellspacing="0" cellpadding="2" width="100%">
       <tr><td bgcolor="#525D76">
         <font color="#ffffff" face="arial,helvetica,sanserif">
-          <a name="Note"><strong>Note</strong></a>
+          <a name="Introduction"><strong>Introduction</strong></a>
         </font>
       </td></tr>
       <tr><td>
         <blockquote>
-                                    <p>The Apache Tomcat project doesn't endorse any of the products mentioned
-     here. They are mentioned just because they are Tomcat centric and could
-     help a user with using it.</p>
+                                    <p>
+Building Tomcat from CVS is very easy, and is the first step to contributing to
+Tomcat. The following is a step by step TODO list.
+</p>
                             </blockquote>
         </p>
       </td></tr>
@@ -130,20 +131,23 @@
                                                 <table border="0" cellspacing="0" cellpadding="2" width="100%">
       <tr><td bgcolor="#525D76">
         <font color="#ffffff" face="arial,helvetica,sanserif">
-          <a name="Books"><strong>Books</strong></a>
+          <a name="Download and install a Java Development Kit 1.4 or later"><strong>Download and install a Java Development Kit 1.4 or later</strong></a>
         </font>
       </td></tr>
       <tr><td>
         <blockquote>
-                                    <ul>
-    <li>
-      <b>Apache Jakarta-Tomcat</b>, by James Goodwill<br />
-      <i>APress</i>
-    </li>
-    <li>
-      <b><a href="http://tomcatbook.sourceforge.net/">Tomcat Book Project</a></b>
-    </li>
-  </ul>
+                                    <p>
+Ealier releases would also work, but are harder to work with due to the need to
+download additional dependencies. Tomcat also runs much faster on the latest 1.4
+JDK.
+</p>
+                                                <p>
+The Sun JDK can be downloaded <a href="http://java.sun.com/j2se/">here</a>.
+</p>
+                                                <p>
+<b>IMPORTANT</b>: Set an environment variable JAVA_HOME to the pathname of the 
+directory into which you installed the JDK release.
+</p>
                             </blockquote>
         </p>
       </td></tr>
@@ -152,19 +156,34 @@
                                                 <table border="0" cellspacing="0" cellpadding="2" width="100%">
       <tr><td bgcolor="#525D76">
         <font color="#ffffff" face="arial,helvetica,sanserif">
-          <a name="Articles"><strong>Articles</strong></a>
+          <a name="Install Apache Ant 1.5.1"><strong>Install Apache Ant 1.5.1</strong></a>
         </font>
       </td></tr>
       <tr><td>
         <blockquote>
-                                    <ul>
-    <li>
-      <b><a href="http://www.ubeans.com/tomcat/index.html">Apache 1.3.23 + Tomcat 4.0.2 + Load Balancing</a></b>, by Pascal Forget
-    </li>
-    <li>
-      <b><a href="http://www.theserverside.com/resources/article.jsp?l=Tomcat">Clustering Technologies - In Memory Session Replication in Tomcat 4</a></b>, by Filip Hanik
-    </li>
-  </ul>
+                                    <p>
+Download a binary distribution of Ant 1.5.1 from 
+<a href="http://jakarta.apache.org/builds/jakarta-ant/release/v1.5.1/bin/">here</a>.
+</p>
+                                                <p>
+Unpack the binary distribution into a convenient location so that the
+Ant release resides in its own directory (conventionally named
+"jakarta-ant-1.5.1").  For the purposes of the remainder of this document,
+the symbolic name "${ant.home}" is used to refer to the full pathname of
+ the release directory.
+</p>
+                                                <p>
+Modify the PATH environment variable to include directory
+"${ant.home}/bin" in its list.  This makes the "ant" command line script
+available, which will be used to actually perform the build.
+</p>
+                                                <p>
+Download a binary distribution of Xalan 2 from <a href="http://xml.apache.org/dist/xalan-j/">here</a>.
+</p>
+                                                <p>
+Make the "xalan.jar" file of this distribution available to Ant (so that
+it can be used with the "style" tag) by copying it to "${ant.home}/lib".
+</p>
                             </blockquote>
         </p>
       </td></tr>
@@ -173,16 +192,87 @@
                                                 <table border="0" cellspacing="0" cellpadding="2" width="100%">
       <tr><td bgcolor="#525D76">
         <font color="#ffffff" face="arial,helvetica,sanserif">
-          <a name="Tools"><strong>Tools</strong></a>
+          <a name="Building Tomcat"><strong>Building Tomcat</strong></a>
         </font>
       </td></tr>
       <tr><td>
         <blockquote>
-                                    <ul>
-    <li>
-      <a href="http://www.day.com/en/product/communiqu1/cqenterprise/communiqu1/dnlogin.html">DAY Communique JSP Debugger</a>
-    </li>
-  </ul>
+                                    <p>
+Download the main build.xml script from <a href="http://jakarta.apache.org/builds/jakarta-tomcat/build-5/build.xml">here</a>.
+</p>
+                                                <p>
+Create a new directory, and copy the newly download build.xml to it. This
+  directory will be referred to as the ${tomcat.source} directory in the rest
+  of this document.
+</p>
+                                                <p>
+Go to that directory, and do:
+<code><br />
+    cd ${tomcat.source}<br />
+    ant<br />
+</code>
+</p>
+                                                <p>
+NOTE: Users accessing the Internet through a proxy must use a properties
+  file to indicate to Ant the proxy configuration. Read below.
+</p>
+                                                <p>
+WARNING: Running this command will checkout the Tomcat 5 sources from CVS, as
+  well as download binaries to the "/usr/local" directory. Make sure this is
+  appropriate to do so on your computer. On Windows, this usually corresponds
+  to the "C:\usr\local" directory, unless Cygwin is used. Read below to 
+  customize the directory used to download the binaries.
+</p>
+                                                <p>
+The build can be controlled by creating a ${tomcat.source}/build.properties
+  file, and adding the following content to it:
+<code><br />
+    # ----- Proxy setup -----<br />
+    # Uncomment if using a proxy server<br />
+    #proxy.host=proxy.domain<br />
+    #proxy.port=8080<br />
+    #proxy.use=on<br />
+<br />
+    # ----- Default Base Path for Dependent Packages -----<br />
+    # Replace this path with the directory path where dependencies binaries<br />
+    # should be downloaded<br />
+    base.path=/usr/local<br />
+</code>
+</p>
+                            </blockquote>
+        </p>
+      </td></tr>
+      <tr><td><br/></td></tr>
+    </table>
+                                                <table border="0" cellspacing="0" cellpadding="2" width="100%">
+      <tr><td bgcolor="#525D76">
+        <font color="#ffffff" face="arial,helvetica,sanserif">
+          <a name="Updating and rebuilding Tomcat sources"><strong>Updating and rebuilding Tomcat sources</strong></a>
+        </font>
+      </td></tr>
+      <tr><td>
+        <blockquote>
+                                    <p>
+It is recommended to regularly update the downloaded Tomcat 5 sources. 
+To do this, execute the following commands:
+
+<code><br />
+    cd ${tomcat.source}<br />
+    ant checkout<br />
+</code>
+</p>
+                                                <p>
+For a quick rebuild of only modified code you can use 
+
+<code><br />
+    cd ${tomcat.source}<br />
+    ant build<br />
+</code>
+
+In addition, "ant build-depends" will build packages that 
+tomcat depends on ( commons-logging for now ), to ease fixes
+and debuging in those packages.
+</p>
                             </blockquote>
         </p>
       </td></tr>

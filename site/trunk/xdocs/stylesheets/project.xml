@@ -10,6 +10,7 @@
         <item name="Front Page"           href="/index.html"/> 
 	<item name="News &amp; Status"    href="/news.html"/>
 	<item name="Bug Database"         href="/bugreport.html"/>
+	<item name="Building"             href="/building.html"/>
 	<item name="Resources"            href="/resources.html"/>
         <item name="IRC"                  href="/irc.html"/>
     </menu>
