@@ -890,8 +890,14 @@ class NoBodyResponse implements HttpServletResponse {
 	didSetContentLength = true;
     }
 
+    public void setCharacterEncoding(String charset)
+      { resp.setCharacterEncoding(charset); }
+
     public void setContentType(String type)
       { resp.setContentType(type); }
+
+    public String getContentType()
+      { return resp.getContentType(); }
 
     public ServletOutputStream getOutputStream() throws IOException
       { return noBody; }

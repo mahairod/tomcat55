@@ -122,6 +122,16 @@ public interface ServletResponse {
   
     public String getCharacterEncoding();
     
+    /**
+     * Overrides the name of the character encoding used in the body
+     * of the request. This method must be called prior to reading
+     * request parameters or reading input using getReader().
+     *
+     * @param charset String containing the name of the chararacter encoding.
+     *
+     */
+  
+    public void setCharacterEncoding(String charset);
     
 
     /**
@@ -223,6 +233,24 @@ public interface ServletResponse {
      */
 
     public void setContentType(String type);
+    
+    /**
+     * Returns the MIME type of the body of the request, or null if
+     * the type is not known. For HTTP servlets, same as the value of
+     * the CGI variable CONTENT_TYPE.
+     *
+     * @return a String containing the name of the MIME type of the
+     * request, or null if the type is not known
+     * 
+     * <p> The content type may include the type of character
+     * encoding used, for example, <code>text/html; charset=ISO-8859-4</code>.
+     *
+     * @see 		#getOutputStream
+     * @see 		#getWriter
+     *
+     */
+
+    public String getContentType();
     
 
     /**
