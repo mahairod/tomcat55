@@ -1,5 +1,4 @@
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application
-2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
 
 <!--
 The web-app element is the root of the deployment descriptor for
@@ -9,10 +8,13 @@ a web application
 <!ELEMENT web-app (icon?, display-name?, description?, distributable?, context-param*, filter*, filter-mapping*, listener*, servlet*, servlet-mapping*, session-config?,
 mime-mapping*, welcome-file-list?, error-page*, taglib*,
 resource-env-ref*, resource-ref*, security-constraint*, login-config?, security-role*,
-env-entry*, ejb-ref*)>
+env-entry*, ejb-ref*, ejb-local-ref*)>
 
 <!--
-Declares a filter in the web application. The filter is mapped to either a servlet or a URL pattern in the filter-mapping element, using the filter-name value to reference. Filters can access the initialization parameters declared in the deployment descriptor at runtime via the FilterConfig interface.
+Declares a filter in the web application. The filter is mapped to either a servlet or a URL 
+pattern in the filter-mapping element, using the filter-name value to reference. Filters 
+can access the initialization parameters declared in the deployment descriptor at 
+runtime via the FilterConfig interface.
 -->
 
 <!ELEMENT filter (icon?, filter-name, display-name?, description?,
@@ -29,14 +31,24 @@ The fully qualified classname of the filter.
 <!ELEMENT filter-class (#PCDATA)>
 
 <!--
-Declaration of the filter mappings in this web application. The container uses the filter-mapping declarations to decide which filters to apply to a request, and in what order. The container matches the request URI to a Servlet in the normal way. To determine which filters to apply it matches filter-mapping declarations either on servlet-name, or on url-pattern for each filter-mapping element, depending on which style is used. The order in which filters are invoked is the order in which filter-mapping declarations that match a request URI for a servlet appear in the list of filter-mapping elements.The filter-name value must be the value of the <filter-name> sub-elements of one of the <filter> declarations in the deployment descriptor.
+Declaration of the filter mappings in this web application. The container uses 
+the filter-mapping declarations to decide which filters to apply to a request, 
+and in what order. The container matches the request URI to a Servlet in the 
+normal way. To determine which filters to apply it matches filter-mapping declarations 
+either on servlet-name, or on url-pattern for each filter-mapping element, depending 
+on which style is used. The order in which filters are invoked is the order in which 
+filter-mapping declarations that match a request URI for a servlet appear in the list 
+of filter-mapping elements.The filter-name value must be the value of the <filter-name> 
+sub-elements of one of the <filter> declarations in the deployment descriptor.
 -->
 
 <!ELEMENT filter-mapping (filter-name, (url-pattern | servlet-name))>
 
 <!--
 The icon element contains a small-icon and a large-icon element
-which specify the location within the web application for a small and large image used to represent the web application in a GUI tool. At a minimum, tools must accept GIF and JPEG format images.
+which specify the location within the web application for a small and large image 
+used to represent the web application in a GUI tool. At a minimum, tools must 
+accept GIF and JPEG format images.
 -->
 
 <!ELEMENT icon (small-icon?, large-icon?)>
@@ -104,7 +116,8 @@ The listener element indicates the deployment properties for a web application l
 <!ELEMENT listener (listener-class)>
 
 <!--
-The listener-class element declares a class in the application must be registered as a web application listener bean.
+The listener-class element declares a class in the application must be registered as 
+a web application listener bean.
 -->
 
 <!ELEMENT listener-class (#PCDATA)>
@@ -268,12 +281,17 @@ Java exception type.
 
 <!--
 The location element contains the location of the resource in the
-web application relative to the root of the web application. The value of the location must have a leading `/'.
+web application relative to the root of the web application. The value of 
+the location must have a leading `/'.
 -->
 
 <!ELEMENT location (#PCDATA)>
 
-<!-- The resource-env-ref element contains a declaration of an component's reference to an administered object associated with a resource in the component's environment. It consists of an optional description, the resource environment reference name, and an indica-tion of the resource environment reference type expected by the component's code. 
+<!-- The resource-env-ref element contains a declaration of an component's 
+reference to an administered object associated with a resource in the 
+component's environment. It consists of an optional description, the 
+resource environment reference name, and an indica-tion of the resource 
+environment reference type expected by the component's code. 
 Examples: 
 <resource-env-ref> 
 
@@ -287,12 +305,15 @@ Examples:
 <!ELEMENT resource-env-ref (description?, resource-env-ref-name, 
 resource-env-ref-type)>
 
-<!-- The resource-env-ref-name element specifies the name of a resource environment reference; its value is the environment entry name used in code.
+<!-- The resource-env-ref-name element specifies the name of a resource 
+environment reference; its value is the environment entry name used in code.
  -->
 
 <!ELEMENT resource-env-ref-name (#PCDATA)>
 
-<!-- The resource-env-ref-type element specifies the type of a resource environment reference. Web containers in J2EE are required to support javax.jms.Topic and javax.jms.Queue
+<!-- The resource-env-ref-type element specifies the type of a resource 
+environment reference. Web containers in J2EE are required to support 
+javax.jms.Topic and javax.jms.Queue
 -->
 
 <!ELEMENT resource-env-ref-type (#PCDATA)>
@@ -330,7 +351,10 @@ for those respective cases.
 
 <!ELEMENT res-auth (#PCDATA)>
 
-<!-- The res-sharing-scope element specifies whether connections obtained through the given resource manager connection factory reference can be shared. The value of this element, if specified, must be one of the two following: <res-sharing-scope>Shareable</res-sharing-scope> 
+<!-- The res-sharing-scope element specifies whether connections obtained 
+through the given resource manager connection factory reference can be shared. 
+The value of this element, if specified, must be one of the two following: 
+<res-sharing-scope>Shareable</res-sharing-scope> 
 <res-sharing-scope>Unshareable</res-sharing-scope> The default value is Shareable.
 -->
 
@@ -395,7 +419,10 @@ CONFIDENTIAL flag will indicate that the use of SSL is required.
 <!--
 The auth-constraint element indicates the user roles that should
 be permitted access to this resource collection. The role used here
-must either in a security-role-ref element, or be the specially reserved role-name "*" that is a compact syntax for indicating all roles in the web application. If both "*" and rolenames appear, the container interprets this as all roles.
+must either in a security-role-ref element, or be the specially reserved 
+role-name "*" that is a compact syntax for indicating all roles in the 
+web application. If both "*" and rolenames appear, the container 
+interprets this as all roles.
 -->
 
 <!ELEMENT auth-constraint (description?, role-name*)>
@@ -447,7 +474,8 @@ can be found
 
 <!--
 The auth-method element is used to configure the authentication
-mechanism for the web application. As a prerequisite to gaining access to any web resources which are protected by an authorization
+mechanism for the web application. As a prerequisite to gaining 
+access to any web resources which are protected by an authorization
 constraint, a user must have authenticated using the configured
 mechanism. Legal values for this element are "BASIC", "DIGEST",
 "FORM", or "CLIENT-CERT".
@@ -464,9 +492,12 @@ application.
 <!ELEMENT security-role (description?, role-name)>
 
 <!--
-The security-role-ref element defines a mapping between the name of role called from a Servlet using 
-isUserInRole(String name) and the name of a security role defined for the web application. For example, 
-to map the security role reference "FOO" to the security role with role-name "manager" the sytax would 
+The security-role-ref element defines a mapping between the name of 
+role called from a Servlet using 
+isUserInRole(String name) and the name of a security role defined 
+for the web application. For example, 
+to map the security role reference "FOO" to the security role 
+with role-name "manager" the sytax would 
 be:
 
 <security-role-ref>
@@ -479,9 +510,11 @@ be:
 <role-link>manager</manager>
 </security-role-ref>
 
-In this case if the servlet called by a user belonging to the "manager" security role made the API call 
+In this case if the servlet called by a user belonging to the "manager" 
+security role made the API call 
 isUserInRole("FOO") the result would be true.
-Since the role-name "*" has a special meaning for authorization constraints, its value is not permitted here.
+Since the role-name "*" has a special meaning for authorization 
+constraints, its value is not permitted here.
 -->
 
 <!ELEMENT security-role-ref (description?, role-name, role-link)>
@@ -543,7 +576,8 @@ reference to the enterprise bean.
 
 <!ELEMENT ejb-ref-name (#PCDATA)>
 
-<!-- The ejb-ref-type element contains the expected type of the referenced enterprise bean. The ejb-ref-type element must be one of the following:
+<!-- The ejb-ref-type element contains the expected type of the 
+referenced enterprise bean. The ejb-ref-type element must be one of the following:
 
    <ejb-ref-type>Entity</ejb-ref-type>
    <ejb-ref-type>Session</ejb-ref-type>
@@ -577,11 +611,57 @@ application package.
 
 
 <!--
-The run-as element must contain the name of a security role defined for this web application. If the optional run-as element is used for a servlet definition, the security identity of a call to any EJBs from the servlet must be propogated as the security role with the same name.
+The ejb-local-ref element is used for the declaration of a reference to
+an enterprise bean's local home. The declaration consists of:
 
+	- an optional description
+	- the EJB reference name used in the code of the web component
+	  that's referencing the enterprise bean
+	- the expected type of the referenced enterprise bean
+	- the expected local home and local interfaces of the referenced
+	  enterprise bean
+	- optional ejb-link information, used to specify the referenced
+	  enterprise bean
+
+Used by <web-app>
 -->
 
-<!ELEMENT run-as (#PCDATA)>
+<!ELEMENT ejb-local-ref (description?, ejb-ref-name, ejb-ref-type,
+		local-home, local, ejb-link?)>
+
+<!-- 
+
+The local element contains the fully-qualified name of the
+enterprise bean's local interface. 
+
+Used by ejb-local-ref
+
+-->
+<!ELEMENT local (#PCDATA)>
+
+<!-- 
+
+The local-home element contains the fully-qualified name of the
+enterprise bean's local home interface. 
+
+Used by ejb-local-ref
+-->
+<!ELEMENT local-home (#PCDATA)>
+
+
+
+
+<!--
+The run-as element, if defined for a servlet, overrides the security 
+identity used to call an EJB
+by that servlet in this web application. The role-name is one of the 
+security roles already
+defined for this web application.
+
+Used by: <servlet>
+-->
+<!ELEMENT run-as (description?, role-name)>
+
 
 
 <!--
@@ -667,4 +747,7 @@ deployment descriptor.
 <!ATTLIST home id ID #IMPLIED>
 <!ATTLIST remote id ID #IMPLIED>
 <!ATTLIST ejb-link id ID #IMPLIED>
+<!ATTLIST ejb-local-ref id ID #IMPLIED>
+<!ATTLIST local-home id ID #IMPLIED>
+<!ATTLIST local id ID #IMPLIED>
 <!ATTLIST run-as id ID #IMPLIED>
