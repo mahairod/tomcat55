@@ -236,6 +236,13 @@ public class ParserController {
 				      InputStreamReader reader)
 	 throws JasperException
     {
+	newEncoding = null;
+
+	// FIXME: Actually we should know that we are compiling a tag file
+	// if we begin the compilation from either the tag file
+	// element in a tld OR tagdir attribute in a tag directive.
+        isTagFile = file.startsWith( "/WEB-INF/tags" ) ||
+                    file.startsWith( "/META-INF/tags" );
 
 	PageInfo pageInfo = compiler.getPageInfo();
 	if (pageInfo.isXmlSpecified()) {
@@ -244,7 +251,7 @@ public class ParserController {
 	if (pageInfo.getPageEncoding() != null) {
 	    newEncoding = pageInfo.getPageEncoding();
 	}
-	if (pageInfo.isXmlSpecified() && pageInfo.getPageEncoding() != null)
+	if (pageInfo.isXmlSpecified() && newEncoding != null)
 	    return;
 
 	JspReader jspReader;
@@ -270,24 +277,15 @@ public class ParserController {
 	    }
 	}
 
-	if (pageInfo.getPageEncoding() != null) {
-	    // XXX isTagFile is not correctly set, but it will be determined
-	    // elsewhere, and not here anyway.
+	if (newEncoding != null) {
+	    // encoding specified in jsp-config
 	    return;
 	}
-
-	newEncoding = null;
-	isTagFile = false;
 
 	// Figure out the encoding of the page
 	// FIXME: We assume xml parser will take care of
         // encoding for page in XML syntax. Correct?
 	if (!isXml) {
-            // Note: this currently assumes there is no XML syntax for tag 
-            // files (as of PFD of the JSP 2.0 spec there is an XML view, 
-            // but no XML syntax).
-            isTagFile = file.startsWith( "/WEB-INF/tags" ) ||
-                file.startsWith( "/META-INF/tags" );
 	    jspReader.reset(startMark);
 	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
