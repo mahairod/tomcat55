@@ -63,7 +63,7 @@ package org.apache.jasper.runtime;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import org.apache.jasper.Constants;
 
 /**
@@ -81,10 +81,10 @@ public class TagHandlerPool {
     // index of next available tag handler
     private int current;
 
-    public static TagHandlerPool getTagHandlerPool( Servlet jspServlet) {
+    public static TagHandlerPool getTagHandlerPool( ServletConfig config) {
         TagHandlerPool result=null;
 
-        String tpClassName=getOption( jspServlet, OPTION_TAGPOOL, null);
+        String tpClassName=getOption( config, OPTION_TAGPOOL, null);
         if( tpClassName != null ) {
             try {
                 Class c=Class.forName( tpClassName );
@@ -95,14 +95,14 @@ public class TagHandlerPool {
             }
         }
         if( result==null ) result=new TagHandlerPool();
-        result.init(jspServlet);
+        result.init(config);
 
         return result;
     }
 
-    protected void init( Servlet servlet ) {
+    protected void init( ServletConfig config ) {
         int maxSize=-1;
-        String maxSizeS=getOption(servlet, OPTION_MAXSIZE, null);
+        String maxSizeS=getOption(config, OPTION_MAXSIZE, null);
         if( maxSizeS != null ) {
             try {
                 maxSize=Integer.parseInt(maxSizeS);
@@ -192,15 +192,14 @@ public class TagHandlerPool {
 	}
     }
 
-    protected static String getOption( Servlet servlet, String name, String defaultV) {
-        if( servlet==null ) return defaultV;
-        if( servlet.getServletConfig() == null ) return defaultV;
+    protected static String getOption( ServletConfig config, String name, String defaultV) {
+        if( config == null ) return defaultV;
 
-        String value=servlet.getServletConfig().getInitParameter(name);
+        String value=config.getInitParameter(name);
         if( value != null ) return value;
-        if( servlet.getServletConfig().getServletContext() ==null )
+        if( config.getServletContext() ==null )
             return defaultV;
-        value=servlet.getServletConfig().getServletContext().getInitParameter(name);
+        value=config.getServletContext().getInitParameter(name);
         if( value!=null ) return value;
         return defaultV;
     }

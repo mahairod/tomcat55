@@ -318,12 +318,41 @@ class Generator {
     }
 
     /**
+     * Generates the _jspInit() method for instantiating the tag handler pools.
+     * For tag file, _jspInit has to be invoked manually, and the ServletConfig
+     * object explicitly passed.
+     */
+    private void generateInit() {
+
+        if (ctxt.isTagFile()) {
+            out.printil("private void _jspInit(ServletConfig config) {");
+	}
+	else {
+            out.printil("public void _jspInit() {");
+	}
+
+        out.pushIndent();
+        for (int i=0; i<tagHandlerPoolNames.size(); i++) {
+            out.printin((String) tagHandlerPoolNames.elementAt(i));
+            out.print(" = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(");
+            if (ctxt.isTagFile()) {
+                out.print("config");
+            }
+            else {
+                out.print("getServletConfig()");
+            }
+            out.println(");");
+        }
+        out.popIndent();
+        out.printil("}");
+        out.println();
+    }
+
+    /**
      * Generates the _jspDestroy() method which is responsible for calling the
      * release() method on every tag handler in any of the tag handler pools.
      */
     private void generateDestroy() {
-	if (tagHandlerPoolNames.size() <= 0)
-	    return;
 
 	out.printil("public void _jspDestroy() {");
 	out.pushIndent();
@@ -415,12 +444,6 @@ class Generator {
 	    }
             out.println();
 	}
- 
-	// Constructor
-	if (ctxt.getOptions().isPoolingEnabled()
-	        && !tagHandlerPoolNames.isEmpty()) {
-	    generateConstructor(className);
-	}
     }
 
     /**
@@ -440,6 +463,7 @@ class Generator {
 
 	if (ctxt.getOptions().isPoolingEnabled()
 	        && !tagHandlerPoolNames.isEmpty()) {
+	    generateInit();
 	    generateDestroy();
 	}
     }
@@ -483,6 +507,9 @@ class Generator {
 
  	// Class variable declarations
         genPreambleClassVariableDeclarations( servletClassName );
+ 
+	// Constructor
+//	generateConstructor(className);
  
 	// Methods here
         genPreambleMethods();
@@ -663,19 +690,6 @@ class Generator {
 	out.printil("public " + className + "() {");
 	out.printil("}");
 	out.println();
-
-        out.printil("public void _jspInit() {");
-        out.pushIndent();
-        for (int i=0; i<tagHandlerPoolNames.size(); i++) {
-            out.printin((String) tagHandlerPoolNames.elementAt(i));
-            out.print(" = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(");
-            out.print("this");
-            out.println(");");
-        }
-        out.popIndent();
-        out.printil("}");
-        out.println();
-
     }
 
     /**
@@ -2971,7 +2985,7 @@ class Generator {
 					       gen.fragmentHelperClass,
 					       gen.ctxt.getClassLoader(),
 					       tagInfo));
-	    gen.generateTagHandlerPostamble(  tagInfo );
+	    gen.generateTagHandlerPostamble(tagInfo);
 	} else {
 	    gen.generatePreamble(page);
 	    gen.generateXmlDeclaration(page);
@@ -3078,8 +3092,11 @@ class Generator {
             "pageContext.getServletContext();" );
 	out.printil("javax.servlet.ServletConfig config = " +
             "pageContext.getServletConfig();");
-        
 	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
+	if (ctxt.getOptions().isPoolingEnabled()
+                && !tagHandlerPoolNames.isEmpty()) {
+	    out.printil("_jspInit(config);");
+	}
 	generatePageScopedVariables(tagInfo);
         
      	// Number of tag object that need to be popped
@@ -3111,6 +3128,10 @@ class Generator {
         out.printil( "} finally {" );
         out.pushIndent();
 	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).syncEndTagFile();");
+	if (ctxt.getOptions().isPoolingEnabled()
+                && !tagHandlerPoolNames.isEmpty()) {
+	    out.printil("_jspDestroy();");
+	}
         out.popIndent();
         out.printil( "}" );
 
