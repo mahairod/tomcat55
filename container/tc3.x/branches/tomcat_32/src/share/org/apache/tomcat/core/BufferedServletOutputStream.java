@@ -215,9 +215,9 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	    // streams properly encode their output.
 	    //
 	    if ((c & 0xff00) != 0) {	// high order byte must be zero
-		String errMsg = sm.getString(
+        String errMsg = sm.getString(
                     "servletOutputStreamImpl.fmt.not_iso8859_1", 
-                     new Object[] {new Character(c)});
+                     new Object[] {Integer.toHexString((int)c)});
 		throw new IOException(errMsg);
 	    }
 	    write(c);
