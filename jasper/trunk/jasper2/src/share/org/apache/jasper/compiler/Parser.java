@@ -1424,19 +1424,7 @@ class Parser implements TagConstants {
         String tagIdentifier = reader.parseToken(false);
         reader.reset(m);
         
-        if (tagIdentifier.equals("%--")) {
-            return false;
-        }
-        if (tagIdentifier.equals("%@")) {
-            return false;
-        }
-        if (tagIdentifier.equals("%!")) {
-            return false;
-        }
-        if (tagIdentifier.equals("%=")) {
-            return false;
-        }
-        if (tagIdentifier.equals("%")) {
+        if (tagIdentifier.startsWith("%")) {
             return false;
         }
         if (tagIdentifier.startsWith("jsp:")) {
