@@ -719,20 +719,33 @@ public class WebappClassLoader
 
             try {
                 NamingEnumeration enum = resources.listBindings(getJarPath());
-                int i;
-                for (i = 0; enum.hasMoreElements() && (i < length); i++) {
+                int i = 0;
+                while (enum.hasMoreElements() && (i < length)) {
                     NameClassPair ncPair = (NameClassPair) enum.nextElement();
-                    if (!ncPair.getName().equals(jarNames[i])) {
+                    String name = ncPair.getName();
+                    // Ignore non JARs present in the lib folder
+                    if (!name.endsWith(".jar"))
+                        continue;
+                    if (!name.equals(jarNames[i])) {
                         // Missing JAR
-                        log("    Additional JARs have been added : '"
-                            + ncPair.getName() + "'");
+                        log("    Additional JARs have been added : '" 
+                            + name + "'");
                         return (true);
                     }
+                    i++;
                 }
                 if (enum.hasMoreElements()) {
-                    // There was more JARs
-                    log("    Additional JARs have been added");
-                    return (true);
+                    while (enum.hasMoreElements()) {
+                        NameClassPair ncPair = 
+                            (NameClassPair) enum.nextElement();
+                        String name = ncPair.getName();
+                        // Additional non-JAR files are allowed
+                        if (name.endsWith(".jar")) {
+                            // There was more JARs
+                            log("    Additional JARs have been added");
+                            return (true);
+                        }
+                    }
                 } else if (i < jarNames.length) {
                     // There was less JARs
                     log("    Additional JARs have been added");
