@@ -346,8 +346,8 @@ public class ContextBindings {
     public static void unbindClassLoader(Object name, Object token, 
                                          ClassLoader classLoader) {
         if (ContextAccessController.checkSecurityToken(name, token)) {
-            Object cl = clBindings.get(name);
-            if (cl != classLoader) {
+            Object n = clNameBindings.get(classLoader);
+            if (!(n.equals(name))) {
                 return;
             }
             clBindings.remove(classLoader);
