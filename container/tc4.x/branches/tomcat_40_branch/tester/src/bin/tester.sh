@@ -35,12 +35,38 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
+# ----- Cygwin Unix Paths Setup -----------------------------------------------
+
+# Cygwin support.  $cygwin _must_ be set to either true or false.
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+  *) cygwin=false ;;
+esac
+ 
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+  [ -n "$CATALINA_HOME" ] &&
+    CATALINA_HOME=`cygpath --unix "$CATALINA_HOME"`
+    [ -n "$JAVA_HOME" ] &&
+    JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+    [ -n "$ANT_HOME" ] &&
+    ANT_HOME=`cygpath --unix "$ANT_HOME"`
+fi
+
 # ----- Set Up The System Classpath -------------------------------------------
 
 CP=$CATALINA_HOME/webapps/tester/WEB-INF/lib/tester.jar:$CATALINA_HOME/server/lib/jaxp.jar:$CATALINA_HOME/server/lib/crimson.jar:$ANT_HOME/lib/ant.jar
 
-echo Using CLASSPATH: $CP
+# ----- Cygwin Windows Paths Setup --------------------------------------------
 
+# convert the existing path to windows
+if $cygwin ; then
+   CP=`cygpath --path --windows "$CP"`
+   CATALINA_HOME=`cygpath --path --windows "$CATALINA_HOME"`
+   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
+fi
+
+echo Using CLASSPATH: $CP
 
 # ----- Execute The Requested Command -----------------------------------------
 
