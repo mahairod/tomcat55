@@ -273,7 +273,9 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
+        // FIX ME 
+        // String tname = findObjectName(type);
+        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
@@ -832,7 +834,8 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
+        // String tname = findObjectName(type);
+        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
@@ -844,7 +847,7 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (tname.equals("Engine")) {
             engine.setLogger(logger);
         } else if (tname.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Host host = (Host) engine.findChild(pname.getKeyProperty("name"));
             host.setLogger(logger);
         }
 
@@ -873,7 +876,9 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
+        // FIX ME
+        //String tname = findObjectName(type);
+        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
@@ -885,7 +890,7 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (tname.equals("Engine")) {
             engine.setLogger(logger);
         } else if (tname.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Host host = (Host) engine.findChild(pname.getKeyProperty("name"));
             host.setLogger(logger);
         }
 
