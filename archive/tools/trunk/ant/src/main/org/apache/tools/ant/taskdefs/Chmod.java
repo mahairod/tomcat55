@@ -67,8 +67,8 @@ import java.util.*;
 
 public class Chmod extends Task {
 
-    public File srcFile;
-    public String mod;
+    private File srcFile;
+    private String mod;
     
     public void setSrc(String src) {
 	srcFile = project.resolveFile(src);
