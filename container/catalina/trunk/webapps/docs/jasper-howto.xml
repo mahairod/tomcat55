@@ -265,7 +265,7 @@ The following command line can be used to run the script
 (replacing the tokens with the Tomcat base path and the path to the webapp 
 which should be precompiled):<br/>
 <source>
-$ANT_HOME/ant.sh -Dtomcat.home=&lt;$TOMCAT_HOME&gt; -Dwebapp.path=&lt;$WEBAPP_PATH&gt;
+$ANT_HOME/ant -Dtomcat.home=&lt;$TOMCAT_HOME&gt; -Dwebapp.path=&lt;$WEBAPP_PATH&gt;
 </source>
 </p>
 
