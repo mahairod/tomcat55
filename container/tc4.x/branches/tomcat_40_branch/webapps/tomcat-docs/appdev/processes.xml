@@ -85,7 +85,7 @@ descriptor.  You can base <code>web.xml</code> on the
 <a href="web.xml.txt">basic web.xml file</a>, or code it from scratch.</p>
 <source>
 cd {my home directory}
-cd myapp/WEB-INF
+cd myapp/web/WEB-INF
 emacs web.xml
 cvs add web.xml
 cvs commit
