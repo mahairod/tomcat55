@@ -155,7 +155,7 @@ if [ "$1" = "debug" ] ; then
       shift
       exec "$_RUNJDB" $JAVA_OPTS $CATALINA_OPTS \
         -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
-        -sourcepath "$CATALINA_HOME"/../../jakarta-tomcat-4.0/catalina/src/share \
+        -sourcepath "$CATALINA_HOME"/../../jakarta-tomcat-catalina/catalina/src/share \
         -Djava.security.manager \
         -Djava.security.policy=="$CATALINA_BASE"/conf/catalina.policy \
         -Dcatalina.base="$CATALINA_BASE" \
@@ -165,7 +165,7 @@ if [ "$1" = "debug" ] ; then
     else
       exec "$_RUNJDB" $JAVA_OPTS $CATALINA_OPTS \
         -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
-        -sourcepath "$CATALINA_HOME"/../../jakarta-tomcat-4.0/catalina/src/share \
+        -sourcepath "$CATALINA_HOME"/../../jakarta-tomcat-catalina/catalina/src/share \
         -Dcatalina.base="$CATALINA_BASE" \
         -Dcatalina.home="$CATALINA_HOME" \
         -Djava.io.tmpdir="$CATALINA_TMPDIR" \
