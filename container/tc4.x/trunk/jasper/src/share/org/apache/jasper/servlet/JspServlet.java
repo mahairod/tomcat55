@@ -325,8 +325,11 @@ public class JspServlet extends HttpServlet {
                     parentClassLoader.loadClass( basePackage +
                         "servlet.JspServlet$JspServletWrapper");
                     parentClassLoader.loadClass( basePackage +
-			"compiler.ServletResponseWrapperInclude");
+			"runtime.ServletResponseWrapperInclude");
 		} catch (ClassNotFoundException ex) {
+		    System.out.println(
+			"Jasper JspServlet preload of class failed: " +
+			ex.getMessage());
 		}
 	    }
 	    Constants.message("jsp.message.scratch.dir.is", 
