@@ -568,10 +568,6 @@
       <param name="sourcefile" value="${struts.loc}"/>
       <param name="destfile" value="${struts.jar}"/>
     </antcall>
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${jstl.loc}"/>
-      <param name="destfile" value="${struts.jar}"/>
-    </antcall>
 <!--
     <antcall target="downloadfile">
       <param name="sourcefile" value="${tyrex.loc}"/>
