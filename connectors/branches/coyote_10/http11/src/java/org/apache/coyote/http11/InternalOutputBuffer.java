@@ -429,7 +429,7 @@ public class InternalOutputBuffer implements OutputBuffer {
         if (message == null) {
             write(HttpMessages.getMessage(status));
         } else {
-	    message = message.replace('\r', ' ').replace('\n', ' ');
+            message = message.replace('\r', ' ').replace('\n', ' ');
             write(message);
         }
 
