@@ -56,6 +56,11 @@ commons-modeler.lib=${commons-modeler.home}
 commons-modeler.lib=${commons-modeler.home}/dist
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 
+# ----- (optional) Jakarta Regexp (required by Http11) -----
+regexp.home=../jakarta-regexp-1.3
+regexp.lib=${regexp.home}
+regexp.jar=${regexp.lib}/jakarta-regexp-1.3.jar
+
 # ----- (optional) Jakarta Commons DB Pool (required by future PooledJDBCRealm ) -----
 commons-dbcp.home=../commons-dbcp-1.0
 commons-dbcp.lib=${commons-dbcp.home}
