@@ -110,6 +110,10 @@ public final class SsiInvokerServlet extends HttpServlet {
     /** Expiration time in seconds for the doc. */
     private Long expires = null;
 
+
+    /** virtual path can be webapp-relative */
+    private boolean isVirtualWebappRelative = false;
+
     /** The Mediator object for the SsiCommands. */
     private static SsiMediator ssiMediator = null;
 
@@ -137,6 +141,10 @@ public final class SsiInvokerServlet extends HttpServlet {
         } catch (Throwable t) {
             ;
         }
+
+        value = getServletConfig().getInitParameter("isVirtualWebappRelative");
+        isVirtualWebappRelative = Integer.parseInt(value) > 0 ? true : false;
+
         try {
             value = getServletConfig().getInitParameter("expires");
             expires = Long.valueOf(value);
@@ -256,9 +264,9 @@ public final class SsiInvokerServlet extends HttpServlet {
 
         if (ssiMediator == null)
             ssiMediator =
-		new SsiMediator(req, res, out, servletContext, debug, path);
+		new SsiMediator(req, res, out, servletContext, debug, path, isVirtualWebappRelative);
         else
-            ssiMediator.flush(req, res, out, servletContext, path);
+            ssiMediator.flush(req, res, out, servletContext, path, isVirtualWebappRelative);
 
         while ((len = in.read(buf)) != -1)
             soonOut.write(buf, 0, len);
