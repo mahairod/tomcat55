@@ -44,6 +44,10 @@
       <fix>
         <bug>32713</bug>: Fix resource-env-ref handling. (remm)
       </fix>
+      <fix>
+        <bug>31201</bug>: Improve i18n support in DefaultServlet. This was causing
+        problems with JSP include actions and static files. (markt)
+      </fix>
     </changelog>
   </subsection>
 
