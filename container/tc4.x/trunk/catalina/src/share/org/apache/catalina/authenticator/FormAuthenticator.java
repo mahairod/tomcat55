@@ -279,11 +279,20 @@ public class FormAuthenticator
             return (false);
         }
 
-        // Save the authenticated Principal in our session
         if (debug >= 1)
             log("Authentication of '" + username + "' was successful");
+
         if (session == null)
-            session = getSession(request, true);
+            session = getSession(request, false);
+        if (session == null) {
+            if (debug >=1)
+                log("User took so long to log on the session expired");
+            hres.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
+                           sm.getString("authenticator.sessionExpired"));
+            return (false);
+        }
+        
+        // Save the authenticated Principal in our session
         session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
 
         // If we are not caching, save the username and password as well
