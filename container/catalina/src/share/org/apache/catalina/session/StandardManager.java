@@ -108,21 +108,6 @@ public class StandardManager
 
 
     /**
-     * Iteration count for background processing.
-     */
-    private int count = 0;
-
-
-    /**
-     * Frequency of the session expiration, and related manager operations.
-     * Manager operations will be done once for the specified amount of
-     * backgrondProcess calls (ie, the lower the amount, the most often the
-     * checks will occur).
-     */
-    protected int processExpiresFrequency = 6;
-
-
-    /**
      * The maximum number of active Sessions allowed, or -1 for no limit.
      */
     protected int maxActiveSessions = -1;
@@ -226,46 +211,6 @@ public class StandardManager
 
     public void setRejectedSessions(int rejectedSessions) {
         this.rejectedSessions = rejectedSessions;
-    }
-
-
-    public long getProcessingTime() {
-        return processingTime;
-    }
-
-
-    public void setProcessingTime(long processingTime) {
-        this.processingTime = processingTime;
-    }
-
-
-    /**
-     * Return the frequency of manager checks.
-     */
-    public int getProcessExpiresFrequency() {
-
-        return (this.processExpiresFrequency);
-
-    }
-
-
-    /**
-     * Set the manager checks frequency.
-     *
-     * @param processExpiresFrequency the new manager checks frequency
-     */
-    public void setProcessExpiresFrequency(int processExpiresFrequency) {
-
-        if (processExpiresFrequency <= 0) {
-            return;
-        }
-
-        int oldProcessExpiresFrequency = this.processExpiresFrequency;
-        this.processExpiresFrequency = processExpiresFrequency;
-        support.firePropertyChange("processExpiresFrequency",
-                                   new Integer(oldProcessExpiresFrequency),
-                                   new Integer(this.processExpiresFrequency));
-
     }
 
 
@@ -799,32 +744,4 @@ public class StandardManager
         return (file);
 
     }
-
-
-    /**
-     * Invalidate all sessions that have expired.
-     */
-    public void processExpires() {
-
-        long timeNow = System.currentTimeMillis();
-        Session sessions[] = findSessions();
-
-        for (int i = 0; i < sessions.length; i++) {
-            sessions[i].isValid();
-        }
-        long timeEnd = System.currentTimeMillis();
-        processingTime += ( timeEnd - timeNow );
-
-    }
-
-    /**
-     * Implements the Manager interface, direct call to processExpires
-     */
-    public void backgroundProcess() {
-        count = (count + 1) % processExpiresFrequency;
-        if (count == 0)
-            processExpires();
-    }
-
-
 }

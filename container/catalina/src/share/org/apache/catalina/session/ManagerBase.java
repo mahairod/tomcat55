@@ -180,6 +180,25 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     protected int duplicates=0;
 
     protected boolean initialized=false;
+    
+    /**
+     * Processing time during session expiration.
+     */
+    protected long processingTime = 0;
+
+    /**
+     * Iteration count for background processing.
+     */
+    private int count = 0;
+
+
+    /**
+     * Frequency of the session expiration, and related manager operations.
+     * Manager operations will be done once for the specified amount of
+     * backgrondProcess calls (ie, the lower the amount, the most often the
+     * checks will occur).
+     */
+    protected int processExpiresFrequency = 6;
 
     /**
      * The string manager for this package.
@@ -257,8 +276,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         Container oldContainer = this.container;
         this.container = container;
         support.firePropertyChange("container", oldContainer, this.container);
-        // TODO: find a good scheme for the log names
-        //log=LogFactory.getLog("tomcat.manager." + container.getName());
     }
 
 
@@ -515,9 +532,11 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                         this.random = new java.util.Random();
                         this.random.setSeed(seed);
                     }
-                    long t2=System.currentTimeMillis();
-                    if( (t2-t1) > 100 )
-                        log.debug(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
+                    if(log.isDebugEnabled()) {
+                        long t2=System.currentTimeMillis();
+                        if( (t2-t1) > 100 )
+                            log.debug(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
+                    }
                 }
             }
         }
@@ -571,6 +590,42 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         this.expiredSessions = expiredSessions;
     }
 
+    public long getProcessingTime() {
+        return processingTime;
+    }
+
+
+    public void setProcessingTime(long processingTime) {
+        this.processingTime = processingTime;
+    }
+    
+    /**
+     * Return the frequency of manager checks.
+     */
+    public int getProcessExpiresFrequency() {
+
+        return (this.processExpiresFrequency);
+
+    }
+
+    /**
+     * Set the manager checks frequency.
+     *
+     * @param processExpiresFrequency the new manager checks frequency
+     */
+    public void setProcessExpiresFrequency(int processExpiresFrequency) {
+
+        if (processExpiresFrequency <= 0) {
+            return;
+        }
+
+        int oldProcessExpiresFrequency = this.processExpiresFrequency;
+        this.processExpiresFrequency = processExpiresFrequency;
+        support.firePropertyChange("processExpiresFrequency",
+                                   new Integer(oldProcessExpiresFrequency),
+                                   new Integer(this.processExpiresFrequency));
+
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -579,8 +634,34 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      * Implements the Manager interface, direct call to processExpires
      */
     public void backgroundProcess() {
+        count = (count + 1) % processExpiresFrequency;
+        if (count == 0)
+            processExpires();
     }
 
+    /**
+     * Invalidate all sessions that have expired.
+     */
+    public void processExpires() {
+
+        long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
+        int expireHere = 0 ;
+        
+        if(log.isDebugEnabled())
+            log.debug("Start expire sessions " + getName() + " at " + timeNow + " sessioncount " + sessions.length);
+        for (int i = 0; i < sessions.length; i++) {
+            if (!sessions[i].isValid()) {
+                expiredSessions++;
+                expireHere++;
+            }
+        }
+        long timeEnd = System.currentTimeMillis();
+        if(log.isDebugEnabled())
+             log.debug("End expire sessions " + getName() + " processingTime " + (timeEnd - timeNow) + " expired sessions: " + expireHere);
+        processingTime += ( timeEnd - timeNow );
+
+    }
 
     public void destroy() {
         if( oname != null )
@@ -610,7 +691,8 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 log.error("Error registering ",e);
             }
         }
-        log.debug("Registering " + oname );
+        if(log.isDebugEnabled())
+            log.debug("Registering " + oname );
                
     }
 
@@ -768,7 +850,8 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 if( len==bytes.length ) {
                     return;
                 }
-                log.debug("Got " + len + " " + bytes.length );
+                if(log.isDebugEnabled())
+                    log.debug("Got " + len + " " + bytes.length );
             } catch( Exception ex ) {
             }
             devRandomSource=null;
@@ -993,7 +1076,8 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     public String getSessionAttribute( String sessionId, String key ) {
         Session s=(Session)sessions.get(sessionId);
         if( s==null ) {
-            log.info("Session not found " + sessionId);
+            if(log.isInfoEnabled())
+                log.info("Session not found " + sessionId);
             return null;
         }
         Object o=s.getSession().getAttribute(key);
@@ -1005,7 +1089,8 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     public void expireSession( String sessionId ) {
         Session s=(Session)sessions.get(sessionId);
         if( s==null ) {
-            log.info("Session not found " + sessionId);
+            if(log.isInfoEnabled())
+                log.info("Session not found " + sessionId);
             return;
         }
         s.expire();
