@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -89,7 +85,14 @@ public final class SimplePool  {
     private int current=-1;
 
     Object lock;
+    public static final int DEFAULT_SIZE=16;
     
+    public SimplePool() {
+	this.max=DEFAULT_SIZE;
+	pool=new Object[max];
+	lock=new Object();
+    }
+
     public SimplePool(int max) {
 	this.max=max;
 	pool=new Object[max];
