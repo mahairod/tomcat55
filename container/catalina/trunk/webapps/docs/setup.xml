@@ -39,13 +39,7 @@
             administration tool and its documentation).</li>
         <li><strong>Java location</strong>: The installer will use the registry
             or the JAVA_HOME environment variable to determine the base path
-            of the JDK or a JRE. If only a JRE (or an incorrect path) 
-            is specified, Tomcat will run but will be unable to compile
-            JSP pages at runtime. Either all webapps will need to be 
-            precompiled (this can be easily done using the Tomcat deployer),
-            or the <code>lib\tools.jar</code> file from a JDK installation
-            must be copied to the <code>common\lib</code> path of the Tomcat 
-            installation.
+            of a J2SE 5 JRE.
             </li>
         <li><strong>Tray icon</strong>: When Tomcat is run as a service, there
             will not be any tray icon present when Tomcat is running. Note that
@@ -61,6 +55,9 @@
     <p>The installer will create shortcuts allowing starting and configuring 
        Tomcat. It is important to note that the Tomcat administration web 
        application can only be used when Tomcat is running.</p>
+
+    <p>If using a J2SE 1.4 JRE, the compatibility package must be downloaded and
+       expanded inside the folder where Tomcat was installed.</p>
 
   </section>
 

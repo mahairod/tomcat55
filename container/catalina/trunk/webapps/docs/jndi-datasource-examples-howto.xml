@@ -64,7 +64,9 @@ number of Jakarta-Commons components:
 <li>Jakarta-Commons Pool</li>
 </ul>
 These libraries are located in a single JAR at 
-<code>$CATALINA_HOME/common/lib/naming-factory-dbcp.jar</code>.
+<code>$CATALINA_HOME/common/lib/naming-factory-dbcp.jar</code>. However,
+only the classes needed for connection pooling have been included, and the
+packages have been renamed to avoid interfering with applications.
 </p>
 
 </subsection>

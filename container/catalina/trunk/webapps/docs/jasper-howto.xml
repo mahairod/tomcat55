@@ -25,7 +25,7 @@
 
 <section name="Introduction">
 
-<p>Tomcat 5.0 uses the Jasper 2 JSP Engine to implement
+<p>Tomcat 5.5 uses the Jasper 2 JSP Engine to implement
 the <a href="http://java.sun.com/products/jsp/">JavaServer Pages 2.0</a>
 specification.</p>
 
@@ -45,9 +45,10 @@ of your JSP pages on a production server.</li>
 <li><strong>Recompile JSP when included page changes</strong> - Jasper 2
 can now detect when a page included at compile time from a JSP has changed
 and then recompile the parent JSP.</li>
-<li><strong>Ant used to compile JSP pages</strong> - The
-<a href="http://jakarta.apache.org/ant/">Ant Build Tool</a> is now
-used to perform JSP java source code compilation.</li>
+<li><strong>JDT used to compile JSP pages</strong> - The
+Eclipse JDT Java compiler is now used to perform JSP java source code
+compilation. This compiler loads source dependencies from the container
+classloader. Ant and javac can still be used.</li>
 </ul>
 </p>
 
@@ -73,8 +74,9 @@ between checks to see if a JSP page needs to be recompiled. Default
 <code>300</code> seconds.</li>
 
 <li><strong>compiler</strong> - Which compiler Ant should use to compile JSP
-pages.  See the Ant documenation for more information. Default
-<code>javac</code>.</li>
+pages.  See the Ant documenation for more information. If the value is not set,
+then the default Eclipse JDT Java compiler will be used instead of using Ant. 
+No default value.</li>
 
 <li><strong>classdebuginfo</strong> - Should the class file be compiled with
 debugging information?  <code>true</code> or <code>false</code>, default
@@ -113,7 +115,7 @@ print statement per input line, to ease debugging?
 <code>true</code> or <code>false</code>, default <code>true</code>.</li>
 
 <li><strong>reloading</strong> - Should Jasper check for modified JSPs?
-<code>true</code> or <code>false</code>, default <code>true</code>.</li>
+<code>true</code> or <code>false</code>, default <code>false</code>.</li>
 
 <li><strong>scratchdir</strong> - What scratch directory should we use when
 compiling JSP pages? Default is the work directory for the current web
@@ -131,8 +133,8 @@ actions or directives be trimmed ?, default <code>false</code>.</li>
 <p>When using Jasper 2 in a production Tomcat server you should consider
 making the following changes from the default configuration.
 <ul>
-<li><strong>development</strong> - To enable background compilation of JSP
-pages set this to <code>false</code>.</li>
+<li><strong>development</strong> - To disable on access checks for JSP
+pages compilation set this to <code>false</code>.</li>
 <li><strong>fork</strong> - The internal JVM javac compiler used by Ant
 has a known memory leak. And Ant requires that java compiles be synchronized,
 i.e. only one JSP page can be compiled at a time.  Set fork to
@@ -143,6 +145,9 @@ all the javac classes from being instantiated and subsequently garbage
 collected by the JVM Tomcat is running in. This also works around known 
 issues with javac, including memory leaking, as well as JAR file locking
 on Windows.</li>
+<li><strong>reloading</strong> - To disable background compilation of JSP
+pages, which uses one thread per web application, set this to 
+<code>false</code>.</li>
 </ul>
 </p>
 
@@ -253,6 +258,7 @@ are automatically compiled as part of the build process.
 <a href="http://oss.software.ibm.com/developerworks/opensource/jikes/">
 Jikes</a> to compile JSP pages:
 <ul>
+<li>Download and install the Ant JAR in <code>$CATALINA_BASE/common/lib</code>.</li>
 <li>Download and install jikes. jikes must support the -encoding option.
 Execute <code>jikes -help</code> to verify that it was built with support
 for <code>-encoding</code>.</li>

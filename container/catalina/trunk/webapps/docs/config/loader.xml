@@ -134,8 +134,11 @@
 
 <section name="Special Features">
 
-  <p>No special features are associated with a <strong>Loader</strong>
-  element.</p>
+  <subsection name="Logging">
+
+    <p>A loader is associated with the log category based on its classname.</p>
+
+  </subsection>
 
 </section>
 

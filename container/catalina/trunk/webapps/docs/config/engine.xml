@@ -119,14 +119,6 @@
   by nesting a corresponding element inside your <strong>Engine</strong>
   element:</p>
   <ul>
-  <li><a href="logger.html"><strong>Logger</strong></a> -
-      Configure a logger that will receive
-      and process all log messages for this <strong>Engine</strong>, plus
-      messages from <strong>Connectors</strong> associated with this Engine
-      in the surrounding Service.  In addition, this Logger will log messages
-      from subordinate <a href="host.html">Hosts</a> and
-      <a href="context.html">Contexts</a>, unless overridden by a
-      <a href="logger.html">Logger</a> configuration at a lower level.</li>
   <li><a href="realm.html"><strong>Realm</strong></a> -
       Configure a realm that will allow its
       database of users, and their associated roles, to be shared across all
@@ -139,6 +131,15 @@
 
 
 <section name="Special Features">
+
+
+  <subsection name="Logging">
+
+    <p>An engine is associated with the 
+       <code>org.apache.catalina.core.ContainerBase.[enginename]</code>
+       log category.</p>
+
+  </subsection>
 
 
   <subsection name="Access Logs">

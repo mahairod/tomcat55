@@ -13,6 +13,11 @@
 
 <body>
  
+<section name="NOTICE">
+<p>
+    <b>This section of the documentation applies to procrun 1.0, and is now obsolete.</b>
+</p>
+</section>
 <section name="Tomcat5 service application">
 <p>
     <b>Tomcat5</b> is a service application for running Tomcat5 as NT service.
