@@ -9,7 +9,7 @@
 
      <property name="watchdog.build" value="../build/watchdog"/>
      <property name="watchdog.dist" value="../dist/watchdog"/>
-     <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:" />
+     <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../jakarta-tools/servlet-2.2.0.jar" />
    </target>
 
 
