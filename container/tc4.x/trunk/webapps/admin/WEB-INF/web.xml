@@ -6,6 +6,11 @@
 
 <web-app>
 
+  <display-name>Tomcat Administration Application</display-name>
+  <description>
+    Tomcat HTML based administration web application.
+  </description>
+
   <!-- Action Servlet Configuration -->
   <servlet>
     <servlet-name>action</servlet-name>
