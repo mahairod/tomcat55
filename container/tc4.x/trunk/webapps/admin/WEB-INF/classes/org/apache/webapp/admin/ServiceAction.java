@@ -86,14 +86,14 @@ import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
 
 /**
- * Implementation of <strong>Action</strong> that validates a user logon.
+ * Implementation of <strong>Action</strong> that validates
+ * actions on a Service.
  *
- * @author Jazmin Jonson
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class ServerAction extends Action {
+public final class ServiceAction extends Action {
     
     private static MBeanServer mBServer = null;
     
@@ -140,38 +140,49 @@ public final class ServerAction extends Action {
                 ApplicationServlet servlet = (ApplicationServlet)getServlet();
                 mBServer = servlet.getServer();
             }
-            Iterator serverItr =
-            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder. WILDCARD),
+            
+            String serviceName = request.getParameter("serviceName");
+            
+            Iterator serviceItr =
+            mBServer.queryMBeans(new ObjectName(
+            TomcatTreeBuilder.ENGINE_TYPE +
+            ",service=" + serviceName),
             null).iterator();
             
-            ObjectName serverObjName =
-            ((ObjectInstance)serverItr.next()).getObjectName();
+            ObjectName serviceObjName =
+            ((ObjectInstance)serviceItr.next()).getObjectName();
             
-            String shutdownText = request.getParameter("shutdownText");
-            String portNumberText = request.getParameter("portNumberText");
+            String engineName = request.getParameter("engineName");
             String debugLvlText = request.getParameter("debugLvl");
+            String defaultHost = request.getParameter("defaultHost");
             
-            if(shutdownText != null) {
+            if (engineName != null) {
                 
-                mBServer.setAttribute(serverObjName,
-                new Attribute(SetUpServerAction.SHUTDOWN_PROP_NAME,
-                shutdownText));
-            }
-            
-            if(portNumberText != null) {
-                
-                Integer port = new Integer(portNumberText);
-                mBServer.setAttribute(serverObjName,
-                new Attribute(SetUpServerAction.PORT_PROP_NAME,
-                port));
+                mBServer.setAttribute(serviceObjName,
+                new Attribute(SetUpServiceAction.NAME_PROP_NAME,
+                engineName));
             }
             
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
-                mBServer.setAttribute(serverObjName,
-                new Attribute(SetUpServerAction.DEBUG_PROP_NAME,
+                mBServer.setAttribute(serviceObjName,
+                new Attribute(SetUpServiceAction.DEBUG_PROP_NAME,
                 debugLvl));
+            }
+            
+            if(defaultHost != null) {
+                
+            /*
+                if ((" ").equals(defaultHost)) {
+                 // no default host value set.
+                // remove this attribute.
+                 TBD: FIX ME - if needed.
+                }
+             */                
+                mBServer.setAttribute(serviceObjName,
+                new Attribute(SetUpServiceAction.HOST_PROP_NAME,
+                defaultHost));
+                
             }
             
         }catch(Throwable t){

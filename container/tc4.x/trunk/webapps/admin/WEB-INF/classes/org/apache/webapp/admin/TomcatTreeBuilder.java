@@ -84,34 +84,36 @@ import javax.management.ObjectName;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
- 
+
 /**
- * <p> Implementation of TreeBuilder interface for Tomcat Tree Controller 
+ * <p> Implementation of TreeBuilder interface for Tomcat Tree Controller
  *     to build plugin components into the tree
  *
  * @author Jazmin Jonson
- * @version 
+ * @author Manveen Kaur
+ * @version
  */
 
 
 
 public class TomcatTreeBuilder implements TreeBuilder{
-
+    
     // This SERVER_LABEL needs to be localized
     private final static String SERVER_LABEL = "Tomcat Server";
-
+    
     public final static String SERVER_TYPE = "Catalina:type=Server";
-    private final static String SERVICE_TYPE = "Catalina:type=Service";
-    private final static String ENGINE_TYPE = "Engine";
+    public final static String SERVICE_TYPE = "Catalina:type=Service";
+    public final static String ENGINE_TYPE = "Catalina:type=Engine";
     private final static String CONNECTOR_TYPE = "Catalina:type=Connector";
+    public final static String HOST_TYPE = "Catalina:type=Host";    
     public final static String WILDCARD = ",*";
-
+    
     private static MBeanServer mBServer = null;
-
+    
     public void buildTree(TreeControl treeControl,
-                          ApplicationServlet servlet,
-                          HttpServletRequest request) {
-
+    ApplicationServlet servlet,
+    HttpServletRequest request) {
+        
         try {
             mBServer = servlet.getServer();
             TreeControlNode root = treeControl.getRoot();
@@ -120,113 +122,113 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getServices(server);
         }catch(Throwable t){
             t.printStackTrace(System.out);
-        } 
+        }
     }
-
-    public TreeControlNode getServer() 
-        throws JMException, ServletException {
-
-        Iterator serverItr = 
-            mBServer.queryMBeans(new ObjectName(SERVER_TYPE + WILDCARD),
-                                 null).iterator();
-	String serverObjName =
-            (((ObjectInstance)serverItr.next()).getObjectName()).toString();
-
+    
+    public TreeControlNode getServer()
+    throws JMException, ServletException {
+        
+        Iterator serverItr =
+        mBServer.queryMBeans(new ObjectName(SERVER_TYPE + WILDCARD),
+        null).iterator();
+        String serverObjName =
+        (((ObjectInstance)serverItr.next()).getObjectName()).toString();
+        
         // HACK to take into account special characters like = and &
         // in the node name, could remove this code if encode URL
         // and later request.getParameter() could deal with = and &
         // character in parameter values. Decoding name not needed
         // because Tomcat does this automatically
- 
-	String encodedServerName =  URLEncoder.encode(serverObjName);
+        
+        String encodedServerName =  URLEncoder.encode(serverObjName);
         TreeControlNode serverNode =
-            new TreeControlNode(serverObjName,
-                                "folder_16_pad.gif", SERVER_LABEL,
-                                "setUpServer.do?select=" + encodedServerName,
-                                "content", true);
-
+        new TreeControlNode(serverObjName,
+        "folder_16_pad.gif", SERVER_LABEL,
+        "setUpServer.do?select=" + encodedServerName,
+        "content", true);
+        
         return serverNode;
-
+        
     }
-
-
-    public void getServices(TreeControlNode serverNode) 
-        throws JMException, ServletException {
-
-        Iterator serviceItr = 
-            mBServer.queryMBeans(new ObjectName(SERVICE_TYPE + WILDCARD) , 
-                                 null).iterator();
-
+    
+    
+    public void getServices(TreeControlNode serverNode)
+    throws JMException, ServletException {
+        
+        Iterator serviceItr =
+        mBServer.queryMBeans(new ObjectName(SERVICE_TYPE + WILDCARD) ,
+        null).iterator();
+        
         String encodedServiceName;
-
+        
         while(serviceItr.hasNext()){
             ObjectInstance service = (ObjectInstance)serviceItr.next();
-
-            String serviceName = 
-                (String)mBServer.getAttribute(service.getObjectName(),"name");
-
+            
+            String serviceName =
+            (String)mBServer.getAttribute(service.getObjectName(),"name");
+            
             // HACK to take into account special characters like = and &
             // in the node name, could remove this code if encode URL
             // and later request.getParameter() could deal with = and &
             // character in parameter values. Decoding name not needed
-            // because Tomcat does this automatically  
-
+            // because Tomcat does this automatically
+            
             encodedServiceName =  URLEncoder.encode(service.getObjectName().toString());
-
-            TreeControlNode serviceNode = 
-                new TreeControlNode(service.getObjectName().toString(),
-                                    "folder_16_pad.gif", 
-                                    "Service(" + serviceName + ")",
-                                    "treeControlTest.do?select=" + encodedServiceName,
-                                    null, true);
-
+            
+            TreeControlNode serviceNode =
+            new TreeControlNode(service.getObjectName().toString(),
+            "folder_16_pad.gif",
+            "Service(" + serviceName + ")",
+            "setUpService.do?select=" + encodedServiceName,
+            "content", true);
+            
             serverNode.addChild(serviceNode);
-	    
+            
             getConnectors(serviceNode, serviceName);
         }
     }
-
-    public void getConnectors(TreeControlNode serviceNode, 
-                              String serviceName)
-
-        throws JMException{
-
-
-        Iterator ConnectorItr = 
-            (mBServer.queryMBeans(new ObjectName(CONNECTOR_TYPE + WILDCARD +
-                                                 ",service=" + serviceName),
-                                  null)).iterator();
-
+    
+    public void getConnectors(TreeControlNode serviceNode,
+    String serviceName)
+    
+    throws JMException{
+        
+        
+        Iterator ConnectorItr =
+        (mBServer.queryMBeans(new ObjectName(CONNECTOR_TYPE + WILDCARD +
+        ",service=" + serviceName),
+        null)).iterator();
+        
         TreeControlNode connectorNode = null;
         String encodedConnectorName;
-
-        while(ConnectorItr.hasNext()){ 
-
+        
+        while(ConnectorItr.hasNext()){
+            
             ObjectInstance connectorObj = (ObjectInstance)ConnectorItr.next();
-
-            String connectorName = 
-                (String)mBServer.getAttribute(connectorObj.getObjectName(),
-                                              "scheme");
-
+            
+            String connectorName =
+            (String)mBServer.getAttribute(connectorObj.getObjectName(),
+            "scheme");
+            
             // HACK to take into account special characters like = and &
             // in the node name, could remove this code if encode URL
             // and later request.getParameter() could deal with = and &
             // character in parameter values. Decoding name not needed
-            // because Tomcat does this automatically 
-
+            // because Tomcat does this automatically
+            
             encodedConnectorName =  URLEncoder.encode(connectorObj.getObjectName().toString());
-
-            connectorNode = 
-                new TreeControlNode(connectorObj.getObjectName().toString(),
-                                    "folder_16_pad.gif", 
-                                    "Connector(" + connectorName + ")",
-                                    "treeControlTest.do?select=" + 
-                                    encodedConnectorName,
-                                    null, true);
-
+            
+            connectorNode =
+            new TreeControlNode(connectorObj.getObjectName().toString(),
+            "folder_16_pad.gif",
+            "Connector(" + connectorName + ")",
+            "treeControlTest.do?select=" +
+            encodedConnectorName,
+            null, true);
+            
             serviceNode.addChild(connectorNode);
         }
-	
-    }	
-
-}			  
+        
+    }
+    
+}

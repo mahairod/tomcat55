@@ -19,6 +19,10 @@
     <form-bean      name="serverForm"
                     type="org.apache.webapp.admin.ServerForm"/>
 
+    <!-- Service form bean -->
+    <form-bean      name="serviceForm"
+                    type="org.apache.webapp.admin.ServiceForm"/>
+
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
@@ -50,6 +54,10 @@
                     path="/server.jsp"
                 redirect="false"/>
 
+    <forward        name="Service"
+                    path="/service.jsp"
+                redirect="false"/>
+
     <forward        name="Save Successful"
                     path="/saved.jsp"
                 redirect="false"/>
@@ -77,13 +85,23 @@
                   redirect="true"/>
     </action>
 
-    <!-- Set up Tree datastructure -->
+    <!-- Set up Server -->
     <action    path="/setUpServer"
                type="org.apache.webapp.admin.SetUpServerAction"
                name="serverForm"
                scope="session">
       <forward        name="SetUpServer"
                       path="/server.jsp"
+                  redirect="true"/>
+    </action>
+
+   <!-- Set up Service datastructure -->
+    <action    path="/setUpService"
+               type="org.apache.webapp.admin.SetUpServiceAction"
+               name="serviceForm"
+               scope="session">
+      <forward        name="SetUpService"
+                      path="/service.jsp"
                   redirect="true"/>
     </action>
 
@@ -101,6 +119,14 @@
                name="serverForm"
               scope="session"
               input="/server.jsp">
+    </action>
+
+   <!-- Process a user server change -->
+    <action    path="/service"
+               type="org.apache.webapp.admin.ServiceAction"
+               name="serviceForm"
+              scope="session"
+              input="/service.jsp">
     </action>
 
     <!-- Process a set-locale action -->

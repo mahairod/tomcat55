@@ -59,47 +59,58 @@
  *
  */
 
-package org.apache.webapp.admin;
 
+package org.apache.webapp.admin;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-
 import java.util.ArrayList;
 
 /**
- * Form bean for the server form page.  
- * @author Patrick Luby
+ * Form bean for the service page.
+ *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class ServerForm extends ActionForm {
+public final class ServiceForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
-    /**
-     * The text for the port number.
-     */
-    private String action = null;
     
-    private String portNumberText = "8080";
+    /**
+     * The text for the serviceName.
+     */
+    private String serviceName = null;
+    
+    
+    /**
+     * The text for the engine Name.
+     */
+    private String engineName = null;
+    
     
     /**
      * The text for the debug level.
      */
     private String debugLvl = "0";
     
-    /**
-     * The text for the debug level.
-     */
     
-    private String shutdownText = null;
+    /**
+     * The action chosen.
+     */
+    private String action = null;
+    
+    /**
+     * The text for the defaultHost Name.
+     */
+    private String defaultHost = " ";
     
     private ArrayList debugLvlVals = null;
+    private ArrayList hostNameVals = null;
     private ArrayList actionVals = null;
     // ------------------------------------------------------------- Properties
     
@@ -123,6 +134,23 @@ public final class ServerForm extends ActionForm {
     }
     
     
+    /**
+     * Return the host name values.
+     */
+    public ArrayList getHostNameVals() {
+        
+        return this.hostNameVals;
+        
+    }
+    
+    /**
+     * Set the hostName values.
+     */
+    public void setHostNameVals(ArrayList hostNameVals) {
+        
+        this.hostNameVals = hostNameVals;
+        
+    }
     /**
      * Return the ActionVals.
      */
@@ -159,28 +187,31 @@ public final class ServerForm extends ActionForm {
         
     }
     
-    
     /**
-     * Return the portNumberText.
+     * Set the engineName.
      */
-    public String getPortNumberText() {
+    
+    public void setEngineName(String engineName) {
         
-        return this.portNumberText;
+        this.engineName = engineName;
         
     }
     
+    
     /**
-     * Set the portNumberText.
+     * Return the engineName.
      */
-    public void setPortNumberText(String portNumberText) {
+    
+    public String getEngineName() {
         
-        this.portNumberText = portNumberText;
+        return this.engineName;
         
     }
     
     /**
      * Return the Debug Level Text.
      */
+    
     public String getDebugLvl() {
         
         return this.debugLvl;
@@ -197,23 +228,40 @@ public final class ServerForm extends ActionForm {
     }
     
     /**
-     * Return the Shutdown Text.
+     * Return the Service Name.
      */
-    public String getShutdownText() {
+    public String getServiceName() {
         
-        return this.shutdownText;
+        return this.serviceName;
         
     }
     
     /**
-     * Set the Shut down  Text.
+     * Set the Service Name.
      */
-    public void setShutdownText(String shutdownText) {
+    public void setServiceName(String serviceName) {
         
-        this.shutdownText = shutdownText;
+        this.serviceName = serviceName;
         
     }
     
+    /**
+     * Return the default Host.
+     */
+    public String getDefaultHost() {
+        
+        return this.defaultHost;
+        
+    }
+    
+    /**
+     * Set the default Host.
+     */
+    public void setDefaultHost(String defaultHost) {
+        
+        this.defaultHost = defaultHost;
+        
+    }
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -224,13 +272,15 @@ public final class ServerForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
-        this.portNumberText = null;
+        this.serviceName = null;
+        this.engineName = null;
         this.debugLvl = "0";
-        this.shutdownText = null;
+        this.defaultHost = " ";
         this.action = null;
-        
+        //this.debugLvlVals = null;
+        //this.hostNameVals = null;
+        //this.actionVals = null;
     }
-    
     
     /**
      * Validate the properties that have been set from this HTTP request,
@@ -246,38 +296,16 @@ public final class ServerForm extends ActionForm {
     HttpServletRequest request) {
         
         ActionErrors errors = new ActionErrors();
-        
         String submit = request.getParameter("submit");
+        
         if (submit != null) {
             
-            // check for portNumber -- must not be blank, must be in
-            // the range 1 to 65535.
-            
-            if ((portNumberText == null) || (portNumberText.length() < 1)) {
-                errors.add("portNumberText",
-                new ActionError("error.portNumberText.required"));
-            } else {
-                try {
-                    int port = Integer.parseInt(portNumberText);
-                    if ((port <= 0) || (port >65535 ))
-                        errors.add("portNumberText", 
-                            new ActionError("error.portNumber.range"));
-                } catch (NumberFormatException e) {
-                    errors.add("portNumberText", 
-                        new ActionError("error.portNumber.format"));
-                }
-            }
-        
-            // shutdown text can be any non-empty string of atleast 6 characters.
-            
-            if ((shutdownText == null) || (shutdownText.length() < 7))
-                errors.add("shutdownText",
-                new ActionError("error.shutdownText.length"));
-            
+            if ((engineName == null) || (engineName.length() < 1))
+                errors.add("engineName",
+                new ActionError("error.engineName.required"));
         }
         
         return errors;
-        
     }
     
 }
