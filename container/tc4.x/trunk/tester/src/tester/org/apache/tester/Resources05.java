@@ -126,6 +126,7 @@ public class Resources05 extends HttpServlet {
         // Stringify the URL if requested
         try {
             if (ok) {
+                StaticLogger.write("Stringifying the URL");
                 String urlString = url.toString();
                 url = new URL(urlString);
             }
