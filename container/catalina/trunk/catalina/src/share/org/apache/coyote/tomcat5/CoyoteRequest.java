@@ -1266,7 +1266,7 @@ public class CoyoteRequest
         if (localName == null) {
             if (socket != null) {
                 InetAddress inet = socket.getLocalAddress();
-                localAddr = inet.getHostName();
+                localName = inet.getHostName();
             } else {
                 coyoteRequest.action
                     (ActionCode.ACTION_REQ_LOCAL_NAME_ATTRIBUTE, coyoteRequest);
