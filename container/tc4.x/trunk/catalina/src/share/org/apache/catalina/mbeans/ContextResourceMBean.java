@@ -149,6 +149,7 @@ public class ContextResourceMBean extends BaseModelMBean {
              throw new MBeanException(e);
         }
         
+        String value = null;
         if ("auth".equals(name)) {
             return (cr.getAuth());
         } else if ("description".equals(name)) {
@@ -159,22 +160,22 @@ public class ContextResourceMBean extends BaseModelMBean {
             return (cr.getScope());  
         } else if ("type".equals(name)) {
             return (cr.getType());
-        }
-        
-        NamingResources nr = cr.getNamingResource(); 
-        if (nr == null) {
-            throw new AttributeNotFoundException
-                ("Cannot find naming resource "+cr.getName());
-        }
-        ResourceParams rp = nr.findResourceParams(cr.getName());
-        if (rp == null) {
-            throw new AttributeNotFoundException
-                ("Cannot find resource param "+cr.getName());
-        }
-        String value = (String) rp.getParameters().get(name);
-        if (value == null) {
-            throw new AttributeNotFoundException
-                ("Cannot find attribute "+cr.getName());
+        } else {
+            NamingResources nr = cr.getNamingResource(); 
+            if (nr == null) {
+                throw new AttributeNotFoundException
+                    ("Cannot find naming resource "+cr.getName());
+            }
+            ResourceParams rp = nr.findResourceParams(cr.getName());
+            if (rp == null) {
+                throw new AttributeNotFoundException
+                    ("Cannot find resource param "+cr.getName());
+            }
+            value = (String) rp.getParameters().get(name);
+            if (value == null) {
+                throw new AttributeNotFoundException
+                    ("Cannot find attribute "+cr.getName());
+            }
         }
         
         return value;
@@ -230,13 +231,14 @@ public class ContextResourceMBean extends BaseModelMBean {
             cr.setScope((String)value);  
         } else if ("type".equals(name)) {
             cr.setType((String)value);
+        } else {
+            ResourceParams rp = cr.getNamingResource().findResourceParams(cr.getName());
+            if (rp == null) {
+                throw new AttributeNotFoundException
+                    ("Cannot find resource params "+cr.getName());
+            }
+            rp.getParameters().put(name, value);
         }
-        ResourceParams rp = cr.getNamingResource().findResourceParams(cr.getName());
-        if (rp == null) {
-            throw new AttributeNotFoundException
-                ("Cannot find resource params "+cr.getName());
-        }
-        rp.getParameters().put(name, value);
 
     }
     
