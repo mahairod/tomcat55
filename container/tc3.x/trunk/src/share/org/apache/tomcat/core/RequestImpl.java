@@ -160,6 +160,7 @@ public class RequestImpl  implements Request {
         StringManager.getManager("org.apache.tomcat.core");
 
     public RequestImpl() {
+	//	System.out.println("XXX new ri " );
  	headers = new MimeHeaders();
  	recycle(); // XXX need better placement-super()
     }
