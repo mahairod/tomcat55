@@ -1069,9 +1069,10 @@
 
   <target name="cvsbuild" unless="exist" depends="testexist">
     <!-- cvs checkout and ant dist + copy of jar file -->
-    <echo message="cvs co ${location} and ant dist in ${subdir}"/>
+    <echo message="cvs co ${location} -r ${cvstag} and ant dist in ${subdir}"/>
     <mkdir dir="${base.path}/tmp"/>
     <cvs cvsRoot="${cvsroot}"
+      tag="${cvstag}"
       package="${location}"
       dest="${base.path}/tmp"
     />
