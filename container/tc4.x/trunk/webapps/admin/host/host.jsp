@@ -43,11 +43,14 @@
             <controls:action selected="true"> -----<bean:message key="actions.available.actions"/>----- </controls:action>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
             <logic:notEqual name="hostForm" property="adminAction" value="Create">              
+            <controls:action url='<%= "/AddAlias.do?hostName=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.alias.create"/>
+            </controls:action>              
             <%--
-            <controls:action url="">  <bean:message key="actions.alias.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.alias.delete"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action> 
             --%>
+            <controls:action disabled="true"> ------------------------------------- </controls:action> 
             <controls:action url='<%= "/AddLogger.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.create"/>
