@@ -159,6 +159,11 @@ Questions that were not categorized.
         Is tomcat an EJB server?  Can I use EJBs with tomcat?
       </a>
     </li>
+    <li>
+      <a href="#externalJndi">
+        Can I access Tomcat's JNDI provider from outside tomcat?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -678,6 +683,15 @@ Questions that were not categorized.
     for Servlets, such as a subset of JNDI functionality.
     Furthermore, you can connect to remote J2EE servers, or
     run tomcat embedded inside a full J2EE server.
+  </answer>
+
+  <question>
+    <a name="externalJndi">
+      Can I access Tomcat's JNDI provider from outside tomcat?
+    </a>
+  </question>
+  <answer>
+    Not at this time.
   </answer>
 </section>
 
