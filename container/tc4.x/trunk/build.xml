@@ -519,7 +519,8 @@
     </antcall>
     <antcall target="downloadzip">
       <param name="sourcefile" value="${javaservice.loc}"/>
-      <param name="destfile" value="${javaservice.home}"/>
+      <param name="destfile" value="${javaservice.home}/bin/JavaService.exe"/>
+      <param name="destdir" value="${javaservice.home}"/>
     </antcall>
     <antcall target="downloadgz">
       <param name="sourcefile" value="${jmx.loc}"/>
@@ -528,6 +529,7 @@
     <antcall target="downloadzip">
       <param name="sourcefile" value="${junit.loc}"/>
       <param name="destfile" value="${junit.jar}"/>
+      <param name="destdir" value="${base.path}"/>
     </antcall>
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
@@ -576,7 +578,8 @@
   <target name="downloadzip" unless="exist" depends="setproxy,testexist">
     <!-- Download and extract the package -->
     <get src="${sourcefile}" dest="${base.path}/file.zip" />
-    <unzip src="${base.path}/file.zip" dest="${base.path}"/>
+    <mkdir dir="${destdir}" />
+    <unzip src="${base.path}/file.zip" dest="${destdir}"/>
     <delete file="${base.path}/file.zip"/>
   </target>
 
