@@ -77,15 +77,10 @@ import org.apache.jasper.logging.Logger;
  * @author Pierre Delisle
  */
 public class ParserController {
-    /*
-     * The compilation context
-     */
-    private JspCompilationContext ctxt;
 
-    /*
-     * The Compiler
-     */
+    private JspCompilationContext ctxt;
     private Compiler compiler;
+    private ErrorDispatcher err;
 
     /*
      * A stack to keep track of the 'current base directory'
@@ -124,12 +119,13 @@ public class ParserController {
     private String newEncoding;
 
 
-    //*********************************************************************
-    // Constructor
-
+    /*
+     * Constructor
+     */
     public ParserController(JspCompilationContext ctxt, Compiler compiler) {
         this.ctxt = ctxt; // @@@ can we assert that ctxt is not null?
 	this.compiler = compiler;
+	this.err = compiler.getErrorDispatcher();
     }
 
     public JspCompilationContext getJspCompilationContext () {
@@ -139,9 +135,6 @@ public class ParserController {
     public Compiler getCompiler () {
 	return compiler;
     }
-
-    //*********************************************************************
-    // Parse
 
     /**
      * Parses a jsp file.  This is invoked by the compiler.
@@ -228,8 +221,7 @@ public class ParserController {
 						     isTagFile);
             } else {
 		JspReader r = new JspReader(ctxt, absFileName, encoding,
-					    reader,
-					    compiler.getErrorDispatcher());
+					    reader, err);
                 parsedPage = Parser.parse(this, r, parent, isTagFile,
 					  directivesOnly);
             }
@@ -281,8 +273,7 @@ public class ParserController {
 
 	JspReader jspReader;
 	try {
-	    jspReader = new JspReader(ctxt, file, encoding, reader,
-				      compiler.getErrorDispatcher());
+	    jspReader = new JspReader(ctxt, file, encoding, reader, err);
 	} catch (FileNotFoundException ex) {
 	    throw new JasperException(ex);
 	}
@@ -362,28 +353,32 @@ public class ParserController {
 
     private InputStreamReader getReader(String file, String encoding,
 					JarFile jarFile)
-	throws FileNotFoundException, JasperException, IOException {
+	        throws JasperException, IOException {
 
-        InputStream in;
-        InputStreamReader reader;
+        InputStream in = null;
+        InputStreamReader reader = null;
 
 	if (jarFile != null) {
-	    ZipEntry jarEntry =
-		jarFile.getEntry(file.substring(1, file.length()));
+	    String jarEntryName = file.substring(1, file.length());
+	    ZipEntry jarEntry = jarFile.getEntry(jarEntryName);
+	    if (jarEntry == null) {
+		err.jspError("jsp.error.file.not.found", file);
+	    }
 	    in = jarFile.getInputStream(jarEntry);
 	} else {
 	    in = ctxt.getResourceAsStream(file);
 	}
+
 	if (in == null) {
-	    throw new FileNotFoundException(file);
+	    err.jspError("jsp.error.file.not.found", file);
 	}
 
 	try {
-            return new InputStreamReader(in, encoding);
+            reader = new InputStreamReader(in, encoding);
 	} catch (UnsupportedEncodingException ex) {
-	    throw new JasperException(
-                Constants.getString("jsp.error.unsupported.encoding",
-				    new Object[]{encoding}));
+	    err.jspError("jsp.error.unsupported.encoding", encoding);
 	}
+
+	return reader;
     }
 }
