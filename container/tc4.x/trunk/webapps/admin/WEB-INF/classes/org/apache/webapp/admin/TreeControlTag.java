@@ -400,6 +400,9 @@ public class TreeControlTag extends TagSupport {
         
         String updateTreeAction =
             replace(getAction(), "tree=${name}", "select=" + encodedNodeName);
+        updateTreeAction =
+            ((HttpServletResponse) pageContext.getResponse()).
+            encodeURL(updateTreeAction);
 
         out.print("    <td>");
         if ((action != null) && !node.isLeaf()) {
