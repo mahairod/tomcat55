@@ -59,7 +59,7 @@
     You may wish to tune the JSP compiler configuration to prevent
     memory leaks.  Of course, these are documents you should have
     read by now anyways..
-  </p>  
+  </p>
   </blockquote></td></tr></table>
 
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
@@ -113,6 +113,11 @@
           of threads which may be executed by a single process. (Which is what the
           JVM is.) Refer to your OS docs for more information on how to raise this
           threshold.
+      </li>
+      <li>
+        If you have a lot of servlets or JSP's, you may need to increase your
+        permanent generation. By default, it is 64MB.
+        Doubling it to be <code>-XX:MaxPermSize=256m</code> might be a good start.
       </li>
       <li>Your OS limits the amount of memory your process may take. OK, this
           one is grasping at straws.
