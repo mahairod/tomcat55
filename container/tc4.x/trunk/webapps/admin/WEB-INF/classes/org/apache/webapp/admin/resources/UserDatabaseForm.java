@@ -16,17 +16,10 @@
 
 package org.apache.webapp.admin.resources;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.apache.webapp.admin.LabelValueBean;
-
-import java.lang.reflect.Constructor;
 
 /**
  * Form bean for the individual user database page.

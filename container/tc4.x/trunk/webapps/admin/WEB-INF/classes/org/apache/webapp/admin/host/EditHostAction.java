@@ -17,8 +17,6 @@
 package org.apache.webapp.admin.host;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -27,21 +25,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
 
 import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.Lists;
-import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * The <code>Action</code> that sets up <em>Edit Host</em> transactions.

@@ -17,15 +17,10 @@
 package org.apache.webapp.admin.valve;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.net.InetAddress;
 import java.util.List;
 
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.LabelValueBean;
 
 /**
  * Form bean for the generic valve page.

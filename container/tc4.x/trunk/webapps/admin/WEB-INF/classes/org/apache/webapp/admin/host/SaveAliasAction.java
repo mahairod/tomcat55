@@ -16,19 +16,11 @@
 
 package org.apache.webapp.admin.host;
 
-import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.List;
 import java.io.IOException;
-import javax.management.Attribute;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,9 +33,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TomcatTreeBuilder;
-import org.apache.webapp.admin.TreeControl;
-import org.apache.webapp.admin.TreeControlNode;
 
 
 

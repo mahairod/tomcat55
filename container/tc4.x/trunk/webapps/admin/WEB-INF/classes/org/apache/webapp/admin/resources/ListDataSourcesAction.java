@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Locale;
 import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

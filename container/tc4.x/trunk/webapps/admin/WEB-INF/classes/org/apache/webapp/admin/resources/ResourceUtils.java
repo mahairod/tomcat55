@@ -17,7 +17,6 @@
 
 package org.apache.webapp.admin.resources;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collections;

@@ -19,13 +19,7 @@ package org.apache.webapp.admin.realm;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.util.List;
-import java.util.Enumeration;
-
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.LabelValueBean;
 
 /**
  * Form bean for the memory realm page.

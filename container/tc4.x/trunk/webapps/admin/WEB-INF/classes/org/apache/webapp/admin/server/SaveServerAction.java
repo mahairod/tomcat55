@@ -17,7 +17,6 @@
 
 package org.apache.webapp.admin.server;
 
-import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -31,10 +30,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
