@@ -65,6 +65,7 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.BodyTag;
+import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.xml.sax.Attributes;
 
@@ -113,6 +114,8 @@ public class TagEndGenerator
 	    IterationTag.class.isAssignableFrom(tagHandlerClass);
         boolean implementsBodyTag = 
 	    BodyTag.class.isAssignableFrom(tagHandlerClass);
+        boolean implementsTryCatchFinally = 
+	    TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
 
 	writer.popIndent();
 
@@ -164,8 +167,19 @@ public class TagEndGenerator
         //          writer.popIndent();
         /** FIXME: REMOVE END */
 
+	// TryCatchFinally
+	if (implementsTryCatchFinally) {
+	    writer.println("} catch (Throwable t) {");
+	    writer.pushIndent();
+	    writer.println(thVarName+".doCatch(t);");
+	    writer.popIndent();
+	}
+
 	writer.println("} finally {");
 	writer.pushIndent();
+	if (implementsTryCatchFinally) {
+	    writer.println(thVarName+".doFinally();");
+	}
 	writer.println(thVarName+".release();");
 	writer.popIndent();
 	writer.println("}");
