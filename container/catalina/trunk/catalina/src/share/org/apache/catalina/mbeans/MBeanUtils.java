@@ -803,8 +803,7 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        if ("org.apache.coyote.tomcat4.CoyoteConnector".equals
-                   (connector.getClass().getName())) {
+        if (connector.getClass().getName().indexOf("CoyoteConnector") >= 0 ) {
             try {
                 String address = (String)
                     PropertyUtils.getSimpleProperty(connector, "address");
