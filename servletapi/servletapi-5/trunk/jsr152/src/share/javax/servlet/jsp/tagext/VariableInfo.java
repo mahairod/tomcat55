@@ -193,9 +193,9 @@ package javax.servlet.jsp.tagext;
  *   <tr>
  *     <td valign="top" bgcolor="#c0c0c0"><b>BodyTag<br>
  *     </b></td>
- *     <td valign="top" align="center" bgcolor="#ffffff"><br>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<sup>1</sup><br>
  *     </td>
- *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, AT_NESTED<br>
+ *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<sup>1</sup><br>
  *     </td>
  *     <td valign="top" align="center" bgcolor="#ffffff">AT_BEGIN, NESTED<br>
  *     </td>
@@ -220,6 +220,9 @@ package javax.servlet.jsp.tagext;
  *   </tr>
  * </tbody>
  * </table>
+ * <sup>1</sup> Called after <code>doStartTag()</code> if 
+ * <code>EVAL_BODY_INCLUDE</code> is returned, or after 
+ * <code>doInitBody()</code> otherwise.
  * </blockquote>
  *
  * <p><B>Variable Information in the TLD</B>
