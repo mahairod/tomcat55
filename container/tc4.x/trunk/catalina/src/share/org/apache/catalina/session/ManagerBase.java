@@ -413,21 +413,31 @@ public abstract class ManagerBase implements Manager {
     public synchronized Random getRandom() {
 
 	if (this.random == null) {
-	    log(sm.getString("managerBase.seeding", randomClass));
-	    try {
-		Class clazz = Class.forName(randomClass);
-		this.random = (Random) clazz.newInstance();
-		long seed = System.currentTimeMillis();
-		char entropy[] = getEntropy().toCharArray();
-		for (int i = 0; i < entropy.length; i++) {
-		    long update = ((byte) entropy[i]) << ((i % 8) * 8);
-		    seed ^= update;		    
-		}
-	    } catch (Exception e) {
-		log(sm.getString("managerBase.random", randomClass), e);
-		this.random = new java.util.Random();
-	    }
-	    log(sm.getString("managerBase.complete", randomClass));
+            synchronized (this) {
+                if (this.random == null) {
+                    // Calculate the new random number generator seed
+                    log(sm.getString("managerBase.seeding", randomClass));
+                    long seed = System.currentTimeMillis();
+                    char entropy[] = getEntropy().toCharArray();
+                    for (int i = 0; i < entropy.length; i++) {
+                        long update = ((byte) entropy[i]) << ((i % 8) * 8);
+                        seed ^= update;		    
+                    }
+                    try {
+                        // Construct and seed a new random number generator
+                        Class clazz = Class.forName(randomClass);
+                        this.random = (Random) clazz.newInstance();
+                        this.random.setSeed(seed);
+                    } catch (Exception e) {
+                        // Fall back to the simple case
+                        log(sm.getString("managerBase.random", randomClass),
+                            e);
+                        this.random = new java.util.Random();
+                        this.random.setSeed(seed);
+                    }
+                    log(sm.getString("managerBase.complete", randomClass));
+                }
+            }
 	}
 
 	return (this.random);

@@ -574,6 +574,13 @@ public final class StandardManager
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
+        // Force initialization of the random number generator
+        if (debug >= 1)
+            log("Force random number initialization starting");
+        String dummy = generateSessionId();
+        if (debug >= 1)
+            log("Force random number initialization completed");
+
 	// Start the background reaper thread
 	threadStart();
 
