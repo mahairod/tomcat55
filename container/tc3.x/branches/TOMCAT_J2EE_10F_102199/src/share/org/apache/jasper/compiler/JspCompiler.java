@@ -209,8 +209,13 @@ public class JspCompiler extends Compiler implements Mangler {
     }
     
     private final String getBaseClassName() {
-	String className
-	    = jsp.getName().substring(0, jsp.getName().length() - 4);
+	String className;
+        
+        if (jsp.getName().endsWith(".jsp"))
+            className = jsp.getName().substring(0, jsp.getName().length() - 4);
+        else
+            className = jsp.getName();
+            
 	
 	// Fix for invalid characters. If you think of more add to the list.
 	StringBuffer modifiedClassName = new StringBuffer();
