@@ -292,11 +292,11 @@
             writeable="false"/>
 
     <attribute   name="proxyName"
-          description="Ther Server name to which we should pretend requests to this Connector"
+          description="The Server name to which we should pretend requests to this Connector"
                  type="java.lang.String"/>
 
     <attribute   name="proxyPort"
-          description="Ther Server port to which we should pretend requests to this Connector"
+          description="The Server port to which we should pretend requests to this Connector"
                  type="int"/>
 
     <attribute   name="redirectPort"
@@ -317,6 +317,10 @@
 
     <attribute    name="tomcatAuthentication"
            description="Should Tomcat perform all authentications?"
+                  type="boolean"/>
+
+    <attribute    name="disableUploadTimeout"
+           description="Should Tomcat ignore setting a timeout for uploads?" />
                   type="boolean"/>
 
   </mbean>
