@@ -272,15 +272,15 @@ public final class InvokerServlet
         String inServletPath = null;
         String inPathInfo = null;
         boolean included =
-            (request.getAttribute(Globals.REQUEST_URI_ATTR) != null);
+            (request.getAttribute(Globals.INCLUDE_REQUEST_URI_ATTR) != null);
 
         if (included) {
             inRequestURI =
-                (String) request.getAttribute(Globals.REQUEST_URI_ATTR);
+                (String) request.getAttribute(Globals.INCLUDE_REQUEST_URI_ATTR);
             inServletPath =
-                (String) request.getAttribute(Globals.SERVLET_PATH_ATTR);
+                (String) request.getAttribute(Globals.INCLUDE_SERVLET_PATH_ATTR);
             inPathInfo =
-                (String) request.getAttribute(Globals.PATH_INFO_ATTR);
+                (String) request.getAttribute(Globals.INCLUDE_PATH_INFO_ATTR);
         } else {
             inRequestURI = request.getRequestURI();
             inServletPath = request.getServletPath();
