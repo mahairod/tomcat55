@@ -55,7 +55,7 @@ Section "Tomcat (required)"
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
 
-  WriteUninstaller uninst-tomcat4.exe
+  WriteUninstaller "$INSTDIR\uninst-tomcat4.exe"
 
 SectionEnd
 
@@ -187,10 +187,6 @@ Section -post
   File /r conf
 
   SetOverwrite on
-
-  ; since the installer is now created last (in 1.2+), this makes sure 
-  ; that any old installer that is readonly is overwritten.
-  Delete $INSTDIR\uninst-tomcat4.exe 
 
   WriteRegStr HKLM "SOFTWARE\Apache\Apache Tomcat 4.1" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
