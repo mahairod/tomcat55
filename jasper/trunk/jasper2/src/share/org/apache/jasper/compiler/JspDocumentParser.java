@@ -83,8 +83,6 @@ import org.apache.jasper.JspCompilationContext;
 class JspDocumentParser extends DefaultHandler
             implements LexicalHandler, TagConstants {
 
-    private static final String XMLNS_ATTR = "xmlns";
-    private static final String XMLNS_JSP = "xmlns:jsp";
     private static final String JSP_VERSION = "version";
     private static final String LEXICAL_HANDLER_PROPERTY
 	= "http://xml.org/sax/properties/lexical-handler";
@@ -243,16 +241,12 @@ class JspDocumentParser extends DefaultHandler
 	Attributes xmlnsAttrs = null;
 	if (attrs != null) {
 	    attrsCopy = new AttributesImpl(attrs);
-	    xmlnsAttrs = getXmlnsAttributes(attrsCopy);
-	    if (xmlnsAttrs != null) {
-		try {
-		    addCustomTagLibraries(xmlnsAttrs);
-		} catch (JasperException je) {
-		    throw new SAXParseException(
-		        Localizer.getMessage(
-                            "jsp.error.could.not.add.taglibraries"),
-			locator, je);
-		}
+	    try {
+		xmlnsAttrs = addTagLibraries(attrsCopy);
+	    } catch (JasperException je) {
+		    throw new SAXParseException(Localizer.getMessage(
+                                    "jsp.error.could.not.add.taglibraries"),
+						locator, je);
 	    }
 	}
 
@@ -696,63 +690,58 @@ class JspDocumentParser extends DefaultHandler
     }
 
     /*
-     * Extracts and removes any xmlns attributes from the given Attributes.
-     *
-     * @param attrs The Attributes from which to extract any xmlns attributes
-     *
-     * @return The set of xmlns attributes extracted from the given Attributes,
-     * or null if the given Attributes do not contain any xmlns attributes
-     */
-    private Attributes getXmlnsAttributes(AttributesImpl attrs) {
-
-	AttributesImpl result = null;
-
-	if (attrs == null) {
-	    return null;
-	}
-
-	int len = attrs.getLength();
-	for (int i=len-1; i>=0; i--) {
-	    String qName = attrs.getQName(i);
-	    if (qName.startsWith(XMLNS_ATTR)) {
-		if (result == null) {
-		    result = new AttributesImpl();
-		}
-		result.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
-				    attrs.getQName(i), attrs.getType(i),
-				    attrs.getValue(i));
-		attrs.removeAttribute(i);
-	    }	    
-	}
-	
-	return result;
-    }
-
-    /*
-     * Enumerates the xmlns:prefix attributes of the given Attributes object
-     * and adds the corresponding TagLibraryInfo objects to the set of custom
+     * Removes from the given Attributes object any xmlns attributes that
+     * represent (standard or custom) tag libraries, and adds them to the
+     * result.
+     * 
+     * For each xmlns attribute representing a custom tag library, the
+     * corresponding TagLibraryInfo object is added to the set of custom
      * tag libraries.
+     *
+     * @param attrs The Attributes which to scan for xmlns attributes
+     *
+     * @return The set of xmlns attributes (extracted from the given attrs)
+     * representing standard or custom tag libraries, or null
      */
-    private void addCustomTagLibraries(Attributes xmlnsAttrs)
+    private Attributes addTagLibraries(AttributesImpl attrs)
 	    throws JasperException 
     {
-        if (xmlnsAttrs == null) {
-	    return;
+	AttributesImpl result = null;
+	boolean isTaglib = false;
+
+        if (attrs != null) {
+	    int len = attrs.getLength();
+	    for (int i=0; i<len; i++) {
+		isTaglib = false;
+		String qName = attrs.getQName(i);
+		if (!qName.startsWith("xmlns")) {
+		    continue;
+		}
+		if (qName.startsWith("xmlns:jsp")) {
+		    isTaglib = true;
+		} else {
+		    String uri = attrs.getValue(i);
+		    if (!taglibs.containsKey(uri)) {
+			TagLibraryInfo tagLibInfo = getTaglibInfo(qName, uri);
+			if (tagLibInfo != null) {
+			    isTaglib = true;
+			}
+			taglibs.put(uri, tagLibInfo);
+		    }
+		}
+		if (isTaglib) {
+		    if (result == null) {
+			result = new AttributesImpl();
+		    }
+		    result.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
+					attrs.getQName(i), attrs.getType(i),
+					attrs.getValue(i));
+		    attrs.removeAttribute(i);
+		}
+	    }
 	}
 
-	int len = xmlnsAttrs.getLength();
-        for (int i=len-1; i>=0; i--) {
-	    String qName = xmlnsAttrs.getQName(i);
-	    if (qName.startsWith(XMLNS_JSP)) {
-		continue;
-	    }
-
-	    String uri = xmlnsAttrs.getValue(i);
-	    if (!taglibs.containsKey(uri)) {
-		TagLibraryInfo tagLibInfo = getTaglibInfo(qName, uri);
-		taglibs.put(uri, tagLibInfo);
-	    }
-	}
+	return result;
     }
 
     /*
