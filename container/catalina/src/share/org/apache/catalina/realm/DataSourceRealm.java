@@ -390,7 +390,7 @@ public class DataSourceRealm
             stmt = credentials(dbConnection, username);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                dbCredentials = rs.getString(1).trim();
+                dbCredentials = rs.getString(1);
             }
             rs.close();
             rs = null;
@@ -399,6 +399,7 @@ public class DataSourceRealm
             if (dbCredentials == null) {
                 return (null);
             }
+            dbCredentials = dbCredentials.trim();
     
             // Validate the user's credentials
             boolean validated = false;
