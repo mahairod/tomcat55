@@ -75,6 +75,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -88,8 +90,11 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.Server;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.StringManager;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
@@ -131,6 +136,9 @@ import org.apache.naming.resources.WARDirContext;
  *     configuration files.</li>
  * <li><b>/remove?path=/xxx</b> - Shutdown and remove the web application
  *     attached to context path <code>/xxx</code> for this virtual host.</li>
+ * <li><b>/resources?type=xxxx</b> - Enumerate the available global JNDI
+ *     resources, optionally limited to those of the specified type
+ *     (fully qualified Java class name), if available.</li>
  * <li><b>/sessions?path=/xxx</b> - List session information about the web
  *     application attached to context path <code>/xxx</code> for this
  *     virtual host.</li>
@@ -210,6 +218,13 @@ public class ManagerServlet
      * are managing.
      */
     protected Deployer deployer = null;
+
+
+    /**
+     * The global JNDI <code>NamingContext</code> for this server,
+     * if available.
+     */
+    protected javax.naming.Context global = null;
 
 
     /**
@@ -294,6 +309,7 @@ public class ManagerServlet
             command = request.getServletPath();
         String config = request.getParameter("config");
         String path = request.getParameter("path");
+        String type = request.getParameter("type");
         String war = request.getParameter("war");
 
         // Prepare our output writer to generate the response message
@@ -311,6 +327,8 @@ public class ManagerServlet
             reload(writer, path);
         } else if (command.equals("/remove")) {
             remove(writer, path);
+        } else if (command.equals("/resources")) {
+            resources(writer, type);
         } else if (command.equals("/sessions")) {
             sessions(writer, path);
         } else if (command.equals("/start")) {
@@ -403,11 +421,19 @@ public class ManagerServlet
             ;
         }
 
+        // Acquire global JNDI resources if available
+        Server server = ServerFactory.getServer();
+        if ((server != null) && (server instanceof StandardServer)) {
+            global = ((StandardServer) server).getGlobalNamingContext();
+        }
 
         // Log debugging messages as necessary
         if (debug >= 1) {
             log("init: Associated with Deployer '" +
                 deployer.getName() + "'");
+            if (global != null) {
+                log("init: Global resources are available");
+            }
         }
 
     }
@@ -703,6 +729,58 @@ public class ManagerServlet
             writer.println(sm.getString("managerServlet.removed", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.remove[" + displayPath + "]", t);
+            writer.println(sm.getString("managerServlet.exception",
+                                        t.toString()));
+        }
+
+    }
+
+
+    /**
+     * Render a list of available global JNDI resources.
+     *
+     * @param type Fully qualified class name of the resource type of interest,
+     *  or <code>null</code> to list resources of all types
+     */
+    protected void resources(PrintWriter writer, String type) {
+
+        if (debug >= 1) {
+            if (type != null) {
+                log("resources:  Listing resources of type " + type);
+            } else {
+                log("resources:  Listing resources of all types");
+            }
+        }
+
+        // Is the global JNDI resources context available?
+        if (global == null) {
+            writer.println(sm.getString("managerServlet.noGlobal"));
+            return;
+        }
+
+        // Enumerate the global JNDI resources of the requested type
+        if (type != null) {
+            writer.println(sm.getString("managerServlet.resourcesType",
+                                        type));
+        } else {
+            writer.println(sm.getString("managerServlet.resourcesAll"));
+        }
+        try {
+            NamingEnumeration items = global.list("");
+            while (items.hasMore()) {
+                NameClassPair item = (NameClassPair) items.next();
+                if ((type != null) &&
+                    (!type.equals(item.getClassName()))) {
+                    continue;
+                }
+                writer.print(item.getName());
+                writer.print(':');
+                writer.print(item.getClassName());
+                // Do we want a description if available?
+                writer.println();
+            }
+        } catch (Throwable t) {
+            log("ManagerServlet.resources[" + type + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }

@@ -36,6 +36,9 @@ the following functions:</p>
 <li>Reload an existing web application, to reflect changes in the
     contents of <code>/WEB-INF/classes</code> or <code>/WEB-INF/lib</code>.
     </li>
+<li>List the available global JNDI resources, for use in deployment
+    tools that are preparing <code>&lt;ResourceLink&gt;</code> elements
+    nested in a <code>&lt;Context&gt;</code> deployment description.</li>
 <li>Remove an installed web application.</li>
 <li>Start a stopped application (thus making it available again).</li>
 <li>Stop an existing application (so that it becomes unavailable), but
@@ -434,6 +437,57 @@ error message.  Possible causes for problems include:</p>
 
 </subsection>
 
+<subsection name="List Available Global JNDI Resources">
+
+<source>
+http://localhost:8080/manager/resources[?type=xxxxx]
+</source>
+
+<p>List the global JNDI resources that are available for use in resource
+links for context configuration files.  If you specify the <code>type</code>
+request parameter, the value must be the fully qualified Java class name of
+the resource type you are interested in (for example, you would specify
+<code>javax.sql.DataSource</code> to acquire the names of all available
+JDBC data sources).  If you do not specify the <code>type</code> request
+parameter, resources of all types will be returned.</p>
+
+<p>Depending on whether the <code>type</code> request parameter is specfied
+or not, the first line of a normal response will be:</p>
+<pre>
+  OK - Listed global resources of all types
+</pre>
+<p>or</p>
+<pre>
+  OK - Listed global resources of type xxxxx
+</pre>
+<p>followed by one line for each resource.  Each line is composed of fields
+delimited by colon characters (":"), as follows:</p>
+<ul>
+<li><em>Global Resource Name</em> - The name of this global JNDI resource,
+    which would be used in the <code>global</code> attribute of a
+    <code>&lt;ResourceLink&gt;</code> element.</li>
+<li><em>Global Resource Type</em> - The fully qualified Java class name of
+    this global JNDI resource.</li>
+</ul>
+
+<p>If an error occurs, the response will start with <code>FAIL</code> and
+include an error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to enumerate the global JNDI
+    resources.  Check the Tomcat 4 logs for the details.</p>
+    </blockquote></li>
+<li><em>No global JNDI resources are available</em>
+    <blockquote>
+    <p>The Tomcat server you are running has been configured without
+    global JNDI resources.</p>
+    </blockquote></li>
+</ul>
+
+
+</subsection>
+
 <subsection name="Session Statistics">
 
 <source>
@@ -637,14 +691,15 @@ file might look something like this:</p>
   &lt;property name="password" value="mypassword"/&gt;
 
   &lt;-- Configure the custom Ant tasks for the Manager application --&gt;
-  &lt;taskdef name="deploy"   classname="org.apache.catalina.ant.DeployTask"/&gt;
-  &lt;taskdef name="install"  classname="org.apache.catalina.ant.InstallTask"/&gt;
-  &lt;taskdef name="list"     classname="org.apache.catalina.ant.ListTask"/&gt;
-  &lt;taskdef name="reload"   classname="org.apache.catalina.ant.ReloadTask"/&gt;
-  &lt;taskdef name="remove"   classname="org.apache.catalina.ant.RemoveTask"/&gt;
-  &lt;taskdef name="start"    classname="org.apache.catalina.ant.StartTask"/&gt;
-  &lt;taskdef name="stop"     classname="org.apache.catalina.ant.StopTask"/&gt;
-  &lt;taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/&gt;
+  &lt;taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/&gt;
+  &lt;taskdef name="install"   classname="org.apache.catalina.ant.InstallTask"/&gt;
+  &lt;taskdef name="list"      classname="org.apache.catalina.ant.ListTask"/&gt;
+  &lt;taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/&gt;
+  &lt;taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask"/&gt;
+  &lt;taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask"/&gt;
+  &lt;taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/&gt;
+  &lt;taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/&gt;
+  &lt;taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/&gt;
 
   &lt;-- Executable Targets --&gt;
   &lt;target name="compile" description="Compile web application"&gt;
