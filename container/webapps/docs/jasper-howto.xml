@@ -116,7 +116,7 @@ Explorer when using &lt;jsp:plugin&gt; tags.   Default
 
 <li><strong>fork</strong> - Have Ant fork JSP page compiles so they are
 performed in a seperate JVM from Tomcat? <code>true</code> or
-<code>false</code>, default <code>false</code>.</li>
+<code>false</code>, default <code>true</code>.</li>
 
 <li><strong>javaEncoding</strong> - Java file encoding to use for generating
 java source files. Default <code>UTF8</code>.</li>
@@ -159,10 +159,13 @@ pages set this to <code>false</code>.</li>
 <li><strong>fork</strong> - The internal JVM javac compiler used by Ant
 has a known memory leak. And Ant requires that java compiles be synchronized,
 i.e. only one JSP page can be compiled at a time.  Set fork to
-<code>true</code> so that Ant compiles JSP pages in a seperate JVM.
+<code>true</code> or do not define it (it is the default value) so that Ant 
+compiles JSP pages in a seperate JVM.
 This removes the synchronization of JSP page compiles and prevents
 all the javac classes from being instantiated and subsequently garbage
-collected by the JVM Tomcat is running in.</li>
+collected by the JVM Tomcat is running in. This also works around known 
+issues with javac, including memory leaking, as well as JAR file locking
+on Windows.</li>
 </ul>
 </p>
 
