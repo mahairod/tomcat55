@@ -625,44 +625,15 @@ public class WebappLoader
             setRepositories();
             setClassPath();
 
-	    if (container instanceof Context) {
-		// Tell the class loader the root of the context
-		ServletContext servletContext = 
-                    ((Context) container).getServletContext();
-		try {
-		    URL contextURL = servletContext.getResource("/");
-		    if( contextURL != null ) {
-			((WebappClassLoader)classLoader).setPermissions
-                            (contextURL);
-                        String jarUrl = "jar:" + contextURL.toString() 
-                            + "WEB-INF/lib/";
-                        ((WebappClassLoader)classLoader).setPermissions
-                            (jarUrl);                  
-                    }
-                    String contextRoot = servletContext.getRealPath("/");
-                    if (contextRoot != null) {
-                        ((WebappClassLoader)classLoader).setPermissions
-                            (contextRoot);
-                        String rootUrl = "file:" + contextRoot;
-                        ((WebappClassLoader)classLoader).setPermissions
-                            (rootUrl);
-		    }
-                    File workDir = 
-                        (File) servletContext.getAttribute
-                        (Globals.WORK_DIR_ATTR);
-                    if (workDir != null) {
-                        File libDir = new File(workDir, "WEB-INF/lib/");
-                        ((WebappClassLoader)classLoader).setPermissions
-                            (libDir.getAbsolutePath());
-                    }
-		} catch (MalformedURLException e) {
-		}
-	    }
+            setPermissions();
+
 	    if (classLoader instanceof Lifecycle)
 		((Lifecycle) classLoader).start();
+
             // Binding the Webapp class loader to the directory context
             DirContextURLStreamHandler.bind
                 ((ClassLoader) classLoader, this.container.getResources());
+
 	} catch (Throwable t) {
 	    throw new LifecycleException("start: ", t);
 	}
@@ -811,6 +782,83 @@ public class WebappLoader
             new WebappContextNotifier((Context) container);
 	(new Thread(notifier)).start();
 
+    }
+
+
+    /**
+     * Configure associated class loader permissions.
+     */
+    private void setPermissions() {
+        
+        if (System.getSecurityManager() == null)
+            return;
+        if (!(container instanceof Context))
+            return;
+
+        // Tell the class loader the root of the context
+        ServletContext servletContext = 
+            ((Context) container).getServletContext();
+
+        try {
+            
+            URL classesURL = 
+                servletContext.getResource("/WEB-INF/classes/");
+            if (classesURL != null)
+                classLoader.setPermissions(classesURL);
+            
+            URL libURL = servletContext.getResource("/WEB-INF/lib/");
+            if (libURL != null) {
+                classLoader.setPermissions(libURL);
+            }
+            
+            String contextRoot = servletContext.getRealPath("/");
+            if (contextRoot != null) {
+                
+                if (libURL != null) {
+                    File rootDir = new File(contextRoot);
+                    File libDir = new File(rootDir, "WEB-INF/lib/");
+                    String path = null;
+                    try {
+                        path = libDir.getCanonicalPath() + File.separator;
+                    } catch (IOException e) {
+                    }
+                    if (path != null)
+                        classLoader.setPermissions(path);
+                }
+                
+            } else {
+                
+                File workDir = 
+                    (File) servletContext.getAttribute
+                    (Globals.WORK_DIR_ATTR);
+                if (workDir != null) {
+                    if (libURL != null) {
+                        File libDir = new File(workDir, "WEB-INF/lib/");
+                        String path = null;
+                        try {
+                            path = libDir.getCanonicalPath() + File.separator;
+                        } catch (IOException e) {
+                        }
+                        classLoader.setPermissions(path);
+                    }
+                    if (classesURL != null) {
+                        File classesDir = 
+                            new File(workDir, "WEB-INF/classes/");
+                        String path = null;
+                        try {
+                            path = classesDir.getCanonicalPath() 
+                                + File.separator;
+                        } catch (IOException e) {
+                        }
+                        classLoader.setPermissions(path);
+                    }
+                }
+
+            }
+
+        } catch (MalformedURLException e) {
+        }
+        
     }
 
 
