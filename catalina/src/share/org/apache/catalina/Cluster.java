@@ -221,5 +221,13 @@ public interface Cluster {
      *  the web application
      */
     public void stop(String contextPath) throws IOException;
+    
+    /**
+     * Notifies the cluster if a context is distributable or not
+     * @param contextName - the name of the registed context
+     * @param distributable - true means that the sessions will be replicated
+     */
+    public void setDistributable(String contextName, boolean distributable);
+    
 
 }
