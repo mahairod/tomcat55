@@ -74,6 +74,14 @@
      classname="org.apache.tools.ant.taskdefs.optional.TraXLiaison" />
 
     <!-- Class availability flags -->
+    <condition property="jaxp.present">
+      <and>
+        <available classname="javax.xml.parsers.SAXParser"
+         classpath="${xerces.jar}" />
+        <available classname="org.xml.sax.ContentHandler"
+         classpath="${xerces.jar}" />
+      </and>
+    </condition>
     <condition property="javamail.present">
       <and>
         <available classname="javax.activation.DataSource"
@@ -281,12 +289,9 @@
     <condition property="copy.xerces.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
-        <and>
-          <equals arg1="${xerces.jar.present}" arg2="true" />
-          <not>
-            <equals arg1="${jdk.1.4.present}" arg2="true" />
-          </not>
-        </and>
+        <not>
+          <equals arg1="${jdk.1.4.present}" arg2="true" />
+        </not>
       </or>
     </condition>
 
@@ -310,15 +315,13 @@
     <echo message="--- Ant Flags ---" />
     <echo message="&lt;style&gt; task available (required)=${style.available}" />
 
-    <echo message="--- Source Repositories ---" />
-    <echo message="jakarta-tomcat-connectors.home.present=${jakarta-tomcat-connectors.home.present}" />
-
     <echo message="--- JDK ---" />
     <echo message="jdk.1.2.present=${jdk.1.2.present}" />
     <echo message="jdk.1.3.present=${jdk.1.3.present}" />
     <echo message="jdk.1.4.present=${jdk.1.4.present}" />
 
     <echo message="--- Required Libraries ---" />
+    <echo message="jaxp.present=${jaxp.present}" />
     <echo message="jndi.present=${jndi.present}" />
     <echo message="regexp.present=${regexp.present}" />
     <echo message="servlet.present=${servlet.present}" />
@@ -330,13 +333,12 @@
     <echo message="junit.present=${junit.present}" />
     <echo message="ldap.present=${ldap.present}" />
     <echo message="tyrex.present=${tyrex.present}" />
-    <echo message="xerces.present=${xerces.present}" />
 
     <echo message="--- Required JARs ---" />
     <echo message="jndi.jar.present(except JDK 1.3+)=${jndi.jar.present}" />
     <echo message="regexp.jar.present=${regexp.jar.present}" />
     <echo message="servlet.jar.present=${servlet.jar.present}" />
-    <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
+    <echo message="xerces.jar.present(except JDK 1.4+)=${xerces.jar.present}" />
 
     <echo message="--- Optional JARs ---" />
     <echo message="tomcat-ajp.jar.present=${tomcat-ajp.jar.present}" />
@@ -345,8 +347,8 @@
     <echo message="jta.jar.present=${jta.jar.present}" />
     <echo message="junit.jar.present=${junit.jar.present}" />
     <echo message="ldap.jar.present=${ldap.jar.present}" />
+    <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
     <echo message="tyrex.jar.present=${tyrex.jar.present}" />
-    <echo message="xerces.jar.present=${xerces.jar.present}" />
 
     <echo message="--- Conditional compilation flags ---" />
     <echo message="compile.javamail=${compile.javamail}" />
