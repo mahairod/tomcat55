@@ -205,6 +205,9 @@ Generic Bug Fixes:
 [4.1.15] Administration Webapp:
          Fix edition and creation of resource links.
 
+[4.1.17] Default configuration:
+         Connector performance tweaks.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -549,6 +552,17 @@ Catalina Bug Fixes:
          Conditional SSI enhancement, better emulation of Apache SSI,
          fix expression parser's handling of literals.
 
+[4.1.17] #15086
+         StandardWrapper:
+         Use the swallowOutput flag when unloading.
+
+[4.1.17] #15077
+         StandardWrapper:
+         Mark servlets as unavailable when the wrapper is stopped.
+
+[4.1.17] CGIServlet, SSIServlet:
+         Fix for SSI "normal" configuration which invokes a CGI script.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -629,6 +643,7 @@ Coyote Bug Fixes:
          Performance: Allow disabling upload timeout.
 
 [4.1.16] #14658
+         Tomcat 4 Adapter CoyoteWriter:
          Performance: Full reimplementation of PrintWriter, fixing syncing as
          well as performance problems which occurred when a client abruplty
          disconnected.
@@ -654,6 +669,36 @@ Coyote Bug Fixes:
 
 [4.1.16] JK2 HandlerRequest, JKCoyoteHandler:
          Lazy extraction of ssl certs to speed up jk/ajp13 when under SSL.
+
+[4.1.17] ActionCode:
+         Allow ActionCode to be used in a switch.
+
+[4.1.17] Response:
+         Fix Locale initilization to the default locale (en-us).
+
+[4.1.17] #15201
+         Tomcat 4 Adapter:
+         Fix SSL attributes retrival with JK 2.
+
+[4.1.17] Tomcat 4 Adapter CoyoteResponse:
+         encodeURL does not encode session with empty URL (rfc2396).
+
+[4.1.17] HTTP/1.1 Http11Processor:
+         Fix incorrect setting of the socket timeout when the connection is
+         first established.
+
+[4.1.17] HTTP/1.1 Http11Processor:
+         Performance: Optimize soTimeout management when the upload timeout is
+         disabled.
+
+[4.1.17] PoolTcpEndpoint:
+         Reduce synchornization by not using connection object pooling. Also
+         minimize the amount of time during which no thread is listening on 
+         the server socket.
+
+[4.1.17] ThreadPool:
+         Reduce synchronization by using an array of threads instead of 
+         a Vector.
 
 
 ----------------
