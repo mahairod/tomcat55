@@ -5,7 +5,7 @@
    <property name="build.compiler" value="classic"/>
    <property name="watchdog.build" value="../build/watchdog"/>
    <property name="watchdog.dist" value="../dist/watchdog"/>
-   <property name="watchdog-classpath" value="../jakarta-servletapi/lib/servlet.jar:./src/tools" />
+   <property name="watchdog-classpath" value="../jakarta-servletapi-4/lib/servlet.jar:./src/tools" />
 
    <!-- Prepare the unpacked destination directory -->
 
@@ -31,7 +31,7 @@
       <copyfile src="../jakarta-ant/lib/ant.jar"
                 dest="${watchdog.build}/lib/ant.jar"/>
 
-      <copyfile src="../jakarta-servletapi/lib/servlet.jar"
+      <copyfile src="../jakarta-servletapi-4/lib/servlet.jar"
                 dest="${watchdog.build}/lib/servlet.jar"/>
 
 
@@ -129,7 +129,7 @@
       <copyfile src="../jakarta-ant/lib/ant.jar"
                dest="${watchdog.dist}/lib/ant.jar"/>
 
-      <copyfile src="../jakarta-servletapi/lib/servlet.jar"
+      <copyfile src="../jakarta-servletapi-4/lib/servlet.jar"
                dest="${watchdog.dist}/lib/servlet.jar"/>
 
       <copydir src="src/clients/org/apache/jcheck/jsp/client" 
