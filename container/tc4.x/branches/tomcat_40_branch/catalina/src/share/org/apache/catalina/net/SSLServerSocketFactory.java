@@ -358,16 +358,20 @@ public class SSLServerSocketFactory
      */
     private void initKeyStore() throws IOException {
 
+        FileInputStream istream = null;
+
         try {
             keyStore = KeyStore.getInstance(keystoreType);
-            FileInputStream istream = new FileInputStream(keystoreFile);
+            istream = new FileInputStream(keystoreFile);
             keyStore.load(istream, keystorePass.toCharArray());
-            istream.close();
         } catch (Exception e) {
             // FIXME - send to an appropriate log file?
             System.out.println("initKeyStore:  " + e);
             e.printStackTrace(System.out);
             throw new IOException(e.toString());
+        } finally {
+            if ( istream != null )
+                istream.close();
         }
 
     }
