@@ -81,12 +81,10 @@ import org.apache.catalina.loader.StandardClassLoader;
  * <ul>
  * <li>A set of directories containing unpacked classes (and resources)
  *     that should be included in the class loader's
- *     repositories, <strong>unless</strong> a trigger class (see below)
- *     is discovered in that directory.</li>
+ *     repositories.</li>
  * <li>A set of directories containing classes and resources in JAR files.
  *     Each readable JAR file discovered in these directories will be
- *     added to the class loader's repositories, <strong>unless</strong> a
- *     trigger class (see below) is discovered in that directory.</li>
+ *     added to the class loader's repositories.</li>
  * <li><code>ClassLoader</code> instance that should become the parent of
  *     the new class loader.</li>
  * </ul>
@@ -140,13 +138,11 @@ public final class ClassLoaderFactory {
      * defaults and the specified directory paths:
      *
      * @param unpacked Array of pathnames to unpacked directories that should
-     *  be added to the repositories of the class loader unless they contain
-     *  one of the trigger classes, or <code>null</code> for no unpacked
-     *  directories to be considered
+     *  be added to the repositories of the class loader, or <code>null</code> 
+     * for no unpacked directories to be considered
      * @param packed Array of pathnames to directories containing JAR files
-     *  that should be added to the repositories of the class loader unless
-     *  they contain one of the trigger classes, or <code>null</code> for no
-     *  directories of JAR files to be considered
+     *  that should be added to the repositories of the class loader, 
+     * or <code>null</code> for no directories of JAR files to be considered
      * @param parent Parent class loader for the new class loader, or
      *  <code>null</code> for the system class loader.
      *
@@ -163,7 +159,7 @@ public final class ClassLoaderFactory {
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
-        // Add unpacked directories that do not contain trigger classes
+        // Add unpacked directories
         if (unpacked != null) {
             for (int i = 0; i < unpacked.length; i++)  {
                 File file = unpacked[i];
@@ -177,7 +173,7 @@ public final class ClassLoaderFactory {
             }
         }
 
-        // Add packed directory JAR files that do not contain trigger classes
+        // Add packed directory JAR files
         if (packed != null) {
             for (int i = 0; i < packed.length; i++) {
                 File directory = packed[i];
