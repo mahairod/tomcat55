@@ -70,6 +70,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import javax.servlet.ServletContext;
@@ -82,6 +83,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Resources;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -433,12 +435,16 @@ public final class StandardLoader
 
         if (debug >= 1)
 	    log(sm.getString("standardLoader.addRepository", repository));
+        for (int i = 0; i < repositories.length; i++) {
+            if (repository.equals(repositories[i]))
+                return;
+        }
 	String results[] = new String[repositories.length + 1];
 	for (int i = 0; i < repositories.length; i++)
 	    results[i] = repositories[i];
 	results[repositories.length] = repository;
 	repositories = results;
-	if (started) {
+	if (started && (classLoader != null)) {
 	    classLoader.addRepository(repository);
 	    setClassPath();
 	}
@@ -537,6 +543,9 @@ public final class StandardLoader
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
+        // Configure our context repositories if appropriate
+        setRepositories();
+
 	// Construct a class loader based on our current repositories list
 	try {
 	    if (parentClassLoader == null)
@@ -552,6 +561,9 @@ public final class StandardLoader
 	} catch (Throwable t) {
 	    throw new LifecycleException("start: ", t);
 	}
+
+        // Validate that all required packages are actually available
+        validatePackages();
 
 	// Set up context attributes if appropriate
 	setClassLoader();
@@ -770,6 +782,64 @@ public final class StandardLoader
 
 
     /**
+     * Configure the repositories for our class loader, based on the
+     * associated Context.
+     */
+    private void setRepositories() {
+
+        if (!(container instanceof Context))
+            return;
+	Resources resources = ((Context) container).getResources();
+
+	// Add the WEB-INF/classes subdirectory
+	URL classesURL = null;
+	try {
+	    classesURL = resources.getResource("/WEB-INF/classes");
+        } catch (MalformedURLException e) {
+	    classesURL = null;
+	}
+        if (classesURL != null) {
+            // Work around JDK 1.3 problem on Windows
+            String classesURLString = classesURL.toString();
+            while (true) {
+                int index = classesURLString.indexOf("\\.\\");
+                if (index < 0)
+                    break;
+                classesURLString = classesURLString.substring(0, index) +
+                    '\\' + classesURLString.substring(index + 3);
+            }
+            addRepository(classesURLString + "/");
+        }
+
+	// Add the WEB-INF/lib/*.jar files
+	URL libURL = null;
+	try {
+	    libURL = resources.getResource("/WEB-INF/lib");
+	} catch (MalformedURLException e) {
+	    libURL = null;
+	}
+        // FIXME - This still requires disk directory!  Scan JARs if present
+	if ((libURL != null) && "file".equals(libURL.getProtocol())) {
+	    File libFile = new File(libURL.getFile());
+	    if (libFile.exists() && libFile.canRead() &&
+	        libFile.isDirectory()) {
+		String filenames[] = libFile.list();
+		for (int i = 0; i < filenames.length; i++) {
+		    if (!filenames[i].endsWith(".jar"))
+		        continue;
+		    File jarFile = new File(libFile, filenames[i]);
+		    if (debug > 0)
+		        log(" Adding '" + "file: " +
+                            jarFile.getAbsolutePath() + "'");
+                    addRepository("file:" + jarFile.getAbsolutePath());
+		}
+	    }
+	}
+
+    }
+
+
+    /**
      * Sleep for the duration specified by the <code>checkInterval</code>
      * property.
      */
@@ -837,6 +907,46 @@ public final class StandardLoader
 	}
 
 	thread = null;
+
+    }
+
+
+    /**
+     * Validate that the required optional packages for this application
+     * are actually present.
+     *
+     * @exception LifecycleException if a required package is not available
+     */
+    private void validatePackages() throws LifecycleException {
+
+        ClassLoader classLoader = getClassLoader();
+        if (classLoader instanceof StandardClassLoader) {
+
+            Extension available[] =
+                ((StandardClassLoader) classLoader).findAvailable();
+            Extension required[] =
+                ((StandardClassLoader) classLoader).findRequired();
+            if (debug >= 1)
+                log("Optional Packages:  available=" +
+                    available.length + ", required=" +
+                    required.length);
+
+            for (int i = 0; i < required.length; i++) {
+                if (debug >= 1)
+                    log("Checking for required package " + required[i]);
+                boolean found = false;
+                for (int j = 0; j < available.length; j++) {
+                    if (available[j].isCompatibleWith(required[i])) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    throw new LifecycleException
+                        ("Missing optional package " + required[i]);
+            }
+
+        }
 
     }
 

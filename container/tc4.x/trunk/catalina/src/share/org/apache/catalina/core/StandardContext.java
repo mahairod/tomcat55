@@ -98,6 +98,9 @@ import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.loader.StandardLoader;
+import org.apache.catalina.resources.FileResources;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
 
@@ -2390,6 +2393,23 @@ public final class StandardContext
 	// Create context attributes that will be required
 	postWelcomeFiles();
 	postWorkDirectory();
+
+        // Add missing components as necessary
+        if (getResources() == null) {   // (1) Required by Loader
+            if (debug >= 1)
+                log(sm.getString("standardContext.defaultResources"));
+            setResources(new FileResources());
+        }
+        if (getLoader() == null) {      // (2) Required by Manager
+            if (debug >= 1)
+                log(sm.getString("standardContext.defaultLoader"));
+            setLoader(new StandardLoader(getParentClassLoader()));
+        }
+        if (getManager() == null) {     // (3) After prerequisites
+            if (debug >= 1)
+                log(sm.getString("standardContext.defaultManager"));
+            setManager(new StandardManager());
+        }
 
 	// Standard container startup
 	super.start();

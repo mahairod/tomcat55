@@ -957,25 +957,28 @@ final class StandardSession
 
 	// Deserialize the scalar instance variables (except Manager)
 	creationTime = ((Long) stream.readObject()).longValue();
-	id = (String) stream.readObject();
 	lastAccessedTime = ((Long) stream.readObject()).longValue();
 	maxInactiveInterval = ((Integer) stream.readObject()).intValue();
 	isNew = ((Boolean) stream.readObject()).booleanValue();
 	isValid = ((Boolean) stream.readObject()).booleanValue();
 	thisAccessedTime = ((Long) stream.readObject()).longValue();
 	principal = null;	// Transient only
+        setId((String) stream.readObject());
 
 	// Deserialize the attribute count and attribute values
 	if (attributes == null)
 	    attributes = new HashMap();
 	int n = ((Integer) stream.readObject()).intValue();
+        boolean isValidSave = isValid;
+        isValid = true;
 	for (int i = 0; i < n; i++) {
 	    String name = (String) stream.readObject();
 	    Object value = (Object) stream.readObject();
 	    if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
 		continue;
-	    attributes.put(name, value);	// No multithread access
+            setAttribute(name, value);
 	}
+        isValid = isValidSave;
 
     }
 
@@ -1003,12 +1006,12 @@ final class StandardSession
 
 	// Write the scalar instance variables (except Manager)
 	stream.writeObject(new Long(creationTime));
-	stream.writeObject(id);
 	stream.writeObject(new Long(lastAccessedTime));
 	stream.writeObject(new Integer(maxInactiveInterval));
 	stream.writeObject(new Boolean(isNew));
 	stream.writeObject(new Boolean(isValid));
 	stream.writeObject(new Long(thisAccessedTime));
+	stream.writeObject(id);
 
 	// Accumulate the names of serializable and non-serializable attributes
 	String keys[] = keys();

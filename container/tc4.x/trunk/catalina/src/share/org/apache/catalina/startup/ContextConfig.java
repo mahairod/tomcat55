@@ -96,7 +96,6 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Resources;
@@ -107,10 +106,6 @@ import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.Extension;
-import org.apache.catalina.loader.StandardClassLoader;
-import org.apache.catalina.loader.StandardLoader;
-import org.apache.catalina.resources.FileResources;
-import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
@@ -786,105 +781,6 @@ public final class ContextConfig
 
 
     /**
-     * Configure the repositories for the Loader associated with
-     * this Context.
-     */
-    private void loaderConfig() {
-
-	if (debug > 0)
-	    log("Configuring class loader repositories");
-
-	// Identify the components we will need
-	// FIXME - dependency on StandardLoader versus Loader?
-	StandardLoader loader = null;
-	try {
-	    loader = (StandardLoader) context.getLoader();
-        } catch (ClassCastException e) {
-	    ;
-        }
-	if (loader == null)
-	    return;
-	Resources resources = context.getResources();
-
-	// Add the WEB-INF/classes subdirectory
-	URL classesURL = null;
-	try {
-	    classesURL = resources.getResource("/WEB-INF/classes");
-        } catch (MalformedURLException e) {
-	    ;
-	}
-        if (classesURL != null) {
-            // Work around JDK 1.3 problem on Windows
-            String classesURLString = classesURL.toString();
-            while (true) {
-                int index = classesURLString.indexOf("\\.\\");
-                if (index < 0)
-                    break;
-                classesURLString = classesURLString.substring(0, index) +
-                    '\\' + classesURLString.substring(index + 3);
-            }
-            loader.addRepository(classesURLString + "/");
-        }
-
-	// Add the WEB-INF/lib/*.jar files
-	URL libURL = null;
-	try {
-	    libURL = resources.getResource("/WEB-INF/lib");
-	} catch (MalformedURLException e) {
-	    ;
-	}
-        // FIXME - This still requires disk directory!  Scan JARs if present
-	if ((libURL != null) && "file".equals(libURL.getProtocol())) {
-	    File libFile = new File(libURL.getFile());
-	    if (libFile.exists() && libFile.canRead() &&
-	        libFile.isDirectory()) {
-		String filenames[] = libFile.list();
-		for (int i = 0; i < filenames.length; i++) {
-		    if (!filenames[i].endsWith(".jar"))
-		        continue;
-		    File jarFile = new File(libFile, filenames[i]);
-		    if (debug > 0)
-		        log(" Adding '" + "file: " +
-                            jarFile.getAbsolutePath() + "'");
-                    loader.addRepository("file:" + jarFile.getAbsolutePath());
-		}
-	    }
-	}
-
-        // Validate the required and available optional packages
-        ClassLoader classLoader = loader.getClassLoader();
-        if (classLoader instanceof StandardClassLoader) {
-
-            Extension available[] =
-                ((StandardClassLoader) classLoader).findAvailable();
-            Extension required[] =
-                ((StandardClassLoader) classLoader).findRequired();
-            if (debug >= 1)
-                log("Optional Packages:  available=" +
-                    available.length + ", required=" +
-                    required.length);
-
-            for (int i = 0; i < required.length; i++) {
-                if (debug >= 1)
-                    log("Checking for required package " + required[i]);
-                boolean found = false;
-                for (int j = 0; j < available.length; j++) {
-                    if (available[j].isCompatibleWith(required[i])) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    throw new IllegalStateException
-                        ("start:  Missing extension " + required[i]);
-            }
-
-        }
-
-    }
-
-
-    /**
      * Log a message on the Logger associated with our Context (if any)
      *
      * @param message Message to be logged
@@ -1041,33 +937,8 @@ public final class ContextConfig
 	    log(sm.getString("contextConfig.start"));
         ok = true;
 
-	// Add missing Loader component if necessary
-	if (context.getLoader() == null) {
-	    if (debug > 0)
-		log(sm.getString("contextConfig.defaultLoader"));
-	    context.setLoader
-	      (new StandardLoader(context.getParentClassLoader()));
-	}
-
-	// Add missing Manager component if necessary
-	if (context.getManager() == null) {
-	    if (debug > 0)
-		log(sm.getString("contextConfig.defaultManager"));
-	    context.setManager(new StandardManager());
-	}
-
-	// Add missing Resources component if necessary
-	if (context.getResources() == null) {
-	    if (debug > 0)
-		log(sm.getString("contextConfig.defaultResources"));
-	    context.setResources(new FileResources());
-	}
-
         // Configure the Permissions for this Context (if necessary)
         permissionsConfig();
-
-	// Configure the Loader for this Context
-	loaderConfig();
 
 	// Process the default and application web.xml files
 	XmlMapper mapper = createWebMapper();
@@ -1087,7 +958,6 @@ public final class ContextConfig
             authenticatorConfig();
 
 	// Configure the application event listeners for this Context
-	// PREREQUISITE:  class loader has been configured
         if (ok)
             listenerConfig();
 

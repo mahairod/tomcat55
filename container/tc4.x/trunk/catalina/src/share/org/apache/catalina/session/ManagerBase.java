@@ -697,3 +697,4 @@ public abstract class ManagerBase implements Manager {
 
 
 }
+
