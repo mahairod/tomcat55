@@ -142,7 +142,7 @@ public class ResourceFactory
                         factory = (ObjectFactory) factoryClass.newInstance();
                     } catch(Throwable t) {
                         if( t instanceof NamingException)
-                            throw t;
+                            throw (NamingException)t;
                         throw new NamingException(
                             "Could not create resource factory instance, " +
                             t.getMessage());
