@@ -795,6 +795,30 @@ public abstract class Node {
     }
     
     /**
+     * Represents a <jsp:element>.
+     */
+    public static class JspElement extends Node {
+
+	private JspAttribute[] jspAttrs;
+
+	public JspElement(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public void setJspAttributes(JspAttribute[] jspAttrs) {
+	    this.jspAttrs = jspAttrs;
+	}
+
+	public JspAttribute[] getJspAttributes() {
+	    return jspAttrs;
+	}
+    }
+
+    /**
      * Collected information about child elements.  Used by nodes like
      * CustomTag, JspBody, and NamedAttribute.  The information is 
      * set in the Collector.
@@ -1585,6 +1609,11 @@ public abstract class Node {
 	}
 
 	public void visit(UninterpretedTag n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(JspElement n) throws JasperException {
 	    doVisit(n);
 	    visitBody(n);
 	}

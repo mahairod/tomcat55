@@ -271,6 +271,8 @@ public class JspDocumentParser extends DefaultHandler
 		    locator);
 	    }
 	    node = new Node.DoBodyAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_ELEMENT)) {
+	    node = new Node.JspElement(attrsCopy, start, current);
 	} else {
 	    node = getCustomTag(qName, attrsCopy, start, current);
 	    if (node == null) {

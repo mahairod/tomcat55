@@ -1613,6 +1613,77 @@ public class Generator {
 	    }
 	}
 
+	public void visit(Node.JspElement n) throws JasperException {
+
+	    // Hashtable for storing attribute name/value combinations
+	    Hashtable map = new Hashtable();
+
+	    Node.JspAttribute[] attrs = n.getJspAttributes();
+	    for (int i=0; i<attrs.length; i++) {
+		String attrStr = null;
+		if (attrs[i].isNamedAttribute()) {
+		    attrStr = generateNamedAttributeValue(
+                            attrs[i].getNamedAttributeNode());
+		} else {
+		    if ("name".equals(attrs[i].getName())) {
+			attrStr = attributeValue(attrs[i], false, String.class,
+						 "null");
+		    } else {
+			attrStr = attributeValue(attrs[i], false, Object.class,
+						 "null");
+		    }
+		}
+		String s = null;
+		if ("name".equals(attrs[i].getName())) {
+		    s = " + " + attrStr;
+		} else {
+		    s = " + \" " + attrs[i].getName() + "=\\\"\" + "
+			+ attrStr + " + \"\\\"\"";
+		}
+		map.put(attrs[i].getName(), s);
+	    }
+            
+	    // Write begin tag
+	    out.printin("out.write(\"<\"");
+	    // Write 'name' attribute
+	    out.print((String) map.get("name"));
+	    // Write remaining attributes
+	    Enumeration enum = map.keys();
+	    while (enum.hasMoreElements()) {
+		String attrName = (String) enum.nextElement();
+		if ("name".equals(attrName))
+		    continue;
+		out.print((String) map.get(attrName));
+	    }
+
+	    // Does the <jsp:element> have nested tags other than
+	    // <jsp:attribute>
+	    boolean hasBody = false;
+            Node.Nodes subelements = n.getBody();
+	    if (subelements != null) {
+		for (int i = 0; i<subelements.size(); i++) {
+		    Node subelem = subelements.getNode(i);
+		    if (!(subelem instanceof Node.NamedAttribute)) {
+			hasBody = true;
+			break;
+		    }
+		}
+	    }
+	    if (hasBody) {
+		out.println(" + \">\");");
+		
+		// Visit tag body
+		visitBody(n);
+
+		// Write end tag
+		out.printin("out.write(\"</\"");
+		out.print((String) map.get("name"));
+		out.println(" + \">\");");
+	    } else {
+		out.println(" + \"/>\");");
+	    }
+	}
+
 	private static final int CHUNKSIZE = 1024;
 
 	public void visit(Node.TemplateText n) throws JasperException {
