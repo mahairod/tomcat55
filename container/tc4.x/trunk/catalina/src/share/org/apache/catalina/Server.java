@@ -64,6 +64,7 @@
 
 package org.apache.catalina;
 
+import org.apache.catalina.deploy.NamingResources;
 
 /**
  * A <b>Server</b> represents one convenient way to package a set of
@@ -106,6 +107,21 @@ public interface Server {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo();
+
+
+    /**
+     * Return the global naming resources.
+     */
+    public NamingResources getGlobalNamingResources();
+
+
+    /**
+     * Set the global naming resources.
+     * 
+     * @param namingResources The new global naming resources
+     */
+    public void setGlobalNamingResources
+        (NamingResources globalNamingResources);
 
 
     /**
