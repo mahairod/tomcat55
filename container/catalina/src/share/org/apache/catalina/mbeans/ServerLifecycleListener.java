@@ -428,8 +428,8 @@ public class ServerLifecycleListener
     protected void createMBeans(Context context) throws Exception {
 
         // Create the MBean for the Context itself
-        if (log.isDebugEnabled())
-            log.debug("Creating MBean for Context " + context);
+//        if (log.isDebugEnabled())
+//            log.debug("Creating MBean for Context " + context);
 //        MBeanUtils.createMBean(context);
         context.addContainerListener(this);
         if (context instanceof StandardContext) {
@@ -466,14 +466,14 @@ public class ServerLifecycleListener
         if (cManager != null) {
             if (log.isDebugEnabled())
                 log.debug("Creating MBean for Manager " + cManager);
-            MBeanUtils.createMBean(cManager);
+            //MBeanUtils.createMBean(cManager);
         }
         Realm hRealm = context.getParent().getRealm();
         Realm cRealm = context.getRealm();
         if ((cRealm != null) && (cRealm != hRealm)) {
             if (log.isDebugEnabled())
                 log.debug("Creating MBean for Realm " + cRealm);
-            MBeanUtils.createMBean(cRealm);
+            //MBeanUtils.createMBean(cRealm);
         }
 
         // Create the MBeans for the NamingResources (if any)
@@ -568,7 +568,7 @@ public class ServerLifecycleListener
         if (dManager != null) {
             if (log.isDebugEnabled())
                 log.debug("Creating MBean for Manager " + dManager);
-            MBeanUtils.createMBean(dManager);
+            //MBeanUtils.createMBean(dManager);
         }
 
         // Create the MBeans for the NamingResources (if any)
@@ -608,7 +608,7 @@ public class ServerLifecycleListener
         if (eRealm != null) {
             if (log.isDebugEnabled())
                 log.debug("Creating MBean for Realm " + eRealm);
-            MBeanUtils.createMBean(eRealm);
+            //MBeanUtils.createMBean(eRealm);
         }
 
         // Create the MBeans for each child Host
@@ -659,7 +659,7 @@ public class ServerLifecycleListener
         if ((hRealm != null) && (hRealm != eRealm)) {
             if (log.isDebugEnabled())
                 log.debug("Creating MBean for Realm " + hRealm);
-            MBeanUtils.createMBean(hRealm);
+            //MBeanUtils.createMBean(hRealm);
         }
 
         // Create the MBeans for each child Context
@@ -743,7 +743,7 @@ public class ServerLifecycleListener
         // Create the MBean for the Server itself
         if (log.isDebugEnabled())
             log.debug("Creating MBean for Server " + server);
-        MBeanUtils.createMBean(server);
+        //MBeanUtils.createMBean(server);
         if (server instanceof StandardServer) {
             ((StandardServer) server).addPropertyChangeListener(this);
         }
@@ -783,7 +783,7 @@ public class ServerLifecycleListener
         // Create the MBean for the Service itself
         if (log.isDebugEnabled())
             log.debug("Creating MBean for Service " + service);
-        MBeanUtils.createMBean(service);
+        //MBeanUtils.createMBean(service);
         if (service instanceof StandardService) {
             ((StandardService) service).addPropertyChangeListener(this);
         }
@@ -843,13 +843,13 @@ public class ServerLifecycleListener
         if ((cRealm != null) && (cRealm != hRealm)) {
             if (log.isDebugEnabled())
                 log.debug("Destroying MBean for Realm " + cRealm);
-            MBeanUtils.destroyMBean(cRealm);
+            //MBeanUtils.destroyMBean(cRealm);
         }
         Manager cManager = context.getManager();
         if (cManager != null) {
             if (log.isDebugEnabled())
                 log.debug("Destroying MBean for Manager " + cManager);
-            MBeanUtils.destroyMBean(cManager);
+            //MBeanUtils.destroyMBean(cManager);
         }
         Logger hLogger = context.getParent().getLogger();
         Logger cLogger = context.getLogger();
@@ -954,7 +954,7 @@ public class ServerLifecycleListener
         if (dManager != null) {
             if (log.isDebugEnabled())
                 log.debug("Destroying MBean for Manager " + dManager);
-            MBeanUtils.destroyMBean(dManager);
+            //MBeanUtils.destroyMBean(dManager);
         }
 
         Loader dLoader = dcontext.getLoader();
@@ -1003,7 +1003,7 @@ public class ServerLifecycleListener
         if (eRealm != null) {
             if (log.isDebugEnabled())
                 log.debug("Destroying MBean for Realm " + eRealm);
-            MBeanUtils.destroyMBean(eRealm);
+            //MBeanUtils.destroyMBean(eRealm);
         }
         Logger eLogger = engine.getLogger();
         if (eLogger != null) {
@@ -1046,7 +1046,7 @@ public class ServerLifecycleListener
         if ((hRealm != null) && (hRealm != eRealm)) {
             if (log.isDebugEnabled())
                 log.debug("Destroying MBean for Realm " + hRealm);
-            MBeanUtils.destroyMBean(hRealm);
+            //MBeanUtils.destroyMBean(hRealm);
         }
         Logger eLogger = host.getParent().getLogger();
         Logger hLogger = host.getLogger();
@@ -1137,7 +1137,7 @@ public class ServerLifecycleListener
         if (log.isDebugEnabled()) {
             log.debug("Destroying MBean for Server " + server);
         }
-        MBeanUtils.destroyMBean(server);
+        //MBeanUtils.destroyMBean(server);
         if (server instanceof StandardServer) {
             ((StandardServer) server).removePropertyChangeListener(this);
         }
@@ -1306,13 +1306,13 @@ public class ServerLifecycleListener
                 if (log.isDebugEnabled()) {
                     log.debug("Removing MBean for Manager " + oldValue);
                 }
-                MBeanUtils.destroyMBean((Manager) oldValue);
+                //MBeanUtils.destroyMBean((Manager) oldValue);
             }
             if (newValue != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Creating MBean for Manager " + newValue);
                 }
-                MBeanUtils.createMBean((Manager) newValue);
+                //MBeanUtils.createMBean((Manager) newValue);
             }
         } else if ("realm".equals(propertyName)) {
             if (oldValue != null) {
@@ -1325,7 +1325,7 @@ public class ServerLifecycleListener
                 if (log.isDebugEnabled()) {
                     log.debug("Creating MBean for Realm " + newValue);
                 }
-                MBeanUtils.createMBean((Realm) newValue);
+                //MBeanUtils.createMBean((Realm) newValue);
             }
         } else if ("service".equals(propertyName)) {
             if (oldValue != null) {
@@ -1402,16 +1402,16 @@ public class ServerLifecycleListener
             }
         } else if ("realm".equals(propertyName)) {
             if (oldValue != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Removing MBean for Realm " + oldValue);
-                }
-                MBeanUtils.destroyMBean((Realm) oldValue);
+//                if (log.isDebugEnabled()) {
+//                    log.debug("Removing MBean for Realm " + oldValue);
+//                }
+//                //MBeanUtils.destroyMBean((Realm) oldValue);
             }
             if (newValue != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Creating MBean for Realm " + newValue);
-                }
-                MBeanUtils.createMBean((Realm) newValue);
+//                if (log.isDebugEnabled()) {
+//                    log.debug("Creating MBean for Realm " + newValue);
+//                }
+//                //MBeanUtils.createMBean((Realm) newValue);
             }
         } else if ("service".equals(propertyName)) {
             if (oldValue != null) {
