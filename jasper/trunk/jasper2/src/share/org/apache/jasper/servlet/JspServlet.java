@@ -17,7 +17,6 @@
 package org.apache.jasper.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
