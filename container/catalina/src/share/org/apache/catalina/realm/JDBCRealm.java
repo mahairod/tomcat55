@@ -574,9 +574,13 @@ public class JDBCRealm
                 dbConnection.prepareStatement(sb.toString());
         }
 
-        preparedCredentials.setString(1, username);
-        return (preparedCredentials);
+        if (username == null) {
+            preparedCredentials.setNull(1,java.sql.Types.VARCHAR);
+        } else {
+            preparedCredentials.setString(1, username);
+        }
 
+        return (preparedCredentials);
     }
 
 
