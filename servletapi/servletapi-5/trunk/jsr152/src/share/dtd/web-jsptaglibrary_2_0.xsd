@@ -3,7 +3,6 @@
      targetNamespace="http://java.sun.com/xml/ns/j2ee"
      xmlns:j2ee="http://java.sun.com/xml/ns/j2ee"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      elementFormDefault="qualified"
      attributeFormDefault="unqualified"
      version="2.0">
@@ -13,10 +12,11 @@
       %W% %G%
     </xsd:documentation>
   </xsd:annotation>
+
   <xsd:annotation>
     <xsd:documentation>
 
-      Copyright 2002 Sun Microsystems, Inc., 901 San Antonio
+      Copyright 2003 Sun Microsystems, Inc., 901 San Antonio
       Road, Palo Alto, California 94303, U.S.A. All rights
       reserved.
 
@@ -270,13 +270,15 @@
 
 		Where:
 
- 		    * Type is a basic type or a fully qualified Java class name
-		      (including package name), as per the 'Type' production
-		      in the Java Language Specification, Second Edition,
+ 		    * Type is a basic type or a fully qualified
+		      Java class name (including package name),
+		      as per the 'Type' production in the Java
+		      Language Specification, Second Edition,
 		      Chapter 18.
 
-                    * Identifier is a Java identifier, as per the 'Identifier'
-		      production in the Java Language Specification, Second
+                    * Identifier is a Java identifier, as per
+		      the 'Identifier' production in the Java
+		      Language Specification, Second
 		      Edition, Chapter 18.
 
 	    Example:
@@ -693,8 +695,8 @@
 
 	The taglib tag is the document root, it defines:
 
-	description     a simple string describing the "use" of this taglib,
-			should be user discernable
+	description     a simple string describing the "use" of this
+			taglib, should be user discernable
 
 	display-name    the display-name element contains a
 			short name that is intended to be displayed
