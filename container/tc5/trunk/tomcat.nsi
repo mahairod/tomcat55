@@ -122,6 +122,7 @@ Section "Core" SecTomcatCore
   File /r work
   File /r temp
   SetOutPath $INSTDIR\webapps
+  File /r webapps\balancer
   File /r webapps\ROOT
 
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
@@ -487,6 +488,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\shared"
   RMDir "$INSTDIR\logs"
   RMDir /r "$INSTDIR\server"
+  RMDir /r "$INSTDIR\webapps\balancer"
   RMDir /r "$INSTDIR\webapps\ROOT"
   RMDir /r "$INSTDIR\webapps\tomcat-docs"
   RMDir /r "$INSTDIR\webapps\servlets-examples"
