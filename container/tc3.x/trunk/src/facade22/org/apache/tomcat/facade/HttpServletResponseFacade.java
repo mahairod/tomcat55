@@ -106,7 +106,10 @@ final class HttpServletResponseFacade  implements HttpServletResponse
     void recycle() {
 	usingStream = false;
 	usingWriter= false;
-	//	writer=null; // fixed ( ? )
+	if( writer.checkError() ) {
+	    OutputBuffer oBuffer= response.getBuffer();
+	    writer = new ServletWriterFacade( oBuffer, response);
+	}
 	if( osFacade != null ) osFacade.recycle();
     }
 
