@@ -403,10 +403,20 @@ public class RequestImpl  implements Request {
     }
 
     public HttpSession getSession(boolean create) {
-	// use the cached value
-	if( serverSession!=null )
-	    return serverSession;
 
+	// use the cached value, unless it is invalid
+	if( serverSession!=null ) {
+	    // Detect "invalidity" by trying to access a property
+	    try {
+		serverSession.getCreationTime();
+		return (serverSession);
+	    } catch (IllegalStateException e) {
+		// It's invalid, so pretend we never saw it
+		serverSession = null;
+		reqSessionId = null;
+	    }
+	}
+	
 	SessionManager sM=context.getSessionManager();
 
 	// if the interceptors found a request id, use it
