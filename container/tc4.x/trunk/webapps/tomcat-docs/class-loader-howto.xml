@@ -143,13 +143,19 @@ loaders as it is initialized:</p>
         These are separated so that they can be completely removed if the
         corresponding service is not required, or they can be subject to
         specialized security manager permissions.</li>
-    <li><em>tomcat-ajp.jar</em> - Classes for the Java portion of the
-        <code>mod_jk</code> web server connector, which allows Tomcat to
+    <li><em>tomcat-coyote.jar</em> - Coyote connector for Tomcat 4.</li>
+    <li><em>tomcat-http11.jar</em> - Standalone Java HTTP/1.1 
+        connector.</li>
+    <li><em>tomcat-jk.jar</em> - Classes for the Java portion of the
+        <code>JK</code> web server connector, which allows Tomcat to
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>
-    <li><em>tomcat-util.jar</em> - Utility classes required by
-        <em>tomcat-ajp.jar</em>.</li>
-    <li><em>warp.jar</em> - Classes for the Java portion of the
-        <code>mod_webapp</code> web server connector, which allows Tomcat to
+    <li><em>tomcat-jk2.jar</em> - Classes for the Java portion of the
+        <code>JK 2</code> web server connector, which allows Tomcat to
+        run behind web servers such as Apache and iPlanet iAS and iWS.</li>
+    <li><em>tomcat-util.jar</em> - Utility classes required by some
+        Tomcat connectors.</li>
+    <li><em>tomcat-webapp.jar</em> - Classes for the Java portion of the
+        <code>Webapp</code> web server connector, which allows Tomcat to
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>
     </ul></li>
 <li><strong>Shared</strong> - This class loader is the place to put classes
