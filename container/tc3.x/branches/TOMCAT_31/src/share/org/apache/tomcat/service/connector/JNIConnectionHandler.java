@@ -125,7 +125,9 @@ public class JNIConnectionHandler {
 
     	    contextM.service( reqA, resA );
 
-    	    resA.finish();
+    	    if(resA.getStatus() > 0) {
+    	        resA.finish();
+    	    }
     	} catch(Exception ex) {
     	    ex.printStackTrace();
     	}
@@ -285,15 +287,17 @@ class JNIResponseAdapter extends ResponseImpl {
 
     public void endHeaders() throws IOException {
 
-    	if(request.getProtocol()==null) // HTTP/0.9 
+    	if(request.getProtocol()==null) // HTTP/0.9
 	        return;
 
         super.endHeaders();
-        
+
         int    hcnt = 0;
         String []headerNames = null;
         String []headerValues = null;
+
         headers.removeHeader("Status");
+
         hcnt = headers.size();
         headerNames = new String[hcnt];
         headerValues = new String[hcnt];
@@ -304,7 +308,7 @@ class JNIResponseAdapter extends ResponseImpl {
             headerValues[i] = h.getValue();
         }
 
-        if(h.startReasponse(s, l, status, getMessage(status), headerNames, headerValues, hcnt) <= 0) {
+        if(h.startReasponse(s, l, getStatus(), getMessage(getStatus()), headerNames, headerValues, hcnt) <= 0) {
             throw new IOException("Error: JNI startReasponse implementation error");
         }
     }
