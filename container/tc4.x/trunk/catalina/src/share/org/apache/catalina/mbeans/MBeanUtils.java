@@ -99,6 +99,7 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
 
@@ -123,6 +124,8 @@ public class MBeanUtils {
      * is a class name, and the second element is the managed bean name.
      */
     private static String exceptions[][] = {
+        { "org.apache.ajp.tomcat4.Ajp13Connector",
+          "Ajp13Connector" },
         { "org.apache.catalina.core.StandardDefaultContext",
           "DefaultContext" },
         { "org.apache.catalina.connector.http10.HttpConnector",
@@ -172,14 +175,19 @@ public class MBeanUtils {
         // Deal with exceptions to the standard rule
         String className = component.getClass().getName();
         for (int i = 0; i < exceptions.length; i++) {
-            if (className.equals(exceptions[i][0]))
+            if (className.equals(exceptions[i][0])) {
+                System.out.println("EXC " + className + " --> " +
+                                   exceptions[i][1]);
                 return (exceptions[i][1]);
+            }
         }
 
         // Perform the standard transformation
         int period = className.lastIndexOf('.');
         if (period >= 0)
             className = className.substring(period + 1);
+        System.out.println("STD " + component.getClass().getName() + " --> " +
+                           className);
         return (className);
 
     }
@@ -707,6 +715,23 @@ public class MBeanUtils {
                                   ",port=" + httpConnector.getPort() +
                                   ",address=" + httpConnector.getAddress());
             return (name);
+        } else if ("org.apache.ajp.tomcat4.Ajp13Connector".equals
+                   (connector.getClass().getName())) {
+            try {
+                String address = (String)
+                    PropertyUtils.getSimpleProperty(connector, "address");
+                Integer port = (Integer)
+                    PropertyUtils.getSimpleProperty(connector, "port");
+                name = new ObjectName(domain + ":type=Connector" +
+                                      ",service=" +
+                                      connector.getService().getName() +
+                                      ",port=" + port +
+                                      ",address=" + address);
+                return (name);
+            } catch (Exception e) {
+                throw new MalformedObjectNameException
+                    ("Cannot create object name for " + connector);
+            }
         } else {
             throw new MalformedObjectNameException
                 ("Cannot create object name for " + connector);
