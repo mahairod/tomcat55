@@ -2376,10 +2376,6 @@
           description="Number of sessions that expired ( doesn't include explicit invalidations )"
                  type="int" />
 
-    <attribute   name="processingTime"
-          description="Time spent doing housekeeping and expiration"
-                 type="long" />
-
     <attribute   name="duplicates"
           description="Number of duplicated session ids generated"
                  type="int" />
