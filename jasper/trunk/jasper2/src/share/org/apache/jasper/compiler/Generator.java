@@ -1843,7 +1843,10 @@ class Generator {
 	    }
 	    out.printil("try {");
 	    out.pushIndent();
+	    out.printil("if (getJspBody() != null)");
+	    out.pushIndent();
 	    out.printil("getJspBody().invoke(_jspx_sout);");
+	    out.popIndent();
 	    out.popIndent();
 	    out.printil( "} finally {" );
 	    out.pushIndent();
@@ -2082,12 +2085,15 @@ class Generator {
 	    if (findJspBody(n) == null) {
 		/*
 		 * Encapsulate body of custom tag invocation in JspFragment
-		 * and pass it to tag handler's setJspBody()
+		 * and pass it to tag handler's setJspBody(), unless tag body
+		 * is empty
 		 */
-		out.printin(tagHandlerVar);
-		out.print(".setJspBody(");
-		generateJspFragment(n, tagHandlerVar);
-		out.println(");");
+		if (n.getBody() != null) {
+		    out.printin(tagHandlerVar);
+		    out.print(".setJspBody(");
+		    generateJspFragment(n, tagHandlerVar);
+		    out.println(");");
+		}
 	    } else {
 		/*
 		 * Body of tag is the body of the <jsp:body> element.
