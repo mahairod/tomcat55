@@ -418,6 +418,8 @@ public class PageContextImpl extends PageContext {
         throws ServletException, IOException
     {
         String path = getAbsolutePathRelativeToContext(relativeUrlPath);
+	if( out!=null )
+	    out.clearBuffer();
         context.getRequestDispatcher(path).forward(request, response);
     }
 
