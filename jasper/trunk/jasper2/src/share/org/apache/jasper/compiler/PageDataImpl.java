@@ -405,8 +405,11 @@ class PageDataImpl extends PageData implements TagConstants {
 	    if (attrs != null) {
 		printAttributes(attrs);
 	    }
-	    if (body != null || text != null) {
+	    if (tag.equals(JSP_ROOT) || body != null || text != null) {
 		buf.append(">\n");
+		if (tag.equals(JSP_ROOT)) {
+		    appendPageDirective();
+		}
 		if (body != null) {
 		    body.visit(this);
 		} else {
@@ -441,8 +444,15 @@ class PageDataImpl extends PageData implements TagConstants {
 	    int len = attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String attrName = attrs.getQName(i);
-		if ("import".equals(attrName)) {
-		    // Ignore page directive's import attribute for now
+		if ("import".equals(attrName) || "contentType".equals(attrName)
+		        || "pageEncoding".equals(attrName)) {
+		    /*
+		     * Page directive's 'import' attribute is considered
+		     * further down, and its 'pageEncoding' and 'contentType'
+		     * attributes are ignored, since we've already created 
+		     * a new page directive containing just these two
+		     * attributes
+		     */
 		    continue;
 		}
 		String value = attrs.getValue(i);
@@ -479,6 +489,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
 		appendCDATA(text);
 		buf.append(JSP_TEXT_END);
+		buf.append("\n");
 	    } else {
 		appendCDATA(text);
 	    }
@@ -537,7 +548,24 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * Appends XML prolog with encoding declaration.
 	 */
 	private void appendXmlProlog() {
-	    buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+	    buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+	}
+
+	/*
+	 * Appends a page directive with 'pageEncoding' and 'contentType'
+	 * attributes whose values are derived from pageInfo.
+	 */
+	private void appendPageDirective() {
+	    buf.append("<").append(JSP_PAGE_DIRECTIVE);
+	    buf.append("\n");
+
+	    // append jsp:id
+	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append(jspId++).append("\"\n");
+	    buf.append("  ").append("pageEncoding").append("=\"UTF-8\"\n");
+	    buf.append("  ").append("contentType").append("=\"");
+	    buf.append(pageInfo.getContentType()).append("\"\n");
+	    buf.append("/>\n");	    
 	}
     }
 }
