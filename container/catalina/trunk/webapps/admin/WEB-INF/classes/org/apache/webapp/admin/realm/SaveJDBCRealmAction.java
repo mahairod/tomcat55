@@ -109,6 +109,10 @@ public final class SaveJDBCRealmAction extends Action {
      */
     private String createStandardRealmTypes[] =
     { "java.lang.String",     // parent
+      "java.lang.String",     // driverName
+      "java.lang.String",     // connectionName
+      "java.lang.String",     // connectionPassword
+      "java.lang.String",     // connectionURL
     };
 
 
@@ -216,8 +220,12 @@ public final class SaveJDBCRealmAction extends Action {
                     TomcatTreeBuilder.getMBeanFactory();
 
                 // Create a new StandardRealm object
-                values = new String[1];
+                values = new String[5];
                 values[0] = parent;
+		values[1] = rform.getDriver();
+		values[2] = rform.getConnectionName();
+		values[3] = rform.getConnectionPassword();
+		values[4] = rform.getConnectionURL();
                 operation = "createJDBCRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,
