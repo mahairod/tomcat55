@@ -57,8 +57,8 @@ Release Builds
 
 Release Builds of Tomcat 4.0 are created and released periodically, and
 announced to the interested mailing lists.  Each release build resides in its
-own directories.  For example, the Tomcat 4.0-beta-6 release is available at:
+own directories.  For example, the Tomcat 4.0-beta-7 release is available at:
 
-Binary:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0-b6/
-Source:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0-b6/src/
+Binary:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0-b7/
+Source:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0-b7/src/
 
