@@ -370,7 +370,6 @@ public class ErrorReportValve
                 // If writer is null, it's an indication that the response has
                 // been hard committed already, which should never happen
                 writer.write(sb.toString());
-                writer.flush();
 
             }
 
