@@ -331,7 +331,7 @@ Generic Bug Fixes:
          Docs updates.
 
 [4.1.31] Administration Wepapp:
-         Add support for new clientAtuth values
+         Add support for new clientAuth values
 
 [4.1.31] Docs:
          Correctly document default value for useBodyEncodingForURI
@@ -1248,6 +1248,10 @@ Catalina Bug Fixes:
          Session persistence
          Fix serialization of array of custom class
 
+[4.1.31] #20758
+         StandardContext
+         Fix sources of memory leaks associated with deploy/undeploy
+
 
 ----------------
 Coyote Bug Fixes:
@@ -1487,6 +1491,8 @@ Coyote Bug Fixes:
 [4.1.31] #21184
          http connector
          Rename LocalString_fr.properties to LocalStrings_fr.properties
+
+[4.1.31] Upgrade to Connectors from Tomcat 5.0.28
 
 
 ----------------
