@@ -112,13 +112,12 @@ public class HttpResponseAdapter extends  Response {
 
 	int count=headers.size();
 	for( int i=0; i<count; i++ ) {
-	    MimeHeaderField field=headers.getField( i );
 	    // response headers are set by the servlet, so probably we have only
 	    // Strings.
 	    // XXX date, cookies, etc shoud be extracted from response
-	    printHead( field.getName() );
+	    printHead( headers.getName( i ).toString() );
 	    printHead(": ");
-	    printHead( field.getValue() );
+	    printHead( headers.getValue( i ).toString() );
 	    printHead("\r\n");
 	}
 	
@@ -154,13 +153,8 @@ public class HttpResponseAdapter extends  Response {
 	// for any of those ( instead the server will generate the date )
 	// This avoids redundant setting of date ( very expensive ).
 	// XXX XXX Check if IIS, NES do generate the date
-	MimeHeaderField dateH= headers.find( "Date" );
-	if( false && dateH == null ) {
-	    // no date header set by user
-	    dateH=headers.putHeader();
-	    dateH.setName("Date");
-	    dateH.setDateValue(System.currentTimeMillis());
-	    // will reuse the HttpDate instance
+	if( false ) {
+	    headers.setDateHeader(  "Date", System.currentTimeMillis());
 	}
 	
 	// Servlet Engine header will be set per/adapter - smarter adapters will

@@ -245,7 +245,7 @@ public class Response {
 	    if( checkSpecialHeader(name, value) )
 		return;
 	}
-	headers.putHeader(name, value);
+	headers.setHeader(name, value);
     }
 
     public void addHeader(String name, String value) {
@@ -430,7 +430,7 @@ public class Response {
         setContentType(newType);
 
 	// only one header !
-	headers.putHeader("Content-Language", contentLanguage);
+	headers.setHeader("Content-Language", contentLanguage);
     }
 
     public String getCharacterEncoding() {
@@ -444,7 +444,7 @@ public class Response {
         if (encoding != null) {
 	    characterEncoding = encoding;
         }
-	headers.putHeader("Content-Type", contentType);
+	headers.setHeader("Content-Type", contentType);
     }
 
     public String getContentType() {
@@ -454,7 +454,7 @@ public class Response {
     public void setContentLength(int contentLength) {
         if( included ) return;
 	this.contentLength = contentLength;
-	headers.putIntHeader("Content-Length", contentLength);
+	headers.setIntHeader("Content-Length", contentLength);
     }
 
     public int getContentLength() {

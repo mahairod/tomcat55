@@ -166,7 +166,7 @@ public class Ajp13ConnectorRequest extends Request
             }
 
             String hValue = msg.getString();
-            headers.putHeader( hName , hValue );
+            headers.addHeader( hName , hValue );
             //log( "Head: " + hName + "=" + hValue);
         }
 
