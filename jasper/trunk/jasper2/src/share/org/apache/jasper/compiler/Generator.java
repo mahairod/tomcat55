@@ -2823,7 +2823,7 @@ public class Generator {
 	        throws JasperException {
 
 	if (tagInfo.hasDynamicAttributes()) {
-	    out.printil("HashMap dynamicAttrs = new java.util.HashMap();");
+	    out.printil("java.util.HashMap dynamicAttrs = new java.util.HashMap();");
 	}
 
 	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
@@ -2924,7 +2924,7 @@ public class Generator {
      * variable can later be created for it.
      */
     public void generateSetDynamicAttribute() {
-        out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws AttributeNotSupportedException {");
+        out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws javax.servlet.jsp.tagext.AttributeNotSupportedException {");
 	out.pushIndent();
 	out.printil("if (uri != null)");
 	out.pushIndent();
@@ -2976,10 +2976,10 @@ public class Generator {
 
 	// dynamic attributes
 	if (tagInfo.hasDynamicAttributes()) {
-	    out.printil("for (Iterator i = dynamicAttrs.entrySet().iterator(); i.hasNext(); ) {");
+	    out.printil("for (java.util.Iterator i = dynamicAttrs.entrySet().iterator(); i.hasNext(); ) {");
 	    out.pushIndent();
-	    out.printil("Map.Entry e = (Map.Entry) i.next();");
-	    out.printil("getJspContext().setAttribute(e.getKey(), e.getValue());");
+	    out.printil("java.util.Map.Entry e = (java.util.Map.Entry) i.next();");
+	    out.printil("getJspContext().setAttribute((String) e.getKey(), e.getValue());");
 	    out.popIndent();
 	    out.printil("}");
 	}

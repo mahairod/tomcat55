@@ -111,42 +111,7 @@ public class Validator {
 	    new JspUtil.ValidAttribute("isErrorPage"),
 	    new JspUtil.ValidAttribute("contentType"),
 	    new JspUtil.ValidAttribute("pageEncoding"),
-	    new JspUtil.ValidAttribute("isScriptingEnabled") };
-
-	private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name"),
-	    new JspUtil.ValidAttribute("dispaly-name"),
-	    new JspUtil.ValidAttribute("body-content"),
-	    new JspUtil.ValidAttribute("small-icon"),
-	    new JspUtil.ValidAttribute("large-icon"),
-	    new JspUtil.ValidAttribute("description"),
-	    new JspUtil.ValidAttribute("example"),
-	    new JspUtil.ValidAttribute("pageEncoding") };
-
-	private static final JspUtil.ValidAttribute[] attributeDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name", true),
-	    new JspUtil.ValidAttribute("required"),
-	    new JspUtil.ValidAttribute("fragment"),
-	    new JspUtil.ValidAttribute("rtexprvalue"),
-	    new JspUtil.ValidAttribute("type"),
-	    new JspUtil.ValidAttribute("description")
-	};
-
-	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name-given"),
-	    new JspUtil.ValidAttribute("name-from"),
-	    new JspUtil.ValidAttribute("variable-class"),
-	    new JspUtil.ValidAttribute("scope"),
-	    new JspUtil.ValidAttribute("declare"),
-	    new JspUtil.ValidAttribute("description")
-	};
-
-	private static final JspUtil.ValidAttribute[] fragmentInputDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name", true),
-	    new JspUtil.ValidAttribute("fragment", true),
-	    new JspUtil.ValidAttribute("required"),
-	    new JspUtil.ValidAttribute("type"),
-	    new JspUtil.ValidAttribute("description")
+	    new JspUtil.ValidAttribute("isScriptingEnabled")
 	};
 
 	private boolean languageSeen = false;
@@ -298,24 +263,29 @@ public class Validator {
 	    pageInfo.addImports(n.getImports());
 	}
 
-	public void visit(Node.TagDirective n) throws JasperException {    
-            JspUtil.checkAttributes("Tag directive", n,
-                                    tagDirectiveAttrs, err);
+	public void visit(Node.TagDirective n) throws JasperException {
+	    // Do nothing, since this tag directive has already been validated
+	    // by TagFileProcessor when it created a TagInfo object from the
+	    // tag file in which the directive appeared
 	}
 
 	public void visit(Node.AttributeDirective n) throws JasperException {
-            JspUtil.checkAttributes("Attribute directive", n,
-                                    attributeDirectiveAttrs, err);
+	    // Do nothing, since this attribute directive has already been
+	    // validated by TagFileProcessor when it created a TagInfo object
+	    // from the tag file in which the directive appeared
 	}
 
 	public void visit(Node.VariableDirective n) throws JasperException {
-            JspUtil.checkAttributes("Variable directive", n,
-                                    variableDirectiveAttrs, err);
+	    // Do nothing, since this variable directive has already been
+	    // validated by TagFileProcessor when it created a TagInfo object
+	    // from the tag file in which the directive appeared
 	}
 
-	public void visit(Node.FragmentInputDirective n) throws JasperException{
-            JspUtil.checkAttributes("Fragment-input directive", n,
-                                    fragmentInputDirectiveAttrs, err);
+	public void visit(Node.FragmentInputDirective n)
+	        throws JasperException {
+	    // Do nothing, since this fragment-input directive has already been
+	    // validated by TagFileProcessor when it created a TagInfo object
+	    // from the tag file in which the directive appeared
 	}
     }
 

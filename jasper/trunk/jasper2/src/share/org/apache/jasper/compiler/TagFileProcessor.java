@@ -86,6 +86,43 @@ public class TagFileProcessor {
      */
     static class TagFileVisitor extends Node.Visitor {
 
+        private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
+            new JspUtil.ValidAttribute("name"),
+            new JspUtil.ValidAttribute("display-name"),
+            new JspUtil.ValidAttribute("body-content"),
+            new JspUtil.ValidAttribute("dynamic-attributes"),
+            new JspUtil.ValidAttribute("small-icon"),
+            new JspUtil.ValidAttribute("large-icon"),
+            new JspUtil.ValidAttribute("description"),
+            new JspUtil.ValidAttribute("example"),
+            new JspUtil.ValidAttribute("pageEncoding") };
+
+	private static final JspUtil.ValidAttribute[] attributeDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("required"),
+	    new JspUtil.ValidAttribute("fragment"),
+	    new JspUtil.ValidAttribute("rtexprvalue"),
+	    new JspUtil.ValidAttribute("type"),
+	    new JspUtil.ValidAttribute("description")
+	};
+
+	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name-given"),
+	    new JspUtil.ValidAttribute("name-from"),
+	    new JspUtil.ValidAttribute("variable-class"),
+	    new JspUtil.ValidAttribute("scope"),
+	    new JspUtil.ValidAttribute("declare"),
+	    new JspUtil.ValidAttribute("description")
+	};
+
+	private static final JspUtil.ValidAttribute[] fragmentInputDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("fragment", true),
+	    new JspUtil.ValidAttribute("required"),
+	    new JspUtil.ValidAttribute("type"),
+	    new JspUtil.ValidAttribute("description")
+	};
+
         private ErrorDispatcher err;
 	private TagLibraryInfo tagLibInfo;
 
@@ -104,44 +141,6 @@ public class TagFileProcessor {
         private Vector fragmentAttributeVector = new Vector();
         private Map fragmentAttributesMap = new Hashtable();
 
-        private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
-            new JspUtil.ValidAttribute("name"),
-            new JspUtil.ValidAttribute("display-name"),
-            new JspUtil.ValidAttribute("body-content"),
-            new JspUtil.ValidAttribute("dynamic-attributes"),
-            new JspUtil.ValidAttribute("small-icon"),
-            new JspUtil.ValidAttribute("large-icon"),
-            new JspUtil.ValidAttribute("description"),
-            new JspUtil.ValidAttribute("example"),
-            new JspUtil.ValidAttribute("pageEncoding") };
-
-        private static final JspUtil.ValidAttribute[] attributeDirectiveAttrs =
-{
-            new JspUtil.ValidAttribute("name", true),
-            new JspUtil.ValidAttribute("required"),
-            new JspUtil.ValidAttribute("fragment"),
-            new JspUtil.ValidAttribute("rtexprvalue"),
-            new JspUtil.ValidAttribute("type"),
-            new JspUtil.ValidAttribute("description")
-        };
-
-        private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
-            new JspUtil.ValidAttribute("name-given"),
-            new JspUtil.ValidAttribute("name-from"),
-            new JspUtil.ValidAttribute("variable-class"),
-            new JspUtil.ValidAttribute("scope"),
-            new JspUtil.ValidAttribute("declare"),
-            new JspUtil.ValidAttribute("description")
-        };
-
-        private static final JspUtil.ValidAttribute[] fragmentInputDirectiveAttrs = {
-            new JspUtil.ValidAttribute("name", true),
-            new JspUtil.ValidAttribute("fragment", true),
-            new JspUtil.ValidAttribute("required"),
-            new JspUtil.ValidAttribute("type"),
-            new JspUtil.ValidAttribute("description")
-        };
-
         public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo) {
             err = compiler.getErrorDispatcher();
 	    this.tagLibInfo = tagLibInfo;
@@ -149,8 +148,8 @@ public class TagFileProcessor {
 
         public void visit(Node.TagDirective n) throws JasperException {
 
-            JspUtil.checkAttributes("Tag directive", n,
-                                    tagDirectiveAttrs, err);
+            JspUtil.checkAttributes("Tag directive", n, tagDirectiveAttrs,
+				    err);
 
 	    String tname = n.getAttributeValue("name");
 	    if (tname != null && name != null && !tname.equals(name)) {
