@@ -39,6 +39,9 @@
   <!--   readonly            Is this context "read only", so HTTP           -->
   <!--                       commands like PUT and DELETE are               -->
   <!--                       rejected?  [true]                              -->
+  <!--                                                                      -->
+  <!--   encodeRedirects     Call encodeRedirectURL() on welcomefile or     -->
+  <!--                       directory redirects. [false]                   -->
 
     <servlet>
         <servlet-name>default</servlet-name>

@@ -165,6 +165,12 @@ public class DefaultServlet
 
 
     /**
+     * Calls encodeRedirectURL on redirects? default=false
+     */
+    protected boolean encodeRedirects = false;
+
+
+    /**
      * The set of welcome files for this web application
      */
     protected String welcomes[] = new String[0];
@@ -291,6 +297,12 @@ public class DefaultServlet
         try {
             value = getServletConfig().getInitParameter("output");
             output = Integer.parseInt(value);
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            value = getServletConfig().getInitParameter("encodeRedirects");
+            encodeRedirects = (new Boolean(value)).booleanValue();
         } catch (Throwable t) {
             ;
         }
@@ -627,12 +639,12 @@ public class DefaultServlet
 
 
     /**
-     * Handle a partial PUT.  New content specified in request is appended to 
-     * existing content in oldRevisionContent (if present). This code does 
+     * Handle a partial PUT.  New content specified in request is appended to
+     * existing content in oldRevisionContent (if present). This code does
      * not support simultaneous partial updates to the same resource.
      */
-    protected File executePartialPut(HttpServletRequest req, Range range, 
-                                     String path) 
+    protected File executePartialPut(HttpServletRequest req, Range range,
+                                     String path)
         throws IOException {
 
         // Append data specified in ranges to existing content for this
@@ -648,7 +660,7 @@ public class DefaultServlet
             contentFile.deleteOnExit();
         }
 
-        RandomAccessFile randAccessContentFile = 
+        RandomAccessFile randAccessContentFile =
             new RandomAccessFile(contentFile, "rw");
 
         Resource oldResource = null;
@@ -661,8 +673,8 @@ public class DefaultServlet
 
         // Copy data in oldRevisionContent to contentFile
         if (oldResource != null) {
-            BufferedInputStream bufOldRevStream = 
-                new BufferedInputStream(oldResource.streamContent(), 
+            BufferedInputStream bufOldRevStream =
+                new BufferedInputStream(oldResource.streamContent(),
                                         BUFFER_SIZE);
 
             int numBytesRead;
@@ -763,9 +775,9 @@ public class DefaultServlet
                                      ResourceInfo resourceInfo)
         throws IOException {
 
-        return checkIfMatch(request, response, resourceInfo) 
-            && checkIfModifiedSince(request, response, resourceInfo) 
-            && checkIfNoneMatch(request, response, resourceInfo) 
+        return checkIfMatch(request, response, resourceInfo)
+            && checkIfModifiedSince(request, response, resourceInfo)
+            && checkIfNoneMatch(request, response, resourceInfo)
             && checkIfUnmodifiedSince(request, response, resourceInfo);
 
     }
@@ -784,7 +796,7 @@ public class DefaultServlet
         } else if (resourceInfo.weakETag != null) {
             return resourceInfo.weakETag;
         } else {
-            return "W/\"" + resourceInfo.length + "-" 
+            return "W/\"" + resourceInfo.length + "-"
                 + resourceInfo.date + "\"";
         }
     }
@@ -921,7 +933,7 @@ public class DefaultServlet
         ResourceInfo resourceInfo = new ResourceInfo(path, resources);
 
         if (!resourceInfo.exists) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                request.getRequestURI());
             return;
         }
@@ -930,7 +942,7 @@ public class DefaultServlet
         // ends with "/" or "\", return NOT FOUND
         if (!resourceInfo.collection) {
             if (path.endsWith("/") || (path.endsWith("\\"))) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+                response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                    request.getRequestURI());
                 return;
             }
@@ -949,6 +961,9 @@ public class DefaultServlet
                 if (!(redirectPath.endsWith("/")))
                     redirectPath = redirectPath + "/";
                 redirectPath = appendParameters(request, redirectPath);
+                if (encodeRedirects) {
+                    redirectPath = response.encodeRedirectURL(redirectPath);
+                }
                 response.sendRedirect(redirectPath);
                 return;
             }
@@ -961,6 +976,9 @@ public class DefaultServlet
                     redirectPath = contextPath + redirectPath;
                 }
                 redirectPath = appendParameters(request, redirectPath);
+                if (encodeRedirects) {
+                    redirectPath = response.encodeRedirectURL(redirectPath);
+                }
                 response.sendRedirect(redirectPath);
                 return;
             }
@@ -970,7 +988,7 @@ public class DefaultServlet
             // Checking If headers
             boolean included =
                 (request.getAttribute(Globals.CONTEXT_PATH_ATTR) != null);
-            if (!included 
+            if (!included
                 && !checkIfHeaders(request, response, resourceInfo)) {
                 return;
             }
@@ -1183,7 +1201,7 @@ public class DefaultServlet
 
         try {
             range.start = Long.parseLong(rangeHeader.substring(0, dashPos));
-            range.end = 
+            range.end =
                 Long.parseLong(rangeHeader.substring(dashPos + 1, slashPos));
             range.length = Long.parseLong
                 (rangeHeader.substring(slashPos + 1, rangeHeader.length()));
@@ -1300,7 +1318,7 @@ public class DefaultServlet
                     currentRange.start = fileLength + offset;
                     currentRange.end = fileLength - 1;
                 } catch (NumberFormatException e) {
-                    response.addHeader("Content-Range", 
+                    response.addHeader("Content-Range",
                                        "bytes */" + fileLength);
                     response.sendError
                         (HttpServletResponse
@@ -1320,7 +1338,7 @@ public class DefaultServlet
                     else
                         currentRange.end = fileLength - 1;
                 } catch (NumberFormatException e) {
-                    response.addHeader("Content-Range", 
+                    response.addHeader("Content-Range",
                                        "bytes */" + fileLength);
                     response.sendError
                         (HttpServletResponse
@@ -1555,7 +1573,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfMatch(HttpServletRequest request,
@@ -1600,7 +1618,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfModifiedSince(HttpServletRequest request,
@@ -1611,10 +1629,10 @@ public class DefaultServlet
             long headerValue = request.getDateHeader("If-Modified-Since");
             long lastModified = resourceInfo.date;
             if (headerValue != -1) {
-    
+
                 // If an If-None-Match header has been specified, if modified since
                 // is ignored.
-                if ((request.getHeader("If-None-Match") == null) 
+                if ((request.getHeader("If-None-Match") == null)
                     && (lastModified <= headerValue + 1000)) {
                     // The entity has not been modified since the date
                     // specified by the client. This is not an error case.
@@ -1637,7 +1655,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfNoneMatch(HttpServletRequest request,
@@ -1653,7 +1671,7 @@ public class DefaultServlet
 
             if (!headerValue.equals("*")) {
 
-                StringTokenizer commaTokenizer = 
+                StringTokenizer commaTokenizer =
                     new StringTokenizer(headerValue, ",");
 
                 while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
@@ -1695,7 +1713,7 @@ public class DefaultServlet
      * @param response The servlet response we are creating
      * @param resourceInfo File object
      * @return boolean true if the resource meets the specified condition,
-     * and false if the condition is not satisfied, in which case request 
+     * and false if the condition is not satisfied, in which case request
      * processing is stopped
      */
     private boolean checkIfUnmodifiedSince(HttpServletRequest request,
