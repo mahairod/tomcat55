@@ -174,11 +174,31 @@ public class PersistentValve
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String sessionId = hreq.getRequestedSessionId();
         Manager manager = context.getManager();
-        if (sessionId != null) {
-            if (manager != null) {
-                Session session = manager.findSession(sessionId);
-                if ((session != null) && session.isValid())
-                    session.access();
+        if (sessionId != null && manager != null) {
+            if (manager instanceof PersistentManager) {
+                Store store = ((PersistentManager) manager).getStore();
+                if (store != null) {
+                    Session session = null;
+                    try {
+                        session = store.load(sessionId);
+                    } catch (Exception e) {
+                        log("deserializeError");
+                    }
+                    if (session != null) {
+                        if (!session.isValid() ||
+                            isSessionStale(session, System.currentTimeMillis())) {
+                            log("session swapped in is invalid or expired");
+                            session.expire();
+                            store.remove(sessionId);
+                        } else {
+                            session.setManager(manager);
+                            // session.setId(sessionId); Only if new ???
+                            manager.add(session);
+                            // ((StandardSession)session).activate();
+                            session.access();
+                        }
+                    }
+                }
             }
         }
         log("sessionId: " + sessionId);
