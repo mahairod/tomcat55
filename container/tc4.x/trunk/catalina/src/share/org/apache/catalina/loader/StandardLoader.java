@@ -166,6 +166,13 @@ public final class StandardLoader
 
 
     /**
+     * The "follow standard delegation model" flag that will be used to
+     * configure our ClassLoader.
+     */
+    private boolean delegate = false;
+
+
+    /**
      * The descriptive information about this Loader implementation.
      */
     private static final String info =
@@ -338,6 +345,33 @@ public final class StandardLoader
 	this.debug = debug;
 	support.firePropertyChange("debug", new Integer(oldDebug),
 				   new Integer(this.debug));
+
+    }
+
+
+    /**
+     * Return the "follow standard delegation model" flag used to configure
+     * our ClassLoader.
+     */
+    public boolean getDelegate() {
+
+        return (this.delegate);
+
+    }
+
+
+    /**
+     * Set the "follow standard delegation model" flag used to configure
+     * our ClassLoader.
+     *
+     * @param delegate The new flag
+     */
+    public void setDelegate(boolean delegate) {
+
+        boolean oldDelegate = this.delegate;
+        this.delegate = delegate;
+        support.firePropertyChange("delegate", new Boolean(oldDelegate),
+                                   new Boolean(this.delegate));
 
     }
 
@@ -556,6 +590,7 @@ public final class StandardLoader
 		classLoader.addRepository(repositories[i]);
 	    classLoader.addRestricted("org.apache.catalina.");
 	    classLoader.addSystem("javax.servlet.");
+            ((StandardClassLoader) classLoader).setDelegate(this.delegate);
 	    if (classLoader instanceof Lifecycle)
 		((Lifecycle) classLoader).start();
 	} catch (Throwable t) {

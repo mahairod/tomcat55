@@ -79,12 +79,14 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.loader.StandardLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.net.SSLServerSocketFactory;
@@ -619,6 +621,25 @@ public class Embedded implements Lifecycle {
 	host.setName(name);
 
 	return (host);
+
+    }
+
+
+    /**
+     * Create and return a class loader manager that can be customized, and
+     * then attached to a Context, before it is started.
+     *
+     * @param parent ClassLoader that will be the parent of the one
+     *  created by this Loader
+     */
+    public Loader createLoader(ClassLoader parent) {
+
+        if (debug >= 1)
+            logger.log("Creating Loader with parent class loader '" +
+                       parent + "'");
+
+        StandardLoader loader = new StandardLoader(parent);
+        return (loader);
 
     }
 

@@ -126,6 +126,22 @@ public interface Loader {
 
 
     /**
+     * Return the "follow standard delegation model" flag used to configure
+     * our ClassLoader.
+     */
+    public boolean getDelegate();
+
+
+    /**
+     * Set the "follow standard delegation model" flag used to configure
+     * our ClassLoader.
+     *
+     * @param delegate The new flag
+     */
+    public void setDelegate(boolean delegate);
+
+
+    /**
      * Return descriptive information about this Loader implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
