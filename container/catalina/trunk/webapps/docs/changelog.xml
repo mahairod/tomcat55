@@ -42,6 +42,15 @@
 
     <changelog>
 
+      <update>
+      Add caching mechanism for invocation of methods using privileged actions
+      (jfarcand)
+      </update>
+      <fix>
+      <bug>20380</bug>: AccessLogValve incorrectly calculates timezone, 
+      <bug>16374</bug>: Date in file name configurable, <bug>16400</bug>:
+      Allow logging to be conditional (funkman)
+      </fix>
       <add>
       W3C Extended Log File Format support (funkman)
       </add>

@@ -22,6 +22,7 @@
   <xsl:param    name="void-image"       select="'/images/void.gif'"/>
   <xsl:param    name="project-menu"     select="'menu'"/>
   <xsl:param    name="standalone"       select="''"/>
+  <xsl:param    name="buglink"          select="'http://nagoya.apache.org/bugzilla/show_bug.cgi?id='"/>
 
   <!-- Defined variables (non-overrideable) -->
   <xsl:variable name="body-bg"          select="'#ffffff'"/>
@@ -410,6 +411,12 @@
         </xsl:for-each>
       </tr>
     </table>
+  </xsl:template>
+
+  <!-- Link to a bug report -->
+  <xsl:template match="bug">
+      <xsl:variable name="link"><xsl:value-of select="$buglink"/><xsl:value-of select="text()"/></xsl:variable>
+      <a href="{$link}"><xsl:apply-templates/></a>
   </xsl:template>
 
   <!-- Process everything else by just passing it through -->
