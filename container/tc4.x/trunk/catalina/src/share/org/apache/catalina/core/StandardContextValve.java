@@ -152,6 +152,11 @@ final class StandardContextValve
 	    ((HttpServletResponse) response.getResponse()).sendError
 		(HttpServletResponse.SC_NOT_FOUND,
 		 sm.getString("standardContext.notFound"));
+            try {
+                response.finishResponse();
+            } catch (IOException e) {
+                ;
+            }
 	    return;
 	}
 

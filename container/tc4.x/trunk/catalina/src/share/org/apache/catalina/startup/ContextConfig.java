@@ -142,6 +142,12 @@ public final class ContextConfig
 
 
     /**
+     * Track any fatal errors during startup configuration processing.
+     */
+    private boolean ok = false;
+
+
+    /**
      * The string resources for this package.
      */
     private static final StringManager sm =
@@ -227,13 +233,16 @@ public final class ContextConfig
 	} catch (InvocationTargetException e) {
 	    log(sm.getString("contextConfig.applicationConfig"),
 		e.getTargetException());
+            ok = false;
         } catch (SAXParseException e) {
             log(sm.getString("contextConfig.applicationParse"), e);
             log(sm.getString("contextConfig.applicationPosition",
                              "" + e.getLineNumber(),
                              "" + e.getColumnNumber()));
+            ok = false;
 	} catch (Exception e) {
 	    log(sm.getString("contextConfig.applicationParse"), e);
+            ok = false;
 	} finally {
 	    try {
 		stream.close();
@@ -288,6 +297,7 @@ public final class ContextConfig
 		    ("org.apache.catalina.startup.Authenticators");
 	    } catch (MissingResourceException e) {
 		log(sm.getString("contextConfig.authenticatorResources"), e);
+                ok = false;
 		return;
 	    }
 	}
@@ -303,6 +313,7 @@ public final class ContextConfig
 	if (authenticatorName == null) {
 	    log(sm.getString("contextConfig.authenticatorMissing",
 			     loginConfig.getAuthMethod()));
+            ok = false;
 	    return;
 	}
 
@@ -317,6 +328,7 @@ public final class ContextConfig
 	} catch (Throwable t) {
 	    log(sm.getString("contextConfig.authenticatorInstantiate",
 			     authenticatorName), t);
+            ok = false;
 	}
 
     }
@@ -355,6 +367,7 @@ public final class ContextConfig
             log(sm.getString("contextConfig.certificatesConfig.added"));
         } catch (Throwable t) {
             log(sm.getString("contextConfig.certificatesConfig.error"), t);
+            ok = false;
         }
 
     }
@@ -617,13 +630,16 @@ public final class ContextConfig
 	} catch (InvocationTargetException e) {
 	    log(sm.getString("contextConfig.defaultConfig"),
 		e.getTargetException());
+            ok = false;
         } catch (SAXParseException e) {
             log(sm.getString("contextConfig.defaultParse"), e);
             log(sm.getString("contextConfig.defaultPosition",
                              "" + e.getLineNumber(),
                              "" + e.getColumnNumber()));
+            ok = false;
 	} catch (Exception e) {
 	    log(sm.getString("contextConfig.defaultParse"), e);
+            ok = false;
 	} finally {
 	    try {
 		stream.close();
@@ -656,10 +672,10 @@ public final class ContextConfig
 		Class clazz = loader.loadClass(listeners[i]);
 		results[i] = clazz.newInstance();
 	    } catch (Throwable t) {
-		// FIXME - should we do anything besides log these?
 		log(sm.getString("contextConfig.applicationListener",
 				 listeners[i]), t);
 		error = true;
+                ok = false;
 	    }
 	}
 	if (!error)
@@ -689,8 +705,8 @@ public final class ContextConfig
 		  (ServletContextListener) listeners[i];
 		listener.contextInitialized(event);
 	    } catch (Throwable t) {
-	        // FIXME - should we do anything besides log these?
 	        log(sm.getString("contextConfig.applicationStart"), t);
+                ok = false;
 	    }
 	}
 
@@ -719,8 +735,8 @@ public final class ContextConfig
 		  (ServletContextListener) listeners[j];
 		listener.contextDestroyed(event);
 	    } catch (Throwable t) {
-	        // FIXME - should we do anything besides log these?
 	        log(sm.getString("contextConfig.applicationStop"), t);
+                ok = false;
 	    }
 	}
 
@@ -866,6 +882,7 @@ public final class ContextConfig
 
 	if (debug > 0)
 	    log(sm.getString("contextConfig.start"));
+        ok = true;
 
 	// Configure a mapper to read a web application deployment descriptor
 	XmlMapper mapper = createMapper();
@@ -900,17 +917,21 @@ public final class ContextConfig
 	applicationConfig(mapper);
 
         // Configure a certificates exposer valve, if required
-        certificatesConfig();
+        if (ok)
+            certificatesConfig();
 
 	// Configure an authenticator if we need one
-	authenticatorConfig();
+        if (ok)
+            authenticatorConfig();
 
 	// Configure the application event listeners for this Context
 	// PREREQUISITE:  class loader has been configured
-	listenerConfig();
+        if (ok)
+            listenerConfig();
 
 	// Send an application start event to all interested listeners
-	listenerStartEvent();
+        if (ok)
+            listenerStartEvent();
 
         // Dump the contents of this pipeline if requested
         if (debug >= 1) {
@@ -923,6 +944,14 @@ public final class ContextConfig
             log("======================");
         }
 
+        // Make our application available if no problems were encountered
+        if (ok)
+            context.setAvailable(true);
+        else {
+            log(sm.getString("contextConfig.unavailable"));
+            context.setAvailable(false);
+        }
+
     }
 
 
@@ -933,6 +962,7 @@ public final class ContextConfig
 
 	if (debug > 0)
 	    log(sm.getString("contextConfig.stop"));
+        ok = true;
 
 	// Send an application stop event to all interested listeners
 	listenerStopEvent();

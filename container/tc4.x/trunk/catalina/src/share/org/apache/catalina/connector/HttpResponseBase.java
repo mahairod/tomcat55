@@ -161,6 +161,20 @@ public class HttpResponseBase
 
 
     /**
+     * Perform whatever actions are required to flush and close the output
+     * stream or writer, in a single operation.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public void finishResponse() throws IOException {
+
+        sendHeaders();
+        super.finishResponse();
+
+    }
+
+
+    /**
      * Return the value for the specified header, or <code>null</code> if this
      * header has not been set.  If more than one value was added for this
      * name, only the first is returned; use getHeaderValues() to retrieve all

@@ -200,8 +200,15 @@ final class StandardWrapperValve
             ((HttpRequest) request).setServletPath(jspFile);
         }
 
+        // Check for the application being marked unavailable
+        if (!((Context) wrapper.getParent()).getAvailable()) {
+            hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                           sm.getString("standardContext.isUnavailable"));
+            unavailable = true;
+        }
+
 	// Check for the servlet being marked unavailable
-	if (wrapper.isUnavailable()) {
+	if (!unavailable && wrapper.isUnavailable()) {
 	    log(sm.getString("standardWrapper.isUnavailable",
 			     wrapper.getName()));
 	    if (hres == null) {

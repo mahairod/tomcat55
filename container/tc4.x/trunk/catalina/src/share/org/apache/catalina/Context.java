@@ -126,6 +126,20 @@ public interface Context extends Container {
 
 
     /**
+     * Return the application available flag for this Context.
+     */
+    public boolean getAvailable();
+
+
+    /**
+     * Set the application available flag for this Context.
+     *
+     * @param available The new application available flag
+     */
+    public void setAvailable(boolean available);
+
+
+    /**
      * Return the Locale to character set mapper for this Context.
      */
     public CharsetMapper getCharsetMapper();

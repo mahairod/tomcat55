@@ -153,6 +153,12 @@ public final class StandardContext
 
 
     /**
+     * The application available flag for this Context.
+     */
+    private boolean available = false;
+
+
+    /**
      * The Locale to character set mapper for this application.
      */
     private CharsetMapper charsetMapper = null;
@@ -393,6 +399,32 @@ public final class StandardContext
     public void setApplicationListeners(Object listeners[]) {
 
         applicationListenersObjects = listeners;
+
+    }
+
+
+    /**
+     * Return the application available flag for this Context.
+     */
+    public boolean getAvailable() {
+
+        return (this.available);
+
+    }
+
+
+    /**
+     * Set the application available flag for this Context.
+     *
+     * @param available The new application available flag
+     */
+    public void setAvailable(boolean available) {
+
+        boolean oldAvailable = this.available;
+        this.available = available;
+	support.firePropertyChange("available",
+				   new Boolean(oldAvailable),
+                                   new Boolean(this.available));
 
     }
 
@@ -2344,42 +2376,57 @@ public final class StandardContext
 
 	// Standard container startup
 	super.start();
+        if (!available)
+            return;
 
-	// Collect "load on startup" servlets that need to be initialized
-	TreeMap map = new TreeMap();
-	Container children[] = findChildren();
-	for (int i = 0; i < children.length; i++) {
-	    Wrapper wrapper = (Wrapper) children[i];
-	    int loadOnStartup = wrapper.getLoadOnStartup();
-	    if (loadOnStartup < 0)
-		continue;
-	    if (loadOnStartup == 0)	// Arbitrarily put them last
-		loadOnStartup = Integer.MAX_VALUE;
-	    Integer key = new Integer(loadOnStartup);
-	    ArrayList list = (ArrayList) map.get(key);
-	    if (list == null) {
-		list = new ArrayList();
-		map.put(key, list);
-	    }
-	    list.add(wrapper);
-	}
+        // Collect "load on startup" servlets that need to be initialized
+        TreeMap map = new TreeMap();
+        Container children[] = findChildren();
+        for (int i = 0; i < children.length; i++) {
+            Wrapper wrapper = (Wrapper) children[i];
+            int loadOnStartup = wrapper.getLoadOnStartup();
+            if (loadOnStartup < 0)
+                continue;
+            if (loadOnStartup == 0)	// Arbitrarily put them last
+                loadOnStartup = Integer.MAX_VALUE;
+            Integer key = new Integer(loadOnStartup);
+            ArrayList list = (ArrayList) map.get(key);
+            if (list == null) {
+                list = new ArrayList();
+                map.put(key, list);
+            }
+            list.add(wrapper);
+        }
 
-	// Load the collected "load on startup" servlets
-	Iterator keys = map.keySet().iterator();
-	while (keys.hasNext()) {
-	    Integer key = (Integer) keys.next();
-	    ArrayList list = (ArrayList) map.get(key);
-	    Iterator wrappers = list.iterator();
-	    while (wrappers.hasNext()) {
-		Wrapper wrapper = (Wrapper) wrappers.next();
-		try {
-		    wrapper.load();
-		} catch (ServletException e) {
-		    log(sm.getString("standardWrapper.loadException",
-				     getName()), e);
-		}
-	    }
-	}
+        // Load the collected "load on startup" servlets
+        Iterator keys = map.keySet().iterator();
+        while (keys.hasNext()) {
+            Integer key = (Integer) keys.next();
+            ArrayList list = (ArrayList) map.get(key);
+            Iterator wrappers = list.iterator();
+            while (wrappers.hasNext()) {
+                Wrapper wrapper = (Wrapper) wrappers.next();
+                try {
+                    wrapper.load();
+                } catch (ServletException e) {
+                    log(sm.getString("standardWrapper.loadException",
+                                     getName()), e);
+                }
+            }
+        }
+
+    }
+
+
+    /**
+     * Stop this Context component.
+     *
+     * @exception LifecycleException if a shutdown error occurs
+     */
+    public void stop() throws LifecycleException {
+
+        setAvailable(false);
+        super.stop();
 
     }
 
