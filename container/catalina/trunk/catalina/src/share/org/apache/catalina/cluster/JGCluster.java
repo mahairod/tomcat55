@@ -109,57 +109,67 @@ public class JGCluster
     /**
      * Descriptive information about this component implementation.
      */
-    private static final String info = "JavaGroupsCluster/1.0";
+    protected static final String info = "JavaGroupsCluster/1.0";
+
 
     /**
      * Name to register for the background thread.
      */
-    private String threadName = "JavaGroupsCluster";
+    protected String threadName = "JavaGroupsCluster";
+
 
     /**
      * Name for logging purpose
      */
-    private String clusterImpName = "JavaGroupsCluster";
+    protected String clusterImpName = "JavaGroupsCluster";
+
 
     /**
      * The string manager for this package.
      */
-    private StringManager sm = StringManager.getManager(Constants.Package);
+    protected StringManager sm = StringManager.getManager(Constants.Package);
+
 
     /**
      * The background thread completion semaphore.
      */
-    private boolean threadDone = false;
+    protected boolean threadDone = false;
+
 
     /**
      * The cluster name to join
      */
-    private String clusterName = null;
+    protected String clusterName = null;
+
 
     /**
      * The Container associated with this Cluster.
      */
-    private Container container = null;
+    protected Container container = null;
+
 
     /**
      * The lifecycle event support for this component.
      */
-    private LifecycleSupport lifecycle = new LifecycleSupport(this);
+    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
+
 
     /**
      * Has this component been started?
      */
-    private boolean started = false;
+    protected boolean started = false;
+
 
     /**
      * The property change support for this component.
      */
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
+    protected PropertyChangeSupport support = new PropertyChangeSupport(this);
+
 
     /**
      * The debug level for this Container
      */
-    private int debug = 0;
+    protected int debug = 0;
 
 
     /**
@@ -168,14 +178,22 @@ public class JGCluster
     protected HashMap managers = new HashMap();
 
 
-    //A reference to the communication channel
-    private JChannel mChannel = null;  
-    //the channel configuration
-    private String mChannelConfig = null;
-    //we keep a thread to listen to the channel
-    private ReceiverThread mChannelListener = null;  
-    //somehow start() gets called more than once
-    private boolean mChannelStarted = false;
+    /**
+     * A reference to the communication channel.
+     */
+    protected JChannel channel = null;
+
+
+    /**
+     * The channel configuration.
+     */
+    protected String protocol = null;
+
+
+    /**
+     * Channel listener thread.
+     */
+    protected ReceiverThread channelListener = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -270,11 +288,9 @@ public class JGCluster
      * @see <a href="www.javagroups.com">JavaGroups</a> for details
      */
     public void setProtocol(String protocol) {
-        String oldProtocol = this.mChannelConfig;
-        this.mChannelConfig = protocol;
-        support.firePropertyChange("protocol",
-                                   oldProtocol,
-                                   this.mChannelConfig);
+        String oldProtocol = this.protocol;
+        this.protocol = protocol;
+        support.firePropertyChange("protocol", oldProtocol, this.protocol);
     }
 
 
@@ -282,7 +298,7 @@ public class JGCluster
      * Returns the protocol.
      */
     public String getProtocol() {
-        return (this.mChannelConfig);
+        return (this.protocol);
     }
 
 
@@ -313,11 +329,6 @@ public class JGCluster
     public void send(SessionMessage msg, IpAddress dest)
         throws Exception {
 
-        if (!mChannelStarted) {
-            log.warn("Channel is not active, not sending message=" + msg);
-            return;
-        }
-
         //   Check the event type, 
         //   if it is EVT_GET_ALL_SESSION then 
         //   only send the message to the coordinator
@@ -325,12 +336,12 @@ public class JGCluster
         IpAddress destination = dest;
         if (msg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS) {
             destination = 
-                (IpAddress) mChannel.getView().getMembers().elementAt(0);
+                (IpAddress) channel.getView().getMembers().elementAt(0);
         }
 
         Message jgmsg = 
-            new Message(destination, mChannel.getLocalAddress(), msg);
-        mChannel.send(jgmsg);
+            new Message(destination, channel.getLocalAddress(), msg);
+        channel.send(jgmsg);
 
     }
 
@@ -341,7 +352,7 @@ public class JGCluster
     public void receive(SessionMessage msg, IpAddress sender) {
 
         // Discard all message from ourself
-        if (sender.equals(mChannel.getLocalAddress())) {
+        if (sender.equals(channel.getLocalAddress())) {
             return;
         }
 
@@ -403,22 +414,20 @@ public class JGCluster
     public void start()
         throws LifecycleException {
 
-        //start the javagroups channel
+        if (started)
+            throw new LifecycleException
+                (sm.getString("cluster.alreadyStarted"));
 
         try {
-            //the channel is already running
-            if (mChannelStarted) 
-                return;
 
-            mChannel = new JChannel(mChannelConfig);
-            mChannelListener = new ReceiverThread(this, mChannel);
-            mChannel.connect("TomcatReplication");
-            mChannelListener.start();
-            mChannelStarted = true;
-            log.info("Javagroups channel started inside tomcat");
+            channel = new JChannel(protocol);
+            channelListener = new ReceiverThread(this, channel);
+            channel.connect("[TomcatSC]" + container.getName());
+            channelListener.start();
+            log.info(sm.getString("jgCluster.channelStartSuccess"));
 
         } catch (Exception x) {
-            log.error("Unable to start javagroups channel",x);
+            log.error(sm.getString("jgCluster.channelStartFail"), x);
         }
 
     }
@@ -438,47 +447,51 @@ public class JGCluster
     public void stop() 
         throws LifecycleException {
 
-        mChannelStarted = false;
+        if (!started)
+            throw new IllegalStateException
+                (sm.getString("cluster.notStarted"));
 
-        //stop the javagroup channel
+        // Stop the javagroup channel
         try {
-            mChannelListener.stopRunning();
-            mChannel.disconnect();   
-            mChannel.close();
+            channelListener.stopRunning();
+            channel.disconnect();   
+            channel.close();
         } catch (Exception x) {
-            log.error("Unable to stop javagroups channel",x);
+            log.error(sm.getString("jgCluster.channelStopFail"), x);
         }
 
     }
 
 
+    // --------------------------------------------- ReceiverThread Inner Class
+
+
     /**
      * Thread that listens to the cluster communication channel.
-     * 
      */
-    private class ReceiverThread
+    protected class ReceiverThread
         extends Thread {
 
-        private JGCluster mParentCluster = null;
-        private JChannel mParentChannel = null;
-        private boolean mOkToRun = true;
+        protected JGCluster parentCluster = null;
+        protected JChannel parentChannel = null;
+        protected boolean running = true;
 
         public ReceiverThread(JGCluster parent, JChannel listenTo) {
-            mParentCluster = parent;
-            mParentChannel = listenTo;
+            parentCluster = parent;
+            parentChannel = listenTo;
         }
 
         public void stopRunning() {
-            mOkToRun = false;
+            running = false;
         }
 
         public void run() {
 
-            while (mOkToRun) {
+            while (running) {
 
                 try {
                     // Receive a message from the channel
-                    Object obj = mParentChannel.receive(0);
+                    Object obj = parentChannel.receive(0);
                     // Make sure it is a data message
                     if ((obj != null) && (obj instanceof Message)) {
                         Message msg = (Message)obj;
@@ -489,20 +502,20 @@ public class JGCluster
                         Object myobj = stream.readObject();
                         if (myobj instanceof SessionMessage) {
                             // notify the cluster
-                            mParentCluster.receive((SessionMessage) myobj,
-                                                   (IpAddress) msg.getSrc());
+                            parentCluster.receive((SessionMessage) myobj,
+                                                  (IpAddress) msg.getSrc());
                         } else {
-                            mParentCluster.log.info
-                                ("Received unwanted message="+obj); 
+                            parentCluster.log.info
+                                (sm.getString
+                                 ("jgCluster.channelIncorrectMessage", obj)); 
                         }
                     } else if (obj instanceof View) {
-                        mParentCluster.log.info
-                            ("Received membership message="+obj); 
+                        parentCluster.log.info
+                            (sm.getString("jgCluster.channelNewMember", obj)); 
                     }
                 } catch (Exception x) {
-                    if (mChannelStarted)
-                        mParentCluster.log.warn
-                            ("Unable to receive JavaGroup message",x);
+                    parentCluster.log.warn
+                        (sm.getString("jgCluster.channelFail"), x);
                 }
 
             }

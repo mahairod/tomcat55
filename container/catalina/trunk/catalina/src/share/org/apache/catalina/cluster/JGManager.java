@@ -112,18 +112,17 @@ public class JGManager
         org.apache.commons.logging.LogFactory.getLog( JGManager.class );
 
 
+    // ----------------------------------------------------- Instance Variables
+
+
     /**
      * Associated JavaGroups cluster.
      */
     protected JGCluster cluster = null;
 
-    /**
-     * Constructor, just calls super()
-     * 
-     */
-    public JGManager() {
-        super();
-    }
+
+    // --------------------------------------------------------- Public Methods
+
 
     /**
      * Set JavaGroups cluster.
@@ -134,100 +133,6 @@ public class JGManager
         }
         this.cluster = cluster;
     }
-
-
-    /**
-     * Get new session class to be used in the doLoad() method.
-     */
-    protected StandardSession getNewSession() {
-        return new ReplicatedSession(this);
-    }
-
-
-    /**
-     * Creates a HTTP session.
-     * Most of the code in here is copied from the StandardManager.
-     * This is not pretty, yeah I know, but it was necessary since the 
-     * StandardManager had hard coded the session instantiation to the a
-     * StandardSession, when we actually want to instantiate a ReplicatedSession<BR>
-     * If the call comes from the Tomcat servlet engine, a SessionMessage goes out to the other
-     * nodes in the cluster that this session has been created.
-     * @param notify - if set to true the other nodes in the cluster will be notified. 
-     *                 This flag is needed so that we can create a session before we deserialize 
-     *                 a replicated one
-     * 
-     * @see ReplicatedSession
-     */
-    protected Session createSession(boolean notify) {
-
-        //inherited from the basic manager
-        if ((getMaxActiveSessions() >= 0) &&
-           (sessions.size() >= getMaxActiveSessions()))
-            throw new IllegalStateException(sm.getString("standardManager.createSession.ise"));
-        
-        
-        // Recycle or create a Session instance
-        Session session = null;
-        //modified to make sure we only recycle sessions that are of type=ReplicatedSession
-        //I personally believe the VM does a much better job pooling object instances
-        //than the synchronized penalty gives us
-        synchronized (recycled) {
-            int size = recycled.size();
-            int index = size;
-            if (size > 0) {
-                do 
-                {
-                    index--;
-                    session = (Session) recycled.get(index);
-                    recycled.remove(index);
-                } while ( index > 0 && (session instanceof ReplicatedSession));
-            }
-        }//synchronized
-        
-        //set the current manager
-        if (session != null)
-            session.setManager(this);
-        else
-            session = new ReplicatedSession(this);
-        
-        // Initialize the properties of the new session and return it
-        session.setNew(true);
-        session.setValid(true);
-        session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(this.maxInactiveInterval);
-        String sessionId = generateSessionId();
-        String jvmRoute = getJvmRoute();
-        // @todo Move appending of jvmRoute generateSessionId()???
-        if (jvmRoute != null) {
-            sessionId += '.' + jvmRoute;
-            session.setId(sessionId);
-        }
-        /*
-        synchronized (sessions) {
-        while (sessions.get(sessionId) != null)        // Guarantee uniqueness
-        sessionId = generateSessionId();
-        }
-        */
-        session.setId(sessionId);
-        
-        if ( notify )
-        {
-            
-            log.info("Replicated Session created with ID="+session.getId());
-                
-            //notify javagroups
-            SessionMessage msg = new SessionMessage
-                (container.getName(), SessionMessage.EVT_SESSION_CREATED,
-                 writeSession(session), session.getId(), null, null, null);
-            sendSessionEvent(msg);
-        }
-        return (session);
-    }
-
-
-    //=========================================================================
-    // OVERRIDE THESE METHODS TO IMPLEMENT THE REPLICATION
-    //=========================================================================
 
 
     /**
@@ -243,8 +148,75 @@ public class JGManager
     public Session createSession() {
         //create a session and notify the other nodes in the cluster
         Session session = createSession(true);
-        add(session);
+        add(session); // ?
         return session;
+    }
+
+
+    public void start() throws LifecycleException {
+
+        super.start();
+
+        try {
+            SessionMessage msg = new SessionMessage
+                (container.getName(), SessionMessage.EVT_GET_ALL_SESSIONS, 
+                 null, null, null, null, null);
+            sendSessionEvent(msg);
+        } catch (Exception x) {
+            log.error(sm.getString("jgManager.startFail"), x);
+        }
+
+    }
+
+
+    public void stop() throws LifecycleException {
+        super.stop();
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Get new session class to be used in the doLoad() method.
+     */
+    protected StandardSession getNewSession() {
+        return new ReplicatedSession(this);
+    }
+
+
+    /**
+     * Creates a HTTP session.<br>
+     * Most of the code in here is copied from the StandardManager.
+     * This is not pretty, yeah I know, but it was necessary since the 
+     * StandardManager had hard coded the session instantiation to the a
+     * StandardSession, when we actually want to instantiate 
+     * a ReplicatedSession<BR>
+     * If the call comes from the Tomcat servlet engine, a SessionMessage 
+     * goes out to the other nodes in the cluster that this session 
+     * has been created.
+     * 
+     * @param notify if set to true the other nodes in the cluster will 
+     * be notified. This flag is needed so that we can create a session 
+     * before we deserialize a replicated one
+     * @see ReplicatedSession
+     */
+    protected Session createSession(boolean notify) {
+
+        Session session = super.createSession();
+
+        if (notify) {
+            log.info(sm.getString
+                     ("jgManager.sessionCreated", session.getId()));
+            // Notify javagroups
+            SessionMessage msg = new SessionMessage
+                (container.getName(), SessionMessage.EVT_SESSION_CREATED,
+                 writeSession(session), session.getId(), null, null, null);
+            sendSessionEvent(msg);
+        }
+
+        return (session);
+
     }
 
 
@@ -272,7 +244,7 @@ public class JGManager
             session_out.close();
             return session_data.toByteArray();
         } catch ( Exception x ) {
-            log.warn("Failed to serialize the session!",x);
+            log.warn(sm.getString("jgManager.sessionSerializationFail"), x);
         } finally {
             Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
         }
@@ -303,32 +275,11 @@ public class JGManager
             ((ReplicatedSession)session).readObjectData(session_in);
             return session;
         } catch (Exception x) {
-            log.warn("Failed to deserialize the session!",x);
+            log.warn(sm.getString("jgManager.sessionDeserializationFail"), x);
         } finally {
             Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
         }
         return null;
-    }
-
-
-    public void start() throws LifecycleException {
-
-        super.start();
-
-        try {
-            SessionMessage msg = new SessionMessage
-                (container.getName(), SessionMessage.EVT_GET_ALL_SESSIONS, 
-                 null, null, null, null, null);
-            sendSessionEvent(msg);
-        } catch (Exception x) {
-            log.error("Unable to start manager", x);
-        }
-
-    }
-
-
-    public void stop() throws LifecycleException {
-        super.stop();
     }
 
 
@@ -340,8 +291,8 @@ public class JGManager
     protected void sendSessionEvent( SessionMessage msg, IpAddress dest ) {
         try {
             cluster.send(msg, dest);
-        } catch ( Exception x ) {
-            log.error("Unable to send message through javagroups channel",x);
+        } catch (Exception x) {
+            log.error(sm.getString("jgManager.messageSendFail"), x);
         }
     }
 
@@ -355,105 +306,125 @@ public class JGManager
      *                 EVT_GET_ALL_SESSION message, so that we only reply to 
      *                 the requesting node  
      */
-    public void messageReceived( SessionMessage msg, IpAddress sender )
-    {
-        try
-        {
-            log.debug("Received SessionMessage of type="+msg.getEventTypeString());
+    public void messageReceived(SessionMessage msg, IpAddress sender) {
+
+        try {
+
+            if (log.isDebugEnabled()) {
+                log.debug(sm.getString("jgManager.messageType", 
+                                       msg.getEventTypeString()));
+            }
             
-            switch ( msg.getEventType() )
-            {
+            switch (msg.getEventType()) {
+
                 case SessionMessage.EVT_ATTRIBUTE_ADDED:
                 {
-                    //add the attribute to the replicated session
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{1} ["+msg.getSessionID() + "] doesn't exist!");
+                    // Add the attribute to the replicated session
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
-                    }//end if
-                    //log("Attribute added to session="+msg.getSessionID()+ " will be inserted into session="+session);
-                    //how does the call below affect session binding listeners?
-                    session.setAttribute(msg.getAttributeName(),msg.getAttributeValue(),false);
+                    }
+                    // FIXME
+                    // How does the call below affect session binding listeners
+                    session.setAttribute
+                        (msg.getAttributeName(),msg.getAttributeValue(),false);
                     break;
                 }
                 case SessionMessage.EVT_ATTRIBUTE_REMOVED_WNOTIFY:
                 case SessionMessage.EVT_ATTRIBUTE_REMOVED_WONOTIFY:
                 {
-                    boolean notify = (msg.getEventType() == SessionMessage.EVT_ATTRIBUTE_REMOVED_WNOTIFY); 
-                    //remove the attribute from the session
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{2} ["+msg.getSessionID() + "] doesn't exist!");
+                    boolean notify = 
+                        (msg.getEventType() 
+                         == SessionMessage.EVT_ATTRIBUTE_REMOVED_WNOTIFY); 
+                    // Remove the attribute from the session
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
-                    }//end if
-                    //how does this affect the listeners?
-                    session.removeAttribute(msg.getAttributeName(),notify,false);
+                    }
+                    // How does this affect the listeners?
+                    session.removeAttribute
+                        (msg.getAttributeName(), notify, false);
                     break;
                 }
                 case SessionMessage.EVT_REMOVE_SESSION_NOTE:
                 {
-                    //remove the note from the session
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{3} ["+msg.getSessionID() + "] doesn't exist!");
+                    // Remove the note from the session
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
-                    }//end if
-                    //how does this affect the listeners?
+                    }
+                    // How does this affect the listeners?
                     session.removeNote(msg.getAttributeName(),false);
                     break;
                 }
                 case SessionMessage.EVT_SET_SESSION_NOTE:
                 {
-                    //add the note to the session
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{4} ["+msg.getSessionID() + "] doesn't exist!");
+                    // Add the note to the session
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
-                    }//end if
-                    //how does this affect the listeners?
-                    session.setNote(msg.getAttributeName(),msg.getAttributeValue(),false);
+                    }
+                    // How does this affect the listeners?
+                    session.setNote(msg.getAttributeName(), 
+                                    msg.getAttributeValue(), false);
                     break;
                 }
                 case SessionMessage.EVT_GET_ALL_SESSIONS:
                 {
-                    //get a list of all the session from this manager
+                    // Get a list of all the session from this manager
                     Object[] sessions = findSessions();
-                    for (int i=0; i<sessions.length; i++)
-                    {
-                        //make sure we only replicate sessions
-                        //that are replicatable :)
-                        if ( sessions[i] instanceof ReplicatedSession)
-                        {
-                            ReplicatedSession ses = (ReplicatedSession)sessions[i];
+                    for (int i=0; i<sessions.length; i++) {
+                        // Make sure we only replicate sessions
+                        // that are replicatable :)
+                        if (sessions[i] instanceof ReplicatedSession) {
+                            ReplicatedSession ses = 
+                                (ReplicatedSession) sessions[i];
                             SessionMessage newmsg = new SessionMessage
                                 (container.getName(), 
                                  SessionMessage.EVT_SESSION_CREATED,
                                  writeSession(ses), ses.getId(),
                                  null, null, null);
                             sendSessionEvent(newmsg,sender);
-                            //since the principal doesn't get serialized, we better send it over too
-                            if ( ses.getPrincipal() != null )
-                            {
+                            // Since the principal doesn't get serialized, 
+                            // we better send it over too
+                            if (ses.getPrincipal() != null) {
                                 SessionMessage pmsg = new SessionMessage
                                     (container.getName(),
                                      SessionMessage.EVT_SET_USER_PRINCIPAL,
                                      null, ses.getId(), null, null,
                                      SerializablePrincipal.createPrincipal
-                                     ((GenericPrincipal)ses.getPrincipal()));
+                                     ((GenericPrincipal) ses.getPrincipal()));
                                 sendSessionEvent(pmsg,sender);
                             }
+                        } else {
+                            log.warn(sm.getString
+                                     ("jgManager.nonStandardSession", 
+                                      sessions[i]));
                         }
-                        else log.warn("System contains non standard sessions="+sessions[i]);
                     }
                     break;
                 }
                 case SessionMessage.EVT_SESSION_ACCESSED:
                 {
-                    //this is so that the replicated session doesn't expire in any 
-                    //other node
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{5} ["+msg.getSessionID() + "] doesn't exist!");
+                    // This is so that the replicated session doesn't expire 
+                    // in any other node
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
                     }
                     session.access(false);
@@ -461,20 +432,22 @@ public class JGManager
                 }
                 case SessionMessage.EVT_SET_USER_PRINCIPAL:
                 {
-                    //set the user principal
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{6} ["+msg.getSessionID() + "] doesn't exist!");
+                    // Set the user principal
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
                     }
-                    //log("Setting principal for the session");
-                    GenericPrincipal principal = (msg.getPrincipal()).getPrincipal(getContainer().getRealm());
-                    session.setPrincipal(principal,false);
+                    GenericPrincipal principal = 
+                        (msg.getPrincipal()).getPrincipal
+                        (getContainer().getRealm());
+                    session.setPrincipal(principal, false);
                     break;
                 }
                 case SessionMessage.EVT_SESSION_CREATED:
                 {
-                    //log("Session got replicated="+msg.getSessionID());
                     Session session = this.readSession(msg.getSession());
                     session.setManager(this);
                     add(session);
@@ -483,11 +456,15 @@ public class JGManager
                 case SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY:
                 case SessionMessage.EVT_SESSION_EXPIRED_WONOTIFY:
                 {
-                    //session has expired
-                    boolean notify = msg.getEventType() == SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY; 
-                    ReplicatedSession session = (ReplicatedSession)findSession(msg.getSessionID());
-                    if ( session == null ) {
-                        log.warn("Replicated session with ID{7} ["+msg.getSessionID() + "] doesn't exist!");
+                    // Session has expired
+                    boolean notify = 
+                        (msg.getEventType() 
+                         == SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY); 
+                    ReplicatedSession session = 
+                        (ReplicatedSession) findSession(msg.getSessionID());
+                    if (session == null) {
+                        log.warn(sm.getString("jgManager.unknownSessionID", 
+                                              msg.getSessionID()));
                         return;
                     }
                     session.expire(notify, false);
@@ -495,14 +472,12 @@ public class JGManager
                 }
                 default:
                 {
-                    //we didn't recognize the message type, do nothing
+                    // We didn't recognize the message type, do nothing
                     break;
                 }
-            }//switch
-        }
-        catch ( Exception x )
-        {
-            log.error("Unable to receive message through javagroups channel", x);
+            }
+        } catch (Exception x) {
+            log.error(sm.getString("jgManager.messageReceiveFail", x));
         }
     }
 
