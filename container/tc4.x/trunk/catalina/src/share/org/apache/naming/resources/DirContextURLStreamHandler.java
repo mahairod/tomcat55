@@ -67,6 +67,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.io.IOException;
+import java.util.Hashtable;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
@@ -83,9 +84,22 @@ public class DirContextURLStreamHandler
     // ----------------------------------------------------------- Constructors
     
     
+    public DirContextURLStreamHandler() {
+    }
+    
+    
     public DirContextURLStreamHandler(DirContext context) {
         this.context = context;
     }
+    
+    
+    // -------------------------------------------------------------- Variables
+    
+    
+    /**
+     * Bindings class loader - directory context. Keyed by CL id.
+     */
+    private static Hashtable clBindings = new Hashtable();
     
     
     // ----------------------------------------------------- Instance Variables
@@ -94,7 +108,7 @@ public class DirContextURLStreamHandler
     /**
      * Directory context.
      */
-    protected DirContext context;
+    protected DirContext context = null;
     
     
     // ------------------------------------------------------------- Properties
@@ -109,7 +123,69 @@ public class DirContextURLStreamHandler
      */
     protected URLConnection openConnection(URL u) 
         throws IOException {
-        return new DirContextURLConnection(context, u);
+        DirContext currentContext = this.context;
+        if (currentContext == null)
+            currentContext = get();
+        return new DirContextURLConnection(currentContext, u);
+    }
+    
+    
+    // --------------------------------------------------------- Public Methods
+    
+    
+    /**
+     * Binds a directory context to a class loader.
+     */
+    public static void bind(DirContext dirContext) {
+        ClassLoader currentCL = 
+            Thread.currentThread().getContextClassLoader();
+        if (currentCL != null)
+            clBindings.put(currentCL, dirContext);
+    }
+    
+    
+    /**
+     * Unbinds a directory context to a class loader.
+     */
+    public static void unbind() {
+        ClassLoader currentCL = 
+            Thread.currentThread().getContextClassLoader();
+        if (currentCL != null)
+            clBindings.remove(currentCL);
+    }
+    
+    
+    /**
+     * Get the bound context.
+     */
+    public static DirContext get() {
+        ClassLoader currentCL = 
+            Thread.currentThread().getContextClassLoader();
+        return (DirContext) clBindings.get(currentCL);
+    }
+    
+    
+    /**
+     * Binds a directory context to a class loader.
+     */
+    public static void bind(ClassLoader cl, DirContext dirContext) {
+        clBindings.put(cl, dirContext);
+    }
+    
+    
+    /**
+     * Unbinds a directory context to a class loader.
+     */
+    public static void unbind(ClassLoader cl) {
+        clBindings.remove(cl);
+    }
+    
+    
+    /**
+     * Get the bound context.
+     */
+    public static DirContext get(ClassLoader cl) {
+        return (DirContext) clBindings.get(cl);
     }
     
     

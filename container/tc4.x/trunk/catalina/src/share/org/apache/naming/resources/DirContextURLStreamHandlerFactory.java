@@ -63,6 +63,7 @@
 
 package org.apache.naming.resources;
 
+import java.util.Hashtable;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.io.IOException;
@@ -82,18 +83,11 @@ public class DirContextURLStreamHandlerFactory
     // ----------------------------------------------------------- Constructors
     
     
-    public DirContextURLStreamHandlerFactory(DirContext context) {
-        this.context = context;
+    public DirContextURLStreamHandlerFactory() {
     }
     
     
     // ----------------------------------------------------- Instance Variables
-    
-    
-    /**
-     * Directory context.
-     */
-    protected DirContext context;
     
     
     // ------------------------------------------------------------- Properties
@@ -112,7 +106,7 @@ public class DirContextURLStreamHandlerFactory
      */
     public URLStreamHandler createURLStreamHandler(String protocol) {
         if (protocol.equals("jndi")) {
-            return new DirContextURLStreamHandler(context);
+            return new DirContextURLStreamHandler();
         } else {
             return null;
         }
