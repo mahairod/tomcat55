@@ -1,4 +1,9 @@
 /*
+ * Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
+/*
  * $Header$
  * $Revision$
  * $Date$
@@ -1246,20 +1251,38 @@ class Generator {
                 out.println(" not found within scope\");");
             } else {
                 /*
-                 * Instantiate bean if not there
+                 * Instantiate the bean if it is not in the specified scope.
                  */
-                String className;
-                if (beanName != null) {
-                    if (beanName.isNamedAttribute()) {
-                        // If the value for beanName was specified via
-                        // jsp:attribute, first generate code to evaluate
-                        // that body.
-                        className =
-                            generateNamedAttributeValue(
-                                beanName.getNamedAttributeNode());
+                boolean generateNew = false;
+                if (beanName == null) {
+                    try {
+                        Class bean = ctxt.getClassLoader().loadClass(klass);
+                        bean.newInstance();
+                        generateNew = true;
+                    } catch (Exception e) {
+                        // Cannot instantiate the specified class
+                        if (ctxt.getOptions().getErrorOnUseBeanInvalidClassAttribute()) {
+                            err.jspError(n, "jsp.error.invalid.bean", klass);
+                        }
+                    }
+                }
+                if (!generateNew) {
+                    String className;
+                    if (beanName != null) {
+                        if (beanName.isNamedAttribute()) {
+                            // If the value for beanName was specified via
+                            // jsp:attribute, first generate code to evaluate
+                            // that body.
+                            className =
+                                generateNamedAttributeValue(
+                                    beanName.getNamedAttributeNode());
+                        } else {
+                            className =
+                                attributeValue(beanName, false, String.class);
+                        }
                     } else {
-                        className =
-                            attributeValue(beanName, false, String.class);
+                        // Implies klass is not null
+                        className = quote(klass);
                     }
                     out.printil("try {");
                     out.pushIndent();

@@ -158,6 +158,8 @@ public final class EmbeddedServletOptions implements Options {
      */
     private boolean genStringAsCharArray = false;
 
+    private boolean errorOnUseBeanInvalidClassAttribute = true;
+
     /**
      * I want to see my generated servlets. Which directory are they
      * in?
@@ -334,6 +336,13 @@ public final class EmbeddedServletOptions implements Options {
         return compiler;
     }
 
+    public boolean getErrorOnUseBeanInvalidClassAttribute() {
+        return errorOnUseBeanInvalidClassAttribute;
+    }
+
+    public void setErrorOnUseBeanInvalidClassAttribute(boolean b) {
+        errorOnUseBeanInvalidClassAttribute = b;
+    }
 
     public TldLocationsCache getTldLocationsCache() {
 	return tldLocationsCache;
@@ -535,6 +544,20 @@ public final class EmbeddedServletOptions implements Options {
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage("jsp.warning.genchararray"));
+                }
+            }
+        }
+
+        String errBeanClass =
+	    config.getInitParameter("errorOnUseBeanInvalidClassAttribute");
+        if (errBeanClass != null) {
+            if (errBeanClass.equalsIgnoreCase("true")) {
+                errorOnUseBeanInvalidClassAttribute = true;
+            } else if (errBeanClass.equalsIgnoreCase("false")) {
+                errorOnUseBeanInvalidClassAttribute = false;
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn(Localizer.getMessage("jsp.warning.errBean"));
                 }
             }
         }

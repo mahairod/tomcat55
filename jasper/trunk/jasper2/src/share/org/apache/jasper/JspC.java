@@ -186,6 +186,7 @@ public class JspC implements Options {
     private boolean classDebugInfo = true;
     private Vector extensions;
     private Vector pages = new Vector();
+    private boolean errorOnUseBeanInvalidClassAttribute = true;
 
     /**
      * The java file encoding.  Default
@@ -342,6 +343,14 @@ public class JspC implements Options {
 
     public boolean isXpoweredBy() {
         return xpoweredBy;
+    }
+
+    public boolean getErrorOnUseBeanInvalidClassAttribute() {
+        return errorOnUseBeanInvalidClassAttribute;
+    }
+
+    public void setErrorOnUseBeanInvalidClassAttribute(boolean b) {
+        errorOnUseBeanInvalidClassAttribute = b;
     }
 
     public int getTagPoolSize() {

@@ -77,6 +77,13 @@ import org.apache.jasper.compiler.TldLocationsCache;
 public interface Options {
 
     /**
+     * Returns true if Jasper issues a compilation error instead of a runtime
+     * Instantiation error if the class attribute specified in useBean action
+     * is invalid.
+     */
+    public boolean getErrorOnUseBeanInvalidClassAttribute();
+
+    /**
      * Are we keeping generated code around?
      */
     public boolean getKeepGenerated();
