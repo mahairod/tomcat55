@@ -1512,21 +1512,21 @@ public class WebappClassLoader
      */
     public void closeJARs(boolean force) {
         if (jarFiles.length > 0) {
-            try {
                 synchronized (jarFiles) {
                     if (force || (System.currentTimeMillis() 
                                   > (lastJarAccessed + 90000))) {
                         for (int i = 0; i < jarFiles.length; i++) {
-                            if (jarFiles[i] != null) {
-                                jarFiles[i].close();
-                                jarFiles[i] = null;
+                            try {
+                            	if (jarFiles[i] != null) {
+                            		jarFiles[i].close();
+                            		jarFiles[i] = null;
+                            	}
+                            } catch (IOException e) {
+                                log.warn("Failed to close JAR", e);
                             }
                         }
                     }
                 }
-            } catch (IOException e) {
-                log.warn("Failed to close JAR", e);
-            }
         }
     }
 
@@ -1541,12 +1541,12 @@ public class WebappClassLoader
         if (started && (jarFiles.length > 0)) {
             lastJarAccessed = System.currentTimeMillis();
             if (jarFiles[0] == null) {
-                try {
-                    for (int i = 0; i < jarFiles.length; i++) {
-                        jarFiles[i] = new JarFile(jarRealFiles[i]);
-                    }
-                } catch (IOException e) {
-                    log.warn("Failed to open JAR", e);
+                for (int i = 0; i < jarFiles.length; i++) {
+                	try {
+                		jarFiles[i] = new JarFile(jarRealFiles[i]);
+                	} catch (IOException e) {
+                		log.warn("Failed to open JAR", e);
+                	}
                 }
             }
         }
