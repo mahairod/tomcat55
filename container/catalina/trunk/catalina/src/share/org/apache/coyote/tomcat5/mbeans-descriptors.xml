@@ -32,6 +32,10 @@
           description="Comma-separated list of SSL cipher suites to be enabled"
                  type="java.lang.String"/>
 
+    <attribute   name="sslProtocol"
+          description="SSL protocol variant to be used"
+                 type="java.lang.String"/>
+
     <attribute   name="connectionTimeout"
           description="Timeout value on the incoming connection"
                  type="int"/>
