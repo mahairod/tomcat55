@@ -44,11 +44,11 @@ public class RequestInfoExample extends HttpServlet {
         // making these absolute till we work out the
         // addition of a PathInfo issue
 	
-        out.println("<a href=\"/examples/servlets/reqinfo.html\">");
-        out.println("<img src=\"/examples/images/code.gif\" height=24 " +
+        out.println("<a href=\"../reqinfo.html\">");
+        out.println("<img src=\"../images/code.gif\" height=24 " +
                     "width=24 align=right border=0 alt=\"view code\"></a>");
-        out.println("<a href=\"/examples/servlets/index.html\">");
-        out.println("<img src=\"/examples/images/return.gif\" height=24 " +
+        out.println("<a href=\"../index.html\">");
+        out.println("<img src=\"../images/return.gif\" height=24 " +
                     "width=24 align=right border=0 alt=\"return\"></a>");
 
         out.println("<h3>" + title + "</h3>");

@@ -51,17 +51,6 @@
         </init-param>
     </filter>
 
-    <!-- Define filter mappings for the defined filters -->
-    <filter-mapping>
-        <filter-name>Servlet Mapped Filter</filter-name>
-	<servlet-name>invoker</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>Path Mapped Filter</filter-name>
-	<url-pattern>/servlet/*</url-pattern>
-    </filter-mapping>
-
-
 <!-- Example filter mapping to apply the "Set Character Encoding" filter
      to *all* requests processed by this web application -->
 <!--
@@ -96,30 +85,6 @@
     <!-- Define servlets that are included in the example application -->
 
     <servlet>
-        <servlet-name>SendMailServlet</servlet-name>
-        <servlet-class>SendMailServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>
-            snoop
-        </servlet-name>
-        <servlet-class>
-            SnoopServlet
-        </servlet-class>
-<!--
-        <init-param>
-            <param-name>foo</param-name>
-            <param-value>bar</param-value>
-        </init-param>
--->
-        <run-as>
-            <description>Security role for anonymous access</description>
-            <role-name>tomcat</role-name>
-        </run-as>
-    </servlet>
-
-    <servlet>
       <servlet-name>
           servletToJsp
       </servlet-name>
@@ -127,14 +92,14 @@
           servletToJsp
       </servlet-class>
     </servlet>
-        <servlet>
+
+    <servlet>
         <servlet-name>
             CompressionFilterTestServlet
         </servlet-name>
         <servlet-class>
             compressionFilters.CompressionFilterTestServlet
         </servlet-class>
-
     </servlet>
 
     <servlet-mapping>
@@ -146,19 +111,6 @@
         </url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>SendMailServlet</servlet-name>
-        <url-pattern>/SendMailServlet</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>
-            snoop
-        </servlet-name>
-        <url-pattern>
-            /snoop
-        </url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>
             servletToJsp
