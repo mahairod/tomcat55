@@ -364,15 +364,14 @@ public class GTest extends Task {
     }
 
     /**
-     * Describe <code>setReturnCode</code> Sets the expected
-     * return code and message to be found in the server's
+     * Describe <code>setReturnCodeMsg</code> Sets the expected
+     * return message to be found in the server's
      * response.
      *
      * @param code a valid HTTP resonse status code
      * @param message a <code>String</code> value
      */
-    public void setReturnCode( String code, String message ) {
-        this.returnCode = code;
+    public void setReturnCodeMsg( String message ) {
         this.returnCodeMsg = message;
     }
 
@@ -683,6 +682,13 @@ public class GTest extends Task {
                 System.out.println( responseBodyString );
             }
         }
+
+	if ( !expectResponseBody && responseBody != null ) {
+	    if ( debug > 0 ) {
+		System.out.println( "Received a response body from the server where none was expected" );
+	    }
+	    return false;
+	}
 
         // compare the body
         if ( goldenFile == null )
