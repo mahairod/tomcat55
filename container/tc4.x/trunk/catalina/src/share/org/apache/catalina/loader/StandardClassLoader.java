@@ -75,6 +75,7 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
+import java.security.AccessControlException;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.Policy;
@@ -643,6 +644,8 @@ public class StandardClassLoader
 	        log("      super.findClass(" + name + ")");
 	    try {
 	        clazz = super.findClass(name);
+            } catch(AccessControlException ace) {
+		throw new ClassNotFoundException(name);
 	    } catch (RuntimeException e) {
 	        if (debug >= 4)
 		    log("      -->RuntimeException Rethrown", e);
@@ -673,15 +676,21 @@ public class StandardClassLoader
                 pathname = pathname.substring(5);
             pathname += File.separatorChar +
                 name.replace('.', File.separatorChar) + ".class";
-            File file = new File(pathname);
-            if (file.exists() && file.canRead()) {
-                if (debug >= 3)
-                    log("    Caching from '" + file.getAbsolutePath() +
-                        "' modified '" +
-                        (new java.sql.Timestamp(file.lastModified())) + "'");
-                classCache.put(name, new ClassCacheEntry(clazz, file,
-                                                         file.lastModified()));
-            }
+	    try {
+                File file = new File(pathname);
+                if (file.exists() && file.canRead()) {
+                    if (debug >= 3)
+                        log("    Caching from '" + file.getAbsolutePath() +
+                            "' modified '" +
+                            (new java.sql.Timestamp(file.lastModified())) +
+			    "'");
+                    classCache.put(name, new ClassCacheEntry(clazz, file,
+                                   file.lastModified()));
+		}
+            } catch(AccessControlException ace) {
+		// Don't worry about caching the class last modified
+		// if ClassLoader doesn't have permission to read file
+	    }
         }
 
         // Return the class we have located
