@@ -2,7 +2,7 @@ $Id$
 
                             Release Notes for:
                            ====================
-                           TOMCAT Version 3.2.2
+                           TOMCAT Version 3.2.3
                            ====================
 
 
@@ -30,9 +30,17 @@ be used stand alone, or in conjunction with several popular web servers:
 You should read the License Agreement (in the LICENSE file of the top level
 directory), which applies to all software included in this release.
 
-Tomcat Version 3.2.2 is a bug fix release.  No new features have been
-added in this release.  The bugs known to be fixed in Version 3.2.2
-are described in section 7.1 below.
+Tomcat version 3.2.3 is a security update release.  This release closes a 
+hole that potentially allowed access to resource protected by a 
+<security-constraint> in web.xml.  This release also includes fixes for
+several other bugs discovered after the release of Tomcat version 3.2.2.  
+Section 7 lists the bugs fixed in this release.
+
+Users of previous version of Tomcat are strongly encouraged to upgrade to
+this release.  No changes to any configuration files are required.  Existing
+installations can be upgraded to version 3.2.3 by simply copying the JAR
+files in this release into an existing 3.2.x tomcat/lib directory.
+
 
 =============================================================================
 2.  INSTALLING AND RUNNING TOMCAT
@@ -75,8 +83,10 @@ features.
 
 - Tomcat 3.2.1 was a security update.  See section 7.3 for details.
 
-- Tomcat 3.2.2 is a bug fix release.  Section 7.1 describes the issues
+- Tomcat 3.2.2 was a bug fix release.  Section 7.1 describes the issues
 that have been fixed in the version.
+
+- Tomcat 3.2.3 is a security release.
 
 - Tomcat 4.0 is separate development from Tomcat 3.x.  It is based on the
 Catalina architecture, which is very different from the architecture of
@@ -300,81 +310,40 @@ from this problem.
 7.  FIXES AND ENHANCEMENTS IN UPDATES
 
 
-7.1 Fixes and Enhancements in Release 3.2.2
+7.1 Fixes and Enhancements in Release 3.2.3
 
-This section highlights the bugs fixed in this release.  In addition to
-these, there have been many other minor bug fixes through the product.
+This section highlights the bugs fixed in this release.  
 
-Documentation
-  -  Several updates to how-to documents and users guide.
-
-Servlet
-  -  Fix infinite loop if no prefix matches the request URI.  Now returns
-     a 404 error.
-  -  Handle UnavailableException in included servlets.
-  -  User principle was incorrectly maintained.  (#757)
-  -  Use access control for forward() and include() when security manager
-     is being used.
-  -  Properly interpret url-patterns inside security-contraints.  (#567)
-  -  Fix authentication with Sybase ASE 11.9.2 and Interbase.
-  -  reqeust.getPort() now returns the correct port when using SSL. (#743)
-  -  Fix JSP source disclosure problem.  (#619)
-  -  ServletRequest.getProtocol() could contain a CRLF.  (#620)
-  -  Better initialization of psuedo-random number generator improves
-     response time for first request that generates a session.
-  -  Fix session tracking through forward().  (#504)
-  -  Fix problem with getSession() overwritting the requested session ID
-     and related URL rewritting problems.  (#160)
-  -  Better error reporting for load-on-startup servler load failures.  ((#489)
-  -  Static files (e.g. .html) can how be used as the location for
-     <error-page> tags in web.xml.  (#291)
-  -  URL encoded data in servlet paths and path info are now decoded 
-     properly. (#657)
-  -  HttpServletRequest.encodeURL() now properly encodes URLs that contain
-     an anchor but no query string.  (#1182)
-  -  Error pages now work in virtual hosts.
-  -  ServletRequest.getRemoteHost() now does a DNS lookup (if necessary) to 
-     determine the name of the remote host.  As required by the spec, if this
-     look up fails the method returns the remote host's IP address.  (#208)
+  -  The show source links the examples web app didn't work.  (#372)
+  -  Thread synchronization problems with servlet reloading.  (#1628)
+  -  Recycling BufferedServletOutputStream didn't reset usingWriter.  (#1802)
+  -  ZIP files in tomcat/lib were not automatically added to the CLASSPATH
+     by tomcat.bat  (#1935)
+  -  A sign extension problem caused ServletInputStream to prematurely return
+     EOF.  (#1673, #1993)
+  -  Multistatus codes for RFC 2518 were missing.  (#2069)
+  -  Missing error pages caused Tomcat to enter an infinite loop.  (#2327)
+  -  JDBCRealm SQL statements not being closed.  (#2149)
+  -  Potential for message buffer overflow in AJP13.  (#1528)  
 
 
-Jasper
-  -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
-  -  Support compiling with debug information.
-  -  If JSP source file is removed, then generated files are removed
-     and subsequent requests return a 404 error. (#698)
-  -  Fix compile error with more than one set of tags with the same 
-     name. (#540)
-  -  Support for non 8859-1 character encodings for included pages.
-  -  Better error reporting if compile fails due to missing tag library.
-  -  Fix thread synchronization problem that can cause page compilation to 
-     fail (#44).
-  -  Fixed the defualt character encoding.  The default charset is now
-     ISO-8859-1.  (#285)
-  -  jsp:plugin was not being expanded correctly.  (#467)
-  -  Fixed bug that could cause the body of a JSP page to be exeucted before
-     or while its jspInit() method was being executed.  (#1280)
+7.2 Security vulnerabilities fixed in Tomcat 3.2.3
 
+Non-normalized URIs, for example /examples/jsp/security//protected/index.jsp or
+/examples/jsp/../jsp/security/protected/index.jsp would bypass the security
+constraints specified in web.xml.
 
-Connectors
-  -  Fix infinite loop on invalid content-length for ajp12.  (#264)
-  -  Fix infinite llop if Tomcat connector closed connection.  (#510)
-  -  For ajp13 protocol, add support for multipart form encoding
-     and file uploads now work.
-  -  Reading session ids from cookies in the load balancer. (#603) 
-  -  HTTP connections now time out if no data is received from the 
-     client.  (#1006)	
+URIs are now normalized prior to use by the container.  Servlets will receive
+the normalized path from calls to HttpServletRequest.getRequestURI().  This is
+expected to become the behaviour defined in the Servlet 2.3 specification.
 
-  IIS
-     -  Better error logging for startup failures.
+Also, URL encodings for special characters are now forbidden in request URIs.
+If a request URI contains %25, %2E, %2F or %5c a 404 error will be returned.
+This prevents the use of URL encodings to bypass the URI normalization process.
 
-  NetWare
-     -  Fix for netbuf_getbytes() not supported on NetWare 5.1.
+7.3 Security vulnerabilities fixed in Tomcat 3.2.2
 
-
-7.2 Security vulnerabilities fixed in Tomcat 3.2.2
-
-7.2.1 HTTP Requests With no Protocol
+7.3.1 HTTP Requests With no Protocol
 
 An HTTP request with no protocol specified would return an unprocessed
 source for a JSP file.  For example
@@ -383,7 +352,7 @@ GET /examples/jsp/num/numguess.jsp
 
 would return the source for the numguess.jsp file.
 
-7.2.2
+7.3.2
 
 Tomcat 3.2.2 beta releases prior to beta 3 had allowed URI components
 to be decoded twice.  This problem only appears when using JDK 1.3.0
@@ -396,9 +365,9 @@ versions of this same double decode attack could reveal the contents
 of files outside the web application.
 
 
-7.3 Security vulnerabilities fixed in Tomcat 3.2.1
+7.4 Security vulnerabilities fixed in Tomcat 3.2.1
 
-7.3.1 Protection of Resources in /WEB-INF and /META-INF Directories
+7.4.1 Protection of Resources in /WEB-INF and /META-INF Directories
 
 The servlet specification prohibits servlet containers from serving resources
 in the /WEB-INF and /META-INF directories of a web application archive directly
@@ -416,7 +385,7 @@ this information if the client requests a URL like this instead:
 corrected in Tomcat 3.2.1.
 
 
-7.3.2 Show Source Vulnerability
+7.4.2 Show Source Vulnerability
 
 The example application delivered with Tomcat 3.2 included a mechanism to
 display the source code for the JSP page examples.  This mechanism could
