@@ -19,9 +19,9 @@ package org.apache.webapp.admin.valve;
 import java.lang.IllegalArgumentException;
 import java.net.InetAddress;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.regexp.RE;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -57,12 +57,12 @@ public final class RemoteHostValveForm extends ValveForm {
     /**
      * The set of <code>allow</code> regular expressions we will evaluate.
      */
-    private RE allows[] = new RE[0];
+    private Pattern allows[] = new Pattern[0];
 
     /**
      * The set of <code>deny</code> regular expressions we will evaluate.
      */
-    private RE denies[] = new RE[0];
+    private Pattern denies[] = new Pattern[0];
     
     
     // ------------------------------------------------------------- Properties
@@ -195,24 +195,24 @@ public final class RemoteHostValveForm extends ValveForm {
         }
         
         for (int i = 0; i < denies.length; i++) {
-            if (denies[i].match(host)) {
+            if (denies[i].matcher(host).matches()) {
                 if (allows.length < 1) {
                     errors.add("deny",
                         new ActionError("error.denyHost"));
                 }    
                 for (int j = 0; j < allows.length; j++) {
-                    if (!allows[j].match(host)) { 
+                    if (!allows[j].matcher(host).matches()) { 
                         errors.add("deny",
                         new ActionError("error.denyHost"));
                     }
                 }
-            } else if (denies[i].match(ip)) {
+            } else if (denies[i].matcher(ip).matches()) {
                 if (allows.length < 1) {
                     errors.add("deny",
                         new ActionError("error.denyHost"));
                 }               
                 for (int j = 0; j < allows.length; j++) {
-                    if (!allows[j].match(ip)) { 
+                    if (!allows[j].matcher(ip).matches()) { 
                         errors.add("deny",
                         new ActionError("error.denyHost"));
                     }
@@ -227,7 +227,7 @@ public final class RemoteHostValveForm extends ValveForm {
         }
         
         for (int i = 0; i < allows.length; i++) {
-            if (allows[i].match(host)) {
+            if (allows[i].matcher(host).matches()) {
                 allowMatch = true;       
             }
         }
