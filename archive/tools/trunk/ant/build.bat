@@ -1,3 +1,3 @@
 @echo off
 REM convience bat file to build with
-java -classpath "..\ant.jar;..\javac.jar;..\projectx-tr2.jar;%CLASSPATH%" org.apache.tools.ant.Main %1 %2 %3 %4 %5
+java -classpath "%CLASSPATH%;..\ant.jar;..\javac.jar;..\projectx-tr2.jar" org.apache.tools.ant.Main %1 %2 %3 %4 %5
