@@ -210,7 +210,7 @@
     <touch file="${tomcat.build}/server/webapps/admin/WEB-INF/web.xml" />
   </target>
 
-  <target name="build-admin-precompile" 
+  <target name="build-webapps-precompile" 
           depends="init" description="Builds the admin webapp" >
     <echo>========== Building: admin to  ${tomcat.build}/server/webapps </echo>
     <ant dir="${catalina.home}/webapps/admin" target="build-main">
@@ -220,8 +220,13 @@
 
     <!-- JSPC -->
     <property name="admin.base" location="${tomcat.build}/server/webapps/admin" />
+    <property name="ROOT.base" location="${tomcat.build}/webapps/ROOT" />
+    <property name="jsp-examples.base" location="${tomcat.build}/webapps/jsp-examples" />
 
     <mkdir dir="${admin.base}/WEB-INF/src/admin" />
+    <mkdir dir="${ROOT.base}/WEB-INF/src" />
+    <mkdir dir="${ROOT.base}/WEB-INF/classes" />
+    <mkdir dir="${jsp-examples.base}/WEB-INF/src" />
 
     <taskdef classname="org.apache.jasper.JspC" name="jasper2" >
       <classpath id="jspc.classpath">
@@ -236,7 +241,21 @@
       </classpath>
     </taskdef>
 
-    <jasper2 verbose="0"
+    <jasper2 
+             compile="false"
+             validateXml="false"
+             uriroot="${ROOT.base}"
+             webXmlFragment="${ROOT.base}/WEB-INF/generated_web.xml"
+             outputDir="${ROOT.base}/WEB-INF/src" />
+
+    <jasper2 
+             compile="false"
+             validateXml="false"
+             uriroot="${jsp-examples.base}"
+             webXmlFragment="${jsp-examples.base}/WEB-INF/generated_web.xml"
+             outputDir="${jsp-examples.base}/WEB-INF/src" />
+
+    <jasper2 
              package="admin"
              compile="false"
              validateXml="false"
@@ -244,11 +263,60 @@
              webXmlFragment="${admin.base}/WEB-INF/generated_web.xml"
              outputDir="${admin.base}/WEB-INF/src/admin" />
 
-    <loadfile property="generated_web.xml"
-              srcFile="${admin.base}/WEB-INF/generated_web.xml"  />
+    <loadfile property="generated_ROOT_web.xml"
+              srcFile="${ROOT.base}/WEB-INF/generated_web.xml"  />
+    <replace file="${ROOT.base}/WEB-INF/web.xml"
+             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_ROOT_web.xml}" />
 
+    <loadfile property="generated_jsp-examples_web.xml"
+              srcFile="${jsp-examples.base}/WEB-INF/generated_web.xml"  />
+    <replace file="${jsp-examples.base}/WEB-INF/web.xml"
+             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_jsp-examples_web.xml}" />
+
+    <loadfile property="generated_admin_web.xml"
+              srcFile="${admin.base}/WEB-INF/generated_web.xml"  />
     <replace file="${admin.base}/WEB-INF/web.xml"
-             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_web.xml}" />
+             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_admin_web.xml}" />
+
+    <javac destdir="${ROOT.base}/WEB-INF/classes"
+           optimize="off"
+           debug="on"
+           srcdir="${ROOT.base}/WEB-INF/src" >
+      <classpath>
+        <pathelement location="${java.home}/../lib/tools.jar"/>
+        <fileset dir="${tomcat.build}/server/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${admin.base}/WEB-INF/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${tomcat.build}/common/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${tomcat.build}/classes"/>
+      </classpath>
+      <include name="**" />
+    </javac>
+
+    <javac destdir="${jsp-examples.base}/WEB-INF/classes"
+           optimize="off"
+           debug="on"
+           srcdir="${jsp-examples.base}/WEB-INF/src" >
+      <classpath>
+        <pathelement location="${java.home}/../lib/tools.jar"/>
+        <fileset dir="${tomcat.build}/server/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${admin.base}/WEB-INF/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${tomcat.build}/common/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${tomcat.build}/classes"/>
+      </classpath>
+      <include name="**" />
+    </javac>
 
     <javac destdir="${admin.base}/WEB-INF/classes"
            optimize="off"
@@ -269,7 +337,6 @@
       </classpath>
       <include name="admin/**" />
     </javac>
-
 
   </target>
 
@@ -308,6 +375,7 @@
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.bat" eol="crlf"/>
     <chmod      dir="${tomcat.build}/bin"   includes="*.sh"  perm="+x"/>
+
   </target>
 
   <!-- ====================== Build dependent code =================== -->
@@ -385,10 +453,12 @@
         tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
 
     <!-- Copy the examples webapps -->
-    <copy file="${api.home}/jsr152/dist/examples/examples.war"
-          tofile="${tomcat.build}/webapps/jsp-examples.war" />
-    <copy file="${api.home}/jsr154/dist/examples/examples.war"
-          tofile="${tomcat.build}/webapps/servlets-examples.war" />
+    <copy todir="${tomcat.build}/webapps/jsp-examples">
+      <fileset dir="${api.home}/jsr152/build/examples"/>
+    </copy>
+    <copy todir="${tomcat.build}/webapps/servlets-examples">
+      <fileset dir="${api.home}/jsr154/build/examples"/>
+    </copy>
 
     <echo>Target: Jasper - Deploy ...</echo>
     <ant dir="${jasper.home}"   target="deploy">
@@ -399,6 +469,9 @@
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.bat" eol="crlf"/>
     <chmod      dir="${tomcat.build}/bin"   includes="*.sh"  perm="+x"/>
+
+    <echo>Target: Webapps precompilation ...</echo>
+    <ant dir="."   target="build-webapps-precompile" />
 
   </target>
 
