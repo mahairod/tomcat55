@@ -629,28 +629,40 @@ public class NamingContextListener
                 }
             }
         } else if (name.equals("resourceParams")) {
+            String resourceParamsName = null;
+            ResourceParams rp = null;
             if (oldValue != null) {
-                ResourceParams rp = (ResourceParams) oldValue;
-                if (rp.getName() != null) {
-                    // Remove and re-add the resource without the parameters
-                    ContextResource resource =
-                        namingResources.findResource(rp.getName());
-                    if (resource != null) {
-                        removeResource(resource.getName());
-                        addResource(resource);
-                    }
-                }
+                rp = (ResourceParams) oldValue;
             }
             if (newValue != null) {
-                ResourceParams rp = (ResourceParams) newValue;
-                if (rp.getName() != null) {
-                    // Remove and re-add the resource with the parameters
-                    ContextResource resource =
-                        namingResources.findResource(rp.getName());
-                    if (resource != null) {
-                        removeResource(resource.getName());
-                        addResource(resource);
-                    }
+                rp = (ResourceParams) newValue;
+            }
+            if (rp != null) {
+                resourceParamsName = rp.getName();
+            }
+            if (resourceParamsName != null) {
+                ContextEjb ejb = namingResources.findEjb(resourceParamsName);
+                if (ejb != null) {
+                    removeEjb(resourceParamsName);
+                    addEjb(ejb);
+                }
+                ContextResource resource = 
+                    namingResources.findResource(resourceParamsName);
+                if (resource != null) {
+                    removeResource(resourceParamsName);
+                    addResource(resource);
+                }
+                String resourceEnvRefValue = 
+                    namingResources.findResourceEnvRef(resourceParamsName);
+                if (resourceEnvRefValue != null) {
+                    removeResourceEnvRef(resourceParamsName);
+                    addResourceEnvRef(resourceParamsName, resourceEnvRefValue);
+                }
+                ContextResourceLink resourceLink = 
+                    namingResources.findResourceLink(resourceParamsName);
+                if (resourceLink != null) {
+                    removeResourceLink(resourceParamsName);
+                    addResourceLink(resourceLink);
                 }
             }
         }
