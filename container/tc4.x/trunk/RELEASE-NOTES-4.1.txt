@@ -132,6 +132,9 @@ Generic Bug Fixes:
 [4.1.3] Administration Webapp:
         Fix creation of new connectors through the admin webapp.
 
+[4.1.6] Administration webapp:
+        Context resources administration fixes and improvements.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -266,6 +269,14 @@ Catalina Bug Fixes:
         DefaultServlet:
         Use getDateHeader instead of instance local date parsers to solve
         thread safety issues.
+
+[4.1.6] WebappClassLoader:
+        Fix a rare thread safety issue.
+
+[4.1.6] #9944
+        JAASRealm not configurable
+        JAASRealm:
+        Fix configuration of the appName and userClassNames attributes.
 
 
 ----------------
