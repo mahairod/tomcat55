@@ -725,8 +725,6 @@
          todir="${tomcat.build}/conf/Catalina/localhost" />
     <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
-    <copy file="${tomcat.build}/webapps/balancer/balancer.xml"
-         todir="${tomcat.build}/conf/Catalina/localhost" />
 
   </target>
 

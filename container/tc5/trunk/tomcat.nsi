@@ -76,9 +76,11 @@ ${StrRep}
     LangString DESC_SecTomcatCore ${LANG_ENGLISH} "Install the Tomcat Servlet container core."
     LangString DESC_SecTomcatService ${LANG_ENGLISH} "Automatically start Tomcat when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
     LangString DESC_SecTomcatSource ${LANG_ENGLISH} "Install the Tomcat source code."
-    LangString DESC_SecTomcatDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
     LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
+    LangString DESC_SecDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
     LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
+    LangString DESC_SecAdmin ${LANG_ENGLISH} "Installs the administration web application."
+    LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
 
   ;Language
   !insertmacro MUI_LANGUAGE English
@@ -113,17 +115,26 @@ Section "Core" SecTomcatCore
   SetOutPath $INSTDIR
   File tomcat.ico
   File LICENSE
-  File /r bin
   File /r common
-  File /r conf
   File /nonfatal /r shared
   File /nonfatal /r logs
-  File /r server
   File /nonfatal /r work
   File /nonfatal /r temp
+  SetOutPath $INSTDIR\bin
+  File bin\bootstrap.jar
+  File bin\commons-logging-api.jar
+  File bin\*.exe
+  SetOutPath $INSTDIR\conf
+  File conf\*.*
+  SetOutPath $INSTDIR\server
+  File /r server\lib
+  File /nonfatal /r server\classes
+  SetOutPath $INSTDIR\server\webapps
+  File /r server\webapps\manager
   SetOutPath $INSTDIR\webapps
-  File /r webapps\balancer
   File /r webapps\ROOT
+  SetOutPath $INSTDIR\conf\Catalina\localhost
+  File conf\Catalina\localhost\manager.xml
 
   IfSilent 0 +3
   Call findJavaPath
@@ -182,14 +193,6 @@ Section "Source Code" SecTomcatSource
 
 SectionEnd
 
-Section "Documentation" SecTomcatDocs
-
-  SectionIn 1 3
-  SetOutPath $INSTDIR\webapps
-  File /r webapps\tomcat-docs
-
-SectionEnd
-
 SubSectionEnd
 
 Section "Start Menu Items" SecMenu
@@ -234,14 +237,42 @@ NoDocumentaion:
 
 SectionEnd
 
-Section "Examples" SecExamples
+Section "Documentation" SecDocs
 
   SectionIn 1 3
+  SetOutPath $INSTDIR\webapps
+  File /r webapps\tomcat-docs
+
+SectionEnd
+
+Section "Examples" SecExamples
+
+  SectionIn 3
 
   SetOverwrite on
   SetOutPath $INSTDIR\webapps
   File /r webapps\jsp-examples
   File /r webapps\servlets-examples
+
+SectionEnd
+
+Section "Administration" SecAdmin
+
+  SectionIn 3
+
+  SetOutPath $INSTDIR\server\webapps
+  File /r server\webapps\admin
+  SetOutPath $INSTDIR\conf\Catalina\localhost
+  File conf\Catalina\localhost\admin.xml
+
+SectionEnd
+
+Section "Webapps" SecWebapps
+
+  SectionIn 3
+
+  SetOutPath $INSTDIR\webapps
+  File /r webapps\balancer
   File /r webapps\webdav
 
 SectionEnd
