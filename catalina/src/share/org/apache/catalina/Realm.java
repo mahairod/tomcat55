@@ -66,10 +66,11 @@ package org.apache.catalina;
 
 
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
-
+import org.apache.catalina.deploy.SecurityConstraint;
 /**
  * A <b>Realm</b> is a read-only facade for an underlying security realm
  * used to authenticate individual users, and identify the security roles
@@ -111,7 +112,7 @@ public interface Realm {
 
     // --------------------------------------------------------- Public Methods
 
-
+    
     /**
      * Add a property change listener to this component.
      *
@@ -169,8 +170,27 @@ public interface Realm {
      *  the array being the certificate of the client itself.
      */
     public Principal authenticate(X509Certificate certs[]);
+    
 
-
+    /**
+     * Perform access control based on the specified authorization constraint.
+     * Return <code>true</code> if this constraint is satisfied and processing
+     * should continue, or <code>false</code> otherwise.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param constraint Security constraint we are enforcing
+     * @param The Context to which client of this class is attached.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public boolean hasResourceAccess(HttpRequest request,
+                                     HttpResponse response,
+                                     SecurityConstraint constraint,
+                                     Context context)
+        throws IOException;
+    
+    
     /**
      * Return <code>true</code> if the specified Principal has the specified
      * security role, within the context of this Realm; otherwise return

@@ -512,7 +512,7 @@ public abstract class AuthenticatorBase
         if (constraint.getAuthConstraint()) {
             if (debug >= 1)
                 log(" Calling accessControl()");
-            if (!accessControl(hrequest, hresponse, constraint)) {
+            if (!this.context.getRealm().hasResourceAccess(hrequest, hresponse, constraint, this.context)) {
                 if (debug >= 1)
                     log(" Failed accessControl() test");
                 // ASSERT: AccessControl method has already set the appropriate
@@ -532,88 +532,6 @@ public abstract class AuthenticatorBase
     // ------------------------------------------------------ Protected Methods
 
 
-    /**
-     * Perform access control based on the specified authorization constraint.
-     * Return <code>true</code> if this constraint is satisfied and processing
-     * should continue, or <code>false</code> otherwise.
-     *
-     * @param request Request we are processing
-     * @param response Response we are creating
-     * @param constraint Security constraint we are enforcing
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected boolean accessControl(HttpRequest request,
-                                    HttpResponse response,
-                                    SecurityConstraint constraint)
-        throws IOException {
-
-        if (constraint == null)
-            return (true);
-
-        // Specifically allow access to the form login and form error pages
-        // and the "j_security_check" action
-        LoginConfig config = context.getLoginConfig();
-        if ((config != null) &&
-            (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
-            String requestURI = request.getDecodedRequestURI();
-            String loginPage = context.getPath() + config.getLoginPage();
-            if (loginPage.equals(requestURI)) {
-                if (debug >= 1)
-                    log(" Allow access to login page " + loginPage);
-                return (true);
-            }
-            String errorPage = context.getPath() + config.getErrorPage();
-            if (errorPage.equals(requestURI)) {
-                if (debug >= 1)
-                    log(" Allow access to error page " + errorPage);
-                return (true);
-            }
-            if (requestURI.endsWith(Constants.FORM_ACTION)) {
-                if (debug >= 1)
-                    log(" Allow access to username/password submission");
-                return (true);
-            }
-        }
-
-        // Which user principal have we already authenticated?
-        Principal principal =
-            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-        if (principal == null) {
-            if (debug >= 2)
-                log("  No user authenticated, cannot grant access");
-            ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 sm.getString("authenticator.notAuthenticated"));
-            return (false);
-        }
-
-        // Check each role included in this constraint
-        Realm realm = context.getRealm();
-        String roles[] = constraint.findAuthRoles();
-        if (roles == null)
-            roles = new String[0];
-
-        if (constraint.getAllRoles())
-            return (true);
-        if ((roles.length == 0) && (constraint.getAuthConstraint())) {
-            ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_FORBIDDEN,
-                 sm.getString("authenticator.forbidden"));
-            return (false); // No listed roles means no access at all
-        }
-        for (int i = 0; i < roles.length; i++) {
-            if (realm.hasRole(principal, roles[i]))
-                return (true);
-        }
-
-        // Return a "Forbidden" message denying access to this resource
-        ((HttpServletResponse) response.getResponse()).sendError
-            (HttpServletResponse.SC_FORBIDDEN,
-             sm.getString("authenticator.forbidden"));
-        return (false);
-
-    }
 
 
     /**

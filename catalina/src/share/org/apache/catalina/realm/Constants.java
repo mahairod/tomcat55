@@ -76,5 +76,12 @@ package org.apache.catalina.realm;
 public final class Constants {
 
     public static final String Package = "org.apache.catalina.realm";
+    
+        // Authentication methods for login configuration
+    public static final String FORM_METHOD = "FORM";
+
+    // Form based authentication constants
+    public static final String FORM_ACTION = "/j_security_check";
+
 
 }
