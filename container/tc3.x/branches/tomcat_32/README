@@ -35,7 +35,8 @@ you are installing all of the required distributions.
 	bootstrap		<-- Windows
 
   This should result in the creation of a file "ant.jar" in the "lib"
-  subdirectory, which will be used when building Watchdog.
+  subdirectory, which will be used when building Tomcat.  If you download
+  a binary distribution, you must get Ant version 1.2 or later.
 
 * Download and install the Servletapi distribution (subproject
   "jakarta-servletapi") into a subdirectory named
@@ -52,9 +53,10 @@ you are installing all of the required distributions.
 
 * Download the source distribution of Tomcat (subpackage "jakarta-tomcat"),
   or check it out via anonymous CVS, into a subdirectory named
-  "$JAKARTA_HOME/jakarta-tomcat".  You can now build an "unpacked" version
-  of Tomcat (quicker builds because no time is spent JARing up results)
-  by executing the following commands:
+  "$JAKARTA_HOME/jakarta-tomcat".  For the Tomcat 3.2 source tree, be sure
+  to check out branch "tomcat_32" from the "jakarta-tomcat" repository.
+  You can now build an "unpacked" version of Tomcat (quicker builds because
+  no time is spent JARing up results) by executing the following commands:
 
 	cd $JAKARTA_HOME/jakarta-tomcat
 	./build.sh		<-- Unix
@@ -162,7 +164,6 @@ rest of Tomcat, by the steps described above.  To run the tests against the
 You can also use the Watchdog compatibility test suite, also available at
 <http://jakarta.apache.org>, to test Tomcat's compliance to the servlet and
 JSP specifications.
-
 
 
 Before Committing Changes
