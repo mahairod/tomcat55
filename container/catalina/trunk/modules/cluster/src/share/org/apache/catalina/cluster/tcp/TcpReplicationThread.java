@@ -39,7 +39,7 @@ public class TcpReplicationThread extends WorkerThread
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
     private SelectionKey key;
-    private boolean synchronous=false;
+    private boolean waitForAck=true;
 
     TcpReplicationThread ()
     {
@@ -91,10 +91,10 @@ public class TcpReplicationThread extends WorkerThread
      * to ignore read-readiness for this channel while the
      * worker thread is servicing it.
      */
-    synchronized void serviceChannel (SelectionKey key, boolean synchronous)
+    synchronized void serviceChannel (SelectionKey key, boolean waitForAck)
     {
         this.key = key;
-        this.synchronous=synchronous;
+        this.waitForAck=waitForAck;
         key.interestOps (key.interestOps() & (~SelectionKey.OP_READ));
         key.interestOps (key.interestOps() & (~SelectionKey.OP_WRITE));
         this.notify();		// awaken the thread
@@ -125,11 +125,12 @@ public class TcpReplicationThread extends WorkerThread
         //check to see if any data is available
         int pkgcnt = reader.execute();
         while ( pkgcnt > 0 ) {
-            if (synchronous) {
+            if (waitForAck) {
                 sendAck(key,channel);
             } //end if
             pkgcnt--;
         }
+        
         if (count < 0) {
             // close channel on EOF, invalidates the key
             channel.close();

@@ -19,7 +19,13 @@ package org.apache.catalina.cluster;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 
-
+/**
+ * 
+ * @author Filip Hanik
+ * @author Peter Rossbach
+ * @version 1.1
+ *
+ */
 public interface ClusterSender
 {
 
@@ -35,7 +41,8 @@ public interface ClusterSender
 
     public void sendMessage(String messageId, byte[] indata) throws java.io.IOException;
     
-    public boolean getIsSenderSynchronized();
+    public boolean isWaitForAck();
+    public void setWaitForAck(boolean isWaitForAck);
 
     /**
      * @param cluster
