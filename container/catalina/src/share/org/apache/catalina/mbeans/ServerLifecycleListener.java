@@ -152,6 +152,20 @@ public class ServerLifecycleListener
     }
 
 
+    /**
+     * MX4J adaptor name.
+     */
+    protected String adaptor = null;
+
+    public String getAdaptor() {
+        return (this.adaptor);
+    }
+
+    public void setAdaptor(String adaptor) {
+        this.adaptor = adaptor;
+    }
+
+
     // ---------------------------------------------- ContainerListener Methods
 
 
@@ -205,6 +219,14 @@ public class ServerLifecycleListener
 
                 createMBeans();
 
+                if (adaptor != null) {
+                    try {
+                        MBeanUtils.createRMIAdaptor(adaptor);
+                    } catch (Exception e) {
+                        log("createAdaptor: Exception", e);
+                    }
+                }
+
             }
 
             /*
@@ -220,6 +242,10 @@ public class ServerLifecycleListener
             if (lifecycle instanceof Server) {
                 destroyMBeans();
             }
+
+            // FIXME: RMI adaptor should be stopped; however, this is 
+            // undocumented in MX4J, and reports exist in the MX4J bug DB that
+            // this doesn't work
 
         } else if (Context.RELOAD_EVENT.equals(event.getType())) {
 
