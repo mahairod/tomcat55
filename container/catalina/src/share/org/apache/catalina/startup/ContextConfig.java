@@ -298,6 +298,7 @@ public final class ContextConfig
                 log.error(sm.getString("contextConfig.applicationParse"), e);
                 ok = false;
             } finally {
+                webDigester.reset();
                 parseException = null;
                 try {
                     if (stream != null) {
@@ -598,6 +599,7 @@ public final class ContextConfig
                 log.error(sm.getString("contextConfig.defaultParse"), e);
                 ok = false;
             } finally {
+                digester.reset();
                 parseException = null;
                 try {
                     if (stream != null) {
@@ -687,6 +689,7 @@ public final class ContextConfig
                 log.error(sm.getString("contextConfig.defaultParse"), e);
                 ok = false;
             } finally {
+                contextDigester.reset();
                 parseException = null;
                 try {
                     if (stream != null) {
