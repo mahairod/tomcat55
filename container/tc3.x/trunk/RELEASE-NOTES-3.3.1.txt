@@ -284,6 +284,9 @@ Bug No.  Description
 
 6341	 Fix the "guess home" logic so that it can work on Mac OS
 
+6717	 Fix a problem where the Http10 Connector would fail to parse the 
+	 HTTP headers if the headers are extremely big.
+
 Connectors:
 
          A bug was fixed in isapi_redirect.dll where it would mistake an
