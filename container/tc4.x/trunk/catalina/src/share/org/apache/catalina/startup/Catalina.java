@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.startup;
@@ -76,6 +76,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
+import org.apache.catalina.loader.StandardLoader;
 import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
@@ -330,6 +331,8 @@ public class Catalina {
 		       ("org.apache.catalina.core.StandardHost",
 			"className"));
 	mapper.addRule("Server/Service/Engine/Host", mapper.setProperties());
+        mapper.addRule("Server/Service/Engine/Host",
+                       new CopyParentClassLoaderAction());
 	mapper.addRule("Server/Service/Engine/Host",
 		       new LifecycleListenerAction
 			   ("org.apache.catalina.startup.HostConfig",
@@ -429,6 +432,8 @@ public class Catalina {
 		       ("org.apache.catalina.core.StandardContext",
 			"className"));
 	mapper.addRule(prefix + "", mapper.setProperties());
+        mapper.addRule(prefix + "",
+                       new CopyParentClassLoaderAction());
 	mapper.addRule(prefix + "",
 		       new LifecycleListenerAction
 			   ("org.apache.catalina.startup.ContextConfig",
@@ -441,7 +446,7 @@ public class Catalina {
         mapper.addRule(prefix + "/ResourceParams",
                        mapper.setProperties());
         mapper.addRule(prefix + "/ResourceParams", mapper.addChild
-                       ("addResourceParams", 
+                       ("addResourceParams",
                         "org.apache.catalina.deploy.ResourceParams"));
 	mapper.addRule(prefix + "/ResourceParams/parameter",
 		       mapper.methodSetter("addParameter", 2));
@@ -479,10 +484,14 @@ public class Catalina {
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-	mapper.addRule(prefix + "/Loader",
+        /*
+       	mapper.addRule(prefix + "/Loader",
 		       mapper.objectCreate
 		       ("org.apache.catalina.loader.StandardLoader",
 			"className"));
+        */
+        mapper.addRule(prefix + "/Loader",
+                       new CreateLoaderAction());
 	mapper.addRule(prefix + "/Loader",
 		       mapper.setProperties());
 	mapper.addRule(prefix + "/Loader", mapper.addChild
@@ -629,7 +638,7 @@ public class Catalina {
         } else {
             System.setProperty("catalina.useNaming", "true");
             String value = "org.apache.naming";
-            String oldValue = 
+            String oldValue =
                 System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
             if (oldValue != null) {
                 value = oldValue + ":" + value;
@@ -716,7 +725,7 @@ public class Catalina {
     protected void usage() {
 
         System.out.println
-            ("usage: java org.apache.catalina.startup.Catalina" 
+            ("usage: java org.apache.catalina.startup.Catalina"
              + " [ -config {pathname} ] [ -debug ]"
              + " [ -nonaming ] { start | stop }");
 
@@ -727,6 +736,91 @@ public class Catalina {
 
 
 // ------------------------------------------------------------ Private Classes
+
+
+/**
+ * Class that copies the parentClassLoader property from the next-to-top
+ * item on the stack (which must be a Container) to the top item on the
+ * stack (which must also be a Container).
+ */
+
+final class CopyParentClassLoaderAction extends XmlAction {
+
+
+    /**
+     * Construct a new action.
+     */
+    public CopyParentClassLoaderAction() {
+        super();
+    }
+
+
+    /**
+     * Copy the required class loader.
+     */
+    public void start(SaxContext context) throws Exception {
+        if (context.getDebug() >= 1)
+            context.log("Copying parent class loader");
+        Stack stack = context.getObjectStack();
+        Container child = (Container) stack.pop();
+        Container parent = (Container) stack.peek();
+        stack.push(child);
+        child.setParentClassLoader(parent.getParentClassLoader());
+    }
+
+}
+
+
+/**
+ * Class that creates a new StandardLoader instance, with the parent class
+ * loader associated with the top object on the stack (which must be a
+ * Container), and pushes it on to the stack.
+ */
+
+final class CreateLoaderAction extends XmlAction {
+
+
+    /**
+     * Construct a new action.
+     */
+    public CreateLoaderAction() {
+        super();
+    }
+
+
+    /**
+     * Add the requested Loader implemenation.
+     */
+    public void start(SaxContext context) throws Exception {
+
+        // Look up the required parent class loader
+        Stack stack = context.getObjectStack();
+        Container container = (Container) stack.peek();
+        ClassLoader parentClassLoader = container.getParentClassLoader();
+
+        // Instantiate a new Loader implementation object
+        StandardLoader loader = new StandardLoader(parentClassLoader);
+
+        // Push the new loader onto the stack
+        stack.push(loader);
+        if (context.getDebug() >= 1)
+            context.log("new " + loader.getClass().getName());
+
+    }
+
+
+    /**
+     * Pop the loader off the top of the stack.
+     */
+    public void cleanup(SaxContext context) {
+        Stack stack = context.getObjectStack();
+        Object o = stack.pop();
+        if (context.getDebug() >= 1)
+            context.log("pop " + o.getClass().getName());
+
+    }
+
+}
 
 
 /**
@@ -849,5 +943,3 @@ final class SetParentClassLoaderAction extends XmlAction {
 
 
 }
-
-
