@@ -111,6 +111,21 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedSession01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedSession02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedSession03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedSetBufferSize01</url-pattern>
     </filter-mapping>
@@ -201,6 +216,21 @@
     <servlet>
         <servlet-name>Resources04</servlet-name>
         <servlet-class>org.apache.tester.Resources04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session01</servlet-name>
+        <servlet-class>org.apache.tester.Session01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session02</servlet-name>
+        <servlet-class>org.apache.tester.Session02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session03</servlet-name>
+        <servlet-class>org.apache.tester.Session03</servlet-class>
     </servlet>
 
     <servlet>
@@ -369,6 +399,36 @@
     <servlet-mapping>
         <servlet-name>Resources04</servlet-name>
         <url-pattern>/WrappedResources04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session01</servlet-name>
+        <url-pattern>/Session01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session01</servlet-name>
+        <url-pattern>/WrappedSession01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session02</servlet-name>
+        <url-pattern>/Session02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session02</servlet-name>
+        <url-pattern>/WrappedSession02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session03</servlet-name>
+        <url-pattern>/Session03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session03</servlet-name>
+        <url-pattern>/WrappedSession03</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

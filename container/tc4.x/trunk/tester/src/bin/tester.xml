@@ -381,4 +381,39 @@
   </target>
 
 
+  <target name="HttpSession">
+
+    <!-- ========== Session Attribute Persistence ========================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session01" debug="${debug}"
+      outContent="Session01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session02" debug="${debug}"
+     joinSession="true"
+      outContent="Session02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session03" debug="${debug}"
+     joinSession="true"
+      outContent="Session03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession01" debug="${debug}"
+      outContent="Session01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession02" debug="${debug}"
+     joinSession="true"
+      outContent="Session02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession03" debug="${debug}"
+     joinSession="true"
+      outContent="Session03 PASSED"/>
+
+  </target>
+
+
 </project>
