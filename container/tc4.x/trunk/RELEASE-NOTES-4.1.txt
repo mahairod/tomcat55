@@ -162,6 +162,9 @@ Generic Bug Fixes:
 [4.1.8] Build:
         Tomcat is now built with JDK 1.4.
 
+[4.1.9] Administration Webapp:
+        Specify charset in JSP pages.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -349,6 +352,17 @@ Catalina Bug Fixes:
 [4.1.8] StandardSession:
         Set manager to null before recycling.
 
+[4.1.9] StandardClassLoader:
+        Avoid potential security exception by not calling getParent.
+
+[4.1.9] #11307
+        Summary: Deadlock in ClassLoader
+        WebappClassLoader:
+        Fix deadlock condition by modifying the synced block.
+
+[4.1.9] StandardHostDeployer:
+        Fire event when undeploying.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -456,6 +470,26 @@ Jasper Bug Fixes:
         Summary: <%@ page extends %> causes ClassCastException
         JspServletWrapper:
         Fix regression caused by the included JSP modification tracking.
+
+[4.1.9] #11463
+        Summary: PageContextImpl.removeAttribute do not work correctly without
+        session object
+        PageContextImpl:
+        Add check for the existence of the session.
+
+[4.1.9] Validator:
+        Fix bug in setting the default content-type.
+
+[4.1.9] #10949
+        Summary: Jasper2 compile error with struts logic tag & jsp:include
+        Generator:
+        Fix generated response type to HttpServletResponse.
+
+[4.1.9] #10629
+        Summary: include directive fails when referencing Parent Path within 
+        a WAR
+        JspCompilationContext:
+        Canonicalize URIs used for getResource and getResourceAsStream.
 
 
 ============================
