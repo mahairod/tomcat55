@@ -87,7 +87,7 @@ class TagFileProcessor {
     /**
      * A visitor the tag file
      */
-    private static class TagFileVisitor extends Node.Visitor {
+    private static class TagFileDirectiveVisitor extends Node.Visitor {
 
         private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
             new JspUtil.ValidAttribute("display-name"),
@@ -119,14 +119,6 @@ class TagFileProcessor {
 	    new JspUtil.ValidAttribute("description")
 	};
 
-	private static final JspUtil.ValidAttribute[] fragmentInputDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name", true),
-	    new JspUtil.ValidAttribute("fragment", true),
-	    new JspUtil.ValidAttribute("required"),
-	    new JspUtil.ValidAttribute("type"),
-	    new JspUtil.ValidAttribute("description")
-	};
-
         private ErrorDispatcher err;
 	private TagLibraryInfo tagLibInfo;
 
@@ -143,8 +135,9 @@ class TagFileProcessor {
         private Vector attributeVector = new Vector();
         private Vector variableVector = new Vector();
 
-        public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo,
-			      String name) {
+        public TagFileDirectiveVisitor(Compiler compiler,
+				       TagLibraryInfo tagLibInfo,
+				       String name) {
             err = compiler.getErrorDispatcher();
 	    this.tagLibInfo = tagLibInfo;
 	    this.name = name;
@@ -307,8 +300,8 @@ class TagFileProcessor {
                                         "jsp.error.file.not.found", tagfile);
 	}
 
-        TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler(),
-							   tagLibInfo, name);
+        TagFileDirectiveVisitor tagFileVisitor
+	    = new TagFileDirectiveVisitor(pc.getCompiler(), tagLibInfo, name);
         page.visit(tagFileVisitor);
 
         return tagFileVisitor.getTagInfo();
