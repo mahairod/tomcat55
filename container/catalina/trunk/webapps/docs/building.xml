@@ -25,7 +25,7 @@ Tomcat. The following is a step by step TODO list.
 <section name="Download and install a Java Development Kit 1.4.x or later">
 
 <p>
-Ealier releases would also work, but are harder to work with due to the need to
+Earlier releases would also work, but are harder to work with due to the need to
 download additional dependencies. Tomcat also runs much faster on 
 the latest 1.4 JDK.
 </p>
