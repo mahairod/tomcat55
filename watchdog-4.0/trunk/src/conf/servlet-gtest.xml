@@ -6623,4 +6623,12 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
         />
     </target>
 
+    <target name="SingleModelTest">
+        <watchdog request="GET /servlet-tests/STMClient?count=10&amp;path=SingleModelTest HTTP/1.0"
+            testName="SingleModelTest" debug="0"
+            host="${host}" port="${port}"
+            returnCode="200"
+        />
+    </target>
+
 </project>
