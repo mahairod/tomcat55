@@ -59,6 +59,16 @@ public final class Bootstrap {
     // ------------------------------------------------------- Static Variables
 
 
+    private static final String JMX_ERROR_MESSAGE =
+        "Due to new licensing guidelines mandated by the Apache Software\n"
+        + "Foundation Board of Directors, a JMX implementation can no longer\n"
+        + "be distributed with the Apache Tomcat binaries. As a result, you \n"
+        + "must download a JMX 1.2 implementation (such as the Sun Reference\n"
+        + "Implementation) and copy the JAR containing the API and \n"
+        + "implementation of the JMX specification to: \n" 
+        + "${catalina.home}/bin/jmx.jar";
+
+
     /**
      * Daemon object used by main.
      */
@@ -369,6 +379,19 @@ public final class Bootstrap {
      * @param args Command line arguments to be processed
      */
     public static void main(String args[]) {
+
+        try {
+            // Attempt to load JMX class
+            new ObjectName("test:foo=bar");
+        } catch (Throwable t) {
+            System.out.println(JMX_ERROR_MESSAGE);
+            try {
+                // Give users some time to read the message before exiting
+                Thread.sleep(5000);
+            } catch (Exception ex) {
+            }
+            return;
+        }
 
         if (daemon == null) {
             daemon = new Bootstrap();
