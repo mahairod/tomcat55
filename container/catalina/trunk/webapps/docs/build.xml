@@ -34,6 +34,9 @@
         <include name="RUNNING.txt"/>
       </fileset>
     </copy>
+    <copy    todir="${webapps.build}/${webapp.name}">
+      <fileset dir="." includes="**/*.html"/>
+    </copy>
 
     <!-- WEB-INF Static Files -->
     <copy    todir="${webapps.build}/${webapp.name}/WEB-INF">
