@@ -1744,9 +1744,9 @@ public class Generator {
 	    String varReaderAttr = n.getAttributeValue("varReader");
 	    String varAttr = n.getAttributeValue("var");
 	    if (varReaderAttr != null || varAttr != null) {
-		out.printil("sout = new java.io.StringWriter();");
+		out.printil("_jspx_sout = new java.io.StringWriter();");
 		out.print(toGetterMethod(n.getAttributeValue("fragment")));
-		out.println(".invoke(sout, params);");
+		out.println(".invoke(_jspx_sout, params);");
 	    } else {
 		out.print(toGetterMethod(n.getAttributeValue("fragment")));
 		out.println(".invoke(null, params);");
@@ -1758,10 +1758,10 @@ public class Generator {
 		out.printin("pageContext.setAttribute(");
 		if (varReaderAttr != null) {
 		    out.print(quote(varReaderAttr));
-		    out.print(", new java.io.StringReader(sout.toString())");
+		    out.print(", new java.io.StringReader(_jspx_sout.toString())");
 		} else {
 		    out.print(quote(varAttr));
-		    out.print(", sout.toString()");
+		    out.print(", _jspx_sout.toString()");
 		}		    
 		if (scopeName != null) {
 		    out.print(", ");
@@ -1825,8 +1825,8 @@ public class Generator {
 	    String varReaderAttr = n.getAttributeValue("varReader");
 	    String varAttr = n.getAttributeValue("var");
 	    if (varReaderAttr != null || varAttr != null) {
-		out.printil("sout = new java.io.StringWriter();");
-		out.printil("getJspBody().invoke(sout, params);");
+		out.printil("_jspx_sout = new java.io.StringWriter();");
+		out.printil("getJspBody().invoke(_jspx_sout, params);");
 	    } else {
 		out.printil("getJspBody().invoke(null, params);");
 	    }
@@ -1837,10 +1837,10 @@ public class Generator {
 		out.printin("pageContext.setAttribute(");
 		if (varReaderAttr != null) {
 		    out.print(quote(varReaderAttr));
-		    out.print(", new java.io.StringReader(sout.toString())");
+		    out.print(", new java.io.StringReader(_jspx_sout.toString())");
 		} else {
 		    out.print(quote(varAttr));
-		    out.print(", sout.toString()");
+		    out.print(", _jspx_sout.toString()");
 		}
 		if (scopeName != null) {
 		    out.print(", ");
@@ -2835,7 +2835,7 @@ public class Generator {
 
 	// Declare writer used for storing result of fragment/body invocation
 	// if 'varReader' or 'var' attribute is specified
-	out.printil("java.io.Writer sout = null;");
+	out.printil("java.io.Writer _jspx_sout = null;");
 
 	out.printil("javax.servlet.jsp.JspWriter out = pageContext.getOut();");
 	generatePageScopedVariables(tagInfo);
