@@ -458,10 +458,14 @@ class TagFileProcessor {
                                             tagInfo,
                                             ctxt.getRuntimeContext(),
                                             (JarFile) ctxt.getTagFileJars().get(tagFilePath));
+                tempWrapper.getJspEngineContext()
+                    .setClassPath(ctxt.getClassPath());
                 tagClazz = tempWrapper.loadTagFilePrototype();
                 tempVector.add(
                                tempWrapper.getJspEngineContext().getCompiler());
             } else {
+                wrapper.getJspEngineContext()
+                    .setClassPath(ctxt.getClassPath());
                 tagClazz = wrapper.loadTagFile();
             }
         } finally {
