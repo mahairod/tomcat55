@@ -95,8 +95,6 @@
     <load-on-startup>2</load-on-startup>
   </servlet>
 
-  <!--GENERATED_JSPS--> 
-
   <!-- Action Servlet Mapping -->
   <servlet-mapping>
     <servlet-name>action</servlet-name>
