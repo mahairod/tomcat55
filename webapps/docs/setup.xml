@@ -107,6 +107,11 @@
        information. In particular, the <code>-debug</code> option is useful
        to debug issues running jsvc.</p>
 
+    <p>The file <code>$CATALINA_HOME/bin/jsvc/native/tomcat.sh</code> can be 
+       used as a template for starting Tomcat automatically at boot time from 
+       <code>/etc/init.d</code>.  The file is currently setup for running 
+       Tomcat4.1.x, so it is necessary to edit it and change the classname 
+       from <code>BootstrapService</code> to <code>Bootstrap</code>.</p>
   </section>
 
 </body>
