@@ -1,4 +1,4 @@
-p/*
+/*
  * $Header$
  * $Revision$
  * $Date$
