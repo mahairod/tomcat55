@@ -148,7 +148,24 @@ class Generator {
 
 	class DeclarationVisitor extends Node.Visitor {
 
+            private boolean getServletInfoGenerated = false;
+
+            /*
+             * Generates getServletInfo() method that returns the value of the
+             * page directive's 'info' attribute, if present.
+             *
+             * The Validator has already ensured that if the translation unit
+             * contains more than one page directive with an 'info' attribute,
+             * their values match.
+             */
 	    public void visit(Node.PageDirective n) throws JasperException {
+
+                if (!getServletInfoGenerated) {
+                    getServletInfoGenerated = true;
+                } else {
+                    return;
+                }
+
 		String info = n.getAttributeValue("info");
 		if (info == null)
 		    return;
@@ -156,10 +173,10 @@ class Generator {
 		out.printil("public String getServletInfo() {");
 		out.pushIndent();
 		out.printin("return ");
-		out.print  (quote(info));
+		out.print(quote(info));
 		out.println(";");
 		out.popIndent();
-		out.print  ('}');
+		out.printil("}");
 		out.println();
 	    }
 
