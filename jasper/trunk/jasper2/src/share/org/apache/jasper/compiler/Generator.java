@@ -2004,7 +2004,7 @@ public class Generator {
 	    out.print(tagHandlerVar);
 	    out.println(".doStartTag();");
 
-	    if (!n.implementsIterationTag()) {
+	    if (!n.implementsBodyTag()) {
 		// Synchronize AT_BEGIN scripting variables
 		syncScriptingVars(n, VariableInfo.AT_BEGIN);
 	    }
@@ -2015,35 +2015,34 @@ public class Generator {
 		out.println(" != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {");
 		out.pushIndent();
 		
+		// Declare NESTED scripting variables
+		declareScriptingVars(n, VariableInfo.NESTED);
+		saveScriptingVars(n, VariableInfo.NESTED);
+
+		if (n.implementsBodyTag()) {
+		    out.printin("if (");
+		    out.print(tagEvalVar);
+		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
+		    // Assume EVAL_BODY_BUFFERED
+		    out.pushIndent();
+		    out.printil("out = pageContext.pushBody();");
+		    out.printin(tagHandlerVar);
+		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
+		    out.printin(tagHandlerVar);
+		    out.println(".doInitBody();");
+
+		    // Synchronize AT_BEGIN and NESTED scripting variables
+		    syncScriptingVars(n, VariableInfo.AT_BEGIN);
+		    syncScriptingVars(n, VariableInfo.NESTED);
+
+		    out.popIndent();
+		    out.printil("}");
+		} else {
+		    // Synchronize NESTED scripting variables
+		    syncScriptingVars(n, VariableInfo.NESTED);
+		}
+
 		if (n.implementsIterationTag()) {
-		    // Declare NESTED scripting variables
-		    declareScriptingVars(n, VariableInfo.NESTED);
-		    saveScriptingVars(n, VariableInfo.NESTED);
-
-		    if (n.implementsBodyTag()) {
-			out.printin("if (");
-			out.print(tagEvalVar);
-			out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
-			// Assume EVAL_BODY_BUFFERED
-			out.pushIndent();
-			out.printil("out = pageContext.pushBody();");
-			out.printin(tagHandlerVar);
-			out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
-			out.printin(tagHandlerVar);
-			out.println(".doInitBody();");
-
-			// Synchronize AT_BEGIN and NESTED scripting variables
-			syncScriptingVars(n, VariableInfo.AT_BEGIN);
-			syncScriptingVars(n, VariableInfo.NESTED);
-
-			out.popIndent();
-			out.printil("}");
-		    } else {
-			// Synchronize AT_BEGIN and NESTED scripting variables
-			syncScriptingVars(n, VariableInfo.AT_BEGIN);
-			syncScriptingVars(n, VariableInfo.NESTED);
-		    }
-
 		    out.printil("do {");
 		    out.pushIndent();
 		}
@@ -2074,8 +2073,9 @@ public class Generator {
 
 		    out.popIndent();
 		    out.printil("} while (true);");
-		    restoreScriptingVars(n, VariableInfo.NESTED);
 		}
+
+		restoreScriptingVars(n, VariableInfo.NESTED);
 
 		if (n.implementsBodyTag()) {
 		    out.printin("if (");
