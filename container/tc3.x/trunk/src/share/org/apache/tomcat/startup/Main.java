@@ -212,8 +212,8 @@ public class Main{
 		    File.separator + "tomcat.policy";
 		
 		debug("Setting policy " + policyFile );
-		System.setProperty( "tomcat.home", installDir );
-		System.setProperty("java.security.policy",  policyFile);
+		System.getProperties().put( "tomcat.home", installDir );
+		System.getProperties().put("java.security.policy",  policyFile);
 		jdk11Compat.refreshPolicy();
 	    }
 	}
