@@ -21,6 +21,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1209,7 +1210,14 @@ class Generator {
                 if (beanName == null) {
                     try {
                         Class bean = ctxt.getClassLoader().loadClass(klass);
-                        bean.newInstance();
+                        int modifiers = bean.getModifiers();
+                        if (!Modifier.isPublic(modifiers) ||
+                            Modifier.isInterface(modifiers) ||
+                            Modifier.isAbstract(modifiers)) {
+                            throw new Exception("Invalid bean class modifier");
+                        }
+                        // Check that there is a 0 arg constructor
+                        bean.getConstructor(new Class[] {});
                         generateNew = true;
                     } catch (Exception e) {
                         // Cannot instantiate the specified class
