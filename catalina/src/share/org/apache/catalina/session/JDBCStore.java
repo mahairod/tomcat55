@@ -461,16 +461,13 @@ public class JDBCStore
 
                 preparedKeysSql.setString(1, getName());
                 rst = preparedKeysSql.executeQuery();
-                if (rst != null && rst.next()) {
-                    ArrayList tmpkeys = new ArrayList();
+                ArrayList tmpkeys = new ArrayList();
+                if (rst != null) {
                     while(rst.next()) {
                         tmpkeys.add(rst.getString(1));
                     }
-                    keys = (String[])
-                        tmpkeys.toArray(new String[tmpkeys.size()]);
-                } else {
-                    keys = new String[0];
                 }
+                keys = (String[]) tmpkeys.toArray(new String[tmpkeys.size()]);
             } catch(SQLException e) {
                 log(sm.getString(getStoreName()+".SQLException", e));
             } finally {
