@@ -10,7 +10,7 @@
 
   <xsd:annotation>
     <xsd:documentation>
-      @(#)web-jsptaglibrary_2_0.xsds	1.31 02/11/03
+      @(#)web-jsptaglibrary_2_0.xsds	1.32 03/02/03
     </xsd:documentation>
   </xsd:annotation>
   <xsd:annotation>
@@ -99,25 +99,13 @@
       <xsd:annotation>
 	<xsd:documentation>
 
-	  The taglib element contains tag elements.
+	  The taglib element contains, among other things, tag and
+	  tag-file elements.
 	  The name subelements of these elements must each be unique.
 
 	</xsd:documentation>
       </xsd:annotation>
-      <xsd:selector xpath="j2ee:tag"/>
-      <xsd:field    xpath="j2ee:name"/>
-    </xsd:unique>
-
-    <xsd:unique name="tag-file-name-uniqueness">
-      <xsd:annotation>
-	<xsd:documentation>
-
-	  The taglib element contains tag-file elements.
-	  The name subelements of these elements must each be unique.
-
-	</xsd:documentation>
-      </xsd:annotation>
-      <xsd:selector xpath="j2ee:tag-file"/>
+      <xsd:selector xpath="j2ee:tag|j2ee:tag-file"/>
       <xsd:field    xpath="j2ee:name"/>
     </xsd:unique>
 
@@ -150,7 +138,7 @@
 
 	tagdependent    The body of the tag is interpreted by the tag
 			implementation itself, and is most likely
-			in a different "langage", e.g embedded SQL
+			in a different "language", e.g embedded SQL
 			statements.
 
 	JSP             The body of the tag contains nested JSP
@@ -168,12 +156,9 @@
     <xsd:simpleContent>
       <xsd:restriction base="j2ee:string">
 	<xsd:enumeration value="tagdependent"/>
-	<xsd:enumeration value="TAGDEPENDENT"/>
 	<xsd:enumeration value="JSP"/>
 	<xsd:enumeration value="empty"/>
-	<xsd:enumeration value="EMPTY"/>
 	<xsd:enumeration value="scriptless"/>
-	<xsd:enumeration value="SCRIPTLESS"/>
       </xsd:restriction>
     </xsd:simpleContent>
   </xsd:complexType>
@@ -226,6 +211,10 @@
 
 	example             Optional informal description of an
 			    example of a use of this function
+
+	function-extension  Zero or more extensions that provide extra
+			    information about this function, for tool
+			    consumption
 
       </xsd:documentation>
     </xsd:annotation>
@@ -308,6 +297,19 @@
 	</xsd:annotation>
 
       </xsd:element>
+      <xsd:element name="function-extension"
+		   type="j2ee:tld-extensionType"
+		   minOccurs="0"
+		   maxOccurs="unbounded">
+	<xsd:annotation>
+	  <xsd:documentation>
+
+	    Function extensions are for tool use only and must not affect
+	    the behavior of a container.
+
+	  </xsd:documentation>
+	</xsd:annotation>
+      </xsd:element>
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:ID"/>
   </xsd:complexType>
@@ -340,41 +342,6 @@
       </xsd:element>
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:ID"/>
-  </xsd:complexType>
-
-<!-- **************************************************** -->
-
-  <xsd:complexType name="tag-extensionType">
-    <xsd:annotation>
-      <xsd:documentation>
-
-	The tag-extensionType is used to indicate
-	extensions to the specific TLD element.
-
-	It is used by elements to designate an extension block
-	that is targeted to a specific extension designated by
-	a set of extension elements that are declared by a
-	namespace. The namespace identifies the extension to
-	the tool that processes the extension.
-
-	The type of the extension-element is abstract. Therefore,
-	a concrete type must be specified by the TLD using
-	xsi:type attribute for each extension-element.
-
-      </xsd:documentation>
-    </xsd:annotation>
-
-    <xsd:sequence>
-      <xsd:element name="extension-element"
-		   type="j2ee:extensibleType"
-		   maxOccurs="unbounded"/>
-    </xsd:sequence>
-
-    <xsd:attribute name="namespace"
-		   use="required"
-		   type="xsd:anyURI"/>
-    <xsd:attribute name="id" type="xsd:ID"/>
-
   </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -436,18 +403,14 @@
 
       </xsd:element>
       <xsd:element name="tag-extension"
-		   type="j2ee:tag-extensionType"
+		   type="j2ee:tld-extensionType"
 		   minOccurs="0"
 		   maxOccurs="unbounded">
 	<xsd:annotation>
 	  <xsd:documentation>
 
 	    Tag extensions are for tool use only and must not affect
-	    the behavior of a container.  The TLD extension mechanism
-	    only allows ignorable extensions (i.e. those without a
-	    mustUnderstand attribute).  A Tag Library is considered
-	    invalid if it requires an extension that must be
-	    understood by setting mustUnderstand="true".
+	    the behavior of a container.
 
 	  </xsd:documentation>
 	</xsd:annotation>
@@ -572,18 +535,14 @@
 
       </xsd:element>
       <xsd:element name="tag-extension"
-		   type="j2ee:tag-extensionType"
+		   type="j2ee:tld-extensionType"
 		   minOccurs="0"
 		   maxOccurs="unbounded">
 	<xsd:annotation>
 	  <xsd:documentation>
 
 	    Tag extensions are for tool use only and must not affect
-	    the behavior of a container.  The TLD extension mechanism
-	    only allows ignorable extensions (i.e. those without a
-	    mustUnderstand attribute).  A Tag Library is considered
-	    invalid if it requires an extension that must be
-	    understood by setting mustUnderstand="true".
+	    the behavior of a container.
 
 	  </xsd:documentation>
 	</xsd:annotation>
@@ -702,18 +661,14 @@
 		   minOccurs="0"
 		   maxOccurs="unbounded"/>
       <xsd:element name="taglib-extension"
-		   type="j2ee:tag-extensionType"
+		   type="j2ee:tld-extensionType"
 		   minOccurs="0"
 		   maxOccurs="unbounded">
 	<xsd:annotation>
 	  <xsd:documentation>
 
 	    Taglib extensions are for tool use only and must not affect
-	    the behavior of a container.  The TLD extension mechanism
-	    only allows ignorable extensions (i.e. those without a
-	    mustUnderstand attribute).  A Tag Library is considered
-	    invalid if it requires an extension that must be
-	    understood by setting mustUnderstand="true".
+	    the behavior of a container.
 
 	  </xsd:documentation>
 	</xsd:annotation>
@@ -856,6 +811,41 @@
     <xsd:simpleContent>
       <xsd:restriction base="j2ee:xsdNMTOKENType"/>
     </xsd:simpleContent>
+  </xsd:complexType>
+
+<!-- **************************************************** -->
+
+  <xsd:complexType name="tld-extensionType">
+    <xsd:annotation>
+      <xsd:documentation>
+
+	The tld-extensionType is used to indicate
+	extensions to a specific TLD element.
+
+	It is used by elements to designate an extension block
+	that is targeted to a specific extension designated by
+	a set of extension elements that are declared by a
+	namespace. The namespace identifies the extension to
+	the tool that processes the extension.
+
+	The type of the extension-element is abstract. Therefore,
+	a concrete type must be specified by the TLD using
+	xsi:type attribute for each extension-element.
+
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="extension-element"
+		   type="j2ee:extensibleType"
+		   maxOccurs="unbounded"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="namespace"
+		   use="required"
+		   type="xsd:anyURI"/>
+    <xsd:attribute name="id" type="xsd:ID"/>
+
   </xsd:complexType>
 
 <!-- **************************************************** -->
