@@ -1,5 +1,5 @@
-                  Apache Tomcat Version 4.0 Beta 8
-                  ================================
+             Apache Tomcat Version 4.0 Release Candidate 1
+             =============================================
                             Release Notes
                             =============
 
