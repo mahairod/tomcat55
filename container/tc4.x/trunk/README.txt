@@ -41,11 +41,13 @@ which you are installing all of the required Jakarta distributions.
   JDK 1.2 environment).  None of the JNDI providers are required, unless you
   need to use them in your own applications.
 
-* Download and install the Java API for XML Parsing (JAXP) implementation
-  (current version number is 1.0.1) from <http://java.sun.com/xml>.  Set an
-  environment variable "JAXP_HOME" pointing at the directory to which you
-  installed this distribution.  In addition, add the "jaxp.jar" and
-  "parser.jar" files to your classpath.
+* Download and install the Xerces Java Parser (release 1.2.0 or above)
+  from <http://xml.apache.org/xerces-j/index.html>. Set an
+  environment variable "XERCES_HOME" pointing at the directory to which you
+  installed this distribution.  In addition, add the "xerces.jar" 
+  file to your classpath. 
+  [Please note that Xerces is included with Xalan, so if
+   you have Xalan already you don't need a separate download.]
 
 * Download and install the Java Secure Sockets Extension (JSSE) implementation
   (current version number is 1.0.1) from <http://java.sun.com/products/jsse>.
