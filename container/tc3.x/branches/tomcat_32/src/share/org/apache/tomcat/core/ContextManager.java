@@ -950,6 +950,10 @@ public class ContextManager {
 	String errorPath=null;
 	Handler errorServlet=null;
 
+	try {
+	    res.resetBuffer();
+	} catch (Exception e) { }
+
 	if( code==0 )
 	    code=res.getStatus();
 	else
@@ -970,20 +974,19 @@ public class ContextManager {
 	if( errorPath != null ) {
 	    errorServlet=getHandlerForPath( ctx, errorPath );
 
-	    // Make sure Jsps will work
-	    req.setAttribute( "javax.servlet.include.request_uri",
+	    // if not an internal handler
+	    if (errorPath.indexOf("tomcat.") != 0) {
+		// Make sure Jsps will work
+		req.setAttribute( "javax.servlet.include.request_uri",
 				  ctx.getPath()  + "/" + errorPath );
-	    req.setAttribute( "javax.servlet.include.servlet_path", errorPath );
-
+		req.setAttribute( "javax.servlet.include.servlet_path", errorPath );
+	    }
 	}
 	if( debug>0 )
 	    ctx.log( "Handler " + errorServlet + " " + errorPath);
 
 	if( errorServlet==null )
 	    errorServlet=ctx.getServletByName( "tomcat.statusHandler");
-	else
-	    // reset buffer only if using a non-default handler
-	    res.resetBuffer();
 
 	req.setAttribute("javax.servlet.error.status_code",new Integer( code));
 
@@ -1054,11 +1057,16 @@ public class ContextManager {
 	if( errorLoop( ctx, req ) || errorServlet==null)
 	    errorServlet = ctx.getServletByName("tomcat.exceptionHandler");
 	else
-	    // reset buffer only if using a non-default handler
-	    res.resetBuffer();
+	{
+	    // reset buffer only if using a non-default handler, ignore exception
+	    try {
+		res.resetBuffer();
+	    } catch (Exception e) { }
+	}
 
 	req.setAttribute("javax.servlet.error.exception_type", t.getClass());
 	req.setAttribute("javax.servlet.error.message", t.getMessage());
+	req.setAttribute("javax.servlet.jsp.jspException", t);
 	req.setAttribute("tomcat.servlet.error.throwable", t);
 	req.setAttribute("tomcat.servlet.error.request", req);
 
