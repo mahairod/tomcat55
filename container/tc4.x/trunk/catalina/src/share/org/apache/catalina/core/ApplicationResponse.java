@@ -195,6 +195,25 @@ class ApplicationResponse extends ServletResponseWrapper {
     }
 
 
+    // ----------------------------------------- ServletResponseWrapper Methods
+
+
+    /**
+     * Set the response that we are wrapping.
+     *
+     * @param response The new wrapped response
+     *
+     * @exception IllegalArgumentException if a parent Response implementation
+     *  cannot be identified
+     */
+    public void setResponse(ServletResponse response) {
+
+        super.setResponse(response);
+	calculateParent();
+
+    }
+
+
     // -------------------------------------------------------- Package Methods
 
 
@@ -259,22 +278,6 @@ class ApplicationResponse extends ServletResponseWrapper {
     void setIncluded(boolean included) {
 
 	this.included = included;
-
-    }
-
-
-    /**
-     * Set the response that we are wrapping.
-     *
-     * @param response The new wrapped response
-     *
-     * @exception IllegalArgumentException if a parent Response implementation
-     *  cannot be identified
-     */
-    void setResponse(ServletResponse response) {
-
-	;	// FIXME - cannot change the private "response" variable
-	calculateParent();
 
     }
 

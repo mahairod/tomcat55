@@ -214,7 +214,7 @@ final class ApplicationDispatcher
 	if (response.isCommitted())
 	    throw new IllegalStateException
 		(sm.getString("applicationDispatcher.forward.ise"));
-	;	// FIXME - No API call to reset just the buffer
+        response.resetBuffer();
 
 	// Identify the HTTP-specific request and response objects (if any)
 	HttpServletRequest hrequest = null;

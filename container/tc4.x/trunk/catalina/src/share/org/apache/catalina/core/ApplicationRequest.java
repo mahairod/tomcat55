@@ -194,6 +194,36 @@ class ApplicationRequest extends ServletRequestWrapper {
     }
 
 
+    // ------------------------------------------ ServletRequestWrapper Methods
+
+
+    /**
+     * Set the request that we are wrapping.
+     *
+     * @param request The new wrapped request
+     *
+     * @exception IllegalArgumentException if a parent Request implementation
+     *  cannot be identified
+     */
+    public void setRequest(ServletRequest request) {
+
+        super.setRequest(request);
+	calculateParent();
+
+	// Initialize the attributes for this request
+	synchronized (attributes) {
+	    attributes.clear();
+	    Enumeration names = request.getAttributeNames();
+	    while (names.hasMoreElements()) {
+		String name = (String) names.nextElement();
+		Object value = request.getAttribute(name);
+		attributes.put(name, value);
+	    }
+	}
+
+    }
+
+
     // -------------------------------------------------------- Package Methods
 
 
@@ -237,33 +267,6 @@ class ApplicationRequest extends ServletRequestWrapper {
     Request getParent() {
 
 	return (this.parent);
-
-    }
-
-
-    /**
-     * Set the request that we are wrapping.
-     *
-     * @param request The new wrapped request
-     *
-     * @exception IllegalArgumentException if a parent Request implementation
-     *  cannot be identified
-     */
-    void setRequest(ServletRequest request) {
-
-	;	// FIXME - cannot change the private "request" variable
-	calculateParent();
-
-	// Initialize the attributes for this request
-	synchronized (attributes) {
-	    attributes.clear();
-	    Enumeration names = request.getAttributeNames();
-	    while (names.hasMoreElements()) {
-		String name = (String) names.nextElement();
-		Object value = request.getAttribute(name);
-		attributes.put(name, value);
-	    }
-	}
 
     }
 

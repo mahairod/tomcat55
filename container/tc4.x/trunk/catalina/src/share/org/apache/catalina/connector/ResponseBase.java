@@ -465,16 +465,6 @@ public abstract class ResponseBase
     }
 
 
-    /**
-     * Reset the data buffer but not any status or header information.
-     */
-    public void resetBuffer() {
-
-	bufferCount = 0;
-
-    }
-
-
     // -------------------------------------------------------- Package Methods
 
 
@@ -675,6 +665,23 @@ public abstract class ResponseBase
 	bufferCount = 0;
 	contentLength = -1;
 	contentType = "text/plain";
+
+    }
+
+
+    /**
+     * Reset the data buffer but not any status or header information.
+     *
+     * @exception IllegalStateException if the response has already
+     *  been committed
+     */
+    public void resetBuffer() {
+
+        if (committed)
+            throw new IllegalStateException
+                (sm.getString("responseBase.resetBuffer.ise"));
+
+	bufferCount = 0;
 
     }
 
