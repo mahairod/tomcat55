@@ -81,6 +81,8 @@ import javax.servlet.http.HttpSessionAttributesListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionContext;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
@@ -276,6 +278,26 @@ final class StandardSession
 	if ((manager != null) && (manager instanceof ManagerBase))
 	    ((ManagerBase) manager).add(this);
 
+	// Notify interested application event listeners
+	Context context = (Context) manager.getContainer();
+	Object listeners[] = context.getApplicationListeners();
+	if (listeners != null) {
+	    HttpSessionEvent event =
+	      new HttpSessionEvent(getSession());
+	    for (int i = 0; i < listeners.length; i++) {
+		if (!(listeners[i] instanceof HttpSessionListener))
+		    continue;
+		try {
+		    HttpSessionListener listener =
+		      (HttpSessionListener) listeners[i];
+		    listener.sessionCreated(event);
+		} catch (Throwable t) {
+		  // FIXME - should we do anything besides log these?
+		  log(sm.getString("standardSession.sessionEvent"), t);
+		}
+	    }
+	}
+
     }
 
 
@@ -435,6 +457,28 @@ final class StandardSession
 	String keys[] = keys();
 	for (int i = 0; i < keys.length; i++)
 	    removeAttribute(keys[i]);
+
+	// Notify interested application event listeners
+	// FIXME - Assumes we call listeners in reverse order
+	Context context = (Context) manager.getContainer();
+	Object listeners[] = context.getApplicationListeners();
+	if (listeners != null) {
+	    HttpSessionEvent event =
+	      new HttpSessionEvent(getSession());
+	    for (int i = 0; i < listeners.length; i++) {
+	        int j = (listeners.length - 1) - i;
+		if (!(listeners[j] instanceof HttpSessionListener))
+		    continue;
+		try {
+		    HttpSessionListener listener =
+		      (HttpSessionListener) listeners[j];
+		    listener.sessionDestroyed(event);
+		} catch (Throwable t) {
+		  // FIXME - should we do anything besides log these?
+		  log(sm.getString("standardSession.sessionEvent"), t);
+		}
+	    }
+	}
 
 	// Mark this session as invalid
 	setValid(false);
