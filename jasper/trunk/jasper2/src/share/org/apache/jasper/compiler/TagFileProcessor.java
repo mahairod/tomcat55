@@ -544,7 +544,11 @@ class TagFileProcessor {
             TagFileInfo tagFileInfo = n.getTagFileInfo();
             if (tagFileInfo != null) {
                 String tagFilePath = tagFileInfo.getPath();
-                pageInfo.addDependant(tagFilePath);
+		JspCompilationContext ctxt = compiler.getCompilationContext();
+		if (ctxt.getTagFileJars().get(tagFilePath) == null) {
+		    // Omit tag file dependency info on jar files for now.
+                    pageInfo.addDependant(tagFilePath);
+		}
                 Class c = loadTagFile(compiler, tagFilePath, n.getTagInfo(),
                                       pageInfo);
                 n.setTagHandlerClass(c);
