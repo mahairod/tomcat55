@@ -65,22 +65,12 @@
 package org.apache.catalina.startup;
 
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import org.apache.naming.resources.ResourceAttributes;
@@ -497,7 +487,7 @@ public class HostConfig
                     try {
                         URL url = new URL("jar:file:" +
                                           dir.getCanonicalPath() + "!/");
-                        String path = expand(url);
+                        String path = ExpandWar.expand(host,url);
                         url = new URL("file:" + path);
                         ((Deployer) host).install(contextPath, url);
                     } catch (Throwable t) {
@@ -650,148 +640,7 @@ public class HostConfig
      */
     protected String expand(URL war) throws IOException {
 
-        // Calculate the directory name of the expanded directory
-        if (getDebug() >= 1) {
-            log("expand(" + war.toString() + ")");
-        }
-        String pathname = war.toString().replace('\\', '/');
-        if (pathname.endsWith("!/")) {
-            pathname = pathname.substring(0, pathname.length() - 2);
-        }
-        int period = pathname.lastIndexOf('.');
-        if (period >= pathname.length() - 4)
-            pathname = pathname.substring(0, period);
-        int slash = pathname.lastIndexOf('/');
-        if (slash >= 0) {
-            pathname = pathname.substring(slash + 1);
-        }
-        if (getDebug() >= 1) {
-            log("  Proposed directory name: " + pathname);
-        }
-
-        // Make sure that there is no such directory already existing
-        File appBase = new File(host.getAppBase());
-        if (!appBase.isAbsolute()) {
-            appBase = new File(System.getProperty("catalina.base"),
-                               host.getAppBase());
-        }
-        if (!appBase.exists() || !appBase.isDirectory()) {
-            throw new IOException
-                (sm.getString("standardHost.appBase",
-                              appBase.getAbsolutePath()));
-        }
-        File docBase = new File(appBase, pathname);
-        if (docBase.exists()) {
-            // War file is already installed
-            return (docBase.getAbsolutePath());
-        }
-
-        // Create the new document base directory
-        docBase.mkdir();
-        if (getDebug() >= 2) {
-            log("  Have created expansion directory " +
-                docBase.getAbsolutePath());
-        }
-
-        // Expand the WAR into the new document base directory
-        JarURLConnection juc = (JarURLConnection) war.openConnection();
-        juc.setUseCaches(false);
-        /*
-        JarFile jarFile = juc.getJarFile();
-        if (getDebug() >= 2) {
-            log("  Have opened JAR file successfully");
-        }
-        Enumeration jarEntries = jarFile.entries();
-        if (getDebug() >= 2) {
-            log("  Have retrieved entries enumeration");
-        }
-        while (jarEntries.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-            String name = jarEntry.getName();
-            if (getDebug() >= 2) {
-                log("  Am processing entry " + name);
-            }
-            int last = name.lastIndexOf('/');
-            if (last >= 0) {
-                File parent = new File(docBase,
-                                       name.substring(0, last));
-                if (getDebug() >= 2) {
-                    log("  Creating parent directory " + parent);
-                }
-                parent.mkdirs();
-            }
-            if (name.endsWith("/")) {
-                continue;
-            }
-            if (getDebug() >= 2) {
-                log("  Creating expanded file " + name);
-            }
-            InputStream input = jarFile.getInputStream(jarEntry);
-            expand(input, docBase, name);
-            input.close();
-        }
-        jarFile.close();
-        */
-        JarFile jarFile = null;
-        InputStream input = null;
-        try {
-            jarFile = juc.getJarFile();
-            if (getDebug() >= 2) {
-                log("  Have opened JAR file successfully");
-            }
-            Enumeration jarEntries = jarFile.entries();
-            if (getDebug() >= 2) {
-                log("  Have retrieved entries enumeration");
-            }
-            while (jarEntries.hasMoreElements()) {
-                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-                String name = jarEntry.getName();
-                if (getDebug() >= 2) {
-                    log("  Am processing entry " + name);
-                }
-                int last = name.lastIndexOf('/');
-                if (last >= 0) {
-                    File parent = new File(docBase,
-                                           name.substring(0, last));
-                    if (getDebug() >= 2) {
-                        log("  Creating parent directory " + parent);
-                    }
-                    parent.mkdirs();
-                }
-                if (name.endsWith("/")) {
-                    continue;
-                }
-                if (getDebug() >= 2) {
-                    log("  Creating expanded file " + name);
-                }
-                input = jarFile.getInputStream(jarEntry);
-                expand(input, docBase, name);
-                input.close();
-                input = null;
-            }
-            jarFile.close();
-            jarFile = null;
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (Throwable t) {
-                    ;
-                }
-                input = null;
-            }
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (Throwable t) {
-                    ;
-                }
-                jarFile = null;
-            }
-        }
-
-        // Return the absolute path to our new document base directory
-        return (docBase.getAbsolutePath());
+        return ExpandWar.expand(host,war);
 
     }
 
@@ -809,17 +658,7 @@ public class HostConfig
     protected void expand(InputStream input, File docBase, String name)
         throws IOException {
 
-        File file = new File(docBase, name);
-        BufferedOutputStream output =
-            new BufferedOutputStream(new FileOutputStream(file));
-        byte buffer[] = new byte[2048];
-        while (true) {
-            int n = input.read(buffer);
-            if (n <= 0)
-                break;
-            output.write(buffer, 0, n);
-        }
-        output.close();
+        ExpandWar.expand(input,docBase,name);
 
     }
 

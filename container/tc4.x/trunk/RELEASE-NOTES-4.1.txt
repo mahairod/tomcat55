@@ -212,6 +212,11 @@ Generic Bug Fixes:
 [4.1.17] Default configuration:
          Connector performance tweaks.
 
+[4.1.19] Manager and HTML Manager web applications
+         Fix bugs 5551, 7826, 8969, 13983, 5629, and 13205
+         Updated documentation and added some minor new features.
+         See the Manager App HOW-TO and HTML Manager App HOW-TO
+         documentation for more information.
 
 ------------------
 Catalina Bug Fixes:
@@ -1060,6 +1065,10 @@ once a significant number of pages have been accessed. The memory can only be
 freed by stopping Tomcat and then restarting it.
 
 The JSP command line compiler (JSPC) can also be used to precompile the JSPs.
+
+You can prevent this by setting the JspServlet init parameter fork to true
+in conf/web.xml. This tells jasper to invoke java compiles of JSP pages
+as an external process.
 
 
 -------------------------------
