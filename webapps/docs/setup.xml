@@ -44,7 +44,8 @@
             JSP pages at runtime. Either all webapps will need to be 
             precompiled (this can be easily done using the Tomcat deployer),
             or the <code>lib\tools.jar</code> file from a JDK installation
-            to the <code>common\lib</code> path of the Tomcat installation.
+            must be copied to the <code>common\lib</code> path of the Tomcat 
+            installation.
             </li>
         <li><strong>Tray icon</strong>: When Tomcat is run as a service, there
             will not be any tray icon present when Tomcat is running. Note that
@@ -56,6 +57,55 @@
     <p>The installer will create shortcuts allowing starting and configuring 
        Tomcat. It is important to note that Tomcat administration web 
        application can only be used when Tomcat is started.</p>
+
+  </section>
+
+  <section name="Unix daemon">
+
+    <p>Tomcat can be run as a daemon using the jsvc tool from the 
+       commons-daemon project. Source tarballs for jsvc are included with the
+       Tomcat binaries, and need to be compiled. Building jsvc requires
+       a C ANSI compiler (such as GCC), GNU Autoconf, and a JDK.</p>
+
+    <p>Before running the script, the <code>JAVA_HOME</code> environment
+       variable should be set to the base path of the JDK. Alternately, when
+       calling the <code>./configure</code> script, the path of the JDK may
+       be specified using the <code>--with-java</code> parameter, such as
+       <code>./configure --with-java=/usr/java</code>.</p>
+
+    <p>Using the following commands should result in a compiled jsvc binary,
+       located in the <code>$CATALINA_HOME/bin</code> folder. This assumes
+       that GNU TAR is used, and that <code>CATALINA_HOME</code> is an 
+       environment variable pointing to the base path of the Tomcat 
+       installation.</p>
+
+<source>
+    cd $CATALINA_HOME/bin
+    tar xvfz jsvc.tar.gz
+    cd jsvc
+    autoconf
+    ./configure
+    make
+    cp jsvc ..
+    cd ..
+</source>
+
+    <p>Tomcat can then be run as a daemon using the following commands.</p>
+
+<source>
+    cd $CATALINA_HOME
+    ./bin/jsvc -Djava.endorsed.dirs=./common/endorsed -cp ./bin/bootstrap.jar \
+        -outfile ./logs/catalina.out -errfile ./logs/catalina.err \
+        org.apache.catalina.startup.Bootstrap
+</source>
+
+    <p>jsvc has other useful parameters, such as <code>-user</code> which 
+       causes to switch to another user after the daemon initialization is
+       complete. This allows, for example, running Tomcat as a non priviledged
+       user while still being able to use privileged ports. 
+       <code>jsvc --help</code> will return the full jsvc usage 
+       information. In particular, the <code>-debug</code> option is useful
+       to debug issues running jsvc.</p>
 
   </section>
 
