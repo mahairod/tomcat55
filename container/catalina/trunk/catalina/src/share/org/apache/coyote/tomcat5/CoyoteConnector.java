@@ -164,6 +164,12 @@ public class CoyoteConnector
 
 
     /**
+     * The thread priority for processors.
+     */
+    private int threadPriority = Thread.NORM_PRIORITY;
+
+
+    /**
      * Linger value on the incoming connection.
      * Note : a value inferior to 0 means no linger.
      */
@@ -772,6 +778,27 @@ public class CoyoteConnector
         setProperty("maxThreads", String.valueOf(maxProcessors));
 
     }
+
+    /**
+     * Return the processor thread priority. 
+     *
+     * @return int
+     */
+    public int getThreadPriority() {
+      return threadPriority;
+    }
+
+    
+    /**
+     * Sets the processor thread priority.
+     *
+     * @param threadPriority The new priority level
+     */
+    public void setThreadPriority(int threadPriority) {
+      this.threadPriority = threadPriority;
+      setProperty("threadPriority", String.valueOf(threadPriority));
+    }  
+      
 
 
     /**

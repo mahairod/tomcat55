@@ -52,6 +52,9 @@
       <fix>
         <bug>28837</bug>: Added Solaris includes to JK native build script. (yoavs)
       </fix>
+      <fix>
+        <bug>28914</bug>: Added threadPriority attribute and related code. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
@@ -67,6 +70,9 @@
 
   <subsection name="Webapps">
     <changelog>
+      <fix>
+        <bug>28914</bug>: Added management code for threadPriority. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 

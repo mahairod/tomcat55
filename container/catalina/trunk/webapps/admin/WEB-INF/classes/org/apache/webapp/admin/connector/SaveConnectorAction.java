@@ -369,6 +369,16 @@ public final class SaveConnectorAction extends Action {
             }
             mBServer.setAttribute(coname,
                                   new Attribute(attribute, (new Integer(minSpare)).toString())); 
+
+            attribute = "threadPriority";
+            int threadPriority = Thread.NORM_PRIORITY;
+            try {
+                threadPriority = Integer.parseInt(cform.getThreadPriority());
+            } catch (Throwable t) {
+                threadPriority = Thread.NORM_PRIORITY;
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, (new Integer(threadPriority)).toString()));
 				  
             attribute = "secure";
             mBServer.setAttribute(coname,

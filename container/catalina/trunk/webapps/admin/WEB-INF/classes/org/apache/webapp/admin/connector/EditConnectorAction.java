@@ -196,6 +196,9 @@ public class EditConnectorAction extends Action {
             attribute = "minSpareThreads";
             connectorFm.setMinSpare
                 ((String) mBServer.getAttribute(cname, attribute));        
+            attribute = "threadPriority";
+            connectorFm.setThreadPriority
+                ((String) mBServer.getAttribute(cname, attribute));
             attribute = "secure";
             connectorFm.setSecure
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;       
