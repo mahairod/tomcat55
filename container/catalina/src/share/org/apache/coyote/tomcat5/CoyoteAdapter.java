@@ -312,7 +312,7 @@ final class CoyoteAdapter
      */
     protected void parseSessionId(Request req, CoyoteRequest request) {
 
-        ByteChunk uriCC = req.decodedURI().getByteChunk();
+        CharChunk uriCC = req.decodedURI().getCharChunk();
         int semicolon = uriCC.indexOf(match, 0, match.length(), 0);
 
         if (semicolon > 0) {
