@@ -1325,12 +1325,8 @@ public final class CoyoteConnector
 
     /**
      * Return keystorePass
-     *
-     * @exception Exception if an MBean cannot be created or registered
      */
-    public String getKeystorePass()
-        throws Exception
-    {
+    public String getKeystorePass() {
         ServerSocketFactory factory = getFactory();
         if( factory instanceof CoyoteServerSocketFactory ) {
             return ((CoyoteServerSocketFactory)factory).getKeystorePass();
@@ -1341,17 +1337,14 @@ public final class CoyoteConnector
 
     /**
      * Set keystorePass
-     *
-     * @exception Exception if an MBean cannot be created or registered
      */
-    public void setKeystorePass(String keystorePass)
-        throws Exception
-    {
+    public void setKeystorePass(String keystorePass) {
         ServerSocketFactory factory = getFactory();
         if( factory instanceof CoyoteServerSocketFactory ) {
             ((CoyoteServerSocketFactory)factory).setKeystorePass(keystorePass);
         }
     }
+
     // -------------------- JMX registration  --------------------
     protected String domain;
     protected ObjectName oname;
