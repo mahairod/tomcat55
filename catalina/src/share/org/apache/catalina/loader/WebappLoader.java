@@ -688,7 +688,7 @@ public class WebappLoader
                     if (path.equals("")) {
                         path = "/";
                     }   
-                    oname=new ObjectName(eng.getName() + ":type=Loader,path=" +
+                    oname=new ObjectName(ctx.getDomain() + ":type=Loader,path=" +
                                 path + ",host=" + ctx.getParent().getName());
                     Registry.getRegistry().registerComponent(this, oname, null);
                     controller=oname;
