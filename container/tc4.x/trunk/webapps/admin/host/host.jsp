@@ -69,6 +69,7 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.contexts.deletes"/> 
             </controls:action>
+            <logic:notEqual name="hostName" value='<%= request.getServerName() %>'>
             <controls:action disabled="true"> 
                 ------------------------------------- 
             </controls:action>
@@ -80,6 +81,7 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.realms.deletes"/> 
             </controls:action>
+            </logic:notEqual>
             <controls:action disabled="true"> 
                 ------------------------------------- 
             </controls:action>
@@ -91,13 +93,15 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.valves.deletes"/> 
             </controls:action>
+            <logic:notEqual name="hostName" value='<%= request.getServerName() %>'>
             <controls:action disabled="true"> 
                 ------------------------------------- 
             </controls:action>
             <controls:action url='<%= "/DeleteHost.do?select=" + 
                                         URLEncoder.encode(thisObjectName) %>'>  
                 <bean:message key="actions.hosts.delete"/> 
-            </controls:action>           
+            </controls:action>
+           </logic:notEqual>
            </logic:notEqual>          
          </controls:actions>
        </div>
