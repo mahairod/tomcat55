@@ -20,7 +20,7 @@ goto next
 :next
 echo Using classpath: %CLASSPATH%
 
-java org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
+java org.apache.tools.ant.Main -Dant.home=%ANT_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 :clean
 

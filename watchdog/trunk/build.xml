@@ -2,6 +2,7 @@
 
    <!-- System property definitions -->
 
+   <property name="ant.home" value="../jakarta-ant"/>
    <property name="build.compiler" value="classic"/>
    <property name="watchdog.build" value="../build/watchdog"/>
    <property name="watchdog.dist" value="../dist/watchdog"/>
