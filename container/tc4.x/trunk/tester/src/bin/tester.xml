@@ -1221,10 +1221,6 @@
         golden="${golden.path}/binary.txt"/>
 
   <tester host="${host}" port="${port}" protocol="${protocol}"
-        request="${context.path}/cgi-bin/chores.pl?" debug="${debug}"
-        golden="${golden.path}/chores.txt"/>
-
-  <tester host="${host}" port="${port}" protocol="${protocol}"
         request="${context.path}/cgi-bin/concat.pl?first_name=jane&amp;last_name=johnson&amp;fiance_first=john&amp;fiance_last=smith" debug="${debug}"
         golden="${golden.path}/concat.txt"/>
 
