@@ -424,7 +424,7 @@ public final class TldConfig  {
 
     /**
      * Scan the JAR file at the specified resource path for TLDs in the
-     * <code>META-INF</code> subdirectory, and scan them for application
+     * <code>META-INF</code> subdirectory, and scan each TLD for application
      * event listeners that need to be registered.
      *
      * @param resourcePath Resource path of the JAR file to scan
@@ -480,14 +480,11 @@ public final class TldConfig  {
                 }
                 inputStream = jarFile.getInputStream(entry);
                 tldScanStream(inputStream);
-                inputStream.close();
-                inputStream = null;
+		inputStream.close();
+		inputStream = null;
                 name = null;
             }
-            // FIXME - Closing the JAR file messes up the class loader???
-            //            jarFile.close();
         } catch (Exception e) {
-            // XXX Why do we wrap it ? The signature is 'throws Exception'
             if (name == null) {
 		log.error(sm.getString("contextConfig.tldJarException",
 				       jarPath, context.getPath()),
@@ -502,21 +499,17 @@ public final class TldConfig  {
                 try {
                     inputStream.close();
                 } catch (Throwable t) {
-                    ;
+                    // Ignore
                 }
-                inputStream = null;
             }
             if (jarFile != null) {
-            // FIXME - Closing the JAR file messes up the class loader???
-            //                try {
-            //                    jarFile.close();
-            //                } catch (Throwable t) {
-            //                    ;
-            //                }
-                jarFile = null;
+                try {
+                    jarFile.close();
+                } catch (Throwable t) {
+		    // Ignore
+                }
             }
         }
-
     }
 
     /**
@@ -565,23 +558,21 @@ public final class TldConfig  {
             if (inputStream == null) {
                 throw new IllegalArgumentException
                     (sm.getString("contextConfig.tldResourcePath",
-                                  resourcePath));
+				  resourcePath));
             }
             tldScanStream(inputStream);
-            inputStream.close();
-            inputStream = null;
         } catch (Exception e) {
              throw new ServletException
-                 (sm.getString("contextConfig.tldFileException", resourcePath, context.getPath()),
+                 (sm.getString("contextConfig.tldFileException", resourcePath,
+			       context.getPath()),
                   e);
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (Throwable t) {
-                    ;
+                    // Ignore
                 }
-                inputStream = null;
             }
         }
 
@@ -741,8 +732,8 @@ public final class TldConfig  {
 			     * Call getJarFile() to see if JAR file exists
 			     * (throws exception in case it doesn't)
 			     */
-			    jarConn.getJarFile();
 			    jarConn.setUseCaches(false);
+			    jarConn.getJarFile();
 			    globalJarPaths.add(jarConn);
 			} catch (Exception e) {
 			    // Ignore any JAR files that may have been
