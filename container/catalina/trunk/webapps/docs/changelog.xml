@@ -26,7 +26,7 @@
   </p>
 </section>
 
-<section name="Tomcat 5.5.7 (yoavs)">
+<section name="Tomcat 5.5.7 (remm)">
   <subsection name="General">
     <changelog>
       <add>
@@ -43,6 +43,9 @@
       <fix>
         <bug>32953</bug>: SERVLETAPI: XSS Issues, submitted by Mark Thomas (jfarcand)
       </fix>
+      <update>
+        Update to commons-digester 1.6, JDT 3.0.1, MX4J 2.1.0, Struts 1.2.6 (remm)
+      </update>
     </changelog>
   </subsection>
 
