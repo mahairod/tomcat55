@@ -214,6 +214,27 @@ public class StandardContextMBean extends BaseModelMBean {
 
     }
 
+
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public javax.naming.directory.DirContext getStaticResources() {
+
+        return ((StandardContext)this.resource).getResources();
+
+    }
+
+
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public String[] getWelcomeFiles() {
+
+        return ((StandardContext)this.resource).findWelcomeFiles();
+
+    }
+
+
     // ------------------------------------------------------------- Operations
 
 

@@ -231,6 +231,12 @@ public interface Container {
 
 
     /**
+     * Return an object which may be utilized for mapping to this component.
+     */
+    public Object getMappingObject();
+
+
+    /**
      * Return the Cluster with which this Container is associated.  If there is
      * no associated Cluster, return the Cluster associated with our parent
      * Container (if any); otherwise return <code>null</code>.

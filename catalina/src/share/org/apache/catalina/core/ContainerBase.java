@@ -517,6 +517,15 @@ public abstract class ContainerBase
 
     }
 
+
+    /**
+     * Return an object which may be utilized for mapping to this component.
+     */
+    public Object getMappingObject() {
+        return this;
+    }
+
+
     /**
      * Return the Cluster with which this Container is associated.  If there is
      * no associated Cluster, return the Cluster associated with our parent
