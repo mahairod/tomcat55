@@ -3017,10 +3017,30 @@ END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
             goldenFile="${wgdir}/compat/WithoutLeadingSlashTest.html"
             assertion="A 2.2 web application deployment descriptor who's url mapping does not begin with a '/' can be deployed in a 2.3 environment, specified in the Java Servlet Pages Specification v2.3, Sec 11"
             testStrategy="The DD url-pattern that does not have a '/' at the beginning of the string. The web app should deploy and be able to be called by a client."
-            lastTask="true"
         />
 
         <!-- END compat -->
+
+        <!-- BEGIN webapps_dirstruct -->
+
+        <watchdog request="GET /servlet-tests/ClassFileTest HTTP/1.0"
+            testName="ClassFileTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/webapps/dirstruct/ClassFileTest.html"
+            assertion="This class which is in the WEB-INF/classes directory is available to the application class loader specified in the Java Servlet Pages Specification v2.3, Chapter 9"
+            testStrategy="The serlvet which is in the WEB-INF/classes directory is called by the client and should execute."
+        />
+
+        <watchdog request="GET /servlet-tests/JarFileTest HTTP/1.0"
+            testName="ClassFileTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/webapps/dirstruct/JarFileTest.html"
+            assertion="This class which is in a jar file the WEB-INF/lib directory is available to the application class loader specified in the Java Servlet Pages Specification v2.3, Chapter 9"
+            testStrategy="The serlvet which is in a jar file in the WEB-INF/lib directory is called by the client and should execute."
+            lastTask="true"
+        />
+
+        <!-- END webapps_dirstruct -->
 
     </target>
 
@@ -6580,6 +6600,26 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
             goldenFile="${wgdir}/javax_servlet_http/HttpServlet/HttpServletGetServletInfoTest.html"
             assertion="Returns this servlet's ServletInfo object, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.ServletContext() method"
             testStrategy="Create a servlet and check for its ServletInfo object values"
+        />
+    </target>
+
+    <target name="ClassFileTest">
+        <watchdog request="GET /servlet-tests/ClassFileTest HTTP/1.0"
+            testName="ClassFileTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/webapps/dirstruct/ClassFileTest.html"
+            assertion="This class which is in the WEB-INF/classes directory is available to the application class loader specified in the Java Servlet Pages Specification v2.3, Chapter 9"
+            testStrategy="The serlvet which is in the WEB-INF/classes directory is called by the client and should execute."
+        />
+    </target>
+
+    <target name="JarFileTest">
+        <watchdog request="GET /servlet-tests/JarFileTest HTTP/1.0"
+            testName="ClassFileTest" debug="0"
+            host="${host}" port="${port}" exactMatch="true"
+            goldenFile="${wgdir}/webapps/dirstruct/JarFileTest.html"
+            assertion="This class which is in a jar file the WEB-INF/lib directory is available to the application class loader specified in the Java Servlet Pages Specification v2.3, Chapter 9"
+            testStrategy="The serlvet which is in a jar file in the WEB-INF/lib directory is called by the client and should execute."
         />
     </target>
 
