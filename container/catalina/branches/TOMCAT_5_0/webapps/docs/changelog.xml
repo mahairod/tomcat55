@@ -33,6 +33,9 @@
       <fix>
         <bug>30763</bug>: added failOnError attribute to UndeployTask. (yoavs)
       </fix>
+      <fix>
+        <bug>30624</bug>: Enhanced null checking in RealmBase#findSecurityConstraints. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">

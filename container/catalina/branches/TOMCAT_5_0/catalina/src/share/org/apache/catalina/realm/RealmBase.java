@@ -417,13 +417,28 @@ public abstract class RealmBase
         boolean found = false;
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
-                     
-            if (log.isDebugEnabled())
+
+            // If collection is null, continue to avoid an NPE
+	    // See Bugzilla 30624
+            if ( collection == null ) {
+		continue;
+            }
+
+            if (log.isDebugEnabled()) {
                 log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
+            }
+
             for(int j=0; j < collection.length; j++){
                 String [] patterns = collection[j].findPatterns();
+
+                // If patterns is null, continue to avoid an NPE
+                // See Bugzilla 30624
+                if ( patterns == null) {
+		    continue;
+                }
+
                 for(int k=0; k < patterns.length; k++) {
                     if(uri.equals(patterns[k])) {
                         found = true;
@@ -446,15 +461,31 @@ public abstract class RealmBase
 
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
+
+            // If collection is null, continue to avoid an NPE
+	    // See Bugzilla 30624
+            if ( collection == null ) {
+		continue;
+            }            
             
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
+            }
+
             for(int j=0; j < collection.length; j++){
                 String [] patterns = collection[j].findPatterns();
+
+                // If patterns is null, continue to avoid an NPE
+                // See Bugzilla 30624
+                if ( patterns == null) {
+		    continue;
+                }
+
                 boolean matched = false;
                 int length = -1;
+
                 for(int k=0; k < patterns.length; k++) {
                     String pattern = patterns[k];
                     if(pattern.startsWith("/") && pattern.endsWith("/*") && 
@@ -473,6 +504,7 @@ public abstract class RealmBase
                         }
                     }
                 }
+
                 if(matched) {
                     found = true;
                     if(length > longest) {
@@ -481,6 +513,7 @@ public abstract class RealmBase
                         }
                         longest = length;
                     }
+
                     if(collection[j].findMethod(method)) {
                         if(results == null) {
                             results = new ArrayList();
@@ -498,14 +531,29 @@ public abstract class RealmBase
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
             
-            if (log.isDebugEnabled())
+            // If collection is null, continue to avoid an NPE
+	    // See Bugzilla 30624
+            if ( collection == null ) {
+		continue;
+            }            
+
+            if (log.isDebugEnabled()) {
                 log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
+            }
+
             boolean matched = false;
             int pos = -1;
             for(int j=0; j < collection.length; j++){
                 String [] patterns = collection[j].findPatterns();
+
+                // If patterns is null, continue to avoid an NPE
+                // See Bugzilla 30624
+                if ( patterns == null) {
+		    continue;
+                }
+
                 for(int k=0; k < patterns.length && !matched; k++) {
                     String pattern = patterns[k];
                     if(pattern.startsWith("*.")){
@@ -539,13 +587,28 @@ public abstract class RealmBase
 
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
+
+            // If collection is null, continue to avoid an NPE
+	    // See Bugzilla 30624
+            if ( collection == null ) {
+		continue;
+            }            
             
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
+            }
+
             for(int j=0; j < collection.length; j++){
                 String [] patterns = collection[j].findPatterns();
+
+                // If patterns is null, continue to avoid an NPE
+                // See Bugzilla 30624
+                if ( patterns == null) {
+		    continue;
+                }
+
                 boolean matched = false;
                 for(int k=0; k < patterns.length && !matched; k++) {
                     String pattern = patterns[k];
