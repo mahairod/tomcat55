@@ -94,9 +94,7 @@ public class Generator {
     private JspCompilationContext ctxt;
     private boolean breakAtLF;
     private PageInfo pageInfo;
-    private FinallyApplyer finallies;
-    private int tryBit;
-    private Stack tryStack;
+    private int maxTagNesting;
 
     /**
      * @param s the input string
@@ -201,7 +199,7 @@ public class Generator {
 	generateDeclarations(page);
 	out.println();
 
-	// Static initializations (none yet) here
+	// Static initializations here
 
         // Static data for getIncludes()
         out.printil("private static java.util.Vector _jspx_includes;");
@@ -227,24 +225,24 @@ public class Generator {
             out.println();
         }
 
+ 	// Class fields declarations
+     	
+        maxTagNesting = pageInfo.getMaxTagNesting();
+        if (maxTagNesting >= 0) {
+            out.printil("private static final int RELEASE_ACTION         = 0;");
+            out.printil("private static final int POP_AND_RELEASE_ACTION = 1;");
+            out.println();
+            out.println();
+        }
+
 	// Constructor (empty so far) here
+
+	// Methods here
 
 	// Method used to get compile time include file dependencies
         out.printil("public java.util.List getIncludes() {");
         out.pushIndent();
         out.printil("return _jspx_includes;");
-        out.popIndent();
-        out.printil("}");
-        out.println();
-        out.println();
-
-        out.printil("private void addTagToVector(java.util.Vector tags, int index, Object tag) {");
-        out.pushIndent();
-        out.printil("if (index + 1 > tags.size())");
-        out.pushIndent();
-        out.printil("tags.setSize(index + 1);");
-        out.popIndent();
-        out.printil("tags.setElementAt(tag, index);");
         out.popIndent();
         out.printil("}");
         out.println();
@@ -272,8 +270,19 @@ public class Generator {
 	out.printil("ServletConfig config = null;");
 	out.printil("JspWriter out = null;");
 	out.printil("Object page = this;");
-        out.printil("java.util.BitSet bitmask = new java.util.BitSet();");
-        out.printil("java.util.Vector tags = new java.util.Vector();");
+
+     	// pseudo "Finally" state stack objects
+        if (maxTagNesting >= 0) {
+            String depth = Integer.toString(maxTagNesting + 1);
+            out.printil("int   tagStackIndex = -1;");
+            out.printin("int[] tagStackActions = new int[");
+            out.print(depth);
+            out.println("];");
+            out.printin("javax.servlet.jsp.tagext.Tag[] tagStack = new javax.servlet.jsp.tagext.Tag[");
+            out.print(depth);
+            out.println("];");
+            out.println();
+        }
 
 	out.printil("try {");
 	out.pushIndent();
@@ -981,17 +990,10 @@ public class Generator {
                 out.printil("try {");
                 out.pushIndent();
             } else {
-                out.printil("// try {");
-                out.printin("bitmask.set(");
-                Integer tryBitVal = new Integer(tryBit++);
-                tryStack.push(tryBitVal);
-                out.print(tryBitVal.toString());
-                out.println(");");
-                out.printin("addTagToVector(tags, ");
-                out.print(tryBitVal.toString());
-                out.print(", ");
+                out.printil("tagStackActions[++tagStackIndex] = RELEASE_ACTION;");
+                out.printin("tagStack[tagStackIndex] = ");
                 out.print(tagHandlerVar);
-                out.println(");");
+                out.println(";");
             }
 	    out.printin("int ");
 	    out.print(tagEvalVar);
@@ -1014,17 +1016,6 @@ public class Generator {
 		out.pushIndent();
 		
 		if (isBodyTag) {
-                    out.printil("// try {");
-                    out.printin("bitmask.set(");
-                    Integer tryBitVal = new Integer(tryBit++);
-                    tryStack.push(tryBitVal);
-                    out.print(tryBitVal.toString());
-                    out.println(");");
-                    out.printin("addTagToVector(tags, ");
-                    out.print(tryBitVal.toString());
-                    out.print(", new Integer(");
-                    out.print(tagEvalVar);
-                    out.println("));");
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
@@ -1032,6 +1023,10 @@ public class Generator {
 		    out.pushIndent();
 		    
 		    out.printil("out = pageContext.pushBody();");
+                    if (!implementsTryCatchFinally) {
+                        out.printil("tagStackActions[tagStackIndex]" +
+					" = POP_AND_RELEASE_ACTION;");
+ 		    }
 		    out.printin(tagHandlerVar);
 		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
 		    out.printin(tagHandlerVar);
@@ -1086,29 +1081,15 @@ public class Generator {
 
 	    if (n.getBody() != null) {
 		if (implementsBodyTag) {
-                    Integer tryBitVal = (Integer)tryStack.pop();
-                    out.printil("// } finally {");
-                    out.printin("bitmask.clear(");
-                    out.print(tryBitVal.toString());
-                    out.println(");");
-
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
+                    if (!implementsTryCatchFinally) {
+                        out.printil("tagStackActions[tagStackIndex] = RELEASE_ACTION;");
+ 		    }
 		    out.printil("out = pageContext.popBody();");
 		    out.popIndent();
-
-                    finallies.beginPartMethod(tryBitVal.intValue());
-                    finallies.print("      if (");
-                    finallies.print("((Integer)tags.elementAt(");
-                    finallies.print(tryBitVal.toString());
-                    finallies.print(")).intValue()");
-                    finallies.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
-                    finallies.println("        out = pageContext.popBody();");
-
-                    finallies.endPartMethod();
-                    out.printil("// }");
 		}
 
 		out.popIndent(); // EVAL_BODY
@@ -1139,20 +1120,9 @@ public class Generator {
                 out.popIndent();
                 out.printil("}");
             } else {
-                Integer tryBitVal = (Integer)tryStack.pop();
-                out.printil("// } finally {");
-                out.printin("bitmask.clear(");
-                out.print(tryBitVal.toString());
-                out.println(");");
+                out.printil("tagStackIndex--;");
                 out.printin(tagHandlerVar);
                 out.println(".release();");
-                out.printil("// }");
-                finallies.beginPartMethod(tryBitVal.intValue());
-                finallies.printin("((javax.servlet.jsp.tagext.Tag)tags.elementAt(");
-                finallies.print(tryBitVal.toString());
-                finallies.print("))");
-                finallies.println(".release();");
-                finallies.endPartMethod();
 	    }
 
 	    // Declare and update AT_END variables
@@ -1428,17 +1398,19 @@ public class Generator {
         out.printil("} finally {");
         out.pushIndent();
 
-        // Do stuff here for finally actions...
+	// Cleanup the tags on the stack
+        if (maxTagNesting >= 0) {
+            out.printil("while (tagStackIndex >= 0) {");
+            out.pushIndent();
+            out.printil("if (POP_AND_RELEASE_ACTION == tagStackActions[tagStackIndex])");
+            out.pushIndent();
+            out.printil("out = pageContext.popBody();");
+            out.popIndent();
+            out.printil("tagStack[tagStackIndex--].release();");
+            out.popIndent();
+            out.printil("}");
+        }
 
-        out.printil("try {");
-        out.pushIndent();
-        out.printil("finallies(bitmask, out, tags, pageContext);");
-        out.popIndent();
-        out.printil("} catch (javax.servlet.jsp.JspException e) {");
-        out.pushIndent();
-        out.printil("if (pageContext != null) pageContext.handlePageException(e);");
-        out.popIndent();
-        out.printil("}");
         out.printil("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
 
         out.popIndent();
@@ -1447,10 +1419,6 @@ public class Generator {
         // Close the service method
         out.popIndent();
         out.printil("}");
-
-        // Call the final method
-        finallies.done();
-        out.printil(finallies.toString());
 
         // Close the class definition
         out.popIndent();
@@ -1467,8 +1435,6 @@ public class Generator {
 	pageInfo = compiler.getPageInfo();
 	beanInfo = pageInfo.getBeanRepository();
 	breakAtLF = ctxt.getOptions().getMappedFile();
-        finallies = new FinallyApplyer();
-        tryStack = new Stack();
     }
 
     /**
@@ -1563,55 +1529,5 @@ public class Generator {
 	    return tagHandlerClass;
 	}
     }
-
-    private static class FinallyApplyer {
-        private PrintStream finalOutput;
-        private ByteArrayOutputStream rawOutput;
-
-        FinallyApplyer() {
-            rawOutput = new ByteArrayOutputStream();
-            finalOutput = new PrintStream(rawOutput, true);
-
-            finalOutput.println();
-            finalOutput.println("  private void finallies(java.util.BitSet bitmask, JspWriter out, java.util.Vector tags, PageContext pageContext)");
-            finalOutput.println("  throws javax.servlet.jsp.JspException {");
-        }
-
-        public void done() {
-            finalOutput.println("  }");
-        }
-
-        public void beginPartMethod(int bit) {
-            finalOutput.print("    if (bitmask.get(");
-            finalOutput.print(bit);
-            finalOutput.println(")) {");
-        }
-
-        public void endPartMethod() {
-            finalOutput.println("    }");
-            finalOutput.println();
-        }
-
-        public void println(String aLine) {
-            if (null != aLine) {
-                finalOutput.print(aLine);
-            }
-            finalOutput.println();
-        }
-
-        public void printin(String partLine) {
-            finalOutput.print("      ");
-            finalOutput.print(partLine);
-        }
-
-        public void print(String partLine) {
-            finalOutput.print(partLine);
-        }
-
-        public String toString() {
-            return rawOutput.toString();
-        }
-    }
-
 }
 
