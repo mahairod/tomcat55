@@ -286,7 +286,7 @@ public class BaseJkConfig  extends BaseInterceptor {
         }
     }
 
-    protected void initProtocol(ContextManager cm) {
+    protected void initWorker(ContextManager cm) {
 	// Find Ajp1? connectors
 	BaseInterceptor ci[]=cm.getContainer().getInterceptors();
 	    

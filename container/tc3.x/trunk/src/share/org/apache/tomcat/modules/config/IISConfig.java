@@ -197,7 +197,7 @@ public class IISConfig extends BaseJkConfig  {
     {
         try {
 	    initProperties(cm);
-	    initProtocol(cm);
+	    initWorker(cm);
 
             PrintWriter regfile = new PrintWriter(new FileWriter(regConfig));
             PrintWriter uri_worker = new PrintWriter(new FileWriter(uriConfig));        

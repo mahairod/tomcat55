@@ -283,7 +283,7 @@ public class ApacheConfig  extends BaseJkConfig {
     public void execute(ContextManager cm) throws TomcatException {
     	try {
 	    initProperties(cm);
-	    initProtocol(cm);
+	    initWorker(cm);
 
             NamedVirtualHosts = new Hashtable();  
 
