@@ -20,24 +20,12 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Hashtable;
-import java.util.Stack;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import javax.naming.NamingException;
-import javax.naming.InitialContext;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-import javax.naming.NamingEnumeration;
-import javax.naming.Binding;
-import javax.naming.StringRefAddr;
-import javax.naming.directory.DirContext;
 import org.apache.naming.NamingContext;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ContextAccessController;
@@ -52,7 +40,6 @@ import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Server;
@@ -285,6 +272,8 @@ public class NamingContextListener
 
             // Setting the context in read/write mode
             ContextAccessController.setWritable(getName(), container);
+            
+            ContextBindings.unbindContext(container, container);
 
             if (container instanceof Context) {
                 ContextBindings.unbindClassLoader
