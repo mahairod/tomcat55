@@ -69,10 +69,20 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
+import java.util.Set;
 import javax.servlet.ServletException;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.management.MBeanRegistration;
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.core.StandardEngine;
+import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.core.StandardContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -84,10 +94,11 @@ import org.apache.catalina.Logger;
  * @version $Revision$ $Date$
  */
 
-public abstract class LoggerBase
-    implements Logger {
-
-
+public class LoggerBase
+    implements Logger, MBeanRegistration 
+ {
+    private static Log log = LogFactory.getLog(LoggerBase.class);
+    
     // ----------------------------------------------------- Instance Variables
 
 
@@ -252,7 +263,9 @@ public abstract class LoggerBase
      * @param message A <code>String</code> specifying the message to be
      *  written to the log file
      */
-    public abstract void log(String msg);
+    public void log(String msg) {
+        log.info(msg);
+    }
 
 
     /**
@@ -349,5 +362,106 @@ public abstract class LoggerBase
 
     }
 
+    protected String domain;
+    protected String host;
+    protected String path;
+    protected ObjectName oname;
+    protected ObjectName controller;
+    protected MBeanServer mserver;
 
+    public ObjectName getController() {
+        return controller;
+    }
+
+    public void setController(ObjectName controller) {
+        this.controller = controller;
+    }
+
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+
+        host=name.getKeyProperty("host");
+        path=name.getKeyProperty("path");
+
+        if( container== null ) {
+            // Register with the parent
+            try {
+                ObjectName cname=null;
+                if( host == null ) {
+                    // global
+                    cname=new ObjectName(domain +":type=Engine");
+                } else if( path==null ) {
+                    cname=new ObjectName(domain +
+                            ":type=Host,host=" + host);
+                } else {
+                    cname=new ObjectName(domain +":j2eeType=WebModule,name=//" +
+                            host + "/" + path);
+                }
+                log.info("Register with " + cname);
+                mserver.invoke(cname, "setLogger", new Object[] {this},
+                        new String[] {"org.apache.catalina.Logger"});
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            }
+        }
+                
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
+
+    public void init() {
+        
+    }
+    
+    public void destroy() {
+        
+    }
+    
+    public ObjectName createObjectName() {
+        // register
+        try {
+            StandardEngine engine=null;            
+            String suffix="";
+            if( container instanceof StandardEngine ) {
+                engine=(StandardEngine)container;                
+            } else if( container instanceof StandardHost ) {
+                engine=(StandardEngine)container.getParent();
+                suffix=",host=" + container.getName();
+            } else if( container instanceof StandardContext ) {
+                engine=(StandardEngine)container.getParent().getParent();
+                suffix=",host=" + container.getParent().getName() + 
+                        ",path=" + ((StandardContext)container).getPath();
+            } else {
+                log.error("Unknown container " + container );
+            }
+            if( engine != null ) {
+                oname=new ObjectName(engine.getDomain()+ ":type=Logger" + suffix);
+            } else {
+                log.error("Null engine !! " + container);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        }
+        return oname;
+    }
+    
 }
