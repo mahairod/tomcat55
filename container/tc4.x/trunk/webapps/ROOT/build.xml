@@ -4,15 +4,11 @@
   <!-- ===================== Initialize Property Values =================== -->
   <property name="ant.home"        value="../../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
-  <property name="build.catalina"  value="../../../build/catalina"/>
   <property name="build.dir"       value="../../../build/webapps"/>
   <property name="dist.dir"        value="../../../dist/webapps"/>
-  <property name="dist.servletapi" value="../../../dist/servletapi"/>
-  <property name="deploy.dir"      value="../../../build/catalina/webapps"/>
-  <property name="deploy-dist.dir" value="../../../dist/catalina/webapps"/>
   <property name="servletapi.home" value="../../../jakarta-servletapi"/>
-  <property name="webapps.name"    value="ROOT"/>
-  <property name="webapps.src"     value="WEB-INF"/>
+  <property name="webapp.name"    value="ROOT"/>
+
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
@@ -21,86 +17,51 @@
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
     <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dir}/${webapps.name}"/>
+    <mkdir dir="${build.dir}/${webapp.name}"/>
   </target>
 
 
   <!-- ================ BUILD: Copy Static Files ========================== -->
   <target name="build-static" depends="build-prepare">
-    <copydir src="." dest="${build.dir}/${webapps.name}"
+    <copydir src="." dest="${build.dir}/${webapp.name}"
              excludes="build.*"/>
     <copydir src="../../catalina/docs"
-            dest="${build.dir}/${webapps.name}/docs"/>
-  </target>
-
-
-  <!-- ================ BUILD: Copy Javadoc Files ========================= -->
-  <target name="build-javadoc" depends="build-static">
-    <copydir src="${build.catalina}/webapps/ROOT/catalina-javadoc"
-            dest="${build.dir}/${webapps.name}/catalina-javadoc"/>
-    <copydir src="${build.catalina}/webapps/ROOT/jasper-javadoc"
-            dest="${build.dir}/${webapps.name}/jasper-javadoc"/>
-    <copydir src="${dist.servletapi}/docs/api"
-            dest="${build.dir}/${webapps.name}/servletapi-javadoc"/>
+            dest="${build.dir}/${webapp.name}/docs"/>
+    <!-- FIXME: JavaDocs????? -->
   </target>
 
 
   <!-- ================= BUILD: Compile Server Components ================= -->
-  <target name="build-main" depends="build-static">
-    <!--
-    <javac   srcdir="WEB-INF/classes" 
-             destdir="${build.dir}/${webapps.name}/WEB-INF/classes"
-             classpath="${servlet.jar}"
-             deprecation="off" debug="on" optimize="off"
-             excludes="**/CVS/**"/>
-    -->
-  </target>
+  <target name="build-main" depends="build-static"/>
 
 
-  <!-- ======================= BUILD: Deploy Build Files ================== -->
-  <target name="deploy" depends="build-main,build-javadoc">
-    <copydir  src="${build.dir}/${webapps.name}"
-              dest="${deploy.dir}/${webapps.name}">
-    </copydir>
-  </target>
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
-    <deltree dir="${build.dir}/${webapps.name}"/>
+    <deltree dir="${build.dir}/${webapp.name}"/>
   </target>
 
 
   <!-- ======================= DIST: Create Directories =================== -->
   <target name="dist-prepare">
     <mkdir dir="${dist.dir}"/>
-    <mkdir dir="${dist.dir}/${webapps.name}"/>
   </target>
 
 
   <!-- ======================= DIST: Create Distribution Files ============ -->
-  <target name="dist" depends="build-main,build-javadoc,dist-prepare">
-      <jar   jarfile="${dist.dir}/${webapps.name}/${webapps.name}.war"
-             basedir="${build.dir}/${webapps.name}" includes="**"/>
-  </target>
-
-
-  <!-- ======================= DIST: Deploy Distribution Files ============ -->
-  <target name="deploy-dist" depends="dist">
-    <copydir  src="${dist.dir}/${webapps.name}"
-              dest="${deploy-dist.dir}">
-    </copydir>
+  <target name="dist" depends="build-main,dist-prepare">
+      <jar   jarfile="${dist.dir}/${webapp.name}.war"
+             basedir="${build.dir}/${webapp.name}" includes="**"/>
   </target>
 
 
   <!-- ======================= DIST: Clean Directory ====================== -->
   <target name="dist-clean">
-    <deltree dir="${dist.dir}/${webapps.name}"/>
+    <deltree dir="${dist.dir}/${webapp.name}"/>
   </target>
-
-
-  <!-- ==================== BUILD: Rebuild Everything ===================== -->
-  <target name="all" depends="build-clean,build-main"/>
 
 
   <!-- ====================== Convenient Synonyms ========================= -->

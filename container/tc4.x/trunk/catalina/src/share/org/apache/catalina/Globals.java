@@ -89,7 +89,7 @@ public final class Globals {
      * delimited with the appropriate path delimiter for this platform.
      */
     public static final String CLASS_PATH_ATTR =
-	"org.apache.catalina.jsp.classpath";
+	"org.apache.catalina.jsp_classpath";
 
 
     /**

@@ -4,9 +4,11 @@
   <!-- ===================== Initialize Property Values =================== -->
   <property name="ant.home"        value="../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
-  <property name="webapps.build"   value="../../build/webapps"/>
-  <property name="webapps.dist"    value="../../dist/webapps"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
+  <property name="webapps.build"   value="../../build/webapps"/>
+  <property name="webapps.deploy"  value="../../build/tomcat-4.0"/>
+  <property name="webapps.dist"    value="../../dist/webapps"/>
+
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
@@ -15,7 +17,7 @@
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
     <mkdir dir="${webapps.build}"/>
-    <mkdir dir="${webapps.build}/"/>
+    <mkdir dir="${webapps.dist}"/>
   </target>
 
 
@@ -26,48 +28,46 @@
     <ant dir="./ROOT" target="dist"/>
   </target>
 
-  <target name="ROOT-deploy">
-    <ant dir="./ROOT" target="deploy"/>
-  </target>
-
-  <target name="ROOT-deploydist">
-    <ant dir="./ROOT" target="deploy-dist"/>
-  </target>
-
   <target name="examples">
     <ant dir="./examples" target="dist"/>
   </target>
 
-  <target name="examples-deploy">
-    <ant dir="./examples" target="deploy"/>
-  </target>
-
-  <target name="examples-deploydist">
-    <ant dir="./examples" target="deploy-dist"/>
-  </target>
 
   <!-- ================= BUILD: Compile Server Components ================= -->
+  <!-- Update the depends list for each subproject -->
   <target name="build" depends="build-prepare,ROOT,examples"/>
 
-  <!-- ================= BUILD: Create Distribution Files ================= -->
-  <target name="dist" depends="build-prepare,ROOT,examples"/>
-
-  <!-- ================= BUILD: Deploy Webapps Projects =================== -->
-  <target name="deploy" depends="ROOT-deploy,examples-deploy"/>
-
-  <!-- ================= BUILD: Deploy Webapps Distribution Files ========= -->
-  <target name="deploy-dist" depends="ROOT-deploydist,examples-deploydist"/>
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
     <deltree dir="${webapps.build}"/>
-    <deltree dir="${webapps.dist}"/>
   </target>
+
 
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
   <target name="all" depends="build-clean,dist"/>
 
+
+  <!-- ================= DEPLOY: Deploy Webapps Projects ================== -->
+  <target name="deploy" depends="dist">
+    <deltree dir="${webapps.deploy}/webapps"/>
+    <mkdir dir="${webapps.deploy}/webapps"/>
+    <copydir src="${webapps.dist}" dest="${webapps.deploy}/webapps"/>
+  </target>
+
+
+  <!-- ================= DIST: Create Distribution Files ================== -->
+  <target name="dist" depends="build"/>
+
+
+  <!-- ======================= DIST: Clean Directory ====================== -->
+  <target name="dist-clean">
+    <deltree dir="${webapps.dist}"/>
+  </target>
+
+
   <!-- ====================== Convenient Synonyms ========================= -->
-  <target name="clean" depends="build-clean"/>
+  <target name="clean" depends="build-clean,dist-clean"/>
+
 
 </project>
