@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
@@ -30,7 +30,7 @@
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
-       <div class="page-title-text" align="left"> 
+       <div class="page-title-text" align="left">
          <logic:equal name="singleSignOnValveForm" property="adminAction" value="Create">
             <bean:message key="actions.valves.create"/>
           </logic:equal>
@@ -39,19 +39,19 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <logic:notEqual name="singleSignOnValveForm" property="adminAction" value="Create">              
+            <logic:notEqual name="singleSignOnValveForm" property="adminAction" value="Create">
              <controls:action url='<%= "/DeleteValve.do?"  +
-                                 "select=" + URLEncoder.encode(thisObjectName) + 
-                                 "&parent="+ URLEncoder.encode(thisParentName) %>'>  
-                <bean:message key="actions.valves.delete"/> 
+                                 "select=" + URLEncoder.encode(thisObjectName) +
+                                 "&parent="+ URLEncoder.encode(thisParentName) %>'>
+                <bean:message key="actions.valves.delete"/>
               </controls:action>
-              </logic:notEqual>          
-       </controls:actions>   
+              </logic:notEqual>
+       </controls:actions>
          </div>
       </td>
     </tr>
@@ -61,16 +61,16 @@
 
  <%-- Single Sign On Valve Properties --%>
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td> <div class="table-title-text"> 
+    <tr> <td> <div class="table-title-text">
         <bean:message key="valve.single.properties"/>
     </div> </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -90,7 +90,7 @@
                 </logic:equal>
             </controls:data>
         </controls:row>
-      
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
@@ -105,7 +105,7 @@
       </controls:table>
       </td>
     </tr>
-  </table>    
+  </table>
     <%@ include file="../buttons.jsp" %>
   <br>
   </html:form>

@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -21,12 +21,12 @@
   <html:hidden property="hostName"/>
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
-      <td width="81%"> 
+      <td width="81%">
         <div class="page-title-text" align="left">
           <bean:message key="actions.alias.delete"/>
         </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
             <controls:actions>
               <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
@@ -37,14 +37,14 @@
     </tr>
   </table>
 
-<%@ include file="../buttons.jsp" %>    
+<%@ include file="../buttons.jsp" %>
   <br>
 
   <%-- Aliases List --%>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
         <table class="front-table" border="1"
          cellspacing="0" cellpadding="0" width="100%">
           <tr class="header-row">
@@ -62,7 +62,7 @@
               <html:multibox property="aliases"
                                 value="<%= alias.toString() %>"/>
             </div></td>
-            <td><div align="left" class="table-normal-text">&nbsp;  
+            <td><div align="left" class="table-normal-text">&nbsp;
                 <%= alias.toString() %>
             </div></td>
           </tr>

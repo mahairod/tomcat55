@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -35,7 +35,7 @@
  name="loginForm">
   <table border="0" cellspacing="5" background="images/LoginBackgroundTile.gif">
 
-    <tr> 
+    <tr>
     <!-- banner -->
      <td height="183">
         <div align="center"><img src="images/Login.jpg" width="490" height="228"></div>
@@ -44,7 +44,7 @@
 
     <!-- username password prompts fields layout -->
     <tr>
-    <td background="images/LoginBackgroundTile.gif"> 
+    <td background="images/LoginBackgroundTile.gif">
      <table width="100%" border="0" cellspacing="2" cellpadding="5">
      <tr>
       <th align="right">
@@ -54,7 +54,7 @@
         <input type="text" name="j_username" size="16" maxlength="16"/>
       </td>
     </tr>
-    <p>    
+    <p>
     <tr>
       <th align="right">
         <font color="#FFFFFF"><bean:message key="prompt.password"/></font>
@@ -63,20 +63,20 @@
         <input type="password" name="j_password" size="16" maxlength="16"/>
       </td>
     </tr>
-    
+
     <tr>
       <td width="50%" valign="top"> <div align="right"></div> </td>
       <td width="55%" valign="top">&nbsp;</td>
      </tr>
 
     <!-- login reset buttons layout -->
-    <tr> 
-       <td width="50%" valign="top"> 
-            <div align="right"> 
+    <tr>
+       <td width="50%" valign="top">
+            <div align="right">
                <input type="submit" value='<bean:message key="button.login"/>'>&nbsp;&nbsp;
             </div>
        </td>
-       <td width="55%" valign="top"> 
+       <td width="55%" valign="top">
           &nbsp;&nbsp;<input type="reset" value='<bean:message key="button.reset"/>'>
        </td>
      </tr>
