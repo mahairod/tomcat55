@@ -252,7 +252,7 @@ public class CoyoteRequest
     /**
      * The associated input buffer.
      */
-    protected InputBuffer inputBuffer = new InputBuffer();
+    protected InputBuffer inputBuffer;
 
 
     /**
@@ -394,6 +394,14 @@ public class CoyoteRequest
     
     // --------------------------------------------------------- Public Methods
 
+    /**
+     * Constructor
+     *
+     * @param inBufSize The input buffer size
+     */
+    public CoyoteRequest(int inBufSize) {
+	inputBuffer = new InputBuffer(inBufSize);
+    }
 
     /**
      * Release all object references, and initialize instance variables, in

@@ -143,7 +143,7 @@ public final class CoyoteConnector
     /**
      * The input buffer size we should create on input streams.
      */
-    private int bufferSize = 2048;
+    private int bufferSize = InputBuffer.DEFAULT_BUFFER_SIZE;
 
 
     /**
@@ -1122,7 +1122,7 @@ public final class CoyoteConnector
      */
     public Request createRequest() {
 
-        CoyoteRequest request = new CoyoteRequest();
+        CoyoteRequest request = new CoyoteRequest(getBufferSize());
         request.setConnector(this);
         return (request);
 
