@@ -1684,119 +1684,44 @@ public class CGIServlet extends HttpServlet {
                 }
             }
 
-            /*String postIn = getPostInput(params);
-            int contentLength = (postIn.length()
-                    + System.getProperty("line.separator").length());
-            if ("POST".equals(env.get("REQUEST_METHOD"))) {
-                env.put("CONTENT_LENGTH", new Integer(contentLength));
-            }*/
-
-        //if (command.endsWith(".pl") || command.endsWith(".cgi")) {
             StringBuffer command = new StringBuffer(cgiExecutable);
             command.append(" ");
             command.append(cmdAndArgs.toString());
             cmdAndArgs = command;
-        //}
 
             rt = Runtime.getRuntime();
             proc = rt.exec(cmdAndArgs.toString(), hashToStringArray(env), wd);
 
-            /*
-             * provide input to cgi
-             * First  -- parameters
-             * Second -- any remaining input
-             */
-            /*commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-            if (debug >= 2 ) {
-                log("runCGI stdin=[" + stdin + "], qs="
-                    + env.get("QUERY_STRING"));
-            }
-            if ("POST".equals(env.get("REQUEST_METHOD"))) {
-                if (debug >= 2) {
-                    log("runCGI: writing ---------------\n");
-                    log(postIn);
-                    log("runCGI: new content_length=" + contentLength
-                        + "---------------\n");
-                }
-                commandsStdIn.write(postIn.getBytes());
-            }
-            if (stdin != null) {
-                //REMIND: document this
-                /* assume if nothing is available after a time, that nothing is
-                 * coming...
-                 */
-                /*if (stdin.available() <= 0) {
-                    if (debug >= 2 ) {
-                        log("runCGI stdin is NOT available ["
-                            + stdin.available() + "]");
-                    }
-                    try {
-                        Thread.currentThread().sleep(iClientInputTimeout);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-                if (stdin.available() > 0) {
-                    if (debug >= 2 ) {
-                        log("runCGI stdin IS available ["
-                            + stdin.available() + "]");
-                    }
-                    byte[] bBuf = new byte[1024];
-                    bufRead = -1;
-                    try {
-                        while ((bufRead = stdin.read(bBuf)) != -1) {
-                            if (debug >= 2 ) {
-                                log("runCGI: read [" + bufRead
-                                    + "] bytes from stdin");
-                            }
-                            commandsStdIn.write(bBuf, 0, bufRead);
+            String sContentLength = (String) env.get("CONTENT_LENGTH");
+            if(!"".equals(sContentLength)) {
+                commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
+                byte[] content = new byte[Integer.parseInt(sContentLength)];
+
+                int lenRead = stdin.read(content);
+
+                if ("POST".equals(env.get("REQUEST_METHOD"))) {
+                    String paramStr = getPostInput(params);
+                    if (paramStr != null) {
+                        byte[] paramBytes = paramStr.getBytes();
+                        commandsStdIn.write(paramBytes);
+
+                        int contentLength = paramBytes.length;
+                        if (lenRead > 0) {
+                            String lineSep = System.getProperty("line.separator");
+                            commandsStdIn.write(lineSep.getBytes());
+                            contentLength = lineSep.length() + lenRead;
                         }
-                        if (debug >= 2 ) {
-                            log("runCGI: DONE READING from stdin");
-                        }
-                    } catch (IOException ioe) {
-                        //REMIND: replace with logging
-                        //REMIND: should I throw this exception?
-                        log("runCGI: couldn't write all bytes.");
-                        ioe.printStackTrace();
+                        env.put("CONTENT_LENGTH", new Integer(contentLength));
                     }
                 }
+
+                if (lenRead > 0) {
+                    commandsStdIn.write(content, 0, lenRead);
+                }
+
+                commandsStdIn.flush();
+                commandsStdIn.close();
             }
-            commandsStdIn.flush();
-            commandsStdIn.close();*/
-      String sContentLength = (String) env.get("CONTENT_LENGTH");
-      if(!"".equals(sContentLength)) {
-          commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-          byte[] content = new byte[Integer.parseInt(sContentLength)];
-
-          int lenRead = stdin.read(content);
-
-          if ("POST".equals(env.get("REQUEST_METHOD"))) {
-              String paramStr = getPostInput(params);
-              if (paramStr != null) {
-                  byte[] paramBytes = paramStr.getBytes();
-                  commandsStdIn.write(paramBytes);
-
-                  int contentLength = paramBytes.length;
-                  if (lenRead > 0) {
-                      String lineSep = System.getProperty("line.separator");
-
-                      commandsStdIn.write(lineSep.getBytes());
-
-                      contentLength = lineSep.length() + lenRead;
-                  }
-
-                  env.put("CONTENT_LENGTH", new Integer(contentLength));
-              }
-          }
-
-          if (lenRead > 0) {
-              commandsStdIn.write(content, 0, lenRead);
-          }
-
-
-          commandsStdIn.flush();
-          commandsStdIn.close();
-      }
 
             /* we want to wait for the process to exit,  Process.waitFor()
              * is useless in our situation; see
@@ -1875,7 +1800,7 @@ public class CGIServlet extends HttpServlet {
 
                 } catch (IllegalThreadStateException e) {
                     try {
-                        Thread.currentThread().sleep(500);
+                        Thread.sleep(500);
                     } catch (InterruptedException ignored) {
                     }
                 }
