@@ -83,6 +83,10 @@ WebappCLassLoader: Modify getResourceAsStream so that there is no need to use
 URL.openStream() which would require a privileged action when using a security
 manager.
 
+InstanceEvent: Enhance InstanceEvent reporting to include any exception that 
+was thrown during the process being reported by this event. This applies to 
+any of the "AFTER" events.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -105,6 +109,8 @@ Bugzilla Bugs Resolved:
         in a fatal translation error if the class is abstract, an interface, 
         or a class without a public no-arg constructor.
 4023    Exceptions that terminate engine should be saved in a log.
+4043    gotCatalinaHome and gotCatalinaBase labels in catalina.bat
+        indistinguishable for Windows 98 (unconfirmed bug).
 4067    jndi-resources-howto.xml fixes.
 4078    "%JSSE_HOME%\jsse.jar" should be "%JSSE_HOME%\lib\jsse.jar" 
         in catalina.bat.
@@ -124,6 +130,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * JAVAC leaking memory
 * Linux and Sun JDK 1.2.x - 1.3.x
 * Jasper and Jikes
+* Tomcat 4.0 and Apache Cocoon 2.0
 
 
 ---------------------
@@ -178,6 +185,8 @@ the following section in $CATALINA_HOME/conf/server.xml:
                port="8009" minProcessors="5" maxProcessors="75"
                acceptCount="10" debug="0"/>
     -->
+
+The AJP connector for Tomcat 4.0 does not support load balancing at this time.
 
 
 -------------------------------------
@@ -303,6 +312,13 @@ CP="$CATALINA_HOME/bin/bootstrap.jar"
   to
 CP="$JAVA_HOME/jre/lib/rt.jar:$CATALINA_HOME/bin/bootstrap.jar"
 
+
+--------------------------------
+Tomcat 4.0 and Apache Cocoon 2.0:
+--------------------------------
+
+For optimal performance with Apache Cocoon 2.0, it is recommended to use the
+HTTP/1.0 connector.
 
 
 
