@@ -151,7 +151,8 @@ public class SSLAuthenticator
         X509Certificate certs[] = (X509Certificate[])
             request.getRequest().getAttribute(Globals.CERTIFICATES_ATTR);
         if ((certs == null) || (certs.length < 1)) {
-            certs = request.getRequest().getAttribute(Globals.SSL_CERTIFICATE_ATTR);
+            certs = (X509Certificate[])
+                request.getRequest().getAttribute(Globals.SSL_CERTIFICATE_ATTR);
         }
         if ((certs == null) || (certs.length < 1)) {
             if (debug >= 1)
