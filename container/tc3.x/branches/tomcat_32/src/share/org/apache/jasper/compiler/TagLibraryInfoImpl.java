@@ -228,7 +228,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    
 	    if (in == null)
 		throw new JasperException(Constants.getString("jsp.error.tld_not_found",
-							      new Object[] {TLD}));
+							      new Object[] {uri}));
 	    // Now parse the tld.
 	    parseTLD(in);
 	}
