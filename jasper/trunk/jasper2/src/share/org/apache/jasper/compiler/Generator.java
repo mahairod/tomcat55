@@ -1689,10 +1689,7 @@ public class Generator {
 		    out.print(attributeValue(value, false, JspFragment.class,
                         "null" ));
 		} else {
-                    // Parent node must be a CustomTag since 
-                    // isSimpleTagHandler is set to true.
-		    generateJspFragment((Node.CustomTag)n.getParent(), 
-                        simpleTagHandlerVar);
+		    generateJspFragment(n, simpleTagHandlerVar);
 		}
 		out.println(");");
 	    } else {
@@ -2377,7 +2374,7 @@ public class Generator {
 	 * Generates anonymous JspFragment inner class which is passed as an
 	 * argument to SimpleTag.setJspBody().
 	 */
-	private void generateJspFragment(Node parent, String tagHandlerVar) 
+	private void generateJspFragment(Node n, String tagHandlerVar) 
             throws JasperException
         {
             // XXX - A possible optimization here would be to check to see
@@ -2387,10 +2384,10 @@ public class Generator {
             // body.  The implementation of this fragment can come from
             // the org.apache.jasper.runtime package as a support class.
             int id = helperClassBuffer.getFragmentId();
-            helperClassBuffer.openFragment( parent );
+            helperClassBuffer.openFragment( n );
             ServletWriter outSave = out;
             out = helperClassBuffer.getOut();
-            visitBody( parent );
+            visitBody( n );
             out = outSave;
             helperClassBuffer.closeFragment();
             // XXX - Need to change pageContext to jspContext if
