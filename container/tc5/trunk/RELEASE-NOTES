@@ -69,21 +69,21 @@ Bundled APIs:
 
 A standard installation of Tomcat 5.5 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
-* ant.jar (Apache Ant 1.6 or later)
-* commons-collections*.jar (Commons Collections 2.1 or later)
-* commons-dbcp.jar (Commons DBCP 1.1 or later)
 * commons-el.jar (Commons Expression Language 1.0)
 * commons-logging-api.jar (Commons Logging API 1.0.3 or later)
-* commons-pool.jar (Commons Pool 1.1 or later)
 * jasper-compiler.jar (Jasper 2 Compiler)
+* jasper-compiler-jdt.jar (Eclipse JDT Java compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
-* jmx.jar (Java Management Extensions API 1.2 or later)
 * jsp-api.jar (JSP 2.0 API)
 * commons-el.jar (JSP 2.0 Expression Language)
 * naming-common.jar (JNDI Context implementation)
 * naming-factory.jar (JNDI object factories for J2EE ENC support)
+* naming-factory-dbcp.jar (DataSource implementation based on commons-dbcp)
 * naming-resources.jar (JNDI DirContext implementations)
 * servlet-api.jar (Servlet 2.4 API)
+
+Installing the compatibility package will add the following to the list:
+* jmx.jar (Java Management Extensions API 1.2 or later)
 * xercesImpl.jar (Xerces XML Parser, version 2.6.2 or later)
 
 You can make additional APIs available to all of your web applications by
