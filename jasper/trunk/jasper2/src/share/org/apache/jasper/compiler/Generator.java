@@ -1815,13 +1815,13 @@ public class Generator {
 			out.print(name);
 			out.print(", jspContext.getAttribute(");
 			out.print(name);
-			out.println(");");
+			out.println("));");
 		    } else {
 			String getter = toGetterMethod(tagVars[i].getNameFromAttribute());
 			out.print(getter);
 			out.print(", jspContext.getAttribute(");
 			out.print(getter);
-			out.println(");");
+			out.println("));");
 		    }
 		}
 	    }
@@ -2757,7 +2757,8 @@ public class Generator {
 	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
 	if (tagInfo.hasDynamicAttributes())
 	    out.print(" implements javax.servlet.jsp.tagext.DynamicAttributes");
-	out.print(" {");
+	out.println(" {");
+	out.println();
 	out.pushIndent();
 	
 	// Class body begins here
@@ -2767,14 +2768,14 @@ public class Generator {
 	if (tagInfo.hasDynamicAttributes())
 	    generateSetDynamicAttribute();
 
-	out.printil("public int doTag() throws JspException {");
+	out.printil("public int doTag() throws javax.servlet.jsp.JspException {");
 	out.pushIndent();
 	// Declare parameter map for fragment/body invocation
-	out.println("java.util.Map params = null;");
+	out.printil("java.util.Map params = null;");
 
 	// Declare writer used for storing result of fragment/body invocation
 	// if 'varReader' attribute is specified
-	out.println("java.io.Writer sout = null;");
+	out.printil("java.io.Writer sout = null;");
 
 	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
 	out.printil("jspContext.pushPageScope();");
@@ -2820,6 +2821,7 @@ public class Generator {
 		out.print(attrInfos[i].getName());
 		out.println(";");
 	    }
+	    out.println();
 	}
 
 	// Declare fragment attributes
@@ -2829,6 +2831,7 @@ public class Generator {
 		out.print(fragAttrInfos[i].getName());
 		out.println(";");
 	    }
+	    out.println();
 	}
 
 	// Define getter and setter methods for "normal" attributes
@@ -2860,6 +2863,7 @@ public class Generator {
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
+		out.println();
 	    }
 	}
 
@@ -2892,6 +2896,7 @@ public class Generator {
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
+		out.println();
 	    }
 	}
     }
@@ -2931,7 +2936,7 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		String attrName = attrInfos[i].getName();
-		out.printin("this.jspContext.setAttribute(\"");
+		out.printin("jspContext.setAttribute(\"");
 		out.print(attrName);
 		out.print("\", ");
 		out.print(toGetterMethod(attrName));
@@ -2945,7 +2950,7 @@ public class Generator {
 	if (fragAttrInfos != null) {
 	    for (int i=0; i<fragAttrInfos.length; i++) {
 		String attrName = fragAttrInfos[i].getName();
-		out.printin("this.jspContext.setAttribute(\"");
+		out.printin("jspContext.setAttribute(\"");
 		out.print(attrName);
 		out.print("\", ");
 		out.print(toGetterMethod(attrName));
