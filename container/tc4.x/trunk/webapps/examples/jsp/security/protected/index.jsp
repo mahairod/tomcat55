@@ -1,10 +1,18 @@
+<%
+  if (request.getParameter("logoff") != null) {
+    session.invalidate();
+    response.sendRedirect("index.jsp");
+    return;
+  }
+%>
 <html>
 <head>
 <title>Protected Page for Examples</title>
 </head>
 <body bgcolor="white">
 
-You are logged in as remote user <b><%= request.getRemoteUser() %></b><br><br>
+You are logged in as remote user <b><%= request.getRemoteUser() %></b>
+in session <b><%= session.getId() %></b><br><br>
 
 <%
   if (request.getUserPrincipal() != null) {
@@ -41,6 +49,11 @@ enter it here:
 <form method="GET" action="index.jsp">
 <input type="text" name="role" value="<%= role %>">
 </form>
+<br><br>
+
+If you have configured this app for form-based authentication, you can log
+off by clicking <a href="index.jsp?logoff=true">here</a>.  This should cause
+you to be returned to the logon page after the redirect that is performed.
 
 </body>
 </html>
