@@ -33,10 +33,10 @@
 
   <!-- =================== DETECT: Display configuration ================== -->
   <target name="detect"
-   description="Display configuration flags">
+   description="Display configuration and conditional compilation flags">
 
-    <echo>Target: Catalina - Detect ...</echo>
-    <ant dir="./catalina" target="flags.display"/>
+    <ant dir="${basedir}/catalina" target="flags.display"/>
+    <ant dir="${basedir}/webapps/admin" target="flags.display"/>
 
   </target>
 
