@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/ksh
 #
 # $Id$
 
@@ -8,27 +8,20 @@ host=localhost
 port=8080
 test=testlist.txt
 
-baseDir=../../..
-tomcatBuildDir=$baseDir/build/tomcat
-toolsDir=$baseDir/jakarta-tools
-
-jsdkJars=${tomcatBuildDir}/webserver.jar:${tomcatBuildDir}/lib/servlet.jar
-jspJars=${tomcatBuildDir}/lib/jasper.jar
-beanJars=
-miscJars=${toolsDir}/projectx-tr2.jar:${toolsDir}/moo.jar
-appJars=${jsdkJars}:${jspJars}:${miscJars}:${tomcatBuildDir}/classes
-sysJars=${JAVA_HOME}/lib/tools.jar
-
-appClassPath=./classes:${appJars}
 cp=$CLASSPATH
 
-CLASSPATH=${appClassPath}:${sysJars}
-export CLASSPATH
+CLASSPATH=classes:lib/moo.jar
 
 if [ "$cp" != "" ]; then
     CLASSPATH=${CLASSPATH}:${cp}
-    export CLASSPATH
 fi
+
+
+# Add tomcat-related classes
+TOMCAT_HOME=..
+. ${TOMCAT_HOME}/env.tomcat
+
+export CLASSPATH
 
 echo Using classpath: ${CLASSPATH}
 echo
