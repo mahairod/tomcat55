@@ -3,8 +3,8 @@
 
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"  value="classic"/>
-  <property name="build.dir"       value="../build"/>
-  <property name="dist.dir"        value="../dist"/>
+  <property name="webapps.build"   value="../build"/>
+  <property name="webapps.dist"    value="../dist"/>
   <property name="servletapi.home" value="../../../jakarta-servletapi-4"/>
   <property name="webapp.name"    value="manager"/>
 
@@ -15,14 +15,14 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dir}/${webapp.name}"/>
+    <mkdir dir="${webapps.build}"/>
+    <mkdir dir="${webapps.build}/${webapp.name}"/>
   </target>
 
 
   <!-- ================ BUILD: Copy Static Files ========================== -->
   <target name="build-static" depends="build-prepare">
-    <copy todir="${build.dir}/${webapp.name}">
+    <copy todir="${webapps.build}/${webapp.name}">
       <fileset dir=".">
         <exclude name="build.*"/>
       </fileset>
@@ -35,7 +35,7 @@
 
 <!--
     <javac   srcdir="WEB-INF/classes" 
-             destdir="${build.dir}/${webapp.name}/WEB-INF/classes"
+             destdir="${webapps.build}/${webapp.name}/WEB-INF/classes"
              classpath="${servlet.jar}"
              deprecation="off" debug="on" optimize="off"
              excludes="**/CVS/**"/>
@@ -50,20 +50,20 @@
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
-    <delete dir="${build.dir}/${webapp.name}"/>
+    <delete dir="${webapps.build}/${webapp.name}"/>
   </target>
 
 
   <!-- ======================= DIST: Create Directories =================== -->
   <target name="dist-prepare">
-    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${webapps.dist}"/>
   </target>
 
 
   <!-- ======================= DIST: Create Distribution Files ============ -->
   <target name="dist" depends="build-main,dist-prepare">
-      <jar   jarfile="${dist.dir}/${webapp.name}.war"
-             basedir="${build.dir}/${webapp.name}" includes="**"/>
+      <jar   jarfile="${webapps.dist}/${webapp.name}.war"
+             basedir="${webapps.build}/${webapp.name}" includes="**"/>
   </target>
 
 
