@@ -83,6 +83,7 @@
                 <tr>
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
                         <a href="RELEASE-NOTES.txt">Release Notes</a><br>
+                        <a href="tomcat-docs/changelog.html">Change Log</a><br>
                         <a href="tomcat-docs">Tomcat Documentation</a><br>
                         &nbsp;
                     </td>
@@ -172,7 +173,7 @@
 
             <p align="right"><font size=-1><img src="tomcat-power.gif" width="77" height="80"></font><br>
             &nbsp;
-            <font size=-1>Copyright &copy; 1999-2003 Apache Software Foundation</font><br>
+            <font size=-1>Copyright &copy; 1999-2004 Apache Software Foundation</font><br>
             <font size=-1>All Rights Reserved</font> <br>
             &nbsp;</p>
             <p align="right">&nbsp;</p>
