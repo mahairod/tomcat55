@@ -11,7 +11,7 @@
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
-  <property name="year"                  value="2002" />
+  <property name="year"                  value="2003" />
   <property name="version"               value="5.0" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
@@ -29,9 +29,7 @@
   <property name="jasper.project"        value="jakarta-tomcat-jasper" />
 
   <!-- Dependent projects -->
-  <property name="commons-el.project"      value="jakarta-commons/el" />
-  <property name="commons-daemon.project"  value="jakarta-commons-sandbox/daemon" />
-  <property name="commons-modeler.project" value="jakarta-commons/modeler" />
+  <property name="commons-daemon.project"  value="jakarta-commons/daemon" />
 
   <!-- Source dependencies -->
   <property name="api.home"
@@ -45,23 +43,11 @@
   <property name="tomcat.home"
            value="${basedir}/${tomcat.project}"/>
 
-  <target name="build" depends="check.source,get.source"
+  <target name="build" depends="check.source,check.source.depends,get.source,get.source.depends"
    description="Builds all components">
 
     <ant dir="${tomcat.home}" target="download" />
     <ant dir="${tomcat.home}" target="deploy" />
-
-  </target>
-
-  <target name="check.source">
-
-    <available property="source.exists" file="${basedir}/${tomcat.project}" />
-
-  </target>
-
-  <target name="get.source" unless="source.exists">
-
-    <antcall target="checkout" />
 
   </target>
 
@@ -84,20 +70,45 @@
          command="checkout -P ${api.project}" 
          dest="${basedir}" compression="true" />
 
+  </target>
+
+  <target name="checkout.depends"
+          description="Update or checkout dependent sources from CVS">
+
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P jakarta-commons/LICENSE" 
          dest="${basedir}" compression="true" />
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${commons-el.project}" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${commons-daemon.project}" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${commons-modeler.project}" 
          dest="${basedir}" compression="true" />
 
   </target>
 
+  <!-- *************** UTILITY TARGETS *************** -->
+
+  <target name="check.source">
+
+    <available property="source.exists" file="${basedir}/${tomcat.project}" />
+
+  </target>
+
+  <target name="check.source.depends">
+
+    <available property="source.depends.exists" 
+                   file="${basedir}/${commons-daemon.project}" />
+
+  </target>
+
+  <target name="get.source" unless="source.exists">
+
+    <antcall target="checkout" />
+
+  </target>
+
+  <target name="get.source.depends" unless="source.depends.exists">
+
+    <antcall target="checkout.depends" />
+
+  </target>
 
 </project>
