@@ -791,6 +791,17 @@ public class Validator {
 	    }
 
 	    TagData tagData = new TagData(tagDataAttrs);
+
+	    // JSP.C1: It is a (translation time) error for an action that
+	    // has one or more variable subelements to have a TagExtraInfo
+	    // class that returns a non-null object.
+	    TagExtraInfo tei = tagInfo.getTagExtraInfo();
+	    if (tei != null && tei.getVariableInfo(tagData) != null
+		    && tagInfo.getTagVariableInfos() != null) {
+		err.jspError("jsp.error.non_null_tei_and_var_subelems",
+			     n.getName());
+	    }
+
 	    n.setTagData(tagData);
 	    n.setJspAttributes(jspAttrs);
 
