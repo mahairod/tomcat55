@@ -1002,7 +1002,7 @@ class Generator {
             printParams(n, pageParam, page.isLiteral());
             out.println(");");
             if (isTagFile || isFragment) {
-                out.printil("throw new javax.servlet.jsp.SkipPageException();");
+                out.printil("throw new SkipPageException();");
             } else {
                 out.printil((methodNesting > 0) ? "return true;" : "return;");
             }
@@ -1119,10 +1119,6 @@ class Generator {
                         + "pageContext, "
                         + value.getEL().getMapName()
                         + ");");
-                /*
-                                    + "(javax.servlet.jsp.el.VariableResolver) pageContext, "
-                                    + "(javax.servlet.jsp.el.FunctionMapper) this );");
-                */
             } else if (value.isNamedAttribute()) {
                 // If the value for setProperty was specified via
                 // jsp:attribute, first generate code to evaluate
@@ -2186,7 +2182,7 @@ class Generator {
                 ".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
             out.pushIndent();
             if (isTagFile || isFragment) {
-                out.printil("throw new javax.servlet.jsp.SkipPageException();");
+                out.printil("throw new SkipPageException();");
             } else {
                 out.printil((methodNesting > 0) ? "return true;" : "return;");
             }
@@ -3046,7 +3042,7 @@ class Generator {
         out.printil("} catch (Throwable t) {");
         out.pushIndent();
         out.printil(
-            "if (!(t instanceof javax.servlet.jsp.SkipPageException)){");
+            "if (!(t instanceof SkipPageException)){");
         out.pushIndent();
         out.printil("out = _jspx_out;");
         out.printil("if (out != null && out.getBufferSize() != 0)");
@@ -3227,7 +3223,7 @@ class Generator {
 
         // Now the doTag() method
         out.printil(
-            "public void doTag() throws javax.servlet.jsp.JspException, java.io.IOException {");
+            "public void doTag() throws JspException, java.io.IOException {");
 
         if (ctxt.isPrototypeMode()) {
             out.printil("}");
@@ -3240,27 +3236,17 @@ class Generator {
         out.printil("PageContext pageContext = (PageContext)jspContext;");
 
         // Declare implicit objects.  
-        // XXX - Note that the current JSP 2.0 PFD 
-        // spec is unclear about whether these are required
-        // XXX - Optimization: Check scriptlets and expressions for the
-        // use of any of these.  They're not likely to be used.  If they're
-        // not used, get rid of them.
         out.printil(
-            "javax.servlet.ServletRequest request = "
-                + "pageContext.getRequest();");
+            "HttpServletRequest request = "
+                + "(HttpServletRequest) pageContext.getRequest();");
         out.printil(
-            "javax.servlet.ServletResponse response = "
-                + "pageContext.getResponse();");
+            "HttpServletResponse response = "
+                + "(HttpServletResponse) pageContext.getResponse();");
+        out.printil("HttpSession session = pageContext.getSession();");
         out.printil(
-            "javax.servlet.http.HttpSession session = "
-                + "pageContext.getSession();");
-        out.printil(
-            "javax.servlet.ServletContext application = "
-                + "pageContext.getServletContext();");
-        out.printil(
-            "javax.servlet.ServletConfig config = "
-                + "pageContext.getServletConfig();");
-        out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
+            "ServletContext application = pageContext.getServletContext();");
+        out.printil("ServletConfig config = pageContext.getServletConfig();");
+        out.printil("JspWriter out = jspContext.getOut();");
         if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
             out.printil("_jspInit(config);");
         }
@@ -3284,15 +3270,15 @@ class Generator {
         // helper method is declared to throw Throwable.
         out.printil("} catch( Throwable t ) {");
         out.pushIndent();
-        out.printil("if( t instanceof javax.servlet.jsp.SkipPageException )");
-        out.printil("    throw (javax.servlet.jsp.SkipPageException) t;");
+        out.printil("if( t instanceof SkipPageException )");
+        out.printil("    throw (SkipPageException) t;");
         out.printil("if( t instanceof java.io.IOException )");
         out.printil("    throw (java.io.IOException) t;");
         out.printil("if( t instanceof IllegalStateException )");
         out.printil("    throw (IllegalStateException) t;");
-        out.printil("if( t instanceof javax.servlet.jsp.JspException )");
-        out.printil("    throw (javax.servlet.jsp.JspException) t;");
-        out.printil("throw new javax.servlet.jsp.JspException(t);");
+        out.printil("if( t instanceof JspException )");
+        out.printil("    throw (JspException) t;");
+        out.printil("throw new JspException(t);");
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
@@ -3480,7 +3466,7 @@ class Generator {
      */
     public void generateSetDynamicAttribute() {
         out.printil(
-            "public void setDynamicAttribute(String uri, String localName, Object value) throws javax.servlet.jsp.JspException {");
+            "public void setDynamicAttribute(String uri, String localName, Object value) throws jsp.JspException {");
         out.pushIndent();
         /* 
          * According to the spec, only dynamic attributes with no uri are to
@@ -3803,7 +3789,7 @@ class Generator {
             // Generate postamble:
             out.printil("public void invoke( java.io.Writer writer )");
             out.pushIndent();
-            out.printil("throws javax.servlet.jsp.JspException");
+            out.printil("throws JspException");
             out.popIndent();
             out.printil("{");
             out.pushIndent();
@@ -3835,9 +3821,9 @@ class Generator {
             out.printil("catch( Throwable e ) {");
             out.pushIndent();
             out.printil(
-                "if (e instanceof javax.servlet.jsp.SkipPageException)");
-            out.printil("    throw (javax.servlet.jsp.SkipPageException) e;");
-            out.printil("throw new javax.servlet.jsp.JspException( e );");
+                "if (e instanceof SkipPageException)");
+            out.printil("    throw (SkipPageException) e;");
+            out.printil("throw new JspException( e );");
             out.popIndent();
             out.printil("}"); // catch
             out.printil("finally {");
