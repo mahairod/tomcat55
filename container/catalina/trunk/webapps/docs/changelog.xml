@@ -17,6 +17,8 @@
 <section name="Tomcat 5.0.27 (yoavs)">
   <subsection name="General">
     <changelog>
+      <update>Updated dependencies on commons-dbcp (to 1.2.1) and commons-pool (to 1.2). (yoavs)
+      </update>
     </changelog>
   </subsection>
 
