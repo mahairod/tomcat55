@@ -22,7 +22,10 @@ import java.security.Principal;
 import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.List;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.AccountExpiredException;
@@ -62,7 +65,7 @@ import org.apache.commons.logging.LogFactory;
  * this Realm:</p>
  * <ul>
  * <li>The JAAS <code>LoginModule</code> is assumed to return a
- *     <code>Subject with at least one <code>Principal</code> instance
+ *     <code>Subject</code> with at least one <code>Principal</code> instance
  *     representing the user himself or herself, and zero or more separate
  *     <code>Principals</code> representing the security roles authorized
  *     for this user.</li>
@@ -87,10 +90,39 @@ import org.apache.commons.logging.LogFactory;
  * <li>It is a configuration error for the JAAS login method to return a
  *     validated <code>Subject</code> without a <code>Principal</code> that
  *     matches the "user classes" list.</li>
- * </ul>
- *
- * @author Craig R. McClanahan
- * @author Yoav Shapira
+ * <li>By default, the enclosing Container's name serves as the
+ *     application name used to obtain the JAAS LoginContext ("Catalina" in
+ *     a default installation). Tomcat must be able to find an application
+ *     with this name in the JAAS configuration file. Here is a hypothetical
+ *     JAAS configuration file entry for a database-oriented login module that uses 
+ *     a Tomcat-managed JNDI database resource:
+ *     <blockquote><pre>Catalina {
+org.foobar.auth.DatabaseLoginModule REQUIRED
+    JNDI_RESOURCE=jdbc/AuthDB
+  USER_TABLE=users
+  USER_ID_COLUMN=id
+  USER_NAME_COLUMN=name
+  USER_CREDENTIAL_COLUMN=password
+  ROLE_TABLE=roles
+  ROLE_NAME_COLUMN=name
+  PRINCIPAL_FACTORY=org.foobar.auth.impl.SimplePrincipalFactory;
+};</pre></blockquote></li>
+ * <li>To set the JAAS configuration file
+ *     location, set the <code>CATALINA_OPTS</code> environment variable
+ *     similar to the following:
+<blockquote><code>CATALINA_OPTS="-Djava.security.auth.login.config=$CATALINA_HOME/conf/jaas.config"</code></blockquote>
+ * </li>
+ * <li>As part of the login process, JAASRealm registers its own <code>CallbackHandler</code>,
+ *     called (unsurprisingly) <code>JAASCallbackHandler</code>. This handler supplies the 
+ *     HTTP requests's username and credentials to the user-supplied <code>LoginModule</code></li>
+ * <li>As with other <code>Realm</code> implementations, digested passwords are supported if
+ *     the <code>&lt;Realm&gt;</code> element in <code>server.xml</code> contains a 
+ *     <code>digest</code> attribute; <code>JAASCallbackHandler</code> will digest the password
+ *     prior to passing it back to the <code>LoginModule</code></li>  
+* </ul>
+*
+* @author Craig R. McClanahan
+* @author Yoav Shapira
  * @version $Revision$ $Date$
  */
 
@@ -104,20 +136,20 @@ public class JAASRealm
 
     /**
      * The application name passed to the JAAS <code>LoginContext</code>,
-     * which uses it to select the set of relevant <code>LoginModules</code>.
+     * which uses it to select the set of relevant <code>LoginModule</code>s.
      */
     protected String appName = null;
 
 
     /**
-     * Descriptive information about this Realm implementation.
+     * Descriptive information about this <code>Realm</code> implementation.
      */
     protected static final String info =
         "org.apache.catalina.realm.JAASRealm/1.0";
 
 
     /**
-     * Descriptive information about this Realm implementation.
+     * Descriptive information about this <code>Realm</code> implementation.
      */
     protected static final String name = "JAASRealm";
 
@@ -125,7 +157,7 @@ public class JAASRealm
     /**
      * The list of role class names, split out for easy processing.
      */
-    protected ArrayList roleClasses = new ArrayList();
+    protected List roleClasses = new ArrayList();
 
 
     /**
@@ -138,7 +170,14 @@ public class JAASRealm
     /**
      * The set of user class names, split out for easy processing.
      */
-    protected ArrayList userClasses = new ArrayList();
+    protected List userClasses = new ArrayList();
+
+     /**
+      * Map associating each user <code>Principal</code> object
+      * with an array of role <code>Principal</code>s. 
+      * This Map is read when <code>hasRole</code> is called.
+      */
+     protected Map roleMap = new HashMap();
 
     /**
      * Whether to use context ClassLoader or default ClassLoader.
@@ -152,15 +191,15 @@ public class JAASRealm
 
     
     /**
-     * setter for the appName member variable
-     * @deprecated JAAS should use the Engine ( domain ) name and webpp/host overrides
+     * setter for the <code>appName</code> member variable
+     * @deprecated JAAS should use the <code>Engine</code> (domain) name and webpp/host overrides
      */
     public void setAppName(String name) {
         appName = name;
     }
     
     /**
-     * getter for the appName member variable
+     * getter for the <code>appName</code> member variable
      */
     public String getAppName() {
         return appName;
@@ -201,7 +240,7 @@ public class JAASRealm
     }
 
     /**
-     * Comma-delimited list of <code>javax.security.Principal</code> classes
+     * Comma-delimited list of <code>java.security.Principal</code> classes
      * that represent security roles.
      */
     protected String roleClassNames = null;
@@ -210,8 +249,16 @@ public class JAASRealm
         return (this.roleClassNames);
     }
 
-    public void setRoleClassNames(String roleClassNames) {
-        this.roleClassNames = roleClassNames;
+     /**
+      * Sets the list of comma-delimited classes that represent 
+      * roles. The classes in the list must implement <code>java.security.Principal</code>.
+      * When this accessor is called (for example, by a <code>Digester</code>
+      * instance parsing the
+      * configuration file), it will parse the class names and store the resulting
+      * string(s) into the <code>ArrayList</code> field </code>roleClasses</code>.
+      */
+     public void setRoleClassNames(String roleClassNames) {
+         this.roleClassNames = roleClassNames;
         roleClasses.clear();
         String temp = this.roleClassNames;
         if (temp == null) {
@@ -233,7 +280,7 @@ public class JAASRealm
 
 
     /**
-     * Comma-delimited list of <code>javax.security.Principal</code> classes
+     * Comma-delimited list of <code>java.security.Principal</code> classes
      * that represent individual users.
      */
     protected String userClassNames = null;
@@ -242,6 +289,14 @@ public class JAASRealm
         return (this.userClassNames);
     }
 
+     /**
+     * Sets the list of comma-delimited classes that represent individual
+     * users. The classes in the list must implement <code>java.security.Principal</code>.
+     * When this accessor is called (for example, by a <code>Digester</code>
+     * instance parsing the
+     * configuration file), it will parse the class names and store the resulting
+     * string(s) into the <code>ArrayList</code> field </code>userClasses</code>.
+     */
     public void setUserClassNames(String userClassNames) {
         this.userClassNames = userClassNames;
         userClasses.clear();
@@ -268,7 +323,7 @@ public class JAASRealm
 
 
     /**
-     * Return the Principal associated with the specified username and
+     * Return the <code>Principal</code> associated with the specified username and
      * credentials, if there is one; otherwise return <code>null</code>.
      *
      * If there are any errors with the JDBC connection, executing
@@ -276,7 +331,7 @@ public class JAASRealm
      * event is also logged, and the connection will be closed so that
      * a subsequent request will automatically re-open it.
      *
-     * @param username Username of the Principal to look up
+     * @param username Username of the <code>Principal</code> to look up
      * @param credentials Password or other credentials to use in
      *  authenticating this username
      */
@@ -288,7 +343,7 @@ public class JAASRealm
         if( appName==null ) appName="Tomcat";
 
         if( log.isDebugEnabled())
-            log.debug("Authenticating " + appName + " " +  username);
+            log.debug(sm.getString("jaasRealm.beginLogin", username, appName));
 
         // What if the LoginModule is in the container class loader ?
         ClassLoader ocl = null;
@@ -345,7 +400,7 @@ public class JAASRealm
         }
 
         if( log.isDebugEnabled())
-            log.debug("Getting principal " + subject);
+            log.debug(sm.getString("jaasRealm.loginContextCreated", username));
 
         // Return the appropriate Principal for this authenticated Subject
         Principal principal = createPrincipal(username, subject);
@@ -363,7 +418,53 @@ public class JAASRealm
             return null;
         }
     }
-
+     
+     /**
+      * Returns <code>true</code> if the specified user <code>Principal</code> has the specified
+      * security role, within the context of this <code>Realm</code>; otherwise return
+      * <code>false</code>. This will be true when 
+      * an associated role <code>Principal</code> can be found whose <code>getName</code>
+      * method returns a <code>String</code> equalling the specified role.
+      * @param principal <code>Principal</code> for whom the role is to be checked
+      * @param role Security role to be checked
+      */
+     public boolean hasRole(Principal principal, String role) {
+         if (log.isDebugEnabled()) {
+             log.debug(sm.getString("jaasRealm.isInRole.start", principal.getName(), role));
+         }
+         
+         if ((principal == null) || (role == null) ||
+             (roleMap.get(principal) == null)) {
+             if (log.isDebugEnabled()) {
+                 log.debug(sm.getString("jaasRealm.isInRole.noPrincipalOrRole"));
+             }
+             return false;
+         }
+         
+         List roles = (List)roleMap.get(principal);
+         if (log.isDebugEnabled()) {
+             log.debug(sm.getString("jaasRealm.isInRole.principalCached", String.valueOf(roles.size())));
+         }
+         
+         for (Iterator it = roles.iterator(); it.hasNext();) {
+             Principal possessedRole = (Principal)it.next();
+             String possessedRoleName = possessedRole.getName();
+             if (log.isDebugEnabled()) {
+                 log.debug(sm.getString("jaasRealm.isInRole.possessesRole", possessedRole.getName()));
+             }
+             
+             if (possessedRoleName.equals(role)) {
+                 if (log.isDebugEnabled()) {
+                     log.debug(sm.getString("jaasRealm.isInRole.match"));
+                 }
+                 return true;
+             }
+         }
+         if (log.isDebugEnabled()) {
+             log.debug(sm.getString("jaasRealm.isInRole.noMatch"));
+         }
+         return false;
+     }
 
     // -------------------------------------------------------- Package Methods
 
@@ -372,7 +473,7 @@ public class JAASRealm
 
 
     /**
-     * Return a short name for this Realm implementation.
+     * Return a short name for this <code>Realm</code> implementation.
      */
     protected String getName() {
 
@@ -392,7 +493,7 @@ public class JAASRealm
 
 
     /**
-     * Return the Principal associated with the given user name.
+     * Return the <code>Principal</code> associated with the given user name.
      */
     protected Principal getPrincipal(String username) {
 
@@ -402,58 +503,76 @@ public class JAASRealm
 
 
     /**
-     * Construct and return a <code>java.security.Principal</code> instance
-     * representing the authenticated user for the specified Subject.  If no
-     * such Principal can be constructed, return <code>null</code>.
-     *
-     * @param subject The Subject representing the logged in user
+     * Identify and return a <code>java.security.Principal</code> instance
+     * representing the authenticated user for the specified <code>Subject</code>.
+     * The Principal is constructed by scanning the list of Principals returned
+     * by the JAASLoginModule. The first <code>Principal</code> object that matches
+     * one of the class names supplied as a "user class" is the user Principal.
+     * This object is returned to tha caller.
+     * Any remaining principal objects returned by the LoginModules are mapped to  
+     * roles, but only if their respective classes match one of the "role class" classes. 
+     * If a user Principal cannot be constructed, return <code>null</code>.
+     * @param subject The <code>Subject</code> representing the logged-in user
      */
     protected Principal createPrincipal(String username, Subject subject) {
         // Prepare to scan the Principals for this Subject
         String password = null; // Will not be carried forward
-        ArrayList roles = new ArrayList();
+
+        List roles = new ArrayList();
+        Principal userPrincipal = null;
 
         // Scan the Principals for this Subject
         Iterator principals = subject.getPrincipals().iterator();
         while (principals.hasNext()) {
             Principal principal = (Principal) principals.next();
-            // No need to look further - that's our own stuff
-            if( principal instanceof GenericPrincipal ) {
-                if( log.isDebugEnabled() )
-                    log.debug("Found old GenericPrincipal " + principal );
-                return principal;
-            }
-            String principalClass = principal.getClass().getName();
-            if( log.isDebugEnabled() )
-                log.info("Principal: " + principalClass + " " + principal);
 
-            if (userClasses.contains(principalClass)) {
-                // Override the default - which is the original user, accepted by
-                // the friendly LoginManager
-                username = principal.getName();
+            String principalClass = principal.getClass().getName();
+
+            if( log.isDebugEnabled() ) {
+                log.debug(sm.getString("jaasRealm.checkPrincipal", principal, principalClass));
             }
+
+            if (userPrincipal == null && userClasses.contains(principalClass)) {
+                userPrincipal = principal;
+                if( log.isDebugEnabled() ) {
+                    log.debug(sm.getString("jaasRealm.userPrincipalSuccess", principal.getName()));
+                }
+            }
+            
             if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
             }
-            // Same as Jboss - that's a pretty clean solution
-            if( (principal instanceof Group) &&
-                 "Roles".equals( principal.getName())) {
-                Group grp=(Group)principal;
-                Enumeration en=grp.members();
-                while( en.hasMoreElements() ) {
-                    Principal roleP=(Principal)en.nextElement();
-                    roles.add( roleP.getName());
-                }
 
+            if (roleClasses.contains(principalClass)) {
+                roles.add(principal);
+                if( log.isDebugEnabled() ) {
+                    log.debug(sm.getString("jaasRealm.rolePrincipalAdd", principal.getName()));
+                }
             }
         }
 
-        // Create the resulting Principal for our authenticated user
-        if (username != null) {
-            return (new GenericPrincipal(this, username, password, roles));
+        // Print failure message if needed
+        if (userPrincipal == null) {
+            if (log.isDebugEnabled()) {
+                log.debug(sm.getString("jaasRealm.userPrincipalFailure"));
+                log.debug(sm.getString("jaasRealm.rolePrincipalFailure"));
+            }
         } else {
-            return (null);
+            if (roles.size() == 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug(sm.getString("jaasRealm.rolePrincipalFailure"));
+                }
+            } else {
+                roleMap.put(userPrincipal, roles);
+                if (log.isDebugEnabled()) {
+                    log.debug(sm.getString("jaasRealm.rolePrincipalSuccess", String.valueOf(roles.size())));
+                    log.debug(sm.getString("jaasRealm.cachePrincipal", userPrincipal.getName(), String.valueOf(roles.size())));
+                }
+            }
         }
+
+        // Return the resulting Principal for our authenticated user
+        return userPrincipal;
     }
 
      /**
@@ -488,7 +607,7 @@ public class JAASRealm
 
     /**
      *
-     * Prepare for active use of the public methods of this Component.
+     * Prepare for active use of the public methods of this <code>Component</code>.
      *
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents it from being started
@@ -502,7 +621,7 @@ public class JAASRealm
 
 
     /**
-     * Gracefully shut down active use of the public methods of this Component.
+     * Gracefully shut down active use of the public methods of this <code>Component</code>.
      *
      * @exception LifecycleException if this component detects a fatal error
      *  that needs to be reported

@@ -48,6 +48,9 @@
       <fix>
         <bug>31277</bug>: Clarified automatic application deployment section of Host configuration page. (yoavs)
       </fix>
+     <fix> 
+       <bug>28631</bug>: JAASRealm enhancements to support custom user, role class names, use Commons-Logging. (yoavs) 
+     </fix> 
     </changelog>
   </subsection>
 
