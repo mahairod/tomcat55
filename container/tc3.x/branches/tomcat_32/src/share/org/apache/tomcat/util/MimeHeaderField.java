@@ -364,7 +364,7 @@ public class MimeHeaderField {
      * @param s the string to compare
      */
     public boolean nameEquals(String s) {
-	switch (type) {
+	switch (nameType) {
 	case T_STR:
 	    return name.equalsIgnoreCase(s);
 	case T_CHARS:
