@@ -138,8 +138,10 @@
 
     <copy todir="${tomcat.build}/common/lib" file="${commons-logging-api.jar}" />
     <copy tofile="${tomcat.build}/common/lib/jmx.jar" file="${jmx.jar}" />
+    <!--
     <copy tofile="${tomcat.build}/common/lib/jmx-tools.jar" 
           file="${jmx-tools.jar}" />
+    -->
     <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
   </target>
@@ -1113,6 +1115,9 @@
         <exclude name="build/**"/>
         <exclude name="dist/**"/>
         <exclude name="release/**"/>
+        <exclude name="compat/**"/>
+        <exclude name="deployer/**"/>
+        <exclude name="embed/**"/>
         <exclude name="build.properties"/>
       </fileset>
     </copy>
