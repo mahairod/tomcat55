@@ -42,6 +42,10 @@
                     path="/index.jsp"
                 redirect="false"/>
 
+    <forward        name="Tree Control Test"
+                    path="/tree-control-test.jsp"
+                redirect="false"/>
+
   </global-forwards>
 
 
@@ -79,6 +83,10 @@
                name="setLocaleForm"
               scope="session">
     </action>
+
+    <!-- Tree control test action -->
+    <action    path="/treeControlTest"
+               type="org.apache.webapp.admin.TreeControlTestAction"/>
 
   </action-mappings>
 

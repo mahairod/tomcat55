@@ -6,6 +6,13 @@
 
 <web-app>
 
+  <!-- Session Event Listener for Tree Control Test -->
+  <listener>
+    <listener-class>
+      org.apache.webapp.admin.TreeControlTestListener
+    </listener-class>
+  </listener>
+
   <!-- Action Servlet Configuration -->
   <servlet>
     <servlet-name>action</servlet-name>
