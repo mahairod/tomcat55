@@ -676,17 +676,7 @@ public class StandardHostDeployer implements Deployer {
                 if (workDir == null &&
                     context instanceof StandardContext &&
                     ((StandardContext)context).getWorkDir() != null) {
-                    workDir = new File(((StandardContext)context).getWorkDir());
-                    if (!workDir.isAbsolute()) {
-                        File catalinaHome = new File(System.getProperty("catalina.base"));
-                        String catalinaHomePath = null;
-                        try {
-                            catalinaHomePath = catalinaHome.getCanonicalPath();
-                            workDir = new File(catalinaHomePath,
-                                               ((StandardContext)context).getWorkDir());
-                        } catch (IOException e) {
-                        }
-                    }
+                    workDir = new File(((StandardContext)context).getWorkPath());
                 }
                 if (workDir != null && workDir.exists()) {
                     deleteDir(workDir);
