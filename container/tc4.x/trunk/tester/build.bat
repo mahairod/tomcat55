@@ -30,7 +30,7 @@ goto cleanup
 :gotJavaHome
 
 if not "%ANT_HOME%" == "" goto gotAntHome
-set ANT_HOME=../jakarta-ant
+set ANT_HOME=../../jakarta-ant
 :gotAntHome
 
 

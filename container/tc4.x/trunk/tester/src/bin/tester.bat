@@ -4,6 +4,8 @@ rem tester.bat - Execute Test Application Client
 rem
 rem Environment Variable Prequisites:
 rem
+rem   ANT_HOME       Ant runtime directory
+rem
 rem   CATALINA_HOME (Optional) May point at your Catalina "build" directory.
 rem                 If not present, the current working directory is assumed.
 rem
@@ -18,6 +20,7 @@ rem ---------------------------------------------------------------------------
 
 rem ----- Save Environment Variables That May Change --------------------------
 
+set _ANT_HOME=%ANT_HOME%
 set _CATALINA_HOME=%CATALINA_HOME%
 set _CLASSPATH=%CLASSPATH%
 set _CP=%CP%
@@ -29,6 +32,10 @@ if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto cleanup
 :gotJavaHome
+
+if not "%ANT_HOME%" == "" goto gotAntHome
+set ANT_HOME=../../jakarta-ant
+:gotAntHome
 
 if not "%CATALINA_HOME%" == "" goto gotCatalinaHome
 set CATALINA_HOME=.
@@ -67,5 +74,7 @@ set _CATALINA_HOME=
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
 set CP=%_CP%
+set ANT_HOME=%_ANT_HOME%
+set _ANT_HOME=
 set _RUNJAVA=
 :finish
