@@ -66,7 +66,6 @@ import java.util.Arrays;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-
 /**
  * <p>Shared utility methods for the resource administration module.</p>
  *
@@ -78,6 +77,7 @@ import javax.management.ObjectName;
 public class ResourceUtils {
 
     public final static String ENVIRONMENT_TYPE = "Catalina:type=Environment";
+    public final static String RESOURCE_TYPE = "Catalina:type=Resource";
     public final static String NAMINGRESOURCES_TYPE = "Catalina:type=NamingResources";
 
     // --------------------------------------------------------- Public Methods
@@ -91,7 +91,6 @@ public class ResourceUtils {
      *
      * @exception Exception if an error occurs
      */
-    //public static EnvEntriesForm getEnvEntriesForm(MBeanServer mserver)
     public static EnvEntriesForm getEnvEntriesForm(MBeanServer mserver)
         throws Exception {
 
@@ -111,7 +110,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Construct and return a DatasourcesForm identifying all currently defined
+     * Construct and return a DataSourcesForm identifying all currently defined
      * datasources in the specified resource database.
      *
      * @param mserver MBeanServer to be consulted
@@ -119,23 +118,29 @@ public class ResourceUtils {
      *
      * @exception Exception if an error occurs
      */
-    /*
-    public static DatasourcesForm getDatasourcesForm(MBeanServer mserver,
-                                           String databaseName)
+    public static DataSourcesForm getDataSourcesForm(MBeanServer mserver)
         throws Exception {
-
-        ObjectName dname = new ObjectName(databaseName);
+   
+        ObjectName rname = new ObjectName( NAMINGRESOURCES_TYPE );
         String results[] =
-            (String[]) mserver.getAttribute(dname, "datasources");
+            (String[]) mserver.getAttribute(rname, "resources");
+        
+        /*    
+        ObjectName rname = new ObjectName( RESOURCE_TYPE + 
+                            ",class=" + "javax.sql.DataSource");
+
+        // display only JDBC Resources for the DataSources screen       
+        String[] results = (String[]) (mserver.queryMBeans(rname, null).toArray());
+         */
+        
         if (results == null) {
             results = new String[0];
-        }
+        }        
         Arrays.sort(results);
 
-        DatasourcesForm datasourcesForm = new DatasourcesForm();
-        datasourcesForm.setDatasources(results);
-        return (datasourcesForm);
+        DataSourcesForm dataSourcesForm = new DataSourcesForm();
+        dataSourcesForm.setDataSources(results);
+        return (dataSourcesForm);
 
     }
-     */
 }

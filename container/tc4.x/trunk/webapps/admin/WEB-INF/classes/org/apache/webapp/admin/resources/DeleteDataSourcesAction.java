@@ -22,14 +22,14 @@
  *    the documentation and/or other materials provided with the
  *    distribution.
  *
- * 3. The end-user documentation included with the redistribution, if
+ * 3. The end-envEntry documentation included with the redistribution, if
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ * 4. The names "The Jakarta Project", "Struts", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -62,39 +62,44 @@
 
 package org.apache.webapp.admin.resources;
 
-
 import java.io.IOException;
-import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import javax.management.Attribute;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.QueryExp;
+import javax.management.Query;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.JMException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * <p>Retrieve the set of MBean names for all currently defined environment entries,
- * and expose them in a request attribute named "enventriesForm".  This action
- * requires the following request parameters to be set:</p>
- * <ul>
- * <li><strong>forward</strong> - Global forward to which we should
- *     go after stashing the env entries list.</li>
- * </ul>
+ * <p>Implementation of <strong>Action</strong> that deletes the
+ * specified set of dataSource entries.</p>
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public class ListEnvEntriesAction extends Action {
+public final class DeleteDataSourcesAction extends Action {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -136,7 +141,6 @@ public class ListEnvEntriesAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-
         // Look up the components we will be using as needed
         if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
@@ -147,27 +151,59 @@ public class ListEnvEntriesAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
-        // Create a form bean containing the requested MBean Names
-        EnvEntriesForm envEntriesForm = null;
-        try {
-              envEntriesForm = ResourceUtils.getEnvEntriesForm(mserver);
-        } catch (Exception e) {
-            getServlet().log(resources.getMessage
-                             (locale,
-                              "users.error.attribute.get", "environments"), e);
-            response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 resources.getMessage
-                 (locale, "users.error.attribute.get", "environments"));
+        // Has this transaction been cancelled?
+        if (isCancelled(request)) {
+            return (mapping.findForward("List DataSources Setup"));
         }
 
-        // Stash the results in request scope
-        request.setAttribute("envEntriesForm", envEntriesForm);
-        saveToken(request);
-        String forward =
-            URLDecoder.decode(request.getParameter("forward"));
-        
-        return (mapping.findForward(forward));
+        // Check the transaction token
+        if (!isTokenValid(request)) {
+            response.sendError
+                (HttpServletResponse.SC_BAD_REQUEST,
+                 resources.getMessage(locale, "users.error.token"));
+            return (null);
+        }
+
+        // Perform any extra validation that is required
+        DataSourcesForm dataSourcesForm = (DataSourcesForm) form;
+        String dataSources[] = dataSourcesForm.getDataSources();
+        if (dataSources == null) {
+            dataSources = new String[0];
+        }
+
+        // Perform "Delete EnvEntry" transactions as required
+        try {
+
+            // Construct the MBean Name for the naming source
+            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+
+            String signature[] = new String[1];
+            signature[0] = "java.lang.String";
+            Object params[] = new String[1];
+
+            for (int i = 0; i < dataSources.length; i++) {
+                ObjectName oname = new ObjectName(dataSources[i]);
+                params[0] = oname.getKeyProperty("name");
+                mserver.invoke(dname, "removeResource",
+                               params, signature);
+            }
+
+        } catch (Throwable t) {
+
+            getServlet().log
+                (resources.getMessage(locale, "users.error.invoke",
+                                      "removeResource"), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.invoke",
+                                      "removeResource"));
+            return (null);
+
+        }
+
+        // Proceed to the list envEntrys screen
+        return (mapping.findForward("DataSources List Setup"));
+
     }
 
 }

@@ -22,14 +22,14 @@
  *    the documentation and/or other materials provided with the
  *    distribution.
  *
- * 3. The end-user documentation included with the redistribution, if
+ * 3. The end-DataSource documentation included with the redistribution, if
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ * 4. The names "The Jakarta Project", "Struts", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -59,20 +59,29 @@
  *
  */
 
-
 package org.apache.webapp.admin.resources;
-
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Iterator;
 import java.util.Locale;
+import javax.management.Attribute;
 import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.QueryExp;
+import javax.management.Query;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.JMException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.MBeanInfo;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -81,21 +90,17 @@ import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * <p>Retrieve the set of MBean names for all currently defined environment entries,
- * and expose them in a request attribute named "enventriesForm".  This action
- * requires the following request parameters to be set:</p>
- * <ul>
- * <li><strong>forward</strong> - Global forward to which we should
- *     go after stashing the env entries list.</li>
- * </ul>
+ * <p>Implementation of <strong>Action</strong> that sets up and stashes
+ * a <code>DataSourceForm</code> bean in request scope.  The form bean will have
+ * a null <code>objectName</code> property if this form represents a DataSource
+ * being added, or a non-null value for an existing DataSource.</p>
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public class ListEnvEntriesAction extends Action {
-
+public final class SetUpDataSourceAction extends Action {
 
     // ----------------------------------------------------- Instance Variables
 
@@ -136,7 +141,6 @@ public class ListEnvEntriesAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-
         // Look up the components we will be using as needed
         if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
@@ -147,27 +151,63 @@ public class ListEnvEntriesAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
-        // Create a form bean containing the requested MBean Names
-        EnvEntriesForm envEntriesForm = null;
-        try {
-              envEntriesForm = ResourceUtils.getEnvEntriesForm(mserver);
-        } catch (Exception e) {
-            getServlet().log(resources.getMessage
-                             (locale,
-                              "users.error.attribute.get", "environments"), e);
-            response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 resources.getMessage
-                 (locale, "users.error.attribute.get", "environments"));
-        }
-
-        // Stash the results in request scope
-        request.setAttribute("envEntriesForm", envEntriesForm);
-        saveToken(request);
-        String forward =
-            URLDecoder.decode(request.getParameter("forward"));
+        // Set up the form bean based on the creating or editing state
+        String objectName = request.getParameter("objectName");
         
-        return (mapping.findForward(forward));
-    }
+        DataSourceForm dataSourceForm = new DataSourceForm();
+        if (objectName == null) {
+            dataSourceForm.setNodeLabel
+                (resources.getMessage(locale, "resources.actions.datasrc.create"));
+            dataSourceForm.setObjectName(null);
+        } else {
+            dataSourceForm.setNodeLabel
+                (resources.getMessage(locale, "resources.actions.datasrc.edit"));
+            dataSourceForm.setObjectName(objectName);
+            
+            String attribute = null;
+            try {
+                ObjectName oname = new ObjectName(objectName);
+                attribute = "url";
+                dataSourceForm.setUrl
+                    ((String) mserver.getAttribute(oname, attribute));
+                attribute = "driverClassName";
+                dataSourceForm.setDriverClass
+                    ((String) mserver.getAttribute(oname, attribute));
+                attribute = "username";
+                dataSourceForm.setUsername
+                    ((String) mserver.getAttribute(oname, attribute));
+                attribute = "password";
+                dataSourceForm.setPassword
+                    ((String) mserver.getAttribute(oname, attribute));
+                attribute = "maxActive";
+                dataSourceForm.setActive
+                    (((Integer) mserver.getAttribute(oname, attribute)).toString());                
+                attribute = "maxWait";
+                dataSourceForm.setWait
+                    (((Integer) mserver.getAttribute(oname, attribute)).toString());
+                attribute = "maxIdle";
+                dataSourceForm.setIdle
+                    (((Integer) mserver.getAttribute(oname, attribute)).toString());
+                attribute = "validationQuery";
+                dataSourceForm.setQuery
+                    ((String) mserver.getAttribute(oname, attribute));
 
+            } catch (Exception e) {
+                getServlet().log
+                    (resources.getMessage(locale,
+                        "users.error.attribute.get", attribute), e);
+                response.sendError
+                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                     resources.getMessage
+                         (locale, "users.error.attribute.get", attribute));
+                return (null);
+            } 
+        }
+            
+        // Stash the form bean and forward to the display page
+        saveToken(request);
+        request.setAttribute("dataSourceForm", dataSourceForm);
+        return (mapping.findForward("DataSource"));
+
+    }
 }

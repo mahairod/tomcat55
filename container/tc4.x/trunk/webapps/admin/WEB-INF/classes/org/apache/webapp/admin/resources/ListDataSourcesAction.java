@@ -81,12 +81,12 @@ import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * <p>Retrieve the set of MBean names for all currently defined environment entries,
- * and expose them in a request attribute named "enventriesForm".  This action
+ * <p>Retrieve the set of MBean names for all currently defined data sources,
+ * and expose them in a request attribute named "dataSourcesForm".  This action
  * requires the following request parameters to be set:</p>
  * <ul>
  * <li><strong>forward</strong> - Global forward to which we should
- *     go after stashing the env entries list.</li>
+ *     go after stashing the dataSources list.</li>
  * </ul>
  *
  * @author Manveen Kaur
@@ -94,11 +94,9 @@ import org.apache.webapp.admin.ApplicationServlet;
  * @since 4.1
  */
 
-public class ListEnvEntriesAction extends Action {
-
+public class ListDataSourcesAction extends Action {
 
     // ----------------------------------------------------- Instance Variables
-
 
     /**
      * The MBeanServer we will be interacting with.
@@ -148,21 +146,21 @@ public class ListEnvEntriesAction extends Action {
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
         // Create a form bean containing the requested MBean Names
-        EnvEntriesForm envEntriesForm = null;
+        DataSourcesForm dataSourcesForm = null;
         try {
-              envEntriesForm = ResourceUtils.getEnvEntriesForm(mserver);
+              dataSourcesForm = ResourceUtils.getDataSourcesForm(mserver);
         } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,
-                              "users.error.attribute.get", "environments"), e);
+                              "users.error.attribute.get", "resources"), e);
             response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage
-                 (locale, "users.error.attribute.get", "environments"));
+                 (locale, "users.error.attribute.get", "resources"));
         }
 
         // Stash the results in request scope
-        request.setAttribute("envEntriesForm", envEntriesForm);
+        request.setAttribute("dataSourcesForm", dataSourcesForm);
         saveToken(request);
         String forward =
             URLDecoder.decode(request.getParameter("forward"));
