@@ -309,9 +309,24 @@ public interface Context extends Container {
     /**
      * Set the override flag for this web application.
      *
-     * @param overried The new override flag
+     * @param override The new override flag
      */
     public void setOverride(boolean override);
+
+
+    /**
+     * Return the privileged flag for this web application.
+     */
+    public boolean getPrivileged();
+
+
+    /**
+     * Set the privileged flag for this web application.
+     * 
+     * @param privileged The new privileged flag
+     */
+    public void setPrivileged(boolean privileged);
+
 
     /**
      * Return the servlet context for which this Context is a facade.
