@@ -65,11 +65,7 @@ import java.security.PermissionCollection;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.security.ProtectionDomain;
 
-import javax.servlet.http.*;
-
-import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
 /**

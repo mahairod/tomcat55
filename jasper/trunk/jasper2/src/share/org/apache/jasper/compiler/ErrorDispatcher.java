@@ -60,11 +60,14 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.util.*;
-import java.io.*;
-import java.text.MessageFormat;
-import org.xml.sax.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ResourceBundle;
+import java.util.Vector;
+
 import org.apache.jasper.JasperException;
+import org.xml.sax.SAXException;
 
 /**
  * Class responsible for dispatching JSP parse and javac compilation errors

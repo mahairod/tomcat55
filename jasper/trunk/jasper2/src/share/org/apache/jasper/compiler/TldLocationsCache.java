@@ -55,31 +55,24 @@
 package org.apache.jasper.compiler;
 
 import java.io.InputStream;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.IOException;
-import java.io.DataInputStream;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.jar.*;
 import java.net.JarURLConnection;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.servlet.ServletContext;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.Tag;
 
-import org.apache.jasper.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A container for all tag libraries that are defined "globally"

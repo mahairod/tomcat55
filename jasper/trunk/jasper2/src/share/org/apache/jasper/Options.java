@@ -63,12 +63,9 @@ package org.apache.jasper;
 
 import java.io.File;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
-import org.apache.jasper.compiler.TldLocationsCache;
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
+import org.apache.jasper.compiler.TldLocationsCache;
 
 /**
  * A class to hold all init parameters specific to the JSP engine. 

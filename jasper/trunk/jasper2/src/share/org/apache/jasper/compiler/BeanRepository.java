@@ -62,14 +62,8 @@ package org.apache.jasper.compiler;
 
 
 import java.util.Vector;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
-import java.beans.Beans;
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
-
-import javax.servlet.ServletException;
 import org.apache.jasper.JasperException;
 
 /**

@@ -54,16 +54,19 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
-import java.util.jar.*;
-import java.net.*;
-import javax.servlet.jsp.tagext.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.Attributes;
-import org.apache.jasper.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.Stack;
+import java.util.jar.JarFile;
+
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.xmlparser.XMLEncodingDetector;
+import org.xml.sax.Attributes;
 
 /**
  * Controller for the parsing of a JSP page.

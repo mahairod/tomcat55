@@ -60,12 +60,25 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.util.*;
-import java.io.CharArrayWriter;
-import javax.servlet.jsp.tagext.*;
-import org.xml.sax.Attributes;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import javax.servlet.jsp.tagext.BodyTag;
+import javax.servlet.jsp.tagext.DynamicAttributes;
+import javax.servlet.jsp.tagext.IterationTag;
+import javax.servlet.jsp.tagext.SimpleTag;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
+import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagFileInfo;
+import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
+import javax.servlet.jsp.tagext.TryCatchFinally;
+import javax.servlet.jsp.tagext.VariableInfo;
+
 import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.tagplugin.TagPluginContext;
+import org.xml.sax.Attributes;
 
 
 /**

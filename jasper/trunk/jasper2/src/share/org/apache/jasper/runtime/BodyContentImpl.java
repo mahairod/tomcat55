@@ -55,10 +55,15 @@
 
 package org.apache.jasper.runtime;
 
-import java.io.*;
-import javax.servlet.ServletResponse;
+import java.io.CharArrayReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
+
 import org.apache.jasper.Constants;
 
 /**

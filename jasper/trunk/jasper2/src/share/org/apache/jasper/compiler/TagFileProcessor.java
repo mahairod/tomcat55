@@ -62,15 +62,21 @@ compiler/TagFileProcessor.java,v 1.16 2002/05/24 23:57:42 kinman Exp $
 
 package org.apache.jasper.compiler;
 
-import java.util.*;
-import java.util.jar.JarFile;
-import java.io.*;
-import java.net.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Iterator;
+import java.util.Vector;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
+import javax.servlet.jsp.tagext.TagExtraInfo;
+import javax.servlet.jsp.tagext.TagFileInfo;
+import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagLibraryInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
+import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.servlet.JspServletWrapper;

@@ -60,10 +60,8 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * This is what is used to generate servlets. 

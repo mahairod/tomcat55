@@ -61,13 +61,13 @@
 
 package org.apache.jasper.runtime;
 
-import java.lang.IllegalStateException;
-import java.io.Writer;
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.jsp.JspWriter;
 
 /**

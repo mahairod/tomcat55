@@ -59,37 +59,28 @@
 
 package org.apache.jasper.servlet;
 
-import java.io.IOException;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Hashtable;
-import java.util.jar.JarFile;
+import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.SingleThreadModel;
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagData;
 
-import org.apache.jasper.JasperException;
-import org.apache.jasper.Constants;
-import org.apache.jasper.Options;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.compiler.JspRuntimeContext;
-import org.apache.jasper.compiler.JspUtil;
-import org.apache.jasper.compiler.Localizer;
-import org.apache.jasper.runtime.JspSourceDependent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.Options;
+import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.compiler.Localizer;
+import org.apache.jasper.runtime.JspSourceDependent;
 
 /**
  * The JSP engine (a.k.a Jasper).

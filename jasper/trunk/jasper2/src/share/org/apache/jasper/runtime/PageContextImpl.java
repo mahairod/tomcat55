@@ -61,47 +61,38 @@
 
 package org.apache.jasper.runtime;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
-import java.util.EmptyStackException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Stack;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.ServletException;
-
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
-import javax.servlet.jsp.PageContext;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
+import javax.servlet.jsp.tagext.BodyContent;
 
-import org.apache.jasper.Constants;
-import org.apache.jasper.compiler.Localizer;
-
-import org.apache.commons.el.VariableResolverImpl;
 import org.apache.commons.el.ExpressionEvaluatorImpl;
-
+import org.apache.commons.el.VariableResolverImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jasper.Constants;
+import org.apache.jasper.compiler.Localizer;
 
 /**
  * Implementation of the PageContext class from the JSP spec.

@@ -61,34 +61,38 @@
 
 package org.apache.jasper;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.BufferedReader;
+import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Stack;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
-import org.apache.tools.ant.AntClassLoader;
-
-import org.apache.jasper.compiler.ServletWriter;
-import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.TldLocationsCache;
-import org.apache.jasper.compiler.JspConfig;
-import org.apache.jasper.compiler.TagPluginManager;
-import org.apache.jasper.compiler.Localizer;
-import org.apache.jasper.compiler.JspRuntimeContext;
-import org.apache.jasper.servlet.JspCServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jasper.compiler.Compiler;
+import org.apache.jasper.compiler.JspConfig;
+import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.compiler.Localizer;
+import org.apache.jasper.compiler.TagPluginManager;
+import org.apache.jasper.compiler.TldLocationsCache;
+import org.apache.jasper.servlet.JspCServletContext;
+import org.apache.tools.ant.AntClassLoader;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the

@@ -62,30 +62,28 @@
 
 package org.apache.jasper.runtime;
 
-import java.util.*;
-import java.io.*;
-import java.beans.*;
-import java.security.*;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Enumeration;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.el.VariableResolver;
-import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.Localizer;
-
-// for JSTL expression interpreter
-import javax.servlet.jsp.PageContext;
 
 /**
  * Bunch of util methods that are used by code generated for useBean,

@@ -61,7 +61,6 @@
 
 package org.apache.jasper.compiler.tagplugin;
 
-import org.apache.jasper.compiler.ServletWriter;
 
 /**
  * This interface allows the plugin author to make inqueries about the

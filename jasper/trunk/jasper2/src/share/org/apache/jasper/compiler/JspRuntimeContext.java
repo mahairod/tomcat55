@@ -64,31 +64,27 @@ package org.apache.jasper.compiler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilePermission;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
-import java.security.Policy;
 import java.security.PermissionCollection;
-import java.util.Iterator;
-import java.util.List;
+import java.security.Policy;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspFactory;
 
-import org.apache.jasper.JasperException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.runtime.JspFactoryImpl;
 import org.apache.jasper.security.SecurityClassLoad;
 import org.apache.jasper.servlet.JspServletWrapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Class for tracking JSP compile time file dependencies when the

@@ -61,20 +61,25 @@
 package org.apache.jasper.compiler;
 
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.HashMap;
-import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.servlet.jsp.tagext.*;
 import javax.servlet.jsp.el.FunctionMapper;
+import javax.servlet.jsp.tagext.FunctionInfo;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.PageData;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
+import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagExtraInfo;
+import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagLibraryInfo;
+import javax.servlet.jsp.tagext.ValidationMessage;
 
+import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.Constants;
-
 import org.xml.sax.Attributes;
 
 /**

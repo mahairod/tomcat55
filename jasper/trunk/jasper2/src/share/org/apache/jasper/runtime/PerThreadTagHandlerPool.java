@@ -61,12 +61,12 @@
 
 package org.apache.jasper.runtime;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.servlet.Servlet;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.Servlet;
-import org.apache.jasper.Constants;
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 /**
  * Pool of tag handlers that can be reused.

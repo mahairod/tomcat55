@@ -61,18 +61,17 @@
 
 package org.apache.jasper.compiler;
 
-import java.util.Vector;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.servlet.ServletContext;
 
-import org.apache.jasper.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the jsp-config element in WEB_INF/web.xml.  This is used

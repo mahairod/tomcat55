@@ -60,11 +60,9 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.util.*;
-import java.io.*;
 import java.text.MessageFormat;
-import org.xml.sax.*;
-import org.apache.jasper.JasperException;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * Class responsible for converting error codes to corresponding localized

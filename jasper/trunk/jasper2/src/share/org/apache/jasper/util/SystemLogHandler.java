@@ -57,15 +57,8 @@
 package org.apache.jasper.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Writer;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.FileWriter;
-import java.io.File;
-import java.io.OutputStreamWriter;
 import java.io.IOException;
-import java.io.StringWriter;
-
+import java.io.PrintStream;
 import java.util.Hashtable;
 
 
