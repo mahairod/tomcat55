@@ -1,4 +1,9 @@
 /*
+* $Header$
+* $Revision$
+* $Date$
+*
+* ====================================================================
 * The Apache Software License, Version 1.1
 *
 * Copyright (c) 1999 The Apache Software Foundation.  All rights
@@ -206,6 +211,13 @@ public class JDBCRealm
 
     // ------------------------------------------------------------- Properties
 
+    /**
+     * Return the username to use to connect to the database.
+     *
+     */
+    public String getConnectionName() {
+        return connectionName;
+    }
 
     /**
      * Set the username to use to connect to the database.
@@ -216,6 +228,13 @@ public class JDBCRealm
         this.connectionName = connectionName;
     }
 
+    /**
+     * Return the password to use to connect to the database.
+     *
+     */
+    public String getConnectionPassword() {
+        return connectionPassword;
+    }
 
     /**
      * Set the password to use to connect to the database.
@@ -226,6 +245,13 @@ public class JDBCRealm
         this.connectionPassword = connectionPassword;
     }
 
+    /**
+     * Return the URL to use to connect to the database.
+     *
+     */
+    public String getConnectionURL() {
+        return connectionURL;
+    }
 
     /**
      * Set the URL to use to connect to the database.
@@ -236,6 +262,13 @@ public class JDBCRealm
       this.connectionURL = connectionURL;
     }
 
+    /**
+     * Return the JDBC driver that will be used.
+     *
+     */
+    public String getDriverName() {
+        return driverName;
+    }
 
     /**
      * Set the JDBC driver that will be used.
@@ -246,6 +279,13 @@ public class JDBCRealm
       this.driverName = driverName;
     }
 
+    /**
+     * Return the column in the user role table that names a role.
+     *
+     */
+    public String getRoleNameCol() {
+        return roleNameCol;
+    }
 
     /**
      * Set the column in the user role table that names a role.
@@ -256,6 +296,13 @@ public class JDBCRealm
         this.roleNameCol = roleNameCol;
     }
 
+    /**
+     * Return the column in the user table that holds the user's credentials.
+     *
+     */
+    public String getUserCredCol() {
+        return userCredCol;
+    }
 
     /**
      * Set the column in the user table that holds the user's credentials.
@@ -266,6 +313,13 @@ public class JDBCRealm
        this.userCredCol = userCredCol;
     }
 
+    /**
+     * Return the column in the user table that holds the user's name.
+     *
+     */
+    public String getUserNameCol() {
+        return userNameCol;
+    }
 
     /**
      * Set the column in the user table that holds the user's name.
@@ -276,6 +330,13 @@ public class JDBCRealm
        this.userNameCol = userNameCol;
     }
 
+    /**
+     * Return the table that holds the relation between user's and roles.
+     *
+     */
+    public String getUserRoleTable() {
+        return userRoleTable;
+    }
 
     /**
      * Set the table that holds the relation between user's and roles.
@@ -286,6 +347,13 @@ public class JDBCRealm
         this.userRoleTable = userRoleTable;
     }
 
+    /**
+     * Return the table that holds user data..
+     *
+     */
+    public String getUserTable() {
+        return userTable;
+    }
 
     /**
      * Set the table that holds user data.
