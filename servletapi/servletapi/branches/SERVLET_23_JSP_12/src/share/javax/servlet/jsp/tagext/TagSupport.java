@@ -169,12 +169,6 @@ public class TagSupport implements IterationTag, Serializable {
 
     // Actions related to body evaluation
 
-    /**
-     * Reset all custom (i.e. not parent, not pageContext) attributes to their
-     * default values
-     */
-    public void resetCustomAttributes() { }
-
 
     /**
      * Release state.
