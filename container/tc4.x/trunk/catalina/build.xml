@@ -71,7 +71,9 @@
 
     <!-- =================== Conditional Compilation Falgs ================ -->
     <available property="tyrex.present"
-     classname="tyrex.jdbc.ServerDataSource" />
+     classname="tyrex.jdbc.xa.EnabledDataSource" />
+    <available property="jdbcse.present"
+     classname="javax.sql.DataSource" />
     <available property="jta.present"
      classname="javax.transaction.UserTransaction" />
 
@@ -80,10 +82,10 @@
              classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**">
-      <exclude name="**/factory/TyrexDataSourceFactory.java" 
+      <exclude name="**/factory/Tyrex*.java" 
        unless="tyrex.present" />
-      <exclude name="**/factory/TyrexTransactionFactory.java" 
-       unless="tyrex.present" />
+      <exclude name="**/factory/ResourceFactory.java" 
+       unless="jdbcse.present" />
       <exclude name="**/factory/TransactionFactory.java" 
        unless="jta.present" />
     </javac>
