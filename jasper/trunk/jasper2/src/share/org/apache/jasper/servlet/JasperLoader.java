@@ -177,8 +177,13 @@ public class JasperLoader extends URLClassLoader {
                         }
                     });
                 } catch(PrivilegedActionException ex){
-                    ex.getException().printStackTrace();
-
+                    Exception rootCause = ex.getException();
+                    if (rootCause instanceof ClassNotFoundException) {
+                        throw (ClassNotFoundException) rootCause;
+                    } else {
+                        throw new ClassNotFoundException("JasperLoader",
+                                                         rootCause);
+                    }
                 }
             } else {
                 clazz = parent.loadClass(name);
