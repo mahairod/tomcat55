@@ -78,7 +78,7 @@ Catalina Bug Fixes:
 Jasper Bug Fixes:
 ----------------
 
-
+JspParseEventListener: Eliminated use of hard coded '\n' line separator.
 
 -----------------
 Webapps Bug Fixes:
