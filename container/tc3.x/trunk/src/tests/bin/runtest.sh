@@ -15,7 +15,7 @@ test=testlist.txt
 
 cp=$CLASSPATH
 
-CLASSPATH=classes:lib/moo.jar
+CLASSPATH=classes:lib/ant.jar:lib/moo.jar
 
 if [ "$cp" != "" ]; then
     CLASSPATH=${CLASSPATH}:${cp}
@@ -49,12 +49,7 @@ export CLASSPATH
 echo Using classpath: ${CLASSPATH}
 echo
 
-#$JAVACMD org.apache.tomcat.shell.Startup "$@" &
-$TOMCAT_HOME/tomcat.sh start &
-sleep 25
-$JAVACMD -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main -testfile $test -debug
-$TOMCAT_HOME/tomcat.sh stop
-#$JAVACMD org.apache.tomcat.shell.Shutdown "$@"
+java org.apache.tools.ant.Main -f test.xml $@
 
 if [ "$cp" != "" ]; then
     CLASSPATH=${cp}
