@@ -443,6 +443,10 @@ final class ApplicationDispatcher
             // Close anyway
             try {
                 response.flushBuffer();
+            } catch (IllegalStateException f) {
+                ;
+            }
+            try {
                 PrintWriter writer = response.getWriter();
                 writer.flush();
                 writer.close();
