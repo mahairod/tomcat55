@@ -1546,7 +1546,7 @@ public class WebappClassLoader
             entry = findResourceInternal(name, classPath);
         }
 
-        if (entry == null)
+        if ((entry == null) || (entry.binaryContent == null))
             throw new ClassNotFoundException(name);
 
         Class clazz = entry.loadedClass;
@@ -1653,10 +1653,9 @@ public class WebappClassLoader
                 String fullPath = repositories[i] + path;
 
                 Object lookupResult = resources.lookup(fullPath);
-                if (!(lookupResult instanceof Resource))
-                    continue;
-
-                resource = (Resource) lookupResult;
+                if (lookupResult instanceof Resource) {
+                    resource = (Resource) lookupResult;
+                }
 
                 // Note : Not getting an exception here means the resource was
                 // found
@@ -1671,30 +1670,36 @@ public class WebappClassLoader
                     (ResourceAttributes) resources.getAttributes(fullPath);
                 contentLength = (int) attributes.getContentLength();
                 entry.lastModified = attributes.getLastModified();
-                try {
-                    binaryStream = resource.streamContent();
-                } catch (IOException e) {
-                    return null;
-                }
 
-                // Register the full path for modification checking
-                synchronized (paths) {
+                if (resource != null) {
 
-                    int j;
-
-                    long[] result2 = new long[lastModifiedDates.length + 1];
-                    for (j = 0; j < lastModifiedDates.length; j++) {
-                        result2[j] = lastModifiedDates[j];
+                    try {
+                        binaryStream = resource.streamContent();
+                    } catch (IOException e) {
+                        return null;
                     }
-                    result2[lastModifiedDates.length] = entry.lastModified;
-                    lastModifiedDates = result2;
 
-                    String[] result = new String[paths.length + 1];
-                    for (j = 0; j < paths.length; j++) {
-                        result[j] = paths[j];
+                    // Register the full path for modification checking
+                    synchronized (paths) {
+
+                        int j;
+
+                        long[] result2 = 
+                            new long[lastModifiedDates.length + 1];
+                        for (j = 0; j < lastModifiedDates.length; j++) {
+                            result2[j] = lastModifiedDates[j];
+                        }
+                        result2[lastModifiedDates.length] = entry.lastModified;
+                        lastModifiedDates = result2;
+
+                        String[] result = new String[paths.length + 1];
+                        for (j = 0; j < paths.length; j++) {
+                            result[j] = paths[j];
+                        }
+                        result[paths.length] = fullPath;
+                        paths = result;
+
                     }
-                    result[paths.length] = fullPath;
-                    paths = result;
 
                 }
 
@@ -1741,27 +1746,31 @@ public class WebappClassLoader
             return null;
         }
 
-        byte[] binaryContent = new byte[contentLength];
+        if (binaryStream != null) {
 
-        try {
-            int pos = 0;
-            while (true) {
-                int n = binaryStream.read(binaryContent, pos,
-                                          binaryContent.length - pos);
-                if (n <= 0)
-                    break;
-                pos += n;
+            byte[] binaryContent = new byte[contentLength];
+
+            try {
+                int pos = 0;
+                while (true) {
+                    int n = binaryStream.read(binaryContent, pos,
+                                              binaryContent.length - pos);
+                    if (n <= 0)
+                        break;
+                    pos += n;
+                }
+                binaryStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
             }
-            binaryStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
 
-        entry.binaryContent = binaryContent;
+            entry.binaryContent = binaryContent;
+
+        }
 
         // Add the entry in the local resource repository
         synchronized (this) {
