@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
 
 
   <target name="ROOT">
@@ -852,6 +852,57 @@
            debug="${debug}"
          request="${context.path}/Resources06?path=/WEB-INF"
       outContent="Resources06 PASSED"/>
+
+  </target>
+
+
+  <target name="ServletContext">
+
+    <!-- ========== Servlet Context Attributes ============================ -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Context00"
+      outContent="Context00 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Context01"
+      outContent="Context01 PASSED"/>
+
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${reload.path}"
+      outContent="OK - Reloaded application at context path ${reload.path}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Context02"
+      outContent="Context02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/WrappedContext00"
+      outContent="Context00 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/WrappedContext01"
+      outContent="Context01 PASSED"/>
+
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${reload.path}"
+      outContent="OK - Reloaded application at context path ${reload.path}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/WrappedContext02"
+      outContent="Context02 PASSED"/>
 
   </target>
 
