@@ -38,12 +38,20 @@
                type="boolean"/>
 
     <attribute name="rotatable"
-               description="Rotate log"
+               description="Flag to indicate automatic log rotation."
                is="true"
                type="boolean"/>
 
     <attribute name="suffix"
                description="The suffix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <attribute name="condition"
+               description="The value to look for conditional logging."
+               type="java.lang.String"/>
+
+    <attribute name="fileDateFormat"
+               description="The format for the date date based log rotation."
                type="java.lang.String"/>
   </mbean>
 
@@ -158,6 +166,10 @@
 
     <attribute name="suffix"
                description="The suffix that is added to log file filenames"
+               type="java.lang.String"/>
+
+    <attribute name="fileDateFormat"
+               description="The format for the date date based log rotation."
                type="java.lang.String"/>
 
     <operation name="rotate"
