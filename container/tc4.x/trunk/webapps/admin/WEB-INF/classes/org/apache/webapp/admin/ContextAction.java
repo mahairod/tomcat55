@@ -231,9 +231,80 @@ public final class ContextAction extends Action {
                 workDir));
             }
             
-            // FIXME
-            // Need to write loader and session mgr properties back
-            // once their mBeans are available through code!
+            // writing loader properties
+            // retrieve the corresponding loader mBean
+            String loaderName = request.getParameter("loaderName");
+            
+            Iterator loaderItr =
+            mBServer.queryMBeans(new ObjectName(loaderName), null).iterator();
+            
+            objInstance = (ObjectInstance)loaderItr.next();
+            ObjectName loaderObjName = (objInstance).getObjectName();
+                        
+            String ldrCheckInterval = request.getParameter("ldrCheckInterval");
+            if(ldrCheckInterval != null) {
+                Integer ldrCheckInt = new Integer(ldrCheckInterval);
+                mBServer.setAttribute(loaderObjName,
+                new Attribute(SetUpContextAction.CHECKINTERVAL_PROP_NAME,
+                ldrCheckInt));
+            }       
+                
+            String ldrDebugLvlText = request.getParameter("ldrDebugLvl");
+            if(ldrCheckInterval != null) {
+                Integer ldrDebugLvl = new Integer(ldrDebugLvlText);
+                mBServer.setAttribute(loaderObjName,
+                new Attribute(SetUpContextAction.DEBUG_PROP_NAME,
+                ldrDebugLvl));
+            }            
+                            
+            String ldrReloadable = request.getParameter("ldrReloadable");
+            if(ldrReloadable != null) {
+                Boolean ldrReload = new Boolean(ldrReloadable);
+                mBServer.setAttribute(loaderObjName,
+                new Attribute(SetUpContextAction.RELOADABLE_PROP_NAME,
+                ldrReload));
+            }            
+
+            // write session manager properties
+            // retrieve the corresponding manager mBean
+            String managerName = request.getParameter("managerName");
+            
+            Iterator managerItr =
+            mBServer.queryMBeans(new ObjectName(managerName), null).iterator();
+            
+            objInstance = (ObjectInstance)managerItr.next();
+            ObjectName managerObjName = (objInstance).getObjectName();
+                        
+            String mgrCheckInterval = request.getParameter("mgrCheckInterval");
+            if(mgrCheckInterval != null) {
+                Integer mgrCheckInt = new Integer(mgrCheckInterval);
+                mBServer.setAttribute(managerObjName,
+                new Attribute(SetUpContextAction.CHECKINTERVAL_PROP_NAME,
+                mgrCheckInt));
+            }       
+                                               
+            String mgrDebugLvlText = request.getParameter("mgrDebugLvl");
+            if(mgrDebugLvlText != null) {
+                Integer mgrDebugLvl = new Integer(mgrDebugLvlText);
+                mBServer.setAttribute(managerObjName,
+                new Attribute(SetUpContextAction.DEBUG_PROP_NAME,
+                mgrDebugLvl));
+            }       
+                                           
+            String mgrSessionIDInit = request.getParameter("mgrSessionIDInit");
+            if(mgrSessionIDInit != null) {                
+                mBServer.setAttribute(managerObjName,
+                new Attribute(SetUpContextAction.SESSIONID_INIT_PROP_NAME,
+                mgrSessionIDInit));
+            }                   
+                               
+            String mgrMaxSessions = request.getParameter("mgrMaxSessions");
+            if(mgrMaxSessions != null) {
+                Integer mgrMaxSess = new Integer(mgrMaxSessions);
+                mBServer.setAttribute(managerObjName,
+                new Attribute(SetUpContextAction.MAXACTIVE_SESSIONS_PROP_NAME,
+                mgrMaxSess));
+            }       
             
         }catch(Throwable t){
             t.printStackTrace(System.out);

@@ -107,8 +107,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
     public final static String HOST_TYPE = "Catalina:type=Host";
     public final static String CONTEXT_TYPE = "Catalina:type=Context";
-    public final static String LOADER_TYPE = "Catalina:type=WebappLoader";
-    public final static String MANAGER_TYPE = "Catalina:type=StandardManager";
+    public final static String LOADER_TYPE = "Catalina:type=Loader";
+    public final static String MANAGER_TYPE = "Catalina:type=Manager";
     public final static String LOGGER_TYPE = "Catalina:type=Logger";
 
     public final static String WILDCARD = ",*";

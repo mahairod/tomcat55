@@ -164,7 +164,7 @@ public final class ContextForm extends ActionForm {
     /**
      * The text for the session mgr session ID initializer.
      */
-    private String mgrSessionIDInit = "0";
+    private String mgrSessionIDInit = "";
     
     /**
      * The text for the session mgr max active sessions.
@@ -175,6 +175,16 @@ public final class ContextForm extends ActionForm {
      * The text for the contextName.
      */
     private String contextName = null;
+    
+    /**
+     * The text for the loaderName.
+     */
+    private String loaderName = null;
+    
+    /**
+     * The text for the managerName.
+     */
+    private String managerName = null;
     
     /**
      * Set of valid values for debug level.
@@ -567,6 +577,40 @@ public final class ContextForm extends ActionForm {
         
     }
     
+    /**
+     * Return the loader Name.
+     */
+    public String getLoaderName() {
+        
+        return this.loaderName;
+        
+    }
+    
+    /**
+     * Set the loader Name.
+     */
+    public void setLoaderName(String loaderName) {
+        
+        this.loaderName = loaderName;
+        
+    }
+    /**
+     * Return the manager Name.
+     */
+    public String getManagerName() {
+        
+        return this.managerName;
+        
+    }
+    
+    /**
+     * Set the manager Name.
+     */
+    public void setManagerName(String managerName) {
+        
+        this.managerName = managerName;
+        
+    }
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -640,7 +684,6 @@ public final class ContextForm extends ActionForm {
             
             // session manager properties
             numberCheck("mgrCheckInterval",  mgrCheckInterval, true, 0, 10000);
-            numberCheck("mgrSessionIDInit",  mgrSessionIDInit, false, 0, 65535);
             numberCheck("mgrMaxSessions",  mgrMaxSessions, false, -1, 100);
             
         }

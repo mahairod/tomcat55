@@ -121,7 +121,7 @@ public class SetUpContextAction extends Action {
     public final static String CHECKINTERVAL_PROP_NAME = "checkInterval";
     
     // -- Session manager properties --
-    public final static String SESSIONID_INIT_PROP_NAME = "sessionID";
+    public final static String SESSIONID_INIT_PROP_NAME = "entropy";
     public final static String MAXACTIVE_SESSIONS_PROP_NAME = "maxActiveSessions";
     
     private ArrayList debugLvlList = null;
@@ -193,6 +193,8 @@ public class SetUpContextAction extends Action {
         }
         
         String contextName = null;
+        String loaderName = null;
+        String managerName = null;
         
         // context properties
         Boolean cookies = null;
@@ -213,7 +215,7 @@ public class SetUpContextAction extends Action {
         // session properties
         Integer mgrCheckInterval = null;
         Integer mgrDebug = null;
-        Integer mgrSessionIDInit = null;
+        String mgrSessionIDInit = null;
         Integer mgrMaxSessions = null; 
        
         try{
@@ -260,19 +262,51 @@ public class SetUpContextAction extends Action {
             WORKDIR_PROP_NAME);
             
             // Loader properties
-            // FIXME -- will update these to read from the Loader mBean 
-            // after code that allows access to this mBean has been checked in.
-            ldrCheckInterval = Integer.valueOf("15");            
-            ldrDebug = Integer.valueOf("0");            
-            ldrReloadable = Boolean.valueOf("true");            
+            // Get the corresponding Loader mBean
+            int i = selectedName.indexOf(",");
+            if (i != -1) 
+                loaderName = TomcatTreeBuilder.LOADER_TYPE +
+                selectedName.substring(i, selectedName.length());
+
+            Iterator loaderItr =
+            mBServer.queryMBeans(new ObjectName(loaderName), null).iterator();
             
-            // Session manager properties
-            // FIXME -- will update this later, after code that allows access to
-            // SessionManager mBean has been checked in.
-            mgrCheckInterval = Integer.valueOf("60");            
-            mgrDebug = Integer.valueOf("0");            
-            mgrSessionIDInit = Integer.valueOf("0");            
-            mgrMaxSessions = Integer.valueOf("-1");
+            objInstance = (ObjectInstance)loaderItr.next();
+            ObjectName loaderObjName = (objInstance).getObjectName();
+           
+            ldrCheckInterval = (Integer) mBServer.getAttribute(loaderObjName,
+            CHECKINTERVAL_PROP_NAME);
+                    
+            ldrDebug = (Integer) mBServer.getAttribute(loaderObjName,
+            DEBUG_PROP_NAME);
+            
+            ldrReloadable = (Boolean) mBServer.getAttribute(loaderObjName,
+            RELOADABLE_PROP_NAME);                
+            
+            // Session manager properties         
+            // Get the corresponding Session Manager mBean
+            i = selectedName.indexOf(",");
+            if (i != -1) 
+                managerName = TomcatTreeBuilder.MANAGER_TYPE + 
+                              selectedName.substring(i, selectedName.length());
+                       
+            Iterator managerItr =
+            mBServer.queryMBeans(new ObjectName(managerName), null).iterator();
+            
+            objInstance = (ObjectInstance)managerItr.next();
+            ObjectName managerObjName = (objInstance).getObjectName();
+           
+            mgrCheckInterval = (Integer) mBServer.getAttribute(managerObjName,
+            CHECKINTERVAL_PROP_NAME);                
+                  
+            mgrDebug = (Integer) mBServer.getAttribute(managerObjName,
+            DEBUG_PROP_NAME);         
+            
+            mgrSessionIDInit = (String) mBServer.getAttribute(managerObjName,
+            SESSIONID_INIT_PROP_NAME);   
+             
+            mgrMaxSessions = (Integer) mBServer.getAttribute(managerObjName,
+            MAXACTIVE_SESSIONS_PROP_NAME);         
             
         } catch(Throwable t){
             t.printStackTrace(System.out);
@@ -283,6 +317,8 @@ public class SetUpContextAction extends Action {
         
         contextFm.setNodeLabel(nodeLabel);
         contextFm.setContextName(selectedName);
+        contextFm.setLoaderName(loaderName);
+        contextFm.setManagerName(managerName);
         
         contextFm.setDebugLvlVals(debugLvlList);
         contextFm.setBooleanVals(booleanList);

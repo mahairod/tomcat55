@@ -21,6 +21,8 @@
     <tr bgcolor="7171A5">
       <td width="81%"> 
        <html:hidden property="contextName"/>
+       <html:hidden property="loaderName"/>
+       <html:hidden property="managerName"/>
        <div class="page-title-text" align="left">
          <bean:write name="contextForm" property="nodeLabel" scope="session"/>
        </div>
@@ -254,7 +256,7 @@
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.sessionId"/>:</controls:label>
             <controls:data>
-               <html:text property="mgrSessionIDInit" size="20"/>
+               <html:textarea property="mgrSessionIDInit" cols="30" rows="2"/>
             </controls:data>
         </controls:row>
 
