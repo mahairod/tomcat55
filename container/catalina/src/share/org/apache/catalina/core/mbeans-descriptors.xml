@@ -199,6 +199,10 @@
                description="Associated loader."
                type="org.apache.catalina.Loader" />
       
+    <attribute name="logger"
+               description="Associated logger."
+               type="org.apache.catalina.Logger" />
+      
     <attribute name="managedResource"
                description="The managed resource this MBean is associated with"
                type="java.lang.Object"/>
@@ -230,6 +234,10 @@
     <attribute name="privileged"
                description="Access to tomcat internals"
                type="boolean"/>
+      
+    <attribute name="realm"
+               description="Associated realm."
+               type="org.apache.catalina.Realm" />
       
     <attribute name="reloadable"
                description="The reloadable flag for this web application"
@@ -317,6 +325,15 @@
                  type="java.lang.String"/>
     </operation>
     
+    <operation   name="addValve"
+               description="Add a valve to this Context"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="valve"
+                 description="New valve to be added"
+                 type="org.apache.catalina.Valve"/>
+    </operation>
+    
     <operation   name="removeEnvironment"
                description="Remove any environment entry with the specified name"
                impact="ACTION"
@@ -333,6 +350,15 @@
       <parameter name="resourceName"
                  description="Name of the resource reference to remove"
                  type="java.lang.String"/>
+    </operation>
+    
+    <operation   name="removeValve"
+               description="Remove a valve from this Context"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="valve"
+                 description="New valve to be removed"
+                 type="org.apache.catalina.Valve"/>
     </operation>
     
     <operation   name="setRealm"
