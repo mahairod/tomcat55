@@ -59,9 +59,18 @@ public class Main {
 		    return;
 		}
 	    } else if (arg.startsWith("-D")) {
-                arg = arg.substring(2, arg.length());
-                String value = args[++i];
-                definedProps.put(arg, value);
+
+		/* Interestingly enough, we get to here when a user
+		 * uses -Dname=value. However, the JDK goes ahead
+		 * and parses this out to args {"-Dname", "value"}
+		 * so instead of parsing on "=", we just make the "-D"
+		 * characters go away and skip one argument forward.
+		 */
+		
+                String name = arg.substring(2, arg.length());
+		String value = args[++i];
+                definedProps.put(name, value);
+		System.out.println("n: "+ name + " v: " + value);
             } else if (arg.startsWith("-")) {
 		// we don't have any more args to recognize!
 		String msg = "Unknown arg: " + arg;
