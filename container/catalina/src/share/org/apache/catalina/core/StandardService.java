@@ -429,7 +429,7 @@ public class StandardService
     public void start() throws LifecycleException {
 
         // Validate and update our current component state
-        if (started) {
+        if (log.isInfoEnabled() && started) {
             log.info(sm.getString("standardService.start.started"));
         }
         
@@ -438,8 +438,8 @@ public class StandardService
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
-
-        log.info(sm.getString("standardService.start.name", this.name));
+        if(log.isInfoEnabled())
+            log.info(sm.getString("standardService.start.name", this.name));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -500,9 +500,9 @@ public class StandardService
         }
 
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-
-        log.info
-            (sm.getString("standardService.stop.name", this.name));
+        if(log.isInfoEnabled())
+            log.info
+                (sm.getString("standardService.stop.name", this.name));
         started = false;
 
         // Stop our defined Container second
@@ -545,7 +545,8 @@ public class StandardService
     {
         // Service shouldn't be used with embeded, so it doesn't matter
         if (initialized) {
-            log.info(sm.getString("standardService.initialize.initialized"));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("standardService.initialize.initialized"));
             return;
         }
         initialized = true;
