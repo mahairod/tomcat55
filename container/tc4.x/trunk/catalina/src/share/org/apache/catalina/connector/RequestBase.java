@@ -972,6 +972,11 @@ public abstract class RequestBase
      */
     public void setAttribute(String name, Object value) {
 
+        // Name cannot be null
+        if (name == null)
+            throw new IllegalArgumentException
+                (sm.getString("requestBase.setAttribute.namenull"));
+
         // Null value is the same as removeAttribute()
         if (value == null) {
             removeAttribute(name);
