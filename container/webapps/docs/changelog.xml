@@ -155,18 +155,18 @@
        </fix>
        <add>
           Support optional primaryIndicator at ReplicationValve to mark that 
-		  request processing to existing session is at primary cluster node. 
-		  Easy failover detection, when mark is not at 
-		  configurable primaryIndicator attribute, submitted by Rainer Jung (pero)
+          request processing to existing session is at primary cluster node. 
+          Easy failover detection, when mark is not at 
+          configurable primaryIndicator attribute, submitted by Rainer Jung (pero)
        </add>
        <update>
           Refactor all implementation from interface IDataSenders (pero)
-	   </update>
-	   <add>
-		  Add some usefull attributes and operations to the all sender MBeans. (pero)
+       </update>
+      <add>
+          Add some usefull attributes and operations to the all sender MBeans. (pero)
        </add>
-	   <add>
-		  Add keepAlive and waitForAck handling to AsyncSocketSender and factor out a DataSender base class.(pero)
+      <add>
+          Add keepAlive and waitForAck handling to AsyncSocketSender and factor out a DataSender base class.(pero)
        </add>
        <add>
           ReplicationTransmitter: Enable and Disable autoreconnect sender and waitForAck. (pero)
