@@ -254,6 +254,20 @@ public class ErrorDispatcherValve
                     log("Exception Processing " + errorPage, e);
                 }
             }
+        } else {
+            // A custom error-page has not been defined for the exception
+            // that was thrown during request processing. Check if an
+            // error-page for error code 500 was specified and if so, 
+            // send that page back as the response.
+            ServletResponse sresp = (ServletResponse) response;
+            if (sresp instanceof HttpServletResponse) {
+                ((HttpServletResponse) sresp).setStatus(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                // The response is an error
+                response.setError();
+
+                status(request, response);
+            }
         }
 
     }
@@ -381,7 +395,14 @@ public class ErrorDispatcherValve
         try {
 
             // Reset the response if possible (else IllegalStateException)
-            hres.reset();
+            //hres.reset();
+            // Reset the response (keeping the real error code and message)
+            Integer statusCodeObj =
+                (Integer) hreq.getAttribute(Globals.STATUS_CODE_ATTR);
+            int statusCode = statusCodeObj.intValue();
+            String message = 
+                (String) hreq.getAttribute(Globals.ERROR_MESSAGE_ATTR);
+            ((HttpResponse) response).reset(statusCode, message);
 
             // Forward control to the specified location
             ServletContext servletContext =
