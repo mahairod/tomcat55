@@ -418,10 +418,10 @@ public class SingleSignOn
     public String toString() {
 
         StringBuffer sb = new StringBuffer("SingleSignOn[");
-	if (container == null )
-	    sb.append("Container is null");
-	else
-	    sb.append(container.getName());
+        if (container == null )
+            sb.append("Container is null");
+        else
+            sb.append(container.getName());
         sb.append("]");
         return (sb.toString());
 
@@ -438,7 +438,7 @@ public class SingleSignOn
      * @param ssoId Single sign on identifier
      * @param session Session to be associated
      */
-    void associate(String ssoId, Session session) {
+    protected void associate(String ssoId, Session session) {
 
         if (debug >= 1)
             log("Associate sso id " + ssoId + " with session " + session);
@@ -459,7 +459,7 @@ public class SingleSignOn
      * @param ssoId Single sign on identifier
      * @param session Session to be deregistered
      */
-    private void deregister(String ssoId, Session session) {
+    protected void deregister(String ssoId, Session session) {
 
         synchronized (reverse) {
             reverse.remove(session);
@@ -488,7 +488,7 @@ public class SingleSignOn
      *
      * @param ssoId Single sign on identifier to deregister
      */
-    private void deregister(String ssoId) {
+    protected void deregister(String ssoId) {
 
         if (debug >= 1)
             log("Deregistering sso id '" + ssoId + "'");
@@ -533,7 +533,7 @@ public class SingleSignOn
      * @param username Username used to authenticate this user
      * @param password Password used to authenticate this user
      */
-    void register(String ssoId, Principal principal, String authType,
+    protected void register(String ssoId, Principal principal, String authType,
                   String username, String password) {
 
         if (debug >= 1)
