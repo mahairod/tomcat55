@@ -784,6 +784,8 @@ abstract class Node implements TagConstants {
      */
     public static class ELExpression extends Node {
 
+	private ELNode.Nodes el;
+
         public ELExpression(String text, Mark start, Node parent) {
             super(null, null, text, start, parent);
         }
@@ -791,6 +793,14 @@ abstract class Node implements TagConstants {
         public void accept(Visitor v) throws JasperException {
             v.visit(this);
         }
+
+	public void setEL(ELNode.Nodes el) {
+	    this.el = el;
+	}
+
+	public ELNode.Nodes getEL() {
+	    return el;
+	}
     }
 
     /**
@@ -1766,8 +1776,8 @@ abstract class Node implements TagConstants {
 	private String localName;
 	private String value;
 	private boolean expression;
-        private boolean el;
 	private boolean dynamic;
+        private ELNode.Nodes el;
 
         // If true, this JspAttribute represents a <jsp:attribute>
         private boolean namedAttribute;
@@ -1775,7 +1785,7 @@ abstract class Node implements TagConstants {
         private NamedAttribute namedAttributeNode;
 
         JspAttribute(String qName, String uri, String localName, String value,
-		     boolean expr, boolean el, boolean dyn ) {
+		     boolean expr, ELNode.Nodes el, boolean dyn ) {
 	    this.qName = qName;
 	    this.uri = uri;
 	    this.localName = localName;
@@ -1798,7 +1808,7 @@ abstract class Node implements TagConstants {
             this.value = null;
             this.namedAttributeNode = na;
             this.expression = false;
-            this.el = false;
+            this.el = null;
 	    this.dynamic = dyn;
             this.namedAttribute = true;
         }
@@ -1866,7 +1876,7 @@ abstract class Node implements TagConstants {
          * not be interpreted or reevaluated
          */
         public boolean isELInterpreterInput() {
-            return el;
+            return el != null;
         }
 
 	/**
@@ -1874,7 +1884,7 @@ abstract class Node implements TagConstants {
 	 * time.
 	 */
 	public boolean isLiteral() {
-	    return !expression && !el && !namedAttribute;
+	    return !expression && (el != null) && !namedAttribute;
 	}
 
 	/**
@@ -1882,6 +1892,10 @@ abstract class Node implements TagConstants {
 	 */
 	public boolean isDynamic() {
 	    return dynamic;
+	}
+
+	public ELNode.Nodes getEL() {
+	    return el;
 	}
     }
 

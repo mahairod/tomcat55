@@ -253,7 +253,7 @@ public class Compiler {
 
 	// Generate FunctionMapper (used for validation of EL expressions and
 	// code generation)
-	pageInfo.setFunctionMapper(new FunctionMapperImpl(this));
+	// pageInfo.setFunctionMapper(new FunctionMapperImpl(this));
 
 	// Validate and process attributes
 	Validator.validate(this, pageNodes);
@@ -278,6 +278,9 @@ public class Compiler {
 	// Optimizations by Tag Plugins
 	TagPluginManager tagPluginManager = options.getTagPluginManager();
 	tagPluginManager.apply(pageNodes, errDispatcher, pageInfo);
+
+	// Generate static funciton mapper codes.
+	ELFunctionMapper.map(this, pageNodes);
 
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);

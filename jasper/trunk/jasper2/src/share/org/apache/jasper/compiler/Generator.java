@@ -435,10 +435,6 @@ class Generator {
             out.printil("}");
             out.println();
         }
-        
-        // Static data for EL function and prefix maps:
-        generateELFunctionMap();
-        generateFunctionMapper();
     }
 
     /**
@@ -613,70 +609,6 @@ class Generator {
 	}
     }
 
-    /**
-     * Generates EL Function map section
-     */
-    private void generateELFunctionMap() 
-        throws JasperException
-    {
-        FunctionMapperImpl fnMap = pageInfo.getFunctionMapper();
-
-        out.printil("private static org.apache.jasper.runtime.ProtectedFunctionMapper _jspx_fnmap;");
-        if (!fnMap.isEmpty()) {
-            Iterator iter = fnMap.keySet().iterator();
-            out.println();
-            out.printil("static {");
-            out.pushIndent();
-	    out.printil("_jspx_fnmap = org.apache.jasper.runtime.ProtectedFunctionMapper.getInstance();");
-            while (iter.hasNext()) {
-                String key = (String) iter.next();
-		out.printin("_jspx_fnmap.mapFunction(");
-		out.print(quote(key));
-		out.print(", ");
-		out.print(fnMap.getFunctionClass(key) + ".class, ");
-		out.print(quote(fnMap.getMethodName(key)));
-		out.print(", ");
-		Class[] args = fnMap.getParameterTypes(key);
-		if (args != null) {
-		    out.print("new Class[] {" );
-		    for( int j = 0; j < args.length; j++ ) {
-			out.print( args[j].getName() + ".class" );
-			if( j < (args.length - 1) ) {
-			    out.print( ", " );
-			}
-		    }
-		    out.print("} ");
-		} else {
-		    out.print("null");
-		}
-		out.println(");");
-	    }
-	    out.popIndent();
-	    out.printil("}");
-	    out.println();
-	}
-    }
-    
-    /**
-     * Generates the method needed to implement FunctionMapper
-     */
-    private void generateFunctionMapper() 
-        throws JasperException 
-    {
-/* XX suppress until EL moves out of JSTL
-        out.printil( "public java.lang.reflect.Method resolveFunction(" );
-        out.printil( "    String prefix, String localName )" );
-        out.printil( "{" );
-        out.pushIndent();
-        out.printil( "return (java.lang.reflect.Method)_jspx_fnmap.get( " );
-        out.printil( "    prefix + \":\" + localName );" );
-        out.popIndent();
-        out.printil( "}" );
-        out.println();
-*/
-    }
-
-
     /*
      * Generates the constructor.
      * (shared by servlet and tag handler preamble generation)
@@ -784,7 +716,7 @@ class Generator {
 		    boolean replaceESC = v.indexOf(Constants.ESC) > 0;
 		    v = JspUtil.interpreterCall(this.isTagFile,
 		        v, expectedType, defaultPrefix,
-			"_jspx_fnmap", false );
+			attr.getEL().getMapName(), false );
 		    // XXX ESC replacement hack
 		    if (replaceESC) {
 		        v = "(" + v + ").replace(" + Constants.ESCStr + ", '$')";
@@ -867,7 +799,7 @@ class Generator {
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,
                         "${" + new String(n.getText()) + "}", String.class,
-			null, "_jspx_fnmap", false )
+			null, n.getEL().getMapName(), false )
                     + ");");
             } else {
                 out.printil("out.write(" +
@@ -2480,7 +2412,8 @@ class Generator {
                 // run attrValue through the expression interpreter
 		boolean replaceESC = attrValue.indexOf(Constants.ESC) > 0;
                 attrValue = JspUtil.interpreterCall(this.isTagFile,
-                         attrValue, c[0], n.getPrefix(), "_jspx_fnmap", false );
+                         attrValue, c[0], n.getPrefix(),
+                         attr.getEL().getMapName(), false );
 		// XXX hack: Replace ESC with '$'
 		if (replaceESC) {
 		    attrValue = "(" + attrValue + ").replace(" +

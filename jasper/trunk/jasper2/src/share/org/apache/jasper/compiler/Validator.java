@@ -364,9 +364,6 @@ class Validator {
         private ClassLoader loader;
 	private Hashtable taglibs;
 
-	// A FunctionMapper, used to validate EL expressions.
-        private FunctionMapper functionMapper;
-
 	private static final JspUtil.ValidAttribute[] jspRootAttrs = {
 	    new JspUtil.ValidAttribute("version", true) };
 
@@ -448,7 +445,6 @@ class Validator {
 	    this.err = compiler.getErrorDispatcher();
 	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
 	    this.loader = compiler.getCompilationContext().getClassLoader();
-	    this.functionMapper = pageInfo.getFunctionMapper();
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
@@ -653,15 +649,21 @@ class Validator {
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {
+	    // Currently parseExpression does not validate functions, so
+	    // a null FunctionMapper is passed.
             if ( !pageInfo.isELIgnored() ) {
+		String expressions = "${" + new String(n.getText()) + "}";
                 JspUtil.validateExpressions(
                     n.getStart(),
-                    "${" + new String(n.getText()) + "}", 
+		    expressions,
                     java.lang.String.class, // XXX - Should template text 
                                             // always evaluate to String?
-                    this.functionMapper,
+                    null,
                     null,
                     err);
+		ELNode.Nodes el = ELParser.parse(expressions);
+		validateFunctions(el, n);
+		n.setEL(el);
             }
         }
 
@@ -932,7 +934,7 @@ class Validator {
 							attrs.getLocalName(i),
 							attrs.getValue(i),
 							false,
-							false,
+							null,
 							false);
 			}
 			if (jspAttrs[i].isExpression()) {
@@ -1058,7 +1060,7 @@ class Validator {
 					localName,
 					value.substring(2, value.length()-1),
 					true,
-					false,
+					null,
 					dynamic);
                 }
                 else if(!n.isXmlSyntax() && value.startsWith("<%=")) {
@@ -1068,7 +1070,7 @@ class Validator {
 					localName,
 					value.substring(3, value.length()-2),
 					true,
-					false,
+					null,
 					dynamic);
                 }
                 else {
@@ -1079,22 +1081,25 @@ class Validator {
 
                     // validate expression syntax if string contains
                     // expression(s)
-                    if (value.indexOf("${") != -1 && !pageInfo.isELIgnored()) {
+                    ELNode.Nodes el = ELParser.parse(value);
+                    if (el.containsEL() && !pageInfo.isELIgnored()) {
                         JspUtil.validateExpressions(
                             n.getStart(),
                             value, 
                             expectedType, 
-                            this.functionMapper,
+                            null,
                             defaultPrefix,
                             this.err);
+
+	                validateFunctions(el, n);
                         
                         result = new Node.JspAttribute(qName, uri, localName,
-						       value, false, true,
+						       value, false, el,
 						       dynamic);
                     } else {
 			value = value.replace(Constants.ESC, '$');
                         result = new Node.JspAttribute(qName, uri, localName,
-						       value, false, false,
+						       value, false, null,
 						       dynamic);
                     }
                 }
@@ -1160,7 +1165,74 @@ class Validator {
 		return hasDynamicContent;
 	    }
 	}
-    }
+
+	private String findUri(String prefix, Node n) {
+
+	    Node p = n;
+	    while (p != null) {
+		if (p instanceof Node.CustomTag) {
+		    Node.CustomTag ct = (Node.CustomTag) p;
+		    if (prefix.equals(ct.getPrefix())) {
+			return (ct.getURI());
+		    }
+		} else if (p instanceof Node.JspRoot) {
+		    // XXX find Uri from the root node
+		}
+		p = p.getParent();
+	    }
+	    return null;
+	}
+
+	/**
+	 * Validate functions in EL expressions
+	 */
+	private void validateFunctions(ELNode.Nodes el, Node n) 
+		throws JasperException {
+
+	    class FVVisitor extends ELNode.Visitor {
+
+		Node n;
+
+		FVVisitor(Node n) {
+		    this.n = n;
+		}
+
+		public void visit(ELNode.Function func) throws JasperException {
+		    String defaultNS = null;	// for now
+		    String prefix = func.getPrefix();
+		    String function = func.getName();
+		    String uri = null;
+		    if (prefix == null) {
+			// In XML syntax, use the default namespace
+			if (defaultNS == null) {
+			    err.jspError(n, "jsp.error.noFuncionPrefix",
+					 function);
+		        }
+			uri = defaultNS;
+		    } else if (n.isXmlSyntax()) {
+		        uri = findUri(prefix, n);
+		    } else {
+			Hashtable prefixMapper = pageInfo.getPrefixMapper();
+			uri = (String) prefixMapper.get(prefix);
+		    }
+
+		    TagLibraryInfo taglib = 
+					(TagLibraryInfo) taglibs.get(uri);
+		    FunctionInfo funcInfo = null;
+		    if (taglib != null) {
+			funcInfo = taglib.getFunction(function);
+		    }
+		    if (funcInfo == null) {
+			err.jspError(n, "jsp.error.noFunction", function);
+		    }
+		    // Skip TLD function uniqueness check.  Done by Schema ?
+		    func.setFunctionInfo(funcInfo);
+		}
+	    }
+
+	    el.visit(new FVVisitor(n));
+	}
+    } // End of ValidateVisitor
 
     /**
      * A visitor for validating TagExtraInfo classes of all tags

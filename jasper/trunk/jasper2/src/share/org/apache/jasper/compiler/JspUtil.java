@@ -60,8 +60,6 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.net.URL;
-
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -597,10 +595,10 @@ public class JspUtil {
                                            String defaultPrefix,
                                            ErrorDispatcher err)
             throws JasperException {
-        // Just parse and check if any exceptions are thrown.
+
         try {
             JspUtil.expressionEvaluator.parseExpression( expressions, 
-                expectedType, functionMapper, defaultPrefix );
+                expectedType, null, defaultPrefix );
         }
         catch( ELParseException e ) {
             err.jspError(where, "jsp.error.invalid.expression", expressions,
@@ -918,7 +916,4 @@ public class JspUtil {
 	return reader;
     }
 }
-
-
-
 
