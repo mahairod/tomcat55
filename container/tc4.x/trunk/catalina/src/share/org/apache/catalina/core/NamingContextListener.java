@@ -627,10 +627,18 @@ public class NamingContextListener
                 value = Double.valueOf(env.getValue());
             } else if (type.equals("java.lang.Float")) {
                 value = Float.valueOf(env.getValue());
+            } else if (type.equals("java.lang.Character")) {
+                if (env.getValue().length() == 1) {
+                    value = new Character(env.getValue().charAt(0));
+                } else {
+                    throw new IllegalArgumentException();
+                }
             } else {
                 log(sm.getString("naming.invalidEnvEntryType", env.getName()));
             }
         } catch (NumberFormatException e) {
+            log(sm.getString("naming.invalidEnvEntryValue", env.getName()));
+        } catch (IllegalArgumentException e) {
             log(sm.getString("naming.invalidEnvEntryValue", env.getName()));
         }
 
