@@ -45,6 +45,13 @@
   web application for this virtual host, and is used to process all
   requests that do not match any other Context's context path.</p>
 
+  <p>In addition to nesting <strong>Context</strong> elements inside a
+  <a href="host.html">Host</a> element, you can also store them in
+  individual files (with a ".xml" extension) in the <code>appBase</code>
+  directory for a Host.  See
+  <a href="host.html#Automatic Application Deployment">Automatic
+  Application Deployment</a> for more information.</p>
+
   <p>In addition to explicitly specified Context elements, there are
   several techniques by which Context elements can be created automatically
   for you.  See <a href="host.html#Automatic Application Deployment">

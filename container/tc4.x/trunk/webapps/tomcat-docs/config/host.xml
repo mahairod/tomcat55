@@ -212,7 +212,8 @@
     the following actions take place automatically when Catalina is first
     started.  All processing takes place in the <em>application base
     directory</em> that is configured by the <code>appBase</code> property.
-    No special configuration is required to enable these activities:</p>
+    This behavior is enabled by setting the <code>autoDeploy</code> attribute
+    to <code>true</code> (which is the default value):</p>
     <ul>
     <li>Any web application archive file that does not have a corresponding
         directory of the same name (without the ".war" extension) will be
@@ -231,12 +232,19 @@
         deployed Context will be a slash character ("/") followed by the
         directory name, unless the directory name is ROOT, in which case
         the context path will be an empty string ("").</li>
+    <li>Any XML file in this directory is assumed to contain a
+        <a href="context.html">Context</a> element (and its associated
+        subelements) for a single web application.  The <code>docBase</code>
+        attribute of this <code>&lt;Context&gt;</code> element will typically
+        be the absolute pathname to a web applicationd directory, or the
+        absolute pathname of a web application archive (WAR) file (which
+        will not be expanded).</li>
     </ul>
 
-    <p>The net effect of this feature is that you need not specifically
-    mention your web applications in <code>conf/server.xml</code>, unless
-    you wish to define non-default properties for the corresponding
-    <a href="context.html">Context</a>.</p>
+    <p>In addition to the automatic deployment that occurs at startup time,
+    you can also add new WAR files, directory, or XML configuration files
+    into the <code>appBase</code> directory at any time, and the corresponding
+    applications will be automatically deployed.</p>
 
   </subsection>
 
