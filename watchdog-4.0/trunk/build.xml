@@ -17,15 +17,19 @@
       <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
       <mkdir dir="${watchdog.build}/lib/servlet-golden"/>
 
+<!--
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
+-->
       <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
       <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
 
       <copydir  src="src/server/jsp-tests"
                dest="${watchdog.build}/webapps/jsp-tests"/>
+<!--
       <copydir  src="src/server/servlet-tests"
                dest="${watchdog.build}/webapps/servlet-tests"/>
+-->
       <copyfile src="../jakarta-tools/moo.jar"
                dest="${watchdog.build}/lib/moo.jar"/>
 
@@ -41,8 +45,10 @@
       <copydir  src="src/clients/org/apache/jcheck/jsp/client" 
                 dest="${watchdog.build}/lib/jsp-golden"/>
 
+<!--
       <copydir  src="src/clients/org/apache/jcheck/servlet/client" 
                 dest="${watchdog.build}/lib/servlet-golden"/>
+-->
 
       <copydir  src="src/bin" dest="${watchdog.build}/bin"/>
       <copydir  src="src/conf" dest="${watchdog.build}/conf" />
@@ -62,10 +68,12 @@
 
    <target name="main" depends="prepare">
 
+<!--
       <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
              classpath="${watchdog-classpath}" 
              deprecation="off" />
+-->
 
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
@@ -77,11 +85,12 @@
              destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
              classpath="${watchdog-classpath}" 
              deprecation="off" />
+<!--
       <javac srcdir="../jakarta-tools/moo/src/share"
              destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
              classpath="${watchdog-classpath}" 
              deprecation="off" />
-
+-->
       <javac srcdir="src/clients" destdir="${watchdog.build}/clients" 
              classpath="${watchdog-classpath}" 
              deprecation="off" />    
