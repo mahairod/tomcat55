@@ -643,6 +643,14 @@ public class WebappLoader
                         ((WebappClassLoader)classLoader).setPermissions
                             (rootUrl);
 		    }
+                    File workDir = 
+                        (File) servletContext.getAttribute
+                        (Globals.WORK_DIR_ATTR);
+                    if (workDir != null) {
+                        File libDir = new File(workDir, "WEB-INF/lib/");
+                        ((WebappClassLoader)classLoader).setPermissions
+                            (libDir.getAbsolutePath());
+                    }
 		} catch (MalformedURLException e) {
 		}
 	    }
