@@ -55,7 +55,7 @@ commons-beanutils.loc=http://www.apache.org/dist/jakarta/commons/beanutils/binar
 commons-collections.home=${base.path}/commons-collections-2.1
 commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
-commons-collections.loc=http://www.apache.org/dist/jakarta/commons/collections/binaries/collections-2.1.zip
+commons-collections.loc=http://www.apache.org/dist/jakarta/commons/collections/binaries/collections-2.1.tar.gz
 
 
 # ----- Commons Launcher, version 0.9 or later -----
