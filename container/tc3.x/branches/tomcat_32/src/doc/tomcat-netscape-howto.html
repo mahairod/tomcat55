@@ -39,7 +39,7 @@ the Netscape server.</p>
   <li>WinNT4.0-i386 SP4/SP5/SP6a (it should be able to work on other versions
   of the NT service pack and also UNIX) </li>
   <li>Netscape Enterprise 3.0 and 3.61</li>
-  <li>Tomcat3.0 - Tomcat3.1beta1 </li>
+  <li>Tomcat3.0 - Tomcat3.2 </li>
 </ol>
 
 <p>The redirector uses <b>ajp12</b> to send requests to the Tomcat
@@ -48,10 +48,24 @@ in-process mode can be found in the in process howto.</p>
 
 <h2>Installation</h2>
 
-<p>The Netscape redirector is not part of the "official" build of Jakarta, You
-can obtain the code and binaries needed for it by accessing
-http://jakarta.apache.org/builds/tomcat/release/v3.1_beta_1/bin/win32/i386/.
-The redirector related file is <tt>nsapi_redirect.dll</tt>.</p>
+<p>As of Tomcat 3.2, a pre-built version of the Netscape redirector server plugin
+for Win32, <tt>nsapi_redirect.dll</tt>, is available from two locations.  First,
+it may be found under the win32/i386 directory where you got the
+<a href="http://jakarta.apache.org/downloads/binindex.html"> Tomcat binary
+distribution.</a> Second, it may be found in the Tomcat source distribution under
+jakarta-tomcat\bin\netscape\nt4\i386.  The <tt>nsapi_redirect.dll</tt>
+may be used on Win98 systems in spite of the "nt4" in the sequence of subdirectories.
+For those using Netscape as your browser, your best bet is to download the Tomcat
+source distribution since there have been reported problems with Netscape downloading
+DLLs directly.</p>
+
+<p>A pre-built version of the Netscape redirector server plugin for Linux,
+<tt>nsapi_redirect.so</tt>, is available in the Tomcat source distribution
+under jakarta-tomcat\bin\netscape\linux\i386.  (Though this Linux version is available,
+the OS dependent instructions below refer only to Windows NT.)</p>
+
+<p>You can also build a copy locally from the source in Tomcat's source
+distribution.</p>
 
 <p>The Tomcat redirector requires two entities:
 
@@ -121,6 +135,16 @@ to edit obj.conf and add a NameTrans line that looks like:</p>
 name=&quot;servlet&quot; </tt></p>
 
 <p>After saving obj.conf restart Netscape and it will serve the new context.</p>
+
+<p>As a new feature in Tomcat 3.2, a <tt>obj.conf-auto</tt> is
+automatically written each time Tomcat is started.  This file includes settings
+for each of the contexts that Tomcat will serve during its run. Each context
+has settings to have Tomcat handle servlet and JSP requests, as well as a setting
+to have Netscape serve all other content.  This file requires some modification
+before it can be used directly.  If you wish to use this file directly, instead
+of copying some of its contents to another file, you should rename it (so it won't
+be overwritten the next time Tomcat is started) and make any required modifications.
+</p>
 
 <h2>Building the redirector</h2>
 
@@ -215,8 +239,11 @@ name=&quot;servlet&quot; </tt></p>
 
 <p>As you can see the second configuration is more explicit, it actually instructs
 Netscape to assign the redirector with only requests to resources under <tt>/examples/servlet/</tt>
-and resources under <tt>/examples/ </tt>whose name ends with <tt>.jsp</tt>. You can be
-even more explicit and provide lines such as:</p>
+and resources under <tt>/examples/ </tt>whose name ends with <tt>.jsp</tt>. This is
+similar to what is automically written to the <tt>obj.conf-auto</tt> file for
+each context.</p>
+
+<p>You can be even more explicit and provide lines such as:</p>
 
 <p><tt>NameTrans fn=&quot;assign-name&quot; from=&quot;/examples/servletname&quot;
 name=&quot;servlet&quot;</tt></p>
