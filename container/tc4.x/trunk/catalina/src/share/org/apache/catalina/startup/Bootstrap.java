@@ -207,6 +207,26 @@ public final class Bootstrap {
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
+        // Add the "common/classes" directory if it exists
+        File classes = new File(System.getProperty("catalina.home"),
+                                "common/classes");
+        if (classes.exists() && classes.canRead() &&
+            classes.isDirectory()) {
+            try {
+                URL url = new URL("file", null,
+                                  classes.getCanonicalPath() + "/");
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
+                list.add(url.toString());
+            } catch (IOException e) {
+                System.out.println("Cannot create URL for " +
+                                   classes.getAbsolutePath());
+                e.printStackTrace(System.out);
+                System.exit(1);
+            }
+        }
+
+        // Add all JAR files in the "common/lib" directory if it exists
         File directory = new File(System.getProperty("catalina.home"),
                                   "common/lib");
         if (!directory.exists() || !directory.canRead() ||
@@ -236,24 +256,6 @@ public final class Bootstrap {
             }
         }
 
-        File classes = new File(System.getProperty("catalina.home"),
-                                "common/classes");
-        if (classes.exists() && classes.canRead() &&
-            classes.isDirectory()) {
-            try {
-                URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   classes.getAbsolutePath());
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
         StandardClassLoader loader = new StandardClassLoader(array);
@@ -275,6 +277,26 @@ public final class Bootstrap {
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
+        // Add the "server/classes" directory if it exists
+        File classes = new File(System.getProperty("catalina.home"),
+                                "server/classes");                  
+        if (classes.exists() && classes.canRead() &&                
+            classes.isDirectory()) {                
+            try {                                   
+                URL url = new URL("file", null,
+                                  classes.getCanonicalPath() + "/");
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
+                list.add(url.toString());
+            } catch (IOException e) {
+                System.out.println("Cannot create URL for " +
+                                   classes.getAbsolutePath());
+                e.printStackTrace(System.out);
+                System.exit(1);
+            }   
+        }
+
+        // Add all JAR files in the "server/lib" directory if it exists
         File directory = new File(System.getProperty("catalina.home"),
                                   "server/lib");
         if (!directory.exists() || !directory.canRead() ||
@@ -301,24 +323,6 @@ public final class Bootstrap {
             }
 	}
 
-        File classes = new File(System.getProperty("catalina.home"),
-                                "server/classes");                  
-        if (classes.exists() && classes.canRead() &&                
-            classes.isDirectory()) {                
-            try {                                   
-                URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   classes.getAbsolutePath());
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }   
-        }
-
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
         StandardClassLoader loader = new StandardClassLoader(array, parent);
@@ -340,6 +344,26 @@ public final class Bootstrap {
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
+        // Add the "classes" directory if it exists
+        File classes = new File(System.getProperty("catalina.home"),
+                                "classes");                         
+        if (classes.exists() && classes.canRead() &&                
+            classes.isDirectory()) {                
+            try {                                   
+                URL url = new URL("file", null,
+                                  classes.getCanonicalPath() + "/");
+                if (debug >= 1)                                     
+                    log("  Adding " + url.toString());              
+                list.add(url.toString());             
+            } catch (IOException e) {                 
+                System.out.println("Cannot create URL for " +
+                                   classes.getAbsolutePath());
+                e.printStackTrace(System.out);                
+                System.exit(1);                               
+            }                                 
+        }
+
+        // Add all JAR files in the "lib" directory if it exists
         File directory = new File(System.getProperty("catalina.home"),
                                   "lib");
         if (!directory.exists() || !directory.canRead() ||
@@ -365,24 +389,6 @@ public final class Bootstrap {
                 System.exit(1);
             }
 	}
-
-        File classes = new File(System.getProperty("catalina.home"),
-                                "classes");                         
-        if (classes.exists() && classes.canRead() &&                
-            classes.isDirectory()) {                
-            try {                                   
-                URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
-                if (debug >= 1)                                     
-                    log("  Adding " + url.toString());              
-                list.add(url.toString());             
-            } catch (IOException e) {                 
-                System.out.println("Cannot create URL for " +
-                                   classes.getAbsolutePath());
-                e.printStackTrace(System.out);                
-                System.exit(1);                               
-            }                                 
-        }
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
