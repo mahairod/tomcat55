@@ -94,7 +94,7 @@ public class CoyoteServerSocketFactory
     implements org.apache.catalina.net.ServerSocketFactory {
 
     private String algorithm = null;
-    private boolean clientAuth = false;
+    private String clientAuth = "false";
     private String keystoreFile =
         System.getProperty("user.home") + File.separator + ".keystore";
     private String randomFile =
@@ -132,19 +132,23 @@ public class CoyoteServerSocketFactory
     /**
      * Provides information about whether client authentication is enforced.
      *
-     * @return true if client authentication is enforced, false otherwise
+     * @return <code>true</code> if client authentication is enforced, 
+     *         <code>want</code> if client authentication is desired,
+     *         <code>false</code> otherwise
      */
-    public boolean getClientAuth() {
+    public String getClientAuth() {
         return (this.clientAuth);
     }
 
     /**
      * Sets the requirement of client authentication.
      *
-     * @param clientAuth true if client authentication is enforced, false
+     * @param clientAuth <code>true</code> if client authentication is enforced, 
+     *                   <code>want</code> if client authentication is desired,
+     *                   <code>false</code>
      * otherwise
      */
-    public void setClientAuth(boolean clientAuth) {
+    public void setClientAuth(String clientAuth) {
         this.clientAuth = clientAuth;
     }
 

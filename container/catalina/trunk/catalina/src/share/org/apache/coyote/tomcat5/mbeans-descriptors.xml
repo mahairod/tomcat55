@@ -35,7 +35,7 @@
 
     <attribute   name="clientAuth"
           description="Should we require client authentication?"
-                 type="boolean"/>
+                 type="String"/>
 
     <attribute   name="ciphers"
           description="Comma-separated list of SSL cipher suites to be enabled"
