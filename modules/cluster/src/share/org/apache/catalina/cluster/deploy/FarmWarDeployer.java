@@ -54,18 +54,6 @@ import org.apache.commons.modeler.Registry;
  * @author Peter Rossbach
  * @version 1.1
  */
-/**
- * @author peter
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-/**
- * @author peter
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
- */
 public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
     /*--Static Variables----------------------------------------*/
     public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
