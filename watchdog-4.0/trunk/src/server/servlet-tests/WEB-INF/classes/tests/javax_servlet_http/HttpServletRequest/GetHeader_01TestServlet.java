@@ -80,14 +80,14 @@ public class GetHeader_01TestServlet extends HttpServlet {
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
         PrintWriter out = response.getWriter();
-        String param = "User-Agent";
+        String param = "nonheader";
         String result = request.getHeader( param );
 
         if ( result == null ) {
             out.println( "GetHeader_01Test test PASSED" );
         } else {
             out.println( "GetHeader_01Test test FAILED <BR>" );
-            out.println( "     HttpServletRequest.getHeader(" + param + ") returned a Non-Null value even when we haven't set header(User-Agent) <BR>" );
+            out.println( "     HttpServletRequest.getHeader(" + param + ") returned a Non-Null value even when we haven't set header(nonheader) <BR>" );
             out.println( "     Actual result = |" + result + "| <BR>" );
         }
     }
