@@ -111,6 +111,16 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedJndi01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedJndi02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedReset01</url-pattern>
     </filter-mapping>
@@ -246,6 +256,16 @@
     <servlet>
         <servlet-name>Include02a</servlet-name>
         <servlet-class>org.apache.tester.Include02a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Jndi01</servlet-name>
+        <servlet-class>org.apache.tester.Jndi01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Jndi02</servlet-name>
+        <servlet-class>org.apache.tester.Jndi02</servlet-class>
     </servlet>
 
     <servlet>
@@ -467,6 +487,26 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>Jndi01</servlet-name>
+        <url-pattern>/Jndi01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi01</servlet-name>
+        <url-pattern>/WrappedJndi01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi02</servlet-name>
+        <url-pattern>/Jndi02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi02</servlet-name>
+        <url-pattern>/WrappedJndi02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>Reset01</servlet-name>
         <url-pattern>/Reset01</url-pattern>
     </servlet-mapping>
@@ -596,6 +636,51 @@
         <auth-method>BASIC</auth-method>
         <realm-name>Authentication Servlet</realm-name>
     </login-config>
+
+
+    <!-- ========== Environment Entries =================================== -->
+
+    <env-entry>
+        <env-entry-name>booleanEntry</env-entry-name>
+        <env-entry-value>true</env-entry-value>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>byteEntry</env-entry-name>
+        <env-entry-value>123</env-entry-value>
+        <env-entry-type>java.lang.Byte</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>doubleEntry</env-entry-name>
+        <env-entry-value>123.45</env-entry-value>
+        <env-entry-type>java.lang.Double</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>floatEntry</env-entry-name>
+        <env-entry-value>54.32</env-entry-value>
+        <env-entry-type>java.lang.Float</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>integerEntry</env-entry-name>
+        <env-entry-value>12345</env-entry-value>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>longEntry</env-entry-name>
+        <env-entry-value>54321</env-entry-value>
+        <env-entry-type>java.lang.Long</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>stringEntry</env-entry-name>
+        <env-entry-value>String Value</env-entry-value>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
 
 
 </web-app>

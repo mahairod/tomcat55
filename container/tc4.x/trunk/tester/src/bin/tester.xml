@@ -12,7 +12,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession"/>
+  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession"/>
 
 
   <target name="ROOT">
@@ -120,6 +120,31 @@
          request="${context.path}/WrappedErrorPage03" debug="${debug}"
       outContent="ErrorPage04 PASSED"/>
 
+
+  </target>
+
+
+  <target name="Jndi">
+
+    <!-- ========== JNDI Naming Context =================================== -->
+
+<!-- JNDI naming context currently allows changes
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+-->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
 
   </target>
 
