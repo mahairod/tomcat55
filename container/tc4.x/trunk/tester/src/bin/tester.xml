@@ -8,6 +8,7 @@
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
   <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
+  <property name="golden.path"    value="${context.path}/golden"/>
   <property name="manager.path"   value="/manager"/>
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
@@ -33,6 +34,16 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/../.." debug="${debug}"
           status="404"/>
+
+    <!-- Should be able to successfully retrieve a golden file -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Golden01"
+          golden="${golden.path}/Golden01.txt"/>
+
+    <!-- Should be able to successfully retrieve a golden file -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedGolden01"
+          golden="${golden.path}/Golden01.txt"/>
 
   </target>
 

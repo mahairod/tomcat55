@@ -86,6 +86,8 @@ import org.apache.tools.ant.Task;
  * </pre>
  * and accepts the following configuration properties:</p>
  * <ul>
+ * <li><strong>golden</strong> - The server-relative path of the static
+ *     resource containing the golden file for this request.</li>
  * <li><strong>host</strong> - The server name to which this request will be
  *     sent.  Defaults to <code>localhost</code> if not specified.</li>
  * <li><strong>inContent</strong> - The data content that will be submitted
@@ -125,11 +127,25 @@ public class TestClient extends Task {
 
 
     /**
+     * The saved golden file we will compare to the response.  Each element
+     * contains a line of text without any line delimiters.
+     */
+    protected ArrayList saveGolden = new ArrayList();
+
+
+    /**
      * The saved headers we received in our response.  The key is the header
      * name (converted to lower case), and the value is an ArrayList of the
      * string value(s) received for that header.
      */
     protected HashMap saveHeaders = new HashMap();
+
+
+    /**
+     * The response file to be compared to the golden file.  Each element
+     * contains a line of text without any line delimiters.
+     */
+    protected ArrayList saveResponse = new ArrayList();
 
 
     // ------------------------------------------------------------- Properties
@@ -146,6 +162,20 @@ public class TestClient extends Task {
 
     public void setDebug(int debug) {
         this.debug = debug;
+    }
+
+
+    /**
+     * The server-relative request URI of the golden file for this request.
+     */
+    protected String golden = null;
+
+    public String getGolden() {
+        return (this.golden);
+    }
+
+    public void setGolden(String golden) {
+        this.golden = golden;
     }
 
 
@@ -345,6 +375,12 @@ public class TestClient extends Task {
     public void execute() throws BuildException {
 
         saveHeaders.clear();
+        try {
+            readGolden();
+        } catch (IOException e) {
+            System.out.println("FAIL:  readGolden(" + golden + ")");
+            e.printStackTrace(System.out);
+        }
         if ((protocol == null) || (protocol.length() == 0))
             executeHttp();
         else
@@ -440,21 +476,19 @@ public class TestClient extends Task {
             String outText = "";
             boolean eol = false;
             InputStream is = conn.getInputStream();
-            if (is != null) {
-                while (true) {
-                    int b = is.read();
-                    if (b < 0)
-                        break;
-                    char ch = (char) b;
-                    if ((ch == '\r') || (ch == '\n'))
-                        eol = true;
-                    if (!eol)
-                        outData += ch;
-                    else
-                        outText += ch;
-                }
-                is.close();
+            int lines = 0;
+            while (true) {
+                String line = read(is);
+                if (line == null)
+                    break;                
+                if (lines == 0)
+                    outData = line;
+                else
+                    outText += line + "\r\n";
+                saveResponse.add(line);
+                lines++;
             }
+            is.close();
 
             // Dump out the response stuff
             if (debug >= 1)
@@ -489,12 +523,17 @@ public class TestClient extends Task {
                     success = false;
             }
             if (success) {
+                result = validateHeaders();
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
                 result = validateData(outData);
                 if (result != null)
                     success = false;
             }
             if (success) {
-                result = validateHeaders();
+                result = validateGolden();
                 if (result != null)
                     success = false;
             }
@@ -676,21 +715,19 @@ public class TestClient extends Task {
             // Acquire the response data (if any)
             String outData = "";
             String outText = "";
-            boolean eol = false;
-            if (is != null) {
-                while (true) {
-                    int b = is.read();
-                    if (b < 0)
-                        break;
-                    char ch = (char) b;
-                    if ((ch == '\r') || (ch == '\n'))
-                        eol = true;
-                    if (!eol)
-                        outData += ch;
-                    else
-                        outText += ch;
-                }
+            int lines = 0;
+            while (true) {
+                line = read(is);
+                if (line == null)
+                    break;                
+                if (lines == 0)
+                    outData = line;
+                else
+                    outText += line + "\r\n";
+                saveResponse.add(line);
+                lines++;
             }
+            is.close();
             if (debug >= 1) {
                 System.out.println("DATA: " + outData);
                 if (outText.length() > 2)
@@ -709,12 +746,17 @@ public class TestClient extends Task {
                     success = false;
             }
             if (success) {
+                result = validateHeaders();
+                if (result != null)
+                    success = false;
+            }
+            if (success) {
                 result = validateData(outData);
                 if (result != null)
                     success = false;
             }
             if (success) {
-                result = validateHeaders();
+                result = validateGolden();
                 if (result != null)
                     success = false;
             }
@@ -824,6 +866,44 @@ public class TestClient extends Task {
 
 
     /**
+     * Read and save the contents of the golden file for this test, if any.
+     * Otherwise, the <code>saveGolden</code> list will be empty.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void readGolden() throws IOException {
+
+        // Was a golden file specified?
+        saveGolden.clear();
+        if (golden == null)
+            return;
+
+        // Create a connection to receive the golden file contents
+        URL url = new URL("http", host, port, golden);
+        HttpURLConnection conn =
+            (HttpURLConnection) url.openConnection();
+        conn.setAllowUserInteraction(false);
+        conn.setDoInput(true);
+        conn.setDoOutput(false);
+        conn.setFollowRedirects(true);
+        conn.setRequestMethod("GET");
+
+        // Connect to the server and retrieve the golden file
+        conn.connect();
+        InputStream is = conn.getInputStream();
+        while (true) {
+            String line = read(is);
+            if (line == null)
+                break;
+            saveGolden.add(line);
+        }
+        is.close();
+        conn.disconnect();
+
+    }
+
+
+    /**
      * Save the specified header name and value in our collection.
      *
      * @param name Header name to save
@@ -857,6 +937,42 @@ public class TestClient extends Task {
         else
             return ("Expected data '" + outContent + "', got data '" +
                     data + "'");
+
+    }
+
+
+    /**
+     * Validate the response against the golden file (if any).  Return
+     * <code>null</code> for no problems, or an error message.
+     */
+    protected String validateGolden() {
+
+        if (golden == null)
+            return (null);
+        boolean ok = true;
+        if (saveGolden.size() != saveResponse.size())
+            ok = false;
+        if (ok) {
+            for (int i = 0; i < saveGolden.size(); i++) {
+                String golden = (String) saveGolden.get(i);
+                String response = (String) saveResponse.get(i);
+                if (!golden.equals(response)) {
+                    ok = false;
+                    break;
+                }
+            }
+        }
+        if (ok)
+            return (null);
+        System.out.println("EXPECTED: ======================================");
+        for (int i = 0; i < saveGolden.size(); i++)
+            System.out.println((String) saveGolden.get(i));
+        System.out.println("================================================");
+        System.out.println("RECEIVED: ======================================");
+        for (int i = 0; i < saveResponse.size(); i++)
+            System.out.println((String) saveResponse.get(i));
+        System.out.println("================================================");
+        return ("Failed Golden File Comparison");
 
     }
 

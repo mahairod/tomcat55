@@ -117,6 +117,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGolden01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedInclude01</url-pattern>
     </filter-mapping>
 
@@ -305,6 +310,11 @@
     <servlet>
         <servlet-name>GetQueryString01</servlet-name>
         <servlet-class>org.apache.tester.GetQueryString01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Golden01</servlet-name>
+        <servlet-class>org.apache.tester.Golden01</servlet-class>
     </servlet>
 
     <servlet>
@@ -579,6 +589,16 @@
     <servlet-mapping>
         <servlet-name>GetQueryString01</servlet-name>
         <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Golden01</servlet-name>
+        <url-pattern>/Golden01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Golden01</servlet-name>
+        <url-pattern>/WrappedGolden01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
