@@ -608,10 +608,10 @@ public class HostConfig
             // Add the eventual unpacked WAR and all the resources which will be
             // watched inside it
             if (isWar && unpackWARs) {
-                deployedApp.redeployResources.put
-                    (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                 deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
                         new Long(expandedDocBase.lastModified()));
+                deployedApp.redeployResources.put
+                    (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                 addWatchedResources(deployedApp, expandedDocBase.getAbsolutePath(), context);
             } else {
                 if (context.getDocBase() != null) {
