@@ -97,37 +97,7 @@ public final class SecurityClassLoad {
         String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage +
-             "core.ApplicationContext$PrivilegedGetRequestDispatcher");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedGetResource");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedGetResourcePaths");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedLogMessage");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedLogException");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedLogThrowable");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedGetNamedDispatcher");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedGetInitParameter");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$PrivilegedGetInitParameterNames");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$1");
-        loader.loadClass
-            (basePackage +
-             "core.ApplicationContext$2");
+             "core.ApplicationContextFacade$1");
         loader.loadClass
             (basePackage +
              "core.ApplicationDispatcher$PrivilegedForward");
@@ -218,8 +188,26 @@ public final class SecurityClassLoad {
              "CoyoteResponseFacade$SetContentTypePrivilegedAction");
         loader.loadClass
             (basePackage +
+             "CoyoteResponseFacade$1");
+        loader.loadClass
+            (basePackage +
              "OutputBuffer$1");
-        
+        loader.loadClass
+            (basePackage +
+             "CoyoteInputStream$1");
+        loader.loadClass
+            (basePackage +
+             "CoyoteInputStream$2");
+                loader.loadClass
+            (basePackage +
+             "CoyoteInputStream$3");
+                loader.loadClass
+            (basePackage +
+             "CoyoteInputStream$4");
+                loader.loadClass
+            (basePackage +
+             "CoyoteInputStream$5");
+                
     }
 
 }

@@ -67,6 +67,8 @@ package org.apache.catalina.core;
 
 import java.io.InputStream;
 import java.io.File;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
@@ -96,6 +98,7 @@ import javax.servlet.http.HttpServletRequest;
  * object from the web application.
  *
  * @author Remy Maucherat
+ * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
 
@@ -103,6 +106,23 @@ public final class ApplicationContextFacade
     implements ServletContext {
 
 
+    // ---------------------------------------------------------- Attributes
+    /**
+     * Cache Class object used for reflection.
+     */
+    private HashMap classCache;
+    
+    
+    /**
+     * Cache method object.
+     */
+    private HashMap objectCache;
+    
+    
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ApplicationContextFacade.class );
+
+        
     // ----------------------------------------------------------- Constructors
 
 
@@ -115,6 +135,29 @@ public final class ApplicationContextFacade
     public ApplicationContextFacade(ApplicationContext context) {
         super();
         this.context = context;
+        
+        classCache = new HashMap();
+        objectCache = new HashMap();
+        initClassCache();
+    }
+    
+    
+    private void initClassCache(){
+        Class[] clazz = new Class[]{String.class};
+        classCache.put("getContext", clazz);
+        classCache.put("getMimeType", clazz);
+        classCache.put("getResourcePaths", clazz);
+        classCache.put("getResource", clazz);
+        classCache.put("getResourceAsStream", clazz);
+        classCache.put("getRequestDispatcher", clazz);
+        classCache.put("getNamedDispatcher", clazz);
+        classCache.put("getServlet", clazz);
+        classCache.put("getInitParameter", clazz);
+        classCache.put("setAttribute", new Class[]{String.class, Object.class});
+        classCache.put("removeAttribute", clazz);
+        classCache.put("getRealPath", clazz);
+        classCache.put("getAttribute", clazz);
+        classCache.put("log", clazz);
     }
 
 
@@ -125,16 +168,19 @@ public final class ApplicationContextFacade
      * Wrapped application context.
      */
     private ApplicationContext context = null;
+    
 
 
     // ------------------------------------------------- ServletContext Methods
 
 
     public ServletContext getContext(String uripath) {
-        ServletContext theContext = context.getContext(uripath);
+        ServletContext theContext = (ServletContext)
+            doPrivileged("getContext", new Object[]{uripath});
         if ((theContext != null) &&
-            (theContext instanceof ApplicationContext))
-            theContext = ((ApplicationContext) theContext).getFacade();
+            (theContext instanceof ApplicationContext)){
+            theContext = ((ApplicationContext)theContext).getFacade();
+        }
         return (theContext);
     }
 
@@ -150,50 +196,50 @@ public final class ApplicationContextFacade
 
 
     public String getMimeType(String file) {
-        return context.getMimeType(file);
+        return (String)doPrivileged("getMimeType", new Object[]{file});
     }
 
 
     public Set getResourcePaths(String path) {
-        return context.getResourcePaths(path);
+         return (Set)doPrivileged("getResourcePaths", new Object[]{path});
     }
 
 
     public URL getResource(String path)
         throws MalformedURLException {
-        return context.getResource(path);
+        return (URL)doPrivileged("getResource", new Object[]{path});
     }
 
 
     public InputStream getResourceAsStream(String path) {
-        return context.getResourceAsStream(path);
+        return (InputStream)doPrivileged("getResourceAsStream", new Object[]{path});
     }
 
 
-    public RequestDispatcher getRequestDispatcher(String path) {
-        return context.getRequestDispatcher(path);
+    public RequestDispatcher getRequestDispatcher(final String path) {
+        return (RequestDispatcher)doPrivileged("getRequestDispatcher", new Object[]{path});
     }
 
 
     public RequestDispatcher getNamedDispatcher(String name) {
-        return context.getNamedDispatcher(name);
+        return (RequestDispatcher)doPrivileged("getNamedDispatcher", new Object[]{name});
     }
 
 
     public Servlet getServlet(String name)
         throws ServletException {
-        return context.getServlet(name);
+       return (Servlet)doPrivileged("getServlet", null);
     }
 
 
     public Enumeration getServlets() {
-        return context.getServlets();
+        return (Enumeration)doPrivileged("getServlets", null);
     }
 
 
     public Enumeration getServletNames() {
-        return context.getServletNames();
-    }
+        return (Enumeration)doPrivileged("getServletNames", null);
+   }
 
 
     public void log(String msg) {
@@ -202,58 +248,139 @@ public final class ApplicationContextFacade
 
 
     public void log(Exception exception, String msg) {
-        context.log(exception, msg);
+        doPrivileged("log", new Class[]{Exception.class, String.class}, new Object[]{exception,msg});
     }
 
 
     public void log(String message, Throwable throwable) {
-        context.log(message, throwable);
+        doPrivileged("log", new Class[]{String.class, Throwable.class}, new Object[]{message, throwable});
     }
 
 
     public String getRealPath(String path) {
-        return context.getRealPath(path);
+        return (String)doPrivileged("getRealPath", new Object[]{path});
     }
 
 
     public String getServerInfo() {
-        return context.getServerInfo();
+        return (String)doPrivileged("getServerInfo", null);
     }
 
 
     public String getInitParameter(String name) {
-        return context.getInitParameter(name);
+        return (String)doPrivileged("getInitParameter", new Object[]{name});
     }
 
 
     public Enumeration getInitParameterNames() {
-        return context.getInitParameterNames();
+        return (Enumeration)doPrivileged("getInitParameterNames", null);
     }
 
 
     public Object getAttribute(String name) {
-        return context.getAttribute(name);
-    }
+        return doPrivileged("getAttribute",new Object[]{name});
+     }
 
 
     public Enumeration getAttributeNames() {
-        return context.getAttributeNames();
+        return (Enumeration)doPrivileged("getAttributeNames", null);
     }
 
 
     public void setAttribute(String name, Object object) {
-        context.setAttribute(name, object);
+        doPrivileged("setAttribute", new Object[]{name,object});
     }
 
 
     public void removeAttribute(String name) {
-        context.removeAttribute(name);
+        doPrivileged("removeAttribute", new Object[]{name});
     }
 
 
     public String getServletContextName() {
-        return context.getServletContextName();
+        return (String)doPrivileged("getServletContextName", null);
     }
 
+       
+    private Object doPrivileged(final String methodName, final Object[] params){
+        return doPrivileged(context, methodName,params);
+    }
 
+    
+    /**
+     * Use reflection to invoke the requested method. Cache the method object 
+     * to speed up the process
+     * @param appContext The AppliationContext object on which the method
+     *                   will be invoked
+     * @param methodName The method to call.
+     * @param params The arguments passed to the called method.
+     */
+    private Object doPrivileged(ApplicationContext appContext,
+                                final String methodName, 
+                                final Object[] params){
+        try{
+            Method method = (Method)objectCache.get(methodName);
+            if (method == null){
+                method = appContext.getClass()
+                    .getMethod(methodName, (Class[])classCache.get(methodName));
+                objectCache.put(methodName, method);
+            }
+            
+            return executeMethod(method,appContext,params);
+        } catch (Exception ex){
+            if (log.isErrorEnabled()){
+                log.error("doPrivileged", ex);
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * Use reflection to invoke the requested method. Cache the method object 
+     * to speed up the process
+     * @param appContext The AppliationContext object on which the method
+     *                   will be invoked
+     * @param methodName The method to call.
+     * @param params The arguments passed to the called method.
+     */    
+    private Object doPrivileged(final String methodName, 
+                                final Class[] clazz,
+                                final Object[] params){
+        try{
+            Method method = context.getClass()
+                    .getMethod(methodName, (Class[])clazz);
+            return executeMethod(method,context,params);
+        } catch (Exception ex){
+            if (log.isErrorEnabled()){
+                log.error("doPrivileged", ex);
+            }
+            return null;
+        }
+    }
+    
+    
+    /**
+     * Executes the method of the specified <code>ApplicationContext</code>
+     * @param method The method object to be invoked.
+     * @param context The AppliationContext object on which the method
+     *                   will be invoked
+     * @param params The arguments passed to the called method.
+     */
+    private Object executeMethod(final Method method, 
+                                 final ApplicationContext context,
+                                 final Object[] params) 
+            throws PrivilegedActionException, 
+                   IllegalAccessException,
+                   InvocationTargetException {
+                                     
+        if (System.getSecurityManager() != null){
+           return AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                public Object run() throws IllegalAccessException, InvocationTargetException{
+                    return method.invoke(context,  params);
+                }
+            });
+        } else {
+            return method.invoke(context, params);
+        }        
+    }
 }
