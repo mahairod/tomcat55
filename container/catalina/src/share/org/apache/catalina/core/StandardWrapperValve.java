@@ -64,11 +64,11 @@ final class StandardWrapperValve
     // Some JMX statistics. This vavle is associated with a StandardWrapper.
     // We exponse the StandardWrapper as JMX ( j2eeType=Servlet ). The fields
     // are here for performance.
-    private long processingTime;
-    private long maxTime;
-    private long minTime = Long.MAX_VALUE;
-    private int requestCount;
-    private int errorCount;
+    private volatile long processingTime;
+    private volatile long maxTime;
+    private volatile long minTime = Long.MAX_VALUE;
+    private volatile int requestCount;
+    private volatile int errorCount;
 
 
     /**
