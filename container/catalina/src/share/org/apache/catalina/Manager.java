@@ -186,7 +186,7 @@ public interface Manager {
      * Get a session from the recycled ones or create a new empty one.
      * The PersistentManager manager does not need to create session data
      * because it reads it from the Store.
-     */                                                                         
+     */
     public Session createEmptySession();
 
     /**
@@ -260,5 +260,11 @@ public interface Manager {
      */
     public void unload() throws IOException;
 
+    /**
+     * This method will be invoked by the context/container on a periodic
+     * basis and allows the manager to implement
+     * a method that executes periodic tasks, such as expiring sessions etc.
+     */
+    public void backgroundProcess();
 
 }
