@@ -90,7 +90,7 @@ import javax.servlet.jsp.*;
  *
  * <p><B>Empty and Non-Empty Action</B>
  * <p> If the TagLibraryDescriptor file indicates that the action must
- * always have an empty action, by an <body-content> entry of "empty",
+ * always have an empty action, by an &lt;body-content&gt; entry of "empty",
  * then the doStartTag() method must return SKIP_BODY.
  *
  * Otherwise, the doStartTag() method may return SKIP_BODY or
