@@ -19,15 +19,17 @@
   VIAddVersionKey ProductVersion "@VERSION@"
   VIAddVersionKey Comments "jakarta.apache.org/tomcat"
   VIAddVersionKey InternalName "jakarta-tomcat-@VERSION@.exe"
-  VIProductVersion @VERSION@.0
+  VIProductVersion @VERSION@.0.0
 
 !include "MUI.nsh"
 !include "StrFunc.nsh"
 ${StrRep}
+  Var "JavaHome"
 
 ;--------------------------------
 ;Configuration
 
+  !define MUI_WELCOMEFINISHPAGE_BITMAP side_left.bmp 
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
   !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcat5w.exe
   !define MUI_FINISHPAGE_RUN_PARAMETERS //MS//Tomcat5
@@ -68,7 +70,7 @@ ${StrRep}
   !insertmacro MUI_UNPAGE_INSTFILES
 
   ;License dialog
-  LicenseData INSTALLLICENSE
+  LicenseData License.rtf
 
   ;Component-selection page
     ;Descriptions
@@ -153,6 +155,7 @@ Section "Core" SecTomcatCore
   IfSilent +2 0
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
+  StrCpy "$JavaHome" $2
   Push $2
   Call findJVMPath
   Pop $2
@@ -175,6 +178,7 @@ Section "Service" SecTomcatService
   IfSilent +2 0
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
+  StrCpy "$JavaHome" $2
   Push $2
   Call findJVMPath
   Pop $2
@@ -278,7 +282,7 @@ Section "Webapps" SecWebapps
 SectionEnd
 
 Section -post
-  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$JavaHome\lib\tools.jar;$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --JvmOptions "-Dcatalina.home=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR\temp" --StdOutput "$INSTDIR\logs\stdout.log" --StdError "$INSTDIR\logs\stderr.log"'
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -429,6 +433,7 @@ Function checkJvm
   MessageBox MB_OK "No Java Virtual Machine found."
   Quit
 NoErrors1:
+  StrCpy "$JavaHome" $3
   Push $3
   Call findJVMPath
   Pop $4
