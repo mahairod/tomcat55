@@ -561,11 +561,12 @@ final class ApplicationDispatcher
 	// Call the service() method for the allocated servlet instance
 	try {
 	    if (servlet != null) {
-		if ((servlet instanceof HttpServlet) &&
-		    (hrequest != null) && (hresponse != null))
-		    ((HttpServlet) servlet).service(hrequest, hresponse);
-		else
-		    servlet.service(request, response);
+                if ((hrequest != null) && (hresponse != null)) {
+                    servlet.service((HttpServletRequest) request,
+                                    (HttpServletResponse) response);
+                } else {
+                    servlet.service(request, response);
+                }
 	    }
 	} catch (IOException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
