@@ -56,6 +56,7 @@
 package javax.servlet.jsp.tagext;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
 
 /**
  * Tag instance attribute(s)/value(s); often this data is fully static in the
@@ -95,7 +96,11 @@ public class TagData implements Cloneable {
      * @param atts the static attribute and values.  May be null.
      */
     public TagData(Object[] atts[]) {
-	attributes = new Hashtable(atts.length);
+	if (atts == null) {
+	    attributes = new Hashtable();
+	} else {
+	    attributes = new Hashtable(atts.length);
+	}
 
 	if (atts != null) {
 	    for (int i = 0; i < atts.length; i++) {
@@ -109,12 +114,6 @@ public class TagData implements Cloneable {
      *
      * If you already have the attributes in a hashtable, use this
      * constructor. 
-     *
-     ***** NEED TO REMOVE THIS COMMENT: JUST FOR pelegri/lpgc's eyes ****
-     * Since the JSP translator internally has attributes in a
-     * hashtable whenever a TagData needs to be constructed at
-     * translation time, this constructor is used... akv
-     ***** 
      */
     public TagData(Hashtable attrs) {
         this.attributes = attrs;
@@ -156,8 +155,23 @@ public class TagData implements Cloneable {
      */
 
     public String getAttributeString(String attName) {
-	return (String) attributes.get(attName);
+	Object o = attributes.get(attName);
+	if (o == null) {
+	    return null;
+	} else {
+	    return (String) o;
+	}
     }
+
+    /**
+     * Enumerate the attributes
+     *
+     * @return An enumeration of the attributes in a TagData
+     */
+
+    public Enumeration getAttributes() {
+	return attributes.keys();
+    }    
 
     // private data
 
