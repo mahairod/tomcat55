@@ -63,6 +63,8 @@
 package org.apache.webapp.admin.resources;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -79,6 +81,10 @@ public class ResourceUtils {
     public final static String ENVIRONMENT_TYPE = "Catalina:type=Environment";
     public final static String RESOURCE_TYPE = "Catalina:type=Resource";
     public final static String NAMINGRESOURCES_TYPE = "Catalina:type=NamingResources";
+    
+    // resource class names
+    private final static String USERDB_CLASS = "org.apache.catalina.UserDatabase";
+    private final static String DATASOURCE_CLASS = "javax.sql.DataSource";
 
     // --------------------------------------------------------- Public Methods
 
@@ -120,18 +126,12 @@ public class ResourceUtils {
      */
     public static DataSourcesForm getDataSourcesForm(MBeanServer mserver)
         throws Exception {
-   
-        ObjectName rname = new ObjectName( NAMINGRESOURCES_TYPE );
-        String results[] =
-            (String[]) mserver.getAttribute(rname, "resources");
-        
-        /*    
+
         ObjectName rname = new ObjectName( RESOURCE_TYPE + 
                             ",class=" + "javax.sql.DataSource");
 
         // display only JDBC Resources for the DataSources screen       
         String[] results = (String[]) (mserver.queryMBeans(rname, null).toArray());
-         */
         
         if (results == null) {
             results = new String[0];
@@ -143,4 +143,35 @@ public class ResourceUtils {
         return (dataSourcesForm);
 
     }
+    
+    /**
+     * Construct and return a UserDatabaseForm identifying all currently defined
+     * user databases in the specified resource database.
+     *
+     * @param mserver MBeanServer to be consulted
+     * @param databaseName MBean Name of the resource database to be consulted
+     *
+     * @exception Exception if an error occurs
+     */
+    public static UserDatabasesForm getUserDatabasesForm(MBeanServer mserver)
+        throws Exception {
+
+        ObjectName ename = new ObjectName( NAMINGRESOURCES_TYPE );
+        
+        String results[] =
+            (String[]) mserver.getAttribute(ename, "resources");
+        
+        // FIX ME -- need to add just the UserDatabase resources.
+        
+        if (results == null) {
+            results = new String[0];
+        }        
+        Arrays.sort(results);
+
+        UserDatabasesForm userDatabasesForm = new UserDatabasesForm();
+        userDatabasesForm.setUserDatabases(results);
+        return (userDatabasesForm);
+
+    }
+    
 }
