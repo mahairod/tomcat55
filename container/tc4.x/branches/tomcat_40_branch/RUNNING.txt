@@ -103,7 +103,7 @@ There are two techniques by which Tomcat 4.0 can be stopped:
 
 (4) Advanced Configuration - Multiple Tomcat 4 Instances
 
-In many circumstances, it is desireable to have a single copy of a Tomcat 4
+In many circumstances, it is desirable to have a single copy of a Tomcat 4
 binary distribution shared among multiple users on the same server.  To make
 this possible, you must configure a CATALINA_BASE environment variable (in
 addition to CATALINA_HOME as described above) that points to a directory
@@ -123,7 +123,7 @@ CATALINA_HOME:
 
 If you do not set CATALINA_BASE to an explicit value, it will be initialized
 to the same value as is set for CATALINA_HOME (which means that the same
-directory is used for all relative path resoluations).
+directory is used for all relative path resolutions).
 
 
 (5) Troubleshooting:
@@ -155,7 +155,7 @@ Tomcat 4.0 install:
    After you click apply, Windows will create shortcuts in the directory with
    which you can use to start and stop the container.
 
-3) The 'localhost' machine isn't found.  This could happen if you're behing a
+3) The 'localhost' machine isn't found.  This could happen if you're behind a
    proxy.  If that's the case, make sure the proxy configuration for your
    browser knows that you shouldn't be going through the proxy to access the
    "localhost" machine.
