@@ -19,6 +19,7 @@ package org.apache.jasper.compiler;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Vector;
+import java.net.URL;
 
 import javax.servlet.ServletContext;
 
@@ -27,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
+import org.xml.sax.InputSource;
 
 /**
  * Handles the jsp-config element in WEB_INF/web.xml.  This is used
@@ -60,14 +62,18 @@ public class JspConfig {
 	InputStream is = null;
 
         try {
-            is = ctxt.getResourceAsStream(WEB_XML);
-	    if (is == null) {
+            URL uri = ctxt.getResource(WEB_XML);
+            if (uri == null) {
 	        // no web.xml
-	        return;
+                return;
 	    }
 
-	    ParserUtils pu = new ParserUtils();
-	    TreeNode webApp = pu.parseXMLDocument(WEB_XML, is);
+            is = uri.openStream();
+            InputSource ip = new InputSource(is);
+            ip.setSystemId(uri.toExternalForm()); 
+
+            ParserUtils pu = new ParserUtils();
+	    TreeNode webApp = pu.parseXMLDocument(WEB_XML, ip);
 	    if (webApp == null
                     || !"2.4".equals(webApp.findAttribute("version"))) {
 	        defaultIsELIgnored = "true";
@@ -173,6 +179,8 @@ public class JspConfig {
                     jspProperties.addElement(propertyGroup);
                 }
             }
+        } catch (Exception ex) {
+            throw new JasperException(ex);
         } finally {
             if (is != null) {
                 try {
