@@ -73,6 +73,10 @@ public class StandardWrapper
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( StandardWrapper.class );
+
+    private static final String[] DEFAULT_SERVLET_METHODS = new String[] {
+                                                    "GET", "HEAD", "POST" };
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -563,12 +567,18 @@ public class StandardWrapper
      * servlet
      */
     public String[] getServletMethods() throws ServletException {
-	
+
+        Class servletClazz = loadServlet().getClass();
+        if (!javax.servlet.http.HttpServlet.class.isAssignableFrom(
+                                                        servletClazz)) {
+            return DEFAULT_SERVLET_METHODS;
+        }
+
         HashSet allow = new HashSet();
         allow.add("TRACE");
         allow.add("OPTIONS");
 	
-        Method[] methods = getAllDeclaredMethods(loadServlet().getClass());
+        Method[] methods = getAllDeclaredMethods(servletClazz);
         for (int i=0; methods != null && i<methods.length; i++) {
             Method m = methods[i];
 	    
