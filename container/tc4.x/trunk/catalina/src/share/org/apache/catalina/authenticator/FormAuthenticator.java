@@ -139,9 +139,18 @@ public final class FormAuthenticator
 				LoginConfig config)
 	throws IOException {
 
+        if (debug < 99)
+            debug = 99;
+
+        // References to objects we will need later
+        HttpServletRequest hreq =
+          (HttpServletRequest) request.getRequest();
+        HttpServletResponse hres =
+          (HttpServletResponse) response.getResponse();
+        Session session = null;
+
 	// Have we already authenticated someone?
-	Principal principal =
-	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+	Principal principal = hreq.getUserPrincipal();
 	if (principal != null) {
             if (debug >= 1)
                 log("Already authenticated '" +
@@ -149,21 +158,38 @@ public final class FormAuthenticator
 	    return (true);
         }
 
+        // Is this the re-submit of the original request URI after successful
+        // authentication?  If so, forward the *original* request instead.
+        if (matchRequest(request)) {
+            session = getSession(request);
+            if (debug >= 1)
+                log("Restore request from session '" + session.getId() + "'");
+            principal = (Principal)
+              session.getSession().getAttribute(Constants.FORM_PRINCIPAL);
+            register(request, response, principal, Constants.FORM_METHOD);
+            if (restoreRequest(request, session)) {
+                if (debug >= 1)
+                    log("Proceed to restored request");
+                return (true);
+            } else {
+                if (debug >= 1)
+                    log("Restore of original request failed");
+                hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return (false);
+            }
+        }
+
 	// Acquire references to objects we will need to evaluate
-	HttpServletRequest hreq =
-	    (HttpServletRequest) request.getRequest();
-	HttpServletResponse hres =
-	    (HttpServletResponse) response.getResponse();
 	String contextPath = hreq.getContextPath();
 	String requestURI = hreq.getRequestURI();
 	response.setContext(request.getContext());
-        Session session = null;
 
 	// Is this a request for the login page itself?  Test here to avoid
 	// displaying it twice (from the user's perspective) -- once because
 	// of the "save and redirect" and once because of the "restore and
 	// redirect" performed below.
-	if (requestURI.equals(contextPath + config.getLoginPage())) {
+        String loginURI = contextPath + config.getLoginPage();
+	if (requestURI.equals(loginURI)) {
             if (debug >= 1)
                 log("Requesting login page normally");
 	    return (true);	// Display the login page in the usual manner
@@ -180,8 +206,10 @@ public final class FormAuthenticator
             if (debug >= 1)
                 log("Save request in session '" + session.getId() + "'");
 	    saveRequest(request, session);
-	    request.setRequestURI(contextPath + config.getLoginPage());
-	    return (true);	// Display the login page in the usual manner
+            if (debug >= 1)
+                log("Redirect to login page '" + loginURI + "'");
+            hres.sendRedirect(hres.encodeRedirectURL(loginURI));
+            return (false);
 	}
 
 	// Yes -- Validate the specified credentials and redirect
@@ -191,14 +219,28 @@ public final class FormAuthenticator
 	String password = hreq.getParameter(Constants.FORM_PASSWORD);
 	principal = realm.authenticate(username, password);
 	if (principal == null) {
+            String errorURI = contextPath + config.getErrorPage();
             if (debug >= 1)
-                log("Authentication failed, show error page");
-	    request.setRequestURI(contextPath + config.getErrorPage());
-	    return (true);	// Display the error page in the usual manner
+                log("Redirect to error page '" + errorURI + "'");
+            hres.sendRedirect(hres.encodeRedirectURL(errorURI));
+            return (false);
 	}
 
+        // Save the authenticated Principal in our session
+        if (session == null)
+            session = getSession(request);
+        session.getSession().setAttribute(Constants.FORM_PRINCIPAL, principal);
+
+        // Redirect the user to the original request URI (which will cause
+        // the original request to be restored)
+        requestURI = savedRequestURI(session);
+        if (debug >= 1)
+            log("Redirecting to '" + requestURI + "'");
+        hres.sendRedirect(hres.encodeRedirectURL(requestURI));
+        return (false);
 
 	// Restore this request and redirect to the original request URI
+        /*
         session = getSession(request, true);
         if (debug >= 1)
             log("restore request from session '" + session.getId() + "'");
@@ -214,11 +256,45 @@ public final class FormAuthenticator
             //	    hres.flushBuffer();
 	    return (false);
 	}
+        */
 
     }
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Does this request match the saved one (so that it must be the redirect
+     * we signalled after successful authentication?
+     *
+     * @param request The request to be verified
+     */
+    private boolean matchRequest(HttpRequest request) {
+
+      // Has a session been created?
+      Session session = getSession(request, false);
+      if (session == null)
+          return (false);
+
+      // Is there a saved request?
+      SavedRequest sreq = (SavedRequest)
+        session.getSession().getAttribute(Constants.FORM_KEY);
+      if (sreq == null)
+          return (false);
+
+      // Is there a saved principal?
+      if (session.getSession().getAttribute(Constants.FORM_PRINCIPAL) == null)
+          return (false);
+
+      // Does the request URI match?
+      HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+      String requestURI = hreq.getRequestURI();
+      if (requestURI == null)
+          return (false);
+      return (requestURI.equals(sreq.getRequestURI()));
+
+    }
 
 
     /**
@@ -236,6 +312,7 @@ public final class FormAuthenticator
 	SavedRequest saved = (SavedRequest)
 	    session.getSession().getAttribute(Constants.FORM_KEY);
 	session.getSession().removeAttribute(Constants.FORM_KEY);
+        session.getSession().removeAttribute(Constants.FORM_PRINCIPAL);
 	if (saved == null)
 	    return (false);
 
@@ -318,6 +395,23 @@ public final class FormAuthenticator
 
 	// Stash the SavedRequest in our session for later use
 	session.getSession().setAttribute(Constants.FORM_KEY, saved);
+
+    }
+
+
+    /**
+     * Return the request URI from the saved request.
+     *
+     * @param session Our current session
+     */
+    private String savedRequestURI(Session session) {
+
+        SavedRequest saved =
+          (SavedRequest) session.getSession().getAttribute(Constants.FORM_KEY);
+        if (saved == null)
+            return (null);
+        else
+            return (saved.getRequestURI());
 
     }
 

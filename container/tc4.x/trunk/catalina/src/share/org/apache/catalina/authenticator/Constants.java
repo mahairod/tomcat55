@@ -85,6 +85,8 @@ public class Constants {
     public static final String FORM_KEY =
 	"org.apache.catalina.security.REQUEST";
     public static final String FORM_PASSWORD = "j_password";
+    public static final String FORM_PRINCIPAL =
+        "org.apache.catalina.security.PRINCIPAL";
     public static final String FORM_USERNAME = "j_username";
 
     // Cookie name for single sign on support
