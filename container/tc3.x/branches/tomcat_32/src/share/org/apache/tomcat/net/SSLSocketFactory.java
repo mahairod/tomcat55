@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -89,6 +85,7 @@ import javax.net.ssl.HandshakeCompletedEvent;
  *
  * @author Harish Prabandham
  * @author Costin Manolache
+ * @author Stefan Freyr Stefansson
  */
 public class SSLSocketFactory
     extends org.apache.tomcat.net.ServerSocketFactory
@@ -142,6 +139,10 @@ public class SSLSocketFactory
      */
     private void initProxy() throws IOException {
 	try {
+	    /** Should client authentication be performed?
+	     */
+	    clientAuth = "true".equals(attributes.get("clientAuth"));
+
 	    /** You should have this in java.security, but
 		can't hurt to double check
 	    */
@@ -168,13 +169,17 @@ public class SSLSocketFactory
 		com.sun.net.ssl.KeyManagerFactory.getInstance("SunX509");
 	    kmf.init( kstore, keyPass.toCharArray());
 
-	    // XXX I don't know if this is needed
-//  	    com.sun.net.ssl.TrustManagerFactory tmf = 
-//  		com.sun.net.ssl.TrustManagerFactory.getInstance("SunX509");
-// 		tmf.init(kstore);
+	    // If client authentication is needed, set up TrustManager
+	    com.sun.net.ssl.TrustManager[] tm = null;
+	    if( clientAuth) {
+		com.sun.net.ssl.TrustManagerFactory tmf =
+                    com.sun.net.ssl.TrustManagerFactory.getInstance("SunX509");
+		tmf.init(kstore);
+		tm = tmf.getTrustManagers();
+	    }
 
 	    // init context with the key managers
-	    context.init(kmf.getKeyManagers(), null, null);
+	    context.init(kmf.getKeyManagers(), tm, null);
 
 	    // create proxy
 	    sslProxy = context.getServerSocketFactory();
@@ -197,9 +202,12 @@ public class SSLSocketFactory
 	String cipherSuites[] = socket.getSupportedCipherSuites();
 	socket.setEnabledCipherSuites(cipherSuites);
 
+// 	if(clientAuth) {
+// 	}
+    
 	// we don't know if client auth is needed -
 	// after parsing the request we may re-handshake
-	socket.setNeedClientAuth(false);
+	socket.setNeedClientAuth(clientAuth);
     }
 
     private KeyStore initKeyStore( String keystoreFile,
@@ -224,5 +232,27 @@ public class SSLSocketFactory
 	}
     }
 
-    
+    /** 3.2-specific hack - allow the socket factory to manipulate the
+	request. This will be replaced with a clean, interceptor
+	based mechanism in 3.3
+    */
+    public void preProcessRequest( Socket sslSocket,
+				   org.apache.tomcat.core.Request reqA )
+    {
+	//Set the client certificate attribute if appropriate
+	if( socket instanceof javax.net.ssl.SSLSocket ) {
+	    javax.net.ssl.SSLSocket sslSocket = (javax.net.ssl.SSLSocket)socket;
+	    javax.security.cert.X509Certificate[] certChain = sslSocket.
+		getSession().getPeerCertificateChain();
+	    
+	    if( certChain != null && certChain.length > 0 ) {
+		reqA.setAttribute("tomcat.request.X509CertificateChain",
+				  certChain);
+		reqA.setAttribute("javax.servlet.request.X509Certificate",
+				  certChain[0]);
+	    }
+	    // this is a  ssl socket
+	    reqA.setScheme( "https" );
+	}
+    }
 }
