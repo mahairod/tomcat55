@@ -5,8 +5,8 @@ $Id$
                  ===========================================
 
 This subproject contains the source code for Tomcat 5, a container that
-implements the Servlet 2.4 and the JSP 2.0 specifications from the Java
-Community Process (http://www.jcp.org).  In order to build a binary
+implements the Servlet 2.4 and JSP 2.0 specifications from the Java
+Community Process <http://www.jcp.org/>.  In order to build a binary
 distribution version of the container from a source distribution, 
 do the following:
 
@@ -47,28 +47,28 @@ do the following:
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
 
-* Modify the PATH environment variable to include directory
-  "${ant.home}/bin" in its list.  This makes the "ant" command line script
+* Modify the PATH environment variable to include the directory
+  ${ant.home}/bin in its list.  This makes the "ant" command line script
   available, which will be used to actually perform the build.
 
 
 (1.2) Download and Install the Xalan 2 Distribution
 
-* Download a binary distribution of version 2.x from:
+* Download a binary distribution of Xalan version 2.x from:
 
   http://xml.apache.org/dist/xalan-j/
 
-  On a Windows platform, you will need:
+  On a Windows platform, you probably want:
     Xerces-J-bin.2.x.y.zip
 
-  On a Unix platform, you will need:
+  On a Unix platform, you probably want:
     Xerces-J-bin.2.x.y.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
   "xalan-2_x_y").
 
-* Copy the xalan.jar file from that distribution to the "${ant.home}/lib"
+* Copy the xalan.jar file from that distribution to the ${ant.home}/lib	
   directory.
 
 
@@ -94,8 +94,8 @@ do the following:
   file to indicate to Ant the proxy configuration. Read below.
 
 * WARNING: Running this command will checkout the Tomcat 5 sources from CVS, as
-  well as download binaries to the "/usr/local" directory. Make sure this is
-  appropriate to do so on your computer. On Windows, this usually corresponds
+  well as download binaries to the /usr/local directory. Make sure this is
+  appropriate to do on your computer. On Windows, this usually corresponds
   to the "C:\usr\local" directory, unless Cygwin is used. Read below to 
   customize the directory used to download the binaries.
 
@@ -116,7 +116,7 @@ do the following:
 
 (3) Updating sources
 
-It is recommended to regularly update the downloaded Tomcat 5 sources. 
+It is recommended that you regularly update the downloaded Tomcat 5 sources. 
 To do this, execute the following commands:
 
     cd ${tomcat.source}
@@ -132,8 +132,4 @@ For a quick rebuild of only modified code you can use
 
 In addition, "ant build-depends" will build packages that 
 tomcat depends on ( commons-logging for now ), to ease fixes
-and debuging in those packages.
-
-
-
-  
+and debuging in those packages.  
