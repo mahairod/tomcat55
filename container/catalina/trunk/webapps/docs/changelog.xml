@@ -119,6 +119,9 @@
         <bug>33774</bug>: Retry once in JNDI realm authenticate failure regardless of the 
         exception message (remm)
       </fix>
+      <fix>
+        <bug>33961</bug>: Don't encode '~' in context paths (remm)
+      </fix>
     </changelog>
    </subsection>
    
