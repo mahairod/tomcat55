@@ -342,6 +342,14 @@ public class HttpResponseBase
 	    return ("Unsupported Media Type");
 	case SC_USE_PROXY:
 	    return ("Use Proxy");
+        case 207:       // WebDAV
+            return ("Multi-Status");
+        case 422:       // WebDAV
+            return ("Unprocessable Entity");
+        case 423:       // WebDAV
+            return ("Locked");
+        case 507:       // WebDAV
+            return ("Insufficient Storage");
 	default:
 	    return ("HTTP Response Status " + status);
 	}
