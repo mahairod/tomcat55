@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletResponse;
