@@ -148,6 +148,15 @@ public class IncludeGenerator
 	    writer.println ("pageContext.include(" +
 			    JspUtil.getExpr(page) +
 			    ");");
-			    
+
+	// Now remove the parameters that were meant only for the inclusion.
+	if (params.size() > 0) {
+	    Enumeration en = params.keys();
+	    while (en.hasMoreElements()) {
+		String key = (String) en.nextElement();
+		writer.println("request.removeAttribute(\"" + key + "\");");
+	    }
+	}
+	
     }
 }
