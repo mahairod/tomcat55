@@ -183,7 +183,10 @@ public abstract class HttpServlet extends GenericServlet
      * to return its response to the client, improving performance.
      * The content length is automatically set if the entire response fits
      * inside the response buffer.
-     * 
+     *
+     * <p>When using HTTP 1.1 chunked encoding (which means that the response
+     * has a Transfer-Encoding header), do not set the Content-Length header.
+     *
      * <p>The GET method should be safe, that is, without
      * any side effects for which users are held responsible.
      * For example, most form queries have no side effects.
