@@ -202,56 +202,8 @@ public class HttpRequestStream extends RequestStream {
             
             if ((chunkBuffer == null)
                 || (chunkPos >= chunkLength)) {
-                
-                chunkPos = 0;
-                
-                try {
-                    chunkLength = 
-                        Integer.parseInt(readLineFromStream().trim(), 16);
-                } catch (NumberFormatException e) {
-                    // Critical error, unable to parse the chunk length
-                    chunkLength = 0;
-                    chunk = false;
-                    close();
-                    return -1;
-                }
-                
-                if (chunkLength == 0) {
-                    
-                    // Skipping trailing headers, if any
-                    String trailingLine = readLineFromStream();
-                    while (!trailingLine.equals(""))
-                        trailingLine = readLineFromStream();
-                    endChunk = true;
+                if (!fillChunkBuffer())
                     return (-1);
-                    // TODO : Should the stream be automatically closed ?
-                    
-                } else {
-                    
-                    if ((chunkBuffer == null)
-                        || (chunkLength > chunkBuffer.length))
-                        chunkBuffer = new byte[chunkLength];
-                    
-                    // Now read the whole chunk into the buffer
-                    
-                    int nbRead = 0;
-                    int currentRead = 0;
-                    
-                    while (nbRead < chunkLength) {
-                        currentRead = 
-                            stream.read(chunkBuffer, nbRead, 
-                                       chunkLength - nbRead);
-                        if (currentRead == -1)
-                            throw new IOException
-                                (sm.getString("requestStream.read.error"));
-                        nbRead += currentRead;
-                    }
-                    
-                    // Skipping the CRLF
-                    readLineFromStream();
-                    
-                }
-                
             }
             
             return (chunkBuffer[chunkPos++]);
@@ -265,7 +217,112 @@ public class HttpRequestStream extends RequestStream {
     }
 
 
+    /**
+     * Read up to <code>len</code> bytes of data from the input stream
+     * into an array of bytes.  An attempt is made to read as many as
+     * <code>len</code> bytes, but a smaller number may be read,
+     * possibly zero.  The number of bytes actually read is returned as
+     * an integer.  This method blocks until input data is available,
+     * end of file is detected, or an exception is thrown.
+     *
+     * @param b The buffer into which the data is read
+     * @param off The start offset into array <code>b</code> at which
+     *  the data is written
+     * @param len The maximum number of bytes to read
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public int read(byte b[], int off, int len) throws IOException {
+        if (chunk) {
+            
+            int avail = chunkLength - chunkPos;
+            if (avail == 0)
+                fillChunkBuffer();
+            avail = chunkLength - chunkPos;
+            if (avail == 0)
+                return (-1);
+            
+            int toCopy = avail;
+            if (avail > len)
+                toCopy = len;
+            System.arraycopy(chunkBuffer, chunkPos, b, off, toCopy);
+            chunkPos += toCopy;
+            return toCopy;
+            
+        } else {
+            return super.read(b, off, len);
+        }
+    }
+    
+    
     // -------------------------------------------------------- Private Methods
+    
+    
+    /**
+     * Fill the chunk buffer.
+     */
+    private synchronized boolean fillChunkBuffer() 
+        throws IOException {
+        
+        chunkPos = 0;
+        
+        try {
+            String numberValue = readLineFromStream().trim();
+            chunkLength = 
+                Integer.parseInt(numberValue, 16);
+        } catch (NumberFormatException e) {
+            // Critical error, unable to parse the chunk length
+            chunkLength = 0;
+            chunk = false;
+            close();
+            return false;
+        }
+        
+        if (chunkLength == 0) {
+                    
+            // Skipping trailing headers, if any
+            String trailingLine = readLineFromStream();
+            while (!trailingLine.equals(""))
+                trailingLine = readLineFromStream();
+            endChunk = true;
+            return false;
+            // TODO : Should the stream be automatically closed ?
+            
+        } else {
+            
+            if ((chunkBuffer == null)
+                || (chunkLength > chunkBuffer.length))
+                chunkBuffer = new byte[chunkLength];
+            
+            // Now read the whole chunk into the buffer
+            
+            int nbRead = 0;
+            int currentRead = 0;
+            
+            while (nbRead < chunkLength) {
+                try {
+                    currentRead = 
+                        stream.read(chunkBuffer, nbRead, 
+                                    chunkLength - nbRead);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    throw new IOException();
+                }
+                if (currentRead < 0) {
+                    throw new IOException
+                        (sm.getString("requestStream.read.error"));
+                }
+                nbRead += currentRead;
+            }
+            
+            // Skipping the CRLF
+            String blank = readLineFromStream();
+            
+        }
+        
+        return true;
+        
+    }
     
 
     /**

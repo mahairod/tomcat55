@@ -762,7 +762,8 @@ public final class HttpConnector
 	    Socket socket = null;
 	    try {
 		socket = serverSocket.accept();
-                socket.setSoTimeout(connectionTimeout);
+                if (connectionTimeout > 0)
+                    socket.setSoTimeout(connectionTimeout);
 	    } catch (IOException e) {
 		if (started && !stopped)
 		    log("accept: ", e);

@@ -65,18 +65,17 @@
 package org.apache.catalina.connector.http;
 
 import java.io.IOException;
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.EOFException;
 import org.apache.catalina.util.StringManager;
 
 /**
- * Extends BufferedInputStream to be more efficient reading lines during HTTP
+ * Extends InputStream to be more efficient reading lines during HTTP
  * header processing.
  *
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  */
-public class SocketInputStream extends BufferedInputStream {
+public class SocketInputStream extends InputStream {
 
 
     // -------------------------------------------------------------- Constants
@@ -112,6 +111,30 @@ public class SocketInputStream extends BufferedInputStream {
     private static final int LC_OFFSET = 'A' - 'a';
 
 
+    /**
+     * Internal buffer.
+     */
+    protected byte buf[];
+
+
+    /**
+     * Last valid byte.
+     */
+    protected int count;
+
+
+    /**
+     * Position in the buffer.
+     */
+    protected int pos;
+
+
+    /**
+     * Underlying input stream.
+     */
+    protected InputStream is;
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -124,7 +147,8 @@ public class SocketInputStream extends BufferedInputStream {
      */
     public SocketInputStream(InputStream is, int bufferSize) {
 
-	super(is, bufferSize);
+	this.is = is;
+        buf = new byte[bufferSize];
 
     }
 
@@ -174,9 +198,7 @@ public class SocketInputStream extends BufferedInputStream {
         if (chr == -1)
             throw new EOFException
                 (sm.getString("requestStream.readline.error"));
-        if ((chr != CR) || (chr != LF)) {
-            pos--;
-        }
+        pos--;
 
         // Reading the method name
 
@@ -484,6 +506,81 @@ public class SocketInputStream extends BufferedInputStream {
         
         header.valueEnd = readCount;
         
+    }
+
+
+    /**
+     * Read byte.
+     */
+    public int read()
+        throws IOException {
+        if (pos >= count) {
+            fill();
+	    if (pos >= count)
+		return -1;
+        }
+	return buf[pos++] & 0xff;
+    }
+
+
+    /**
+     * 
+     */
+    /*
+    public int read(byte b[], int off, int len)
+        throws IOException {
+        
+    }
+    */
+
+
+    /**
+     * 
+     */
+    /*
+    public long skip(long n)
+        throws IOException {
+        
+    }
+    */
+
+
+    /**
+     * Returns the number of bytes that can be read from this input 
+     * stream without blocking.
+     */
+    public int available()
+        throws IOException {
+        return (count - pos) + is.available();
+    }
+
+
+    /**
+     * Close the input stream.
+     */
+    public void close()
+        throws IOException {
+        if (is == null)
+            return;
+        is.close();
+        is = null;
+        buf = null;
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Fill the internal buffer using data from the undelying input stream.
+     */
+    protected void fill()
+        throws IOException {
+        pos = 0;
+        count = 0;
+        int nRead = is.read(buf, 0, buf.length);
+        if (nRead > 0)
+            count = nRead;
     }
 
 
