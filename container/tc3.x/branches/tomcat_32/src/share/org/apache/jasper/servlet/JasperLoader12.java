@@ -172,7 +172,7 @@ public class JasperLoader12 extends JasperLoader {
 		throw (JasperException)ex;
 	    if( ex instanceof FileNotFoundException )
 		throw (FileNotFoundException) ex;
-	    ex.printStackTrace();
+	    //	    ex.printStackTrace();
 	    throw new JasperException( ex );
 	}
     }
