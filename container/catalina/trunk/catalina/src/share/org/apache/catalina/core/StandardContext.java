@@ -69,48 +69,30 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Hashtable;
 import java.util.Stack;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequestListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
-import javax.naming.InitialContext;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.naming.NamingEnumeration;
-import javax.naming.Binding;
-import javax.naming.StringRefAddr;
 import javax.naming.directory.DirContext;
-import org.apache.naming.NamingContext;
+import javax.management.ObjectName;
 import org.apache.naming.ContextBindings;
-import org.apache.naming.ContextAccessController;
-import org.apache.naming.EjbRef;
-import org.apache.naming.ResourceRef;
-import org.apache.naming.ResourceEnvRef;
-import org.apache.naming.TransactionRef;
 import org.apache.naming.resources.BaseDirContext;
 import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
 import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -139,7 +121,6 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
@@ -147,6 +128,9 @@ import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
 
 import org.apache.tomcat.util.log.SystemLogHandler;
+import org.apache.commons.modeler.Registry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Standard implementation of the <b>Context</b> interface.  Each
@@ -160,7 +144,10 @@ import org.apache.tomcat.util.log.SystemLogHandler;
 
 public class StandardContext
     extends ContainerBase
-    implements Context {
+    implements Context
+ {
+    private static Log log = LogFactory.getLog(StandardContext.class);
+
 
 
     // ----------------------------------------------------------- Constructors
@@ -512,6 +499,7 @@ public class StandardContext
      */
     private DirContext webappResources = null;
 
+    private ArrayList wrappers=new ArrayList();
 
     // ----------------------------------------------------- Context Properties
 
@@ -874,7 +862,7 @@ public class StandardContext
         String loginPage = config.getLoginPage();
         if ((loginPage != null) && !loginPage.startsWith("/")) {
             if (isServlet22()) {
-                log(sm.getString("standardContext.loginConfig.loginWarning",
+                log.info(sm.getString("standardContext.loginConfig.loginWarning",
                                  loginPage));
                 config.setLoginPage("/" + loginPage);
             } else {
@@ -886,7 +874,7 @@ public class StandardContext
         String errorPage = config.getErrorPage();
         if ((errorPage != null) && !errorPage.startsWith("/")) {
             if (isServlet22()) {
-                log(sm.getString("standardContext.loginConfig.errorWarning",
+                log.info(sm.getString("standardContext.loginConfig.errorWarning",
                                  errorPage));
                 config.setErrorPage("/" + errorPage);
             } else {
@@ -1367,7 +1355,7 @@ public class StandardContext
         String jspFile = wrapper.getJspFile();
         if ((jspFile != null) && !jspFile.startsWith("/")) {
             if (isServlet22()) {
-                log(sm.getString("standardContext.wrapper.warning", jspFile));
+                log.info(sm.getString("standardContext.wrapper.warning", jspFile));
                 wrapper.setJspFile("/" + jspFile);
             } else {
                 throw new IllegalArgumentException
@@ -1469,7 +1457,7 @@ public class StandardContext
         String location = errorPage.getLocation();
         if ((location != null) && !location.startsWith("/")) {
             if (isServlet22()) {
-                log(sm.getString("standardContext.errorPage.warning",
+                log.info(sm.getString("standardContext.errorPage.warning",
                                  location));
                 errorPage.setLocation("/" + location);
             } else {
@@ -1886,6 +1874,7 @@ public class StandardContext
     public Wrapper createWrapper() {
 
         Wrapper wrapper = new StandardWrapper();
+        wrappers.add(wrapper);
 
         synchronized (instanceListeners) {
             for (int i = 0; i < instanceListeners.length; i++) {
@@ -3634,6 +3623,7 @@ public class StandardContext
 
         if (debug >= 1)
             log("Starting");
+        registerJMX();
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
@@ -4354,5 +4344,51 @@ public class StandardContext
         return ok;
 
     }
+
+    // -------------------- JMX methods  --------------------
+
+    /** JSR77 servlets attribute
+     *
+     * @return list of all servlets ( we know about )
+     */
+    public ObjectName[] getServlets() {
+        int size=wrappers.size();
+        ObjectName result[]=new ObjectName[size];
+        for( int i=0; i< size; i++ ) {
+            result[i]=((StandardWrapper)wrappers.get(i)).getObjectName();
+        }
+        return result;
+    }
+
+    private void registerJMX() {
+        String onameStr=null;
+        try {
+            if( oname==null || oname.getKeyProperty("WebModule")==null ) {
+                ContainerBase ctx=(ContainerBase)parent;
+                String pathName=getName();
+                String hostName=getParent().getName();
+                String name= ((hostName==null)? "DEFAULT" : hostName) +
+                        (("".equals(pathName))?"/":pathName );
+
+                onameStr="j2eeType=WebModule,name=" + name +
+                        ctx.getJSR77Suffix();
+                if( log.isDebugEnabled())
+                    log.debug("Registering " + onameStr );
+
+                Registry.getRegistry().registerComponent(this,
+                        ctx.getDomain(),
+                        "StandardContext", onameStr);
+            }
+            for( Iterator it=wrappers.iterator(); it.hasNext() ; ) {
+                StandardWrapper wrapper=(StandardWrapper)it.next();
+                // XXX prevent duplicated registration
+                wrapper.registerJMX( this, wrapper );
+            }
+        } catch( Exception ex ) {
+            log.info("Error registering context with jmx " + this + " " +
+                    onameStr + " " + ex.toString() );
+        }
+    }
+
 
 }
