@@ -73,6 +73,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Globals;
 import org.apache.catalina.util.StringManager;
@@ -290,12 +291,15 @@ public final class SecurityUtil{
                     && targetArguments[0] instanceof HttpServletRequest){
                 HttpServletRequest request = 
                     (HttpServletRequest)targetArguments[0];
-                subject = (Subject)request.getSession()
-                                        .getAttribute(Globals.SUBJECT_ATTR);
 
-                if (subject == null){
-                    subject = new Subject();
-                    request.getSession().setAttribute(Globals.SUBJECT_ATTR, subject);
+                HttpSession session = request.getSession(false);
+                if (session != null){
+                    subject = (Subject)session.getAttribute(Globals.SUBJECT_ATTR);
+
+                    if (subject == null){
+                        subject = new Subject();
+                        session.setAttribute(Globals.SUBJECT_ATTR, subject);
+                    }
                 }
             }
 
