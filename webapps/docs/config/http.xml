@@ -295,6 +295,16 @@
       </p>
     </attribute>
 
+    <attribute name="strategy" required="false">
+      <p>The thread pooling strategy which will be used. The default strategy does 
+      not use a master thread, but a more conventional strategy using a 
+      master listener thread can be used by setting "ms" as this attribute's value. 
+      The master strategy will work significantly better using the threadPriority 
+      attribute, which will apply only to the thread which listens on the server socket.
+      This is set to <code>lf</code> by default.
+      </p>
+    </attribute>
+
   </attributes>
 
   </subsection>

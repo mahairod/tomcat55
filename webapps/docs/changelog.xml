@@ -27,10 +27,16 @@
 </section>
 
 <section name="Tomcat 5.5.3 (yoavs)">
+
   <subsection name="General">
-    <fix>
-      <bug>30568</bug>: Incomplete setup.html documentation for launching jsvc. (yoavs)
-    </fix>
+    <changelog>
+      <fix>
+        <bug>30568</bug>: Incomplete setup.html documentation for launching jsvc. (yoavs)
+      </fix>
+      <update>
+        Repackage naming features. (remm)
+      </update>
+    </changelog>
   </subsection>
 
   <subsection name="Catalina">
@@ -78,6 +84,29 @@
       <fix>
         Fixed StandardContext.getStartTime() to return actual start time/date instead of time (startupTime) it took to start context. (luehe)
       </fix>
+      <update>
+        getRequest/getResponse should return the most relevant interface, to avoid casts. (remm)
+      </update>
+      <update>
+        Add check for directory before considering something is a compressed WAR. (remm)
+      </update>
+      <docs>
+        Update the connector documentation. (remm)
+      </docs>
+      <fix>
+        When parsing a context file, ignore the "path" attribute: 
+        the only place where it is acceptable is in server.xml. (remm)
+      </fix>
+      <fix>
+        Digester handling fixes: always call reset in a finally block after using a digester. (remm)
+      </fix>
+      <update>
+        Remove many fields from Connector, and tie the creation of the Connector to the 
+        creation of the protocol handler. (remm)
+      </update>
+      <update>
+        Remove package triggers from the classloader, which seem useless when using Java 5. (remm)
+      </update>
     </changelog>
   </subsection>
 
@@ -86,6 +115,22 @@
       <update>
         Allow customized server header for Standalone. (funkman)
       </update>
+      <fix>
+        Digester.reset now removes the error handler, the root and calls clear, to prevent
+        any memory leak. (remm)
+      </fix>
+      <update>
+        Remove useless stuff in digester. (remm)
+      </update>
+      <update>
+        In HTTP, add a utility method to convert strings to byte arrays, and output the server header
+        directly as bytes. (remm)
+      </update>
+      <add>
+        Add a master slave thread pool based on the code from Tomcat 4.0. It is less exotic than the
+        default one, and might fare better on some picky systems, such as Redhat 9. The two threadpools
+        will likely be removed once we use the Java 5 API, although more investigation is needed. (remm)
+      </add>
     </changelog>
   </subsection>
 
@@ -97,6 +142,9 @@
       <fix>
         <bug>31257</bug>: Added specification of endorsed dirs if forking.  Note that this is fairly useless for now in 5.5 since it uses JDT and not javac by default. (yoavs)
       </fix>
+      <docs>
+        Document new Jasper defaults, and update the production configuration. (remm)
+      </docs>
       <fix>
         Copied XML encoding detection logic into JASPER, so we're no longer dependent on Xerces. (luehe)
       </fix>
@@ -128,6 +176,12 @@
       <update>
         Added contexts' start time (available from 'startTime' MBean attribute of StandardContext) to status page (luehe)
       </update>
+      <fix>
+        <bug>31264</bug>: the deploy task should now behave correctly. (remm)
+      </fix>
+      <update>
+        Refactor the manager servlet to make calls to the deployer more robust. (remm)
+      </update>
     </changelog>
   </subsection>
 </section>
@@ -136,16 +190,39 @@
 <section name="Tomcat 5.5.2 (yoavs)">
   <subsection name="General">
     <changelog>
+      <fix>
+        The installer will now use the system's JRE. (remm)
+      </fix>
     </changelog>
   </subsection>
 
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        Fix URL generation for classloaders on Windows, causing common/classes and shared/classes
+        to be unusable (remm)
+      </fix>
+      <fix>
+        <bug>31110</bug>: Fix resource packaging bug for servlets (remm)
+      </fix>
+      <fix>
+        Fix 5.5 regression where going through the authenticator would create a session each time. (remm)
+      </fix>
+      <fix>
+        Fix classname of the connector in Embedded, and remove the socket factory. (remm)
+      </fix>
     </changelog>
   </subsection>
 
   <subsection name="Coyote">
     <changelog>
+      <fix>
+        Redo server header handling again. (remm)
+      </fix>
+      <update>
+        Cleanup a little access to the headers using a local variable and 
+        use setValue for Server and Date headers. (remm)
+      </update>
     </changelog>
   </subsection>
 
@@ -153,6 +230,10 @@
     <changelog>
       <fix>
         Remove maxTagNesting and curTagNesting since they are unused. (funkman)
+      </fix>
+      <fix>
+        Fix tag files handling with JDT, which were ususable, and refactor the lifecycle handling of
+        the page loader. (remm)
       </fix>
     </changelog>
   </subsection>
