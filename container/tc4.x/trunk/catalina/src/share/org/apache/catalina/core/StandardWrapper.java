@@ -1064,18 +1064,18 @@ public final class StandardWrapper
         // Loaf a while if the current instance is allocated
         // (possibly more than once if non-STM)
         if (countAllocated > 0) {
-            boolean first = true;
-            while (countAllocated > 0) {
-                if (first) {
+            int nRetries = 0;
+            while (nRetries < 10) {
+                if (nRetries == 0) {
                     log("Waiting for " + countAllocated +
                         " instance(s) to be deallocated");
-                    first = false;
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     ;
                 }
+                nRetries++;
             }
         }
 
