@@ -773,6 +773,7 @@ public class JspC implements Options {
             initServletContext();
                                                                        
         initWebXml();
+        Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 
         Enumeration e = pages.elements();
         while (e.hasMoreElements()) {
