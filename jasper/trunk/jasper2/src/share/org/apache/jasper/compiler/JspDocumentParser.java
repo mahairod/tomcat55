@@ -150,6 +150,17 @@ class JspDocumentParser extends DefaultHandler
 	JspDocumentParser handler = new JspDocumentParser(pc, path, inStream,
 							  isTagFile,
 							  directivesOnly);
+	// It's an error to have a prelude or a coda associated with
+	// a JSP document
+	if (!handler.pageInfo.getIncludePrelude().isEmpty()) {
+	    String file = (String) handler.pageInfo.getIncludePrelude().get(0);
+	    handler.err.jspError("jsp.error.prelude.xml", path, file);
+	}
+	if (!handler.pageInfo.getIncludeCoda().isEmpty()) {
+	    String file = (String) handler.pageInfo.getIncludeCoda().get(0);
+	    handler.err.jspError("jsp.error.coda.xml", path, file);
+	}
+
 	Node.Nodes pageNodes = null;
 	Node.JspRoot jspRoot = null;
 
@@ -160,8 +171,6 @@ class JspDocumentParser extends DefaultHandler
 		rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
 		jspRoot = new Node.JspRoot(rootAttrs, null, null);
 		handler.current = jspRoot;
-		handler.addInclude(jspRoot,
-				   handler.pageInfo.getIncludePrelude());
 	    } else {
 		handler.isTop = false;
 		handler.current = parent;
@@ -184,7 +193,6 @@ class JspDocumentParser extends DefaultHandler
 	    saxParser.parse(handler.inputSource, handler);
 
 	    if (parent == null) {
-		handler.addInclude(jspRoot, handler.pageInfo.getIncludeCoda());
 		// Create Node.Nodes from dummy (top-level) <jsp:root>
 		pageNodes = new Node.Nodes(jspRoot);
 	    } else {
@@ -729,29 +737,6 @@ class JspDocumentParser extends DefaultHandler
 		}
 	    }
 	}
-    }
-
-    /*
-     * Processes the given list of included files.
-     *
-     * This is used to implement the include-prelude and include-coda
-     * subelements of the jsp-config element in web.xml
-     */
-    private void addInclude(Node parent, List files) throws SAXException {
-        if (files != null) {
-            Iterator iter = files.iterator();
-            while (iter.hasNext()) {
-                String file = (String) iter.next();
-                AttributesImpl attrs = new AttributesImpl();
-                attrs.addAttribute("", "file", "file", "CDATA", file);
-
-                // Create a dummy Include directive node
-                Node includeDir = new Node.IncludeDirective(attrs, 
-							    null, // XXX
-							    parent);
-                processIncludeDirective(file, includeDir);
-            }
-        }
     }
 
     /*
