@@ -17,9 +17,9 @@
       <depend property="commons-digester.jar" project="commons-digester"
         runtime="true"/>
       <depend property="commons-logging.jar" project="commons-logging"
-        runtime="true"/>
+        runtime="true" id="all"/>
       <depend property="commons-logging-api.jar" project="commons-logging"
-        runtime="true"/>
+        runtime="true" id="all"/>
       <property name="regexp.jar"
         reference="jarpath" id="regexp" project="jakarta-regexp"/>
       <property name="jtc.home" reference="srcdir" 
@@ -76,9 +76,9 @@
       <depend property="commons-dbcp.jar" project="commons-dbcp"/>
       <depend property="commons-pool.jar" project="commons-pool"/>
       <depend property="commons-logging.jar" project="commons-logging"
-        runtime="true"/>
+        runtime="true" id="all"/>
       <depend property="commons-logging-api.jar" project="commons-logging"
-        runtime="true"/>
+        runtime="true" id="all">
     </ant>
 
     <depend project="jakarta-ant"/>
@@ -91,7 +91,6 @@
     <option project="jakarta-avalon"/>
     <option project="jakarta-avalon-phoenix"/>
     <depend project="jakarta-tomcat-coyote"/>
-    <depend project="tomcat-catalina"/>
     <depend project="jakarta-tomcat-util"/>
     <depend project="jakarta-servletapi-4"/>
     <depend project="jakarta-regexp"/>
