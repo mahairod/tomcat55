@@ -210,7 +210,7 @@ public class TagBeginGenerator
 	writer.pushIndent();
 	
 	writer.println("out = pageContext.pushBody();");
-	writer.println(thVarName+".setBodyOut((BodyJspWriter) out);");
+	writer.println(thVarName+".setBodyOut((BodyContent) out);");
 	writer.println("do {");
 	writer.pushIndent();
         // Need to declare and update NESTED variables here

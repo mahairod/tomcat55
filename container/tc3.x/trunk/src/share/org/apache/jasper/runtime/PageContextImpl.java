@@ -84,7 +84,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyJspWriter;
+import javax.servlet.jsp.tagext.BodyContent;
 
 import org.apache.jasper.Constants;
 
@@ -342,10 +342,11 @@ public class PageContextImpl extends PageContext {
 
     Stack writerStack = new Stack();
     
-    public BodyJspWriter pushBody() {
+    public BodyContent pushBody() {
+        JspWriter previous = out;
         writerStack.push(out);
-        out = new BodyJspWriterImpl(bufferSize);
-        return (BodyJspWriter) out;
+        out = new BodyContentImpl(previous);
+        return (BodyContent) out;
     }
     
     public JspWriter popBody() {
