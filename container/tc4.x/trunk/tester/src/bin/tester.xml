@@ -4,6 +4,8 @@
   <property name="catalina.home"  value="../../build/tomcat-4.0"/>
   <property name="host"           value="localhost"/>
   <property name="port"           value="8080"/>
+<!--  <property name="protocol"       value="HTTP/1.0"/> -->
+  <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
@@ -16,7 +18,7 @@
     <!-- ========== Basic Run State ======================================= -->
 
     <!-- Should be able to see the home page -->
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/index.html"
           status="200"/>
 
@@ -28,63 +30,63 @@
     <!-- ========== Case Sensitive Request URI Matching =================== -->
 
     <!-- Make sure that static resources are matched case sensitively -->
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/index.HTML"
           status="404"/>
 
     <!-- Should be able to execute the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/jsp/dates/date.jsp"
           status="200"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/jsp/dates/date.Jsp"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/jsp/dates/Date.jsp"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/jsp/Dates/date.jsp"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/Jsp/dates/date.jsp"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/Examples/jsp/dates/date.jsp"
           status="404"/>
 
     <!-- Should be able to execute the HelloWorld servlet example -->
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/servlet/HelloWorldExample"
           status="200"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/servlet/helloWorldExample"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/Servlet/HelloWorldExample"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/Examples/servlet/HelloWorldExample"
           status="404"/>
 
@@ -95,27 +97,27 @@
 
     <!-- ========== Parameters and Query Strings ========================== -->
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetParameter01?foo=1"
       outContent="GetParameter01 PASSED"/>
 
-    <tester host="${host}" port="${port}" debug="0"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetParameter01?foo=1"
       outContent="GetParameter01 PASSED"/>
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
       outContent="GetParameterMap00 PASSED"/>
 
-    <tester host="${host}" port="${port}" debug="0"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
       outContent="GetParameterMap00 PASSED"/>
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetQueryString01?foo=1"
       outContent="GetQueryString01 PASSED"/>
 
-    <tester host="${host}" port="${port}" debug="0"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetQueryString01?foo=1"
       outContent="GetQueryString01 PASSED"/>
 
@@ -124,11 +126,25 @@
     <!-- Servlet compliance tests, until equivalent tests are included
          in jakarta-watchdog-4.0.  -->
 
-    <tester host="${host}" port="${port}"
+    <!-- HttpURLConnection does not handle multiple headers for the same
+         name correctly, so use native socket connections, selected by
+         setting the protocol to "HTTP/1.0" -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/GetHeaders01"
+       inHeaders="Accept-Language:en-us##Accept-Language:en-gb"
+      outContent="GetHeaders01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/WrappedGetHeaders01"
+       inHeaders="Accept-Language:en-us##Accept-Language:en-gb"
+      outContent="GetHeaders01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetInputStream01"
       outContent="GetInputStream01 PASSED"/>
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetInputStream01"
       outContent="GetInputStream01 PASSED"/>
 
@@ -141,12 +157,12 @@
          tested by invoking a protected URI followed by a non-protected URI
     -->
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/protected/Authentication01"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication01 PASSED"/>
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/protected/Authentication02"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication02 PASSED"/>
@@ -160,11 +176,11 @@
 
     <!-- ========== Other ServletResponse Tests =========================== -->
 
-    <tester host="${host}" port="${port}"
+    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
          request="${context.path}/SetBufferSize01"
       outContent="SetBufferSize01 PASSED"/>
 
-    <tester host="${host}" port="${port}" debug="0"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedSetBufferSize01"
       outContent="SetBufferSize01 PASSED"/>
 

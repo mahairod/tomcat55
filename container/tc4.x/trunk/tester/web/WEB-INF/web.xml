@@ -41,6 +41,11 @@
     <!-- ========== Filter Mappings ======================================= -->
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetHeaders01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedGetInputStream01</url-pattern>
     </filter-mapping>
@@ -79,6 +84,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>GetHeaders01</servlet-name>
+        <servlet-class>org.apache.tester.GetHeaders01</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>GetInputStream01</servlet-name>
         <servlet-class>org.apache.tester.GetInputStream01</servlet-class>
     </servlet>
@@ -113,6 +123,16 @@
     <servlet-mapping>
         <servlet-name>Authentication02</servlet-name>
         <url-pattern>/protected/Authentication02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetHeaders01</servlet-name>
+        <url-pattern>/GetHeaders01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetHeaders01</servlet-name>
+        <url-pattern>/WrappedGetHeaders01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

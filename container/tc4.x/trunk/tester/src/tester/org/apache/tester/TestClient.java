@@ -62,8 +62,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.Socket;
 import java.net.URL;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -249,6 +251,22 @@ public class TestClient extends Task {
 
 
     /**
+     * The protocol and version to include in the request, if executed as
+     * a direct socket connection.  Lack of a value here indicates that an
+     * HttpURLConnection should be used instead.
+     */
+    protected String protocol = null;
+
+    public String getProtocol() {
+        return (this.protocol);
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+
+    /**
      * The request URI to be sent to the server.  This value is required.
      */
     protected String request = null;
@@ -281,8 +299,28 @@ public class TestClient extends Task {
 
     /**
      * Execute the test that has been configured by our property settings.
+     *
+     * @exception BuildException if an exception occurs
      */
     public void execute() throws BuildException {
+
+        if ((protocol == null) || (protocol.length() == 0))
+            executeHttp();
+        else
+            executeSocket();
+
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Execute the test via use of an HttpURLConnection.
+     *
+     * @exception BuildException if an exception occurs
+     */
+    protected void executeHttp() throws BuildException {
 
         // Construct a summary of the request we will be sending
         String summary = "[" + method + " " + request + "]";
@@ -428,6 +466,254 @@ public class TestClient extends Task {
             if (throwable != null)
                 throwable.printStackTrace(System.out);
         }
+
+    }
+
+
+    /**
+     * Execute the test via use of a socket with direct input/output.
+     *
+     * @exception BuildException if an exception occurs
+     */
+    protected void executeSocket() throws BuildException {
+
+        // Construct a summary of the request we will be sending
+        String command = method + " " + request + " " + protocol;
+        String summary = "[" + command + "]";
+        if (debug >= 1)
+            System.out.println("RQST: " + summary);
+        boolean success = true;
+        String result = null;
+        Socket socket = null;
+        OutputStream os = null;
+        PrintWriter pw = null;
+        InputStream is = null;
+        Throwable throwable = null;
+        int outStatus = 0;
+        String outMessage = null;
+
+        try {
+
+            // Open a client socket for this request
+            socket = new Socket(host, port);
+            os = socket.getOutputStream();
+            pw = new PrintWriter(os);
+            is = socket.getInputStream();
+
+            // Send the command and content length header (if any)
+            pw.print(command + "\r\n");
+            if (inContent != null) {
+                if (debug >= 1)
+                    System.out.println("HEAD: " + "Content-Length: " +
+                                       inContent.length());
+                pw.print("Content-Length: " + inContent.length() + "\r\n");
+            }
+
+            // Send the specified headers (if any)
+            if (inHeaders != null) {
+                String headers = inHeaders;
+                while (headers.length() > 0) {
+                    int delimiter = headers.indexOf("##");
+                    String header = null;
+                    if (delimiter < 0) {
+                        header = headers;
+                        headers = "";
+                    } else {
+                        header = headers.substring(0, delimiter);
+                        headers = headers.substring(delimiter + 2);
+                    }
+                    int colon = header.indexOf(":");
+                    if (colon < 0)
+                        break;
+                    String name = header.substring(0, colon).trim();
+                    String value = header.substring(colon + 1).trim();
+                    if (debug >= 1)
+                        System.out.println("HEAD: " + name + ": " + value);
+                    pw.print(name + ": " + value + "\r\n");
+                }
+            }
+            pw.print("\r\n");
+
+            // Send our content (if any)
+            if (inContent != null) {
+                if (debug >= 1)
+                    System.out.print("DATA: ");
+                for (int i = 0; i < inContent.length(); i++) {
+                    if (debug >= 1)
+                        System.out.print(inContent.charAt(i));
+                    pw.print(inContent.charAt(i));
+                }
+            }
+            pw.flush();
+
+            // Read the response status and associated message
+            String line = read(is);
+            if (line == null) {
+                outStatus = -1;
+                outMessage = "NO RESPONSE";
+            } else {
+                line = line.trim();
+                if (debug >= 1)
+                    System.out.println("RESP: " + line);
+                int space = line.indexOf(" ");
+                if (space >= 0) {
+                    line = line.substring(space + 1).trim();
+                    space = line.indexOf(" ");
+                }
+                try {
+                    if (space < 0) {
+                        outStatus = Integer.parseInt(line);
+                        outMessage = "";
+                    } else {
+                        outStatus = Integer.parseInt(line.substring(0, space));
+                        outMessage = line.substring(space + 1).trim();
+                    }
+                } catch (NumberFormatException e) {
+                    outStatus = -1;
+                    outMessage = "NUMBER FORMAT EXCEPTION";
+                }
+            }
+            if (debug >= 1)
+                System.out.println("STAT: " + outStatus + " MESG: " +
+                                   outMessage);
+
+            // Read the response headers (if any)
+            String headerName = null;
+            String headerValue = null;
+            while (true) {
+                line = read(is);
+                if ((line == null) || (line.length() == 0))
+                    break;
+                int colon = line.indexOf(":");
+                if (colon < 0) {
+                    if (debug >= 1)
+                        System.out.println("????: " + line);
+                } else {
+                    headerName = line.substring(0, colon).trim();
+                    headerValue = line.substring(colon + 1).trim();
+                    if (debug >= 1)
+                        System.out.println("HEAD: " + headerName + ": " +
+                                           headerValue);
+                    ; // FIXME - record them?
+                }
+            }
+
+            // Acquire the response data (if any)
+            String outData = "";
+            String outText = "";
+            boolean eol = false;
+            if (is != null) {
+                while (true) {
+                    int b = is.read();
+                    if (b < 0)
+                        break;
+                    char ch = (char) b;
+                    if ((ch == '\r') || (ch == '\n'))
+                        eol = true;
+                    if (!eol)
+                        outData += ch;
+                    else
+                        outText += ch;
+                }
+            }
+            if (debug >= 1) {
+                System.out.println("DATA: " + outData);
+                if (outText.length() > 2)
+                    System.out.println("TEXT: " + outText);
+            }
+
+            // Validate the response against our criteria
+            if (status != outStatus) {
+                success = false;
+                result = "Expected status=" + status + ", got status=" +
+                    outStatus;
+            } else if ((message != null) &&
+                       !message.equals(outMessage)) {
+                success = false;
+                result = "Expected message='" + message + "', got message='" +
+                    outMessage + "'";
+            } else if ((outContent != null) &&
+                       !outData.startsWith(outContent)) {
+                success = false;
+                result = outData;
+            }
+
+        } catch (Throwable t) {
+            success = false;
+            result = "Status=" + outStatus +
+                ", Message=" + outMessage;
+            throwable = null;
+        } finally {
+            if (pw != null) {
+                try {
+                    pw.close();
+                } catch (Throwable w) {
+                    ;
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (Throwable w) {
+                    ;
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Throwable w) {
+                    ;
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (Throwable w) {
+                    ;
+                }
+            }
+        }
+
+        if (success)
+            System.out.println("OK " + summary);
+        else {
+            System.out.println("FAIL " + summary + " " + result);
+            if (throwable != null)
+                throwable.printStackTrace(System.out);
+        }
+
+    }
+
+
+    /**
+     * Read and return the next line from the specified input stream, with
+     * no carriage return or line feed delimiters.  If
+     * end of file is reached, return <code>null</code> instead.
+     *
+     * @param stream The input stream to read from
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected String read(InputStream stream) throws IOException {
+
+        StringBuffer result = new StringBuffer();
+        while (true) {
+            int b = stream.read();
+            if (b < 0) {
+                if (result.length() == 0)
+                    return (null);
+                else
+                    break;
+            }
+            char c = (char) b;
+            if (c == '\r')
+                continue;
+            else if (c == '\n')
+                break;
+            else
+                result.append(c);
+        }
+        return (result.toString());
 
     }
 
