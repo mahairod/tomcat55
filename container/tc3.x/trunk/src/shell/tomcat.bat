@@ -52,8 +52,8 @@ goto cleanup
 rem ----- Prepare Appropriate Java Execution Commands -----------------------
 
 if not "%OS%" == "Windows_NT" goto noTitle
-set _SECSTARTJAVA=start "Secure Tomcat 3.2" "%JAVA_HOME%\bin\java"
-set _STARTJAVA=start "Tomcat 3.2" "%JAVA_HOME%\bin\java"
+set _SECSTARTJAVA=start "Secure Tomcat 3.3" "%JAVA_HOME%\bin\java"
+set _STARTJAVA=start "Tomcat 3.3" "%JAVA_HOME%\bin\java"
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 goto setClasspath
 
