@@ -8890,7 +8890,7 @@
     
     <exception-type>java.lang.ArithmeticException</exception-type>
     
-    <location>/ServletErrorPage</location>
+    <location>/tests/javax_servlet/Error/ServletErrorPage</location>
     
   
   </error-page>
@@ -8899,7 +8899,7 @@
     
     <error-code>501</error-code>
     
-    <location>/ServletErrorPage</location>
+    <location>/tests/javax_servlet/Error/ServletErrorPage</location>
     
   
   </error-page>
@@ -8908,7 +8908,7 @@
     
     <error-code>502</error-code>
     
-    <location>/JSPErrorPage</location>
+    <location>/tests/javax_servlet/Error/JSPErrorPage</location>
     
   
   </error-page>
@@ -8926,7 +8926,7 @@
     
     <exception-type>java.lang.ArrayIndexOutOfBoundsException</exception-type>
     
-    <location>/JSPErrorPage</location>
+    <location>/tests/javax_servlet/Error/JSPErrorPage</location>
     
   
   </error-page>
