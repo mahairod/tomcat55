@@ -72,7 +72,7 @@ commons-daemon-launcher-bootstrap.class=${commons-daemon.bin}/LauncherBootstrap.
 commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
-# ----- Commons Digester, version 20020819 or later -----
+# ----- Commons Digester, version 20020820 or later -----
 commons-digester.home=${base.path}/commons-digester
 commons-digester.lib=${commons-digester.home}/dist
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
