@@ -164,13 +164,13 @@ public class SocketInputStream extends BufferedInputStream {
         
         // Checking for a blank line
         int chr = 0;
-        while ((chr = read()) == CR) { // Skipping CR
-            read(); // Skipping LF
-        }
+        do { // Skipping CR or LF
+            chr = read();
+        } while ((chr == CR) || (chr == LF));
         if (chr == -1)
             throw new EOFException
                 (sm.getString("requestStream.readline.error"));
-        if (chr != CR) {
+        if ((chr != CR) || (chr != LF)) {
             pos--;
         }
 
@@ -263,8 +263,6 @@ public class SocketInputStream extends BufferedInputStream {
         readStart = pos;
         readCount = 0;
         
-        int crPos = -2;
-        
         boolean eol = false;
         
         while (!eol) {
@@ -285,12 +283,6 @@ public class SocketInputStream extends BufferedInputStream {
             if (pos >= count) {
                 // Copying part (or all) of the internal buffer to the line
                 // buffer
-                if (pos != readStart) {
-                    // Hack to reintialize the internal buffer. We pretend the 
-                    // first character was never read and we'll reread it from
-                    // the buffer.
-                    crPos = crPos - count;
-                }
                 int val = read();
                 if (val == -1)
                     throw new IOException
@@ -299,17 +291,17 @@ public class SocketInputStream extends BufferedInputStream {
                 readStart = 0;
             }
             if (buf[pos] == CR) {
-                // We found a CR. Next character has to be a LF.
-                crPos = pos;
-            } else if ((buf[pos] == LF) && (crPos == (pos - 1))) {
+                // Skip CR.
+            } else if (buf[pos] == LF) {
                 eol = true;
+            } else {
+                requestLine.protocol[readCount] = (char) buf[pos];
+                readCount++;
             }
-            requestLine.protocol[readCount] = (char) buf[pos];
-            readCount++;
             pos++;
         }
         
-        requestLine.protocolEnd = readCount - 2;
+        requestLine.protocolEnd = readCount;
         
     }
 
@@ -332,8 +324,10 @@ public class SocketInputStream extends BufferedInputStream {
             header.recycle();
         
         // Checking for a blank line
-        if (read() == CR) { // Skipping CR
-            read(); // Skipping LF
+        int chr = read();
+        if ((chr == CR) || (chr == LF)) { // Skipping CR
+            if (chr == CR)
+                read(); // Skipping LF
             header.nameEnd = 0;
             header.valueEnd = 0;
             return;
@@ -441,12 +435,6 @@ public class SocketInputStream extends BufferedInputStream {
                 if (pos >= count) {
                     // Copying part (or all) of the internal buffer to the line
                     // buffer
-                    if (pos != readStart) {
-                        // Hack to reintialize the internal buffer. 
-                        // We pretend the first character was never read and 
-                        // we'll reread it from the buffer.
-                        crPos = crPos - count;
-                    }
                     int val = read();
                     if (val == -1)
                         throw new IOException
@@ -455,9 +443,7 @@ public class SocketInputStream extends BufferedInputStream {
                     readStart = 0;
                 }
                 if (buf[pos] == CR) {
-                    // We found a CR. Next character has to be a LF.
-                    crPos = pos;
-                } else if ((buf[pos] == LF) && (crPos == (pos - 1))) {
+                } else if (buf[pos] == LF) {
                     eol = true;
                 } else {
                     // FIXME : Check if binary conversion is working fine
@@ -495,174 +481,6 @@ public class SocketInputStream extends BufferedInputStream {
         header.valueEnd = readCount;
         
     }
-
-
-    /**
-     * Read a line, and copies it to the given buffer. This function is meant
-     * to be used during the HTTP request header parsing. Do NOT attempt to 
-     * read the request body using it.
-     * 
-     * @param buffer char buffer
-     * @return the number of bytes read
-     * @throws IOException If an exception occurs during the underlying socket
-     * read operations, or if the given buffer is not big enough to accomodate
-     * the whole line.
-     */
-    public int readLine(char[] buffer) 
-        throws IOException {
-        return readLine(buffer, 0);
-    }
-
-
-    /**
-     * Read a line, and copies it to the given buffer. This function is meant
-     * to be used during the HTTP request header parsing. Do NOT attempt to 
-     * read the request body using it. Read data must be US-ASCII.
-     * 
-     * @param buffer char buffer
-     * @param startPos position in the buffer from which the read character
-     * will be copied
-     * @return the number of bytes read
-     * @throws IOException If an exception occurs during the underlying socket
-     * read operations, or if the given buffer is not big enough to accomodate
-     * the whole line.
-     */
-    public int readLine(char[] buffer, int startPos) 
-        throws IOException {
-        int maxRead = buffer.length - startPos;
-        int readStart = pos;
-        int readCount = 0;
-        int bufferPos = startPos;
-        
-        int crPos = -2;
-        
-        boolean eol = false;
-        
-        while (!eol && (readCount < maxRead)) {
-            
-            // We're at the end of the internal buffer
-            if (pos >= count) {
-                // Copying part (or all) of the internal buffer to the line
-                // buffer
-                if (pos != readStart) {
-                    // Hack to reintialize the internal buffer. We pretend the 
-                    // first character was never read and we'll reread it from
-                    // the buffer.
-                    crPos = crPos - count;
-                }
-                int val = read();
-                if (val == -1)
-                    throw new IOException
-                        (sm.getString("requestStream.readline.error"));
-                pos = 0;
-                readStart = 0;
-            }
-            if (buf[pos] == CR) {
-                // We found a CR. Next character has to be a LF.
-                crPos = pos;
-            } else if ((buf[pos] == LF) && (crPos == (pos - 1))) {
-                eol = true;
-            }
-            buffer[startPos + readCount] = (char) buf[pos];
-            readCount++;
-            pos++;
-        }
-        
-        if (readCount == maxRead)
-            throw new IOException
-                (sm.getString("requestStream.readline.toolong"));
-        
-        return readCount - 2;
-    }
-
-
-    /**
-     * Read a line, and copies it to the given buffer. This function is meant
-     * to be used during the HTTP request header parsing. Do NOT attempt to 
-     * read the request body using it.
-     * 
-     * @param buffer byte buffer
-     * @return the number of bytes read
-     * @throws IOException If an exception occurs during the underlying socket
-     * read operations, or if the given buffer is not big enough to accomodate
-     * the whole line.
-     */
-    public int readLine(byte[] buffer) 
-        throws IOException {
-        return readLine(buffer, 0);
-    }
-
-
-    /**
-     * Read a line, and copies it to the given buffer. This function is meant
-     * to be used during the HTTP request header parsing. Do NOT attempt to 
-     * read the request body using it.
-     * 
-     * @param buffer byte buffer
-     * @param startPos position in the buffer from which the read character
-     * will be copied
-     * @return the number of bytes read
-     * @throws IOException If an exception occurs during the underlying socket
-     * read operations, or if the given buffer is not big enough to accomodate
-     * the whole line.
-     */
-    public int readLine(byte[] buffer, int startPos) 
-        throws IOException {
-        int maxRead = buffer.length - startPos;
-        int readStart = pos;
-        int readCount = 0;
-        int bufferPos = startPos;
-        
-        int crPos = -2;
-        
-        boolean eol = false;
-        
-        while (!eol && (readCount < maxRead)) {
-            
-            // We're at the end of the internal buffer
-            if (pos >= count) {
-                // Copying part (or all) of the internal buffer to the line
-                // buffer
-                if (pos != readStart) {
-                    System.arraycopy(buf, readStart, buffer, bufferPos, 
-                                     pos - readStart);
-                    // Hack to reintialize the internal buffer. We pretend the 
-                    // first character was never read and we'll reread it from
-                    // the buffer.
-                    crPos = crPos - count;
-                    bufferPos += pos - readStart;
-                }
-                int val = read();
-                if (val == -1)
-                    throw new IOException
-                        (sm.getString("requestStream.readline.error"));
-                pos = 0;
-                readStart = 0;
-            }
-            if (buf[pos] == CR) {
-                // We found a CR. Next character has to be a LF.
-                crPos = pos;
-            } else if ((buf[pos] == LF) && (crPos == (pos - 1))) {
-                eol = true;
-                // Copy the line from the buffer
-                if ((pos - 1 - readStart) > 0)
-                    System.arraycopy
-                        (buf, readStart, buffer, bufferPos, 
-                         pos - 1 - readStart);
-            }
-            readCount++;
-            pos++;
-        }
-        
-        if (readCount == maxRead)
-            throw new IOException
-                (sm.getString("requestStream.readline.toolong"));
-        
-        return readCount - 2;
-    }
-
-
-    // ------------------------------------------------------ Protected Methods
 
 
 }
