@@ -85,7 +85,7 @@
       </docs>
       <update>
          Use NIO for the raw copying operation, as it is faster (a little under 30%), 
-         and decreases a little the impact of antResourceLocking. (remm)
+         and decreases a little the impact of antiResourceLocking. (remm)
       </update>
       <fix>
          <bug>33357</bug>: Fix connection leaks with the DataSourceRealm, as well 
@@ -114,7 +114,7 @@
         Add some log.isXXXEnabled (pero)
       </update>
 	  <add>
-	    JkMX: make log4j mbean configureable with attribute log4jEnabled
+	    JkMX: make log4j mbean configurable with attribute log4jEnabled (pero)
 	  </add>
 	  <fix>
 	    When Tomcat runs on Windows and IE is uploading data to the server, the first read 
@@ -136,6 +136,23 @@
     </changelog>
   </subsection>
   
+  <subsection name="Cluster">
+    <changelog>
+       <fix>
+          Add instance based ReplicationValve statistics to Mbean descriptor (pero)
+       </fix>
+       <fix>
+          Better I18N support to Cluster Session classes (pero)
+       </fix>
+       <add>
+          Support optional primaryIndicator at ReplicationValve to mark that 
+		  request processing to existing session is at primary cluster node. 
+		  Easy failover detection, when mark is not at 
+		  configurable primaryIndicator attribute, submitted by Rainer Jung (pero)
+       </add>
+    </changelog>
+  </subsection>
+
   <subsection name="Webapps">
     <changelog>
       <fix>
