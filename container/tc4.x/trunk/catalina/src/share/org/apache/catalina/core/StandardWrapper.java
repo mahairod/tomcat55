@@ -146,6 +146,13 @@ public final class StandardWrapper
 
 
     /**
+     * The count of allocations that are currently active (even if they
+     * are for the same instance, as will be true on a non-STM servlet).
+     */
+    private int countAllocated = 0;
+
+
+    /**
      * The debugging detail level for this component.
      */
     private int debug = 0;
@@ -268,6 +275,18 @@ public final class StandardWrapper
             this.available = 0L;
         support.firePropertyChange("available", new Long(oldAvailable),
                                    new Long(this.available));
+
+    }
+
+
+    /**
+     * Return the number of active allocations of this servlet, even if they
+     * are all for the same instance (as will be true for servlets that do
+     * not implement <code>SingleThreadModel</code>.
+     */
+    public int getCountAllocated() {
+
+        return (this.countAllocated);
 
     }
 
@@ -612,6 +631,7 @@ public final class StandardWrapper
         if (!singleThreadModel) {
             if (debug >= 2)
                 log("  Returning non-STM instance");
+            countAllocated++;
             return (instance);
         }
 
@@ -629,6 +649,7 @@ public final class StandardWrapper
             if (debug >= 2)
                 log("  Returning allocated STM instance");
             allocated = true;
+            countAllocated++;
             return (instance);
         }
 
@@ -645,6 +666,8 @@ public final class StandardWrapper
      * @exception ServletException if a deallocation error occurs
      */
     public void deallocate(Servlet servlet) throws ServletException {
+
+        countAllocated--;
 
         // If not SingleThreadModel, no action is required
         if (!singleThreadModel)
@@ -963,12 +986,13 @@ public final class StandardWrapper
         unloading = true;
 
         // Loaf a while if the current instance is allocated
-        if (allocated) {
+        // (possibly more than once if non-STM)
+        if (countAllocated > 0) {
             boolean first = true;
-            while (allocated) {
+            while (countAllocated > 0) {
                 if (first) {
-                    if (debug >= 1)
-                        log("Waiting for instance to be deallocated");
+                    log("Waiting for " + countAllocated +
+                        " instance(s) to be deallocated");
                     first = false;
                 }
                 try {
