@@ -137,6 +137,10 @@ public class RequestDispatcherImpl implements RequestDispatcher {
     public void include(ServletRequest request, ServletResponse response)
     throws ServletException, IOException {
 	HttpServletRequest req = (HttpServletRequest)request;
+
+        // XXX
+        // while this appears to work i believe the code
+        // could be streamlined/normalized a bit.
 	
 	// if we are in a chained include, then we'll store the attributes
 	// from the last round so that we've got them for the next round
@@ -154,9 +158,9 @@ public class RequestDispatcherImpl implements RequestDispatcher {
 	    (HttpServletRequestFacade)request;
 	HttpServletResponseFacade resFacade =
 	    (HttpServletResponseFacade)response;
+        Request realRequest = reqFacade.getRealRequest();
 	Response realResponse = resFacade.getRealResponse();
-
-	reqFacade.getRealRequest().setQueryString(this.queryString);
+        String originalQueryString = realRequest.getQueryString();
 
 	// XXX
 	// not sure why we're pre-pending context.getPath() here
@@ -182,14 +186,37 @@ public class RequestDispatcherImpl implements RequestDispatcher {
                 lookupResult.getPathInfo());
 	}
 
-	if (this.queryString != null) {
+        // join the query strings of the destination request
+        // with the originaing request in that order.
+
+        String aggregatedQueryString = this.queryString;
+
+        if (realRequest.getQueryString() != null &&
+            realRequest.getQueryString().trim().length() > 0) {
+            if (aggregatedQueryString == null) {
+                aggregatedQueryString = realRequest.getQueryString();
+            } else {
+                aggregatedQueryString += "&" + realRequest.getQueryString();
+            }
+        }
+
+	if (aggregatedQueryString != null) {
 	    req.setAttribute(Constants.Attribute.QueryString,
-                this.queryString);
+                aggregatedQueryString);
 	}
+
+        // inline the aggregated query string for the scope
+        // of the include
+
+	reqFacade.getRealRequest().setQueryString(aggregatedQueryString);
 	
 	IncludedResponse iResponse = new IncludedResponse(realResponse);
 
 	lookupResult.getWrapper().handleRequest(reqFacade, iResponse);
+
+        // revert the query string to its original value
+
+        reqFacade.getRealRequest().setQueryString(originalQueryString);
 
 	if (request_uri != null) {
 	    req.setAttribute(Constants.Attribute.RequestURI, request_uri);
