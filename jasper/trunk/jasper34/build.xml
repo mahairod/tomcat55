@@ -12,7 +12,10 @@
 	    location="${jakarta-tomcat-jasper}/jasper34" />
 
   <property name="tomcat.home" 
-	    location="${jakarta-tomcat-jasper}/../jakarta-tomcat/build/tomcat" />
+      location="${jakarta-tomcat-jasper}/../jakarta-tomcat/build/tomcat" />
+
+  <property name="catalina.home" 
+    location="${jakarta-tomcat-jasper}/../jakarta-tomcat-4.0/build/catalina" />
 
   <property name="servlet22.jar" 
 	    location="${jakarta-tomcat-jasper}/lib/servlet.jar" />
@@ -21,10 +24,6 @@
        since we'll want to take advantage of it -->
   <property name="tomcat_util.jar" 
 	    location="${jakarta-tomcat-jasper}/lib/tomcat_util.jar" />
-
-  <!-- used to compile tomcat33 liaison -->
-  <property name="tomcat_core.jar" 
-	    location="${jakarta-tomcat-jasper}/lib/tomcat_core.jar" />
 
   <!-- For later use ( while merging with catalina ) -->
   <property name="servlet23.jar" 
@@ -103,18 +102,25 @@
 
   <target name="liaison" 
 	  description="Adapters for different containers">
+    <available classpath="${tomcat.home}/lib/common/tomcat_core.jar" 
+	       classname="org.apache.tomcat.core.BaseInterceptor" 
+	       property="tomcat33"
+	       />
+    <echo message="XXX ${tomcat33} ${tomcat.home}/lib/common/tomcat_core.jar"/>
     <javac destdir="${build.dir}/classes"
 	   debug="${debug}" 
 	   optimize="${optimize}" 
-	   srcdir="${jasper34.src}/generator"
+	   srcdir="${jasper34.src}/liaison"
 	   deprecation="off" >
       <classpath>
 	<pathelement location="${servlet22.jar}" />
 	<pathelement location="${tomcat_util.jar}" />
-	<pathelement location="${tomcat_core.jar}" />
+	<pathelement location="${tomcat.home}/lib/common/tomcat_core.jar" />
+	<pathelement location="${tomcat.home}/lib/container/facade22.jar" />
 	<pathelement location="${catalina.jar}" />
       </classpath>
       <include name="**"/>
+      <exclude name="**/JasperInterceptor**" unless="${tomcat33}"/>
     </javac>
 
     <copy todir="${build.dir}/classes/org/apache/jasper34">
@@ -133,6 +139,21 @@
   </target>
 
   <target name="main" depends="prepare,runtime,generator,liaison"/>
+
+  <target name="install" depends="main" >
+    <copy file="${build.dir}/jasper34_liaison.jar" 
+	  todir="${tomcat.home}/lib/container" />
+    <copy file="${build.dir}/jasper34.jar" 
+	  todir="${tomcat.home}/lib/container" />
+    <copy file="${build.dir}/jasper34_runtime.jar" 
+	  todir="${tomcat.home}/lib/common" />
+
+    <!-- Easiest way to plug the new module -->
+    <replace file="${tomcat.home}/conf/modules.xml" 
+	     token="org.apache.tomcat.facade.JspInterceptor" 
+	     value="org.apache.jasper34.tomcat33.JspInterceptor"
+	     />
+  </target>
 
   <target name="clean" >
     <delete dir="${build.dir}"/>
