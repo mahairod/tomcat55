@@ -481,10 +481,12 @@ public class JspContextWrapper
     }
 
     /**
-     * Find the attribute that variable is alised to.
-     * @param varName a variable
-     * @return if varName is an alias, then the aliased variable
-     *         otherwise varName
+     * Checks to see if the given variable name is used as an alias, and if so,
+     * returns the variable name for which it is used as an alias.
+     *
+     * @param varName The variable name to check
+     * @return The variable name for which varName is used as an alias, or
+     * varName if it is not being used as an alias
      */
     private String findAlias(String varName) {
 
