@@ -159,14 +159,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * The parent object that is actually an internal request object.
-     */
-    /*
-    protected HttpServletRequest parent = null;
-    */
-
-
-    /**
      * The path information for this request.
      */
     protected String pathInfo = null;
@@ -408,42 +400,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * Calculate and set the parent of the wrapped servlet request that is
-     * actually an internal <code>Request</code> implementation.
-     *
-     * @exception IllegalArgumentException if a parent Request cannot be
-     *  identified
-     */
-    /*
-    void calculateParent() {
-
-	HttpServletRequest request = (HttpServletRequest) getRequest();
-	if (request == null) {
-	    this.parent = null;
-	    return;
-	}
-	while (request != null) {
-	    if ((request instanceof HttpRequest) 
-                || (request instanceof HttpRequestFacade))
-		break;
-	    if (!(request instanceof HttpServletRequestWrapper)) {
-		throw new IllegalArgumentException
-		    (sm.getString("applicationRequest.badRequest"));
-	    }
-	    request = (HttpServletRequest)
-		((HttpServletRequestWrapper) request).getRequest();
-	}
-	if (request == null) {
-	    throw new IllegalArgumentException
-		(sm.getString("applicationRequest.badParent"));
-	}
-	this.parent = request;
-
-    }
-    */
-
-
-    /**
      * Perform a shallow copy of the specified Map, and return the result.
      *
      * @param orig Origin Map to be copied
@@ -463,19 +419,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	return (dest);
 
     }
-
-
-    /**
-     * Get the parent of the wrapped servlet request that is actually an
-     * internal Request implementation.
-     */
-    /*
-    HttpServletRequest getParent() {
-
-	return (this.parent);
-
-    }
-    */
 
 
     /**
@@ -559,16 +502,10 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * Set the request that we are wrapping.
      *
      * @param request The new wrapped request
-     *
-     * @exception IllegalArgumentException if a parent Request implementation
-     *  cannot be identified
      */
     void setRequest(HttpServletRequest request) {
 
-	;	// FIXME - cannot change the private "request" variable
-        /*
-	calculateParent();
-        */
+        super.setRequest(request);
 
 	// Initialize the attributes for this request
 	synchronized (attributes) {

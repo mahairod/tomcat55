@@ -114,18 +114,12 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      * @param response The servlet response being wrapped
      * @param included <code>true</code> if this response is being processed
      *  by a <code>RequestDispatcher.include()</code> call
-     *
-     * @exception IllegalArgumentException if a parent Response implementation
-     *  cannot be identified
      */
     public ApplicationHttpResponse(HttpServletResponse response,
 				   boolean included) {
 
 	super(response);
 	setIncluded(included);
-        /*
-	calculateParent();
-        */
 
     }
 
@@ -145,14 +139,6 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     protected static final String info =
         "org.apache.catalina.core.ApplicationHttpResponse/1.0";
-
-
-    /**
-     * The parent object that is actually an internal response object.
-     */
-    /*
-    protected HttpServletResponse parent = null;
-    */
 
 
     /**
@@ -393,55 +379,6 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 
 
     /**
-     * Calculate and set the parent of the wrapped servlet response that is
-     * actually an internal <code>Response</code> implementation.
-     *
-     * @exception IllegalArgumentException if a parent Response cannot be
-     *  identified
-     */
-    /*
-    void calculateParent() {
-
-	HttpServletResponse response = (HttpServletResponse) getResponse();
-	if (response == null) {
-	    this.parent = null;
-	    return;
-	}
-	while (response != null) {
-	    if ((response instanceof HttpResponse) 
-                || (response instanceof HttpResponseFacade))
-		break;
-	    if (!(response instanceof HttpServletResponseWrapper)) {
-		throw new IllegalArgumentException
-		    (sm.getString("applicationResponse.badResponse"));
-	    }
-	    response = (HttpServletResponse)
-		((HttpServletResponseWrapper) response).getResponse();
-	}
-	if (response == null) {
-	    throw new IllegalArgumentException
-		(sm.getString("applicationResponse.badParent"));
-	}
-	this.parent = response;
-
-    }
-    */
-
-
-    /**
-     * Get the parent of the wrapped servlet response that is actually an
-     * internal Response implementation.
-     */
-    /*
-    HttpServletResponse getParent() {
-
-	return (this.parent);
-
-    }
-    */
-
-
-    /**
      * Return the included flag for this response.
      */
     boolean isIncluded() {
@@ -467,16 +404,10 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      * Set the response that we are wrapping.
      *
      * @param response The new wrapped response
-     *
-     * @exception IllegalArgumentException if a parent Response implementation
-     *  cannot be identified
      */
     void setResponse(HttpServletResponse response) {
 
-	;	// FIXME - cannot change the private "response" variable
-        /*
-	calculateParent();
-        */
+        super.setResponse(response);
 
     }
 

@@ -116,17 +116,11 @@ class ApplicationResponse extends ServletResponseWrapper {
      * @param response The servlet response being wrapped
      * @param included <code>true</code> if this response is being processed
      *  by a <code>RequestDispatcher.include()</code> call
-     *
-     * @exception IllegalArgumentException if a parent Response implementation
-     *  cannot be identified
      */
     public ApplicationResponse(ServletResponse response, boolean included) {
 
 	super(response);
 	setIncluded(included);
-        /*
-	calculateParent();
-        */
 
     }
 
@@ -139,14 +133,6 @@ class ApplicationResponse extends ServletResponseWrapper {
      * call?
      */
     protected boolean included = false;
-
-
-    /**
-     * The parent object that is actually an internal response object.
-     */
-    /*
-    protected ServletResponse parent = null;
-    */
 
 
     /**
@@ -207,69 +193,15 @@ class ApplicationResponse extends ServletResponseWrapper {
      * Set the response that we are wrapping.
      *
      * @param response The new wrapped response
-     *
-     * @exception IllegalArgumentException if a parent Response implementation
-     *  cannot be identified
      */
     public void setResponse(ServletResponse response) {
 
         super.setResponse(response);
-        /*
-	calculateParent();
-        */
 
     }
 
 
     // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * Calculate and set the parent of the wrapped servlet response that is
-     * actually an internal <code>Response</code> implementation.
-     *
-     * @exception IllegalArgumentException if a parent Response cannot be
-     *  identified
-     */
-    /*
-    void calculateParent() {
-
-	ServletResponse response = getResponse();
-	if (response == null) {
-	    this.parent = null;
-	    return;
-	}
-	while (response != null) {
-	    if ((response instanceof Response) 
-                || (response instanceof ResponseFacade))
-		break;
-	    if (!(response instanceof ServletResponseWrapper)) {
-		throw new IllegalArgumentException
-		    (sm.getString("applicationResponse.badResponse"));
-	    }
-	    response = ((ServletResponseWrapper) response).getResponse();
-	}
-	if (response == null) {
-	    throw new IllegalArgumentException
-		(sm.getString("applicationResponse.badParent"));
-	}
-	this.parent = response;
-
-    }
-    */
-
-
-    /**
-     * Get the parent of the wrapped servlet response that is actually an
-     * internal Response implementation.
-     */
-    /*
-    ServletResponse getParent() {
-
-	return (this.parent);
-
-    }
-    */
 
 
     /**

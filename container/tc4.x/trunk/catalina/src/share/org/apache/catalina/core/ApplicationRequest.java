@@ -135,14 +135,6 @@ class ApplicationRequest extends ServletRequestWrapper {
 
 
     /**
-     * The parent object that is actually an internal request object.
-     */
-    /*
-    protected ServletRequest parent = null;
-    */
-
-
-    /**
      * The string manager for this package.
      */
     protected static StringManager sm =
@@ -221,16 +213,10 @@ class ApplicationRequest extends ServletRequestWrapper {
      * Set the request that we are wrapping.
      *
      * @param request The new wrapped request
-     *
-     * @exception IllegalArgumentException if a parent Request implementation
-     *  cannot be identified
      */
     public void setRequest(ServletRequest request) {
 
         super.setRequest(request);
-        /*
-	calculateParent();
-        */
 
 	// Initialize the attributes for this request
 	synchronized (attributes) {
@@ -264,58 +250,6 @@ class ApplicationRequest extends ServletRequestWrapper {
         return (false);
 
     }
-
-
-    // -------------------------------------------------------- Package Methods
-
-
-
-    /**
-     * Calculate and set the parent of the wrapped servlet request that is
-     * actually an internal <code>Request</code> implementation.
-     *
-     * @exception IllegalArgumentException if a parent Request cannot be
-     *  identified
-     */
-    /*
-    void calculateParent() {
-
-	ServletRequest request = getRequest();
-	if (request == null) {
-	    this.parent = null;
-	    return;
-	}
-	while (request != null) {
-	    if ((request instanceof Request) 
-                || (request instanceof RequestFacade))
-		break;
-	    if (!(request instanceof ServletRequestWrapper)) {
-		throw new IllegalArgumentException
-		    (sm.getString("applicationRequest.badRequest"));
-	    }
-	    request = ((ServletRequestWrapper) request).getRequest();
-	}
-	if (request == null) {
-	    throw new IllegalArgumentException
-		(sm.getString("applicationRequest.badParent"));
-	}
-	this.parent = request;
-
-    }
-    */
-
-
-    /**
-     * Get the parent of the wrapped servlet request that is actually an
-     * internal Request implementation.
-     */
-    /*
-    ServletRequest getParent() {
-
-	return (this.parent);
-
-    }
-    */
 
 
 }
