@@ -139,16 +139,18 @@ public class PageContextImpl extends PageContext {
 	    this.session = ((HttpServletRequest)request).getSession();
 
 	if (needsSession && session == null)
-	    throw new IllegalStateException("Page needs a session and none is available");
+	    throw new IllegalStateException
+                ("Page needs a session and none is available");
 
-	// initialize the initial out ...
-	//	System.out.println("Initialize PageContextImpl " + out );
-	if( out == null ) {
-	    out = _createOut(bufferSize, autoFlush); // throws
-	} else {
-            ((JspWriterImpl)out).init(response, bufferSize, autoFlush );
+        // initialize the initial out ...
+        depth = -1;
+        if (this.baseOut == null) {
+            this.baseOut = _createOut(bufferSize, autoFlush);
+        } else {
+            this.baseOut.init(response, bufferSize, autoFlush);
         }
-	
+        this.out = baseOut;
+
 	if (this.out == null)
 	    throw new IllegalStateException("failed initialize JspWriter");
 
@@ -190,9 +192,9 @@ public class PageContextImpl extends PageContext {
 	autoFlush    = true;
 	request      = null;
 	response     = null;
-        //out = null;
-	if( out instanceof JspWriterImpl )
-	    ((JspWriterImpl)out).recycle();
+        depth = -1;
+        out = baseOut;
+	baseOut.recycle();
 	session      = null;
 
 	attributes.clear();
@@ -428,21 +430,30 @@ public class PageContextImpl extends PageContext {
         }
     }
 
-    public void setOut(JspWriter newOut) {
-        out = newOut;
-    }
-
-    Stack writerStack = new Stack();
+    protected BodyContent[] outs = new BodyContentImpl[0];
+    protected int depth = -1;
 
     public BodyContent pushBody() {
-        JspWriter previous = out;
-        writerStack.push(out);
-        out = new BodyContentImpl(previous);
-        return (BodyContent) out;
+        depth++;
+        if (depth >= outs.length) {
+            BodyContent[] newOuts = new BodyContentImpl[depth + 1];
+            for (int i = 0; i < outs.length; i++) {
+                newOuts[i] = outs[i];
+            }
+            newOuts[depth] = new BodyContentImpl(out);
+            outs = newOuts;
+        }
+        out = outs[depth];
+        return outs[depth];
     }
 
     public JspWriter popBody() {
-        out = (JspWriter) writerStack.pop();
+        depth--;
+        if (depth >= 0) {
+            out = outs[depth];
+        } else {
+            out = baseOut;
+        }
         return out;
     }
 
@@ -485,15 +496,14 @@ public class PageContextImpl extends PageContext {
 	}
     }
 
-    protected JspWriter _createOut(int bufferSize, boolean autoFlush)
-        throws IOException, IllegalArgumentException
-    {
-	try {
-	    return new JspWriterImpl(response, bufferSize, autoFlush);
-	} catch( Throwable t ) {
-	    loghelper.log("creating out", t);
-	    return null;
-	}
+    protected JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
+        throws IOException, IllegalArgumentException {
+        try {
+            return new JspWriterImpl(response, bufferSize, autoFlush);
+        } catch( Throwable t ) {
+            loghelper.log("creating out", t);
+            return null;
+        }
     }
 
     /*
@@ -531,5 +541,7 @@ public class PageContextImpl extends PageContext {
 
     // initial output stream
 
-    protected transient JspWriter	out;
+    protected transient JspWriter       out;
+    protected transient JspWriterImpl   baseOut;
+
 }

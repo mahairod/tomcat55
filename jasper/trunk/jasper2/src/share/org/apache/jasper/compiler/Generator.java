@@ -358,7 +358,7 @@ public class Generator {
 
 	// Local variable declarations
 	out.printil("JspFactory _jspxFactory = null;");
-	out.printil("org.apache.jasper.runtime.PageContextImpl pageContext = null;");
+	out.printil("javax.servlet.jsp.PageContext pageContext = null;");
 	if (pageInfo.isSession())
 	    out.printil("HttpSession session = null;");
 
@@ -386,8 +386,7 @@ public class Generator {
 	out.print  (quote(pageInfo.getContentType()));
 	out.println(");");
 
-	out.printil("pageContext = (org.apache.jasper.runtime.PageContextImpl)"
-                    + " _jspxFactory.getPageContext(this, request, response,");
+	out.printil("pageContext = _jspxFactory.getPageContext(this, request, response,");
 	out.printin("\t\t\t");
 	out.print  (quote(pageInfo.getErrorPage()));
 	out.print  (", " + pageInfo.isSession());
@@ -432,17 +431,11 @@ public class Generator {
 	out.pushIndent();
 	out.printil("public int tagCount;");
 	out.println();
-	out.printil("public int tagDepth;");
-	out.println();
-	out.printil("public javax.servlet.jsp.tagext.BodyContent[] outs;");
-	out.println();
 	out.printil("public JspWriter out;");
 	out.println();
 	out.printil("public JspxState() {");
 	out.pushIndent();
 	out.printil("tagCount = 0;");
-	out.printil("tagDepth = -1;");
-	out.printil("outs = new org.apache.jasper.runtime.BodyContentImpl[" + (maxTagNesting) + "];");
 	out.popIndent();
 	out.printil("}");
 	out.popIndent();
@@ -1045,21 +1038,12 @@ public class Generator {
 		    out.print(parent);
 		    out.print(", ");
 		}
-		out.println("org.apache.jasper.runtime.PageContextImpl pageContext, JspxState _jspxState)");
+		out.println("javax.servlet.jsp.PageContext pageContext, JspxState _jspxState)");
 		out.printil("        throws Throwable {");
 		out.pushIndent();
 
 		// Initilaize local variables used in this method.
-		out.printil("JspWriter out = null;");
-                out.printil("if (_jspxState.tagDepth < 0) {");
-		out.pushIndent();
-                out.printil("out = _jspxState.out;");
-		out.popIndent();
-                out.printil("} else {");
-		out.pushIndent();
-                out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
-		out.popIndent();
-                out.printil("}");
+		out.printil("JspWriter out = pageContext.getOut();");
 		if (n.isHasUsebean()) {
 		    out.println("HttpSession session = pageContext.getSession();");
 		    out.println("ServletContext application = pageContext.getServletContext();");
@@ -1265,23 +1249,12 @@ public class Generator {
                     if (!implementsTryCatchFinally) {
                         out.printil("_jspxState.tagCount++;");
  		    }
-                    out.printil("_jspxState.tagDepth++;");
-
-                    out.printil("if (_jspxState.outs[_jspxState.tagDepth] == null) {");
-		    out.pushIndent();
-                    out.printil("_jspxState.outs[_jspxState.tagDepth] = new org.apache.jasper.runtime.BodyContentImpl(out);");
-		    out.popIndent();
-		    out.printil("} else {");
-		    out.pushIndent();
-		    out.printil("_jspxState.outs[_jspxState.tagDepth].clear();");
-		    out.popIndent();
-		    out.printil("}");
-
-                    out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
-		    out.printil("pageContext.setOut(out);");
+                    out.printil("javax.servlet.jsp.tagext.BodyContent _bc = pageContext.pushBody();");
+                    out.printil("_bc.clear();");
+                    out.printil("out = _bc;");
 
 		    out.printin(tagHandlerVar);
-		    out.println(".setBodyContent(_jspxState.outs[_jspxState.tagDepth]);");
+		    out.println(".setBodyContent(_bc);");
 		    out.printin(tagHandlerVar);
 		    out.println(".doInitBody();");
 		    
@@ -1339,9 +1312,7 @@ public class Generator {
                     if (!implementsTryCatchFinally) {
                         out.printil("_jspxState.tagCount--;");
  		    }
-                    out.printil("out = _jspxState.outs[_jspxState.tagDepth].getEnclosingWriter();");
-                    out.printil("_jspxState.tagDepth--;");
-                    out.printil("pageContext.setOut(out);");
+                    out.printil("out = pageContext.popBody();");
 		    out.popIndent();
 		}
 
@@ -1591,16 +1562,12 @@ public class Generator {
         out.popIndent();
 
         out.printil("if (pageContext != null) pageContext.handlePageException(t);");
+
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
 
-	// Cleanup the tags on the stack
-        if (maxTagNesting > 0) {
-            out.printil("out = _jspxState.out;");
-            out.printil("pageContext.setOut(out);");
-        }
-
+        out.printil("out = _jspxState.out;");
         out.printil("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
 
         out.popIndent();
