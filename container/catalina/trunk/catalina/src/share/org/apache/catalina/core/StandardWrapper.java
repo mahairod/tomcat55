@@ -1343,6 +1343,8 @@ public final class StandardWrapper
         // Load and initialize an instance of this servlet if requested
         // MOVED TO StandardContext START() METHOD
 
+        setAvailable(0L);
+
     }
 
 
@@ -1354,11 +1356,14 @@ public final class StandardWrapper
      */
     public void stop() throws LifecycleException {
 
+        setAvailable(Long.MAX_VALUE);
+
         // Shut down our servlet instance (if it has been initialized)
         try {
             unload();
         } catch (ServletException e) {
-            log.error(sm.getString("standardWrapper.unloadException", getName()), e);
+            log.error(sm.getString
+                      ("standardWrapper.unloadException", getName()), e);
         }
 
         // Shut down this component
