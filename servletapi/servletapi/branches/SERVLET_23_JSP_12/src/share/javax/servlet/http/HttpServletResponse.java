@@ -196,7 +196,8 @@ public interface HttpServletResponse extends ServletResponse {
     /**
      * Sends an error response to the client using the specified
      * status clearing the buffer.  The server defaults to creating the 
-     * response to look like an HTML-formatted server error page.
+     * response to look like an HTML-formatted server error page, setting the content type
+     * to "text/html", leaving cookies and other headers unmodified.
      *
      * If an <error-page> declaration has been made for the web application
      * corresponding to the status code passed in, it will be served back in 
