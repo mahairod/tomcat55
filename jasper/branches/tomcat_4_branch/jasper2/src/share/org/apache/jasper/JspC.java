@@ -411,8 +411,8 @@ public class JspC implements Options {
                     try {
                         File libFile = new File(lib, libs[i]);
                         classPath = classPath + File.pathSeparator 
-                            + libFile.getCanonicalPath();
-                        urls.add(libFile.getCanonicalFile().toURL());
+                            + libFile.getAbsolutePath();
+                        urls.add(libFile.getAbsoluteFile().toURL());
                     } catch (IOException ioe) {
                         // failing a toCanonicalPath on a file that
                         // exists() should be a JVM regression test,
@@ -557,7 +557,7 @@ public class JspC implements Options {
         }
         try {
             if (f.exists()) {
-                f = new File(f.getCanonicalPath());
+                f = new File(f.getAbsolutePath());
                 while (f != null) {
                     File g = new File(f, "WEB-INF");
                     if (g.exists() && g.isDirectory()) {
@@ -727,20 +727,16 @@ public class JspC implements Options {
         Enumeration e = pages.elements();
         while (e.hasMoreElements()) {
             String nextjsp = e.nextElement().toString();
-            try {
-                File fjsp = new File(nextjsp);
-                if (!fjsp.exists()) {
-                    Constants.message("jspc.error.fileDoesNotExist", 
-                                      new Object[] {fjsp}, Logger.WARNING);
-                    continue;
-                }
-                String s = fjsp.getCanonicalPath();
-                //System.out.println("**" + s);
-                if (s.startsWith(uriRoot)) {
-                    nextjsp = s.substring(uriRoot.length());
-                }
-            } catch (IOException ioe) {
-                // if we got problems dont change the file name
+
+            File fjsp = new File(nextjsp);
+            if (!fjsp.exists()) {
+                Constants.message("jspc.error.fileDoesNotExist", 
+                                  new Object[] {fjsp}, Logger.WARNING);
+                continue;
+            }
+            String s = fjsp.getAbsolutePath();
+            if (s.startsWith(uriRoot)) {
+                nextjsp = s.substring(uriRoot.length());
             }
 
             if (nextjsp.startsWith("." + File.separatorChar)) {
