@@ -28,6 +28,9 @@
 
 <section name="Tomcat 5.5.3 (yoavs)">
   <subsection name="General">
+    <fix> 
+      <bug>30568</bug>: Incomplete setup.html documentation for launching jsvc. (yoavs) 
+    </fix> 
   </subsection>
 
   <subsection name="Catalina">
