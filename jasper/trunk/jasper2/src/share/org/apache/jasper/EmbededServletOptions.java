@@ -205,7 +205,7 @@ public final class EmbededServletOptions implements Options {
     }
 
     public void setProperty(String name, String value ) {
-        if (name != null || value != null){ 
+        if (name != null && value != null){ 
             settings.setProperty( name, value );
         }
     }
