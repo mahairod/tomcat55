@@ -42,6 +42,9 @@ PersistentManager:  You can now configure the persistent session manager
 (along with an appropriate Store implementation) in the server.xml file.
 Added an example of this, commented out by default.
 
+Manager/Session:  Refactor to eliminate dependencies by StandardManager,
+ManagerBase, and StandardSession on each other.
+
 
 -------------------
 Jasper New Features:
