@@ -358,7 +358,7 @@ public class Generator {
 
 	// Local variable declarations
 	out.printil("JspFactory _jspxFactory = null;");
-	out.printil("PageContext pageContext = null;");
+	out.printil("org.apache.jasper.runtime.PageContextImpl pageContext = null;");
 	if (pageInfo.isSession())
 	    out.printil("HttpSession session = null;");
 
@@ -386,8 +386,8 @@ public class Generator {
 	out.print  (quote(pageInfo.getContentType()));
 	out.println(");");
 
-	out.printil("pageContext = _jspxFactory.getPageContext(" +
-		    "this, request, response,");
+	out.printil("pageContext = (org.apache.jasper.runtime.PageContextImpl)"
+                    + " _jspxFactory.getPageContext(this, request, response,");
 	out.printin("\t\t\t");
 	out.print  (quote(pageInfo.getErrorPage()));
 	out.print  (", " + pageInfo.isSession());
@@ -401,6 +401,9 @@ public class Generator {
 	if (pageInfo.isSession())
 	    out.printil("session = pageContext.getSession();");
 	out.printil("out = pageContext.getOut();");
+        if (maxTagNesting > 0) {
+            out.printil("_jspxState.outs[0] = out;");
+        }
 	out.println();
     }
 
@@ -429,9 +432,15 @@ public class Generator {
 	out.pushIndent();
 	out.printil("public int tagCount;");
 	out.println();
+	out.printil("public int tagDepth;");
+	out.println();
+	out.printil("public JspWriter[] outs;");
+	out.println();
 	out.printil("public JspxState() {");
 	out.pushIndent();
 	out.printil("tagCount = 0;");
+	out.printil("tagDepth = 0;");
+	out.printil("outs = new JspWriter[" + (maxTagNesting + 1) + "];");
 	out.popIndent();
 	out.printil("}");
 	out.popIndent();
@@ -1034,12 +1043,12 @@ public class Generator {
 		    out.print(parent);
 		    out.print(", ");
 		}
-		out.println("PageContext pageContext, JspxState _jspxState)");
+		out.println("org.apache.jasper.runtime.PageContextImpl pageContext, JspxState _jspxState)");
 		out.printil("        throws java.io.IOException, javax.servlet.jsp.JspException {");
 		out.pushIndent();
 
 		// Initilaize local variables used in this method.
-		out.printil("JspWriter out = pageContext.getOut();");
+		out.printil("JspWriter out = _jspxState.outs[_jspxState.tagDepth];");
 		if (n.isHasUsebean()) {
 		    out.println("HttpSession session = pageContext.getSession();");
 		    out.println("ServletContext application = pageContext.getServletContext();");
@@ -1242,10 +1251,15 @@ public class Generator {
 		    // Assume EVAL_BODY_BUFFERED
 		    out.pushIndent();
 		    
-		    out.printil("out = pageContext.pushBody();");
                     if (!implementsTryCatchFinally) {
                         out.printil("_jspxState.tagCount++;");
  		    }
+                    out.printil("_jspxState.tagDepth++;");
+
+                    out.printil("out = pageContext.allocateBody(_jspxState.outs[_jspxState.tagDepth], out);");
+                    out.printil("_jspxState.outs[_jspxState.tagDepth] = out;");
+		    out.printil("pageContext.setOut(out);");
+
 		    out.printin(tagHandlerVar);
 		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
 		    out.printin(tagHandlerVar);
@@ -1302,10 +1316,13 @@ public class Generator {
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
+		    out.printil("_jspxState.outs[_jspxState.tagDepth].clear();");
                     if (!implementsTryCatchFinally) {
                         out.printil("_jspxState.tagCount--;");
  		    }
-		    out.printil("out = pageContext.popBody();");
+                    out.printil("_jspxState.tagDepth--;");
+		    out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
+                    out.printil("pageContext.setOut(out);");
 		    out.popIndent();
 		}
 
@@ -1561,11 +1578,8 @@ public class Generator {
 
 	// Cleanup the tags on the stack
         if (maxTagNesting > 0) {
-            out.printil("while (_jspxState.tagCount-- > 0) {");
-            out.pushIndent();
-            out.printil("out = pageContext.popBody();");
-            out.popIndent();
-            out.printil("}");
+            out.printil("out = _jspxState.outs[0];");
+            out.printil("pageContext.setOut(out);");
         }
 
         out.printil("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
