@@ -18,12 +18,15 @@ JSP 2.0 specifications, currently under development by the Java Community
 Process.
 
 The major goals for Apache Tomcat 5.0 are to:
-- improve scalability and reliability over previous versions
+- improve scalability, reliability and performance over previous versions
 - have simpler/cleaner code, so more people can get involved
 - merge of the various ideas in 3.x and 4.x
 - get the community togheter
 - provide maximum modularity and compliance to the standards
 - make it easy to continue to maintain the existing codebases
+
+Testing will occur to make sure the stated robustness and performance goals
+are met by Tomcat 5.0.
 
 This proposal also tries to take advantage of the lessons learned while 
 optimizing and maintaining Tomcat.
@@ -154,3 +157,13 @@ The implementation of JSP 2.0 will occur in the HEAD branch of the
 jakarta-tomcat-jasper repository. A branch will be created to contain 
 the Jasper 2 code which is used in Tomcat 4.1.x.
 
+
+
+Release managers (proposed):
+---------------------------
+
+It is proposed that the release management duties be split for this release, 
+due to the amount of modules which will be part of Tomcat 5.0.
+
+Larry Isaacs
+Remy Maucherat
