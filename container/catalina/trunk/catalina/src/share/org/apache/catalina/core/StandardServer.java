@@ -163,6 +163,7 @@ public final class StandardServer
         { "org.apache.catalina.core.StandardEngine", "domain" },
         { "org.apache.catalina.core.StandardHost", "domain" },
         { "org.apache.catalina.core.StandardContext", "available" },
+        { "org.apache.catalina.core.StandardContext", "configFile" },
         { "org.apache.catalina.core.StandardContext", "configured" },
         { "org.apache.catalina.core.StandardContext", "distributable" },
         { "org.apache.catalina.core.StandardContext", "domain" },
@@ -1220,6 +1221,8 @@ public final class StandardServer
                 }
                 throw (e);
             }
+
+            indent = 0;
 
         }
 
