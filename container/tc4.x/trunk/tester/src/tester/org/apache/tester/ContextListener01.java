@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *      Copyright (c) 1999, 2000, 2001  The Apache Software Foundation.      *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -58,67 +58,73 @@
 package org.apache.tester;
 
 
-import java.io.Serializable;
-
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 /**
- * Simple JavaBean to use for context attribute tests.
+ * Application event listener for context events.  All events that occur
+ * are logged appropriately to the static logger..
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class ContextBean implements Serializable {
+public class ContextListener01
+    implements ServletContextAttributeListener, ServletContextListener {
 
 
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The lifecycle events that have happened on this bean instance.
-     */
-    protected String lifecycle = "";
-
-    public String getLifecycle() {
-        return (this.lifecycle);
+    public void attributeAdded(ServletContextAttributeEvent event) {
+        StaticLogger.write("ContextListener01: attributeAdded(" +
+                           event.getName() + "," + event.getValue() + ")");
+        ServletContext context = (ServletContext) event.getSource();
+        context.log("ContextListener01: attributeAdded(" +
+                    event.getName() + "," + event.getValue() + ")");
+        if (event.getValue() instanceof ContextBean) {
+            ContextBean bean = (ContextBean) event.getValue();
+            bean.setLifecycle(bean.getLifecycle() + "/add");
+        }
     }
 
-    public void setLifecycle(String lifecycle) {
-        this.lifecycle = lifecycle;
+    public void attributeRemoved(ServletContextAttributeEvent event) {
+        StaticLogger.write("ContextListener01: attributeRemoved(" +
+                           event.getName() + "," + event.getValue() + ")");
+        ServletContext context = (ServletContext) event.getSource();
+        context.log("ContextListener01: attributeRemoved(" +
+                    event.getName() + "," + event.getValue() + ")");
+        if (event.getValue() instanceof ContextBean) {
+            ContextBean bean = (ContextBean) event.getValue();
+            bean.setLifecycle(bean.getLifecycle() + "/rem");
+        }
     }
 
-
-    /**
-     * A string property.
-     */
-    protected String stringProperty = "Default String Property Value";
-
-    public String getStringProperty() {
-        return (this.stringProperty);
+    public void attributeReplaced(ServletContextAttributeEvent event) {
+        StaticLogger.write("ContextListener01: attributeReplaced(" +
+                           event.getName() + "," + event.getValue() + ")");
+        ServletContext context = (ServletContext) event.getSource();
+        context.log("ContextListener01: attributeReplaced(" +
+                    event.getName() + "," + event.getValue() + ")");
+        if (event.getValue() instanceof ContextBean) {
+            ContextBean bean = (ContextBean) event.getValue();
+            bean.setLifecycle(bean.getLifecycle() + "/rep");
+        }
     }
 
-    public void setStringProperty(String stringProperty) {
-        this.stringProperty = stringProperty;
+    public void contextDestroyed(ServletContextEvent event) {
+        StaticLogger.write("ContextListener01: contextDestroyed()");
+        ServletContext context = (ServletContext) event.getSource();
+        context.log("ContextListener01: contextDestroyed()");
+        context.removeAttribute("contextListener01");
     }
 
-
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Return a string representation of this bean.
-     */
-    public String toString() {
-
-        StringBuffer sb = new StringBuffer("ContextBean[lifecycle=");
-        sb.append(lifecycle);
-        sb.append(", stringProperty=");
-        sb.append(this.stringProperty);
-        sb.append("]");
-        return (sb.toString());
-
+    public void contextInitialized(ServletContextEvent event) {
+        StaticLogger.write("ContextListener01: contextInitialized()");
+        ServletContext context = (ServletContext) event.getSource();
+        context.log("ContextListener01: contextInitialized()");
+        ContextBean bean = new ContextBean();
+        bean.setStringProperty("ContextListener01");
+        context.setAttribute("contextListener01", bean);
     }
 
 
 }
-

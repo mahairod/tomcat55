@@ -94,7 +94,9 @@ public class Context01 extends HttpServlet {
 
         // Create and stash a context attribute
         if (ok) {
-            context.setAttribute("context01", "This is Context01");
+            ContextBean bean = new ContextBean();
+            bean.setStringProperty("Context01");
+            context.setAttribute("context01", bean);
         }
 
         // Ensure that we can retrieve the attribute successfully
@@ -103,18 +105,57 @@ public class Context01 extends HttpServlet {
             if (bean == null) {
                 writer.println("Context01 FAILED - Cannot retrieve attribute");
                 ok = false;
-            } else if (!(bean instanceof String)) {
-                writer.println("Context01 FAILED - Attribute instance of " +
-                               bean.getClass().getName());
-                ok = false;
-            } else {
-                String value = (String) bean;
-                if (!"This is Context01".equals(value)) {
+            }
+            if (ok) {
+                if (!(bean instanceof ContextBean)) {
+                    writer.println("Context01 FAILED - Bean instance of " +
+                                   bean.getClass().getName());
+                    ok = false;
+                }
+            }
+            if (ok) {
+                String value = ((ContextBean) bean).getStringProperty();
+                if (!"Context01".equals(value)) {
                     writer.println("Context01 FAILED - Value = " + value);
                     ok = false;
                 }
             }
+            if (ok) {
+                String lifecycle = ((ContextBean) bean).getLifecycle();
+                if (!"/add".equals(lifecycle)) {
+                    writer.println("Context01 FAILED - Bean lifecycle is " +
+                                   lifecycle);
+                    ok = false;
+                }
+            }
         }
+
+        // Ensure that we can update this attribute and check its lifecycle
+        if (ok) {
+            ContextBean bean = (ContextBean) context.getAttribute("context01");
+            context.setAttribute("context01", bean);
+            String lifecycle = bean.getLifecycle();
+            if (!"/add/rep".equals(lifecycle)) {
+                writer.println("Context01 FAILED - Bean lifecycle is " +
+                               lifecycle);
+                ok = false;
+            }
+        }
+
+        // Ensure that we can remove this attribute and check its lifecycle
+        if (ok) {
+            ContextBean bean = (ContextBean) context.getAttribute("context01");
+            context.removeAttribute("context01");
+            String lifecycle = bean.getLifecycle();
+            if (!"/add/rep/rem".equals(lifecycle)) {
+                writer.println("Context01 FAILED - Bean lifecycle is " +
+                               lifecycle);
+                ok = false;
+            }
+        }
+
+        // Add a bean back for the restart application test
+        context.setAttribute("context01", new ContextBean());
 
         // Ensure that setAttribute("name", null) works correctly
         if (ok) {
