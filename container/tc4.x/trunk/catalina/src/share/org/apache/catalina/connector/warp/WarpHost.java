@@ -56,6 +56,9 @@
  * ========================================================================= */
 package org.apache.catalina.connector.warp;
 
+import javax.servlet.ServletException;
+import org.apache.catalina.Request;
+import org.apache.catalina.Response;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.catalina.Container;
@@ -88,8 +91,6 @@ public class WarpHost extends StandardHost {
     /** The ID to use for the next dynamically configured application. */
     private int applid=0;
 
-    // --------------------------------------------------------- PUBLIC METHODS
-
     /**
      * Create a new instance of a WarpHost.
      */
@@ -99,6 +100,35 @@ public class WarpHost extends StandardHost {
         conf.setContextClass(cc);
         this.setContextClass(cc);
         this.addLifecycleListener(conf);
+        this.setDebug(9);
+    }
+
+    // --------------------------------------------------------- PUBLIC METHODS
+
+    public void invoke(Request req, Response res)
+    throws ServletException, IOException {
+        if (DEBUG) this.debug("Invoked");
+        super.invoke(req,res);
+    }
+
+    public Container map(Request request, boolean update) {
+        if (DEBUG) this.debug("Trying to map request to context");
+        if (request instanceof WarpRequest) {
+            WarpRequest r=(WarpRequest)request;
+
+    	    Container children[]=this.findChildren();
+    	    for (int x=0; x<children.length; x++) {
+    	        if (children[x] instanceof WarpContext) {
+    	            WarpContext c=(WarpContext)children[x];
+    	            if (r.getRequestedApplicationID()==c.getApplicationID()) {
+    	                ((WarpRequest)request).setContextPath(c.getPath());
+    	                return(children[x]);
+    	            }
+                }
+            }
+        }
+        if (DEBUG) this.debug("Trying to map request to context (std)");
+        return(super.map(request,update));
     }
 
     /**
