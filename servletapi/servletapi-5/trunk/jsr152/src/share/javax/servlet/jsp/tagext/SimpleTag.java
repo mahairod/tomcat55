@@ -111,6 +111,11 @@ public interface SimpleTag extends JspTag {
      * Called by the container to invoke this tag.
      * The implementation of this method is provided by the tag library
      * developer, and handles all tag processing, body iteration, etc.
+     *
+     * <p>
+     * The JSP container will resynchronize any AT_BEGIN and AT_END
+     * variables (defined by the associated tag file, TagExtraInfo, or TLD)
+     * after the invocation of doTag().
      * 
      * @throws javax.servlet.jsp.JspException If an error occurred 
      *     while processing this tag.
