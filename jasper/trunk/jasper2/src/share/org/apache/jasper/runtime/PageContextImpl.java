@@ -64,6 +64,7 @@ package org.apache.jasper.runtime;
 import java.io.IOException;
 import java.io.Writer;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Enumeration;
@@ -399,12 +400,24 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	return 0;
     }
 
-    public Object findAttribute(String name) {
+    public Object findAttribute(final String name) {
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
+        if (System.getSecurityManager() != null){
+            return AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    return doFindAttribute(name);
+                }
+            });
+        } else {
+            return doFindAttribute(name);
+        }
+    }
+
+    private Object doFindAttribute(String name){
 
         Object o = attributes.get(name);
         if (o != null)
