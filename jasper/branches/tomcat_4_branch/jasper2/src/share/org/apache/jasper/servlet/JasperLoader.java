@@ -99,15 +99,15 @@ public class JasperLoader extends URLClassLoader {
     private PrivilegedLoadClass privLoadClass = null;
 
     public JasperLoader(URL [] urls, String className, ClassLoader parent,
-		 PermissionCollection permissionCollection,
-		 CodeSource codeSource) {
-	super(urls,parent);
-	this.permissionCollection = permissionCollection;
-	this.codeSource = codeSource;
-	this.className = className;
-	this.parent = parent;
+                        PermissionCollection permissionCollection,
+                        CodeSource codeSource) {
+        super(urls,parent);
+        this.permissionCollection = permissionCollection;
+        this.codeSource = codeSource;
+        this.className = className;
+        this.parent = parent;
         this.privLoadClass = new PrivilegedLoadClass();
-	this.securityManager = System.getSecurityManager();
+        this.securityManager = System.getSecurityManager();
     }
 
     /**
@@ -165,7 +165,7 @@ public class JasperLoader extends URLClassLoader {
         }                          
                           
         // (.5) Permission to access this class when using a SecurityManager
-	int dot = name.lastIndexOf('.');
+        int dot = name.lastIndexOf('.');
         if (System.getSecurityManager() != null) {     
             if (dot >= 0) {                
                 try {                    
@@ -179,42 +179,42 @@ public class JasperLoader extends URLClassLoader {
             }                              
         }
 
-	// Class is in a package, delegate to thread context class loader
-	if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
+        // Class is in a package, delegate to thread context class loader
+        if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
             ClassLoader classLoader = null;
-	    if (System.getSecurityManager() != null) {
+            if (System.getSecurityManager() != null) {
                  classLoader = (ClassLoader)AccessController.doPrivileged(privLoadClass);
             } else {
-	        classLoader = Thread.currentThread().getContextClassLoader();
+                classLoader = Thread.currentThread().getContextClassLoader();
             }
             clazz = classLoader.loadClass(name);
-	    if( resolve )
-		resolveClass(clazz);
-	    return clazz;
-	}
+            if( resolve )
+                resolveClass(clazz);
+            return clazz;
+        }
 
-	// Only load classes for this JSP page
-	if( name.startsWith(className) ) {
-	    String classFile = name.substring(Constants.JSP_PACKAGE_NAME.length()+1) +
-		".class";
-	    byte [] cdata = loadClassDataFromFile(classFile);
-	    if( cdata == null )
-		throw new ClassNotFoundException(name);
-	    if( System.getSecurityManager() != null ) {
-		ProtectionDomain pd = new ProtectionDomain(
-			codeSource,permissionCollection);
-		clazz = defineClass(name,cdata,0,cdata.length,pd);
-	    } else {
-		clazz = defineClass(name,cdata,0,cdata.length);
-	    }
-	    if( clazz != null ) {
-		if( resolve )                
-		    resolveClass(clazz);
-		return clazz;
-	    }
-	}
+        // Only load classes for this JSP page
+        if( name.startsWith(className) ) {
+            String classFile = name.substring(Constants.JSP_PACKAGE_NAME.length()+1) +
+                ".class";
+            byte [] cdata = loadClassDataFromFile(classFile);
+            if( cdata == null )
+                throw new ClassNotFoundException(name);
+            if( System.getSecurityManager() != null ) {
+                ProtectionDomain pd = new ProtectionDomain(
+                        codeSource,permissionCollection);
+                clazz = defineClass(name,cdata,0,cdata.length,pd);
+            } else {
+                clazz = defineClass(name,cdata,0,cdata.length);
+            }
+            if( clazz != null ) {
+                if( resolve )                
+                    resolveClass(clazz);
+                return clazz;
+            }
+        }
 
-	throw new ClassNotFoundException(name);
+        throw new ClassNotFoundException(name);
     }
 
     /**
@@ -240,8 +240,8 @@ public class JasperLoader extends URLClassLoader {
         try {
             InputStream in = getResourceAsStream(fileName);
             if (in == null) {
-		return null;
-	    }
+                return null;
+            }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte buf[] = new byte[1024];
             for(int i = 0; (i = in.read(buf)) != -1; )
@@ -250,7 +250,7 @@ public class JasperLoader extends URLClassLoader {
             baos.close();    
             classBytes = baos.toByteArray();
         } catch(Exception ex) {
-	    ex.printStackTrace();
+            ex.printStackTrace();
             return null;     
         }                    
         return classBytes;
