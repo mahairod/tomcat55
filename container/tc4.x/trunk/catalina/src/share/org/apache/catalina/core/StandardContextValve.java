@@ -191,21 +191,12 @@ final class StandardContextValve
         try {
             wrapper = (Wrapper) context.map(request, true);
         } catch (IllegalArgumentException e) {
-            badRequest(requestURI, (HttpServletResponse) response.getResponse());
-            try {
-                response.finishResponse();
-            } catch (IOException f) {
-                ;
-            }
+            badRequest(requestURI, 
+                       (HttpServletResponse) response.getResponse());
             return;
         }
         if (wrapper == null) {
             notFound(requestURI, (HttpServletResponse) response.getResponse());
-            try {
-                response.finishResponse();
-            } catch (IOException e) {
-                ;
-            }
             return;
         }
 
@@ -232,24 +223,8 @@ final class StandardContextValve
     private void badRequest(String requestURI, HttpServletResponse response) {
 
         try {
-            requestURI = RequestUtil.filter(requestURI);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("text/html");
-            PrintWriter writer = response.getWriter();
-            writer.println("<html>");
-            writer.println("<head>");
-            writer.println("<title>Tomcat Error Report</title>");
-            writer.println("<body bgcolor=\"white\">");
-            writer.println("<br><br>");
-            writer.println("<h1>HTTP Status 400 - " + requestURI + "</h1>");
-            writer.println(sm.getString("standardContext.badRequest",
-                                        requestURI));
-            writer.println("</body>");
-            writer.println("</html>");
-            writer.flush();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST, requestURI);
         } catch (IllegalStateException e) {
-            ;
-        } catch (IOException e) {
             ;
         }
 
@@ -267,24 +242,8 @@ final class StandardContextValve
     private void notFound(String requestURI, HttpServletResponse response) {
 
         try {
-            requestURI = RequestUtil.filter(requestURI);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.setContentType("text/html");
-            PrintWriter writer = response.getWriter();
-            writer.println("<html>");
-            writer.println("<head>");
-            writer.println("<title>Tomcat Error Report</title>");
-            writer.println("<body bgcolor=\"white\">");
-            writer.println("<br><br>");
-            writer.println("<h1>HTTP Status 404 - " + requestURI + "</h1>");
-            writer.println(sm.getString("standardContext.notFound",
-                                        requestURI));
-            writer.println("</body>");
-            writer.println("</html>");
-            writer.flush();
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND, requestURI);
         } catch (IllegalStateException e) {
-            ;
-        } catch (IOException e) {
             ;
         }
 
