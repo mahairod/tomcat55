@@ -109,6 +109,7 @@ class JspDocumentParser extends DefaultHandler
     private boolean isTagFile;
     private boolean directivesOnly;
     private boolean isTop;
+    private Stack prefixMapStack;
 
     /*
      * Constructor
@@ -127,6 +128,7 @@ class JspDocumentParser extends DefaultHandler
 	this.isTagFile = isTagFile;
 	this.directivesOnly = directivesOnly;
 	this.isTop = true;
+        this.prefixMapStack = new Stack();;
     }
 
     /*
@@ -265,20 +267,9 @@ class JspDocumentParser extends DefaultHandler
 			isTaglib = true;
 		    } else {
 			String attrUri = attrs.getValue(i);
-			if (!pageInfo.hasTaglib(attrUri)) {
-			    TagLibraryInfo tagLibInfo = null;
-			    try {
-				tagLibInfo = getTaglibInfo(attrQName, attrUri);
-			    } catch (JasperException je) {
-				throw new SAXParseException(
-                                    Localizer.getMessage("jsp.error.could.not.add.taglibraries"),
-				    locator, je);
-			    }
-			    if (tagLibInfo != null) {
-				isTaglib = true;
-			    }
-			    pageInfo.addTaglib(attrUri, tagLibInfo);
-			}
+			// TaglibInfo for this uri already established in
+			// startPrefixMapping
+			isTaglib = pageInfo.hasTaglib(attrUri);
 		    }
 		    if (isTaglib) {
 			if (taglibAttrs == null) {
@@ -555,16 +546,34 @@ class JspDocumentParser extends DefaultHandler
     /*
      * Receives notification of the start of a Namespace mapping. 
      */
-     public void startPrefixMapping(String prefix, String uri)
+    public void startPrefixMapping(String prefix, String uri)
 	     throws SAXException {
-         // XXX
+        TagLibraryInfo taglibInfo;
+        try {
+            taglibInfo = getTaglibInfo(prefix, uri);
+        } catch (JasperException je) {
+            throw new SAXParseException(
+                Localizer.getMessage("jsp.error.could.not.add.taglibraries"),
+                locator, je);
+        }
+
+        if (taglibInfo != null) {
+            pageInfo.addTaglib(uri, taglibInfo);
+            pageInfo.pushPrefixMapping(prefix, uri);
+            prefixMapStack.push(new Boolean(true));
+	}
+        else {
+            prefixMapStack.push(new Boolean(false));
+        }
      }
 
      /*
       * Receives notification of the end of a Namespace mapping. 
       */
     public void endPrefixMapping(String prefix) throws SAXException {
-	// XXX
+        if (((Boolean)prefixMapStack.pop()).booleanValue()) {
+            pageInfo.popPrefixMapping(prefix);
+        }
     }
 
 
@@ -792,23 +801,15 @@ class JspDocumentParser extends DefaultHandler
      * Creates the tag library associated with the given uri namespace, and
      * returns it.
      *
-     * @param qName The qualified name of the xmlns attribute
-     * (of the form 'xmlns:<prefix>')
+     * @param prefix The prefix of the xmlns attribute
      * @param uri The uri namespace (value of the xmlns attribute)
      *
      * @return The tag library associated with the given uri namespace
      */
-    private TagLibraryInfo getTaglibInfo(String qName, String uri)
+    private TagLibraryInfo getTaglibInfo(String prefix, String uri)
                 throws JasperException {
 
 	TagLibraryInfo result = null;
-
-	// Get the prefix
-	String prefix = "";
-	int colon = qName.indexOf(':');
-	if (colon != -1) {
-	    prefix = qName.substring(colon + 1);
-	}
 
 	if (uri.startsWith(URN_JSPTAGDIR)) {
 	    // uri (of the form "urn:jsptagdir:path") references tag file dir

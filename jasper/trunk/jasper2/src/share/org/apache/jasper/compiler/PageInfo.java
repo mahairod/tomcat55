@@ -320,6 +320,7 @@ class PageInfo {
 	LinkedList stack = (LinkedList) xmlPrefixMapper.get(prefix);
 	if (stack == null) {
 	    stack = new LinkedList();
+	    xmlPrefixMapper.put(prefix, stack);
 	}
 	stack.addFirst(uri);
     }
