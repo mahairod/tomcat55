@@ -2,8 +2,10 @@
 ; Tomcat script for Nullsoft Installer
 ; $Id$
 
-!define NAME "Apache Tomcat"
-!define VERSION "@VERSION@"
+!define MUI_PRODUCT "Apache Tomcat"
+!define MUI_VERSION "@VERSION@"
+
+!define MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
@@ -13,24 +15,21 @@
   !define MUI_INSTALLOPTIONS
 
   !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTPAGE
-  !define MUI_DIRSELECTPAGE
-  !define MUI_INSTALLBUTTONTEXT_NEXT
+  !define MUI_COMPONENTSPAGE
+  !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
 
-  !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
-  !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
+  !define MUI_CUSTOMPAGECOMMANDS
+
+  !define TEMP1 $R0
+  !define TEMP2 $R1
 
   ;Language
-    ;English
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  !insertmacro MUI_LANGUAGE "English"
 
   ;General
-  Name "${NAME} ${VERSION}"
   OutFile tomcat-installer.exe
-  BrandingText "${NAME} ${VERSION} Installer"
 
   ;Compression options
   CRCCheck on
@@ -38,14 +37,38 @@
   SetCompressor bzip2
   SetDatablockOptimize on
 
-  !insertmacro MUI_INTERFACE
-  !insertmacro MUI_INSTALLOPTIONS "$7" "$8"
+  ;Page order
+  !insertmacro MUI_PAGECOMMAND_LICENSE
+  !insertmacro MUI_PAGECOMMAND_COMPONENTS
+  !insertmacro MUI_PAGECOMMAND_DIRECTORY
+  Page custom SetConfiguration
+  Page custom SetChooseJVM
+  !insertmacro MUI_PAGECOMMAND_INSTFILES
 
   ;License dialog
   LicenseData INSTALLLICENSE
 
+  ;Component-selection page
+    ;Descriptions
+    LangString DESC_SecTomcat ${LANG_ENGLISH} "Install the Tomcat Servlet container."
+    LangString DESC_SecTomcatCore ${LANG_ENGLISH} "Install the Tomcat Servlet container core."
+    LangString DESC_SecTomcatService ${LANG_ENGLISH} "Install the Tomcat service, used to automatically start Tomcat in the background when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
+    LangString DESC_SecTomcatSource ${LANG_ENGLISH} "Install the Tomcat source code."
+    LangString DESC_SecTomcatDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
+    LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
+    LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
+
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
+
+  ;Install Options pages
+  LangString TEXT_JVM_TITLE ${LANG_ENGLISH} "Java Virtual Machine"
+  LangString TEXT_JVM_SUBTITLE ${LANG_ENGLISH} "Java Virtual Machine path selection."
+  LangString TEXT_JVM_PAGETITLE ${LANG_ENGLISH} "Java Virtual Machine path selection"
+
+  LangString TEXT_CONF_TITLE ${LANG_ENGLISH} "Configuration"
+  LangString TEXT_CONF_SUBTITLE ${LANG_ENGLISH} "Tomcat basic configuration."
+  LangString TEXT_CONF_PAGETITLE ${LANG_ENGLISH} "Tomcat 5 Configuration Options"
 
   ;Install types
   InstType Normal
@@ -55,15 +78,30 @@
   ; Main registry key
   InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
 
+  ;Uninstaller
+  !define MUI_UNCUSTOMPAGECOMMANDS
+  !insertmacro MUI_UNPAGECOMMAND_CONFIRM
+  !insertmacro MUI_UNPAGECOMMAND_INSTFILES
+
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
   ReserveFile "jvm.ini"
   ReserveFile "config.ini"
+
+;--------------------------------
+;Modern UI System
+
+!insertmacro MUI_SYSTEM
+
+;--------------------------------
+;Installer Sections
 
 SubSection "Tomcat" SecTomcat
 
 Section "Core" SecTomcatCore
 
   SectionIn 1 2 3
+
+  Call checkJvm
 
   SetOutPath $INSTDIR
   File tomcat.ico
@@ -179,12 +217,7 @@ Section "Examples" SecExamples
 
 SectionEnd
 
-Section ""
-
-  ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER
-
-SectionEnd
+!insertmacro MUI_SECTIONS_FINISHHEADER
 
 Section -post
 
@@ -206,122 +239,38 @@ SectionEnd
 
 Function .onInit
 
+  ;Extract Install Options INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "config.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "jvm.ini"
 
+  ;Titles for Install Options dialogs
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "config.ini" "$(TEXT_CONF_PAGETITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "jvm.ini" "$(TEXT_JVM_PAGETITLE)"
+
+  ;Abort warnings for Install Options dialogs
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "config.ini"
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "jvm.ini"
+
 FunctionEnd
 
+Function SetChooseJVM
+  !insertmacro MUI_HEADER_TEXT $(TEXT_JVM_TITLE) $(TEXT_JVM_SUBTITLE)
+  Call findJavaPath
+  Pop $3
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Field 2" "State" $3
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "jvm.ini"
+FunctionEnd
+
+Function SetConfiguration
+  !insertmacro MUI_HEADER_TEXT $(TEXT_CONF_TITLE) $(TEXT_CONF_SUBTITLE)
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "config.ini"
+FunctionEnd
 
 Function .onInstSuccess
 
   ExecShell open '$SMPROGRAMS\Apache Tomcat 5.0'
 
 FunctionEnd
-
-
-Function .onInitDialog
-
-  !insertmacro MUI_INNERDIALOG_INIT
-
-    !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-    !insertmacro MUI_INNERDIALOG_STOP 1
-
-    !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    !insertmacro MUI_INNERDIALOG_STOP 3
-
-    !insertmacro MUI_INNERDIALOG_START 4
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-    !insertmacro MUI_INNERDIALOG_STOP 4
-
-  !insertmacro MUI_INNERDIALOG_END
-
-FunctionEnd
-
-Function .onNextPage
-
-  !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
-  !insertmacro MUI_NEXTPAGE
-
-FunctionEnd
-
-Function .onPrevPage
-
-  !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
-  !insertmacro MUI_PREVPAGE
-
-FunctionEnd
-
-Function SetPage
-
-  !insertmacro MUI_PAGE_INIT
-
-    !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT "Java Virtual Machine" "Java Virtual Machine path selection."
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "Title" "Java Virtual Machine path selection"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
-      Call findJavaPath
-      Pop $3
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Field 2" "State" $3
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "jvm.ini" "" ""
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      Call checkJvm
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-    !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-   !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT "Configuration" "Tomcat basic configuration."
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "Title" "${NAME} ${VERSION} Configuration Options"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 5 "config.ini" "" ""
-    !insertmacro MUI_PAGE_STOP 5
-
-    !insertmacro MUI_PAGE_START 6
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 6
-
-    !insertmacro MUI_PAGE_START 7
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 7
-
-  !insertmacro MUI_PAGE_END
-
-FunctionEnd
-
-!insertmacro MUI_FUNCTION_DESCRIPTION_START
-
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} "Install the Tomcat Servlet container."
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} "Install the Tomcat Servlet container core."
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} "Install the Tomcat service, used to automatically start Tomcat in the background when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} "Install the Tomcat source code."
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatDocs} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "Create a Start Menu program group for Tomcat."
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} "Installs some examples web applications."
-
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
-
-!insertmacro MUI_FUNCTION_ABORTWARNING
-
 
 
 ; =====================
@@ -610,10 +559,5 @@ Section Uninstall
   !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
-
-;--------------------------------
-;Uninstaller Functions
-
-!insertmacro MUI_UNBASICFUNCTIONS
 
 ;eof
