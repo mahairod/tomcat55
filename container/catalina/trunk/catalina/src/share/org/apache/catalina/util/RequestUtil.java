@@ -276,7 +276,6 @@ public final class RequestUtil {
      *
      * @param map Map that accumulates the resulting parameters
      * @param data Input string containing request parameters
-     * @param urlParameters true if we're parsing parameters on the URL
      *
      * @exception IllegalArgumentException if the data is malformed
      */
@@ -416,12 +415,12 @@ public final class RequestUtil {
 
 
     /**
-     * Put name value pair in map.
-     *
-     * @param b the character value byte
-     *
      * Put name and value pair in map.  When name already exist, add value
      * to array of values.
+     *
+     * @param map The map to populate
+     * @param name The parameter name
+     * @param value The parameter value
      */
     private static void putMapEntry( Map map, String name, String value) {
         String[] newValues = null;

@@ -35,7 +35,6 @@ public interface MembershipService {
     public void setProperties(java.util.Properties properties);
     /**
      * Returns the properties for the configuration used.
-     * @return
      */
     public java.util.Properties getProperties();
     /**
@@ -62,24 +61,21 @@ public interface MembershipService {
     public void stop();
     /**
      * Returns a list of all the members in the cluster.
-     * @return
      */
     public Member[] getMembers();
     /**
      * Returns the member object that defines this member
-     * @return
      */
     public Member getLocalMember();
 
     /**
      * Sets the local member properties for broadcasting
-     * @return
      */
     public void setLocalMemberProperties(String listenHost, int listenPort);
     /**
      * Sets the membership listener, only one listener can be added.
      * If you call this method twice, the last listener will be used.
-     * @param listener
+     * @param listener The listener
      */
     public void addMembershipListener(MembershipListener listener);
     /**

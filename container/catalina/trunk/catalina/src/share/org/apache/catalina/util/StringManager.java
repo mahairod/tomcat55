@@ -93,7 +93,7 @@ public class StringManager {
     /**
      * Get a string from the underlying resource bundle.
      *
-     * @param key
+     * @param key The resource name
      */
     public String getString(String key) {
         return MessageFormat.format(getStringInternal(key), null);
@@ -124,8 +124,8 @@ public class StringManager {
      * Get a string from the underlying resource bundle and format
      * it with the given set of arguments.
      *
-     * @param key
-     * @param args
+     * @param key The resource name
+     * @param args Formatting directives
      */
 
     public String getString(String key, Object[] args) {
@@ -163,8 +163,8 @@ public class StringManager {
      * with the given object argument. This argument can of course be
      * a String object.
      *
-     * @param key
-     * @param arg
+     * @param key The resource name
+     * @param arg Formatting directive
      */
 
     public String getString(String key, Object arg) {
@@ -177,9 +177,9 @@ public class StringManager {
      * with the given object arguments. These arguments can of course
      * be String objects.
      *
-     * @param key
-     * @param arg1
-     * @param arg2
+     * @param key The resource name
+     * @param arg1 Formatting directive
+     * @param arg2 Formatting directive
      */
 
     public String getString(String key, Object arg1, Object arg2) {
@@ -192,10 +192,10 @@ public class StringManager {
      * with the given object arguments. These arguments can of course
      * be String objects.
      *
-     * @param key
-     * @param arg1
-     * @param arg2
-     * @param arg3
+     * @param key The resource name
+     * @param arg1 Formatting directive
+     * @param arg2 Formatting directive
+     * @param arg3 Formatting directive
      */
 
     public String getString(String key, Object arg1, Object arg2,
@@ -209,11 +209,11 @@ public class StringManager {
      * with the given object arguments. These arguments can of course
      * be String objects.
      *
-     * @param key
-     * @param arg1
-     * @param arg2
-     * @param arg3
-     * @param arg4
+     * @param key The resource name
+     * @param arg1 Formatting directive
+     * @param arg2 Formatting directive
+     * @param arg3 Formatting directive
+     * @param arg4 Formatting directive
      */
 
     public String getString(String key, Object arg1, Object arg2,
@@ -232,7 +232,7 @@ public class StringManager {
      * a package already exists, it will be reused, else a new
      * StringManager will be created and returned.
      *
-     * @param packageName
+     * @param packageName The package name
      */
 
     public synchronized static StringManager getManager(String packageName) {

@@ -83,7 +83,6 @@ public class XByteBuffer
 
     /**
      * Returns the bytes in the buffer, in its exact length
-     * @return
      */
     public byte[] getBytes() {
         byte[] b = new byte[bufSize];
@@ -214,7 +213,7 @@ public class XByteBuffer
      * @param b - the byte array containing the four bytes
      * @param off - the offset
      * @return the integer value constructed from the four bytes
-     * @exception java.lang.ArrayOutOfBoundsException
+     * @exception java.lang.ArrayIndexOutOfBoundsException
      */
     public static int toInt(byte[] b,int off){
         return ( ( (int) b[off+3]) & 0xFF) +
@@ -228,7 +227,7 @@ public class XByteBuffer
      * @param b - the byte array containing the four bytes
      * @param off - the offset
      * @return the long value constructed from the eight bytes
-     * @exception java.lang.ArrayOutOfBoundsException
+     * @exception java.lang.ArrayIndexOutOfBoundsException
      */
     public static long toLong(byte[] b,int off){
         return ( ( (long) b[off+7]) & 0xFF) +
@@ -333,7 +332,7 @@ public class XByteBuffer
 
     /**
      * Creates a complete data package
-     * @param data - the message data to be contained within the package
+     * @param indata - the message data to be contained within the package
      * @return - a full package (header,size,data,footer)
      */
     public static byte[] createDataPackage(byte[] indata) throws java.io.IOException  {

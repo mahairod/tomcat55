@@ -96,10 +96,6 @@ public class ProcessHelper {
      * @param  env      Hashtable with the desired script environment
      * @param  wd       File with the script's desired working directory
      * @param  params   Hashtable with the script's query parameters
-     *
-     * @param  res       HttpServletResponse object for setting headers
-     *                   based on CGI script output
-     *
      */
     public ProcessHelper(
         String command,

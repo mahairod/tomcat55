@@ -86,7 +86,7 @@ public class McastMember implements Member, java.io.Serializable {
 
     /**
      *
-     * @returns a Hashmap containing the following properties:<BR>
+     * @return a Hashmap containing the following properties:<BR>
      * 1. tcpListenPort - the port this member listens to for messages - string<BR>
      * 2. tcpListenHost - the host address of this member - string<BR>
      * 3. memberName    - the name of this member - string<BR>
@@ -194,14 +194,13 @@ public class McastMember implements Member, java.io.Serializable {
 
     /**
      * String representation of this object
-     * @return
      */
     public String toString()  {
         return "org.apache.catalina.cluster.mcast.McastMember["+name+","+host+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**
-     * @see java.lang.Object.hashCode()
+     * @see java.lang.Object#hashCode()
      * @return
      */
     public int hashCode() {
@@ -211,7 +210,6 @@ public class McastMember implements Member, java.io.Serializable {
     /**
      * Returns true if the param o is a McastMember with the same name
      * @param o
-     * @return
      */
     public boolean equals(Object o) {
         if ( o instanceof McastMember )    {

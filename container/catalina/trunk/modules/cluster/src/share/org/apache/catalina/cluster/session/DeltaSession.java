@@ -302,7 +302,6 @@ public class DeltaSession
     /**
      * returns true if this session is the primary session, if that is the
      * case, the manager can expire it upon timeout.
-     * @return
      */
     public boolean isPrimarySession() {
        return isPrimarySession;
@@ -310,7 +309,7 @@ public class DeltaSession
 
     /**
      * Sets whether this is the primary session or not.
-     * @param primarySession
+     * @param primarySession Flag value
      */
     public void setPrimarySession(boolean primarySession) {
         this.isPrimarySession=primarySession;

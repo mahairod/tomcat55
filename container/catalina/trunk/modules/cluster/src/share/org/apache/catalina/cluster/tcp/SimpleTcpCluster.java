@@ -579,8 +579,6 @@ public class SimpleTcpCluster
      *  is malformed (it must be "" or start with a slash)
      * @exception IllegalStateException if the specified context path
      *  is already attached to an existing web application
-     * @exception IOException if an input/output error was encountered
-     *  during installation
      */
     public void installContext(String contextPath, URL war) {
         log.debug("\n\n\n\nCluster Install called for context:"+contextPath+"\n\n\n\n");

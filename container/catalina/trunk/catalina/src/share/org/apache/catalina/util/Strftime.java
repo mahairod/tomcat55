@@ -120,7 +120,7 @@ public class Strftime {
      * Create an instance of this date formatting class
      * 
      * @param origFormat the strftime-style formatting string
-     * @param the locale to use for locale-specific conversions
+     * @param locale the locale to use for locale-specific conversions
      */
     public Strftime( String origFormat, Locale locale ) {
         String convertedFormat = convertDateFormat( origFormat );
@@ -149,7 +149,7 @@ public class Strftime {
     /**
      * Change the timezone used to format dates
      *
-     * @see java.util.TimeZone#setTimeZone
+     * @see SimpleDateFormat#setTimeZone
      */
     public void setTimeZone( TimeZone timeZone ) {
         simpleDateFormat.setTimeZone( timeZone );
