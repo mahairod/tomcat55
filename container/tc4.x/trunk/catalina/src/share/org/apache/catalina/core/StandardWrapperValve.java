@@ -506,7 +506,10 @@ final class StandardWrapperValve
         ErrorPage errorPage = findErrorPage(context, realError);
         if ((errorPage == null) && (realError instanceof ServletException)) {
             realError = ((ServletException) exception).getRootCause();
-            errorPage = findErrorPage(context, realError);
+            if (realError != null)
+                errorPage = findErrorPage(context, realError);
+            else
+                realError = exception;
         }
 	if (errorPage != null) {
             //            if (debug >= 1)
