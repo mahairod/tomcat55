@@ -371,11 +371,11 @@ public class JDBCRealm extends RealmBase {
         }
     }
 
-    protected void ContextShutdown(Context ctx) throws TomcatException {
+    public void contextShutdown(Context ctx) throws TomcatException {
         if (started && JDBCStarted) close();
     }
 
-    protected void ContextInit(Context ctx) throws TomcatException {
+    public void contextInit(Context ctx) throws TomcatException {
         if (!started) {
             if (connectOnInit && !checkConnection()) {
                 throw new RuntimeException("JDBCRealm cannot be started");
