@@ -62,86 +62,19 @@
  */ 
 
 
-package org.apache.tomcat.request;
+package org.apache.tomcat.core;
+import javax.servlet.Servlet;
 
-import org.apache.tomcat.core.*;
-import org.apache.tomcat.net.*;
-import org.apache.tomcat.util.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-
-public class ContextInterceptor implements RequestInterceptor {
-    ContextManager cm;
+/**
+ * Called to set up and destroy a context.
+ * Example: expand WAR, move files in the right directories ( Apache ?),
+ * read web.xml or check for a serialized form for faster init, etc.
+ *
+ * @author costin@dnt.ro
+ */
+public interface ContextInterceptor {
+    public static final int OK=0;
     
-    public ContextInterceptor(ContextManager cm) {
-	this.cm=cm;
-    }
-
-    public int handleRequest( Request rrequest ) {
-	// someone else set it up, no need to worry
-	if( rrequest.getContext() != null )
-	    return OK;
-	
-	// resolve the server that we are for
-	String path = rrequest.getRequestURI();
-	
-	Context ctx= this.getContextByPath(path);
-	
-	// final fix on response & request
-	//		rresponse.setServerHeader(server.getServerHeader());
-	
-	String ctxPath = ctx.getPath();
-	String pathInfo =path.substring(ctxPath.length(),
-					    path.length());
-	rrequest.setContext(ctx);
-	rrequest.updatePaths();
-	return OK;
-    }
-
-
-    // XXX XXX XXX need to fix this - it is used by getContext(String path) (costin)
-    
-    /**
-     * Gets the context that is responsible for requests for a
-     * particular path.  If no specifically assigned Context can be
-     * identified, returns the default Context.
-     *
-     * @param path The path for which a Context is requested
-     */
-    public Context getContextByPath(String path) {
-	String realPath = path;
-	Context ctx = null;
-
-	// XXX
-	// needs help ... this needs to be optimized out.
-
-        lookup:
-	do {
-	    ctx = cm.getContext(path);
-	    if (ctx == null) {
-	        int i = path.lastIndexOf('/');
-		if (i > -1 && path.length() > 1) {
-		    path = path.substring(0, i);
-		    if (path.length() == 0) {
-		        path = "/";
-		    }
-		} else {
-		    // path too short
-		    break lookup;
-		}
-	    } else {
-	    }
-	} while (ctx == null);
-
-	// no map - root context
-	if (ctx == null) {
-	    ctx = cm.getContext( "" );
-	}
-
-	return ctx;
-    }
-
-    
+    public int handleContextInit(Context ctx);
+    public int handleContextShutdown(Context ctx);
 }

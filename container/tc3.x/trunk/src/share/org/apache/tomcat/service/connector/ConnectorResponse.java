@@ -74,7 +74,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 
-public class ConnectorResponse extends Response {
+public class ConnectorResponse extends ResponseImpl {
     public static final int SEND_HEADERS=2;
     public static final int END_RESPONSE=5;
 

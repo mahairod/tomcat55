@@ -109,13 +109,13 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
 	    Socket socket=connection.getSocket();
 	    socket.setSoLinger( true, 100);
 	    //XXX recycle
-	    Request request=new Request();
+	    RequestImpl request=new RequestImpl();
 	    
 	    AJPRequestAdapter reqA = new AJPRequestAdapter(socket); // todo: clean ConnectionHandler, make it abstract
 	    request.setRequestAdapter( reqA );
 	    
 	    Ajp11ResponseAdapter resA=new Ajp11ResponseAdapter();
-	    Response response = new Response();
+	    ResponseImpl response = new ResponseImpl();
             resA.setOutputStream(socket.getOutputStream());
 	    response.setResponseAdapter(resA );
 	    int count = 1;

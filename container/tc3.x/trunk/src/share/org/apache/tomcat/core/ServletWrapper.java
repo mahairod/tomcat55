@@ -209,11 +209,13 @@ public class ServletWrapper {
 	    // XXX XXX XXX
 	    // core shouldn't depend on a particular connector!
 	    // need to find out what this code does!
+
+	    // XXX XXX find a better way !!!
 	    RequestAdapterImpl reqA=new RequestAdapterImpl();
 	    ResponseAdapterImpl resA=new ResponseAdapterImpl();
 	    
-	    Request request = new Request();
-            Response response = new Response();
+	    RequestImpl request = new RequestImpl();
+            ResponseImpl response = new ResponseImpl();
             request.recycle();
             response.recycle();
 

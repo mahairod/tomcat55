@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -58,78 +62,86 @@
  */ 
 
 
-package org.apache.tomcat.context;
+package org.apache.tomcat.request;
 
 import org.apache.tomcat.core.*;
-import org.apache.tomcat.core.Constants;
+import org.apache.tomcat.net.*;
 import org.apache.tomcat.util.*;
-import org.apache.tomcat.deployment.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import javax.servlet.http.*;
 
 
-/**
- * Handles work dir setup/removal
- *
- * @author costin@dnt.ro
- */
-public class WorkDirInterceptor implements ContextInterceptor {
-
-    public WorkDirInterceptor() {
+public class ContextMapperInterceptor implements RequestInterceptor {
+    ContextManager cm;
+    
+    public ContextMapperInterceptor(ContextManager cm) {
+	this.cm=cm;
     }
+
+    public int handleRequest( Request rrequest ) {
+	// someone else set it up, no need to worry
+	if( rrequest.getContext() != null )
+	    return OK;
 	
-    public int handleContextInit(Context ctx) {
-	// never null !! ( it is set by default to ./work ! )
-	//log	System.out.println("Preparing work dir " + ctx.getWorkDir() );
+	// resolve the server that we are for
+	String path = rrequest.getRequestURI();
+	
+	Context ctx= this.getContextByPath(path);
+	
+	// final fix on response & request
+	//		rresponse.setServerHeader(server.getServerHeader());
+	
+	String ctxPath = ctx.getPath();
+	String pathInfo =path.substring(ctxPath.length(),
+					    path.length());
+	rrequest.setContext(ctx);
+	rrequest.updatePaths();
+	return OK;
+    }
 
-	if (! ctx.isWorkDirPersistent()) {
-	    clearDir(ctx.getWorkDir() );
-        }
 
-	if (! ctx.getWorkDir().exists()) {
-	    //log  System.out.println("Creating work dir " + ctx.getWorkDir() );
-	    ctx.getWorkDir().mkdirs();
+    // XXX XXX XXX need to fix this - it is used by getContext(String path) (costin)
+    
+    /**
+     * Gets the context that is responsible for requests for a
+     * particular path.  If no specifically assigned Context can be
+     * identified, returns the default Context.
+     *
+     * @param path The path for which a Context is requested
+     */
+    public Context getContextByPath(String path) {
+	String realPath = path;
+	Context ctx = null;
+
+	// XXX
+	// needs help ... this needs to be optimized out.
+
+        lookup:
+	do {
+	    ctx = cm.getContext(path);
+	    if (ctx == null) {
+	        int i = path.lastIndexOf('/');
+		if (i > -1 && path.length() > 1) {
+		    path = path.substring(0, i);
+		    if (path.length() == 0) {
+		        path = "/";
+		    }
+		} else {
+		    // path too short
+		    break lookup;
+		}
+	    } else {
+	    }
+	} while (ctx == null);
+
+	// no map - root context
+	if (ctx == null) {
+	    ctx = cm.getContext( "" );
 	}
 
-	ctx.setAttribute(Constants.ATTRIB_WORKDIR1, ctx.getWorkDir());
-	ctx.setAttribute(Constants.ATTRIB_WORKDIR , ctx.getWorkDir());
-	return 0;
+	return ctx;
     }
 
-    public int handleContextShutdown( Context ctx ) {
-	
-	if (! ctx.isWorkDirPersistent()) {
-            clearDir(ctx.getWorkDir());
-	}
-	return 0;
-    }
-
-    private void clearDir(File dir) {
-        String[] files = dir.list();
-
-        if (files != null) {
-	    for (int i = 0; i < files.length; i++) {
-	        File f = new File(dir, files[i]);
-
-	        if (f.isDirectory()) {
-		    clearDir(f);
-	        }
-
-	        try {
-	            f.delete();
-	        } catch (Exception e) {
-	        }
-	    }
-
-	    try {
-	        dir.delete();
-	    } catch (Exception e) {
-	    }
-        }
-    }
-
-
-	
+    
 }
