@@ -145,8 +145,7 @@
   <target name="build-servletapi" unless="servletapi.build.notrequired" >
     <echo>========== Building: ${servlet-api.jar}</echo>
     <ant dir="${api.home}/jsr154" target="dist" >
-<!--        <property name="servlet-api.dist" value="${servlet-api.home}" />
- -->
+      <property name="servlet-api.dist" value="${servlet-api.home}" />
     </ant>
     <mkdir dir="${servlet-api.home}"/>
     <copy todir="${servlet-api.home}">
