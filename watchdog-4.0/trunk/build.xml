@@ -11,8 +11,7 @@
   <property name="compile.debug"       value="true"/>
   <property name="compile.deprecation" value="false"/>
   <property name="compile.optimize"    value="true"/>
-  <property name="servlet.jar"
-                              value="../jakarta-servletapi-4/lib/servlet.jar"/>
+  <property name="servlet.jar"         value="${servletapi.home}/lib/servlet.jar"/>
   <property name="watchdog.build"      value="build"/>
   <property name="watchdog.dist"       value="dist"/>
 
