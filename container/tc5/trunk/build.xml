@@ -180,6 +180,8 @@
       <property name="build.home" value="${tomcat.build}"/>
       <property name="tomcat5.detect" value="true"/>
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
+      <property name="tomcat-util.jar"
+                value="${tomcat.build}/server/lib/tomcat-util.jar"/>
       <property name="servlet.jar"   value="${tomcat.build}/common/lib/servlet-api.jar"/>
     </ant>
   </target>
@@ -283,6 +285,9 @@
     <ant dir="${catalina.home}/catalina" target="catalina-jars">
         <!-- in-place building -->
         <property name="catalina.build" value="${tomcat.build}" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar"
+                 value="${tomcat.build}/server/lib/tomcat-util.jar"/>
         <property name="catalina.deploy" value="${tomcat.build}" />
         <property name="flags.hide" value="true" />
     </ant>
@@ -350,10 +355,10 @@
     <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="${catalina.home}" target="deploy"/>
     <!-- 
-    <ant dir="${catalina.home}" target="deploy-catalina"/>
     <antcall target="build-tomcat-coyote"/>
     <antcall target="build-tomcat-jk"/>
     <antcall target="build-tomcat-http11"/>
+    <ant dir="${catalina.home}" target="deploy-catalina"/>
      -->
     <copy todir="${tomcat.build}">
       <fileset dir="${catalina.home}/build"/>
