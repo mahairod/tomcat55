@@ -880,7 +880,7 @@
     </jar>
 
     <!-- Naming - Factory JAR File -->
-    <jar jarfile="${catalina.deploy}/shared/lib/naming-factory.jar">
+    <jar jarfile="${catalina.deploy}/common/lib/naming-factory.jar">
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/naming/factory/**" />
         <exclude name="org/apache/naming/factory/Constants.class" />

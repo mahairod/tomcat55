@@ -72,6 +72,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.AccessControlException;
 import java.util.Random;
+import javax.naming.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -118,6 +119,12 @@ public final class StandardServer
      * Debugging detail level.
      */
     private int debug = 0;
+
+
+    /**
+     * Global naming resources context.
+     */
+    private Context globalNamingContext = null;
 
 
     /**
@@ -210,6 +217,28 @@ public final class StandardServer
     public void setDebug(int debug) {
 
         this.debug = debug;
+
+    }
+
+
+    /**
+     * Return the global naming resources context.
+     */
+    public Context getGlobalNamingContext() {
+
+        return (this.globalNamingContext);
+
+    }
+
+
+    /**
+     * Set the global naming resources context.
+     *
+     * @param globalNamingContext The new global naming resource context
+     */
+    public void setGlobalNamingContext(Context globalNamingContext) {
+
+        this.globalNamingContext = globalNamingContext;
 
     }
 

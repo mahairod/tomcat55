@@ -1888,6 +1888,13 @@
     </servlet-mapping>
 
 
+    <!-- ========== Session Configuration ================================= -->
+
+    <session-config>
+        <session-timeout>5</session-timeout>
+    </session-config>
+
+
     <!-- ========== Error Page Mappings =================================== -->
 
     <error-page>

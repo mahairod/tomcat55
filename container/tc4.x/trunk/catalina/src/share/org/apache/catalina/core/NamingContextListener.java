@@ -312,6 +312,10 @@ public class NamingContextListener
             if (container instanceof Server) {
                 org.apache.naming.factory.ResourceLinkFactory.setGlobalContext
                     (namingContext);
+                if (container instanceof StandardServer) {
+                    ((StandardServer) container).setGlobalNamingContext
+                        (namingContext);
+                }
             }
 
             initialized = true;
