@@ -106,6 +106,7 @@ import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
@@ -3473,6 +3474,19 @@ public class StandardContext
             if (!resourcesStart())
                 ok = false;
         }
+
+        // Install DefaultContext configuration
+        if (!getOverride()) {
+            Container host = getParent();
+            if (host instanceof StandardHost) {
+                ((StandardHost)host).installDefaultContext(this);
+                Container engine = host.getParent();
+                if( engine instanceof StandardEngine ) {
+                    ((StandardEngine)engine).installDefaultContext(this);
+                }
+            }
+        }
+
         if (getLoader() == null) {      // (2) Required by Manager
             if (getPrivileged()) {
                 if (debug >= 1)

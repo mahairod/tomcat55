@@ -113,7 +113,6 @@
 </section>
 
 
-<!--
 <section name="Nested Components">
 
   <p>You can nest at most one instance of the following utility components
@@ -124,6 +123,7 @@
       Configure the web application class loader that will be used to load
       servlet and bean classes for each web application.  Normally, the
       default configuration of the class loader will be sufficient.</li>
+<!--
   <li><a href="logger.html"><strong>Logger</strong></a> -
       Configure a logger that will receive
       and process all log messages for each <strong>Context</strong>.  This
@@ -143,10 +143,10 @@
       Configure the resource manager that will be used to access the static
       resources associated with each web application.  Normally, the
       default configuration of the resource manager will be sufficient.</li>
+-->
   </ul>
 
 </section>
--->
 
 <section name="Special Features">
 

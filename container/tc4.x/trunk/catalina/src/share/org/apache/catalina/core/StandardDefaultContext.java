@@ -66,10 +66,12 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 import javax.naming.directory.DirContext;
 import org.apache.naming.ContextAccessController;
 import org.apache.catalina.Container;
@@ -91,6 +93,7 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -259,6 +262,11 @@ public class StandardDefaultContext
      */
     protected Manager manager = null;
 
+
+    /**
+     * The Context LifecycleListener's
+     */
+    protected Vector lifecycle = new Vector();
 
     /**
      * The string manager for this package.
@@ -490,6 +498,18 @@ public class StandardDefaultContext
         support.firePropertyChange("manager", oldManager, this.manager);
     }
 
+
+    // ------------------------------------------------------ Lifecycle Methods
+
+
+    /**
+     * Add a lifecycle event listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+        lifecycle.add(listener);
+    }
 
     // ------------------------------------------------------ Public Properties
 
@@ -1342,12 +1362,12 @@ public class StandardDefaultContext
 
 
     /**
-     * Import the configuration from the DefaultContext into
-     * current Context.
+     * Install the StandardContext portion of the DefaultContext
+     * configuration into current Context.
      *
      * @param context current web application context
      */
-    public void importDefaultContext(Context context) {
+    public void installDefaultContext(Context context) {
 
         if (context instanceof StandardContext) {
             ((StandardContext)context).setUseNaming(isUseNaming());
@@ -1355,7 +1375,48 @@ public class StandardDefaultContext
             if (!contexts.containsKey(context)) {
                 ((StandardContext) context).addLifecycleListener(this);
             }
+            Enumeration lifecycleListeners = lifecycle.elements();
+            while (lifecycleListeners.hasMoreElements()) {
+                ((StandardContext)context).addLifecycleListener(
+                    (LifecycleListener)lifecycleListeners.nextElement());
+            }
         }
+
+        if (!context.getPrivileged() && loader != null) {
+            ClassLoader parentClassLoader = context.getParent().getParentClassLoader();
+            Class clazz = loader.getClass();
+            Class types[] = { ClassLoader.class };
+            Object args[] = { parentClassLoader };
+            try {
+                Constructor constructor = clazz.getDeclaredConstructor(types);
+                Loader context_loader = (Loader) constructor.newInstance(args);
+                context_loader.setDelegate(loader.getDelegate());
+                context_loader.setReloadable(loader.getReloadable());
+                if (loader instanceof WebappLoader) {
+                    ((WebappLoader)context_loader).setCheckInterval
+                        (((WebappLoader)loader).getCheckInterval());
+                    ((WebappLoader)context_loader).setDebug
+                        (((WebappLoader)loader).getDebug());
+                    ((WebappLoader)context_loader).setLoaderClass
+                        (((WebappLoader)loader).getLoaderClass());
+                }
+                context.setLoader(context_loader);
+            } catch(Exception e) {
+                throw new IllegalArgumentException
+                   ("DefaultContext custom Loader install failed, Exception: " +
+                   e.getMessage());
+            }
+        }
+
+    }
+
+    /**
+     * Import the configuration from the DefaultContext into
+     * current Context.
+     *
+     * @param context current web application context
+     */
+    public void importDefaultContext(Context context) {
 
         context.setCookies(getCookies());
         context.setCrossContext(getCrossContext());
