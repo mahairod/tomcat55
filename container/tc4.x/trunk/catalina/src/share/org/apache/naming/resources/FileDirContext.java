@@ -584,10 +584,11 @@ public class FileDirContext extends BaseDirContext {
         // Open os
         
         try {
-            FileOutputStream os = new FileOutputStream(file);
+            FileOutputStream os = null;
             byte buffer[] = new byte[BUFFER_SIZE];
             int len = -1;
             try {
+                os = new FileOutputStream(file);
                 while (true) {
                     len = is.read(buffer);
                     if (len == -1)
@@ -595,7 +596,8 @@ public class FileDirContext extends BaseDirContext {
                     os.write(buffer, 0, len);
                 }
             } finally {
-                os.close();
+                if (os != null)
+                    os.close();
                 is.close();
             }
         } catch (IOException e) {
