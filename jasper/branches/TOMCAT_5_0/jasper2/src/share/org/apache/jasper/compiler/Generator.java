@@ -830,7 +830,9 @@ class Generator {
 
         public void visit(Node.Expression n) throws JasperException {
             n.setBeginJavaLine(out.getJavaLine());
-            out.printil("out.print(" + n.getText() + ");");
+            out.printin("out.print(");
+            out.printMultiLn(n.getText());
+            out.println(");");
             n.setEndJavaLine(out.getJavaLine());
         }
 
@@ -2125,9 +2127,9 @@ class Generator {
 
             Class tagHandlerClass = handlerInfo.getTagHandlerClass();
 
-            n.setBeginJavaLine(out.getJavaLine());
             out.printin("//  ");
             out.println(n.getQName());
+            n.setBeginJavaLine(out.getJavaLine());
 
             // Declare AT_BEGIN scripting variables
             declareScriptingVars(n, VariableInfo.AT_BEGIN);
@@ -2221,7 +2223,10 @@ class Generator {
                     out.pushIndent();
                 }
             }
-        };
+            // Map the Java lines that handles start of custom tags to the
+            // JSP line for this tag
+            n.setEndJavaLine(out.getJavaLine());
+        }
 
         private void generateCustomEnd(
             Node.CustomTag n,
@@ -2327,8 +2332,6 @@ class Generator {
             syncScriptingVars(n, VariableInfo.AT_END);
 
             restoreScriptingVars(n, VariableInfo.AT_BEGIN);
-
-            n.setEndJavaLine(out.getJavaLine());
         }
 
         private void generateCustomDoTag(
