@@ -351,13 +351,6 @@ public class StandardContext
 
 
     /**
-     * The Java class name of the default Mapper class for this Container.
-     */
-    private String mapperClass =
-        "org.apache.catalina.core.StandardContextMapper";
-
-
-    /**
      * The message destinations for this web application.
      */
     private HashMap messageDestinations = new HashMap();
@@ -1395,30 +1388,6 @@ public class StandardContext
 
     }
 
-
-    /**
-     * Return the default Mapper class name.
-     */
-    public String getMapperClass() {
-
-        return (this.mapperClass);
-
-    }
-
-
-    /**
-     * Set the default Mapper class name.
-     *
-     * @param mapperClass The new default Mapper class name
-     */
-    public void setMapperClass(String mapperClass) {
-
-        String oldMapperClass = this.mapperClass;
-        this.mapperClass = mapperClass;
-        support.firePropertyChange("mapperClass",
-                                   oldMapperClass, this.mapperClass);
-
-    }
 
     /** Get the absolute path to the work dir.
      *  To avoid duplication.
@@ -4054,7 +4023,6 @@ public class StandardContext
 
             try {
 
-                addDefaultMapper(this.mapperClass);
                 started = true;
 
                 // Start our subordinate components, if any
@@ -4075,14 +4043,6 @@ public class StandardContext
                     ((Lifecycle) realm).start();
                 if ((resources != null) && (resources instanceof Lifecycle))
                     ((Lifecycle) resources).start();
-
-                // Start our Mappers, if any
-                // FIXME: Remove this
-                Mapper mappers[] = findMappers();
-                for (int i = 0; i < mappers.length; i++) {
-                    if (mappers[i] instanceof Lifecycle)
-                        ((Lifecycle) mappers[i]).start();
-                }
 
                 // Initialize associated mapper
                 mapper.setContext(welcomeFiles, resources);
@@ -4326,13 +4286,6 @@ public class StandardContext
                     ((Lifecycle) children[i]).stop();
             }
 
-            // Stop our Mappers, if any
-            Mapper mappers[] = findMappers();
-            for (int i = 0; i < mappers.length; i++) {
-                if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
-                    ((Lifecycle) mappers[(mappers.length-1)-i]).stop();
-            }
-
             // Stop resources
             resourcesStop();
 
@@ -4423,19 +4376,6 @@ public class StandardContext
 
 
     // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Add a default Mapper implementation if none have been configured
-     * explicitly.
-     *
-     * @param mapperClass Java class name of the default Mapper
-     */
-    protected void addDefaultMapper(String mapperClass) {
-
-        super.addDefaultMapper(this.mapperClass);
-
-    }
 
 
     /**

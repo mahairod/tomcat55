@@ -184,13 +184,6 @@ public class StandardHost
 
 
     /**
-     * The Java class name of the default Mapper class for this Container.
-     */
-    private String mapperClass =
-        "org.apache.catalina.core.StandardHostMapper";
-
-
-    /**
      * Unpack WARs property.
      */
     private boolean unpackWARs = true;
@@ -401,31 +394,6 @@ public class StandardHost
         this.liveDeploy = liveDeploy;
         support.firePropertyChange("liveDeploy", oldLiveDeploy, 
                                    this.liveDeploy);
-
-    }
-
-
-    /**
-     * Return the default Mapper class name.
-     */
-    public String getMapperClass() {
-
-        return (this.mapperClass);
-
-    }
-
-
-    /**
-     * Set the default Mapper class name.
-     *
-     * @param mapperClass The new default Mapper class name
-     */
-    public void setMapperClass(String mapperClass) {
-
-        String oldMapperClass = this.mapperClass;
-        this.mapperClass = mapperClass;
-        support.firePropertyChange("mapperClass",
-                                   oldMapperClass, this.mapperClass);
 
     }
 
@@ -986,18 +954,6 @@ public class StandardHost
 
     // ------------------------------------------------------ Protected Methods
 
-
-    /**
-     * Add a default Mapper implementation if none have been configured
-     * explicitly.
-     *
-     * @param mapperClass Java class name of the default Mapper
-     */
-    protected void addDefaultMapper(String mapperClass) {
-
-        super.addDefaultMapper(this.mapperClass);
-
-    }
 
     static String STANDARD_HOST_DEPLOYER="org.apache.catalina.core.StandardHostDeployer";
     

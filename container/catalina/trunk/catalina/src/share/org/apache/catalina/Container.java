@@ -376,17 +376,6 @@ public interface Container {
 
 
     /**
-     * Add the specified Mapper associated with this Container.
-     *
-     * @param mapper The corresponding Mapper implementation
-     *
-     * @exception IllegalArgumentException if this exception is thrown by
-     *  the <code>setContainer()</code> method of the Mapper
-     */
-    public void addMapper(Mapper mapper);
-
-
-    /**
      * Add a property change listener to this component.
      *
      * @param listener The listener to add
@@ -419,23 +408,6 @@ public interface Container {
 
 
     /**
-     * Return the Mapper associated with the specified protocol, if there
-     * is one.  If there is only one defined Mapper, use it for all protocols.
-     * If there is no matching Mapper, return <code>null</code>.
-     *
-     * @param protocol Protocol for which to find a Mapper
-     */
-    public Mapper findMapper(String protocol);
-
-
-    /**
-     * Return the set of Mappers associated with this Container.  If this
-     * Container has no Mappers, a zero-length array is returned.
-     */
-    public Mapper[] findMappers();
-
-
-    /**
      * Process the specified Request, and generate the corresponding Response,
      * according to the design of this particular Container.
      *
@@ -449,17 +421,6 @@ public interface Container {
      */
     public void invoke(Request request, Response response)
         throws IOException, ServletException;
-
-
-    /**
-     * Return the child Container that should be used to process this Request,
-     * based upon its characteristics.  If no such child Container can be
-     * identified, return <code>null</code> instead.
-     *
-     * @param request Request being processed
-     * @param update Update the Request to reflect the mapping selection?
-     */
-    public Container map(Request request, boolean update);
 
 
     /**
@@ -477,14 +438,6 @@ public interface Container {
      * @param listener The listener to remove
      */
     public void removeContainerListener(ContainerListener listener);
-
-
-    /**
-     * Remove a Mapper associated with this Container, if any.
-     *
-     * @param mapper The Mapper to be removed
-     */
-    public void removeMapper(Mapper mapper);
 
 
     /**

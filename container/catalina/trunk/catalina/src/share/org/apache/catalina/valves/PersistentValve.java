@@ -150,15 +150,9 @@ public class PersistentValve
                        ValveContext valveContext)
         throws IOException, ServletException {
 
-        // Validate the request and response object types
-        if (!(request.getRequest() instanceof HttpServletRequest) ||
-            !(response.getResponse() instanceof HttpServletResponse)) {
-            return;     // NOTE - Not much else we can do generically
-        }
-
         // Select the Context to be used for this Request
         StandardHost host = (StandardHost) getContainer();
-        Context context = (Context) host.map(request, true);
+        Context context = request.getContext();
         if (context == null) {
             ((HttpServletResponse) response.getResponse()).sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

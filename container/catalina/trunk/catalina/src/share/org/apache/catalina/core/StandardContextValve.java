@@ -172,26 +172,13 @@ final class StandardContextValve
             return;
         }
 
-        Context context = (Context) getContainer();
-
         // Select the Wrapper to be used for this Request
-        Wrapper wrapper = null;
-        try {
-            wrapper = (Wrapper) context.map(request, true);
-        } catch (IllegalArgumentException e) {
-            String requestURI = hreq.getDecodedRequestURI();
-            badRequest(requestURI, 
-                       (HttpServletResponse) response.getResponse());
-            return;
-        }
+        Wrapper wrapper = request.getWrapper();
         if (wrapper == null) {
             String requestURI = hreq.getDecodedRequestURI();
             notFound(requestURI, (HttpServletResponse) response.getResponse());
             return;
         }
-
-        // Ask this Wrapper to process this Request
-        response.setContext(context);
 
         wrapper.invoke(request, response);
 

@@ -142,15 +142,8 @@ final class StandardEngineValve
                        ValveContext valveContext)
         throws IOException, ServletException {
 
-        // Validate the request and response object types
-        if (!(request.getRequest() instanceof HttpServletRequest) ||
-            !(response.getResponse() instanceof HttpServletResponse)) {
-            return;     // NOTE - Not much else we can do generically
-        }
-
         // Select the Host to be used for this Request
-        StandardEngine engine = (StandardEngine) getContainer();
-        Host host = (Host) engine.map(request, true);
+        Host host = request.getHost();
         if (host == null) {
             ((HttpServletResponse) response.getResponse()).sendError
                 (HttpServletResponse.SC_BAD_REQUEST,
