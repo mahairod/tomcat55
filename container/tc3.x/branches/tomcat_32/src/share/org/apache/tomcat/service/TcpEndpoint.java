@@ -94,7 +94,7 @@ import java.util.*;
  */
 public abstract class TcpEndpoint  { // implements Endpoint {
 
-    private StringManager sm = StringManager.getManager("org.apache.tomcat.service");
+    private static StringManager sm = StringManager.getManager("org.apache.tomcat.service");
 
     private static final int BACKLOG = 100;
     private static final int TIMEOUT = 1000;

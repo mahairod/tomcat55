@@ -94,7 +94,7 @@ import java.util.*;
  */
 public class SimpleTcpEndpoint  extends PoolTcpEndpoint {
 
-    private StringManager sm = StringManager.getManager("org.apache.tomcat.service");
+    private static StringManager sm = StringManager.getManager("org.apache.tomcat.service");
 
     private static final int BACKLOG = 100;
     private static final int TIMEOUT = 5000;

@@ -90,7 +90,7 @@ import javax.servlet.ServletOutputStream;
  */
 public class BufferedServletOutputStream extends ServletOutputStream {
 
-    protected StringManager sm =
+    protected static StringManager sm =
         StringManager.getManager(Constants.Package);
     protected boolean usingWriter = false;
     

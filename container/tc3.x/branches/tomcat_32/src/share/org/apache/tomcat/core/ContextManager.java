@@ -122,7 +122,7 @@ public class ContextManager {
     /**
      * The string constants for this ContextManager.
      */
-    private StringManager sm = StringManager.getManager("org.apache.tomcat.core");
+    private static StringManager sm = StringManager.getManager("org.apache.tomcat.core");
 
     /** Global interceptors - all requests that will be served by this
 	engine will pass those filters

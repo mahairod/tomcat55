@@ -76,7 +76,7 @@ import org.apache.tomcat.core.Constants;
  */
 public class MessageBytes {
 
-    private StringManager sm =
+    private static StringManager sm =
         StringManager.getManager("org.apache.tomcat.util");
 
     /**

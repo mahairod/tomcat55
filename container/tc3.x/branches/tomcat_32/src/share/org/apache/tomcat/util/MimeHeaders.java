@@ -209,7 +209,7 @@ public class MimeHeaders {
     // Please avoid using any of the methods following this line. 
     // ( most of them will generate GC, or are http sepecific )
     // ------------------------------------------------------------
-    private StringManager sm =
+    private static StringManager sm =
         StringManager.getManager("org.apache.tomcat.util");
     int bufSize=512; // default
     /**
@@ -489,7 +489,7 @@ public class MimeHeaders {
 }
 
 class MimeHeadersEnumerator implements Enumeration {
-    private StringManager sm =
+    private static StringManager sm =
         StringManager.getManager("org.apache.tomcat.util");
     private Hashtable hash;
     private Enumeration delegate;

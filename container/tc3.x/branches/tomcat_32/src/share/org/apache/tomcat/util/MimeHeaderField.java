@@ -84,7 +84,7 @@ public class MimeHeaderField {
 	(byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9' 
     };
 
-    private StringManager sm =
+    private static StringManager sm =
         StringManager.getManager("org.apache.tomcat.util");
 
     /**

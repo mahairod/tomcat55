@@ -81,7 +81,7 @@ import javax.servlet.*;
  */
 final class ServletContextFacade implements ServletContext {
     // Use the strings from core
-    private StringManager sm = StringManager.getManager("org.apache.tomcat.core");
+    private static StringManager sm = StringManager.getManager("org.apache.tomcat.core");
     private ContextManager contextM;
     private Context context;
 
