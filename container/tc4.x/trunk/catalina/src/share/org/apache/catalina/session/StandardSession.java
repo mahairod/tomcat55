@@ -113,7 +113,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-final class StandardSession
+class StandardSession
     implements HttpSession, Session, Serializable {
 
 
@@ -1111,7 +1111,9 @@ final class StandardSession
             if (debug >= 2)
                 log("  loading attribute '" + name +
                     "' with value '" + value + "'");
-            setAttribute(name, value);
+	    synchronized (attributes) {
+	        attributes.put(name, value);
+	    }
 	}
         isValid = isValidSave;
 

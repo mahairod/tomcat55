@@ -108,7 +108,7 @@ import org.apache.catalina.util.LifecycleSupport;
  * @version $Revision$ $Date$
  */
 
-public final class StandardManager
+public class StandardManager
     extends ManagerBase
     implements Lifecycle, PropertyChangeListener, Runnable {
 
@@ -387,6 +387,7 @@ public final class StandardManager
                     session.readObjectData(ois);
 		    session.setManager(this);
 		    sessions.put(session.getId(), session);
+		    ((StandardSession) session).activate();
 		}
 	    } catch (ClassNotFoundException e) {
 		if (ois != null) {
@@ -474,6 +475,7 @@ public final class StandardManager
 		    StandardSession session =
                         (StandardSession) elements.next();
                     list.add(session);
+		    ((StandardSession) session).passivate();
                     session.writeObjectData(oos);
 		}
 	    } catch (IOException e) {
