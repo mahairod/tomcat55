@@ -10,6 +10,31 @@
 
 <section name="News &amp; Status">
 
+<h3>17 September 2001 - Apache Tomcat 4.0 Final Released</h3>
+
+<p>It's official!  The Servlet 2.3 and JSP 1.2 specifications are now final,
+and so is <strong>Apache Tomcat 4.0</strong>, which implements the new
+features of these specifications plus a host of other functionality
+improvements over the current production release (Tomcat 3.2.3).  Please
+read the <code>RELEASE-NOTES-4.0.txt</code> file in the top level directory
+of the distribution for the latest information on recent changes and known
+issues.  You can also browse the Tomcat 4.0 documentation bundle online at
+<a href="http://jakarta.apache.org/tomcat/tomcat-4.0-doc/">http://jakarta.apache.org</a>.</p>
+
+<p>Binary distributions of Apache Tomcat 4.0 are available at
+<a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0/">http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0/</a>.</p>
+
+<p>Source distributions of Apache Tomcat 4.0 are available at
+<a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0/src/">http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0/src/</a>.</p>
+
+<p>Binary and source distributions of the <em>mod_webapp connector</em> will be
+posted on Wednesday, September 19, 2001.  If you wish to build this connector
+in the mean time, you can check out the <code>jakarta-tomcat-connectors</code>
+CVS repository, and follow the directions in the <code>README.txt</code> file
+in the <code>webapp</code> subdirectory.</p>
+
+<hr noshade="" size="1"/>
+
 <h3>4 September 2001 - Jakarta Tomcat 3.3-b2 Released</h3>
 
 <p><strong>Tomcat 3.3 Beta 2</strong> is the latest update to Tomcat 3.3.
